@@ -119,6 +119,51 @@ function ring(info, size = 270) {
   </svg>`;
 }
 
+// ---------- flowing cycle hero (dark, liquid rings, glowing phase arc, today orb) ----------
+function ringSub(info) {
+  return info.late ? `Period ${plural(info.late, 'day')} late`
+    : info.dueToday ? 'Period expected today'
+    : info.isPeriod ? (info.periodActual ? `Period · day ${info.cd}` : 'Period likely')
+    : info.isOvulation ? 'Egg release today'
+    : info.daysToOv <= 5 && info.cd < info.ov ? `Ovulation in ${plural(info.daysToOv, 'day')}`
+    : `Period in ${plural(info.daysToPeriod, 'day')}`;
+}
+function flowRing(info, id = 'fr', showOv = true) {
+  const S = 300, c = S / 2, R = 116, { L, P } = info, cd = Math.min(info.cd, L);
+  const ang = d => -90 + (d - 1) / L * 360;
+  const liquid = (r0, a, k, ph, a2, k2) => { let d = ''; for (let t = 0; t <= 360; t += 3) { const th = t * Math.PI / 180, r = r0 + a * Math.sin(k * th + ph) + a2 * Math.sin(k2 * th - ph); d += `${d ? 'L' : 'M'}${(c + r * Math.cos(th)).toFixed(1)} ${(c + r * Math.sin(th)).toFixed(1)}`; } return d + 'Z'; };
+  const arcs = C.phaseRanges(L, P).map(r => { const on = r.key === info.phase;
+    return `<path class="fh-arc ${on ? 'on' : ''}" d="${arcPath(c, c, R, ang(r.from) + 1.2, ang(r.to + 1) - 1.2)}" stroke="${on ? `url(#${id}-g)` : PHASE_COLOR.dark[r.key]}" stroke-width="${on ? 7 : 2}" stroke-linecap="round" fill="none" opacity="${on ? 1 : .3}" ${on ? `filter="url(#${id}-glow)"` : ''} pathLength="1"/>`; }).join('');
+  const [mx, my] = polar(c, c, R, ang(cd) + 180 / L), [ox, oy] = polar(c, c, R, ang(info.ov) + 180 / L);
+  const col = PHASE_COLOR.dark[info.phase];
+  return `<svg class="fh-svg" viewBox="0 0 ${S} ${S}" width="100%">
+    <defs>
+      <radialGradient id="${id}-bg"><stop offset="0" stop-color="${col}" stop-opacity=".26"/><stop offset=".6" stop-color="${col}" stop-opacity=".06"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></radialGradient>
+      <linearGradient id="${id}-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="${col}"/><stop offset="1" stop-color="#d4ef9a"/></linearGradient>
+      <filter id="${id}-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="${id}-soft"><feGaussianBlur stdDeviation="1.2"/></filter>
+    </defs>
+    <circle cx="${c}" cy="${c}" r="${R - 8}" fill="url(#${id}-bg)" class="fh-breathe"/>
+    <g class="fh-flow f1"><path d="${liquid(R - 16, 5, 3, 0, 2.5, 7)}" stroke="#9fcf8c" stroke-opacity=".32" fill="none" stroke-width="1" filter="url(#${id}-soft)"/></g>
+    <g class="fh-flow f2"><path d="${liquid(R + 12, 4, 5, 1.3, 2, 2)}" stroke="#d4ef9a" stroke-opacity=".22" fill="none" stroke-width="1"/></g>
+    <g class="fh-flow f3"><path d="${liquid(R - 28, 6, 4, 2.1, 3, 9)}" stroke="#ffffff" stroke-opacity=".12" fill="none" stroke-width="1"/></g>
+    <circle cx="${c}" cy="${c}" r="${R}" fill="none" stroke="#fff" stroke-opacity=".06"/>
+    ${arcs}
+    ${showOv ? `<g transform="translate(${ox.toFixed(1)} ${oy.toFixed(1)})"><ellipse rx="3.4" ry="4.2" fill="#f4f5f0" stroke="#d4ef9a" stroke-width="1"/></g>` : ''}
+    <circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="16" fill="${col}" opacity=".25" class="fh-halo"/>
+    <circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="7.5" fill="#fff" filter="url(#${id}-glow)"/>
+  </svg>`;
+}
+function flowHero(info, { eyebrow, title, season, stats = [], badge = '', id = 'fr', showOv = true, center } = {}) {
+  return `<section class="fhero">
+    <div class="fh-aurora"><i></i><i></i><i></i></div>
+    <div class="fh-top"><div><div class="eyebrow">${eyebrow}</div><h2 class="fh-phase">${title}</h2><div class="fh-season">${season}</div></div>${badge}</div>
+    <div class="fh-ring">${flowRing(info, id, showOv)}
+      <div class="fh-center"><span class="fh-k">Cycle day</span><span class="fh-day">${Math.min(info.cd, info.L)}</span><span class="fh-sub">${center || ringSub(info)}</span></div></div>
+    ${stats.length ? `<div class="fh-stats">${stats.map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join('')}</div>` : ''}
+  </section>`;
+}
+
 // ---------- SVG: hormone cycle chart (interactive) ----------
 const HORMONES = [
   { key: 'estrogen', name: 'Estrogen', color: '#ff8fc4', w: 3 },
@@ -271,7 +316,7 @@ function viewOnboarding() {
     return `<div class="onb onb-welcome full dark beyond">
       <canvas class="welcome3d"></canvas>
       <div class="bw-vignette"></div>
-      <div class="bw-hero"><h1 class="bw-title">beyond<br>the skin</h1></div>
+      <div class="bw-hero"><h1 class="bw-title">under<br>the skin</h1></div>
       <div class="welcome-ui">
         <button class="btn btn-light btn-block" data-action="onbEnter">Enter</button>
         <button class="btn btn-ghost btn-block" data-action="onbDemo">Explore with sample data</button>
@@ -356,15 +401,9 @@ function viewToday() {
     <div class="hello-row slim"><div><div class="eyebrow">${fmt(today, { weekday: 'long', month: 'long', day: 'numeric' })}</div><h1 class="hello sm">${greeting()}, <b>${name}</b></h1></div>
       <button class="avatar ${state.profile.photo ? 'has-photo' : ''}" data-action="nav" data-to="profile">${avatarInner(state.profile)}</button></div>
 
-    <section class="hero card-light">
-      <div class="hero-top">
-        <div><div class="eyebrow dark">You are in your</div><div class="hero-phase">${ph.name} phase</div><div class="hero-season">${ph.season} · ${tcm.stage}</div></div>
-        <div class="energy-pill"><span class="dotnum">${energy}</span><small>%<br>energy</small></div>
-      </div>
-      <div class="ring-wrap">${ring(info)}</div>
-      <p class="hero-tag">${ph.tagline}</p>
-      <div class="hchips">${chips.join('')}</div>
-    </section>
+    ${flowHero(info, { eyebrow: 'You are in your', title: `${ph.name} <em>phase</em>`, season: ph.season, id: 'today',
+      badge: `<div class="fh-side"><span class="fh-glyph" title="${tcm.element}">${tcm.elementGlyph}</span>${info.fertile ? `<span class="fh-badge">${icon('spark', 13)} Fertile</span>` : ''}</div>`,
+      stats: [[info.isPeriod ? 'Period' : 'Next period', info.late ? `${info.late}d late` : info.isPeriod ? `Day ${info.cd}` : `${info.daysToPeriod} days`], ['Egg release', info.isOvulation ? 'Today' : info.cd < info.ov ? `in ${info.daysToOv}d` : `day ${info.ov}`], ['Energy', `${energy}%`]] })}
 
     ${alerts.length ? `<section class="card glass alerts">${alerts.slice(0, 2).join('')}</section>` : ''}
     ${cycleFlag()}
@@ -372,7 +411,7 @@ function viewToday() {
     ${sectionTitle('Your hormones', ['Explore', 'hormones'])}
     <section class="card glass chart-card">${cycleChart(info, { id: 'today', compact: true })}
       <p class="cc-hint">${icon('chevL', 12)} Swipe the chart to see any day ${icon('chevR', 12)}</p>
-      <p class="body">${summary}</p><button class="cc-more" data-action="nav" data-to="hormones">What each hormone does ${icon('chevR', 14)}</button></section>
+      <button class="cc-more" data-action="nav" data-to="hormones">What each hormone does ${icon('chevR', 14)}</button></section>
     ${fullCycleGuide(info)}
 
     ${moveCard(info)}
@@ -385,11 +424,11 @@ function viewToday() {
       <button class="card glass gl" data-action="nav" data-to="insights"><div class="eyebrow">Energy</div>
         <div class="gl-v"><span class="dotnum">${energy}</span><small>%</small></div><div class="gl-bars">${bars}</div><div class="gl-s">next 7 days</div></button>
       <button class="card glass gl" data-action="planTab" data-v="nourish"><div class="eyebrow">Eat</div>
-        <div class="gl-h">${warm ? 'Warm & cooked' : 'Raw & living'}</div><div class="gl-s">Focus: ${topNeed.n}<br>${(() => { const sz = SZ.seasonal(myCountry(), new Date().getMonth() + 1).filter(i => i.ph.includes(info.phase) && i.kind !== 'wild').slice(0, 2); return sz.length ? `In season: ${sz.map(i => i.f).join(', ')}` : topNeed.foods.slice(0, 2).join(', '); })()}</div></button>
+        <div class="gl-h">${warm ? 'Warm & cooked' : 'Raw & living'}</div><div class="gl-s">${(() => { const sz = SZ.seasonal(myCountry(), new Date().getMonth() + 1).filter(i => i.ph.includes(info.phase) && i.kind !== 'wild').slice(0, 2); return sz.length ? sz.map(i => i.f).join(' · ') : topNeed.foods.slice(0, 2).join(' · '); })()}</div></button>
       <button class="card glass gl" data-action="planTab" data-v="mind"><div class="eyebrow">Mind</div>
-        <div class="gl-h">${ph.superpower.title}</div><div class="gl-s">${ph.mind.title}<br>${ph.social.title}</div></button>
+        <div class="gl-h">${ph.superpower.title}</div><div class="gl-s">${ph.mind.title}</div></button>
       <button class="card glass gl" data-action="planTab" data-v="rituals"><div class="eyebrow">Eastern</div>
-        <div class="gl-h"><span class="gl-g">${tcm.elementGlyph}</span> ${tcm.element}</div><div class="gl-s">${tcm.principle}<br>Tea: ${tcm.tea.name}</div></button>
+        <div class="gl-h"><span class="gl-g">${tcm.elementGlyph}</span> ${tcm.element}</div><div class="gl-s">${tcm.tea.name}</div></button>
     </div>
 
     ${sectionTitle('Today’s plan')}
@@ -406,10 +445,10 @@ function viewToday() {
 
     ${sectionTitle('More for you')}
     <section class="card glass more">
-      <button class="more-row" data-action="nav" data-to="habits"><span class="art-ic">${icon('check', 18)}</span><span class="art-t">Hormone habits<small>${habitsDone(todayISO()).length} of ${HABITS.length} done today</small></span>${icon('chevR', 16)}</button>
-      <button class="more-row" data-action="nav" data-to="cosmic"><span class="art-ic">${icon('star', 18)}</span><span class="art-t">Cosmic rhythm<small>Zodiac, five elements & moon</small></span>${icon('chevR', 16)}</button>
-      <button class="more-row" data-action="nav" data-to="share"><span class="art-ic">${icon('heart', 18)}</span><span class="art-t">Partner mode<small>Share how to support you</small></span>${icon('chevR', 16)}</button>
-      <button class="more-row" data-action="nav" data-to="article/${article.id}"><span class="art-ic">${icon('book', 18)}</span><span class="art-t">${article.title}<small>${article.mins} min read</small></span>${icon('chevR', 16)}</button>
+      <button class="more-row" data-action="nav" data-to="habits"><span class="art-ic">${icon('check', 18)}</span><span class="art-t">Hormone habits</span>${icon('chevR', 16)}</button>
+      <button class="more-row" data-action="nav" data-to="cosmic"><span class="art-ic">${icon('star', 18)}</span><span class="art-t">Cosmic rhythm</span>${icon('chevR', 16)}</button>
+      <button class="more-row" data-action="nav" data-to="share"><span class="art-ic">${icon('heart', 18)}</span><span class="art-t">Partner mode</span>${icon('chevR', 16)}</button>
+      <button class="more-row" data-action="nav" data-to="article/${article.id}"><span class="art-ic">${icon('book', 18)}</span><span class="art-t">${article.title}</span>${icon('chevR', 16)}</button>
     </section>
     <p class="fine center">Predictions are estimates based on your logs — not medical advice or contraception.</p>
   </div>`;
@@ -438,12 +477,10 @@ function viewCalendar() {
       if (di.periodActual) cls.push('period');
       else if (di.periodPredicted) cls.push('period-pred');
       else if (di.isOvulation && di.cd <= di.L) cls.push('ovu');
-      else if (di.fertile && di.cd <= di.L) cls.push('fertile');
     }
     if (k === todayISO()) cls.push('today');
     if (k === ui.calSelected) cls.push('sel');
-    const moonMark = moonEvent(d) === 'new' ? '<i class="moonmark new"></i>' : moonEvent(d) === 'full' ? '<i class="moonmark full"></i>' : '';
-    cells += `<button class="${cls.join(' ')}" data-action="calSelect" data-date="${k}"><span>${n}</span>${lg && (lg.symptoms || lg.moods || lg.notes) ? '<i class="logdot"></i>' : ''}${moonMark}</button>`;
+    cells += `<button class="${cls.join(' ')}" data-action="calSelect" data-date="${k}"><span>${n}</span>${lg && (lg.symptoms || lg.moods || lg.notes) ? '<i class="logdot"></i>' : ''}</button>`;
   }
   const sd = C.parseISO(ui.calSelected), si = C.dayInfo(sd, stats), slog = getLog(ui.calSelected);
   const isFuture = sd > today;
@@ -459,23 +496,21 @@ function viewCalendar() {
     <section class="card glass cal">
       <div class="cal-w">${['M', 'T', 'W', 'T', 'F', 'S', 'S'].map(x => `<span>${x}</span>`).join('')}</div>
       <div class="cal-grid">${cells}</div>
-      <div class="cal-legend"><span><i class="lg-p"></i>Period</span><span><i class="lg-pp"></i>Predicted</span><span><i class="lg-f"></i>Fertile</span><span><i class="lg-o"></i>Ovulation</span></div>
-      <div class="cal-legend moon-leg"><span><i class="moonmark full"></i>Full moon</span><span><i class="moonmark new"></i>New moon</span>${(() => { const t = Z.moonCycleType(M.stats.periods.map(p => p.start)); return t ? `<span class="lime">${Z.MOON_CYCLES[t].name} cycle</span>` : ''; })()}</div>
+      <div class="cal-legend"><span><i class="lg-p"></i>Period</span><span><i class="lg-pp"></i>Next period (expected)</span><span><i class="lg-o"></i>Egg release (estimate)</span></div>
     </section>
     <section class="card card-light day-panel">
       <div class="dp-head"><div><div class="eyebrow dark">${fmt(sd, { weekday: 'long' })}</div><h3>${fmt(sd, { month: 'long', day: 'numeric' })}</h3></div>
         ${si ? `<span class="phase-tag" style="--c:${PHASE_COLOR.light[si.phase]}">${PHASES[si.phase].name} · day ${si.cd}</span>` : ''}</div>
-      ${(() => { const mp = Z.moonPhase(new Date(sd.getFullYear(), sd.getMonth(), sd.getDate(), 12)); return `<div class="dp-moon">${moonIcon(mp, 16)}<span>${mp.name}</span></div>`; })()}
-      ${si ? `<p class="dp-text">${si.periodActual ? 'Period day logged.' : si.periodPredicted ? 'Period predicted.' : si.isOvulation ? 'Estimated ovulation day.' : si.fertile ? 'In your estimated fertile window.' : PHASES[si.phase].tagline}</p>` : '<p class="dp-text">No cycle data for this day yet.</p>'}
+      ${si ? `<p class="dp-text">${si.periodActual ? `Period · day ${si.cd}.` : si.periodPredicted ? (si.cd === 1 ? 'Your next period is expected to start today.' : 'Your period is expected around this day.') : si.isOvulation ? 'Estimated egg release (ovulation).' : PHASES[si.phase].tagline}</p>` : '<p class="dp-text">No cycle data for this day yet.</p>'}
       ${Object.keys(slog).length ? `<div class="chips">${logChips(slog)}</div>` : ''}
       ${isFuture ? '' : `<div class="dp-actions">
         <button class="btn ${hasFlow ? 'btn-outline-dark' : 'btn-dark'}" data-action="togglePeriod">${icon('drop', 16)} ${hasFlow ? 'Remove period' : 'Period day'}</button>
         <button class="btn btn-outline-dark" data-action="logDay" data-date="${ui.calSelected}">${icon('plus', 16)} Log</button></div>`}
     </section>
-    ${M.info ? `${sectionTitle('Coming up')}
+    ${M.info ? `${sectionTitle('Your periods')}
     <div class="upcoming">
+      ${(() => { const last = stats.periods[stats.periods.length - 1]; return `<div class="card glass up"><span class="up-ic">${icon('drop', 18)}</span><div class="up-k">Last period</div><div class="up-v">${fmt(last.start, { month: 'short', day: 'numeric' })}</div><div class="up-s">${plural(last.length || stats.avgPeriod, 'day')}</div></div>`; })()}
       <div class="card glass up"><span class="up-ic">${icon('drop', 18)}</span><div class="up-k">Next period</div><div class="up-v">${fmt(nextP, { month: 'short', day: 'numeric' })}</div><div class="up-s">${M.info.late ? `${M.info.late}d late` : `in ${plural(M.info.daysToPeriod, 'day')}`}</div></div>
-      <div class="card glass up"><span class="up-ic">${icon('sun', 18)}</span><div class="up-k">Ovulation</div><div class="up-v">${fmt(nextOv, { month: 'short', day: 'numeric' })}</div><div class="up-s">${M.info.daysToOv === 0 ? 'today' : `in ${plural(M.info.daysToOv, 'day')}`}</div></div>
     </div>` : ''}
   </div>`;
 }
@@ -1046,18 +1081,16 @@ function alignmentCard(info) {
   const waxing = moon.age < 14.77, building = info.phase === 'follicular' || info.phase === 'ovulatory';
   const moonSync = waxing === building ? (waxing ? 'In sync — moon and hormones are both building.' : 'In sync — moon and body are both turning inward.') : (waxing ? 'The moon is building while your body turns inward — honour your body first.' : 'The moon is releasing while your energy rises — use both: let go and begin.');
   const rem = remediesFor(info)[dayNum(new Date()) % Math.max(1, remediesFor(info).length)] || REMEDIES[0];
-  const node = (g, k, t, s, to, han) => `<${to ? `button data-action="nav" data-to="${to}"` : 'div'} class="an"><span class="an-g ${han ? 'han' : ''}">${g}</span><span class="an-b"><span class="an-k">${k}</span><b>${t}</b><small>${s}</small></span>${to ? icon('chevR', 14) : ''}</${to ? 'button' : 'div'}>`;
-  return `<section class="card align">
-    <div class="eyebrow">Everything connected · today</div>
-    <div class="chain">
-      ${node(icon('chart', 16), 'Hormones', hLine, `Cycle day ${info.cd} of ${info.L}`, 'insights')}
-      ${node(icon('spark', 16), 'Season within', `${ph.season} · ${ph.name}`, ph.superpower.title + ' is your superpower', 'plan')}
-      ${node(tcm.elementGlyph, 'Chinese medicine', `${tcm.element} · ${tcm.organ}`, tcm.principle, 'point/' + info.phase, true)}
-      ${node(moonIcon(moon), 'Moon', moon.name, moonSync, 'cosmic')}
-      ${node(cp ? cp.sign.glyph : '✦', 'Your stars', cp ? `${cp.sign.name} · ${cp.sign.el}` : 'Add your birthday', cp ? Z.EL_PHASE[cp.sign.el][info.phase] : 'Unlock your zodiac link', 'cosmic')}
-      ${node(rem.glyph, 'Remedy', rem.name, `${rem.organ} · ${rem.nature}`, 'remedy/' + rem.id, true)}
-    </div>
-  </section>`;
+  const top = hs[0];
+  const tile = (g, t, to, han) => `<button class="cx" data-action="nav" data-to="${to}"><span class="cx-g ${han ? 'han' : ''}">${g}</span><span class="cx-t">${t}</span></button>`;
+  return `${sectionTitle('Everything connected')}
+  <div class="cx-row">
+    ${tile(`<i style="background:${top.color}"></i>`, `${top.name} ${top.tr === 'rising' ? '↗' : top.tr === 'falling' ? '↘' : ''}`, 'hormones')}
+    ${tile(tcm.elementGlyph, tcm.element, 'point/' + info.phase, true)}
+    ${tile(moonIcon(moon, 26), /full/i.test(moon.name) ? 'Full moon' : /new/i.test(moon.name) ? 'New moon' : /wax/i.test(moon.name) ? 'Waxing' : /wan/i.test(moon.name) ? 'Waning' : moon.name, 'cosmic')}
+    ${tile(cp ? cp.sign.glyph : '✦', cp ? cp.sign.name : 'Stars', 'cosmic')}
+    ${tile(rem.glyph, rem.name.split(' ')[0], 'remedy/' + rem.id, true)}
+  </div>`;
 }
 
 // ---------- daily focus ----------
@@ -1174,13 +1207,12 @@ function viewHormones() {
 function windowAt(cd, L, P) { return dayWindow({ cd, L, P, ov: C.ovulationDay(L, P) }); }
 function moveDots(n) { return `<span class="mv-dots">${[1, 2, 3].map(i => `<i class="${n >= i ? 'on' : ''}"></i>`).join('')}</span>`; }
 const MV_WORD = ['Rest instead', 'Go lighter', 'Good', 'Best time'];
+const MOVE_PHOTO = { 'flow-start': 'Melatonin', 'premenstrual': 'Melatonin', 'flow-end': 'Cortisol', 'settle': 'Cortisol', 'focus': 'Cortisol', rising: 'Adrenaline', building: 'Testosterone', peak: 'Testosterone' };
 function moveCard(info) {
-  const g = MOVE_GUIDE[dayWindow(info)], best = MOVES.filter(m => g.r[m.k] === 3).map(m => m.n);
-  return `${sectionTitle('Move today', ['Full guide', 'move'])}
-    <button class="card glass move-card" data-action="nav" data-to="move">
-      <div class="mv-head"><div><div class="eyebrow">Day ${info.cd} · ${PHASES[info.phase].name}</div><h3>${g.title}</h3></div>${icon('chevR', 18)}</div>
-      <div class="mv-best">${best.map(b => `<span>${b}</span>`).join('')}</div>
-      <p class="body sm">${g.tip}</p></button>`;
+  const k = dayWindow(info), g = MOVE_GUIDE[k], best = MOVES.filter(m => g.r[m.k] === 3).map(m => m.n), u = hormonePhoto(MOVE_PHOTO[k], 700);
+  return `${sectionTitle('Move today', ['Guide', 'move'])}
+    <button class="card move-card photo" data-action="nav" data-to="move">${u ? `<img src="${u}" alt="" loading="lazy"><span class="mv-shade"></span>` : ''}
+      <div class="mv-in"><h3>${g.title}</h3><div class="mv-best">${best.map(b => `<span>${b}</span>`).join('')}</div></div></button>`;
 }
 function viewMove() {
   const { info } = M, L = info.L, P = info.P, key = dayWindow(info), g = MOVE_GUIDE[key];
@@ -1329,12 +1361,9 @@ function viewPartner(p) {
   <div class="pad">
     <div class="ptd-head">${ptAvatar(p, 'xl')}<div><div class="eyebrow">${p.a === 'friend' ? 'Friend' : 'Partner'} · ${fmt(today, { weekday: 'long', month: 'short', day: 'numeric' })}</div>
       <h1 class="hello" style="margin:4px 0 0">${esc(p.n)} is in her<br><b>${ph.name} phase</b></h1></div></div>
-    <section class="hero card-light">
-      <div class="hero-top"><div><div class="eyebrow dark">${ph.season} · ${tcm.stage}</div><div class="hero-phase">${ph.tagline}</div></div>
-        <div class="energy-pill"><span class="dotnum">${en}</span><small>%<br>energy</small></div></div>
-      <div class="ring-wrap">${ring(p.f ? pi : { ...pi, isOvulation: false, daysToOv: 99 })}</div>
-      <div class="hchips"><span class="hchip">${icon('drop', 14)} ${partnerStatus(pi, p)}</span>${p.f ? `<span class="hchip ${pi.fertile ? 'hl' : ''}">${icon('spark', 14)} ${pi.fertile ? 'Fertile window' : 'Low fertility'}</span>` : ''}<span class="hchip"><span class="gl-g">${tcm.elementGlyph}</span> ${tcm.element}</span></div>
-    </section>
+    ${flowHero(pi, { eyebrow: `${ph.season} · ${tcm.stage}`, title: ph.tagline, season: `${tcm.elementGlyph} ${tcm.element} element`, id: 'pt', showOv: !!p.f, center: partnerStatus(pi, p),
+      badge: p.f && pi.fertile ? `<span class="fh-badge">${icon('spark', 13)} Fertile</span>` : '',
+      stats: [['Next period', pi.isPeriod ? 'Now' : `${pi.daysToPeriod} days`], ['Phase', ph.name], ['Energy', `${en}%`]] })}
     <section class="card glass ptd-read"><div class="eyebrow">Right now</div><p class="body">${partnerRead(pi, p)}</p><p class="body sm muted">${S.feel}</p></section>
 
     ${sectionTitle('Her hormones')}
@@ -1736,11 +1765,10 @@ function viewWith(q) {
   <div class="pad">
     <div class="eyebrow">${role === 'partner' ? 'Partner view' : 'Friend view'} · ${fmt(today, { weekday: 'long', month: 'short', day: 'numeric' })}</div>
     <h1 class="hello" style="margin:6px 0 16px">${name} is in her<br><b>${ph.name} phase</b></h1>
-    <section class="hero card-light">
-      <div class="hero-top"><div><div class="eyebrow dark">${ph.season}</div><div class="hero-phase">${ph.tagline}</div></div></div>
-      <div class="ring-wrap">${ring(snap.f ? info : { ...info, isOvulation: false, daysToOv: 99 })}</div>
-      <div class="hchips">${chips.join('')}</div>
-    </section>
+    ${flowHero(info, { eyebrow: ph.season, title: ph.tagline, season: `${tcm.elementGlyph} ${tcm.element} element`, id: 'with', showOv: !!snap.f,
+      center: info.isPeriod ? 'On her period' : `Period in ${plural(info.daysToPeriod, 'day')}`,
+      badge: snap.f && info.fertile ? `<span class="fh-badge">${icon('spark', 13)} Fertile</span>` : '',
+      stats: [['Next period', info.isPeriod ? 'Now' : `${info.daysToPeriod} days`], ['Phase', ph.name], ['Energy', `${Math.round(C.energyAt(info.cd, info.L, info.P) * 100)}%`]] })}
     ${(() => { const g = DAY_GUIDE[dayWindow(info)], rec = pick(recipesFor(info.phase, info), dayNum(today)); return `
     <section class="card glass pv-day">
       <div class="pv-top"><div><div class="eyebrow">Her day · ${g.energy.toLowerCase()} energy</div><h3>${g.title}</h3></div><span class="pv-e">${g.energy}</span></div>
@@ -1852,14 +1880,17 @@ const actions = {
   selectDay: d => { ui.selected = d.date; render(); },
   onbEnter: d => {
     const w = welcome3d, el = document.querySelector('.onb-welcome');
+    if (el?.classList.contains('entering')) return;
     if (!w || !el) return actions.onbNext(d);
     el.classList.add('entering');
+    import('./sfx.js').then(S => S.whoosh({ dur: 1.3, vol: 0.6, from: 400, to: 5200, boom: true })).catch(() => {});
     w.enter().then(() => actions.onbNext(d));
   },
   onbNext: () => {
     if (ui.onbStep < 6) { ui.onbStep++; render(); return; }
     const o = ui.onb, logs = {}, s = C.parseISO(o.last);
     for (let i = 0; i < o.periodLength; i++) { const d = C.addDays(s, i); if (d <= new Date()) logs[C.iso(d)] = { flow: i === 0 || i === 1 ? 'medium' : 'light' }; }
+    ui.arrive = true;
     state = { onboarded: true, profile: { name: o.name.trim(), cycleLength: o.cycleLength, periodLength: o.periodLength, goals: o.goals, birthday: o.birthday || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
     save(); go('today'); render();
   },
@@ -1990,6 +2021,12 @@ function mountFigures() {
     import('./welcome3d.js').then(m => {
       if (!c.isConnected) return; if (!m.webglOK()) throw new Error('no webgl');
       const w = m.mountWelcome3D(c, { onReady: () => wrap?.classList.add('arrived') });
+      // arrival whoosh: plays right away if sound is allowed, otherwise on the first touch
+      import('./sfx.js').then(S => {
+        const intro = () => S.whoosh({ dur: 2.6, vol: 0.45, from: 180, to: 2600 });
+        if (navigator.userActivation?.hasBeenActive) intro();
+        else wrap?.addEventListener('pointerdown', e => { if (!e.target.closest('[data-action="onbEnter"]')) intro(); }, { once: true });
+      }).catch(() => {});
       welcome3d = w; unmountFigs.push(() => { w.destroy(); if (welcome3d === w) welcome3d = null; });
     }).catch(fail);
   });
@@ -2001,6 +2038,21 @@ function mountFigures() {
     if (fig3d) return go(fig3d);
     import('./figure3d.js').then(m => { if (!m.webglOK()) throw new Error('no webgl'); fig3d = m; go(m); }).catch(() => { fig3d = false; if (c.isConnected) flat(); });
   });
+}
+// After the last onboarding question: a dark "arrival" moment, then the dashboard rises into place.
+function playArrival(view) {
+  const info = M.info, ph = PHASES[info.phase], name = esc(state.profile.name || '');
+  const el = document.createElement('div');
+  el.className = 'arrive';
+  el.innerHTML = `<div class="ar-ring">${flowRing(info, 'ar')}</div>
+    <div class="ar-text"><p class="ar-1">Welcome${name ? `, ${name}` : ''}</p>
+    <p class="ar-2">You’re on day ${Math.min(info.cd, info.L)} — your <em>${ph.name.toLowerCase()} phase</em></p>
+    <p class="ar-3">${ph.season}. Your rhythm is ready.</p></div>`;
+  $app.appendChild(el);
+  view.classList.add('arrive-in');
+  import('./sfx.js').then(S => { S.whoosh({ dur: 2.4, vol: 0.3, from: 150, to: 1400 }); setTimeout(() => S.whoosh({ dur: 1.2, vol: 0.5, from: 500, to: 5000, boom: true }), 3000); }).catch(() => {});
+  setTimeout(() => el.classList.add('out'), 3400);
+  setTimeout(() => { el.remove(); document.getElementById('view')?.classList.remove('arrive-in'); }, 5200);
 }
 function render() {
   const r = route();
@@ -2026,9 +2078,12 @@ function render() {
   };
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];
   const html = (views[r.name] || viewToday)();
-  $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${html}</div>${tabs.includes(r.name) || !views[r.name] ? tabbar(r.name in views ? r.name : 'today') : ''}`;
+  const arriving = $app.querySelector('.arrive');
+  $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''} ${arriving ? 'arrive-in' : ''}" id="view">${html}</div>${tabs.includes(r.name) || !views[r.name] ? tabbar(r.name in views ? r.name : 'today') : ''}`;
+  if (arriving) $app.appendChild(arriving);
   const v = document.getElementById('view');
   v.scrollTop = keep;
+  if (ui.arrive && r.name === 'today' && M.info) { ui.arrive = false; playArrival(v); }
   bindCharts();
   fireNotifications();
   mountFigures();

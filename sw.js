@@ -1,7 +1,7 @@
 // Offline cache for the app shell. Bump VERSION when shipping changes.
-const VERSION = 'uts-v60';
+const VERSION = 'uts-v67';
 const SHELL = ['./', './index.html', './styles.css', './manifest.json', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/icon-64.png',
-  './js/app.js', './js/data.js', './js/cycle.js', './js/icons.js', './js/cosmic.js', './js/figure.js', './js/figure3d.js', './js/torso.js', './js/torso3d.js', './js/photos.js', './js/seasonal.js', './js/welcome3d.js', './models/body.glb'];
+  './js/app.js', './js/data.js', './js/cycle.js', './js/icons.js', './js/cosmic.js', './js/figure.js', './js/figure3d.js', './js/torso.js', './js/torso3d.js', './js/photos.js', './js/seasonal.js', './js/welcome3d.js', './js/sfx.js', './models/body.glb'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
