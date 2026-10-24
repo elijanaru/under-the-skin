@@ -180,7 +180,7 @@ function chartGeom(L, compact) {
   const Y = v => bot - 10 - v * (bot - top - 34);
   return { W, H, top, bot, X, Y };
 }
-function cycleChart(info, { id = 'cc', compact = false } = {}) {
+function cycleChart(info, { id = 'cc', compact = false, who = 'You' } = {}) {
   const { L, P } = info;
   const cd = Math.min(info.cd, L);
   const { W, H, top, bot, X, Y } = chartGeom(L, compact);
@@ -230,7 +230,7 @@ function cycleChart(info, { id = 'cc', compact = false } = {}) {
         <circle cx="${mx}" cy="${my}" r="5.5" fill="#fff"/>
         <g transform="translate(${Math.min(Math.max(mx, 34), W - 34)} ${top + 16})">
           <rect x="-30" y="-11" width="60" height="22" rx="11" fill="#fff"/>
-          <text y="4" text-anchor="middle" class="here-label">YOU · ${cd}</text>
+          <text y="4" text-anchor="middle" class="here-label">${who.toUpperCase()} · ${cd}</text>
         </g>
       </g>
       <g class="scrub" style="opacity:0">
@@ -447,7 +447,7 @@ function viewToday() {
     <section class="card glass more">
       <button class="more-row" data-action="nav" data-to="habits"><span class="art-ic">${icon('check', 18)}</span><span class="art-t">Hormone habits</span>${icon('chevR', 16)}</button>
       <button class="more-row" data-action="nav" data-to="cosmic"><span class="art-ic">${icon('star', 18)}</span><span class="art-t">Cosmic rhythm</span>${icon('chevR', 16)}</button>
-      <button class="more-row" data-action="nav" data-to="share"><span class="art-ic">${icon('heart', 18)}</span><span class="art-t">Partner mode</span>${icon('chevR', 16)}</button>
+      <button class="more-row" data-action="nav" data-to="partners"><span class="art-ic">${icon('heart', 18)}</span><span class="art-t">Partner</span>${icon('chevR', 16)}</button>
       <button class="more-row" data-action="nav" data-to="article/${article.id}"><span class="art-ic">${icon('book', 18)}</span><span class="art-t">${article.title}</span>${icon('chevR', 16)}</button>
     </section>
     <p class="fine center">Predictions are estimates based on your logs — not medical advice or contraception.</p>
@@ -1320,20 +1320,38 @@ function partnerRead(pi, p) {
   out.push(en > .75 ? 'Energy: high.' : en > .5 ? 'Energy: steady.' : 'Energy: low — help her rest.');
   return out.join(' ');
 }
+function addPartnerFrom(text) {
+  const m = String(text).match(/[?&]d=([A-Za-z0-9_-]+)/) || String(text).trim().match(/^([A-Za-z0-9_-]{16,})$/);
+  const snap = m && b64d(m[1]);
+  if (!snap || !snap.s || !snap.c) return toast('That doesn’t look like an Under the Skin link');
+  actions.addPartner({ d: m[1] });
+}
 function viewPartners(id) {
   const ps = state.partners || [];
   if (id) { const p = ps.find(x => x.id === id); return p ? viewPartner(p) : viewMissing(); }
-  return `${topbar('Partners', { back: true })}
+  const me = state.profile, mi = M.info, first = ps[0];
+  const orb = (p, info, label) => `<div class="sy-orb"><span class="sy-av" style="--c:${info ? PHASE_COLOR.dark[info.phase] : 'rgba(255,255,255,.2)'}">${p ? (p.photo || p.t ? `<img src="${p.photo || p.t}" alt="">` : esc((p.name || p.n || '?')[0])) : icon('plus', 22)}</span><small>${label}</small></div>`;
+  return `${topbar('Partner', { back: true })}
   <div class="pad">
-    <h1 class="page-h">Your <span>people</span></h1>
-    ${ps.length ? ps.map(p => { const pi = snapInfo(p, new Date()), ph = PHASES[pi.phase], en = Math.round(C.energyAt(pi.cd, pi.L, pi.P) * 100);
-      return `<button class="card glass partner big" data-action="nav" data-to="partners/${p.id}">${ptAvatar(p, 'lg')}
-        <span class="pt-b"><span class="eyebrow">${p.a === 'friend' ? 'Friend' : 'Partner'} · day ${pi.cd} of ${pi.L}</span><b>${esc(p.n)} · ${ph.name}</b>
-        <span class="pt-meter"><b style="width:${en}%"></b></span><small>${partnerStatus(pi, p)} · ${en}% energy</small></span>${icon('chevR', 16)}</button>`; }).join('')
-    : `<section class="card card-light"><div class="eyebrow dark">How it works</div><h3 class="dark-h">See each other’s rhythm</h3>
-        <p class="dp-text">1. Send her your link below. 2. She sends you hers from her Under the Skin app. 3. Open it and tap “Add to my app” — she appears here with her phase, hormones, energy and how to be there for her.</p></section>`}
-    <button class="btn btn-light btn-block" data-action="nav" data-to="share">${icon('heart', 18)} Send my link to my partner</button>
-    <p class="fine center">Only her name and cycle estimates are shared — never her symptoms, moods or notes.</p>
+    <section class="sync-hero">
+      <div class="sy-pair">${orb(me, mi, mi ? `You · day ${mi.cd}` : 'You')}<span class="sy-line"><i></i></span>${first ? orb(first, snapInfo(first, new Date()), `${esc(first.n)} · day ${snapInfo(first, new Date()).cd}`) : orb(null, null, 'Her')}</div>
+      <h1 class="sy-h">See each other’s <span>rhythm</span></h1>
+    </section>
+
+    ${ps.length ? `${ps.map(p => { const pi = snapInfo(p, new Date()), ph = PHASES[pi.phase];
+      return `<button class="card glass sy-card" data-action="nav" data-to="partners/${p.id}">${ptAvatar(p, 'lg')}
+        <span class="pt-b"><b>${esc(p.n)}</b><small>${ph.name} · day ${pi.cd} · ${partnerStatus(pi, p)}</small></span>${icon('chevR', 16)}</button>`; }).join('')}` : ''}
+
+    <div class="sy-steps">
+      <div class="sy-step"><span class="sy-n">1</span><div><b>Send her your link</b>
+        <button class="btn btn-light btn-block" data-action="shareSend">${icon('heart', 16)} Send my link</button></div></div>
+      <div class="sy-step"><span class="sy-n">2</span><div><b>She adds it in her app</b><small>She copies your link, opens Under the Skin → Partner, and taps “Paste link”.</small></div></div>
+      <div class="sy-step"><span class="sy-n">3</span><div><b>Add hers here</b>
+        <button class="btn btn-ghost btn-block" data-action="pastePartner">${icon('plus', 16)} Paste her link</button>
+        <div class="sy-paste"><input class="field sm" id="partnerLink" placeholder="…or paste it here" autocomplete="off"><button class="btn btn-light" data-action="addPartnerLink">Add</button></div></div></div>
+    </div>
+    <p class="fine center">Only your name and cycle estimates are shared — never symptoms, moods or notes. Send a fresh link after each period to keep it exact.</p>
+    <button class="link center-link" data-action="nav" data-to="share">Sharing settings & preview</button>
   </div>`;
 }
 function viewPartner(p) {
@@ -1359,15 +1377,13 @@ function viewPartner(p) {
   const list = (arr, cls) => `<ul class="plist ${cls || ''}">${arr.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
   return `${topbar(esc(p.n), { back: true })}
   <div class="pad">
-    <div class="ptd-head">${ptAvatar(p, 'xl')}<div><div class="eyebrow">${p.a === 'friend' ? 'Friend' : 'Partner'} · ${fmt(today, { weekday: 'long', month: 'short', day: 'numeric' })}</div>
-      <h1 class="hello" style="margin:4px 0 0">${esc(p.n)} is in her<br><b>${ph.name} phase</b></h1></div></div>
-    ${flowHero(pi, { eyebrow: `${ph.season} · ${tcm.stage}`, title: ph.tagline, season: `${tcm.elementGlyph} ${tcm.element} element`, id: 'pt', showOv: !!p.f, center: partnerStatus(pi, p),
-      badge: p.f && pi.fertile ? `<span class="fh-badge">${icon('spark', 13)} Fertile</span>` : '',
+    ${flowHero(pi, { eyebrow: `${esc(p.n)} is in her`, title: `${ph.name} <em>phase</em>`, season: ph.season, id: 'pt', showOv: !!p.f, center: partnerStatus(pi, p),
+      badge: `<div class="fh-side">${ptAvatar(p, 'lg')}${p.f && pi.fertile ? `<span class="fh-badge">${icon('spark', 13)} Fertile</span>` : ''}</div>`,
       stats: [['Next period', pi.isPeriod ? 'Now' : `${pi.daysToPeriod} days`], ['Phase', ph.name], ['Energy', `${en}%`]] })}
-    <section class="card glass ptd-read"><div class="eyebrow">Right now</div><p class="body">${partnerRead(pi, p)}</p><p class="body sm muted">${S.feel}</p></section>
+    <p class="pt-now">${partnerRead(pi, p).split('. ').slice(1, 2).join('')}.</p>
 
     ${sectionTitle('Her hormones')}
-    <section class="card glass chart-card">${cycleChart(pi, { id: 'pt', compact: true })}</section>
+    <section class="card glass chart-card">${cycleChart(pi, { id: 'pt', compact: true, who: 'Her' })}</section>
 
     ${sectionTitle('Coming up')}
     <section class="card glass ptd-ev">${events.map(e => `<div class="pe ${e.on ? 'on' : ''}"><span class="pe-d">${e.d}</span><span class="pe-t"><b>${e.t}</b>${e.sub ? `<small>${e.sub}</small>` : ''}</span></div>`).join('')}</section>
@@ -1381,14 +1397,11 @@ function viewPartner(p) {
     </section>
 
     ${sectionTitle(p.a === 'friend' ? 'How to be a good friend' : 'How to show up today')}
-    <section class="card glass">${list(sup.do, 'yes')}${sup.avoid ? `<div class="eyebrow mt">Maybe avoid</div>${list(sup.avoid, 'no')}` : ''}</section>
-    ${sup.gifts ? `${sectionTitle('What to give her')}
-    <div class="hscroll">${sup.gifts.map((g, i) => `<div class="rcard gift">${glowArt(['orb', 'drop', 'wave', 'crown', 'hill'][i % 5], 80 + i)}<div class="rc-top"><span class="rc-k">Gift idea</span></div><div class="rc-t">${esc(g)}</div></div>`).join('')}</div>` : ''}
-    <div class="ptd-grid">
-      <section class="card tcm-card"><div class="tcm-glyph">${tcm.elementGlyph}</div><div class="tcm-main"><div class="eyebrow">Make her a cup of</div><h3>${tcm.tea.name}</h3><p class="body sm">${tcm.tea.why}</p></div></section>
-      <button class="card glass ptd-cook" data-action="nav" data-to="recipe/${rec.id}"><span class="art-ic">${icon('bowl', 20)}</span><span class="art-t">Cook for her: ${rec.name}<small>${rec.warm ? 'Warm & cooked' : rec.raw ? 'Fresh & raw' : 'For her phase'} · ${rec.time} min</small></span>${icon('chevR', 18)}</button>
-      <section class="card glass"><div class="eyebrow">Her body today</div><h3 style="margin:6px 0 4px;font-weight:400">${mv.title}</h3><p class="body sm">Best for ${MOVES.filter(m => mv.r[m.k] === 3).map(m => m.n.toLowerCase()).join(', ')} — join her.</p></section>
-      ${sup.date ? `<section class="card card-light"><div class="eyebrow dark">Date idea</div><h3 class="dark-h">${esc(sup.date)}</h3></section>` : sup.plan ? `<section class="card card-light"><div class="eyebrow dark">Plan idea</div><h3 class="dark-h">${esc(sup.plan)}</h3></section>` : ''}
+    <section class="card glass">${list(sup.do.slice(0, 3), 'yes')}</section>
+    ${sup.gifts ? `${sectionTitle('Little gifts')}<div class="chips">${sup.gifts.map(g => `<span class="chip static">${esc(g)}</span>`).join('')}</div>` : ''}
+    <div class="ptd-two">
+      <div class="card glass"><span class="han-big">${tcm.elementGlyph}</span><small>Make her</small><b>${tcm.tea.name}</b></div>
+      ${sup.date || sup.plan ? `<div class="card glass"><span class="han-big">${icon('heart', 22)}</span><small>${sup.date ? 'Date idea' : 'Plan idea'}</small><b>${esc(sup.date || sup.plan)}</b></div>` : ''}
     </div>
     <p class="fine center">Estimated from the cycle ${esc(p.n)} shared${p.added ? ` on ${fmt(new Date(p.added), { month: 'short', day: 'numeric' })}` : ''}. When her next period starts, ask her to send her link again to keep it exact — every body is different, so ask her too.</p>
     <button class="btn btn-ghost btn-block" data-action="removePartner" data-id="${p.id}">Remove ${esc(p.n)}</button>
@@ -1761,7 +1774,10 @@ function viewWith(q) {
   const list = (arr, cls) => `<ul class="plist ${cls || ''}">${arr.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
   const chips = [`<span class="hchip">${icon('drop', 14)} ${info.isPeriod ? 'On her period' : `Period in ${plural(info.daysToPeriod, 'day')}`}</span>`];
   if (snap.f) chips.push(`<span class="hchip ${info.fertile ? 'hl' : ''}">${icon('spark', 14)} ${info.fertile ? 'Fertile window' : 'Low fertility'}</span>`);
-  return `<header class="topbar"><span class="tb-spacer"></span><div class="topbar-title">${name}’s rhythm</div><span style="width:40px"></span></header>
+  const mine = state && state.onboarded && M?.stats?.periods?.length && snap.n === (state.profile.name || 'Her') && snap.s === C.iso(M.stats.periods[M.stats.periods.length - 1].start);
+  if (!(state && state.onboarded)) { try { localStorage.setItem('uts.pendingPartner', q.get('d')); } catch {} }
+  return `<header class="topbar">${state && state.onboarded ? `<button class="icon-btn dark" data-action="nav" data-to="partners" aria-label="Back">${icon('chevL', 22)}</button>` : '<span class="tb-spacer"></span>'}<div class="topbar-title">${name}’s rhythm</div><span style="width:40px"></span></header>
+  ${mine ? `<div class="preview-bar">Preview — this is what she’ll see <button data-action="nav" data-to="partners">Done</button></div>` : ''}
   <div class="pad">
     <div class="eyebrow">${role === 'partner' ? 'Partner view' : 'Friend view'} · ${fmt(today, { weekday: 'long', month: 'short', day: 'numeric' })}</div>
     <h1 class="hello" style="margin:6px 0 16px">${name} is in her<br><b>${ph.name} phase</b></h1>
@@ -1790,12 +1806,13 @@ function viewWith(q) {
     ${sectionTitle('Her week ahead')}
     <section class="card glass"><div class="pweek">${week}</div></section>
     <p class="fine center">Estimates based on her cycle — every body is different, so ask her too.</p>
-    ${state && state.onboarded
+    ${mine ? '' : state && state.onboarded
       ? ((state.partners || []).some(x => x.n === snap.n && x.s === snap.s)
         ? `<a class="btn btn-ghost btn-block" href="#/today">${icon('check', 16)} ${name} is on your dashboard</a>`
         : `<button class="btn btn-light btn-block" data-action="addPartner" data-d="${esc(q.get('d'))}">${icon('heart', 16)} Add ${name} to my app</button>
            <p class="fine center">You both use Under the Skin — add her and you’ll see each other’s cycle side by side.</p>`)
-      : `<a class="btn btn-ghost btn-block" href="#/today">Get Under the Skin for yourself</a>`}
+      : `<a class="btn btn-light btn-block" href="#/today">Get Under the Skin — and see each other</a>
+         <p class="fine center">Set up your own cycle and ${name} is added to your app automatically.</p>`}
   </div>`;
 }
 
@@ -1891,7 +1908,9 @@ const actions = {
     const o = ui.onb, logs = {}, s = C.parseISO(o.last);
     for (let i = 0; i < o.periodLength; i++) { const d = C.addDays(s, i); if (d <= new Date()) logs[C.iso(d)] = { flow: i === 0 || i === 1 ? 'medium' : 'light' }; }
     ui.arrive = true;
+    let pend = null; try { pend = b64d(localStorage.getItem('uts.pendingPartner') || ''); localStorage.removeItem('uts.pendingPartner'); } catch {}
     state = { onboarded: true, profile: { name: o.name.trim(), cycleLength: o.cycleLength, periodLength: o.periodLength, goals: o.goals, birthday: o.birthday || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
+    if (pend && pend.s && pend.c) state.partners = [{ ...pend, id: Date.now().toString(36), added: Date.now() }];
     save(); go('today'); render();
   },
   onbBack: () => { ui.onbStep = Math.max(0, ui.onbStep - 1); render(); },
@@ -1978,6 +1997,8 @@ const actions = {
     try { await navigator.clipboard.writeText(url); toast('Link copied'); } catch { prompt('Copy this link', url); }
   },
   sharePreview: () => { location.hash = shareLink().split('#')[1]; },
+  pastePartner: async () => { try { const t = await navigator.clipboard.readText(); addPartnerFrom(t); } catch { document.getElementById('partnerLink')?.focus(); toast('Paste her link into the box'); } },
+  addPartnerLink: () => addPartnerFrom(document.getElementById('partnerLink')?.value || ''),
   copyText: async d => { try { await navigator.clipboard.writeText(d.t); toast('Message copied'); } catch { toast('Couldn’t copy'); } },
   profileGoal: d => { const g = state.profile.goals = state.profile.goals || []; const i = g.indexOf(d.v); i < 0 ? g.push(d.v) : g.splice(i, 1); save(); render(); },
   export: () => {

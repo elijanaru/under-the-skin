@@ -1293,3 +1293,38 @@ button.cc-more { background: none; border: 0; width: 100%; font: inherit; cursor
 .cx-g.han { font-family: var(--han); font-size: 26px; text-shadow: 0 0 14px rgba(212,239,154,.45); }
 .cx-g i { width: 22px; height: 22px; border-radius: 50%; box-shadow: 0 0 14px currentColor; display: block; }
 .cx-t { font-size: 11px; color: #c3cac1; text-align: center; line-height: 1.2; }
+
+/* ---- partner hub ---- */
+.sync-hero { text-align: center; padding: 18px 0 6px; }
+.sy-pair { display: flex; align-items: center; justify-content: center; gap: 4px; }
+.sy-orb { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 110px; }
+.sy-orb small { font-size: 12px; color: #c3cac1; }
+.sy-av { width: 78px; height: 78px; border-radius: 50%; display: grid; place-items: center; font-size: 28px; overflow: hidden; color: var(--lime);
+  background: radial-gradient(circle at 35% 30%, #2f6b48, #0b1a11); box-shadow: 0 0 0 2px var(--c), 0 0 30px color-mix(in srgb, var(--c) 55%, transparent); animation: syPulse 4s ease-in-out infinite; }
+.sy-av img { width: 100%; height: 100%; object-fit: cover; }
+@keyframes syPulse { 50% { box-shadow: 0 0 0 2px var(--c), 0 0 46px color-mix(in srgb, var(--c) 75%, transparent); } }
+.sy-line { flex: 1; max-width: 70px; height: 2px; position: relative; margin-bottom: 26px; background: linear-gradient(90deg, rgba(212,239,154,.1), rgba(212,239,154,.6), rgba(212,239,154,.1)); overflow: hidden; border-radius: 2px; }
+.sy-line i { position: absolute; top: -2px; width: 14px; height: 6px; border-radius: 6px; background: #fff; box-shadow: 0 0 10px #d4ef9a; animation: syFlow 2.4s ease-in-out infinite; }
+@keyframes syFlow { from { left: -14px; } to { left: 100%; } }
+.sy-h { font-size: 30px; font-weight: 300; letter-spacing: -.03em; margin: 18px 0 8px; }
+.sy-h span { color: var(--lime); }
+.sy-card { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; color: inherit; font: inherit; }
+.sy-steps { display: grid; gap: 10px; margin: 14px 0; }
+.sy-step { display: flex; gap: 14px; padding: 16px; border-radius: 24px; background: var(--glass); border: 1px solid var(--line); }
+.sy-step > div { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.sy-step b { font-weight: 500; font-size: 15px; }
+.sy-step small { color: var(--muted); font-size: 13px; line-height: 1.45; margin-top: -4px; }
+.sy-step .btn { margin: 0; }
+.sy-n { flex: none; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; color: var(--ink); background: var(--lime); }
+.sy-paste { display: flex; gap: 8px; }
+.sy-paste .field { flex: 1; margin: 0; min-width: 0; }
+.sy-paste .btn { flex: none; padding: 0 18px; }
+.center-link { display: block; margin: 6px auto 0; font-size: 13px; }
+.pt-now { font-size: 15px; color: #c3cac1; text-align: center; margin: 4px 12px 16px; line-height: 1.45; }
+.ptd-two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.ptd-two .card { display: flex; flex-direction: column; gap: 4px; padding: 16px; }
+.ptd-two small { font-size: 11px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+.ptd-two b { font-weight: 400; font-size: 14px; line-height: 1.35; }
+.han-big { font-family: var(--han); font-size: 26px; color: var(--lime); margin-bottom: 6px; }
+.preview-bar { margin: 0 16px 10px; padding: 10px 14px; border-radius: 16px; background: rgba(212,239,154,.12); border: 1px solid rgba(212,239,154,.3); color: var(--lime); font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+.preview-bar button { background: var(--lime); color: var(--ink); border: 0; border-radius: 99px; padding: 6px 14px; font: inherit; font-size: 13px; }
