@@ -991,7 +991,8 @@ a.src { color: var(--lime); }
 .scene.dark { background: radial-gradient(70% 55% at 50% 42%, #0f1d14 0%, #070a07 60%, #050605 100%); }
 .fig-wrap.welcome.hero { position: absolute; inset: 3% 0 43% 0; height: auto; min-height: 0; max-height: none; margin: 0; }
 .fig-wrap.welcome.hero::after { display: none; }
-.fig-wrap.welcome.hero canvas { -webkit-mask-image: none; mask-image: none; }
+.fig-wrap.welcome.hero canvas { -webkit-mask-image: none; mask-image: none; mix-blend-mode: screen; }
+.fig-wrap.lib canvas, .fig-wrap.step canvas { mix-blend-mode: screen; }
 .flow-text { position: absolute; inset: 0; overflow: hidden; pointer-events: none; display: flex; flex-direction: column; justify-content: space-around; padding: 8% 0 30%; }
 .flow-row { white-space: nowrap; font-size: 10px; letter-spacing: .32em; color: rgba(212, 239, 154, .22); font-weight: 500; }
 .flow-row span { display: inline-block; animation: flowL 60s linear infinite; }
