@@ -1,0 +1,4 @@
+# internal / local only
+.claude/
+CLAUDE.md
+.DS_Store
