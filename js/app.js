@@ -1,12 +1,12 @@
 import {
-  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, DAY_GUIDE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
+  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, DAY_GUIDE, MOVES, MOVE_GUIDE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
 import * as Z from './cosmic.js';
 import { mountFigure, mushroomArt, nautilusArt } from './figure.js';
 import { mountTorso } from './torso.js';
-import { RECIPE_PHOTOS, photoUrl, DISH_PHOTOS, dishPhoto } from './photos.js';
+import { RECIPE_PHOTOS, photoUrl, DISH_PHOTOS, dishPhoto, HORMONE_PHOTOS, hormonePhoto } from './photos.js';
 import * as SZ from './seasonal.js';
 
 const KEY = 'rhythm.v1';
@@ -121,10 +121,9 @@ function ring(info, size = 270) {
 
 // ---------- SVG: hormone cycle chart (interactive) ----------
 const HORMONES = [
-  { key: 'estrogen', name: 'Estrogen', color: '#ffffff', w: 2.6 },
-  { key: 'progesterone', name: 'Progesterone', color: '#8fcf9c', w: 2.6 },
-  { key: 'lh', name: 'LH', color: '#d4ef9a', w: 2.2 },
-  { key: 'fsh', name: 'FSH', color: '#7fa894', w: 1.8, dash: '3 4' },
+  { key: 'estrogen', name: 'Estrogen', color: '#ff8fc4', w: 3 },
+  { key: 'progesterone', name: 'Progesterone', color: '#5fd38a', w: 3 },
+  { key: 'testosterone', name: 'Testosterone', color: '#ff4d4d', w: 2.6 },
 ];
 const BAND = { menstrual: 'rgba(242,244,238,.075)', follicular: 'rgba(159,207,140,.10)', ovulatory: 'rgba(212,239,154,.16)', luteal: 'rgba(63,138,92,.17)' };
 
@@ -172,11 +171,14 @@ function cycleChart(info, { id = 'cc', compact = false } = {}) {
     <svg viewBox="0 0 ${W} ${H}" width="100%" class="cchart-svg">
       <defs>
         <filter id="${id}-glow" x="-10%" y="-30%" width="120%" height="160%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        <linearGradient id="${id}-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".13"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+        <linearGradient id="${id}-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8fc4" stop-opacity=".16"/><stop offset="1" stop-color="#ff8fc4" stop-opacity="0"/></linearGradient>
       </defs>
       ${bands}
       <path d="${area}" fill="url(#${id}-area)" class="area ${ui.hidden.estrogen ? 'off' : ''}"/>
       ${curves}
+      ${(() => { const ov = C.ovulationDay(L, P), ex = X(ov + 0.5), ey = bot - (compact ? 9 : 12); return `<g class="egg-mark" transform="translate(${ex.toFixed(1)} ${ey})"><title>LH surge → egg release · day ${ov}</title>
+        <circle r="${compact ? 6 : 7.5}" class="egg-halo"/><ellipse rx="${compact ? 3 : 3.6}" ry="${compact ? 3.8 : 4.6}" class="egg-shell"/><circle r="1.3" cy=".6" class="egg-yolk"/>
+        ${compact ? '' : `<text y="-12" text-anchor="middle" class="egg-t">egg · day ${ov}</text>`}</g>`; })()}
       <g class="here">
         <line x1="${mx}" x2="${mx}" y1="${top + 4}" y2="${bot - 4}" stroke="#fff" stroke-opacity=".55" stroke-dasharray="2 4"/>
         <circle cx="${mx}" cy="${my}" r="12" fill="#fff" opacity=".18" class="pulse"/>
@@ -192,23 +194,24 @@ function cycleChart(info, { id = 'cc', compact = false } = {}) {
       </g>
       <rect class="hit" x="0" y="${top}" width="${W}" height="${bot - top}" fill="transparent"/>
     </svg>
-    ${compact ? '' : `<div class="legend">${HORMONES.map(h => `<button class="lg ${ui.hidden[h.key] ? 'off' : ''}" data-action="toggleHormone" data-h="${h.key}"><i style="background:${h.color}"></i>${h.name === 'LH' ? 'Luteinising (LH)' : h.name === 'FSH' ? 'Follicle-stim. (FSH)' : h.name}</button>`).join('')}</div>`}
+    <div class="legend ${compact ? 'static' : ''}">${HORMONES.map(h => `<${compact ? 'span' : `button data-action="toggleHormone" data-h="${h.key}"`} class="lg ${ui.hidden[h.key] ? 'off' : ''}"><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="${h.color}" stroke-width="${h.w}" stroke-linecap="round" ${h.dash ? `stroke-dasharray="${h.dash}"` : ''}/></svg>${h.name}</${compact ? 'span' : 'button'}>`).join('')}<span class="lg egg-lg"><span class="egg-dot"></span>Egg release</span></div>
     <div class="readout" id="${id}-read">${readout(info.cd, L, P, info.cd === cd ? true : false)}</div>
   </div>`;
 }
 function readout(cdRaw, L, P, isYou) {
   const cd = Math.min(cdRaw, L);
-  const ph = C.phaseFor(cd, L, P), h = C.hormonesAt(cd, L, P), tcm = TCM[ph];
+  const ph = C.phaseFor(cd, L, P), h = C.hormonesRel(cd, L, P), tcm = TCM[ph];
   const rows = HORMONES.map(x => {
     const tr = C.hormoneTrend(cd, L, P, x.key);
-    return `<div class="ro-row"><span class="ro-name"><i style="background:${x.color}"></i>${x.name}</span>
+    return `<div class="ro-row"><span class="ro-name"><svg width="16" height="8"><line x1="1" y1="4" x2="15" y2="4" stroke="${x.color}" stroke-width="2.2" stroke-linecap="round" ${x.dash ? `stroke-dasharray="${x.dash}"` : ''}/></svg>${x.name}</span>
       <span class="ro-bar"><b style="width:${Math.round(h[x.key] * 100)}%;background:${x.color}"></b></span>
       <span class="ro-lvl">${C.hormoneLevel(h[x.key])} <em class="tr ${tr}">${tr === 'rising' ? '↗' : tr === 'falling' ? '↘' : '→'}</em></span></div>`;
   }).join('');
   return `<div class="ro-head"><div><div class="eyebrow">${isYou ? 'You are here' : 'Exploring'} · day ${cdRaw}</div>
       <div class="ro-phase">${PHASES[ph].name} <span>· ${PHASES[ph].season}</span></div></div>
       <div class="ro-tcm"><span class="glyph">${tcm.elementGlyph}</span><span>${tcm.stage}</span></div></div>
-    <div class="ro-rows">${rows}</div>`;
+    <div class="ro-rows">${rows}</div>
+    ${(() => { const ov = C.ovulationDay(L, P), d = ov - cd; return `<div class="ro-egg"><span class="egg-dot"></span>${d === 0 ? 'LH surge — egg releasing today' : d === 1 ? 'LH surge — egg release tomorrow' : d > 1 ? `Egg release in ${d} days · day ${ov}` : `Egg released on day ${ov}`}</div>`; })()}`;
 }
 function bindCharts() {
   document.querySelectorAll('.cchart').forEach(el => {
@@ -233,7 +236,8 @@ function bindCharts() {
     hit.addEventListener('pointermove', e => { if (e.buttons || e.pointerType === 'mouse') move(e); });
     const reset = () => { last = null; scrub.style.opacity = 0; el.classList.remove('scrubbing'); read.innerHTML = readout(cdYou, L, P, true); };
     hit.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') reset(); });
-    hit.addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') setTimeout(reset, 2500); });
+    hit.addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') { clearTimeout(el._t); el._t = setTimeout(reset, 3500); } });
+    hit.addEventListener('pointercancel', () => { clearTimeout(el._t); el._t = setTimeout(reset, 3500); });
   });
 }
 
@@ -262,45 +266,47 @@ function glowArt(shape, seed = 0) {
 // ---------- views ----------
 function viewOnboarding() {
   const s = ui.onbStep, o = ui.onb;
-  const dots = `<div class="onb-dots">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= s ? 'on' : ''}"></i>`).join('')}</div>`;
+  const dots = `<div class="onb-dots">${[1, 2, 3, 4, 5, 6].map(i => `<i class="${i <= s ? 'on' : ''}"></i>`).join('')}</div>`;
   if (s === 0) {
-    return `<div class="onb onb-welcome full dark">
-      <div class="scene dark"><div class="flow-text"><div class="flow-row r0"><span>ESTROGEN · PROGESTERONE · LH · FSH · TESTOSTERONE · CORTISOL · MELATONIN · SEROTONIN · ESTROGEN · PROGESTERONE · LH · FSH · TESTOSTERONE · CORTISOL · MELATONIN · SEROTONIN ·</span></div><div class="flow-row r1"><span>MENSTRUAL — FOLLICULAR — OVULATORY — LUTEAL — MENSTRUAL — FOLLICULAR — OVULATORY — LUTEAL — MENSTRUAL — FOLLICULAR — OVULATORY — LUTEAL — MENSTRUAL — FOLLICULAR — OVULATORY — LUTEAL —</span></div><div class="flow-row r2"><span>水 WATER · 木 WOOD · 火 FIRE · 土 EARTH · 金 METAL · 水 WATER · 木 WOOD · 火 FIRE · 水 WATER · 木 WOOD · 火 FIRE · 土 EARTH · 金 METAL · 水 WATER · 木 WOOD · 火 FIRE ·</span></div><div class="flow-row r3"><span>INNER WINTER · INNER SPRING · INNER SUMMER · INNER AUTUMN · INNER WINTER · INNER SPRING · INNER WINTER · INNER SPRING · INNER SUMMER · INNER AUTUMN · INNER WINTER · INNER SPRING ·</span></div><div class="flow-row r4"><span>BODY · MOON · STARS · RHYTHM · RITUAL · BODY · MOON · STARS · RHYTHM · RITUAL · BODY · MOON · STARS · RHYTHM · RITUAL · BODY · MOON · STARS · RHYTHM · RITUAL ·</span></div></div>
-        <div class="fig-wrap welcome hero"><canvas class="figure" data-focus=""></canvas></div>
-        <div class="scene-fade"></div></div>
-      <div class="hero-word"><h1 class="wordmark">under the skin<span>.</span></h1><p class="hero-sub">YOUR BODY · DECODED</p></div>
+    return `<div class="onb onb-welcome full dark beyond">
+      <canvas class="welcome3d"></canvas>
+      <div class="bw-vignette"></div>
+      <div class="bw-hero"><h1 class="bw-title">beyond<br>the skin</h1></div>
       <div class="welcome-ui">
-        <p class="onb-lead">Live in sync with your hormones.<br>Western cycle science, Eastern wisdom.</p>
-        <button class="btn btn-light btn-block" data-action="onbNext">Get started</button>
+        <button class="btn btn-light btn-block" data-action="onbEnter">Enter</button>
         <button class="btn btn-ghost btn-block" data-action="onbDemo">Explore with sample data</button>
         <button class="link welcome-privacy" data-action="nav" data-to="privacy">Private by design — your data never leaves your phone</button>
       </div>
+      <div class="bw-flash"></div>
     </div>`;
   }
   const body = {
     1: `<h2 class="onb-title">What should we<br>call you?</h2>
         <input class="field" data-input="onb.name" placeholder="Your first name" value="${esc(o.name)}" autocomplete="given-name" maxlength="24">`,
-    2: `<h2 class="onb-title">When were<br>you born?</h2>
+    2: `<h2 class="onb-title">Add a profile<br>picture</h2>
+        <p class="muted">So you — and your partner, if you share — recognise your rhythm at a glance. It stays on your phone.</p>
+        <label class="photo-pick">${o.photo ? `<img src="${o.photo}" alt="">` : `<span class="pp-plus">${icon('plus', 28)}</span><span class="pp-cap">Choose a photo</span>`}
+          <input type="file" accept="image/*" data-photo="onb" hidden></label>
+        ${o.photo ? '' : '<button class="link" data-action="onbNext" style="align-self:center">Skip for now</button>'}`,
+    3: `<h2 class="onb-title">When were<br>you born?</h2>
         <p class="muted">Your birthday connects your cycle to your zodiac sign, your Chinese element and the moon. Optional.</p>
         <input class="field" type="date" data-input="onb.birthday" value="${o.birthday || ''}" max="${todayISO()}">
         <button class="link" data-action="onbNext" style="align-self:flex-start">Skip for now</button>`,
-    3: `<h2 class="onb-title">When did your last<br>period start?</h2>
+    4: `<h2 class="onb-title">When did your last<br>period start?</h2>
         <input class="field" type="date" data-input="onb.last" value="${o.last}" max="${todayISO()}">
         <div class="stepper-row"><span>How many days does it usually last?</span>${stepper('periodLength', o.periodLength, 'onb')}</div>`,
-    4: `<h2 class="onb-title">How long is your<br>cycle, usually?</h2>
+    5: `<h2 class="onb-title">How long is your<br>cycle, usually?</h2>
         <p class="muted">First day of one period to the first day of the next. Not sure? 28 is a good start — we'll learn your real rhythm as you log.</p>
         <div class="big-stepper">${stepper('cycleLength', o.cycleLength, 'onb', true)}<span>days</span></div>`,
-    5: `<h2 class="onb-title">What would you<br>like to focus on?</h2>
+    6: `<h2 class="onb-title">What would you<br>like to focus on?</h2>
         <div class="chips">${GOALS.map(g => `<button class="chip ${o.goals.includes(g) ? 'on' : ''}" data-action="onbGoal" data-v="${esc(g)}">${esc(g)}</button>`).join('')}</div>`,
   }[s];
-  const focus = { 1: 'head', 2: 'stars', 3: 'womb', 4: 'body', 5: 'heart' }[s];
-  return `<div class="onb">
+  return `<div class="onb no-fig">
     <div class="onb-top"><button class="icon-btn dark" data-action="onbBack">${icon('chevL', 22)}</button>${dots}<span style="width:40px"></span></div>
-    <div class="fig-wrap step"><canvas class="figure" data-focus="${focus}"></canvas></div>
     <div class="onb-body">${body}</div>
     <div class="onb-foot">
-      <button class="btn btn-light btn-block" data-action="onbNext" ${s === 1 && !o.name.trim() ? 'disabled' : ''}>${s === 5 ? 'Begin' : 'Continue'}</button>
-      ${s === 5 ? '<p class="fine">Under the Skin offers estimates for wellbeing, not medical advice, and must not be used as contraception.</p>' : ''}
+      <button class="btn btn-light btn-block" data-action="onbNext" ${s === 1 && !o.name.trim() ? 'disabled' : ''}>${s === 6 ? 'Begin' : 'Continue'}</button>
+      ${s === 6 ? '<p class="fine">Under the Skin offers estimates for wellbeing, not medical advice, and must not be used as contraception.</p>' : ''}
     </div>
   </div>`;
 }
@@ -348,7 +354,7 @@ function viewToday() {
   return `${topbar('Today')}
   <div class="pad">
     <div class="hello-row slim"><div><div class="eyebrow">${fmt(today, { weekday: 'long', month: 'long', day: 'numeric' })}</div><h1 class="hello sm">${greeting()}, <b>${name}</b></h1></div>
-      <button class="avatar" data-action="nav" data-to="profile">${esc((state.profile.name || 'R')[0].toUpperCase())}</button></div>
+      <button class="avatar ${state.profile.photo ? 'has-photo' : ''}" data-action="nav" data-to="profile">${avatarInner(state.profile)}</button></div>
 
     <section class="hero card-light">
       <div class="hero-top">
@@ -360,14 +366,16 @@ function viewToday() {
       <div class="hchips">${chips.join('')}</div>
     </section>
 
-    ${focusCard(info)}
-
     ${alerts.length ? `<section class="card glass alerts">${alerts.slice(0, 2).join('')}</section>` : ''}
     ${cycleFlag()}
 
-    ${sectionTitle('Your hormones', ['Explore', 'insights'])}
+    ${sectionTitle('Your hormones', ['Explore', 'hormones'])}
     <section class="card glass chart-card">${cycleChart(info, { id: 'today', compact: true })}
-      <p class="body">${summary}</p></section>
+      <p class="cc-hint">${icon('chevL', 12)} Swipe the chart to see any day ${icon('chevR', 12)}</p>
+      <p class="body">${summary}</p><button class="cc-more" data-action="nav" data-to="hormones">What each hormone does ${icon('chevR', 14)}</button></section>
+    ${fullCycleGuide(info)}
+
+    ${moveCard(info)}
 
     ${alignmentCard(info)}
     ${partnersCard(info)}
@@ -386,6 +394,7 @@ function viewToday() {
 
     ${sectionTitle('Today’s plan')}
     <div class="hscroll">
+      ${(() => { const d = seasonalDishesToday(info, 1)[0]; if (!d) return ''; const ph = dishPhoto(d.name, 500); return `<button class="rcard ${ph ? 'has-photo' : ''}" data-action="nav" data-to="season">${ph ? `<img class="rc-photo" src="${ph}" alt="" loading="lazy"><span class="rc-shade"></span>` : glowArt('hill', 5)}<div class="rc-top"><span class="rc-k">In season · ${d.warm ? 'Warm' : 'Raw'}</span><span class="rc-go">${icon('chevR', 16)}</span></div><div class="rc-t">${d.name}</div><div class="rc-m">${d.used.map(i => i.f).slice(0, 2).join(' · ')}</div></button>`; })()}
       <button class="rcard ${photoUrl(recipe.id) ? 'has-photo' : ''}" data-action="nav" data-to="recipe/${recipe.id}">${recipeArt(recipe, 'wave', 1)}<div class="rc-top"><span class="rc-k">Nourish${recipe.warm ? ' · Warm' : recipe.raw ? ' · Raw' : ''}</span><span class="rc-go">${icon('chevR', 16)}</span></div><div class="rc-t">${recipe.name}</div><div class="rc-m">${recipe.time} min · ${recipe.meal}</div></button>
       <button class="rcard" data-action="nav" data-to="ritual/${ritual.id}">${glowArt('crown', 2)}<div class="rc-top"><span class="rc-k">Ritual</span><span class="rc-go">${icon('chevR', 16)}</span></div><div class="rc-t">${ritual.name}</div><div class="rc-m">${ritual.mins} min · TCM</div></button>
       ${(() => { const ls = lemonState(); return `<button class="rcard" data-action="nav" data-to="remedy/lemon-water">${glowArt('orb', 4)}<div class="rc-top"><span class="rc-k">Morning ritual</span><span class="rc-go">${ls && !ls.over && ls.doneToday ? icon('check', 16) : icon('chevR', 16)}</span></div><div class="rc-t">Lemon water</div><div class="rc-m">${ls && !ls.over ? `Day ${ls.day} of 28` : 'Start your 28 days'}</div></button>`; })()}
@@ -599,6 +608,7 @@ function nourishBody(current) {
     </section>
 
     ${phase === current ? seasonCard() : ''}
+    ${phase === current ? (() => { const ds = seasonalDishesToday(M.info, 2); return ds.length ? `<div class="grid2 season-dishes">${ds.map((d, i) => { const ph = dishPhoto(d.name, 400); return `<button class="rcard tall ${ph ? 'has-photo' : ''}" data-action="nav" data-to="season">${ph ? `<img class="rc-photo" src="${ph}" alt="" loading="lazy"><span class="rc-shade"></span>` : glowArt('orb', 60 + i)}<div class="rc-top"><span class="rc-k">${d.warm ? 'Warm' : 'Raw'} · in season</span></div><div class="rc-t">${d.name}</div></button>`; }).join('')}</div>` : ''; })() : ''}
     ${fertilityFoods()}
 
     ${fixes.length ? `${sectionTitle(recent.length ? 'For how you feel' : `Your usual ${ph.name.toLowerCase()} symptoms`)}
@@ -864,7 +874,6 @@ function viewRelief(id) {
     </${x.to ? 'button' : 'div'}>`).join('')}</section>
     ${food ? `${sectionTitle('Eat')}<section class="card glass"><p class="body sm" style="margin:0 0 10px">${food.tip}</p><div class="foods">${food.foods.map(f => `<span class="food">${f}</span>`).join('')}</div></section>` : ''}
     <section class="card tcm-card"><div class="tcm-glyph">${icon('yinyang', 30)}</div><div class="tcm-main"><div class="eyebrow">Chinese medicine view</div><p class="body" style="margin-top:6px">${R.tcm}</p></div></section>
-    <section class="card doctor"><span class="doc-ic">${icon('heart', 18)}</span><div><div class="eyebrow">See a doctor if</div><p>${R.doctor}</p></div></section>
     <p class="fine center">General information, not medical advice. Check with a pharmacist before taking painkillers or supplements.</p>
   </div>`;
 }
@@ -1031,7 +1040,7 @@ function moonIcon(moon, size = 18) {
 }
 function alignmentCard(info) {
   const ph = PHASES[info.phase], tcm = TCM[info.phase], moon = Z.moonPhase(new Date()), cp = cosmicProfile();
-  const h = C.hormonesAt(Math.min(info.cd, info.L), info.L, info.P);
+  const h = C.hormonesRel(Math.min(info.cd, info.L), info.L, info.P);
   const hs = HORMONES.filter(x => x.key !== 'fsh').map(x => ({ ...x, v: h[x.key], tr: C.hormoneTrend(Math.min(info.cd, info.L), info.L, info.P, x.key) })).sort((a, b) => b.v - a.v).slice(0, 2);
   const hLine = hs.map(x => `${x.name} ${C.hormoneLevel(x.v).toLowerCase()}${x.tr === 'rising' ? ' ↗' : x.tr === 'falling' ? ' ↘' : ''}`).join(' · ');
   const waxing = moon.age < 14.77, building = info.phase === 'follicular' || info.phase === 'ovulatory';
@@ -1063,16 +1072,140 @@ function dayWindow(info) {
   if (cd <= ov + 6) return 'settle';
   return 'focus';
 }
-function focusCard(info) {
-  const key = dayWindow(info), g = DAY_GUIDE[key], k = todayISO(), done = (state.focusDone || {})[k] || [];
-  return `<section class="card card-light focus">
-    <div class="fc-head"><div><div class="eyebrow dark">Your focus · day ${info.cd}</div><h3 class="dark-h">${g.title}</h3></div><span class="fc-energy">${g.energy}<small>energy</small></span></div>
-    <div class="fc-label">Tackle today</div>
-    ${g.tackle.map((t, i) => `<button class="fc-task ${done.includes(i) ? 'on' : ''}" data-action="focusTick" data-i="${i}"><span class="cb">${icon('check', 13, 2.4)}</span><span>${t}</span></button>`).join('')}
-    <div class="fc-best">${g.best.map(b => `<span>${b}</span>`).join('')}</div>
-    <p class="fc-ease">${icon('close', 12, 2)} Go easy on: ${g.ease}</p>
-    <details class="fc-why"><summary>Why today</summary><p>${g.why} Your abilities stay the same all cycle — this plans around energy and mood.</p></details>
-  </section>`;
+
+// ---------- full cycle guide: hormones (shared scale) + ovaries + uterine lining + days ----------
+const FULL_H = [
+  { key: 'lh', name: 'LH', color: '#b18cff' }, { key: 'fsh', name: 'FSH', color: '#6cc4ff' },
+  { key: 'estrogen', name: 'Estrogen', color: '#ff8fc4' }, { key: 'progesterone', name: 'Progesterone', color: '#5fd38a' },
+  { key: 'testosterone', name: 'Testosterone', color: '#ff4d4d' },
+];
+function liningAt(cd, L, P, ov) { // relative endometrium thickness
+  if (cd <= P) return 1 - 0.75 * (cd - 1) / Math.max(1, P - 1);
+  if (cd <= ov) return 0.25 + 0.35 * (cd - P) / (ov - P);
+  if (cd <= ov + 7) return 0.6 + 0.38 * (cd - ov) / 7;
+  return 0.98 - 0.08 * Math.max(0, cd - (L - 3)) / 3;
+}
+function ovaryArt(cd, ov, L, x, y) {
+  if (cd < ov) { // growing follicle: outer cells, fluid cavity (antrum) from ~a week before ovulation, egg
+    const k = (cd - 1) / Math.max(1, ov - 2), r = 3.5 + 10 * k, an = cd >= ov - 7 ? r * (0.25 + 0.4 * k) : 0;
+    return `<g transform="translate(${x} ${y})"><circle r="${r}" fill="#ff8fc4" fill-opacity=".28" stroke="#ff8fc4" stroke-width="1.2"/>
+      ${an ? `<circle cx="${-r * .18}" cy="${r * .1}" r="${an}" fill="#bfe3ff" fill-opacity=".55"/>` : ''}<circle cx="${r * .35}" cy="${-r * .25}" r="${Math.max(1.6, r * .22)}" fill="#fff"/></g>`;
+  }
+  if (cd === ov) return `<g transform="translate(${x} ${y})"><path d="M-12 -4 Q-14 -14 -3 -14 Q6 -16 11 -7 Q15 2 7 9 Q0 15 -7 10 Q-13 5 -12 -4Z" fill="#bfe3ff" fill-opacity=".5" stroke="#ff8fc4" stroke-width="1.4"/>
+    <circle cx="3" cy="16" r="3.4" fill="#fff" stroke="#ff8fc4"/><circle cx="7" cy="12" r="1" fill="#bfe3ff"/><circle cx="-1" cy="13" r=".8" fill="#bfe3ff"/></g>`;
+  const d = cd - ov, life = L - ov, k = d <= 7 ? 0.55 + 0.45 * d / 7 : 1 - 0.6 * (d - 7) / Math.max(1, life - 7), r = 13 * k, pale = d > 9;
+  return `<g transform="translate(${x} ${y})"><ellipse rx="${r * 1.15}" ry="${r}" fill="${pale ? '#e9e4d0' : '#f6dfa0'}" fill-opacity="${pale ? .5 : .85}" stroke="${pale ? '#cfc8ad' : '#e9c46a'}"/>
+    ${pale ? '' : `<path d="M${-r * .5} 0 Q${-r * .2} ${-r * .3} 0 0 T${r * .5} 0" stroke="#c0392b" stroke-width="${Math.max(1, r * .18)}" fill="none" stroke-linecap="round"/>`}</g>`;
+}
+function fullCycleGuide(info) {
+  const L = info.L, P = info.P, ov = C.ovulationDay(L, P), cd = Math.min(info.cd, L);
+  const COL = { m: '#e5484d', f: '#f3c4a6', o: '#2fbf71', l: '#a9c7ef' };
+  const kind = d => d <= P ? 'm' : Math.abs(d - ov) <= 1 ? 'o' : d < ov ? 'f' : 'l';
+  const stages = [
+    { k: 'm', name: 'Period', days: [1, P], art: 1, lining: 1, lead: [['Estrogen', '#ff8fc4', 'low'], ['Progesterone', '#5fd38a', 'low']],
+      text: 'Hormones are at their lowest, so last month’s lining sheds. Your brain sends FSH to start a new egg growing.' },
+    { k: 'f', name: 'Building up', days: [P + 1, ov - 2], art: Math.round((P + ov) / 2), lining: Math.round((P + ov) / 2), lead: [['Estrogen', '#ff8fc4', 'rising']],
+      text: 'One egg grows inside its follicle and makes more and more estrogen, which rebuilds the lining and lifts your energy.' },
+    { k: 'o', name: 'Egg release', days: [ov - 1, ov + 1], art: ov, lining: ov, lead: [['Estrogen', '#ff8fc4', 'peak'], ['LH', '#b18cff', 'surge'], ['Testosterone', '#ff4d4d', 'small lift']],
+      text: `Peak estrogen triggers the LH surge and the egg is released around day ${ov}. Fertile window: about days ${ov - 5}–${ov + 1}.` },
+    { k: 'l', name: 'After ovulation', days: [ov + 2, L], art: ov + 6, lining: ov + 7, lead: [['Progesterone', '#5fd38a', 'high']],
+      text: 'The empty follicle becomes the corpus luteum and makes progesterone. The lining thickens. If there’s no pregnancy, both hormones drop and your period starts.' },
+  ];
+  // picture: ovaries across the month, the uterine lining, and the days
+  const W = 360, x0 = 6, x1 = W - 6, X = t => x0 + (t - 1) / L * (x1 - x0), cw = (x1 - x0) / L;
+  const oy = 54, lt = 112, lb = 156, sy = 166;
+  const cand = [1, 4, 7, 10, ov - 2, ov, ov + 3, ov + 6, ov + 10, L - 1].filter(d => d >= 1 && d <= L);
+  const pics = []; for (const d of [...new Set(cand)].sort((a, b) => a - b)) { const prev = pics[pics.length - 1]; if (prev !== undefined && X(d) - X(prev) < 27) { if (d === ov) pics.pop(); else continue; } pics.push(d); }
+  const caps = [[Math.round((1 + ov) / 2) - 1, 'Egg growing'], [ov, 'Egg released'], [ov + 6, 'Yellow body'], [L - 1, 'Shrinks']];
+  let lining = `M${X(1)} ${lb}`;
+  for (let t = 1; t <= L + 1; t += 0.25) lining += `L${X(t).toFixed(1)} ${(lb - 4 - liningAt(Math.min(t, L), L, P, ov) * (lb - lt - 6)).toFixed(1)}`;
+  lining += `L${X(L + 1)} ${lb}Z`;
+  const drops = Array.from({ length: P }, (_, i) => `<circle cx="${X(i + 1.5)}" cy="${lb + 0}" r="2.2" fill="#e5484d"/>`).join('');
+  const mid = (a, b) => ((X(a) + X(b + 1)) / 2).toFixed(1);
+  const diagram = `<svg viewBox="0 0 ${W} 206" width="100%" class="fcg-svg">
+    <text x="${x0}" y="14" class="fcg-row">OVARY</text>
+    ${pics.map(d => `<g transform="translate(${X(d + .5).toFixed(1)} ${oy}) scale(1.05)">${ovaryArt(d, ov, L, 0, 0)}</g>`).join('')}
+    ${caps.filter(([d]) => d >= 1 && d <= L).map(([d, t]) => `<text x="${Math.min(W - 26, Math.max(26, X(d + .5))).toFixed(1)}" y="${oy + 32}" text-anchor="middle" class="fcg-cap">${t}</text>`).join('')}
+    <text x="${x0}" y="${lt - 6}" class="fcg-row">UTERINE LINING</text>
+    <path d="${lining}" fill="#f2a5ad" fill-opacity=".6"/>${drops}
+    ${Array.from({ length: L }, (_, i) => { const d = i + 1; return `<rect x="${(X(d) + .6).toFixed(1)}" y="${sy}" width="${(cw - 1.2).toFixed(1)}" height="12" rx="2" fill="${COL[kind(d)]}" ${d === cd ? 'stroke="#fff" stroke-width="1.8"' : ''}/>`; }).join('')}
+    <line x1="${X(cd + .5)}" x2="${X(cd + .5)}" y1="22" y2="${sy - 2}" stroke="#fff" stroke-opacity=".5" stroke-dasharray="2 3"/>
+    <text x="${X(cd + .5)}" y="${sy + 24}" text-anchor="middle" class="fcg-today">Today · day ${cd}</text>
+    <text x="${x0}" y="${sy + 36}" class="fcg-k">Day 1</text><text x="${x1}" y="${sy + 36}" text-anchor="end" class="fcg-k">Day ${L}</text>
+  </svg>`;
+  return `<details class="card glass fcg"><summary><span class="art-ic">${icon('chart', 20)}</span><span class="art-t">Full cycle guide<small>What happens in your body, step by step</small></span>${icon('chevD', 18)}</summary>
+    <div class="fcg-body">
+      ${diagram}
+      ${stages.map((st, i) => `<div class="fcg-st ${st.days[0] <= cd && cd <= st.days[1] ? 'on' : ''}">
+        <div class="fcg-hd"><span class="fcg-dot" style="background:${COL[st.k]}"></span><b>${i + 1}. ${st.name}</b><span class="fcg-days">${st.days[0] === st.days[1] ? `Day ${st.days[0]}` : `Days ${st.days[0]}–${st.days[1]}`}</span></div>
+        <div class="fcg-lead">${st.lead.map(([n, c, w]) => `<span><i style="background:${c}"></i>${n} <em>${w}</em></span>`).join('')}</div>
+        <p>${st.text}</p></div>`).join('')}
+      <p class="fine">Typical timing for your ${L}-day cycle — real days shift a little from cycle to cycle.</p>
+    </div></details>`;
+}
+
+// ---------- hormone explainer (real photos) ----------
+function viewHormones() {
+  const { info } = M, L = info.L, P = info.P, cd = Math.min(info.cd, L), h = C.hormonesRel(cd, L, P), ph = PHASES[info.phase];
+  const keyOf = n => ({ Oestrogen: 'estrogen', Progesterone: 'progesterone', FSH: 'fsh', LH: 'lh', Testosterone: 'testosterone' })[n];
+  const cards = HORMONE_LIBRARY.map((x, i) => {
+    const u = hormonePhoto(x.n, 700), cr = HORMONE_PHOTOS[x.n], k = keyOf(x.n);
+    const lvl = k ? (() => { const tr = C.hormoneTrend(cd, L, P, k); return `<span class="hx-lvl"><b style="width:${Math.round(h[k] * 100)}%"></b></span><span class="hx-now">Today: ${C.hormoneLevel(h[k])}${tr === 'rising' ? ' ↗' : tr === 'falling' ? ' ↘' : ''}</span>`; })() : '';
+    return `<article class="card hx" id="hx-${i}">
+      ${u ? `<div class="hx-photo"><img src="${u}" alt="" loading="lazy" decoding="async"><span class="hx-shade"></span><span class="hx-gland">${x.g}</span>${cr ? `<span class="hx-cr">Photo · ${esc(cr.by)} / Unsplash</span>` : ''}</div>` : ''}
+      <div class="hx-b"><div class="hx-top"><h3>${x.n}</h3>${lvl ? `<div class="hx-meter">${lvl}</div>` : ''}</div>
+        <p class="body sm">${x.role}</p>
+        <div class="hx-row"><span class="eyebrow">In your cycle</span><p>${x.cycle}</p></div>
+        <div class="hx-row"><span class="eyebrow">Support it</span><p>${x.support}</p></div></div>
+    </article>`;
+  }).join('');
+  return `${topbar('Hormones', { back: true })}
+  <div class="pad">
+    <h1 class="page-h">The role of <span>your hormones</span></h1>
+    <section class="card glass chart-card">${cycleChart(info, { id: 'hx', compact: true })}
+      <p class="body sm">Day ${info.cd} · ${ph.name} phase. ${ph.hormones}</p></section>
+    <div class="hx-index">${HORMONE_LIBRARY.map((x, i) => `<a href="#/hormones" data-action="hxJump" data-i="${i}">${x.n}</a>`).join('')}</div>
+    ${cards}
+    <p class="fine center">Photos: Unsplash (free licence). Hormone curves are a typical model, not lab values.</p>
+  </div>`;
+}
+
+// ---------- movement by cycle ----------
+function windowAt(cd, L, P) { return dayWindow({ cd, L, P, ov: C.ovulationDay(L, P) }); }
+function moveDots(n) { return `<span class="mv-dots">${[1, 2, 3].map(i => `<i class="${n >= i ? 'on' : ''}"></i>`).join('')}</span>`; }
+const MV_WORD = ['Rest instead', 'Go lighter', 'Good', 'Best time'];
+function moveCard(info) {
+  const g = MOVE_GUIDE[dayWindow(info)], best = MOVES.filter(m => g.r[m.k] === 3).map(m => m.n);
+  return `${sectionTitle('Move today', ['Full guide', 'move'])}
+    <button class="card glass move-card" data-action="nav" data-to="move">
+      <div class="mv-head"><div><div class="eyebrow">Day ${info.cd} · ${PHASES[info.phase].name}</div><h3>${g.title}</h3></div>${icon('chevR', 18)}</div>
+      <div class="mv-best">${best.map(b => `<span>${b}</span>`).join('')}</div>
+      <p class="body sm">${g.tip}</p></button>`;
+}
+function viewMove() {
+  const { info } = M, L = info.L, P = info.P, key = dayWindow(info), g = MOVE_GUIDE[key];
+  const days = Array.from({ length: L }, (_, i) => windowAt(i + 1, L, P));
+  const spans = k => { const out = []; let s = null; days.forEach((w, i) => { const ok = MOVE_GUIDE[w].r[k] === 3; if (ok && s === null) s = i + 1; if ((!ok || i === L - 1) && s !== null) { out.push([s, ok ? i + 1 : i]); s = null; } }); return out; };
+  const rng = ([a, b]) => a === b ? `day ${a}` : `days ${a}–${b}`;
+  const strip = k => `<div class="mv-strip">${days.map((w, i) => `<i class="r${MOVE_GUIDE[w].r[k]} ${i + 1 === Math.min(info.cd, L) ? 'now' : ''}"></i>`).join('')}</div>`;
+  return `${topbar('Move', { back: true })}
+  <div class="pad">
+    <h1 class="page-h">Move with <span>your cycle</span></h1>
+    <section class="card card-light">
+      <div class="eyebrow dark">Today · day ${info.cd} · ${PHASES[info.phase].name}</div>
+      <h3 class="dark-h">${g.title}</h3><p class="dp-text">${g.tip}</p>
+      <div class="mv-today">${MOVES.map(m => `<div class="mv-t r${g.r[m.k]}"><span>${m.n}</span><em>${MV_WORD[g.r[m.k]]}</em></div>`).join('')}</div>
+    </section>
+    ${sectionTitle('Best time for each')}
+    ${MOVES.map(m => { const sp = spans(m.k); return `<section class="card glass mv-row">
+      <div class="mv-rh"><b>${m.n}</b>${moveDots(g.r[m.k])}</div><small class="muted">${m.d}</small>
+      ${strip(m.k)}
+      <p class="body sm">${sp.length ? `Best on ${sp.map(rng).join(' & ')} of your ${L}-day cycle.` : 'Fine any time — follow your energy.'}</p></section>`; }).join('')}
+    <div class="mv-leg"><span><i class="r3"></i>Best</span><span><i class="r2"></i>Good</span><span><i class="r1"></i>Lighter</span><span><i class="r0"></i>Rest</span><span><i class="now"></i>Today</span></div>
+    ${sectionTitle('Your month of movement')}
+    <section class="card glass">${Object.entries(MOVE_GUIDE).filter(([k]) => days.includes(k)).map(([k, x]) => { const idx = days.map((w, i) => w === k ? i + 1 : 0).filter(Boolean); return `<div class="mv-win ${k === key ? 'on' : ''}"><span class="mv-d">${idx[0] === idx[idx.length - 1] ? idx[0] : `${idx[0]}–${idx[idx.length - 1]}`}</span><div><b>${x.title}</b><p class="body sm">${x.tip}</p></div></div>`; }).join('')}</section>
+    <p class="fine center">Research on training by cycle phase is still emerging and results are mixed. Your energy on the day always wins — some women set personal bests on their period.</p>
+  </div>`;
 }
 
 // ---------- hormone habits ----------
@@ -1119,18 +1252,130 @@ const SYNC = {
   'follicular|ovulatory': 'Both of you have high energy — go out, be social, make plans.',
 };
 function syncNote(a, b) { return SYNC[[a, b].sort().join('|')] || SYNC[[b, a].join('|')] || SYNC[[a, b].join('|')] || 'Different tides this week — whoever has more energy carries a little more, and you switch next week.'; }
+function ptAvatar(p, cls = '') { return `<span class="pt-av ${cls}">${p.t ? `<img src="${p.t}" alt="">` : esc((p.n || '?')[0])}${cls.includes('sm') ? '' : `<i style="background:${PHASE_COLOR.dark[snapInfo(p, new Date()).phase]}"></i>`}</span>`; }
 function partnersCard(info) {
-  const ps = state.partners || []; if (!ps.length) return '';
-  return `${sectionTitle(ps.length > 1 ? 'Your people' : 'Your partner')}
-    ${ps.map(p => { const pi = snapInfo(p, new Date()), g = DAY_GUIDE[dayWindow(pi)], ph = PHASES[pi.phase];
-      return `<button class="card glass partner" data-action="openPartner" data-id="${p.id}">
-        <span class="pt-av">${esc(p.n[0] || '?')}<i style="background:${PHASE_COLOR.dark[pi.phase]}"></i></span>
-        <span class="pt-b"><span class="eyebrow">${esc(p.n)} · day ${pi.cd}</span><b>${ph.name} · ${g.title}</b>
-          <small>${pi.isPeriod ? 'On her period' : `Period in ${plural(pi.daysToPeriod, 'day')}`} · ${g.energy.toLowerCase()} energy</small>
+  const ps = state.partners || [];
+  if (!ps.length) return `${sectionTitle('Your partner')}
+    <button class="card glass partner add" data-action="nav" data-to="partners"><span class="pt-av">${icon('heart', 20)}</span>
+      <span class="pt-b"><b>See where your partner is</b><small>Swap links and you’ll both see each other’s cycle, mood and energy here.</small></span>${icon('chevR', 16)}</button>`;
+  return `${sectionTitle(ps.length > 1 ? 'Your people' : 'Your partner', ['All', 'partners'])}
+    ${ps.map(p => { const pi = snapInfo(p, new Date()), ph = PHASES[pi.phase], en = Math.round(C.energyAt(pi.cd, pi.L, pi.P) * 100);
+      return `<button class="card glass partner" data-action="nav" data-to="partners/${p.id}">
+        ${ptAvatar(p)}
+        <span class="pt-b"><span class="eyebrow">${esc(p.n)} · day ${pi.cd} of ${pi.L}</span><b>${ph.name} · ${ph.season}</b>
+          <span class="pt-meter"><b style="width:${en}%"></b></span>
+          <small>${partnerStatus(pi, p)} · ${en}% energy</small>
           <small class="pt-sync">${icon('heart', 12)} ${syncNote(info.phase, pi.phase)}</small></span>${icon('chevR', 16)}</button>`; }).join('')}`;
+}
+// One line saying what is happening for her right now / next.
+function partnerStatus(pi, p) {
+  if (pi.isPeriod) return `Period · day ${pi.cd}`;
+  if (pi.daysToPeriod <= 3) return `Period in ${plural(pi.daysToPeriod, 'day')}`;
+  if (p.f && pi.isOvulation) return 'Egg release today';
+  if (pi.cd > pi.L - 6) return `Premenstrual · period in ${plural(pi.daysToPeriod, 'day')}`;
+  return `Period in ${plural(pi.daysToPeriod, 'day')}`;
+}
+// What she probably feels, built from her hormones, energy and where she is heading.
+function partnerRead(pi, p) {
+  const h = C.hormonesRel(pi.cd, pi.L, pi.P), lv = k => C.hormoneLevel(h[k]).toLowerCase(), en = C.energyAt(pi.cd, pi.L, pi.P);
+  const out = [];
+  out.push(`Estrogen is ${lv('estrogen')}, progesterone ${lv('progesterone')}, testosterone ${lv('testosterone')}.`);
+  if (pi.isPeriod) out.push(pi.cd <= 2 ? 'The first days of bleeding are the heaviest — warmth, rest and fewer plans help most.' : 'Bleeding is easing and her energy is slowly coming back.');
+  else if (pi.cd > pi.L - 4) out.push('Hormones are dropping before her period — she may feel tired, sensitive or bloated. Extra patience goes a long way.');
+  else if (pi.phase === 'ovulatory') out.push('She’s at her peak — most social, confident and chatty. Great time for a date.');
+  else if (pi.phase === 'follicular') out.push('Energy is rising — she’s likely up for new plans and adventures.');
+  else out.push('She’s turning inward — cosy plans and calm evenings suit her best.');
+  out.push(en > .75 ? 'Energy: high.' : en > .5 ? 'Energy: steady.' : 'Energy: low — help her rest.');
+  return out.join(' ');
+}
+function viewPartners(id) {
+  const ps = state.partners || [];
+  if (id) { const p = ps.find(x => x.id === id); return p ? viewPartner(p) : viewMissing(); }
+  return `${topbar('Partners', { back: true })}
+  <div class="pad">
+    <h1 class="page-h">Your <span>people</span></h1>
+    ${ps.length ? ps.map(p => { const pi = snapInfo(p, new Date()), ph = PHASES[pi.phase], en = Math.round(C.energyAt(pi.cd, pi.L, pi.P) * 100);
+      return `<button class="card glass partner big" data-action="nav" data-to="partners/${p.id}">${ptAvatar(p, 'lg')}
+        <span class="pt-b"><span class="eyebrow">${p.a === 'friend' ? 'Friend' : 'Partner'} · day ${pi.cd} of ${pi.L}</span><b>${esc(p.n)} · ${ph.name}</b>
+        <span class="pt-meter"><b style="width:${en}%"></b></span><small>${partnerStatus(pi, p)} · ${en}% energy</small></span>${icon('chevR', 16)}</button>`; }).join('')
+    : `<section class="card card-light"><div class="eyebrow dark">How it works</div><h3 class="dark-h">See each other’s rhythm</h3>
+        <p class="dp-text">1. Send her your link below. 2. She sends you hers from her Under the Skin app. 3. Open it and tap “Add to my app” — she appears here with her phase, hormones, energy and how to be there for her.</p></section>`}
+    <button class="btn btn-light btn-block" data-action="nav" data-to="share">${icon('heart', 18)} Send my link to my partner</button>
+    <p class="fine center">Only her name and cycle estimates are shared — never her symptoms, moods or notes.</p>
+  </div>`;
+}
+function viewPartner(p) {
+  const today = C.startOfDay(new Date()), pi = snapInfo(p, today), ph = PHASES[pi.phase], tcm = TCM[pi.phase];
+  const S = SUPPORT[pi.phase], sup = S[p.a === 'friend' ? 'friend' : 'partner'], en = Math.round(C.energyAt(pi.cd, pi.L, pi.P) * 100);
+  const mv = MOVE_GUIDE[dayWindow(pi)], rec = pick(recipesFor(pi.phase, pi), dayNum(today) + 3);
+  // next 14 days for both of you; best shared day = highest combined energy
+  const me = M.stats, days = [];
+  for (let i = 0; i < 14; i++) {
+    const d = C.addDays(today, i), hi = snapInfo(p, d), yi = C.dayInfo(d, me);
+    const low = hi.isPeriod || hi.cd > hi.L - 4 || (yi && (yi.isPeriod || yi.cd > yi.L - 4));
+    days.push({ d, hi, yi, score: 1.4 * C.energyAt(hi.cd, hi.L, hi.P) + (yi ? C.energyAt(Math.min(yi.cd, yi.L), yi.L, yi.P) : .5) - (low ? 1 : 0) });
+  }
+  const best = days.slice(1).reduce((a, b) => b.score > a.score ? b : a, days[1]);
+  const strip = (who, f) => `<div class="sx-row"><span class="sx-n">${who}</span>${days.map(x => { const i = f(x); return `<i style="background:${i ? PHASE_COLOR.dark[i.phase] : 'rgba(255,255,255,.06)'}" class="${i && i.isPeriod ? 'per' : ''} ${x === best ? 'best' : ''}"></i>`; }).join('')}</div>`;
+  const nextPeriod = C.addDays(today, pi.daysToPeriod), pms = C.addDays(nextPeriod, -4), egg = C.addDays(today, pi.daysToOv);
+  const events = [
+    pi.isPeriod ? { t: `On her period · day ${pi.cd} of ${pi.P}`, d: 'Now', on: true, at: today } : { at: nextPeriod, t: 'Next period', d: fmt(nextPeriod, { weekday: 'short', month: 'short', day: 'numeric' }), sub: `in ${plural(pi.daysToPeriod, 'day')}` },
+    !pi.isPeriod && pi.cd <= pi.L - 4 ? { at: pms, t: 'PMS window starts', d: fmt(pms, { weekday: 'short', month: 'short', day: 'numeric' }), sub: 'extra gentle from here' } : null,
+    p.f ? { at: egg, t: pi.isOvulation ? 'Egg release today' : 'Next egg release', d: pi.isOvulation ? 'Today' : fmt(egg, { weekday: 'short', month: 'short', day: 'numeric' }), sub: pi.fertile ? 'fertile window now' : '' } : null,
+    { at: best.d, t: 'Best day together', d: fmt(best.d, { weekday: 'short', month: 'short', day: 'numeric' }), sub: 'you both have the most energy', on: true },
+  ].filter(Boolean).sort((a, b) => a.at - b.at);
+  const list = (arr, cls) => `<ul class="plist ${cls || ''}">${arr.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
+  return `${topbar(esc(p.n), { back: true })}
+  <div class="pad">
+    <div class="ptd-head">${ptAvatar(p, 'xl')}<div><div class="eyebrow">${p.a === 'friend' ? 'Friend' : 'Partner'} · ${fmt(today, { weekday: 'long', month: 'short', day: 'numeric' })}</div>
+      <h1 class="hello" style="margin:4px 0 0">${esc(p.n)} is in her<br><b>${ph.name} phase</b></h1></div></div>
+    <section class="hero card-light">
+      <div class="hero-top"><div><div class="eyebrow dark">${ph.season} · ${tcm.stage}</div><div class="hero-phase">${ph.tagline}</div></div>
+        <div class="energy-pill"><span class="dotnum">${en}</span><small>%<br>energy</small></div></div>
+      <div class="ring-wrap">${ring(p.f ? pi : { ...pi, isOvulation: false, daysToOv: 99 })}</div>
+      <div class="hchips"><span class="hchip">${icon('drop', 14)} ${partnerStatus(pi, p)}</span>${p.f ? `<span class="hchip ${pi.fertile ? 'hl' : ''}">${icon('spark', 14)} ${pi.fertile ? 'Fertile window' : 'Low fertility'}</span>` : ''}<span class="hchip"><span class="gl-g">${tcm.elementGlyph}</span> ${tcm.element}</span></div>
+    </section>
+    <section class="card glass ptd-read"><div class="eyebrow">Right now</div><p class="body">${partnerRead(pi, p)}</p><p class="body sm muted">${S.feel}</p></section>
+
+    ${sectionTitle('Her hormones')}
+    <section class="card glass chart-card">${cycleChart(pi, { id: 'pt', compact: true })}</section>
+
+    ${sectionTitle('Coming up')}
+    <section class="card glass ptd-ev">${events.map(e => `<div class="pe ${e.on ? 'on' : ''}"><span class="pe-d">${e.d}</span><span class="pe-t"><b>${e.t}</b>${e.sub ? `<small>${e.sub}</small>` : ''}</span></div>`).join('')}</section>
+
+    ${sectionTitle('You two · next 14 days')}
+    <section class="card glass sync-x">
+      ${strip('Her', x => x.hi)}${strip('You', x => x.yi)}
+      <div class="sx-days">${days.map((x, i) => `<span>${i === 0 ? '•' : fmt(x.d, { weekday: 'narrow' })}</span>`).join('')}</div>
+      <p class="body sm">${icon('heart', 12)} ${syncNote(M.info ? M.info.phase : pi.phase, pi.phase)}</p>
+      <div class="h-leg">${PHASE_ORDER.map(k => `<span><b style="background:${PHASE_COLOR.dark[k]}"></b>${PHASES[k].name}</span>`).join('')}<span><b class="sx-best"></b>Best day</span></div>
+    </section>
+
+    ${sectionTitle(p.a === 'friend' ? 'How to be a good friend' : 'How to show up today')}
+    <section class="card glass">${list(sup.do, 'yes')}${sup.avoid ? `<div class="eyebrow mt">Maybe avoid</div>${list(sup.avoid, 'no')}` : ''}</section>
+    ${sup.gifts ? `${sectionTitle('What to give her')}
+    <div class="hscroll">${sup.gifts.map((g, i) => `<div class="rcard gift">${glowArt(['orb', 'drop', 'wave', 'crown', 'hill'][i % 5], 80 + i)}<div class="rc-top"><span class="rc-k">Gift idea</span></div><div class="rc-t">${esc(g)}</div></div>`).join('')}</div>` : ''}
+    <div class="ptd-grid">
+      <section class="card tcm-card"><div class="tcm-glyph">${tcm.elementGlyph}</div><div class="tcm-main"><div class="eyebrow">Make her a cup of</div><h3>${tcm.tea.name}</h3><p class="body sm">${tcm.tea.why}</p></div></section>
+      <button class="card glass ptd-cook" data-action="nav" data-to="recipe/${rec.id}"><span class="art-ic">${icon('bowl', 20)}</span><span class="art-t">Cook for her: ${rec.name}<small>${rec.warm ? 'Warm & cooked' : rec.raw ? 'Fresh & raw' : 'For her phase'} · ${rec.time} min</small></span>${icon('chevR', 18)}</button>
+      <section class="card glass"><div class="eyebrow">Her body today</div><h3 style="margin:6px 0 4px;font-weight:400">${mv.title}</h3><p class="body sm">Best for ${MOVES.filter(m => mv.r[m.k] === 3).map(m => m.n.toLowerCase()).join(', ')} — join her.</p></section>
+      ${sup.date ? `<section class="card card-light"><div class="eyebrow dark">Date idea</div><h3 class="dark-h">${esc(sup.date)}</h3></section>` : sup.plan ? `<section class="card card-light"><div class="eyebrow dark">Plan idea</div><h3 class="dark-h">${esc(sup.plan)}</h3></section>` : ''}
+    </div>
+    <p class="fine center">Estimated from the cycle ${esc(p.n)} shared${p.added ? ` on ${fmt(new Date(p.added), { month: 'short', day: 'numeric' })}` : ''}. When her next period starts, ask her to send her link again to keep it exact — every body is different, so ask her too.</p>
+    <button class="btn btn-ghost btn-block" data-action="removePartner" data-id="${p.id}">Remove ${esc(p.n)}</button>
+  </div>`;
 }
 
 // ---------- seasonal foods ----------
+// best seasonal dishes for today: in season, warm/raw rule, then those fitting the current phase
+function seasonalDishesToday(info, n = 2) {
+  const items = SZ.seasonal(myCountry(), new Date().getMonth() + 1);
+  let ds = SZ.dishesFor(items);
+  if (info && warmWindow(info)) ds = ds.filter(d => d.warm);
+  const fit = d => info && d.used.some(i => i.ph.includes(info.phase)) ? 1 : 0;
+  ds.sort((a, b) => fit(b) - fit(a) || (info && !warmWindow(info) ? (!!a.warm - !!b.warm) : 0) || b.score - a.score);
+  return ds.slice(0, n);
+}
 function myCountry() { return state.profile.country || SZ.guessCountry(); }
 function phaseFoodWords(phase) {
   const words = new Set();
@@ -1280,6 +1525,7 @@ function viewInsights() {
   if (tab === 'cycle') body = `
     <section class="card glass big-chart">${cycleChart(info, { id: 'ins' })}</section>
     <p class="muted center" style="margin:-4px 0 12px">Drag across the chart to explore any day.</p>
+    ${fullCycleGuide(info)}
     ${cycleFlag()}
     <section class="card card-light where">
       <div class="eyebrow dark">Where you are</div>
@@ -1305,7 +1551,8 @@ function viewInsights() {
   else body = `
     <button class="card gro-cta" data-action="nav" data-to="relief"><span class="art-ic">${icon('heart', 20)}</span><span class="art-t">Relief guide<small>Cramps, PMS, sleep, skin & more</small></span>${icon('chevR', 18)}</button>
     <button class="card gro-cta" data-action="nav" data-to="habits"><span class="art-ic">${icon('check', 20)}</span><span class="art-t">Hormone habits<small>Daily checklist for hormones & fertility</small></span>${icon('chevR', 18)}</button>
-    ${hormoneLibrary()}
+    <button class="card gro-cta" data-action="nav" data-to="hormones"><span class="art-ic">${icon('chart', 20)}</span><span class="art-t">Your hormones, explained<small>All 14 hormones — what they do & how to support them</small></span>${icon('chevR', 18)}</button>
+    <button class="card gro-cta" data-action="nav" data-to="move"><span class="art-ic">${icon('leaf', 20)}</span><span class="art-t">Move with your cycle<small>When to lift heavy, sprint, do yoga or meditate</small></span>${icon('chevR', 18)}</button>
     ${PHASE_ORDER.concat([null]).map(p => { const list = ARTICLES.filter(a => a.phase === p); return list.length ? `${sectionTitle(p ? PHASES[p].name + (p === info.phase ? ' · now' : '') : 'Foundations')}
       ${list.map(a => `<button class="card glass article-row" data-action="nav" data-to="article/${a.id}"><span class="art-ic">${icon('book', 20)}</span><span class="art-t">${a.title}<small>${a.mins} min read</small></span>${icon('chevR', 18)}</button>`).join('')}` : ''; }).join('')}`;
   return `${topbar('Insights')}
@@ -1371,11 +1618,33 @@ function viewArticle(id) {
     <h1>${a.title}</h1>${a.body.map(p => `<p>${p}</p>`).join('')}
   </div>`;
 }
+function avatarInner(p) { return p.photo ? `<img src="${p.photo}" alt="">` : esc((p.name || 'R')[0].toUpperCase()); }
+// Downscale a chosen photo to a 320px square JPEG data URL so it fits comfortably in local storage.
+function readPhoto(file) {
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const S = 320, c = document.createElement('canvas'); c.width = c.height = S;
+      const m = Math.min(img.width, img.height);
+      c.getContext('2d').drawImage(img, (img.width - m) / 2, (img.height - m) / 2, m, m, 0, 0, S, S);
+      const t = document.createElement('canvas'); t.width = t.height = 56; t.getContext('2d').drawImage(c, 0, 0, 56, 56);
+      URL.revokeObjectURL(url); res({ full: c.toDataURL('image/jpeg', 0.82), thumb: t.toDataURL('image/jpeg', 0.6) });
+    };
+    img.onerror = rej; img.src = url;
+  });
+}
+document.addEventListener('change', e => {
+  const t = e.target, scope = t.dataset?.photo, f = t.files?.[0]; if (!scope || !f) return;
+  readPhoto(f).then(d => {
+    if (scope === 'onb') { ui.onb.photo = d.full; ui.onb.thumb = d.thumb; } else { state.profile.photo = d.full; state.profile.thumb = d.thumb; save(); toast('Profile picture saved'); }
+    render();
+  }).catch(() => toast('Couldn’t read that photo'));
+});
 function viewProfile() {
   const p = state.profile, s = M.stats;
   return `${topbar('Profile', { back: true })}
   <div class="pad">
-    <div class="profile-head"><div class="avatar xl">${esc((p.name || 'R')[0].toUpperCase())}</div>
+    <div class="profile-head"><label class="avatar xl ${p.photo ? 'has-photo' : ''}">${avatarInner(p)}<span class="av-edit">${icon('plus', 14, 2.4)}</span><input type="file" accept="image/*" data-photo="profile" hidden></label>
       <input class="field name-field" data-input="profile.name" value="${esc(p.name)}" placeholder="Your name" maxlength="24"></div>
     ${sectionTitle('Birthday')}
     <section class="card glass"><input class="field" type="date" data-input="profile.birthday" value="${p.birthday || ''}" max="${todayISO()}"><button class="list-btn" data-action="nav" data-to="cosmic">${icon('star', 18)} See my cosmic rhythm</button></section>
@@ -1392,7 +1661,8 @@ function viewProfile() {
     ${remindersSection()}
     ${sectionTitle('Partner mode')}
     <section class="card glass"><button class="list-btn" data-action="nav" data-to="share">${icon('heart', 18)} Share my cycle with partner & friends</button>
-      ${(state.partners || []).map(x => `<div class="list-btn"><span class="pt-av sm">${esc(x.n[0] || '?')}</span><span style="flex:1">${esc(x.n)}<small class="muted" style="display:block;font-size:12px">On your dashboard</small></span><button class="link muted-l" data-action="removePartner" data-id="${x.id}">Remove</button></div>`).join('')}</section>
+      <button class="list-btn" data-action="nav" data-to="partners">${icon('chart', 18)} See my partners' dashboard</button>
+      ${(state.partners || []).map(x => `<div class="list-btn">${ptAvatar(x, 'sm')}<span style="flex:1">${esc(x.n)}<small class="muted" style="display:block;font-size:12px">On your dashboard</small></span><button class="link muted-l" data-action="removePartner" data-id="${x.id}">Remove</button></div>`).join('')}</section>
     ${sectionTitle('Your data')}
     <section class="card glass">
       <button class="list-btn" data-action="export">${icon('download', 18)} Export my data (JSON)</button>
@@ -1410,6 +1680,7 @@ function b64d(s) { try { return JSON.parse(decodeURIComponent(escape(atob(s.repl
 function shareLink() {
   const { stats } = M, last = stats.periods[stats.periods.length - 1];
   const snap = { n: state.profile.name || 'Her', s: C.iso(last.start), c: stats.avgCycle, p: stats.avgPeriod, a: ui.shareAudience, f: ui.shareFertile ? 1 : 0 };
+  if (state.profile.thumb) snap.t = state.profile.thumb;
   return `${location.origin}${location.pathname}#/with?d=${b64e(snap)}`;
 }
 // Cycle info rebuilt from a shared snapshot (projected forward cycle by cycle).
@@ -1473,7 +1744,7 @@ function viewWith(q) {
     ${(() => { const g = DAY_GUIDE[dayWindow(info)], rec = pick(recipesFor(info.phase, info), dayNum(today)); return `
     <section class="card glass pv-day">
       <div class="pv-top"><div><div class="eyebrow">Her day · ${g.energy.toLowerCase()} energy</div><h3>${g.title}</h3></div><span class="pv-e">${g.energy}</span></div>
-      <p class="body sm">Today is best for ${g.best.slice(0, 3).join(', ').toLowerCase()}. Help her avoid: ${g.ease.charAt(0).toLowerCase() + g.ease.slice(1)}.</p>
+      <p class="body sm">Today is best for ${g.best.slice(0, 3).join(', ').toLowerCase()}.</p>
     </section>
     <details class="card glass pv-cook"><summary><span class="art-ic">${icon('bowl', 20)}</span><span class="art-t">Cook for her: ${rec.name}<small>${rec.warm ? 'Warm & cooked — just right for this phase' : rec.raw ? 'Fresh & raw — perfect for her phase' : 'Made for her phase'} · ${rec.time} min</small></span>${icon('chevD', 18)}</summary>
       <div class="pv-rec"><div class="eyebrow">Ingredients</div>${rec.ingredients.map(g => `<div class="ing">${icon('leaf', 14)}<span>${g}</span></div>`).join('')}
@@ -1488,8 +1759,6 @@ function viewWith(q) {
     <section class="card tcm-card"><div class="tcm-glyph">${tcm.elementGlyph}</div><div class="tcm-main"><div class="eyebrow">Make her a cup of</div><h3>${tcm.tea.name}</h3><p class="body sm">${tcm.tea.why}</p></div></section>
     <section class="card card-light"><div class="eyebrow dark">Date idea</div><h3 class="dark-h">${esc(sup.date)}</h3></section>`
     : `<section class="card card-light"><div class="eyebrow dark">Plan idea</div><h3 class="dark-h">${esc(sup.plan)}</h3></section>`}
-    ${sectionTitle('Send her a message')}
-    <section class="card glass msg"><p>“${esc(sup.say)}”</p><button class="btn btn-light" data-action="copyText" data-t="${esc(sup.say)}">Copy message</button></section>
     ${sectionTitle('Her week ahead')}
     <section class="card glass"><div class="pweek">${week}</div></section>
     <p class="fine center">Estimates based on her cycle — every body is different, so ask her too.</p>
@@ -1581,11 +1850,17 @@ const actions = {
   nav: d => go(d.to),
   back: () => (history.length > 1 ? history.back() : go('today')),
   selectDay: d => { ui.selected = d.date; render(); },
+  onbEnter: d => {
+    const w = welcome3d, el = document.querySelector('.onb-welcome');
+    if (!w || !el) return actions.onbNext(d);
+    el.classList.add('entering');
+    w.enter().then(() => actions.onbNext(d));
+  },
   onbNext: () => {
-    if (ui.onbStep < 5) { ui.onbStep++; render(); return; }
+    if (ui.onbStep < 6) { ui.onbStep++; render(); return; }
     const o = ui.onb, logs = {}, s = C.parseISO(o.last);
     for (let i = 0; i < o.periodLength; i++) { const d = C.addDays(s, i); if (d <= new Date()) logs[C.iso(d)] = { flow: i === 0 || i === 1 ? 'medium' : 'light' }; }
-    state = { onboarded: true, profile: { name: o.name.trim(), cycleLength: o.cycleLength, periodLength: o.periodLength, goals: o.goals, birthday: o.birthday || undefined }, logs, favorites: [] };
+    state = { onboarded: true, profile: { name: o.name.trim(), cycleLength: o.cycleLength, periodLength: o.periodLength, goals: o.goals, birthday: o.birthday || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
     save(); go('today'); render();
   },
   onbBack: () => { ui.onbStep = Math.max(0, ui.onbStep - 1); render(); },
@@ -1644,14 +1919,15 @@ const actions = {
   habitTick: d => { const k = todayISO(), H = state.habits = state.habits || {}; const a = H[k] = H[k] || []; a.includes(d.id) ? a.splice(a.indexOf(d.id), 1) : a.push(d.id);
     const cut = C.iso(C.addDays(new Date(), -60)); for (const x in H) if (x < cut) delete H[x]; save(); render(); },
   addPartner: d => { const snap = b64d(d.d); if (!snap) return; const ps = state.partners = (state.partners || []).filter(x => x.n !== snap.n);
-    ps.push({ ...snap, id: Date.now().toString(36) }); save(); toast(`${snap.n} added`); render(); },
+    ps.push({ ...snap, id: Date.now().toString(36), added: Date.now() }); save(); toast(`${snap.n} added`); go('partners/' + ps[ps.length - 1].id); },
   openPartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (p) { const { id, ...snap } = p; location.hash = '#/with?d=' + b64e(snap); } },
-  removePartner: d => { state.partners = (state.partners || []).filter(x => x.id !== d.id); save(); render(); },
+  removePartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (!p || !confirm(`Remove ${p.n}?`)) return; state.partners = state.partners.filter(x => x.id !== d.id); save(); if (route().name === 'partners') go('partners'); else render(); },
   seasonView: d => { ui.seasonView = d.v; render(); },
   seasonFood: d => { ui.seasonFood = ui.seasonFood === d.f ? null : d.f; render(); if (ui.seasonFood) document.querySelector('.sf-detail')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); },
   seasonFilter: d => { ui.seasonFilter = d.v; render(); },
   seasonMonth: d => { const m = (ui.seasonMonth || new Date().getMonth() + 1) + +d.d; ui.seasonMonth = ((m - 1 + 12) % 12) + 1; render(); },
   insTab: d => { ui.insTab = d.v; render(); },
+  hxJump: d => { document.getElementById('hx-' + d.i)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
   groToggle: d => { const g = state.grocery = state.grocery || {}; g[d.k] ? delete g[d.k] : (g[d.k] = 1); save(); render(); },
   groClear: () => { state.grocery = {}; save(); render(); },
   groShare: async () => {
@@ -1697,6 +1973,7 @@ document.addEventListener('input', e => {
 
 // ---------- render ----------
 let unmountFigs = [];
+let welcome3d = null; // the running welcome scene (for the fly-through on Enter)
 let fig3d = null; // lazily loaded Three.js module (null = not tried, false = unavailable)
 function mountFigures() {
   unmountFigs.forEach(f => f()); unmountFigs = [];
@@ -1705,6 +1982,16 @@ function mountFigures() {
     const grain = c.parentElement.querySelector('canvas.grain');
     import('./torso3d.js').then(m => { if (!c.isConnected) return; unmountFigs.push(m.mountTorso3D(c, grain)); })
       .catch(() => { if (c.isConnected) unmountFigs.push(mountTorso(c, null)); });
+  });
+  document.querySelectorAll('canvas.welcome3d').forEach(c => {
+    const wrap = c.closest('.onb-welcome');
+    const fail = () => { if (!c.isConnected) return; const f = document.createElement('div'); f.className = 'fig-wrap welcome hero'; f.innerHTML = '<canvas class="figure" data-focus=""></canvas>'; c.replaceWith(f); mountFigures(); };
+    c.addEventListener('welcome-fail', fail);
+    import('./welcome3d.js').then(m => {
+      if (!c.isConnected) return; if (!m.webglOK()) throw new Error('no webgl');
+      const w = m.mountWelcome3D(c, { onReady: () => wrap?.classList.add('arrived') });
+      welcome3d = w; unmountFigs.push(() => { w.destroy(); if (welcome3d === w) welcome3d = null; });
+    }).catch(fail);
   });
   document.querySelectorAll('canvas.figure').forEach(c => {
     const opts = { focus: c.dataset.focus || null, mode: c.closest('.welcome') ? 'full' : 'lite', intro: !!c.closest('.welcome') };
@@ -1734,7 +2021,7 @@ function render() {
   }
   M = model();
   const views = {
-    today: viewToday, calendar: viewCalendar, log: viewLog, plan: viewPlan, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: viewCosmic, grocery: viewGrocery, remedy: () => viewRemedy(r.id), habits: viewHabits, season: viewSeason, privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
+    today: viewToday, calendar: viewCalendar, log: viewLog, plan: viewPlan, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: viewCosmic, grocery: viewGrocery, remedy: () => viewRemedy(r.id), habits: viewHabits, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, season: viewSeason, privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
     recipe: () => viewRecipe(r.id), ritual: () => viewRitual(r.id), point: () => viewPoint(r.id), article: () => viewArticle(r.id),
   };
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];

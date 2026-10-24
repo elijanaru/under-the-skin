@@ -27,7 +27,7 @@ export const PHASES = {
     name: 'Follicular',
     season: 'Inner spring',
     tagline: 'Fresh energy, new ideas.',
-    hormones: 'FSH matures a follicle and estrogen starts to climb. Rising estrogen lifts mood, energy and motivation, and supports muscle building — a great window to start something new.',
+    hormones: 'A new egg starts to ripen and estrogen begins to climb. Rising estrogen lifts mood, energy and motivation, and supports muscle building — a great window to start something new.',
     superpower: { title: 'Creativity', text: 'Curiosity is high and new things feel exciting. Brainstorm, learn, experiment.' },
     nourish: { title: 'Fresh & light', text: 'Lean protein, fermented foods and lots of fresh produce to support rising estrogen.' },
     foods: ['Eggs', 'Avocado', 'Raw sauerkraut', 'Broccoli', 'Citrus', 'Sprouts', 'Chicken', 'Flax seeds'],
@@ -41,7 +41,7 @@ export const PHASES = {
     name: 'Ovulatory',
     season: 'Inner summer',
     tagline: 'Magnetic, bold, bright.',
-    hormones: 'Estrogen peaks, LH surges to release an egg and testosterone gets a small boost. Many women feel their most energetic, confident and social — and communication flows easily.',
+    hormones: 'Estrogen peaks, your egg is released and testosterone gets a small boost. Many women feel their most energetic, confident and social — and communication flows easily.',
     superpower: { title: 'Communication', text: 'Confidence and verbal fluency peak. Perfect for pitching, presenting and honest conversations.' },
     nourish: { title: 'Fibre & antioxidants', text: 'Fibre and cruciferous veg help your body clear excess estrogen. Lighter meals feel great.' },
     foods: ['Berries', 'Cucumber', 'Asparagus', 'Salmon', 'Almonds', 'Leafy greens', 'Tomatoes', 'Brussels sprouts'],
@@ -277,14 +277,6 @@ export const ARTICLES = [
       'Seed cycling means eating flax and pumpkin seeds in the first half of your cycle, then sesame and sunflower seeds in the second half.',
       'There is little direct research that it changes hormone levels — but seeds are rich in fibre, zinc, magnesium and healthy fats, which all support hormone health.',
       'Think of it as an easy nutrition habit, not a treatment.',
-    ],
-  },
-  {
-    id: 'doctor', title: 'When to talk to a doctor', phase: null, mins: 2,
-    body: [
-      'Cycles regularly shorter than 21 or longer than 35 days, periods lasting more than 7 days, or bleeding that soaks a pad or tampon every hour are worth checking.',
-      'So is pain that stops you from daily life, bleeding between periods, or missed periods when you are not pregnant.',
-      'Your logs here are a great summary to bring to your appointment.',
     ],
   },
 ];
@@ -744,8 +736,8 @@ export const DAY_GUIDE = {
 export const HORMONE_LIBRARY = [
   { n: 'Oestrogen', g: 'Ovaries', role: 'Affects the urinary tract, heart and blood vessels, bones, muscles, breasts, skin, hair, mucous membranes, brain and fertility.', cycle: 'Rises through the follicular phase and peaks just before ovulation.', support: 'Fibre, cruciferous veg and a daily raw carrot help clear used estrogen.' },
   { n: 'Progesterone', g: 'Ovaries (corpus luteum)', role: 'Released after ovulation; prepares the body for a possible pregnancy and helps support one.', cycle: 'Dominates the luteal phase; calming and warming.', support: 'Eggs (cholesterol & choline), vitamin C, zinc, enough food and low stress.' },
-  { n: 'FSH', g: 'Pituitary gland', role: 'Grows and develops ovarian follicles in the follicular phase.', cycle: 'Rises at the start of your cycle and briefly at ovulation.', support: 'Steady sleep and enough calories.' },
-  { n: 'LH', g: 'Pituitary gland', role: 'Triggers the release of an egg from the ovary.', cycle: 'Surges 24–36 hours before ovulation.', support: 'Manage stress — high cortisol can blunt the surge.' },
+  { n: 'FSH', g: 'Pituitary gland', role: 'Follicle-stimulating hormone — the “wake-up call” for your ovaries. Each month your brain sends FSH to the ovaries, telling a small group of follicles (tiny fluid sacs that each hold an egg) to start growing. The strongest one becomes the egg you release, and as it grows it makes estrogen.', cycle: 'Rises at the very start of your cycle, during your period, to start a new egg growing — then a small spike at ovulation. Without enough FSH, no egg matures and estrogen stays low.', support: 'Steady sleep, enough calories and protein, and less stress — your brain only sends strong signals when it feels safe and fed.' },
+  { n: 'LH', g: 'Pituitary gland', role: 'Luteinising hormone — the “release” signal. A sudden LH surge tells the ripe follicle to burst open and release its egg (ovulation). This is the egg sign on your hormone chart.', cycle: 'Surges 24–36 hours before ovulation.', support: 'Manage stress — high cortisol can blunt the surge.' },
   { n: 'Testosterone', g: 'Ovaries & adrenal glands', role: 'Affects red blood cells, menstruation, tissue and bone mass, sex drive and fertility.', cycle: 'Peaks gently around ovulation — libido and confidence.', support: 'Strength training, zinc (oysters), healthy fats.' },
   { n: 'Prolactin', g: 'Pituitary gland', role: 'Enables breast milk production after birth.', cycle: 'Can rise with stress and poor sleep, disturbing ovulation.', support: 'Rest, B6-rich foods, gentle evenings.' },
   { n: 'SHBG', g: 'Liver', role: 'Carries oestrogen and testosterone through the blood and controls how much the tissues can use.', cycle: 'Shapes how strongly you feel your hormones.', support: 'Stable blood sugar and a healthy liver.' },
@@ -800,3 +792,26 @@ export const FERTILITY_FOODS = [
   { f: 'Strength training', why: 'Improves insulin sensitivity.' },
   { f: 'Dancing', why: 'Lowers cortisol.' },
 ];
+
+// Movement by cycle window. Ratings: 3 = best time, 2 = good, 1 = lighter / gentle version, 0 = skip, rest instead.
+// Evidence is emerging and mixed (e.g. follicular-weighted strength training studies; McNulty 2020 meta-analysis
+// found only small performance dips in the early follicular phase) — energy and how you feel always win.
+export const MOVES = [
+  { k: 'lift', n: 'Heavy lifting', d: 'Low reps, heavy weights, new personal bests' },
+  { k: 'hiit', n: 'HIIT & sprints', d: 'Short, all-out intervals' },
+  { k: 'sport', n: 'Cardio & sport', d: 'Running, cycling, dance, team sports, tennis' },
+  { k: 'pilates', n: 'Pilates & moderate strength', d: 'Controlled, moderate loads, core' },
+  { k: 'yoga', n: 'Yoga & stretching', d: 'Flow yoga early in the cycle, yin & restorative later' },
+  { k: 'meditate', n: 'Meditation & breathwork', d: 'Stillness, journaling, slow breathing' },
+  { k: 'walk', n: 'Walks & rest', d: 'Nature walks, sauna, early nights' },
+];
+export const MOVE_GUIDE = {
+  'flow-start': { title: 'Rest & restore', r: { lift: 0, hiit: 0, sport: 1, pilates: 1, yoga: 2, meditate: 3, walk: 3 }, tip: 'Hormones are at their lowest and your body is shedding. Walks, yin yoga and meditation — intuition is strong now. Skip the PR attempts.' },
+  'flow-end': { title: 'Ease back in', r: { lift: 1, hiit: 1, sport: 2, pilates: 2, yoga: 3, meditate: 2, walk: 3 }, tip: 'As bleeding eases, start moving more: flowing yoga, pilates, light strength. Iron-rich food helps your energy come back.' },
+  'rising': { title: 'Build strength', r: { lift: 2, hiit: 2, sport: 3, pilates: 2, yoga: 2, meditate: 1, walk: 2 }, tip: 'Rising estrogen improves recovery. A great window to try a new class and ramp up your training volume.' },
+  'building': { title: 'Lift heavy', r: { lift: 3, hiit: 3, sport: 3, pilates: 2, yoga: 1, meditate: 1, walk: 2 }, tip: 'Your best window for heavy lifting and new personal bests — studies that put more strength training into the follicular phase saw bigger gains.' },
+  'peak': { title: 'Peak power', r: { lift: 3, hiit: 3, sport: 3, pilates: 2, yoga: 1, meditate: 1, walk: 2 }, tip: 'Estrogen and testosterone peak: strength, speed and confidence are high. Warm up well — ligaments are a little looser around ovulation.' },
+  'settle': { title: 'Steady strength', r: { lift: 2, hiit: 2, sport: 2, pilates: 3, yoga: 2, meditate: 2, walk: 2 }, tip: 'Progesterone rises and your body temperature climbs. Keep lifting at moderate weights, take longer rests, drink more water.' },
+  'focus': { title: 'Endurance & flow', r: { lift: 2, hiit: 1, sport: 2, pilates: 3, yoga: 2, meditate: 2, walk: 3 }, tip: 'Steady efforts beat all-out ones: pilates, hiking, swimming, steady cardio. Your body burns more fat for fuel now.' },
+  'premenstrual': { title: 'Slow down', r: { lift: 1, hiit: 0, sport: 1, pilates: 2, yoga: 3, meditate: 3, walk: 3 }, tip: 'Energy drops before your period. Yin yoga, stretching, walks and meditation calm cramps and moods — rest is training too.' },
+};

@@ -51,20 +51,26 @@ const US = [
   ['Rhubarb', 'veg', r(4, 6)], ['Radishes', 'veg', r(4, 6)], ['Spinach', 'veg', [3, 4, 5, 9, 10, 11]], ['Artichokes', 'veg', r(3, 5)],
   ['Strawberries', 'fruit', r(4, 7)], ['Cherries', 'fruit', r(6, 7)], ['Blueberries', 'fruit', r(6, 8)], ['Peaches & plums', 'fruit', r(6, 9)],
   ['Watermelon', 'fruit', r(6, 9)], ['Tomatoes', 'veg', r(7, 9)], ['Sweetcorn', 'veg', r(7, 9)], ['Zucchini', 'veg', r(6, 9)],
-  ['Peppers', 'veg', r(7, 10)], ['Cucumbers', 'veg', r(6, 9)], ['Apples', 'fruit', r(8, 11)], ['Pears', 'fruit', r(8, 11)],
-  ['Grapes', 'fruit', r(8, 10)], ['Pumpkin & winter squash', 'veg', r(9, 12)], ['Cranberries', 'fruit', r(10, 12)], ['Pecans & walnuts', 'other', r(10, 12)],
+  ['Peppers', 'veg', r(7, 10)], ['Cucumbers', 'veg', r(6, 9)], ['Apples', 'fruit', r(8, 2)], ['Pears', 'fruit', r(8, 12)],
+  ['Grapes', 'fruit', r(8, 10)], ['Pumpkin & winter squash', 'veg', r(9, 2)], ['Cranberries', 'fruit', r(10, 12)], ['Pecans & walnuts', 'other', r(10, 12)],
   ['Ramps (wild leeks)', 'wild', r(4, 5)], ['Fiddleheads', 'wild', r(4, 5)], ['Morels', 'wild', r(4, 5)], ['Basil', 'herb', r(6, 9)],
   ['Parsley & cilantro', 'herb', r(4, 10)], ['Raw honey', 'other', r(6, 9)],
+  ['Collards & mustard greens', 'veg', r(11, 3)], ['Leeks', 'veg', r(9, 3)], ['Turnips & rutabaga', 'veg', r(10, 3)], ['Parsnips', 'veg', r(10, 3)],
+  ['Carrots', 'veg', r(7, 3)], ['Beets', 'veg', r(7, 2)], ['Broccoli & cauliflower', 'veg', [5, 6, 9, 10, 11]], ['Pomegranate', 'fruit', r(9, 12)],
+  ['Persimmon', 'fruit', r(10, 12)], ['Avocado', 'fruit', r(3, 9)], ['Maple syrup', 'other', r(2, 4)],
 ];
 const AUS = [
   ['Mango', 'fruit', r(11, 3)], ['Cherries', 'fruit', r(11, 1)], ['Stone fruit', 'fruit', r(12, 3)], ['Berries', 'fruit', r(11, 3)],
   ['Watermelon', 'fruit', r(11, 3)], ['Tomatoes', 'veg', r(12, 4)], ['Sweetcorn', 'veg', r(12, 3)], ['Zucchini', 'veg', r(11, 3)],
   ['Apples', 'fruit', r(3, 8)], ['Pears', 'fruit', r(3, 7)], ['Figs', 'fruit', r(2, 4)], ['Pumpkin', 'veg', r(3, 8)],
-  ['Mushrooms', 'veg', r(3, 6)], ['Feijoa', 'fruit', r(3, 6)], ['Citrus', 'fruit', r(6, 10)], ['Kale', 'veg', r(5, 9)],
+  ['Mushrooms', 'veg', r(3, 6)], ['Feijoa', 'fruit', r(3, 6)], ['Citrus', 'fruit', r(5, 10)], ['Kale', 'veg', r(5, 9)],
   ['Broccoli & cauliflower', 'veg', r(5, 9)], ['Root vegetables', 'veg', r(5, 9)], ['Rhubarb', 'veg', r(5, 9)], ['Brussels sprouts', 'veg', r(5, 8)],
   ['Asparagus', 'veg', r(9, 11)], ['Peas & broad beans', 'veg', r(9, 11)], ['Strawberries', 'fruit', r(9, 12)], ['Artichokes', 'veg', r(8, 10)],
   ['Avocado', 'fruit', r(9, 2)], ['Macadamias', 'other', r(3, 9)],
   ['Basil', 'herb', r(11, 3)], ['Parsley & coriander', 'herb', r(3, 11)], ['Passionfruit', 'fruit', r(12, 5)], ['Pomegranate', 'fruit', r(3, 5)],
+  ['Leeks', 'veg', r(5, 9)], ['Cabbage', 'veg', r(5, 9)], ['Spinach & silverbeet', 'veg', r(5, 10)], ['Fennel', 'veg', r(5, 9)],
+  ['Sweet potatoes', 'veg', r(3, 8)], ['Jerusalem artichoke', 'veg', r(5, 8)], ['Kiwifruit', 'fruit', r(5, 9)], ['Quince', 'fruit', r(3, 6)],
+  ['Persimmon', 'fruit', r(3, 6)], ['Custard apple', 'fruit', r(3, 8)], ['Chestnuts', 'other', r(3, 6)],
 ];
 // seasonal animal foods (game seasons, fish runs, pasture peaks)
 CENTRAL.push(['Venison & wild boar', 'animal', r(9, 1)], ['Goose & duck', 'animal', r(11, 12)], ['Carp', 'animal', r(9, 12)],
@@ -73,8 +79,8 @@ CENTRAL.push(['Venison & wild boar', 'animal', r(9, 1)], ['Goose & duck', 'anima
 MED.push(['Sardines', 'animal', r(5, 10)], ['Anchovies', 'animal', r(4, 9)], ['Bluefin tuna', 'animal', r(5, 7)], ['Spring lamb', 'animal', r(3, 5)],
   ['Mussels', 'animal', r(6, 10)], ['Fresh sheep & goat cheese', 'animal', r(3, 6)], ['Pasture eggs', 'animal', r(2, 7)], ['Wild boar', 'animal', r(10, 1)]);
 US.push(['Wild salmon', 'animal', r(5, 9)], ['Halibut', 'animal', r(3, 11)], ['Oysters', 'animal', r(9, 4)], ['Venison', 'animal', r(10, 1)],
-  ['Turkey', 'animal', r(11, 12)], ['Grass-fed raw milk & butter', 'animal', r(5, 9)], ['Pasture eggs', 'animal', r(3, 9)]);
-AUS.push(['Spring lamb', 'animal', r(9, 11)], ['Oysters', 'animal', r(5, 10)], ['Snapper', 'animal', all], ['Prawns', 'animal', r(11, 2)],
+  ['Turkey', 'animal', r(11, 12)], ['Dungeness crab', 'animal', r(11, 6)], ['Grass-fed raw milk & butter', 'animal', r(5, 9)], ['Pasture eggs', 'animal', r(3, 9)]);
+AUS.push(['Spring lamb', 'animal', r(9, 11)], ['Oysters', 'animal', r(5, 10)], ['Snapper', 'animal', all], ['Prawns', 'animal', r(11, 2)], ['Mussels', 'animal', r(5, 10)],
   ['Grass-fed raw milk & butter', 'animal', r(9, 1)], ['Pasture eggs', 'animal', r(9, 3)]);
 
 // Northern Europe (UK, Ireland, Scandinavia): same produce as central Europe but spring/summer
@@ -129,6 +135,13 @@ export function seasonName(code, month) {
 // nature: warm | neutral | cool. Phases: m=menstrual f=follicular o=ovulatory l=luteal.
 const I = (nature, nut, ph) => ({ nature, nut, ph: ph.split('').map(c => ({ m: 'menstrual', f: 'follicular', o: 'ovulatory', l: 'luteal' })[c]) });
 export const FOOD_INFO = {
+  'collards & mustard greens': I('warm', ['Calcium', 'Vitamin K', 'Folate'], 'mfl'), 'turnips & rutabaga': I('neutral', ['Vitamin C', 'Fibre'], 'l'),
+  'beets': I('neutral', ['Iron', 'Folate', 'Nitrates'], 'm'), 'broccoli & cauliflower': I('neutral', ['Sulforaphane', 'Vitamin C'], 'fol'),
+  'persimmon': I('cool', ['Vitamin A', 'Fibre', 'Manganese'], 'l'), 'avocado': I('neutral', ['Healthy fats', 'Potassium', 'Vitamin E'], 'ol'),
+  'maple syrup': I('warm', ['Manganese', 'Zinc'], 'm'), 'dungeness crab': I('cool', ['Zinc', 'Vitamin B12', 'Selenium'], 'fo'),
+  'spinach & silverbeet': I('cool', ['Iron', 'Magnesium', 'Folate'], 'ml'), 'sweet potatoes': I('neutral', ['Beta-carotene', 'Complex carbs', 'Vitamin B6'], 'l'),
+  'kiwifruit': I('cool', ['Vitamin C', 'Fibre'], 'mf'), 'custard apple': I('neutral', ['Vitamin C', 'Vitamin B6', 'Magnesium'], 'l'),
+  'mussels': I('warm', ['Iron', 'Vitamin B12', 'Omega-3'], 'm'),
   'kale': I('neutral', ['Calcium', 'Vitamin K', 'Iron'], 'mfo'), 'brussels sprouts': I('neutral', ['Fibre', 'Vitamin C', 'Sulforaphane'], 'ol'),
   'savoy & red cabbage': I('neutral', ['Vitamin C', 'Fibre'], 'ol'), 'cabbage': I('neutral', ['Vitamin C', 'Fibre'], 'ol'), 'leeks': I('warm', ['Prebiotic fibre', 'Folate'], 'ml'),
   'parsnips': I('warm', ['Complex carbs', 'Folate', 'Potassium'], 'l'), 'beetroot': I('neutral', ['Iron', 'Folate', 'Nitrates'], 'm'), 'carrots': I('neutral', ['Beta-carotene', 'Fibre'], 'fl'),
@@ -227,6 +240,18 @@ export const SEASON_DISHES = [
   D('Wild Salmon with Summer Greens', true, ['salmon', 'zucchini|courgette|peas|spinach|asparagus'], ['Butter', 'Lemon', 'Dill'], 'Pan-sear the salmon in butter, serve on lightly wilted seasonal greens.'),
   D('Pan-Fried Mackerel with Dill Butter', true, ['mackerel', 'dill|chive|parsley'], ['Butter', 'Lemon', 'New potatoes'], 'Fry the mackerel skin-side down until crisp, spoon over melted dill butter.'),
   D('Wild Berries with Raw Cream', false, ['bilberr|cloudberr|lingonberr|wild berr'], ['Raw cream', 'Raw honey'], 'A bowl of just-picked berries, cold raw cream and a thread of honey.'),
+  D('Braised Collards with Bone Broth', true, ['collard|kale|cabbage'], ['Bone broth', 'Pastured bacon', 'Garlic', 'Apple cider vinegar'], 'Crisp the bacon, add garlic and greens, pour in broth and braise 20 minutes; finish with a splash of vinegar.'),
+  D('Roasted Turnips & Carrots with Maple Butter', true, ['turnip|parsnip|root', 'carrot|beet'], ['Butter', 'Maple syrup or raw honey', 'Thyme'], 'Roast the roots at 200 °C for 30 minutes, toss in melted butter with a little maple and thyme.'),
+  D('Crab with Warm Lemon Butter', true, ['crab'], ['Butter', 'Lemon', 'Parsley'], 'Steam the crab 12–15 minutes, crack, and dip in melted lemon-parsley butter.'),
+  D('Winter Citrus & Avocado Salad', false, ['citrus|orange|mandarin', 'avocado'], ['Olive oil', 'Sea salt', 'Mint'], 'Slice citrus into rounds, fan out avocado, salt, oil and mint.'),
+  D('Persimmon & Pomegranate with Raw Yoghurt', false, ['persimmon', 'pomegranate'], ['Raw yoghurt or kefir', 'Raw honey'], 'Slice ripe persimmon, scatter pomegranate seeds, spoon over yoghurt.'),
+  D('Leek & Silverbeet Soup with Raw Cream', true, ['leek', 'spinach|silverbeet|chard'], ['Bone broth', 'Butter', 'Raw cream', 'Nutmeg'], 'Soften leeks in butter, add broth and greens, simmer 10 minutes, blend and swirl in raw cream.'),
+  D('Kiwi & Mandarin Bowl with Kefir', false, ['kiwi', 'citrus|mandarin'], ['Raw kefir', 'Raw honey', 'Pumpkin seeds'], 'Slice the fruit over cold kefir, drizzle honey, sprinkle seeds.'),
+  D('Sweet Potato, Leek & Fennel Bake', true, ['sweet potato', 'fennel|leek'], ['Butter', 'Raw cheese', 'Thyme'], 'Layer thin slices in a buttered dish, top with raw cheese, bake 40 minutes at 190 °C.'),
+  D('Custard Apple with Raw Cream', false, ['custard apple'], ['Raw cream', 'Lime'], 'Halve, scoop the creamy flesh (spit out the seeds), add a squeeze of lime and raw cream.'),
+  D('Chestnut & Mushroom Soup', true, ['chestnut', 'mushroom'], ['Bone broth', 'Butter', 'Thyme', 'Raw cream'], 'Brown mushrooms in butter, add peeled chestnuts and broth, simmer 20 minutes, blend smooth.'),
+  D('Wild Garlic & Nettle Soup', true, ['wild garlic', 'nettle'], ['Bone broth', 'Butter', 'Raw cream'], 'Wilt nettle tips (gloves!) and wild garlic in hot broth for 3 minutes, blend, finish with cream.'),
+  D('Purple Sprouting Broccoli with Soft Eggs', true, ['purple sprouting'], ['Pasture eggs', 'Butter', 'Lemon'], 'Steam the spears 4 minutes, top with soft-boiled eggs, brown butter and lemon.'),
   D('Grapes, Raw Cheese & Walnuts', false, ['grape', 'walnut|hazelnut'], ['Raw cheese'], 'A simple autumn plate — perfect afternoon snack.'),
 ];
 export function dishesFor(items) {

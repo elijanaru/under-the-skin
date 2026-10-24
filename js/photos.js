@@ -348,3 +348,25 @@ export function dishPhoto(name, w = 400) {
   const p = DISH_PHOTOS[name];
   return p ? `${p.src}?w=${w}&q=70&auto=format&fit=crop` : null;
 }
+
+// Real Unsplash photos (free licence) for the hormone explainer.
+export const HORMONE_PHOTOS = {
+  'Oestrogen': { src: 'https://images.unsplash.com/photo-1483884105135-c06ea81a7a80', by: 'Sasha Freemind' },
+  'Progesterone': { src: 'https://images.unsplash.com/photo-1517912181842-e5a9d4701a4e', by: 'Annie Spratt' },
+  'FSH': { src: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735', by: 'Markus Spiske' },
+  'LH': { src: 'https://images.unsplash.com/photo-1514241516423-6c0a5e031aa2', by: 'Ravi Sharma' },
+  'Testosterone': { src: 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5', by: 'John Arano' },
+  'Prolactin': { src: 'https://images.unsplash.com/photo-1582486225644-aeacf6aa0b1b', by: 'Nathan Dumlao' },
+  'SHBG': { src: 'https://images.unsplash.com/photo-1437482078695-73f5ca6c96e2', by: 'kazuend' },
+  'Insulin': { src: 'https://images.unsplash.com/photo-1519996529931-28324d5a630e', by: 'Jo Sonn' },
+  'Cortisol': { src: 'https://images.unsplash.com/photo-1489395636501-49fb62e34c38', by: 'Jakob Owens' },
+  'Adrenaline': { src: 'https://images.unsplash.com/photo-1594882645126-14020914d58d', by: 'Venti Views' },
+  'Thyroid hormones': { src: 'https://images.unsplash.com/photo-1470549584009-d347338fc0ff', by: 'CHUTTERSNAP' },
+  'Melatonin': { src: 'https://images.unsplash.com/photo-1507502707541-f369a3b18502', by: 'Sander Dewerte' },
+  'Serotonin': { src: 'https://images.unsplash.com/photo-1624016218756-a192618d3153', by: 'Nadine Redlich' },
+  'Active vitamin D': { src: 'https://images.unsplash.com/photo-1720643249405-720f4e916c38', by: 'stenedit' },
+};
+export function hormonePhoto(n, w = 700) {
+  const p = HORMONE_PHOTOS[n];
+  return p ? `${p.src}?w=${w}&q=70&auto=format&fit=crop` : null;
+}

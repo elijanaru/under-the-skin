@@ -106,40 +106,48 @@ export function dayInfo(date, stats) {
   };
 }
 
-// ---- Hormone model (relative levels 0–1, shaped on textbook curves) ----
+// ---- Hormone model ----
+// One shared scale, shaped on the standard textbook curves (28-day reference charts, scaled to her cycle):
+// LH surge is the tallest spike, estrogen peaks ~1–2 days before ovulation, dips, then a smaller luteal hump;
+// progesterone rises after ovulation and peaks ~7 days later; FSH has an early-follicular hump and a small
+// mid-cycle spike; testosterone stays low with only a gentle rise around ovulation.
 const g = (x, mu, s) => Math.exp(-((x - mu) ** 2) / (2 * s * s));
+const ga = (x, mu, sl, sr) => g(x, mu, x < mu ? sl : sr); // asymmetric bell
 function raw(cd, L, P) {
-  const ov = ovulationDay(L, P);
+  const ov = ovulationDay(L, P), f = (ov - 1) / 13; // stretch follicular shapes to her follicular length
   return {
-    estrogen: 0.1 + 0.12 * g(cd, 3.5, 1.6) + 0.14 * clamp((cd - P) / (ov - P), 0, 1) / (1 + Math.exp((cd - ov - 1.5) / 0.9)) + 0.8 * g(cd, ov - 1.3, 2.4) + 0.42 * g(cd, ov + 7, 3.2),
-    progesterone: 0.03 + 0.97 * g(cd, ov + 7.5, 3.6),
-    lh: 0.07 + 0.93 * g(cd, ov - 0.4, 0.8),
-    fsh: 0.2 + 0.18 * g(cd, 3, 4) + 0.38 * g(cd, ov - 0.4, 0.9) + 0.12 * g(cd, L + 1, 2),
-    testosterone: 0.32 + 0.55 * g(cd, ov - 0.6, 3),
+    estrogen: 0.12 + 0.83 * ga(cd, ov - 1.6, 3.4 * f, 1.25) + 0.3 * ga(cd, ov + 7.5, 2.8, 2.5),
+    progesterone: 0.07 + 0.78 * ga(cd, ov + 7.5, 3.4, 2.7),
+    lh: 0.1 + 0.04 * g(cd, 3, 3 * f) + 1.15 * ga(cd, ov - 0.8, 0.7, 1.15) + 0.03 * g(cd, ov + 5, 4),
+    fsh: 0.08 + 0.17 * g(cd, 4 * f + 1, 3.3 * f) + 0.27 * ga(cd, ov - 0.7, 0.8, 1.3) + 0.12 * g(cd, L + 1.5, 1.8),
+    testosterone: 0.06 + 0.07 * g(cd, ov - 0.5, 2.2),
   };
 }
+// Shared-scale levels for drawing the curves (estrogen peak ≈ 0.95, LH surge ≈ 1.25).
+export function hormonesAt(cd, L, P) { return raw(clamp(cd, 1, L + 1), L, P); }
 const cache = {};
-function maxes(L, P) {
+function range(L, P) {
   const k = L + ':' + P;
   if (!cache[k]) {
-    const m = { estrogen: 0, progesterone: 0, lh: 0, fsh: 0, testosterone: 0 };
-    for (let x = 1; x <= L; x += 0.1) { const r = raw(x, L, P); for (const h in m) m[h] = Math.max(m[h], r[h]); }
-    cache[k] = m;
+    const lo = {}, hi = {};
+    for (let x = 1; x <= L; x += 0.1) { const r = raw(x, L, P); for (const h in r) { lo[h] = Math.min(lo[h] ?? 9, r[h]); hi[h] = Math.max(hi[h] ?? 0, r[h]); } }
+    cache[k] = { lo, hi };
   }
   return cache[k];
 }
-export function hormonesAt(cd, L, P) {
-  const x = clamp(cd, 1, L), r = raw(x, L, P), m = maxes(L, P), out = {};
-  for (const h in r) out[h] = r[h] / m[h];
+// 0–1 position of each hormone within its own monthly range — used for labels, bars and energy.
+export function hormonesRel(cd, L, P) {
+  const r = hormonesAt(cd, L, P), { lo, hi } = range(L, P), out = {};
+  for (const h in r) out[h] = clamp((r[h] - lo[h]) / (hi[h] - lo[h]), 0, 1);
   return out;
 }
-export function hormoneLevel(v) { return v < 0.25 ? 'Low' : v < 0.5 ? 'Moderate' : v < 0.82 ? 'High' : 'Peak'; }
+export function hormoneLevel(r) { return r < 0.2 ? 'Low' : r < 0.45 ? 'Moderate' : r < 0.8 ? 'High' : 'Peak'; }
 export function hormoneTrend(cd, L, P, h) {
-  const a = hormonesAt(cd - 0.5, L, P)[h], b = hormonesAt(cd + 0.5, L, P)[h];
+  const a = hormonesRel(cd - 0.5, L, P)[h], b = hormonesRel(cd + 0.5, L, P)[h];
   return b - a > 0.03 ? 'rising' : a - b > 0.03 ? 'falling' : 'steady';
 }
 export function energyAt(cd, L, P) {
-  const h = hormonesAt(cd, L, P);
+  const h = hormonesRel(cd, L, P);
   let e = 0.3 + 0.5 * h.estrogen + 0.2 * h.testosterone;
   if (cd <= 2) e -= 0.15;
   if (cd > L - 4) e -= 0.12;
