@@ -264,8 +264,11 @@ function viewOnboarding() {
   const s = ui.onbStep, o = ui.onb;
   const dots = `<div class="onb-dots">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= s ? 'on' : ''}"></i>`).join('')}</div>`;
   if (s === 0) {
-    return `<div class="onb onb-welcome full">
-      <div class="scene"><canvas class="torso3d"></canvas><canvas class="grain"></canvas><div class="scene-fade"></div></div>
+    return `<div class="onb onb-welcome full dark">
+      <div class="scene dark"><div class="flow-text"><div class="flow-row r0"><span>ESTROGEN · PROGESTERONE · LH · FSH · TESTOSTERONE · CORTISOL · MELATONIN · SEROTONIN · ESTROGEN · PROGESTERONE · LH · FSH · TESTOSTERONE · CORTISOL · MELATONIN · SEROTONIN ·</span></div><div class="flow-row r1"><span>MENSTRUAL — FOLLICULAR — OVULATORY — LUTEAL — MENSTRUAL — FOLLICULAR — OVULATORY — LUTEAL — MENSTRUAL — FOLLICULAR — OVULATORY — LUTEAL — MENSTRUAL — FOLLICULAR — OVULATORY — LUTEAL —</span></div><div class="flow-row r2"><span>水 WATER · 木 WOOD · 火 FIRE · 土 EARTH · 金 METAL · 水 WATER · 木 WOOD · 火 FIRE · 水 WATER · 木 WOOD · 火 FIRE · 土 EARTH · 金 METAL · 水 WATER · 木 WOOD · 火 FIRE ·</span></div><div class="flow-row r3"><span>INNER WINTER · INNER SPRING · INNER SUMMER · INNER AUTUMN · INNER WINTER · INNER SPRING · INNER WINTER · INNER SPRING · INNER SUMMER · INNER AUTUMN · INNER WINTER · INNER SPRING ·</span></div><div class="flow-row r4"><span>BODY · MOON · STARS · RHYTHM · RITUAL · BODY · MOON · STARS · RHYTHM · RITUAL · BODY · MOON · STARS · RHYTHM · RITUAL · BODY · MOON · STARS · RHYTHM · RITUAL ·</span></div></div>
+        <div class="fig-wrap welcome hero"><canvas class="figure" data-focus=""></canvas></div>
+        <div class="scene-fade"></div></div>
+      <div class="hero-word"><h1 class="wordmark">under the skin<span>.</span></h1><p class="hero-sub">YOUR BODY · DECODED</p></div>
       <div class="welcome-ui">
         <p class="onb-lead">Live in sync with your hormones.<br>Western cycle science, Eastern wisdom.</p>
         <button class="btn btn-light btn-block" data-action="onbNext">Get started</button>
