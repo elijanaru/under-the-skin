@@ -289,7 +289,7 @@ export const FLOWS = [
 ];
 export const PERIOD_FLOWS = ['light', 'medium', 'heavy'];
 
-export const SYMPTOMS = ['Cramps', 'Bloating', 'Headache', 'Acne', 'Tender breasts', 'Back pain', 'Fatigue', 'Cravings', 'Nausea', 'Insomnia', 'Constipation', 'Dizziness'];
+export const SYMPTOMS = ['Cramps', 'Ovulation pain', 'Bloating', 'Headache', 'Acne', 'Tender breasts', 'Back pain', 'Fatigue', 'Cravings', 'Nausea', 'Insomnia', 'Constipation', 'Dizziness'];
 export const MOODS = ['Calm', 'Happy', 'Energetic', 'Confident', 'Social', 'Sensitive', 'Anxious', 'Irritable', 'Sad', 'Unmotivated'];
 export const FLUIDS = ['Dry', 'Sticky', 'Creamy', 'Watery', 'Egg white'];
 export const SEX = ['None', 'Protected', 'Unprotected'];
@@ -563,6 +563,20 @@ export const EVIDENCE = {
 
 // Whole-body relief guide per symptom: body, food link (SYMPTOM_FOODS), TCM, red flags.
 export const RELIEF = {
+  'Ovulation pain': {
+    why: 'A one-sided twinge, cramp or dull ache low in your belly as the follicle stretches and releases the egg (“mittelschmerz”). A little fluid released with the egg can irritate the belly lining. It usually lasts minutes to 1–2 days and can switch sides from month to month.',
+    steps: [
+      { t: 'Heat on the sore side', d: 'A hot water bottle or heat pad for 15–20 minutes relaxes the muscles around the ovary.', ev: 'some' },
+      { t: 'Pain relief with food', d: 'Ibuprofen or naproxen calm the prostaglandins behind the twinge — take with food, if they are safe for you.', ev: 'some' },
+      { t: 'Warm bath with magnesium salts', d: '15 minutes in warm water with Epsom or magnesium flakes to soften the cramp.', ev: 'emerging' },
+      { t: 'Gentle movement', d: 'A slow walk, child’s pose or lying on your side with knees pulled in often eases it fast.', ev: 'emerging' },
+      { t: 'Ginger or chamomile tea', d: 'Warm, anti-inflammatory and calming for the lower belly.', ev: 'emerging' },
+      { t: 'Light, warm meals', d: 'Skip big heavy meals and fizzy drinks that add bloating on top of the twinge.', ev: 'emerging' },
+      { t: 'Press LV3 (Taichong)', d: 'On the top of the foot between the big and second toe, 1–2 minutes each side, to “move” stuck energy.', ev: 'tcm', to: 'point/ovulatory' },
+    ],
+    tcm: 'Chinese medicine sees this as a brief “stuck” moment while the body pushes the egg out. Warmth and gentle movement help it flow.',
+    doctor: 'Sharp or severe one-sided pain, pain with fever, vomiting or fainting, or pain lasting more than 2 days.',
+  },
   Cramps: {
     why: 'Prostaglandins make the uterus contract to shed its lining; higher levels mean stronger cramps.',
     steps: [

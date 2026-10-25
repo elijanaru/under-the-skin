@@ -146,10 +146,12 @@ export function hormoneTrend(cd, L, P, h) {
   const a = hormonesRel(cd - 0.5, L, P)[h], b = hormonesRel(cd + 0.5, L, P)[h];
   return b - a > 0.03 ? 'rising' : a - b > 0.03 ? 'falling' : 'steady';
 }
+// Typical energy (0–1). Changes across the cycle are real but moderate: lowest in the days before and the first
+// days of the period, rising with estrogen, highest around ovulation, steady in the early/mid luteal phase.
 export function energyAt(cd, L, P) {
-  const h = hormonesRel(cd, L, P);
-  let e = 0.3 + 0.5 * h.estrogen + 0.2 * h.testosterone;
-  if (cd <= 2) e -= 0.15;
-  if (cd > L - 4) e -= 0.12;
-  return clamp(e, 0.12, 1);
+  const h = hormonesRel(cd, L, P), late = cd > L - 4;
+  let e = 0.48 + 0.34 * h.estrogen + 0.08 * h.testosterone + (late ? 0 : 0.06 * h.progesterone);
+  if (cd <= 2) e -= 0.06;       // heaviest bleeding days
+  if (late) e -= 0.06 * (cd - (L - 4)) / 4 + 0.04; // premenstrual dip
+  return clamp(e, 0.35, 0.92);
 }

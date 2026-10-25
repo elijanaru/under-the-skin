@@ -7,7 +7,7 @@ export const COUNTRIES = [
   ['SE', 'Sweden', 'north'], ['NO', 'Norway', 'north'], ['GB', 'United Kingdom', 'north'], ['IE', 'Ireland', 'north'],
   ['FI', 'Finland', 'north'], ['FR', 'France', 'central'], ['ES', 'Spain', 'med'], ['IT', 'Italy', 'med'], ['PT', 'Portugal', 'med'], ['GR', 'Greece', 'med'],
   ['HR', 'Croatia', 'med'], ['TR', 'Türkiye', 'med'], ['US', 'United States', 'us'], ['CA', 'Canada', 'canada'],
-  ['AU', 'Australia', 'aus'], ['NZ', 'New Zealand', 'aus'], ['ZA', 'South Africa', 'aus'],
+  ['KR', 'South Korea', 'korea'], ['AU', 'Australia', 'aus'], ['NZ', 'New Zealand', 'aus'], ['ZA', 'South Africa', 'aus'],
 ];
 
 const all = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -103,7 +103,26 @@ const CANADA = US.filter(([f]) => !['Citrus', 'Artichokes', 'Avocado', 'Pomegran
 CANADA.push(['Saskatoon berries', 'fruit', r(7, 8)], ['Wild blueberries', 'wild', r(8, 9)], ['Haskap berries', 'fruit', r(6, 7)],
   ['Arctic char', 'animal', all], ['Atlantic lobster', 'animal', r(5, 7)], ['Pacific halibut', 'animal', r(4, 10)], ['Wild rice', 'other', r(9, 10)]);
 
-const DATA = { central: CENTRAL, north: NORTH, med: MED, us: US, canada: CANADA, aus: AUS };
+// South Korea: four sharp seasons — cold dry winters (kimjang, Jeju citrus, winter fish), wild spring greens,
+// hot humid summers, rich autumn harvest.
+const KOREA = [
+  ['Napa cabbage', 'veg', r(10, 12)], ['Korean radish (mu)', 'veg', r(10, 2)], ['Spinach (sigeumchi)', 'veg', r(11, 3)], ['Spring onions', 'veg', r(3, 6)],
+  ['Spring wild greens (naengi, dallae, ssuk)', 'wild', r(2, 4)], ['Minari (water dropwort)', 'veg', r(2, 4)], ['Bamboo shoots', 'veg', r(4, 5)],
+  ['Potatoes', 'veg', r(6, 7)], ['Cucumber', 'veg', r(6, 8)], ['Zucchini (aehobak)', 'veg', r(6, 9)], ['Perilla leaves (kkaennip)', 'herb', r(6, 9)],
+  ['Peppers (gochu)', 'veg', r(7, 9)], ['Eggplant', 'veg', r(7, 9)], ['Sweetcorn', 'veg', r(7, 8)], ['Tomatoes', 'veg', r(6, 8)],
+  ['Pumpkin (danhobak)', 'veg', r(8, 11)], ['Sweet potatoes (goguma)', 'veg', r(9, 12)], ['Burdock & lotus root', 'veg', r(10, 3)],
+  ['Pine mushrooms (songi)', 'wild', r(9, 10)], ['Shiitake', 'veg', r(3, 5)],
+  ['Strawberries', 'fruit', r(12, 4)], ['Korean melon (chamoe)', 'fruit', r(5, 7)], ['Green plums (maesil)', 'fruit', [6]], ['Watermelon', 'fruit', r(6, 8)],
+  ['Peaches', 'fruit', r(7, 9)], ['Grapes', 'fruit', r(8, 10)], ['Asian pears (bae)', 'fruit', r(9, 11)], ['Apples', 'fruit', r(9, 12)],
+  ['Persimmon', 'fruit', r(10, 12)], ['Jujubes (daechu)', 'fruit', r(9, 10)], ['Jeju mandarins (gamgyul)', 'fruit', r(11, 2)], ['Hallabong', 'fruit', r(2, 4)],
+  ['Chestnuts', 'other', r(9, 11)], ['Ginseng', 'other', r(9, 11)], ['Seaweed (gim & miyeok)', 'other', r(11, 3)],
+  ['Oysters', 'animal', r(11, 2)], ['Pollock & cod', 'animal', r(12, 2)], ['Mackerel', 'animal', r(9, 11)], ['Hairtail (galchi)', 'animal', r(9, 11)],
+  ['Aged kimchi (mugeunji)', 'other', all], ['Soybean sprouts (kongnamul)', 'veg', all], ['Carrots', 'veg', r(10, 3)],
+  ['Young chicken (boknal season)', 'animal', [7, 8]], ['Abalone (jeonbok)', 'animal', r(6, 9)], ['New-crop rice (haepssal)', 'other', r(9, 11)], ['Garaetteok (New Year rice cakes)', 'other', [1, 2]],
+  ['Blue crab (kkotge)', 'animal', [4, 5, 9, 10, 11]], ['Baby octopus (jjukkumi)', 'animal', r(3, 5)], ['Clams', 'animal', r(2, 5)], ['Pasture eggs', 'animal', r(3, 10)],
+];
+
+const DATA = { central: CENTRAL, north: NORTH, med: MED, us: US, canada: CANADA, korea: KOREA, aus: AUS };
 
 // TCM season for the month (southern regions are shifted by 6 months).
 const SEASON_N = { 12: 'Winter', 1: 'Winter', 2: 'Winter', 3: 'Spring', 4: 'Spring', 5: 'Spring', 6: 'Summer', 7: 'Summer', 8: 'Late summer', 9: 'Autumn', 10: 'Autumn', 11: 'Autumn' };
@@ -130,7 +149,7 @@ export function guessCountry() {
   const l = (navigator.language || 'de-DE').split('-');
   const code = (l[1] || '').toUpperCase();
   if (COUNTRIES.some(c => c[0] === code)) return code;
-  return { de: 'DE', en: 'GB', fr: 'FR', es: 'ES', it: 'IT', nl: 'NL', pt: 'PT', el: 'GR', pl: 'PL', sv: 'SE', da: 'DK', nb: 'NO', tr: 'TR', cs: 'CZ' }[l[0]] || 'DE';
+  return { de: 'DE', en: 'GB', fr: 'FR', es: 'ES', it: 'IT', nl: 'NL', pt: 'PT', el: 'GR', pl: 'PL', sv: 'SE', da: 'DK', nb: 'NO', tr: 'TR', cs: 'CZ', ko: 'KR' }[l[0]] || 'DE';
 }
 export function seasonal(code, month) {
   const region = countryRegion(code);
@@ -145,6 +164,24 @@ export function seasonName(code, month) {
 // nature: warm | neutral | cool. Phases: m=menstrual f=follicular o=ovulatory l=luteal.
 const I = (nature, nut, ph) => ({ nature, nut, ph: ph.split('').map(c => ({ m: 'menstrual', f: 'follicular', o: 'ovulatory', l: 'luteal' })[c]) });
 export const FOOD_INFO = {
+  'aged kimchi (mugeunji)': I('warm', ['Probiotics', 'Vitamin C'], 'fol'), 'soybean sprouts (kongnamul)': I('cool', ['Vitamin C', 'Folate', 'Fibre'], 'fo'),
+  'young chicken (boknal season)': I('warm', ['Protein', 'Collagen', 'B vitamins'], 'ml'), 'abalone (jeonbok)': I('neutral', ['Iron', 'Zinc', 'Protein'], 'm'),
+  'new-crop rice (haepssal)': I('neutral', ['Complex carbs', 'B vitamins'], 'l'), 'garaetteok (new year rice cakes)': I('neutral', ['Complex carbs'], 'm'),
+  'napa cabbage': I('cool', ['Vitamin C', 'Folate', 'Fibre'], 'fo'), 'korean radish (mu)': I('cool', ['Vitamin C', 'Digestive enzymes'], 'ol'),
+  'spinach (sigeumchi)': I('cool', ['Iron', 'Magnesium', 'Folate'], 'ml'), 'spring wild greens (naengi, dallae, ssuk)': I('warm', ['Iron', 'Vitamin C', 'Folate'], 'mf'),
+  'minari (water dropwort)': I('cool', ['Vitamin C', 'Potassium'], 'f'), 'bamboo shoots': I('cool', ['Fibre', 'Potassium'], 'o'),
+  'potatoes': I('neutral', ['Potassium', 'Vitamin C', 'Complex carbs'], 'l'), 'zucchini (aehobak)': I('cool', ['Potassium', 'Water'], 'o'),
+  'perilla leaves (kkaennip)': I('warm', ['Omega-3', 'Calcium', 'Iron'], 'mf'), 'peppers (gochu)': I('warm', ['Vitamin C', 'Capsaicin'], 'mo'),
+  'eggplant': I('cool', ['Fibre', 'Antioxidants'], 'o'), 'pumpkin (danhobak)': I('warm', ['Beta-carotene', 'Magnesium'], 'lm'),
+  'sweet potatoes (goguma)': I('neutral', ['Beta-carotene', 'Complex carbs', 'Vitamin B6'], 'l'), 'burdock & lotus root': I('neutral', ['Inulin', 'Iron', 'Vitamin C'], 'ml'),
+  'pine mushrooms (songi)': I('neutral', ['Vitamin D', 'Selenium'], 'f'), 'shiitake': I('neutral', ['Vitamin D', 'B vitamins'], 'f'),
+  'korean melon (chamoe)': I('cool', ['Vitamin C', 'Water', 'Potassium'], 'o'), 'green plums (maesil)': I('neutral', ['Organic acids', 'Vitamin C'], 'f'),
+  'peaches': I('warm', ['Vitamin C', 'Fibre'], 'fo'), 'asian pears (bae)': I('cool', ['Fibre', 'Water', 'Potassium'], 'l'),
+  'jujubes (daechu)': I('warm', ['Iron', 'Vitamin C', 'Fibre'], 'ml'), 'jeju mandarins (gamgyul)': I('cool', ['Vitamin C', 'Folate'], 'mf'),
+  'hallabong': I('cool', ['Vitamin C', 'Folate'], 'f'), 'ginseng': I('warm', ['Ginsenosides'], 'm'), 'seaweed (gim & miyeok)': I('cool', ['Iodine', 'Iron', 'Calcium'], 'ml'),
+  'pollock & cod': I('neutral', ['Protein', 'Iodine', 'Vitamin B12'], 'ml'), 'hairtail (galchi)': I('warm', ['Omega-3', 'Protein'], 'fl'),
+  'blue crab (kkotge)': I('cool', ['Zinc', 'Selenium', 'Vitamin B12'], 'fo'), 'baby octopus (jjukkumi)': I('neutral', ['Iron', 'Taurine', 'B12'], 'm'),
+  'clams': I('cool', ['Iron', 'Vitamin B12', 'Zinc'], 'm'),
   'turnip greens': I('warm', ['Calcium', 'Folate', 'Vitamin K'], 'mf'), 'cardoons': I('cool', ['Fibre', 'Magnesium', 'Folate'], 'l'),
   'octopus': I('neutral', ['Iron', 'Vitamin B12', 'Selenium'], 'm'), 'cuttlefish': I('neutral', ['Iron', 'Vitamin B12', 'Copper'], 'mf'),
   'red mullet': I('neutral', ['Omega-3', 'Vitamin D', 'Iodine'], 'fo'),
@@ -217,6 +254,7 @@ export function foodInfo(name, kind) {
 // `extra` = pantry staples. Built on natural whole food: raw-first, warm when the body needs it,
 // no oats, no tofu, few grains, raw dairy welcome.
 const D = (name, warm, keys, extra, how) => ({ name, warm, keys, extra, how });
+const K = (...a) => ({ ...D(...a), region: 'korea' });
 export const SEASON_DISHES = [
   D('Roasted Root Bowl with Herb Butter', true, ['parsnip', 'carrot', 'beetroot', 'celeriac|jerusalem'], ['Butter or ghee', 'Thyme', 'Walnuts', 'Sea salt'], 'Roast the roots at 200 °C for 35 minutes, toss with melted herb butter and toasted walnuts.'),
   D('Kale, Leek & Bone Broth Soup', true, ['kale|cabbage', 'leek', 'carrot'], ['Bone broth', 'Garlic', 'Pasture egg'], 'Soften leeks in butter, add carrots and broth, simmer 15 minutes, stir in kale and finish with a soft egg.'),
@@ -280,9 +318,9 @@ export const SEASON_DISHES = [
   D('Cuttlefish with Spring Peas', true, ['cuttlefish', 'peas|broad beans'], ['Olive oil', 'Garlic', 'Mint'], 'Sauté cuttlefish strips in olive oil and garlic, add peas and a splash of water, cook 10 minutes, finish with mint.'),
   D('Pan-Fried Red Mullet with Fennel', true, ['red mullet', 'fennel|lemon|orange'], ['Olive oil', 'Sea salt'], 'Fry the fillets skin-side down 3 minutes until crisp; serve on thinly sliced fennel with citrus.'),
   D('Slow-Braised Cardoons with Butter & Lemon', true, ['cardoon', 'lemon|orange'], ['Butter', 'Bone broth', 'Raw cheese'], 'Peel and cut the cardoons, braise in broth 40 minutes until tender, finish with butter, lemon and grated raw cheese.'),
-  D('Radishes with Butter & Sea Salt', false, ['radish'], ['Raw butter', 'Flaky sea salt', 'Chives'], 'Dip crisp radishes in soft raw butter, then in salt — the classic French spring snack.'),
+  D('Radishes with Butter & Sea Salt', false, ['^radish|red & black radish'], ['Raw butter', 'Flaky sea salt', 'Chives'], 'Dip crisp radishes in soft raw butter, then in salt — the classic French spring snack.'),
   D('Herb Omelette with Spring Onions', true, ['spring onion|chive|wild garlic', 'parsley|dill|chive|spinach'], ['Pasture eggs', 'Butter', 'Raw cheese'], 'Whisk eggs with chopped herbs, cook gently in butter, fold over grated raw cheese.'),
-  D('Watercress, Egg & Radish Salad', false, ['watercress', 'radish'], ['Pasture eggs', 'Olive oil', 'Lemon'], 'Toss peppery watercress with sliced radish, halved soft eggs, oil and lemon.'),
+  D('Watercress, Egg & Radish Salad', false, ['watercress', '^radish|red & black radish'], ['Pasture eggs', 'Olive oil', 'Lemon'], 'Toss peppery watercress with sliced radish, halved soft eggs, oil and lemon.'),
   D('Trout with Wild Garlic Butter', true, ['trout', 'wild garlic|chive|parsley|dill'], ['Butter', 'Lemon', 'Sea salt'], 'Pan-fry the trout in butter 3–4 minutes a side, spoon over melted herb butter and lemon.'),
   D('Gazpacho', false, ['tomato', 'cucumber', 'pepper'], ['Olive oil', 'Garlic', 'Sherry vinegar', 'Sea salt'], 'Blend ripe tomatoes, cucumber, pepper and garlic with oil and vinegar until silky; chill — no bread needed.'),
   D('Grilled Aubergine with Raw Yoghurt & Mint', true, ['aubergine', 'mint|basil'], ['Raw yoghurt', 'Olive oil', 'Garlic'], 'Grill thick aubergine slices until soft and charred, top with garlicky yoghurt and torn mint.'),
@@ -293,15 +331,57 @@ export const SEASON_DISHES = [
   D('Sweetcorn with Herb Butter', true, ['sweetcorn'], ['Butter', 'Chives or basil', 'Sea salt'], 'Boil or grill the cobs 6–8 minutes, roll in soft herb butter and salt.'),
   D('Ginger-Poached Stone Fruit', true, ['stone fruit|peach|apricot|plum|cherr'], ['Fresh ginger', 'Cinnamon', 'Raw honey', 'Raw cream'], 'Poach halved fruit with ginger and cinnamon 8 minutes — warming for your period, sweet for summer.'),
   D('Warm Pea & Mint Soup', true, ['peas', 'mint|basil|parsley'], ['Bone broth', 'Butter', 'Raw cream'], 'Simmer peas in broth 5 minutes, blend with mint and butter, swirl in raw cream.'),
+  // ---- Korean kitchen (shown first when the country is South Korea) ----
+  K('Soegogi-muguk (Beef & Radish Soup)', true, ['korean radish'], ['Beef brisket', 'Garlic', 'Sesame oil', 'Soup soy sauce'], 'Sauté thin beef slices in sesame oil, add sliced mu and water, simmer 20 minutes until the radish turns clear.'),
+  K('Geotjeori (Fresh Kimchi)', false, ['napa cabbage', 'korean radish|spring onion'], ['Gochugaru', 'Garlic', 'Fish sauce', 'Asian pear'], 'Toss salted cabbage with chili, garlic, fish sauce and grated pear — eaten fresh, the way it’s made at kimjang.'),
+  K('Sigeumchi-namul (Spinach Namul)', true, ['spinach'], ['Sesame oil', 'Garlic', 'Toasted sesame', 'Soup soy sauce'], 'Blanch the spinach 30 seconds, squeeze, season with sesame oil, garlic and sesame.'),
+  K('Bom-namul (Spring Greens Namul)', true, ['spring wild greens|minari'], ['Doenjang or gochujang', 'Sesame oil', 'Garlic'], 'Blanch naengi, dallae or minari briefly and season — Korea’s first taste of spring.'),
+  K('Ssukguk (Mugwort Soup)', true, ['spring wild greens|ssuk', 'clams'], ['Doenjang', 'Anchovy broth', 'Garlic'], 'Dissolve doenjang in anchovy broth, add clams, then fresh mugwort for the last minute.'),
+  K('Oi-muchim (Spicy Cucumber Salad)', false, ['cucumber'], ['Gochugaru', 'Vinegar', 'Garlic', 'Sesame'], 'Slice cucumber, salt briefly, toss with chili flakes, vinegar, garlic and sesame.'),
+  K('Hobak-bokkeum (Stir-Fried Zucchini)', true, ['zucchini|aehobak'], ['Saeujeot (salted shrimp)', 'Garlic', 'Sesame oil'], 'Sauté half-moons of aehobak with garlic and salted shrimp until just soft.'),
+  K('Godeungeo-gui (Grilled Mackerel)', true, ['mackerel'], ['Coarse sea salt', 'Lemon'], 'Salt the mackerel, grill skin-side first until crisp — autumn mackerel is the fattest.'),
+  K('Galchi-jorim (Braised Hairtail)', true, ['hairtail'], ['Korean radish', 'Gochugaru', 'Garlic', 'Soy sauce'], 'Layer radish and hairtail in a pot, pour over spicy sauce and simmer 20 minutes.'),
+  K('Songi-gui (Grilled Pine Mushrooms)', true, ['pine mushroom|shiitake'], ['Sesame oil', 'Sea salt'], 'Tear the mushrooms, grill briefly and dip in sesame oil and salt — a short autumn luxury.'),
+  K('Baesuk (Steamed Pear with Jujube & Ginger)', true, ['asian pear', 'jujube'], ['Fresh ginger', 'Honey', 'Black peppercorns'], 'Steam a hollowed pear filled with jujubes, ginger and honey 30 minutes — the classic Korean throat soother.'),
+  K('Dongtae-jjigae (Pollock Stew)', true, ['pollock', 'korean radish'], ['Gochugaru', 'Garlic', 'Anchovy broth', 'A little tofu'], 'Simmer radish in spicy broth, add pollock and a few cubes of tofu for 10 minutes.'),
+  K('Gun-goguma (Roasted Sweet Potatoes)', true, ['sweet potato'], ['Kimchi on the side'], 'Roast whole sweet potatoes until caramelised — the Korean winter street snack, eaten with cold kimchi.'),
+  K('Daechu-cha (Jujube Tea)', true, ['jujube'], ['Fresh ginger', 'Cinnamon', 'Honey', 'Pine nuts'], 'Simmer jujubes and ginger 1 hour until deep red and sweet; float a few pine nuts on top.'),
+  K('Jjukkumi-bokkeum (Spicy Baby Octopus)', true, ['baby octopus'], ['Gochujang', 'Garlic', 'Spring onion', 'Sesame oil'], 'Stir-fry spring baby octopus with spicy gochujang sauce, garlic and spring onion.'),
+  K('Subak-hwachae (Watermelon Punch)', false, ['watermelon'], ['Milk', 'Honey', 'Mint'], 'Scoop watermelon into a big bowl, pour over cold milk and honey — Korea’s summer party bowl.'),
+  K('Miyeokguk (Seaweed Soup)', true, ['seaweed'], ['Beef brisket', 'Garlic', 'Sesame oil', 'Soup soy sauce'], 'Sauté soaked miyeok with beef in sesame oil, add water and simmer — eaten on birthdays and after giving birth, rich in iron and iodine.'),
+  K('Ueong-jorim (Braised Burdock)', true, ['burdock'], ['Soy sauce', 'Rice syrup or honey', 'Sesame'], 'Braise thin burdock and lotus root slices in soy and syrup until glossy.'),
+  K('Bibimbap', true, ['spinach|bean sprouts|zucchini|spring wild greens|minari|cucumber'], ['Rice', 'Beef', 'Fried egg', 'Gochujang', 'Sesame oil'], 'Top warm rice with seasoned namul, beef and a fried egg; mix in gochujang and sesame oil.'),
+  K('Kimchi-jjigae (Kimchi Stew)', true, ['aged kimchi'], ['Pork belly', 'Garlic', 'Spring onion', 'A little tofu'], 'Fry pork with sour kimchi, add water and simmer 20 minutes; a few cubes of tofu at the end.'),
+  K('Doenjang-jjigae (Soybean Paste Stew)', true, ['zucchini|korean radish|potatoes|shiitake'], ['Doenjang', 'Anchovy broth', 'Peppers', 'A little tofu'], 'Dissolve doenjang in anchovy broth, simmer the vegetables, add chili and a little tofu.'),
+  K('Bulgogi', true, ['asian pear|spring onion|shiitake'], ['Thin-sliced beef', 'Soy sauce', 'Garlic', 'Lettuce for wraps'], 'Marinate beef in soy, garlic and grated pear for an hour, sear hot, wrap in lettuce.'),
+  K('Galbi-jjim (Braised Short Ribs)', true, ['korean radish|chestnut', 'jujube|chestnut|shiitake'], ['Beef short ribs', 'Soy sauce', 'Asian pear', 'Garlic'], 'Braise the ribs with radish, chestnuts and jujubes for 2 hours — the Chuseok feast dish.'),
+  K('Samgyetang (Ginseng Chicken Soup)', true, ['young chicken|ginseng'], ['Sticky rice', 'Ginseng', 'Jujubes', 'Garlic'], 'Stuff a small chicken with sticky rice, ginseng, jujubes and garlic; simmer 1 hour — eaten on the hottest days of summer.'),
+  K('Mul-naengmyeon (Cold Buckwheat Noodles)', false, ['cucumber|korean radish|asian pear'], ['Buckwheat noodles', 'Beef broth', 'Boiled egg', 'Mustard & vinegar'], 'Serve chewy noodles in icy beef broth with cucumber, pear and egg — the summer classic.'),
+  K('Kongguksu (Cold Soy Milk Noodles)', false, ['cucumber', 'tomato'], ['Soy milk', 'Wheat noodles', 'Sesame', 'Sea salt'], 'Blend soaked soybeans with sesame into a creamy cold broth; pour over noodles with cucumber and tomato.'),
+  K('Gimbap', false, ['spinach|cucumber|carrot'], ['Rice', 'Gim (seaweed)', 'Egg', 'Pickled radish', 'Sesame oil'], 'Roll seasoned rice, spinach, egg and pickled radish in gim; brush with sesame oil and slice.'),
+  K('Japchae (Glass Noodles)', true, ['spinach|shiitake|peppers|carrot'], ['Sweet potato noodles', 'Beef', 'Soy sauce', 'Sesame oil'], 'Toss glass noodles with stir-fried vegetables, beef, soy and sesame oil.'),
+  K('Haemul-pajeon (Seafood Pancake)', true, ['spring onion', 'clams|baby octopus|blue crab|oyster'], ['Flour or rice flour', 'Egg', 'Soy-vinegar dip'], 'Lay long spring onions in batter with seafood, fry until crisp — a rainy-day favourite.'),
+  K('Kimchi-bokkeumbap (Kimchi Fried Rice)', true, ['aged kimchi'], ['Rice', 'Fried egg', 'Butter', 'Gim'], 'Fry chopped kimchi in butter, add rice, top with a runny fried egg and crumbled gim.'),
+  K('Hobakjuk (Pumpkin Porridge)', true, ['pumpkin'], ['Sweet rice flour', 'Honey', 'Sea salt'], 'Simmer pumpkin until soft, blend and thicken with a little sweet rice flour — gentle and warming.'),
+  K('Jeonbokjuk (Abalone Porridge)', true, ['abalone'], ['Rice', 'Sesame oil', 'Soup soy sauce'], 'Sauté sliced abalone and rice in sesame oil, simmer to a silky porridge — restorative after illness or your period.'),
+  K('Tteokguk (New Year Rice Cake Soup)', true, ['garaetteok'], ['Beef broth', 'Egg ribbons', 'Gim', 'Spring onion'], 'Simmer sliced rice cakes in beef broth, top with egg ribbons and gim — eaten on Seollal to turn a year older.'),
+  K('Songpyeon (Chuseok Rice Cakes)', true, ['new-crop rice', 'chestnut|jujube'], ['Rice flour', 'Sesame & honey filling', 'Pine needles'], 'Shape half-moons of new-rice dough around sesame-honey or chestnut filling, steam on pine needles.'),
+  K('Bossam (Pork Wraps with Kimjang Kimchi)', true, ['napa cabbage', 'korean radish'], ['Pork belly', 'Doenjang', 'Garlic', 'Ssamjang'], 'Boil pork belly with doenjang, slice and wrap in cabbage leaves with spicy radish salad.'),
+  K('Patbingsu (Shaved Ice)', false, ['strawberr|peach|watermelon|korean melon'], ['Milk ice', 'Sweet red beans', 'Injeolmi'], 'Shave frozen milk into snow, top with red beans, fruit and rice-cake cubes.'),
+  K('Kongnamul-guk (Bean Sprout Soup)', true, ['bean sprouts'], ['Anchovy broth', 'Garlic', 'Spring onion', 'Gochugaru'], 'Simmer sprouts in anchovy broth with garlic — clean, light and soothing.'),
+  K('Gyeran-jjim (Steamed Egg)', true, ['pasture eggs'], ['Anchovy broth', 'Spring onion', 'Sesame oil'], 'Whisk eggs with broth, steam in a clay pot until puffed and silky.'),
+  K('Sundubu-jjigae (Soft Tofu Stew)', true, ['clams|oyster', 'peppers|spring onion'], ['Soft tofu', 'Gochugaru', 'Egg', 'Garlic'], 'Bubble clams in spicy broth, spoon in soft tofu, crack an egg on top — the one tofu dish worth it.'),
+  K('Gamja-jeon (Potato Pancakes)', true, ['potatoes'], ['Sea salt', 'Soy-vinegar dip'], 'Grate potatoes, drain, fry thin crispy pancakes in a little oil.'),
   D('Grapes, Raw Cheese & Walnuts', false, ['grape', 'walnut|hazelnut'], ['Raw cheese'], 'A simple autumn plate — perfect afternoon snack.'),
 ];
-export function dishesFor(items) {
+// Dishes that belong to a region's own kitchen (region tag) are shown first there.
+export function dishesFor(items, region) {
   const names = items.map(i => i.f.toLowerCase());
   const has = alt => names.some(n => new RegExp(alt).test(n));
   return SEASON_DISHES.map(d => {
     const hit = d.keys.filter(has);
-    return { ...d, hit, score: hit.length / d.keys.length, used: items.filter(i => d.keys.some(k => new RegExp(k).test(i.f.toLowerCase()))) };
-  }).filter(d => d.score >= .66 && has(d.keys[0])).sort((a, b) => b.score - a.score); // main ingredient must be in season
+    return { ...d, hit, local: !!region && d.region === region, score: hit.length / d.keys.length, used: items.filter(i => d.keys.some(k => new RegExp(k).test(i.f.toLowerCase()))) };
+  }).filter(d => d.score >= .66 && has(d.keys[0]) && (!d.region || d.region === region)).sort((a, b) => (b.local - a.local) || (b.score - a.score)); // main ingredient must be in season
 }
 
 // Whole-year view: every food of the region with its in-season months.

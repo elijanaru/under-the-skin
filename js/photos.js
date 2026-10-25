@@ -517,6 +517,91 @@ export const DISH_PHOTOS = {
   "src": "https://images.unsplash.com/photo-1626200419199-391ae4be7a41",
   "by": "Farhad Ibrahimzade",
   "page": "https://unsplash.com/photos/green-soup-in-white-ceramic-bowl-C9GB-cCSRsM"
+ },
+ "Soegogi-muguk (Beef & Radish Soup)": {
+  "src": "https://images.unsplash.com/photo-1618351708186-5ba8a9da1933",
+  "by": "Choi sungwoo",
+  "page": "https://unsplash.com/photos/soup-with-sliced-of-meat-in-white-ceramic-bowl-bfbcJnliD7I"
+ },
+ "Geotjeori (Fresh Kimchi)": {
+  "src": "https://images.unsplash.com/photo-1540162621994-4b096ef8523b",
+  "by": "charlesdeluvio",
+  "page": "https://unsplash.com/photos/jdMEMbsWd70"
+ },
+ "Sigeumchi-namul (Spinach Namul)": {
+  "src": "https://images.unsplash.com/photo-1574316071802-0d684efa7bf5",
+  "by": "Shutter Sphere Collective",
+  "page": "https://unsplash.com/photos/6AAptb2kBak"
+ },
+ "Bom-namul (Spring Greens Namul)": {
+  "src": "https://images.unsplash.com/photo-1653226361684-2730bbab56b4",
+  "by": "Nikki Son",
+  "page": "https://unsplash.com/photos/a-bunch-of-plants-that-are-in-the-dirt-1zyvBZS1ya4"
+ },
+ "Ssukguk (Mugwort Soup)": {
+  "src": "https://images.unsplash.com/photo-1560684352-8497838a2229",
+  "by": "Do mee",
+  "page": "https://unsplash.com/photos/SH8_JmrsQcw"
+ },
+ "Oi-muchim (Spicy Cucumber Salad)": {
+  "src": "https://images.unsplash.com/photo-1679735107918-15112296e28d",
+  "by": "Alex Bayev",
+  "page": "https://unsplash.com/photos/a-bowl-of-cucumbers-and-onions-on-a-table-xxFlRFNsBoU"
+ },
+ "Godeungeo-gui (Grilled Mackerel)": {
+  "src": "https://images.unsplash.com/photo-1670207261020-3930a53fb855",
+  "by": "yeojin yun",
+  "page": "https://unsplash.com/photos/a-plate-of-food-5eFflPtVA8U"
+ },
+ "Songi-gui (Grilled Pine Mushrooms)": {
+  "src": "https://images.unsplash.com/photo-1676140382464-83cd80afc22b",
+  "by": "Filipp Romanovski",
+  "page": "https://unsplash.com/photos/a-bunch-of-mushrooms-sitting-on-top-of-a-pan-B24epTR09To"
+ },
+ "Baesuk (Steamed Pear with Jujube & Ginger)": {
+  "src": "https://images.unsplash.com/photo-1497587285970-432d79cee5f3",
+  "by": "Leti Kugler",
+  "page": "https://unsplash.com/photos/round-fruits-in-dimmed-area-SXCHiYlA5QM"
+ },
+ "Dongtae-jjigae (Pollock Stew)": {
+  "src": "https://images.unsplash.com/photo-1776651993696-a7e4fb747f52",
+  "by": "jason hu",
+  "page": "https://unsplash.com/photos/spicy-fish-stew-with-chili-and-herbs-XQ96KH78g9U"
+ },
+ "Gun-goguma (Roasted Sweet Potatoes)": {
+  "src": "https://images.unsplash.com/photo-1639922414789-74610d7385ea",
+  "by": "Dong Cheng",
+  "page": "https://unsplash.com/photos/43U-vt3dwYg"
+ },
+ "Daechu-cha (Jujube Tea)": {
+  "src": "https://images.unsplash.com/photo-1537201872643-ff006e1f016f",
+  "by": "Mona Mok",
+  "page": "https://unsplash.com/photos/dried-fruits-on-white-ceramic-plate-wx4A5w85Sm8"
+ },
+ "Galchi-jorim (Braised Hairtail)": {
+  "src": "https://images.unsplash.com/photo-1548704087-b11dab0fbec0",
+  "by": "lalo Hernandez",
+  "page": "https://unsplash.com/photos/fried-fish-with-sliced-lemon-nOpn-ScYv6A"
+ },
+ "Jjukkumi-bokkeum (Spicy Baby Octopus)": {
+  "src": "https://images.unsplash.com/photo-1753768842932-73e9991ca4f3",
+  "by": "Kris Tian",
+  "page": "https://unsplash.com/photos/delicious-octopus-dish-with-herbs-and-spices-GLlzEDznWaw"
+ },
+ "Subak-hwachae (Watermelon Punch)": {
+  "src": "https://images.unsplash.com/photo-1633040248049-b15607ae19f9",
+  "by": "Ömer Haktan Bulut",
+  "page": "https://unsplash.com/photos/a-watermelon-drink-with-a-slice-of-watermelon-on-the-side--qvWEIGYMus"
+ },
+ "Miyeokguk (Seaweed Soup)": {
+  "src": "https://images.unsplash.com/photo-1784448678101-51e8b1dfcee3",
+  "by": "Jamie Trinh",
+  "page": "https://unsplash.com/photos/MyIBscTsMBU"
+ },
+ "Ueong-jorim (Braised Burdock)": {
+  "src": "https://images.unsplash.com/photo-1791321829210-d94ccbc63b8f",
+  "by": "Zoshua Colah",
+  "page": "https://unsplash.com/photos/lotus-root-dish-with-chopsticks-6tkZ_SwjPuA"
  }
 };
 export function dishPhoto(name, w = 400) {

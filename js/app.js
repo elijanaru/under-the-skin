@@ -346,8 +346,10 @@ function viewOnboarding() {
         <input class="field" type="date" data-input="onb.last" value="${o.last}" max="${todayISO()}">
         <div class="stepper-row"><span>How many days does it usually last?</span>${stepper('periodLength', o.periodLength, 'onb')}</div>`,
     5: `<h2 class="onb-title">How long is your<br>cycle, usually?</h2>
-        <p class="muted">First day of one period to the first day of the next. Not sure? 28 is a good start — we'll learn your real rhythm as you log.</p>
-        <div class="big-stepper">${stepper('cycleLength', o.cycleLength, 'onb', true)}<span>days</span></div>`,
+        <p class="muted">First day of one period to the first day of the next.</p>
+        <div class="big-stepper ${o.unsure ? 'dim' : ''}">${stepper('cycleLength', o.cycleLength, 'onb', true)}<span>days</span></div>
+        <button class="chip unsure ${o.unsure ? 'on' : ''}" data-action="onbUnsure">${o.unsure ? icon('check', 14, 2.4) : ''} I’m not sure</button>
+        ${o.unsure ? '<p class="muted sm">No problem — we’ll start with 28 days and learn your real cycle automatically as soon as you log your next period.</p>' : ''}`,
     6: `<h2 class="onb-title">What would you<br>like to focus on?</h2>
         <div class="chips">${GOALS.map(g => `<button class="chip ${o.goals.includes(g) ? 'on' : ''}" data-action="onbGoal" data-v="${esc(g)}">${esc(g)}</button>`).join('')}</div>`,
   }[s];
@@ -374,7 +376,7 @@ function viewToday() {
       <button class="btn btn-dark" data-action="nav" data-to="calendar">Open calendar</button></div></div>`;
   }
   const info = M.info, ph = PHASES[info.phase], tcm = TCM[info.phase], N = NUTRITION[info.phase];
-  const energy = Math.round(C.energyAt(info.cd, info.L, info.P) * 100);
+  const energy = Math.round(myEnergy(info) * 100);
   const seed = dayNum(today);
   const chips = [];
   if (info.late) chips.push(`<span class="hchip">${icon('drop', 14)} ${plural(info.late, 'day')} late</span>`);
@@ -412,6 +414,8 @@ function viewToday() {
       badge: `<div class="fh-side"><span class="fh-glyph" title="${tcm.element}">${tcm.elementGlyph}</span>${info.fertile ? `<span class="fh-badge">${icon('spark', 13)} Fertile</span>` : ''}</div>`,
       stats: [[info.isPeriod ? 'Period' : 'Next period', info.late ? `${info.late}d late` : info.isPeriod ? `Day ${info.cd}` : `${info.daysToPeriod} days`], ['Egg release', info.isOvulation ? 'Today' : info.cd < info.ov ? `in ${info.daysToOv}d` : `day ${info.ov}`], ['Energy', `${energy}%`]] })}
 
+    ${!stats.lengths.length ? `<section class="card learn-note"><span class="art-ic">${icon('spark', 18)}</span><div><b>Learning your cycle</b><span>Using ${stats.avgCycle} days for now. Log your next period and every prediction adjusts to your real rhythm.</span></div></section>` : ''}
+    ${info.cd >= info.ov - 2 && info.cd <= info.ov + 1 ? `<button class="card ovpain" data-action="nav" data-to="relief/${encodeURIComponent('Ovulation pain')}"><span class="ovp-ic"><i></i></span><span class="art-t">Twinge on one side?<small>That’s your egg being released — 7 ways to ease it</small></span>${icon('chevR', 18)}</button>` : ''}
     ${alerts.length ? `<section class="card glass alerts">${alerts.slice(0, 2).join('')}</section>` : ''}
     ${cycleFlag()}
 
@@ -968,6 +972,27 @@ function upcomingPatterns(P) {
   }
   return out.slice(0, 3);
 }
+// Personal energy: blends the hormone model with what you actually log (1–5) once there's data for that day.
+function myEnergy(info) {
+  const base = C.energyAt(Math.min(info.cd, info.L), info.L, info.P);
+  const P = patterns(), v = P.eAvg[Math.min(info.cd, info.L)];
+  return v == null ? base : Math.max(.3, Math.min(.95, base * .5 + (.3 + (v - 1) / 4 * .62) * .5));
+}
+function learnedCard() {
+  const { stats, info } = M; if (!info) return '';
+  const n = stats.lengths.length, P = patterns(), facts = [];
+  const pm = Math.max(1, Math.round(stats.variation / 2));
+  facts.push(n ? ['Your cycle', `${stats.avgCycle} days${stats.variation ? ` (±${pm})` : ''}`, `Learned from ${n} ${n === 1 ? 'cycle' : 'cycles'}`] : ['Your cycle', `${stats.avgCycle} days for now`, 'Log your next period to learn your real rhythm']);
+  facts.push(['Your period', `About ${stats.avgPeriod} days`, stats.periods.length ? `From ${stats.periods.length} logged ${stats.periods.length === 1 ? 'period' : 'periods'}` : 'Default until you log']);
+  const np = info.nextStart, lo = C.addDays(np, -pm), hi = C.addDays(np, pm);
+  facts.push(['Next period', fmt(np, { month: 'short', day: 'numeric' }), n ? `Most likely ${fmt(lo, { month: 'short', day: 'numeric' })} – ${fmt(hi, { month: 'short', day: 'numeric' })}` : 'Gets sharper with every period you log']);
+  const ev = P.eAvg.map((v, d) => [v, d]).filter(([v]) => v != null);
+  if (ev.length >= 5) { const [, d] = ev.reduce((a, b) => b[0] > a[0] ? b : a); facts.push(['Your energy peak', `Around day ${d}`, 'From your energy check-ins']); }
+  P.list.slice(0, 2).forEach(x => facts.push([x.name, x.from === x.to ? `Day ${x.from}` : `Days ${x.from}–${x.to}`, `Seen in ${x.cyclesN} of your cycles`]));
+  return `${sectionTitle('What I’ve learned about you')}
+    <section class="card glass learned">${facts.map(([k, v, s]) => `<div class="lr"><span>${k}</span><b>${v}</b><small>${s}</small></div>`).join('')}
+    <p class="fine" style="margin:10px 0 0">The more you log — periods, energy, symptoms — the more personal every prediction gets.</p></section>`;
+}
 function headsUpCard() {
   const P = patterns(), up = upcomingPatterns(P);
   if (!up.length) return '';
@@ -1298,14 +1323,16 @@ function partnersCard(info) {
   if (!ps.length) return `${sectionTitle('Your partner')}
     <button class="card glass partner add" data-action="nav" data-to="partners"><span class="pt-av">${icon('heart', 20)}</span>
       <span class="pt-b"><b>See where your partner is</b><small>Swap links and you’ll both see each other’s cycle, mood and energy here.</small></span>${icon('chevR', 16)}</button>`;
-  return `${sectionTitle(ps.length > 1 ? 'Your people' : 'Your partner', ['All', 'partners'])}
-    ${ps.map(p => { const pi = snapInfo(p, new Date()), ph = PHASES[pi.phase], en = Math.round(C.energyAt(pi.cd, pi.L, pi.P) * 100);
+  const shown = ps.some(p => p.pin) ? ps.filter(p => p.pin) : ps.slice(0, 2);
+  return `${sectionTitle(ps.length > 1 ? 'Your people' : 'Your partner', [ps.length > shown.length ? `All ${ps.length}` : 'All', 'partners'])}
+    ${shown.map(p => { const pi = snapInfo(p, new Date()), ph = PHASES[pi.phase], en = Math.round(C.energyAt(pi.cd, pi.L, pi.P) * 100);
       return `<button class="card glass partner" data-action="nav" data-to="partners/${p.id}">
         ${ptAvatar(p)}
         <span class="pt-b"><span class="eyebrow">${esc(p.n)} · day ${pi.cd} of ${pi.L}</span><b>${ph.name} · ${ph.season}</b>
           <span class="pt-meter"><b style="width:${en}%"></b></span>
           <small>${partnerStatus(pi, p)} · ${en}% energy</small>
-          <small class="pt-sync">${icon('heart', 12)} ${syncNote(info.phase, pi.phase)}</small></span>${icon('chevR', 16)}</button>`; }).join('')}`;
+          <small class="pt-sync">${icon('heart', 12)} ${syncNote(info.phase, pi.phase)}</small></span>${icon('chevR', 16)}</button>
+        <button class="love-btn sm" data-action="openLove" data-id="${p.id}">${loveArt('sm')}<span class="lb-t"><b>Send love to ${esc(p.n)}</b></span>${icon('chevR', 16)}</button>`; }).join('')}`;
 }
 // One line saying what is happening for her right now / next.
 function partnerStatus(pi, p) {
@@ -1328,6 +1355,40 @@ function partnerRead(pi, p) {
   out.push(en > .75 ? 'Energy: high.' : en > .5 ? 'Energy: steady.' : 'Energy: low — help her rest.');
   return out.join(' ');
 }
+const HEART = c => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.6-4.7-9.7-9.3C.8 8.3 3 4.4 6.8 4.4c2.1 0 3.6 1.1 4.3 2.5h1.8c.7-1.4 2.2-2.5 4.3-2.5 3.8 0 6 3.9 4.5 7.3C19.6 16.3 12 21 12 21z" fill="${c}"/></svg>`;
+// beating red heart with a pulse ring and two white hearts orbiting
+const loveArt = (sz = 'md') => `<span class="la la-${sz}"><i class="la-ring"></i><i class="la-ring r2"></i><span class="la-main">${HEART('#ff2d4b')}</span><span class="la-o o1">${HEART('#fff')}</span><span class="la-o o2">${HEART('#fff')}</span></span>`;
+const LOVE = [
+  { k: 'hug', g: '🤗', t: 'Big hug', s: 'sent you a big warm hug' },
+  { k: 'kiss', g: '💋', t: 'Kisses', s: 'is sending you kisses' },
+  { k: 'tea', g: '🍵', t: 'Tea’s coming', s: 'is making you a cup of tea' },
+  { k: 'think', g: '💭', t: 'Thinking of you', s: 'is thinking of you' },
+  { k: 'strong', g: '💪', t: 'You’ve got this', s: 'says: you’ve got this' },
+  { k: 'date', g: '🌙', t: 'Date night?', s: 'wants a date night with you' },
+  { k: 'choc', g: '🍫', t: 'Chocolate run', s: 'is bringing you chocolate' },
+  { k: 'love', g: '❤️', t: 'Love you', s: 'loves you' },
+];
+function loveSheet() {
+  const p = (state.partners || []).find(x => x.id === ui.loveFor); if (!p) return '';
+  const sent = (state.loveSent || []).filter(x => x.to === p.id).length;
+  return `<div class="love-sheet" data-action="loveClose"><div class="ls-card" data-action="noop">
+    <div class="ls-grip"></div><div class="ls-head">${loveArt('lg')}<div><h3>Send love to ${esc(p.n)}</h3><p class="muted sm">${sent ? `You’ve sent ${sent} ${sent === 1 ? 'heart' : 'hearts'} so far` : 'Tap one — it opens your messages'}</p></div></div>
+    <div class="ls-grid">${LOVE.map(l => `<button class="ls-b" data-action="sendLove" data-k="${l.k}"><span>${l.g}</span><small>${l.t}</small></button>`).join('')}</div></div></div>`;
+}
+function heartBurst(x, y) {
+  const wrap = document.createElement('div'); wrap.className = 'burst'; wrap.style.left = x + 'px'; wrap.style.top = y + 'px';
+  for (let i = 0; i < 18; i++) { const h = document.createElement('i'); h.innerHTML = HEART(i % 3 === 2 ? '#fff' : '#ff2d4b'); h.style.width = h.style.height = (14 + Math.random() * 18) + 'px'; h.style.setProperty('--dx', (Math.random() * 240 - 120) + 'px'); h.style.setProperty('--dy', (-120 - Math.random() * 220) + 'px'); h.style.animationDelay = (Math.random() * .15) + 's'; wrap.appendChild(h); }
+  document.body.appendChild(wrap); setTimeout(() => wrap.remove(), 1600);
+}
+function viewLove(q) {
+  const d = b64d(q.get('d') || ''), l = d && LOVE.find(x => x.k === d.k);
+  if (!l) return `<div class="pad"><h1 class="page-h" style="margin-top:80px">Link not valid</h1></div>`;
+  const hearts = Array.from({ length: 24 }, (_, i) => `<i style="left:${(i * 37) % 100}%;animation-delay:${(i * .37) % 7}s;animation-duration:${6 + (i % 5)}s;width:${12 + (i * 7) % 22}px;height:${12 + (i * 7) % 22}px">${HEART(i % 3 === 1 ? '#fff' : '#ff2d4b')}</i>`).join('');
+  return `<div class="love-view"><div class="lv-hearts">${hearts}</div>
+    <div class="lv-in"><div class="lv-art">${loveArt('xl')}<span class="lv-av">${d.t ? `<img src="${d.t}" alt="">` : esc((d.f || '?')[0])}</span><span class="lv-g">${l.g}</span></div><h1>${esc(d.f || 'Someone')} ${l.s}</h1>
+      <p class="muted">${fmt(new Date(), { weekday: 'long' })} · with love, from Under the Skin</p>
+      ${state && state.onboarded ? `<a class="btn btn-love btn-block" href="#/partners">${icon('heart', 16)} Send love back</a>` : `<a class="btn btn-light btn-block" href="#/today">Get Under the Skin</a>`}</div></div>`;
+}
 function addPartnerFrom(text) {
   const m = String(text).match(/[?&]d=([A-Za-z0-9_-]+)/) || String(text).trim().match(/^([A-Za-z0-9_-]{16,})$/);
   const snap = m && b64d(m[1]);
@@ -1346,9 +1407,11 @@ function viewPartners(id) {
       <h1 class="sy-h">See each other’s <span>rhythm</span></h1>
     </section>
 
-    ${ps.length ? `${ps.map(p => { const pi = snapInfo(p, new Date()), ph = PHASES[pi.phase];
-      return `<button class="card glass sy-card" data-action="nav" data-to="partners/${p.id}">${ptAvatar(p, 'lg')}
-        <span class="pt-b"><b>${esc(p.n)}</b><small>${ph.name} · day ${pi.cd} · ${partnerStatus(pi, p)}</small></span>${icon('chevR', 16)}</button>`; }).join('')}` : ''}
+    ${ps.length ? `${sectionTitle(`Your people · ${ps.length}`)}<p class="muted sm" style="margin:-6px 4px 10px">Pin the ones you want on your home screen.</p>
+    ${ps.slice().sort((a, b) => !!b.pin - !!a.pin).map(p => { const pi = snapInfo(p, new Date()), ph = PHASES[pi.phase], zs = p.z ? Z.sunSign(+p.z.slice(0, 2), +p.z.slice(3)) : null;
+      return `<div class="sy-row"><button class="card glass sy-card" data-action="nav" data-to="partners/${p.id}">${ptAvatar(p, 'lg')}
+        <span class="pt-b"><b>${esc(p.n)} ${zs ? `<span class="z-g">${zs.glyph}</span>` : ''}</b><small>${ph.name} · day ${pi.cd} · ${partnerStatus(pi, p)}</small></span>${icon('chevR', 16)}</button>
+        <button class="pin ${p.pin ? 'on' : ''}" data-action="pinPartner" data-id="${p.id}" aria-label="Pin">${icon('star', 18)}</button></div>`; }).join('')}` : ''}
 
     <div class="sy-steps">
       <div class="sy-step"><span class="sy-n">1</span><div><b>Send her your link</b>
@@ -1388,7 +1451,21 @@ function viewPartner(p) {
     ${flowHero(pi, { eyebrow: `${esc(p.n)} is in her`, title: `${ph.name} <em>phase</em>`, season: ph.season, id: 'pt', showOv: !!p.f, center: partnerStatus(pi, p),
       badge: `<div class="fh-side">${ptAvatar(p, 'lg')}${p.f && pi.fertile ? `<span class="fh-badge">${icon('spark', 13)} Fertile</span>` : ''}</div>`,
       stats: [['Next period', pi.isPeriod ? 'Now' : `${pi.daysToPeriod} days`], ['Phase', ph.name], ['Energy', `${en}%`]] })}
-    <p class="pt-now">${partnerRead(pi, p).split('. ').slice(1, 2).join('')}.</p>
+    ${(() => {
+      const late = pi.cd > pi.L - 4, moods = { menstrual: ['Tired', 'Inward', 'Tender', 'Reflective'], follicular: ['Curious', 'Optimistic', 'Light', 'Playful'], ovulatory: ['Confident', 'Social', 'Flirty', 'Radiant'], luteal: late ? ['Sensitive', 'Bloated', 'Irritable', 'Needs comfort'] : ['Calm', 'Focused', 'Nesting', 'Cosy'] }[pi.phase];
+      const moon = Z.moonPhase(new Date()), waxing = moon.age < 14.77, building = pi.phase === 'follicular' || pi.phase === 'ovulatory';
+      const sync = /full/i.test(moon.name) ? 'Full moon — feelings run high. Extra tenderness goes a long way.' : /new/i.test(moon.name) ? 'New moon — a quiet reset. Perfect for a cosy night in together.' : waxing === building ? (waxing ? 'In sync — the moon is growing and so is her energy.' : 'In sync — the moon is waning and she’s turning inward too.') : (waxing ? 'The moon is growing while she turns inward — let her rest.' : 'The moon is releasing while her energy rises — great for fresh starts together.');
+      const zs = p.z ? Z.sunSign(+p.z.slice(0, 2), +p.z.slice(3)) : null;
+      return `<section class="card glass feel-card"><div class="eyebrow">How she’s feeling</div>
+        <div class="feel-chips">${moods.map(m => `<span>${m}</span>`).join('')}</div>
+        <p class="body sm">${partnerRead(pi, p).split('. ').slice(1, 2).join('')}.</p></section>
+      <div class="two-tiles">
+        <div class="card glass tile cos"><span class="cos-g">${zs ? zs.glyph : '✦'}</span><small>Her stars</small>
+          ${zs ? `<b>${zs.name} · ${zs.el}</b><span class="muted sm">${Z.EL_PHASE[zs.el][pi.phase]}</span>`
+          : `<b>Not shared yet</b><span class="muted sm">Appears as soon as she adds her birthday in her app and sends you her link.</span>`}</div>
+        <div class="card glass tile cos"><span class="cos-g">${moonIcon(moon, 30)}</span><small>Moon & her cycle</small><b>${moon.name}</b><span class="muted sm">${sync}</span></div>
+      </div>`; })()}
+    <button class="love-btn" data-action="openLove" data-id="${p.id}">${loveArt()}<span class="lb-t"><b>Send love</b><small>to ${esc(p.n)}</small></span>${icon('chevR', 18)}</button>
 
     ${sectionTitle('Her hormones')}
     <section class="card glass chart-card">${cycleChart(pi, { id: 'pt', compact: true, who: 'Her' })}</section>
@@ -1412,7 +1489,7 @@ function viewPartner(p) {
       ${sup.date || sup.plan ? `<div class="card glass"><span class="han-big">${icon('heart', 22)}</span><small>${sup.date ? 'Date idea' : 'Plan idea'}</small><b>${esc(sup.date || sup.plan)}</b></div>` : ''}
     </div>
     <p class="fine center">Estimated from the cycle ${esc(p.n)} shared${p.added ? ` on ${fmt(new Date(p.added), { month: 'short', day: 'numeric' })}` : ''}. When her next period starts, ask her to send her link again to keep it exact — every body is different, so ask her too.</p>
-    <button class="btn btn-ghost btn-block" data-action="removePartner" data-id="${p.id}">Remove ${esc(p.n)}</button>
+    <button class="tiny-link" data-action="removePartner" data-id="${p.id}">remove</button>
   </div>`;
 }
 
@@ -1420,10 +1497,10 @@ function viewPartner(p) {
 // best seasonal dishes for today: in season, warm/raw rule, then those fitting the current phase
 function seasonalDishesToday(info, n = 2) {
   const items = SZ.seasonal(myCountry(), new Date().getMonth() + 1);
-  let ds = SZ.dishesFor(items);
+  let ds = SZ.dishesFor(items, SZ.countryRegion(myCountry()));
   if (info && warmWindow(info)) ds = ds.filter(d => d.warm);
   const fit = d => info && d.used.some(i => i.ph.includes(info.phase)) ? 1 : 0;
-  ds.sort((a, b) => fit(b) - fit(a) || (info && !warmWindow(info) ? (!!a.warm - !!b.warm) : 0) || b.score - a.score);
+  ds.sort((a, b) => (b.local - a.local) || fit(b) - fit(a) || (info && !warmWindow(info) ? (!!a.warm - !!b.warm) : 0) || b.score - a.score);
   return ds.slice(0, n);
 }
 function myCountry() { return state.profile.country || SZ.guessCountry(); }
@@ -1489,7 +1566,7 @@ function viewSeason() {
       ${warm ? `<p class="dp-text">${icon('sun', 13)} You’re in your warm window — cook these gently rather than eating them raw.</p>` : ''}</section>` : ''}
     ${detail}
     ${(() => {
-      let ds = SZ.dishesFor(all);
+      let ds = SZ.dishesFor(all, SZ.countryRegion(myCountry()));
       ds = warm ? ds.filter(d => d.warm) : [...ds.filter(d => !d.warm), ...ds.filter(d => d.warm)];
       ds = ds.slice(0, 4);
       if (!ds.length) return '';
@@ -1574,7 +1651,7 @@ function viewInsights() {
   let body = '';
   if (tab === 'cycle') body = `
     <section class="card glass big-chart">${cycleChart(info, { id: 'ins' })}</section>
-    <p class="muted center" style="margin:-4px 0 12px">Drag across the chart to explore any day.</p>
+    ${learnedCard()}
     ${fullCycleGuide(info)}
     ${cycleFlag()}
     <section class="card card-light where">
@@ -1696,7 +1773,8 @@ function viewProfile() {
     <div class="profile-head"><label class="avatar xl ${p.photo ? 'has-photo' : ''}">${avatarInner(p)}<span class="av-edit">${icon('plus', 14, 2.4)}</span><input type="file" accept="image/*" data-photo="profile" hidden></label>
       <input class="field name-field" data-input="profile.name" value="${esc(p.name)}" placeholder="Your name" maxlength="24"></div>
     ${sectionTitle('Birthday')}
-    <section class="card glass"><input class="field" type="date" data-input="profile.birthday" value="${p.birthday || ''}" max="${todayISO()}"><button class="list-btn" data-action="nav" data-to="cosmic">${icon('star', 18)} See my cosmic rhythm</button></section>
+    <section class="card glass"><input class="field" type="date" data-input="profile.birthday" value="${p.birthday || ''}" max="${todayISO()}"><button class="list-btn" data-action="nav" data-to="cosmic">${icon('star', 18)} See my cosmic rhythm</button>
+      ${p.birthday && (state.partners || []).length ? `<button class="list-btn" data-action="shareSend">${icon('heart', 18)} Send my link so my people see my sign</button>` : ''}</section>
     ${sectionTitle('Country')}
     <section class="card glass"><select class="field sm" data-input="profile.country">${SZ.COUNTRIES.map(([code, nm]) => `<option value="${code}" ${code === myCountry() ? 'selected' : ''}>${nm}</option>`).join('')}</select>
       <p class="fine" style="margin:8px 0 0">Used for seasonal foods.</p></section>
@@ -1730,6 +1808,7 @@ function shareLink() {
   const { stats } = M, last = stats.periods[stats.periods.length - 1];
   const snap = { n: state.profile.name || 'Her', s: C.iso(last.start), c: stats.avgCycle, p: stats.avgPeriod, a: ui.shareAudience, f: ui.shareFertile ? 1 : 0 };
   if (state.profile.thumb) snap.t = state.profile.thumb;
+  if (state.profile.birthday) snap.z = state.profile.birthday.slice(5); // MM-DD only, for the zodiac sign
   return `${location.origin}${location.pathname}#/with?d=${b64e(snap)}`;
 }
 // Cycle info rebuilt from a shared snapshot (projected forward cycle by cycle).
@@ -1910,13 +1989,14 @@ const actions = {
     import('./sfx.js').then(S => S.whoosh({ dur: 1.3, vol: 0.6, from: 400, to: 5200, boom: true })).catch(() => {});
     w.enter().then(() => actions.onbNext(d));
   },
+  onbUnsure: () => { ui.onb.unsure = !ui.onb.unsure; if (ui.onb.unsure) ui.onb.cycleLength = 28; render(); },
   onbNext: () => {
     if (ui.onbStep < 6) { ui.onbStep++; render(); return; }
     const o = ui.onb, logs = {}, s = C.parseISO(o.last);
     for (let i = 0; i < o.periodLength; i++) { const d = C.addDays(s, i); if (d <= new Date()) logs[C.iso(d)] = { flow: i === 0 || i === 1 ? 'medium' : 'light' }; }
     ui.arrive = true;
     let pend = null; try { pend = b64d(localStorage.getItem('uts.pendingPartner') || ''); localStorage.removeItem('uts.pendingPartner'); } catch {}
-    state = { onboarded: true, profile: { name: o.name.trim(), cycleLength: o.cycleLength, periodLength: o.periodLength, goals: o.goals, birthday: o.birthday || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
+    state = { onboarded: true, profile: { name: o.name.trim(), cycleLength: o.unsure ? 28 : o.cycleLength, cycleUnsure: !!o.unsure, periodLength: o.periodLength, goals: o.goals, birthday: o.birthday || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
     if (pend && pend.s && pend.c) state.partners = [{ ...pend, id: Date.now().toString(36), added: Date.now() }];
     save(); go('today'); render();
   },
@@ -1935,9 +2015,26 @@ const actions = {
     ui.calMonth = C.iso(new Date(m.getFullYear(), m.getMonth() + +d.d, 1)); render();
   },
   calSelect: d => { ui.calSelected = d.date; render(); },
+  pinPartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (!p) return; p.pin = !p.pin; save(); toast(p.pin ? `${p.n} pinned to your home screen` : 'Unpinned'); render(); },
+  openLove: d => { ui.loveFor = d.id; render(); },
+  loveClose: () => { ui.loveFor = null; render(); },
+  noop: () => {},
+  sendLove: async (d, el) => {
+    const p = (state.partners || []).find(x => x.id === ui.loveFor), l = LOVE.find(x => x.k === d.k); if (!p || !l) return;
+    const r = el.getBoundingClientRect(); heartBurst(r.left + r.width / 2, r.top + r.height / 2);
+    const snap = { f: state.profile.name || 'Someone', k: l.k }; if (state.profile.thumb) snap.t = state.profile.thumb;
+    const url = `${location.origin}${location.pathname}#/love?d=${b64e(snap)}`, text = `${l.g} ${state.profile.name || 'I'} ${l.s}`;
+    (state.loveSent = state.loveSent || []).push({ to: p.id, k: l.k, at: Date.now() }); state.loveSent = state.loveSent.slice(-200); save();
+    setTimeout(async () => {
+      ui.loveFor = null; render();
+      if (navigator.share) { try { await navigator.share({ text, url }); toast(`Love sent to ${p.n} ❤️`); return; } catch { return; } }
+      try { await navigator.clipboard.writeText(`${text} ${url}`); toast('Copied — paste it in your chat ❤️'); } catch { prompt('Copy and send', `${text} ${url}`); }
+    }, 700);
+  },
   periodStart: () => {
-    const k = todayISO(); setLog(k, { flow: 'medium' });
-    toast('Period logged — take it easy today'); render();
+    const before = C.cycleStats(state), k = todayISO(); setLog(k, { flow: 'medium' });
+    const after = C.cycleStats(state);
+    toast(after.lengths.length && after.avgCycle !== before.avgCycle ? `Period logged · your cycle is now ${after.avgCycle} days` : 'Period logged — take it easy today'); render();
   },
   togglePeriod: () => {
     const k = ui.calSelected, l = getLog(k);
@@ -1979,7 +2076,9 @@ const actions = {
   focusTick: d => { const k = todayISO(), f = state.focusDone = state.focusDone || {}; const a = f[k] = f[k] || []; const i = +d.i; a.includes(i) ? a.splice(a.indexOf(i), 1) : a.push(i); for (const x in f) if (x !== k) delete f[x]; save(); render(); },
   habitTick: d => { const k = todayISO(), H = state.habits = state.habits || {}; const a = H[k] = H[k] || []; a.includes(d.id) ? a.splice(a.indexOf(d.id), 1) : a.push(d.id);
     const cut = C.iso(C.addDays(new Date(), -60)); for (const x in H) if (x < cut) delete H[x]; save(); render(); },
-  addPartner: d => { const snap = b64d(d.d); if (!snap) return; const ps = state.partners = (state.partners || []).filter(x => x.n !== snap.n);
+  addPartner: d => { const snap = b64d(d.d); if (!snap) return; const ps = state.partners = state.partners || [];
+    const old = ps.find(x => x.n === snap.n);
+    if (old) { Object.assign(old, snap, { added: Date.now() }); save(); toast(`${snap.n} updated`); return go('partners/' + old.id); }
     ps.push({ ...snap, id: Date.now().toString(36), added: Date.now() }); save(); toast(`${snap.n} added`); go('partners/' + ps[ps.length - 1].id); },
   openPartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (p) { const { id, ...snap } = p; location.hash = '#/with?d=' + b64e(snap); } },
   removePartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (!p || !confirm(`Remove ${p.n}?`)) return; state.partners = state.partners.filter(x => x.id !== d.id); save(); if (route().name === 'partners') go('partners'); else render(); },
@@ -2030,7 +2129,7 @@ document.addEventListener('input', e => {
   const f = e.target.dataset?.input; if (!f) return;
   const [scope, key] = f.split('.'), v = e.target.value;
   if (scope === 'onb') { ui.onb[key] = v; const b = document.querySelector('[data-action="onbNext"]'); if (b && ui.onbStep === 1) b.disabled = !v.trim(); }
-  else if (scope === 'profile') { state.profile[key] = v; save(); if (key === 'country') render(); }
+  else if (scope === 'profile') { state.profile[key] = v; save(); if (key === 'country') render(); if (key === 'birthday' && v && (state.partners || []).length) { toast('Saved — send your link again so your people see your sign'); render(); } }
   else if (scope === 'log') { const n = key === 'temp' ? (v === '' ? null : Math.round(parseFloat(v) * 100) / 100) : v; setLog(ui.logDate || todayISO(), { [key]: Number.isNaN(n) ? null : n }); }
 });
 
@@ -2094,6 +2193,10 @@ function render() {
   if (r.name !== 'log' && fresh) ui.logDate = r.name === 'log' ? ui.logDate : ui.logDate;
   ui.lastRoute = r.key;
 
+  if (r.name === 'love') {
+    $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewLove(r.q)}</div>`;
+    return;
+  }
   if (r.name === 'with') {
     $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewWith(r.q)}</div>`;
     return;
@@ -2113,6 +2216,7 @@ function render() {
   const arriving = $app.querySelector('.arrive');
   $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''} ${arriving ? 'arrive-in' : ''}" id="view">${html}</div>${tabs.includes(r.name) || !views[r.name] ? tabbar(r.name in views ? r.name : 'today') : ''}`;
   if (arriving) $app.appendChild(arriving);
+  if (ui.loveFor) $app.insertAdjacentHTML('beforeend', loveSheet());
   const v = document.getElementById('view');
   v.scrollTop = keep;
   if (ui.arrive && r.name === 'today' && M.info) { ui.arrive = false; playArrival(v); }
