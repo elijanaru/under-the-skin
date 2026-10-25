@@ -123,7 +123,7 @@ function ring(info, size = 270) {
 function ringSub(info) {
   return info.late ? `Period ${plural(info.late, 'day')} late`
     : info.dueToday ? 'Period expected today'
-    : info.isPeriod ? (info.periodActual ? `Period · day ${info.cd}` : 'Period likely')
+    : info.isPeriod || info.cd <= info.P ? `Period · day ${info.cd}`
     : info.isOvulation ? 'Egg release today'
     : info.daysToOv <= 5 && info.cd < info.ov ? `Ovulation in ${plural(info.daysToOv, 'day')}`
     : `Period in ${plural(info.daysToPeriod, 'day')}`;
@@ -154,13 +154,20 @@ function flowRing(info, id = 'fr', showOv = true) {
     <circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="7.5" fill="#fff" filter="url(#${id}-glow)"/>
   </svg>`;
 }
-function flowHero(info, { eyebrow, title, season, stats = [], badge = '', id = 'fr', showOv = true, center } = {}) {
+const PHASE_WELCOME = {
+  menstrual: { feel: 'Quieter and more inward — rest is productive now.', soak: 'warm soups, red meat & beetroot, ginger tea, heat on your belly.' },
+  follicular: { feel: 'Lighter, curious and motivated as estrogen rises.', soak: 'fresh greens, sprouts, eggs, citrus — and new ideas.' },
+  ovulatory: { feel: 'Confident, social and glowing — your peak energy.', soak: 'raw salads, berries, oysters, sunshine and good company.' },
+  luteal: { feel: 'Grounded at first, then more sensitive before your period.', soak: 'sweet potato, roots, magnesium, dark chocolate, early nights.' },
+};
+function flowHero(info, { eyebrow, title, season, stats = [], badge = '', id = 'fr', showOv = true, center, action = '' } = {}) {
   return `<section class="fhero">
     <div class="fh-aurora"><i></i><i></i><i></i></div>
-    <div class="fh-top"><div><div class="eyebrow">${eyebrow}</div><h2 class="fh-phase">${title}</h2><div class="fh-season">${season}</div></div>${badge}</div>
+    <div class="fh-top"><div>${eyebrow ? `<div class="eyebrow">${eyebrow}</div>` : ''}<h2 class="fh-phase">${title}</h2><div class="fh-season">${season}</div></div>${badge}</div>
     <div class="fh-ring">${flowRing(info, id, showOv)}
       <div class="fh-center"><span class="fh-k">Cycle day</span><span class="fh-day">${Math.min(info.cd, info.L)}</span><span class="fh-sub">${center || ringSub(info)}</span></div></div>
     ${stats.length ? `<div class="fh-stats">${stats.map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join('')}</div>` : ''}
+    ${action}
   </section>`;
 }
 
@@ -252,9 +259,7 @@ function readout(cdRaw, L, P, isYou) {
       <span class="ro-bar"><b style="width:${Math.round(h[x.key] * 100)}%;background:${x.color}"></b></span>
       <span class="ro-lvl">${C.hormoneLevel(h[x.key])} <em class="tr ${tr}">${tr === 'rising' ? '↗' : tr === 'falling' ? '↘' : '→'}</em></span></div>`;
   }).join('');
-  return `<div class="ro-head"><div><div class="eyebrow">${isYou ? 'You are here' : 'Exploring'} · day ${cdRaw}</div>
-      <div class="ro-phase">${PHASES[ph].name} <span>· ${PHASES[ph].season}</span></div></div>
-      <div class="ro-tcm"><span class="glyph">${tcm.elementGlyph}</span><span>${tcm.stage}</span></div></div>
+  return `<div class="ro-head"><div class="ro-phase">Day ${cdRaw} · ${PHASES[ph].name}</div></div>
     <div class="ro-rows">${rows}</div>
     ${(() => { const ov = C.ovulationDay(L, P), d = ov - cd; return `<div class="ro-egg"><span class="egg-dot"></span>${d === 0 ? 'LH surge — egg releasing today' : d === 1 ? 'LH surge — egg release tomorrow' : d > 1 ? `Egg release in ${d} days · day ${ov}` : `Egg released on day ${ov}`}</div>`; })()}`;
 }
@@ -401,7 +406,9 @@ function viewToday() {
     <div class="hello-row slim"><div><div class="eyebrow">${fmt(today, { weekday: 'long', month: 'long', day: 'numeric' })}</div><h1 class="hello sm">${greeting()}, <b>${name}</b></h1></div>
       <button class="avatar ${state.profile.photo ? 'has-photo' : ''}" data-action="nav" data-to="profile">${avatarInner(state.profile)}</button></div>
 
-    ${flowHero(info, { eyebrow: 'You are in your', title: `${ph.name} <em>phase</em>`, season: ph.season, id: 'today',
+    ${flowHero(info, { eyebrow: '', title: `${ph.name} <em>phase</em>`, id: 'today',
+      season: `<span class="fh-feel">${PHASE_WELCOME[info.phase].feel}</span>`,
+      action: info.periodActual ? '' : `<button class="fh-period" data-action="periodStart">${icon('drop', 16)} ${info.cd <= info.P && !info.late ? 'Log my period today' : 'My period started today'}</button>`,
       badge: `<div class="fh-side"><span class="fh-glyph" title="${tcm.element}">${tcm.elementGlyph}</span>${info.fertile ? `<span class="fh-badge">${icon('spark', 13)} Fertile</span>` : ''}</div>`,
       stats: [[info.isPeriod ? 'Period' : 'Next period', info.late ? `${info.late}d late` : info.isPeriod ? `Day ${info.cd}` : `${info.daysToPeriod} days`], ['Egg release', info.isOvulation ? 'Today' : info.cd < info.ov ? `in ${info.daysToOv}d` : `day ${info.ov}`], ['Energy', `${energy}%`]] })}
 
@@ -410,7 +417,6 @@ function viewToday() {
 
     ${sectionTitle('Your hormones', ['Explore', 'hormones'])}
     <section class="card glass chart-card">${cycleChart(info, { id: 'today', compact: true })}
-      <p class="cc-hint">${icon('chevL', 12)} Swipe the chart to see any day ${icon('chevR', 12)}</p>
       <button class="cc-more" data-action="nav" data-to="hormones">What each hormone does ${icon('chevR', 14)}</button></section>
     ${fullCycleGuide(info)}
 
@@ -541,43 +547,70 @@ function viewLog() {
   </div>`;
 }
 
+// Plain-English copy for the Nourish / Rituals / Mind tabs (no jargon).
+const PLAN_PHOTO = { menstrual: 'Melatonin', follicular: 'FSH', ovulatory: 'LH', luteal: 'Progesterone' };
+const PLAIN = {
+  menstrual: {
+    eat: 'Your body is shedding and losing iron. Warm, cooked, iron-rich food refills you and eases cramps.',
+    tcm: 'Chinese medicine sees your period as a time to stay warm, so blood can flow freely — cold food and drinks slow it down.', focus: 'Stay warm & rest',
+    do: 'Keep your feet and lower back warm, sip something hot, and try a ginger foot soak before bed.',
+    mind: 'Hormones are at their lowest. Your mind turns inward — great for reflecting, journaling and saying no to extra plans.',
+  },
+  follicular: {
+    eat: 'Estrogen is rising and your body is rebuilding. Fresh, light food and plenty of protein fit perfectly now.',
+    tcm: 'After your period your body is refilling — like spring after winter. Nourishing food and good sleep help it rebuild.', focus: 'Rebuild & sleep well',
+    do: 'Go to bed before 11pm — deep sleep is when your body rebuilds best this week.',
+    mind: 'Rising estrogen makes your brain curious and quick. A great time to start new things and learn.',
+  },
+  ovulatory: {
+    eat: 'You’re at your peak. Light, raw, colourful food, zinc and fibre support you and help clear extra estrogen.',
+    tcm: 'Around ovulation your body is at its warmest and most active. Keep things flowing and don’t overheat.', focus: 'Stay in flow',
+    do: 'Move, laugh, get outside — and cool down with fresh fruit and lots of water.',
+    mind: 'Confidence and communication peak. Speak up, present, connect — you shine in conversations now.',
+  },
+  luteal: {
+    eat: 'Progesterone rises and your body burns more energy. Grounding, cooked food with complex carbs and magnesium keeps you steady.',
+    tcm: 'Before your period energy can feel “stuck” — tension, bloating, moodiness. Gentle movement and warmth keep it moving.', focus: 'Keep energy moving',
+    do: 'Walk, stretch and breathe deeply every day — it releases tension, bloating and mood swings.',
+    mind: 'Your brain loves detail now. Finish projects, organise, tidy — and give yourself softer evenings.',
+  },
+};
+function whatsGoingOn(text) { return `<section class="card wgo"><div class="eyebrow">What’s going on</div><p>${text}</p></section>`; }
 function viewPlan() {
-  const info = M.info, phase = info ? info.phase : 'follicular', ph = PHASES[phase], tcm = TCM[phase];
+  const info = M.info, phase = info ? info.phase : 'follicular', ph = PHASES[phase], tcm = TCM[phase], P = PLAIN[phase];
   const tabs = [['nourish', 'Nourish'], ['rituals', 'Rituals'], ['mind', 'Mind']];
   let body = '';
   if (ui.planTab === 'nourish') {
     body = nourishBody(phase);
   } else if (ui.planTab === 'rituals') {
     const rits = RITUALS.slice().sort((a, b) => b.phases.includes(phase) - a.phases.includes(phase));
-    body = `<section class="card tcm-card">
-        <div class="tcm-glyph">${tcm.elementGlyph}</div>
-        <div class="tcm-main"><div class="eyebrow">${tcm.stage} · ${tcm.element} · ${tcm.organ}</div><h3>${tcm.principle}</h3><p class="body">${tcm.ritual}</p></div></section>
-      <button class="card point-card" data-action="nav" data-to="point/${phase}">
-        <div class="pt-dot"><span></span></div>
-        <div><div class="eyebrow">Acupressure point</div><h3>${tcm.point.code} · ${tcm.point.name}</h3><p class="body sm">${tcm.point.does}</p></div>${icon('chevR', 18)}</button>
-      ${cosmicCard()}
-      <button class="card gro-cta" data-action="nav" data-to="relief"><span class="art-ic">${icon('heart', 20)}</span><span class="art-t">Relief guide<small>Cramps, PMS, sleep, skin & more</small></span>${icon('chevR', 18)}</button>
-      ${sectionTitle('Remedies')}
-      <div class="grid2">${M.info ? remedyCards(M.info) : ''}</div>
-      ${sectionTitle('Rituals')}
+    body = `${whatsGoingOn(P.tcm)}
+      <section class="card focus-card"><span class="fc-glyph">${tcm.elementGlyph}</span><div><div class="eyebrow">Your focus now</div><h3>${P.focus}</h3><p class="body sm">${P.do}</p></div></section>
+      <div class="two-tiles">
+        <button class="card glass tile" data-action="nav" data-to="point/${phase}"><div class="pt-dot sm"><span></span></div><small>Press this point</small><b>${tcm.point.name}</b><span class="muted sm">${tcm.point.secs} seconds</span></button>
+        <div class="card glass tile"><span class="tile-ic">${icon('leaf', 22)}</span><small>Tea for today</small><b>${tcm.tea.name}</b></div>
+      </div>
+      ${sectionTitle('Rituals for you')}
       <div class="grid2">${rits.map((r, i) => `<button class="rcard tall" data-action="nav" data-to="ritual/${r.id}">${glowArt(['crown', 'drop', 'hill', 'wave', 'orb', 'peak'][i % 6], 40 + i)}
         <span class="rc-glyph">${r.glyph}</span>
         <div class="rc-top"><span class="rc-k">${r.mins} min</span>${r.phases.includes(phase) ? `<span class="rc-badge">For you</span>` : ''}</div>
         <div class="rc-t">${r.name}</div></button>`).join('')}</div>
-      ${sectionTitle('The tide of your cycle')}
-      <section class="card glass">${PHASE_ORDER.map(p => `<div class="tide ${p === phase ? 'on' : ''}"><span class="tide-g">${TCM[p].elementGlyph}</span>
-        <div><div class="tide-n">${PHASES[p].name} <em>· ${TCM[p].stage}</em></div><div class="tide-s">${TCM[p].principle}</div></div></div>`).join('')}</section>`;
+      ${sectionTitle('Home remedies')}
+      <div class="grid2">${M.info ? remedyCards(M.info) : ''}</div>
+      <button class="card gro-cta" data-action="nav" data-to="relief"><span class="art-ic">${icon('heart', 20)}</span><span class="art-t">Relief guide<small>Cramps, PMS, sleep, skin</small></span>${icon('chevR', 18)}</button>`;
   } else {
-    body = `<section class="card card-light"><div class="eyebrow dark">Superpower</div><h3 class="dark-h">${ph.superpower.title}</h3><p class="dp-text">${ph.superpower.text}</p></section>
-      ${[['mind', ph.mind, 'Work & focus'], ['users', ph.social, 'Social'], ['heart', ph.selfcare, 'Self-care']].map(([ic, o, k]) => `
-      <section class="card glass mind-row"><span class="art-ic">${icon(ic, 20)}</span><div><div class="eyebrow">${k}</div><h3>${o.title}</h3><p class="body sm">${o.text}</p></div></section>`).join('')}
-      ${sectionTitle('Your month at a glance')}
-      <section class="card glass">${PHASE_ORDER.map(p => `<div class="tide ${p === phase ? 'on' : ''}"><span class="tide-dot" style="background:${PHASE_COLOR.dark[p]}"></span>
-        <div><div class="tide-n">${PHASES[p].name} <em>· ${PHASES[p].superpower.title}</em></div><div class="tide-s">${PHASES[p].mind.title} · ${PHASES[p].social.title}</div></div></div>`).join('')}</section>`;
+    const rows = [['mind', ph.mind, 'Work'], ['users', ph.social, 'Social'], ['heart', ph.selfcare, 'Self-care']];
+    body = `${whatsGoingOn(P.mind)}
+      <section class="card card-light sp-card"><div class="eyebrow dark">Your superpower now</div><h3 class="dark-h">${ph.superpower.title}</h3><p class="dp-text">${ph.superpower.text}</p></section>
+      <div class="mind-grid">${rows.map(([ic, o, k]) => `<div class="card glass mg"><span class="tile-ic">${icon(ic, 22)}</span><small>${k}</small><b>${o.title}</b><p>${o.text}</p></div>`).join('')}</div>
+      ${sectionTitle('Your month')}
+      <div class="month-strip">${PHASE_ORDER.map(p => `<div class="ms ${p === phase ? 'on' : ''}"><i style="background:${PHASE_COLOR.dark[p]}"></i><b>${PHASES[p].name}</b><span>${PHASES[p].superpower.title}</span></div>`).join('')}</div>`;
   }
+  const photo = hormonePhoto(PLAN_PHOTO[phase], 900);
   return `${topbar({ nourish: 'Nourish', rituals: 'Rituals', mind: 'Mind' }[ui.planTab])}
   <div class="pad">
-    <div class="page-art">${mushroomArt(1, 'corner')}<h1 class="page-h">${ph.name} <span>phase</span></h1><p class="muted">${info ? `Cycle day ${info.cd} · ${tcm.stage}` : ''}</p></div>
+    <section class="plan-hero">${photo ? `<img src="${photo}" alt="">` : ''}<span class="ph-shade"></span>
+      <div class="ph-in"><div class="eyebrow">${info ? `Day ${info.cd}` : ''}</div><h1>${ph.name} <span>phase</span></h1><p>${ph.tagline}</p></div></section>
     <div class="seg">${tabs.map(([k, l]) => `<button class="${ui.planTab === k ? 'on' : ''}" data-action="planTab" data-v="${k}">${l}</button>`).join('')}</div>
     ${body}
   </div>`;
@@ -620,54 +653,29 @@ function typicalSymptoms(phase) {
   return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 3).map(x => x[0]);
 }
 function nourishBody(current) {
-  const phase = ui.nourishPhase || current, N = NUTRITION[phase], ph = PHASES[phase];
-  const recs = RECIPES.slice().sort((a, b) => (b.phases.includes(phase) - a.phases.includes(phase)) || ((phase === current ? warmWindow(M.info) : phase === 'menstrual') ? (!!a.raw - !!b.raw) || (!!b.warm - !!a.warm) : (!!b.raw - !!a.raw)));
-  const recent = phase === current ? recentSymptoms() : [];
-  const typical = typicalSymptoms(phase).filter(s => !recent.includes(s));
-  const fixes = recent.concat(typical).filter(s => SYMPTOM_FOODS[s]).slice(0, 4);
-  return `
-    <div class="phase-pick">${PHASE_ORDER.map(p => `<button class="${p === phase ? 'on' : ''}" data-action="nourishPhase" data-v="${p}"><i style="background:${PHASE_COLOR.dark[p]}"></i>${PHASES[p].name}${p === current ? '<em>now</em>' : ''}</button>`).join('')}</div>
-    <section class="card card-light">
-      <div class="eyebrow dark">${ph.name} nutrition</div><h3 class="dark-h">${N.focus}</h3>
-      <p class="dp-text">${N.why}</p>
-      <div class="hunger">${icon('bolt', 16)}<span>${N.energy}</span></div>
-    </section>
+  const phase = current, N = NUTRITION[phase], warm = warmWindow(M.info);
+  const recs = RECIPES.filter(r => r.phases.includes(phase)).sort((a, b) => warm ? (!!b.warm - !!a.warm) : (!!b.raw - !!a.raw));
+  const recent = recentSymptoms().filter(s => SYMPTOM_FOODS[s]).slice(0, 2);
+  const ds = seasonalDishesToday(M.info, 4);
+  return `${whatsGoingOn(PLAIN[phase].eat)}
+    <section class="card eat-rule ${warm ? 'warm' : 'raw'}"><span class="er-ic">${icon(warm ? 'sun' : 'leaf', 24)}</span>
+      <div><small>Today</small><b>${warm ? 'Warm & cooked' : 'Raw & fresh'}</b><span>${warm ? 'Soups, stews, cooked veg and warm drinks — no iced or raw cold food.' : 'Salads, fruit, raw dairy and fresh greens are perfect now.'}</span></div></section>
 
-    ${sectionTitle('What your body needs')}
-    <section class="card glass needs">${N.needs.map((x, i) => `
-      <div class="need ${ui.openNeed === i ? 'open' : ''}">
-        <button class="need-h" data-action="openNeed" data-i="${i}"><span class="need-n">${x.n}</span>${evBadge(x.ev)}<span class="need-t">${x.target}</span>${icon('chevD', 16)}</button>
-        <div class="need-b"><p class="body sm">${x.why}</p><div class="foods">${x.foods.map(f => `<span class="food">${f}</span>`).join('')}</div></div>
-      </div>`).join('')}
-      <div class="ev-leg">${Object.keys(EVIDENCE).map(k => `<span>${evBadge(k)} ${EVIDENCE[k].label}</span>`).join('')}</div>
-    </section>
+    ${sectionTitle('Eat more of')}
+    <div class="need-tiles">${N.needs.slice(0, 3).map(x => `<div class="card glass nt"><b>${x.n}</b><span>${x.foods.slice(0, 4).join(' · ')}</span></div>`).join('')}</div>
 
-    ${phase === current ? seasonCard() : ''}
-    ${phase === current ? (() => { const ds = seasonalDishesToday(M.info, 2); return ds.length ? `<div class="grid2 season-dishes">${ds.map((d, i) => { const ph = dishPhoto(d.name, 400); return `<button class="rcard tall ${ph ? 'has-photo' : ''}" data-action="nav" data-to="season">${ph ? `<img class="rc-photo" src="${ph}" alt="" loading="lazy"><span class="rc-shade"></span>` : glowArt('orb', 60 + i)}<div class="rc-top"><span class="rc-k">${d.warm ? 'Warm' : 'Raw'} · in season</span></div><div class="rc-t">${d.name}</div></button>`; }).join('')}</div>` : ''; })() : ''}
-    ${fertilityFoods()}
+    ${sectionTitle('Recipes for you')}
+    <div class="hscroll">${recs.map((r, i) => `<button class="rcard ${photoUrl(r.id) ? 'has-photo' : ''}" data-action="nav" data-to="recipe/${r.id}">${recipeArt(r, ['wave', 'orb', 'drop', 'hill'][i % 4], 20 + i)}
+      <div class="rc-top"><span class="rc-k">${r.raw ? 'Raw' : r.warm ? 'Warm' : r.meal}</span><span class="rc-go">${icon('chevR', 16)}</span></div>
+      <div class="rc-t">${r.name}</div><div class="rc-m">${r.time} min</div></button>`).join('')}</div>
 
-    ${fixes.length ? `${sectionTitle(recent.length ? 'For how you feel' : `Your usual ${ph.name.toLowerCase()} symptoms`)}
-    <div class="fixes">${fixes.map(s => { const f = SYMPTOM_FOODS[s]; return `<section class="card glass fix">
-      <div class="fix-h"><span class="fix-s">${s}${recent.includes(s) ? '<em>logged</em>' : ''}</span>${evBadge(f.ev)}</div>
-      <p class="body sm">${f.tip}</p><div class="foods">${f.foods.map(x => `<span class="food">${x}</span>`).join('')}</div>
-      ${reliefKey(s) ? `<button class="link fix-more" data-action="nav" data-to="relief/${encodeURIComponent(reliefKey(s))}">Full relief guide ${icon('chevR', 14)}</button>` : ''}</section>`; }).join('')}</div>` : ''}
+    ${ds.length ? `${sectionTitle('In season now', ['All', 'season'])}
+    <div class="hscroll">${ds.map((d, i) => { const ph = dishPhoto(d.name, 500); return `<button class="rcard ${ph ? 'has-photo' : ''}" data-action="nav" data-to="season">${ph ? `<img class="rc-photo" src="${ph}" alt="" loading="lazy"><span class="rc-shade"></span>` : glowArt('orb', 60 + i)}
+      <div class="rc-top"><span class="rc-k">${d.warm ? 'Warm' : 'Raw'}</span></div><div class="rc-t">${d.name}</div><div class="rc-m">${d.used.map(u => u.f).slice(0, 2).join(' · ')}</div></button>`; }).join('')}</div>` : ''}
 
-    <button class="card gro-cta" data-action="nav" data-to="grocery"><span class="art-ic">${icon('check', 20)}</span><span class="art-t">Build my grocery list<small>From your next 7 days of phases</small></span>${icon('chevR', 18)}</button>
+    ${recent.length ? `${sectionTitle('For how you feel')}${recent.map(s => { const f = SYMPTOM_FOODS[s]; return `<section class="card glass fix"><div class="fix-h"><span class="fix-s">${s}</span></div><div class="foods">${f.foods.slice(0, 5).map(x => `<span class="food">${x}</span>`).join('')}</div></section>`; }).join('')}` : ''}
 
-    ${sectionTitle('A day of eating')}
-    <section class="card glass dayplan">${N.day.map(d => `
-      <${d.recipe ? `button data-action="nav" data-to="recipe/${d.recipe}"` : 'div'} class="dp-row">
-        <span class="dp-meal">${d.meal}</span><span class="dp-what">${d.what}</span>${d.recipe ? `<span class="dp-go">${icon('chevR', 16)}</span>` : ''}
-      </${d.recipe ? 'button' : 'div'}>`).join('')}</section>
-
-    ${sectionTitle('Go easy on')}
-    <section class="card glass">${N.limit.map(l => `<div class="limit"><span class="limit-x">${icon('close', 14, 2)}</span><div><div class="limit-n">${l.x}</div><div class="tide-s">${l.why}</div></div></div>`).join('')}</section>
-
-    ${sectionTitle('Recipes')}
-    <div class="grid2">${recs.map((r, i) => `<button class="rcard tall ${photoUrl(r.id) ? 'has-photo' : ''}" data-action="nav" data-to="recipe/${r.id}">${recipeArt(r, ['wave', 'orb', 'drop', 'hill', 'crown', 'peak'][i % 6], 20 + i)}
-      <div class="rc-top"><span class="rc-k">${r.meal}${r.raw ? ' · Raw' : r.warm ? ' · Warm' : ''}</span>${r.phases.includes(phase) ? `<span class="rc-badge">${ph.name}</span>` : ''}</div>
-      <div class="rc-t">${r.name}</div><div class="rc-m">${r.time} min · ${r.kcal} kcal</div></button>`).join('')}</div>
-    <p class="fine">Targets are general adult guidance (e.g. iron 18 mg/day for menstruating women). Evidence for cycle-specific eating is still developing — use it as a guide and talk to a doctor or dietitian about supplements, heavy periods or ongoing symptoms.</p>`;
+    <button class="card gro-cta" data-action="nav" data-to="grocery"><span class="art-ic">${icon('check', 20)}</span><span class="art-t">My grocery list<small>For the next 7 days</small></span>${icon('chevR', 18)}</button>`;
 }
 
 // ---------- cosmic rhythm ----------
@@ -1579,11 +1587,10 @@ function viewInsights() {
     <div class="stats">
       <div class="card glass stat"><div class="dotnum xl">${stats.avgCycle}</div><div class="stat-k">Avg cycle<br>days</div></div>
       <div class="card glass stat"><div class="dotnum xl">${stats.avgPeriod}</div><div class="stat-k">Avg period<br>days</div></div>
-      <div class="card glass stat"><div class="dotnum xl">${stats.lengths.length}</div><div class="stat-k">Cycles<br>tracked</div></div>
-      <div class="card glass stat"><div class="dotnum xl">±${stats.variation}</div><div class="stat-k">Cycle<br>variation</div></div>
+      <div class="card glass stat"><div class="dotnum xl">${info.late ? '+' + info.late : info.daysToPeriod}</div><div class="stat-k">${info.late ? 'Days<br>late' : 'Days until<br>period'}</div></div>
+      <div class="card glass stat"><div class="dotnum xl">${info.daysToOv}</div><div class="stat-k">${info.daysToOv === 0 ? 'Egg release<br>today' : 'Days until<br>egg release'}</div></div>
     </div>
-    ${sectionTitle('Cycle history')}
-    <section class="card glass">${histRows}<div class="h-leg"><span><b class="p"></b>Period</span><span><b class="o"></b>Ovulation (est.)</span></div></section>`;
+`;
   else if (tab === 'patterns') body = `
     ${patternsSection()}
     ${sectionTitle('By phase')}
@@ -1928,6 +1935,10 @@ const actions = {
     ui.calMonth = C.iso(new Date(m.getFullYear(), m.getMonth() + +d.d, 1)); render();
   },
   calSelect: d => { ui.calSelected = d.date; render(); },
+  periodStart: () => {
+    const k = todayISO(); setLog(k, { flow: 'medium' });
+    toast('Period logged — take it easy today'); render();
+  },
   togglePeriod: () => {
     const k = ui.calSelected, l = getLog(k);
     setLog(k, { flow: PERIOD_FLOWS.includes(l.flow) ? null : 'medium' });

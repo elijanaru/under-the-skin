@@ -6,7 +6,7 @@ export const COUNTRIES = [
   ['BE', 'Belgium', 'central'], ['DK', 'Denmark', 'north'], ['PL', 'Poland', 'central'], ['CZ', 'Czechia', 'central'],
   ['SE', 'Sweden', 'north'], ['NO', 'Norway', 'north'], ['GB', 'United Kingdom', 'north'], ['IE', 'Ireland', 'north'],
   ['FI', 'Finland', 'north'], ['FR', 'France', 'central'], ['ES', 'Spain', 'med'], ['IT', 'Italy', 'med'], ['PT', 'Portugal', 'med'], ['GR', 'Greece', 'med'],
-  ['HR', 'Croatia', 'med'], ['TR', 'Türkiye', 'med'], ['US', 'United States', 'us'], ['CA', 'Canada', 'us'],
+  ['HR', 'Croatia', 'med'], ['TR', 'Türkiye', 'med'], ['US', 'United States', 'us'], ['CA', 'Canada', 'canada'],
   ['AU', 'Australia', 'aus'], ['NZ', 'New Zealand', 'aus'], ['ZA', 'South Africa', 'aus'],
 ];
 
@@ -44,6 +44,8 @@ const MED = [
   ['Olives', 'other', r(10, 1)], ['Wild greens', 'wild', r(1, 4)],
   ['Wild fennel', 'wild', r(2, 5)], ['Prickly pear', 'fruit', r(8, 10)], ['Basil', 'herb', r(5, 9)], ['Rosemary & oregano', 'herb', all],
   ['Mint', 'herb', r(4, 10)], ['Loquat', 'fruit', r(4, 5)], ['Plums', 'fruit', r(6, 8)],
+  ['Cabbage', 'veg', r(11, 3)], ['Turnip greens', 'veg', r(11, 3)], ['Carrots', 'veg', r(11, 5)], ['Beetroot', 'veg', r(11, 4)],
+  ['Cardoons', 'veg', r(11, 2)], ['Avocado', 'fruit', r(10, 4)], ['Kiwifruit', 'fruit', r(11, 3)],
 ];
 const US = [
   ['Kale', 'veg', r(10, 3)], ['Brussels sprouts', 'veg', r(9, 2)], ['Cabbage', 'veg', r(10, 3)], ['Sweet potatoes', 'veg', r(9, 12)],
@@ -76,7 +78,7 @@ const AUS = [
 CENTRAL.push(['Venison & wild boar', 'animal', r(9, 1)], ['Goose & duck', 'animal', r(11, 12)], ['Carp', 'animal', r(9, 12)],
   ['Trout & char', 'animal', r(4, 10)], ['Matjes herring', 'animal', r(6, 7)], ['Mussels', 'animal', r(9, 3)], ['Oysters', 'animal', r(9, 4)],
   ['Spring lamb', 'animal', r(4, 6)], ['Grass-fed raw milk & butter', 'animal', r(5, 9)], ['Pasture eggs', 'animal', r(3, 9)]);
-MED.push(['Sardines', 'animal', r(5, 10)], ['Anchovies', 'animal', r(4, 9)], ['Bluefin tuna', 'animal', r(5, 7)], ['Spring lamb', 'animal', r(3, 5)],
+MED.push(['Octopus', 'animal', r(10, 4)], ['Cuttlefish', 'animal', r(1, 5)], ['Red mullet', 'animal', r(9, 12)], ['Sardines', 'animal', r(5, 10)], ['Anchovies', 'animal', r(4, 9)], ['Bluefin tuna', 'animal', r(5, 7)], ['Spring lamb', 'animal', r(3, 5)],
   ['Mussels', 'animal', r(6, 10)], ['Fresh sheep & goat cheese', 'animal', r(3, 6)], ['Pasture eggs', 'animal', r(2, 7)], ['Wild boar', 'animal', r(10, 1)]);
 US.push(['Wild salmon', 'animal', r(5, 9)], ['Halibut', 'animal', r(3, 11)], ['Oysters', 'animal', r(9, 4)], ['Venison', 'animal', r(10, 1)],
   ['Turkey', 'animal', r(11, 12)], ['Dungeness crab', 'animal', r(11, 6)], ['Grass-fed raw milk & butter', 'animal', r(5, 9)], ['Pasture eggs', 'animal', r(3, 9)]);
@@ -93,7 +95,15 @@ NORTH.push(['Samphire', 'veg', r(6, 8)], ['Watercress', 'veg', r(4, 9)], ['Purpl
   ['Lingonberries', 'wild', r(8, 9)], ['Cloudberries', 'wild', r(7, 8)], ['Bilberries', 'wild', r(7, 8)], ['Mackerel', 'animal', r(6, 9)],
   ['Cod', 'animal', r(1, 4)], ['Crab & langoustine', 'animal', r(5, 10)]);
 
-const DATA = { central: CENTRAL, north: NORTH, med: MED, us: US, aus: AUS };
+// Canada: northern US produce with a shorter season (spring/summer crops ~a month later, ending ~a month earlier),
+// no warm-climate California crops, plus Canadian specialties.
+const SHORT = m => { if (m.length >= 12 || (m.includes(12) && m.includes(1))) return m; const lo = Math.min(...m), hi = Math.max(...m);
+  return m.length > 3 ? m.filter(x => !(lo >= 3 && lo <= 6 && x === lo) && !(hi >= 9 && hi <= 11 && x === hi)) : m; };
+const CANADA = US.filter(([f]) => !['Citrus', 'Artichokes', 'Avocado', 'Pomegranate', 'Persimmon', 'Halibut'].includes(f)).map(([f, k, m]) => [f, k, SHORT(m)]);
+CANADA.push(['Saskatoon berries', 'fruit', r(7, 8)], ['Wild blueberries', 'wild', r(8, 9)], ['Haskap berries', 'fruit', r(6, 7)],
+  ['Arctic char', 'animal', all], ['Atlantic lobster', 'animal', r(5, 7)], ['Pacific halibut', 'animal', r(4, 10)], ['Wild rice', 'other', r(9, 10)]);
+
+const DATA = { central: CENTRAL, north: NORTH, med: MED, us: US, canada: CANADA, aus: AUS };
 
 // TCM season for the month (southern regions are shifted by 6 months).
 const SEASON_N = { 12: 'Winter', 1: 'Winter', 2: 'Winter', 3: 'Spring', 4: 'Spring', 5: 'Spring', 6: 'Summer', 7: 'Summer', 8: 'Late summer', 9: 'Autumn', 10: 'Autumn', 11: 'Autumn' };
@@ -135,6 +145,14 @@ export function seasonName(code, month) {
 // nature: warm | neutral | cool. Phases: m=menstrual f=follicular o=ovulatory l=luteal.
 const I = (nature, nut, ph) => ({ nature, nut, ph: ph.split('').map(c => ({ m: 'menstrual', f: 'follicular', o: 'ovulatory', l: 'luteal' })[c]) });
 export const FOOD_INFO = {
+  'turnip greens': I('warm', ['Calcium', 'Folate', 'Vitamin K'], 'mf'), 'cardoons': I('cool', ['Fibre', 'Magnesium', 'Folate'], 'l'),
+  'octopus': I('neutral', ['Iron', 'Vitamin B12', 'Selenium'], 'm'), 'cuttlefish': I('neutral', ['Iron', 'Vitamin B12', 'Copper'], 'mf'),
+  'red mullet': I('neutral', ['Omega-3', 'Vitamin D', 'Iodine'], 'fo'),
+  'saskatoon berries': I('neutral', ['Iron', 'Manganese', 'Fibre'], 'mf'), 'wild blueberries': I('cool', ['Antioxidants', 'Vitamin C'], 'fo'),
+  'haskap berries': I('cool', ['Vitamin C', 'Antioxidants'], 'f'), 'arctic char': I('warm', ['Omega-3', 'Vitamin D', 'Protein'], 'ml'),
+  'atlantic lobster': I('warm', ['Zinc', 'Selenium', 'Copper'], 'fo'), 'pacific halibut': I('neutral', ['Protein', 'Selenium', 'Vitamin D'], 'ml'),
+  'wild rice': I('neutral', ['Magnesium', 'Zinc', 'Fibre'], 'l'), 'snapper': I('neutral', ['Protein', 'Selenium', 'Omega-3'], 'ml'),
+  'prawns': I('warm', ['Zinc', 'Iodine', 'Selenium'], 'fo'), 'feijoa': I('cool', ['Vitamin C', 'Fibre', 'Folate'], 'f'),
   'collards & mustard greens': I('warm', ['Calcium', 'Vitamin K', 'Folate'], 'mfl'), 'turnips & rutabaga': I('neutral', ['Vitamin C', 'Fibre'], 'l'),
   'beets': I('neutral', ['Iron', 'Folate', 'Nitrates'], 'm'), 'broccoli & cauliflower': I('neutral', ['Sulforaphane', 'Vitamin C'], 'fol'),
   'persimmon': I('cool', ['Vitamin A', 'Fibre', 'Manganese'], 'l'), 'avocado': I('neutral', ['Healthy fats', 'Potassium', 'Vitamin E'], 'ol'),
@@ -226,11 +244,11 @@ export const SEASON_DISHES = [
   D('Spinach, Strawberry & Asparagus Salad', false, ['spinach|lettuce', 'strawberr', 'asparagus'], ['Lemon', 'Olive oil', 'Raw cheese'], 'Shave raw asparagus, toss with leaves and halved strawberries.'),
   D('Cherries & Raw Yoghurt Bowl', false, ['cherr'], ['Raw yoghurt or kefir', 'Almonds', 'Raw cacao nibs'], 'Pit cherries, layer with yoghurt, almonds and cacao nibs.'),
   D('Courgette Ribbons with Basil & Lemon', false, ['courgette|zucchini', 'basil|mint'], ['Lemon', 'Olive oil', 'Pumpkin seeds'], 'Peel courgette into ribbons, dress with lemon, oil, herbs and seeds.'),
-  D('Figs with Raw Honey & Walnuts', false, ['fig', 'walnut|almond|hazelnut'], ['Raw honey', 'Raw cream'], 'Quarter the figs, drizzle honey, add nuts and a spoon of cream.'),
+  D('Figs with Raw Honey & Walnuts', false, ['fig', 'walnut|almond|hazelnut|macadamia'], ['Raw honey', 'Raw cream'], 'Quarter the figs, drizzle honey, add nuts and a spoon of cream.'),
   D('Mango & Avocado Salad', false, ['mango', 'avocado'], ['Lime', 'Coriander', 'Chili'], 'Cube both, squeeze lime, add herbs and a little chili.'),
   D('Artichokes with Lemon Butter', true, ['artichoke', 'lemon|orange'], ['Butter', 'Garlic', 'Sea salt'], 'Steam whole artichokes 30 minutes; dip the leaves in warm lemon-garlic butter.'),
   D('Orange, Fennel & Olive Salad', false, ['orange|citrus|mandarin', 'fennel|wild fennel'], ['Olives', 'Olive oil', 'Mint'], 'Slice oranges and fennel thinly, add olives and a glug of good oil.'),
-  D('Warm Chard with Garlic & Lemon', true, ['chard|spinach|wild greens', 'lemon|orange'], ['Olive oil', 'Garlic', 'Pine nuts'], 'Sauté greens with garlic for 3 minutes, finish with lemon and toasted pine nuts.'),
+  D('Warm Chard with Garlic & Lemon', true, ['chard|spinach|wild greens|turnip green', 'lemon|orange'], ['Olive oil', 'Garlic', 'Pine nuts'], 'Sauté greens with garlic for 3 minutes, finish with lemon and toasted pine nuts.'),
   D('Venison & Root Vegetable Stew', true, ['venison|wild boar', 'carrot|parsnip|celeriac|root'], ['Bone broth', 'Juniper', 'Red cabbage'], 'Brown the meat, add roots, broth and juniper; braise covered for 2 hours.'),
   D('Mussels in Garlic Broth', true, ['mussels'], ['Bone broth', 'Garlic', 'Parsley', 'Butter'], 'Steam mussels in garlicky broth with butter for 5 minutes until they open; finish with parsley.'),
   D('Matjes with Apple & Onion', false, ['matjes|herring', 'apple'], ['Red onion', 'Raw cream or kefir', 'Dill'], 'Slice apple and onion, fold into soured raw cream with dill, serve with the herring.'),
@@ -252,6 +270,29 @@ export const SEASON_DISHES = [
   D('Chestnut & Mushroom Soup', true, ['chestnut', 'mushroom'], ['Bone broth', 'Butter', 'Thyme', 'Raw cream'], 'Brown mushrooms in butter, add peeled chestnuts and broth, simmer 20 minutes, blend smooth.'),
   D('Wild Garlic & Nettle Soup', true, ['wild garlic', 'nettle'], ['Bone broth', 'Butter', 'Raw cream'], 'Wilt nettle tips (gloves!) and wild garlic in hot broth for 3 minutes, blend, finish with cream.'),
   D('Purple Sprouting Broccoli with Soft Eggs', true, ['purple sprouting'], ['Pasture eggs', 'Butter', 'Lemon'], 'Steam the spears 4 minutes, top with soft-boiled eggs, brown butter and lemon.'),
+  D('Whole Baked Snapper with Lemon & Herbs', true, ['snapper', 'lemon|citrus|parsley|coriander|basil'], ['Butter', 'Garlic', 'Sea salt'], 'Stuff the fish with lemon and herbs, bake at 200 °C for 20–25 minutes, spoon over the buttery juices.'),
+  D('Garlic Butter Prawns', true, ['prawn'], ['Butter', 'Garlic', 'Chili', 'Lemon'], 'Sizzle garlic in butter, add prawns for 2 minutes per side until pink, finish with lemon.'),
+  D('Feijoa & Passionfruit with Kefir', false, ['feijoa', 'passionfruit'], ['Raw kefir', 'Raw honey'], 'Scoop feijoa and passionfruit over cold kefir, a thread of honey on top.'),
+  D('Pan-Seared Arctic Char with Wild Rice', true, ['arctic char|halibut', 'wild rice|leek|carrot'], ['Butter', 'Dill', 'Lemon'], 'Sear the fish skin-side down in butter until crisp; serve over buttered wild rice or soft leeks.'),
+  D('Lobster with Brown Butter', true, ['lobster'], ['Butter', 'Lemon', 'Chives'], 'Boil the lobster 8–10 minutes, crack, dip in nutty brown butter with lemon.'),
+  D('Saskatoon & Wild Blueberry Bowl', false, ['saskatoon|wild blueberr|haskap|blueberr'], ['Raw cream or kefir', 'Raw honey', 'Pumpkin seeds'], 'Heap the berries in a bowl, pour over cold raw cream, honey and seeds.'),
+  D('Octopus with Lemon, Olive Oil & Paprika', true, ['octopus', 'lemon|orange|parsley'], ['Olive oil', 'Smoked paprika', 'Sea salt'], 'Simmer the octopus gently for 50 minutes until tender, slice, dress warm with oil, lemon and paprika.'),
+  D('Cuttlefish with Spring Peas', true, ['cuttlefish', 'peas|broad beans'], ['Olive oil', 'Garlic', 'Mint'], 'Sauté cuttlefish strips in olive oil and garlic, add peas and a splash of water, cook 10 minutes, finish with mint.'),
+  D('Pan-Fried Red Mullet with Fennel', true, ['red mullet', 'fennel|lemon|orange'], ['Olive oil', 'Sea salt'], 'Fry the fillets skin-side down 3 minutes until crisp; serve on thinly sliced fennel with citrus.'),
+  D('Slow-Braised Cardoons with Butter & Lemon', true, ['cardoon', 'lemon|orange'], ['Butter', 'Bone broth', 'Raw cheese'], 'Peel and cut the cardoons, braise in broth 40 minutes until tender, finish with butter, lemon and grated raw cheese.'),
+  D('Radishes with Butter & Sea Salt', false, ['radish'], ['Raw butter', 'Flaky sea salt', 'Chives'], 'Dip crisp radishes in soft raw butter, then in salt — the classic French spring snack.'),
+  D('Herb Omelette with Spring Onions', true, ['spring onion|chive|wild garlic', 'parsley|dill|chive|spinach'], ['Pasture eggs', 'Butter', 'Raw cheese'], 'Whisk eggs with chopped herbs, cook gently in butter, fold over grated raw cheese.'),
+  D('Watercress, Egg & Radish Salad', false, ['watercress', 'radish'], ['Pasture eggs', 'Olive oil', 'Lemon'], 'Toss peppery watercress with sliced radish, halved soft eggs, oil and lemon.'),
+  D('Trout with Wild Garlic Butter', true, ['trout', 'wild garlic|chive|parsley|dill'], ['Butter', 'Lemon', 'Sea salt'], 'Pan-fry the trout in butter 3–4 minutes a side, spoon over melted herb butter and lemon.'),
+  D('Gazpacho', false, ['tomato', 'cucumber', 'pepper'], ['Olive oil', 'Garlic', 'Sherry vinegar', 'Sea salt'], 'Blend ripe tomatoes, cucumber, pepper and garlic with oil and vinegar until silky; chill — no bread needed.'),
+  D('Grilled Aubergine with Raw Yoghurt & Mint', true, ['aubergine', 'mint|basil'], ['Raw yoghurt', 'Olive oil', 'Garlic'], 'Grill thick aubergine slices until soft and charred, top with garlicky yoghurt and torn mint.'),
+  D('Melon with Raw Cheese & Mint', false, ['melon', 'mint|basil'], ['Raw sheep cheese', 'Black pepper', 'Olive oil'], 'Slice ripe melon, crumble over raw cheese, scatter mint and a crack of pepper.'),
+  D('Broad Beans with Fresh Goat Cheese & Mint', false, ['broad beans|peas', 'goat cheese|mint'], ['Lemon', 'Olive oil'], 'Pop young beans from their skins, toss with crumbled fresh cheese, mint, lemon and oil.'),
+  D('Sautéed Courgette with Garlic & Basil', true, ['zucchini|courgette', 'basil|parsley|mint'], ['Butter or olive oil', 'Garlic', 'Raw cheese'], 'Slice and sauté in butter with garlic 5 minutes until golden, finish with torn basil and grated raw cheese.'),
+  D('Summer Shakshuka', true, ['tomato', 'pepper|zucchini|courgette|basil'], ['Pasture eggs', 'Olive oil', 'Cumin', 'Raw yoghurt'], 'Stew tomatoes and peppers with cumin 15 minutes, crack in eggs, cover until just set; spoon over yoghurt.'),
+  D('Sweetcorn with Herb Butter', true, ['sweetcorn'], ['Butter', 'Chives or basil', 'Sea salt'], 'Boil or grill the cobs 6–8 minutes, roll in soft herb butter and salt.'),
+  D('Ginger-Poached Stone Fruit', true, ['stone fruit|peach|apricot|plum|cherr'], ['Fresh ginger', 'Cinnamon', 'Raw honey', 'Raw cream'], 'Poach halved fruit with ginger and cinnamon 8 minutes — warming for your period, sweet for summer.'),
+  D('Warm Pea & Mint Soup', true, ['peas', 'mint|basil|parsley'], ['Bone broth', 'Butter', 'Raw cream'], 'Simmer peas in broth 5 minutes, blend with mint and butter, swirl in raw cream.'),
   D('Grapes, Raw Cheese & Walnuts', false, ['grape', 'walnut|hazelnut'], ['Raw cheese'], 'A simple autumn plate — perfect afternoon snack.'),
 ];
 export function dishesFor(items) {
@@ -260,7 +301,7 @@ export function dishesFor(items) {
   return SEASON_DISHES.map(d => {
     const hit = d.keys.filter(has);
     return { ...d, hit, score: hit.length / d.keys.length, used: items.filter(i => d.keys.some(k => new RegExp(k).test(i.f.toLowerCase()))) };
-  }).filter(d => d.score >= .66).sort((a, b) => b.score - a.score);
+  }).filter(d => d.score >= .66 && has(d.keys[0])).sort((a, b) => b.score - a.score); // main ingredient must be in season
 }
 
 // Whole-year view: every food of the region with its in-season months.

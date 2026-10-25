@@ -1328,3 +1328,51 @@ button.cc-more { background: none; border: 0; width: 100%; font: inherit; cursor
 .han-big { font-family: var(--han); font-size: 26px; color: var(--lime); margin-bottom: 6px; }
 .preview-bar { margin: 0 16px 10px; padding: 10px 14px; border-radius: 16px; background: rgba(212,239,154,.12); border: 1px solid rgba(212,239,154,.3); color: var(--lime); font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
 .preview-bar button { background: var(--lime); color: var(--ink); border: 0; border-radius: 99px; padding: 6px 14px; font: inherit; font-size: 13px; }
+.fh-feel { display: block; color: #d9ded6; font-size: 14px; margin-top: 2px; }
+.fh-soak { display: block; color: #9aa398; font-size: 13px; margin-top: 6px; line-height: 1.4; }
+.fh-soak b { color: var(--lime); font-weight: 500; }
+.fh-period { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 14px; padding: 14px; border-radius: 99px; border: 0;
+  background: var(--paper); color: var(--ink); font: inherit; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 0 24px rgba(244,245,240,.15); }
+.fh-period:active { transform: scale(.98); }
+.ro-head .ro-phase { font-size: 15px; }
+
+/* ---- Nourish / Rituals / Mind: clear structure ---- */
+.plan-hero { position: relative; height: 180px; border-radius: 30px; overflow: hidden; margin: 4px 0 14px; border: 1px solid var(--line); }
+.plan-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(.8); }
+.ph-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,6,5,.1), rgba(5,6,5,.85)); }
+.ph-in { position: absolute; left: 20px; right: 20px; bottom: 18px; }
+.ph-in h1 { margin: 4px 0 2px; font-size: 32px; font-weight: 600; letter-spacing: -.03em; }
+.ph-in h1 span { color: var(--lime); font-weight: 300; }
+.ph-in p { margin: 0; color: #c3cac1; font-size: 14px; }
+.wgo { background: rgba(212,239,154,.07); border: 1px solid rgba(212,239,154,.22); }
+.wgo p { margin: 6px 0 0; font-size: 15.5px; line-height: 1.5; color: #e6ebe2; }
+.eat-rule { display: flex; gap: 14px; align-items: center; }
+.eat-rule.warm { background: linear-gradient(135deg, #2a2112, #120e08); border: 1px solid rgba(255,190,120,.2); }
+.eat-rule.raw { background: linear-gradient(135deg, #16301f, #0a140d); border: 1px solid rgba(159,207,140,.25); }
+.er-ic { width: 52px; height: 52px; flex: none; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.07); color: var(--lime); }
+.eat-rule small, .tile small, .mg small { display: block; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.eat-rule b { display: block; font-size: 20px; font-weight: 500; margin: 2px 0 4px; }
+.eat-rule span { font-size: 13px; color: #c3cac1; line-height: 1.4; }
+.need-tiles { display: grid; gap: 8px; }
+.nt { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; }
+.nt b { font-weight: 500; font-size: 15px; color: var(--lime); }
+.nt span { font-size: 14px; color: #d9ded6; }
+.focus-card { display: flex; gap: 16px; align-items: center; background: linear-gradient(160deg, #13261a, #0b130d); border: 1px solid rgba(159,207,140,.18); }
+.fc-glyph { font-family: var(--han); font-size: 46px; color: var(--lime); text-shadow: 0 0 22px rgba(212,239,154,.5); flex: none; }
+.focus-card h3 { margin: 4px 0 6px; font-size: 21px; font-weight: 500; }
+.two-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 4px; }
+.tile { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 16px; text-align: left; color: inherit; font: inherit; }
+.tile b { font-weight: 500; font-size: 15px; line-height: 1.3; }
+.tile-ic { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: rgba(212,239,154,.1); color: var(--lime); }
+.pt-dot.sm { width: 40px; height: 40px; }
+.mind-grid { display: grid; gap: 10px; }
+.mg { display: grid; grid-template-columns: 40px 1fr; column-gap: 14px; align-items: center; }
+.mg .tile-ic { grid-row: span 3; }
+.mg b { font-weight: 500; font-size: 16px; }
+.mg p { margin: 2px 0 0; font-size: 13.5px; color: #c3cac1; line-height: 1.45; }
+.month-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.ms { display: flex; flex-direction: column; gap: 6px; padding: 12px 10px; border-radius: 18px; background: var(--glass); border: 1px solid var(--line); }
+.ms.on { border-color: rgba(212,239,154,.45); background: rgba(212,239,154,.08); }
+.ms i { width: 100%; height: 4px; border-radius: 4px; }
+.ms b { font-size: 12.5px; font-weight: 500; }
+.ms span { font-size: 11.5px; color: var(--muted); }

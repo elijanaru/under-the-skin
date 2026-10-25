@@ -402,6 +402,121 @@ export const DISH_PHOTOS = {
   "src": "https://images.unsplash.com/photo-1720287333807-4cec121e7e5c",
   "by": "Michael Carruth",
   "page": "https://unsplash.com/photos/a-white-bowl-filled-with-purple-and-green-broccoli-MqsnUgmvhVI"
+ },
+ "Whole Baked Snapper with Lemon & Herbs": {
+  "src": "https://images.unsplash.com/photo-1665401015549-712c0dc5ef85",
+  "by": "Keesha's Kitchen",
+  "page": "https://unsplash.com/photos/a-plate-of-fish-and-lemons-KRbF_wsztBE"
+ },
+ "Garlic Butter Prawns": {
+  "src": "https://images.unsplash.com/photo-1758972572427-fc3d4193bbd2",
+  "by": "Luna Wang",
+  "page": "https://unsplash.com/photos/delicious-cooked-shrimp-with-herbs-and-sauce-E4Jgsf6JS3w"
+ },
+ "Feijoa & Passionfruit with Kefir": {
+  "src": "https://images.unsplash.com/photo-1541857754-557a44522bec",
+  "by": "Elena G",
+  "page": "https://unsplash.com/photos/green-round-fruits-lot-XpHY3u3EeVw"
+ },
+ "Pan-Seared Arctic Char with Wild Rice": {
+  "src": "https://images.unsplash.com/photo-1792460238276-99f8ea53bc8c",
+  "by": "Facundo Luca",
+  "page": "https://unsplash.com/photos/pan-seared-fish-fillet-on-plate-cIaTp2Bgr_U"
+ },
+ "Lobster with Brown Butter": {
+  "src": "https://images.unsplash.com/photo-1758796626175-cfbb6ed524d5",
+  "by": "T",
+  "page": "https://unsplash.com/photos/two-halves-of-cooked-lobster-in-butter-sauce-cVNTVHKgb6c"
+ },
+ "Saskatoon & Wild Blueberry Bowl": {
+  "src": "https://images.unsplash.com/photo-1762147028504-0bdb9ae4e940",
+  "by": "Marina Zvada",
+  "page": "https://unsplash.com/photos/hand-holding-a-bowl-of-blueberries-in-the-forest-FhmcfVYynuk"
+ },
+ "Octopus with Lemon, Olive Oil & Paprika": {
+  "src": "https://images.unsplash.com/photo-1535980156496-87fc2cfcb832",
+  "by": "Nikita Tikhomirov",
+  "page": "https://unsplash.com/photos/octopus-dish-with-potato-lQ1nICyM4cA"
+ },
+ "Cuttlefish with Spring Peas": {
+  "src": "https://images.unsplash.com/photo-1758448786233-2051ecd150c8",
+  "by": "blackieshoot",
+  "page": "https://unsplash.com/photos/grilled-calamari-served-with-herbs-and-oil-by-the-sea-zgotbaQZvFo"
+ },
+ "Pan-Fried Red Mullet with Fennel": {
+  "src": "https://images.unsplash.com/photo-1792460237871-e2e750665404",
+  "by": "Facundo Luca",
+  "page": "https://unsplash.com/photos/grilled-fish-fillet-on-plate-92GaWwnSFts"
+ },
+ "Slow-Braised Cardoons with Butter & Lemon": {
+  "src": "https://images.unsplash.com/photo-1790890177340-408cb54d6eb4",
+  "by": "John Legrand",
+  "page": "https://unsplash.com/photos/halved-artichoke-on-wooden-surface-5MFHA6sbTIs"
+ },
+ "Radishes with Butter & Sea Salt": {
+  "src": "https://images.unsplash.com/photo-1576072115035-5fe30e447e60",
+  "by": "philippe collard",
+  "page": "https://unsplash.com/photos/bunch-of-white-red-and-purple-radishes-B4y0dFOq510"
+ },
+ "Herb Omelette with Spring Onions": {
+  "src": "https://images.unsplash.com/photo-1677844592730-ce9c936d8f1a",
+  "by": "Bakd&Raw by Karolin Baitinger",
+  "page": "https://unsplash.com/photos/a-white-plate-topped-with-an-omelet-and-greens-SCZP5rvZINk"
+ },
+ "Watercress, Egg & Radish Salad": {
+  "src": "https://images.unsplash.com/photo-1783155499108-7b78a41c4b41",
+  "by": "Theo Lonic",
+  "page": "https://unsplash.com/photos/colorful-salad-with-soft-boiled-eggs-and-creamy-dressing-W2sNvBdsXgw"
+ },
+ "Trout with Wild Garlic Butter": {
+  "src": "https://images.unsplash.com/photo-1510130387422-82bed34b37e9",
+  "by": "Gregor Moser",
+  "page": "https://unsplash.com/photos/QGIJUqnEpCY"
+ },
+ "Gazpacho": {
+  "src": "https://images.unsplash.com/photo-1624382075163-a4fdb99b99ec",
+  "by": "Empreinte",
+  "page": "https://unsplash.com/photos/white-ceramic-bowl-with-stainless-steel-spoon--TnVo1rEfYw"
+ },
+ "Grilled Aubergine with Raw Yoghurt & Mint": {
+  "src": "https://images.unsplash.com/photo-1677889173788-57b871df7b8a",
+  "by": "Natalia Gusakova",
+  "page": "https://unsplash.com/photos/a-white-plate-topped-with-grilled-eggplant-and-potatoes-UdsV2iVWVOc"
+ },
+ "Melon with Raw Cheese & Mint": {
+  "src": "https://images.unsplash.com/photo-1571575173700-afb9492e6a50",
+  "by": "Oriol Portell",
+  "page": "https://unsplash.com/photos/cantaloupe-slices-on-green-surface-AbwqpFnBDms"
+ },
+ "Broad Beans with Fresh Goat Cheese & Mint": {
+  "src": "https://images.unsplash.com/photo-1788513035242-c858dcb7c5fd",
+  "by": "Zoshua Colah",
+  "page": "https://unsplash.com/photos/fresh-green-fava-bean-pods-2_urXm2lJR4"
+ },
+ "Sautéed Courgette with Garlic & Basil": {
+  "src": "https://images.unsplash.com/photo-1742044609850-ed68d84c39ab",
+  "by": "okeykat",
+  "page": "https://unsplash.com/photos/grilled-zucchini-slices-in-a-pan-s_EJXaJzIys"
+ },
+ "Summer Shakshuka": {
+  "src": "https://images.unsplash.com/photo-1757972367454-b79cbe99a253",
+  "by": "Nafsika G.",
+  "page": "https://unsplash.com/photos/eggs-baked-with-vegetables-and-herbs-in-a-pan-1pbfSSnd9fs"
+ },
+ "Sweetcorn with Herb Butter": {
+  "src": "https://images.unsplash.com/photo-1590005176489-db2e714711fc",
+  "by": "Estúdio Bloom",
+  "page": "https://unsplash.com/photos/yellow-corn-on-white-ceramic-plate-Sk8eWqGLG18"
+ },
+ "Ginger-Poached Stone Fruit": {
+  "src": "https://images.unsplash.com/photo-1600707482842-ea7ec73daa90",
+  "by": "Sara Iovino",
+  "page": "https://unsplash.com/photos/sliced-fruit-in-white-ceramic-bowl-wF9-2UljgVE"
+ },
+ "Warm Pea & Mint Soup": {
+  "src": "https://images.unsplash.com/photo-1626200419199-391ae4be7a41",
+  "by": "Farhad Ibrahimzade",
+  "page": "https://unsplash.com/photos/green-soup-in-white-ceramic-bowl-C9GB-cCSRsM"
  }
 };
 export function dishPhoto(name, w = 400) {
