@@ -1027,6 +1027,22 @@ export const MOVE_SCIENCE = [
   { t: 'You run warmer after ovulation', ev: 'strong', s: 'Core temperature rises about 0.3–0.5 °C in the luteal phase, so heat feels harder. Drink more and pace yourself.', c: 'Charkoudian & Stachenfeld 2014, Compr Physiol' },
 ];
 
+// Mind tab: how energy, mood, social drive and the need for rest typically shift (0 low – 3 high).
+// Abilities stay the same all month; only energy and mood move.
+export const MIND_GUIDE = {
+  'flow-start': { energy: 1, mood: 1, social: 1, rest: 3 }, 'flow-end': { energy: 2, mood: 2, social: 2, rest: 2 },
+  rising: { energy: 3, mood: 3, social: 2, rest: 1 }, building: { energy: 3, mood: 3, social: 3, rest: 1 },
+  peak: { energy: 3, mood: 3, social: 3, rest: 1 }, settle: { energy: 2, mood: 2, social: 2, rest: 2 },
+  focus: { energy: 2, mood: 2, social: 1, rest: 2 }, premenstrual: { energy: 1, mood: 1, social: 1, rest: 3 },
+};
+export const MIND_SCIENCE = [
+  { t: 'Your thinking stays sharp all month', ev: 'some', s: 'Across studies, memory, attention and reasoning showed no consistent change across the cycle.', c: 'Sundström Poromaa & Gingnell 2014, Front Neurosci' },
+  { t: 'Measured hormones, steady minds', ev: 'some', s: 'Following women over two full cycles, measured hormone levels were not linked to working memory, attention or cognitive bias.', c: 'Leeners et al. 2017, Front Behav Neurosci' },
+  { t: 'Daily life moves mood more than the cycle', ev: 'some', s: 'A review of daily-mood studies found no clear premenstrual low mood in most women. Stress, sleep and people mattered more.', c: 'Romans et al. 2012, Gend Med' },
+  { t: 'PMS is real for many, PMDD for a few', ev: 'strong', s: 'About 1 in 5 women has bothersome PMS and 3–8% have PMDD, a severe form that deserves medical care.', c: 'Yonkers et al. 2008, The Lancet' },
+  { t: 'Estrogen and your mood chemistry', ev: 'emerging', s: 'Estradiol influences serotonin, which may explain why some women feel the late-luteal drop more than others.', c: 'Rubinow & Schmidt 2006, Front Neuroendocrinol' },
+];
+
 // Why someone uses the app — only 'conceive' shows pregnancy & fertility content.
 export const PURPOSES = [
   { k: 'know', t: 'Understand my body', s: 'Periods, rhythm & biological clock — no fertility content', photo: 'Oestrogen', img: 'images/purpose-body.jpg', pos: '50% 62%' },

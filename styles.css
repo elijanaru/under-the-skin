@@ -3859,3 +3859,10 @@ button.tip:active { transform: scale(.98); background: var(--glass-2); }
 .pld-h span.ev-some { color: var(--sage); }
 .pld-h span.ev-strong { color: var(--ink); }
 .pld-h span.ev-emerging { color: #b7beb5; } .pld-h span.ev-tcm { color: var(--lime); }
+/* Plan > Mind: ring bubbles for energy, mood, social drive and rest */
+.mind-today { margin: 4px 0 14px; }
+.mind-rings { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+.mind-rings .mv2-b { width: auto; padding: 10px 2px 12px; }
+.mind-rings .mv2-b svg { width: 56px; height: 56px; }
+.mind-rings .mv2-g { line-height: 56px; font-size: 20px; }
+.mind-rings .mv2-b b { font-size: 12.5px; }

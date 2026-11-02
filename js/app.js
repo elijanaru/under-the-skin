@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
+  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -1168,11 +1168,20 @@ function viewPlan() {
       <button class="card gro-cta" data-action="nav" data-to="relief"><span class="art-ic">${icon('heart', 20)}</span><span class="art-t">Relief guide<small>Cramps, PMS, sleep, skin</small></span>${icon('chevR', 18)}</button>`;
   } else {
     const rows = [['mind', ph.mind, 'Work'], ['users', ph.social, 'Social'], ['heart', ph.selfcare, 'Self-care']];
+    const MG = M.info ? MIND_GUIDE[dayWindow(M.info)] : null, words = ['Low', 'Lower', 'Steady', 'High'];
+    const rings = MG ? [['energy', '⚡', 'Energy'], ['mood', '☀️', 'Mood lift'], ['social', '💬', 'Social'], ['rest', '🌙', 'Rest need']].map(([k, g, n], i) => {
+      const v = MG[k], R = 27, Cc = 2 * Math.PI * R, pct = [12, 38, 70, 100][v];
+      return `<div class="mv2-b r${k === 'rest' ? Math.min(3, v) : v}" style="--i:${i}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * pct / 100).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-g">${g}</span><b>${n}</b><small>${k === 'rest' ? ['Low', 'Some', 'Usual', 'More'][v] : words[v]}</small></div>`;
+    }).join('') : '';
     body = `${whatsGoingOn(P.mind)}
+      ${MG ? `<section class="mind-today"><div class="mvd-k">Your mind today · typical</div><div class="mind-rings">${rings}</div><p class="mvd-f">Your abilities stay the same all month. Energy and mood shift, and every woman’s pattern is her own.</p></section>` : ''}
       <section class="card card-light sp-card"><div class="eyebrow dark">Your superpower now</div><h3 class="dark-h">${ph.superpower.title}</h3><p class="dp-text">${ph.superpower.text}</p></section>
       <div class="mind-grid">${rows.map(([ic, o, k]) => `<div class="card glass mg"><span class="tile-ic">${icon(ic, 22)}</span><small>${k}</small><b>${o.title}</b><p>${o.text}</p></div>`).join('')}</div>
       ${sectionTitle('Your month')}
-      <div class="month-strip">${PHASE_ORDER.map(p => `<div class="ms ${p === phase ? 'on' : ''}"><i style="background:${PHASE_COLOR.dark[p]}"></i><b>${PHASES[p].name}</b><span>${PHASES[p].superpower.title}</span></div>`).join('')}</div>`;
+      <div class="month-strip">${PHASE_ORDER.map(p => `<div class="ms ${p === phase ? 'on' : ''}"><i style="background:${PHASE_COLOR.dark[p]}"></i><b>${PHASES[p].name}</b><span>${PHASES[p].superpower.title}</span></div>`).join('')}</div>
+      ${sectionTitle('What studies found')}
+      <section class="card glass mv-sci">${MIND_SCIENCE.map(x => `<details class="mvs"><summary><b>${x.t}</b>${evBadge(x.ev)}</summary><p>${x.s}</p><cite>${x.c}</cite></details>`).join('')}</section>
+      <p class="fine center">Low mood that stays, or PMS that takes over your life, is worth a doctor’s visit.</p>`;
   }
   return `${phaseFoodPic(phase, true)}
   <div class="pad">
