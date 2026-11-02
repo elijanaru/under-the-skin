@@ -1,0 +1,50 @@
+<!doctype html><html><head><meta charset="utf-8">
+<!-- App Store product page header, 3840 × 1646 (rendered at 1920 × 823, 2x). Key content stays in the centre. -->
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+html,body{width:1920px;height:823px;overflow:hidden;background:#000;font-family:Outfit,sans-serif;color:#f4f5f0}
+.bg{position:absolute;inset:0;background:
+  radial-gradient(38% 70% at 50% 108%,rgba(212,239,154,.28),transparent 70%),
+  radial-gradient(55% 90% at 50% 100%,rgba(47,107,72,.7),transparent 72%),
+  radial-gradient(30% 50% at 8% 10%,rgba(47,107,72,.28),transparent 70%),
+  radial-gradient(30% 50% at 92% 12%,rgba(47,107,72,.28),transparent 70%)}
+.grain{position:absolute;inset:0;background-image:radial-gradient(rgba(244,245,240,.05) 1px,transparent 1px);background-size:6px 6px;mask:linear-gradient(#000,transparent 70%)}
+.hud{position:absolute;top:56px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:22px;font-size:13px;letter-spacing:.42em;color:rgba(212,239,154,.85);white-space:nowrap}
+.hud i{display:block;width:180px;height:1px;background:linear-gradient(90deg,transparent,rgba(212,239,154,.6))}
+.hud i:last-child{background:linear-gradient(90deg,rgba(212,239,154,.6),transparent)}
+h1{position:absolute;top:96px;width:100%;text-align:center;font-weight:200;font-size:104px;letter-spacing:-.035em;line-height:1;text-shadow:0 0 60px rgba(212,239,154,.25)}
+p{position:absolute;top:224px;width:100%;text-align:center;font-weight:300;font-size:30px;color:#c3cac1;letter-spacing:.005em}
+p b{font-weight:400;color:#d4ef9a}
+.fan{position:absolute;left:50%;top:318px;width:0;height:0}
+.ph{position:absolute;width:236px;aspect-ratio:1320/2868;border-radius:38px;overflow:hidden;border:5px solid #1b1f1b;background:#000;
+  box-shadow:0 40px 90px rgba(0,0,0,.85),0 0 0 1px rgba(244,245,240,.08),0 0 70px rgba(212,239,154,.12);transform-origin:50% 120%}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph.c{width:276px;left:-138px;top:-8px;z-index:3;box-shadow:0 40px 100px rgba(0,0,0,.9),0 0 0 1px rgba(244,245,240,.1),0 0 110px rgba(212,239,154,.28)}
+.ph.l1{left:-430px;top:40px;transform:rotate(-7deg);z-index:2}
+.ph.r1{left:194px;top:40px;transform:rotate(7deg);z-index:2}
+.ph.l2{left:-690px;top:110px;transform:rotate(-13deg);z-index:1;opacity:.85}
+.ph.r2{left:454px;top:110px;transform:rotate(13deg);z-index:1;opacity:.85}
+.orb{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(212,239,154,.5),transparent 65%);filter:blur(4px)}
+.scan{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(212,239,154,.35) 30%,rgba(212,239,154,.35) 70%,transparent)}
+.tag{position:absolute;font-size:12px;letter-spacing:.35em;color:rgba(159,207,140,.75)}
+</style></head><body>
+<div class="bg"></div><div class="grain"></div>
+<div class="scan" style="top:300px;opacity:.5"></div>
+<div class="orb" style="width:14px;height:14px;left:330px;top:250px"></div>
+<div class="orb" style="width:9px;height:9px;left:1560px;top:190px"></div>
+<div class="orb" style="width:20px;height:20px;left:1650px;top:430px;opacity:.6"></div>
+<div class="orb" style="width:10px;height:10px;left:250px;top:520px;opacity:.7"></div>
+<div class="tag" style="left:150px;top:300px">MOON · SUN · SEASONS</div>
+<div class="tag" style="right:150px;top:300px">HORMONES · ENERGY · GLOW</div>
+<div class="hud"><i></i>LIVE IN SYNC WITH YOUR CYCLE<i></i></div>
+<h1>Under the Skin</h1>
+<p>Your cycle is a gift. <b>Know when to push</b> and <b>when to slow down</b>.</p>
+<div class="fan">
+  <div class="ph l2"><img src="../ios-6.9/06-season.png"></div>
+  <div class="ph l1"><img src="../ios-6.9/02-today.png"></div>
+  <div class="ph r1"><img src="../ios-6.9/05-hormones.png"></div>
+  <div class="ph r2"><img src="../ios-6.9/03-plan.png"></div>
+  <div class="ph c"><img src="../ios-6.9/01-welcome.png"></div>
+</div>
+</body></html>
