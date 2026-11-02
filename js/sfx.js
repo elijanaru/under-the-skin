@@ -30,3 +30,26 @@ export function whoosh({ dur = 1.6, vol = 0.5, from = 300, to = 3200, boom = fal
   }
   return c.state === 'running';
 }
+// Soft glassy chime for hovering buttons (two quick sine notes with a gentle fade).
+let lastChime = 0;
+export function chime({ vol = 0.12 } = {}) {
+  const c = ac(); if (!c || c.state !== 'running') return;
+  const now = performance.now(); if (now - lastChime < 350) return; lastChime = now;
+  const t = c.currentTime;
+  [[1318.5, 0], [1975.5, 0.06]].forEach(([f, d]) => {
+    const o = c.createOscillator(), g = c.createGain(); o.type = 'sine'; o.frequency.value = f;
+    g.gain.setValueAtTime(0.0001, t + d); g.gain.exponentialRampToValueAtTime(vol, t + d + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + d + 0.6);
+    o.connect(g); g.connect(c.destination); o.start(t + d); o.stop(t + d + 0.65);
+  });
+}
+// Very soft, warm bell for button presses: a mellow sine with a gentle octave and a quiet airy breath.
+export function soft({ vol = 0.09 } = {}) {
+  const c = ac(); if (!c) return;
+  const t = c.currentTime, out = c.createGain(), lp = c.createBiquadFilter();
+  lp.type = 'lowpass'; lp.frequency.value = 2400; out.gain.value = 1; out.connect(lp); lp.connect(c.destination);
+  [[523.25, 1], [1046.5, .35], [783.99, .25]].forEach(([f, a], i) => {
+    const o = c.createOscillator(), g = c.createGain(); o.type = 'sine'; o.frequency.value = f;
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol * a, t + 0.02 + i * .01); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.4);
+    o.connect(g); g.connect(out); o.start(t); o.stop(t + 1.5);
+  });
+}

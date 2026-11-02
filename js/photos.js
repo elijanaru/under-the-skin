@@ -602,6 +602,121 @@ export const DISH_PHOTOS = {
   "src": "https://images.unsplash.com/photo-1791321829210-d94ccbc63b8f",
   "by": "Zoshua Colah",
   "page": "https://unsplash.com/photos/lotus-root-dish-with-chopsticks-6tkZ_SwjPuA"
+ },
+ "Bibimbap": {
+  "src": "https://images.unsplash.com/photo-1741295017668-c8132acd6fc0",
+  "by": "Dmitry Pavlovsky",
+  "page": "https://unsplash.com/photos/korean-bibimbap-with-side-dishes-is-served-SbHulgzS_eo"
+ },
+ "Kimchi-jjigae (Kimchi Stew)": {
+  "src": "https://images.unsplash.com/photo-1760228865341-675704c22a5b",
+  "by": "rawkkim",
+  "page": "https://unsplash.com/photos/close-up-of-spicy-korean-stew-with-tofu-and-scallions-1_SenAyTAXg"
+ },
+ "Doenjang-jjigae (Soybean Paste Stew)": {
+  "src": "https://images.unsplash.com/photo-1746718547557-1a0e05bed94b",
+  "by": "lee seunghyub",
+  "page": "https://unsplash.com/photos/a-hot-bubbling-korean-soup-RGixR6QAk3o"
+ },
+ "Bulgogi": {
+  "src": "https://images.unsplash.com/photo-1646299501330-c46c84c0c936",
+  "by": "Zhuojun Yu",
+  "page": "https://unsplash.com/photos/a-bowl-filled-with-meat-and-vegetables-next-to-a-bowl-of-soup-TAo2VJlo6DI"
+ },
+ "Samgyetang (Ginseng Chicken Soup)": {
+  "src": "https://images.unsplash.com/photo-1562749606-0a9eb5a8a0f3",
+  "by": "Cyprien Delaporte",
+  "page": "https://unsplash.com/photos/white-soup-on-black-ceramic-pot-M-vG5uWAE0Q"
+ },
+ "Mul-naengmyeon (Cold Buckwheat Noodles)": {
+  "src": "https://images.unsplash.com/photo-1774652765882-82b95247de82",
+  "by": "Henn Lee",
+  "page": "https://unsplash.com/photos/delicious-korean-cold-noodles-topped-with-egg-and-cucumber-pjUAvCR07UM"
+ },
+ "Kongguksu (Cold Soy Milk Noodles)": {
+  "src": "https://images.unsplash.com/photo-1750296976666-e736034e76fa",
+  "by": "patrick kim",
+  "page": "https://unsplash.com/photos/creamy-soup-is-served-with-cucumber-garnish-pBCvCOQeLGg"
+ },
+ "Gimbap": {
+  "src": "https://images.unsplash.com/photo-1608731002187-d3448d224d18",
+  "by": "Devi Puspita Amartha Yahya",
+  "page": "https://unsplash.com/photos/white-rice-with-green-leaf-vegetable-on-white-ceramic-plate-QcQ_9WxQFC0"
+ },
+ "Japchae (Glass Noodles)": {
+  "src": "https://images.unsplash.com/photo-1583032015879-e5022cb87c3b",
+  "by": "GoodEats YQR",
+  "page": "https://unsplash.com/photos/brown-and-white-ceramic-bowl-with-brown-and-white-sticks-LY4xyLYX5Vs"
+ },
+ "Haemul-pajeon (Seafood Pancake)": {
+  "src": "https://images.unsplash.com/photo-1676874566453-06335e4ae97d",
+  "by": "sehoon ye",
+  "page": "https://unsplash.com/photos/a-plate-of-food-and-a-bottle-of-wine-on-a-table-thwv-cHsXpI"
+ },
+ "Hobakjuk (Pumpkin Porridge)": {
+  "src": "https://images.unsplash.com/photo-1783153978844-3d4dbbc06f94",
+  "by": "Theo Lonic",
+  "page": "https://unsplash.com/photos/a-bowl-of-yellow-food-with-chopped-nuts-yK4K9DKU40I"
+ },
+ "Jeonbokjuk (Abalone Porridge)": {
+  "src": "https://images.unsplash.com/photo-1775883375112-64fe8e37a9e1",
+  "by": "note thanun",
+  "page": "https://unsplash.com/photos/abalone-porridge-with-side-dishes-and-egg-yolk-3JiQYHSQvGs"
+ },
+ "Bossam (Pork Wraps with Kimjang Kimchi)": {
+  "src": "https://images.unsplash.com/photo-1746718547546-7111b8cc3f7a",
+  "by": "lee seunghyub",
+  "page": "https://unsplash.com/photos/sliced-cooked-meat-served-on-a-white-plate-s-2An8fq23o"
+ },
+ "Sundubu-jjigae (Soft Tofu Stew)": {
+  "src": "https://images.unsplash.com/photo-1785166285093-d25b0ac6ca8a",
+  "by": "Ellen Chaffin",
+  "page": "https://unsplash.com/photos/YwPR-zfKD_U"
+ },
+ "Hobak-bokkeum (Stir-Fried Zucchini)": {
+  "src": "https://images.unsplash.com/photo-1591278952693-6d759bbbc6a9",
+  "by": "Anshu A",
+  "page": "https://unsplash.com/photos/green-vegetable-in-brown-bowl-beside-clear-drinking-glass-7ORMtoeXwSc"
+ },
+ "Galbi-jjim (Braised Short Ribs)": {
+  "src": "https://images.unsplash.com/photo-1783684539282-cc34b91ed983",
+  "by": "tommao wang",
+  "page": "https://unsplash.com/photos/plate-of-dark-stewed-meat-and-diced-potatoes-VjQUnfHYj54"
+ },
+ "Kimchi-bokkeumbap (Kimchi Fried Rice)": {
+  "src": "https://images.unsplash.com/photo-1600688654899-379ec76aca42",
+  "by": "Emanuel Ekström",
+  "page": "https://unsplash.com/photos/sunny-side-up-egg-on-white-ceramic-bowl-1C_RSVhy32Y"
+ },
+ "Tteokguk (New Year Rice Cake Soup)": {
+  "src": "https://images.unsplash.com/photo-1540138411301-84af810a9a44",
+  "by": "Jo Wa",
+  "page": "https://unsplash.com/photos/noodle-soup-on-round-stainless-steel-bowl-jOmIphEzhNM"
+ },
+ "Songpyeon (Chuseok Rice Cakes)": {
+  "src": "https://images.unsplash.com/photo-1671762520613-af74d6268101",
+  "by": "Caitlyn Way",
+  "page": "https://unsplash.com/photos/two-bowls-of-cookies-and-marshmallows-on-a-table-6yeXEd_6A4s"
+ },
+ "Patbingsu (Shaved Ice)": {
+  "src": "https://images.unsplash.com/photo-1771209802058-3b40ce534905",
+  "by": "Seungmin Yoon",
+  "page": "https://unsplash.com/photos/a-bowl-of-shaved-ice-with-strawberries-and-cream-BZDvXJ9blUQ"
+ },
+ "Kongnamul-guk (Bean Sprout Soup)": {
+  "src": "https://images.unsplash.com/photo-1708388064941-de7a9f879bf9",
+  "by": "Daniel",
+  "page": "https://unsplash.com/photos/a-metal-bowl-filled-with-food-on-top-of-a-black-table-1K9mMQE6zW4"
+ },
+ "Gyeran-jjim (Steamed Egg)": {
+  "src": "https://images.unsplash.com/photo-1770966666356-3f022a79b8ea",
+  "by": "Zhang Ziyu",
+  "page": "https://unsplash.com/photos/steamed-egg-custard-with-crab-and-mushroom-7iin878WAZY"
+ },
+ "Gamja-jeon (Potato Pancakes)": {
+  "src": "https://images.unsplash.com/photo-1616627077891-a4780e730b7e",
+  "by": "Crystal Jo",
+  "page": "https://unsplash.com/photos/brown-pastry-on-stainless-steel-tray-LGuTOZCfygY"
  }
 };
 export function dishPhoto(name, w = 400) {
@@ -630,3 +745,35 @@ export function hormonePhoto(n, w = 700) {
   const p = HORMONE_PHOTOS[n];
   return p ? `${p.src}?w=${w}&q=70&auto=format&fit=crop` : null;
 }
+
+// Real Unsplash photos for rituals and home remedies (filled in below).
+export const CARE_PHOTOS = {
+  "foot-soak": { src: "https://images.unsplash.com/photo-1577117633143-a2437fb9bdda", by: "Toranong Mahachai", page: "https://unsplash.com/photos/person-sitting-with-both-feet-in-brown-bowl-xugoOgRPngU" },
+  "belly-massage": { src: "https://images.unsplash.com/photo-1549445069-d1125f7a129c", by: "Jannes Jacobs", page: "https://unsplash.com/photos/pMQgDg_8z88" },
+  "liver-stretch": { src: "https://images.unsplash.com/photo-1767611124095-0180597f3a2b", by: "Margaret Young", page: "https://unsplash.com/photos/woman-stretching-on-a-yoga-mat-uuRTeOsTg5k" },
+  "early-sleep": { src: "https://images.unsplash.com/photo-1552858725-a19e7fcd3ac4", by: "Jp Valery", page: "https://unsplash.com/photos/F2SrBdv9swk" },
+  "congee": { src: "https://images.unsplash.com/photo-1648161020664-73e6e084ef3a", by: "Solène Haillard", page: "https://unsplash.com/photos/w1wM3CMumqA" },
+  "heart-breath": { src: "https://images.unsplash.com/photo-1461468611824-46457c0e11fd", by: "Artem Kovalev", page: "https://unsplash.com/photos/fk3XUcfTAvk" },
+  "lemon-water": { src: "https://images.unsplash.com/photo-1610378833220-9e374e37856b", by: "Aneta Voborilova", page: "https://unsplash.com/photos/clear-drinking-glass-with-water-and-sliced-lemon-on-brown-wooden-chopping-board-V2TubGSIf0w" },
+  "lung-elixir": { src: "https://images.unsplash.com/photo-1785605121301-c5ab1cd740d7", by: "Le Tia", page: "https://unsplash.com/photos/YT6hO81LyP8" },
+  "circulation-shot": { src: "https://images.unsplash.com/photo-1459933083533-46381576caa9", by: "Osha Key", page: "https://unsplash.com/photos/clear-drinking-glass-full-of-orange-liquid-wCml4tvK-Yg" },
+  "gut-smoothie": { src: "https://images.unsplash.com/photo-1610970881699-44a5587cabec", by: "Giorgi Iremadze", page: "https://unsplash.com/photos/3OV0ft7mG_o" },
+  "carrot-salad": { src: "https://images.unsplash.com/photo-1714611446690-53f67b0b1360", by: "Mustafa Fatemi", page: "https://unsplash.com/photos/a-bowl-of-shredded-carrots-with-a-fork-in-it-f1Jnk7tSM-w" },
+  "heart-foods": { src: "https://images.unsplash.com/photo-1561998831-c8e4004e6637", by: "Roberto Patti", page: "https://unsplash.com/photos/weravkagvgE" },
+};
+export function carePhoto(id, w = 600) {
+  const p = CARE_PHOTOS[id];
+  return p ? `${p.src}?w=${w}&q=70&auto=format&fit=crop` : null;
+}
+
+// Real Unsplash photos for the "Your stars" tiles (filled in below).
+// Cosmic rhythm photos: Pexels photo IDs (free Pexels License, no attribution required).
+export const STAR_PHOTOS = {"emotions": "19765194", "body": "35566479", "path": "17731161", "social": "13027642", "romance": "17979088", "career": "5393490", "beauty": "5468644", "creativity": "4442078", "sensuality": "8007347", "fragrance": "713042", "flower": "27168241", "moon": "39037947", "sky": "17954395"};
+export function starPhoto(k, w = 700) {
+  const id = STAR_PHOTOS[k];
+  return id ? `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${w}` : null;
+}
+
+// Single seasonal foods: Pexels photo IDs (free Pexels License, no attribution required).
+export const FOOD_PHOTOS = {"Carrots":"16812115","Leeks":"38571492","Beetroot":"20517382","Apples":"38924564","Spinach":"38571502","Fennel":"7511809","Kale":"5756033","Tomatoes":"38990977","Pears":"35145219","Chives":"17143565","Parsley":"6102658","Broccoli":"7676071","Basil":"13995284","Cauliflower":"6631953","Savoy & red cabbage":"209482","Celeriac":"18121556","Parsnips":"36517116","Jerusalem artichoke":"39647826","Brussels sprouts":"12098967","Salsify":"38476430","Lamb's lettuce":"38084069","Red & black radish":"29679933","Radishes":"29679933","Strawberries":"18018686","Cucumber":"39490165","Spring onions":"7392730","Courgette":"13656392","Pumpkin & squash":"39467457","Lettuce":"28524414","Kohlrabi":"7511865","Thyme & sage":"4198139","Rosemary & oregano":"38531156","Horseradish":"17552791","Asparagus":"545028","Avocado":"27462724","Green beans":"36525890","Dill":"14646104","Peppers":"18640811","Peas":"5125097","Rhubarb":"104662","Chestnuts":"750974","Cabbage":"6316537","Mushrooms & chanterelles":"28531151","Walnuts":"39432877","Artichokes":"31976164","Cherries":"38073147","Quince":"9944540","Nettle":"36215169","Raspberries":"6316703","Blueberries":"583837","Chard":"27666299","Plums":"27533957","Kiwifruit":"7255620","Grapes":"10922960","Sea buckthorn":"28553992","Rosehips":"36599502","Lemons":"31428126","Mint":"13632808","Pomegranate":"12148143","Wild garlic":"16619012","Dandelion greens":"16714208","Baby potatoes":"5638270","Gooseberries & currants":"13026273","Sweetcorn":"9362415","Watercress":"12931140","Oranges & mandarins":"8639570","Persimmon":"34485902","Figs":"28160702","Turnip greens":"11663131","Aubergine":"34096648","Mushrooms":"17630122","Elderflower":"31818212","Wild berries":"18688377","Blackberries":"5194027","Elderberries":"1343941","Hazelnuts":"6316669","Root vegetables":"33893317","Parsley & coriander":"6102658","Apricots":"38096496","Sweet potatoes":"7456548","Olives":"40117804","Wild greens":"9432640","Cardoons":"12324984","Wild fennel":"15725619","Peaches & nectarines":"9265739","Melon & watermelon":"17903817","Watermelon":"1591183","Citrus":"7156052","Broccoli & cauliflower":"7676071","Zucchini":"13656392","Macadamias":"21558690","Purple sprouting broccoli":"24783885","Samphire":"9444055","Broad beans":"4963929","Almonds":"35339669","Prickly pear":"35979465","Passionfruit":"6332803","Pumpkin":"39467457","Custard apple":"16769751","Spinach & silverbeet":"38571502","Beets":"33893317","Mango":"19087708","Berries":"15499011","Cloudberries":"40281236","Bilberries":"1366797","Damsons":"11532335","Lingonberries":"38240786","Loquat":"12433713","Pumpkin & winter squash":"39467457","Turnips & rutabaga":"19689765","Parsley & cilantro":"6102658","Aged kimchi (mugeunji)":"8956780","Soybean sprouts (kongnamul)":"8954508","Stone fruit":"30870745","Feijoa":"4235460","Collards & mustard greens":"2518893","Peas & broad beans":"5125097","Maple syrup":"6864213","Peaches & plums":"9265739","Cucumbers":"33440683","Raw honey":"20012002","Cranberries":"38802747","Pecans & walnuts":"37829757","Burdock & lotus root":"37297743","Korean radish (mu)":"35625125","Spinach (sigeumchi)":"38571502","Seaweed (gim & miyeok)":"8849617","Ramps (wild leeks)":"24387661","Fiddleheads":"8266728","Morels":"37673231","Jeju mandarins (gamgyul)":"4074999","Zucchini (aehobak)":"13656392","Perilla leaves (kkaennip)":"35663682","Pumpkin (danhobak)":"30136947","Sweet potatoes (goguma)":"7456548","Spring wild greens (naengi, dallae, ssuk)":"227376","Minari (water dropwort)":"12931140","Hallabong":"30925639","Shiitake":"6157030","Korean melon (chamoe)":"38588473","Peppers (gochu)":"10899475","Eggplant":"34096648","Peaches":"9265739","Asian pears (bae)":"13534176","Ginseng":"16122465","New-crop rice (haepssal)":"36346840","Napa cabbage":"16275972","Haskap berries":"10097289","Saskatoon berries":"17603130","Wild blueberries":"5273297","Wild rice":"1306548","Bamboo shoots":"20880098","Potatoes":"36400786","Pine mushrooms (songi)":"33111628","Jujubes (daechu)":"33030028","Green plums (maesil)":"33654839"};
+export function foodPhoto(name, w = 360) { const id = FOOD_PHOTOS[name]; return id ? `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${w}&h=${Math.round(w * 1.3)}&fit=crop` : ''; }

@@ -1,0 +1,23 @@
+{
+  "appId": "com.elijanaru.undertheskin",
+  "appName": "Under the Skin",
+  "webDir": "www",
+  "backgroundColor": "#050605",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#050605"
+  },
+  "android": {
+    "backgroundColor": "#050605"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 600,
+      "backgroundColor": "#050605",
+      "showSpinner": false
+    },
+    "SystemBars": {
+      "style": "DARK"
+    }
+  }
+}

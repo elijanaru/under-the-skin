@@ -1,1 +1,24 @@
-{"type":"module","private":true}
+{
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/filesystem": "^8.1.5",
+    "@capacitor/ios": "^8.6.0",
+    "@capacitor/share": "^8.0.3",
+    "@capacitor/splash-screen": "^8.0.2",
+    "@ebarooni/capacitor-calendar": "^8.10.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^4.0.0",
+    "@capacitor/cli": "^8.6.0",
+    "three": "^0.160.0"
+  },
+  "scripts": {
+    "build": "node scripts/build-www.mjs",
+    "ios": "node scripts/build-www.mjs && npx cap sync ios && npx cap open ios",
+    "android": "node scripts/build-www.mjs && npx cap sync android && npx cap open android",
+    "sync": "node scripts/build-www.mjs && npx cap sync"
+  }
+}

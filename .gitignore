@@ -2,3 +2,10 @@
 .claude/
 CLAUDE.md
 .DS_Store
+node_modules/
+www/
+ios/App/Pods/
+android/.gradle/
+android/app/build/
+android/build/
+release/

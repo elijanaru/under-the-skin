@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Under the Skin</string>
+    <string name="title_activity_main">Under the Skin</string>
+    <string name="package_name">com.elijanaru.undertheskin</string>
+    <string name="custom_url_scheme">com.elijanaru.undertheskin</string>
+</resources>

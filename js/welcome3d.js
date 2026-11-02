@@ -33,7 +33,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
   scene.environmentIntensity = 0.35;
 
   const camera = new THREE.PerspectiveCamera(32, 1, 0.05, 80);
-  const CAM_END = new THREE.Vector3(0, -0.25, 5.4), CAM_START = new THREE.Vector3(0, 0.6, 26);
+  const CAM_END = new THREE.Vector3(0, -0.2, 5.1), CAM_START = new THREE.Vector3(0, 0.6, 26);
   camera.position.copy(reduce ? CAM_END : CAM_START);
 
   // light: soft white key, deep-green and lime rims from behind
@@ -43,6 +43,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
   const rimB = new THREE.PointLight(0xd4ef9a, 26, 12, 1.6); rimB.position.set(2.3, -0.4, -1.6); scene.add(rimB);
 
   const world = new THREE.Group(); scene.add(world);
+  world.position.x = -0.24; // her raised arm reaches right — shift so she reads centred
   const body = new THREE.Group(); world.add(body);
 
   // ---- warp tunnel: streaks of light rushing past the camera ----
@@ -167,7 +168,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
     }
     look.x += (look.tx - look.x) * 0.04; look.y += (look.ty - look.y) * 0.04;
     camera.position.set(look.x * 0.35, camY - look.y * 0.2, camZ);
-    camera.lookAt(0, camY * 0.3, 0);
+    camera.lookAt(0, camY * 0.3 - (entering ? 0 : 0.22 * k), 0); // look below her so she sits high and fills the screen
 
     // warp streaks: length grows with speed
     const L = Math.min(9, warpSpeed * 0.09) + 0.05, p = warpGeo.attributes.position.array;

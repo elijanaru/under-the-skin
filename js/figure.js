@@ -1,3 +1,11 @@
+// accent colour of the current phase, read from the CSS (canvas can't use CSS variables)
+let accC = '212,239,154', accT = 0;
+function ACC() {
+  const now = performance.now(); if (now - accT < 1000) return accC; accT = now;
+  const el = document.createElement('i'); el.style.cssText = 'position:absolute;visibility:hidden;color:var(--lime)'; document.body.appendChild(el);
+  const m = getComputedStyle(el).color.match(/[\d.]+/g); el.remove(); if (m) accC = m.slice(0, 3).map(x => Math.round(+x)).join(',');
+  return accC;
+}
 // "Technical" female body: a living cloud of glowing pearl particles on canvas,
 // with a scan-light, breathing motion and HUD focus markers (womb, head, heart...).
 
@@ -83,26 +91,26 @@ export function mountFigure(canvas, { focus = null, mode = 'full', intro = true 
       if (F) { const d = Math.hypot(p.x - F.x, p.y - F.y); near = Math.max(0, 1 - d / F.r); }
       const al = Math.min(1, p.b * tw + scan * .7 + near * .6) * ease;
       const dx = Math.sin(t * .8 + p.y * .03) * .35;
-      ctx.fillStyle = near > .2 ? `rgba(212,239,154,${al})` : `rgba(240,244,236,${al})`;
+      ctx.fillStyle = near > .2 ? `rgba(${ACC()},${al})` : `rgba(240,244,236,${al})`;
       ctx.beginPath(); ctx.arc(p.x + dx, p.y + rise - lift, p.s * (1 + scan * .6 + near * .5), 0, 6.283); ctx.fill();
-      if (k < 1) { ctx.fillStyle = `rgba(212,239,154,${(1 - k) * .5})`; ctx.fillRect(p.x + dx - .3, p.y + rise - lift, .6, 6 * (1 - k)); }
+      if (k < 1) { ctx.fillStyle = `rgba(${ACC()},${(1 - k) * .5})`; ctx.fillRect(p.x + dx - .3, p.y + rise - lift, .6, 6 * (1 - k)); }
     }
     // HUD focus marker
     if (F) {
       const pulse = (Math.sin(t * 2.4) + 1) / 2;
-      ctx.strokeStyle = `rgba(212,239,154,${.5 + pulse * .4})`; ctx.lineWidth = .7;
+      ctx.strokeStyle = `rgba(${ACC()},${.5 + pulse * .4})`; ctx.lineWidth = .7;
       ctx.beginPath(); ctx.arc(F.x, F.y, F.r * (.85 + pulse * .15), 0, 6.283); ctx.stroke();
       ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.arc(F.x, F.y, F.r * 1.35, t * .5, t * .5 + 4.5); ctx.stroke(); ctx.setLineDash([]);
       if (focus === 'stars') for (let i = 0; i < 12; i++) {
         const a = t * .35 + i * (Math.PI * 2 / 12);
-        ctx.fillStyle = `rgba(212,239,154,${.5 + .5 * Math.sin(t * 3 + i)})`;
+        ctx.fillStyle = `rgba(${ACC()},${.5 + .5 * Math.sin(t * 3 + i)})`;
         ctx.beginPath(); ctx.arc(F.x + Math.cos(a) * F.r * 1.25, F.y + Math.sin(a) * F.r * .9, 1.4, 0, 6.283); ctx.fill();
       }
       // leader line + label
       const lx = F.x + F.r + 26, ly = F.y - F.r * .6;
-      ctx.strokeStyle = 'rgba(212,239,154,.7)';
+      ctx.strokeStyle = `rgba(${ACC()},.7)`;
       ctx.beginPath(); ctx.moveTo(F.x + F.r * .7, F.y - F.r * .3); ctx.lineTo(lx - 6, ly); ctx.lineTo(lx + 40, ly); ctx.stroke();
-      ctx.fillStyle = 'rgba(212,239,154,.9)'; ctx.font = '500 6.5px Outfit, sans-serif';
+      ctx.fillStyle = `rgba(${ACC()},.9)`; ctx.font = '500 6.5px Outfit, sans-serif';
       ctx.fillText(F.label, lx - 4, ly - 3);
     }
     ctx.restore();
@@ -137,7 +145,7 @@ export function mushroomArt(variant = 0, cls = '') {
       <radialGradient id="${id}" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#cfd9cc" stop-opacity=".18"/><stop offset="1" stop-color="#9fcf8c" stop-opacity=".05"/></radialGradient>
       <filter id="${id}b"><feGaussianBlur stdDeviation="5"/></filter></defs>
     <rect x="128" y="0" width="22" height="200" rx="8" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.12)"/>
-    <ellipse cx="80" cy="110" rx="60" ry="70" fill="rgba(212,239,154,.08)" filter="url(#${id}b)"/>
+    <ellipse cx="80" cy="110" rx="60" ry="70" fill="var(--lime)" fill-opacity=".08" filter="url(#${id}b)"/>
     <g class="mush-caps">${caps}</g>
     <g class="glitch">${[[44, 62, 52, 6], [26, 104, 70, 5], [60, 140, 40, 4], [30, 168, 48, 5]].map(([x, y, w, h], i) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" style="--d:${i * .7}s"/>`).join('')}</g>
   </svg>`;
@@ -159,7 +167,7 @@ export function nautilusArt(cls = '') {
     }
   }
   return `<svg class="nautilus ${cls}" viewBox="0 0 200 200" aria-hidden="true"><defs>
-      <radialGradient id="nau-g"><stop offset="0" stop-color="#d4ef9a" stop-opacity=".18"/><stop offset="1" stop-color="#d4ef9a" stop-opacity="0"/></radialGradient></defs>
+      <radialGradient id="nau-g"><stop offset="0" stop-color="var(--lime)" stop-opacity=".18"/><stop offset="1" stop-color="var(--lime)" stop-opacity="0"/></radialGradient></defs>
     <circle cx="100" cy="100" r="96" fill="url(#nau-g)"/>
     <g fill="#f3f5ef">${dots.join('')}${septa.join('')}</g></svg>`;
 }
