@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
+  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -2542,7 +2542,7 @@ function ovaryArt(cd, ov, L, x, y) {
 }
 function fullCycleGuide(info) {
   const L = info.L, P = info.P, ov = C.ovulationDay(L, P), cd = Math.min(info.cd, L);
-  const COL = { m: '#e5484d', f: '#f3c4a6', o: 'hsl(calc(var(--hb) + 147 * var(--hk)) calc(61% * var(--hs)) 47%)', l: '#a9c7ef' };
+  const PC = PHASE_COLOR.dark, COL = { m: PC.menstrual, f: PC.follicular, o: PC.ovulatory, l: PC.luteal };
   const kind = d => d <= P ? 'm' : Math.abs(d - ov) <= 1 ? 'o' : d < ov ? 'f' : 'l';
   const stages = [
     { k: 'm', name: 'Period', days: [1, P], art: 1, lining: 1, lead: [['Estrogen', '#ff8fc4', 'low'], ['Progesterone', 'hsl(calc(var(--hb) + 142 * var(--hk)) calc(57% * var(--hs2)) 60%)', 'low']],
@@ -2938,7 +2938,10 @@ function viewRhythm() {
 function viewGuide() {
   const info = M.info; if (!info) return viewMissing();
   return `${topbar('Cycle guide', { back: true })}
-  <div class="pad"><h1 class="page-h">How your <span>cycle works</span></h1>${fullCycleGuide(info)}</div>`;
+  <div class="pad"><h1 class="page-h">How your <span>cycle works</span></h1>${fullCycleGuide(info)}
+    ${sectionTitle('What studies found')}
+    <section class="card glass tea-study">${CYCLE_SCIENCE.map(x => `<div class="ts-i"><div class="ts-h"><b>${x.t}</b>${evBadge(x.ev)}</div><p>${x.s}</p><small>${x.c}</small></div>`).join('')}</section>
+    <p class="fine center">Your own days may differ. Log your periods and the app learns your real rhythm.</p></div>`;
 }
 function bindGuide() {
   document.querySelectorAll('.guide[data-l]').forEach(el => { // only the cycle-guide diagram (star tiles share the class)

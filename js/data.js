@@ -1035,6 +1035,13 @@ export const MIND_GUIDE = {
   peak: { energy: 3, mood: 3, social: 3, rest: 1 }, settle: { energy: 2, mood: 2, social: 2, rest: 2 },
   focus: { energy: 2, mood: 2, social: 1, rest: 2 }, premenstrual: { energy: 1, mood: 1, social: 1, rest: 3 },
 };
+// Cycle guide · what large studies found about real cycles.
+export const CYCLE_SCIENCE = [
+  { t: 'Few cycles are exactly 28 days', ev: 'strong', s: 'In over 600,000 cycles tracked in an app, the average cycle was about 29 days and only around 1 in 8 was exactly 28. The first half (before the egg is released) varied the most. The second half was steadier at about 12 days.', c: 'Bull et al. 2019, npj Digital Medicine' },
+  { t: 'Cycles shorten a little with age', ev: 'strong', s: 'In the same data, cycles got slightly shorter between the mid-20s and mid-40s, mainly because the first half got shorter.', c: 'Bull et al. 2019, npj Digital Medicine' },
+  { t: 'Egg release moves from cycle to cycle', ev: 'strong', s: 'Only about 3 in 10 women had their whole fertile window between days 10 and 17. Even with regular periods, the day of egg release shifts. That is why this app learns from your logs and is never contraception.', c: 'Wilcox, Dunson & Baird 2000, BMJ' },
+  { t: 'The fertile window is about 6 days', ev: 'strong', s: 'Pregnancy was only possible in the 5 days before egg release and on the day itself, because sperm live a few days and the egg about one.', c: 'Wilcox, Weinberg & Baird 1995, New England Journal of Medicine' },
+];
 export const MIND_SCIENCE = [
   { t: 'Your thinking stays sharp all month', ev: 'some', s: 'Across studies, memory, attention and reasoning showed no consistent change across the cycle.', c: 'Sundström Poromaa & Gingnell 2014, Front Neurosci' },
   { t: 'Measured hormones, steady minds', ev: 'some', s: 'Following women over two full cycles, measured hormone levels were not linked to working memory, attention or cognitive bias.', c: 'Leeners et al. 2017, Front Behav Neurosci' },
