@@ -6,3 +6,5 @@ export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 // Google sign-in client IDs (public, from Google Cloud → Credentials). The web one is also the server's audience.
 export const GOOGLE_WEB_CLIENT_ID = '883575718064-9ip5a33hlilu4krpmt7plq17fnceg6t8.apps.googleusercontent.com';
 export const GOOGLE_IOS_CLIENT_ID = '883575718064-7vq25j7690mb819gaui67eq3ee5k11lj.apps.googleusercontent.com';
+// Providers that work on the website too (needs the Google client secret / Apple Services ID in Supabase).
+export const WEB_OAUTH = [];

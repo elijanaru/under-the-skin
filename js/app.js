@@ -3613,7 +3613,7 @@ function viewAccount() {
     ${create ? `<label class="ac-consent"><input type="checkbox" id="ac-consent"><span>I agree that my cycle and health logs are kept in my private account so they sync between my phones. I can delete them anytime. <a href="#/privacy">Privacy</a></span></label>` : ''}
     ${A.oauthOK('apple') ? `<button class="ac-btn ac-apple" data-action="acProvider" data-p="apple">${APPLE_SVG}<span>${create ? 'Sign up' : 'Sign in'} with Apple</span></button>` : ''}
     ${A.oauthOK('google') ? `<button class="ac-btn ac-google" data-action="acProvider" data-p="google">${GOOGLE_SVG}<span>${create ? 'Sign up' : 'Sign in'} with Google</span></button>` : ''}
-    <div class="ac-or"><span>or with email</span></div>
+    ${A.oauthOK('apple') || A.oauthOK('google') ? '<div class="ac-or"><span>or with email</span></div>' : ''}
     <section class="card glass ac-form">
       <input class="field" id="ac-email" type="email" inputmode="email" autocomplete="email" placeholder="Email" value="${esc(ui.acEmail || '')}">
       <input class="field" id="ac-pw" type="password" autocomplete="${create ? 'new-password' : 'current-password'}" placeholder="${create ? 'Password · at least 8 characters' : 'Password'}">

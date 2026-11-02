@@ -1,6 +1,6 @@
 // Accounts and cloud sync: Sign in with Apple, Google, or email + password (Supabase).
 // Local-first: the app works fully without an account; signing in only adds a private copy in the cloud.
-import { SUPABASE_URL, SUPABASE_ANON_KEY, GOOGLE_WEB_CLIENT_ID, GOOGLE_IOS_CLIENT_ID } from './config.js';
+import { SUPABASE_URL, SUPABASE_ANON_KEY, GOOGLE_WEB_CLIENT_ID, GOOGLE_IOS_CLIENT_ID, WEB_OAUTH } from './config.js';
 
 const LIB = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm';
 const TABLE = 'cycle_data';
@@ -17,7 +17,8 @@ const NATIVE = !!window.Capacitor?.isNativePlatform?.();
 const OS = window.Capacitor?.getPlatform?.();
 const SL = () => window.Capacitor?.Plugins?.SocialLogin;
 // Apple: iPhone only (Android would need a server redirect). Google: once its client IDs are in config.js.
-export const oauthOK = p => !NATIVE || (!!SL() && (p === 'apple' ? OS === 'ios' : !!(OS === 'ios' ? GOOGLE_IOS_CLIENT_ID : GOOGLE_WEB_CLIENT_ID)));
+// On the website: only once the Google client secret / Apple Services ID are in Supabase (WEB_OAUTH in config.js).
+export const oauthOK = p => (!NATIVE && WEB_OAUTH.includes(p)) || (!!SL() && (p === 'apple' ? OS === 'ios' : !!(OS === 'ios' ? GOOGLE_IOS_CLIENT_ID : GOOGLE_WEB_CLIENT_ID)));
 const redirect = () => (NATIVE ? 'https://elijanaru.github.io/under-the-skin/' : location.origin + location.pathname);
 
 // The library is only fetched when someone has (or wants) an account, so the app stays light.
