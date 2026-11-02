@@ -3175,10 +3175,6 @@ button.hub-rh:active .hub-mg { transform: scale(.94); }
 .br-cta { margin-top: 12px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 16px; border-radius: 99px; border: 0; background: #f4f5f0; color: #0d130e; font: 500 14px Outfit, sans-serif; }
 @media (prefers-reduced-motion: reduce) { .br-orb i, .lg-sec, .lg-in, .br-note, .br-card { animation: none; } }
 
-/* ---- welcome title: back to the original thin Outfit wordmark ---- */
-.bw-script { font-family: var(--font) !important; font-weight: 200 !important; font-size: clamp(46px, 15vw, 64px) !important; line-height: .95 !important; letter-spacing: -.035em !important; text-transform: lowercase; }
-.bw-ink { color: var(--paper) !important; -webkit-text-fill-color: var(--paper); -webkit-text-stroke: 0 !important; filter: none !important; text-shadow: 0 0 40px rgba(212,239,154,.28); }
-
 /* ---- "My period started today": glass pill with a blood-drop seal ---- */
 .stage-after .fh-period.pp { display: inline-flex; align-items: center; gap: 10px; width: auto; margin: 14px auto 0; padding: 6px 18px 6px 6px; border-radius: 99px;
   background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.16); color: #f4f5f0; font: 400 14px Outfit, sans-serif; letter-spacing: .01em;
