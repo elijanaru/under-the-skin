@@ -226,7 +226,7 @@ function tipsCard(info) {
     <div class="tips">${list.slice(0, 6).map(x => { const u = hormonePhoto(x.photo, 300); return `<div class="tip">${u ? `<img src="${u}" alt="" loading="lazy">` : ''}<div><small>${x.t}</small><p>${x.tip}</p></div></div>`; }).join('')}</div>`;
 }
 // Articles to read around today's tips: this phase first, then what she wants help with.
-const ARTICLE_PHOTO = { estrogen: 'Oestrogen', 'progesterone-pms': 'Progesterone', iron: 'Active vitamin D', 'yin-yang': 'Thyroid hormones', 'seed-cycling': 'Insulin', 'four-phases': 'LH' };
+const ARTICLE_PHOTO = { estrogen: 'Oestrogen', 'progesterone-pms': 'Progesterone', iron: 'Active vitamin D', 'yin-yang': 'Thyroid hormones', 'seed-cycling': 'Insulin', 'four-phases': 'LH', brain: 'Serotonin', sleep: 'Melatonin', 'ovulation-signs': 'FSH' };
 const FOCUS_READS = {
   sleep: { to: 'rhythm', k: 'Sleep & light', t: 'Why your body follows the sun', m: '6 min read', photo: 'Melatonin' },
   pms: { to: 'relief', k: 'PMS & cramps', t: 'Gentle relief for every symptom', m: 'Guide', photo: 'Progesterone' },
@@ -3476,7 +3476,11 @@ function viewArticle(id) {
   return `${topbar('Learn', { back: true })}
   <div class="pad article">
     <div class="eyebrow">${a.phase ? PHASES[a.phase].name + ' phase · ' : ''}${a.mins} min read</div>
-    <h1>${a.title}</h1>${a.body.map(p => `<p>${p}</p>`).join('')}
+    <h1>${a.title}</h1>
+    ${a.keys ? `<section class="card glass art-keys"><div class="spec-k">Key numbers</div>${a.keys.map(([b, t]) => `<div class="spec-row"><b>${b}</b><span>${t}</span></div>`).join('')}</section>` : ''}
+    ${a.body.map(p => `<p>${p}</p>`).join('')}
+    ${a.src ? `<section class="card glass tea-study art-src"><div class="ts-ev">${evBadge(a.ev)} <span>${EVIDENCE[a.ev].label}</span></div><small>Sources · ${a.src}</small></section>` : ''}
+    ${(() => { const i = ARTICLES.indexOf(a), n = ARTICLES[(i + 1) % ARTICLES.length]; return `<button class="card glass nu-next" data-action="nav" data-to="article/${n.id}"><small>Next read</small><b>${n.title}</b>${icon('chevR', 16)}</button>`; })()}
   </div>`;
 }
 function avatarInner(p) { return p.photo ? `<img src="${esc(p.photo)}" alt="">` : esc((p.name || 'R')[0].toUpperCase()); }
