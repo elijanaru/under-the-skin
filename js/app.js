@@ -1317,42 +1317,54 @@ const PLATE_SET = {
   fruit: { Winter: UNS('1788512337872-7390113a5318'), Autumn: UNS('1788512337872-7390113a5318'), Spring: UNS('1594282241894-4da286138f44'), Summer: PEX(6316703), 'Late summer': PEX(6316703) },
 };
 const plateSetPic = (k, phase, season) => k === 'veg' ? PLATE_SET.veg() : k === 'fruit' ? PLATE_SET.fruit[season] : PLATE_SET[k][phase];
+// A rounded food portion: the wedge between angles a0 and a1, pulled in by h from both cut edges.
+function portionPath(cx, cy, R, a0, a1, h = 2.6, rr = 7) {
+  const u = a => [Math.sin(a), -Math.cos(a)], n = a => [Math.cos(a), Math.sin(a)], f = v => v.toFixed(1);
+  const half = (a1 - a0) / 2, t = h / Math.sin(Math.min(half, Math.PI / 2 - .01)), [bx, by] = u(a0 + half);
+  const A = [cx + t * bx, cy + t * by];
+  const edge = (a, r, side) => { const [ux, uy] = u(a), [nx, ny] = n(a); return [cx + r * ux + side * h * nx, cy + r * uy + side * h * ny]; };
+  const arc = (a, r = R) => [cx + r * Math.sin(a), cy - r * Math.cos(a)];
+  const P0 = edge(a0, R - rr, 1), C0 = arc(a0 + h / R), Q0 = arc(a0 + (h + rr) / R), Q1 = arc(a1 - (h + rr) / R), C1 = arc(a1 - h / R), P1 = edge(a1, R - rr, -1);
+  const big = a1 - a0 - 2 * (h + rr) / R > Math.PI ? 1 : 0;
+  return `M${f(A[0])} ${f(A[1])} L${f(P0[0])} ${f(P0[1])} Q${f(C0[0])} ${f(C0[1])} ${f(Q0[0])} ${f(Q0[1])} A${R} ${R} 0 ${big} 1 ${f(Q1[0])} ${f(Q1[1])} Q${f(C1[0])} ${f(C1[1])} ${f(P1[0])} ${f(P1[1])}Z`;
+}
 function plateWheel(phase, season, sel, warm) {
-  // Her plate is a real photo; the food sections sit in its well and the labels on its white rim.
-  const S = PLATE_SHARE[phase], cx = 180, cy = 184, R = 90, tau = 2 * Math.PI;
-  const at = (r, a) => [cx + r * Math.sin(a), cy - r * Math.cos(a)], f = n => n.toFixed(1);
-  let a = -tau * S.veg / 200, defs = '', segs = '', lines = '', labels = '';
+  // Her plate is a real photo. Each food is its own rounded portion with a shadow, sitting in the well;
+  // small portions get a minimum size so they stay easy to tap (labels show the true share).
+  const S = PLATE_SHARE[phase], cx = 180, cy = 184, R = 92, tau = 2 * Math.PI, f = n => n.toFixed(1);
+  const vis = Object.fromEntries(PLATE_ORDER.map(k => [k, Math.max(S[k], 11)])), tot = PLATE_ORDER.reduce((t, k) => t + vis[k], 0);
+  const at = (r, a) => [cx + r * Math.sin(a), cy - r * Math.cos(a)];
+  let a = -tau * vis.veg / tot / 2, defs = '', segs = '', labels = '';
   PLATE_ORDER.forEach((k, i) => {
-    const P = PLATE_PETALS.find(x => x.k === k), sh = S[k], a0 = a, a1 = a + tau * sh / 100, mid = (a0 + a1) / 2; a = a1;
-    const [x0, y0] = at(R, a0), [x1, y1] = at(R, a1), on = k === sel;
-    const d = `M${cx} ${cy} L${f(x0)} ${f(y0)} A${R} ${R} 0 ${a1 - a0 > Math.PI ? 1 : 0} 1 ${f(x1)} ${f(y1)}Z`;
-    const pic = plateSetPic(k, phase, season);
-    const [ix, iy] = at(R * .52, mid), sz = R * 1.7;
+    const P = PLATE_PETALS.find(x => x.k === k), sh = S[k], a0 = a, a1 = a + tau * vis[k] / tot, mid = (a0 + a1) / 2; a = a1;
+    const on = k === sel, d = portionPath(cx, cy, R, a0, a1), pic = plateSetPic(k, phase, season);
+    const [ix, iy] = at(R * .55, mid), sz = R * 1.6, [mx, my] = [Math.sin(mid), -Math.cos(mid)];
     defs += `<clipPath id="pls-${k}"><path d="${d}"/></clipPath>`;
-    segs += `<g class="pls ${on ? 'on' : ''}" data-action="plPetal" data-v="${k}" role="button" aria-label="${P.n} ${sh}%" style="--d:${(.55 + i * .13).toFixed(2)}s">
-      <path d="${d}" class="pls-bg"/>${pic ? `<image href="${pic}" x="${f(ix - sz / 2)}" y="${f(iy - sz / 2)}" width="${f(sz)}" height="${f(sz)}" preserveAspectRatio="xMidYMid slice" clip-path="url(#pls-${k})"/>` : ''}<path d="${d}" class="pls-veil"/></g>`;
-    lines += `<line x1="${cx}" y1="${cy}" x2="${f(x0)}" y2="${f(y0)}" class="pl-div" style="--d:${(.55 + i * .13).toFixed(2)}s"/>`;
+    segs += `<g transform="translate(${f(mx * 1.6)} ${f(my * 1.6)})"><g class="pls ${on ? 'on' : ''}" data-action="plPetal" data-v="${k}" role="button" aria-label="${P.n} ${sh}%" style="--d:${(.55 + i * .13).toFixed(2)}s;--lx:${f(mx * 5)}px;--ly:${f(my * 5)}px"><g class="pls-lift">
+      <path d="${d}" class="pls-bg"/>${pic ? `<image href="${pic}" x="${f(ix - sz / 2)}" y="${f(iy - sz / 2)}" width="${f(sz)}" height="${f(sz)}" preserveAspectRatio="xMidYMid slice" clip-path="url(#pls-${k})"/>` : ''}
+      <path d="${d}" fill="url(#pl-vol)" class="pls-vol"/><path d="${d}" class="pls-rim" clip-path="url(#pls-${k})"/><path d="${d}" class="pls-veil"/></g></g></g>`;
     const [tx, ty] = at(131, mid);
-    labels += `<g class="pll ${on ? 'on' : ''}" data-action="plPetal" data-v="${k}" style="--d:${(1.3 + i * .08).toFixed(2)}s"><text x="${f(tx)}" y="${f(ty - 2)}" text-anchor="middle" class="pll-n">${P.s}</text><text x="${f(tx)}" y="${f(ty + 12)}" text-anchor="middle" class="pll-v">${sh}%</text></g>`;
+    labels += `<g class="pll ${on ? 'on' : ''}" data-action="plPetal" data-v="${k}" style="--d:${(1.3 + i * .08).toFixed(2)}s"><rect x="${f(tx - 30)}" y="${f(ty - 19)}" width="60" height="40" rx="14" class="pll-hit"/><text x="${f(tx)}" y="${f(ty - 2)}" text-anchor="middle" class="pll-n">${P.s}</text><text x="${f(tx)}" y="${f(ty + 12)}" text-anchor="middle" class="pll-v">${sh}%</text></g>`;
   });
   return `<svg class="plate2 plate3" viewBox="0 0 360 362" role="group" aria-label="Your plate"><defs>${defs}
     <radialGradient id="pl-fade" cx=".5" cy=".5" r=".5"><stop offset=".78" stop-color="#fff"/><stop offset=".97" stop-color="#000"/></radialGradient>
-    <mask id="pl-mask" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#pl-fade)"/></mask></defs>
+    <mask id="pl-mask" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#pl-fade)"/></mask>
+    <radialGradient id="pl-vol" gradientUnits="userSpaceOnUse" cx="${cx - 26}" cy="${cy - 32}" r="${R * 1.45}"><stop offset="0" stop-color="#fff" stop-opacity=".26"/><stop offset=".38" stop-color="#fff" stop-opacity="0"/><stop offset=".72" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".42"/></radialGradient>
+    <filter id="pl-ds" x="-25%" y="-25%" width="150%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="1.6" flood-color="#000" flood-opacity=".38"/><feDropShadow dx="2" dy="9" stdDeviation="7" flood-color="#1b1f1b" flood-opacity=".42"/></filter></defs>
     <image class="pl-photo" href="images/plate.webp" x="-21.6" y="-18.5" width="405" height="405" mask="url(#pl-mask)"/>
     <circle cx="${cx}" cy="${cy}" r="${R + 6}" class="pl-well"/>
-    ${segs}${lines}<circle cx="${cx}" cy="${cy}" r="${R}" class="pl-ring"/><circle cx="${cx}" cy="${cy}" r="4" class="pl-dot"/>${labels}</svg>`;
+    <g filter="url(#pl-ds)">${segs}</g>${labels}</svg>`;
 }
 function plateSection(current) {
   ui.plNow = current;
-  const phase = ui.plPhase || current, m = new Date().getMonth() + 1, nowSeason = SZ.seasonName(myCountry(), m);
+  const phase = current, m = new Date().getMonth() + 1, nowSeason = SZ.seasonName(myCountry(), m);
   const season = nowSeason, sel = ui.plPetal || 'veg', warm = plateWarm(phase);
   const T = SZ.SEASON_TCM[season], PSn = PLATE_SEASON[season], tcm = TCM[phase], P = PLATE_PETALS.find(x => x.k === sel);
   const foods = plateFoods(sel, phase, season, warm), live = (sel === 'veg' || sel === 'fruit') && season === nowSeason;
   const country = SZ.COUNTRIES.find(x => x[0] === myCountry())?.[1] || '';
   const cook = warm ? `Warm and cooked, even in ${season === 'Summer' || season === 'Late summer' ? 'the heat' : season.toLowerCase()}. No iced drinks during your period and the 2–3 days before it.` : phase === 'luteal' ? `${PSn.cook} Lean warmer as your period gets close.` : PSn.cook;
   return `<section class="pl">
-    <div class="pl-tabs">${PHASE_ORDER.map(p => `<button class="${p === phase ? 'on' : ''}" data-action="plPhase" data-v="${p}" style="--pc:${PHASE_COLOR.dark[p]}"><i></i>${p === 'ovulatory' ? 'Ovulation' : PHASES[p].name}</button>`).join('')}</div>
-    <div class="pl-head"><div class="mv2-eyebrow">Your plate${phase === current ? ' today' : ''}</div><h2>${EAT_GUIDE[phase].goal}</h2><p>${PHASES[phase].name} × ${season.toLowerCase()}: ${PSn.aim.toLowerCase()}</p></div>
+    <div class="pl-head"><div class="mv2-eyebrow">Your plate today</div><h2>${EAT_GUIDE[phase].goal}</h2><p>${PHASES[phase].name} × ${season.toLowerCase()}: ${PSn.aim.toLowerCase()}</p></div>
     <div class="pl-wheel ${ui.plAnim ? 'pl-anim' : ''}">${plateWheel(phase, season, sel, warm)}</div>
     <div class="pl-det" data-k="${sel}">
       <div class="pld-h"><b>${P.n}</b><span class="pld-p">${PLATE_SHARE[phase][sel]}%</span>${evBadge(PLATE_EV[sel] === 'strong' && phase !== 'menstrual' ? 'some' : PLATE_EV[sel])}</div>
@@ -1366,7 +1378,7 @@ function plateSection(current) {
       <div class="pl-r"><b>To drink</b><span>${T.tea}. Your coffee fits too, best with food.</span></div>
     </div>
     <button class="card pl-meal" data-action="plRecipes"><span class="plm-k">Tonight’s plate</span><b>${PLATE_MEAL[phase][season]}</b><span class="plm-cta">See recipes ${icon('chevR', 14)}</span></button>
-    <p class="fine center">Mostly paleo: whole foods, no grains or legumes. Shares are a gentle guide, not a rule. Cycle food: ${EVIDENCE.some.short} evidence · seasons: Traditional Chinese Medicine.</p>
+    <p class="fine center">Meat and organs first, then what’s in season. Roots, beans, lentils and some grains are welcome. Shares are a gentle guide, not a rule. Cycle food: ${EVIDENCE.some.short} evidence · seasons: Traditional Chinese Medicine.</p>
   </section>`;
 }
 function nourishBody(current) {
@@ -4352,7 +4364,6 @@ const actions = {
     try { await navigator.clipboard.writeText(text); toast('List copied'); } catch { toast('Couldn’t copy'); }
   },
   saveBirthday: () => { if (state.profile.birthday) render(); else toast('Pick your birthday first'); },
-  plPhase: d => { ui.plPhase = d.v === ui.plNow ? null : d.v; render(); },
   plPetal: d => { ui.plPetal = d.v; render(); },
   plRecipes: () => document.getElementById('pl-recipes')?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
   nourishPhase: d => { ui.nourishPhase = d.v; ui.openNeed = 0; render(); },

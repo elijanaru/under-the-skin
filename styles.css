@@ -3846,3 +3846,16 @@ button.tip:active { transform: scale(.98); background: var(--glass-2); }
 .plate3 .pll.on .pll-n { fill: #0b0d0b; font-weight: 600; }
 .plate3 .pll.on .pll-v { fill: #0b0d0b; }
 .plate3 .pll:not(.on) { opacity: .62; }
+/* 3D portions: rounded pieces with shadow, volume shading and a lift when selected */
+.plate3 .pls-lift { transition: transform .45s cubic-bezier(.2,.8,.2,1); transform-box: view-box; transform-origin: 180px 184px; }
+.plate3 .pls.on .pls-lift { transform: translate(var(--lx), var(--ly)) scale(1.025); }
+.plate3 .pls-vol { pointer-events: none; mix-blend-mode: soft-light; }
+.plate3 .pls-rim { fill: none; stroke: rgba(0,0,0,.35); stroke-width: 3.5; pointer-events: none; }
+.plate3 .pls-veil { opacity: .3; }
+.plate3 .pls.on .pls-veil { opacity: 0; }
+.plate3 .pll-hit { fill: transparent; }
+.plate3 .pl-well { fill: rgba(40,44,40,.12); }
+.pld-h span.ev { flex: none; font: 500 9.5px var(--font); letter-spacing: .06em; }
+.pld-h span.ev-some { color: var(--sage); }
+.pld-h span.ev-strong { color: var(--ink); }
+.pld-h span.ev-emerging { color: #b7beb5; } .pld-h span.ev-tcm { color: var(--lime); }
