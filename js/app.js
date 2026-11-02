@@ -3816,38 +3816,39 @@ document.addEventListener('change', e => {
     render();
   }).catch(() => toast('Couldn’t read that photo'));
 });
+// Ring bubbles on the profile hero: what the app has learned so far.
+function profileRings() {
+  const s = M.stats, info = M.info, n = s.periods.length, R = 27, Cc = 2 * Math.PI * R;
+  const items = [
+    ['Cycle', s.avgCycle, 'days', info ? info.cd / info.L : 1],
+    ['Period', s.avgPeriod, 'days', s.avgPeriod / 7],
+    ['Logged', n, n === 1 ? 'period' : 'periods', Math.min(1, n / 6)],
+    ['Next', info ? info.daysToPeriod : '–', 'days', info ? 1 - info.daysToPeriod / info.L : 0],
+  ];
+  return `<div class="mind-rings pf-rings">${items.map(([t, v, u, f], i) => `<div class="mv2-b r3" style="--i:${i}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * Math.max(.06, Math.min(1, f))).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-g pf-n">${v}</span><b>${t}</b><small>${u}</small></div>`).join('')}</div>`;
+}
+const PF_TABS = [['you', 'You'], ['cycle', 'Cycle'], ['alerts', 'Reminders'], ['data', 'Data']];
 function viewProfile() {
-  const p = state.profile, s = M.stats;
-  return `${topbar('Profile', { back: true })}
-  <div class="pad">
-    ${A.configured() || A.currentUser() ? accountCard() : ''}
-    <div class="profile-head"><label class="avatar xl ${p.photo ? 'has-photo' : ''}">${avatarInner(p)}<span class="av-edit">${icon('plus', 14, 2.4)}</span><input type="file" accept="image/*" data-photo="profile" hidden></label>
-      <input class="field name-field" data-input="profile.name" value="${esc(p.name)}" placeholder="Your name" maxlength="24"></div>
-    ${sectionTitle('Birthday')}
-    <section class="card glass"><input class="field" type="date" data-input="profile.birthday" value="${p.birthday || ''}" max="${todayISO()}"><button class="list-btn" data-action="nav" data-to="cosmic">${icon('star', 18)} See my cosmic rhythm</button>
-      ${p.birthday && (state.partners || []).length ? `<button class="list-btn" data-action="shareSend">${icon('heart', 18)} Send my link so my people see my sign</button>` : ''}</section>
-    ${sectionTitle('Country')}
-    <section class="card glass"><select class="field sm" data-input="profile.country">${SZ.COUNTRIES.map(([code, nm]) => `<option value="${code}" ${code === myCountry() ? 'selected' : ''}>${nm}</option>`).join('')}</select>
-      <p class="fine" style="margin:8px 0 0">Used for seasonal foods.</p></section>
-    ${sectionTitle('Cycle')}
+  const p = state.profile, s = M.stats, tab = ui.pfTab || 'you', n = s.periods.length;
+  const learn = n >= 6 ? 'Your predictions are fully personal now.' : n >= 2 ? `Learning your rhythm · ${6 - n} more ${6 - n === 1 ? 'period' : 'periods'} to fully personal` : 'Log your periods and predictions become yours';
+  let body;
+  if (tab === 'cycle') body = `${sectionTitle('Cycle')}
     <section class="card glass">
       <div class="stepper-row"><span>Default cycle length<small>Used until you've logged 2+ periods · now ${s.avgCycle}d</small></span>${stepper('cycleLength', p.cycleLength, 'profile')}</div>
       <div class="stepper-row"><span>Default period length<small>Now ${s.avgPeriod}d</small></span>${stepper('periodLength', p.periodLength, 'profile')}</div>
     </section>
-    ${sectionTitle('Why you’re here')}
-    ${purposePicker(purpose(), 'setPurpose')}
-    ${sectionTitle('Your goals', ['90-day plan', 'roadmap'])}
-    <section class="card glass">${focusPicker(focusKeys(), 'setFocus')}<p class="fine" style="margin:10px 0 0">Your daily tips and your 90-day plan follow these.</p></section>
     ${sectionTitle('Birth control')}
-    <section class="card glass"><div class="chips">${BIRTH_CONTROL.map(b => `<button class="chip ${(state.profile.bc || 'none') === b.k ? 'on' : ''}" data-action="setBc" data-v="${b.k}">${b.t}</button>`).join('')}</div>
-      ${hormonalBC(state.profile.bc) ? `<p class="muted sm" style="margin:12px 0 8px">Coming off it?</p><div class="chips">${BC_PLAN.map(b => `<button class="chip ${state.profile.bcPlan === b.k ? 'on' : ''}" data-action="setBcPlan" data-v="${b.k}">${b.t}</button>`).join('')}</div>` : ''}
+    <section class="card glass"><div class="chips">${BIRTH_CONTROL.map(b => `<button class="chip ${(p.bc || 'none') === b.k ? 'on' : ''}" data-action="setBc" data-v="${b.k}">${b.t}</button>`).join('')}</div>
+      ${hormonalBC(p.bc) ? `<p class="muted sm" style="margin:12px 0 8px">Coming off it?</p><div class="chips">${BC_PLAN.map(b => `<button class="chip ${p.bcPlan === b.k ? 'on' : ''}" data-action="setBcPlan" data-v="${b.k}">${b.t}</button>`).join('')}</div>` : ''}
       <button class="link" data-action="restartPlan" style="margin-top:12px">Restart my 90-day plan from today</button></section>
-    ${remindersSection()}
+    ${M.info ? `<button class="card glass pf-link" data-action="nav" data-to="insights"><span>${icon('chart', 18)}</span><b>Your hormones & patterns<small>What the app has learned about you</small></b>${icon('chevR', 16)}</button>` : ''}`;
+  else if (tab === 'alerts') body = `${remindersSection()}
+    ${M.info ? calSyncCard() : ''}
     ${sectionTitle('Partner mode')}
     <section class="card glass"><button class="list-btn" data-action="nav" data-to="share">${icon('heart', 18)} Share my cycle with partner & friends</button>
       <button class="list-btn" data-action="nav" data-to="partners">${icon('chart', 18)} See my partners' dashboard</button>
-      ${(state.partners || []).map(x => `<div class="list-btn">${ptAvatar(x, 'sm')}<span style="flex:1">${esc(x.n)}<small class="muted" style="display:block;font-size:12px">On your dashboard</small></span><button class="link muted-l" data-action="removePartner" data-id="${x.id}">Remove</button></div>`).join('')}</section>
-    ${M.info ? calSyncCard() : ''}
+      ${(state.partners || []).map(x => `<div class="list-btn">${ptAvatar(x, 'sm')}<span style="flex:1">${esc(x.n)}<small class="muted" style="display:block;font-size:12px">On your dashboard</small></span><button class="link muted-l" data-action="removePartner" data-id="${x.id}">Remove</button></div>`).join('')}</section>`;
+  else if (tab === 'data') body = `${A.configured() || A.currentUser() ? accountCard() : ''}
     ${sectionTitle('Your data')}
     <section class="card glass">
       <button class="list-btn" data-action="export">${icon('download', 18)} Export my data (JSON)</button>
@@ -3855,7 +3856,29 @@ function viewProfile() {
       <button class="list-btn" data-action="nav" data-to="privacy">${icon('heart', 18)} Privacy — how your data is kept</button>
       <button class="list-btn danger" data-action="reset">${icon('trash', 18)} Delete all data</button>
     </section>
-    <p class="fine">${A.currentUser() ? 'Stored on this device and privately in your account.' : 'Everything is stored privately on this device.'} Underskin gives wellbeing estimates based on your logs and on Traditional Chinese Medicine concepts; it is not medical advice and must not be used as contraception.</p>
+    <p class="fine">${A.currentUser() ? 'Stored on this device and privately in your account.' : 'Everything is stored privately on this device.'} Underskin gives wellbeing estimates based on your logs and on Traditional Chinese Medicine concepts; it is not medical advice and must not be used as contraception.</p>`;
+  else body = `${sectionTitle('Why you’re here')}
+    ${purposePicker(purpose(), 'setPurpose')}
+    ${sectionTitle('Your goals', ['90-day plan', 'roadmap'])}
+    <section class="card glass">${focusPicker(focusKeys(), 'setFocus')}<p class="fine" style="margin:10px 0 0">Your daily tips and your 90-day plan follow these.</p></section>
+    ${sectionTitle('Birthday & home')}
+    <section class="card glass"><input class="field" type="date" data-input="profile.birthday" value="${p.birthday || ''}" max="${todayISO()}" aria-label="Birthday">
+      <select class="field sm" data-input="profile.country" style="margin-top:10px" aria-label="Country">${SZ.COUNTRIES.map(([code, nm]) => `<option value="${code}" ${code === myCountry() ? 'selected' : ''}>${nm}</option>`).join('')}</select>
+      <p class="fine" style="margin:8px 0 0">Your birthday sets your sign, your country sets what's in season.</p>
+      <button class="list-btn" data-action="nav" data-to="cosmic">${icon('star', 18)} See my cosmic rhythm</button>
+      ${p.birthday && (state.partners || []).length ? `<button class="list-btn" data-action="shareSend">${icon('heart', 18)} Send my link so my people see my sign</button>` : ''}</section>`;
+  const signedOut = A.configured() && !A.currentUser();
+  return `${topbar('Profile', { back: true })}
+  <div class="pad">
+    <section class="card card-light pf-hero">
+      <div class="profile-head"><label class="avatar xl ${p.photo ? 'has-photo' : ''}">${avatarInner(p)}<span class="av-edit">${icon('plus', 14, 2.4)}</span><input type="file" accept="image/*" data-photo="profile" hidden></label>
+        <input class="field name-field" data-input="profile.name" value="${esc(p.name)}" placeholder="Your name" maxlength="24" aria-label="Your name"></div>
+      <p class="pf-learn">${learn}</p>
+      ${signedOut && tab !== 'data' ? `<button class="pill-cta pf-cta" data-action="pfTab" data-v="data">${icon('heart', 15)} Save my cycle to an account</button>` : ''}
+    </section>
+    <section class="card glass pf-stats ${ui.plAnim ? '' : 'still'}">${profileRings()}</section>
+    <div class="seg pf-seg">${PF_TABS.map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="pfTab" data-v="${k}">${l}</button>`).join('')}</div>
+    ${body}
   </div>`;
 }
 
@@ -4286,6 +4309,7 @@ const actions = {
   rhView: d => { ui.rhView = d.v; render(); },
   mvTab: d => { ui.mvTab = d.v; render(); },
   stTab: d => { ui.stTab = d.v; render(); },
+  pfTab: d => { ui.pfTab = d.v; render(); },
   czTab: d => { ui.czTab = d.v; render(); },
   planOpen: d => { ui.planOpen = d.date || null; ui.planKind = 'date'; calRefresh(['.day-panel']); },
   planKind: d => { const name = document.getElementById('ev-name')?.value; ui.planKind = d.v; calRefresh(['.day-panel']); const i = document.getElementById('ev-name'); if (i && name) i.value = name; },

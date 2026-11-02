@@ -3871,3 +3871,20 @@ button.tip:active { transform: scale(.98); background: var(--glass-2); }
 .pld-more { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.08); }
 .pld-mk { display: block; margin-bottom: 10px; font-size: 12.5px; line-height: 1.45; color: #9aa297; }
 .pld-more .eat-foods { margin: 0; }
+
+/* Profile: paper hero, ring bubbles, sub-tabs */
+.pf-hero { text-align: center; padding: 22px 18px 20px; border-radius: 30px; }
+.pf-hero .profile-head { margin: 0; }
+.pf-hero .name-field { background: transparent; border-color: rgba(11,13,11,.12); color: var(--ink); text-align: center; }
+.pf-hero .name-field::placeholder { color: rgba(11,13,11,.4); }
+.pf-learn { margin: 12px 0 0; font-size: 13px; color: rgba(11,13,11,.6); }
+.pf-cta { margin-top: 14px; background: #0b0d0b; color: #f4f5f0; }
+.pf-stats { margin-top: 12px; padding: 6px 8px 4px; border-radius: 28px; }
+.pf-rings { margin-top: 0; }
+.pf-n { font-family: Doto, monospace; font-weight: 700; font-size: 19px !important; color: #f4f5f0; }
+.pf-seg button { font-size: 13.5px; }
+.pf-link { display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 14px; padding: 16px 18px; border-radius: 26px; text-align: left; color: #f4f5f0; }
+.pf-link > span { color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%); }
+.pf-link b { flex: 1; font-weight: 400; }
+.pf-link small { display: block; font-size: 12px; color: rgba(244,245,240,.55); }
+.pf-stats.still .mv2-b, .pf-stats.still .mv2-b .p { animation: none; }
