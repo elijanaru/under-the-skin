@@ -1185,6 +1185,7 @@ function viewPlan() {
   }
   return `${phaseFoodPic(phase, true)}
   <div class="pad">
+    ${ui.planTab === 'nourish' ? eatGoal(phase) : ''}
     <div class="seg">${tabs.map(([k, l]) => `<button class="${ui.planTab === k ? 'on' : ''}" data-action="planTab" data-v="${k}">${l}</button>`).join('')}</div>
     ${body}
   </div>`;
@@ -1373,12 +1374,14 @@ function plateSection(current) {
   const country = SZ.COUNTRIES.find(x => x[0] === myCountry())?.[1] || '';
   const cook = warm ? `Warm and cooked, even in ${season === 'Summer' || season === 'Late summer' ? 'the heat' : season.toLowerCase()}. No iced drinks during your period and the 2–3 days before it.` : phase === 'luteal' ? `${PSn.cook} Lean warmer as your period gets close.` : PSn.cook;
   return `<section class="pl">
-    <div class="pl-head"><div class="mv2-eyebrow">Your plate today</div><h2>${EAT_GUIDE[phase].goal}</h2><p>${PHASES[phase].name} × ${season.toLowerCase()}: ${PSn.aim.toLowerCase()}</p></div>
+    <div class="pl-head"><div class="mv2-eyebrow">Your plate today</div><h2>${PHASES[phase].name} × ${season.toLowerCase()}</h2><p>${PSn.aim} · ${T.el} season ${T.han}</p></div>
     <div class="pl-wheel ${ui.plAnim ? 'pl-anim' : ''}">${plateWheel(phase, season, sel, warm)}</div>
     <div class="pl-det" data-k="${sel}">
       <div class="pld-h"><b>${P.n}</b><span class="pld-p">${PLATE_SHARE[phase][sel]}%</span>${evBadge(PLATE_EV[sel] === 'strong' && phase !== 'menstrual' ? 'some' : PLATE_EV[sel])}</div>
       <p>${plateWhy(sel, phase)}${live ? ` <em>In season in ${country} now.</em>` : ''}</p>
       <div class="pld-foods">${foods.map(x => `<div>${x.photo ? `<img src="${x.photo}" alt="" loading="lazy">` : `<span>${x.g || '•'}</span>`}<small>${x.n}</small></div>`).join('')}</div>
+      ${(() => { const g = EAT_GUIDE[phase].cats[sel]; if (!g) return ''; const have = foods.map(x => x.n.toLowerCase()); const more = g[1].filter(([, n]) => !have.some(h => n.toLowerCase().includes(h) || h.includes(n.toLowerCase())));
+        return more.length ? `<div class="pld-more"><small class="pld-mk">More for you</small><div class="eat-foods">${more.map(([e, n]) => `<span><i>${e}</i>${n}</span>`).join('')}</div></div>` : ''; })()}
     </div>
     <div class="pl-rules">
       <div class="pl-r"><b>Cook it</b><span>${cook}</span></div>
@@ -1390,16 +1393,21 @@ function plateSection(current) {
     <p class="fine center">Meat and organs first, then what’s in season. Roots, beans, lentils and some grains are welcome. Shares are a gentle guide, not a rule. Cycle food: ${EVIDENCE.some.short} evidence · seasons: Traditional Chinese Medicine.</p>
   </section>`;
 }
+// Her food goal for the phase, shown right under the big phase photo.
+function eatGoal(phase) {
+  const E = EAT_GUIDE[phase], warm = warmWindow(M.info);
+  return `<section class="eat-goal eat-goal-top">
+      <div class="eg2-in"><div class="eyebrow">${PHASES[phase].name} · your goal</div><h2>${E.goal}</h2><p>${E.why}</p>
+      <span class="eg-rule ${warm ? 'warm' : 'raw'}">${icon(warm ? 'sun' : 'leaf', 14)} Today: ${warm ? 'warm & cooked' : 'raw & fresh'}</span></div></section>`;
+}
 function nourishBody(current) {
   const phase = current, N = NUTRITION[phase], warm = warmWindow(M.info);
   const recs = RECIPES.filter(r => r.phases.includes(phase)).sort((a, b) => warm ? (!!b.warm - !!a.warm) : (!!b.raw - !!a.raw));
   const recent = recentSymptoms().filter(s => SYMPTOM_FOODS[s]).slice(0, 2);
   const ds = seasonalDishesToday(M.info, 4);
-  const E = EAT_GUIDE[phase], cat = ui.eatCat || 'veg';
-  return `${plateSection(phase)}${sectionTitle('Every food group')}<section class="eat-goal">
-      <div class="eg2-in"><div class="eyebrow">${PHASES[phase].name} · your goal</div><h2>${E.goal}</h2><p>${E.why}</p>
-      <span class="eg-rule ${warm ? 'warm' : 'raw'}">${icon(warm ? 'sun' : 'leaf', 14)} Today: ${warm ? 'warm & cooked' : 'raw & fresh'}</span></div></section>
-    <div class="eat-tabs">${EAT_CATS.map(c => `<button class="${c.k === cat ? 'on' : ''}" data-action="eatCat" data-v="${c.k}"><span>${c.g}</span>${c.t}</button>`).join('')}</div>
+  const EXTRA = EAT_CATS.filter(c => !PLATE_PETALS.some(p => p.k === c.k)), cat = EXTRA.some(c => c.k === ui.eatCat) ? ui.eatCat : EXTRA[0].k;
+  return `${plateSection(phase)}${sectionTitle('Dairy, drinks & supplements')}
+    <div class="eat-tabs">${EXTRA.map(c => `<button class="${c.k === cat ? 'on' : ''}" data-action="eatCat" data-v="${c.k}"><span>${c.g}</span>${c.t}</button>`).join('')}</div>
     <section class="card glass eat-cat" data-phase="${phase}">${eatCatInner(phase, cat)}</section>
 
     <span id="pl-recipes"></span>${sectionTitle('Recipes for you')}

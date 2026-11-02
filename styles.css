@@ -3866,3 +3866,8 @@ button.tip:active { transform: scale(.98); background: var(--glass-2); }
 .mind-rings .mv2-b svg { width: 56px; height: 56px; }
 .mind-rings .mv2-g { line-height: 56px; font-size: 20px; }
 .mind-rings .mv2-b b { font-size: 12.5px; }
+.eat-goal-top { margin: 0 0 16px; }
+/* plate detail: the whole food group under the photos */
+.pld-more { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.08); }
+.pld-mk { display: block; margin-bottom: 10px; font-size: 12.5px; line-height: 1.45; color: #9aa297; }
+.pld-more .eat-foods { margin: 0; }
