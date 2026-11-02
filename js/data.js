@@ -1430,3 +1430,15 @@ export const HABIT_FOCUS = {
   ovulatory: ['move', 'snuggle', 'beauty', 'nature'],
   luteal: ['sleep', 'magnesium-bath', 'calm', 'no-blue'],
 };
+
+// What research says about each way to calm stress. Tap to open on the stress page.
+export const CALM_SCIENCE = [
+  { g: '🌬️', t: 'Long exhales', ev: 'some', s: '5 minutes a day of “cyclic sighing” (two breaths in through the nose, one long breath out) lifted mood and slowed breathing more than mindfulness meditation in a month-long Stanford trial.', c: 'Balban 2023' },
+  { g: '🧘‍♀️', t: 'Meditation', ev: 'some', s: 'A review of 47 trials found mindfulness programmes eased anxiety, low mood and pain about as much as you’d expect from antidepressants in people with milder symptoms.', c: 'Goyal 2014 (JAMA review)' },
+  { g: '🌙', t: 'Yoga nidra', ev: 'emerging', s: 'An 11-minute guided yoga nidra each day for 30 days lowered stress and improved sleep quality and well-being.', c: 'Moszeik 2022' },
+  { g: '🌳', t: 'Time in nature', ev: 'some', s: '20–30 minutes somewhere that feels like nature brought the biggest drop in the stress hormone cortisol; longer helped a little more.', c: 'Hunter 2019' },
+  { g: '😴', t: 'Sleep', ev: 'some', s: 'One night without sleep raised next-day anxiety by up to 30%, and deep sleep was what calmed it again.', c: 'Ben Simon 2020' },
+  { g: '🫂', t: 'Hugs & touch', ev: 'some', s: 'Women who got more hugs from their partner had higher oxytocin and lower blood pressure. People who were hugged more often got less ill when stressed.', c: 'Light 2005 · Cohen 2015' },
+  { g: '🚶‍♀️', t: 'Gentle, not maximal, training', ev: 'some', s: 'Moderate exercise lowered cortisol, while hard efforts above about 60% of your capacity raised it. On high-stress days, go easy.', c: 'Hill 2008' },
+  { g: '🔥', t: 'Warmth on your belly', ev: 'tcm', s: 'In Chinese medicine, stress “knots” the Liver qi; warmth and slow breathing help it flow, especially around your period.', c: 'Traditional Chinese medicine' },
+];

@@ -3394,3 +3394,15 @@ button.tc-row { width: 100%; text-align: left; font: inherit; color: var(--text)
 .hb-tags { display: flex; gap: 6px; align-items: center; margin-top: 6px; }
 .hb-now { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; padding: 2px 8px; border-radius: 99px; color: #0b0f0c; background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%); }
 @media (prefers-reduced-motion: reduce) { .hb-bub svg circle:last-child { transition: none; } }
+
+/* stress: the science of calm */
+.cs-list { padding: 4px 16px; margin-bottom: 14px; }
+.cs { border-bottom: 1px solid var(--line); } .cs:last-child { border-bottom: 0; }
+.cs summary { list-style: none; display: flex; align-items: center; gap: 10px; padding: 14px 0; cursor: pointer; }
+.cs summary::-webkit-details-marker { display: none; }
+.cs summary b { flex: 1; font-weight: 500; font-size: 15px; }
+.cs summary svg { color: var(--sage); transition: transform .3s; } .cs[open] summary svg { transform: rotate(180deg); }
+.cs-g { width: 34px; height: 34px; flex: none; display: grid; place-items: center; border-radius: 12px; font-size: 17px; background: hsl(calc(var(--hb) + 145 * var(--hk)) calc(39% * var(--hs2)) 30% / .3); border: 1px solid var(--line); }
+.cs p { margin: 0 0 6px 44px; font-size: 14px; line-height: 1.55; color: #d9ded6; animation: rise .45s ease both; }
+.cs small { display: block; margin: 0 0 14px 44px; font-size: 11.5px; color: var(--sage); }
+@media (prefers-reduced-motion: reduce) { .cs p { animation: none; } .cs summary svg { transition: none; } }

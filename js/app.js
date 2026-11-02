@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, RELIEF_LINKS, HABIT_FOCUS, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
+  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, RELIEF_LINKS, HABIT_FOCUS, CALM_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -2846,7 +2846,9 @@ function viewStress() {
         <section class="st2-breathe"><video src="images/stress-breathe.mp4" poster="images/stress-breathe.webp" muted loop playsinline ${auto} preload="metadata" aria-hidden="true"></video><span class="st2-bshade"></span>
           <div class="st2-bin"><span class="eyebrow">Fastest calm · 5 min</span><div class="st2-orb" aria-hidden="true"><i></i><b class="in">Breathe in</b><b class="out">Breathe out</b></div>
           <p>In through your nose for 4, out slowly for 6. A longer exhale calms your nervous system.</p>${evBadge('some')}</div></section>
-        <h3 class="st2-h">Best ways to lower it</h3>${steps(sp[1])}`;
+        <h3 class="st2-h">Best ways to lower it</h3>${steps(sp[1])}
+        <h3 class="st2-h">The science of calm</h3>
+        <section class="card glass cs-list">${CALM_SCIENCE.map(x => `<details class="cs"><summary><span class="cs-g">${x.g}</span><b>${x.t}</b>${evBadge(x.ev)}${icon('chevD', 14)}</summary><p>${x.s}</p><small>${x.c}</small></details>`).join('')}</section>`;
   return `<section class="mv2 st2">
     <video class="mv2-bg" src="images/stress-meditate.mp4" poster="images/stress-meditate.webp" muted loop playsinline ${auto} preload="auto" aria-hidden="true"></video><span class="mv2-shade"></span>
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
