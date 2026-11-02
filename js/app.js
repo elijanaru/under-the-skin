@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
+  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -2344,27 +2344,54 @@ function viewTea() {
     <p>${why}</p></button>`;
   const WIN = [['flow-start', 'Period · first days'], ['flow-end', 'End of period'], ['rising', 'Early rise'], ['building', 'Strong days'], ['peak', 'Ovulation'], ['settle', 'After ovulation'], ['focus', 'Mid second half'], ['premenstrual', 'Before the period']];
   const body = k === 'cycle'
-    ? `<div class="tea-cycle">${WIN.map(([w, t]) => { const x = TEA_DAY[w], now = info && dayWindow(info) === w; return `<div class="tc-row ${now ? 'now' : ''}"><span class="tea-g">${x[0]}</span><div><small>${t}${now ? ' · now' : ''}</small><b>${x[1]}</b><p>${x[2]}</p></div></div>`; }).join('')}</div>`
+    ? `<div class="tea-cycle">${WIN.map(([w, t]) => { const x = TEA_DAY[w], now = info && dayWindow(info) === w; return `<button class="tc-row ${now ? 'now' : ''}" data-action="nav" data-to="tea/day-${w}"><span class="tea-g">${x[0]}</span><div><small>${t}${now ? ' · now' : ''}</small><b>${x[1]}</b><p>${x[2]}</p></div><span class="tea-go">${icon('chevR', 16)}</span></button>`; }).join('')}</div>`
     : (TEA_GUIDE.find(x => x.k === k) || TEA_GUIDE[0]).teas.map(tea).join('');
   return `${topbar('Tea guide', { back: true })}
   <div class="pad">
     <h1 class="page-h">Tea for <span>every need</span></h1>
-    ${td ? `<section class="card card-light tea-today"><small>Your tea today</small><div class="tea-h"><span class="tea-g">${td[0]}</span><b>${td[1]}</b>${evBadge(td[4])}</div><p>${td[2]}</p><p class="tea-how">☕ ${td[3]}</p></section>` : ''}
+    ${td ? `<section class="card card-light tea-today" data-action="nav" data-to="tea/day-${dayWindow(info)}" role="button"><small>Your tea today · tap for the details</small><div class="tea-h"><span class="tea-g">${td[0]}</span><b>${td[1]}</b>${evBadge(td[4])}</div><p>${td[2]}</p><p class="tea-how">☕ ${td[3]}</p></section>` : ''}
     <div class="tea-tabs">${[['cycle', '🌙', 'By cycle'], ...TEA_GUIDE.map(x => [x.k, x.g, x.n])].map(([kk, g, n]) => `<button class="${kk === k ? 'on' : ''}" data-action="teaK" data-v="${kk}">${g} ${n}</button>`).join('')}</div>
     ${body}
     <p class="fine center">Herbal teas are gentle support, not medicine. Pregnant, on medication or unsure? Ask your doctor or midwife first.</p>
   </div>`;
 }
+// Herb profiles in a tea's name ("Ginger & red dates" → ginger + red dates).
+const TEA_ALIAS = { 'holy basil': 'tulsi', 'raspberry leaf': 'raspberry' };
+function teaProfiles(name) {
+  const l = name.toLowerCase(), keys = Object.keys(TEA_PROFILES).filter(k => l.includes(k) || Object.entries(TEA_ALIAS).some(([a, v]) => v === k && l.includes(a)));
+  return keys.sort((a, b) => l.indexOf(a) - l.indexOf(b)).map(k => TEA_PROFILES[k]);
+}
+const TEMPS = ['cold', 'cool', 'neutral', 'warm', 'hot'];
 function viewTeaItem(id) {
-  const m = String(id).match(/^(.+)-(\d+)$/), G = m && TEA_GUIDE.find(x => x.k === m[1]), t = G && G.teas[+m[2]];
+  let G, t, idx = -1;
+  const day = String(id).match(/^day-(.+)$/), m = !day && String(id).match(/^(.+)-(\d+)$/);
+  if (day) { t = TEA_DAY[day[1]]; G = t && TEA_GUIDE.find(x => x.k === t[5]); t = t && [...t.slice(0, 5), '']; }
+  else if (m) { G = TEA_GUIDE.find(x => x.k === m[1]); idx = +m[2]; t = G && G.teas[idx]; }
   if (!t) return viewTea();
   const [g, n, why, how, ev, warn] = t, steep = (how.match(/\d+(?:–\d+)?\s*min/) || [''])[0];
+  const P = teaProfiles(n), info = M.info, ph = info && info.phase;
+  const rows = P.length > 1 ? P.flatMap(p => p.c.slice(0, 1).map(([c, d]) => [c, `${p.n} · ${d}`])).concat(P[0].c.slice(1, 2)) : P.length ? P[0].c : [[n, `${EVIDENCE[ev].short} evidence`], ...(steep ? [[steep, 'Steep']] : [])];
+  // warmest herb wins: ginger makes a cool chamomile blend warm
+  const temp = P.length ? TEMPS[Math.max(...P.map(p => TEMPS.indexOf(p.t)))] : '', best = [...new Set(P.flatMap(p => p.p))];
+  const cold = ['cold', 'cool'].includes(temp), nearBleed = ph === 'menstrual' || (info && dayWindow(info) === 'premenstrual');
+  const PH = [['menstrual', 'Period'], ['follicular', 'Follicular'], ['ovulatory', 'Ovulation'], ['luteal', 'Luteal']];
+  const cautions = [warn, ...P.map(p => p.caution)].filter((x, i, a) => x && a.indexOf(x) === i);
   return `<div class="pad">
-    ${specHero({ glyph: g, eyebrow: `Tea for ${G.n.toLowerCase()}`, name: `${n} tea`, label: 'At a glance',
-      rows: [[n, ev === 'tcm' ? 'TCM' : `${EVIDENCE[ev].short} evidence`], ...(steep ? [[steep, 'Steep']] : []), [G.n, 'Helps with']], lead: `${n} — ${EVIDENCE[ev].short.toLowerCase()} evidence`, desc: why })}
+    ${specHero({ glyph: g, eyebrow: G ? `Tea for ${G.n.toLowerCase()}` : 'Tea', name: /tea|milk|coffee/i.test(n) ? n : `${n} tea`, label: 'Key ingredients',
+      rows, lead: `${n} · ${EVIDENCE[ev].label.toLowerCase()}`, desc: why })}
+    ${P.length ? `<section class="card glass tea-fit">
+      <div class="tf-k">Best in your cycle</div>
+      <div class="tf-phases">${PH.map(([k, l]) => `<span class="${best.includes(k) ? 'on' : ''} ${k === ph ? 'now' : ''}" style="--pc:${PHASE_COLOR.dark[k]}">${l}${k === ph ? '<i>you</i>' : ''}</span>`).join('')}</div>
+      <div class="tf-k">Nature in Chinese medicine</div>
+      <div class="tf-temp"><div class="tf-bar">${TEMPS.map(x => `<span class="${x === temp ? 'on' : ''}">${x}</span>`).join('')}</div><small>${[...new Set(P.flatMap(p => p.o.split(' · ')))].join(' · ')}</small></div>
+      ${cold && nearBleed ? `<p class="tea-warn">${icon('spark', 12)} Cooling in Chinese medicine. Around your period drink it hot and add a slice of ginger.</p>` : ''}
+    </section>` : ''}
     ${sectionTitle('How to make it')}
-    <section class="card glass"><p class="body" style="margin:0">☕ ${how}</p>${warn ? `<p class="tea-warn">${icon('spark', 12)} ${warn}</p>` : ''}</section>
-    ${G.teas.length > 1 ? `${sectionTitle(`More for ${G.n.toLowerCase()}`)}<div class="tea-more">${G.teas.map((x, i) => i === +m[2] ? '' : `<button data-action="nav" data-to="tea/${G.k}-${i}"><span>${x[0]}</span>${x[1]}</button>`).join('')}</div>` : ''}
+    <section class="card glass tea-how-c"><div class="th-steps">${[['☕', how], ['🫖', 'Cover the cup while it steeps, so the fragrant oils stay in your tea.'], ...(nearBleed ? [['🔥', 'Drink it hot or warm these days, never iced.']] : [])].map(([e, x]) => `<div><span>${e}</span><p>${x}</p></div>`).join('')}</div></section>
+    ${P.length ? `${sectionTitle('What studies found')}
+    <section class="card glass tea-study">${P.map(p => `<div class="ts-i"><div class="ts-h"><b>${p.n}</b></div><p>${p.study}</p><small>${p.cite}</small></div>`).join('')}<div class="ts-ev">${evBadge(ev)} <span>${EVIDENCE[ev].label}</span></div></section>` : ''}
+    ${cautions.length ? `${sectionTitle('Good to know')}<section class="card glass tea-care">${cautions.map(c => `<p>${icon('spark', 12)} ${c}</p>`).join('')}</section>` : ''}
+    ${G && G.teas.length > 1 ? `${sectionTitle(`More for ${G.n.toLowerCase()}`)}<div class="tea-more">${G.teas.map((x, i) => i === idx ? '' : `<button data-action="nav" data-to="tea/${G.k}-${i}"><span>${x[0]}</span>${x[1]}</button>`).join('')}</div>` : ''}
     <p class="fine center">Herbal teas are gentle support, not medicine. Pregnant, on medication or unsure? Ask your doctor or midwife first.</p>
   </div>`;
 }
