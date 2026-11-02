@@ -1472,3 +1472,25 @@ export const NUTRIENT_ROLE = {
   Electrolytes: ['Sodium, potassium and magnesium to rehydrate.'],
   'Fat-soluble vitamins': ['A, D, E and K2 for skin, bones and hormones.', 'vitamin-d'],
 };
+
+// The science behind each TCM ritual, same shape as REMEDY_SCIENCE.
+export const RITUAL_SCIENCE = {
+  'foot-soak': { ev: 'some', c: [['Warmth on the feet', 'Widens vessels, so your core cools and sleep comes easier'], ['Heat on the body', 'Eases cramping as well as common painkillers'], ['Gingerols', 'Warming compounds from the ginger']],
+    study: 'A warm foot bath before bed helped people fall asleep faster. A review of heat therapy for period pain found it worked about as well as painkillers.',
+    cite: 'Sung & Tochihara 2000 · Jo & Lee 2018 (meta-analysis)', caution: 'With diabetes or numb feet, test the water with your hand first.' },
+  'belly-massage': { ev: 'some', c: [['Slow circles', 'Relax the womb and gut muscles'], ['Warm hands', 'Gentle heat on the lower belly'], ['Calm breath', 'Switches on rest-and-digest']],
+    study: 'In a trial, women who had a belly massage with warming oils had shorter and milder period pain. Belly massage also eased constipation in another trial.',
+    cite: 'Ou 2012 · Lämås 2009', caution: 'Gentle pressure only. Stop if the pain is sharp.' },
+  'liver-stretch': { ev: 'some', c: [['Side stretches', 'Open the ribs and the Liver channel'], ['Tapping', 'Wakes up the tissue along the ribs'], ['Long sighs', 'The fastest way to calm your nerves']],
+    study: 'Simple stretching three times a week for 8 weeks made period pain shorter and milder. Long sighing breaths lifted mood in a Stanford trial.',
+    cite: 'Shahr-jerdy 2012 · Balban 2023', caution: '' },
+  'early-sleep': { ev: 'some', c: [['Dim light', 'Lets melatonin rise on time'], ['Before 11 pm', 'Liver and Gallbladder hours in TCM'], ['Warm tea', 'A calming signal for your body']],
+    study: 'Ordinary room light before bed held melatonin back and cut its night-time run by about 90 minutes. Dim the lights and your body clock catches up.',
+    cite: 'Gooley 2011', caution: '' },
+  congee: { ev: 'tcm', c: [['Warm, cooked fruit', 'Easy to digest in TCM, builds Qi'], ['Pectin', 'From apples and pears, feeds good gut bacteria'], ['Red dates & goji', 'Classic herbs to build Blood']],
+    study: 'Chinese food therapy has favoured warm, cooked breakfasts for centuries, especially around the period. Pectin from stewed apples feeds the gut bacteria that make calming butyrate.',
+    cite: 'Classic TCM dietetics', caution: 'No honey for babies under 1.' },
+  'heart-breath': { ev: 'some', c: [['4 in, 6 out', 'About 6 breaths a minute, the calmest rhythm'], ['Heart-rate variability', 'Rises with slow breathing, a sign of calm'], ['“Haaa” sound', 'The Heart healing sound in Qigong']],
+    study: 'A review of slow-breathing studies found that about 6 breaths a minute raised heart-rate variability and eased anxiety and anger.',
+    cite: 'Zaccaro 2018 (review)', caution: '' },
+};
