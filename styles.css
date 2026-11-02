@@ -3815,3 +3815,19 @@ button.tip:active { transform: scale(.98); background: var(--glass-2); }
 @media (prefers-reduced-motion: reduce) { .pl-anim .pl-photo, .pl-anim .pls, .pl-anim .pl-div, .pl-anim .pl-dot, .pl-anim .pll { animation: none; } }
 .plate3 .pll-n { fill: #4a5048; font-weight: 500; }
 .plate3 .pll-v { fill: #0b0d0b; font-weight: 700; font-size: 16px; }
+
+/* Move: today's dose spec card and studies */
+.mv-dose { margin-top: 12px; padding: 18px 18px 14px; border-radius: 28px; }
+.mvd-k { font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--lime); margin-bottom: 4px; }
+.mvd-r { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,.1); }
+.mvd-r small { flex: none; font-size: 13px; color: #9aa297; }
+.mvd-r b { text-align: right; font-size: 16px; font-weight: 400; color: #f4f5f0; }
+.mvd-f { margin: 10px 0 0; font-size: 12px; color: rgba(244,245,240,.5); }
+.mv-sci { padding: 4px 16px; border-radius: 26px; }
+.mvs { border-bottom: 1px solid rgba(255,255,255,.08); }
+.mvs:last-child { border-bottom: 0; }
+.mvs summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 0; cursor: pointer; }
+.mvs summary::-webkit-details-marker { display: none; }
+.mvs summary b { font-size: 15px; font-weight: 400; color: #f4f5f0; }
+.mvs p { margin: 0 0 6px; font-size: 13.5px; line-height: 1.5; color: #c3cac1; }
+.mvs cite { display: block; padding-bottom: 14px; font-style: normal; font-size: 11.5px; color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(50% * var(--hs)) 70%); }

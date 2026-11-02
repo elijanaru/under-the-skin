@@ -995,7 +995,7 @@ export const MOVES = [
   { k: 'walk', n: 'Walks & rest', d: 'Nature walks, sauna, early nights' },
 ];
 export const MOVE_GUIDE = {
-  'flow-start': { title: 'Rest & restore', r: { lift: 0, hiit: 0, sport: 1, pilates: 1, yoga: 2, meditate: 3, walk: 3 }, tip: 'Hormones are at their lowest and your body is shedding. Walks, yin yoga and meditation — a natural time to turn inward. Skip the PR attempts.' },
+  'flow-start': { title: 'Rest & restore', r: { lift: 0, hiit: 0, sport: 1, pilates: 1, yoga: 2, meditate: 3, walk: 3 }, tip: 'Hormones are at their lowest and your body is shedding. Walks, yin yoga and meditation — a natural time to turn inward. Go by feel: some women feel strong now, others want rest.' },
   'flow-end': { title: 'Ease back in', r: { lift: 1, hiit: 1, sport: 2, pilates: 2, yoga: 3, meditate: 2, walk: 3 }, tip: 'As bleeding eases, start moving more: flowing yoga, pilates, light strength. Iron-rich food helps your energy come back.' },
   'rising': { title: 'Build strength', r: { lift: 2, hiit: 2, sport: 3, pilates: 2, yoga: 2, meditate: 1, walk: 2 }, tip: 'Rising estrogen improves recovery. A great window to try a new class and ramp up your training volume.' },
   'building': { title: 'Lift heavy', r: { lift: 3, hiit: 3, sport: 3, pilates: 2, yoga: 1, meditate: 1, walk: 2 }, tip: 'A good window for heavy lifting if you feel strong — some small studies that put more strength training into the follicular phase saw bigger gains.' },
@@ -1004,6 +1004,28 @@ export const MOVE_GUIDE = {
   'focus': { title: 'Endurance & flow', r: { lift: 2, hiit: 1, sport: 2, pilates: 3, yoga: 2, meditate: 2, walk: 3 }, tip: 'Steady efforts beat all-out ones: pilates, hiking, swimming, steady cardio. Your body burns more fat for fuel now.' },
   'premenstrual': { title: 'Slow down', r: { lift: 1, hiit: 0, sport: 1, pilates: 2, yoga: 3, meditate: 3, walk: 3 }, tip: 'Energy drops before your period. Yin yoga, stretching, walks and meditation calm cramps and moods — rest is training too.' },
 };
+
+// How much to move in each stretch of the cycle (RPE = how hard it feels, out of 10).
+export const MOVE_DOSE = {
+  'flow-start': { int: 'Easy · RPE 3–5', len: '20–40 min', warm: '5 min, gentle', rec: 'Warmth after, sleep 8 h+' },
+  'flow-end': { int: 'Easy to moderate · RPE 4–6', len: '30–45 min', warm: '8 min', rec: 'An easy day between hard ones' },
+  rising: { int: 'Moderate to hard · RPE 6–8', len: '45–60 min', warm: '10 min', rec: '48 h per muscle group' },
+  building: { int: 'Hard if you feel strong · RPE 7–9', len: '45–60 min', warm: '10 min', rec: '48 h per muscle group' },
+  peak: { int: 'Hard if you feel strong · RPE 7–9', len: '45–60 min', warm: '12–15 min, dynamic + landings', rec: '48 h per muscle group' },
+  settle: { int: 'Moderate · RPE 6–7', len: '40–60 min', warm: '10 min', rec: 'Longer rests between sets, more water' },
+  focus: { int: 'Steady · RPE 5–7', len: '45–75 min', warm: '10 min', rec: 'Extra water and a pinch of salt' },
+  premenstrual: { int: 'Easy · RPE 3–5', len: '20–40 min', warm: '8 min', rec: 'Early nights, magnesium-rich food' },
+};
+// What research found on training across the cycle.
+export const MOVE_SCIENCE = [
+  { t: 'Performance barely changes', ev: 'emerging', s: 'A review of 78 studies found performance may be trivially lower in the first days of the period, with big differences between women.', c: 'McNulty et al. 2020, Sports Medicine' },
+  { t: 'Strength stays the same', ev: 'some', s: 'Across studies, cycle phase had no clear effect on maximal strength.', c: 'Blagrove et al. 2020, Sports Medicine' },
+  { t: 'More strength work in the first half', ev: 'emerging', s: 'A few small trials that put more strength sessions into the follicular phase saw larger gains. Too few women studied to be sure.', c: 'Kissow et al. 2022, Sports Medicine' },
+  { t: 'Warm up well before ovulation', ev: 'some', s: 'ACL knee injuries were more common in the late follicular phase, around rising estrogen. A longer warm-up and landing practice help.', c: 'Herzberg et al. 2017, Orthop J Sports Med' },
+  { t: 'Exercise eases period pain', ev: 'some', s: 'Regular exercise, about 45–60 minutes three times a week, reduced period pain in trials.', c: 'Armour et al. 2019, Cochrane Review' },
+  { t: 'Symptoms are the real limit', ev: 'some', s: 'In 6,812 exercising women, 93% had cycle symptoms, and heavier symptoms went with missed or changed training.', c: 'Bruinvels et al. 2021, Br J Sports Med' },
+  { t: 'You run warmer after ovulation', ev: 'strong', s: 'Core temperature rises about 0.3–0.5 °C in the luteal phase, so heat feels harder. Drink more and pace yourself.', c: 'Charkoudian & Stachenfeld 2014, Compr Physiol' },
+];
 
 // Why someone uses the app — only 'conceive' shows pregnancy & fertility content.
 export const PURPOSES = [
