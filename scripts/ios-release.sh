@@ -23,6 +23,9 @@ BUILD=$(date +%Y%m%d%H%M)
 xcodebuild -project App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
   -archivePath "$OUT/UnderTheSkin.xcarchive" DEVELOPMENT_TEAM="$TEAM" CURRENT_PROJECT_VERSION="$BUILD" \
   -allowProvisioningUpdates CODE_SIGNING_ALLOWED=NO archive | tail -3
+# the archive is unsigned (avoids the "no devices" profile error), so stamp the entitlements
+# (Sign in with Apple) on it; the export keeps them when it signs for the App Store
+codesign -f -s - --entitlements App/App.entitlements "$OUT/UnderTheSkin.xcarchive/Products/Applications/App.app"
 xcodebuild -exportArchive -archivePath "$OUT/UnderTheSkin.xcarchive" -exportOptionsPlist "$OUT/export.plist" \
   -exportPath "$OUT/export" -allowProvisioningUpdates | tail -5
 echo "Uploaded build $BUILD. It appears in App Store Connect → TestFlight in about 10–30 minutes."
