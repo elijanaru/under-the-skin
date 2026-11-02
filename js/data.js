@@ -838,30 +838,31 @@ export const HORMONE_LIBRARY = [
 ];
 
 // Daily hormone habits — the positive side of what harms women's health, plus fertility fundamentals.
+// a: area for the ring bubbles (body / mind / food), ev: evidence label.
 export const HABITS = [
-  { id: 'phone-free', g: 'protect', t: 'Phone-free first & last hour', why: 'Constant scrolling and alerts keep stress hormones switched on.' },
-  { id: 'calm', g: 'protect', t: '10 minutes of calm', why: 'Chronic stress raises cortisol, which can delay ovulation and worsen PMS.' },
-  { id: 'coffee', g: 'protect', t: 'Coffee or tea with food, not instead of it', why: 'Enjoy it — just not on an empty stomach or as a replacement for sleep.' },
-  { id: 'sleep', g: 'protect', t: '7–9 hours of sleep', why: 'Sleep sets melatonin, cortisol and every other hormone rhythm.' },
-  { id: 'real-food', g: 'protect', t: 'Real food — nothing ultra-processed', why: 'Whole, natural food steadies blood sugar and insulin.' },
-  { id: 'alcohol-free', g: 'protect', t: 'Alcohol-free day', why: 'Frequent alcohol burdens the liver, which clears used estrogen.' },
-  { id: 'no-blue', g: 'protect', t: 'No bright screens after dark', why: 'Blue light at night suppresses melatonin.' },
-  { id: 'move', g: 'protect', t: 'Move your body', why: 'Activity — especially strength training — improves insulin sensitivity.' },
-  { id: 'nature', g: 'protect', t: 'Time in nature', why: 'Daylight and green space lower stress and support serotonin.' },
-  { id: 'clean', g: 'protect', t: 'Natural cosmetics & no synthetic perfume', why: 'Many synthetic fragrances and chemicals can disrupt hormones.' },
-  { id: 'warm-feet', g: 'fertile', t: 'Warm feet, warm womb', why: 'Socks and warmth — classic Chinese-medicine care for the womb.' },
-  { id: 'egg-yolks', g: 'fertile', t: 'Egg yolks or liver today', why: 'Cholesterol is the building block of progesterone; yolks add choline. Keep liver to a small portion about once a week.' },
-  { id: 'warm-soup', g: 'fertile', t: 'A warm soup or broth', why: 'Nourishing and easy to digest — TCM builds Blood with warmth.' },
-  { id: 'magnesium-bath', g: 'fertile', t: 'Long hot magnesium bath', why: 'Relaxes muscles and the nervous system; magnesium for sleep. After ovulation, keep it warm rather than hot.' },
-  { id: 'phone-away', g: 'fertile', t: 'Phone & laptop away from your belly', why: 'Keep devices off your lap and out of your front pockets.' },
-  { id: 'dance', g: 'fertile', t: 'Dance', why: 'Joyful movement lowers cortisol.' },
-  { id: 'snuggle', g: 'fertile', t: 'Snuggles & touch', why: 'Oxytocin calms stress and supports connection.' },
-  { id: 'beauty', g: 'fertile', t: 'Surround yourself with beauty', why: 'Flowers, music, art — pleasure is regulating.' },
-  { id: 'lemon', g: 'fertile', t: 'Whole lemon drink', why: 'Hydration and vitamin C to start the day.' },
-  { id: 'intuition', g: 'fertile', t: 'Listen to your intuition', why: 'Notice what your body is asking for today.' },
-  { id: 'pray', g: 'fertile', t: 'Prayer or intention', why: 'A quiet moment for your body, your future and your future children.' },
-  { id: 'slow', g: 'fertile', t: 'Slow down — especially on your period', why: 'Rest during bleeding is part of a healthy cycle.' },
-  { id: 'track', g: 'fertile', t: 'Track your cycle', why: 'Knowing your rhythm is the foundation of everything else.' },
+  { id: 'phone-free', a: 'mind', ev: 'emerging', g: 'protect', t: 'Phone-free first & last hour', why: 'Constant scrolling and alerts keep stress hormones switched on.' },
+  { id: 'calm', a: 'mind', ev: 'some', g: 'protect', t: '10 minutes of calm', why: 'Chronic stress raises cortisol, which can delay ovulation and worsen PMS.' },
+  { id: 'coffee', a: 'food', ev: 'some', g: 'protect', t: 'Coffee or tea with food, not instead of it', why: 'Enjoy it — just not on an empty stomach or as a replacement for sleep.' },
+  { id: 'sleep', a: 'body', ev: 'strong', g: 'protect', t: '7–9 hours of sleep', why: 'Sleep sets melatonin, cortisol and every other hormone rhythm.' },
+  { id: 'real-food', a: 'food', ev: 'strong', g: 'protect', t: 'Real food — nothing ultra-processed', why: 'Whole, natural food steadies blood sugar and insulin.' },
+  { id: 'alcohol-free', a: 'food', ev: 'some', g: 'protect', t: 'Alcohol-free day', why: 'Frequent alcohol burdens the liver, which clears used estrogen.' },
+  { id: 'no-blue', a: 'mind', ev: 'some', g: 'protect', t: 'No bright screens after dark', why: 'Blue light at night suppresses melatonin.' },
+  { id: 'move', a: 'body', ev: 'strong', g: 'protect', t: 'Move your body', why: 'Activity — especially strength training — improves insulin sensitivity.' },
+  { id: 'nature', a: 'body', ev: 'some', g: 'protect', t: 'Time in nature', why: 'Daylight and green space lower stress and support serotonin.' },
+  { id: 'clean', a: 'body', ev: 'emerging', g: 'protect', t: 'Natural cosmetics & no synthetic perfume', why: 'Many synthetic fragrances and chemicals can disrupt hormones.' },
+  { id: 'warm-feet', a: 'body', ev: 'tcm', g: 'fertile', t: 'Warm feet, warm womb', why: 'Socks and warmth — classic Chinese-medicine care for the womb.' },
+  { id: 'egg-yolks', a: 'food', ev: 'emerging', g: 'fertile', t: 'Egg yolks or liver today', why: 'Cholesterol is the building block of progesterone; yolks add choline. Keep liver to a small portion about once a week.' },
+  { id: 'warm-soup', a: 'food', ev: 'tcm', g: 'fertile', t: 'A warm soup or broth', why: 'Nourishing and easy to digest — TCM builds Blood with warmth.' },
+  { id: 'magnesium-bath', a: 'body', ev: 'emerging', g: 'fertile', t: 'Long hot magnesium bath', why: 'Relaxes muscles and the nervous system; magnesium for sleep. After ovulation, keep it warm rather than hot.' },
+  { id: 'phone-away', a: 'body', ev: 'emerging', g: 'fertile', t: 'Phone & laptop away from your belly', why: 'Keep devices off your lap and out of your front pockets.' },
+  { id: 'dance', a: 'body', ev: 'some', g: 'fertile', t: 'Dance', why: 'Joyful movement lowers cortisol.' },
+  { id: 'snuggle', a: 'mind', ev: 'some', g: 'fertile', t: 'Snuggles & touch', why: 'Oxytocin calms stress and supports connection.' },
+  { id: 'beauty', a: 'mind', ev: 'emerging', g: 'fertile', t: 'Surround yourself with beauty', why: 'Flowers, music, art — pleasure is regulating.' },
+  { id: 'lemon', a: 'food', ev: 'emerging', g: 'fertile', t: 'Whole lemon drink', why: 'Hydration and vitamin C to start the day.' },
+  { id: 'intuition', a: 'mind', ev: 'emerging', g: 'fertile', t: 'Listen to your intuition', why: 'Notice what your body is asking for today.' },
+  { id: 'pray', a: 'mind', ev: 'emerging', g: 'fertile', t: 'Prayer or intention', why: 'A quiet moment for your body, your future and your future children.' },
+  { id: 'slow', a: 'body', ev: 'tcm', g: 'fertile', t: 'Slow down — especially on your period', why: 'Rest during bleeding is part of a healthy cycle.' },
+  { id: 'track', a: 'mind', ev: 'some', g: 'fertile', t: 'Track your cycle', why: 'Knowing your rhythm is the foundation of everything else.' },
 ];
 
 // Fertility foods & lifestyle.
@@ -1420,4 +1421,12 @@ export const RELIEF_LINKS = {
   Headache: { g: '🤕', tea: 'headache', nu: ['magnesium'] },
   Fatigue: { g: '🔋', tea: 'energy', nu: ['iron', 'vitamin-d'] },
   'Tender breasts': { g: '🌸', tea: 'pms', nu: ['vitex', 'calcium'] },
+};
+
+// Habits that matter most in each phase (shown first, tagged "your phase").
+export const HABIT_FOCUS = {
+  menstrual: ['slow', 'warm-feet', 'warm-soup', 'sleep', 'calm'],
+  follicular: ['move', 'nature', 'real-food', 'dance'],
+  ovulatory: ['move', 'snuggle', 'beauty', 'nature'],
+  luteal: ['sleep', 'magnesium-bath', 'calm', 'no-blue'],
 };

@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, RELIEF_LINKS, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
+  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, RELIEF_LINKS, HABIT_FOCUS, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -2864,21 +2864,28 @@ function viewStress() {
 // ---------- hormone habits ----------
 function habitsDone(k) { return ((state.habits || {})[k] || []); }
 function viewHabits() {
-  const k = todayISO(), done = habitsDone(k), total = HABITS.length, n = done.length;
+  const k = todayISO(), list = HABITS.filter(h => h.g === 'protect' || ttc()), ids = list.map(h => h.id);
+  const done = habitsDone(k).filter(id => ids.includes(id)), total = list.length, n = done.length;
+  const ph = M.info && M.info.phase, focus = ph ? HABIT_FOCUS[ph].filter(id => ids.includes(id)) : [];
+  const bubble = (a, l) => { const L = list.filter(h => h.a === a), c = L.filter(h => done.includes(h.id)).length, r = 20, cc = 2 * Math.PI * r;
+    return `<div class="hb-bub"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="4"/><circle cx="24" cy="24" r="${r}" fill="none" stroke="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" stroke-width="4" stroke-linecap="round" stroke-dasharray="${cc}" stroke-dashoffset="${cc * (1 - (L.length ? c / L.length : 0))}" transform="rotate(-90 24 24)"/></svg><b>${c}<small>/${L.length}</small></b><span>${l}</span></div>`; };
+  const row = h => `<button class="hb ${done.includes(h.id) ? 'on' : ''}" data-action="habitTick" data-id="${h.id}">
+      <span class="cb">${icon('check', 13, 2.4)}</span><span class="hb-t"><b>${h.t}</b><small>${h.why}</small><span class="hb-tags">${evBadge(h.ev)}${focus.includes(h.id) ? '<span class="hb-now">Your phase</span>' : ''}</span></span></button>`;
   const R = 46, Cc = 2 * Math.PI * R;
   let week = '';
-  for (let i = 6; i >= 0; i--) { const d = C.addDays(new Date(), -i), c = habitsDone(C.iso(d)).length; week += `<div class="hb-day"><b style="height:${Math.max(6, c / total * 100)}%"></b><span>${fmt(d, { weekday: 'narrow' })}</span></div>`; }
+  for (let i = 6; i >= 0; i--) { const d = C.addDays(new Date(), -i), c = habitsDone(C.iso(d)).filter(id => ids.includes(id)).length; week += `<div class="hb-day"><b style="height:${Math.max(6, Math.min(100, c / total * 100))}%"></b><span>${fmt(d, { weekday: 'narrow' })}</span></div>`; }
   const group = (g, title, sub) => `${sectionTitle(title)}<p class="muted" style="margin:-6px 4px 10px">${sub}</p>
-    <section class="card glass habits">${HABITS.filter(h => h.g === g).map(h => `<button class="hb ${done.includes(h.id) ? 'on' : ''}" data-action="habitTick" data-id="${h.id}">
-      <span class="cb">${icon('check', 13, 2.4)}</span><span class="hb-t"><b>${h.t}</b><small>${h.why}</small></span></button>`).join('')}</section>`;
+    <section class="card glass habits">${list.filter(h => h.g === g).sort((a, b) => focus.includes(b.id) - focus.includes(a.id)).map(row).join('')}</section>`;
   return `${topbar('Hormone habits', { back: true })}
   <div class="pad">
     <section class="card hb-hero">
       <svg viewBox="0 0 110 110" width="110" height="110"><circle cx="55" cy="55" r="${R}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="9"/>
         <circle cx="55" cy="55" r="${R}" fill="none" stroke="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" stroke-width="9" stroke-linecap="round" stroke-dasharray="${Cc}" stroke-dashoffset="${Cc * (1 - n / total)}" transform="rotate(-90 55 55)" style="transition:stroke-dashoffset .5s"/>
         <text x="55" y="60" text-anchor="middle" class="hb-num">${n}</text></svg>
-      <div><div class="eyebrow">Today</div><h3>${n} of ${total} habits</h3><p class="body sm">Small daily choices that protect your hormones and fertility.</p><div class="hb-week">${week}</div></div>
+      <div><div class="eyebrow">Today</div><h3>${n} of ${total} habits</h3><p class="body sm">Small daily choices that protect your hormones${ttc() ? ' and fertility' : ''}.</p><div class="hb-week">${week}</div></div>
     </section>
+    <div class="hb-bubs">${bubble('body', 'Body')}${bubble('mind', 'Mind')}${bubble('food', 'Food')}</div>
+    ${focus.length ? `<section class="card card-light hb-focus"><small>${PHASES[ph].name} phase · start here</small><p>${focus.map(id => HABITS.find(h => h.id === id).t).join(' · ')}</p></section>` : ''}
     ${group('protect', 'Protect your hormones', 'The opposite of what harms women’s health most.')}
     ${ttc() ? group('fertile', 'Fertility & feminine flow', 'Fundamentals for a warm womb and a calm nervous system.') : ''}
     <p class="fine center">You’re not the problem — the modern world is designed against your rhythm. One habit at a time.</p>
