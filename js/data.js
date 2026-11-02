@@ -1075,6 +1075,26 @@ export const SUGAR_TRICKS = [
   { k: 'spices', w: 'with', t: 'Cinnamon, ginger or turmeric on your food', g: '🫚', n: 'Spices', eff: .1, d: 'Cinnamon, ginger, turmeric, black seed (nigella) and a pinch of cayenne — warming, anti-inflammatory and may gently lower blood sugar.' },
 ];
 
+// What the research says about each blood-sugar trick: evidence label, study (author + year), caution.
+export const SUGAR_SCIENCE = {
+  fibre: { ev: 'some', s: 'Eating vegetables and protein before the carbs lowered the after-meal sugar rise by about 29% at 30 minutes and 37% at 60 minutes, compared with carbs first.', c: 'Shukla et al. 2015, Diabetes Care (small crossover study)' },
+  move: { ev: 'strong', s: 'A review of 7 studies found that even 2–5 minutes of light walking after a meal lowered blood sugar compared with sitting. Longer walks did more.', c: 'Buffey et al. 2022, Sports Medicine (meta-analysis)' },
+  acv: { ev: 'some', s: 'Vinegar with a carb-rich meal lowered the after-meal sugar and insulin rise. A review of trials confirmed a modest effect.', c: 'Johnston et al. 2004, Diabetes Care · Shishehbor et al. 2017, Diabetes Res Clin Pract', care: 'Always diluted, ideally through a straw. Skip it with reflux or a sore stomach.' },
+  tea: { ev: 'some', s: 'Green tea lowered fasting blood sugar and long-term sugar (HbA1c) a little across 17 trials. Hibiscus tea lowered blood pressure.', c: 'Liu et al. 2013, Am J Clin Nutr · Serban et al. 2015, J Hypertension (meta-analyses)' },
+  berberine: { ev: 'some', s: 'Across 14 trials in people with high blood sugar, berberine lowered fasting sugar and HbA1c, similar to some first-line medicines. There is less research in women with normal blood sugar.', c: 'Dong et al. 2012, Evid Based Complement Alternat Med (meta-analysis)', care: 'Not in pregnancy, breastfeeding or when trying to conceive. It changes how many medicines are broken down, so ask your doctor first. It can upset the stomach.' },
+  d3mg: { ev: 'some', s: 'Magnesium supplements improved fasting sugar and insulin sensitivity in people at risk. Vitamin D did not prevent diabetes in a large trial overall, but helped most in people who were low.', c: 'Veronese et al. 2016, Eur J Clin Nutr · Pittas et al. 2019, NEJM (D2d trial)', care: 'Test your vitamin D before taking high doses. Keep supplement magnesium to about 350 mg a day.' },
+  minerals: { ev: 'emerging', s: 'Chromium gave small improvements in blood sugar, mainly in people with diabetes. Results are mixed, so food first: oysters, eggs, broccoli, fish and pumpkin seeds.', c: 'Suksomboon et al. 2014, J Clin Pharm Ther (meta-analysis)' },
+  spices: { ev: 'some', s: 'Cinnamon lowered fasting blood sugar in people with type 2 diabetes across 10 trials.', c: 'Allen et al. 2013, Annals of Family Medicine (meta-analysis)', care: 'For daily use pick Ceylon cinnamon. Cassia cinnamon has a lot of coumarin, which is hard on the liver in large amounts.' },
+};
+
+// How blood sugar and appetite shift across the cycle.
+export const SUGAR_CYCLE = {
+  menstrual: { t: 'Steady, but tired', d: 'Losing iron can make you crave quick energy. Warm, cooked meals with protein and iron keep you even.' },
+  follicular: { t: 'Most insulin-sensitive', d: 'Rising estrogen helps insulin work. Your body handles carbs best now.' },
+  ovulatory: { t: 'Light appetite', d: 'Appetite is often lowest around ovulation. Eat enough protein so you don’t crash later.' },
+  luteal: { t: 'More cravings, less sensitive', d: 'Progesterone makes insulin work a little less well and you burn slightly more at rest. Cravings are real: add protein, fibre and a warm snack rather than fighting them.' },
+};
+
 // ---------- Tea guide: the best teas for each problem ----------
 // Each tea: [emoji, name, what it does, how to make it, evidence, caution or ''].
 export const TEA_GUIDE = [
