@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
+  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -704,7 +704,7 @@ function viewToday() {
     : `<section class="card checkin" data-action="nav" data-to="log"><div><div class="eyebrow">Daily check-in</div><h3>How do you feel today?</h3></div><span class="round-go">${icon('plus', 22)}</span></section>`}
 
     ${sectionTitle('Explore')}
-    <div class="explore">${[['rhythm', 'sun', 'Your rhythm', 'Sun, moon & body'], ['hormones', 'book', 'Hormones', 'What each one does'], ['guide', 'chart', 'Cycle guide', 'Day by day'], ['move', 'leaf', 'Move', 'Best training times'], ['cosmic', 'star', 'Your stars', 'Zodiac & moon'], ['habits', 'check', 'Habits', 'Daily checklist'], ['relief', 'heart', 'Relief', 'Cramps, PMS, sleep'], ['season', 'leaf', 'In season', 'Local foods'], ['tea', 'cup', 'Tea guide', 'For every need'], ]
+    <div class="explore">${[['rhythm', 'sun', 'Your rhythm', 'Sun, moon & body'], ['hormones', 'book', 'Hormones', 'What each one does'], ['guide', 'chart', 'Cycle guide', 'Day by day'], ['move', 'leaf', 'Move', 'Best training times'], ['cosmic', 'star', 'Your stars', 'Zodiac & moon'], ['habits', 'check', 'Habits', 'Daily checklist'], ['relief', 'heart', 'Relief', 'Cramps, PMS, sleep'], ['season', 'leaf', 'In season', 'Local foods'], ['tea', 'cup', 'Tea guide', 'For every need'], ['nutrients', 'drop', 'Nutrients', 'Food first, doses'], ]
       .map(([to, ic, t, sub]) => `<button class="ex" data-action="nav" data-to="${to}"><span class="ex-ic">${icon(ic, 20)}</span><b>${t}</b><small>${sub}</small></button>`).join('')}</div>
 
     ${tipsCard(info)}
@@ -944,7 +944,7 @@ function viewLog() {
       <div class="lg-sleep"><button data-action="logSleep" data-d="-0.5" aria-label="Less sleep">−</button><b>${l.sleep != null ? l.sleep : '–'}<small>hours</small></b><button data-action="logSleep" data-d="0.5" aria-label="More sleep">+</button></div>`,
     desire: `${logSlider('drive', 'Sex drive', l)}<div class="lg-k">Today</div>${chips('intim', INTIMACY)}
       <p class="lg-fine">Private: stays on your phone and is never shared with partners.</p>`,
-    fuel: `<div class="lg-k">Today I had</div>${chips('intake', INTAKE)}<div class="lg-k">Supplements & medicine</div>${chips('supp', SUPPS)}`,
+    fuel: `<div class="lg-k">Today I had</div>${chips('intake', INTAKE)}<div class="lg-k">Supplements & medicine <button class="link lg-more" data-action="nav" data-to="nutrients">Doses & food first ${icon('chevR', 11)}</button></div>${chips('supp', SUPPS)}`,
     disrupt: `<p class="lg-fine top">Things that can shift ovulation or your next period. Logging them helps me read your cycle right.</p>${chips('disrupt', DISRUPTORS)}`,
     note: `<textarea class="lg-note" rows="3" placeholder="Anything you want to remember about today…" data-input="log.notes">${esc(l.notes || '')}</textarea>`,
   };
@@ -2374,14 +2374,13 @@ function viewTeaItem(id) {
   // warmest herb wins: ginger makes a cool chamomile blend warm
   const temp = P.length ? TEMPS[Math.max(...P.map(p => TEMPS.indexOf(p.t)))] : '', best = [...new Set(P.flatMap(p => p.p))];
   const cold = ['cold', 'cool'].includes(temp), nearBleed = ph === 'menstrual' || (info && dayWindow(info) === 'premenstrual');
-  const PH = [['menstrual', 'Period'], ['follicular', 'Follicular'], ['ovulatory', 'Ovulation'], ['luteal', 'Luteal']];
   const cautions = [warn, ...P.map(p => p.caution)].filter((x, i, a) => x && a.indexOf(x) === i);
   return `<div class="pad">
     ${specHero({ glyph: g, eyebrow: G ? `Tea for ${G.n.toLowerCase()}` : 'Tea', name: /tea|milk|coffee/i.test(n) ? n : `${n} tea`, label: 'Key ingredients',
       rows, lead: `${n} · ${EVIDENCE[ev].label.toLowerCase()}`, desc: why })}
     ${P.length ? `<section class="card glass tea-fit">
       <div class="tf-k">Best in your cycle</div>
-      <div class="tf-phases">${PH.map(([k, l]) => `<span class="${best.includes(k) ? 'on' : ''} ${k === ph ? 'now' : ''}" style="--pc:${PHASE_COLOR.dark[k]}">${l}${k === ph ? '<i>you</i>' : ''}</span>`).join('')}</div>
+      ${phaseFit(best, ph)}
       <div class="tf-k">Nature in Chinese medicine</div>
       <div class="tf-temp"><div class="tf-bar">${TEMPS.map(x => `<span class="${x === temp ? 'on' : ''}">${x}</span>`).join('')}</div><small>${[...new Set(P.flatMap(p => p.o.split(' · ')))].join(' · ')}</small></div>
       ${cold && nearBleed ? `<p class="tea-warn">${icon('spark', 12)} Cooling in Chinese medicine. Around your period drink it hot and add a slice of ginger.</p>` : ''}
@@ -2393,6 +2392,40 @@ function viewTeaItem(id) {
     ${cautions.length ? `${sectionTitle('Good to know')}<section class="card glass tea-care">${cautions.map(c => `<p>${icon('spark', 12)} ${c}</p>`).join('')}</section>` : ''}
     ${G && G.teas.length > 1 ? `${sectionTitle(`More for ${G.n.toLowerCase()}`)}<div class="tea-more">${G.teas.map((x, i) => i === idx ? '' : `<button data-action="nav" data-to="tea/${G.k}-${i}"><span>${x[0]}</span>${x[1]}</button>`).join('')}</div>` : ''}
     <p class="fine center">Herbal teas are gentle support, not medicine. Pregnant, on medication or unsure? Ask your doctor or midwife first.</p>
+  </div>`;
+}
+// ---------- nutrients: food first, a supplement when there's a reason ----------
+const PH4 = [['menstrual', 'Period'], ['follicular', 'Follicular'], ['ovulatory', 'Ovulation'], ['luteal', 'Luteal']];
+const phaseFit = (best, ph) => `<div class="tf-phases">${PH4.map(([k, l]) => `<span class="${best.includes(k) ? 'on' : ''} ${k === ph ? 'now' : ''}" style="--pc:${PHASE_COLOR.dark[k]}">${l}${k === ph ? '<i>you</i>' : ''}</span>`).join('')}</div>`;
+function viewNutrients() {
+  const ph = M.info && M.info.phase, now = ph ? NUTRIENTS.filter(x => x.p.includes(ph) && x.p.length < 4) : [];
+  const card = x => `<button class="card glass nu-c" data-action="nav" data-to="nutrients/${x.id}"><span class="nu-g">${x.g}</span>
+    <div class="nu-t"><b>${x.n}</b><small>${x.for}</small></div><div class="nu-r"><span class="nu-dose">${x.d[0][0]}</span>${evBadge(x.ev)}</div></button>`;
+  return `${topbar('Nutrients', { back: true })}
+  <div class="pad">
+    <h1 class="page-h">Food first, <span>then a boost</span></h1>
+    <section class="card card-light nu-intro"><small>How to use this</small><p>Real food covers most of what your cycle needs. A supplement makes sense when you have the signs, a test shows you’re low, or a study dose clearly helps.</p></section>
+    ${now.length ? `${sectionTitle(`For your ${PHASES[ph].name.toLowerCase()} phase`)}<div class="nu-list">${now.map(card).join('')}</div>` : ''}
+    ${sectionTitle(now.length ? 'All nutrients' : 'Nutrients')}
+    <div class="nu-list">${NUTRIENTS.filter(x => !now.includes(x)).map(card).join('')}</div>
+    <p class="fine center">General information, not medical advice. Pregnant, on medication or unsure? Ask your doctor or pharmacist first.</p>
+  </div>`;
+}
+function viewNutrient(id) {
+  const x = NUTRIENTS.find(n => n.id === id); if (!x) return viewNutrients();
+  const ph = M.info && M.info.phase, i = NUTRIENTS.indexOf(x);
+  return `<div class="pad">
+    ${specHero({ glyph: x.g, eyebrow: `For ${x.for.toLowerCase()}`, name: x.n, label: 'Key facts', rows: x.d, lead: `${x.n} · ${EVIDENCE[x.ev].label.toLowerCase()}`, desc: x.why })}
+    <section class="card glass tea-fit"><div class="tf-k">When it helps most</div>${phaseFit(x.p, ph)}</section>
+    ${sectionTitle('Food first')}
+    <section class="card glass nu-food">${x.f.map(([f, a]) => `<div class="spec-row"><b>${f}</b>${a ? `<span>${a}</span>` : ''}</div>`).join('')}</section>
+    ${sectionTitle('Are you low?')}
+    <section class="card glass nu-low"><div class="nl-i"><span>🔎</span><div><small>Signs</small><p>${x.low}</p></div></div><div class="nl-i"><span>🧪</span><div><small>Test to ask for</small><p>${x.test}</p></div></div></section>
+    ${sectionTitle('What studies found')}
+    <section class="card glass tea-study"><div class="ts-i"><p>${x.study}</p><small>${x.cite}</small></div><div class="ts-ev">${evBadge(x.ev)} <span>${EVIDENCE[x.ev].label}</span></div></section>
+    ${sectionTitle('Good to know')}<section class="card glass tea-care"><p>${icon('spark', 12)} ${x.caution}</p></section>
+    <button class="card glass nu-next" data-action="nav" data-to="nutrients/${NUTRIENTS[(i + 1) % NUTRIENTS.length].id}"><small>Next</small><b>${NUTRIENTS[(i + 1) % NUTRIENTS.length].g} ${NUTRIENTS[(i + 1) % NUTRIENTS.length].n}</b>${icon('chevR', 16)}</button>
+    <p class="fine center">General information, not medical advice. Pregnant, on medication or unsure? Ask your doctor or pharmacist first.</p>
   </div>`;
 }
 function viewSugar() {
@@ -4155,7 +4188,7 @@ function render() {
   const ph = (ui.phasePreview || M.info?.phase) || ''; // the whole app takes the colour of her phase
   if (document.documentElement.dataset.phase !== ph) document.documentElement.dataset.phase = ph;
   const views = {
-    today: viewToday, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), plan: viewPlan, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: () => (r.id ? viewStar(r.id) : viewCosmic()), grocery: viewGrocery, remedy: () => viewRemedy(r.id), habits: viewHabits, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
+    today: viewToday, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), plan: viewPlan, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: () => (r.id ? viewStar(r.id) : viewCosmic()), grocery: viewGrocery, remedy: () => viewRemedy(r.id), habits: viewHabits, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
     recipe: () => viewRecipe(r.id), ritual: () => viewRitual(r.id), point: () => viewPoint(r.id), article: () => viewArticle(r.id),
   };
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];

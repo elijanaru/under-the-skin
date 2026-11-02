@@ -3351,3 +3351,18 @@ button.tc-row { width: 100%; text-align: left; font: inherit; color: var(--text)
 .tea-care { display: grid; gap: 8px; padding: 16px 18px; }
 .tea-care p { margin: 0; display: flex; gap: 8px; align-items: flex-start; font-size: 13.5px; line-height: 1.5; color: #d9ded6; }
 .tea-care p svg { flex: none; margin-top: 4px; color: var(--lime); }
+
+/* nutrients */
+.lg-more { float: right; font-size: 11.5px; letter-spacing: 0; text-transform: none; }
+.nu-intro { padding: 18px; } .nu-intro small { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 500; color: hsl(calc(var(--hb) + 145 * var(--hk)) calc(39% * var(--hs2)) 30%); }
+.nu-intro p { margin: 6px 0 0; font-size: 14px; line-height: 1.5; color: #3b443d; }
+.nu-list { display: grid; gap: 8px; margin-bottom: 14px; }
+.nu-c { width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px; text-align: left; font: inherit; color: var(--text); cursor: pointer; }
+.nu-g { flex: none; width: 44px; height: 44px; display: grid; place-items: center; font-size: 22px; border-radius: 15px; background: radial-gradient(circle at 35% 30%, hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77% / .28), hsl(calc(var(--hb) + 145 * var(--hk)) calc(39% * var(--hs2)) 30% / .35)); border: 1px solid var(--line); }
+.nu-t { flex: 1; min-width: 0; } .nu-t b { display: block; font-size: 16px; font-weight: 500; } .nu-t small { font-size: 12.5px; color: #c3cac1; }
+.nu-r { display: grid; justify-items: end; gap: 5px; } .nu-dose { font-family: Doto, monospace; font-size: 13px; color: var(--lime); white-space: nowrap; }
+.nu-food { padding: 6px 18px 10px; } .nu-food .spec-row b { font-size: 17px; font-weight: 500; letter-spacing: -.01em; } .nu-food .spec-row:last-child { border-bottom: 0; } .nu-food .spec-row { border-bottom-color: var(--line); }
+.nu-low { display: grid; gap: 14px; padding: 18px; }
+.nl-i { display: flex; gap: 12px; } .nl-i > span { flex: none; font-size: 18px; } .nl-i small { font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--sage); } .nl-i p { margin: 3px 0 0; font-size: 14px; line-height: 1.5; color: #d9ded6; }
+.nu-next { width: 100%; display: flex; align-items: center; gap: 10px; padding: 16px 18px; font: inherit; color: var(--text); cursor: pointer; margin-top: 6px; }
+.nu-next small { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--sage); } .nu-next b { flex: 1; text-align: left; font-weight: 500; } .nu-next svg { color: var(--lime); }
