@@ -717,6 +717,9 @@ export const RELIEF = {
       { t: 'Iron + vitamin C', d: 'Lentils with lemon, red meat, spinach with peppers.', ev: 'strong' },
       { t: 'Daylight in the morning', d: '10 minutes outside helps set your body clock and energy.', ev: 'some' },
       { t: 'Lower the bar', d: 'Move non-essential tasks to your follicular phase.', ev: 'emerging' },
+      { t: 'Protein at breakfast', d: 'Eggs, cheese or yogurt in the morning keep blood sugar and energy steadier than a sweet start.', ev: 'some', to: 'sugar' },
+      { t: 'A 10–20 minute nap', d: 'Before 3 pm. Short naps lifted alertness for hours in trials; longer ones leave you groggy.', ev: 'some' },
+      { t: 'Check ferritin and thyroid', d: 'If you’re tired all month, not just around your period, these two blood tests explain most cases.', ev: 'strong', to: 'nutrients/iron' },
     ],
     tcm: 'Qi and Blood deficiency — red dates, goji, bone broth, stewed fruit and early nights.',
     doctor: 'Ongoing exhaustion, breathlessness or very heavy periods — ask for a ferritin (iron stores) test.',
@@ -727,6 +730,9 @@ export const RELIEF = {
       { t: 'Supportive bra', d: 'Including a soft one for sleep.', ev: 'some' },
       { t: 'Go easy on salt', d: 'Commonly advised to ease fluid retention; evidence is mixed.', ev: 'emerging' },
       { t: 'Warm or cool compress', d: 'Whichever feels better.', ev: 'emerging' },
+      { t: 'Chasteberry for 3 cycles', d: 'In a trial with 170 women it eased breast fullness along with mood and irritability.', ev: 'strong', to: 'nutrients/vitex' },
+      { t: 'Flax seeds daily', d: '25 g ground flax a day eased cyclical breast pain in a small trial.', ev: 'emerging' },
+      { t: 'Rose tea and side stretches', d: 'Rose moves stuck Liver qi in Chinese medicine; side stretches open the Liver channel along your ribs.', ev: 'tcm', to: 'tea/pms-1' },
     ],
     tcm: 'The Liver channel runs through the breasts — tenderness points to Liver Qi stagnation. Rose tea and side stretches.',
     doctor: 'A new lump, pain in one spot that doesn’t change with your cycle, or nipple discharge.',
@@ -1401,4 +1407,17 @@ export const REMEDY_SCIENCE = {
   'heart-foods': { ev: 'some', c: [['Cacao flavanols', 'Gently lower blood pressure'], ['Beetroot nitrates', 'Turn into nitric oxide, widen vessels'], ['Omega-3', 'From wild fish, steadies the heart rhythm']],
     study: 'Cacao flavanols lowered blood pressure a little in a Cochrane review. Beetroot juice lowered the top number by about 4 mmHg.',
     cite: 'Ried 2017 (Cochrane) · Siervo 2013 (meta-analysis)', caution: 'Beetroot can turn urine pink, which is harmless. On heart or blood-thinning medicine, ask your doctor before supplements.' },
+};
+
+// Relief → the teas and nutrients that belong to it, plus a glyph for the tile.
+export const RELIEF_LINKS = {
+  'Ovulation pain': { g: '🥚', tea: 'ovulation', nu: ['magnesium'] },
+  Cramps: { g: '🔥', tea: 'cramps', nu: ['magnesium', 'omega-3', 'vitamin-d'] },
+  'PMS mood': { g: '🌧️', tea: 'pms', nu: ['calcium', 'b6', 'vitex'] },
+  Bloating: { g: '🎈', tea: 'bloating', nu: ['magnesium'] },
+  Insomnia: { g: '🌙', tea: 'sleep', nu: ['magnesium'] },
+  Acne: { g: '✨', tea: 'skin', nu: ['zinc', 'omega-3', 'inositol'] },
+  Headache: { g: '🤕', tea: 'headache', nu: ['magnesium'] },
+  Fatigue: { g: '🔋', tea: 'energy', nu: ['iron', 'vitamin-d'] },
+  'Tender breasts': { g: '🌸', tea: 'pms', nu: ['vitex', 'calcium'] },
 };

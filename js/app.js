@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
+  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, RELIEF_LINKS, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -1586,23 +1586,31 @@ function viewReliefIndex() {
   <div class="pad">
     <div class="page-art">${mushroomArt(0, 'corner')}<h1 class="page-h">Feel better, <span>gently</span></h1></div>
     <p class="muted">What helps — body, food and Chinese medicine — with honest evidence labels.</p>
-    <div class="relief-grid">${keys.map((k, i) => `<button class="rcard tall relief-c" data-action="nav" data-to="relief/${encodeURIComponent(k)}">${glowArt(['drop', 'wave', 'orb', 'hill', 'crown', 'peak'][i % 6], 70 + i)}
-      <div class="rc-top"><span class="rc-k">${RELIEF[k].steps.length} steps</span>${recent.has(k) ? '<span class="rc-badge">Logged</span>' : ''}</div><div class="rc-t">${k}</div></button>`).join('')}</div>
+    <div class="relief-grid">${keys.map((k, i) => { const h = (state.reliefHelp || {})[k] || [], L = RELIEF_LINKS[k] || {};
+      return `<button class="rcard tall relief-c" data-action="nav" data-to="relief/${encodeURIComponent(k)}">${glowArt(['drop', 'wave', 'orb', 'hill', 'crown', 'peak'][i % 6], 70 + i)}
+      <div class="rc-top"><span class="rc-k">${RELIEF[k].steps.length} ways</span>${recent.has(k) ? '<span class="rc-badge">Logged</span>' : ''}</div>
+      ${L.g ? `<span class="rl-g">${L.g}</span>` : ''}<div class="rc-t">${k}</div>
+      <div class="rl-first">${h.length ? `♥ ${h.length} work${h.length > 1 ? '' : 's'} for you` : `First: ${RELIEF[k].steps[0].t.toLowerCase()}`}</div></button>`; }).join('')}</div>
   </div>`;
 }
 function viewRelief(id) {
   const k = decodeURIComponent(id || ''), R = RELIEF[k]; if (!R) return viewMissing();
-  const food = SYMPTOM_FOODS[k] || (k === 'PMS mood' ? SYMPTOM_FOODS.Cravings : null);
+  const food = SYMPTOM_FOODS[k] || (k === 'PMS mood' ? SYMPTOM_FOODS.Cravings : null), L = RELIEF_LINKS[k] || {};
+  const help = (state.reliefHelp || {})[k] || [], order = R.steps.map((_, i) => i).sort((a, b) => help.includes(b) - help.includes(a));
   return `${topbar('Relief', { back: true })}
   <div class="pad">
     <h1 class="page-h">${k}</h1>
     <section class="card card-light mt"><div class="eyebrow dark">Why it happens</div><p class="dp-text">${R.why}</p></section>
     ${sectionTitle('What helps')}
-    <section class="card glass relief-steps">${R.steps.map((x, i) => `<${x.to ? `button data-action="nav" data-to="${x.to}"` : 'div'} class="rs">
-      <span class="step-n">${i + 1}</span><div class="rs-b"><div class="rs-h"><b>${x.t}</b>${evBadge(x.ev)}</div><p class="body sm">${x.d}</p></div>${x.to ? icon('chevR', 16) : ''}
-    </${x.to ? 'button' : 'div'}>`).join('')}</section>
+    <p class="rl-hint">${help.length ? `♥ ${help.length} of ${R.steps.length} work for you, so they’re at the top.` : 'Tap ♥ on what helps you. Next time it moves to the top.'}</p>
+    <section class="card glass relief-steps">${order.map(i => { const x = R.steps[i]; return `<div class="rs ${help.includes(i) ? 'helped' : ''}">
+      <span class="step-n">${i + 1}</span><div class="rs-b"><div class="rs-h"><b>${x.t}</b>${evBadge(x.ev)}</div><p class="body sm">${x.d}</p>${x.to ? `<button class="link rs-go" data-action="nav" data-to="${x.to}">Open ${icon('chevR', 12)}</button>` : ''}</div>
+      <button class="rs-heart ${help.includes(i) ? 'on' : ''}" data-action="reliefHelp" data-k="${k}" data-i="${i}" aria-label="This helps me">${icon('heart', 18)}</button>
+    </div>`; }).join('')}</section>
+    ${L.tea || L.nu ? `${sectionTitle('Teas & nutrients for this')}<div class="tea-more">${L.tea ? (TEA_GUIDE.find(t => t.k === L.tea) || { teas: [] }).teas.map((t, i) => `<button data-action="nav" data-to="tea/${L.tea}-${i}"><span>${t[0]}</span>${t[1]}</button>`).join('') : ''}${(L.nu || []).map(id => { const n = NUTRIENTS.find(x => x.id === id); return n ? `<button data-action="nav" data-to="nutrients/${id}"><span>${n.g}</span>${n.n}</button>` : ''; }).join('')}</div>` : ''}
     ${food ? `${sectionTitle('Eat')}<section class="card glass"><p class="body sm" style="margin:0 0 10px">${food.tip}</p><div class="foods">${food.foods.map(f => `<span class="food">${f}</span>`).join('')}</div></section>` : ''}
     <section class="card tcm-card"><div class="tcm-glyph">${icon('yinyang', 30)}</div><div class="tcm-main"><div class="eyebrow">Chinese medicine view</div><p class="body" style="margin-top:6px">${R.tcm}</p></div></section>
+    ${R.doctor ? `<section class="card glass rl-doc"><span>🩺</span><div><small>See a doctor if</small><p>${R.doctor}</p></div></section>` : ''}
     <p class="fine center">General information, not medical advice. Check with a pharmacist before taking painkillers or supplements.</p>
   </div>`;
 }
@@ -3938,6 +3946,12 @@ const actions = {
   },
   useGeo: () => { if (!navigator.geolocation) return toast('Location isn’t available'); navigator.geolocation.getCurrentPosition(p => { state.profile.geo = { lat: +p.coords.latitude.toFixed(2), lng: +p.coords.longitude.toFixed(2) }; save(); toast('Sun times set for where you are'); render(); }, () => toast('Location not allowed — using your country')); },
   teaK: d => { ui.teaK = d.v; render(); },
+  reliefHelp: (d, el) => {
+    const H = state.reliefHelp = state.reliefHelp || {}, l = H[d.k] = H[d.k] || [], i = +d.i, at = l.indexOf(i);
+    at < 0 ? l.push(i) : l.splice(at, 1); save();
+    el.classList.toggle('on', at < 0); el.closest('.rs').classList.toggle('helped', at < 0);
+    if (at < 0) plusOne(el);
+  },
   rhView: d => { ui.rhView = d.v; render(); },
   mvTab: d => { ui.mvTab = d.v; render(); },
   stTab: d => { ui.stTab = d.v; render(); },
