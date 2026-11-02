@@ -1830,14 +1830,25 @@ function remindersSection() {
 // ---------- relief guide ----------
 const MOOD_TO_RELIEF = { Irritable: 'PMS mood', Anxious: 'PMS mood', Sad: 'PMS mood', Stressed: 'PMS mood', Angry: 'PMS mood', 'Low mood': 'PMS mood', 'Mood swings': 'PMS mood', Tearful: 'PMS mood' };
 function reliefKey(sym) { return RELIEF[sym] ? sym : MOOD_TO_RELIEF[sym] || null; }
+// What often bothers women in each part of the cycle (shown first, after anything she logged).
+const RELIEF_WINDOW = { 'flow-start': ['Cramps', 'Fatigue', 'Headache'], 'flow-end': ['Fatigue', 'Cramps'], rising: [], building: [], peak: ['Ovulation pain', 'Bloating'], settle: ['Bloating', 'Tender breasts'], focus: ['Tender breasts', 'Insomnia', 'Acne'], premenstrual: ['PMS mood', 'Bloating', 'Headache'] };
 function viewReliefIndex() {
   const recent = new Set();
   for (let i = 0; i < 4; i++) { const l = getLog(C.iso(C.addDays(new Date(), -i))); [...(l.symptoms || []), ...(l.moods || [])].forEach(s => { const k = reliefKey(s); if (k) recent.add(k); }); }
   const keys = Object.keys(RELIEF).sort((a, b) => recent.has(b) - recent.has(a));
+  const info = M.info, w = info && dayWindow(info);
+  const likely = [...new Set([...recent, ...(w ? RELIEF_WINDOW[w] : [])])].filter(k => RELIEF[k]).slice(0, 3);
+  const row = k => { const st = RELIEF[k].steps[0], L = RELIEF_LINKS[k] || {};
+    return `<button class="rl-row" data-action="nav" data-to="relief/${encodeURIComponent(k)}"><span class="rl-rg">${L.g || '🌿'}</span><span class="rl-rt"><b>${k}${recent.has(k) ? ' <i>logged</i>' : ''}</b><small>Start with: ${st.t.charAt(0).toLowerCase() + st.t.slice(1)}</small></span>${evBadge(st.ev)}${icon('chevR', 15)}</button>`; };
+  const today = info ? `<section class="card card-light rl-today"><small>${recent.size ? 'For what you logged' : 'Common around now'} · day ${info.cd}</small>
+      ${likely.length ? `<div class="rl-rows">${likely.map(row).join('')}</div>` : `<p class="rl-calm">These are usually your easiest days. If something bothers you, pick it below.</p>`}
+      <button class="pill-cta rl-cta" data-action="nav" data-to="log">${icon('plus', 14)} Log how you feel</button></section>` : '';
   return `${topbar('Relief', { back: true })}
   <div class="pad">
     <div class="page-art">${mushroomArt(0, 'corner')}<h1 class="page-h">Feel better, <span>gently</span></h1></div>
     <p class="muted">What helps — body, food and Chinese medicine — with honest evidence labels.</p>
+    ${today}
+    ${sectionTitle('Everything that helps')}
     <div class="relief-grid">${keys.map((k, i) => { const h = (state.reliefHelp || {})[k] || [], L = RELIEF_LINKS[k] || {};
       return `<button class="rcard tall relief-c" data-action="nav" data-to="relief/${encodeURIComponent(k)}">${glowArt(['drop', 'wave', 'orb', 'hill', 'crown', 'peak'][i % 6], 70 + i)}
       <div class="rc-top"><span class="rc-k">${RELIEF[k].steps.length} ways</span>${recent.has(k) ? '<span class="rc-badge">Logged</span>' : ''}</div>
