@@ -1062,6 +1062,74 @@ export const EAT_GUIDE = {
   } },
 };
 
+// ---------- The cycle × season plate ----------
+// Six petals; the share is a guide to how much of the plate each one fills in that phase.
+// Vegetables and fruit come live from what is in season in her country; the rest is set per phase × TCM season.
+export const PLATE_PETALS = [
+  { k: 'veg', n: 'Vegetables', s: 'Veg', g: '🥦' }, { k: 'protein', n: 'Protein', s: 'Protein', g: '🥩' }, { k: 'carbs', n: 'Roots & carbs', s: 'Roots', g: '🍠' },
+  { k: 'fruit', n: 'Fruit', s: 'Fruit', g: '🍐' }, { k: 'fats', n: 'Fats & seeds', s: 'Fats', g: '🥑' }, { k: 'spice', n: 'Spices & herbs', s: 'Spices', g: '🫚' },
+];
+export const PLATE_SHARE = {
+  menstrual: { veg: 30, protein: 25, carbs: 20, fruit: 10, fats: 10, spice: 5 },
+  follicular: { veg: 35, protein: 25, carbs: 10, fruit: 15, fats: 10, spice: 5 },
+  ovulatory: { veg: 35, protein: 20, carbs: 10, fruit: 20, fats: 10, spice: 5 },
+  luteal: { veg: 25, protein: 20, carbs: 25, fruit: 10, fats: 15, spice: 5 },
+};
+export const PLATE_EV = { veg: 'some', protein: 'strong', carbs: 'some', fruit: 'some', fats: 'some', spice: 'tcm' };
+export const PLATE_SPICE_WHY = {
+  menstrual: 'Warming spices warm the womb and keep Blood moving. Ginger also eased period pain in several trials.',
+  follicular: 'Goji, sesame and fresh herbs nourish Yin and Blood while you rebuild.',
+  ovulatory: 'Rose, turmeric and fresh herbs keep Qi flowing smoothly through the turn from Yin to Yang.',
+  luteal: 'Fennel, cinnamon and orange peel move stuck Liver Qi, ease bloating and keep digestion warm.',
+};
+// How the five TCM seasons change the plate.
+export const PLATE_SEASON = {
+  Winter: { aim: 'Warm & store', cook: 'Slow-cooked, braised and baked. Raw food at room temperature, at midday.', taste: ['Salty', 'A little sea salt, seaweed and bone broth support the Kidney. Not too much.'], veg: ['🥬 Kale', '🥕 Carrots', '🧅 Leeks', '🥬 Cabbage'], fruit: ['🍎 Apples', '🍐 Pears', '🍊 Citrus'] },
+  Spring: { aim: 'Fresh & moving', cook: 'Steamed, quick sautés, sprouts and raw greens.', taste: ['Sour', 'Lemon, sauerkraut and a little vinegar help the Liver move energy after winter.'], veg: ['🌿 Wild garlic', '🥬 Spinach', '🌱 Asparagus', '🔴 Radishes'], fruit: ['🍓 Strawberries', '🌱 Rhubarb', '🍋 Lemons'] },
+  Summer: { aim: 'Light & cool', cook: 'Raw and fresh, quick grilling. Cool, but not iced.', taste: ['Bitter', 'Rocket, dandelion and bitter leaves cool the Heart and help digestion.'], veg: ['🍅 Tomatoes', '🥒 Cucumber', '🥒 Courgette', '🫑 Peppers'], fruit: ['🍒 Cherries', '🫐 Berries', '🍉 Melon'] },
+  'Late summer': { aim: 'Sweet & grounding', cook: 'Steamed, stewed and gently cooked, with some raw ripe fruit.', taste: ['Sweet', 'Naturally sweet roots, corn and squash strengthen the Spleen. Not sugar.'], veg: ['🌽 Sweetcorn', '🎃 Squash', '🫛 Green beans', '🍆 Aubergine'], fruit: ['🍑 Plums', '🍇 Grapes', '🫐 Blackberries'] },
+  Autumn: { aim: 'Moisten & protect', cook: 'Roasted, baked and braised. Soups and stewed pears keep the Lung moist.', taste: ['Pungent', 'Onion, ginger, radish and garlic open the Lung and protect against cold wind.'], veg: ['🎃 Pumpkin', '🥬 Kale', '🫚 Beetroot', '🍄 Mushrooms'], fruit: ['🍐 Pears', '🍎 Apples', '🍈 Quince'] },
+};
+const PS = s => s.split('|').map(x => x.trim());
+// [protein, roots & carbs, fats & seeds, spices & herbs] for each phase × season.
+export const PLATE_GRID = {
+  menstrual: {
+    Winter: [PS('🍲 Beef bone broth | 🐑 Slow-braised lamb | 🦪 Mussels'), PS('🍠 Sweet potato | 🌰 Chestnuts | 🫘 Black beans'), PS('🧈 Ghee | ⚫ Black sesame | 🌰 Walnuts'), PS('🫚 Ginger | 🟤 Cinnamon | 🔴 Red dates')],
+    Spring: [PS('🥩 Grass-fed beef | 🫀 Chicken liver | 🥚 Pasture eggs'), PS('🥔 New potatoes | 🫘 Black beans | 🍞 Toasted sourdough'), PS('🧈 Butter | 🎃 Pumpkin seeds | 🫒 Olive oil'), PS('🫚 Ginger | 🔴 Red dates | 🧡 Turmeric')],
+    Summer: [PS('🥩 Grass-fed beef | 🐟 Sardines | 🍲 Chicken bone broth'), PS('🥔 Potatoes | 🍠 Sweet potato | 🍞 Toasted sourdough'), PS('🫒 Olive oil | 🎃 Pumpkin seeds | 🥚 Egg yolks'), PS('🫚 Fresh ginger | 🔴 Red dates | 🧡 Turmeric')],
+    'Late summer': [PS('🍗 Chicken thigh stew | 🥩 Beef | 🥚 Pasture eggs'), PS('🎃 Squash | 🍠 Sweet potato | 🌽 Cooked sweetcorn'), PS('🧈 Butter | 🎃 Pumpkin seeds | 🌰 Walnuts'), PS('🫚 Ginger | 🟤 Cinnamon | 🍊 Orange peel')],
+    Autumn: [PS('🦪 Mussels | 🥩 Beef stew | 🐑 Lamb'), PS('🍠 Sweet potato | 🌰 Chestnuts | 🥕 Parsnips'), PS('🧈 Ghee | 🌰 Walnuts | ⚫ Black sesame'), PS('🫚 Ginger | 🟤 Cinnamon | 🔴 Red dates')],
+  },
+  follicular: {
+    Winter: [PS('🥚 Pasture eggs | 🐟 Wild salmon | 🍗 Chicken soup'), PS('🫘 Lentils | 🍠 Sweet potato | 🌾 Buckwheat'), PS('🟤 Flaxseed | 🎃 Pumpkin seeds | 🧈 Butter'), PS('🔴 Goji | ⚫ Black sesame | 🫚 Ginger')],
+    Spring: [PS('🥚 Pasture eggs | 🐟 Trout | 🐑 Spring lamb'), PS('🥔 New potatoes | 🫘 Lentils | 🍞 Sourdough'), PS('🥑 Avocado | 🟤 Flaxseed | 🎃 Pumpkin seeds'), PS('🌿 Parsley | 🔴 Goji | 🌱 Nettle')],
+    Summer: [PS('🐟 White fish | 🦐 Prawns | 🍗 Chicken'), PS('🥔 Baby potatoes | 🫘 Lentils | 🍞 Sourdough'), PS('🥑 Avocado | 🫒 Olive oil | 🎃 Pumpkin seeds'), PS('🌿 Mint | 🌿 Parsley | 🔴 Goji')],
+    'Late summer': [PS('🥚 Pasture eggs | 🍗 Chicken | 🐟 Mackerel'), PS('🌽 Sweetcorn | 🥔 Potatoes | 🫘 Lentils'), PS('🫒 Olive oil | 🟤 Flaxseed | 🎃 Pumpkin seeds'), PS('🌿 Basil | 🔴 Goji | 🫚 Ginger')],
+    Autumn: [PS('🐟 Wild salmon | 🥚 Pasture eggs | 🦆 Duck'), PS('🍠 Sweet potato | 🫘 Lentils | 🌾 Buckwheat'), PS('🟤 Flaxseed | 🎃 Pumpkin seeds | 🥜 Almonds'), PS('🔴 Goji | 🌿 Thyme | 🫚 Ginger')],
+  },
+  ovulatory: {
+    Winter: [PS('🦪 Oysters | 🐟 Wild salmon | 🥚 Pasture eggs'), PS('🫘 Chickpeas | 🍠 Sweet potato | 🥔 Potatoes'), PS('🥑 Avocado | ⚪ Sesame | 🌻 Sunflower seeds'), PS('🧡 Turmeric | 🫚 Ginger | 🌹 Rose')],
+    Spring: [PS('🥚 Pasture eggs | 🦐 Prawns | 🐟 Trout'), PS('🫘 Chickpeas | 🥔 New potatoes | 🍞 Sourdough'), PS('🥑 Avocado | 🫒 Olive oil | 🌻 Sunflower seeds'), PS('🌹 Rose | 🌿 Coriander | 🍋 Lemon zest')],
+    Summer: [PS('🐟 Sardines | 🦐 Prawns | 🍗 Chicken'), PS('🌽 Sweetcorn | 🫘 Chickpeas | 🥔 Baby potatoes'), PS('🥑 Avocado | 🥥 Coconut | 🫒 Olive oil'), PS('🌿 Mint | 🌹 Rose | 🌿 Coriander')],
+    'Late summer': [PS('🐟 Mackerel | 🥚 Pasture eggs | 🍗 Chicken'), PS('🌽 Sweetcorn | 🫘 Chickpeas | 🍠 Sweet potato'), PS('🫒 Olive oil | 🌻 Sunflower seeds | 🥥 Coconut'), PS('🌹 Rose | 🌿 Basil | 🧡 Turmeric')],
+    Autumn: [PS('🦪 Oysters | 🐟 Wild salmon | 🦆 Duck'), PS('🫘 Chickpeas | 🍠 Sweet potato | 🥔 Potatoes'), PS('🌰 Walnuts | ⚪ Sesame | 🥑 Avocado'), PS('🧡 Turmeric | 🌹 Rose | 🫚 Ginger')],
+  },
+  luteal: {
+    Winter: [PS('🥩 Beef stew | 🦃 Turkey | 🐟 Wild salmon'), PS('🍠 Sweet potato | 🌰 Chestnuts | 🥔 Potatoes'), PS('🧈 Butter | ⚪ Sesame | 🌻 Sunflower seeds'), PS('🟤 Cinnamon | 🌿 Fennel seed | 🍊 Orange peel')],
+    Spring: [PS('🦃 Turkey | 🥚 Pasture eggs | 🐟 Wild salmon'), PS('🍠 Sweet potato | 🥔 New potatoes | 🫘 Chickpeas'), PS('⚪ Sesame | 🌻 Sunflower seeds | 🫒 Olive oil'), PS('🌿 Fennel | 🍊 Orange peel | 🌹 Rose')],
+    Summer: [PS('🍗 Chicken | 🐟 Wild salmon | 🥚 Pasture eggs'), PS('🥔 Potatoes | 🍠 Sweet potato | 🫘 Chickpeas'), PS('🥑 Avocado | ⚪ Sesame | 🌻 Sunflower seeds'), PS('🌿 Fennel | 🌹 Rose | 🌿 Mint')],
+    'Late summer': [PS('🥩 Beef | 🦃 Turkey | 🥚 Pasture eggs'), PS('🎃 Squash | 🍠 Sweet potato | 🌾 Millet'), PS('🧈 Butter | ⚪ Sesame | 🌻 Sunflower seeds'), PS('🟤 Cinnamon | 🍊 Orange peel | 🌿 Cardamom')],
+    Autumn: [PS('🦃 Turkey | 🥩 Beef | 🐟 Wild salmon'), PS('🎃 Squash | 🌰 Chestnuts | 🍠 Sweet potato'), PS('🌰 Walnuts | ⚪ Tahini | 🌻 Sunflower seeds'), PS('🟤 Cinnamon | 🌿 Fennel seed | 🍊 Orange peel')],
+  },
+};
+// One plate to cook, for each phase × season.
+export const PLATE_MEAL = {
+  menstrual: { Winter: 'Slow-braised lamb with sweet potato, black beans and ginger', Spring: 'Beef and leek stew with new potatoes and a soft egg', Summer: 'Warm chicken broth with courgette, potatoes and fresh ginger', 'Late summer': 'Chicken and squash stew with cinnamon and red dates', Autumn: 'Mussels in ginger broth with roasted parsnips and chestnuts' },
+  follicular: { Winter: 'Salmon with lentils, steamed kale and black sesame', Spring: 'Herb omelette with spring greens, new potatoes and sauerkraut', Summer: 'Raw salad with prawns, cucumber, avocado, herbs and pumpkin seeds', 'Late summer': 'Eggs with sweetcorn, tomatoes and basil, raw kefir on the side', Autumn: 'Salmon with buckwheat, roasted beetroot and a raw apple slaw' },
+  ovulatory: { Winter: 'Salmon with roasted chickpeas and lightly cooked kale', Spring: 'Prawns with asparagus, radishes and new potatoes', Summer: 'Sardines with a tomato, cucumber and herb salad, berries after', 'Late summer': 'Grilled mackerel with a sweetcorn salad and ripe plums', Autumn: 'Salmon with broccoli, chickpeas and a walnut-pear salad' },
+  luteal: { Winter: 'Beef and root-veg stew with chestnuts and cinnamon', Spring: 'Turkey with roasted fennel, sweet potato and sesame', Summer: 'Chicken with roasted aubergine, potatoes and tahini', 'Late summer': 'Squash and millet bowl with beef, butter and cinnamon', Autumn: 'Turkey and squash bake with sunflower seeds and a stewed pear' },
+};
+
 // Blood-sugar tricks — from the user's book "Krankheitslügen entlarvt" (pp. 165–168).
 // eff = how much each trick flattens the typical after-meal glucose rise in the app's illustration.
 export const SUGAR_TRICKS = [
