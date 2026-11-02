@@ -838,13 +838,37 @@ function viewCalendar() {
       : `<div class="cal-grid ${slide}">${cells}</div>`}
       ${ui.calEdit ? `<div class="cal-editbar"><span>Tap each day you bled</span><button class="btn btn-light cal-done" data-action="calEdit">Done</button></div>`
         : `<div class="cal2-legend"><span><i class="lg-p"></i>Period</span><span><i class="lg-pp"></i>Expected period</span><span><i class="lg-f"></i>Fertile</span><span><i class="lg-o"></i>Egg release</span></div>
-      <div class="cal2-sel"><div><small>${fmt(sd, { weekday: 'long', month: 'long', day: 'numeric' })}</small><b>${selLine}</b></div>
-        ${isFuture ? '' : `<button class="cal2-btn ${hasFlow ? 'on' : ''}" data-action="togglePeriod">${icon('drop', 14)} ${hasFlow ? 'Bled' : 'Bled?'}</button><button class="cal2-btn" data-action="logDay" data-date="${ui.calSelected}">${icon('plus', 14)} Log</button>`}</div>
+      ${calDayCard(sd, si, slog, selLine, isFuture, hasFlow)}
       <button class="cal-editbtn" data-action="calEdit">${icon('drop', 15)} Edit period days</button>`}
     </section>
+    ${events().some(e => e.date >= todayISO()) ? upcomingEvents() : ''}
     ${cp ? `<button class="cal2-cosmic" data-action="nav" data-to="cosmic"><span class="cal2-g">${cp.sign.glyph}</span><span><small>Your cosmic rhythm</small><b>${cp.sign.name} · ${cp.cz.element} ${cp.cz.animal.name}</b></span>${icon('chevR', 18)}</button>`
       : `<button class="cal2-cosmic" data-action="nav" data-to="cosmic"><span class="cal2-g">✦</span><span><small>Your cosmic rhythm</small><b>Add your birthday for personal readings</b></span>${icon('chevR', 18)}</button>`}
     ${starSections()}
+  </div>`;
+}
+
+// The tapped day as a glass card: hormone and energy rings, her mode for the day, what she logged.
+function calDayCard(sd, si, slog, selLine, isFuture, hasFlow) {
+  const head = `<div class="cd-h"><div><small>${fmt(sd, { weekday: 'long', month: 'long', day: 'numeric' })}</small><b>${selLine || 'No cycle data yet'}</b></div>
+    ${isFuture ? '' : `<button class="cal2-btn ${hasFlow ? 'on' : ''}" data-action="togglePeriod">${icon('drop', 14)} ${hasFlow ? 'Bled' : 'Bled?'}</button>`}</div>`;
+  if (!si) return `<div class="cal2-sel cd day-panel">${head}</div>`;
+  const { cd, L, P } = si, rel = C.hormonesRel(cd, L, P), c = COMPASS[dayWindow(si)];
+  const rings = [['Estrogen', rel.estrogen], ['Progest.', rel.progesterone], ['Testost.', rel.testosterone], ['Energy', C.energyAt(cd, L, P)]].map(([n, v], i) => {
+    const R = 22, len = 2 * Math.PI * R, lvl = i === 3 ? (v < .5 ? 'Low' : v < .7 ? 'Steady' : 'High') : C.hormoneLevel(v);
+    return `<div class="cd-r"><svg viewBox="0 0 54 54"><circle cx="27" cy="27" r="${R}" class="cd-bg"/>${v > .02 ? `<circle cx="27" cy="27" r="${R}" class="cd-fg" stroke-dasharray="${(v * len).toFixed(1)} ${len.toFixed(1)}" transform="rotate(-90 27 27)"/>` : ''}</svg>
+      <span class="cd-n">${Math.round(v * 100)}</span><small>${n}</small><em>${lvl}</em></div>`;
+  }).join('');
+  const logged = [...(slog.symptoms || []), ...(slog.moods || [])].slice(0, 6), dayEv = events().filter(e => e.date === C.iso(sd));
+  return `<div class="cal2-sel cd day-panel">${head}
+    <div class="cd-rings">${rings}</div>
+    <div class="cd-mode"><span class="cd-m">${c.mode}</span><p>${c.why}</p></div>
+    ${logged.length ? `<div class="cd-log">${logged.map(x => `<span>${LOG_EMOJI[x] || '•'} ${x}</span>`).join('')}</div>` : ''}
+    ${dayEv.map(evCard).join('')}
+    ${isFuture ? `<div class="cd-plan">${planForm(C.iso(sd))}</div>` : ''}
+    <div class="cd-cta">${isFuture ? '' : `<button class="pill-cta" data-action="logDay" data-date="${C.iso(sd)}">${icon('plus', 14)} ${logged.length ? 'Edit log' : 'Log this day'}</button>`}
+      <button class="cd-link" data-action="nav" data-to="hormones">Your hormones ${icon('chevR', 14)}</button></div>
+    <p class="cd-note">Estimated from your cycle · rings show where each hormone sits in its own monthly range.</p>
   </div>`;
 }
 
