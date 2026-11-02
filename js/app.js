@@ -1023,6 +1023,16 @@ function brainRead(k) {
   }
   return { l, di, ph, notes, cards, up: upcomingPatterns(P), P };
 }
+// What already worked for her (her ♥ relief steps) plus one tea and the nutrients for this symptom.
+function brainLinks(k) {
+  if (!k || !RELIEF[k]) return '';
+  const L = RELIEF_LINKS[k] || {}, help = ((state.reliefHelp || {})[k] || []).map(i => RELIEF[k].steps[i]).filter(Boolean);
+  const tea = L.tea ? (TEA_GUIDE.find(t => t.k === L.tea) || { teas: [] }).teas[0] : null;
+  const pills = [tea ? `<button data-action="nav" data-to="tea/${L.tea}-0"><span>${tea[0]}</span>${tea[1]}</button>` : '',
+    ...(L.nu || []).slice(0, 2).map(id => { const n = NUTRIENTS.find(x => x.id === id); return n ? `<button data-action="nav" data-to="nutrients/${id}"><span>${n.g}</span>${n.n}</button>` : ''; })].join('');
+  return `${help.length ? `<div class="br-works"><small>♥ Works for you</small><p>${help.slice(0, 2).map(x => x.t).join(' · ')}</p></div>` : ''}
+      ${pills ? `<div class="br-fix"><small>Teas & nutrients</small></div><div class="tea-more br-pills">${pills}</div>` : ''}`;
+}
 function viewBrain(id) {
   const k = id && /^\d{4}-\d\d-\d\d$/.test(id) ? id : todayISO(), R = brainRead(k);
   const ph = R ? PHASES[R.ph] : null, isToday = k === todayISO();
@@ -1037,6 +1047,7 @@ function viewBrain(id) {
       <div class="br-learn">${icon('spark', 13)}<span>${c.learn}</span></div>
       ${c.fix ? `<div class="br-fix"><small>Try</small><p>${c.fix}</p></div>` : ''}
       ${c.foods.length ? `<div class="foods">${c.foods.map(x => `<span class="food">${x}</span>`).join('')}</div>` : ''}
+      ${brainLinks(c.rk)}
       ${c.other ? `<p class="br-other">${c.other}</p>` : ''}
       ${c.rk ? `<button class="br-more" data-action="nav" data-to="relief/${encodeURIComponent(c.rk)}">Full relief guide ${icon('chevR', 14)}</button>` : ''}
     </section>`).join('')}`;

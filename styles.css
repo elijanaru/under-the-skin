@@ -3160,6 +3160,10 @@ button.hub-rh:active .hub-mg { transform: scale(.94); }
 .br-fix { margin-top: 12px; }
 .br-fix small { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: rgba(244,245,240,.45); }
 .br-fix p { margin: 4px 0 0; font-size: 14.5px; line-height: 1.45; color: #f4f5f0; }
+.br-works { margin-top: 12px; padding: 10px 14px; border-radius: 16px; background: hsl(calc(var(--hb) + 82 * var(--hk)) calc(60% * var(--hs)) 72% / .08); border: 1px solid hsl(calc(var(--hb) + 82 * var(--hk)) calc(60% * var(--hs)) 72% / .22); }
+.br-works small { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: hsl(calc(var(--hb) + 82 * var(--hk)) calc(68% * var(--hs)) 77%); }
+.br-works p { margin: 3px 0 0; font-size: 14px; line-height: 1.4; color: #f4f5f0; }
+.br-pills { margin-top: 8px; }
 .br-card .foods { margin-top: 10px; }
 .br-other { margin: 12px 0 0; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.08); font-size: 13.5px; line-height: 1.45; color: #e9c9c9; }
 .br-more { margin-top: 12px; display: inline-flex; align-items: center; gap: 4px; padding: 8px 14px; border-radius: 99px; border: 1px solid rgba(255,255,255,.14); background: none; color: #f4f5f0; font: 400 13px Outfit, sans-serif; }
