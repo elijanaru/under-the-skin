@@ -1292,11 +1292,6 @@ function findFoodPhoto(n, w = 300) {
   return k ? foodPhoto(k, w) : '';
 }
 // The picture that fills each section of the plate when none of its foods has one.
-const PLATE_PIC = {
-  protein: { menstrual: () => photoUrl('beef-beet-stew', 500), follicular: () => photoUrl('egg-kraut-plate', 500), ovulatory: () => photoUrl('citrus-salmon-salad', 500), luteal: () => photoUrl('caldereta', 500) },
-  carbs: () => foodPhoto('Sweet potatoes', 500), fats: () => foodPhoto('Avocado', 500), fruit: () => foodPhoto('Pears', 500), veg: () => foodPhoto('Kale', 500),
-  spice: { menstrual: () => foodPhoto('Rosemary & oregano', 500), follicular: () => foodPhoto('Parsley', 500), ovulatory: () => foodPhoto('Mint', 500), luteal: () => foodPhoto('Thyme & sage', 500) },
-};
 function plateFoods(k, phase, season, warm) {
   if (k === 'veg' || k === 'fruit') return plateSeasonal(k, phase, season, warm);
   const idx = { protein: 0, carbs: 1, fats: 2, spice: 3 }[k];
@@ -1310,30 +1305,42 @@ function petalPath(cx, r0, r1, a0, a1, rr = 7) {
 }
 // A divided plate: each section is as wide as its share and filled with a photo of its food.
 const PLATE_ORDER = ['veg', 'fats', 'protein', 'spice', 'carbs', 'fruit'];
+// One calm, close-up whole-food photo per plate section, so the plate reads as one set.
+const UNS = id => `https://images.unsplash.com/photo-${id}?w=420&h=420&fit=crop&auto=format&q=70`;
+const PEX = id => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=420&h=420&fit=crop`;
+const PLATE_SET = {
+  protein: { menstrual: UNS('1783632665766-2806d10f2a03'), follicular: UNS('1641999161954-f6a92e137b84'), ovulatory: UNS('1706982272171-8ce965c1c996'), luteal: UNS('1603048297172-c92544798d5a') },
+  spice: { menstrual: UNS('1635843104103-ddd88e1c5141'), follicular: UNS('1726994803809-0e065bd4b25b'), ovulatory: PEX(13632808), luteal: UNS('1702989052359-541ef30e5973') },
+  fats: { menstrual: PEX(35339669), follicular: PEX(35339669), ovulatory: PEX(35339669), luteal: PEX(35339669) },
+  carbs: { menstrual: PEX(7456548), follicular: PEX(7456548), ovulatory: PEX(39467457), luteal: PEX(39467457) },
+  veg: () => UNS('1558234608-ae0b60563965'),
+  fruit: { Winter: UNS('1788512337872-7390113a5318'), Autumn: UNS('1788512337872-7390113a5318'), Spring: UNS('1594282241894-4da286138f44'), Summer: PEX(6316703), 'Late summer': PEX(6316703) },
+};
+const plateSetPic = (k, phase, season) => k === 'veg' ? PLATE_SET.veg() : k === 'fruit' ? PLATE_SET.fruit[season] : PLATE_SET[k][phase];
 function plateWheel(phase, season, sel, warm) {
   // Her plate is a real photo; the food sections sit in its well and the labels on its white rim.
-  const S = PLATE_SHARE[phase], cx = 180, cy = 184, R = 88, tau = 2 * Math.PI;
+  const S = PLATE_SHARE[phase], cx = 180, cy = 184, R = 90, tau = 2 * Math.PI;
   const at = (r, a) => [cx + r * Math.sin(a), cy - r * Math.cos(a)], f = n => n.toFixed(1);
   let a = -tau * S.veg / 200, defs = '', segs = '', lines = '', labels = '';
   PLATE_ORDER.forEach((k, i) => {
     const P = PLATE_PETALS.find(x => x.k === k), sh = S[k], a0 = a, a1 = a + tau * sh / 100, mid = (a0 + a1) / 2; a = a1;
     const [x0, y0] = at(R, a0), [x1, y1] = at(R, a1), on = k === sel;
     const d = `M${cx} ${cy} L${f(x0)} ${f(y0)} A${R} ${R} 0 ${a1 - a0 > Math.PI ? 1 : 0} 1 ${f(x1)} ${f(y1)}Z`;
-    const pic = (plateFoods(k, phase, season, warm).find(x => x.photo) || {}).photo || (typeof PLATE_PIC[k] === 'function' ? PLATE_PIC[k]() : PLATE_PIC[k][phase]());
-    const [ix, iy] = at(R * .5, mid), sz = R * 1.5;
+    const pic = plateSetPic(k, phase, season);
+    const [ix, iy] = at(R * .52, mid), sz = R * 1.7;
     defs += `<clipPath id="pls-${k}"><path d="${d}"/></clipPath>`;
     segs += `<g class="pls ${on ? 'on' : ''}" data-action="plPetal" data-v="${k}" role="button" aria-label="${P.n} ${sh}%" style="--d:${(.55 + i * .13).toFixed(2)}s">
       <path d="${d}" class="pls-bg"/>${pic ? `<image href="${pic}" x="${f(ix - sz / 2)}" y="${f(iy - sz / 2)}" width="${f(sz)}" height="${f(sz)}" preserveAspectRatio="xMidYMid slice" clip-path="url(#pls-${k})"/>` : ''}<path d="${d}" class="pls-veil"/></g>`;
     lines += `<line x1="${cx}" y1="${cy}" x2="${f(x0)}" y2="${f(y0)}" class="pl-div" style="--d:${(.55 + i * .13).toFixed(2)}s"/>`;
-    const [tx, ty] = at(126, mid);
+    const [tx, ty] = at(131, mid);
     labels += `<g class="pll ${on ? 'on' : ''}" data-action="plPetal" data-v="${k}" style="--d:${(1.3 + i * .08).toFixed(2)}s"><text x="${f(tx)}" y="${f(ty - 2)}" text-anchor="middle" class="pll-n">${P.s}</text><text x="${f(tx)}" y="${f(ty + 12)}" text-anchor="middle" class="pll-v">${sh}%</text></g>`;
   });
   return `<svg class="plate2 plate3" viewBox="0 0 360 362" role="group" aria-label="Your plate"><defs>${defs}
     <radialGradient id="pl-fade" cx=".5" cy=".5" r=".5"><stop offset=".78" stop-color="#fff"/><stop offset=".97" stop-color="#000"/></radialGradient>
     <mask id="pl-mask" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#pl-fade)"/></mask></defs>
-    <image class="pl-photo" href="images/plate.webp" x="-10" y="-15" width="405" height="405" mask="url(#pl-mask)"/>
-    <circle cx="${cx}" cy="${cy}" r="${R + 1}" class="pl-well"/>
-    ${segs}${lines}<circle cx="${cx}" cy="${cy}" r="4.5" class="pl-dot"/>${labels}</svg>`;
+    <image class="pl-photo" href="images/plate.webp" x="-21.6" y="-18.5" width="405" height="405" mask="url(#pl-mask)"/>
+    <circle cx="${cx}" cy="${cy}" r="${R + 6}" class="pl-well"/>
+    ${segs}${lines}<circle cx="${cx}" cy="${cy}" r="${R}" class="pl-ring"/><circle cx="${cx}" cy="${cy}" r="4" class="pl-dot"/>${labels}</svg>`;
 }
 function plateSection(current) {
   ui.plNow = current;
