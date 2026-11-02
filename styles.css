@@ -3328,5 +3328,3 @@ button.hub-rh:active .hub-mg { transform: scale(.94); }
 .pfood2 .pf-bot { right: 16px; bottom: 16px; text-align: right; max-width: 72%; }
 .pfood2 .pf-mid { left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; font-size: clamp(26px, 9vw, 40px); font-weight: 300; letter-spacing: -.01em; }
 
-/* one-word "underskin": a little more air before the ornaments */
-.orn-l, .orn-r { width: 70px !important; margin: 0 -4px !important; }

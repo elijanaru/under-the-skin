@@ -3,10 +3,10 @@
 // Fully procedural — no photo assets.
 
 const MARKS = [
-  { a: 'underskin.', b: 'HORMONES · CYCLE · RITUAL' },
+  { a: 'under the skin.', b: 'HORMONES · CYCLE · RITUAL' },
   { a: 'XX — 2026', b: 'LIVE IN SYNC' },
   { a: '水 木 火 土', b: 'FOUR INNER SEASONS' },
-  { a: 'underskin.', b: 'YOUR BODY, DECODED' },
+  { a: 'under the skin.', b: 'YOUR BODY, DECODED' },
   { a: '♀ · ☾ · ✦', b: 'BODY · MOON · STARS' },
 ];
 

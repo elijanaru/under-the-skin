@@ -3,7 +3,7 @@
 Copy-paste text for App Store Connect and Google Play Console. Every field is within the store's limit.
 
 ## Screenshots (ready)
-- **iPhone 6.9"** (1320 × 2868): `store/ios-6.9/` (5 images, upload in this order)
+- **iPhone 6.9"** (1320 × 2868): `store/ios-6.9/` (6 images, upload in this order). App Store Connect slot "iPhone with Dynamic Island (medium)": `store/ios-6.3/` (1206 × 2622 JPG, uploaded)
 - **Android phone** (1320 × 2640): `store/android-phone/` (same 5 images, cropped to Google's 2:1 maximum)
 - **Google feature graphic** (1024 × 500): `store/feature-graphic-1024x500.png` (source: `store/source/feature-graphic.html`)
 - **Google app icon** (512 × 512): `icons/icon-512.png`
