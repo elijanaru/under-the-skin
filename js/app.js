@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, RELIEF_LINKS, HABIT_FOCUS, CALM_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
+  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, RELIEF_LINKS, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -3422,10 +3422,12 @@ function viewRecipe(id) {
   return `<div class="pad">
     ${specHero({ photo: photoUrl(r.id) ? photoUrl(r.id, 1000) : '', glyph: '🥣', eyebrow: `${r.meal} · ${r.time} min · ${r.kcal} kcal`, name: r.name,
       rows: r.ingredients.map(ingRow), lead: `${r.name} — ${r.meal.toLowerCase()} for your ${r.phases.map(p => PHASES[p].name).join(' & ')} phase`,
-      desc: `Rich in ${r.nutrients.join(', ').toLowerCase()}. ${r.warm ? 'Warm and cooked, kind to your body around your period.' : r.raw ? 'Fresh and raw, best outside your period days.' : ''}`,
+      desc: `Rich in ${r.nutrients.map(n => /^(Vitamin|Omega|B\d)/.test(n) ? n : n.toLowerCase()).join(', ')}. ${r.warm ? 'Warm and cooked, kind to your body around your period.' : r.raw ? 'Fresh and raw, best outside your period days.' : ''}`,
       extra: `<button class="spec-btn r fav ${fav ? 'on' : ''}" data-action="fav" data-id="${id}" aria-label="Save">${icon('heart', 20)}</button>` })}
-    <div class="chips">${r.warm ? `<span class="chip static warm">${icon('sun', 13)} Warm</span>` : r.raw ? `<span class="chip static">${icon('leaf', 13)} Raw</span>` : ''}${r.nutrients.map(n => `<span class="chip static">${n}</span>`).join('')}</div>
-    ${r.raw && warmWindow(M.info) ? `<p class="fine" style="margin:10px 2px 0">${icon('yinyang', 12)} Raw/cold — Chinese medicine says save it for after your period.</p>` : ''}
+    <section class="card glass tea-fit"><div class="tf-k">Made for${r.warm ? ' · warm & cooked' : r.raw ? ' · raw' : ''}</div>${phaseFit(r.phases, M.info && M.info.phase)}
+      ${r.raw && warmWindow(M.info) ? `<p class="tea-warn">${icon('yinyang', 12)} Raw and cold: Chinese medicine says save it for after your period.</p>` : ''}</section>
+    ${sectionTitle('Why it’s good for you')}
+    <section class="card glass rn-list">${r.nutrients.map(n => { const [line, to] = NUTRIENT_ROLE[n] || ['']; return `<${to ? `button data-action="nav" data-to="nutrients/${to}"` : 'div'} class="rn"><b>${n}</b><p>${line}</p>${to ? icon('chevR', 15) : ''}</${to ? 'button' : 'div'}>`; }).join('')}</section>
     ${sectionTitle('Ingredients')}
     <section class="card glass">${r.ingredients.map((g, i) => { const k = id + i; return `<button class="check-row ${ui.checked[k] ? 'on' : ''}" data-action="check" data-k="${k}"><span class="cb">${icon('check', 14, 2.2)}</span>${g}</button>`; }).join('')}</section>
     ${sectionTitle('Method')}

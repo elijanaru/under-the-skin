@@ -1442,3 +1442,33 @@ export const CALM_SCIENCE = [
   { g: '🚶‍♀️', t: 'Gentle, not maximal, training', ev: 'some', s: 'Moderate exercise lowered cortisol, while hard efforts above about 60% of your capacity raised it. On high-stress days, go easy.', c: 'Hill 2008' },
   { g: '🔥', t: 'Warmth on your belly', ev: 'tcm', s: 'In Chinese medicine, stress “knots” the Liver qi; warmth and slow breathing help it flow, especially around your period.', c: 'Traditional Chinese medicine' },
 ];
+
+// What each recipe nutrient does for her, and the nutrient page it opens (when there is one).
+export const NUTRIENT_ROLE = {
+  Iron: ['Replaces the iron your period takes. Low stores bring tiredness and hair shedding.', 'iron'],
+  'Heme iron': ['The iron in meat, absorbed 2–3 times better than iron from plants.', 'iron'],
+  Fibre: ['Feeds your gut bacteria and carries used estrogen out of the body.'],
+  'Vitamin C': ['Helps you absorb iron from plants and builds collagen for your skin.'],
+  Magnesium: ['Relaxes muscles, softens cramps and helps you sleep.', 'magnesium'],
+  Potassium: ['Balances fluids, so less bloating before your period.'],
+  Protein: ['Keeps blood sugar steady and builds muscle, skin and hormones.'],
+  Probiotics: ['Live bacteria for a calmer gut and immune system.'],
+  'B vitamins': ['Turn your food into energy.'],
+  B12: ['Builds healthy red blood cells and keeps nerves well.'],
+  'Omega-3': ['Calms the inflammation behind cramps and supports your mood.', 'omega-3'],
+  Antioxidants: ['Protect your cells, eggs included, from everyday wear.'],
+  Sulforaphane: ['From the cabbage family: helps your liver process estrogen.'],
+  Zinc: ['Calms skin, supports ovulation and healing.', 'zinc'],
+  'Complex carbs': ['Steady energy and serotonin, which matter most before your period.'],
+  'Slow carbs': ['Steady energy and serotonin, which matter most before your period.'],
+  'Vitamin B6': ['Helps your brain make serotonin, steadying PMS mood.', 'b6'],
+  Folate: ['Builds new cells; essential before and in early pregnancy.'],
+  Collagen: ['Glycine-rich protein for skin, gut lining and calmer sleep.'],
+  Minerals: ['Replace what bleeding and sweat take.'],
+  'Healthy fats': ['Your hormones are built from fat and cholesterol.'],
+  Choline: ['For your liver, and in pregnancy for a baby’s brain.'],
+  Calcium: ['Eases PMS mood, cravings and bloating.', 'calcium'],
+  'Vitamin A': ['Renews skin and the lining of your womb.'],
+  Electrolytes: ['Sodium, potassium and magnesium to rehydrate.'],
+  'Fat-soluble vitamins': ['A, D, E and K2 for skin, bones and hormones.', 'vitamin-d'],
+};
