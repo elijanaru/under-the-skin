@@ -262,7 +262,9 @@ function readsCard(info) {
     <div class="lt-dots" id="lt-dots">${list.map((_, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div>`;
 }
 document.addEventListener('scroll', e => { const t = e.target; if (t.classList?.contains('deck')) deckFx(t); }, true);
-new MutationObserver(() => document.querySelectorAll('.deck').forEach(deckFx)).observe(document.getElementById('app'), { childList: true, subtree: false });
+// The plate draws itself in when it scrolls into view.
+const plIO = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); plIO.unobserve(e.target); } }), { threshold: .35 }) : null;
+new MutationObserver(() => { document.querySelectorAll('.deck').forEach(deckFx); document.querySelectorAll('.pl-anim:not(.in)').forEach(el => { if (plIO) plIO.observe(el); setTimeout(() => el.classList.add('in'), plIO ? 8000 : 0); }); }).observe(document.getElementById('app'), { childList: true, subtree: false });
 // coming back to the app after a while counts as a new open: the next read moves to the front
 let hiddenAt = 0;
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') hiddenAt = Date.now(); else if (hiddenAt && Date.now() - hiddenAt > 10 * 60 * 1000) { opensNow++; if (route().name === 'today') render(); } });
@@ -1172,9 +1174,8 @@ function viewPlan() {
       ${sectionTitle('Your month')}
       <div class="month-strip">${PHASE_ORDER.map(p => `<div class="ms ${p === phase ? 'on' : ''}"><i style="background:${PHASE_COLOR.dark[p]}"></i><b>${PHASES[p].name}</b><span>${PHASES[p].superpower.title}</span></div>`).join('')}</div>`;
   }
-  return `${topbar({ nourish: 'Nourish', rituals: 'Rituals', mind: 'Mind' }[ui.planTab])}
+  return `${phaseFoodPic(phase, true)}
   <div class="pad">
-    ${phaseDeck(phase)}
     <div class="seg">${tabs.map(([k, l]) => `<button class="${ui.planTab === k ? 'on' : ''}" data-action="planTab" data-v="${k}">${l}</button>`).join('')}</div>
     ${body}
   </div>`;
@@ -1226,31 +1227,25 @@ function eatCatInner(phase, cat) {
 }
 // The two best dishes for each phase, as one photo card with the day, the phase and its tagline in the middle.
 // Menstrual photos (Pexels licence): broth by jenvit keiwalinsarid (3559899), steak (618775). Others: recipe photos (Unsplash).
+// The two foundation foods of each phase: whole foods, not dishes or snacks.
 const PHASE_DISHES = {
-  menstrual: { img: 'images/period-food.webp', alt: 'A bowl of clear bone broth and a raw beef steak on a wooden board', d: [['bone broth', 'rich in minerals and amino acids to replenish the body', 'ginger-bone-broth'], ['grass-fed beef', 'replenishes the iron lost while you bleed', 'beef-beet-stew']] },
-  follicular: { d: [['eggs & sauerkraut', 'protein builds your follicle, fermented food clears used estrogen', 'egg-kraut-plate'], ['citrus salmon salad', 'omega-3 and vitamin C for rising estrogen', 'citrus-salmon-salad']] },
-  ovulatory: { d: [['garlic prawns', 'zinc and lean protein for your peak', 'cruciferous-stir-fry'], ['berry chia bowl', 'antioxidants, fibre and omega-3 for your brightest days', 'berry-quinoa-bowl']] },
-  luteal: { d: [['warm comfort bowl', 'slow carbs and colour keep blood sugar and mood steady', 'sweet-potato-bowl'], ['cacao & nut bites', 'magnesium for calmer PMS and cravings', 'magnesium-bites']] },
+  menstrual: { img: 'images/period-food.webp', alt: 'A bowl of clear bone broth and a raw beef steak on a wooden board', d: [['bone broth', 'minerals and amino acids to replenish the body'], ['grass-fed beef', 'replenishes the iron lost while you bleed']] },
+  follicular: { d: [['broccoli', 'cruciferous greens help your liver clear used estrogen', 'Broccoli'], ['oranges', 'vitamin C and fresh, light energy for rising estrogen', 'Oranges & mandarins']] },
+  ovulatory: { d: [['raspberries', 'antioxidants and fibre for your brightest days', 'Raspberries'], ['asparagus', 'folate and fibre that help estrogen leave the body', 'Asparagus']] },
+  luteal: { d: [['sweet potatoes', 'slow carbs and B6 keep blood sugar and mood steady', 'Sweet potatoes'], ['almonds', 'magnesium for calmer PMS and fewer cravings', 'Almonds']] },
 };
-function phaseFoodPic(phase) {
+function phaseFoodPic(phase, full) {
   const X = PHASE_DISHES[phase], info = M.info;
   let day = '';
   if (info && info.phase === phase) day = `Day ${info.cd}`;
   else if (M.stats) { const r = C.phaseRanges(M.stats.avgCycle, M.stats.avgPeriod).find(x => x.key === phase); if (r) day = r.from === r.to ? `Day ${r.from}` : `Days ${r.from}–${r.to}`; }
   const [t, b] = X.d, name = phase === 'ovulatory' ? 'Ovulation' : `${PHASES[phase].name} phase`;
-  const photos = X.img ? `<img class="pf-one" src="${X.img}" alt="${X.alt}" loading="lazy" decoding="async">`
-    : X.d.map(([n, , id]) => `<img class="pf-half" src="${photoUrl(id, 800)}" alt="${n}" loading="lazy" decoding="async">`).join('');
-  return `<figure class="pfood pfood2 pfood3">${photos}
-    <button class="pf-hit pf-hit-t" data-action="nav" data-to="recipe/${t[2]}" aria-label="${t[0]} recipe"></button><button class="pf-hit pf-hit-b" data-action="nav" data-to="recipe/${b[2]}" aria-label="${b[0]} recipe"></button>
+  const photos = X.img ? `<img class="pf-one" src="${X.img}" alt="${X.alt}" decoding="async">`
+    : X.d.map(([n, , k]) => `<img class="pf-half" src="${foodPhoto(k, 900)}" alt="${n}" decoding="async">`).join('');
+  return `<figure class="pfood pfood2 pfood3 ${full ? 'pf-full' : ''}">${photos}
     <span class="pf-l pf-top"><b>${t[0]}</b>${t[1]}</span>
     <span class="pf-mid">${day ? `<small class="pf-day">${day}</small>` : ''}<b>${name}</b><em>${PHASES[phase].tagline}</em></span>
     <span class="pf-l pf-bot"><b>${b[0]}</b>${b[1]}</span></figure>`;
-}
-// The four phase cards as a swipeable glass deck, her phase first.
-function phaseDeck(current) {
-  const i = PHASE_ORDER.indexOf(current), order = [...PHASE_ORDER.slice(i), ...PHASE_ORDER.slice(0, i)];
-  return `<div class="deck ph-deck" data-dots="ph-dots">${order.map(p => phaseFoodPic(p)).join('')}</div>
-    <div class="lt-dots" id="ph-dots">${order.map((p, j) => `<i class="${j ? '' : 'on'}" style="--pc:${PHASE_COLOR.dark[p]}"></i>`).join('')}</div>`;
 }
 // Deck motion: cards tilt, shrink and fade as they leave the centre.
 function deckFx(t) {
@@ -1277,7 +1272,6 @@ function allRecipes(phase, warm) {
       <div class="rc-t">${r.name}</div><div class="rc-m">${r.time} min</div></button>`).join('')}</div>`;
 }
 // ---------- the cycle × season plate (petal wheel) ----------
-const SEASONS5 = [['Spring', '🌱'], ['Summer', '☀️'], ['Late summer', '🌾'], ['Autumn', '🍂'], ['Winter', '❄️']];
 // Warm & cooked during her period and the days before it (TCM), whatever the season.
 const plateWarm = ph => ph === ui.plNow ? warmWindow(M.info) : ph === 'menstrual';
 // Seasonal vegetables / fruit for her country, ranked by phase fit and TCM temperature.
@@ -1317,7 +1311,8 @@ function petalPath(cx, r0, r1, a0, a1, rr = 7) {
 // A divided plate: each section is as wide as its share and filled with a photo of its food.
 const PLATE_ORDER = ['veg', 'fats', 'protein', 'spice', 'carbs', 'fruit'];
 function plateWheel(phase, season, sel, warm) {
-  const S = PLATE_SHARE[phase], cx = 180, cy = 158, R = 102, rim = 120, tau = 2 * Math.PI;
+  // Her plate is a real photo; the food sections sit in its well and the labels on its white rim.
+  const S = PLATE_SHARE[phase], cx = 180, cy = 184, R = 88, tau = 2 * Math.PI;
   const at = (r, a) => [cx + r * Math.sin(a), cy - r * Math.cos(a)], f = n => n.toFixed(1);
   let a = -tau * S.veg / 200, defs = '', segs = '', lines = '', labels = '';
   PLATE_ORDER.forEach((k, i) => {
@@ -1327,22 +1322,23 @@ function plateWheel(phase, season, sel, warm) {
     const pic = (plateFoods(k, phase, season, warm).find(x => x.photo) || {}).photo || (typeof PLATE_PIC[k] === 'function' ? PLATE_PIC[k]() : PLATE_PIC[k][phase]());
     const [ix, iy] = at(R * .5, mid), sz = R * 1.5;
     defs += `<clipPath id="pls-${k}"><path d="${d}"/></clipPath>`;
-    segs += `<g class="pls ${on ? 'on' : ''}" data-action="plPetal" data-v="${k}" role="button" aria-label="${P.n} ${sh}%" style="--d:${i * .08}s">
+    segs += `<g class="pls ${on ? 'on' : ''}" data-action="plPetal" data-v="${k}" role="button" aria-label="${P.n} ${sh}%" style="--d:${(.55 + i * .13).toFixed(2)}s">
       <path d="${d}" class="pls-bg"/>${pic ? `<image href="${pic}" x="${f(ix - sz / 2)}" y="${f(iy - sz / 2)}" width="${f(sz)}" height="${f(sz)}" preserveAspectRatio="xMidYMid slice" clip-path="url(#pls-${k})"/>` : ''}<path d="${d}" class="pls-veil"/></g>`;
-    lines += `<line x1="${cx}" y1="${cy}" x2="${f(x0)}" y2="${f(y0)}" class="pl-div"/>`;
-    const [lx0, ly0] = at(rim + 4, mid), [lx1, ly1] = at(rim + 18, mid), right = Math.sin(mid) > .15, left = Math.sin(mid) < -.15;
-    const tx = lx1 + (right ? 8 : left ? -8 : 0), ty = ly1 + (Math.cos(mid) > .9 ? -10 : Math.cos(mid) < -.9 ? 14 : 0), anc = right ? 'start' : left ? 'end' : 'middle';
-    labels += `<g class="pll ${on ? 'on' : ''}" data-action="plPetal" data-v="${k}"><line x1="${f(lx0)}" y1="${f(ly0)}" x2="${f(lx1)}" y2="${f(ly1)}" class="pll-l"/>${right || left ? `<line x1="${f(lx1)}" y1="${f(ly1)}" x2="${f(lx1 + (right ? 6 : -6))}" y2="${f(ly1)}" class="pll-l"/>` : ''}
-      <text x="${f(tx)}" y="${f(ty - 3)}" text-anchor="${anc}" class="pll-n">${P.s}</text><text x="${f(tx)}" y="${f(ty + 13)}" text-anchor="${anc}" class="pll-v">${sh}%</text></g>`;
+    lines += `<line x1="${cx}" y1="${cy}" x2="${f(x0)}" y2="${f(y0)}" class="pl-div" style="--d:${(.55 + i * .13).toFixed(2)}s"/>`;
+    const [tx, ty] = at(126, mid);
+    labels += `<g class="pll ${on ? 'on' : ''}" data-action="plPetal" data-v="${k}" style="--d:${(1.3 + i * .08).toFixed(2)}s"><text x="${f(tx)}" y="${f(ty - 2)}" text-anchor="middle" class="pll-n">${P.s}</text><text x="${f(tx)}" y="${f(ty + 12)}" text-anchor="middle" class="pll-v">${sh}%</text></g>`;
   });
-  return `<svg class="plate2" viewBox="0 0 360 316" role="group" aria-label="Your plate"><defs>${defs}<radialGradient id="pl-rim" cx="50%" cy="42%" r="60%"><stop offset="0" stop-color="#ffffff"/><stop offset=".8" stop-color="#eceee8"/><stop offset="1" stop-color="#cfd3cb"/></radialGradient></defs>
-    <circle cx="${cx}" cy="${cy + 6}" r="${rim}" class="pl-shadow"/><circle cx="${cx}" cy="${cy}" r="${rim}" fill="url(#pl-rim)"/><circle cx="${cx}" cy="${cy}" r="${R + 3}" class="pl-well"/>
-    ${segs}${lines}<circle cx="${cx}" cy="${cy}" r="5" fill="#f4f5f0"/>${labels}</svg>`;
+  return `<svg class="plate2 plate3" viewBox="0 0 360 362" role="group" aria-label="Your plate"><defs>${defs}
+    <radialGradient id="pl-fade" cx=".5" cy=".5" r=".5"><stop offset=".78" stop-color="#fff"/><stop offset=".97" stop-color="#000"/></radialGradient>
+    <mask id="pl-mask" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#pl-fade)"/></mask></defs>
+    <image class="pl-photo" href="images/plate.webp" x="-10" y="-15" width="405" height="405" mask="url(#pl-mask)"/>
+    <circle cx="${cx}" cy="${cy}" r="${R + 1}" class="pl-well"/>
+    ${segs}${lines}<circle cx="${cx}" cy="${cy}" r="4.5" class="pl-dot"/>${labels}</svg>`;
 }
 function plateSection(current) {
   ui.plNow = current;
   const phase = ui.plPhase || current, m = new Date().getMonth() + 1, nowSeason = SZ.seasonName(myCountry(), m);
-  const season = ui.plSeason || nowSeason, sel = ui.plPetal || 'veg', warm = plateWarm(phase);
+  const season = nowSeason, sel = ui.plPetal || 'veg', warm = plateWarm(phase);
   const T = SZ.SEASON_TCM[season], PSn = PLATE_SEASON[season], tcm = TCM[phase], P = PLATE_PETALS.find(x => x.k === sel);
   const foods = plateFoods(sel, phase, season, warm), live = (sel === 'veg' || sel === 'fruit') && season === nowSeason;
   const country = SZ.COUNTRIES.find(x => x[0] === myCountry())?.[1] || '';
@@ -1350,8 +1346,7 @@ function plateSection(current) {
   return `<section class="pl">
     <div class="pl-tabs">${PHASE_ORDER.map(p => `<button class="${p === phase ? 'on' : ''}" data-action="plPhase" data-v="${p}" style="--pc:${PHASE_COLOR.dark[p]}"><i></i>${p === 'ovulatory' ? 'Ovulation' : PHASES[p].name}</button>`).join('')}</div>
     <div class="pl-head"><div class="mv2-eyebrow">Your plate${phase === current ? ' today' : ''}</div><h2>${EAT_GUIDE[phase].goal}</h2><p>${PHASES[phase].name} × ${season.toLowerCase()}: ${PSn.aim.toLowerCase()}</p></div>
-    <div class="pl-wheel">${plateWheel(phase, season, sel, warm)}</div>
-    <div class="pl-tabs pl-seas">${SEASONS5.map(([sn]) => `<button class="${sn === season ? 'on' : ''}" data-action="plSeason" data-v="${sn}">${sn === 'Late summer' ? 'Late sum.' : sn}${sn === nowSeason ? '<i></i>' : ''}</button>`).join('')}</div>
+    <div class="pl-wheel ${ui.plAnim ? 'pl-anim' : ''}">${plateWheel(phase, season, sel, warm)}</div>
     <div class="pl-det" data-k="${sel}">
       <div class="pld-h"><b>${P.n}</b><span class="pld-p">${PLATE_SHARE[phase][sel]}%</span>${evBadge(PLATE_EV[sel] === 'strong' && phase !== 'menstrual' ? 'some' : PLATE_EV[sel])}</div>
       <p>${plateWhy(sel, phase)}${live ? ` <em>In season in ${country} now.</em>` : ''}</p>
@@ -1364,7 +1359,7 @@ function plateSection(current) {
       <div class="pl-r"><b>To drink</b><span>${T.tea}. Your coffee fits too, best with food.</span></div>
     </div>
     <button class="card pl-meal" data-action="plRecipes"><span class="plm-k">Tonight’s plate</span><b>${PLATE_MEAL[phase][season]}</b><span class="plm-cta">See recipes ${icon('chevR', 14)}</span></button>
-    <p class="fine center">Shares are a gentle guide, not a rule. Cycle food: ${EVIDENCE.some.short} evidence · seasons: Traditional Chinese Medicine.</p>
+    <p class="fine center">Mostly paleo: whole foods, no grains or legumes. Shares are a gentle guide, not a rule. Cycle food: ${EVIDENCE.some.short} evidence · seasons: Traditional Chinese Medicine.</p>
   </section>`;
 }
 function nourishBody(current) {
@@ -4346,7 +4341,6 @@ const actions = {
   },
   saveBirthday: () => { if (state.profile.birthday) render(); else toast('Pick your birthday first'); },
   plPhase: d => { ui.plPhase = d.v === ui.plNow ? null : d.v; render(); },
-  plSeason: d => { ui.plSeason = d.v; render(); },
   plPetal: d => { ui.plPetal = d.v; render(); },
   plRecipes: () => document.getElementById('pl-recipes')?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
   nourishPhase: d => { ui.nourishPhase = d.v; ui.openNeed = 0; render(); },
@@ -4489,7 +4483,7 @@ function render() {
     if (st.length > 1 && st[st.length - 2] === r.key) { st.pop(); keep = (ui.scrollMem || {})[r.key] || 0; } else st.push(r.key);
   }
   if (r.name !== 'log' && fresh) ui.logDate = r.name === 'log' ? ui.logDate : ui.logDate;
-  ui.lastRoute = r.key;
+  ui.lastRoute = r.key; ui.plAnim = fresh;
 
   if (r.name === 'love') {
     $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewLove(r.q)}</div>`;

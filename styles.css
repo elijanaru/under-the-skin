@@ -3773,3 +3773,45 @@ button.tip:active { transform: scale(.98); background: var(--glass-2); }
 .cd .dp-actions .btn-outline-dark { background: none; border: 1px solid rgba(255,255,255,.22); color: #f4f5f0; }
 .cd .dp-actions .btn-dark { background: var(--paper); color: #0b0d0b; }
 .cd .ev-add { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.16); color: #f4f5f0; }
+
+/* Plan: her phase's two foundation foods fill the screen, no top bar */
+.pfood3.pf-full { margin: 0 0 18px; width: 100%; height: calc(100dvh - env(safe-area-inset-top, 0px)); min-height: 560px; aspect-ratio: auto; border-radius: 0 0 34px 34px; box-shadow: 0 30px 60px rgba(0,0,0,.6); }
+.pf-full .pf-top { top: calc(22px + env(safe-area-inset-top, 0px)); left: 20px; }
+.pf-full .pf-bot { bottom: 128px; right: 20px; }
+.pf-full .pf-l b { font-size: 21px; font-weight: 400; }
+.pf-full .pf-l { font-size: 13px; }
+.pf-full .pf-mid b { font-size: clamp(36px, 11vw, 48px); }
+.pf-full .pf-mid { left: 9%; right: 9%; padding: 18px 12px 16px; border-radius: 26px; background: rgba(12,14,12,.26); -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4); border: 1px solid rgba(255,255,255,.2); box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 10px 30px rgba(0,0,0,.3); }
+.pf-cue { position: absolute; z-index: 3; left: 50%; bottom: 96px; transform: translateX(-50%); color: rgba(255,255,255,.75); animation: pfCue 2.4s ease-in-out infinite; pointer-events: none; }
+@keyframes pfCue { 0%, 100% { transform: translate(-50%, 0); opacity: .5; } 50% { transform: translate(-50%, 6px); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .pf-cue { animation: none; } }
+/* full width, natural 3:4 shape: the whole photo shows, nothing cut at the sides */
+.pfood3.pf-full { height: auto; min-height: 0; aspect-ratio: 3 / 4; }
+.pf-full .pf-bot { bottom: 20px; }
+.pf-full .pf-mid b { font-size: clamp(32px, 10vw, 44px); }
+.pf-cue { display: none; }
+
+/* Plate on a real photo: sections in the well, labels on the white rim, drawn in on arrival */
+.pl-wheel:has(.plate3) { max-width: 400px; margin: 0 -14px; }
+.pl-wheel:has(.plate3)::before { content: none; }
+.plate3 { margin-top: 6px; }
+.plate3 .pl-well { fill: hsl(calc(var(--hb) + 143 * var(--hk)) calc(20% * var(--hs)) 14%); opacity: .0; }
+.plate3 .pls { animation: none; transform-box: view-box; transform-origin: 180px 184px; }
+.plate3 .pl-div { stroke: #f4f5f0; stroke-width: 3; }
+.plate3 .pl-dot { fill: #f4f5f0; }
+.plate3 .pll-n { font: 400 11px var(--font); fill: #6b7268; letter-spacing: .06em; text-transform: uppercase; }
+.plate3 .pll-v { font: 400 15px var(--dot); fill: #1d221d; }
+.plate3 .pll.on .pll-n { fill: hsl(calc(var(--hb) + 143 * var(--hk)) calc(38% * var(--hs)) 32%); }
+.plate3 .pll.on .pll-v { fill: hsl(calc(var(--hb) + 143 * var(--hk)) calc(38% * var(--hs)) 30%); }
+.pl-anim .pl-photo { animation: plPlate 1.1s cubic-bezier(.2,.7,.2,1) both; transform-box: view-box; transform-origin: 180px 184px; }
+.pl-anim .pls { animation: plSlice .9s cubic-bezier(.2,.8,.25,1) both; animation-delay: var(--d); }
+.pl-anim .pl-div { animation: plFadeIn .5s ease both; animation-delay: calc(var(--d) + .35s); }
+.pl-anim .pl-dot { animation: plFadeIn .5s ease 1.4s both; }
+.pl-anim .pll { animation: plFadeIn .7s ease both; animation-delay: var(--d); }
+.pl-anim:not(.in) * { animation-play-state: paused !important; }
+@keyframes plPlate { from { opacity: 0; transform: scale(.9) rotate(-8deg); } to { opacity: 1; transform: none; } }
+@keyframes plSlice { from { opacity: 0; transform: scale(.25) rotate(-28deg); } 60% { opacity: 1; } to { opacity: 1; transform: none; } }
+@keyframes plFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .pl-anim .pl-photo, .pl-anim .pls, .pl-anim .pl-div, .pl-anim .pl-dot, .pl-anim .pll { animation: none; } }
+.plate3 .pll-n { fill: #4a5048; font-weight: 500; }
+.plate3 .pll-v { fill: #0b0d0b; font-weight: 700; font-size: 16px; }
