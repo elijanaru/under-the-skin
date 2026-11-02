@@ -1576,6 +1576,22 @@ function groceryItems() {
       if (!items[key].phases.includes(ph)) items[key].phases.push(ph);
     }
   }
+  // Out of season locally? Leave it out and offer an in-season swap with the same nutrient.
+  const m = new Date().getMonth() + 1, table = SZ.yearTable(myCountry()), nowSeason = SZ.seasonal(myCountry(), m);
+  const ALIAS = { berries: /berr/i, 'leafy greens': /kale|spinach|chard|greens|lettuce/i, citrus: /citrus|orange|lemon|mandarin/i };
+  const seasonOf = n => { const re = ALIAS[n]; const hits = table.filter(t => re ? re.test(t.f) : t.f.toLowerCase() === n); return hits.length ? hits.some(t => t.months.includes(m)) : null; };
+  const swaps = [];
+  for (const k of Object.keys(items)) {
+    if (seasonOf(k) !== false) continue;
+    const it = items[k], alt = nowSeason.find(i => i.nut.some(n => n.toLowerCase() === it.why.toLowerCase()) && !items[i.f.toLowerCase()]);
+    swaps.push({ out: it.name, alt: alt ? alt.f : '', why: it.why });
+    if (alt) items[alt.f.toLowerCase()] = { name: alt.f, phases: it.phases, why: `${it.why} · in season` };
+    delete items[k];
+  }
+  // a general name next to a specific one (berries next to blueberries) is the same shopping
+  const GENERIC = { berries: /berr/i, beans: /black beans|kidney beans/i, yoghurt: /greek yoghurt/i, 'leafy greens': /spinach|kale|chard/i, 'wild fish': /salmon|sardine|mackerel/i };
+  for (const [g, re] of Object.entries(GENERIC)) if (items[g] && Object.keys(items).some(k => k !== g && re.test(k))) { const keep = Object.keys(items).find(k => k !== g && re.test(k)); items[g].phases.forEach(p => { if (!items[keep].phases.includes(p)) items[keep].phases.push(p); }); delete items[g]; }
+  groceryItems.swaps = swaps;
   const groups = AISLES.map(([a]) => [a, []]);
   const other = ['Other', []];
   for (const it of Object.values(items)) {
@@ -1591,19 +1607,32 @@ function groceryItems() {
   return [['In season now', season], ...groups, other].filter(([, l]) => l.length);
 }
 function viewGrocery() {
-  const phases = weekPhases(), groups = groceryItems(), got = state.grocery || {};
-  const total = groups.reduce((n, [, l]) => n + l.length, 0), done = groups.reduce((n, [, l]) => n + l.filter(i => got[i.name.toLowerCase()]).length, 0);
+  const phases = weekPhases(), groups = groceryItems(), swaps = groceryItems.swaps || [], got = state.grocery || {};
+  const flat = groups.flatMap(([, l]) => l), total = flat.length, done = flat.filter(i => got[i.name.toLowerCase()]).length;
+  const ring = (pct, r, w) => { const C0 = 2 * Math.PI * r; return `<circle cx="${r + w}" cy="${r + w}" r="${r}" class="gr-bg" stroke-width="${w}"/>${pct > 0 ? '' : '<!--'}<circle cx="${r + w}" cy="${r + w}" r="${r}" class="gr-fg" stroke-width="${w}" stroke-dasharray="${(pct * C0).toFixed(1)} ${C0.toFixed(1)}" transform="rotate(-90 ${r + w} ${r + w})"/>${pct > 0 ? '' : '-->'}`; };
+  // nutrients this week's basket covers, each with how much of it is ticked
+  const nut = {};
+  for (const it of flat) { const n = it.why.replace(/ · in season$/, ''); if (/^in season/i.test(n)) continue; (nut[n] = nut[n] || []).push(it); }
+  const nuts = Object.entries(nut).sort((x, y) => y[1].length - x[1].length).slice(0, 8);
+  const warm = M.info && warmWindow(M.info) || phases.includes('menstrual');
   return `${topbar('Grocery list', { back: true })}
   <div class="pad">
     <h1 class="page-h">This week’s <span>basket</span></h1>
-    <p class="muted">Built from the nutrients your next 7 days need — ${phases.map(p => `<b class="phase-inline" style="--c:${PHASE_COLOR.dark[p]}">${PHASES[p].name}</b>`).join(' then ')}.</p>
-    <section class="card glass gro-prog"><div class="gp-top"><span>${done} of ${total} in the basket</span><button class="link" data-action="groClear">Clear ticks</button></div>
-      <div class="gp-bar"><b style="width:${total ? done / total * 100 : 0}%"></b></div></section>
+    <p class="muted">Built from what your next 7 days need: ${phases.map(p => `<b class="phase-inline" style="--c:${PHASE_COLOR.dark[p]}">${PHASES[p].name}</b>`).join(' then ')}.</p>
+    <section class="card glass gro-score">
+      <div class="gs-ring"><svg viewBox="0 0 124 124">${ring(total ? done / total : 0, 54, 8)}</svg><div><b>${done}</b><small>of ${total}</small></div></div>
+      <div class="gs-t"><div class="eyebrow">In the basket</div><p>${done === total && total ? 'All done. Your week is stocked.' : done ? `${total - done} to go. Tick them off as you shop.` : 'Tick foods off as you shop. Each nutrient ring fills up.'}</p>
+        ${done ? '<button class="link" data-action="groClear">Clear ticks</button>' : ''}</div>
+    </section>
+    <div class="gro-nuts">${nuts.map(([n, l]) => { const d = l.filter(i => got[i.name.toLowerCase()]).length; return `<div class="gn ${d === l.length ? 'full' : ''}"><svg viewBox="0 0 64 64">${ring(d / l.length, 27, 5)}</svg><b>${d}/${l.length}</b><small>${n}</small></div>`; }).join('')}</div>
+    ${warm ? `<p class="gro-warm">${icon('sun', 14)} Your period falls in this week: cook the produce and stew the fruit on those days.</p>` : ''}
     ${groups.map(([aisle, list]) => `${sectionTitle(aisle)}
-      <section class="card glass">${list.map(it => { const k = it.name.toLowerCase(); return `<button class="check-row gro ${got[k] ? 'on' : ''}" data-action="groToggle" data-k="${esc(k)}">
-        <span class="cb">${icon('check', 14, 2.2)}</span><span class="gro-n">${esc(it.name)}<small>${it.why}</small></span>
+      <section class="card glass">${list.map(it => { const k = it.name.toLowerCase(), ph = foodPhoto(it.name, 120); return `<button class="check-row gro ${got[k] ? 'on' : ''}" data-action="groToggle" data-k="${esc(k)}">
+        <span class="cb">${icon('check', 14, 2.2)}</span>${ph ? `<img class="gro-img" src="${ph}" alt="" loading="lazy">` : ''}<span class="gro-n">${esc(it.name)}<small>${it.why}</small></span>
         <span class="gro-ph">${it.phases.map(p => `<i style="background:${PHASE_COLOR.dark[p]}" title="${PHASES[p].name}"></i>`).join('')}</span></button>`; }).join('')}</section>`).join('')}
-    <button class="btn btn-light btn-block" data-action="groShare">${icon('download', 18)} Share list</button>
+    ${swaps.length ? `${sectionTitle('Swapped for the season')}<section class="card glass gro-swap">${swaps.map(x => `<div><s>${x.out}</s>${icon('chevR', 12)}<b>${x.alt || 'skip this week'}</b><small>${x.why}</small></div>`).join('')}
+      <p class="fine" style="margin:8px 0 0">Not in season where you live this month, so swapped for a local food with the same nutrient.</p></section>` : ''}
+    <section class="card glass gro-share"><div><b>Shopping with someone?</b><small>Send the list as text</small></div><button class="pill-cta" data-action="groShare">${icon('download', 15)} Share list</button></section>
     <p class="fine center">Dots show which phase each food supports.</p>
   </div>`;
 }
