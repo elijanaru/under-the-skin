@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, RELIEF_LINKS, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, RITUAL_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
+  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, RELIEF_LINKS, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -3455,14 +3455,19 @@ function viewPoint(phase) {
   return `${topbar('Acupressure', { back: true })}
   <div class="pad">
     <section class="detail-hero point-hero">
-      <svg viewBox="0 0 200 140" class="foot"><path d="M60 20 C 40 40, 38 90, 50 120 C 58 135, 95 135, 105 120 C 120 95, 112 60, 100 35 C 92 18, 72 10, 60 20 Z" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
-        <circle cx="${phase === 'luteal' ? 92 : phase === 'ovulatory' ? 78 : phase === 'follicular' ? 58 : 54}" cy="${phase === 'luteal' ? 40 : phase === 'ovulatory' ? 70 : phase === 'follicular' ? 108 : 92}" r="7" fill="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" class="pulse-pt"/></svg>
+      ${phase === 'ovulatory'
+        ? `<svg viewBox="0 0 200 140" class="foot"><path d="M55 8 C 48 50, 46 95, 60 132 M145 8 C 152 50, 154 95, 140 132" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/><circle cx="100" cy="52" r="3" fill="none" stroke="rgba(255,255,255,.45)"/><path d="M100 60 V96" stroke="rgba(255,255,255,.18)" stroke-dasharray="3 4"/><circle cx="100" cy="96" r="7" fill="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" class="pulse-p"/></svg>`
+        : `<svg viewBox="0 0 200 140" class="foot"><path d="M60 20 C 40 40, 38 90, 50 120 C 58 135, 95 135, 105 120 C 120 95, 112 60, 100 35 C 92 18, 72 10, 60 20 Z" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
+        <circle cx="${phase === 'luteal' ? 92 : phase === 'ovulatory' ? 78 : phase === 'follicular' ? 58 : 54}" cy="${phase === 'luteal' ? 40 : phase === 'ovulatory' ? 70 : phase === 'follicular' ? 108 : 92}" r="7" fill="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" class="pulse-pt"/></svg>`}
       <div class="dh-in"><div class="eyebrow">${t.stage} · ${t.organ}</div><h1>${p.code} · ${p.name}</h1></div></section>
     <section class="card card-light"><div class="eyebrow dark">Where</div><p class="dp-text">${p.where}</p><div class="eyebrow dark mt">What it does</div><p class="dp-text">${p.does}</p></section>
     <section class="card glass"><div class="step"><span class="step-n">1</span><p>Find the point — it often feels slightly tender.</p></div>
-      <div class="step"><span class="step-n">2</span><p>Press firmly with your thumb, making slow small circles.</p></div>
-      <div class="step"><span class="step-n">3</span><p>Breathe slowly into your belly. Repeat on the other side.</p></div></section>
+      <div class="step"><span class="step-n">2</span><p>${phase === 'ovulatory' ? 'Rest two fingertips on it and make slow small circles.' : 'Press firmly with your thumb, making slow small circles.'}</p></div>
+      <div class="step"><span class="step-n">3</span><p>${phase === 'ovulatory' ? 'Keep the pressure gentle and breathe slowly into your belly. It sits on the midline, so there is only one.' : 'Breathe slowly into your belly. Repeat on the other side.'}</p></div></section>
     <button class="btn btn-light btn-block" data-action="timer" data-title="${p.code} · ${p.name}" data-secs="${p.secs}">${icon('play', 16)} Press for ${p.secs} seconds</button>
+    ${POINT_SCIENCE[phase] ? `${sectionTitle('What studies found')}<section class="card glass tea-study"><div class="ts-i"><p>${POINT_SCIENCE[phase].study}</p><small>${POINT_SCIENCE[phase].cite}</small></div><div class="ts-ev">${evBadge(POINT_SCIENCE[phase].ev)} <span>${EVIDENCE[POINT_SCIENCE[phase].ev].label}</span></div></section>` : ''}
+    ${sectionTitle('A point for every phase')}
+    <div class="tea-more">${PHASE_ORDER.map(ph => `<button class="${ph === phase ? 'on' : ''}" data-action="nav" data-to="point/${ph}"><span style="color:${PHASE_COLOR.dark[ph]}">●</span>${TCM[ph].point.code} · ${PHASES[ph].name}</button>`).join('')}</div>
     <p class="fine center">Avoid strong pressure on SP6 and CV4 if you might be pregnant.</p>
   </div>`;
 }

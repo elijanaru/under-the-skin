@@ -1494,3 +1494,11 @@ export const RITUAL_SCIENCE = {
     study: 'A review of slow-breathing studies found that about 6 breaths a minute raised heart-rate variability and eased anxiety and anger.',
     cite: 'Zaccaro 2018 (review)', caution: '' },
 };
+
+// Acupressure points by phase: what research says.
+export const POINT_SCIENCE = {
+  menstrual: { ev: 'some', study: 'Pressing SP6 for 20 minutes during the period eased pain and anxiety in a trial with young women, and reviews of acupressure for period pain found consistent, modest relief.', cite: 'Chen & Chen 2004 · Abaraogu 2015 (review)' },
+  follicular: { ev: 'tcm', study: 'KI3 is the source point of the Kidney, the organ TCM links to your eggs and your deepest energy reserve. Modern studies on it alone are few.', cite: 'Classic acupuncture texts' },
+  ovulatory: { ev: 'tcm', study: 'CV4 sits over the womb and has been warmed and pressed for fertility and period pain for centuries. Small studies use it together with SP6.', cite: 'Classic acupuncture texts' },
+  luteal: { ev: 'emerging', study: 'LV3 is usually pressed together with LI4 on the hand (the “four gates”). Small trials of acupressure for PMS found less pain and irritability, though they combine several points.', cite: 'Small acupressure trials for PMS' },
+};

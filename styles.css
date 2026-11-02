@@ -3414,3 +3414,4 @@ button.tc-row { width: 100%; text-align: left; font: inherit; color: var(--text)
 .rn b { font-size: 15px; font-weight: 500; color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%); }
 .rn p { grid-column: 1; margin: 3px 0 0; font-size: 13.5px; line-height: 1.5; color: #d9ded6; }
 .rn svg { grid-column: 2; grid-row: 1 / span 2; color: var(--sage); }
+.tea-more button.on { border-color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77% / .6); color: var(--lime); }
