@@ -3366,3 +3366,4 @@ button.tc-row { width: 100%; text-align: left; font: inherit; color: var(--text)
 .nl-i { display: flex; gap: 12px; } .nl-i > span { flex: none; font-size: 18px; } .nl-i small { font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--sage); } .nl-i p { margin: 3px 0 0; font-size: 14px; line-height: 1.5; color: #d9ded6; }
 .nu-next { width: 100%; display: flex; align-items: center; gap: 10px; padding: 16px 18px; font: inherit; color: var(--text); cursor: pointer; margin-top: 6px; }
 .nu-next small { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--sage); } .nu-next b { flex: 1; text-align: left; font-weight: 500; } .nu-next svg { color: var(--lime); }
+.tf-all { font-size: 12.5px; color: var(--lime); }

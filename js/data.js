@@ -1380,3 +1380,25 @@ export const NUTRIENTS = [
     cite: 'Schellenberg 2001 (BMJ)',
     caution: 'Not with the pill or other hormonal birth control, in pregnancy, IVF or with dopamine medicines.' },
 ];
+
+// The science behind each home remedy: active compounds, what studies found, who should be careful.
+export const REMEDY_SCIENCE = {
+  'lemon-water': { ev: 'emerging', c: [['Vitamin C', 'About 10 mg in half a lemon'], ['Citrate', 'Raises citrate in urine, protects against kidney stones'], ['Hesperidin', 'Citrus flavonoid, supports blood vessels']],
+    study: 'Lemon juice raises citrate in urine, which helps prevent kidney stones. A spoon of vinegar with a meal softened the blood sugar rise after it (week 4).',
+    cite: 'Penniston 2007 · Östman 2005', caution: 'Acid softens tooth enamel: drink with a straw or rinse with water after, and wait 30 minutes before brushing.' },
+  'lung-elixir': { ev: 'emerging', c: [['Allicin', 'Forms when garlic is pressed and rested'], ['Honey', 'Coats the throat, antibacterial'], ['Thymoquinone', 'From black seed oil, anti-inflammatory']],
+    study: 'A review found honey eased cough and cold symptoms better than usual care. In a small trial, people taking garlic every day caught fewer colds.',
+    cite: 'Abuelgasim 2021 (review) · Lissiman 2014 (Cochrane)', caution: 'Start with 2 cloves: raw garlic can upset the stomach. On blood thinners, ask your doctor. Never give honey to babies under 1.' },
+  'circulation-shot': { ev: 'emerging', c: [['Capsaicin', 'From cayenne, warms and widens blood vessels'], ['Olive polyphenols', 'Protect the heart and vessels'], ['Chia fibre & ALA', 'Plant omega-3, steadies blood sugar']],
+    study: 'In a large Spanish trial, a diet rich in extra-virgin olive oil lowered heart attacks and strokes by about 30%. Capsaicin improved blood flow in small studies.',
+    cite: 'Estruch 2018 (PREDIMED)', caution: 'Cayenne can burn with reflux or on an empty sensitive stomach.' },
+  'gut-smoothie': { ev: 'some', c: [['Kefir cultures', 'Dozens of live bacteria and yeasts'], ['Resistant starch', 'From green banana, feeds good bacteria'], ['Anthocyanins', 'From berries, antioxidant']],
+    study: 'People who ate fermented foods like kefir every day for 10 weeks had a more diverse gut and lower levels of 19 inflammation markers.',
+    cite: 'Wastyk 2021 (Stanford)', caution: 'Raw egg yolks and raw milk: choose very fresh, from healthy animals, and skip both in pregnancy.' },
+  'carrot-salad': { ev: 'emerging', c: [['Insoluble fibre', 'Carries used hormones out through the gut'], ['Falcarinol', 'Natural compound in raw carrots'], ['Beta-carotene', 'Turns into vitamin A for skin']],
+    study: 'No trials on carrots and hormones yet. Women who ate more fibre had lower estrogen levels across the cycle, because fibre helps the gut clear what the liver has used.',
+    cite: 'Gaskins 2009 (BioCycle)', caution: '' },
+  'heart-foods': { ev: 'some', c: [['Cacao flavanols', 'Gently lower blood pressure'], ['Beetroot nitrates', 'Turn into nitric oxide, widen vessels'], ['Omega-3', 'From wild fish, steadies the heart rhythm']],
+    study: 'Cacao flavanols lowered blood pressure a little in a Cochrane review. Beetroot juice lowered the top number by about 4 mmHg.',
+    cite: 'Ried 2017 (Cochrane) · Siervo 2013 (meta-analysis)', caution: 'Beetroot can turn urine pink, which is harmless. On heart or blood-thinning medicine, ask your doctor before supplements.' },
+};

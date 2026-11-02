@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
+  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -1790,6 +1790,7 @@ function viewRemedy(id) {
   return `<div class="pad">
     ${specHero({ photo: carePhoto(r.id, 1000), glyph: r.glyph, han: true, eyebrow: `${r.nature} · ${r.element} · ${r.organ}`, name: r.name,
       rows: r.ingredients.map(ingRow), lead: `${r.name} — ${r.nature.toLowerCase()} · ${r.element}`, desc: r.why })}
+    <section class="card glass tea-fit"><div class="tf-k">Best in your cycle${r.raw ? ' · raw days' : ''}</div>${phaseFit(r.phases, M.info && M.info.phase)}${r.phases.length === 4 ? '<small class="tf-all">Good every day of your cycle</small>' : ''}</section>
     ${r.raw && warm ? `<section class="card flag"><span class="bn-ic">${icon('yinyang', 18)}</span><div class="bn-t"><b>Not today</b><p>You’re in your warm window — Chinese medicine keeps raw and cold food away during your period and the days before. Save this for your follicular phase.</p></div></section>` : ''}
     ${tracker}
     ${organPhase ? `<section class="card tcm-card"><div class="tcm-glyph">${Z.FIVE[r.element].han}</div><div class="tcm-main"><div class="eyebrow">How it connects</div>
@@ -1798,9 +1799,18 @@ function viewRemedy(id) {
     <section class="card glass">${r.ingredients.map(g => `<div class="ing">${icon('leaf', 14)}<span>${g}</span></div>`).join('')}</section>
     ${sectionTitle('How')}
     <section class="card glass">${r.steps.map((x, i) => `<div class="step"><span class="step-n">${i + 1}</span><p>${x}</p></div>`).join('')}</section>
+    ${remedyScience(r)}
     ${r.weeks ? `${sectionTitle('Week by week')}<section class="card glass">${r.weeks.map(w => `<div class="tide on"><span class="tide-g">${w.w}</span><div><div class="tide-n">${w.add}</div><div class="tide-s">${w.gain}</div></div></div>`).join('')}</section>` : ''}
     <p class="fine center">Traditional home remedies — not a replacement for medical care.</p>
   </div>`;
+}
+function remedyScience(r) {
+  const x = REMEDY_SCIENCE[r.id]; if (!x) return '';
+  return `${sectionTitle('Why it works')}
+    <section class="card glass nu-food">${x.c.map(([c, d]) => `<div class="spec-row"><b>${c}</b><span>${d}</span></div>`).join('')}</section>
+    ${sectionTitle('What studies found')}
+    <section class="card glass tea-study"><div class="ts-i"><p>${x.study}</p><small>${x.cite}</small></div><div class="ts-ev">${evBadge(x.ev)} <span>${EVIDENCE[x.ev].label}</span></div></section>
+    ${x.caution ? `${sectionTitle('Good to know')}<section class="card glass tea-care"><p>${icon('spark', 12)} ${x.caution}</p></section>` : ''}`;
 }
 // Detail page: full photo on top, a frosted sheet slides over it with the 3 key items and a short description.
 const QTY = /^((?:juice of |pinch of |a |an )?[\d½¼¾⅓⅔.\/–-]+\s*(?:g|kg|ml|l|cups?|tbsp|tsp|handfuls?|cloves?|slices?|sticks?|pinch)?\b|pinch of|a handful of|handful of)\s*/i;
