@@ -538,7 +538,7 @@ function viewRoadmap() {
   if (!p.planStart) { p.planStart = todayISO(); save(true); }
   return `${topbar('Your plan', { back: true })}<div class="pad">${roadmapHTML(planKeys(p), '', Math.min(90, planDay()))}
     <p class="center"><button class="link" data-action="nav" data-to="profile">Change goals or birth control in Profile</button></p>
-    <p class="fine center">Under the Skin is a wellness app, not medical advice.</p></div>`;
+    <p class="fine center">Underskin is a wellness app, not medical advice.</p></div>`;
 }
 function viewOnboarding() {
   const s = ui.onbStep, o = ui.onb;
@@ -556,7 +556,7 @@ function viewOnboarding() {
 <path d="M58 76 C44 84 26 82 16 74"/></g>
 <g fill="currentColor"><path d="M82 46 c6 -2 10 2 8 7 c-5 1 -9 -2 -8 -7z"/><path d="M64 30 c2 -6 8 -7 11 -3 c-3 5 -8 6 -11 3z"/><path d="M30 60 c-2 -6 2 -10 7 -8 c1 5 -2 9 -7 8z"/>
 <path d="M100 66 c4 -4 9 -3 10 1 c-4 4 -9 3 -10 -1z"/><circle cx="86" cy="10" r="2.4"/><circle cx="10" cy="20" r="2"/><circle cx="16" cy="74" r="2.2"/>
-<g transform="translate(46 12)"><circle r="3.2"/><circle cx="0" cy="-5" r="2.4"/><circle cx="4.8" cy="-1.5" r="2.4"/><circle cx="3" cy="4" r="2.4"/><circle cx="-3" cy="4" r="2.4"/><circle cx="-4.8" cy="-1.5" r="2.4"/></g></g></svg></span><h1 class="bw-script"><span class="bw-ink">Under the Skin</span></h1><span class="orn-r"><svg class="orn" viewBox="0 0 120 90" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+<g transform="translate(46 12)"><circle r="3.2"/><circle cx="0" cy="-5" r="2.4"/><circle cx="4.8" cy="-1.5" r="2.4"/><circle cx="3" cy="4" r="2.4"/><circle cx="-3" cy="4" r="2.4"/><circle cx="-4.8" cy="-1.5" r="2.4"/></g></g></svg></span><h1 class="bw-script"><span class="bw-ink">Underskin</span></h1><span class="orn-r"><svg class="orn" viewBox="0 0 120 90" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
 <path d="M118 60 C96 62 84 52 74 40 C64 28 50 22 38 28 C26 34 28 50 40 50 C50 50 50 38 42 38"/>
 <path d="M90 58 C86 72 72 80 58 76 C48 73 48 62 56 62 C62 62 62 70 56 70" />
 <path d="M74 40 C70 26 74 14 86 10 C94 8 98 16 92 20"/>
@@ -624,7 +624,7 @@ function viewOnboarding() {
     <div class="onb-body">${body}</div>
     <div class="onb-foot">
       <button class="pearl-btn wide" data-action="onbNext" ${s === 1 && !o.name.trim() ? 'disabled' : ''}><span>${s === 9 ? 'Start my plan' : s === 8 ? 'See my plan' : 'Continue'}</span></button>
-      ${s === 9 ? '<p class="fine rm2-note">Under the Skin is a wellness app, not medical advice.</p>' : ''}
+      ${s === 9 ? '<p class="fine rm2-note">Underskin is a wellness app, not medical advice.</p>' : ''}
     </div>
   </div>`;
 }
@@ -741,7 +741,7 @@ function evName(e) { return e.t || evKind(e.kind)[2]; }
 const gday = d => C.iso(d).replace(/-/g, '');
 function gcalUrl(e) {
   const x = evInfo(e), d = C.parseISO(e.date);
-  const q = new URLSearchParams({ action: 'TEMPLATE', text: evName(e), dates: `${gday(d)}/${gday(C.addDays(d, 1))}`, details: x ? `Day ${x.di.cd} · ${PHASES[x.di.phase].name} phase. ${x.prep} (Under the Skin)` : '' });
+  const q = new URLSearchParams({ action: 'TEMPLATE', text: evName(e), dates: `${gday(d)}/${gday(C.addDays(d, 1))}`, details: x ? `Day ${x.di.cd} · ${PHASES[x.di.phase].name} phase. ${x.prep} (Underskin)` : '' });
   return 'https://calendar.google.com/calendar/render?' + q;
 }
 function evCard(e) {
@@ -848,7 +848,7 @@ function calStretches(days = 182, start = M.today) {
 function calItems() {
   // from the start of this cycle, so today's stretch shows in full
   const out = calStretches(182 + C.diffDays(M.today, M.info.cycleStart), M.info.cycleStart).map(x => { const [g, ph, word] = CAL_WORD[x.w], c = COMPASS[x.w];
-    return { k: `${ymdOf(x.from)}-${x.w}`, t: `${g} ${ph} · ${word}`, from: x.from, to: x.to, d: `${c.mode}. ${c.why}\nLean into: ${c.work}\n\nAn estimate from Under the Skin, not contraception.` }; });
+    return { k: `${ymdOf(x.from)}-${x.w}`, t: `${g} ${ph} · ${word}`, from: x.from, to: x.to, d: `${c.mode}. ${c.why}\nLean into: ${c.work}\n\nAn estimate from Underskin, not contraception.` }; });
   events().filter(e => e.date >= todayISO()).forEach(e => { const x = evInfo(e), d = C.parseISO(e.date);
     out.push({ k: 'e' + e.id, t: evName(e), from: d, to: d, d: x ? `Day ${x.di.cd} · ${PHASES[x.di.phase].name} phase. ${x.prep}` : '' }); });
   return out;
@@ -859,7 +859,7 @@ function calICS() {
   const txt = t => String(t).replace(/\\/g, '\\\\').replace(/[,;]/g, m => '\\' + m).replace(/\n/g, '\\n');
   const ev = calItems().map(x => ['BEGIN:VEVENT', `UID:uts-${x.k}@undertheskin`, `DTSTAMP:${stamp}`, `DTSTART;VALUE=DATE:${ymdOf(x.from)}`, `DTEND;VALUE=DATE:${ymdOf(C.addDays(x.to, 1))}`,
     `SUMMARY:${txt(x.t)}`, `DESCRIPTION:${txt(x.d)}`, 'TRANSP:TRANSPARENT', 'END:VEVENT'].join('\r\n'));
-  return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Under the Skin//Cycle//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:My cycle', ...ev, 'END:VCALENDAR'].join('\r\n');
+  return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Underskin//Cycle//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:My cycle', ...ev, 'END:VCALENDAR'].join('\r\n');
 }
 // In the iPhone / Android app: write straight into a "My cycle" calendar on the phone (it syncs on to
 // iCloud or Google from there) and rewrite it whenever her cycle or plans change.
@@ -874,7 +874,7 @@ async function calWrite(ask) {
   try {
     if (ask && (await P.requestFullCalendarAccess())?.result !== 'granted') { toast('Allow calendar access in your phone settings to sync'); return false; }
     const cals = (await P.listCalendars())?.result || [];
-    if (!pr.calId || !cals.some(c => c.id === pr.calId)) { pr.calId = (await P.createCalendar({ title: 'My cycle', color: '#9fcf8c', accountName: 'Under the Skin' })).id; pr.calEv = []; }
+    if (!pr.calId || !cals.some(c => c.id === pr.calId)) { pr.calId = (await P.createCalendar({ title: 'My cycle', color: '#9fcf8c', accountName: 'Underskin' })).id; pr.calEv = []; }
     if (pr.calEv?.length) await P.deleteEventsById({ ids: pr.calEv, commit: false }).catch(() => {});
     const ids = [];
     for (const x of items) { const r = await P.createEvent({ calendarId: pr.calId, title: x.t, description: x.d, isAllDay: true, startDate: +x.from, endDate: +x.to, commit: false }); if (r?.id) ids.push(r.id); }
@@ -997,7 +997,7 @@ function brainRead(k) {
   if ((l.down || []).includes('Blood clots')) note('🩸', 'About clots', 'Small clots on heavy days are normal. Clots bigger than a coin, or soaking a pad or tampon every hour, are worth checking with a doctor.', 'strong', 'warn');
   if (l.flow === 'heavy') note('🥩', 'Heavy day', 'Refill iron: red meat, lentils, dark greens with a squeeze of lemon, and keep warm.', 'strong');
   // sex and desire
-  if ((l.intim || []).includes('Sex, unprotected') && di.fertile) note('💞', 'You’re in your fertile window', 'If you’re not trying for a baby, a pharmacist can talk you through emergency contraception. Under the Skin is not contraception.', 'strong', 'warn');
+  if ((l.intim || []).includes('Sex, unprotected') && di.fertile) note('💞', 'You’re in your fertile window', 'If you’re not trying for a baby, a pharmacist can talk you through emergency contraception. Underskin is not contraception.', 'strong', 'warn');
   if (l.drive >= 4 && Math.abs(di.cd - ov) <= 3) note('🌹', 'Desire right on cue', 'Estrogen and testosterone peak around ovulation, and your sex drive is following them.', 'some', 'good');
   if (l.drive && l.drive <= 2 && (ph === 'luteal' || ph === 'menstrual')) note('🌹', 'Lower desire is normal now', 'With hormones low, desire often quiets. It usually returns as estrogen rises after your period.', 'some');
   // how she feels overall
@@ -1173,7 +1173,11 @@ function eatCatInner(phase, cat) {
       ${cat === 'supps' ? `<p class="eg-note">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}.</p>` : ''}`;
 }
 // Photo for the period days (it carries its own labels): bone broth and red meat refill minerals and iron.
-const PERIOD_FOOD_PIC = `<figure class="pfood"><img src="images/menstrual-food.webp" alt="Bone broth in a ladle and two raw beef steaks" loading="lazy" decoding="async"></figure>`;
+// Photos (Pexels licence): broth by jenvit keiwalinsarid (3559899), steak (618775).
+const PERIOD_FOOD_PIC = `<figure class="pfood pfood2"><img src="images/period-food.webp" alt="A bowl of clear bone broth and a raw beef steak on a wooden board" loading="lazy" decoding="async">
+  <span class="pf-l pf-top"><b>bone broth</b>rich in minerals and amino acids to replenish the body</span>
+  <span class="pf-mid">menstrual phase</span>
+  <span class="pf-l pf-bot"><b>grass-fed beef</b>replenishes the iron lost while you bleed</span></figure>`;
 // Every recipe, by meal. The ones made for her phase come first; raw ones step back while she should eat warm.
 const MEALS = [['Breakfast', '🍳'], ['Lunch', '🥗'], ['Dinner', '🍲'], ['Snack', '🍓'], ['Drink', '🍵']];
 function allRecipes(phase, warm) {
@@ -1530,7 +1534,7 @@ function dueReminders() {
     events().filter(e => e.date === C.iso(C.addDays(new Date(), 1))).forEach(e => { const x = evInfo(e); out.push({ id: 'ev-' + e.id, icon: 'calendar', title: `Tomorrow: ${evName(e)}`, body: x ? x.prep : 'Get ready tonight.', to: 'calendar' }); });
   }
   if (r.checkin && !state.logs[today] && new Date().getHours() >= r.checkinHour) {
-    out.push({ id: 'checkin', icon: 'heart', title: 'How are you feeling today?', body: 'A 10-second check-in helps Under the Skin learn your patterns.', to: 'log' });
+    out.push({ id: 'checkin', icon: 'heart', title: 'How are you feeling today?', body: 'A 10-second check-in helps Underskin learn your patterns.', to: 'log' });
   }
   return out.filter(x => r.dismissed[x.id] !== today);
 }
@@ -1566,7 +1570,7 @@ function remindersSection() {
       ${r.checkin ? `<div class="stepper-row sub"><span>From</span><div class="stepper"><button data-action="remHour" data-d="-1">−</button><span class="num">${hr(r.checkinHour)}</span><button data-action="remHour" data-d="1">+</button></div></div>` : ''}
       ${perm === 'granted' ? `<p class="fine" style="margin:8px 0 0">${icon('check', 13)} Phone notifications on</p>`
         : perm === 'denied' ? '<p class="fine" style="margin:8px 0 0">Notifications are blocked in your browser settings — reminders show inside the app.</p>'
-        : perm === 'unsupported' ? '<p class="fine" style="margin:8px 0 0">Reminders show inside the app. Add Under the Skin to your home screen for notifications.</p>'
+        : perm === 'unsupported' ? '<p class="fine" style="margin:8px 0 0">Reminders show inside the app. Add Underskin to your home screen for notifications.</p>'
         : `<button class="btn btn-light btn-block" data-action="remPermission">${icon('spark', 16)} Turn on notifications</button>`}
     </section>`;
 }
@@ -1749,7 +1753,7 @@ function patternsSection() {
     ${P.list.length || energyCard ? `${energyCard}
       ${rows ? `<section class="card glass"><div class="eyebrow" style="margin-bottom:6px">When your symptoms show up</div>${rows}
         <div class="pat-days"><span>Day 1</span><span>Ovulation ~${C.ovulationDay(L, M.stats.avgPeriod)}</span><span>Day ${L}</span></div></section>` : ''}`
-      : `<section class="card glass"><p class="muted" style="margin:0">Log symptoms and energy across 2 cycles and Under the Skin will show you <b>your</b> patterns — which days cramps, bloating or low moods tend to arrive, and how your energy really moves.</p></section>`}`;
+      : `<section class="card glass"><p class="muted" style="margin:0">Log symptoms and energy across 2 cycles and Underskin will show you <b>your</b> patterns — which days cramps, bloating or low moods tend to arrive, and how your energy really moves.</p></section>`}`;
 }
 
 // ---------- remedies ----------
@@ -2908,7 +2912,7 @@ function showSignal(sig, name, from) {
   const hearts = Array.from({ length: 18 }, (_, i) => `<i style="left:${(i * 37) % 100}%;animation-delay:${(i * .3) % 4}s;animation-duration:${5 + (i % 4)}s;width:${14 + (i * 7) % 18}px;height:${14 + (i * 7) % 18}px">${HEART(i % 3 === 1 ? '#fff' : isLove ? '#ff2d4b' : 'hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)')}</i>`).join('');
   const el = document.createElement('div'); el.className = `sig-pop ${isLove ? 'love' : 'care'}`;
   el.innerHTML = `<div class="lv-hearts">${hearts}</div><div class="lv-in"><div class="lv-art">${loveArt('xl')}<span class="lv-av">${from && from.t ? `<img src="${esc(from.t)}" alt="">` : esc((name || '?')[0])}</span><span class="lv-g">${sig.g}</span></div>
-    <h1>${esc(name)} ${sig.s}</h1><p class="muted">just now · Under the Skin</p>
+    <h1>${esc(name)} ${sig.s}</h1><p class="muted">just now · Underskin</p>
     ${from ? `<button class="btn btn-love btn-block" data-action="openLove" data-id="${from.id}">${icon('heart', 16)} Send love back</button>` : ''}
     <button class="btn btn-ghost btn-block" data-action="sigClose">Close</button></div>`;
   $app.appendChild(el);
@@ -2948,13 +2952,13 @@ function viewLove(q) {
   const hearts = Array.from({ length: 24 }, (_, i) => `<i style="left:${(i * 37) % 100}%;animation-delay:${(i * .37) % 7}s;animation-duration:${6 + (i % 5)}s;width:${12 + (i * 7) % 22}px;height:${12 + (i * 7) % 22}px">${HEART(i % 3 === 1 ? '#fff' : '#ff2d4b')}</i>`).join('');
   return `<div class="love-view"><div class="lv-hearts">${hearts}</div>
     <div class="lv-in"><div class="lv-art">${loveArt('xl')}<span class="lv-av">${d.t ? `<img src="${esc(d.t)}" alt="">` : esc((d.f || '?')[0])}</span><span class="lv-g">${l.g}</span></div><h1>${esc(d.f || 'Someone')} ${l.s}</h1>
-      <p class="muted">${fmt(new Date(), { weekday: 'long' })} · with love, from Under the Skin</p>
-      ${state && state.onboarded ? `<a class="btn btn-love btn-block" href="#/partners">${icon('heart', 16)} Send love back</a>` : `<a class="btn btn-light btn-block" href="#/today">Get Under the Skin</a>`}</div></div>`;
+      <p class="muted">${fmt(new Date(), { weekday: 'long' })} · with love, from Underskin</p>
+      ${state && state.onboarded ? `<a class="btn btn-love btn-block" href="#/partners">${icon('heart', 16)} Send love back</a>` : `<a class="btn btn-light btn-block" href="#/today">Get Underskin</a>`}</div></div>`;
 }
 function addPartnerFrom(text) {
   const m = String(text).match(/[?&]d=([A-Za-z0-9_-]+)/) || String(text).trim().match(/^([A-Za-z0-9_-]{16,})$/);
   const snap = m && b64d(m[1]);
-  if (!snap || !snap.s || !snap.c) return toast('That doesn’t look like an Under the Skin link');
+  if (!snap || !snap.s || !snap.c) return toast('That doesn’t look like an Underskin link');
   actions.addPartner({ d: m[1] });
 }
 function viewPartners(id) {
@@ -2983,7 +2987,7 @@ function viewPartners(id) {
         <span class="sy-who">You</span><b>Send her your link</b><small>It opens your messages. Pick her chat and send.</small>
         <button class="btn btn-dark btn-block" data-action="shareSend">${icon('heart', 16)} ${sent ? 'Send it again' : 'Send my link'}</button></div></li>
       <li class="sy-st">${sent && got ? done() : '<span class="sy-n">02</span>'}<div class="sy-c">
-        <span class="sy-who">Her</span><b>She adds you and sends hers</b><small>In her Under the Skin app:</small>
+        <span class="sy-who">Her</span><b>She adds you and sends hers</b><small>In her Underskin app:</small>
         <span class="sy-path"><span>Partner</span>${icon('chevR', 12)}<span>Paste link</span>${icon('chevR', 12)}<span>Send hers</span></span></div></li>
       <li class="sy-st ${got ? 'is-done' : ''}">${got ? done() : '<span class="sy-n">03</span>'}<div class="sy-c">
         <span class="sy-who">You</span><b>Paste her link here</b><small>Copy the link she sent you, then tap below.</small>
@@ -3443,7 +3447,7 @@ function viewProfile() {
       <button class="list-btn" data-action="nav" data-to="privacy">${icon('heart', 18)} Privacy — how your data is kept</button>
       <button class="list-btn danger" data-action="reset">${icon('trash', 18)} Delete all data</button>
     </section>
-    <p class="fine">${A.currentUser() ? 'Stored on this device and privately in your account.' : 'Everything is stored privately on this device.'} Under the Skin gives wellbeing estimates based on your logs and on Traditional Chinese Medicine concepts; it is not medical advice and must not be used as contraception.</p>
+    <p class="fine">${A.currentUser() ? 'Stored on this device and privately in your account.' : 'Everything is stored privately on this device.'} Underskin gives wellbeing estimates based on your logs and on Traditional Chinese Medicine concepts; it is not medical advice and must not be used as contraception.</p>
   </div>`;
 }
 
@@ -3474,7 +3478,7 @@ function viewShare() {
   return `${topbar('Partner mode', { back: true })}
   <div class="pad">
     <h1 class="page-h">Share your <span>rhythm</span></h1>
-    <p class="muted">Send a private link. They'll see your phase, how you might feel and how to show up for you — and it updates every day on its own. If your partner uses Under the Skin too, she can add you with one tap and you'll both see each other's cycle.</p>
+    <p class="muted">Send a private link. They'll see your phase, how you might feel and how to show up for you — and it updates every day on its own. If your partner uses Underskin too, she can add you with one tap and you'll both see each other's cycle.</p>
     <div class="seg">${[['partner', 'Partner'], ['friend', 'Friends']].map(([k, l]) => `<button class="${aud === k ? 'on' : ''}" data-action="shareAud" data-v="${k}">${l}</button>`).join('')}</div>
     <section class="card card-light">
       <div class="eyebrow dark">They will see today</div>
@@ -3542,8 +3546,8 @@ function viewWith(q) {
       ? ((state.partners || []).some(x => x.n === snap.n && x.s === snap.s)
         ? `<a class="btn btn-ghost btn-block" href="#/today">${icon('check', 16)} ${name} is on your dashboard</a>`
         : `<button class="btn btn-light btn-block" data-action="addPartner" data-d="${esc(q.get('d'))}">${icon('heart', 16)} Add ${name} to my app</button>
-           <p class="fine center">You both use Under the Skin — add her and you’ll see each other’s cycle side by side.</p>`)
-      : `<a class="btn btn-light btn-block" href="#/today">Get Under the Skin — and see each other</a>
+           <p class="fine center">You both use Underskin — add her and you’ll see each other’s cycle side by side.</p>`)
+      : `<a class="btn btn-light btn-block" href="#/today">Get Underskin — and see each other</a>
          <p class="fine center">Set up your own cycle and ${name} is added to your app automatically.</p>`}
   </div>`;
 }
@@ -3622,7 +3626,7 @@ function viewAccount() {
 function viewPrivacy() {
   return `${topbar('Privacy', { back: true })}
   <div class="pad article">
-    <div class="eyebrow">Under the Skin</div>
+    <div class="eyebrow">Underskin</div>
     <h1>Your data stays with you</h1>
     <p><b>No account needed.</b> Without an account, everything you log (cycle, symptoms, moods, notes, habits, birthday) stays only in this app on your phone.</p>
     <p><b>If you create an account</b> (with Apple, Google or email), a copy of your data is kept on our account server in the EU so you can sign in on a new phone and never lose it. It is locked to your login: only you can read it. We never sell it, never share it with advertisers and never use it for anything else.</p>
@@ -3632,7 +3636,7 @@ function viewPrivacy() {
     <p><b>Partner links.</b> When you share your cycle, the link contains only your first name and cycle estimates (last period start, average cycle and period length). Symptoms, moods and notes are never included. Anyone with the link can view it, so share it only with people you trust.</p>
     <p><b>Images and fonts.</b> Recipe photos load from Unsplash and fonts from Google Fonts; the 3D graphics library loads from jsDelivr. These services receive standard web requests (like your IP address) but none of your health data.</p>
     <p><b>Delete anytime.</b> Profile → “Delete all data” erases everything from this device. Deleting the app or clearing your browser data does the same — so export a backup first if you want to keep it.</p>
-    <p><b>Not medical advice.</b> Predictions are estimates based on your logs and traditional knowledge. Under the Skin is not a contraceptive and does not diagnose or treat any condition.</p>
+    <p><b>Not medical advice.</b> Predictions are estimates based on your logs and traditional knowledge. Underskin is not a contraceptive and does not diagnose or treat any condition.</p>
   </div>`;
 }
 
@@ -3955,7 +3959,7 @@ const actions = {
   groClear: () => { state.grocery = {}; save(); render(); },
   groShare: async () => {
     const got = state.grocery || {};
-    const text = 'My Under the Skin grocery list\n\n' + groceryItems().map(([a, l]) => `${a}\n` + l.filter(i => !got[i.name.toLowerCase()]).map(i => `• ${i.name}`).join('\n')).join('\n\n');
+    const text = 'My Underskin grocery list\n\n' + groceryItems().map(([a, l]) => `${a}\n` + l.filter(i => !got[i.name.toLowerCase()]).map(i => `• ${i.name}`).join('\n')).join('\n\n');
     if (await shareOut({ title: 'Grocery list', text })) return;
     try { await navigator.clipboard.writeText(text); toast('List copied'); } catch { toast('Couldn’t copy'); }
   },
@@ -3978,7 +3982,7 @@ const actions = {
   copyText: async d => { try { await navigator.clipboard.writeText(d.t); toast('Message copied'); } catch { toast('Couldn’t copy'); } },
   profileGoal: d => { const g = state.profile.goals = state.profile.goals || []; const i = g.indexOf(d.v); i < 0 ? g.push(d.v) : g.splice(i, 1); save(); render(); },
   export: () => {
-    saveFile(`under-the-skin-${todayISO()}.json`, JSON.stringify(state, null, 2), 'application/json');
+    saveFile(`underskin-${todayISO()}.json`, JSON.stringify(state, null, 2), 'application/json');
   },
   demo: () => { if (confirm('Replace your logs with sample cycles?')) { state = demoState(state.profile.name); save(); toast('Sample cycles loaded'); go('today'); render(); } },
   reset: () => { if (confirm('Delete all your Rhythm data from this device?')) { localStorage.removeItem(KEY); try { localStorage.removeItem(KEY + '.backup'); localStorage.removeItem('uts.pendingPartner'); } catch {} state = null; ui.onbStep = 0; go('today'); render(); } },

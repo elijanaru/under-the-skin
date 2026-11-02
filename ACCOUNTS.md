@@ -38,7 +38,7 @@ and aren't limited to a few per hour.
 
 ## 3. Google
 1. https://console.cloud.google.com → new project → **APIs & Services → OAuth consent screen**
-   (External, app name "Under the Skin", your support email).
+   (External, app name "Underskin", your support email).
 2. **Credentials → Create credentials → OAuth client ID → Web application**.
    Authorised redirect URI: `https://<your-project>.supabase.co/auth/v1/callback`
 3. Paste the Client ID and Secret into Supabase → Authentication → Providers → Google.

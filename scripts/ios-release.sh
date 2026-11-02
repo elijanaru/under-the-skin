@@ -2,7 +2,7 @@
 # Builds the App Store version and uploads it to App Store Connect.
 # Usage: scripts/ios-release.sh <TEAM_ID>   (the 10-character ID of your PAID developer team)
 # Needs: Xcode signed in to the Apple ID of the paid team, and the app created in App Store Connect.
-set -e
+set -e -o pipefail
 TEAM="$1"; [ -n "$TEAM" ] || { echo "Usage: $0 <TEAM_ID>"; exit 1; }
 ROOT="${0:A:h:h}"; OUT="$ROOT/release/ios"; mkdir -p "$OUT"
 cd "$ROOT"; npm run build >/dev/null; npx cap sync ios >/dev/null
@@ -22,7 +22,7 @@ cd ios/App
 BUILD=$(date +%Y%m%d%H%M)
 xcodebuild -project App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
   -archivePath "$OUT/UnderTheSkin.xcarchive" DEVELOPMENT_TEAM="$TEAM" CURRENT_PROJECT_VERSION="$BUILD" \
-  -allowProvisioningUpdates archive | tail -3
+  -allowProvisioningUpdates CODE_SIGNING_ALLOWED=NO archive | tail -3
 xcodebuild -exportArchive -archivePath "$OUT/UnderTheSkin.xcarchive" -exportOptionsPlist "$OUT/export.plist" \
   -exportPath "$OUT/export" -allowProvisioningUpdates | tail -5
 echo "Uploaded build $BUILD. It appears in App Store Connect → TestFlight in about 10–30 minutes."

@@ -123,7 +123,7 @@ export function mountFigure(canvas, { focus = null, mode = 'full', intro = true 
       });
       ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.font = '500 9px Outfit, sans-serif';
       ctx.fillText(`SCAN ${String(Math.floor((scanY + 60) / (H + 120) * 100)).padStart(2, '0')}%`, 14, ch - 16);
-      ctx.textAlign = 'right'; ctx.fillText('XX · UNDER THE SKIN', cw - 14, ch - 16); ctx.textAlign = 'left';
+      ctx.textAlign = 'right'; ctx.fillText('XX · UNDERSKIN', cw - 14, ch - 16); ctx.textAlign = 'left';
     }
     if (!reduce) raf = requestAnimationFrame(frame);
   }

@@ -1,4 +1,4 @@
-# Launching Under the Skin on the App Store and Google Play
+# Launching Underskin on the App Store and Google Play
 
 Everything that can be done in code is done. What's left needs **your** accounts, because the apps are
 published in your name. Do the parts in order; each one says how long it takes.
@@ -106,7 +106,7 @@ npm run android    # same for Android Studio
 ---
 
 ## Before you press submit
-- [ ] Replace or get permission for the menstrual-phase photo (it carries the **@softlyevolve** watermark).
+- [x] Menstrual food photo replaced with Pexels photos (labels are app text).
 - [ ] App icon: the store icon is upscaled from a 512 px image, and its source isn't recorded. Use your own
       1024×1024 original (put it at `assets/icon-only.png`, then run `npx capacitor-assets generate`).
 - [ ] Screenshots: iPhone 6.9" (1320×2868) and Android phone. Claude can make these for you.

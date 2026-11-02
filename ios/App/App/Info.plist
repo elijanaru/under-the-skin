@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Under the Skin</string>
+	<string>Underskin</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -27,13 +27,13 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCalendarsUsageDescription</key>
-	<string>Under the Skin adds your cycle phases and plans to a “My cycle” calendar.</string>
+	<string>Underskin adds your cycle phases and plans to a “My cycle” calendar.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>Under the Skin adds your cycle phases and plans to a “My cycle” calendar and keeps it up to date.</string>
+	<string>Underskin adds your cycle phases and plans to a “My cycle” calendar and keeps it up to date.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Take a profile photo. It stays on your phone unless you sync it to your account.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Save images you export from Under the Skin.</string>
+	<string>Save images you export from Underskin.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Choose a profile photo. It stays on your phone unless you sync it to your account.</string>
 	<key>UIApplicationSceneManifest</key>

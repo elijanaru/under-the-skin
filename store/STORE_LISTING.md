@@ -1,4 +1,4 @@
-# Store listing · Under the Skin
+# Store listing · Underskin
 
 Copy-paste text for App Store Connect and Google Play Console. Every field is within the store's limit.
 
@@ -15,7 +15,7 @@ Copy-paste text for App Store Connect and Google Play Console. Every field is wi
 
 | Field | Text |
 |---|---|
-| Name (30) | Under the Skin: Cycle & Glow |
+| Name (30) | Underskin: Cycle & Glow |
 | Subtitle (30) | Know when to push & slow down |
 | Category | Health & Fitness (secondary: Lifestyle) |
 | Keywords (100) | period,tracker,hormones,ovulation,PMS,luteal,TCM,moon,women,energy,wellness,syncing,calendar,fertility |
@@ -28,7 +28,7 @@ Copy-paste text for App Store Connect and Google Play Console. Every field is wi
 > You're not meant to run like a man. Track your cycle, see your hormones day by day, and know when to push and when to slow down. Same ambition, less burnout.
 
 **Description**
-> Under the Skin is a period and hormone tracker for ambitious women who are tired of running at the same pace every single day.
+> Underskin is a period and hormone tracker for ambitious women who are tired of running at the same pace every single day.
 >
 > A man's hormones repeat roughly every 24 hours. Yours move through a cycle of about 28 days. When you plan with that rhythm instead of against it, you sleep better, stress less and feel like yourself again. That's the glow people notice.
 >
@@ -55,7 +55,7 @@ Copy-paste text for App Store Connect and Google Play Console. Every field is wi
 > • Share your cycle with a partner, so they know when to bring tea and when to plan the adventure
 > • Private by design: your data stays on your phone. No ads, no tracking, no selling data.
 >
-> Under the Skin is not a contraceptive and does not diagnose or treat any condition.
+> Underskin is not a contraceptive and does not diagnose or treat any condition.
 
 **Age rating questionnaire**: answer "None" to everything except *Medical or Treatment Information* → **Infrequent/Mild**. Apple then shows the resulting rating (expect 13+ or 16+; either is fine).
 
@@ -74,7 +74,7 @@ Copy-paste text for App Store Connect and Google Play Console. Every field is wi
 
 | Field | Text |
 |---|---|
-| App name (30) | Under the Skin: Cycle & Glow |
+| App name (30) | Underskin: Cycle & Glow |
 | Short description (80) | Period & hormone tracker: know when to push and when to slow down. |
 | Full description | Same as the Apple description above |
 | Category | Health & Fitness |

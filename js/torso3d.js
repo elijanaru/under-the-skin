@@ -108,7 +108,7 @@ function textTexture() {
   const draw = () => {
     g.fillStyle = '#ffffff'; g.fillRect(0, 0, 1024, 2048);
     g.fillStyle = '#0d1a12'; g.textAlign = 'center'; g.textBaseline = 'middle';
-    const blocks = [['under the skin.', 'HORMONES · CYCLE · RITUAL'], ['水  木  火  土', 'FOUR INNER SEASONS']];
+    const blocks = [['underskin.', 'HORMONES · CYCLE · RITUAL'], ['水  木  火  土', 'FOUR INNER SEASONS']];
     blocks.forEach(([a, b], i) => {
       const cy = 380 + i * 1024;
       g.font = '300 74px Outfit, sans-serif'; g.fillText(a, 512, cy);

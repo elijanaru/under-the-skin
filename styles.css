@@ -3318,3 +3318,15 @@ button.hub-rh:active .hub-mg { transform: scale(.94); }
 @keyframes caveGlow { 0%, 100% { opacity: .8; transform: scale(.97); } 50% { opacity: 1; transform: scale(1.03); } }
 .hub .dpt-g.pic i { background: linear-gradient(180deg, rgba(5,6,5,.72) 0%, rgba(5,6,5,.38) 42%, rgba(5,6,5,.22) 62%, rgba(5,6,5,.6) 100%) !important; }
 .hub .dpt.has-pic b, .hub .dpt.has-pic small, .hub .dpt.has-pic .dpt-k, .hub .dpt.has-pic .dpt-col { text-shadow: 0 1px 10px rgba(0,0,0,.7); }
+
+/* menstrual food photo: labels as live text */
+.pfood2::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(5,6,5,.35), transparent 22%, transparent 42%, rgba(5,6,5,.45) 50%, transparent 58%, transparent 78%, rgba(5,6,5,.4)); }
+.pfood2 .pf-l, .pfood2 .pf-mid { position: absolute; z-index: 1; color: #fff; text-shadow: 0 1px 10px rgba(0,0,0,.6); }
+.pfood2 .pf-l { max-width: 58%; font-size: 12px; font-weight: 300; line-height: 1.35; }
+.pfood2 .pf-l b { display: block; font-size: 17px; font-weight: 500; color: #fff; letter-spacing: .01em; }
+.pfood2 .pf-top { left: 16px; top: 16px; }
+.pfood2 .pf-bot { right: 16px; bottom: 16px; text-align: right; max-width: 72%; }
+.pfood2 .pf-mid { left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; font-size: clamp(26px, 9vw, 40px); font-weight: 300; letter-spacing: -.01em; }
+
+/* one-word "underskin": a little more air before the ornaments */
+.orn-l, .orn-r { width: 70px !important; margin: 0 -4px !important; }
