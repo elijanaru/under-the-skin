@@ -1380,7 +1380,21 @@ function viewCosmic() {
     return `${sectionTitle('The moon tonight')}
       <section class="card glass moon-card">${moonSvg(moon.illum, moon.age < 14.77)}
         <div><div class="eyebrow">${Math.round(moon.illum * 100)}% lit · day ${Math.floor(moon.age) + 1} of the lunar month</div><h3>${moon.name}</h3><p class="body sm">${moon.ritual}</p></div></section>
-      ${mc ? `<section class="card card-light"><div class="eyebrow dark">Your moon cycle · ${mc.when.toLowerCase()}</div><h3 class="dark-h">${mc.name} cycle</h3><p class="dp-text">${mc.meaning}</p></section>` : ''}`;
+      ${mc ? `<section class="card card-light"><div class="eyebrow dark">Your moon cycle · ${mc.when.toLowerCase()}</div><h3 class="dark-h">${mc.name} cycle</h3><p class="dp-text">${mc.meaning}</p></section>` : ''}
+      ${M.info ? moonMonth() : ''}
+      ${sectionTitle('The moon and your cycle')}
+      <section class="card glass tea-study"><div class="ts-i"><p>A lunar month lasts 29.5 days and the average cycle 29.3, so the idea of a moon rhythm is old and lovely. Long-term diaries of 22 women showed their cycles fell in step with the moon now and then, more often in younger women and with longer cycles. Artificial light at night and age weakened the link.</p><small>Helfrich-Förster 2021 (Science Advances) · Bull 2019</small></div>
+        <div class="ts-i"><p>Large app studies with millions of cycles found no overall sync. So the moon is a beautiful mirror for reflection, not something your body must follow. Darker nights and less screen light are the part with science behind them.</p><small>Clue app analysis of 7.5 million cycles</small></div>
+        <div class="ts-ev">${evBadge('emerging')} <span>${EVIDENCE.emerging.label}</span></div></section>`;
+  }
+  // 30 days ahead: the moon each night above the colour of her phase that day.
+  function moonMonth() {
+    const days = Array.from({ length: 30 }, (_, i) => { const d = C.addDays(new Date(), i); return { d, m: Z.moonPhase(d), di: C.dayInfo(d, M.stats), ev: moonEvent(d) }; });
+    return `${sectionTitle('Your next 30 nights')}
+      <section class="card glass mm"><div class="mm-row">${days.map(({ d, m, di, ev }, i) => `<div class="mm-d ${i === 0 ? 'now' : ''} ${ev ? 'ev' : ''}">
+        <span class="mm-tag">${ev === 'full' ? 'Full' : ev === 'new' ? 'New' : di && di.cd === 1 ? '🩸' : ''}</span>${moonSvg(m.illum, m.age < 14.77).replace('class="moon"', 'class="moon mini"')}
+        <b>${d.getDate()}</b><i style="background:${di ? PHASE_COLOR.dark[di.phase] : 'transparent'}"></i></div>`).join('')}</div>
+        <div class="mm-key">${PHASE_ORDER.map(ph => `<span><i style="background:${PHASE_COLOR.dark[ph]}"></i>${PHASES[ph].name}</span>`).join('')}</div></section>`;
   }
   const { sign, cz, five, bridge } = cp, tab = ui.czTab || 'readings';
   const badge = (g, k, v) => `<div class="cz-b"><span class="cz-g ${/[\u4e00-\u9fff]/.test(g) ? 'han' : ''}">${g}</span><b>${v}</b><small>${k}</small></div>`;
