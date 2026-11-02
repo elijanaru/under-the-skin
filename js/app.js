@@ -3370,85 +3370,113 @@ function seasonCard() {
     ${match.length ? `<p class="body sm" style="margin-top:10px">${icon('spark', 12)} Highlighted foods suit your ${PHASES[M.info.phase].name.toLowerCase()} phase.</p>` : ''}
   </button>`;
 }
+// ---------- what's in season: spec sheet, five-season wheel, photo grid, cook, year ----------
+const SEASON_ORDER = ['Spring', 'Summer', 'Late summer', 'Autumn', 'Winter'];
+const SEASON_EL = { Spring: 'Wood', Summer: 'Fire', 'Late summer': 'Earth', Autumn: 'Metal', Winter: 'Water' };
+const KINDS = [['veg', 'Veg', '🥦'], ['fruit', 'Fruit', '🍎'], ['herb', 'Herbs', '🌿'], ['wild', 'Wild', '🍄'], ['animal', 'Fish & meat', '🐟'], ['other', 'Nuts & more', '🌰']];
+const NATURE = { warm: ['Warming', 'Supports circulation. Welcome all cycle, especially around your period.'], neutral: ['Neutral', 'Balanced for every phase, raw or cooked.'], cool: ['Cooling', 'Fresh and cooling. Lovely raw on your raw-first days; cook it with ginger around your period.'] };
+function seasonWheel(cur, mine) {
+  const cx = 150, R = 140, hole = 36, step = 2 * Math.PI / 5, gap = .04;
+  const at = (r, a) => [(cx + r * Math.sin(a)).toFixed(1), (cx - r * Math.cos(a)).toFixed(1)];
+  const petals = SEASON_ORDER.map((sn, i) => {
+    const a0 = i * step - step / 2 + gap, a1 = a0 + step - 2 * gap, mid = (a0 + a1) / 2, F = Z.FIVE[SEASON_EL[sn]], on = sn === cur;
+    const [hx, hy] = at(66, mid), [lx, ly] = at(116, mid);
+    return `<g class="pw-p sw-p ${on ? 'on' : ''}" data-action="seasonJump" data-v="${sn}" style="--d:${i * .08}s" role="button" aria-label="${sn}">
+      <path class="pw-out" d="${petalPath(cx, hole, R, a0, a1)}"/><path class="pw-in" d="${petalPath(cx, hole, 94, a0, a1)}"/>
+      <text class="sw-han" x="${hx}" y="${hy}" text-anchor="middle" dominant-baseline="central">${F.han}</text>
+      <text class="pw-l sw-n" x="${lx}" y="${(+ly - 5).toFixed(1)}" text-anchor="middle">${sn}</text>
+      <text class="pw-l sw-o" x="${lx}" y="${(+ly + 9).toFixed(1)}" text-anchor="middle">${F.organ.split(' & ')[0]}${sn === mine ? ' · you' : ''}</text></g>`;
+  }).join('');
+  return `<svg class="pw sw" viewBox="0 0 300 300" role="group" aria-label="The five seasons">${petals}<circle cx="${cx}" cy="${cx}" r="${hole - 6}" class="pw-hole"/><text x="${cx}" y="${cx + 1}" class="pw-han sw-c" text-anchor="middle" dominant-baseline="central">五行</text></svg>`;
+}
 function viewSeason(jump) {
   if (jump) {
-    Object.assign(ui, { seasonView: 'month', seasonFilter: 'all', seasonMonth: null });
-    setTimeout(() => { if (jump === 'cook') document.querySelector('details.dish')?.setAttribute('open', ''); document.getElementById(`sz-${jump}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); history.replaceState(null, '', '#/season'); }, 80);
+    Object.assign(ui, { seasonView: jump === 'cook' ? 'cook' : 'month', seasonFilter: 'all', seasonKind: null, seasonMonth: null });
+    setTimeout(() => { document.getElementById(`sz-${jump === 'cook' ? 'tabs' : jump}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); history.replaceState(null, '', '#/season'); }, 80);
   }
-  const c = myCountry(), m = ui.seasonMonth || new Date().getMonth() + 1, filt = ui.seasonFilter || 'all';
-  const all = SZ.seasonal(c, m), items = filt === 'all' ? all : all.filter(i => i.nature === filt);
-  const sn = SZ.seasonName(c, m), tcm = SZ.SEASON_TCM[sn];
-  const phase = M.info ? M.info.phase : null, match = phase ? all.filter(i => i.ph.includes(phase)) : [];
-  const warm = M.info && warmWindow(M.info);
-  const NAT = { warm: ['Warming', 'sun'], neutral: ['Neutral', 'yinyang'], cool: ['Cooling', 'drop'] };
-  const chip = i => `<button class="food sf ${match.includes(i) ? 'match' : ''} ${ui.seasonFood === i.f ? 'sel' : ''}" data-action="seasonFood" data-f="${esc(i.f)}"><i class="nat ${i.nature}"></i>${i.f}</button>`;
-  const yearAll = SZ.yearTable(c);
-  const sel = all.find(i => i.f === ui.seasonFood) || yearAll.find(i => i.f === ui.seasonFood);
-  const selMonths = sel && (yearAll.find(i => i.f === sel.f) || {}).months || [];
-  const inNow = selMonths.includes(m);
-  const detail = sel ? `<section class="card card-light sf-detail">
-      <div class="dp-head"><div><div class="eyebrow dark">${NAT[sel.nature][0]} in Chinese medicine</div><h3 class="dark-h">${sel.f}</h3></div>
+  const c = myCountry(), m = ui.seasonMonth || new Date().getMonth() + 1, filt = ui.seasonFilter || 'all', kind = ui.seasonKind || null, view = ui.seasonView || 'month';
+  const all = SZ.seasonal(c, m), country = SZ.COUNTRIES.find(x => x[0] === c)?.[1] || '';
+  const sn = SZ.seasonName(c, m), tcm = SZ.SEASON_TCM[sn], F = Z.FIVE[tcm.el];
+  const phase = M.info ? M.info.phase : null, warm = M.info && warmWindow(M.info);
+  const mine = phase ? Z.FIVE[TCM[phase].element].season : null;
+  const fits = i => phase && i.ph.includes(phase);
+  const items = all.filter(i => (filt === 'all' || i.nature === filt) && (!kind || i.kind === kind));
+  const yearAll = SZ.yearTable(c), sel = all.find(i => i.f === ui.seasonFood) || yearAll.find(i => i.f === ui.seasonFood);
+  const heroItem = [...all.filter(i => fits(i) && foodPhoto(i.f)), ...all.filter(i => foodPhoto(i.f))][0];
+  const pic = (i, w = 300) => foodPhoto(i.f, w);
+  const tile = i => `<button class="szt ${ui.seasonFood === i.f ? 'sel' : ''}" data-action="seasonFood" data-f="${esc(i.f)}">
+      <span class="szt-img">${pic(i) ? `<img src="${pic(i)}" alt="" loading="lazy">` : `<i class="szt-g">${(KINDS.find(k => k[0] === i.kind) || KINDS[0])[2]}</i>`}${fits(i) ? '<em>for you</em>' : ''}</span>
+      <b>${i.f}</b><small><i class="nat ${i.nature}"></i>${NATURE[i.nature][0]}</small></button>`;
+  // the selected food, as a paper card
+  let detail = '';
+  if (sel) {
+    const months = (yearAll.find(i => i.f === sel.f) || {}).months || [], inNow = months.includes(m);
+    detail = `<section class="card szd">${pic(sel, 600) ? `<img class="szd-img" src="${pic(sel, 600)}" alt="">` : ''}
+      <div class="szd-b"><div class="szd-h"><div><div class="eyebrow dark">${NATURE[sel.nature][0]} in Chinese medicine</div><h3>${sel.f}</h3></div>
         <button class="bn-x" data-action="seasonFood" data-f="${esc(sel.f)}" aria-label="Close">${icon('close', 16)}</button></div>
-      <p class="dp-text">${icon('calendar', 13)} In season ${SZ.monthRange(selMonths)}${inNow ? ' — <b>now</b>' : ` · back in ${SZ.nextSeasonStart(selMonths, m)}`}</p>
-      ${sel.nut.length ? `<div class="chips" style="margin-top:10px">${sel.nut.map(n => `<span class="chip static">${n}</span>`).join('')}</div>` : ''}
-      ${sel.ph.length ? `<p class="dp-text">Best in your ${sel.ph.map(p => `<b>${PHASES[p].name.toLowerCase()}</b>`).join(' & ')} phase${sel.ph.length > 1 ? 's' : ''}.${phase && sel.ph.includes(phase) ? ' That’s your phase right now.' : ''}</p>` : ''}
-      <p class="dp-text">${sel.nature === 'cool' ? (warm ? 'Cooling food — in your warm window, cook it gently or pair it with ginger and cinnamon.' : 'Cooling and fresh — lovely raw on your raw-first days.') : sel.nature === 'warm' ? 'Warming — supports circulation and is welcome all cycle, especially around your period.' : 'Neutral — balanced for every phase, raw or cooked.'}</p>
-    </section>` : '';
-  const group = (kind, title) => { const l = items.filter(i => i.kind === kind); return l.length ? `<div class="sz-anchor" id="sz-${kind}"></div>${sectionTitle(title)}<section class="card glass"><div class="foods">${l.map(chip).join('')}</div></section>` : ''; };
-  return `${topbar('In season', { back: true })}
-  <div class="pad">
-    <h1 class="page-h">What’s <span>in season</span></h1>
-    <p class="muted">Local, seasonal food is fresher, richer in nutrients and closest to food as nature made it. Tap a food for details.</p>
+      <div class="szd-r"><span>In season</span><b>${SZ.monthRange(months)}${inNow ? ' · now' : ` · back in ${SZ.nextSeasonStart(months, m)}`}</b></div>
+      ${sel.nut.length ? `<div class="szd-r"><span>Rich in</span><b>${sel.nut.join(' · ')}</b></div>` : ''}
+      ${sel.ph.length ? `<div class="szd-r"><span>Best phase</span><b>${sel.ph.map(p => PHASES[p].name).join(' & ')}${phase && sel.ph.includes(phase) ? ' · yours now' : ''}</b></div>` : ''}
+      <p>${sel.nature === 'cool' && warm ? 'Cooling food. You’re in your warm window, so cook it gently or pair it with ginger and cinnamon.' : NATURE[sel.nature][1]}</p></div></section>`;
+  }
+  const counts = KINDS.map(([k, n, g]) => { const l = all.filter(i => i.kind === k); return { k, n, g, t: l.length, f: l.filter(fits).length }; }).filter(x => x.t);
+  const bubbles = `<div class="szb">${counts.map(x => { const C0 = 2 * Math.PI * 25, pct = x.t ? x.f / x.t : 0; return `<button class="szb-i ${kind === x.k ? 'on' : ''}" data-action="seasonKind" data-v="${x.k}">
+      <svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="25" class="szb-bg"/><circle cx="30" cy="30" r="25" class="szb-fg" stroke-dasharray="${(pct * C0).toFixed(1)} ${C0.toFixed(1)}" transform="rotate(-90 30 30)"/></svg>
+      <span class="szb-n">${x.t}</span><small>${x.n}</small></button>`; }).join('')}</div>
+    ${phase ? `<p class="szb-k"><i></i> ring = how many fit your ${PHASES[phase].name.toLowerCase()} phase</p>` : ''}`;
+  const natSeg = `<div class="seg nat-seg">${[['all', 'All'], ['warm', 'Warming'], ['neutral', 'Neutral'], ['cool', 'Cooling']].map(([k, l]) => `<button class="${filt === k ? 'on' : ''}" data-action="seasonFilter" data-v="${k}">${k !== 'all' ? `<i class="nat ${k}"></i>` : ''}${l}</button>`).join('')}</div>`;
+  let body = '';
+  if (view === 'month') {
+    const nm = m % 12 + 1, next = SZ.seasonal(c, nm), now = all.map(i => i.f), nx = next.map(i => i.f);
+    const coming = next.filter(i => !now.includes(i.f)), leaving = all.filter(i => !nx.includes(i.f));
+    const round = i => `<button class="szr" data-action="seasonFood" data-f="${esc(i.f)}">${pic(i, 160) ? `<img src="${pic(i, 160)}" alt="" loading="lazy">` : `<i>${(KINDS.find(k => k[0] === i.kind) || KINDS[0])[2]}</i>`}<small>${i.f}</small></button>`;
+    body = `${bubbles}${natSeg}${detail}
+      <div class="szg">${items.map(tile).join('')}</div>
+      ${!items.length ? '<p class="muted center">Nothing like this in season this month.</p>' : ''}
+      ${coming.length || leaving.length ? `${sectionTitle(`Looking ahead to ${MONTHS[nm - 1]}`)}<section class="card glass ahead2">
+        ${coming.length ? `<div class="ah2-k">${icon('spark', 13)} Arriving</div><div class="szr-row">${coming.map(round).join('')}</div>` : ''}
+        ${leaving.length ? `<div class="ah2-k">${icon('clock', 13)} Last chance</div><div class="szr-row">${leaving.map(round).join('')}</div>` : ''}</section>` : ''}`;
+  } else if (view === 'cook') {
+    let ds = SZ.dishesFor(all, SZ.countryRegion(c));
+    ds = warm ? ds.filter(d => d.warm) : [...ds.filter(d => !d.warm), ...ds.filter(d => d.warm)];
+    body = `${warm ? `<p class="sz-warm">${icon('sun', 14)} Your warm window: warm, cooked dishes only.</p>` : ''}
+      ${ds.slice(0, 8).map(d => { const fit = phase && d.used.some(i => i.ph.includes(phase)), ph = dishPhoto(d.name, 700); return `<details class="card glass szc">
+        <summary>${ph ? `<img class="szc-img" src="${ph}" alt="" loading="lazy">` : ''}<span class="szc-t"><span class="szc-tags"><span class="dish-tag ${d.warm ? 'w' : 'r'}">${d.warm ? 'Warm' : 'Raw'}</span>${fit ? `<span class="dish-tag fit">${icon('spark', 10)} Your phase</span>` : ''}</span><b>${d.name}</b><small>${d.used.map(i => i.f).slice(0, 3).join(' · ')}</small></span><span class="szc-cta">How to ${icon('chevD', 14)}</span></summary>
+        <div class="foods" style="margin-top:12px">${d.used.map(i => `<span class="food match">${i.f}</span>`).join('')}${d.extra.map(e => `<span class="food">${e}</span>`).join('')}</div>
+        <p class="body sm">${d.how}</p>
+        ${DISH_PHOTOS[d.name] ? `<p class="fine" style="margin:6px 0 0">Photo: <a class="src" href="${DISH_PHOTOS[d.name].page}?utm_source=under_the_skin&utm_medium=referral" target="_blank" rel="noopener">${esc(DISH_PHOTOS[d.name].by)}</a> on Unsplash</p>` : ''}</details>`; }).join('') || '<p class="muted center">No dishes for this month yet.</p>'}`;
+  } else {
+    const yt = yearAll.filter(i => (filt === 'all' || i.nature === filt) && (!kind || i.kind === kind)), L = 'JFMAMJJASOND';
+    body = `${bubbles}${natSeg}${detail}${KINDS.map(([k, title]) => { const l = yt.filter(i => i.kind === k); return l.length ? `${sectionTitle(title)}<section class="card glass year">
+      <div class="yr-row yr-head"><span></span>${[...L].map((ch, i) => `<i class="${i + 1 === m ? 'now' : ''}">${ch}</i>`).join('')}</div>
+      ${l.map(i => `<div class="yr-row ${fits(i) ? 'fit' : ''} ${ui.seasonFood === i.f ? 'sel' : ''}" data-action="seasonFood" data-f="${esc(i.f)}"><span><i class="nat ${i.nature}"></i>${i.f}</span>${[...L].map((_, k2) => `<b class="${i.months.includes(k2 + 1) ? 'on' : ''} ${k2 + 1 === m ? 'now' : ''}"></b>`).join('')}</div>`).join('')}
+    </section>` : ''; }).join('')}`;
+  }
+  const forYou = all.filter(i => fits(i) && foodPhoto(i.f));
+  return `<div class="pad sz2">
+  ${specHero({ photo: heroItem ? pic(heroItem, 1000) : '', glyph: 'leaf', han: tcm.han, eyebrow: `In season · ${country} · ${MONTHS[m - 1]}`, name: sn, label: 'This season',
+      rows: [[`${all.length} foods`, 'fresh now'], [`${tcm.el} ${tcm.han}`, F.organ], [F.taste, 'taste to lean on']],
+      lead: tcm.note, desc: mine ? `Outside it’s ${sn.toLowerCase()}. Inside, your ${PHASES[phase].name.toLowerCase()} phase is your inner ${mine.toLowerCase()}.` : '' })}
     <div class="season-ctl">
       <select class="field sm" data-input="profile.country" aria-label="Country">${SZ.COUNTRIES.map(([code, nm]) => `<option value="${code}" ${code === c ? 'selected' : ''}>${nm}</option>`).join('')}</select>
-      <div class="stepper"><button data-action="seasonMonth" data-d="-1">‹</button><span class="num month">${MONTHS[m - 1].slice(0, 3)}</span><button data-action="seasonMonth" data-d="1">›</button></div>
+      <div class="stepper"><button data-action="seasonMonth" data-d="-1" aria-label="Previous month">‹</button><span class="num month">${MONTHS[m - 1].slice(0, 3)}</span><button data-action="seasonMonth" data-d="1" aria-label="Next month">›</button></div>
     </div>
-    <section class="card tcm-card season-tcm"><div class="tcm-glyph">${tcm.han}</div><div class="tcm-main"><div class="eyebrow">${sn} · ${tcm.el} element</div><p class="body" style="margin-top:6px">${tcm.note}</p>
-      <details class="st-more"><summary>${icon('yinyang', 13)} ${sn} ritual · ${tcm.ritual.t}</summary>
-        ${tcm.ritual.steps.map((x, i) => `<div class="step"><span class="step-n">${i + 1}</span><p>${x}</p></div>`).join('')}
-        <div class="kv"><span>Tea</span><b>${tcm.tea}</b></div>
-        <div class="kv"><span>Rhythm</span><b>${tcm.sleep}</b></div>
-        <div class="kv"><span>Emotion</span><b>${tcm.emotion[0]} · watch for ${tcm.emotion[1].toLowerCase()}</b></div>
-      </details></div></section>
-    ${match.length ? `${sectionTitle(`Perfect for your ${PHASES[phase].name.toLowerCase()} phase`)}
-      <section class="card card-light"><div class="foods">${match.map(chip).join('')}</div>
-      ${warm ? `<p class="dp-text">${icon('sun', 13)} You’re in your warm window — cook these gently rather than eating them raw.</p>` : ''}</section>` : ''}
-    ${detail}
-    ${(() => {
-      let ds = SZ.dishesFor(all, SZ.countryRegion(myCountry()));
-      ds = warm ? ds.filter(d => d.warm) : [...ds.filter(d => !d.warm), ...ds.filter(d => d.warm)];
-      ds = ds.slice(0, 4);
-      if (!ds.length) return '';
-      return `<div class="sz-anchor" id="sz-cook"></div>${sectionTitle('Cook with the season')}
-        ${warm ? `<p class="muted" style="margin:-6px 4px 10px">${icon('yinyang', 12)} Warm window — warm, cooked dishes only.</p>` : ''}
-        ${ds.map(d => { const fit = phase && d.used.some(i => i.ph.includes(phase)); return `<details class="card glass dish">
-          <summary>${dishPhoto(d.name) ? `<img class="dish-thumb" src="${dishPhoto(d.name, 160)}" alt="" loading="lazy">` : ''}<span class="dish-tag ${d.warm ? 'w' : 'r'}">${d.warm ? 'Warm' : 'Raw'}</span><span class="dish-n">${d.name}${fit ? `<small>${icon('spark', 11)} Good for your ${PHASES[phase].name.toLowerCase()} phase</small>` : ''}</span>${icon('chevD', 16)}</summary>
-          <div class="foods" style="margin-top:12px">${d.used.map(i => `<span class="food match">${i.f}</span>`).join('')}${d.extra.map(e => `<span class="food">${e}</span>`).join('')}</div>
-          <p class="body sm">${d.how}</p>
-          ${DISH_PHOTOS[d.name] ? `<img class="dish-photo" src="${dishPhoto(d.name, 700)}" alt="${esc(d.name)}" loading="lazy"><p class="fine" style="margin:6px 0 0">Photo: <a class="src" href="${DISH_PHOTOS[d.name].page}?utm_source=under_the_skin&utm_medium=referral" target="_blank" rel="noopener">${esc(DISH_PHOTOS[d.name].by)}</a> on Unsplash</p>` : ''}</details>`; }).join('')}`;
-    })()}
-    <div class="seg">${[['month', 'This month'], ['year', 'Whole year']].map(([k, l]) => `<button class="${(ui.seasonView || 'month') === k ? 'on' : ''}" data-action="seasonView" data-v="${k}">${l}</button>`).join('')}</div>
-    <div class="seg nat-seg">${[['all', 'All'], ['warm', 'Warming'], ['neutral', 'Neutral'], ['cool', 'Cooling']].map(([k, l]) => `<button class="${filt === k ? 'on' : ''}" data-action="seasonFilter" data-v="${k}">${k !== 'all' ? `<i class="nat ${k}"></i>` : ''}${l}</button>`).join('')}</div>
-    ${(ui.seasonView || 'month') === 'year' ? (() => {
-      const yt = SZ.yearTable(c).filter(i => filt === 'all' || i.nature === filt), L = 'JFMAMJJASOND';
-      const block = (kind, title) => { const l = yt.filter(i => i.kind === kind); return l.length ? `${sectionTitle(title)}<section class="card glass year">
-        <div class="yr-row yr-head"><span></span>${[...L].map((ch, i) => `<i class="${i + 1 === m ? 'now' : ''}">${ch}</i>`).join('')}</div>
-        ${l.map(i => `<div class="yr-row ${phase && i.ph.includes(phase) ? 'fit' : ''} ${ui.seasonFood === i.f ? 'sel' : ''}" data-action="seasonFood" data-f="${esc(i.f)}"><span><i class="nat ${i.nature}"></i>${i.f}</span>${[...L].map((_, k) => `<b class="${i.months.includes(k + 1) ? 'on' : ''} ${k + 1 === m ? 'now' : ''}"></b>`).join('')}</div>`).join('')}
-      </section>` : ''; };
-      return block('veg', 'Vegetables') + block('fruit', 'Fruit') + block('herb', 'Fresh herbs') + block('animal', 'Fish, meat & dairy') + block('wild', 'Wild & foraged') + block('other', 'Nuts & more');
-    })() : `${group('veg', 'Vegetables')}${group('fruit', 'Fruit')}${group('herb', 'Fresh herbs')}${group('animal', 'Fish, meat & dairy')}${group('wild', 'Wild & foraged')}${group('other', 'Nuts & more')}`}
-    ${(() => {
-      const nm = m % 12 + 1, next = SZ.seasonal(c, nm), now = all.map(i => i.f), nx = next.map(i => i.f);
-      const coming = next.filter(i => !now.includes(i.f)), leaving = all.filter(i => !nx.includes(i.f));
-      if (!coming.length && !leaving.length) return '';
-      return `${sectionTitle(`Looking ahead to ${MONTHS[nm - 1]}`)}
-        <section class="card glass ahead">
-          ${coming.length ? `<div class="ah-row"><span class="ah-k">${icon('spark', 13)} Arriving</span><div class="foods">${coming.map(i => `<span class="food"><i class="nat ${i.nature}"></i>${i.f}</span>`).join('')}</div></div>` : ''}
-          ${leaving.length ? `<div class="ah-row"><span class="ah-k">${icon('clock', 13)} Last chance</span><div class="foods">${leaving.map(i => `<span class="food">${i.f}</span>`).join('')}</div></div>` : ''}
-        </section>`;
-    })()}
-    ${!items.length ? '<p class="muted center">Nothing with this nature in season this month.</p>' : ''}
-    <p class="fine center">Typical regional field seasons — they shift a little by weather and area. Forage only what you can identify with certainty.</p>
+    ${sectionTitle('The five seasons')}
+    <div class="pl-wheel sw-wrap">${seasonWheel(sn, mine)}</div>
+    <section class="card glass sz-tcm">
+      <div class="pl-r"><b>${tcm.han} ${sn} · ${tcm.el}</b><span>${F.organ}. Emotion in balance: ${tcm.emotion[0].toLowerCase()}; watch for ${tcm.emotion[1].toLowerCase()}.</span></div>
+      <div class="pl-r"><b>🍵 Tea</b><span>${tcm.tea}</span></div>
+      <div class="pl-r"><b>🌙 Rhythm</b><span>${tcm.sleep}</span></div>
+      <details class="sz-rit"><summary><span>${icon('yinyang', 14)} ${sn} ritual · ${tcm.ritual.t}</span>${icon('chevD', 14)}</summary>
+        ${tcm.ritual.steps.map((x, i) => `<div class="step"><span class="step-n">${i + 1}</span><p>${x}</p></div>`).join('')}</details>
+    </section>
+    ${forYou.length ? `${sectionTitle(`For your ${PHASES[phase].name.toLowerCase()} phase`)}
+      <div class="hscroll">${forYou.map(i => `<button class="rcard has-photo" data-action="seasonFood" data-f="${esc(i.f)}"><img class="rc-photo" src="${pic(i, 500)}" alt="" loading="lazy"><span class="rc-shade"></span>
+        <div class="rc-top"><span class="rc-k">${NATURE[i.nature][0]}${warm && i.nature === 'cool' ? ' · cook it' : ''}</span></div><div class="rc-t">${i.f}</div><div class="rc-m">${i.nut.slice(0, 2).join(' · ')}</div></button>`).join('')}</div>` : ''}
+    <div class="sz-anchor" id="sz-tabs"></div>
+    <div class="seg sz-tabs">${[['month', 'Foods'], ['cook', 'Cook'], ['year', 'Whole year']].map(([k, l]) => `<button class="${view === k ? 'on' : ''}" data-action="seasonView" data-v="${k}">${l}</button>`).join('')}</div>
+    ${body}
+    <p class="fine center">Typical regional field seasons; they shift a little with weather and area. Food natures follow Traditional Chinese Medicine. Forage only what you can identify with certainty.</p>
   </div>`;
 }
 
@@ -4181,6 +4209,8 @@ const actions = {
   seasonGo: d => { Object.assign(ui, { seasonFood: d.f, seasonView: 'month', seasonFilter: 'all', seasonMonth: null }); go('season'); setTimeout(() => document.querySelector('.sf-detail')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150); },
   seasonFood: d => { ui.seasonFood = ui.seasonFood === d.f ? null : d.f; render(); if (ui.seasonFood) document.querySelector('.sf-detail')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); },
   seasonFilter: d => { ui.seasonFilter = d.v; render(); },
+  seasonKind: d => { ui.seasonKind = ui.seasonKind === d.v ? null : d.v; render(); },
+  seasonJump: d => { const now = new Date().getMonth() + 1; for (let k = 0; k < 12; k++) { const mm = ((now - 1 + k) % 12) + 1; if (SZ.seasonName(myCountry(), mm) === d.v) { ui.seasonMonth = mm === now ? null : mm; break; } } ui.seasonFood = null; render(); },
   seasonMonth: d => { const m = (ui.seasonMonth || new Date().getMonth() + 1) + +d.d; ui.seasonMonth = ((m - 1 + 12) % 12) + 1; render(); },
   insTab: d => { ui.insTab = d.v; render(); },
   hxJump: d => { document.getElementById('hx-' + d.i)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
