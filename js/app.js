@@ -3592,7 +3592,7 @@ function viewShare() {
   return `${topbar('Partner mode', { back: true })}
   <div class="pad">
     <h1 class="page-h">Share your <span>rhythm</span></h1>
-    <p class="muted">Send a private link. They'll see your phase, how you might feel and how to show up for you — and it updates every day on its own. If your partner uses Underskin too, she can add you with one tap and you'll both see each other's cycle.</p>
+    <p class="muted">Send a private link. They'll see your phase, how you might feel and how to show up for you — and it updates every day on its own. If your partner uses Underskin too, they can add you with one tap and you'll both see each other's cycle.</p>
     <div class="seg">${[['partner', 'Partner'], ['friend', 'Friends']].map(([k, l]) => `<button class="${aud === k ? 'on' : ''}" data-action="shareAud" data-v="${k}">${l}</button>`).join('')}</div>
     <section class="card card-light">
       <div class="eyebrow dark">They will see today</div>
@@ -3650,6 +3650,7 @@ function viewWith(q) {
     ${role === 'partner' ? `${sectionTitle('What to give her')}
     <div class="hscroll">${sup.gifts.map((g, i) => `<div class="rcard gift">${glowArt(['orb', 'drop', 'wave', 'crown', 'hill'][i % 5], 60 + i)}<div class="rc-top"><span class="rc-k">Gift idea</span></div><div class="rc-t">${esc(g)}</div></div>`).join('')}</div>
     ${sectionTitle('Maybe avoid')}<section class="card glass">${list(sup.avoid, 'no')}</section>
+    ${role === 'partner' ? `<section class="card glass tea-study pv-why"><div class="eyebrow">Why your support matters</div><div class="ts-i"><p>When partners took part in a programme for premenstrual distress, women felt more understood and less distressed than when they went alone. Small things count most: noticing, listening, taking something off her plate.</p><small>Ussher & Perz 2017</small></div><div class="ts-ev">${evBadge('some')} <span>${EVIDENCE.some.label}</span></div></section>` : ''}
     <section class="card tcm-card"><div class="tcm-glyph">${tcm.elementGlyph}</div><div class="tcm-main"><div class="eyebrow">Make her a cup of</div><h3>${tcm.tea.name}</h3><p class="body sm">${tcm.tea.why}</p></div></section>
     <section class="card card-light"><div class="eyebrow dark">Date idea</div><h3 class="dark-h">${esc(sup.date)}</h3></section>`
     : `<section class="card card-light"><div class="eyebrow dark">Plan idea</div><h3 class="dark-h">${esc(sup.plan)}</h3></section>`}

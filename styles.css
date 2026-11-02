@@ -3434,3 +3434,4 @@ button.tc-row { width: 100%; text-align: left; font: inherit; color: var(--text)
 .mm-tag { height: 14px; font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--lime); }
 .mm-key { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 10px 18px 0; font-size: 11.5px; color: #c3cac1; }
 .mm-key span { display: inline-flex; align-items: center; gap: 6px; } .mm-key i { width: 14px; height: 4px; border-radius: 4px; }
+.pv-why { gap: 8px; } .pv-why .eyebrow { margin: 0; }
