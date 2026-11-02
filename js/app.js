@@ -3563,8 +3563,8 @@ function viewGate() {
     <span class="gate-hud">PRIVATE · ENCRYPTED IN TRANSIT · EU</span>
     <h2 class="onb-title">Keep your cycle <span>safe with you</span></h2>
     <p class="gate-lead">A free account saves every period, symptom and note, and brings them back on any new phone.</p>
-    ${A.oauthOK() ? `<button class="ac-btn ac-apple" data-action="acProvider" data-p="apple">${APPLE_SVG}<span>Continue with Apple</span></button>
-    <button class="ac-btn ac-google" data-action="acProvider" data-p="google">${GOOGLE_SVG}<span>Continue with Google</span></button>` : ''}
+    ${A.oauthOK('apple') ? `<button class="ac-btn ac-apple" data-action="acProvider" data-p="apple">${APPLE_SVG}<span>Continue with Apple</span></button>` : ''}
+    ${A.oauthOK('google') ? `<button class="ac-btn ac-google" data-action="acProvider" data-p="google">${GOOGLE_SVG}<span>Continue with Google</span></button>` : ''}
     <button class="ac-btn ac-mail" data-action="gateEmail">${icon('user', 18)}<span>Continue with email</span></button>
     <p class="ac-msg" id="ac-msg" role="status"></p>
     <div class="ac-or"><span>or</span></div>
@@ -3611,8 +3611,8 @@ function viewAccount() {
       <p>${create ? 'Keep your periods and logs safe in a private account, and take them to any new phone.' : 'Your periods, logs and plans come back onto this phone.'}</p></section>
     <div class="ac-seg" role="tablist"><button class="${create ? 'on' : ''}" data-action="acMode" data-v="create" role="tab" aria-selected="${create}">Create account</button><button class="${create ? '' : 'on'}" data-action="acMode" data-v="signin" role="tab" aria-selected="${!create}">Sign in</button></div>
     ${create ? `<label class="ac-consent"><input type="checkbox" id="ac-consent"><span>I agree that my cycle and health logs are kept in my private account so they sync between my phones. I can delete them anytime. <a href="#/privacy">Privacy</a></span></label>` : ''}
-    ${A.oauthOK() ? `<button class="ac-btn ac-apple" data-action="acProvider" data-p="apple">${APPLE_SVG}<span>${create ? 'Sign up' : 'Sign in'} with Apple</span></button>
-    <button class="ac-btn ac-google" data-action="acProvider" data-p="google">${GOOGLE_SVG}<span>${create ? 'Sign up' : 'Sign in'} with Google</span></button>` : ''}
+    ${A.oauthOK('apple') ? `<button class="ac-btn ac-apple" data-action="acProvider" data-p="apple">${APPLE_SVG}<span>${create ? 'Sign up' : 'Sign in'} with Apple</span></button>` : ''}
+    ${A.oauthOK('google') ? `<button class="ac-btn ac-google" data-action="acProvider" data-p="google">${GOOGLE_SVG}<span>${create ? 'Sign up' : 'Sign in'} with Google</span></button>` : ''}
     <div class="ac-or"><span>or with email</span></div>
     <section class="card glass ac-form">
       <input class="field" id="ac-email" type="email" inputmode="email" autocomplete="email" placeholder="Email" value="${esc(ui.acEmail || '')}">
@@ -3725,7 +3725,7 @@ const actions = {
   acProvider: async (d, el) => {
     if (!acReady()) return;
     acMsg(''); el.classList.add('busy');
-    try { await A.withProvider(d.p); } catch (e) { el.classList.remove('busy'); acMsg(e.message, true); }
+    try { await A.withProvider(d.p); el.classList.remove('busy'); } catch (e) { el.classList.remove('busy'); acMsg(e.message, true); }
   },
   acEmail: async (d, el) => {
     const email = (document.getElementById('ac-email')?.value || '').trim(), pw = document.getElementById('ac-pw')?.value || '';

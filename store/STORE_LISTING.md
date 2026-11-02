@@ -60,8 +60,7 @@ Copy-paste text for App Store Connect and Google Play Console. Every field is wi
 **Age rating questionnaire**: answer "None" to everything except *Medical or Treatment Information* → **Infrequent/Mild**. Apple then shows the resulting rating (expect 13+ or 16+; either is fine).
 
 **App Privacy ("nutrition label")**
-- **At launch, while accounts are off:** cycle data never leaves the phone. To be safe, declare one item: **Contact Info → Name**, *App Functionality*, **not** linked, **not** tracking. The "send love" feature passes the first name through the ntfy.sh relay. Everything else is "not collected".
-- **Once accounts are switched on:** change it to the answers in `LAUNCH.md` → Part 5.
+- **Published (accounts on, 2 Nov 2026):** Name, Email Address, Health, Photos or Videos, Other User Content, User ID. All *App Functionality*, linked to the user, **not** tracking.
 
 **App Review notes**
 > No login is needed. Tap Enter, type any first name and follow the short setup (pick any recent date as the last period). All data is stored only on the device. The partner-share and "send love" features use links the user shares themselves.

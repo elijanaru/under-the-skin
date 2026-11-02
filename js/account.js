@@ -1,6 +1,6 @@
 // Accounts and cloud sync: Sign in with Apple, Google, or email + password (Supabase).
 // Local-first: the app works fully without an account; signing in only adds a private copy in the cloud.
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from './config.js';
+import { SUPABASE_URL, SUPABASE_ANON_KEY, GOOGLE_WEB_CLIENT_ID, GOOGLE_IOS_CLIENT_ID } from './config.js';
 
 const LIB = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm';
 const TABLE = 'cycle_data';
@@ -11,10 +11,13 @@ const tell = ev => { told = user?.id; subs.forEach(f => f(user, ev)); };
 export const configured = () => !!(SUPABASE_URL && SUPABASE_ANON_KEY);
 export const currentUser = () => user;
 export function onUser(f) { subs.add(f); return () => subs.delete(f); }
-// In the store apps Apple/Google need their native sign-in plugins (not set up yet), so only email shows there;
-// email links open the public website.
+// In the store apps Apple/Google use their own native sign-in sheets (Google blocks sign-in inside app web views)
+// and hand us an ID token; email links open the public website.
 const NATIVE = !!window.Capacitor?.isNativePlatform?.();
-export const oauthOK = () => !NATIVE;
+const OS = window.Capacitor?.getPlatform?.();
+const SL = () => window.Capacitor?.Plugins?.SocialLogin;
+// Apple: iPhone only (Android would need a server redirect). Google: once its client IDs are in config.js.
+export const oauthOK = p => !NATIVE || (!!SL() && (p === 'apple' ? OS === 'ios' : !!(OS === 'ios' ? GOOGLE_IOS_CLIENT_ID : GOOGLE_WEB_CLIENT_ID)));
 const redirect = () => (NATIVE ? 'https://elijanaru.github.io/under-the-skin/' : location.origin + location.pathname);
 
 // The library is only fetched when someone has (or wants) an account, so the app stays light.
@@ -56,7 +59,30 @@ function nice(m = '') {
   return m || 'Something went wrong. Try again.';
 }
 
+const hex = b => [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
+let slReady = null;
+async function nativeProvider(provider) {
+  const P = SL();
+  if (!slReady) slReady = P.initialize({
+    ...(OS === 'ios' ? { apple: { clientId: 'com.elijanaru.undertheskin' } } : {}),
+    ...(GOOGLE_WEB_CLIENT_ID ? { google: { webClientId: GOOGLE_WEB_CLIENT_ID, iOSClientId: GOOGLE_IOS_CLIENT_ID || undefined, iOSServerClientId: GOOGLE_WEB_CLIENT_ID, mode: 'online' } } : {}),
+  }).catch(e => { slReady = null; throw e; });
+  await slReady;
+  // the provider signs the hashed nonce into its token; the server checks it against the raw one
+  const raw = hex(crypto.getRandomValues(new Uint8Array(16)));
+  const nonce = hex(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw)));
+  let res;
+  try { res = await P.login({ provider, options: { scopes: provider === 'apple' ? ['email', 'name'] : ['email', 'profile'], nonce } }); }
+  catch (e) { if (/cancel/i.test(e?.message || '') || e?.code === '1001') return; throw new Error('Sign-in didn’t finish. Try again.'); }
+  const token = res?.result?.idToken;
+  if (!token) throw new Error('Sign-in didn’t finish. Try again.');
+  const c = await client();
+  const { error } = await c.auth.signInWithIdToken({ provider, token, nonce: raw });
+  fail(error);
+}
+
 export async function withProvider(provider) {
+  if (NATIVE) return nativeProvider(provider);
   const c = await client();
   const { error } = await c.auth.signInWithOAuth({ provider, options: { redirectTo: redirect() } });
   fail(error); // the page now leaves for Apple/Google and comes back signed in

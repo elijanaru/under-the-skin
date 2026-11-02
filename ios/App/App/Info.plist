@@ -20,16 +20,27 @@
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.883575718064-7vq25j7690mb819gaui67eq3ee5k11lj</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>GIDClientID</key>
+	<string>883575718064-7vq25j7690mb819gaui67eq3ee5k11lj.apps.googleusercontent.com</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSCalendarsUsageDescription</key>
-	<string>Underskin adds your cycle phases and plans to a “My cycle” calendar.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
 	<string>Underskin adds your cycle phases and plans to a “My cycle” calendar and keeps it up to date.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Underskin adds your cycle phases and plans to a “My cycle” calendar.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Take a profile photo. It stays on your phone unless you sync it to your account.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

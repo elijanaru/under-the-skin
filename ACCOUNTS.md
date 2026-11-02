@@ -63,3 +63,11 @@ and aren't limited to a few per hour.
   and Apple prefers the native Sign in with Apple sheet. Both then need the native plugins of the
   wrapper (e.g. Capacitor) instead of the web redirect — tell Claude which wrapper you use.
 - Update the App Store privacy label: "Health & Fitness" data, linked to the user, not used for tracking.
+
+## Status (2 Nov 2026): switched on
+- Supabase project `yscpgbmnaltfghjthbex` (Frankfurt), table + delete function created, URL and anon key in `js/config.js`.
+- Apple: "Sign in with Apple" enabled on App ID `com.elijanaru.undertheskin`, `ios/App/App/App.entitlements`, Supabase Apple provider with that bundle ID (native only; web Apple needs a Services ID + .p8 key).
+- Google: Cloud project "Underskin" (`skilled-tuner-513514-s8`), consent screen in production, Web + iOS client IDs in `js/config.js` and Supabase. The web client secret is not in Supabase yet (only needed for Google on the website).
+- Native sign-in uses `@capgo/capacitor-social-login` + `signInWithIdToken` with a hashed nonce (`js/account.js`).
+- Android Google sign-in still needs an Android OAuth client (package + SHA-1).
+- Still to do: own SMTP sender (Supabase's built-in one is rate limited).
