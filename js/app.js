@@ -3962,13 +3962,14 @@ function viewRitual(id) {
   const r = RITUALS.find(x => x.id === id); if (!r) return viewMissing();
   return `<div class="pad">
     ${specHero({ photo: carePhoto(r.id, 1000), glyph: r.glyph, han: true, eyebrow: 'TCM ritual', name: r.name, label: 'At a glance',
-      rows: [[`${r.mins} min`, 'Time'], [r.phases.map(p => PHASES[p].name).join(' & '), 'Best in'], [`${r.steps.length} steps`, 'Simple']],
+      rows: [[`${r.mins} min`, 'Time'], [!M.info ? `${r.phases.length} phases` : r.phases.includes(M.info.phase) ? 'Good today' : `From ${PHASES[r.phases.find(p => PHASE_ORDER.indexOf(p) > PHASE_ORDER.indexOf(M.info.phase)) || r.phases[0]].name.toLowerCase()}`, 'Your cycle'], [`${r.steps.length} steps`, 'Simple']],
       lead: `${r.name} — why it helps`, desc: r.why })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit(r.phases, M.info && M.info.phase)}</section>
     ${sectionTitle('Steps')}
     <section class="card glass">${r.steps.map((s, i) => `<div class="step"><span class="step-n">${i + 1}</span><p>${s}</p></div>`).join('')}</section>
     <button class="btn btn-light btn-block" data-action="timer" data-title="${esc(r.name)}" data-secs="${r.mins * 60}">${icon('play', 16)} Start ${r.mins}-minute timer</button>
     ${remedyScience(r, RITUAL_SCIENCE)}
+    ${(() => { const nx = RITUALS[(RITUALS.indexOf(r) + 1) % RITUALS.length]; return `<button class="card glass nu-next" data-action="nav" data-to="ritual/${nx.id}"><small>Next ritual</small><b>${nx.name}</b>${icon('chevR', 16)}</button>`; })()}
   </div>`;
 }
 function viewPoint(phase) {

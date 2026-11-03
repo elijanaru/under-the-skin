@@ -4797,3 +4797,7 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .conceive { border: 1px solid rgba(255,255,255,.95) !important; box-shadow: inset 0 1px 0 #fff, 0 18px 40px rgba(40,36,50,.1) !important; background: #fff !important; }
 .conceive > img { opacity: .5; filter: saturate(.7); }
 .conceive .cv-shade { background: linear-gradient(170deg, rgba(255,255,255,.55), rgba(255,255,255,.82) 55%, rgba(255,255,255,.9)) !important; }
+/* Spec photos dissolve into the page (no hard bottom edge), like the Today forest */
+.spec-media > img { -webkit-mask-image: linear-gradient(#000 0%, #000 52%, rgba(0,0,0,.5) 74%, transparent 96%); mask-image: linear-gradient(#000 0%, #000 52%, rgba(0,0,0,.5) 74%, transparent 96%); }
+.spec-media:has(> img) { background: transparent !important; }
+.spec-media:has(> img) .spec-shade { background: linear-gradient(180deg, rgba(255,255,255,0) 40%, rgba(255,255,255,.35) 70%, transparent 100%) !important; }
