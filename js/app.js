@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
+  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -1381,7 +1381,7 @@ function eatCatInner(phase, cat) {
   const warm = warmWindow(M.info) && phase === (M.info && M.info.phase);
   return `<div class="ec-h"><span class="ec-g">${icon(ct.ic, 22)}</span><div><b>${ct.t}</b><p>${C0[0]}</p></div></div>
       ${warm && (cat === 'dairy' || cat === 'drinks') ? `<p class="eg-note warm">${icon('sun', 12)} These days: everything warm or at room temperature, nothing iced.</p>` : ''}
-      <div class="eat-foods">${warmChips(C0[1], cat, warm).map(([g, n]) => `<span>${n}</span>`).join('')}</div>
+      <div class="eat-foods">${warmChips(C0[1], cat, warm).map(([g, n]) => { const x = cat === 'supps' && suppOf(n); return x ? `<button class="eat-sup" data-action="nav" data-to="supp/${x.id}"><span>${n}</span>${icon('chevR', 14)}</button>` : `<span>${n}</span>`; }).join('')}</div>
       ${cat === 'supps' ? `<p class="eg-note">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}.</p>` : ''}`;
 }
 // The two best dishes for each phase, as one photo card with the day, the phase and its tagline in the middle.
@@ -2249,6 +2249,27 @@ function viewRemedy(id) {
     <p class="fine center">Traditional home remedies — not a replacement for medical care.</p>
   </div>`;
 }
+// Supplement spec sheet: dose, form and timing on the glass sheet, then the phases it helps, studies and cautions.
+const suppOf = name => SUPP_LIB.find(x => x.m.test(name));
+const suppPhases = x => { const ph = PHASE_ORDER.filter(p => EAT_GUIDE[p].cats.supps[1].some(([, n]) => x.m.test(n))); return ph.length ? ph : PHASE_ORDER; };
+function viewSupp(id) {
+  const x = SUPP_LIB.find(s => s.id === id); if (!x) return viewMissing();
+  const ph = suppPhases(x), now = M.info && M.info.phase;
+  return `<div class="pad">
+    ${specHero({ glyph: x.sym, han: x.han, eyebrow: `Supplement · ${EVIDENCE[x.ev].label}`, sym: !x.han, name: x.name, label: 'How to take it',
+      rows: [['Dose', x.dose], ['Form', x.form], ['When', x.when]], desc: x.desc })}
+    <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit(ph, now)}${ph.length === 4 ? '<small class="tf-all">Useful every day of your cycle</small>' : now && !ph.includes(now) ? `<small class="tf-all">Not a focus in your ${PHASES[now].name.toLowerCase()} phase</small>` : ''}</section>
+    ${remedyScience(x, { [x.id]: x })}
+    <p class="fine center">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}. Food first, supplements to fill the gaps.</p>
+  </div>`;
+}
+function viewSupps() {
+  const now = M.info && M.info.phase;
+  return `<div class="pad">${sectionTitle('Supplements')}
+    <p class="body sm">What each one does, how much, and when in your cycle it helps most.</p>
+    <section class="card glass sup-list">${SUPP_LIB.filter(x => ttc() || !/prenatal|coq10/.test(x.id)).map(x => { const on = now && suppPhases(x).includes(now);
+      return `<button class="sup-row" data-action="nav" data-to="supp/${x.id}"><span class="sup-sym ${x.han ? 'han' : ''}">${x.sym}</span><span class="sup-t"><b>${x.name}</b><small>${x.dose} · ${x.when.toLowerCase()}</small></span>${on ? '<span class="sup-now">now</span>' : ''}${icon('chevR', 16)}</button>`; }).join('')}</section></div>`;
+}
 function remedyScience(r, lib = REMEDY_SCIENCE) {
   const x = lib[r.id]; if (!x) return '';
   return `${sectionTitle('Why it works')}
@@ -2263,11 +2284,11 @@ function ingRow(s) {
   const m = String(s).match(QTY), rest = (m ? s.slice(m[0].length) : s).replace(/\s*\(.*?\)/g, '').replace(/^of\s+/i, '');
   return [rest.charAt(0).toUpperCase() + rest.slice(1), m ? m[1].trim() : ''];
 }
-function liquidArt(glyph, han) {
-  return `<div class="spec-liquid"><i></i><i></i><i></i></div>${glyph ? `<span class="spec-glyph ${han ? 'han' : ''}">${glyph}</span>` : ''}`;
+function liquidArt(glyph, han, sym) {
+  return `<div class="spec-liquid"><i></i><i></i><i></i></div>${glyph ? `<span class="spec-glyph ${han ? 'han' : ''} ${sym ? 'sym' : ''}">${glyph}</span>` : ''}`;
 }
-function specHero({ photo, glyph, han, eyebrow, name, label = 'Key ingredients', rows = [], lead, desc, extra = '' }) {
-  return `<section class="spec"><div class="spec-media ${photo ? '' : 'liquid'}">${photo ? `<img src="${photo}" alt="">` : liquidArt(glyph, han)}<span class="spec-shade"></span>
+function specHero({ photo, glyph, han, sym, eyebrow, name, label = 'Key ingredients', rows = [], lead, desc, extra = '' }) {
+  return `<section class="spec"><div class="spec-media ${photo ? '' : 'liquid'}">${photo ? `<img src="${photo}" alt="">` : liquidArt(glyph, han, sym)}<span class="spec-shade"></span>
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>${extra}
     <div class="spec-name">${eyebrow ? `<div class="eyebrow">${eyebrow}</div>` : ''}<h1>${name}</h1></div></div>
     <div class="spec-sheet"><span class="spec-handle"></span><div class="spec-k">${label}</div>
@@ -4772,7 +4793,7 @@ function render() {
   const ph = (ui.phasePreview || M.info?.phase) || ''; // the whole app takes the colour of her phase
   if (document.documentElement.dataset.phase !== ph) document.documentElement.dataset.phase = ph;
   const views = {
-    today: viewToday, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), plan: viewPlan, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: () => (r.id ? viewStar(r.id) : viewCosmic()), grocery: viewGrocery, remedy: () => viewRemedy(r.id), habits: viewHabits, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
+    today: viewToday, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), plan: viewPlan, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: () => (r.id ? viewStar(r.id) : viewCosmic()), grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewHabits, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
     recipe: () => viewRecipe(r.id), ritual: () => viewRitual(r.id), point: () => viewPoint(r.id), article: () => viewArticle(r.id), learn: viewLearn,
   };
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];

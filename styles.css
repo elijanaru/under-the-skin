@@ -4577,3 +4577,21 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 /* her lower body melts into the mist behind the title */
 .beyond .bw-vignette::before { content: ''; position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(180deg, transparent 44%, rgba(226,228,214,.38) 56%, rgba(196,206,184,.62) 66%, rgba(120,138,98,.5) 82%, rgba(74,90,52,.35) 100%); }
+
+/* Supplements: tappable rows in the food guide and the index list */
+.eat-foods .eat-sup { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 16px; background: rgba(255,255,255,.32); border: 1px solid rgba(255,255,255,.7); font: inherit; font-size: 13.5px; line-height: 1.25; color: #304023; text-align: left; }
+.eat-foods .eat-sup span { flex: 1; }
+.eat-foods .eat-sup .ic { opacity: .55; flex: none; }
+.eat-foods .eat-sup:active { transform: scale(.98); }
+.sup-list { padding: 6px 8px !important; }
+.sup-row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 8px; text-align: left; color: #304023; border-bottom: 1px solid rgba(48,64,35,.1); }
+.sup-row:last-child { border-bottom: 0; }
+.sup-sym { flex: none; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 13px; letter-spacing: -.02em;
+  background: radial-gradient(circle at 35% 30%, #fff, hsl(calc(var(--hb) + 100 * var(--hk)) calc(30% * var(--hs)) 88%) 70%); border: 1px solid rgba(255,255,255,.9); box-shadow: 0 4px 12px rgba(48,64,35,.12); }
+.sup-sym.han { font-family: 'Noto Serif SC', serif; font-size: 17px; }
+.sup-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.sup-t b { font-weight: 500; font-size: 15px; }
+.sup-t small { font-size: 12.5px; color: rgba(48,64,35,.65); }
+.sup-now { flex: none; font-size: 11px; padding: 3px 9px; border-radius: 20px; color: #fff; background: hsl(calc(var(--hb) + 95 * var(--hk)) calc(35% * var(--hs)) 38%); }
+.sup-row .ic { opacity: .45; flex: none; }
+.spec-glyph.sym { top: 30%; font-family: 'Outfit', sans-serif; font-weight: 200; font-size: 84px; letter-spacing: -.04em; color: #304023; }
