@@ -4649,3 +4649,9 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .dot-word { display: block; width: 100%; height: auto; fill: #fbf8f9; filter: drop-shadow(0 0 6px rgba(255,255,255,.35)) drop-shadow(0 2px 10px rgba(40,40,50,.25)); opacity: 0; transition: opacity 1.4s ease; }
 .dot-word.fit { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .dot-word { transition: none; } }
+
+/* Every page sits in the misty pink forest (same as the intro screens), under a soft blush veil */
+.phone { background:
+  linear-gradient(180deg, hsl(calc(var(--hb) + 0 * var(--hk)) calc(38% * var(--hs)) 86% / .5) 0%, hsl(calc(var(--hb) + 0 * var(--hk)) calc(30% * var(--hs)) 84% / .62) 45%, hsl(calc(var(--hb) + 0 * var(--hk)) calc(26% * var(--hs)) 82% / .72) 100%),
+  url('images/intro-forest.jpg') center / cover no-repeat, var(--page) !important; }
+.home .hub { background: transparent; }

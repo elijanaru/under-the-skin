@@ -1525,7 +1525,7 @@ function plateWheel(phase, season, sel, warm) {
     <mask id="pl-mask" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#pl-fade)"/></mask>
     <radialGradient id="pl-vol" gradientUnits="userSpaceOnUse" cx="${cx - 26}" cy="${cy - 32}" r="${R * 1.45}"><stop offset="0" stop-color="#fff" stop-opacity=".26"/><stop offset=".38" stop-color="#fff" stop-opacity="0"/><stop offset=".72" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".42"/></radialGradient>
     <filter id="pl-ds" x="-25%" y="-25%" width="150%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="1.6" flood-color="#000" flood-opacity=".38"/><feDropShadow dx="2" dy="9" stdDeviation="7" flood-color="#1b1f1b" flood-opacity=".42"/></filter></defs>
-    <image class="pl-photo" href="images/plate.webp" x="-21.6" y="-18.5" width="405" height="405" mask="url(#pl-mask)"/>
+    <image class="pl-photo" href="images/plate.webp" x="-21.6" y="-18.5" width="405" height="405"/>
     <circle cx="${cx}" cy="${cy}" r="${R + 6}" class="pl-well"/>
     <g filter="url(#pl-ds)">${segs}</g>${labels}</svg>`;
 }
