@@ -3813,6 +3813,16 @@ function viewPoint(phase) {
     <p class="fine center">Avoid strong pressure on SP6 and CV4 if you might be pregnant.</p>
   </div>`;
 }
+// Reading progress as ring bubbles: letters so far, the cycle basics, minutes read, and the next unread one as the CTA.
+function learnProgress(letters, read) {
+  const R = 27, Cc = 2 * Math.PI * R, all = [...letters, ...ARTICLES], done = all.filter(x => read[x.id]);
+  const mins = done.reduce((n, x) => n + (x.mins || 0), 0), total = all.reduce((n, x) => n + (x.mins || 0), 0);
+  const items = [['✉', 'Letters', letters.filter(x => read[x.id]).length, letters.length, 'read'], ['◐', 'Basics', ARTICLES.filter(x => read[x.id]).length, ARTICLES.length, 'read'], ['◷', 'Minutes', mins, total, 'min']];
+  const next = all.find(x => !read[x.id]);
+  return `<section class="card glass pat-unlock lr-prog"><small>Your reading</small>
+    <div class="mind-rings pu-rings">${items.map(([g, n, v, goal, u], i) => `<div class="mv2-b r${goal && v >= goal ? 3 : v ? 2 : 0}" style="--i:${i}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * Math.max(.04, Math.min(1, goal ? v / goal : 0))).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-g">${goal && v >= goal ? '✓' : g}</span><b>${n}</b><small>${v} of ${goal} ${u}</small></div>`).join('')}</div>
+    ${next ? `<p>Up next: <b>${next.title}</b></p><button class="pill-cta" data-action="nav" data-to="article/${next.id}">${icon('book', 14)} Read it · ${next.mins} min</button>` : '<p>You’ve read everything so far. The next letter arrives on the 1st.</p>'}</section>`;
+}
 function viewLearn() {
   const m = new Date().getMonth() + 1, read = state.read || {};
   const letters = LETTERS.filter(l => l.month <= m).reverse(), soon = LETTERS.find(l => l.month === m % 12 + 1);
@@ -3823,6 +3833,7 @@ function viewLearn() {
     <h1 class="page-h">The Underskin <span>letter</span></h1>
     <p class="muted">A new read every month on a new topic, with the research behind it.</p>
     ${letters[0] ? card(letters[0], true) : ''}
+    ${learnProgress(letters, read)}
     ${soon ? `<p class="lt-soon">${icon('clock', 13)} Next letter on 1 ${MONTHS[soon.month - 1]}: <b>${soon.tag.toLowerCase()}</b></p>` : ''}
     ${letters.length > 1 ? `${sectionTitle('Past letters')}<div class="lt-grid">${letters.slice(1).map(x => card(x)).join('')}</div>` : ''}
     ${sectionTitle('Your cycle, explained')}<div class="lt-grid">${ARTICLES.map(x => card(x)).join('')}</div>

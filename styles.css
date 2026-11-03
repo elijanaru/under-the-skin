@@ -3960,3 +3960,7 @@ button.tip:active { transform: scale(.98); background: var(--glass-2); }
 .pt-where .foot circle:not([fill="none"]) { fill: hsl(calc(var(--hb) + 145 * var(--hk)) calc(39% * var(--hs2)) 30%); }
 .pt-where .dp-text { margin: 0; }
 .eg-note.warm { display: flex; align-items: center; gap: 6px; margin: 4px 0 10px; color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%); }
+/* Read: reading progress rings */
+.lr-prog { margin-top: 14px; }
+.lr-prog .mv2-g { font-size: 20px; color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%); }
+.lr-prog p b { font-weight: 400; }
