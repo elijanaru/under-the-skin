@@ -4543,3 +4543,6 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .onb.no-fig .link { color: var(--cream) !important; font-weight: 600 !important; text-decoration: underline; text-underline-offset: 3px; }
 .onb.no-fig .ago-exact > span, .onb.no-fig .stepper-row > span, .onb.no-fig .onb-body > p, .onb.no-fig .onb-body label:not(.stepper) { color: rgba(243,240,234,.9) !important; font-weight: 600; }
 .onb.no-fig .big-stepper > span { color: rgba(243,240,234,.9) !important; font-family: var(--it) !important; font-weight: 600; }
+/* Bigger crystal title with flourishes (user reference: ornate film title) */
+.beyond .bw-hand { width: min(100vw, 440px) !important; margin: 0 -18px !important; }
+.beyond .orn-l, .beyond .orn-r { display: none !important; }

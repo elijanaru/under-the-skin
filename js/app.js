@@ -662,15 +662,19 @@ function pearlWord(g, word) {
   if (g.dataset.vines) // filigree vines above and below the word, in smaller stones that taper to the tips (a curl ends in a bigger stone)
   { const wx0 = Math.min(...placed.map(p => p[0] - p[2])), wx1 = Math.max(...placed.map(p => p[0] + p[2])), wy0 = Math.min(...placed.map(p => p[1] - p[2])), wy1 = Math.max(...placed.map(p => p[1] + p[2]));
     const bw = wx1 - wx0, bh = Math.min(wy1 - wy0, bw * .5), P = (u, v) => `${(wx0 + u * bw).toFixed(1)} ${(v > .5 ? wy1 - (1 - v) * bh : wy0 + v * bh).toFixed(1)}`;
-    const V = [ // [path in box units, start radius, end radius]
-      ['M .5 -.04 C .40 -.34, .22 -.36, .15 -.18 C .11 -.06, .20 .00, .25 -.08 C .28 -.15, .22 -.19, .19 -.14', 5, 2.4],
-      ['M .33 -.26 C .30 -.44, .40 -.50, .43 -.40', 3.4, 2],
-      ['M .5 1.04 C .62 1.36, .84 1.34, .91 1.14 C .94 1.02, .85 .97, .81 1.05 C .79 1.11, .85 1.14, .87 1.10', 5, 2.4],
-      ['M .70 1.28 C .70 1.44, .60 1.48, .57 1.38', 3.4, 2]];
+    const V = [ // [path in box units, start radius, end radius]; each is mirrored to the right
+      ['M .46 1.02 C .34 1.32, .16 1.32, .08 1.12 C .04 1.01, .12 .95, .16 1.04 C .18 1.09, .13 1.12, .12 1.07', 4.6, 2.2],
+      ['M .24 1.22 C .22 1.40, .30 1.48, .34 1.40', 3, 1.8],
+      ['M .30 .06 C .26 -.26, .34 -.44, .42 -.38 C .46 -.34, .43 -.27, .40 -.30', 3.8, 2],
+      ['M .10 .02 C .02 -.20, -.02 -.42, .06 -.52 C .10 -.56, .15 -.50, .11 -.46', 3.4, 2],
+      ['M .19 -.28 C .14 -.40, .17 -.52, .23 -.52', 2.6, 1.7]];
     const ns = 'http://www.w3.org/2000/svg', tmp = document.createElementNS(ns, 'path'); g.appendChild(tmp);
     const vine = (d, r0, r1) => { tmp.setAttribute('d', d.replace(/(-?[\d.]+)[ ,]+(-?[\d.]+)/g, (_, u, v) => P(+u, +v)));
       const L = tmp.getTotalLength(); let at = 0;
-      while (at <= L) { const k = at / L, r = r0 + (r1 - r0) * k, q = tmp.getPointAtLength(at); placed.push([q.x, q.y, r]); at += r * 2 + 1.2; } };
+      while (at <= L) { const k = at / L, r = r0 + (r1 - r0) * k, q = tmp.getPointAtLength(at); placed.push([q.x, q.y, r]); at += r * 2 + 1.2; }
+      // little crystal leaves sprouting off the vine, alternating sides
+      for (let n = 1, f = .22; f < .8; f += .26, n++) { const a = tmp.getPointAtLength(L * f), b = tmp.getPointAtLength(Math.min(L, L * f + 2)), dx = b.x - a.x, dy = b.y - a.y, m = Math.hypot(dx, dy) || 1, s = n % 2 ? 1 : -1, nx = -dy / m * s, ny = dx / m * s, r = r0 * .8;
+        [[1.9, .55], [3.6, .7], [5.1, .5]].forEach(([t, w]) => placed.push([a.x + (nx * t + dx / m * t * .6) * r, a.y + (ny * t + dy / m * t * .6) * r, r * w])); } };
     V.forEach(([d, r0, r1]) => { vine(d, r0, r1); vine(d.replace(/(-?[\d.]+)([ ,]+-?[\d.]+)/g, (_, u, rest) => `${(1 - +u).toFixed(3)}${rest}`), r0, r1); });
     tmp.remove(); }
   const x0 = Math.min(...placed.map(p => p[0] - p[2])), x1 = Math.max(...placed.map(p => p[0] + p[2])), y0 = Math.min(...placed.map(p => p[1] - p[2])), y1 = Math.max(...placed.map(p => p[1] + p[2]));
@@ -695,7 +699,7 @@ function viewOnboarding() {
 <path d="M100 66 c4 -4 9 -3 10 1 c-4 4 -9 3 -10 -1z"/><circle cx="86" cy="10" r="2.4"/><circle cx="10" cy="20" r="2"/><circle cx="16" cy="74" r="2.2"/>
 <g transform="translate(46 12)"><circle r="3.2"/><circle cx="0" cy="-5" r="2.4"/><circle cx="4.8" cy="-1.5" r="2.4"/><circle cx="3" cy="4" r="2.4"/><circle cx="-3" cy="4" r="2.4"/><circle cx="-4.8" cy="-1.5" r="2.4"/></g></g></svg></span><h1 class="bw-script bw-hand" aria-label="Underskin"><svg class="uts-hand pearl" viewBox="0 0 600 220" aria-hidden="true">
           <defs><radialGradient id="crysRim" cx=".5" cy=".5" r=".5"><stop offset=".75" stop-color="#eef1f8"/><stop offset=".92" stop-color="#9aa3b8"/><stop offset="1" stop-color="#5d6478"/></radialGradient><radialGradient id="crysTab" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#fff"/><stop offset=".6" stop-color="#eef3fb"/><stop offset="1" stop-color="#bcc6da"/></radialGradient><symbol id="crys" viewBox="-10 -10 20 20"><circle r="10" fill="url(#crysRim)"/><path fill="#ffffff" d="M4.07 -1.68L8.50 -3.52L8.50 3.52L4.07 1.68Z"/><path fill="#c9d1e2" d="M4.07 1.68L8.50 3.52L3.52 8.50L1.68 4.07Z"/><path fill="#f7dbe8" d="M1.68 4.07L3.52 8.50L-3.52 8.50L-1.68 4.07Z"/><path fill="#8f9bb4" d="M-1.68 4.07L-3.52 8.50L-8.50 3.52L-4.07 1.68Z"/><path fill="#ffffff" d="M-4.07 1.68L-8.50 3.52L-8.50 -3.52L-4.07 -1.68Z"/><path fill="#cfe9e2" d="M-4.07 -1.68L-8.50 -3.52L-3.52 -8.50L-1.68 -4.07Z"/><path fill="#e9edf6" d="M-1.68 -4.07L-3.52 -8.50L3.52 -8.50L1.68 -4.07Z"/><path fill="#9ea8c0" d="M1.68 -4.07L3.52 -8.50L8.50 -3.52L4.07 -1.68Z"/><polygon points="4.07,-1.68 4.07,1.68 1.68,4.07 -1.68,4.07 -4.07,1.68 -4.07,-1.68 -1.68,-4.07 1.68,-4.07" fill="url(#crysTab)"/><path fill="#fff" d="M-2.6-5.6l1 2.2 2.2 1-2.2 1-1 2.2-1-2.2-2.2-1 2.2-1z" opacity=".95"/></symbol></defs>
-          <g class="h-g" data-word="Underskin"></g></svg></h1><span class="orn-r"><svg class="orn" viewBox="0 0 120 90" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <g class="h-g" data-word="Underskin" data-vines="1"></g></svg></h1><span class="orn-r"><svg class="orn" viewBox="0 0 120 90" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
 <path d="M118 60 C96 62 84 52 74 40 C64 28 50 22 38 28 C26 34 28 50 40 50 C50 50 50 38 42 38"/>
 <path d="M90 58 C86 72 72 80 58 76 C48 73 48 62 56 62 C62 62 62 70 56 70" />
 <path d="M74 40 C70 26 74 14 86 10 C94 8 98 16 92 20"/>
