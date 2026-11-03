@@ -867,7 +867,6 @@ function planForm(date) {
   if (ui.planOpen !== date) return `<button class="btn btn-outline-dark btn-block ev-add" data-action="planOpen" data-date="${date}">${icon('plus', 16)} Plan something on this day</button>`;
   const kind = ui.planKind || 'date';
   return `<div class="ev-form"><div class="ev-kinds">${EV_KINDS.map(([k, g, n]) => `<button class="${k === kind ? 'on' : ''}" data-action="planKind" data-v="${k}">${icon(g, 14)} ${n}</button>`).join('')}</div>
-    <input class="field" id="ev-name" placeholder="Name (optional), e.g. Anna’s birthday" maxlength="40">
     <div class="dp-actions"><button class="btn btn-outline-dark" data-action="planOpen" data-date="">Cancel</button><button class="btn btn-dark" data-action="planSave" data-date="${date}">${icon('check', 16)} Save</button></div></div>`;
 }
 function upcomingEvents() {
