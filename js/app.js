@@ -593,15 +593,7 @@ const BA_METRICS = [
   ['Tired days', l => (l.symptoms || []).includes('Fatigue'), 'down'],
 ];
 function promiseHTML(day) {
-    return `<section class="pm">
-      <div class="pm-h"><b>Our promise</b><span class="pm-day">Day <em>${day}</em>/90</span></div>
-      <p class="pm-p">Follow your plan for 90 days and check in every day. You get a clear plan for each day of your cycle, and your check-ins show what changed. In studies, women felt clearly fewer PMS symptoms within 2–3 cycles.</p>
-      <span class="pm-track" aria-hidden="true"><i style="width:${Math.max(2, day / 90 * 100)}%"></i></span>
-      <ol class="pm-steps">
-        <li><span>1</span><div><b>Check in every day</b><small>Ten seconds: how you feel, and your period.</small></div><button class="pm-go" data-action="nav" data-to="log">Log</button></li>
-        <li><span>2</span><div><b>Do today’s plan</b><small>Eat, move and rest for your phase.</small></div><button class="pm-go" data-action="nav" data-to="today">Today</button></li>
-      </ol></section>
-    ${sectionTitle('Our founder’s before & after')}
+    return `${sectionTitle('Our founder’s before & after')}
     <section class="card glass fba"><div class="ba-pair">
       <figure><img src="images/ba-founder-before.jpg" alt="The founder before, living against her cycle" loading="lazy"><figcaption><b>Before</b><small>Running at the same pace every day</small></figcaption></figure>
       <figure><img src="images/ba-founder-after.jpg" alt="The founder after, living with her hormones" loading="lazy"><figcaption><b>After</b><small>Living with my hormones</small></figcaption></figure></div>
@@ -617,11 +609,100 @@ function paletteHTML() {
     ${x ? `<div class="pal-sw" style="--pc:${x.c}"><div class="pal-swh"><i></i><b>${x.name}</b>${x.story ? '<span class="pal-story">Personal story</span>' : evBadge(x.ev)}</div><p>${x.line}</p><small>${x.src}</small></div>`
       : '<p class="pal-hint">Tap a shade to swatch it.</p>'}</section>`;
 }
+// ---------- your plan: the 90-day hero, before & after, the science we build on, your hormone panel ----------
+// The hormone axis, tap a part to read what it does.
+const AXIS = [
+  { k: 'brain', n: 'Hypothalamus', t: 'The conductor', ev: 'strong', d: 'Deep in your brain it sends GnRH in pulses. Stress, too little food and short sleep slow these pulses, which is why a hard month can shift your period.' },
+  { k: 'pit', n: 'Pituitary', t: 'The messenger', ev: 'strong', d: 'Answers with FSH, which ripens an egg follicle, and a surge of LH that releases the egg around the middle of your cycle.' },
+  { k: 'ova', n: 'Ovaries', t: 'The makers', ev: 'strong', d: 'Make estrogen in the first half, progesterone after ovulation and a little testosterone. They report back to the brain, which sets the next pulse.' },
+  { k: 'body', n: 'Your body', t: 'Where you feel it', ev: 'some', d: 'Skin, mood, sleep, appetite and energy carry receptors for these hormones, so they move with the same rhythm. That is the rhythm your plan follows.' },
+];
+const PLAN_STUDIES = [
+  { n: '29.3 days', c: 'var(--sci-1)', i: 'calendar', t: 'is the average cycle across 600,000 cycles. Only 13% were exactly 28 days, so your plan follows your own length.', cite: 'Bull et al. 2019 · npj Digital Medicine', ev: 'strong' },
+  { n: '48%', c: 'var(--sci-2)', i: 'drop', t: 'fewer PMS symptoms with 1,200 mg calcium a day, against 30% on placebo, within three cycles.', cite: 'Thys-Jacobs et al. 1998 · Am J Obstet Gynecol', ev: 'strong' },
+  { n: '39 °C', c: 'var(--sci-3)', i: 'thermo', t: 'of steady warmth on the belly eased period pain as well as ibuprofen. It is why your period days are warm days.', cite: 'Akin et al. 2001 · Obstetrics & Gynecology', ev: 'some' },
+];
+const BA_LIST = {
+  before: ['The same pace every day', 'PMS takes you by surprise', 'Tired by 3 pm', 'Breakouts and bloating', 'Guilt on slow days'],
+  after: ['A plan for every phase', 'You know what is coming', 'Steadier energy', 'Calmer skin, more glow', 'Rest without guilt'],
+};
+// A tiny pearl with a leaf on her head: sad under a rain cloud, glowing in the sun.
+function pearlPal(happy) {
+  const id = happy ? 'pp-h' : 'pp-s';
+  return `<svg class="pal-svg ${happy ? 'happy' : 'sad'}" viewBox="0 0 120 120" aria-hidden="true"><defs>
+      <radialGradient id="${id}" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#fff"/><stop offset=".55" stop-color="${happy ? '#fbe9ef' : '#e9e2ea'}"/><stop offset="1" stop-color="${happy ? '#efc3d2' : '#c9bccb'}"/></radialGradient></defs>
+    <ellipse cx="60" cy="110" rx="28" ry="5" fill="rgba(40,30,40,.14)"/>
+    <path class="pal-leaf" d="M60 34 C 56 24, 58 16, 66 12 C 70 20, 68 28, 60 34 Z" fill="#8fae5a"/><path d="M60 34 C 61 27, 63 21, 66 13" stroke="#5f7d36" stroke-width="1.2" fill="none"/>
+    <circle cx="60" cy="72" r="38" fill="url(#${id})" stroke="rgba(255,255,255,.9)" stroke-width="1.5"/>
+    <ellipse cx="44" cy="80" rx="6" ry="3.6" fill="#f0a3b8" opacity="${happy ? .75 : .35}"/><ellipse cx="76" cy="80" rx="6" ry="3.6" fill="#f0a3b8" opacity="${happy ? .75 : .35}"/>
+    ${happy ? `<path d="M42 70 q6 -7 12 0 M66 70 q6 -7 12 0" stroke="#304023" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M50 82 q10 11 20 0 Z" fill="#c4566f"/>`
+      : `<path d="M43 64 l9 3 M77 64 l-9 3" stroke="#304023" stroke-width="2" stroke-linecap="round"/><circle cx="48" cy="72" r="2.6" fill="#304023"/><circle cx="72" cy="72" r="2.6" fill="#304023"/><path d="M52 88 q8 -6 16 0" stroke="#304023" stroke-width="2.2" stroke-linecap="round" fill="none"/><path class="pal-tear" d="M47 77 q-2 4 0 6 q2 -2 0 -6 Z" fill="#9cc3e6"/>`}
+  </svg>`;
+}
+function baCompare() {
+  const cloud = `<svg class="bav-cloud" viewBox="0 0 120 70" aria-hidden="true"><path d="M30 52 C 14 52, 12 32, 28 30 C 30 14, 54 10, 60 24 C 70 12, 94 16, 92 34 C 106 34, 108 52, 92 52 Z" fill="#a99bb0"/><path class="rd r1" d="M40 58 q-2 4 0 6 q2 -2 0 -6Z"/><path class="rd r2" d="M62 60 q-2 4 0 6 q2 -2 0 -6Z"/><path class="rd r3" d="M82 57 q-2 4 0 6 q2 -2 0 -6Z"/></svg>`;
+  const spark = n => `<svg class="bav-sp s${n}" viewBox="-10 -10 20 20" aria-hidden="true"><path d="M0-10C.5-1.4 1.4-.5 10 0 1.4.5.5 1.4 0 10-.5 1.4-1.4.5-10 0-1.4-.5-.5-1.4 0-10Z"/></svg>`;
+  return `<section class="bav" aria-label="Before and after">
+    <div class="bav-c bav-b">${cloud}<h3>Before</h3><ul>${BA_LIST.before.map(t => `<li>${icon('close', 12, 2.2)}<span>${t}</span></li>`).join('')}</ul><span class="bav-pal">${pearlPal(false)}</span></div>
+    <div class="bav-c bav-a"><span class="bav-sun" aria-hidden="true"></span><h3>After</h3><ul>${BA_LIST.after.map(t => `<li>${icon('check', 13, 2.4)}<span>${t}</span></li>`).join('')}</ul>${spark(1)}${spark(2)}${spark(3)}<span class="bav-pal">${pearlPal(true)}</span></div>
+  </section>`;
+}
+function axisHTML() {
+  const on = ui.axis || 'brain', x = AXIS.find(a => a.k === on);
+  return `<section class="card glass sci-axis" data-on="${on}">
+    <div class="ax-stage">
+      <svg class="ax-svg" viewBox="0 0 340 300" aria-hidden="true"><defs>
+        ${[['brain', '#c9b6f0'], ['pit', '#f1c96a'], ['ova', '#ef9db4'], ['body', '#9cc27a']].map(([k, c]) => `<radialGradient id="ax-${k}"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="${c}"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></radialGradient>`).join('')}
+        <marker id="ax-ar" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="rgba(48,64,35,.45)"/></marker></defs>
+        <g class="ax-body"><ellipse cx="170" cy="50" rx="25" ry="29"/><path d="M156 77 C 155 90, 150 96, 134 100 C 110 106, 98 120, 96 146 L 94 196 C 94 226, 106 252, 122 296 M184 77 C 185 90, 190 96, 206 100 C 230 106, 242 120, 244 146 L 246 196 C 246 226, 234 252, 218 296"/></g>
+        <path class="ax-flow f1" d="M170 58 L170 70" marker-end="url(#ax-ar)"/>
+        <path class="ax-flow f2" d="M162 80 C 120 120, 122 190, 146 226" marker-end="url(#ax-ar)"/>
+        <path class="ax-flow f3 back" d="M196 230 C 226 186, 222 110, 186 60" marker-end="url(#ax-ar)"/>
+        <path class="ax-flow f4" d="M170 226 C 170 200, 170 184, 170 168" marker-end="url(#ax-ar)"/>
+        <g class="ax-n n-brain"><circle cx="170" cy="48" r="26" fill="url(#ax-brain)"/></g>
+        <g class="ax-n n-pit"><circle cx="170" cy="76" r="14" fill="url(#ax-pit)"/></g>
+        <g class="ax-n n-ova"><circle cx="148" cy="236" r="18" fill="url(#ax-ova)"/><circle cx="192" cy="236" r="18" fill="url(#ax-ova)"/></g>
+        <g class="ax-n n-body"><circle cx="170" cy="150" r="30" fill="url(#ax-body)"/></g>
+      </svg>
+      ${AXIS.map(a => `<button class="ax-chip c-${a.k} ${a.k === on ? 'on' : ''}" data-action="axis" data-k="${a.k}" aria-pressed="${a.k === on}"><b>${a.n}</b><small>${a.t}</small></button>`).join('')}
+      <span class="ax-fb">feedback</span>
+    </div>
+    <div class="ax-detail"><div class="ax-dh"><b>${x.n}</b>${evBadge(x.ev)}</div><p>${x.d}</p></div>
+  </section>`;
+}
+function scienceHTML() {
+  return `<section class="sci">
+    <h2 class="sci-h">Built on <span>hormone science</span></h2>
+    <p class="sci-sub">Four parts talk to each other every day of your cycle. Tap one.</p>
+    ${axisHTML()}
+    <div class="sci-stats">${PLAN_STUDIES.map(x => `<div class="sci-s"><span class="sci-ic">${icon(x.i, 18)}</span><div class="sci-t"><p><b style="color:${x.c}">${x.n}</b> ${x.t}</p><small>${x.cite} ${evBadge(x.ev)}</small></div></div>`).join('')}</div>
+  </section>`;
+}
+function hormonePanelHTML() {
+  if (!M.info) return '';
+  const rows = [['#ef8fb1', 'Estrogen', 'Rises before ovulation: energy, confidence and glow.'], ['#9cc27a', 'Progesterone', 'Leads after ovulation: calm, warmth and more need for rest.'], ['#e0645c', 'Testosterone', 'A small peak mid-cycle: drive and desire.']];
+  return `${sectionTitle('Your hormone panel', ['Each hormone', 'hormones'])}
+    <section class="card glass chart-card hp">${cycleChart(M.info, { id: 'plan', compact: true })}
+      <div class="hp-read"><p class="hp-k">How to read it</p>${rows.map(([c, n, t]) => `<div class="hp-r"><i style="background:${c}"></i><div><b>${n}</b><span>${t}</span></div></div>`).join('')}
+        <p class="hp-now">The white dot is you today, day ${M.info.cd}. Your plan changes as these lines cross.</p></div></section>`;
+}
 function viewRoadmap() {
   const p = state.profile;
   if (!p.planStart) { p.planStart = todayISO(); save(true); }
-  const day = Math.max(1, Math.min(90, planDay()));
-  return `${topbar('Your plan', { back: true })}<div class="pad">${promiseHTML(day)}${sectionTitle('Your 90 days')}${roadmapHTML(planKeys(p), '', day)}
+  const day = Math.max(1, Math.min(90, planDay())), m = Math.min(2, Math.floor((day - 1) / 30));
+  return `${topbar('Your plan', { back: true })}<div class="pad">
+    <section class="ph">
+      <div class="ph-ring" role="img" aria-label="Day ${day} of 90"><svg viewBox="0 0 120 120"><circle class="t" cx="60" cy="60" r="52"/><circle class="p" cx="60" cy="60" r="52" pathLength="100" stroke-dasharray="${Math.max(1.5, day / 90 * 100).toFixed(1)} 100"/></svg>
+        <div><b>${day}</b><small>of 90 days</small></div></div>
+      <h1 class="page-h">Your <span>90 days</span></h1>
+      <p class="ph-p">Month ${m + 1} · ${PLAN_METHOD[m].k}. Check in every day and follow today’s plan: your check-ins show what changed.</p>
+      <div class="ph-cta"><button class="ph-b w" data-action="nav" data-to="log">${icon('check', 15)} Check in</button><button class="ph-b" data-action="nav" data-to="today">Today’s plan ${icon('chevR', 14)}</button></div>
+    </section>
+    ${baCompare()}
+    ${scienceHTML()}
+    ${hormonePanelHTML()}
+    ${promiseHTML(day)}
+    ${sectionTitle('Your 90 days')}${roadmapHTML(planKeys(p), '', day)}
     <p class="center"><button class="link" data-action="nav" data-to="profile">Change goals or birth control in Profile</button></p>
     <p class="fine center">Underskin is a wellness app, not medical advice.</p></div>`;
 }
@@ -705,9 +786,29 @@ function pearlWord(g, word) {
   g.dataset.box = `${x0} ${y0} ${x1 - x0} ${y1 - y0}`; // exact crystal bounds, so the word sits dead centre
   g.innerHTML = placed.sort((a, b) => a[0] - b[0]).map(([i, j, r]) => `<use class="p-bead" href="#crys" style="--d:${(i / W * 1.8).toFixed(2)}s" x="${(i - r).toFixed(1)}" y="${(j - r).toFixed(1)}" width="${(r * 2).toFixed(1)}" height="${(r * 2).toFixed(1)}" transform="rotate(${Math.round(rnd() * 45)} ${i} ${j})"/>`).join('') + big.map(star).join('');
 }
+// One small fact under each onboarding question: why we ask and how it shapes her plan.
+const ONB_STATS = {
+  1: { n: '13%', t: 'of cycles are exactly 28 days. Everything in Underskin starts from you, not an average.', c: 'Bull et al. 2019, 600,000 cycles', ev: 'strong' },
+  2: { n: '0', t: 'photos leave your phone unless you switch on a private backup. No ads, no trackers.', c: 'Our privacy promise', ev: '' },
+  3: { n: '5', t: 'elements link your birth year to a TCM body type, so your teas and rituals fit you.', c: 'Traditional Chinese Medicine', ev: 'tcm' },
+  4: { n: '12.4 days', t: 'is the average phase after ovulation. From your last period we map all four phases today.', c: 'Bull et al. 2019 · npj Digital Medicine', ev: 'strong' },
+  5: { n: '29.3 days', t: 'is the real average cycle. Not sure of yours? We learn it from your next period.', c: 'Bull et al. 2019 · npj Digital Medicine', ev: 'strong' },
+  6: { n: '83%', t: 'got pregnant within a year of stopping birth control: your own cycle comes back. We guide you through it.', c: 'Girum & Wasie 2018 · 22 studies', ev: 'strong' },
+  7: { n: '48%', t: 'fewer PMS symptoms with enough calcium. Small, phase-timed habits like this make your plan.', c: 'Thys-Jacobs et al. 1998', ev: 'strong' },
+  8: { n: '39 °C', t: 'of steady warmth eased period pain as well as ibuprofen. Your goals pick which of these you get.', c: 'Akin et al. 2001 · Obstet Gynecol', ev: 'some' },
+};
+function onbPromise() {
+  const no = [['Subscriptions', 'One payment, yours for good'], ['Ads', 'Never, not even small ones'], ['Hidden fees', 'The price you see is all'], ['Selling your data', 'It stays yours, always'], ['Popups', 'No nagging to upgrade']];
+  return `<div class="op">
+    <h2 class="onb-title">We hate <span>subscriptions</span></h2>
+    <p class="muted">We’re a small team and this is our passion project. Try everything free for 3 days. If you love it, unlock the full app with one payment.</p>
+    <div class="op-steps"><div><b>Today</b><span>Full app, free</span></div><i></i><div><b>Day 3</b><span>Decide, no charge before</span></div><i></i><div><b>Forever</b><span>One payment</span></div></div>
+    <ul class="op-no">${no.map(([a, b]) => `<li><span class="op-x">${icon('close', 12, 2.4)}</span><div><b>No ${a.toLowerCase()}</b><small>${b}</small></div></li>`).join('')}</ul>
+  </div>`;
+}
 function viewOnboarding() {
   const s = ui.onbStep, o = ui.onb;
-  const dots = `<div class="onb-dots">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => `<i class="${i < s ? 'on' : i === s ? 'now' : ''}"></i>`).join('')}</div>`;
+  const dots = `<div class="onb-dots">${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => `<i class="${i < s ? 'on' : i === s ? 'now' : ''}"></i>`).join('')}</div>`;
   if (s === 0) {
     return `<div class="onb onb-welcome full dark beyond">
       <canvas class="welcome3d"></canvas>
@@ -782,15 +883,18 @@ function viewOnboarding() {
         <p class="muted">Pick as many as you like. We build your plan around them.</p>
         ${focusTiles(o.focus || [], 'onbFocus')}`,
     9: roadmapHTML(planKeys(o), o.name.trim()),
+    10: onbPromise(),
   }[s];
+  const st = ONB_STATS[s];
+  const statHTML = st ? `<aside class="onb-stat" aria-label="Why we ask"><b>${st.n}</b><p>${st.t}</p><small>${st.c} ${st.ev ? evBadge(st.ev) : ""}</small></aside>` : '';
   const flash = ui.flashOut ? '<div class="flash-out"></div>' : ''; ui.flashOut = false;
   const anim = ui.onbAnim || ''; ui.onbAnim = '';
   return `<div class="onb no-fig step-${s} ${anim}">${flash}
     <div class="onb-top"><button class="icon-btn dark" data-action="onbBack">${icon('chevL', 22)}</button>${dots}<span style="width:40px"></span></div>
-    <div class="onb-body">${body}</div>
+    <div class="onb-body">${body}${statHTML}</div>
     <div class="onb-foot">
-      <button class="pearl-btn wide" data-action="onbNext" ${s === 1 && !o.name.trim() ? 'disabled' : ''}><span>${s === 9 ? 'Start my plan' : s === 8 ? 'See my plan' : 'Continue'}</span></button>
-      ${s === 9 ? '<p class="fine rm2-note">Underskin is a wellness app, not medical advice.</p>' : ''}
+      <button class="pearl-btn wide" data-action="onbNext" ${s === 1 && !o.name.trim() ? 'disabled' : ''}><span>${s === 10 ? 'Start my 3 free days' : s === 8 ? 'See my plan' : 'Continue'}</span></button>
+      ${s === 10 ? '<p class="fine rm2-note">Underskin is a wellness app, not medical advice.</p>' : ''}
     </div>
   </div>`;
 }
@@ -4445,7 +4549,7 @@ const actions = {
   onbUnsure: () => { ui.onb.unsure = !ui.onb.unsure; if (ui.onb.unsure) ui.onb.cycleLength = 28; render(); },
   onbNext: () => {
     if (ui.onbStep === 6 && !ui.onb.bc) { toast('Pick one, so we can tailor your plan'); return; }
-    if (ui.onbStep < 9) { ui.onbStep += ui.onbStep === 4 && ui.onb.noPeriod ? 2 : 1; ui.onbAnim = 'fwd'; render(); window.scrollTo(0, 0); return; }
+    if (ui.onbStep < 10) { ui.onbStep += ui.onbStep === 4 && ui.onb.noPeriod ? 2 : 1; ui.onbAnim = 'fwd'; render(); window.scrollTo(0, 0); return; }
     if (!o_ok()) { toast('Pick the day your last period started'); ui.onbStep = 4; render(); return; }
     const o = ui.onb, logs = {}, s = C.parseISO(o.last);
     if (!o.noPeriod) for (let i = 0; i < o.periodLength; i++) { const d = C.addDays(s, i); if (d <= new Date()) logs[C.iso(d)] = { flow: i === 0 || i === 1 ? 'medium' : 'light' }; }
@@ -4463,6 +4567,8 @@ const actions = {
   onbBc: d => { ui.onb.bc = d.v; if (!hormonalBC(d.v)) ui.onb.bcPlan = null; render(); },
   onbBcPlan: d => { ui.onb.bcPlan = d.v; render(); },
   mealTab: d => { ui.mealTab = d.v; render(); },
+  axis: d => { ui.axis = d.k; const box = document.querySelector('.sci-axis'); if (!box) return render();
+    const t = document.createElement('div'); t.innerHTML = axisHTML(); box.replaceWith(t.firstElementChild); },
   rmMonth: (d, el) => { // swap in place so the page doesn't jump to the top
     ui.rmM = +d.v; const root = el.closest('.rm'); if (!root) return render();
     root.querySelectorAll('.rm2-tabs button').forEach((b, i) => b.classList.toggle('on', i === +d.v));
