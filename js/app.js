@@ -659,7 +659,7 @@ function viewToday() {
   const { stats, today } = M;
   const name = esc(state.profile.name || 'you');
   if (!M.info) {
-    return `<div class="pad home"><div class="home-top solo"><h1 class="hello">${greeting()},<br><b>${name}</b></h1><button class="avatar ${state.profile.photo ? 'has-photo' : ''}" data-action="nav" data-to="profile">${avatarInner(state.profile)}</button></div>
+    return `<div class="pad home"><div class="home-top solo"><h1 class="hello">${greeting()},<br><b>${name}</b></h1><button class="avatar ${state.profile.photo ? 'has-photo' : ''}" data-action="nav" data-to="profile" aria-label="Your profile">${avatarInner(state.profile)}</button></div>
       ${state.profile.noPeriod ? `<div class="card card-light empty"><h3>When your period comes, tap here</h3><p>We map your whole cycle from that day. Until then, your plan below helps it come back.</p>
       <button class="btn btn-dark" data-action="periodStart">My period started today</button></div>`
       : `<div class="card card-light empty"><h3>Log your period to begin</h3><p>Tap the day your last period started and we'll map your whole cycle.</p>
@@ -695,7 +695,7 @@ function viewToday() {
   const summary = ph.hormones.split('. ')[0] + '.';
 
   const head = `<div class="home-top"><div><div class="eyebrow">${fmt(today, { weekday: 'long', month: 'long', day: 'numeric' })}</div><h1 class="hello sm">${greeting()}, <b>${name}</b></h1></div>
-      <button class="avatar ${state.profile.photo ? 'has-photo' : ''}" data-action="nav" data-to="profile">${avatarInner(state.profile)}</button></div>`;
+      <button class="avatar ${state.profile.photo ? 'has-photo' : ''}" data-action="nav" data-to="profile" aria-label="Your profile">${avatarInner(state.profile)}</button></div>`;
   return `<div class="pad home">
     ${todayHub(info, energy, head)}
 
@@ -997,9 +997,9 @@ function viewLog() {
   const total = Object.values(count).reduce((a, b) => a + b, 0);
   return `${topbar('Check-in')}
   <div class="pad lg">
-    <div class="log-date"><button class="icon-btn" data-action="logMove" data-d="-1">${icon('chevL', 20)}</button>
+    <div class="log-date"><button class="icon-btn" data-action="logMove" data-d="-1" aria-label="Previous day">${icon('chevL', 20)}</button>
       <div><div class="eyebrow">${isToday ? 'Today' : fmt(d, { weekday: 'long' })}${di ? ` · Day ${di.cd} · ${PHASES[di.phase].name}` : ''}</div><h2>${fmt(d, { month: 'long', day: 'numeric' })}</h2></div>
-      <button class="icon-btn" data-action="logMove" data-d="1" ${isToday ? 'disabled' : ''}>${icon('chevR', 20)}</button></div>
+      <button class="icon-btn" data-action="logMove" data-d="1" aria-label="Next day" ${isToday ? 'disabled' : ''}>${icon('chevR', 20)}</button></div>
     ${LOG_SECS.map(([id, e, t], i) => `<section class="lg-sec ${open[id] ? 'open' : ''}" style="animation-delay:${i * 40}ms">
       <button class="lg-head" data-action="logSec" data-s="${id}" aria-expanded="${!!open[id]}"><span class="lg-ic">${e}</span><b>${t}</b>${count[id] ? `<small>${count[id]}</small>` : ''}<span class="lg-chev">${icon('chevR', 16)}</span></button>
       ${open[id] ? `<div class="lg-in">${inner[id]}</div>` : ''}</section>`).join('')}
@@ -1813,7 +1813,7 @@ function reminderBanners() {
 }
 function remindersSection() {
   const r = rem(), perm = 'Notification' in window ? Notification.permission : 'unsupported';
-  const tg = (k, label, sub) => `<div class="stepper-row"><span>${label}<small>${sub}</small></span><button class="toggle ${r[k] ? 'on' : ''}" data-action="remToggle" data-k="${k}"><i></i></button></div>`;
+  const tg = (k, label, sub) => `<div class="stepper-row"><span>${label}<small>${sub}</small></span><button class="toggle ${r[k] ? 'on' : ''}" data-action="remToggle" data-k="${k}" role="switch" aria-checked="${!!r[k]}" aria-label="${label}"><i></i></button></div>`;
   const hr = h => `${((h + 11) % 12) + 1}${h < 12 ? 'am' : 'pm'}`;
   return `${sectionTitle('Reminders')}
     <section class="card glass">
@@ -2938,7 +2938,7 @@ function viewRhythm() {
     <section class="card glass rh-moonc"><div>${moonIcon(moon, 40)}</div><div><b>${moon.name}</b><p>${moonLine()}</p></div></section>
     ${sectionTitle('Your week')}<section class="card glass"><div class="rh-week">${week}</div></section>
     ${sectionTitle('Gentle reminders')}
-    <section class="card glass"><div class="stepper-row"><span>Follow the sun<small>Morning light, midday sun, sunset wind-down, bedtime</small></span><button class="toggle ${r.rhythm ? 'on' : ''}" data-action="remToggle" data-k="rhythm"><i></i></button></div>
+    <section class="card glass"><div class="stepper-row"><span>Follow the sun<small>Morning light, midday sun, sunset wind-down, bedtime</small></span><button class="toggle ${r.rhythm ? 'on' : ''}" data-action="remToggle" data-k="rhythm" role="switch" aria-checked="${!!r.rhythm}" aria-label="Follow the sun"><i></i></button></div>
       ${'Notification' in window && Notification.permission === 'default' ? `<button class="btn btn-light btn-block" data-action="remPermission">${icon('spark', 16)} Turn on notifications</button>` : ''}
       <button class="list-btn" data-action="useGeo">${icon('sun', 18)} ${state.profile.geo ? 'Location set · update' : 'Use my exact location for sun times'}</button></section>
     <article class="rh-article">
@@ -3962,7 +3962,7 @@ function viewShare() {
     </section>
     <section class="card glass">
       <div class="stepper-row"><span>Share period dates<small>Next period countdown</small></span><span class="toggle on locked"><i></i></span></div>
-      <div class="stepper-row"><span>Share fertile window<small>Off by default</small></span><button class="toggle ${ui.shareFertile ? 'on' : ''}" data-action="shareFertile"><i></i></button></div>
+      <div class="stepper-row"><span>Share fertile window<small>Off by default</small></span><button class="toggle ${ui.shareFertile ? 'on' : ''}" data-action="shareFertile" role="switch" aria-checked="${!!ui.shareFertile}" aria-label="Share fertile window"><i></i></button></div>
       <div class="stepper-row"><span>Symptoms, moods & notes<small>Always private</small></span><span class="toggle locked"><i></i></span></div>
     </section>
     <button class="btn btn-light btn-block" data-action="shareSend">${icon('heart', 18)} Share link with ${aud === 'partner' ? 'my partner' : 'friends'}</button>
