@@ -241,7 +241,19 @@ const FOCUS_READS = {
 };
 // ---------- the letter: a swipeable read on Today, a new one on top every time she opens the app ----------
 const PIC = { hormone: hormonePhoto, care: carePhoto, food: foodPhoto };
-function readPic(x, w = 900) { return x.pic ? PIC[x.pic[0]](x.pic[1], w) : ARTICLE_PHOTO[x.id] ? hormonePhoto(ARTICLE_PHOTO[x.id], w) : ''; }
+// Topic-matched Unsplash photos for every read (free licence), so the picture says what it's about.
+const READ_PHOTO = { 'letter-01': '1581714161666-dade083654ae', 'letter-02': '1564020435666-f67ed5319a32', 'letter-03': '1590779032260-5623d6774f7a',
+  'letter-04': '1552916016-9cbd0be0f03e', 'letter-05': '1613578519724-22fdb5d06388', 'letter-06': '1626711245920-92866962c63a', 'letter-07': '1692029861107-991b13db6ad0',
+  'letter-08': '1634463278803-f9f71890e67d', 'letter-09': '1506784983877-45594efa4cbe', 'letter-10': '1603572298498-848f70a46d29', 'letter-11': '1779338325364-0af4b2290b66',
+  'letter-12': '1640331703778-9aac4d988e26', 'four-phases': '1787822976738-d44fa2a85e4f', estrogen: '1544507888-56d73eb6046e', 'progesterone-pms': '1614088685112-0a760b71a3c8',
+  'yin-yang': '1745864709009-457569a2aed1', iron: '1588168333986-5078d3ae3976', 'seed-cycling': '1651241587503-a874db54a1a7', brain: '1491975474562-1f4e30bc9468',
+  sleep: '1522587750645-7e0e798b2b59', 'ovulation-signs': '1594790628624-9e563bea851d' };
+function readPic(x, w = 900) {
+  const u = READ_PHOTO[x.id]; if (u) return `https://images.unsplash.com/photo-${u}?w=${w}&h=${Math.round(w * 1.3)}&fit=crop&auto=format&q=70`;
+  return x.pic ? PIC[x.pic[0]](x.pic[1], w) : ARTICLE_PHOTO[x.id] ? hormonePhoto(ARTICLE_PHOTO[x.id], w) : '';
+}
+// What a read is about, for its chip: the letter's topic, or the phase, or Basics.
+const readTopic = x => x.tag || (x.phase ? PHASES[x.phase].name : 'Basics');
 const READS = () => [...LETTERS, ...ARTICLES];
 const OPENS = (() => { let n = 0; try { n = +(localStorage.getItem('uts.opens') || 0) + 1; localStorage.setItem('uts.opens', n); } catch { /* storage off */ } return n; })();
 let opensNow = OPENS;
@@ -3806,7 +3818,7 @@ function viewLearn() {
   const m = new Date().getMonth() + 1, read = state.read || {};
   const letters = LETTERS.filter(l => l.month <= m).reverse(), soon = LETTERS.find(l => l.month === m % 12 + 1);
   const card = (x, big) => { const u = readPic(x, big ? 900 : 500); return `<button class="lt ${big ? '' : 'sm'}" data-action="nav" data-to="article/${x.id}">${u ? `<img src="${u}" alt="" loading="lazy">` : glowArt('wave', 2)}<span class="lt-shade"></span>
-    <span class="lt-tag">${x.month ? MONTHS[x.month - 1] : x.phase ? PHASES[x.phase].name : 'Basics'}${!read[x.id] ? '<i>new</i>' : ''}</span><span class="lt-b"><b>${x.title}</b>${big && x.lead ? `<small>${x.lead}</small>` : ''}<span class="lt-cta">${icon('book', 14)} ${x.mins} min</span></span></button>`; };
+    <span class="lt-tag">${readTopic(x)}${x.month ? ` · ${MONTHS[x.month - 1].slice(0, 3)}` : ''}${!read[x.id] ? '<i>new</i>' : ''}</span><span class="lt-b"><b>${x.title}</b>${x.lead ? `<small>${x.lead}</small>` : ''}<span class="lt-cta">${icon('book', 14)} ${x.mins} min</span></span></button>`; };
   return `${topbar('Read', { back: true })}
   <div class="pad">
     <h1 class="page-h">The Underskin <span>letter</span></h1>

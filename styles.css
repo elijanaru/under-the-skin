@@ -3988,3 +3988,8 @@ button.tip:active { transform: scale(.98); background: var(--glass-2); }
 button.link, a.link, .cd-link, .toggle { position: relative; }
 button.link::after, a.link::after, .cd-link::after { content: ''; position: absolute; inset: -13px -6px; }
 .toggle::after { content: ''; position: absolute; inset: -8px -4px; }
+/* Read tiles: topic chip + a two-line "what it's about" on the small tiles */
+.lt.sm { height: 270px; }
+.lt.sm .lt-b { gap: 6px; }
+.lt.sm .lt-b small { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 11.5px; line-height: 1.35; color: rgba(255,255,255,.86); }
+.lt.sm .lt-shade { background: linear-gradient(180deg, rgba(5,6,5,.38) 0%, transparent 24%, transparent 34%, rgba(5,6,5,.9) 100%); }
