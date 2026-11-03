@@ -846,7 +846,7 @@ function viewOnboarding() {
         <input class="field big-in" data-input="onb.name" placeholder="Your first name" value="${esc(o.name)}" autocomplete="given-name" maxlength="24">
         <p class="onb-greet ${o.name.trim() ? 'on' : ''}">Nice to meet you, <b>${esc(o.name.trim())}</b> ✦</p>`,
     2: `<h2 class="onb-title">Add a <span>profile picture</span></h2>
-        <p class="muted">So you — and your partner, if you share — recognise your rhythm at a glance.</p>
+        <p class="muted">So you and your partner, if you share, recognise your rhythm at a glance.</p>
         <label class="photo-pick"><span class="pp-frame">${o.photo ? `<img src="${o.photo}" alt="">` : AVATAR_SVG}</span><span class="pp-add">${icon(o.photo ? 'check' : 'plus', 18, 2.4)}</span>
           <input type="file" accept="image/*" data-photo="onb" hidden></label>
         ${o.photo ? '' : '<button class="link" data-action="onbNext" style="align-self:center">Skip for now</button>'}`,
