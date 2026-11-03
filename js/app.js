@@ -3373,20 +3373,20 @@ const HEART = c => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s
 // beating red heart with a pulse ring and two white hearts orbiting
 const loveArt = (sz = 'md') => `<span class="la la-${sz}"><i class="la-ring"></i><i class="la-ring r2"></i><span class="la-main">${HEART('#ff2d4b')}</span><span class="la-o o1">${HEART('#fff')}</span><span class="la-o o2">${HEART('#fff')}</span></span>`;
 const LOVE = [
-  { k: 'hug', g: '🤗', t: 'Big hug', s: 'sent you a big warm hug' },
-  { k: 'kiss', g: '💋', t: 'Kisses', s: 'is sending you kisses' },
-  { k: 'tea', g: '🍵', t: 'Tea’s coming', s: 'is making you a cup of tea' },
-  { k: 'think', g: '💭', t: 'Thinking of you', s: 'is thinking of you' },
-  { k: 'strong', g: '💪', t: 'You’ve got this', s: 'says: you’ve got this' },
-  { k: 'date', g: '🌙', t: 'Date night?', s: 'wants a date night with you' },
-  { k: 'choc', g: '🍫', t: 'Chocolate run', s: 'is bringing you chocolate' },
-  { k: 'love', g: '❤️', t: 'Love you', s: 'loves you' },
+  { k: 'hug', ic: 'users', g: '🤗', t: 'Big hug', s: 'sent you a big warm hug' },
+  { k: 'kiss', ic: 'lips', g: '💋', t: 'Kisses', s: 'is sending you kisses' },
+  { k: 'tea', ic: 'cup', g: '🍵', t: 'Tea’s coming', s: 'is making you a cup of tea' },
+  { k: 'think', ic: 'mind', g: '💭', t: 'Thinking of you', s: 'is thinking of you' },
+  { k: 'strong', ic: 'bolt', g: '💪', t: 'You’ve got this', s: 'says: you’ve got this' },
+  { k: 'date', ic: 'moon', g: '🌙', t: 'Date night?', s: 'wants a date night with you' },
+  { k: 'choc', ic: 'bar', g: '🍫', t: 'Chocolate run', s: 'is bringing you chocolate' },
+  { k: 'love', ic: 'heart', g: '❤️', t: 'Love you', s: 'loves you' },
 ];
 const CARE = [
-  { k: 'eat', g: '🍽️', t: 'Time to eat', s: 'says: time to eat something nourishing' },
-  { k: 'water', g: '💧', t: 'Drink water', s: 'reminds you to drink some water' },
-  { k: 'rest', g: '🌙', t: 'Go to bed', s: 'says: time to rest, go to bed' },
-  { k: 'walk', g: '🌿', t: 'Fresh air', s: 'says: take a little walk outside' },
+  { k: 'eat', ic: 'bowl', g: '🍽️', t: 'Time to eat', s: 'says: time to eat something nourishing' },
+  { k: 'water', ic: 'drop', g: '💧', t: 'Drink water', s: 'reminds you to drink some water' },
+  { k: 'rest', ic: 'moon', g: '🌙', t: 'Go to bed', s: 'says: time to rest, go to bed' },
+  { k: 'walk', ic: 'leaf', g: '🌿', t: 'Fresh air', s: 'says: take a little walk outside' },
 ];
 const SIGNALS = [...LOVE, ...CARE];
 // ---- live signals between phones (free ntfy.sh relay; each app has a private inbox code) ----
@@ -3438,9 +3438,9 @@ function loveSheet() {
   const sent = (state.loveSent || []).filter(x => x.to === p.id).length;
   return `<div class="love-sheet" data-action="loveClose"><div class="ls-card" data-action="noop">
     <div class="ls-grip"></div><div class="ls-head">${loveArt('lg')}<div><h3>Send love to ${esc(p.n)}</h3><p class="muted sm">${sent ? `You’ve sent ${sent} ${sent === 1 ? 'heart' : 'hearts'} so far` : (p.i ? 'Tap one — it lands in her app instantly' : 'Tap one — it opens your messages')}</p></div></div>
-    <div class="ls-grid">${LOVE.map(l => `<button class="ls-b" data-action="sendLove" data-k="${l.k}"><span>${l.g}</span><small>${l.t}</small></button>`).join('')}</div>
+    <div class="ls-grid">${LOVE.map(l => `<button class="ls-b" data-action="sendLove" data-k="${l.k}"><span>${icon(l.ic, 24)}</span><small>${l.t}</small></button>`).join('')}</div>
     <div class="ls-sub">Care nudges</div>
-    <div class="ls-grid">${CARE.map(l => `<button class="ls-b care" data-action="sendLove" data-k="${l.k}"><span>${l.g}</span><small>${l.t}</small></button>`).join('')}</div>
+    <div class="ls-grid">${CARE.map(l => `<button class="ls-b care" data-action="sendLove" data-k="${l.k}"><span>${icon(l.ic, 24)}</span><small>${l.t}</small></button>`).join('')}</div>
     <p class="ls-foot">${p.i ? `${icon('check', 12, 2.4)} Arrives straight in ${esc(p.n)}’s app` : `Sends as a message — ask ${esc(p.n)} to send you her link again to get love straight in her app`}</p></div></div>`;
 }
 function fmtAgo(t) { const m = Math.round((Date.now() - t) / 60000); return m < 1 ? 'just now' : m < 60 ? `${m} min ago` : m < 1440 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} d ago`; }
@@ -3454,7 +3454,7 @@ function viewLove(q) {
   if (!l) return `<div class="pad"><h1 class="page-h" style="margin-top:80px">Link not valid</h1></div>`;
   const hearts = Array.from({ length: 24 }, (_, i) => `<i style="left:${(i * 37) % 100}%;animation-delay:${(i * .37) % 7}s;animation-duration:${6 + (i % 5)}s;width:${12 + (i * 7) % 22}px;height:${12 + (i * 7) % 22}px">${HEART(i % 3 === 1 ? '#fff' : '#ff2d4b')}</i>`).join('');
   return `<div class="love-view"><div class="lv-hearts">${hearts}</div>
-    <div class="lv-in"><div class="lv-art">${loveArt('xl')}<span class="lv-av">${d.t ? `<img src="${esc(d.t)}" alt="">` : esc((d.f || '?')[0])}</span><span class="lv-g">${l.g}</span></div><h1>${esc(d.f || 'Someone')} ${l.s}</h1>
+    <div class="lv-in"><div class="lv-art">${loveArt('xl')}<span class="lv-av">${d.t ? `<img src="${esc(d.t)}" alt="">` : esc((d.f || '?')[0])}</span><span class="lv-g">${icon(l.ic, 26)}</span></div><h1>${esc(d.f || 'Someone')} ${l.s}</h1>
       <p class="muted">${fmt(new Date(), { weekday: 'long' })} · with love, from Underskin</p>
       ${state && state.onboarded ? `<a class="btn btn-love btn-block" href="#/partners">${icon('heart', 16)} Send love back</a>` : `<a class="btn btn-light btn-block" href="#/today">Get Underskin</a>`}</div></div>`;
 }
