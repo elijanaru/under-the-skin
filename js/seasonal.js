@@ -122,26 +122,38 @@ const KOREA = [
   ['Blue crab (kkotge)', 'animal', [4, 5, 9, 10, 11]], ['Baby octopus (jjukkumi)', 'animal', r(3, 5)], ['Clams', 'animal', r(2, 5)], ['Pasture eggs', 'animal', r(3, 10)],
 ];
 
-const DATA = { central: CENTRAL, north: NORTH, med: MED, us: US, canada: CANADA, korea: KOREA, aus: AUS };
+// Fungi: wild seasons where they grow, plus farmed ones that are fresh all year.
+const FARMED = ['Oyster & shiitake mushrooms', 'fungi', all];
+const FUNGI = {
+  central: [FARMED, ['Porcini', 'fungi', r(8, 10)], ['Morels', 'fungi', [4, 5]]],
+  north: [FARMED, ['Porcini', 'fungi', r(8, 10)]],
+  med: [FARMED, ['Porcini', 'fungi', r(9, 11)], ['Morels', 'fungi', [3, 4]]],
+  us: [FARMED, ['Chanterelles', 'fungi', r(7, 10)], ['Maitake (hen of the woods)', 'fungi', [9, 10]]],
+  canada: [FARMED, ['Morels', 'fungi', [5, 6]], ['Chanterelles', 'fungi', r(7, 9)]],
+  korea: [['Oyster mushrooms (neutari)', 'fungi', all], ['Enoki (paengi)', 'fungi', all]],
+  aus: [FARMED, ['Pine mushrooms (saffron milk caps)', 'fungi', r(3, 6)], ['Slippery jacks', 'fungi', r(3, 6)]],
+};
+const DATA = Object.fromEntries(Object.entries({ central: CENTRAL, north: NORTH, med: MED, us: US, canada: CANADA, korea: KOREA, aus: AUS }).map(([k, v]) => [k, [...v, ...FUNGI[k]]]));
+const FUNGUS = /mushroom|chanterelle|shiitake|morel|porcini|songi|enoki|maitake|slippery jack/i;
 
 // TCM season for the month (southern regions are shifted by 6 months).
 const SEASON_N = { 12: 'Winter', 1: 'Winter', 2: 'Winter', 3: 'Spring', 4: 'Spring', 5: 'Spring', 6: 'Summer', 7: 'Summer', 8: 'Late summer', 9: 'Autumn', 10: 'Autumn', 11: 'Autumn' };
 export const SEASON_TCM = {
   Winter: { el: 'Water', han: '水', note: 'Season of the Kidney: warm, slow-cooked roots, broths and dark foods. Rest and store energy.',
     emotion: ['Wisdom & willpower', 'Fear'], sleep: 'Go to bed early and rise with the light — winter is for storing energy.',
-    tea: 'Black sesame & warm raw milk, or ginger with red dates', ritual: { t: 'Kidney warming', steps: ['Soak your feet in hot water with ginger for 15 minutes.', 'Rub your lower back with warm palms until it glows.', 'Eat one warm, slow-cooked meal with bone broth.'] } },
+    tea: 'Ginger, cinnamon, or chai with warm raw milk', ritual: { t: 'Kidney warming', steps: ['Soak your feet in hot water with ginger for 15 minutes.', 'Rub your lower back with warm palms until it glows.', 'Eat one warm, slow-cooked meal with bone broth.'] } },
   Spring: { el: 'Wood', han: '木', note: 'Season of the Liver: fresh greens, sprouts and wild herbs to move energy after winter.',
     emotion: ['Kindness & vision', 'Anger & frustration'], sleep: 'Rise a little earlier and take a brisk morning walk outside.',
-    tea: 'Nettle & dandelion, or fresh mint', ritual: { t: 'Liver awakening', steps: ['Start the day with warm lemon water.', 'Stretch your sides and twist gently for 5 minutes.', 'Eat a handful of fresh spring greens or wild herbs.'] } },
+    tea: 'Nettle, fresh mint or green tea', ritual: { t: 'Liver awakening', steps: ['Start the day with warm lemon water.', 'Stretch your sides and twist gently for 5 minutes.', 'Eat a handful of fresh spring greens or wild herbs.'] } },
   Summer: { el: 'Fire', han: '火', note: 'Season of the Heart: light, colourful, cooling fruit and raw vegetables.',
     emotion: ['Joy & connection', 'Restlessness'], sleep: 'Later nights are natural — rest in the hottest part of the day.',
-    tea: 'Rose & hibiscus, or cooling chrysanthemum', ritual: { t: 'Heart opening', steps: ['Eat a fruit breakfast outdoors in the morning light.', 'Dance or laugh with someone you love.', 'End the day with a cool foot bath and slow breathing.'] } },
+    tea: 'Peppermint, hibiscus or green tea', ritual: { t: 'Heart opening', steps: ['Eat a fruit breakfast outdoors in the morning light.', 'Dance or laugh with someone you love.', 'End the day with a cool foot bath and slow breathing.'] } },
   'Late summer': { el: 'Earth', han: '土', note: 'Season of the Spleen: sweet, golden, grounding foods — corn, squash, ripe fruit.',
     emotion: ['Care & stability', 'Worry & overthinking'], sleep: 'Keep regular meal and sleep times — routine steadies the Spleen.',
-    tea: 'Corn silk, or ginger & orange peel', ritual: { t: 'Grounding', steps: ['Walk barefoot on grass or earth for 10 minutes.', 'Eat warm, golden food at regular times.', 'Write down your worries, then close the notebook.'] } },
+    tea: 'Chamomile, fennel or ginger', ritual: { t: 'Grounding', steps: ['Walk barefoot on grass or earth for 10 minutes.', 'Eat warm, golden food at regular times.', 'Write down your worries, then close the notebook.'] } },
   Autumn: { el: 'Metal', han: '金', note: 'Season of the Lung: pears, roots and pungent warming spices to protect and moisten.',
     emotion: ['Clarity & letting go', 'Grief'], sleep: 'Sleep early, rise early — protect your breath from cold wind.',
-    tea: 'Pear & ginger, or thyme with raw honey', ritual: { t: 'Letting go', steps: ['Take 10 deep breaths in fresh air every morning.', 'Declutter one drawer, closet or inbox.', 'Gently stew a pear with ginger and eat it warm.'] } },
+    tea: 'Ginger with raw honey, cinnamon, rooibos or chai', ritual: { t: 'Letting go', steps: ['Take 10 deep breaths in fresh air every morning.', 'Declutter one drawer, closet or inbox.', 'Gently stew a pear with ginger and eat it warm.'] } },
 };
 
 export function countryRegion(code) { return (COUNTRIES.find(c => c[0] === code) || COUNTRIES[0])[2]; }
@@ -153,7 +165,7 @@ export function guessCountry() {
 }
 export function seasonal(code, month) {
   const region = countryRegion(code);
-  return DATA[region].filter(([, , m]) => m.includes(month)).map(([f, kind]) => ({ f, kind, ...foodInfo(f, kind) }));
+  return DATA[region].filter(([, , m]) => m.includes(month)).map(([f, kind]) => ({ f, kind: FUNGUS.test(f) ? 'fungi' : kind, ...foodInfo(f, kind) }));
 }
 export function seasonName(code, month) {
   const m = countryRegion(code) === 'aus' ? ((month + 5) % 12) + 1 : month;
@@ -229,7 +241,7 @@ export const FOOD_INFO = {
   'loquat': I('cool', ['Beta-carotene'], 'o'), 'sweet potatoes': I('neutral', ['Beta-carotene', 'Vitamin B6', 'Complex carbs'], 'lm'), 'root vegetables': I('warm', ['Complex carbs', 'Potassium'], 'lm'),
   'citrus': I('cool', ['Vitamin C', 'Folate'], 'f'), 'rhubarb ': I('cool', ['Calcium'], 'f'), 'cranberries': I('neutral', ['Vitamin C', 'Proanthocyanidins'], 'f'),
   'pecans & walnuts': I('warm', ['Omega-3', 'Magnesium', 'Zinc'], 'ml'), 'ramps (wild leeks)': I('warm', ['Vitamin C', 'Iron'], 'f'), 'fiddleheads': I('neutral', ['Omega-3', 'Iron'], 'f'),
-  'morels': I('neutral', ['Vitamin D', 'Iron'], 'm'), 'parsley & cilantro': I('neutral', ['Vitamin C', 'Iron'], 'm'), 'parsley & coriander': I('neutral', ['Vitamin C', 'Iron'], 'm'),
+  'morels': I('neutral', ['Vitamin D', 'Iron'], 'm'), 'oyster & shiitake mushrooms': I('neutral', ['Vitamin D', 'B vitamins', 'Fibre'], 'mf'), 'porcini': I('neutral', ['Vitamin D', 'Protein', 'Selenium'], 'ml'), 'chanterelles': I('neutral', ['Vitamin D', 'Iron'], 'mf'), 'maitake (hen of the woods)': I('neutral', ['Vitamin D', 'Beta-glucans'], 'fl'), 'oyster mushrooms (neutari)': I('neutral', ['Vitamin D', 'B vitamins'], 'mf'), 'enoki (paengi)': I('cool', ['B vitamins', 'Fibre'], 'fo'), 'pine mushrooms (saffron milk caps)': I('neutral', ['Vitamin D', 'Fibre'], 'l'), 'slippery jacks': I('neutral', ['Vitamin D', 'Fibre'], 'l'), 'parsley & cilantro': I('neutral', ['Vitamin C', 'Iron'], 'm'), 'parsley & coriander': I('neutral', ['Vitamin C', 'Iron'], 'm'),
   'raw honey': I('neutral', ['Enzymes', 'Antioxidants'], 'mfol'), 'mango': I('cool', ['Vitamin C', 'Beta-carotene'], 'o'), 'stone fruit': I('warm', ['Vitamin C', 'Beta-carotene'], 'o'),
   'berries': I('neutral', ['Antioxidants', 'Fibre'], 'fo'), 'feijoa': I('neutral', ['Vitamin C', 'Fibre'], 'f'), 'broccoli & cauliflower': I('neutral', ['Sulforaphane', 'Vitamin C'], 'fo'),
   'peas & broad beans': I('neutral', ['Protein', 'Folate'], 'f'), 'avocado': I('neutral', ['Healthy fats', 'Potassium', 'Folate'], 'fl'), 'macadamias': I('neutral', ['Healthy fats', 'Magnesium'], 'l'),
