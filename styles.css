@@ -4217,3 +4217,9 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .hub-tip .ev-some, .hub-tip .ev-strong, .hub-tip .ev-emerging, .hub-tip .ev-tcm { background: rgba(244,245,240,.1); color: var(--paper); }
 .hub-tip .fn-more { color: var(--paper) !important; opacity: 1; }
 .ev-kinds button { display: inline-flex; align-items: center; gap: 6px; }
+
+/* Hormone tiles: the molecule in the corner instead of the level ring */
+.hxt-mol { position: absolute; bottom: 12px; right: 12px; width: 66px; height: 44px; display: grid; place-items: center; opacity: .85; pointer-events: none; }
+.hxt-mol .mol { width: 100%; height: 100%; }
+.hxt-mol .mol line { stroke-width: 2.6; }
+.hxt-mol .mol text { font-size: 13px; }
