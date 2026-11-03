@@ -655,7 +655,7 @@ function viewOnboarding() {
 <g transform="translate(46 12)"><circle r="3.2"/><circle cx="0" cy="-5" r="2.4"/><circle cx="4.8" cy="-1.5" r="2.4"/><circle cx="3" cy="4" r="2.4"/><circle cx="-3" cy="4" r="2.4"/><circle cx="-4.8" cy="-1.5" r="2.4"/></g></g></svg></span></div>
         <p class="bw-sub2">Live with your biological rhythm</p>
         <p class="bw-by">Designed by women, <span>for women</span></p>
-        <button class="pearl-btn" data-action="onbEnter"><span>Enter</span></button>
+        <button class="pearl-btn" data-action="onbEnter"><svg class="pb-fl" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c2.2 2.6 2.2 6 0 8.6C9.8 9 9.8 5.6 12 3zM4 9.5c3.3-.4 5.9 1.6 6.6 4.8C7.4 14.7 4.7 12.7 4 9.5zm16 0c-.7 3.2-3.4 5.2-6.6 4.8.7-3.2 3.3-5.2 6.6-4.8zM6 18c2-2.2 4.4-3 6-3s4 .8 6 3"/></svg><span>Enter</span><svg class="pb-fl r" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c2.2 2.6 2.2 6 0 8.6C9.8 9 9.8 5.6 12 3zM4 9.5c3.3-.4 5.9 1.6 6.6 4.8C7.4 14.7 4.7 12.7 4 9.5zm16 0c-.7 3.2-3.4 5.2-6.6 4.8.7-3.2 3.3-5.2 6.6-4.8zM6 18c2-2.2 4.4-3 6-3s4 .8 6 3"/></svg></button>
         ${A.configured() ? '<button class="link welcome-signin" data-action="nav" data-to="account">I already have an account · Sign in</button>' : ''}
         <button class="link welcome-privacy" data-action="nav" data-to="privacy">Private by design: we don’t track you or sell your data</button>
       </div>
