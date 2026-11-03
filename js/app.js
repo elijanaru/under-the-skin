@@ -1870,6 +1870,9 @@ const MOOD_TO_RELIEF = { Irritable: 'PMS mood', Anxious: 'PMS mood', Sad: 'PMS m
 function reliefKey(sym) { return RELIEF[sym] ? sym : MOOD_TO_RELIEF[sym] || null; }
 // What often bothers women in each part of the cycle (shown first, after anything she logged).
 const RELIEF_WINDOW = { 'flow-start': ['Cramps', 'Fatigue', 'Headache'], 'flow-end': ['Fatigue', 'Cramps'], rising: [], building: [], peak: ['Ovulation pain', 'Bloating'], settle: ['Bloating', 'Tender breasts'], focus: ['Tender breasts', 'Insomnia', 'Acne'], premenstrual: ['PMS mood', 'Bloating', 'Headache'] };
+// Drawn line icon for each relief topic (no emoji).
+const RELIEF_IC = { 'Ovulation pain': 'seed', Cramps: 'thermo', 'PMS mood': 'sun', Bloating: 'cup', Insomnia: 'moon', Acne: 'spark', Headache: 'mind', Fatigue: 'bolt', 'Tender breasts': 'heart' };
+const reliefIc = (k, size = 20) => icon(RELIEF_IC[k] || 'leaf', size);
 function viewReliefIndex() {
   const recent = new Set();
   for (let i = 0; i < 4; i++) { const l = getLog(C.iso(C.addDays(new Date(), -i))); [...(l.symptoms || []), ...(l.moods || [])].forEach(s => { const k = reliefKey(s); if (k) recent.add(k); }); }
@@ -1877,7 +1880,7 @@ function viewReliefIndex() {
   const info = M.info, w = info && dayWindow(info);
   const likely = [...new Set([...recent, ...(w ? RELIEF_WINDOW[w] : [])])].filter(k => RELIEF[k]).slice(0, 3);
   const row = k => { const st = RELIEF[k].steps[0], L = RELIEF_LINKS[k] || {};
-    return `<button class="rl-row" data-action="nav" data-to="relief/${encodeURIComponent(k)}"><span class="rl-rg">${L.g || '🌿'}</span><span class="rl-rt"><b>${k}${recent.has(k) ? ' <i>logged</i>' : ''}</b><small>Start with: ${st.t.charAt(0).toLowerCase() + st.t.slice(1)}</small></span>${evBadge(st.ev)}${icon('chevR', 15)}</button>`; };
+    return `<button class="rl-row" data-action="nav" data-to="relief/${encodeURIComponent(k)}"><span class="rl-rg">${reliefIc(k, 18)}</span><span class="rl-rt"><b>${k}${recent.has(k) ? ' <i>logged</i>' : ''}</b><small>Start with: ${st.t.charAt(0).toLowerCase() + st.t.slice(1)}</small></span>${evBadge(st.ev)}${icon('chevR', 15)}</button>`; };
   const today = info ? `<section class="card card-light rl-today"><small>${recent.size ? 'For what you logged' : 'Common around now'} · day ${info.cd}</small>
       ${likely.length ? `<div class="rl-rows">${likely.map(row).join('')}</div>` : `<p class="rl-calm">These are usually your easiest days. If something bothers you, pick it below.</p>`}
       <button class="pill-cta rl-cta" data-action="nav" data-to="log">${icon('plus', 14)} Log how you feel</button></section>` : '';
@@ -1890,7 +1893,7 @@ function viewReliefIndex() {
     <div class="relief-grid">${keys.map((k, i) => { const h = (state.reliefHelp || {})[k] || [], L = RELIEF_LINKS[k] || {};
       return `<button class="rcard tall relief-c" data-action="nav" data-to="relief/${encodeURIComponent(k)}">${glowArt(['drop', 'wave', 'orb', 'hill', 'crown', 'peak'][i % 6], 70 + i)}
       <div class="rc-top"><span class="rc-k">${RELIEF[k].steps.length} ways</span>${recent.has(k) ? '<span class="rc-badge">Logged</span>' : ''}</div>
-      ${L.g ? `<span class="rl-g">${L.g}</span>` : ''}<div class="rc-t">${k}</div>
+      <span class="rl-g">${reliefIc(k, 26)}</span><div class="rc-t">${k}</div>
       <div class="rl-first">${h.length ? `♥ ${h.length} work${h.length > 1 ? '' : 's'} for you` : `First: ${RELIEF[k].steps[0].t.toLowerCase()}`}</div></button>`; }).join('')}</div>
   </div>`;
 }

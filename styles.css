@@ -4102,3 +4102,6 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .spec-glyph svg { color: #f4f5f0; width: 84px; height: 84px; }
 .nl-i > span { color: var(--lime); }
 .nw-rings .mv2-g svg { width: 18px !important; height: 18px !important; }
+.rl-rg { color: hsl(calc(var(--hb) + 145 * var(--hk)) calc(39% * var(--hs2)) 30%); }
+.relief-c .rl-g { color: var(--lime); font-size: 0; filter: none; }
+.rl-today > small { font-size: 13px; letter-spacing: 0; text-transform: none; }
