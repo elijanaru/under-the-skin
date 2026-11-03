@@ -836,7 +836,7 @@ function logChips(l) {
 }
 
 // ---------- plan ahead: events on future days, with how to prepare for that part of the cycle ----------
-const EV_KINDS = [['date', '❤️', 'Date'], ['exam', '📚', 'Exam'], ['trip', '✈️', 'Trip'], ['talk', '🎤', 'Presentation'], ['party', '🎉', 'Party'], ['sport', '🏃‍♀️', 'Sport event'], ['other', '✨', 'Other']];
+const EV_KINDS = [['date', 'heart', 'Date'], ['exam', 'book', 'Exam'], ['trip', 'plane', 'Trip'], ['talk', 'mic', 'Presentation'], ['party', 'star', 'Party'], ['sport', 'bolt', 'Sport event'], ['other', 'spark', 'Other']];
 const EV_GROUP = { 'flow-start': 'men', 'flow-end': 'men', rising: 'fol', building: 'fol', peak: 'ovu', settle: 'lut', focus: 'lut', premenstrual: 'pre' };
 const EV_PREP = {
   date: { men: 'Plan something cosy: dinner in, a film, warm food. Bring supplies.', fol: 'Try something new together. You feel curious and light.', ovu: 'Your most radiant, social days. Go out and dress up.', lut: 'Choose calm and warm: a slow dinner or a long walk.', pre: 'Eat before you go and keep it cosy, close to home.' },
@@ -859,14 +859,14 @@ function gcalUrl(e) {
 }
 function evCard(e) {
   const x = evInfo(e), k = evKind(e.kind);
-  return `<div class="ev-card"><span class="ev-g">${k[1]}</span><div class="ev-b"><b>${esc(evName(e))}</b>
+  return `<div class="ev-card"><span class="ev-g">${icon(k[1], 20)}</span><div class="ev-b"><b>${esc(evName(e))}</b>
     ${x ? `<small>${fmt(C.parseISO(e.date), { weekday: 'short', month: 'short', day: 'numeric' })} · day ${x.di.cd} · ${PHASES[x.di.phase].name}</small><p>${x.prep}</p>` : ''}
     <div class="ev-act"><a class="ev-g-btn" href="${gcalUrl(e)}" target="_blank" rel="noopener">${icon('calendar', 13)} Add to Google Calendar</a><button class="link muted-l" data-action="evDel" data-id="${e.id}">Remove</button></div></div></div>`;
 }
 function planForm(date) {
   if (ui.planOpen !== date) return `<button class="btn btn-outline-dark btn-block ev-add" data-action="planOpen" data-date="${date}">${icon('plus', 16)} Plan something on this day</button>`;
   const kind = ui.planKind || 'date';
-  return `<div class="ev-form"><div class="ev-kinds">${EV_KINDS.map(([k, g, n]) => `<button class="${k === kind ? 'on' : ''}" data-action="planKind" data-v="${k}">${g} ${n}</button>`).join('')}</div>
+  return `<div class="ev-form"><div class="ev-kinds">${EV_KINDS.map(([k, g, n]) => `<button class="${k === kind ? 'on' : ''}" data-action="planKind" data-v="${k}">${icon(g, 14)} ${n}</button>`).join('')}</div>
     <input class="field" id="ev-name" placeholder="Name (optional), e.g. Anna’s birthday" maxlength="40">
     <div class="dp-actions"><button class="btn btn-outline-dark" data-action="planOpen" data-date="">Cancel</button><button class="btn btn-dark" data-action="planSave" data-date="${date}">${icon('check', 16)} Save</button></div></div>`;
 }

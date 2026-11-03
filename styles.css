@@ -4216,3 +4216,4 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .hub-tip .ht-fast { background: rgba(255,255,255,.06); }
 .hub-tip .ev-some, .hub-tip .ev-strong, .hub-tip .ev-emerging, .hub-tip .ev-tcm { background: rgba(244,245,240,.1); color: var(--paper); }
 .hub-tip .fn-more { color: var(--paper) !important; opacity: 1; }
+.ev-kinds button { display: inline-flex; align-items: center; gap: 6px; }
