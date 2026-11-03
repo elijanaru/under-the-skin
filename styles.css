@@ -5151,3 +5151,9 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .onb.no-fig .bc-opt.on .bc-pic { background: rgba(239,212,221,.55); }
 .onb .bc-slot:empty { display: none; }
 .onb .bc-slot .bc-q { animation: stepRise .7s cubic-bezier(.22,1,.36,1) both !important; }
+/* "Why are you here?" cards: crisp photos, only a soft dark shade on the left so the white text reads */
+.onb .purp-c img { filter: none !important; opacity: 1 !important; }
+.onb .purp-c .pc-shade { background: linear-gradient(90deg, rgba(24,18,16,.62) 0%, rgba(24,18,16,.38) 42%, rgba(24,18,16,0) 75%) !important; }
+.onb.no-fig .purp-c, .onb.no-fig .purp-c.on { background: transparent !important; }
+.onb .purp-c .pc-in b { color: #fff !important; text-shadow: 0 2px 12px rgba(0,0,0,.35); }
+.onb .purp-c .pc-in small { color: rgba(255,255,255,.92) !important; text-shadow: 0 1px 8px rgba(0,0,0,.35); }

@@ -1082,7 +1082,7 @@ export const MIND_SCIENCE = [
 
 // Why someone uses the app — only 'conceive' shows pregnancy & fertility content.
 export const PURPOSES = [
-  { k: 'know', t: 'Understand my body', s: 'Periods, rhythm & biological clock — no fertility content', photo: 'Oestrogen', img: 'images/purpose-body.jpg', pos: '50% 62%' },
+  { k: 'know', t: 'Understand my body', s: 'Periods, rhythm and your biological clock', photo: 'Oestrogen', img: 'images/purpose-body.jpg', pos: '50% 62%' },
   { k: 'conceive', t: 'Trying to get pregnant', s: 'Fertile window, best days, preparing my body', photo: 'Prolactin', img: 'images/purpose-conceive.jpg', pos: '62% 42%' },
   { k: 'menopause', t: 'Menopause', s: 'Perimenopause & menopause support', photo: 'Serotonin', soon: true },
 ];
