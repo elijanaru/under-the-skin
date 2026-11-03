@@ -4736,15 +4736,20 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
    (her phase hue, peach, lime, moss). Frosted white cards and crisp dark type on top. */
 :root { --ink-hi: #1b2314; --ink-mid: #4d5643; --ink-lo: #7d8574; }
 .phone { background:
-  radial-gradient(110% 30% at 30% 100%, rgba(76,168,78,.9), transparent 70%),
-  radial-gradient(70% 30% at 90% 90%, rgba(226,230,104,.85), transparent 68%),
-  radial-gradient(85% 34% at 5% 76%, rgba(250,190,160,.78), transparent 68%),
-  radial-gradient(80% 36% at 100% 60%, hsl(calc(var(--hb) + 0 * var(--hk)) calc(52% * var(--hs)) 80% / .85), transparent 68%),
-  radial-gradient(70% 30% at 20% 50%, rgba(206,186,236,.55), transparent 70%),
-  linear-gradient(180deg, #f8f7f9 0%, #f3f1f4 40%, #ece8ee 100%) !important; }
-.phone::before { content: ''; position: absolute; inset: 0 0 auto; height: 46%; pointer-events: none;
-  background: radial-gradient(circle at 1.5px 1.5px, rgba(30,30,40,.11) 1px, transparent 1.4px) 0 0 / 6px 6px;
-  -webkit-mask-image: linear-gradient(#000, transparent); mask-image: linear-gradient(#000, transparent); }
+  linear-gradient(180deg, rgba(246,244,247,0) 0%, rgba(246,244,247,0) 18%, #f4f2f5 48%),
+  radial-gradient(circle at 1.5px 1.5px, rgba(30,30,40,.075) 1px, transparent 1.4px) 0 0 / 6px 6px,
+  linear-gradient(180deg, #f8f7f9, #f2f0f4) !important; }
+/* One soft colour field: lilac, her phase hue, peach, lime and moss flow into each other towards the bottom and drift very slowly */
+.phone::before { content: ''; position: absolute; inset: -12%; pointer-events: none;
+  background:
+    radial-gradient(70% 34% at 30% 104%, rgba(88,166,82,.95), transparent 100%),
+    radial-gradient(60% 30% at 88% 90%, rgba(222,226,110,.85), transparent 100%),
+    radial-gradient(70% 34% at 4% 78%, rgba(248,192,164,.8), transparent 100%),
+    radial-gradient(64% 34% at 98% 60%, hsl(calc(var(--hb) + 0 * var(--hk)) calc(52% * var(--hs)) 82% / .85), transparent 100%),
+    radial-gradient(60% 28% at 22% 48%, rgba(212,196,240,.55), transparent 100%);
+  filter: blur(28px); animation: glowDrift 38s ease-in-out infinite alternate; }
+@keyframes glowDrift { 0% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(-2.5%,-1.5%,0) scale(1.04); } 100% { transform: translate3d(2%,-3%,0) scale(1.02); } }
+@media (prefers-reduced-motion: reduce) { .phone::before { animation: none; } }
 
 /* Cards: frosted white glass, bright top edge, soft lift. The glow shows through the lower ones. */
 .glass, .card.glass, .hub:not(.home .hub) {
@@ -4769,9 +4774,26 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
   -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: 0 6px 16px rgba(40,36,50,.08) !important; }
 
 /* Today photo: ends with a clean fade into the pearl page */
-.stage-scene::after { background: linear-gradient(transparent 0, transparent 70%, rgba(244,242,245,.55) 88%, #f4f2f5 100%) !important; }
+.stage-scene::after { display: none !important; }
+.stage-scene { overflow: visible; }
+.stage-bg, .stage-light, .stage-vig { -webkit-mask-image: linear-gradient(#000 0%, #000 58%, rgba(0,0,0,.55) 76%, rgba(0,0,0,.18) 90%, transparent 100%); mask-image: linear-gradient(#000 0%, #000 58%, rgba(0,0,0,.55) 76%, rgba(0,0,0,.18) 90%, transparent 100%); }
 .card.flag { background: linear-gradient(170deg, rgba(255,255,255,.86), rgba(255,255,255,.62)) !important; border: 1px solid #fff !important;
   -webkit-backdrop-filter: blur(26px) saturate(1.6); backdrop-filter: blur(26px) saturate(1.6); box-shadow: inset 0 1px 0 #fff, 0 18px 40px rgba(40,36,50,.1) !important; }
 /* Spec heroes without a photo float on the pearl page: one soft phase-hue glow, no box edge */
 .spec-media.liquid { background: radial-gradient(60% 46% at 50% 34%, hsl(calc(var(--hb) + 0 * var(--hk)) calc(46% * var(--hs)) 86% / .8), transparent 72%) !important; }
 .spec-media:not(:has(img)) .spec-shade { display: none; }
+.cap small { color: var(--ink-hi) !important; text-shadow: 0 0 10px rgba(255,255,255,.9), 0 0 2px rgba(255,255,255,.8) !important; }
+.cap-pill { background: linear-gradient(170deg, rgba(255,255,255,.72), rgba(255,255,255,.42)) !important; border: 1px solid rgba(255,255,255,.9) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4); box-shadow: inset 0 1px 0 #fff, 0 10px 24px rgba(40,36,50,.12) !important; color: var(--ink-hi) !important; }
+/* Photo tiles: a frosted white veil carries the text all the way down; the photo breathes through the bottom edge */
+.hub .dpt-g.pic i { background: linear-gradient(180deg, rgba(255,255,255,.95) 0%, rgba(255,255,255,.9) 50%, rgba(255,255,255,.62) 76%, rgba(255,255,255,.18) 100%) !important; }
+/* Tab bar: one frosted white glass capsule, quiet icons, the active tab a bright white pearl */
+.tabbar { background: linear-gradient(170deg, rgba(255,255,255,.7), rgba(255,255,255,.44)) !important; border: 1px solid rgba(255,255,255,.95) !important;
+  -webkit-backdrop-filter: blur(26px) saturate(1.7); backdrop-filter: blur(26px) saturate(1.7);
+  box-shadow: inset 0 1px 0 #fff, 0 18px 44px rgba(40,36,50,.16), 0 2px 6px rgba(40,36,50,.06) !important; }
+.tab:not(.tab-main) { background: transparent !important; border-color: transparent !important; color: var(--ink-mid) !important; box-shadow: none !important; }
+.tab.active:not(.tab-main) { background: #fff !important; color: var(--ink-hi) !important; box-shadow: 0 4px 14px rgba(40,36,50,.12), inset 0 -2px 6px rgba(40,36,50,.04) !important; }
+/* Fertile window card: same white glass as the others, the photo a soft breath behind it */
+.conceive { border: 1px solid rgba(255,255,255,.95) !important; box-shadow: inset 0 1px 0 #fff, 0 18px 40px rgba(40,36,50,.1) !important; background: #fff !important; }
+.conceive > img { opacity: .5; filter: saturate(.7); }
+.conceive .cv-shade { background: linear-gradient(170deg, rgba(255,255,255,.55), rgba(255,255,255,.82) 55%, rgba(255,255,255,.9)) !important; }
