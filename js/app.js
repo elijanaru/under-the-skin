@@ -226,12 +226,14 @@ function tipsCard(info) {
   if (ttc()) list.push({ k: 'ttc', t: 'Trying to conceive', photo: 'Prolactin', tip: TTC_TIPS[info.cd >= info.ov - 5 && info.cd <= info.ov ? 'ovulatory' : ph] });
   focusKeys().forEach(k => { const f = FOCUS.find(x => x.k === k); if (f) list.push({ k, t: f.t, photo: f.photo, tip: TIPS[k][ph] }); });
   if (!list.length) return '';
-  const deck = list.slice(0, 6);
+  const [lead, ...rest] = list.slice(0, 6), D = x => TIP_DECK[x.k] || ['spark', x.t, 'Show me'];
+  const [lic, lq, lcta] = D(lead), lu = hormonePhoto(lead.photo, 900);
   return `${sectionTitle('Your tips today', ['Edit', 'profile'])}
-    <div class="tdeck">${deck.map((x, i) => { const [ic, q, cta] = TIP_DECK[x.k] || ['spark', x.t, 'Show me'], u = hormonePhoto(x.photo, 700); return `<button class="td" data-action="nav" data-to="${TIP_TO[x.k] || 'plan'}" style="--i:${i}">
-      <span class="td-media">${u ? `<img src="${u}" alt="" loading="lazy">` : ''}<span class="td-k">${icon(ic, 13)} ${x.t}</span></span>
-      <span class="td-body"><b class="td-q">${q}</b><span class="td-p">${x.tip}</span></span>
-      <span class="td-cta">${cta} ${icon('chevR', 14)}</span></button>`; }).join('')}</div>`;
+    <button class="tf" data-action="nav" data-to="${TIP_TO[lead.k] || 'plan'}">
+      <span class="tf-media">${lu ? `<img src="${lu}" alt="" loading="lazy">` : ''}<span class="tf-k">${icon(lic, 13)} ${lead.t}</span><b class="tf-q">${lq}</b></span>
+      <span class="tf-p">${lead.tip}</span>
+      <span class="tf-cta">${lcta} ${icon('chevR', 14)}</span></button>
+    ${rest.length ? `<div class="tl">${rest.map(x => { const [, q] = D(x), u = hormonePhoto(x.photo, 200); return `<button class="tl-r" data-action="nav" data-to="${TIP_TO[x.k] || 'plan'}">${u ? `<img src="${u}" alt="" loading="lazy">` : '<span class="tl-ph"></span>'}<span class="tl-t"><b>${q}</b><small>${x.t}</small></span><span class="tl-go">${icon('chevR', 14)}</span></button>`; }).join('')}</div>` : ''}`;
 }
 // Articles to read around today's tips: this phase first, then what she wants help with.
 const ARTICLE_PHOTO = { estrogen: 'Oestrogen', 'progesterone-pms': 'Progesterone', iron: 'Active vitamin D', 'yin-yang': 'Thyroid hormones', 'seed-cycling': 'Insulin', 'four-phases': 'LH', brain: 'Serotonin', sleep: 'Melatonin', 'ovulation-signs': 'FSH' };
