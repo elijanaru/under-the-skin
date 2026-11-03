@@ -3062,10 +3062,9 @@ function viewHormone(i) {
   <div class="pad hxd">
     ${u ? `<div class="hxd-photo"><img src="${u}" alt=""><span class="hx-shade"></span><span class="hx-gland">${x.g}</span>${cr ? `<span class="hx-cr">Photo · ${esc(cr.by)} / Unsplash</span>` : ''}
       <div class="hxd-in"><h1>${name}</h1><p>${x.s}</p></div></div>` : `<h1 class="page-h">${name}</h1>`}
-    <section class="card card-light hxd-now"><div class="eyebrow dark">You, right now · day ${cd}</div>
-      <div class="hxd-row"><b>${n.word}${hxArrow(n.tr)}</b><span>${n.amt}</span></div>
-      <span class="hxt-bar light"><i style="width:${Math.round(n.r * 100)}%"></i></span>
-      <p>${n.note}</p></section>
+    <section class="card card-light hxd-now"><div class="hxd-nl"><div class="eyebrow dark">You, right now · day ${cd}</div>
+      <div class="hxd-row"><b>${n.word}${hxArrow(n.tr)}</b></div><span class="hxd-amt">${n.amt}</span>
+      <p>${n.note}</p></div><span class="hxd-ring">${hxRing(n.r, 0)}<small>${k ? 'this month' : 'level'}</small></span></section>
     ${curve}
     <section class="card glass hxd-b">
       <div class="hx-row first"><span class="eyebrow">What it does</span><p>${x.role}</p></div>

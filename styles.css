@@ -3942,3 +3942,13 @@ button.tip:active { transform: scale(.98); background: var(--glass-2); }
 .pat-unlock p b { color: #f4f5f0; font-weight: 500; }
 .pat-unlock .pill-cta { margin: 14px 4px 0; }
 .pp.head .pp-m { font-size: inherit; color: inherit; }
+/* Hormone page: level ring on the paper "right now" card */
+.hxd-now { display: flex; align-items: center; gap: 14px; }
+.hxd-nl { flex: 1; min-width: 0; }
+.hxd-amt { display: block; font-family: var(--dot); font-size: 13px; color: #3b443d; margin-top: 2px; }
+.hxd-now .hxt-ring { position: static; width: 76px; height: 76px; flex: none; }
+.hxd-now .hxt-ring .t { fill: rgba(11,13,11,.03); stroke: rgba(11,13,11,.08); }
+.hxd-now .hxt-ring .p { stroke: hsl(calc(var(--hb) + 145 * var(--hk)) calc(39% * var(--hs2)) 30%); filter: none; }
+.hxd-ring { position: relative; flex: none; display: grid; place-items: center; }
+.hxd-ring > * { grid-area: 1 / 1; }
+.hxd-ring small { font-size: 10px; letter-spacing: .06em; color: #3b443d; }
