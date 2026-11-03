@@ -286,7 +286,7 @@ function readsCard(info) {
 }
 document.addEventListener('scroll', e => { const t = e.target; if (t.classList?.contains('deck')) deckFx(t);
   if (t.id === 'view') document.querySelector('.phone')?.classList.toggle('deep', t.scrollTop > 380); }, true);
-// Scrolled down, the forest gives way to calm wind-swept grass; a new page starts at the forest again.
+// Scrolled down, the forest gives way to flowers behind rainy glass; a new page starts at the forest again.
 addEventListener('hashchange', () => document.querySelector('.phone')?.classList.remove('deep'));
 // The plate draws itself in when it scrolls into view.
 const plIO = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); plIO.unobserve(e.target); } }), { threshold: .35 }) : null;
@@ -2682,7 +2682,7 @@ function stageHero(info, energy) {
   const perCap = cap('drop', nextP === 0 ? 'Today' : `${nextP}d`, nextP === 0 ? 100 : (1 - nextP / L) * 100, 'Next period', 'calendar');
   const fertCap = cap('heart', info.fertile ? 'Yes' : 'No', info.fertile ? 100 : 0, 'Fertile', 'guide');
   return `<div class="opal">
-    <div class="stage-scene"><img class="stage-bg" src="images/intro-forest.jpg" alt="" decoding="async"><span class="stage-tint"></span><span class="stage-light" aria-hidden="true"></span><span class="stage-vig" aria-hidden="true"></span>
+    <div class="stage-scene"><img class="stage-bg" src="images/forest-calm.jpg" alt="" decoding="async"><span class="stage-tint"></span><span class="stage-light" aria-hidden="true"></span><span class="stage-vig" aria-hidden="true"></span>
       <button class="stage-phase" data-action="nav" data-to="guide"><b>${ph.name}</b></button>
       <div class="stage-orb">${flowRing(info, 'today', true)}
         <span class="bubble ${info.phase}" title="${FLOWER[info.phase].n}">${flowerImg(info.phase)}<i class="bubble-glass"></i></span></div>
