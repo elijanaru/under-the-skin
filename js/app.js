@@ -955,7 +955,7 @@ function calDayCard(sd, si, slog, selLine, isFuture, hasFlow) {
   return `<div class="cal2-sel cd day-panel">${head}
     <div class="cd-rings">${rings}</div>
     <div class="cd-mode"><span class="cd-m">${c.mode}</span><p>${c.why}</p></div>
-    ${logged.length ? `<div class="cd-log">${logged.map(x => `<span>${LOG_EMOJI[x] || '•'} ${x}</span>`).join('')}</div>` : ''}
+    ${logged.length ? `<div class="cd-log">${logged.map(x => `<span>${icon(LOG_IC[x] || 'spark', 13)} ${x}</span>`).join('')}</div>` : ''}
     ${dayEv.map(evCard).join('')}
     <div class="cd-cta">${isFuture ? '' : `<button class="pill-cta" data-action="logDay" data-date="${C.iso(sd)}">${icon('plus', 14)} ${logged.length ? 'Edit log' : 'Log this day'}</button>`}
       <button class="cd-link" data-action="nav" data-to="hormones">Your hormones ${icon('chevR', 14)}</button></div>
@@ -1168,16 +1168,20 @@ function brainLinks(k) {
   return `${help.length ? `<div class="br-works"><small>♥ Works for you</small><p>${help.slice(0, 2).map(x => x.t).join(' · ')}</p></div>` : ''}
       ${pills ? `<div class="br-fix"><small>Teas & nutrients</small></div><div class="tea-more br-pills">${pills}</div>` : ''}`;
 }
+// Drawn icons for the brain page: one per log group, and one per note.
+const LOG_IC = Object.fromEntries([[BODY_GROUPS.flatMap(([, l]) => l), 'user'], [MOOD_LIST, 'mind'], [DISCHARGE, 'drop'], [DOWN_EXTRA, 'drop'], [INTIMACY, 'heart'],
+  [INTAKE, 'bowl'], [SUPPS, 'flask'], [DISRUPTORS, 'bolt']].flatMap(([l, ic]) => l.map(([n]) => [n, ic])).concat([['Spotting', 'drop']]));
+const NOTE_IC = { '🥚': 'spark', '🌸': 'leaf', '🩸': 'drop', '🥩': 'fish', '💞': 'heart', '🌹': 'heart', '🫶': 'heart', '🌙': 'moon', '🌪️': 'clock', '🍷': 'cup', '🍲': 'thermo' };
 function viewBrain(id) {
   const k = id && /^\d{4}-\d\d-\d\d$/.test(id) ? id : todayISO(), R = brainRead(k);
   const ph = R ? PHASES[R.ph] : null, isToday = k === todayISO();
   const n = R ? R.cards.length + R.notes.length : 0, mine = R ? R.cards.filter(c => c.learn.startsWith('Your pattern')).length : 0;
   const tone = { warn: 'Worth knowing', good: 'Good sign', info: 'For today' };
   const body = !R || !n ? `<section class="br-empty"><p>Log a few things and I’ll tell you what they mean for your cycle.</p><button class="btn btn-light" data-action="nav" data-to="log">${icon('plus', 18)} Check in</button></section>` : `
-    ${R.notes.map((x, i) => `<section class="br-note ${x.tone}"><span class="br-emo">${x.emo}</span><div><div class="br-k">${tone[x.tone]} ${x.ev ? evBadge(x.ev) : ''}</div><b>${x.t}</b><p>${x.p}</p></div></section>`).join('')}
+    ${R.notes.map((x, i) => `<section class="br-note ${x.tone}"><span class="br-emo">${icon(NOTE_IC[x.emo] || 'spark', 20)}</span><div><div class="br-k">${tone[x.tone]} ${x.ev ? evBadge(x.ev) : ''}</div><b>${x.t}</b><p>${x.p}</p></div></section>`).join('')}
     ${R.cards.length ? `<div class="br-h">What you logged</div>` : ''}
     ${R.cards.map((c, i) => `<section class="br-card ${c.good ? 'good' : ''}">
-      <div class="br-top"><span class="br-emo">${LOG_EMOJI[c.s] || '•'}</span><b>${c.s}</b>${evBadge(c.ev)}</div>
+      <div class="br-top"><span class="br-emo">${icon(LOG_IC[c.s] || 'spark', 20)}</span><b>${c.s}</b>${evBadge(c.ev)}</div>
       ${c.why ? `<p class="br-why">${c.why}</p>` : ''}
       <div class="br-learn">${icon('spark', 13)}<span>${c.learn}</span></div>
       ${c.fix ? `<div class="br-fix"><small>Try</small><p>${c.fix}</p></div>` : ''}

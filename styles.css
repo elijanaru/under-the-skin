@@ -4237,3 +4237,7 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .mol-key i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
 .hxt-mol { position: static; align-self: stretch; width: auto; height: 66px; margin: 8px 0 6px; opacity: 1; }
 .hxt-mol { display: flex; justify-content: center; align-items: center; overflow: hidden; } .hxt-mol .molb { display: block; width: 100%; height: 66px; }
+.cd-log span { display: inline-flex; align-items: center; gap: 5px; }
+.br-emo { color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%); }
+.br-note .br-emo { color: inherit; }
+.br-note.warn { box-shadow: 0 0 0 1px rgba(212,42,64,.45); }
