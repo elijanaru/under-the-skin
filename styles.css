@@ -5020,3 +5020,8 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .sp-b small { max-width: 60px; }
 .sup-ph i { width: 8px; height: 8px; background: rgba(48,64,35,.14); }
 .sup-ph i.on { background: var(--c); box-shadow: 0 0 0 1.5px rgba(255,255,255,.9), 0 1px 3px rgba(48,64,35,.3); }
+
+/* Welcome: soft frosted blur at the bottom, fading up into the photo */
+.onb-welcome .bw-vignette::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 42%;
+  backdrop-filter: blur(10px) saturate(1.05); -webkit-backdrop-filter: blur(10px) saturate(1.05);
+  -webkit-mask: linear-gradient(180deg, transparent 0%, rgba(0,0,0,.55) 30%, #000 62%); mask: linear-gradient(180deg, transparent 0%, rgba(0,0,0,.55) 30%, #000 62%); }
