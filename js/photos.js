@@ -609,9 +609,9 @@ export const DISH_PHOTOS = {
   "page": "https://unsplash.com/photos/korean-bibimbap-with-side-dishes-is-served-SbHulgzS_eo"
  },
  "Kimchi-jjigae (Kimchi Stew)": {
-  "src": "https://images.unsplash.com/photo-1760228865341-675704c22a5b",
-  "by": "rawkkim",
-  "page": "https://unsplash.com/photos/close-up-of-spicy-korean-stew-with-tofu-and-scallions-1_SenAyTAXg"
+  "src": "https://images.unsplash.com/photo-1683225757624-86943fb48966",
+  "by": "Dynamic Wang",
+  "page": "https://unsplash.com/photos/a-close-up-of-a-bowl-of-food-on-a-table-UH_5DgM-JbU"
  },
  "Doenjang-jjigae (Soybean Paste Stew)": {
   "src": "https://images.unsplash.com/photo-1746718547557-1a0e05bed94b",
@@ -668,10 +668,10 @@ export const DISH_PHOTOS = {
   "by": "lee seunghyub",
   "page": "https://unsplash.com/photos/sliced-cooked-meat-served-on-a-white-plate-s-2An8fq23o"
  },
- "Sundubu-jjigae (Soft Tofu Stew)": {
-  "src": "https://images.unsplash.com/photo-1785166285093-d25b0ac6ca8a",
-  "by": "Ellen Chaffin",
-  "page": "https://unsplash.com/photos/YwPR-zfKD_U"
+ "Haemul-tang (Spicy Seafood Stew)": {
+  "src": "https://images.unsplash.com/photo-1761530291482-c3ed81a7fc3a",
+  "by": "yeojin yun",
+  "page": "https://unsplash.com/photos/seafood-medley-with-octopus-crab-and-shellfish-in-broth-OjuN1AN_ygk"
  },
  "Hobak-bokkeum (Stir-Fried Zucchini)": {
   "src": "https://images.unsplash.com/photo-1591278952693-6d759bbbc6a9",
