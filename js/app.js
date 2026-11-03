@@ -796,6 +796,21 @@ function onbPromise() {
   </div>`;
 }
 // The cycle question shows her actual cycle: four phase arcs sized from the length she picks, redrawn on every tap.
+// Little drawings of each birth control method for the onboarding question.
+const BC_PIC = {
+  none: `<svg viewBox="0 0 48 48"><defs><radialGradient id="bp-f" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#fff6f8"/><stop offset="1" stop-color="#ee9db3"/></radialGradient></defs>
+    <path d="M24 30 C 24 36, 22 40, 18 44" stroke="#6c823e" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M21 39 C 15 38, 13 34, 14 31 C 18 31, 21 34, 21 39 Z" fill="#8fae5a"/>
+    ${[0, 72, 144, 216, 288].map(r => `<ellipse cx="24" cy="12" rx="6.5" ry="9" fill="url(#bp-f)" transform="rotate(${r} 24 20)"/>`).join('')}<circle cx="24" cy="20" r="4" fill="#f1c96a"/></svg>`,
+  pill: `<svg viewBox="0 0 48 48"><defs><linearGradient id="bp-b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbfbfd"/><stop offset="1" stop-color="#d9d6e0"/></linearGradient></defs>
+    <rect x="7" y="5" width="34" height="38" rx="6" fill="url(#bp-b)"/>${[0, 1, 2, 3].map(r => [0, 1, 2].map(c => `<circle cx="${15 + c * 9}" cy="${12 + r * 8.2}" r="3.2" fill="${r === 3 ? '#f4c6d3' : '#fff'}" stroke="rgba(48,64,35,.25)" stroke-width=".8"/>`).join('')).join('')}</svg>`,
+  hiud: `<svg viewBox="0 0 48 48"><path d="M8 11 C 14 14, 34 14, 40 11" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="21.5" y="12" width="5" height="24" rx="2.5" fill="#fff"/>
+    <rect x="20.5" y="17" width="7" height="13" rx="3.5" fill="#efd4dd"/><path d="M24 36 C 23 40, 25 42, 24 46 M24 36 C 26 40, 22 43, 23 46" stroke="#8a917f" stroke-width="1" fill="none"/></svg>`,
+  other: `<svg viewBox="0 0 48 48"><circle cx="22" cy="24" r="14" fill="none" stroke="#efd4dd" stroke-width="5"/><circle cx="22" cy="24" r="14" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="1.4"/>
+    <rect x="30" y="7" width="5" height="26" rx="2.5" fill="#fff" transform="rotate(28 32 20)"/></svg>`,
+  copper: `<svg viewBox="0 0 48 48"><defs><linearGradient id="bp-c" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b8693a"/><stop offset=".5" stop-color="#f0b07a"/><stop offset="1" stop-color="#a85a2e"/></linearGradient></defs>
+    <path d="M8 11 C 14 14, 34 14, 40 11" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="21.5" y="12" width="5" height="24" rx="2.5" fill="#fff"/>
+    ${[16, 19, 22, 25, 28, 31].map(y => `<rect x="20" y="${y}" width="8" height="2" rx="1" fill="url(#bp-c)"/>`).join('')}<path d="M24 36 C 23 40, 25 42, 24 46" stroke="#8a917f" stroke-width="1" fill="none"/></svg>`,
+};
 function onbCycleRing(L, P) {
   const R = 74, C = 2 * Math.PI * R, ov = Math.max(P + 3, L - 14);
   const parts = [['menstrual', 1, P], ['follicular', P + 1, ov - 2], ['ovulatory', ov - 1, ov + 1], ['luteal', ov + 2, L]];
@@ -873,7 +888,7 @@ function viewOnboarding() {
         <button class="chip unsure ${o.unsure ? 'on' : ''}" data-action="onbUnsure">${o.unsure ? icon('check', 14, 2.4) : ''} I’m not sure</button>
         ${o.unsure ? '<p class="muted sm">No problem — we’ll start with 28 days and learn your real cycle automatically as soon as you log your next period.</p>' : ''}`,
     6: `<h2 class="onb-title">Are you on <span>birth control?</span></h2>
-        <div class="bc-list">${BIRTH_CONTROL.map(b => `<button class="bc-opt ${o.bc === b.k ? 'on' : ''}" data-action="onbBc" data-v="${b.k}"><b>${b.t}</b><small>${b.s}</small><i>${icon('check', 14, 2.6)}</i></button>`).join('')}</div>
+        <div class="bc-list">${BIRTH_CONTROL.map(b => `<button class="bc-opt has-pic ${o.bc === b.k ? 'on' : ''}" data-action="onbBc" data-v="${b.k}"><span class="bc-pic">${BC_PIC[b.k] || ''}</span><span class="bc-tx"><b>${b.t}</b><small>${b.s}</small></span><i>${icon('check', 14, 2.6)}</i></button>`).join('')}</div>
         ${hormonalBC(o.bc) ? `<div class="bc-q"><h3>Would you like to come off it?</h3>
           <p class="muted sm">Your own cycle is where your energy, mood and glow come from. If you want it back, we’ll guide you step by step.</p>
           <div class="chips">${BC_PLAN.map(b => `<button class="chip ${o.bcPlan === b.k ? 'on' : ''}" data-action="onbBcPlan" data-v="${b.k}">${b.t}</button>`).join('')}</div>

@@ -5114,3 +5114,12 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
   drop-shadow(1.5px 0 0 rgba(40,26,20,.5)) drop-shadow(-1.5px 0 0 rgba(40,26,20,.5)) drop-shadow(0 1.5px 0 rgba(40,26,20,.5)) drop-shadow(0 -1.5px 0 rgba(40,26,20,.5))
   drop-shadow(0 12px 20px rgba(30,14,8,.35)) !important; }
 .onb-ring { width: 170px; height: 170px; }
+
+/* birth control options: a small drawing of the method, outlined like the other onboarding pictures */
+.bc-opt.has-pic { flex-direction: row; align-items: center; gap: 14px; padding-left: 12px; }
+.bc-pic { flex: none; width: 46px; height: 46px; display: grid; place-items: center; border-radius: 16px; background: rgba(255,255,255,.22); }
+.bc-pic svg { width: 40px; height: 40px; filter: drop-shadow(.8px 0 0 #fff) drop-shadow(-.8px 0 0 #fff) drop-shadow(0 .8px 0 #fff) drop-shadow(0 -.8px 0 #fff)
+  drop-shadow(1.2px 0 0 rgba(40,26,20,.5)) drop-shadow(-1.2px 0 0 rgba(40,26,20,.5)) drop-shadow(0 1.2px 0 rgba(40,26,20,.5)) drop-shadow(0 -1.2px 0 rgba(40,26,20,.5))
+  drop-shadow(0 4px 6px rgba(30,14,8,.3)); }
+.bc-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.bc-opt.on .bc-pic { background: rgba(255,255,255,.5); }
