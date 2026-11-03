@@ -4734,11 +4734,12 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 /* ---------- Glass light (from the user's glassy wallet reference) ----------
    Clean pearl-white page with a faint dot screen at the top and soft coloured glows pooling at the bottom
    (her phase hue, peach, lime, moss). Frosted white cards and crisp dark type on top. */
-:root { --ink-hi: #1b2314; --ink-mid: #4d5643; --ink-lo: #7d8574; }
-.phone { background:
-  linear-gradient(180deg, rgba(246,244,247,0) 0%, rgba(246,244,247,0) 18%, #f4f2f5 48%),
-  radial-gradient(circle at 1.5px 1.5px, rgba(30,30,40,.075) 1px, transparent 1.4px) 0 0 / 6px 6px,
-  linear-gradient(180deg, #f8f7f9, #f2f0f4) !important; }
+:root { --ink-hi: #304023; --ink-mid: #56624a; --ink-lo: #8a917f; }
+.phone { background: linear-gradient(180deg, #f8f7f9, #f2f0f4) !important; }
+/* The fine dot screen runs over the whole page, on top of the colour field and under the content */
+.phone::after { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(circle at 1.5px 1.5px, rgba(36,40,30,.085) 1px, transparent 1.45px) 0 0 / 6px 6px; }
+#app { z-index: 1; }
 /* One soft colour field: lilac, her phase hue, peach, lime and moss flow into each other towards the bottom and drift very slowly */
 .phone::before { content: ''; position: absolute; inset: -12%; pointer-events: none;
   background:
