@@ -4574,3 +4574,6 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .onb.no-fig .onb-title, .onb.no-fig .onb-title span { color: #fff !important; }
 .onb.no-fig .onb-title { text-shadow: 0 1px 2px rgba(50,24,38,.35), 0 4px 22px rgba(50,24,38,.45) !important; }
 .onb.no-fig .gate-lead, .onb.no-fig .muted { text-shadow: 0 1px 10px rgba(50,24,38,.45); }
+/* her lower body melts into the mist behind the title */
+.beyond .bw-vignette::before { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, transparent 44%, rgba(226,228,214,.38) 56%, rgba(196,206,184,.62) 66%, rgba(120,138,98,.5) 82%, rgba(74,90,52,.35) 100%); }

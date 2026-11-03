@@ -10,7 +10,8 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
-const MODEL_URL = 'models/body.glb';
+const MODEL_URL = 'models/body2.glb';
+const BODY_Y = -0.4; // she sits low, so her lower body melts into the mist behind the title
 let cached = null; // the parsed model is reused if the welcome screen is shown again
 const ease = t => 1 - Math.pow(1 - Math.min(1, Math.max(0, t)), 4);
 
@@ -77,7 +78,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
   world.add(dust);
 
   // ---- the model, plus a holographic shell and particles that lift off the skin ----
-  let shell = null, motes = null, moteBase = null, moteSeed = null, ready = false, tReady = 0;
+  let shell = null, bodyMat = null, motes = null, moteBase = null, moteSeed = null, ready = false, tReady = 0;
   const shellMat = new THREE.ShaderMaterial({
     uniforms: { uTime: { value: 0 }, uAmt: { value: 0 } },
     vertexShader: `varying vec3 vN; varying vec3 vV; varying float vY;
@@ -97,7 +98,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
     root.scale.setScalar(s); root.position.set(-ctr.x * s, -ctr.y * s, -ctr.z * s);
     body.add(root);
     let mesh = null;
-    root.traverse(o => { if (o.isMesh) { mesh = o; o.material.envMapIntensity = 1; o.material.color?.set(0xf4e4e9); if ('metalness' in o.material) { o.material.metalness = 0.15; o.material.roughness = 0.32; } } });
+    root.traverse(o => { if (o.isMesh) { mesh = o; const m = o.material; m.envMapIntensity = 1; if (!m.map) m.color?.set(0xf4e4e9); if ('metalness' in m && !m.metalnessMap) { m.metalness = 0.15; m.roughness = 0.32; } m.transparent = true; m.opacity = 0; bodyMat = m; } });
     if (!mesh) return;
     shell = new THREE.Mesh(mesh.geometry, shellMat);
     shell.position.copy(mesh.position); shell.quaternion.copy(mesh.quaternion); shell.scale.copy(mesh.scale).multiplyScalar(1.006);
@@ -116,7 +117,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
     motes = new THREE.Points(mg, new THREE.PointsMaterial({ color: 0xfff4f6, size: 0.012 / s, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false }));
     motes.position.copy(mesh.position); motes.quaternion.copy(mesh.quaternion); motes.scale.copy(mesh.scale);
     mesh.parent.add(motes);
-    body.scale.setScalar(0.001);
+    body.scale.setScalar(1);
     ready = true; tReady = clock.getElapsedTime();
     onReady && onReady();
   }
@@ -186,11 +187,13 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
 
     // body grows in as we arrive, then breathes and turns slowly
     if (ready) {
-      const g = reduce ? 1 : ease((t - tReady) / 2.2);
+      // she surfaces slowly out of the mist: fades in while rising a little, no spin
+      const g = reduce ? 1 : ease((t - tReady) / 3.6);
       const breathe = 1 + Math.sin(t * 0.9) * 0.006;
-      body.scale.setScalar(Math.max(0.001, g) * breathe);
-      body.rotation.y = Math.sin(t * 0.18) * 0.2 + (1 - g) * -1.2;
-      body.position.y = Math.sin(t * 0.6) * 0.04;
+      body.scale.setScalar(breathe);
+      body.rotation.y = Math.sin(t * 0.18) * 0.16 + (1 - g) * -0.25;
+      body.position.y = BODY_Y - (1 - g) * 0.45 + Math.sin(t * 0.6) * 0.035;
+      if (bodyMat) { bodyMat.opacity = g; bodyMat.transparent = g < 1; bodyMat.depthWrite = g > 0.98; }
       shellMat.uniforms.uTime.value = t; shellMat.uniforms.uAmt.value = 0.12 + 0.8 * (1 - g) + 0.08 * Math.sin(t * 1.3);
       if (motes) {
         const mp = motes.geometry.attributes.position.array, n = moteSeed.length;

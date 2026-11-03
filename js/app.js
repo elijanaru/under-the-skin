@@ -635,10 +635,10 @@ function fitHand(svg) {
 // and packs round pearls along it, big where the stroke is thick and small where it is thin.
 function pearlWord(g, word) {
   const FS = 230, c = document.createElement('canvas'), x = c.getContext('2d', { willReadFrequently: true });
-  const lines = word.split('|'); x.font = `${FS}px 'Parisienne'`; if ('letterSpacing' in x) x.letterSpacing = `${Math.round(FS * .01)}px`;
+  const lines = word.split('|'); x.font = `${FS}px 'Parisienne'`; if ('letterSpacing' in x) x.letterSpacing = `${Math.round(FS * -.004)}px`;
   const ws = lines.map(l => x.measureText(l).width), off = lines.length > 1 ? ws[0] * .34 : 0; // the second line steps in to the right
   const W = Math.ceil(Math.max(ws[0], off + (ws[1] || 0)) + FS * .8), H = Math.ceil(FS * (.45 + lines.length * .8));
-  c.width = W; c.height = H; x.font = `${FS}px 'Parisienne'`; if ('letterSpacing' in x) x.letterSpacing = `${Math.round(FS * .01)}px`; x.textBaseline = 'alphabetic';
+  c.width = W; c.height = H; x.font = `${FS}px 'Parisienne'`; if ('letterSpacing' in x) x.letterSpacing = `${Math.round(FS * -.004)}px`; x.textBaseline = 'alphabetic';
   x.fillStyle = x.strokeStyle = '#000'; x.lineWidth = 6; x.lineJoin = 'round';
   lines.forEach((l, n) => { const lx = FS * .4 + (n ? off : 0), ly = FS * (.9 + n * .8); x.fillText(l, lx, ly); x.strokeText(l, lx, ly); });
   const px = x.getImageData(0, 0, W, H).data, D = new Float32Array(W * H), INF = 1e9;
@@ -659,30 +659,31 @@ function pearlWord(g, word) {
   }
   const big = placed.slice().sort((a, b) => b[2] - a[2]).filter((p, n, arr) => arr.slice(0, n).every(q => Math.hypot(q[0] - p[0], q[1] - p[1]) > W * .1)).slice(0, 7);
   const star = (p, n) => `<path class="p-star" style="animation-delay:${(n * .9).toFixed(1)}s" transform="translate(${p[0] - p[2] * .25} ${p[1] - p[2] * .3}) scale(${(p[2] / 4.2).toFixed(2)})" d="M0-10C.5-1.4 1.4-.5 10 0 1.4.5.5 1.4 0 10-.5 1.4-1.4.5-10 0-1.4-.5-.5-1.4 0-10Z"/>`;
-  if (g.dataset.vines) // filigree vines above and below the word, in smaller stones that taper to the tips (a curl ends in a bigger stone)
-  { const wx0 = Math.min(...placed.map(p => p[0] - p[2])), wx1 = Math.max(...placed.map(p => p[0] + p[2])), wy0 = Math.min(...placed.map(p => p[1] - p[2])), wy1 = Math.max(...placed.map(p => p[1] + p[2]));
+  if (g.dataset.vines) { // crystal filigree: drawn curls (different on each side) with leaves sprouting along them and a few tiny flowers
+    const word = placed.slice(), wx0 = Math.min(...word.map(p => p[0] - p[2])), wx1 = Math.max(...word.map(p => p[0] + p[2])), wy0 = Math.min(...word.map(p => p[1] - p[2])), wy1 = Math.max(...word.map(p => p[1] + p[2]));
     const bw = wx1 - wx0, bh = Math.min(wy1 - wy0, bw * .5), P = (u, v) => `${(wx0 + u * bw).toFixed(1)} ${(v > .5 ? wy1 - (1 - v) * bh : wy0 + v * bh).toFixed(1)}`;
-    const V = [ // left side: [path in box units, start radius, end radius]
-      ['M .46 1.02 C .34 1.32, .16 1.32, .08 1.12 C .04 1.01, .12 .95, .16 1.04 C .18 1.09, .13 1.12, .12 1.07', 4.6, 2.2],
-      ['M .24 1.22 C .22 1.40, .30 1.48, .34 1.40', 3, 1.8],
-      ['M .30 .06 C .26 -.26, .34 -.44, .42 -.38 C .46 -.34, .43 -.27, .40 -.30', 3.8, 2],
-      ['M .10 .02 C .02 -.20, -.02 -.42, .06 -.52 C .10 -.56, .15 -.50, .11 -.46', 3.4, 2],
-      ['M .19 -.28 C .14 -.40, .17 -.52, .23 -.52', 2.6, 1.7]];
+    const flower = (x, y, r) => { placed.push([x, y, r * 1.2]); for (let k = 0; k < 5; k++) { const a = k * 1.2566 + .3; placed.push([x + Math.cos(a) * r * 2.3, y + Math.sin(a) * r * 2.3, r * (.95 + rnd() * .2)]); } };
+    const leaf = (x, y, h, side, r) => { const a = h + side * (.75 + rnd() * .3); [[2.2, .95], [4.2, 1.1], [6.1, .8], [7.6, .45]].forEach(([t, w]) => placed.push([x + Math.cos(a) * t * r, y + Math.sin(a) * t * r, r * w])); };
+    const V = [ // [path in word-box units (v<0 above, v>1 below), start radius, end radius, leaves, flower at the tip]
+      ['M .46 1.02 C .34 1.32, .16 1.32, .08 1.12 C .04 1.01, .12 .95, .16 1.04 C .18 1.09, .13 1.12, .12 1.07', 4.6, 2.2, 3, 0],
+      ['M .24 1.22 C .22 1.40, .30 1.48, .34 1.40', 3, 1.8, 0, 1],
+      ['M .30 .06 C .26 -.26, .34 -.44, .42 -.38 C .46 -.34, .43 -.27, .40 -.30', 3.8, 2, 2, 0],
+      ['M .10 .02 C .02 -.20, -.02 -.42, .06 -.52 C .10 -.56, .15 -.50, .11 -.46', 3.4, 2, 1, 0],
+      ['M .19 -.28 C .14 -.40, .17 -.52, .23 -.52', 2.6, 1.7, 0, 1],
+      ['M .52 1.03 C .66 1.26, .80 1.38, .93 1.20 C .98 1.10, .90 1.02, .86 1.10 C .84 1.15, .89 1.17, .90 1.13', 4.6, 2.2, 3, 0],
+      ['M .72 1.30 C .76 1.46, .68 1.52, .64 1.44', 3, 1.8, 1, 0],
+      ['M .64 .04 C .70 -.30, .60 -.48, .54 -.40 C .51 -.35, .55 -.30, .57 -.33', 3.8, 2, 1, 0],
+      ['M .92 .06 C 1.00 -.16, .98 -.48, .88 -.56 C .83 -.59, .80 -.52, .84 -.49', 3.4, 2, 2, 0],
+      ['M .80 -.10 C .84 -.28, .80 -.40, .75 -.40', 2.6, 1.7, 0, 1]];
     const ns = 'http://www.w3.org/2000/svg', tmp = document.createElementNS(ns, 'path'); g.appendChild(tmp);
-    const vine = (d, r0, r1) => { tmp.setAttribute('d', d.replace(/(-?[\d.]+)[ ,]+(-?[\d.]+)/g, (_, u, v) => P(+u, +v)));
-      const L = tmp.getTotalLength(); let at = 0;
-      while (at <= L) { const k = at / L, r = r0 + (r1 - r0) * k, q = tmp.getPointAtLength(at); placed.push([q.x, q.y, r]); at += r * 2 + 1.2; }
-      // little crystal leaves sprouting off the vine, alternating sides
-      for (let n = 1, f = .22; f < .8; f += .26, n++) { const a = tmp.getPointAtLength(L * f), b = tmp.getPointAtLength(Math.min(L, L * f + 2)), dx = b.x - a.x, dy = b.y - a.y, m = Math.hypot(dx, dy) || 1, s = n % 2 ? 1 : -1, nx = -dy / m * s, ny = dx / m * s, r = r0 * .8;
-        [[1.9, .55], [3.6, .7], [5.1, .5]].forEach(([t, w]) => placed.push([a.x + (nx * t + dx / m * t * .6) * r, a.y + (ny * t + dy / m * t * .6) * r, r * w])); } };
-    const VR = [ // the right side answers the left with its own curls, so the frame is balanced but not mirrored
-      ['M .52 1.03 C .66 1.26, .80 1.38, .93 1.20 C .98 1.10, .90 1.02, .86 1.10 C .84 1.15, .89 1.17, .90 1.13', 4.6, 2.2],
-      ['M .72 1.30 C .76 1.46, .68 1.52, .64 1.44', 3, 1.8],
-      ['M .64 .04 C .70 -.30, .60 -.48, .54 -.40 C .51 -.35, .55 -.30, .57 -.33', 3.8, 2],
-      ['M .92 .06 C 1.00 -.16, .98 -.48, .88 -.56 C .83 -.59, .80 -.52, .84 -.49', 3.4, 2],
-      ['M .80 -.10 C .84 -.28, .80 -.40, .75 -.40', 2.6, 1.7]];
-    [...V, ...VR].forEach(([d, r0, r1]) => vine(d, r0, r1));
-    tmp.remove(); }
+    V.forEach(([d, r0, r1, nl, fl]) => { tmp.setAttribute('d', d.replace(/(-?[\d.]+)[ ,]+(-?[\d.]+)/g, (_, u, v) => P(+u, +v)));
+      const L = tmp.getTotalLength(); let at = 0, side = rnd() < .5 ? 1 : -1, next = nl ? .2 + rnd() * .1 : 2;
+      while (at <= L) { const k = at / L, r = r0 + (r1 - r0) * k, q = tmp.getPointAtLength(at); placed.push([q.x, q.y, r]);
+        if (k > next) { const q2 = tmp.getPointAtLength(Math.min(L, at + 2)); leaf(q.x, q.y, Math.atan2(q2.y - q.y, q2.x - q.x), side, r * .95); side = -side; next += .6 / nl + rnd() * .08; }
+        at += r * 2 + 1.2; }
+      if (fl) { const e = tmp.getPointAtLength(L); flower(e.x, e.y, r1 * 1.15); } });
+    tmp.remove();
+  }
   const x0 = Math.min(...placed.map(p => p[0] - p[2])), x1 = Math.max(...placed.map(p => p[0] + p[2])), y0 = Math.min(...placed.map(p => p[1] - p[2])), y1 = Math.max(...placed.map(p => p[1] + p[2]));
   g.dataset.box = `${x0} ${y0} ${x1 - x0} ${y1 - y0}`; // exact crystal bounds, so the word sits dead centre
   g.innerHTML = placed.sort((a, b) => a[0] - b[0]).map(([i, j, r]) => `<use class="p-bead" href="#crys" style="--d:${(i / W * 1.8).toFixed(2)}s" x="${(i - r).toFixed(1)}" y="${(j - r).toFixed(1)}" width="${(r * 2).toFixed(1)}" height="${(r * 2).toFixed(1)}" transform="rotate(${Math.round(rnd() * 45)} ${i} ${j})"/>`).join('') + big.map(star).join('');
