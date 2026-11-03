@@ -89,7 +89,25 @@ export function bowl({ notes = [523.25], gap = .18, vol = 0.07, decay = 3.2, del
     });
   });
 }
-// The three moments of the intro.
-export const introSound = () => { breeze({ dur: 4, vol: .18 }); bowl({ notes: [659.25, 783.99], gap: .9, vol: .045, decay: 3.6, delay: 1.2 }); };
-export const enterSound = () => { breeze({ dur: 2, vol: .2, bright: 1.4 }); bowl({ notes: [523.25, 659.25, 783.99, 1046.5], gap: .12, vol: .05, decay: 2.8, delay: .25 }); };
-export const arriveSound = () => { breeze({ dur: 3.4, vol: .14 }); bowl({ notes: [392, 523.25, 659.25], gap: .35, vol: .06, decay: 4, delay: .6 }); };
+// The moments of the intro: only air, no bells or dings.
+export const introSound = () => breeze({ dur: 4, vol: .12 });
+export const enterSound = () => breeze({ dur: 2.2, vol: .16, bright: 1.3 });
+export const arriveSound = () => breeze({ dur: 3.4, vol: .1 });
+// Rain and birds under the whole onboarding: a 72 s seamless loop, faded in and out.
+let amb = null, ambWant = false, ambLoading = null;
+export function ambience(on, { vol = .32, fade = on ? 2.5 : 3.5 } = {}) {
+  ambWant = on;
+  const c = ac(); if (!c) return;
+  if (on && !amb) {
+    if (!ambLoading) ambLoading = fetch('sounds/forest-rain.m4a').then(r => r.arrayBuffer()).then(b => c.decodeAudioData(b)).then(buf => {
+      const src = c.createBufferSource(), g = c.createGain(); src.buffer = buf; src.loop = true; g.gain.value = 0.0001;
+      src.connect(g); g.connect(c.destination); src.start(); amb = { src, g }; ambLoading = null; ambience(ambWant, { vol });
+    }).catch(() => { ambLoading = null; });
+    return;
+  }
+  if (!amb) return;
+  const t = c.currentTime, g = amb.g.gain;
+  g.cancelScheduledValues(t); g.setValueAtTime(Math.max(g.value, 0.0001), t);
+  g.exponentialRampToValueAtTime(on ? vol : 0.0001, t + fade);
+  if (!on) { const a = amb; setTimeout(() => { if (!ambWant && amb === a) { try { a.src.stop(); } catch {} amb = null; } }, fade * 1000 + 200); }
+}

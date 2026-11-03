@@ -3637,7 +3637,7 @@ function showSignal(sig, name, from) {
     ${from ? `<button class="btn btn-love btn-block" data-action="openLove" data-id="${from.id}">${icon('heart', 16)} Send love back</button>` : ''}
     <button class="btn btn-ghost btn-block" data-action="sigClose">Close</button></div>`;
   $app.appendChild(el);
-  import('./sfx.js').then(S => S.bowl({ notes: [783.99, 1046.5], gap: .14, vol: .06, decay: 2.4 })).catch(() => {});
+  import('./sfx.js').then(S => S.breeze({ dur: 1.8, vol: .14 })).catch(() => {});
 }
 let sigSource = null;
 async function startSignals() {
@@ -4166,9 +4166,9 @@ function readPhoto(file) {
     img.onerror = rej; img.src = url;
   });
 }
-// soft chime when hovering (or touching) a pearl button
-// airy "hover" shimmer the moment a pearl button is pressed
-document.addEventListener('pointerdown', e => { if (e.target.closest?.('.pearl-btn')) import('./sfx.js').then(S => S.soft()).catch(() => {}); });
+// rain and birds under the onboarding: sound may only start after her first touch
+const ambience = on => import('./sfx.js').then(S => S.ambience(on)).catch(() => {});
+document.addEventListener('pointerdown', () => { if (!state?.onboarded) ambience(true); });
 document.addEventListener('change', e => {
   const t = e.target, scope = t.dataset?.photo, f = t.files?.[0]; if (!scope || !f) return;
   readPhoto(f).then(d => {
@@ -4925,8 +4925,10 @@ function render() {
     document.documentElement.dataset.phase = '';
     $app.innerHTML = `${statusbar()}<div class="view onb-view ${fresh ? 'enter' : ''}" id="view">${viewOnboarding()}</div>`;
     mountFigures();
+    ui.ambOn = true; if (navigator.userActivation?.hasBeenActive) ambience(true);
     return;
   }
+  if (ui.ambOn !== false) { ui.ambOn = false; ambience(false); } // fades out as she arrives in the app
   M = model();
   const ph = (ui.phasePreview || M.info?.phase) || ''; // the whole app takes the colour of her phase
   if (document.documentElement.dataset.phase !== ph) document.documentElement.dataset.phase = ph;
