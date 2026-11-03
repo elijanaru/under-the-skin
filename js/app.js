@@ -635,11 +635,11 @@ function fitHand(svg) {
 // and packs round pearls along it, big where the stroke is thick and small where it is thin.
 function pearlWord(g, word) {
   const FS = 230, c = document.createElement('canvas'), x = c.getContext('2d', { willReadFrequently: true });
-  const lines = word.split('|'); x.font = `${FS}px 'Parisienne'`;
+  const lines = word.split('|'); x.font = `${FS}px 'Parisienne'`; if ('letterSpacing' in x) x.letterSpacing = `${Math.round(FS * .07)}px`;
   const ws = lines.map(l => x.measureText(l).width), off = lines.length > 1 ? ws[0] * .34 : 0; // the second line steps in to the right
   const W = Math.ceil(Math.max(ws[0], off + (ws[1] || 0)) + FS * .8), H = Math.ceil(FS * (.45 + lines.length * .8));
-  c.width = W; c.height = H; x.font = `${FS}px 'Parisienne'`; x.textBaseline = 'alphabetic';
-  x.fillStyle = x.strokeStyle = '#000'; x.lineWidth = 7; x.lineJoin = 'round';
+  c.width = W; c.height = H; x.font = `${FS}px 'Parisienne'`; if ('letterSpacing' in x) x.letterSpacing = `${Math.round(FS * .07)}px`; x.textBaseline = 'alphabetic';
+  x.fillStyle = x.strokeStyle = '#000'; x.lineWidth = 6; x.lineJoin = 'round';
   lines.forEach((l, n) => { const lx = FS * .4 + (n ? off : 0), ly = FS * (.9 + n * .8); x.fillText(l, lx, ly); x.strokeText(l, lx, ly); });
   const px = x.getImageData(0, 0, W, H).data, D = new Float32Array(W * H), INF = 1e9;
   for (let i = 0; i < W * H; i++) D[i] = px[i * 4 + 3] > 100 ? INF : 0;
@@ -653,13 +653,13 @@ function pearlWord(g, word) {
   const S = 24, grid = new Map(), placed = [], key = (a, b) => a + ',' + b;
   let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   for (const [i, j, d] of cand) {
-    const r = Math.min(17, d * (.88 + rnd() * .12)), gi = Math.floor(i / S), gj = Math.floor(j / S); let ok = true;
+    const r = Math.min(13, d * (.88 + rnd() * .12)), gi = Math.floor(i / S), gj = Math.floor(j / S); let ok = true;
     for (let a = gi - 1; a <= gi + 1 && ok; a++) for (let b = gj - 1; b <= gj + 1 && ok; b++) for (const q of grid.get(key(a, b)) || []) if (Math.hypot(q[0] - i, q[1] - j) < (q[2] + r) * .93) { ok = false; break; }
     if (!ok) continue; const pr = [i, j, r]; placed.push(pr); (grid.get(key(gi, gj)) || grid.set(key(gi, gj), []).get(key(gi, gj))).push(pr);
   }
   const big = placed.slice().sort((a, b) => b[2] - a[2]).filter((p, n, arr) => arr.slice(0, n).every(q => Math.hypot(q[0] - p[0], q[1] - p[1]) > W * .1)).slice(0, 7);
   const star = (p, n) => `<path class="p-star" style="animation-delay:${(n * .9).toFixed(1)}s" transform="translate(${p[0] - p[2] * .25} ${p[1] - p[2] * .3}) scale(${(p[2] / 4.2).toFixed(2)})" d="M0-10C.5-1.4 1.4-.5 10 0 1.4.5.5 1.4 0 10-.5 1.4-1.4.5-10 0-1.4-.5-.5-1.4 0-10Z"/>`;
-  // filigree vines above and below the word, in smaller stones that taper to the tips (a curl ends in a bigger stone)
+  if (g.dataset.vines) // filigree vines above and below the word, in smaller stones that taper to the tips (a curl ends in a bigger stone)
   { const wx0 = Math.min(...placed.map(p => p[0] - p[2])), wx1 = Math.max(...placed.map(p => p[0] + p[2])), wy0 = Math.min(...placed.map(p => p[1] - p[2])), wy1 = Math.max(...placed.map(p => p[1] + p[2]));
     const bw = wx1 - wx0, bh = Math.min(wy1 - wy0, bw * .5), P = (u, v) => `${(wx0 + u * bw).toFixed(1)} ${(v > .5 ? wy1 - (1 - v) * bh : wy0 + v * bh).toFixed(1)}`;
     const V = [ // [path in box units, start radius, end radius]
@@ -695,7 +695,7 @@ function viewOnboarding() {
 <path d="M100 66 c4 -4 9 -3 10 1 c-4 4 -9 3 -10 -1z"/><circle cx="86" cy="10" r="2.4"/><circle cx="10" cy="20" r="2"/><circle cx="16" cy="74" r="2.2"/>
 <g transform="translate(46 12)"><circle r="3.2"/><circle cx="0" cy="-5" r="2.4"/><circle cx="4.8" cy="-1.5" r="2.4"/><circle cx="3" cy="4" r="2.4"/><circle cx="-3" cy="4" r="2.4"/><circle cx="-4.8" cy="-1.5" r="2.4"/></g></g></svg></span><h1 class="bw-script bw-hand" aria-label="Underskin"><svg class="uts-hand pearl" viewBox="0 0 600 220" aria-hidden="true">
           <defs><radialGradient id="crysRim" cx=".5" cy=".5" r=".5"><stop offset=".75" stop-color="#eef1f8"/><stop offset=".92" stop-color="#9aa3b8"/><stop offset="1" stop-color="#5d6478"/></radialGradient><radialGradient id="crysTab" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#fff"/><stop offset=".6" stop-color="#eef3fb"/><stop offset="1" stop-color="#bcc6da"/></radialGradient><symbol id="crys" viewBox="-10 -10 20 20"><circle r="10" fill="url(#crysRim)"/><path fill="#ffffff" d="M4.07 -1.68L8.50 -3.52L8.50 3.52L4.07 1.68Z"/><path fill="#c9d1e2" d="M4.07 1.68L8.50 3.52L3.52 8.50L1.68 4.07Z"/><path fill="#f7dbe8" d="M1.68 4.07L3.52 8.50L-3.52 8.50L-1.68 4.07Z"/><path fill="#8f9bb4" d="M-1.68 4.07L-3.52 8.50L-8.50 3.52L-4.07 1.68Z"/><path fill="#ffffff" d="M-4.07 1.68L-8.50 3.52L-8.50 -3.52L-4.07 -1.68Z"/><path fill="#cfe9e2" d="M-4.07 -1.68L-8.50 -3.52L-3.52 -8.50L-1.68 -4.07Z"/><path fill="#e9edf6" d="M-1.68 -4.07L-3.52 -8.50L3.52 -8.50L1.68 -4.07Z"/><path fill="#9ea8c0" d="M1.68 -4.07L3.52 -8.50L8.50 -3.52L4.07 -1.68Z"/><polygon points="4.07,-1.68 4.07,1.68 1.68,4.07 -1.68,4.07 -4.07,1.68 -4.07,-1.68 -1.68,-4.07 1.68,-4.07" fill="url(#crysTab)"/><path fill="#fff" d="M-2.6-5.6l1 2.2 2.2 1-2.2 1-1 2.2-1-2.2-2.2-1 2.2-1z" opacity=".95"/></symbol></defs>
-          <g class="h-g" data-word="Under|skin"></g></svg></h1><span class="orn-r"><svg class="orn" viewBox="0 0 120 90" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <g class="h-g" data-word="Underskin"></g></svg></h1><span class="orn-r"><svg class="orn" viewBox="0 0 120 90" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
 <path d="M118 60 C96 62 84 52 74 40 C64 28 50 22 38 28 C26 34 28 50 40 50 C50 50 50 38 42 38"/>
 <path d="M90 58 C86 72 72 80 58 76 C48 73 48 62 56 62 C62 62 62 70 56 70" />
 <path d="M74 40 C70 26 74 14 86 10 C94 8 98 16 92 20"/>

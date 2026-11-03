@@ -36,7 +36,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
   scene.environmentIntensity = 0.35;
 
   const camera = new THREE.PerspectiveCamera(32, 1, 0.05, 80);
-  const CAM_END = new THREE.Vector3(0, -0.15, 6.3), CAM_START = new THREE.Vector3(0, 0.6, 26);
+  const CAM_END = new THREE.Vector3(0, -0.15, 7), CAM_START = new THREE.Vector3(0, 0.6, 26);
   camera.position.copy(reduce ? CAM_END : CAM_START);
 
   // light: soft white key, blush and willow rims from behind, like morning sun through mist
@@ -172,7 +172,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
     }
     look.x += (look.tx - look.x) * 0.04; look.y += (look.ty - look.y) * 0.04;
     camera.position.set(look.x * 0.35, camY - look.y * 0.2, camZ);
-    camera.lookAt(0, camY * 0.3 - (entering ? 0 : 0.22 * k), 0); // look below her so she sits high and fills the screen
+    camera.lookAt(0, camY * 0.3 - (entering ? 0 : 0.6 * k), 0); // look below her so she sits high and leaves the lower third for the title
 
     // warp streaks: length grows with speed
     const L = Math.min(9, warpSpeed * 0.09) + 0.05, p = warpGeo.attributes.position.array;
