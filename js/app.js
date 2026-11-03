@@ -3467,7 +3467,7 @@ function viewPartner(p) {
   <div class="pad">
     ${flowHero(pi, { eyebrow: `${esc(p.n)} is in her`, title: `${ph.name} <em>phase</em>`, season: ph.season, id: 'pt', showOv: !!p.f, center: partnerStatus(pi, p),
       badge: `<div class="fh-side">${ptAvatar(p, 'lg')}${p.f && pi.fertile ? `<span class="fh-badge">${icon('spark', 13)} Fertile</span>` : ''}</div>`,
-      stats: [['Next period', pi.isPeriod ? 'Now' : `${pi.daysToPeriod} days`], ['Phase', ph.name], ['Energy', `${en}%`]] })}
+      stats: [pi.isPeriod ? ['Period day', `${pi.cd} of ${pi.P}`] : ['Next period', `${pi.daysToPeriod} days`], ['Phase', ph.name], ['Energy', `${en}%`]] })}
     ${(() => {
       const late = pi.cd > pi.L - 4, moods = { menstrual: ['Tired', 'Inward', 'Tender', 'Reflective'], follicular: ['Curious', 'Optimistic', 'Light', 'Playful'], ovulatory: ['Confident', 'Social', 'Flirty', 'Radiant'], luteal: late ? ['Sensitive', 'Bloated', 'Irritable', 'Needs comfort'] : ['Calm', 'Focused', 'Nesting', 'Cosy'] }[pi.phase];
       const moon = Z.moonPhase(new Date()), waxing = moon.age < 14.77, building = pi.phase === 'follicular' || pi.phase === 'ovulatory';
@@ -4015,7 +4015,7 @@ function viewWith(q) {
     ${flowHero(info, { eyebrow: ph.season, title: ph.tagline, season: `${tcm.elementGlyph} ${tcm.element} element`, id: 'with', showOv: !!snap.f,
       center: info.isPeriod ? 'On her period' : `Period in ${plural(info.daysToPeriod, 'day')}`,
       badge: snap.f && info.fertile ? `<span class="fh-badge">${icon('spark', 13)} Fertile</span>` : '',
-      stats: [['Next period', info.isPeriod ? 'Now' : `${info.daysToPeriod} days`], ['Phase', ph.name], ['Energy', `${Math.round(C.energyAt(info.cd, info.L, info.P) * 100)}%`]] })}
+      stats: [info.isPeriod ? ['Period day', `${info.cd} of ${info.P}`] : ['Next period', `${info.daysToPeriod} days`], ['Phase', ph.name], ['Energy', `${Math.round(C.energyAt(info.cd, info.L, info.P) * 100)}%`]] })}
     ${(() => { const g = DAY_GUIDE[dayWindow(info)], rec = pick(recipesFor(info.phase, info), dayNum(today)); return `
     <section class="card glass pv-day">
       <div class="pv-top"><div><div class="eyebrow">Her day · ${g.energy.toLowerCase()} energy</div><h3>${g.title}</h3></div><span class="pv-e">${g.energy}</span></div>
