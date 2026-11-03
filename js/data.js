@@ -1165,8 +1165,8 @@ export const TTC_TIPS = {
 // "What to eat" by phase and food group. Built on natural, unprocessed food: raw-first, warm & cooked
 // around the period, raw dairy welcome, no oats or tofu, few grains (sourdough is fine), coffee or matcha always fine.
 export const EAT_CATS = [
-  { k: 'protein', t: 'Protein', g: '🥩' }, { k: 'veg', t: 'Veggies', g: '🥦' }, { k: 'fats', t: 'Healthy fats', g: '🥑' },
-  { k: 'carbs', t: 'Carbs', g: '🍠' }, { k: 'fruit', t: 'Fruit', g: '🍓' }, { k: 'dairy', t: 'Raw dairy', g: '🥛' }, { k: 'drinks', t: 'Coffee & drinks', g: '☕' }, { k: 'supps', t: 'Supplements', g: '💊' },
+  { k: 'protein', ic: 'fish', t: 'Protein', g: '🥩' }, { k: 'veg', ic: 'leaf', t: 'Veggies', g: '🥦' }, { k: 'fats', ic: 'drop', t: 'Healthy fats', g: '🥑' },
+  { k: 'carbs', ic: 'grain', t: 'Carbs', g: '🍠' }, { k: 'fruit', ic: 'berry', t: 'Fruit', g: '🍓' }, { k: 'dairy', ic: 'milk', t: 'Raw dairy', g: '🥛' }, { k: 'drinks', ic: 'cup', t: 'Coffee & drinks', g: '☕' }, { k: 'supps', ic: 'flask', t: 'Supplements', g: '💊' },
 ];
 const F = s => s.split('|').map(x => x.trim()).map(x => [x.slice(0, x.indexOf(' ')), x.slice(x.indexOf(' ') + 1)]);
 export const EAT_GUIDE = {

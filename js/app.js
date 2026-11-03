@@ -1319,7 +1319,7 @@ function typicalSymptoms(phase) {
 function warmChips(list, cat, warm) {
   if (!warm) return list;
   if (cat === 'fruit') return list.filter(([, n]) => !/orange|citrus|kiwi|melon/i.test(n)).map(([e, n]) => [e, /date|dried|stewed|baked|compote/i.test(n) ? n : `${/banana/i.test(n) ? 'Baked' : 'Stewed'} ${n.toLowerCase()}`]);
-  if (cat === 'dairy') return list.map(([e, n]) => [e, /milk/i.test(n) && !/warm/i.test(n) ? `${n}, warmed` : /yoghurt|yogurt|kefir/i.test(n) ? `${n}, at room temperature` : n]);
+  if (cat === 'dairy') return list.map(([e, n]) => [e, /milk/i.test(n) && !/warm/i.test(n) ? `${n}, warmed` : /yoghurt|yogurt|kefir/i.test(n) && !/room temperature/i.test(n) ? `${n}, at room temperature` : n]);
   if (cat === 'veg') return list.map(([e, n]) => [e, /salad|raw/i.test(n) ? n.replace(/^raw\s+/i, 'Cooked ') : n]);
   return list;
 }
@@ -1328,9 +1328,9 @@ function eatCatInner(phase, cat) {
   // trying to conceive: prenatal + CoQ10, and no ashwagandha
   if (cat === 'supps' && ttc()) C0 = [C0[0] + ' Trying to conceive: start a prenatal with folate.', [['🤰', 'Prenatal with methylfolate'], ['🔋', 'CoQ10'], ...C0[1].filter(([, n]) => !/Ashwagandha/.test(n))]];
   const warm = warmWindow(M.info) && phase === (M.info && M.info.phase);
-  return `<div class="ec-h"><span class="ec-g">${ct.g}</span><div><b>${ct.t}</b><p>${C0[0]}</p></div></div>
+  return `<div class="ec-h"><span class="ec-g">${icon(ct.ic, 22)}</span><div><b>${ct.t}</b><p>${C0[0]}</p></div></div>
       ${warm && (cat === 'dairy' || cat === 'drinks') ? `<p class="eg-note warm">${icon('sun', 12)} These days: everything warm or at room temperature, nothing iced.</p>` : ''}
-      <div class="eat-foods">${warmChips(C0[1], cat, warm).map(([g, n]) => `<span><i>${g}</i>${n}</span>`).join('')}</div>
+      <div class="eat-foods">${warmChips(C0[1], cat, warm).map(([g, n]) => `<span>${n}</span>`).join('')}</div>
       ${cat === 'supps' ? `<p class="eg-note">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}.</p>` : ''}`;
 }
 // The two best dishes for each phase, as one photo card with the day, the phase and its tagline in the middle.
@@ -1369,12 +1369,12 @@ function deckFx(t) {
   document.querySelectorAll(`#${t.dataset.dots} i`).forEach((d, j) => d.classList.toggle('on', j === best));
 }
 // Every recipe, by meal. The ones made for her phase come first; raw ones step back while she should eat warm.
-const MEALS = [['Breakfast', '🍳'], ['Lunch', '🥗'], ['Dinner', '🍲'], ['Snack', '🍓'], ['Drink', '🍵']];
+const MEALS = [['Breakfast', 'sun'], ['Lunch', 'leaf'], ['Dinner', 'bowl'], ['Snack', 'berry'], ['Drink', 'cup']];
 function allRecipes(phase, warm) {
   const meal = ui.mealTab || 'Breakfast';
   const list = RECIPES.filter(r => r.meal === meal).map(r => ({ r, s: (r.phases.includes(phase) ? 2 : 0) + (warm ? (r.warm ? 1 : r.raw ? -2 : 0) : (r.raw ? 1 : 0)) })).sort((a, b) => b.s - a.s);
   return `${sectionTitle('All recipes')}
-    <div class="meal-tabs">${MEALS.map(([m, g]) => `<button class="${m === meal ? 'on' : ''}" data-action="mealTab" data-v="${m}"><span>${g}</span>${m === 'Snack' ? 'Snacks' : m === 'Drink' ? 'Drinks' : m}<small>${RECIPES.filter(r => r.meal === m).length}</small></button>`).join('')}</div>
+    <div class="meal-tabs">${MEALS.map(([m, g]) => `<button class="${m === meal ? 'on' : ''}" data-action="mealTab" data-v="${m}"><span>${icon(g, 18)}</span>${m === 'Snack' ? 'Snacks' : m === 'Drink' ? 'Drinks' : m}<small>${RECIPES.filter(r => r.meal === m).length}</small></button>`).join('')}</div>
     <div class="meal-grid">${list.map(({ r }, i) => `<button class="rcard sm ${photoUrl(r.id) ? 'has-photo' : ''}" data-action="nav" data-to="recipe/${r.id}">${recipeArt(r, ['wave', 'orb', 'drop', 'hill'][i % 4], 60 + i)}
       <div class="rc-top">${r.phases.includes(phase) ? '<span class="rc-k now">For now</span>' : `<span class="rc-k">${r.raw ? 'Raw' : r.warm ? 'Warm' : PHASES[r.phases[0]].name}</span>`}</div>
       <div class="rc-t">${r.name}</div><div class="rc-m">${r.time} min</div></button>`).join('')}</div>`;
@@ -1479,7 +1479,7 @@ function plateSection(current) {
       <p>${plateWhy(sel, phase)}${live ? ` <em>In season in ${country} now.</em>` : ''}</p>
       <div class="pld-foods">${foods.map(x => `<div>${x.photo ? `<img src="${x.photo}" alt="" loading="lazy">` : `<span>${x.g || '•'}</span>`}<small>${x.n}</small></div>`).join('')}</div>
       ${(() => { const g = EAT_GUIDE[phase].cats[sel]; if (!g) return ''; const have = foods.map(x => x.n.toLowerCase()); const more = warmChips(g[1].filter(([, n]) => !have.some(h => n.toLowerCase().includes(h) || h.includes(n.toLowerCase()))), sel, warm);
-        return more.length ? `<div class="pld-more"><small class="pld-mk">More for you</small><div class="eat-foods">${more.map(([e, n]) => `<span><i>${e}</i>${n}</span>`).join('')}</div></div>` : ''; })()}
+        return more.length ? `<div class="pld-more"><small class="pld-mk">More for you</small><div class="eat-foods">${more.map(([e, n]) => `<span>${n}</span>`).join('')}</div></div>` : ''; })()}
     </div>
     <div class="pl-rules">
       <div class="pl-r"><b>Cook it</b><span>${cook}</span></div>
@@ -1505,7 +1505,7 @@ function nourishBody(current) {
   const ds = seasonalDishesToday(M.info, 4);
   const EXTRA = EAT_CATS.filter(c => !PLATE_PETALS.some(p => p.k === c.k)), cat = EXTRA.some(c => c.k === ui.eatCat) ? ui.eatCat : EXTRA[0].k;
   return `${plateSection(phase)}${sectionTitle('Dairy, drinks & supplements')}
-    <div class="eat-tabs">${EXTRA.map(c => `<button class="${c.k === cat ? 'on' : ''}" data-action="eatCat" data-v="${c.k}"><span>${c.g}</span>${c.t}</button>`).join('')}</div>
+    <div class="eat-tabs">${EXTRA.map(c => `<button class="${c.k === cat ? 'on' : ''}" data-action="eatCat" data-v="${c.k}"><span>${icon(c.ic, 16)}</span>${c.t}</button>`).join('')}</div>
     <section class="card glass eat-cat" data-phase="${phase}">${eatCatInner(phase, cat)}</section>
 
     <span id="pl-recipes"></span>${sectionTitle('Recipes for you')}
