@@ -4382,3 +4382,24 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .beyond .welcome-ui .bw-by span { color: #ffd6e4 !important; }
 .beyond .welcome-signin { font-weight: 600 !important; font-size: 15px !important; text-shadow: 0 1px 2px rgba(30,40,22,.6), 0 2px 14px rgba(30,40,22,.6) !important; }
 .beyond .welcome-privacy { font-weight: 500 !important; font-size: 13px !important; color: #fff !important; text-shadow: 0 1px 2px rgba(30,40,22,.65), 0 2px 12px rgba(30,40,22,.6) !important; }
+
+/* Welcome, round 3: natural spacing, fitted lockup, softer blurred ground, stronger contrast */
+.uts-hand { opacity: 0; transition: opacity .3s; }
+.uts-hand.fit { opacity: 1; }
+.uts-hand .h1 { font-size: 104px; }
+.uts-hand .h2 { font-size: 56px; }
+.uts-hand .h3 { font-size: 116px; }
+.bw-hand { width: min(84vw, 340px); }
+.uts-hand { filter: drop-shadow(0 0 1.5px rgba(30,40,22,.7)) drop-shadow(0 2px 12px rgba(30,40,22,.7)) drop-shadow(0 0 34px rgba(30,40,22,.45)); }
+.bw-vignette::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 46%; -webkit-backdrop-filter: blur(7px); backdrop-filter: blur(7px);
+  -webkit-mask-image: linear-gradient(transparent, #000 55%); mask-image: linear-gradient(transparent, #000 55%); background: rgba(40,54,30,.12); }
+
+/* Enter: frosted moss glass */
+.beyond .pearl-btn { background: linear-gradient(180deg, rgba(255,255,255,.38), rgba(255,255,255,.08) 48%, rgba(108,130,62,.28)), rgba(140,151,104,.32) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4);
+  color: #fff !important; font-weight: 500 !important; letter-spacing: .08em !important;
+  border: 1px solid rgba(255,255,255,.75) !important;
+  box-shadow: 0 10px 30px rgba(30,40,22,.35), inset 0 1.5px 0 rgba(255,255,255,.9), inset 0 -1px 0 rgba(255,255,255,.3), inset 0 -14px 22px rgba(48,64,35,.25) !important;
+  animation: none; }
+.beyond .pearl-btn span { text-shadow: 0 1px 8px rgba(30,40,22,.55) !important; }
+.beyond .pearl-btn::after { background: linear-gradient(100deg, transparent, rgba(255,255,255,.4), transparent); }

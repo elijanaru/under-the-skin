@@ -623,6 +623,12 @@ function viewRoadmap() {
     <p class="center"><button class="link" data-action="nav" data-to="profile">Change goals or birth control in Profile</button></p>
     <p class="fine center">Underskin is a wellness app, not medical advice.</p></div>`;
 }
+// Sizes the hand-lettered title to its real drawn letters once the script font has loaded, so swashes never leave the screen.
+function fitHand(svg) {
+  const go = () => { if (!svg.isConnected) return; const b = svg.querySelector('.h-g').getBBox(), p = 4;
+    svg.setAttribute('viewBox', `${b.x - p} ${b.y - p} ${b.width + p * 2} ${b.height + p * 2}`); svg.classList.add('fit'); };
+  (document.fonts?.load ? document.fonts.load("100px 'Monsieur La Doulaise'") : Promise.resolve()).then(go, go);
+}
 function viewOnboarding() {
   const s = ui.onbStep, o = ui.onb;
   const dots = `<div class="onb-dots">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => `<i class="${i < s ? 'on' : i === s ? 'now' : ''}"></i>`).join('')}</div>`;
@@ -639,12 +645,12 @@ function viewOnboarding() {
 <path d="M58 76 C44 84 26 82 16 74"/></g>
 <g fill="currentColor"><path d="M82 46 c6 -2 10 2 8 7 c-5 1 -9 -2 -8 -7z"/><path d="M64 30 c2 -6 8 -7 11 -3 c-3 5 -8 6 -11 3z"/><path d="M30 60 c-2 -6 2 -10 7 -8 c1 5 -2 9 -7 8z"/>
 <path d="M100 66 c4 -4 9 -3 10 1 c-4 4 -9 3 -10 -1z"/><circle cx="86" cy="10" r="2.4"/><circle cx="10" cy="20" r="2"/><circle cx="16" cy="74" r="2.2"/>
-<g transform="translate(46 12)"><circle r="3.2"/><circle cx="0" cy="-5" r="2.4"/><circle cx="4.8" cy="-1.5" r="2.4"/><circle cx="3" cy="4" r="2.4"/><circle cx="-3" cy="4" r="2.4"/><circle cx="-4.8" cy="-1.5" r="2.4"/></g></g></svg></span><h1 class="bw-script bw-hand" aria-label="Under the Skin"><svg class="uts-hand" viewBox="0 0 340 214" aria-hidden="true">
-          <text class="h-w h1" x="8" y="96" textLength="222" lengthAdjust="spacingAndGlyphs">Under</text>
-          <text class="h-w h2" x="236" y="66" textLength="82" lengthAdjust="spacingAndGlyphs">the</text>
-          <text class="h-w h3" x="104" y="178" textLength="214" lengthAdjust="spacingAndGlyphs">Skin</text>
-          <path class="h-swash" pathLength="1" d="M30 196 C 92 214, 196 210, 262 190 C 296 180, 322 164, 332 146 C 336 138, 330 134, 324 140"/>
-        </svg></h1><span class="orn-r"><svg class="orn" viewBox="0 0 120 90" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+<g transform="translate(46 12)"><circle r="3.2"/><circle cx="0" cy="-5" r="2.4"/><circle cx="4.8" cy="-1.5" r="2.4"/><circle cx="3" cy="4" r="2.4"/><circle cx="-3" cy="4" r="2.4"/><circle cx="-4.8" cy="-1.5" r="2.4"/></g></g></svg></span><h1 class="bw-script bw-hand" aria-label="Under the Skin"><svg class="uts-hand" viewBox="0 0 340 240" aria-hidden="true"><g class="h-g">
+          <text class="h-w h1" x="0" y="96">Under</text>
+          <text class="h-w h2" x="150" y="138">the</text>
+          <text class="h-w h3" x="70" y="226">Skin</text>
+          <path class="h-swash" pathLength="1" d="M40 246 C 110 262, 220 258, 290 238 C 318 230, 334 218, 338 206"/>
+        </g></svg></h1><span class="orn-r"><svg class="orn" viewBox="0 0 120 90" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
 <path d="M118 60 C96 62 84 52 74 40 C64 28 50 22 38 28 C26 34 28 50 40 50 C50 50 50 38 42 38"/>
 <path d="M90 58 C86 72 72 80 58 76 C48 73 48 62 56 62 C62 62 62 70 56 70" />
 <path d="M74 40 C70 26 74 14 86 10 C94 8 98 16 92 20"/>
@@ -655,8 +661,7 @@ function viewOnboarding() {
 <g transform="translate(46 12)"><circle r="3.2"/><circle cx="0" cy="-5" r="2.4"/><circle cx="4.8" cy="-1.5" r="2.4"/><circle cx="3" cy="4" r="2.4"/><circle cx="-3" cy="4" r="2.4"/><circle cx="-4.8" cy="-1.5" r="2.4"/></g></g></svg></span></div>
         <p class="bw-sub2">Live with your biological rhythm</p>
         <p class="bw-by">Designed by women, <span>for women</span></p>
-        <button class="pearl-btn" data-action="onbEnter"><svg class="pb-fl" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c2.2 2.6 2.2 6 0 8.6C9.8 9 9.8 5.6 12 3zM4 9.5c3.3-.4 5.9 1.6 6.6 4.8C7.4 14.7 4.7 12.7 4 9.5zm16 0c-.7 3.2-3.4 5.2-6.6 4.8.7-3.2 3.3-5.2 6.6-4.8zM6 18c2-2.2 4.4-3 6-3s4 .8 6 3"/></svg><span>Enter</span><svg class="pb-fl r" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c2.2 2.6 2.2 6 0 8.6C9.8 9 9.8 5.6 12 3zM4 9.5c3.3-.4 5.9 1.6 6.6 4.8C7.4 14.7 4.7 12.7 4 9.5zm16 0c-.7 3.2-3.4 5.2-6.6 4.8.7-3.2 3.3-5.2 6.6-4.8zM6 18c2-2.2 4.4-3 6-3s4 .8 6 3"/></svg></button>
-        ${A.configured() ? '<button class="link welcome-signin" data-action="nav" data-to="account">I already have an account · Sign in</button>' : ''}
+        <button class="pearl-btn" data-action="onbEnter"><span>Enter</span></button>
         <button class="link welcome-privacy" data-action="nav" data-to="privacy">Private by design: we don’t track you or sell your data</button>
       </div>
       <div class="bw-flash"></div>
@@ -4633,6 +4638,7 @@ function mountFigures() {
     import('./torso3d.js').then(m => { if (!c.isConnected) return; unmountFigs.push(m.mountTorso3D(c, grain)); })
       .catch(() => { if (c.isConnected) unmountFigs.push(mountTorso(c, null)); });
   });
+  document.querySelectorAll('svg.uts-hand').forEach(fitHand);
   document.querySelectorAll('canvas.welcome3d').forEach(c => {
     const wrap = c.closest('.onb-welcome');
     const fail = () => { if (!c.isConnected) return; const f = document.createElement('div'); f.className = 'fig-wrap welcome hero'; f.innerHTML = '<canvas class="figure" data-focus=""></canvas>'; c.replaceWith(f); mountFigures(); };
