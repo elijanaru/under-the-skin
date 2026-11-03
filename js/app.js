@@ -230,7 +230,7 @@ function tipsCard(info) {
   const [lic, lq, lcta] = D(lead), lu = hormonePhoto(lead.photo, 900);
   return `${sectionTitle('Your tips today', ['Edit', 'profile'])}
     <button class="tf" data-action="nav" data-to="${TIP_TO[lead.k] || 'plan'}">
-      <span class="tf-media">${lu ? `<img src="${lu}" alt="" loading="lazy">` : ''}<span class="tf-k">${icon(lic, 13)} ${lead.t}</span><b class="tf-q">${lq}</b></span>
+      <span class="tf-media">${lu ? `<img src="${lu}" alt="" loading="lazy">` : ''}<span class="tf-tag">${icon(lic, 13)} ${lead.t}</span><b class="tf-q">${lq}</b></span>
       <span class="tf-p">${lead.tip}</span>
       <span class="tf-cta">${lcta} ${icon('chevR', 14)}</span></button>
     ${rest.length ? `<div class="tl">${rest.map(x => { const [, q] = D(x), u = hormonePhoto(x.photo, 200); return `<button class="tl-r" data-action="nav" data-to="${TIP_TO[x.k] || 'plan'}">${u ? `<img src="${u}" alt="" loading="lazy">` : '<span class="tl-ph"></span>'}<span class="tl-t"><b>${q}</b><small>${x.t}</small></span><span class="tl-go">${icon('chevR', 14)}</span></button>`; }).join('')}</div>` : ''}`;
@@ -2115,7 +2115,7 @@ function viewRemedy(id) {
   }
   return `<div class="pad">
     ${specHero({ photo: carePhoto(r.id, 1000), glyph: r.glyph, han: true, eyebrow: `${r.nature} · ${r.element} · ${r.organ}`, name: r.name,
-      rows: r.ingredients.map(ingRow), lead: `${r.name} — ${r.nature.toLowerCase()} · ${r.element}`, desc: r.why })}
+      rows: r.ingredients.map(ingRow), desc: r.why })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle${r.raw ? ' · raw days' : ''}</div>${phaseFit(r.phases, M.info && M.info.phase)}${r.phases.length === 4 ? '<small class="tf-all">Good every day of your cycle</small>' : ''}</section>
     ${r.raw && warm ? `<section class="card flag"><span class="bn-ic">${icon('yinyang', 18)}</span><div class="bn-t"><b>Not today</b><p>You’re in your warm window — Chinese medicine keeps raw and cold food away during your period and the days before. Save this for your follicular phase.</p></div></section>` : ''}
     ${tracker}
@@ -3247,7 +3247,7 @@ function partnersCard(info) {
   const ps = state.partners || [];
   if (!ps.length) return `${sectionTitle('Your partner')}
     <button class="tf" data-action="nav" data-to="partners">
-      <span class="tf-media"><img src="images/partner-cinema.webp" alt="" loading="lazy"><span class="tf-k">${icon('users', 13)} Two phones</span><b class="tf-q">See where your partner is</b></span>
+      <span class="tf-media"><img src="images/partner-cinema.webp" alt="" loading="lazy"><span class="tf-tag">${icon('users', 13)} Two phones</span><b class="tf-q">See where your partner is</b></span>
       <span class="tf-p">Swap links and you’ll both see each other’s cycle and energy here.</span>
       <span class="tf-cta">Connect with your partner ${icon('chevR', 14)}</span></button>`;
   const shown = ps.some(p => p.pin) ? ps.filter(p => p.pin) : ps.slice(0, 2);
