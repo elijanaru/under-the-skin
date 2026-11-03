@@ -4192,8 +4192,9 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .sba-c p{font-size:14px;line-height:1.45;margin:0 0 8px;font-weight:300}
 .sba-src{font-size:11px;color:rgba(48,64,35,0.593)}
 
-/* Welcome title: the original Mrs Saint Delafield script */
-.bw-script { font-family: 'Mrs Saint Delafield', cursive !important; font-size: clamp(60px, 19vw, 84px) !important; line-height: 1 !important; padding: 0 6px !important; }
+/* Welcome title: a fine hairline copperplate (Monsieur La Doulaise), pure white like a signature */
+.bw-script { font-family: 'Monsieur La Doulaise', cursive !important; font-size: clamp(66px, 21vw, 92px) !important; line-height: 1 !important; padding: 0 8px !important; }
+.bw-script .bw-ink { background: none !important; -webkit-text-fill-color: #fff !important; color: #fff !important; filter: drop-shadow(0 1px 8px rgba(40,54,30,.35)) !important; }
 .bw-ink { -webkit-text-stroke: .8px #e6dcc3; }
 
 /* Today tiles: line icons instead of emoji */
