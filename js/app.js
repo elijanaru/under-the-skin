@@ -629,31 +629,32 @@ function fitHand(svg) {
     if (g.dataset.word && !g.childElementCount) pearlWord(g, g.dataset.word);
     const k = g.dataset.box ? g.dataset.box.split(' ').map(Number) : null, b = k ? { x: k[0], y: k[1], width: k[2], height: k[3] } : g.getBBox(), p = k ? 10 : 6;
     svg.setAttribute('viewBox', `${b.x - p} ${b.y - p} ${b.width + p * 2} ${b.height + p * 2}`); svg.classList.add('fit'); };
-  (document.fonts?.load ? document.fonts.load("100px 'Parisienne'") : Promise.resolve()).then(go, go);
+  (document.fonts?.load ? document.fonts.load("900 100px 'Grenze Gotisch'") : Promise.resolve()).then(go, go);
 }
 // Strings a word in pearls: draws it in the script font, finds the middle of every stroke (distance transform)
 // and packs round pearls along it, big where the stroke is thick and small where it is thin.
 function pearlWord(g, word) {
-  const FS = 230, c = document.createElement('canvas'), x = c.getContext('2d', { willReadFrequently: true });
-  const lines = word.split('|'); x.font = `${FS}px 'Parisienne'`; if ('letterSpacing' in x) x.letterSpacing = `${Math.round(FS * -.004)}px`;
-  const ws = lines.map(l => x.measureText(l).width), off = lines.length > 1 ? ws[0] * .34 : 0; // the second line steps in to the right
-  const W = Math.ceil(Math.max(ws[0], off + (ws[1] || 0)) + FS * .8), H = Math.ceil(FS * (.45 + lines.length * .8));
-  c.width = W; c.height = H; x.font = `${FS}px 'Parisienne'`; if ('letterSpacing' in x) x.letterSpacing = `${Math.round(FS * -.004)}px`; x.textBaseline = 'alphabetic';
-  x.fillStyle = x.strokeStyle = '#000'; x.lineWidth = 6; x.lineJoin = 'round';
-  lines.forEach((l, n) => { const lx = FS * .4 + (n ? off : 0), ly = FS * (.9 + n * .8); x.fillText(l, lx, ly); x.strokeText(l, lx, ly); });
+  // heavy broad-nib gothic, squeezed narrow, its thick strokes paved solid with stones
+  const FS = 230, SQ = .74, FONT = `900 ${FS}px 'Grenze Gotisch'`, c = document.createElement('canvas'), x = c.getContext('2d', { willReadFrequently: true });
+  const lines = word.split('|'); x.font = FONT; if ('letterSpacing' in x) x.letterSpacing = `${Math.round(FS * -.02)}px`;
+  const ws = lines.map(l => x.measureText(l).width * SQ), off = lines.length > 1 ? (ws[0] - ws[1]) / 2 : 0; // stacked lines, centred
+  const W = Math.ceil(Math.max(ws[0], off + (ws[1] || 0)) + FS * .8), H = Math.ceil(FS * (.5 + lines.length * .76));
+  c.width = W; c.height = H; x.font = FONT; if ('letterSpacing' in x) x.letterSpacing = `${Math.round(FS * -.02)}px`; x.textBaseline = 'alphabetic';
+  x.fillStyle = '#000'; x.setTransform(SQ, 0, 0, 1, 0, 0);
+  lines.forEach((l, n) => { const lx = (FS * .4 + (n ? off : 0)) / SQ, ly = FS * (.9 + n * .74); x.fillText(l, lx, ly); });
+  x.setTransform(1, 0, 0, 1, 0, 0);
   const px = x.getImageData(0, 0, W, H).data, D = new Float32Array(W * H), INF = 1e9;
   for (let i = 0; i < W * H; i++) D[i] = px[i * 4 + 3] > 100 ? INF : 0;
   const at = (i, j) => (i < 0 || j < 0 || i >= W || j >= H) ? 0 : D[j * W + i];
   for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) { const k = j * W + i; if (D[k]) D[k] = Math.min(D[k], at(i - 1, j) + 1, at(i, j - 1) + 1, at(i - 1, j - 1) + 1.414, at(i + 1, j - 1) + 1.414); }
   for (let j = H - 1; j >= 0; j--) for (let i = W - 1; i >= 0; i--) { const k = j * W + i; if (D[k]) D[k] = Math.min(D[k], at(i + 1, j) + 1, at(i, j + 1) + 1, at(i + 1, j + 1) + 1.414, at(i - 1, j + 1) + 1.414); }
   const cand = [];
-  for (let j = 1; j < H - 1; j++) for (let i = 1; i < W - 1; i++) { const d = D[j * W + i]; if (d < 2.2) continue;
-    if (d >= at(i - 1, j) && d >= at(i + 1, j) && d >= at(i, j - 1) && d >= at(i, j + 1)) cand.push([i, j, d]); }
+  for (let j = 1; j < H - 1; j += 2) for (let i = 1; i < W - 1; i += 2) { const d = D[j * W + i]; if (d >= 2.6) cand.push([i, j, d]); } // every inside point: pavé fills the stroke
   cand.sort((a, b) => b[2] - a[2]);
   const S = 24, grid = new Map(), placed = [], key = (a, b) => a + ',' + b;
   let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   for (const [i, j, d] of cand) {
-    const r = Math.min(13, d * (.88 + rnd() * .12)), gi = Math.floor(i / S), gj = Math.floor(j / S); let ok = true;
+    const r = Math.min(9.5, d * (.86 + rnd() * .12)), gi = Math.floor(i / S), gj = Math.floor(j / S); let ok = true;
     for (let a = gi - 1; a <= gi + 1 && ok; a++) for (let b = gj - 1; b <= gj + 1 && ok; b++) for (const q of grid.get(key(a, b)) || []) if (Math.hypot(q[0] - i, q[1] - j) < (q[2] + r) * .93) { ok = false; break; }
     if (!ok) continue; const pr = [i, j, r]; placed.push(pr); (grid.get(key(gi, gj)) || grid.set(key(gi, gj), []).get(key(gi, gj))).push(pr);
   }
@@ -676,7 +677,8 @@ function pearlWord(g, word) {
       ['M .92 .06 C 1.00 -.16, .98 -.48, .88 -.56 C .83 -.59, .80 -.52, .84 -.49', 3.4, 2, 2, 0],
       ['M .80 -.10 C .84 -.28, .80 -.40, .75 -.40', 2.6, 1.7, 0, 1]];
     const ns = 'http://www.w3.org/2000/svg', tmp = document.createElementNS(ns, 'path'); g.appendChild(tmp);
-    V.forEach(([d, r0, r1, nl, fl]) => { tmp.setAttribute('d', d.replace(/(-?[\d.]+)[ ,]+(-?[\d.]+)/g, (_, u, v) => P(+u, +v)));
+    V.filter(([d]) => lines.length < 2 || !/ -\./.test(d)).forEach(([d, r0, r1, nl, fl]) => { // stacked: only the curls below, so the title stays low
+      tmp.setAttribute('d', d.replace(/(-?[\d.]+)[ ,]+(-?[\d.]+)/g, (_, u, v) => P(+u, +v)));
       const L = tmp.getTotalLength(); let at = 0, side = rnd() < .5 ? 1 : -1, next = nl ? .2 + rnd() * .1 : 2;
       while (at <= L) { const k = at / L, r = r0 + (r1 - r0) * k, q = tmp.getPointAtLength(at); placed.push([q.x, q.y, r]);
         if (k > next) { const q2 = tmp.getPointAtLength(Math.min(L, at + 2)); leaf(q.x, q.y, Math.atan2(q2.y - q.y, q2.x - q.x), side, r * .95); side = -side; next += .6 / nl + rnd() * .08; }
@@ -706,7 +708,7 @@ function viewOnboarding() {
 <path d="M100 66 c4 -4 9 -3 10 1 c-4 4 -9 3 -10 -1z"/><circle cx="86" cy="10" r="2.4"/><circle cx="10" cy="20" r="2"/><circle cx="16" cy="74" r="2.2"/>
 <g transform="translate(46 12)"><circle r="3.2"/><circle cx="0" cy="-5" r="2.4"/><circle cx="4.8" cy="-1.5" r="2.4"/><circle cx="3" cy="4" r="2.4"/><circle cx="-3" cy="4" r="2.4"/><circle cx="-4.8" cy="-1.5" r="2.4"/></g></g></svg></span><h1 class="bw-script bw-hand" aria-label="Underskin"><svg class="uts-hand pearl" viewBox="0 0 600 220" aria-hidden="true">
           <defs><radialGradient id="crysRim" cx=".5" cy=".5" r=".5"><stop offset=".75" stop-color="#eef1f8"/><stop offset=".92" stop-color="#9aa3b8"/><stop offset="1" stop-color="#5d6478"/></radialGradient><radialGradient id="crysTab" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#fff"/><stop offset=".6" stop-color="#eef3fb"/><stop offset="1" stop-color="#bcc6da"/></radialGradient><symbol id="crys" viewBox="-10 -10 20 20"><circle r="10" fill="url(#crysRim)"/><path fill="#ffffff" d="M4.07 -1.68L8.50 -3.52L8.50 3.52L4.07 1.68Z"/><path fill="#c9d1e2" d="M4.07 1.68L8.50 3.52L3.52 8.50L1.68 4.07Z"/><path fill="#f7dbe8" d="M1.68 4.07L3.52 8.50L-3.52 8.50L-1.68 4.07Z"/><path fill="#8f9bb4" d="M-1.68 4.07L-3.52 8.50L-8.50 3.52L-4.07 1.68Z"/><path fill="#ffffff" d="M-4.07 1.68L-8.50 3.52L-8.50 -3.52L-4.07 -1.68Z"/><path fill="#cfe9e2" d="M-4.07 -1.68L-8.50 -3.52L-3.52 -8.50L-1.68 -4.07Z"/><path fill="#e9edf6" d="M-1.68 -4.07L-3.52 -8.50L3.52 -8.50L1.68 -4.07Z"/><path fill="#9ea8c0" d="M1.68 -4.07L3.52 -8.50L8.50 -3.52L4.07 -1.68Z"/><polygon points="4.07,-1.68 4.07,1.68 1.68,4.07 -1.68,4.07 -4.07,1.68 -4.07,-1.68 -1.68,-4.07 1.68,-4.07" fill="url(#crysTab)"/><path fill="#fff" d="M-2.6-5.6l1 2.2 2.2 1-2.2 1-1 2.2-1-2.2-2.2-1 2.2-1z" opacity=".95"/></symbol></defs>
-          <g class="h-g" data-word="Underskin" data-vines="1"></g></svg></h1><span class="orn-r"><svg class="orn" viewBox="0 0 120 90" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <g class="h-g" data-word="under|skin" data-vines="1"></g></svg></h1><span class="orn-r"><svg class="orn" viewBox="0 0 120 90" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
 <path d="M118 60 C96 62 84 52 74 40 C64 28 50 22 38 28 C26 34 28 50 40 50 C50 50 50 38 42 38"/>
 <path d="M90 58 C86 72 72 80 58 76 C48 73 48 62 56 62 C62 62 62 70 56 70" />
 <path d="M74 40 C70 26 74 14 86 10 C94 8 98 16 92 20"/>
