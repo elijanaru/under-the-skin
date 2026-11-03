@@ -8,6 +8,7 @@ import { mountFigure, mushroomArt, nautilusArt } from './figure.js';
 import { mountTorso } from './torso.js';
 import { RECIPE_PHOTOS, photoUrl, DISH_PHOTOS, dishPhoto, HORMONE_PHOTOS, hormonePhoto, CARE_PHOTOS, carePhoto, STAR_PHOTOS, starPhoto, foodPhoto, FOOD_PHOTOS } from './photos.js';
 import * as SZ from './seasonal.js';
+import { MOLECULES } from './molecules.js';
 import { sunTimes, COUNTRY_GEO } from './sun.js';
 import * as A from './account.js';
 
@@ -3084,6 +3085,16 @@ function viewHormones() {
     <p class="fine center">Amounts are typical values for day ${Math.min(info.cd, info.L)} of your ${info.L}-day cycle, based on standard lab ranges — a guide, not your blood test. Labs differ slightly.</p>
   </div>`;
 }
+// The hormone itself: its skeletal formula (small molecules) or its size (protein hormones).
+const PROTEIN_AA = { FSH: 'two chains of 92 and 111', LH: 'two chains of 92 and 121', Prolactin: 'one chain of 199', SHBG: 'two chains of 373', Insulin: 'two chains with 51 in total' };
+function moleculeCard(n) {
+  const m = MOLECULES[n];
+  if (m) { const w = +m.svg.match(/viewBox="[-\d.]+ [-\d.]+ ([\d.]+)/)[1];
+    return `<section class="card glass mol-card"><div class="mol-h"><b>The molecule</b><span>${m.name} · ${m.f.replace(/(\d+)/g, '<sub>$1</sub>')}</span></div>
+      <div class="mol-art" style="--mw:${Math.round(w * 1.25)}px">${m.svg.replace('role="img"', `role="img" aria-label="Chemical structure of ${m.name}"`)}</div>
+      <small class="mol-k">Each corner is a carbon atom. Wedges show bonds pointing towards you.</small></section>`; }
+  return PROTEIN_AA[n] ? `<section class="card glass mol-card"><div class="mol-h"><b>The molecule</b><span>A protein</span></div><p class="mol-p">${n} is built from ${PROTEIN_AA[n]} amino acids, folded into a 3D shape. Far too big to draw as one small picture.</p></section>` : '';
+}
 function viewHormone(i) {
   const x = HORMONE_LIBRARY[i], info = M.info, n = hxNow(x, info), k = HX_KEY[x.n], u = hormonePhoto(x.n, 800), cr = HORMONE_PHOTOS[x.n];
   const name = x.n === 'Oestrogen' ? 'Estrogen' : x.n, L = info.L, P = info.P, cd = Math.min(info.cd, L);
@@ -3106,6 +3117,7 @@ function viewHormone(i) {
       <div class="hxd-row"><b>${n.word}${hxArrow(n.tr)}</b></div><span class="hxd-amt">${n.amt}</span>
       <p>${n.note}</p></div><span class="hxd-ring">${hxRing(n.r, 0)}<small>${k ? 'this month' : 'level'}</small></span></section>
     ${curve}
+    ${moleculeCard(x.n)}
     <section class="card glass hxd-b">
       <div class="hx-row first"><span class="eyebrow">What it does</span><p>${x.role}</p></div>
       <div class="hx-row"><span class="eyebrow">In your cycle</span><p>${x.cycle}</p></div>

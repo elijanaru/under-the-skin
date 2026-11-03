@@ -4119,3 +4119,18 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .szt-img:empty { background: radial-gradient(circle at 40% 35%, hsl(calc(var(--hb) + 145 * var(--hk)) calc(39% * var(--hs2)) 30% / .5), rgba(255,255,255,.04)); }
 .season-ctl { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 22px 0 6px; }
 .season-ctl label { margin: 0; }
+
+/* ---------- hormone molecule ---------- */
+.mol-card { display: grid; gap: 10px; }
+.mol-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.mol-h b { font-size: 17px; font-weight: 500; }
+.mol-h span { font-size: 13px; color: rgba(244,245,240,.66); }
+.mol-art { display: grid; place-items: center; padding: 6px 0; }
+.mol { width: var(--mw); max-width: 100%; height: auto; overflow: visible; }
+.mol line { stroke: #f4f5f0; stroke-width: 1.4; stroke-linecap: round; }
+.mol .w { fill: #f4f5f0; }
+.mol text { font: 500 10px Outfit, sans-serif; fill: #f4f5f0; }
+.mol .o { fill: var(--lime); }
+.mol .n { fill: hsl(calc(var(--hb) + 103 * var(--hk)) calc(41% * var(--hs)) 68%); }
+.mol-k, .mol-p { font-size: 12.5px; line-height: 1.5; color: rgba(244,245,240,.6); margin: 0; }
+.mol-p { font-size: 14px; color: rgba(244,245,240,.75); }
