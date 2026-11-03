@@ -3933,3 +3933,12 @@ button.tip:active { transform: scale(.98); background: var(--glass-2); }
 .hxt.lo .hxt-ring .p { stroke: rgba(244,245,240,.45); filter: none; }
 .hxt-now { margin-top: 6px; }
 @media (prefers-reduced-motion: reduce) { .hxt-ring .p { animation: none; } }
+/* Insights › Patterns: what unlocks them */
+.pat-unlock { padding: 16px 14px; border-radius: 30px; }
+.pat-unlock > small { display: block; margin: 0 4px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: rgba(244,245,240,.6); }
+.pu-rings { grid-template-columns: repeat(3, 1fr); }
+.pu-rings .mv2-g { font-size: 22px; }
+.pat-unlock p { margin: 12px 4px 0; font-size: 13.5px; line-height: 1.45; color: rgba(244,245,240,.7); }
+.pat-unlock p b { color: #f4f5f0; font-weight: 500; }
+.pat-unlock .pill-cta { margin: 14px 4px 0; }
+.pp.head .pp-m { font-size: inherit; color: inherit; }

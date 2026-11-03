@@ -1999,6 +1999,15 @@ function headsUpCard() {
       <span class="hu-when">${x.inDays === 0 ? 'Today' : x.inDays === 1 ? 'Tomorrow' : `In ${x.inDays} days`}</span>
       <span class="hu-t"><b>${x.name}</b> usually shows up on ${x.from === x.to ? `day ${x.from}` : `days ${x.from}–${x.to}`}<small>Seen in ${x.cyclesN} of your cycles</small>${QUICK_FIX[x.name] ? `<em class="al-fix">${icon('spark', 12)} ${QUICK_FIX[x.name]}</em>` : ''}</span>${rk ? icon('chevR', 16) : ''}</${rk ? 'button' : 'div'}>`; }).join('')}</section>`;
 }
+// Before patterns exist: rings for exactly what unlocks them (6 energy days, a symptom 3 times, 2 cycles).
+function patternUnlock(P) {
+  const eDays = P.eAvg.filter(v => v != null).length, symN = Object.values(state.logs).reduce((n, l) => n + (l.symptoms || []).length, 0), R = 27, Cc = 2 * Math.PI * R;
+  const items = [['⚡', 'Energy', eDays, 6, 'days'], ['🌀', 'Symptoms', symN, 3, 'logged'], ['🌙', 'Cycles', P.cycles, 2, 'cycles']];
+  return `<section class="card glass pat-unlock"><small>Unlock your patterns</small>
+    <div class="mind-rings pu-rings">${items.map(([g, n, v, goal, u], i) => `<div class="mv2-b r${v >= goal ? 3 : v ? 2 : 0}" style="--i:${i}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * Math.max(.04, Math.min(1, v / goal))).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-g">${v >= goal ? '✓' : g}</span><b>${n}</b><small>${Math.min(v, goal)} of ${goal} ${u}</small></div>`).join('')}</div>
+    <p>Check in on your energy and symptoms, and Underskin shows you <b>your</b> patterns: which days cramps, bloating or low moods tend to arrive, and how your energy really moves.</p>
+    <button class="pill-cta" data-action="nav" data-to="log">${icon('plus', 14)} Check in today</button></section>`;
+}
 function patternsSection() {
   const P = patterns(), L = P.L, info = M.info;
   // energy: your logged average vs the hormone model
@@ -2029,7 +2038,7 @@ function patternsSection() {
     ${P.list.length || energyCard ? `${energyCard}
       ${rows ? `<section class="card glass"><div class="eyebrow" style="margin-bottom:6px">When your symptoms show up</div>${rows}
         <div class="pat-days"><span>Day 1</span><span>Ovulation ~${C.ovulationDay(L, M.stats.avgPeriod)}</span><span>Day ${L}</span></div></section>` : ''}`
-      : `<section class="card glass"><p class="muted" style="margin:0">Log symptoms and energy across 2 cycles and Underskin will show you <b>your</b> patterns — which days cramps, bloating or low moods tend to arrive, and how your energy really moves.</p></section>`}`;
+      : patternUnlock(P)}`;
 }
 
 // ---------- remedies ----------
