@@ -4698,11 +4698,7 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
   box-shadow: 0 4px 14px rgba(40,22,32,.14); text-shadow: none; padding: 6px 13px; border-radius: 99px;
 }
 
-/* Scrolled down: the forest fades into pink lilies and white chrysanthemums behind rainy glass, under a soft veil so white titles read */
-.phone::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 1.4s cubic-bezier(.2,.7,.2,1);
-  background: linear-gradient(180deg, rgba(28,26,30,.1), rgba(28,26,30,.3)), url('images/rain-flowers.webp') center / cover no-repeat, #c9bfc1; filter: contrast(1.12) saturate(.85); }
-.phone.deep::before { opacity: 1; }
-@media (prefers-reduced-motion: reduce) { .phone::before { transition: none; } }
+
 
 /* Today hero: the forest with the flower bubble gets more depth and contrast */
 .stage-bg { filter: contrast(1.28) saturate(1.22) brightness(.8) !important; }
@@ -4733,3 +4729,49 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .stage-tint { display: none; }
 .stage-scene::after { background: linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(40,34,36,.12) 100%) !important; }
 .cap small { color: #fff !important; text-shadow: 0 1px 2px rgba(30,22,26,.45), 0 2px 12px rgba(30,22,26,.35); }
+
+
+/* ---------- Glass light (from the user's glassy wallet reference) ----------
+   Clean pearl-white page with a faint dot screen at the top and soft coloured glows pooling at the bottom
+   (her phase hue, peach, lime, moss). Frosted white cards and crisp dark type on top. */
+:root { --ink-hi: #1b2314; --ink-mid: #4d5643; --ink-lo: #7d8574; }
+.phone { background:
+  radial-gradient(110% 30% at 30% 100%, rgba(76,168,78,.9), transparent 70%),
+  radial-gradient(70% 30% at 90% 90%, rgba(226,230,104,.85), transparent 68%),
+  radial-gradient(85% 34% at 5% 76%, rgba(250,190,160,.78), transparent 68%),
+  radial-gradient(80% 36% at 100% 60%, hsl(calc(var(--hb) + 0 * var(--hk)) calc(52% * var(--hs)) 80% / .85), transparent 68%),
+  radial-gradient(70% 30% at 20% 50%, rgba(206,186,236,.55), transparent 70%),
+  linear-gradient(180deg, #f8f7f9 0%, #f3f1f4 40%, #ece8ee 100%) !important; }
+.phone::before { content: ''; position: absolute; inset: 0 0 auto; height: 46%; pointer-events: none;
+  background: radial-gradient(circle at 1.5px 1.5px, rgba(30,30,40,.11) 1px, transparent 1.4px) 0 0 / 6px 6px;
+  -webkit-mask-image: linear-gradient(#000, transparent); mask-image: linear-gradient(#000, transparent); }
+
+/* Cards: frosted white glass, bright top edge, soft lift. The glow shows through the lower ones. */
+.glass, .card.glass, .hub:not(.home .hub) {
+  background: linear-gradient(170deg, rgba(255,255,255,.86), rgba(255,255,255,.6)) !important;
+  -webkit-backdrop-filter: blur(26px) saturate(1.6); backdrop-filter: blur(26px) saturate(1.6);
+  border: 1px solid rgba(255,255,255,.95) !important;
+  box-shadow: inset 0 1px 0 #fff, inset 0 -10px 24px rgba(255,255,255,.35), 0 18px 40px rgba(40,36,50,.1), 0 2px 6px rgba(40,36,50,.05) !important; }
+.chart-card.glass { background: linear-gradient(170deg, rgba(255,255,255,.92), rgba(255,255,255,.8)) !important; }
+
+/* Type on the page: crisp dark ink, no shadows (white stays only on the Today photo) */
+.section-title h3, .page-h, .page-h span, .home .hub-k > span, .home .hub-k > .hub-day, .cal-head .cal-title, .cal-head .cal-title span,
+.st-head h2, .st-head h2 span, .log-date h2, .home .hub-rh h3, .home .hub-rh b {
+  color: var(--ink-hi) !important; -webkit-text-fill-color: var(--ink-hi) !important; text-shadow: none !important; }
+.page-h { font-weight: 300; letter-spacing: -.02em; }
+.page-h span { color: var(--ink-lo) !important; -webkit-text-fill-color: var(--ink-lo) !important; }
+.st-head p, .log-date .eyebrow, .pad > p.muted, .pad > p.lt-soon, .pad > p.lt-soon b, .home .hub-rh p {
+  color: var(--ink-mid) !important; text-shadow: none !important; }
+.pad > p.fine.center, .pad > section.pl > p.fine.center { color: var(--ink-lo) !important; text-shadow: none !important; }
+.section-title::before { background: linear-gradient(90deg, rgba(27,35,20,.16), rgba(27,35,20,.04) 60%, transparent) !important; }
+.section-title h3::before { box-shadow: 0 0 0 3px rgba(255,255,255,.9), 0 2px 6px rgba(40,36,50,.14) !important; }
+.section-title > .link, .home .hub-k > .link { color: var(--ink-hi) !important; background: rgba(255,255,255,.8) !important; border: 1px solid #fff !important;
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: 0 6px 16px rgba(40,36,50,.08) !important; }
+
+/* Today photo: ends with a clean fade into the pearl page */
+.stage-scene::after { background: linear-gradient(transparent 0, transparent 70%, rgba(244,242,245,.55) 88%, #f4f2f5 100%) !important; }
+.card.flag { background: linear-gradient(170deg, rgba(255,255,255,.86), rgba(255,255,255,.62)) !important; border: 1px solid #fff !important;
+  -webkit-backdrop-filter: blur(26px) saturate(1.6); backdrop-filter: blur(26px) saturate(1.6); box-shadow: inset 0 1px 0 #fff, 0 18px 40px rgba(40,36,50,.1) !important; }
+/* Spec heroes without a photo float on the pearl page: one soft phase-hue glow, no box edge */
+.spec-media.liquid { background: radial-gradient(60% 46% at 50% 34%, hsl(calc(var(--hb) + 0 * var(--hk)) calc(46% * var(--hs)) 86% / .8), transparent 72%) !important; }
+.spec-media:not(:has(img)) .spec-shade { display: none; }
