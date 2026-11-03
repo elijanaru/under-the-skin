@@ -284,7 +284,10 @@ function readsCard(info) {
       <span class="lt-b"><b>${x.title}</b>${x.lead ? `<small>${x.lead}</small>` : ''}<span class="lt-cta">${icon('book', 14)} Read · ${x.mins} min</span></span></button>`; }).join('')}</div>
     <div class="lt-dots" id="lt-dots">${list.map((_, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div>`;
 }
-document.addEventListener('scroll', e => { const t = e.target; if (t.classList?.contains('deck')) deckFx(t); }, true);
+document.addEventListener('scroll', e => { const t = e.target; if (t.classList?.contains('deck')) deckFx(t);
+  if (t.id === 'view') document.querySelector('.phone')?.classList.toggle('deep', t.scrollTop > 380); }, true);
+// Scrolled down, the forest gives way to calm wind-swept grass; a new page starts at the forest again.
+addEventListener('hashchange', () => document.querySelector('.phone')?.classList.remove('deep'));
 // The plate draws itself in when it scrolls into view.
 const plIO = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); plIO.unobserve(e.target); } }), { threshold: .35 }) : null;
 new MutationObserver(() => { document.querySelectorAll('.deck').forEach(deckFx); document.querySelectorAll('.pl-anim:not(.in)').forEach(el => { if (plIO) plIO.observe(el); setTimeout(() => el.classList.add('in'), plIO ? 8000 : 0); }); }).observe(document.getElementById('app'), { childList: true, subtree: false });

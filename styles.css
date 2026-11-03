@@ -4681,3 +4681,39 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 /* White-background stills (the lilies) sit whole at the top of the card instead of being cropped */
 img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: center 14% !important; background: #fff; }
 .lt:has(img[src$="read-lilies.webp"]) { background: #fff; }
+
+/* Titles that sit straight on the forest: white with a soft shadow so they read on the photo. Titles inside cards stay dark. */
+.section-title h3, .page-h, .page-h span, .home-top .hello, .home-top .hello b, .home-top .eyebrow,
+.home .hub-k > span, .home .hub-k > .hub-day, .cal-head .cal-title, .cal-head .cal-title span,
+.st-head h2, .st-head h2 span, .st-head p, .log-date h2, .log-date .eyebrow,
+.pad > p.muted, .pad > p.lt-soon, .pad > p.lt-soon b, .pad > p.fine.center, .pad > section.pl > p.fine.center {
+  color: #fff !important;
+  text-shadow: 0 1px 2px rgba(40,22,32,.38), 0 2px 18px rgba(40,22,32,.32);
+}
+.section-title h3 { font-weight: 400; }
+.section-title h3::before { box-shadow: 0 0 0 2px rgba(255,255,255,.85), 0 2px 8px rgba(40,22,32,.25) !important; }
+.section-title::before { background: linear-gradient(90deg, rgba(255,255,255,.7), rgba(255,255,255,.12) 60%, transparent) !important; }
+.section-title > .link, .home .hub-k > .link {
+  color: #2a3820 !important; background: rgba(255,255,255,.88) !important; border: 1px solid rgba(255,255,255,.95) !important;
+  box-shadow: 0 4px 14px rgba(40,22,32,.14); text-shadow: none; padding: 6px 13px; border-radius: 99px;
+}
+
+/* Scrolled down: the forest fades into calm wind-swept grass, darker and simpler so cards and white titles stand out */
+.phone::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 1.4s cubic-bezier(.2,.7,.2,1);
+  background: linear-gradient(180deg, rgba(28,38,18,.1), rgba(28,38,18,.26)), url('images/grass.webp') center / cover no-repeat, #6f7f4c; }
+.phone.deep::before { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .phone::before { transition: none; } }
+
+/* Today hero: the forest with the flower bubble gets more depth and contrast */
+.stage-bg { filter: contrast(1.28) saturate(1.22) brightness(.8) !important; }
+.stage-tint { opacity: .45; }
+.stage-scene::after { background: linear-gradient(rgba(255,255,255,0), rgba(255,255,255,.04) 40%, var(--page) 96%) !important; }
+.stage-scene::before { background: linear-gradient(hsl(calc(var(--hb) + 0 * var(--hk)) calc(38% * var(--hs)) 82% / .55), transparent 60%) !important; }
+.stage-phase b { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(40,22,32,.4), 0 2px 20px rgba(40,22,32,.35) !important; }
+.stage-day, .stage-day small, .stage-tr { color: #fff !important; text-shadow: 0 1px 2px rgba(40,22,32,.4), 0 2px 22px rgba(40,22,32,.38) !important; }
+.stage-br { color: rgba(255,255,255,.8) !important; }
+.stage-orb .fh-svg { filter: drop-shadow(0 8px 22px rgba(40,22,32,.28)); }
+
+.chart-card.glass { background: linear-gradient(160deg, rgba(255,251,252,.9), rgba(250,240,244,.82)) !important; }
+.home .hub-rh h3, .home .hub-rh b, .home .hub-rh p { color: #fff !important; text-shadow: 0 1px 2px rgba(40,22,32,.4), 0 2px 18px rgba(40,22,32,.34); }
+.home .hub-rh h3 { background: none !important; -webkit-text-fill-color: #fff !important; filter: none !important; }
