@@ -4678,3 +4678,6 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 /* Readable pills on light: warm rule pill and evidence badges */
 .eg-rule.warm { color: #7a4a1c; background: rgba(255,243,226,.88); border-color: rgba(200,140,80,.4); }
 .ev-some { color: rgba(48,64,35,.92) !important; background: rgba(255,255,255,.6) !important; }
+/* White-background stills (the lilies) sit whole at the top of the card instead of being cropped */
+img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: center 14% !important; background: #fff; }
+.lt:has(img[src$="read-lilies.webp"]) { background: #fff; }
