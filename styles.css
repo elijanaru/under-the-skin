@@ -1110,7 +1110,7 @@ a.src { color: var(--lime); }
 @keyframes bwShine { 0% { background-position: 100% 0; } 60%, 100% { background-position: -60% 0; } }
 .bw-mark { font-weight: 600; letter-spacing: -.02em; font-size: 16px; }
 .legend.static { pointer-events: none; margin-top: 4px; }
-.legend .lg { display: inline-flex; align-items: center; gap: 6px; }
+.legend .lg { display: inline-flex; align-items: center; gap: 6px; padding: 4px 0; }
 .legend .lg svg, .ro-name svg { flex: none; }
 .ro-name svg { margin-right: 6px; }
 .egg-lg .egg-dot { width: 7px; height: 9px; }
