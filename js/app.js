@@ -3691,7 +3691,7 @@ function viewInsights() {
     const e = energyBy[p], avg = e ? e.reduce((a, b) => a + b, 0) / e.length : 0;
     const mood = moodBy[p] ? Object.entries(moodBy[p]).sort((a, b) => b[1] - a[1])[0][0] : '—';
     return `<div class="pp"><span class="pp-dot" style="background:${PHASE_COLOR.dark[p]}"></span><span class="pp-n">${PHASES[p].name}</span>
-      <span class="pp-e">${[1, 2, 3, 4, 5].map(n => `<i class="${avg >= n - 0.5 ? 'on' : ''}"></i>`).join('')}</span><span class="pp-m">${mood}</span></div>`;
+      <span class="pp-e">${e ? [1, 2, 3, 4, 5].map(n => `<i class="${avg >= n - 0.5 ? 'on' : ''}"></i>`).join('') : '<small class="pp-none">No check-ins yet</small>'}</span><span class="pp-m">${mood}</span></div>`;
   }).join('');
 
   const tab = ui.insTab || 'cycle'; const read = state.read || {};
