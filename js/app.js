@@ -2921,11 +2921,14 @@ function rhythmRing(n, goal) {
 }
 const PHASE_RHYTHM_2 = { menstrual: ['Slow down', 'Your hormones are at their lowest and your body is cleansing. Rest now, your energy comes back in a few days.'], follicular: ['Push', 'Estrogen is rising, so energy and focus climb. Start new things now.'], ovulatory: ['Push hard', 'Estrogen and testosterone peak. Your best days for big plans and people.'], luteal: ['Ease off', 'Progesterone rises and energy dips. Finish what you started and go to bed earlier.'] };
 const PHASE_RHYTHM = Object.fromEntries(Object.entries(PHASE_RHYTHM_2).map(([k, [a, b]]) => [k, `${a}. ${b}`]));
-const rhAct = (x, done) => `<button class="rh-i ${done.includes(x.k) ? 'on' : ''}" data-action="rhTick" data-k="${x.k}"><span class="rh-g">${x.g}</span><span class="rh-t"><b>${x.t}</b><small>${x.s}</small></span><span class="rh-cb">${icon('check', 13, 2.6)}</span></button>`;
+// Emoji in the rhythm data, drawn as line icons.
+const EMI = { '⏰': 'clock', '☀️': 'sun', '🌅': 'sun', '🌇': 'sun', '🌙': 'moon', '🌞': 'sun', '🌤️': 'sun', '🌿': 'leaf', '🍋': 'drop', '🕯️': 'spark', '🥗': 'bowl', '🫶': 'heart', '🔥': 'bolt', '🌱': 'seed', '🌸': 'leaf', '🌕': 'moon' };
+const emi = (e, sz = 18) => icon(EMI[e] || 'spark', sz);
+const rhAct = (x, done) => `<button class="rh-i ${done.includes(x.k) ? 'on' : ''}" data-action="rhTick" data-k="${x.k}"><span class="rh-g">${emi(x.g)}</span><span class="rh-t"><b>${x.t}</b><small>${x.s}</small></span><span class="rh-cb">${icon('check', 13, 2.6)}</span></button>`;
 // "What to do now" panel for a moment (used live and while scrubbing the sky).
 function momentPanel(m, h, live) {
   const done = doneToday();
-  return `<div class="mp-head"><span class="mp-g">${m.g}</span><div><small>${live ? `Right now · ${hLabel(h)}` : `At ${hLabel(h)}`}</small><b>${m.n}</b></div>${live ? '' : '<button class="mp-now" data-action="skyNow">Now</button>'}</div>
+  return `<div class="mp-head"><span class="mp-g">${emi(m.g, 22)}</span><div><small>${live ? `Right now · ${hLabel(h)}` : `At ${hLabel(h)}`}</small><b>${m.n}</b></div>${live ? '' : '<button class="mp-now" data-action="skyNow">Now</button>'}</div>
     <p class="mp-brief">${m.brief}</p>
     ${m.acts.length ? `<div class="rh-list">${m.acts.map(x => rhAct(x, done)).join('')}</div>` : `<p class="mp-moon">${moonLine()}</p>`}`;
 }
@@ -2934,7 +2937,7 @@ function rhythmCard(info) {
   return `${sectionTitle('Your rhythm today', ['Your day', 'rhythm'])}
     <section class="card rhythm-card">
       <div class="rh-top">${rhythmRing(done.length, RH_GOAL)}<div><b>${PHASE_RHYTHM[info.phase]}</b>
-        <small>☀️ ${hm(sunToday().rise)} · 🌇 ${hm(sunToday().set)}${streak ? ` · 🔥 ${streak}-day streak` : ''}</small></div></div>
+        <small>Sunrise ${hm(sunToday().rise)} · sunset ${hm(sunToday().set)}${streak ? ` · ${streak}-day streak` : ''}</small></div></div>
       <div class="mpanel">${momentPanel(m, h, true)}</div>
     </section>`;
 }
@@ -2966,7 +2969,7 @@ function skyDial(D) {
       <path d="${path}" fill="none" stroke="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77% / .55)" stroke-width="1.4"/>
       <line x1="${SKY.x0}" x2="${SKY.x1}" y1="${SKY.hy}" y2="${SKY.hy}" stroke="rgba(244,245,240,.25)"/>
       ${bands}
-      ${tick(0, '00')}${tick(D.rise, `☀️ ${hLabel(D.rise)}`)}${tick(D.noon, hLabel(D.noon))}${tick(D.set, `🌇 ${hLabel(D.set)}`)}${tick(24, '24')}
+      ${tick(0, '00')}${tick(D.rise, `Rise ${hLabel(D.rise)}`)}${tick(D.noon, hLabel(D.noon))}${tick(D.set, `Set ${hLabel(D.set)}`)}${tick(24, '24')}
       <g id="sky-mark">${skyMarker(D, h)}</g>
       <rect class="sky-hit" x="0" y="0" width="${SKY.W}" height="${SKY.H}" fill="transparent"/>
     </svg></div>`;
@@ -3037,12 +3040,12 @@ function viewRhythm() {
       <div class="mpanel" id="mpanel" data-live="1">${momentPanel(cur, h, true)}</div>
     </section>
     <div class="rh-stats"><div>${rhythmRing(done.length, RH_GOAL)}<small>${done.length} of ${RH_GOAL} today</small></div>
-      <div><span>🔥</span><b>${streak} ${streak === 1 ? 'day' : 'days'}</b><small>streak (4+ a day)</small></div>
-      <div><span>${lv.cur[1]}</span><b>${lv.cur[2]}</b><small>${lv.next ? `${lv.next[0] - lv.total} to ${lv.next[2]}` : 'Highest level'}</small></div></div>
+      <div><span>${emi('🔥', 18)}</span><b>${streak} ${streak === 1 ? 'day' : 'days'}</b><small>streak (4+ a day)</small></div>
+      <div><span>${emi(lv.cur[1], 18)}</span><b>${lv.cur[2]}</b><small>${lv.next ? `${lv.next[0] - lv.total} to ${lv.next[2]}` : 'Highest level'}</small></div></div>
     ${info ? `<p class="rh-phase">${PHASE_RHYTHM[info.phase]}</p>` : ''}
     ${sectionTitle('Your day')}
     <div class="dmoments">${D.list.map(m => `<section class="dm ${m.id === cur.id ? 'on' : ''} ${m.to <= h && m.id !== 'night' ? 'past' : ''}" data-m="${m.id}">
-      <div class="dm-rail"><span>${m.g}</span></div>
+      <div class="dm-rail"><span>${emi(m.g, 16)}</span></div>
       <div class="dm-body"><div class="dm-h"><b>${m.n}</b><small>${span(m)}</small></div>
         ${m.acts.length ? `<div class="rh-list">${m.acts.map(x => rhAct(x, done)).join('')}</div>` : `<p class="dm-p">${m.brief}</p>`}</div></section>`).join('')}</div>
     <section class="card glass rh-moonc"><div>${moonIcon(moon, 40)}</div><div><b>${moon.name}</b><p>${moonLine()}</p></div></section>
