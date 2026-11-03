@@ -4552,7 +4552,7 @@ const actions = {
     if (!w || !el) return actions.onbNext(d);
     el.classList.add('entering');
     import('./sfx.js').then(S => S.enterSound()).catch(() => {});
-    w.enter(1.7).then(() => { ui.flashOut = true; actions.onbNext(d); });
+    w.enter(1.05).then(() => { ui.flashOut = true; actions.onbNext(d); });
   },
   onbUnsure: () => { ui.onb.unsure = !ui.onb.unsure; if (ui.onb.unsure) ui.onb.cycleLength = 28; render(); },
   onbNext: () => {

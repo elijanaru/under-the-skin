@@ -5037,8 +5037,8 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .beyond .welcome-ui > .pearl-btn { animation: mistIn 1.6s cubic-bezier(.22,1,.36,1) forwards, btnBreath 5s ease-in-out infinite; animation-delay: 4.6s, 6.4s; }
 @keyframes btnBreath { 0%,100% { transform: none; } 50% { transform: scale(1.025); } }
 /* entering: a pearly mist blooms instead of a dark flash, the words drift up and dissolve */
-.bw-flash { background: radial-gradient(circle at 50% 42%, #fff 0%, #fbf3f5 35%, #f3e6ea 70%, #efe4e8 100%) !important; transition: opacity 1.3s cubic-bezier(.4,0,.2,1) .35s !important; }
-.beyond.entering .bw-hero, .beyond.entering .welcome-ui, .beyond.entering .bw-top { transition: opacity 1s cubic-bezier(.4,0,.2,1), transform 1.6s cubic-bezier(.4,0,.2,1), filter 1.2s ease !important; transform: translateY(-24px) scale(1.04) !important; filter: blur(12px) !important; }
+.bw-flash { background: radial-gradient(circle at 50% 42%, #fff 0%, #fbf3f5 35%, #f3e6ea 70%, #efe4e8 100%) !important; transition: opacity .8s cubic-bezier(.4,0,.2,1) .25s !important; }
+.beyond.entering .bw-hero, .beyond.entering .welcome-ui, .beyond.entering .bw-top { transition: opacity .6s cubic-bezier(.4,0,.2,1), transform 1s cubic-bezier(.4,0,.2,1), filter .7s ease !important; transform: scale(1.06) !important; filter: blur(12px) !important; }
 .flash-out { background: radial-gradient(circle at 50% 42%, #fff 0%, #fbf3f5 40%, var(--page) 100%) !important; animation: flashOut 1.6s cubic-bezier(.4,0,.2,1) forwards !important; }
 /* onboarding steps: content rises gently, title first, then the rest, then the stat */
 .onb.fwd .onb-body > *, .onb.back .onb-body > * { animation: stepRise .9s cubic-bezier(.22,1,.36,1) both; }

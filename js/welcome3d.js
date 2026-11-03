@@ -174,14 +174,14 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
     let warpSpeed = (1 - k) * 60 * warpBoost + 1.2;
     if (entering) {
       const e = Math.min(1, (t - entering.t0) / entering.dur), ee = e * e * (3 - 2 * e); // smooth in and out, no sudden lunge
-      camZ = CAM_END.z - ee * (CAM_END.z + 0.2); camY = CAM_END.y + ee * 0.25;
+      camZ = CAM_END.z - ee * (CAM_END.z + 0.2); // straight in: same height, same aim, no drop
       warpSpeed = 1.2 + ee * 38;
       bloom.strength = 0.55 + ee * 1.9; bloom.threshold = 0.42 * (1 - ee);
       if (e >= 1 && !entering.done) { entering.done = true; entering.resolve(); }
     }
     look.x += (look.tx - look.x) * 0.04; look.y += (look.ty - look.y) * 0.04;
     camera.position.set(look.x * 0.35, camY - look.y * 0.2, camZ);
-    camera.lookAt(0, camY * 0.3 - (entering ? 0 : 0.8 * k), 0); // look below her so she sits high and leaves the lower third for the title
+    camera.lookAt(0, camY * 0.3 - 0.8 * k, 0); // look below her so she sits high and leaves the lower third for the title
 
     // warp streaks: length grows with speed
     const L = Math.min(9, warpSpeed * 0.09) + 0.05, p = warpGeo.attributes.position.array;
