@@ -2429,6 +2429,10 @@ const PHASE_CHEER = {
   luteal: 'Slow and steady. Finish things, nest and take good care of you.',
 };
 const PEOPLE_G = { menstrual: '🫶', follicular: '👯', ovulatory: '💃', luteal: '🫂' };
+// Food colour of the day as drawn dots (the data keeps the emoji as a compact code).
+const FOOD_DOT = { '🔴': '#a8362e', '⚫': '#151515', '🟢': '#5d8a48', '🟠': '#cf7a2e', '🟣': '#6a3d78', '🟡': '#d9b84a', '🟤': '#76523a' };
+const colDots = c => [...c].filter(x => FOOD_DOT[x]).map(x => `<i class="cdot" style="background:${FOOD_DOT[x]}"></i>`).join('');
+const noEmoji = t => String(t).replace(/^[\p{Extended_Pictographic}\uFE0F\u200D]+\s*/u, '');
 // Today's best things to do, as big tiles. Stress, stretch and meditate open in place with the how-to.
 function todayTiles(info) {
   const w = dayWindow(info), g = MOVE_GUIDE[w], [lvl] = CALM[w], ph = info.phase, warm = warmWindow(info);
@@ -2438,27 +2442,27 @@ function todayTiles(info) {
   const tile = (cls, act, g_, k, t, s_) => `<button class="dpt ${cls} ${pics[k] ? 'has-pic' : ''} ${act.tip && open === act.tip ? 'open' : ''}" ${act.to ? `data-action="nav" data-to="${act.to}"` : `data-action="hubTip" data-k="${act.tip}"`}>${pics[k] ? `<span class="dpt-g pic"><img class="pb" src="images/${pics[k].replace('move-', 'tile-')}.webp" alt="" loading="lazy"><img class="ps" src="images/${pics[k].replace('move-', 'tile-')}.webp" alt="" loading="lazy"><i></i></span>` : `<span class="dpt-g">${g_}</span>`}<span class="dpt-k">${k}</span><b>${t}</b><small>${s_}</small>${act.tip ? `<span class="dpt-more">${icon('plus', 14, 2.2)}</span>` : ''}</button>`;
   const fn = FOOD_NEEDS[w], fm = FOOD_MEALS[w], sp = STRESS_PLAN[w], td = TEA_DAY[w];
   const tips = {
-    stress: ['🪷', `Stress today: ${['', 'low', 'medium', 'high'][lvl]}`, sp[0], sp[1], 'some'],
-    stretch: ['🤸', st[0], st[1], st[2], 'some'],
-    meditate: ['🧘', md[0], md[1], md[2], 'some'],
+    stress: [icon('mind', 22), `Stress today: ${['', 'low', 'medium', 'high'][lvl]}`, sp[0], sp[1], 'some'],
+    stretch: [icon('leaf', 22), st[0], st[1], st[2], 'some'],
+    meditate: [icon('spark', 22), md[0], md[1], md[2], 'some'],
   };
   const tipBody = k => {
-    if (k === 'tea') return `<div class="hub-tip-in"><span class="ht-g">${td[0]}</span><div><b>${td[1]}</b><p>${td[2]}</p><p class="ht-how">☕ ${td[3]}</p>${evBadge(td[4])}
+    if (k === 'tea') return `<div class="hub-tip-in"><span class="ht-g">${icon('cup', 22)}</span><div><b>${td[1]}</b><p>${td[2]}</p><p class="ht-how">${icon('clock', 13)} ${td[3]}</p>${evBadge(td[4])}
       <button class="link fn-more" data-action="nav" data-to="tea">Full tea guide · every problem ${icon('chevR', 12)}</button></div></div>`;
-    if (k === 'eat') return `<div class="hub-tip-in stack"><div class="ht-head"><span class="ht-g">🥗</span><div><b>${fn[0]}</b><p>${warm ? '🔥 Today: warm & cooked only — no raw or cold food.' : '🌿 Today: raw and fresh food is welcome, with some warm meals.'}</p></div></div><div>
-      <div class="fcol"><span class="fcol-dots">${fm.col[0]}</span><div><small>Colour of the day</small><b>${fm.col[1]} foods</b><p>${fm.col[2]}</p><span>${fm.col[3]}</span></div></div>
+    if (k === 'eat') return `<div class="hub-tip-in stack"><div class="ht-head"><span class="ht-g">${icon('bowl', 22)}</span><div><b>${fn[0]}</b><p>${warm ? `${icon('thermo', 13)} Today: warm & cooked only — no raw or cold food.` : `${icon('leaf', 13)} Today: raw and fresh food is welcome, with some warm meals.`}</p></div></div><div>
+      <div class="fcol"><span class="fcol-dots">${colDots(fm.col[0])}</span><div><small>Colour of the day</small><b>${fm.col[1]} foods</b><p>${fm.col[2]}</p><span>${fm.col[3]}</span></div></div>
       ${w === 'flow-start' || w === 'flow-end' ? phaseFoodPic('menstrual') : ''}<small class="fk">Meal ideas</small>
-      <div class="fmeals">${[['🍲', 'Broth & soup', fm.broth], warm || !fm.raw ? ['🔥', 'Warm instead of raw', fm.warmAlt] : ['🥗', 'Raw', fm.raw], ['🥩', 'Meat & fish', fm.meat]].map(([g_, k_, [t, d]]) => `<div class="fmeal"><span>${g_}</span><div><small>${k_}</small><b>${t}</b><p>${d}</p></div></div>`).join('')}</div>
+      <div class="fmeals">${[[icon('bowl', 18), 'Broth & soup', fm.broth], warm || !fm.raw ? [icon('thermo', 18), 'Warm instead of raw', fm.warmAlt] : [icon('leaf', 18), 'Raw', fm.raw], [icon('fish', 18), 'Meat & fish', fm.meat]].map(([g_, k_, [t, d]]) => `<div class="fmeal"><span>${g_}</span><div><small>${k_}</small><b>${t}</b><p>${d}</p></div></div>`).join('')}</div>
       <small class="fk">What your body needs</small>
-      <div class="fneeds">${fn[1].map(([n, why, foods, ev]) => `<div class="fn"><div class="fn-h"><b>${n}</b>${evBadge(ev)}</div><p>${why}</p><span>${foods}</span></div>`).join('')}</div>
+      <div class="fneeds">${fn[1].map(([n, why, foods, ev]) => `<div class="fn"><div class="fn-h"><b>${noEmoji(n)}</b>${evBadge(ev)}</div><p>${why}</p><span>${foods}</span></div>`).join('')}</div>
       <button class="link fn-more" data-action="nav" data-to="plan">Full food guide ${icon('chevR', 12)}</button></div></div>`;
     const x = tips[k]; if (!x) return '';
     return `<div class="hub-tip-in"><span class="ht-g">${x[0]}</span><div><b>${x[1]}</b><p>${x[2]}</p>${x[3] ? `<ol>${x[3].map(t => `<li>${t}</li>`).join('')}</ol>` : ''}
-      ${k === 'stress' ? `<p class="ht-fast">⚡ Fastest calm: breathe out longer than you breathe in, for 5 minutes.</p>` : ''}${evBadge(x[4])}</div></div>`;
+      ${k === 'stress' ? `<p class="ht-fast">${icon('bolt', 13)} Fastest calm: breathe out longer than you breathe in, for 5 minutes.</p>` : ''}${evBadge(x[4])}</div></div>`;
   };
   return `<div class="dpt-grid">
       ${tile('wide hero-move', { to: 'move' }, MOVE_G[best[0]?.k] || '🧘', 'Sport', g.title, best.map(m => m.n).slice(0, 3).join(' · '))}
-      ${tile('t-paper', { tip: 'eat' }, '🥗', 'Eat', fn[0], `<span class="dpt-col">${fm.col[0]} ${fm.col[1]} foods</span>${fn[1].map(x => x[0].slice(x[0].indexOf(' ') + 1)).slice(0, 3).join(' · ')}<br><span class="dpt-rule">${warm ? '🔥 Warm & cooked only' : '🌿 Fresh & raw welcome'}</span>`)}
+      ${tile('t-paper', { tip: 'eat' }, '🥗', 'Eat', fn[0], `<span class="dpt-col">${colDots(fm.col[0])} ${fm.col[1]} foods</span>${fn[1].map(x => x[0].slice(x[0].indexOf(' ') + 1)).slice(0, 3).join(' · ')}<br><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
       ${tile('t-deep', { to: 'rhythm' }, PEOPLE_G[ph], 'Friends', pp[0], pp[1])}
       ${tile(`calm lv${lvl}`, { to: 'stress' }, '🪷', 'Stress', `${['', 'Low', 'Medium', 'High'][lvl]}<i class="dc-bar"><b style="width:${lvl * 33.3}%"></b></i>`, `Best: ${sp[1][0].toLowerCase()}`)}
       ${tile('t-sage', { tip: 'stretch' }, '🤸', 'Stretch', st[0], st[1])}

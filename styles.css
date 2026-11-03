@@ -4193,3 +4193,11 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 /* Welcome title: the original Mrs Saint Delafield script */
 .bw-script { font-family: 'Mrs Saint Delafield', cursive !important; font-size: clamp(60px, 19vw, 84px) !important; line-height: 1 !important; padding: 0 6px !important; }
 .bw-ink { -webkit-text-stroke: .8px #e6dcc3; }
+
+/* Today tiles: line icons instead of emoji */
+.hub-tip .ht-g svg { width: 24px; height: 24px; }
+.dpt-rule svg, .ht-how svg, .ht-fast svg, .hub-tip-in p > svg { vertical-align: -2px; margin-right: 3px; }
+.fmeal > span { display: grid; place-items: center; }
+.cdot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 3px; vertical-align: -1px; box-shadow: 0 0 0 1px rgba(244,245,240,.25); }
+.fcol-dots { display: flex; align-items: center; gap: 2px; }
+.fcol-dots .cdot { width: 14px; height: 14px; }
