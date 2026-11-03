@@ -591,7 +591,7 @@ function viewOnboarding() {
         <p class="bw-by">Designed by women, <span>for women</span></p>
         <button class="pearl-btn" data-action="onbEnter"><span>Enter</span></button>
         ${A.configured() ? '<button class="link welcome-signin" data-action="nav" data-to="account">I already have an account · Sign in</button>' : ''}
-        <button class="link welcome-privacy" data-action="nav" data-to="privacy">Private by design — your cycle data stays on your phone</button>
+        <button class="link welcome-privacy" data-action="nav" data-to="privacy">Private by design: no account needed, never sold or tracked</button>
       </div>
       <div class="bw-flash"></div>
     </div>`;
@@ -603,7 +603,7 @@ function viewOnboarding() {
         <input class="field big-in" data-input="onb.name" placeholder="Your first name" value="${esc(o.name)}" autocomplete="given-name" maxlength="24">
         <p class="onb-greet ${o.name.trim() ? 'on' : ''}">Nice to meet you, <b>${esc(o.name.trim())}</b> ✦</p>`,
     2: `<h2 class="onb-title">Add a <span>profile picture</span></h2>
-        <p class="muted">So you — and your partner, if you share — recognise your rhythm at a glance. It stays on your phone.</p>
+        <p class="muted">So you — and your partner, if you share — recognise your rhythm at a glance.</p>
         <label class="photo-pick"><span class="pp-frame">${o.photo ? `<img src="${o.photo}" alt="">` : AVATAR_SVG}</span><span class="pp-add">${icon(o.photo ? 'check' : 'plus', 18, 2.4)}</span>
           <input type="file" accept="image/*" data-photo="onb" hidden></label>
         ${o.photo ? '' : '<button class="link" data-action="onbNext" style="align-self:center">Skip for now</button>'}`,
@@ -989,7 +989,7 @@ function viewLog() {
       <div class="lg-k">Sleep last night</div>
       <div class="lg-sleep"><button data-action="logSleep" data-d="-0.5" aria-label="Less sleep">−</button><b>${l.sleep != null ? l.sleep : '–'}<small>hours</small></b><button data-action="logSleep" data-d="0.5" aria-label="More sleep">+</button></div>`,
     desire: `${logSlider('drive', 'Sex drive', l)}<div class="lg-k">Today</div>${chips('intim', INTIMACY)}
-      <p class="lg-fine">Private: stays on your phone and is never shared with partners.</p>`,
+      <p class="lg-fine">Private: only you see this. It’s never shared with partners.</p>`,
     fuel: `<div class="lg-k">Today I had</div>${chips('intake', INTAKE)}<div class="lg-k">Supplements & medicine <button class="link lg-more" data-action="nav" data-to="nutrients">Doses & food first ${icon('chevR', 11)}</button></div>${chips('supp', SUPPS)}`,
     disrupt: `<p class="lg-fine top">Things that can shift ovulation or your next period. Logging them helps me read your cycle right.</p>${chips('disrupt', DISRUPTORS)}`,
     note: `<textarea class="lg-note" rows="3" placeholder="Anything you want to remember about today…" data-input="log.notes">${esc(l.notes || '')}</textarea>`,

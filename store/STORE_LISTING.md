@@ -53,7 +53,7 @@ Copy-paste text for App Store Connect and Google Play Console. Every field is wi
 > MORE
 > • Moon, zodiac and five-element insights
 > • Share your cycle with a partner, so they know when to bring tea and when to plan the adventure
-> • Private by design: your data stays on your phone. No ads, no tracking, no selling data.
+> • Private by design: no account needed, and without one your data stays on your phone. An optional account keeps a private backup. No ads, no tracking, no selling data.
 >
 > Underskin is not a contraceptive and does not diagnose or treat any condition.
 
@@ -63,7 +63,7 @@ Copy-paste text for App Store Connect and Google Play Console. Every field is wi
 - **Published (accounts on, 2 Nov 2026):** Name, Email Address, Health, Photos or Videos, Other User Content, User ID. All *App Functionality*, linked to the user, **not** tracking.
 
 **App Review notes**
-> No login is needed. Tap Enter, type any first name and follow the short setup (pick any recent date as the last period). All data is stored only on the device. The partner-share and "send love" features use links the user shares themselves.
+> No login is needed. Tap Enter, type any first name and follow the short setup (pick any recent date as the last period). Without an account, all data is stored only on the device; signing in is optional and only adds a private backup. The partner-share and "send love" features use links the user shares themselves.
 
 **Export compliance**: already answered in the app (`ITSAppUsesNonExemptEncryption = NO`), so App Store Connect won't ask.
 
