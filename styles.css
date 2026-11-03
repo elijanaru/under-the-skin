@@ -4261,3 +4261,5 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 /* No all-caps kicker labels: quiet sentence case instead */
 .mv2-eyebrow, .rm2-k, .br-k, .lg-k, .hx-gland, .fk, .fcol small, .fmeal small, .tf-k { text-transform: none !important; letter-spacing: 0 !important; font-size: 13px !important; font-weight: 400 !important; }
 .lg-k { color: rgba(244,245,240,.55) !important; }
+.sb-top small, .cal2-facts small, .cal2-cosmic small, .st-rule span, .ls-t small, .pl-r b, .plm-k, .xp-hero small, .cd-r em { text-transform: none !important; letter-spacing: 0 !important; }
+.st-rule span, .ls-t small, .plm-k, .sb-top small, .cal2-facts small, .cal2-cosmic small { font-size: 13px !important; }
