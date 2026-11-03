@@ -1662,7 +1662,7 @@ export const REMEDY_SCIENCE = {
     cite: 'Wastyk 2021 (Stanford)', caution: 'Raw egg yolks and raw milk: choose very fresh, from healthy animals, and skip both in pregnancy.' },
   'carrot-salad': { ev: 'emerging', c: [['Insoluble fibre', 'Carries used hormones out through the gut'], ['Falcarinol', 'Natural compound in raw carrots'], ['Beta-carotene', 'Turns into vitamin A for skin']],
     study: 'No trials on carrots and hormones yet. Women who ate more fibre had lower estrogen levels across the cycle, because fibre helps the gut clear what the liver has used.',
-    cite: 'Gaskins 2009 (BioCycle)', caution: '' },
+    cite: 'Gaskins 2009 (BioCycle)', caution: 'Raw and cooling in Chinese medicine: pause it during your period and the 2–3 days before, and eat cooked carrots instead. Lots of carrots can tint your palms slightly orange, which is harmless and fades.' },
   'heart-foods': { ev: 'some', c: [['Cacao flavanols', 'Gently lower blood pressure'], ['Beetroot nitrates', 'Turn into nitric oxide, widen vessels'], ['Omega-3', 'From wild fish, steadies the heart rhythm']],
     study: 'Cacao flavanols lowered blood pressure a little in a Cochrane review. Beetroot juice lowered the top number by about 4 mmHg.',
     cite: 'Ried 2017 (Cochrane) · Siervo 2013 (meta-analysis)', caution: 'Beetroot can turn urine pink, which is harmless. On heart or blood-thinning medicine, ask your doctor before supplements.' },
