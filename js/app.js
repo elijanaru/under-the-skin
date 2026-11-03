@@ -807,16 +807,11 @@ function onbCycleRing(L, P) {
   const parts = [['menstrual', 1, P], ['follicular', P + 1, ov - 2], ['ovulatory', ov - 1, ov + 1], ['luteal', ov + 2, L]];
   const col = { menstrual: '#e58b9f', follicular: '#9cc27a', ovulatory: '#f1c96a', luteal: '#b9a2e8' };
   const arc = ([k, a, b]) => { const len = (b - a + 1) / L * C, off = (a - 1) / L * C; return `<circle class="ocr-a" r="${R}" stroke="${col[k]}" stroke-dasharray="${Math.max(0, len - 3).toFixed(1)} ${C.toFixed(1)}" stroke-dashoffset="${(-off).toFixed(1)}"/>`; };
-  const tick = d => { const t = (d - .5) / L * 2 * Math.PI - Math.PI / 2; return `<circle cx="${(100 + 92 * Math.cos(t)).toFixed(1)}" cy="${(100 + 92 * Math.sin(t)).toFixed(1)}" r="${d === 1 || d === ov ? 2.6 : 1.2}"/>`; };
-  const lab = ([k, a, b], t) => { const m = ((a + b) / 2 - .5) / L * 2 * Math.PI - Math.PI / 2; return `<text x="${(100 + 112 * Math.cos(m)).toFixed(1)}" y="${(100 + 112 * Math.sin(m) + 3).toFixed(1)}">${t}</text>`; };
   return `<div class="onb-ring" aria-label="A ${L}-day cycle: period ${P} days, ovulation around day ${ov}">
     <svg viewBox="-24 -24 248 248" aria-hidden="true"><g class="ocr-rot">
       <circle class="ocr-o" r="${R}" cx="100" cy="100"/>
       <g transform="translate(100 100) rotate(-90)">${parts.map(arc).join('')}</g></g>
-      <g class="ocr-t">${Array.from({ length: L }, (_, i) => tick(i + 1)).join('')}</g>
-      <g class="ocr-l">${lab(parts[0], 'Period')}${lab(parts[1], 'Follicular')}${lab(parts[2], 'Egg')}${lab(parts[3], 'Luteal')}</g>
-    </svg>
-    <div class="ocr-c"><b>${L}</b><small>days</small></div></div>`;
+    </svg></div>`;
 }
 function viewOnboarding() {
   const s = ui.onbStep, o = ui.onb;
