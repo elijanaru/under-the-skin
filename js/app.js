@@ -2675,7 +2675,7 @@ function stageHero(info, energy) {
   const perCap = cap('drop', nextP === 0 ? 'Today' : `${nextP}d`, nextP === 0 ? 100 : (1 - nextP / L) * 100, 'Next period', 'calendar');
   const fertCap = cap('heart', info.fertile ? 'Yes' : 'No', info.fertile ? 100 : 0, 'Fertile', 'guide');
   return `<div class="opal">
-    <div class="stage-scene"><img class="stage-bg" src="images/forest-path.jpg" alt="" decoding="async"><span class="stage-tint"></span><span class="stage-light" aria-hidden="true"></span><span class="stage-vig" aria-hidden="true"></span>
+    <div class="stage-scene"><img class="stage-bg" src="images/intro-forest.jpg" alt="" decoding="async"><span class="stage-tint"></span><span class="stage-light" aria-hidden="true"></span><span class="stage-vig" aria-hidden="true"></span>
       <button class="stage-phase" data-action="nav" data-to="guide"><b>${ph.name}</b></button>
       <div class="stage-orb">${flowRing(info, 'today', true)}
         <span class="bubble ${info.phase}" title="${FLOWER[info.phase].n}">${flowerImg(info.phase)}<i class="bubble-glass"></i></span></div>

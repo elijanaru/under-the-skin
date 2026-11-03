@@ -4623,9 +4623,9 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 }
 .phone { background:
   radial-gradient(90% 45% at 90% -5%, hsl(calc(var(--hb) + 0 * var(--hk)) calc(55% * var(--hs)) 68% / .6), transparent 70%),
-  radial-gradient(90% 50% at -10% 105%, rgba(108,130,62,.5), transparent 70%),
-  radial-gradient(70% 40% at 0% 40%, rgba(140,151,104,.24), transparent 70%),
-  linear-gradient(var(--page), var(--page-mid) 55%, #cfd1bb); }
+  radial-gradient(90% 50% at -10% 105%, rgba(140,151,104,.22), transparent 70%),
+  radial-gradient(80% 40% at 100% 70%, rgba(230,177,196,.3), transparent 70%),
+  linear-gradient(var(--page), var(--page-mid) 60%, #dcc4cb); }
 .glass, .card.glass { background: linear-gradient(160deg, hsl(calc(var(--hb) + 0 * var(--hk)) calc(50% * var(--hs)) 98% / .36), hsl(calc(var(--hb) + 0 * var(--hk)) calc(40% * var(--hs)) 94% / .12)); border-color: rgba(48,64,35,.3); box-shadow: inset 0 1px 0 rgba(255,255,255,.4), 0 10px 28px rgba(60,40,50,.1); }
 .body, .body.sm, .fine, .card small, .glass small, .spec-row span { color: rgba(48,64,35,.86); }
 /* Today hero: less white veil over the photo, fades into the page colour */
