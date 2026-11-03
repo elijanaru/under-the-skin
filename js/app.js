@@ -788,7 +788,6 @@ function pearlWord(g, word) {
 }
 // One small fact under each onboarding question: why we ask and how it shapes her plan.
 const ONB_STATS = {
-  4: { n: '12.4 days', t: 'is the average phase after ovulation. From your last period we map all four phases today.', c: 'Bull et al. 2019 · npj Digital Medicine', ev: 'strong' },
   5: { n: '29.3 days', t: 'is the real average cycle. Not sure of yours? We learn it from your next period.', c: 'Bull et al. 2019 · npj Digital Medicine', ev: 'strong' },
   6: { n: '83%', t: 'got pregnant within a year of stopping birth control: your own cycle comes back. We guide you through it.', c: 'Girum & Wasie 2018 · 22 studies', ev: 'strong' },
   7: { n: '48%', t: 'fewer PMS symptoms with enough calcium. Small, phase-timed habits like this make your plan.', c: 'Thys-Jacobs et al. 1998', ev: 'strong' },
