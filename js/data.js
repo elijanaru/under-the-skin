@@ -1450,6 +1450,14 @@ export const GLOW_RESULTS = [
   { g: '💇‍♀️', t: 'Thicker hair', s: 'Enough iron and protein means less shedding and stronger new growth.', ev: 'some' },
 ];
 // Short, real findings for the research wall. Each is one study or review.
+// Before → after, as studies measured it. bars: [label, before, after, compareLabel, compareAfter] on a 0–100 scale.
+export const STUDY_BA = [
+  { t: 'PMS symptoms with calcium', who: '466 women · 3 cycles', before: 'Usual PMS', after: '1,200 mg calcium a day', bars: [['Calcium', 100, 52], ['Placebo', 100, 70]], res: 'Symptoms fell by 48% by the third cycle, against 30% on placebo.', src: 'Thys-Jacobs et al. 1998 · Am J Obstet Gynecol', ev: 'some' },
+  { t: 'PMS with chasteberry', who: '170 women · 3 cycles', before: 'Usual PMS', after: '20 mg chasteberry a day', bars: [['Chasteberry', 0, 52], ['Placebo', 0, 24]], unit: 'halved their symptoms', res: '52% of women at least halved their PMS symptoms, against 24% on placebo.', src: 'Schellenberg 2001 · BMJ', ev: 'some' },
+  { t: 'Period cramps with heat', who: '84 women', before: 'Cramps', after: 'A heat patch at 39 °C', res: 'Heat eased cramps as well as ibuprofen, and heat plus ibuprofen worked fastest.', src: 'Akin et al. 2001 · Obstet Gynecol', ev: 'some' },
+  { t: 'Skin glow with fruit & veg', who: '35 young adults · 6 weeks', before: 'Usual diet', after: 'About 3 more portions a day', res: 'Skin took on a warmer, golden tone, and strangers rated those faces healthier and more attractive.', src: 'Whitehead et al. 2012 · PLoS ONE', ev: 'some' },
+  { t: 'Your face after sleep', who: '23 adults', before: 'Short night', after: 'Normal night', res: 'Faces after a normal night were rated healthier, more attractive and less tired.', src: 'Axelsson et al. 2010 · BMJ', ev: 'some' },
+];
 export const RESEARCH_WALL = [
   { n: '6 wks', t: 'More fruit and veg gave faces a visibly healthier, golden glow.', src: 'Whitehead et al. 2012 · PLoS ONE', more: 'About three extra portions a day raised skin carotenoids, and strangers rated those faces as healthier and more attractive.', ev: 'some', big: 1 },
   { n: '12 wks', t: 'A low-sugar diet cut acne spots.', src: 'Smith et al. 2007 · Am J Clin Nutr', more: 'A low-glycaemic-load diet reduced acne lesions compared with a usual diet in a controlled trial.', ev: 'some' },
