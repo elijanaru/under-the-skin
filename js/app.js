@@ -3721,7 +3721,7 @@ function viewInsights() {
     ${sectionTitle('By phase')}
     <section class="card glass"><div class="pp head"><span></span><span class="pp-n">Phase</span><span class="pp-e">Energy</span><span class="pp-m">Top mood</span></div>${phaseRows}</section>
     ${sectionTitle('Most logged symptoms')}
-    <section class="card glass">${symRows || '<p class="muted" style="margin:0">Log symptoms to see which phase they cluster in.</p>'}</section>`;
+    <section class="card glass">${symRows || `<p class="muted" style="margin:0">Log symptoms to see which phase they cluster in.</p><button class="pill-cta" style="margin-top:12px" data-action="nav" data-to="log">${icon('plus', 14)} Log a symptom</button>`}</section>`;
   else body = `
     <div class="lg-grid">${[['relief', 'heart', 'Relief guide', 'Cramps, PMS, sleep, skin'], ['habits', 'check', 'Hormone habits', 'A daily checklist'], ['hormones', 'chart', 'Your hormones', 'All 14, explained'], ['move', 'leaf', 'Move with your cycle', 'Lift, sprint or rest']].map(([to, g, t, sub], i) => `<button class="card glass lg-t" style="--i:${i}" data-action="nav" data-to="${to}"><span class="lg-g">${icon(g, 18)}</span><b>${t}</b><small>${sub}</small>${icon('chevR', 14)}</button>`).join('')}</div>
     ${[info.phase, ...PHASE_ORDER.filter(p => p !== info.phase), null].map(p => { const list = ARTICLES.filter(a => a.phase === p); return list.length ? `${sectionTitle(p ? PHASES[p].name + (p === info.phase ? ' · now' : '') : 'Foundations')}
