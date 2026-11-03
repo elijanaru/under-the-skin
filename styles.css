@@ -2317,10 +2317,10 @@ button, a, [data-action] { touch-action: manipulation; }
 
 /* ---------- aura ---------- */
 .aura-card { --aura: .5; display: flex; gap: 14px; align-items: center; padding: 18px 16px; margin-bottom: 18px; border-radius: 30px; border: 1px solid hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77% / .18);
-  background: radial-gradient(70% 90% at 0% 50%, rgba(212, 239, 154, calc(var(--aura) * .22)), transparent 70%), linear-gradient(160deg, hsl(calc(var(--hb) + 143 * var(--hk)) calc(33% * var(--hs2)) 8%), #050605); }
+  background: radial-gradient(70% 90% at 0% 50%, hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77% / calc(var(--aura) * .22)), transparent 70%), linear-gradient(160deg, hsl(calc(var(--hb) + 143 * var(--hk)) calc(33% * var(--hs2)) 8%), #050605); }
 .aura-orb { position: relative; flex: none; width: 82px; height: 82px; border-radius: 50%; display: grid; place-items: center; }
 .aura-orb i { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 38% 32%, #fff, hsl(calc(var(--hb) + 76 * var(--hk)) calc(71% * var(--hs)) 88%) 25%, hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%) 50%, hsl(calc(var(--hb) + 145 * var(--hk)) calc(39% * var(--hs2)) 30%) 100%);
-  opacity: calc(.45 + var(--aura) * .55); box-shadow: 0 0 calc(var(--aura) * 50px) rgba(212, 239, 154, calc(var(--aura) * .8)), 0 0 calc(var(--aura) * 110px) rgba(159, 207, 140, calc(var(--aura) * .45)); animation: auraBreath 6s ease-in-out infinite; }
+  opacity: calc(.45 + var(--aura) * .55); box-shadow: 0 0 calc(var(--aura) * 50px) hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77% / calc(var(--aura) * .8)), 0 0 calc(var(--aura) * 110px) rgba(159, 207, 140, calc(var(--aura) * .45)); animation: auraBreath 6s ease-in-out infinite; }
 .aura-orb b { position: relative; font-family: 'Doto', monospace; font-size: 24px; color: var(--ink); }
 .aura-orb b small { font-size: 12px; }
 @keyframes auraBreath { 50% { transform: scale(1.06); } }
@@ -2338,7 +2338,7 @@ button, a, [data-action] { touch-action: manipulation; }
 .aura-manifesto p { margin: 0 0 10px; font-size: 14.5px; line-height: 1.55; color: #3f463e; }
 .aura-manifesto b { color: var(--ink); font-weight: 600; }
 .aura-hero { --aura: .6; display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 26px 18px 20px; border-radius: 30px; border: 1px solid hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77% / .16);
-  background: radial-gradient(60% 50% at 50% 30%, rgba(212, 239, 154, calc(var(--aura) * .2)), transparent 70%), #050605; }
+  background: radial-gradient(60% 50% at 50% 30%, hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77% / calc(var(--aura) * .2)), transparent 70%), #050605; }
 .aura-orb.big { width: 150px; height: 150px; }
 .aura-orb.big b { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 500; letter-spacing: .02em; }
 .aura-lv { width: 100%; text-align: center; }

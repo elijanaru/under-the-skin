@@ -1201,18 +1201,6 @@ function recipesFor(phase, info) {
 }
 
 // ---------- nourish (structured, evidence-graded) ----------
-function plateSvg(plate, phase) {
-  const R = 70, C = 2 * Math.PI * R, cols = ['#d4ef9a', '#9fcf8c', '#3f8a5c', '#f3f5ef'];
-  let off = 0;
-  const segs = plate.map(([, pct], i) => {
-    const len = pct / 100 * C;
-    const seg = `<circle cx="90" cy="90" r="${R}" fill="none" stroke="${cols[i]}" stroke-width="26" stroke-dasharray="${(len - 3).toFixed(1)} ${(C - len + 3).toFixed(1)}" stroke-dashoffset="${(-off).toFixed(1)}" transform="rotate(-90 90 90)" class="plate-seg" style="animation-delay:${i * .12}s"/>`;
-    off += len; return seg;
-  }).join('');
-  return `<div class="plate"><svg viewBox="0 0 180 180" width="150" height="150">${segs}
-      <text x="90" y="86" text-anchor="middle" class="plate-k">YOUR</text><text x="90" y="104" text-anchor="middle" class="plate-v">plate</text></svg>
-    <div class="plate-leg">${plate.map(([k, pct], i) => `<div><i style="background:${cols[i]}"></i><span>${k}</span><b>${pct}%</b></div>`).join('')}</div></div>`;
-}
 function evBadge(ev) { return `<span class="ev ev-${ev}">${EVIDENCE[ev].short}</span>`; }
 function recentSymptoms() {
   const out = {};
@@ -2428,10 +2416,6 @@ function auraStreak() {
   while (auraDay(C.iso(d)).length) { s++; d = C.addDays(d, -1); }
   return s;
 }
-function auraChecks(info) {
-  const c = compassFor(info);
-  return [['energy', c.lvl <= 1 ? 'I slowed down' : 'I went for it'], ['eat', 'Ate for my phase'], ['sleep', 'Slept 7h+']];
-}
 function compassSec(info) {
   const c = compassFor(info), e = getLog(todayISO()).energy;
   const listen = e && c.lvl >= 2 && e <= 2 ? 'You logged low energy. Today, follow your body, not the calendar.'
@@ -2443,16 +2427,6 @@ function compassSec(info) {
       <div class="cp-rows"><div><small>Lean into</small>${c.work}</div><div><small>Go easy on</small>${c.ease}</div><div><small>Body</small>${c.body}</div></div>
       <p class="cp-line">${listen}</p>
     </div>`;
-}
-function auraCard(info) {
-  const k = todayISO(), done = auraDay(k), lv = auraLevel(), pct = auraPct(info.cycleStart, M.today), st = auraStreak();
-  return `<section class="aura-card" id="aura-card" style="--aura:${(0.25 + pct / 133).toFixed(2)}">
-    <button class="aura-orb" data-action="nav" data-to="aura" aria-label="Your aura"><i></i><b>${pct}<small>%</small></b></button>
-    <div class="aura-main">
-      <div class="aura-top"><div><div class="eyebrow">Your aura · ${lv.name}</div><h3>${pct >= 60 ? 'You’re shining' : pct >= 30 ? 'Your glow is growing' : 'Live in sync, glow brighter'}</h3></div></div>
-      <p class="aura-sub">In sync ${pct}% this cycle${st > 1 ? ` · ${st}-day streak` : ''}</p>
-      <div class="aura-ticks">${auraChecks(info).map(([id, t]) => `<button class="${done.includes(id) ? 'on' : ''}" data-action="auraTick" data-k="${id}" aria-pressed="${done.includes(id)}">${icon('check', 13, 2.6)}${t}</button>`).join('')}</div>
-    </div></section>`;
 }
 function viewAura() {
   const info = M.info;
@@ -4207,16 +4181,7 @@ function acReady() {
 }
 function acMsg(t, bad) { const m = document.getElementById('ac-msg'); if (m) { m.textContent = t; m.classList.toggle('bad', !!bad); } }
 const actions = {
-  auraTick: d => {
-    const k = todayISO(), a = state.aura = state.aura || {}, cur = a[k] || [], i = cur.indexOf(d.k);
-    if (i < 0) cur.push(d.k); else cur.splice(i, 1);
-    if (cur.length) a[k] = cur; else delete a[k];
-    save();
-    const el = document.getElementById('aura-card'), t = document.createElement('div');
-    if (!el || !M.info) return render();
-    t.innerHTML = auraCard(M.info); el.replaceWith(t.firstElementChild);
-    if (i < 0) { const lv = auraLevel(); const was = auraLevel(lv.pts - 1); toast(lv.i > was.i ? `Level up: ${lv.name} ✨` : cur.length === 3 ? 'Fully in sync today ✨' : 'In sync +1'); }
-  },
+
   acMode: d => { ui.acMode = d.v; ui.acEmail = document.getElementById('ac-email')?.value || ui.acEmail; render(); },
   acProvider: async (d, el) => {
     if (!acReady()) return;
