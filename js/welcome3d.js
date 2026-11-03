@@ -11,7 +11,7 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 const MODEL_URL = 'models/body2.glb';
-const BODY_Y = -0.08; // she sits higher so the title only meets her hips, where she fades into the mist
+const BODY_Y = -0.3; // she sits low, her hips fading into the mist just above the title
 let cached = null; // the parsed model is reused if the welcome screen is shown again
 const ease = t => 1 - Math.pow(1 - Math.min(1, Math.max(0, t)), 4);
 
