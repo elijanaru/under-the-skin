@@ -4247,3 +4247,5 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .lv-g { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: #f4f5f0; color: #0b0d0b; }
 .sb-g { display: block; color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%); }
 .sg-chips button { display: inline-flex; align-items: center; gap: 6px; }
+.mv2-b .mv2-g svg, .mv2-g > svg { width: 22px !important; height: 22px !important; position: static !important; transform: none !important; }
+.nw-rings .mv2-g svg { width: 18px !important; height: 18px !important; }

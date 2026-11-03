@@ -2282,7 +2282,7 @@ const CALM = {
   focus: [2, 'Cortisol rises more easily now. Keep training steady and add 10 min of meditation.'],
   premenstrual: [3, 'Falling hormones can make stress feel bigger. Extra yoga, meditation and early nights help keep cortisol, cramps and mood calm.'],
 };
-const MOVE_G = { lift: '🏋️', hiit: '⚡', sport: '🏃', pilates: '🤸', yoga: '🧘', meditate: '🪷', walk: '🌿' };
+const MOVE_G = { lift: 'dumbbell', hiit: 'bolt', sport: 'heart', pilates: 'spark', yoga: 'leaf', meditate: 'mind', walk: 'sun' };
 const CALM_SHORT = { 'flow-start': 'Extra yin yoga or meditation, nothing intense', 'flow-end': '5 min slow breathing', rising: 'A short meditation', building: '5 min breathwork after training', peak: '10 min stretching after training', settle: 'Evening yoga or meditation', focus: '10 min meditation a day', premenstrual: 'Extra yoga, meditation & early nights' };
 const SLEEP_PLAN = {
   'flow-start': ['Sleep in', 'Up to 9 hours, rest is repair now'], 'flow-end': ['Back to rhythm', 'Wake with the light again'],
@@ -2463,7 +2463,7 @@ function todayTiles(info) {
       ${k === 'stress' ? `<p class="ht-fast">${icon('bolt', 13)} Fastest calm: breathe out longer than you breathe in, for 5 minutes.</p>` : ''}${evBadge(x[4])}</div></div>`;
   };
   return `<div class="dpt-grid">
-      ${tile('wide hero-move', { to: 'move' }, MOVE_G[best[0]?.k] || '🧘', 'Sport', g.title, best.map(m => m.n).slice(0, 3).join(' · '))}
+      ${tile('wide hero-move', { to: 'move' }, icon(MOVE_G[best[0]?.k] || 'leaf', 22), 'Sport', g.title, best.map(m => m.n).slice(0, 3).join(' · '))}
       ${tile('t-paper', { tip: 'eat' }, '🥗', 'Eat', fn[0], `<span class="dpt-col">${colDots(fm.col[0])} ${fm.col[1]} foods</span>${fn[1].map(x => x[0].slice(x[0].indexOf(' ') + 1)).slice(0, 3).join(' · ')}<br><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
       ${tile('t-deep', { to: 'rhythm' }, PEOPLE_G[ph], 'Friends', pp[0], pp[1])}
       ${tile(`calm lv${lvl}`, { to: 'stress' }, '🪷', 'Stress', `${['', 'Low', 'Medium', 'High'][lvl]}<i class="dc-bar"><b style="width:${lvl * 33.3}%"></b></i>`, `Best: ${sp[1][0].toLowerCase()}`)}
@@ -3207,7 +3207,7 @@ const MOVE_SHORT = { lift: 'Lift', hiit: 'HIIT', sport: 'Cardio', pilates: 'Pila
 // Round score bubble (Oura-style): the ring fills with how good today is for that kind of movement.
 function moveBubble(m, r, i) {
   const pct = [10, 38, 70, 100][r], R = 27, Cc = 2 * Math.PI * R;
-  return `<div class="mv2-b r${r}" style="--i:${i}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * pct / 100).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-g">${MOVE_G[m.k]}</span>
+  return `<div class="mv2-b r${r}" style="--i:${i}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * pct / 100).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-g">${icon(MOVE_G[m.k], 18)}</span>
     <b>${MOVE_SHORT[m.k]}</b><small>${MV_WORD[r]}</small></div>`;
 }
 function viewMove() {
