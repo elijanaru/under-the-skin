@@ -567,6 +567,48 @@ function roadmapRaw(keys, name, day) {
     ${stay ? '<p class="fine">On hormonal birth control your hormones stay level, so your phases here are estimates of a natural cycle. Your plan for skin, body, sleep and mood still works.</p>' : ''}
   </div>`;
 }
+// Onboarding step 9: the plan as a funnel. Her results, our founder's before & after, the research it rests on, then the three months.
+const O9_STUDIES = [
+  { n: '29.3', u: 'days', t: 'The real average cycle across 600,000 cycles. Only 13% were 28 days, so your plan follows yours.', cite: 'Bull et al. 2019', j: 'npj Digital Medicine', ev: 'strong' },
+  { n: '48', u: '%', t: 'Fewer PMS symptoms with 1,200 mg of calcium a day, within three cycles.', cite: 'Thys-Jacobs et al. 1998', j: 'Am J Obstet Gynecol', ev: 'strong' },
+  { n: '6', u: 'weeks', t: 'Of more fruit and vegetables gave faces a visibly healthier, golden glow.', cite: 'Whitehead et al. 2012', j: 'PLoS ONE', ev: 'some' },
+  { n: '12', u: 'weeks', t: 'On a low-sugar diet cut acne spots in a controlled trial.', cite: 'Smith et al. 2007', j: 'Am J Clin Nutr', ev: 'some' },
+];
+const O9_JOURNALS = ['npj Digital Medicine', 'Am J Obstet Gynecol', 'PLoS ONE', 'Am J Clin Nutr', 'BMJ', 'Br J Sports Med', 'Obstetrics & Gynecology'];
+const laurel = side => `<svg class="o9-laurel ${side}" viewBox="0 0 14 30" aria-hidden="true"><path d="M11 29 C 4 24, 2 14, 6 2" fill="none"/>${[[5, 24, -40], [3.4, 18, -25], [3, 12, -10], [4.4, 6.5, 8]].map(([x, y, r]) => `<ellipse cx="${x}" cy="${y}" rx="1.8" ry="3.6" transform="rotate(${r} ${x} ${y})"/>`).join('')}</svg>`;
+function onbPlanHTML(keys, name) {
+  const badges = O9_JOURNALS.map(j => `<span class="o9-j">${laurel('l')}<b>${j}</b>${laurel('r')}</span>`).join('');
+  return `<div class="o9">
+    <section class="o9-hero">
+      <h2>${name ? `${esc(name)}, your plan` : 'Your plan'}<br>is <em>ready</em></h2>
+      <p>Built around your goals and your own cycle.</p>
+      <figure class="o9-lily"><img src="images/read-lilies.webp" alt="A lily opening from bud to full bloom" loading="lazy">
+        <ol>${[['Day 1', 'Start'], ['Day 30', 'Reset'], ['Day 60', 'Rebuild'], ['Day 90', 'Glow']].map(([d, t]) => `<li><b>${d}</b><small>${t}</small></li>`).join('')}</ol></figure>
+      <ul class="o9-goals">${keys.map(k => `<li><span>${icon('check', 13, 2.6)}</span>${ROADMAP[k].o}</li>`).join('')}</ul>
+    </section>
+
+    <section class="o9-card o9-ba">
+      <h3>It worked for <em>our founder</em></h3>
+      <div class="o9-pair">
+        <figure><img src="images/ba-founder-before.jpg" alt="Our founder before, running at the same pace every day" loading="lazy"><figcaption class="b">Before</figcaption></figure>
+        <figure><img src="images/ba-founder-after.jpg" alt="Our founder after 90 days of living with her hormones" loading="lazy"><figcaption class="a">After 90 days</figcaption></figure>
+      </div>
+      <p class="o9-cap">Clearer skin, a calmer face and more glow. One woman’s story, not a promise.</p>
+    </section>
+
+    <section class="o9-card o9-sci">
+      <h3>Backed by <em>research</em></h3>
+      <p class="o9-sub">Every step in your plan comes from studies published in</p>
+      <div class="o9-marq" aria-label="${O9_JOURNALS.join(', ')}"><div>${badges}${badges}</div></div>
+      <ol class="o9-st">${O9_STUDIES.map(x => `<li><span class="o9-n"><b>${x.n}</b><small>${x.u}</small></span><div><p>${x.t}</p><small>${x.cite} · <i>${x.j}</i> ${evBadge(x.ev)}</small></div></li>`).join('')}</ol>
+    </section>
+
+    <section class="o9-card o9-how">
+      <h3>Your <em>90 days</em></h3>
+      <ol>${PLAN_METHOD.map((p, i) => `<li><span class="o9-mi">${i + 1}</span><div><b>${p.k}<small>${p.d}</small></b><p>${p.line}</p></div></li>`).join('')}</ol>
+    </section>
+  </div>`;
+}
 const planDay = () => { const p = state.profile; return p.planStart ? C.diffDays(M.today, C.parseISO(p.planStart)) + 1 : 0; };
 // Today: where she is in her 90-day plan and this month's steps
 function planCard() {
@@ -901,7 +943,7 @@ function viewOnboarding() {
     8: `<h2 class="onb-title">What are <span>your goals?</span></h2>
         <p class="muted">Pick as many as you like. We build your plan around them.</p>
         ${focusTiles(o.focus || [], 'onbFocus')}`,
-    9: roadmapHTML(planKeys(o), o.name.trim()),
+    9: onbPlanHTML(planKeys(o), o.name.trim()),
     10: onbPromise(),
   }[s];
 
