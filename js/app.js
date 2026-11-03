@@ -788,7 +788,6 @@ function pearlWord(g, word) {
 }
 // One small fact under each onboarding question: why we ask and how it shapes her plan.
 const ONB_STATS = {
-  5: { n: '29.3 days', t: 'is the real average cycle. Not sure of yours? We learn it from your next period.', c: 'Bull et al. 2019 · npj Digital Medicine', ev: 'strong' },
   6: { n: '83%', t: 'got pregnant within a year of stopping birth control: your own cycle comes back. We guide you through it.', c: 'Girum & Wasie 2018 · 22 studies', ev: 'strong' },
   7: { n: '48%', t: 'fewer PMS symptoms with enough calcium. Small, phase-timed habits like this make your plan.', c: 'Thys-Jacobs et al. 1998', ev: 'strong' },
   8: { n: '39 °C', t: 'of steady warmth eased period pain as well as ibuprofen. Your goals pick which of these you get.', c: 'Akin et al. 2001 · Obstet Gynecol', ev: 'some' },
