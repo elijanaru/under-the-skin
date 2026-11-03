@@ -624,6 +624,19 @@ function viewRoadmap() {
     <p class="fine center">Underskin is a wellness app, not medical advice.</p></div>`;
 }
 // Sizes the hand-lettered title to its real drawn letters once the script font has loaded, so swashes never leave the screen.
+// Draws a word in a bold brush script as an even grid of small dots, like a soft LED sign.
+function dotWord(svg) {
+  const go = () => { if (!svg.isConnected || svg.childElementCount) return;
+    const FS = 200, FONT = `${FS}px 'Yellowtail'`, c = document.createElement('canvas'), x = c.getContext('2d', { willReadFrequently: true });
+    const ls = `${Math.round(FS * .025)}px`; x.font = FONT; if ('letterSpacing' in x) x.letterSpacing = ls; const W = Math.ceil(x.measureText(svg.dataset.word).width + FS * .5), H = Math.ceil(FS * 1.35);
+    c.width = W; c.height = H; x.font = FONT; if ('letterSpacing' in x) x.letterSpacing = ls; x.fillStyle = '#000'; x.fillText(svg.dataset.word, FS * .25, FS * .95);
+    const px = x.getImageData(0, 0, W, H).data, S = 6, R = 2.4, dots = [];
+    let x0 = W, x1 = 0, y0 = H, y1 = 0;
+    for (let j = S / 2; j < H; j += S) for (let i = S / 2; i < W; i += S) if (px[((j | 0) * W + (i | 0)) * 4 + 3] > 110) {
+      dots.push(`<circle cx="${i}" cy="${j}" r="${R}"/>`); x0 = Math.min(x0, i); x1 = Math.max(x1, i); y0 = Math.min(y0, j); y1 = Math.max(y1, j); }
+    svg.setAttribute('viewBox', `${x0 - 6} ${y0 - 6} ${x1 - x0 + 12} ${y1 - y0 + 12}`); svg.innerHTML = dots.join(''); svg.classList.add('fit'); };
+  (document.fonts?.load ? document.fonts.load("200px 'Yellowtail'") : Promise.resolve()).then(go, go);
+}
 function fitHand(svg) {
   const go = () => { if (!svg.isConnected) return; const g = svg.querySelector('.h-g');
     if (g.dataset.word && !g.childElementCount) pearlWord(g, g.dataset.word);
@@ -706,7 +719,7 @@ function viewOnboarding() {
 <path d="M58 76 C44 84 26 82 16 74"/></g>
 <g fill="currentColor"><path d="M82 46 c6 -2 10 2 8 7 c-5 1 -9 -2 -8 -7z"/><path d="M64 30 c2 -6 8 -7 11 -3 c-3 5 -8 6 -11 3z"/><path d="M30 60 c-2 -6 2 -10 7 -8 c1 5 -2 9 -7 8z"/>
 <path d="M100 66 c4 -4 9 -3 10 1 c-4 4 -9 3 -10 -1z"/><circle cx="86" cy="10" r="2.4"/><circle cx="10" cy="20" r="2"/><circle cx="16" cy="74" r="2.2"/>
-<g transform="translate(46 12)"><circle r="3.2"/><circle cx="0" cy="-5" r="2.4"/><circle cx="4.8" cy="-1.5" r="2.4"/><circle cx="3" cy="4" r="2.4"/><circle cx="-3" cy="4" r="2.4"/><circle cx="-4.8" cy="-1.5" r="2.4"/></g></g></svg></span><h1 class="bw-thin bw-script2" aria-label="Underskin"><span aria-hidden="true">underskin</span></h1><h1 class="bw-script bw-hand" hidden aria-hidden="true"><svg class="uts-hand pearl" viewBox="0 0 600 220" aria-hidden="true">
+<g transform="translate(46 12)"><circle r="3.2"/><circle cx="0" cy="-5" r="2.4"/><circle cx="4.8" cy="-1.5" r="2.4"/><circle cx="3" cy="4" r="2.4"/><circle cx="-3" cy="4" r="2.4"/><circle cx="-4.8" cy="-1.5" r="2.4"/></g></g></svg></span><h1 class="bw-dots" aria-label="Underskin"><svg class="dot-word" data-word="underskin" aria-hidden="true"></svg></h1><h1 class="bw-script bw-hand" hidden aria-hidden="true"><svg class="uts-hand pearl" viewBox="0 0 600 220" aria-hidden="true">
           <defs><radialGradient id="crysRim" cx=".5" cy=".5" r=".5"><stop offset=".75" stop-color="#eef1f8"/><stop offset=".92" stop-color="#9aa3b8"/><stop offset="1" stop-color="#5d6478"/></radialGradient><radialGradient id="crysTab" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#fff"/><stop offset=".6" stop-color="#eef3fb"/><stop offset="1" stop-color="#bcc6da"/></radialGradient><symbol id="crys" viewBox="-10 -10 20 20"><circle r="10" fill="url(#crysRim)"/><path fill="#ffffff" d="M4.07 -1.68L8.50 -3.52L8.50 3.52L4.07 1.68Z"/><path fill="#c9d1e2" d="M4.07 1.68L8.50 3.52L3.52 8.50L1.68 4.07Z"/><path fill="#f7dbe8" d="M1.68 4.07L3.52 8.50L-3.52 8.50L-1.68 4.07Z"/><path fill="#8f9bb4" d="M-1.68 4.07L-3.52 8.50L-8.50 3.52L-4.07 1.68Z"/><path fill="#ffffff" d="M-4.07 1.68L-8.50 3.52L-8.50 -3.52L-4.07 -1.68Z"/><path fill="#cfe9e2" d="M-4.07 -1.68L-8.50 -3.52L-3.52 -8.50L-1.68 -4.07Z"/><path fill="#e9edf6" d="M-1.68 -4.07L-3.52 -8.50L3.52 -8.50L1.68 -4.07Z"/><path fill="#9ea8c0" d="M1.68 -4.07L3.52 -8.50L8.50 -3.52L4.07 -1.68Z"/><polygon points="4.07,-1.68 4.07,1.68 1.68,4.07 -1.68,4.07 -4.07,1.68 -4.07,-1.68 -1.68,-4.07 1.68,-4.07" fill="url(#crysTab)"/><path fill="#fff" d="M-2.6-5.6l1 2.2 2.2 1-2.2 1-1 2.2-1-2.2-2.2-1 2.2-1z" opacity=".95"/></symbol></defs>
           <g class="h-g" data-word="under|skin" data-vines="1"></g></svg></h1><span class="orn-r"><svg class="orn" viewBox="0 0 120 90" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
 <path d="M118 60 C96 62 84 52 74 40 C64 28 50 22 38 28 C26 34 28 50 40 50 C50 50 50 38 42 38"/>
@@ -4720,6 +4733,7 @@ function mountFigures() {
       .catch(() => { if (c.isConnected) unmountFigs.push(mountTorso(c, null)); });
   });
   document.querySelectorAll('svg.uts-hand').forEach(fitHand);
+  document.querySelectorAll('svg.dot-word').forEach(dotWord);
   document.querySelectorAll('canvas.welcome3d').forEach(c => {
     const wrap = c.closest('.onb-welcome');
     const fail = () => { if (!c.isConnected) return; const f = document.createElement('img'); f.className = 'welcome-still'; f.src = 'images/welcome-forest.jpg'; f.alt = ''; c.replaceWith(f); wrap?.classList.add('arrived', 'no3d'); }; // no WebGL: the misty forest still, never a dark screen

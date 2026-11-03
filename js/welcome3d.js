@@ -80,14 +80,14 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
   // ---- the model, plus a holographic shell and particles that lift off the skin ----
   let shell = null, bodyMat = null, motes = null, moteBase = null, moteSeed = null, ready = false, tReady = 0;
   const shellMat = new THREE.ShaderMaterial({
-    uniforms: { uTime: { value: 0 }, uAmt: { value: 0 } },
+    uniforms: { uTime: { value: 0 }, uAmt: { value: 0 }, uCut: { value: -1e3 }, uFade: { value: 1 } },
     vertexShader: `varying vec3 vN; varying vec3 vV; varying float vY;
       void main(){ vec4 mv = modelViewMatrix * vec4(position,1.); vN = normalize(normalMatrix*normal); vV = normalize(-mv.xyz); vY = position.y; gl_Position = projectionMatrix*mv; }`,
-    fragmentShader: `uniform float uTime; uniform float uAmt; varying vec3 vN; varying vec3 vV; varying float vY;
+    fragmentShader: `uniform float uTime; uniform float uAmt; uniform float uCut; uniform float uFade; varying vec3 vN; varying vec3 vV; varying float vY;
       void main(){ float f = pow(1. - abs(dot(vN, vV)), 2.4);
         float scan = smoothstep(.0,.04, abs(fract(vY*1.1 - uTime*.12) - .5) - .44);
         vec3 c = mix(vec3(.9,.69,.77), vec3(1.,.96,.97), f);
-        gl_FragColor = vec4(c, (f*.85 + scan*.35) * uAmt); }`,
+        gl_FragColor = vec4(c, (f*.85 + scan*.35) * uAmt * smoothstep(uCut, uCut + uFade, vY)); }`,
     transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
   });
 
@@ -100,6 +100,14 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
     let mesh = null;
     root.traverse(o => { if (o.isMesh) { mesh = o; const m = o.material; m.envMapIntensity = 1; if (!m.map) m.color?.set(0xf4e4e9); if ('metalness' in m && !m.metalnessMap) { m.metalness = 0.15; m.roughness = 0.32; } m.transparent = true; m.opacity = 0; bodyMat = m; } });
     if (!mesh) return;
+    // her model ends at the hips: fade the lowest part of the body into the mist instead of a hard cut
+    mesh.geometry.computeBoundingBox(); const gb = mesh.geometry.boundingBox, gh = gb.max.y - gb.min.y;
+    const cut = { value: gb.min.y + gh * .02 }, fade = { value: gh * .26 };
+    shellMat.uniforms.uCut.value = cut.value; shellMat.uniforms.uFade.value = fade.value;
+    bodyMat.onBeforeCompile = sh => { sh.uniforms.uCut = cut; sh.uniforms.uFade = fade;
+      sh.vertexShader = 'varying float vFadeY;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n vFadeY = position.y;');
+      sh.fragmentShader = 'uniform float uCut; uniform float uFade; varying float vFadeY;\n' + sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\n gl_FragColor.a *= smoothstep(uCut, uCut + uFade, vFadeY);'); };
+    bodyMat.needsUpdate = true;
     shell = new THREE.Mesh(mesh.geometry, shellMat);
     shell.position.copy(mesh.position); shell.quaternion.copy(mesh.quaternion); shell.scale.copy(mesh.scale).multiplyScalar(1.006);
     mesh.parent.add(shell);
@@ -193,7 +201,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
       body.scale.setScalar(breathe);
       body.rotation.y = Math.sin(t * 0.18) * 0.16 + (1 - g) * -0.25;
       body.position.y = BODY_Y - (1 - g) * 0.45 + Math.sin(t * 0.6) * 0.035;
-      if (bodyMat) { bodyMat.opacity = g; bodyMat.transparent = g < 1; bodyMat.depthWrite = g > 0.98; }
+      if (bodyMat) { bodyMat.opacity = g; bodyMat.transparent = true; bodyMat.depthWrite = g > 0.98; }
       shellMat.uniforms.uTime.value = t; shellMat.uniforms.uAmt.value = 0.12 + 0.8 * (1 - g) + 0.08 * Math.sin(t * 1.3);
       if (motes) {
         const mp = motes.geometry.attributes.position.array, n = moteSeed.length;

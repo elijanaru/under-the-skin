@@ -4643,3 +4643,9 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 /* Welcome: her lower body stays crisp down to the title (lighter blur and mist) */
 .beyond .bw-vignette::after { height: 28%; -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); }
 .beyond .bw-vignette::before { background: linear-gradient(180deg, transparent 58%, rgba(226,228,214,.18) 66%, rgba(160,176,140,.4) 80%, rgba(74,90,52,.4) 100%); }
+
+/* Welcome title: bold brush script made of small white dots (user's "Formula" reference) */
+.bw-dots { margin: 0 auto 12px; width: 88%; max-width: 360px; line-height: 0; }
+.dot-word { display: block; width: 100%; height: auto; fill: #fbf8f9; filter: drop-shadow(0 0 6px rgba(255,255,255,.35)) drop-shadow(0 2px 10px rgba(40,40,50,.25)); opacity: 0; transition: opacity 1.4s ease; }
+.dot-word.fit { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .dot-word { transition: none; } }
