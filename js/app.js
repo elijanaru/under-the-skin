@@ -1166,7 +1166,7 @@ function brainLinks(k) {
   const tea = L.tea ? (TEA_GUIDE.find(t => t.k === L.tea) || { teas: [] }).teas[0] : null;
   const pills = [tea ? `<button data-action="nav" data-to="tea/${L.tea}-0"><span>${icon('cup', 14)}</span>${tea[1]}</button>` : '',
     ...(L.nu || []).slice(0, 2).map(id => { const n = NUTRIENTS.find(x => x.id === id); return n ? `<button data-action="nav" data-to="nutrients/${id}"><span>${nuIc(id, 16)}</span>${n.n}</button>` : ''; })].join('');
-  return `${help.length ? `<div class="br-works"><small>♥ Works for you</small><p>${help.slice(0, 2).map(x => x.t).join(' · ')}</p></div>` : ''}
+  return `${help.length ? `<div class="br-works"><small>${icon('heart', 12)} Works for you</small><p>${help.slice(0, 2).map(x => x.t).join(' · ')}</p></div>` : ''}
       ${pills ? `<div class="br-fix"><small>Teas & nutrients</small></div><div class="tea-more br-pills">${pills}</div>` : ''}`;
 }
 // Drawn icons for the brain page: one per log group, and one per note.
@@ -1960,7 +1960,7 @@ function viewReliefIndex() {
       return `<button class="rcard tall relief-c" data-action="nav" data-to="relief/${encodeURIComponent(k)}">${glowArt(['drop', 'wave', 'orb', 'hill', 'crown', 'peak'][i % 6], 70 + i)}
       <div class="rc-top"><span class="rc-k">${RELIEF[k].steps.length} ways</span>${recent.has(k) ? '<span class="rc-badge">Logged</span>' : ''}</div>
       <span class="rl-g">${reliefIc(k, 26)}</span><div class="rc-t">${k}</div>
-      <div class="rl-first">${h.length ? `♥ ${h.length} work${h.length > 1 ? '' : 's'} for you` : `First: ${RELIEF[k].steps[0].t.toLowerCase()}`}</div></button>`; }).join('')}</div>
+      <div class="rl-first">${h.length ? `${icon('heart', 12)} ${h.length} work${h.length > 1 ? '' : 's'} for you` : `First: ${RELIEF[k].steps[0].t.toLowerCase()}`}</div></button>`; }).join('')}</div>
   </div>`;
 }
 function viewRelief(id) {
@@ -1972,7 +1972,7 @@ function viewRelief(id) {
     <h1 class="page-h">${k}</h1>
     <section class="card card-light mt"><div class="eyebrow dark">Why it happens</div><p class="dp-text">${R.why}</p></section>
     ${sectionTitle('What helps')}
-    <p class="rl-hint">${help.length ? `♥ ${help.length} of ${R.steps.length} work for you, so they’re at the top.` : 'Tap ♥ on what helps you. Next time it moves to the top.'}</p>
+    <p class="rl-hint">${help.length ? `${icon('heart', 12)} ${help.length} of ${R.steps.length} work for you, so they’re at the top.` : `Tap ${icon('heart', 12)} on what helps you. Next time it moves to the top.`}</p>
     <section class="card glass relief-steps">${order.map(i => { const x = R.steps[i]; return `<div class="rs ${help.includes(i) ? 'helped' : ''}">
       <span class="step-n">${i + 1}</span><div class="rs-b"><div class="rs-h"><b>${x.t}</b>${evBadge(x.ev)}</div><p class="body sm">${x.d}</p>${x.to ? `<button class="link rs-go" data-action="nav" data-to="${x.to}">Open ${icon('chevR', 12)}</button>` : ''}</div>
       <button class="rs-heart ${help.includes(i) ? 'on' : ''}" data-action="reliefHelp" data-k="${k}" data-i="${i}" aria-label="This helps me">${icon('heart', 18)}</button>
@@ -1980,7 +1980,7 @@ function viewRelief(id) {
     ${L.tea || L.nu ? `${sectionTitle('Teas & nutrients for this')}<div class="tea-more">${L.tea ? (TEA_GUIDE.find(t => t.k === L.tea) || { teas: [] }).teas.map((t, i) => `<button data-action="nav" data-to="tea/${L.tea}-${i}"><span>${icon('cup', 14)}</span>${t[1]}</button>`).join('') : ''}${(L.nu || []).map(id => { const n = NUTRIENTS.find(x => x.id === id); return n ? `<button data-action="nav" data-to="nutrients/${id}"><span>${nuIc(id, 16)}</span>${n.n}</button>` : ''; }).join('')}</div>` : ''}
     ${food ? `${sectionTitle('Eat')}<section class="card glass"><p class="body sm" style="margin:0 0 10px">${food.tip}</p><div class="foods">${food.foods.map(f => `<span class="food">${f}</span>`).join('')}</div></section>` : ''}
     <section class="card tcm-card"><div class="tcm-glyph">${icon('yinyang', 30)}</div><div class="tcm-main"><div class="eyebrow">Chinese medicine view</div><p class="body" style="margin-top:6px">${R.tcm}</p></div></section>
-    ${R.doctor ? `<section class="card glass rl-doc"><span>🩺</span><div><small>See a doctor if</small><p>${R.doctor}</p></div></section>` : ''}
+    ${R.doctor ? `<section class="card glass rl-doc"><span>${icon('plus', 20)}</span><div><small>See a doctor if</small><p>${R.doctor}</p></div></section>` : ''}
     <p class="fine center">General information, not medical advice. Check with a pharmacist before taking painkillers or supplements.</p>
   </div>`;
 }
