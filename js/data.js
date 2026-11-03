@@ -1472,6 +1472,15 @@ export const STUDY_BA = [
   { t: 'Skin glow with fruit & veg', who: '35 young adults · 6 weeks', before: 'Usual diet', after: 'About 3 more portions a day', res: 'Skin took on a warmer, golden tone, and strangers rated those faces healthier and more attractive.', src: 'Whitehead et al. 2012 · PLoS ONE', ev: 'some' },
   { t: 'Your face after sleep', who: '23 adults', before: 'Short night', after: 'Normal night', res: 'Faces after a normal night were rated healthier, more attractive and less tired.', src: 'Axelsson et al. 2010 · BMJ', ev: 'some' },
 ];
+// The plan page shows these as an eyeshadow palette: one shade per study or story. tex = pan finish.
+export const SHADES = [
+  { name: 'Calm Rose', tex: 'shimmer', c: '#d9a3a0', n: '−48%', t: 'PMS symptoms', line: '1,200 mg calcium a day: symptoms fell 48% by the third cycle, against 30% on placebo.', src: 'Thys-Jacobs et al. 1998 · 466 women', ev: 'some' },
+  { name: 'Soft Lilac', tex: 'matte', c: '#d7a9c8', n: '52%', t: 'halved their PMS', line: '20 mg chasteberry a day for 3 cycles: half the women at least halved their symptoms, against 24% on placebo.', src: 'Schellenberg 2001 · 170 women', ev: 'some' },
+  { name: 'Moss Glow', tex: 'metal', c: '#8f9a3e', n: '6 wks', t: 'to a golden glow', line: 'About 3 more portions of fruit and veg a day gave skin a warmer tone, and strangers rated those faces healthier.', src: 'Whitehead et al. 2012 · 35 adults', ev: 'some' },
+  { name: 'Silk Sleep', tex: 'satin', c: '#c9c3b6', n: '1 night', t: 'shows on your face', line: 'After a normal night, the same faces were rated healthier, more attractive and less tired than after a short one.', src: 'Axelsson et al. 2010 · 23 adults', ev: 'some' },
+  { name: 'Warm Clay', tex: 'matte', c: '#c99178', n: 'Heat', t: 'eased cramps like ibuprofen', line: 'A 39 °C heat patch eased period cramps as well as ibuprofen; both together worked fastest.', src: 'Akin et al. 2001 · 84 women', ev: 'some' },
+  { name: 'Her Story', tex: 'shimmer', c: '#e6c9b5', n: '90 days', t: 'living with her hormones', line: 'Our founder stopped running at the same pace every day and planned with her cycle instead: clearer skin, a calmer face and more glow. One woman’s story, not a promise.', src: 'Personal story · our founder', story: 1 },
+];
 export const RESEARCH_WALL = [
   { n: '6 wks', t: 'More fruit and veg gave faces a visibly healthier, golden glow.', src: 'Whitehead et al. 2012 · PLoS ONE', more: 'About three extra portions a day raised skin carotenoids, and strangers rated those faces as healthier and more attractive.', ev: 'some', big: 1 },
   { n: '12 wks', t: 'A low-sugar diet cut acne spots.', src: 'Smith et al. 2007 · Am J Clin Nutr', more: 'A low-glycaemic-load diet reduced acne lesions compared with a usual diet in a controlled trial.', ev: 'some' },

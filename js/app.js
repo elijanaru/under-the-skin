@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
+  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -590,53 +590,30 @@ const BA_METRICS = [
   ['Bloated days', l => (l.symptoms || []).includes('Bloating'), 'down'],
   ['Tired days', l => (l.symptoms || []).includes('Fatigue'), 'down'],
 ];
-// Her own numbers: the month before she started vs her latest month.
-function baNumbers(day) {
-  const start = C.parseISO(state.profile.planStart), win = (from, n) => Array.from({ length: n }, (_, i) => getLog(C.iso(C.addDays(from, i))));
-  const logged = l => Object.keys(l).length > 0;
-  let before = win(C.addDays(start, -29), 30); if (before.filter(logged).length < 5) before = win(start, 30);
-  const after = day >= 45 ? win(C.addDays(new Date(), -29), 30) : null;
-  const avg = (ls, f) => { const v = ls.map(f).filter(x => x != null); return v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length * 10) / 10 : null; };
-  const rows = BA_METRICS.map(([t, f, dir]) => [t, before.filter(f).length, after ? after.filter(f).length : null, dir])
-    .concat([['Energy (1–5)', avg(before, l => l.energy), after ? avg(after, l => l.energy) : null, 'up'], ['Sleep (hours)', avg(before, l => l.sleep), after ? avg(after, l => l.sleep) : null, 'up']])
-    .filter(([, b, a]) => (b != null && b !== 0) || (a != null && a !== 0));
-  return { rows, after: !!after, n: before.filter(logged).length };
-}
 function promiseHTML(day) {
-  const ba = baGet(), nums = baNumbers(day);
-  const slot = (k, label) => { const x = ba[k]; return `<div class="ba-slot">${x ? `<img src="${x.img}" alt="${label} photo">` : `<span class="ba-empty">${icon('user', 26)}</span>`}
-      <div class="ba-cap"><b>${label}</b><small>${x ? new Date(x.d).toLocaleDateString(undefined, { day: 'numeric', month: 'short' }) : k === 'before' ? 'Take it today' : day >= 60 ? 'Take it now' : `From day 60 · ${60 - day} days to go`}</small></div>
-      <label class="ba-btn ${!x && (k === 'before' || day >= 60) ? 'main' : ''}">${x ? 'Retake' : 'Take photo'}<input type="file" accept="image/*" capture="user" data-photo="ba-${k}" hidden></label>
-      ${x ? `<button class="ba-del" data-action="baDel" data-v="${k}" aria-label="Delete ${label} photo">${icon('trash', 14)}</button>` : ''}</div>`; };
-  const fmt = (v, t) => v == null ? '–' : t.startsWith('Energy') || t.startsWith('Sleep') ? v : `${v}`;
-  const better = ([, b, a, dir]) => a != null && b != null && (dir === 'down' ? a < b : a > b);
-  return `<section class="pm">
+    return `<section class="pm">
       <div class="pm-h"><b>Our promise</b><span class="pm-day">Day <em>${day}</em>/90</span></div>
-      <p class="pm-p">Follow your plan for 90 days and check in every day. You get a clear plan for each day of your cycle, and your own before &amp; after shows you what changed. In studies, women felt clearly fewer PMS symptoms within 2–3 cycles.</p>
+      <p class="pm-p">Follow your plan for 90 days and check in every day. You get a clear plan for each day of your cycle, and your check-ins show what changed. In studies, women felt clearly fewer PMS symptoms within 2–3 cycles.</p>
       <span class="pm-track" aria-hidden="true"><i style="width:${Math.max(2, day / 90 * 100)}%"></i></span>
       <ol class="pm-steps">
         <li><span>1</span><div><b>Check in every day</b><small>Ten seconds: how you feel, and your period.</small></div><button class="pm-go" data-action="nav" data-to="log">Log</button></li>
         <li><span>2</span><div><b>Do today’s plan</b><small>Eat, move and rest for your phase.</small></div><button class="pm-go" data-action="nav" data-to="today">Today</button></li>
-        <li><span>3</span><div><b>Take your photos</b><small>Day 1 and day 90, same spot, same light.</small></div></li>
       </ol></section>
     ${sectionTitle('Our founder’s before & after')}
     <section class="card glass fba"><div class="ba-pair">
       <figure><img src="images/ba-founder-before.jpg" alt="The founder before, living against her cycle" loading="lazy"><figcaption><b>Before</b><small>Running at the same pace every day</small></figcaption></figure>
       <figure><img src="images/ba-founder-after.jpg" alt="The founder after, living with her hormones" loading="lazy"><figcaption><b>After</b><small>Living with my hormones</small></figcaption></figure></div>
-      <p class="fba-p">Clearer skin, calmer face, more glow. One woman’s story, not a promise: your own before &amp; after is below.</p>
+      <p class="fba-p">Clearer skin, calmer face, more glow. One woman’s story, not a promise.</p>
       <button class="link fba-go" data-action="nav" data-to="relief/Face%20fascia">How to release face fascia ${icon('chevR', 12)}</button></section>
-    ${sectionTitle('Your before & after')}
-    <section class="card glass ba"><div class="ba-pair">${slot('before', 'Before')}${slot('after', 'After')}</div>
-      <p class="ba-note">${icon('check', 12)} Your photos stay on this phone only. They are never uploaded or backed up.</p></section>
-    <section class="card glass ba-num"><div class="ba-nh"><b>Your numbers</b><small>${nums.after ? 'First month vs last 30 days' : 'Your starting point · after appears from day 45'}</small></div>
-      ${nums.rows.length ? nums.rows.map(r => `<div class="ba-r ${better(r) ? 'good' : ''}"><span>${r[0]}</span><b>${fmt(r[1], r[0])}</b><i>${icon('chevR', 12)}</i><b>${nums.after ? fmt(r[2], r[0]) : '…'}</b></div>`).join('')
-        : `<p class="ba-note">Check in for a few days and your starting point appears here.</p>`}</section>
-    ${sectionTitle('Before & after in studies')}
-    <div class="sba">${STUDY_BA.map(x => `<section class="card glass sba-c">
-      <div class="sba-h"><b>${x.t}</b>${evBadge(x.ev)}</div>
-      <div class="sba-ba"><span><small>Before</small>${x.before}</span><i>${icon('chevR', 14)}</i><span><small>After</small>${x.after}</span></div>
-      ${x.bars ? `<div class="sba-bars">${x.bars.map(([l, b, a], i) => `<div class="sba-bar ${i ? 'cmp' : ''}"><span>${l}</span><div><i style="width:${a}%"></i>${b ? `<u style="left:${b}%"></u>` : ''}</div><b>${a}%</b></div>`).join('')}${x.unit ? `<small class="sba-u">share of women who ${x.unit}</small>` : '<small class="sba-u">symptom score, start = 100%</small>'}</div>` : ''}
-      <p>${x.res}</p><small class="sba-src">${x.src} · ${x.who}</small></section>`).join('')}</div>`;
+    ${sectionTitle('Shades of living with your hormones')}
+    ${paletteHTML()}`;
+}
+function paletteHTML() {
+  const sel = ui.shade ?? -1, x = SHADES[sel];
+  return `<section class="pal"><div class="pal-grid">${SHADES.map((h, i) => `<button class="pan ${h.tex} ${i === sel ? 'on' : ''}" style="--pc:${h.c}" data-action="shade" data-i="${i}" aria-pressed="${i === sel}">
+      <span class="pan-n">${h.n}</span><span class="pan-t">${h.t}</span><span class="pan-name">${h.name}</span></button>`).join('')}</div>
+    ${x ? `<div class="pal-sw" style="--pc:${x.c}"><div class="pal-swh"><i></i><b>${x.name}</b>${x.story ? '<span class="pal-story">Personal story</span>' : evBadge(x.ev)}</div><p>${x.line}</p><small>${x.src}</small></div>`
+      : '<p class="pal-hint">Tap a shade to swatch it.</p>'}</section>`;
 }
 function viewRoadmap() {
   const p = state.profile;
@@ -4454,6 +4431,7 @@ const actions = {
   },
   useGeo: () => { if (!navigator.geolocation) return toast('Location isn’t available'); navigator.geolocation.getCurrentPosition(p => { state.profile.geo = { lat: +p.coords.latitude.toFixed(2), lng: +p.coords.longitude.toFixed(2) }; save(); toast('Sun times set for where you are'); render(); }, () => toast('Location not allowed — using your country')); },
   teaK: d => { ui.teaK = d.v; render(); },
+  shade: d => { const v = document.querySelector('.view'), y = v ? v.scrollTop : 0; ui.shade = ui.shade === +d.i ? -1 : +d.i; render(); const w = document.querySelector('.view'); if (w) w.scrollTop = y; },
   reliefHelp: (d, el) => {
     const H = state.reliefHelp = state.reliefHelp || {}, l = H[d.k] = H[d.k] || [], i = +d.i, at = l.indexOf(i);
     at < 0 ? l.push(i) : l.splice(at, 1); save();
