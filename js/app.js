@@ -3694,7 +3694,7 @@ function viewInsights() {
       <span class="pp-e">${[1, 2, 3, 4, 5].map(n => `<i class="${avg >= n - 0.5 ? 'on' : ''}"></i>`).join('')}</span><span class="pp-m">${mood}</span></div>`;
   }).join('');
 
-  const tab = ui.insTab || 'cycle';
+  const tab = ui.insTab || 'cycle'; const read = state.read || {};
   const tabs = [['cycle', 'Cycle'], ['patterns', 'Patterns'], ['learn', 'Learn']];
   let body = '';
   if (tab === 'cycle') body = `
@@ -3723,12 +3723,9 @@ function viewInsights() {
     ${sectionTitle('Most logged symptoms')}
     <section class="card glass">${symRows || '<p class="muted" style="margin:0">Log symptoms to see which phase they cluster in.</p>'}</section>`;
   else body = `
-    <button class="card gro-cta" data-action="nav" data-to="relief"><span class="art-ic">${icon('heart', 20)}</span><span class="art-t">Relief guide<small>Cramps, PMS, sleep, skin & more</small></span>${icon('chevR', 18)}</button>
-    <button class="card gro-cta" data-action="nav" data-to="habits"><span class="art-ic">${icon('check', 20)}</span><span class="art-t">Hormone habits<small>Daily checklist for hormones & fertility</small></span>${icon('chevR', 18)}</button>
-    <button class="card gro-cta" data-action="nav" data-to="hormones"><span class="art-ic">${icon('chart', 20)}</span><span class="art-t">Your hormones, explained<small>All 14 hormones — what they do & how to support them</small></span>${icon('chevR', 18)}</button>
-    <button class="card gro-cta" data-action="nav" data-to="move"><span class="art-ic">${icon('leaf', 20)}</span><span class="art-t">Move with your cycle<small>When to lift heavy, sprint, do yoga or meditate</small></span>${icon('chevR', 18)}</button>
-    ${PHASE_ORDER.concat([null]).map(p => { const list = ARTICLES.filter(a => a.phase === p); return list.length ? `${sectionTitle(p ? PHASES[p].name + (p === info.phase ? ' · now' : '') : 'Foundations')}
-      ${list.map(a => `<button class="card glass article-row" data-action="nav" data-to="article/${a.id}"><span class="art-ic">${icon('book', 20)}</span><span class="art-t">${a.title}<small>${a.mins} min read</small></span>${icon('chevR', 18)}</button>`).join('')}` : ''; }).join('')}`;
+    <div class="lg-grid">${[['relief', 'heart', 'Relief guide', 'Cramps, PMS, sleep, skin'], ['habits', 'check', 'Hormone habits', 'A daily checklist'], ['hormones', 'chart', 'Your hormones', 'All 14, explained'], ['move', 'leaf', 'Move with your cycle', 'Lift, sprint or rest']].map(([to, g, t, sub], i) => `<button class="card glass lg-t" style="--i:${i}" data-action="nav" data-to="${to}"><span class="lg-g">${icon(g, 18)}</span><b>${t}</b><small>${sub}</small>${icon('chevR', 14)}</button>`).join('')}</div>
+    ${[info.phase, ...PHASE_ORDER.filter(p => p !== info.phase), null].map(p => { const list = ARTICLES.filter(a => a.phase === p); return list.length ? `${sectionTitle(p ? PHASES[p].name + (p === info.phase ? ' · now' : '') : 'Foundations')}
+      ${list.map(a => `<button class="card glass article-row" data-action="nav" data-to="article/${a.id}"><span class="art-ic ${read[a.id] ? 'done' : ''}">${icon(read[a.id] ? 'check' : 'book', 20)}</span><span class="art-t">${a.title}<small>${read[a.id] ? 'Read · ' : ''}${a.mins} min</small></span>${icon('chevR', 18)}</button>`).join('')}` : ''; }).join('')}`;
   return `${topbar('Insights')}
   <div class="pad">
     <h1 class="page-h">Your <span>hormone cycle</span></h1>

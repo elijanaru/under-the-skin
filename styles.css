@@ -3973,3 +3973,13 @@ button.tip:active { transform: scale(.98); background: var(--glass-2); }
 .ls-t b { font-size: 17px; font-weight: 400; color: #f4f5f0; }
 .ls-t span { font-size: 12.5px; line-height: 1.4; color: rgba(244,245,240,.66); }
 .ls-t .pill-cta { align-self: flex-start; margin-top: 8px; }
+/* Insights > Learn: guide tiles + read ticks */
+.lg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+.lg-t { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; min-height: 124px; padding: 16px 14px; border-radius: 26px; text-align: left; color: #f4f5f0; }
+.lg-t .lg-g { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: auto; border-radius: 50%; font-size: 18px;
+  background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77% / .12); border: 1px solid hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77% / .3);
+  color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%); }
+.lg-t b { margin-top: 10px; font-size: 14.5px; font-weight: 400; line-height: 1.2; }
+.lg-t small { font-size: 12px; color: rgba(244,245,240,.6); }
+.lg-t > svg { position: absolute; top: 18px; right: 14px; opacity: .45; }
+.art-ic.done { color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%); }
