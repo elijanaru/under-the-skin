@@ -4169,6 +4169,8 @@ function readPhoto(file) {
 // rain and birds under the onboarding: sound may only start after her first touch
 const ambience = on => import('./sfx.js').then(S => S.ambience(on)).catch(() => {});
 document.addEventListener('pointerdown', () => { if (!state?.onboarded) ambience(true); });
+// Return in the gate's password field creates the account (or signs in) right there
+document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.closest?.('.gate-form')) { e.preventDefault(); const b = document.querySelector('.gate-form .ac-go'); if (b) actions.acEmail({}, b); } });
 document.addEventListener('change', e => {
   const t = e.target, scope = t.dataset?.photo, f = t.files?.[0]; if (!scope || !f) return;
   readPhoto(f).then(d => {
@@ -4350,16 +4352,24 @@ function viewWith(q) {
 function viewGate() {
   const flash = ui.flashOut ? '<div class="flash-out"></div>' : ''; ui.flashOut = false;
   const anim = ui.onbAnim || ''; ui.onbAnim = '';
-  return `<div class="onb no-fig gate ${anim}">${flash}
+  const f = ui.gateForm, si = ui.acMode === 'signin';
+  return `<div class="onb no-fig gate ${anim} ${f ? 'form-on' : ''} ${si ? 'mode-signin' : ''}">${flash}
     <div class="onb-top"><button class="icon-btn dark" data-action="onbBack" aria-label="Back">${icon('chevL', 22)}</button><button class="link gate-signin" data-action="gateSignIn">Already have an account? <u>Sign in</u></button></div>
     <div class="gate-photo" aria-hidden="true"><img src="images/gate-rose.webp" alt="" decoding="async"></div>
     <h2 class="onb-title">Keep your cycle <span>safe with you</span></h2>
     <p class="gate-lead">A free account saves every period, symptom and note, and brings them back on any new phone.</p>
+    <label class="ac-consent"><input type="checkbox" id="ac-consent"><span>I agree that my cycle and health logs are kept in my private account. I can delete them anytime. <a href="#/privacy">Privacy</a></span></label>
     <button class="ac-btn ac-mail" data-action="gateEmail">${icon('user', 18)}<span>Continue with email</span></button>
+    <form class="gate-form" onsubmit="return false" aria-hidden="${!f}">
+      <div class="gf-seg" role="tablist"><button type="button" class="gf-c" data-action="gateMode" data-v="create" role="tab">Create account</button><button type="button" class="gf-s" data-action="gateMode" data-v="signin" role="tab">Sign in</button></div>
+      <input class="field" id="ac-email" aria-label="Email" type="email" inputmode="email" autocomplete="email" placeholder="Email" value="${esc(ui.acEmail || '')}" ${f ? '' : 'tabindex="-1"'}>
+      <input class="field" id="ac-pw" aria-label="Password" type="password" autocomplete="${si ? 'current-password' : 'new-password'}" placeholder="${si ? 'Password' : 'Password · at least 8 characters'}" ${f ? '' : 'tabindex="-1"'}>
+      <button type="button" class="ac-btn ac-go" data-action="acEmail"><span class="gf-c">Create my account</span><span class="gf-s">Sign in</span></button>
+      <button type="button" class="link ac-forgot gf-s" data-action="acForgot">Forgot password?</button>
+    </form>
     ${A.oauthOK('apple') ? `<button class="ac-btn ac-apple" data-action="acProvider" data-p="apple">${APPLE_SVG}<span>Continue with Apple</span></button>` : ''}
     ${A.oauthOK('google') ? `<button class="ac-btn ac-google" data-action="acProvider" data-p="google">${GOOGLE_SVG}<span>Continue with Google</span></button>` : ''}
     <p class="ac-msg" id="ac-msg" role="status"></p>
-    <label class="ac-consent"><input type="checkbox" id="ac-consent"><span>I agree that my cycle and health logs are kept in my private account. I can delete them anytime. <a href="#/privacy">Privacy</a></span></label>
     <div class="gate-later">
       <button class="gate-skip" data-action="gateSkip">Use without an account</button>
       <p class="gate-warn"><b>Your data won’t be saved anywhere else.</b> It lives only on this phone: if you delete the app, ${NATIVE ? 'clear its data' : 'clear your browser'} or change phones, it’s gone for good. You can create an account later in Profile.</p>
@@ -4498,7 +4508,7 @@ function demoState(name) {
 function acReady() {
   if (!A.configured()) { acMsg('Accounts open very soon. Until then everything stays safely on this phone.', true); return false; }
   const box = document.getElementById('ac-consent');
-  if (box && !box.checked) { acMsg('Please tick the box to agree first.', true); const l = box.closest('label'); l?.classList.add('need'); l?.scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; } // the tick sits at the bottom of the gate
+  if (box && box.offsetParent && !box.checked) { acMsg('Please tick the box to agree first.', true); const l = box.closest('label'); l?.classList.add('need'); l?.scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; } // the tick sits at the bottom of the gate
   if (box) { try { localStorage.setItem('uts.consentAt', String(Date.now())); } catch {} }
   return true;
 }
@@ -4521,7 +4531,7 @@ const actions = {
     if (!acReady()) return;
     el.classList.add('busy'); acMsg('');
     try {
-      if (create) { const r = await A.signUp(email, pw); if (r.confirm) { ui.acMode = 'signin'; render(); acMsg('Almost there: open the link we just emailed you, then sign in here.'); } }
+      if (create) { const r = await A.signUp(email, pw); if (r.confirm) { ui.acMode = 'signin'; if (document.querySelector('.onb.gate')) actions.gateMode({ v: 'signin' }); else render(); acMsg('Almost there: open the link we just emailed you, then sign in here.'); } }
       else await A.signIn(email, pw);
     } catch (e) { acMsg(e.message, true); }
     el.classList.remove('busy');
@@ -4568,8 +4578,18 @@ const actions = {
     save(); go('today'); render();
   },
   gateSkip: () => { ui.onbGateDone = true; ui.onbAnim = 'fwd'; render(); },
-  gateEmail: () => { if (!acReady()) return; ui.acMode = 'create'; go('account'); },
-  gateSignIn: () => { ui.acMode = 'signin'; go('account'); },
+  // the email form opens right on the gate, no second page; classes toggle in place so the tick box keeps its state
+  gateEmail: () => actions.gateMode({ v: ui.acMode === 'signin' ? 'signin' : 'create' }),
+  gateSignIn: () => actions.gateMode({ v: 'signin' }),
+  gateMode: d => {
+    const g = document.querySelector('.onb.gate'); if (!g) return;
+    ui.gateForm = true; ui.acMode = d.v;
+    g.classList.add('form-on'); g.classList.toggle('mode-signin', d.v === 'signin');
+    const pw = document.getElementById('ac-pw'), em = document.getElementById('ac-email');
+    if (pw) { pw.autocomplete = d.v === 'signin' ? 'current-password' : 'new-password'; pw.placeholder = d.v === 'signin' ? 'Password' : 'Password · at least 8 characters'; }
+    g.querySelector('.gate-form')?.setAttribute('aria-hidden', 'false'); [em, pw].forEach(x => x?.removeAttribute('tabindex'));
+    acMsg(''); setTimeout(() => { em?.focus({ preventScroll: true }); g.querySelector('.gate-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 260);
+  },
   onbBack: () => { if (ui.onbStep === 1 && ui.onbGateDone && !A.currentUser() && A.configured()) { ui.onbGateDone = false; ui.onbAnim = 'back'; render(); return; } ui.onbStep = Math.max(0, ui.onbStep - (ui.onbStep === 6 && ui.onb.noPeriod ? 2 : 1)); ui.onbAnim = 'back'; render(); },
   onbAgo: d => { const o = ui.onb; if (d.v === 'none') { o.noPeriod = !o.noPeriod; o.ago = null; } else { o.noPeriod = false; o.ago = +d.v; o.last = C.iso(C.addDays(new Date(), -d.v)); } render(); },
   onbBc: d => { ui.onb.bc = d.v; if (!hormonalBC(d.v)) ui.onb.bcPlan = null; render(); },

@@ -5058,3 +5058,27 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 /* the phone frame never scrolls itself (focus or scrollIntoView could shift it and show a band of glow) */
 .phone { overflow: clip !important; }
 .onb .onb-body > .onb-greet { animation: none !important; } /* keeps its own fade, appears only once she types */
+
+/* ---------- Gate: create the account right on this page ---------- */
+.gate-form { display: grid; gap: 10px; max-height: 0; opacity: 0; overflow: hidden; transform: translateY(-6px); pointer-events: none;
+  transition: max-height .6s cubic-bezier(.22,1,.36,1), opacity .45s ease, transform .6s cubic-bezier(.22,1,.36,1), margin .6s cubic-bezier(.22,1,.36,1); margin: 0; }
+.gate.form-on .gate-form { max-height: 420px; opacity: 1; transform: none; pointer-events: auto; margin: 2px 0 6px; }
+.gate.form-on .ac-mail { display: none; }
+.onb.gate .gf-seg { display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 999px; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.35); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.onb.gate .gf-seg button { padding: 10px; border-radius: 999px; border: 0; background: none; color: #fff; font: 500 14px 'Outfit', sans-serif; cursor: pointer; transition: background .3s, color .3s; }
+.onb.gate:not(.mode-signin) .gf-seg .gf-c, .onb.gate.mode-signin .gf-seg .gf-s { background: #fff; color: var(--ink-hi); box-shadow: 0 6px 16px -8px rgba(0,0,0,.35); }
+.onb.gate .gate-form .field { border-radius: 18px; padding: 15px 18px; font-size: 16px; }
+.onb.gate .gate-form .ac-go { justify-content: center; background: var(--ink-hi); color: #fff; border: 0; }
+.gate-form .ac-go .gf-s, .gate.mode-signin .gate-form .ac-go .gf-c { display: none; }
+.gate.mode-signin .gate-form .ac-go .gf-s { display: inline; }
+.gate-form .ac-forgot { display: none; justify-self: center; color: #fff; }
+.gate.mode-signin .gate-form .ac-forgot { display: inline; }
+.gate.mode-signin .ac-consent { display: none; }
+.gate.form-on .gate-signin { visibility: hidden; }
+@media (prefers-reduced-motion: reduce) { .gate-form { transition: none; } }
+
+.onb.gate .gf-seg button { text-align: center; justify-content: center; display: flex; align-items: center; width: auto; min-height: 0; margin: 0; }
+.onb.gate .gate-form .field { width: 100%; box-sizing: border-box; box-shadow: 0 8px 20px -14px rgba(0,0,0,.4); }
+.onb.gate .gate-form .ac-go { background: #304023 !important; color: #fff !important; box-shadow: 0 12px 26px -14px rgba(20,30,15,.6); }
+.onb.gate .ac-msg { color: #fff !important; font-weight: 500; font-size: 14px; text-shadow: 0 1px 8px rgba(0,0,0,.45); }
+.onb.gate .ac-msg.bad { color: #ffe1e8 !important; }
