@@ -591,8 +591,8 @@ function onbPlanHTML(keys, name) {
       <h3>It worked for <em>our founder</em></h3>
       <div class="o9-cmp" style="--x:50%">
         <img src="images/ba-slide-before.jpg" alt="Our founder before, running at the same pace every day">
-        <img class="o9-after" src="images/ba-slide-after.jpg" alt="Our founder after 90 days of living with her hormones">
-        <span class="o9-tag b">Before</span><span class="o9-tag a">After 90 days</span>
+        <img class="o9-after" src="images/ba-slide-after.jpg" alt="Our founder after 1 year of living with her hormones">
+        <span class="o9-tag b">Before</span><span class="o9-tag a">After 1 year</span>
         <span class="o9-hand" aria-hidden="true">${icon('chevL', 13, 2.6)}${icon('chevR', 13, 2.6)}</span>
         <input class="o9-range" type="range" min="0" max="100" value="50" aria-label="Slide between before and after">
       </div>
