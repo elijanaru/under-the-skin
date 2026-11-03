@@ -3904,3 +3904,7 @@ button.tip:active { transform: scale(.98); background: var(--glass-2); }
 .rl-cta { margin-top: 14px; background: #0b0d0b; color: #f4f5f0; }
 .rl-row .ev { flex: none; }
 .ts-h { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; }
+/* Grocery: one aisle at a time */
+.gro-tabs { margin-top: 6px; }
+.gro-tabs i { font-style: normal; font-family: Doto, monospace; font-weight: 700; font-size: 12px; opacity: .6; margin-left: 4px; }
+.gro-tabs button.full:not(.on) { border-color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77% / .5); }

@@ -1658,8 +1658,8 @@ function cosmicHero(title, sub, extra = '') {
 
 // ---------- grocery list (built from the coming week's phases) ----------
 const AISLES = [
-  ['Produce', /spinach|pepper|citrus|kiwi|strawberr|broccoli|berr|avocado|beet|banana|potato|kale|rocket|cucumber|tomato|pear|lemon|orange|fennel|asparagus|sprout|cauliflower|greens|radish|pumpkin|watermelon|pomegranate|apple|prune|cherr|mulberr|ginger$|^ginger|fresh ginger/i],
-  ['Protein', /meat|salmon|sardine|egg|chicken|turkey|tofu|tempeh|beef|shellfish|prawn|fish|lamb/i],
+  ['Produce', /spinach|pepper|citrus|kiwi|strawberr|broccoli|berr|avocado|beet|banana|potato|kale|rocket|cucumber|tomato|pear|lemon|orange|fennel|asparagus|sprout|cauliflower|greens|radish|pumpkin|watermelon|pomegranate|apple|prune|cherr|mulberr|ginger$|^ginger|fresh ginger|cabbage|carrot|lettuce|leek|parsnip|squash|celeri|chard|onion|garlic|turnip|courgette|zucchini|mushroom|quince|plum|grape|fig|artichoke|salsify|fruit|watercress|nettle/i],
+  ['Protein', /meat|salmon|sardine|egg|chicken|turkey|beef|shellfish|prawn|fish|\blamb(?!'s)|liver|venison|mussel|oyster/i],
   ['Grains & legumes', /lentil|oat|quinoa|rice|bean|chickpea|millet|sourdough|cracker|grain|congee/i],
   ['Dairy & alternatives', /yoghurt|yogurt|kefir|milk/i],
   ['Seeds, nuts & pantry', /seed|almond|walnut|cashew|chocolate|chia|flax|tahini|date|goji|sesame|seaweed|cinnamon|miso|kimchi|sauerkraut|nut butter|honey|turmeric|salt|peel/i],
@@ -1712,7 +1712,9 @@ function groceryItems() {
   return [['In season now', season], ...groups, other].filter(([, l]) => l.length);
 }
 function viewGrocery() {
-  const phases = weekPhases(), groups = groceryItems(), swaps = groceryItems.swaps || [], got = state.grocery || {};
+  // meat and organs come right after what's in season
+  const AISLE_FIRST = ['In season now', 'Protein'], rank = a => { const i = AISLE_FIRST.indexOf(a); return i < 0 ? 9 : i; };
+  const phases = weekPhases(), groups = groceryItems().map((g, i) => [g, i]).sort((x, y) => rank(x[0][0]) - rank(y[0][0]) || x[1] - y[1]).map(x => x[0]), swaps = groceryItems.swaps || [], got = state.grocery || {};
   const flat = groups.flatMap(([, l]) => l), total = flat.length, done = flat.filter(i => got[i.name.toLowerCase()]).length;
   const ring = (pct, r, w) => { const C0 = 2 * Math.PI * r; return `<circle cx="${r + w}" cy="${r + w}" r="${r}" class="gr-bg" stroke-width="${w}"/>${pct > 0 ? '' : '<!--'}<circle cx="${r + w}" cy="${r + w}" r="${r}" class="gr-fg" stroke-width="${w}" stroke-dasharray="${(pct * C0).toFixed(1)} ${C0.toFixed(1)}" transform="rotate(-90 ${r + w} ${r + w})"/>${pct > 0 ? '' : '-->'}`; };
   // nutrients this week's basket covers, each with how much of it is ticked
@@ -1720,6 +1722,7 @@ function viewGrocery() {
   for (const it of flat) { const n = it.why.replace(/ · in season$/, ''); if (/^in season/i.test(n)) continue; (nut[n] = nut[n] || []).push(it); }
   const nuts = Object.entries(nut).sort((x, y) => y[1].length - x[1].length).slice(0, 8);
   const warm = M.info && warmWindow(M.info) || phases.includes('menstrual');
+  const aisle = groups.some(([a]) => a === ui.groAisle) ? ui.groAisle : (groups[0] || [''])[0];
   return `${topbar('Grocery list', { back: true })}
   <div class="pad">
     <h1 class="page-h">This week’s <span>basket</span></h1>
@@ -1731,7 +1734,9 @@ function viewGrocery() {
     </section>
     <div class="gro-nuts">${nuts.map(([n, l]) => { const d = l.filter(i => got[i.name.toLowerCase()]).length; return `<div class="gn ${d === l.length ? 'full' : ''}"><svg viewBox="0 0 64 64">${ring(d / l.length, 27, 5)}</svg><b>${d}/${l.length}</b><small>${n}</small></div>`; }).join('')}</div>
     ${warm ? `<p class="gro-warm">${icon('sun', 14)} Your period falls in this week: cook the produce and stew the fruit on those days.</p>` : ''}
-    ${groups.map(([aisle, list]) => `${sectionTitle(aisle)}
+    ${sectionTitle('Your list')}
+    <div class="tea-tabs gro-tabs">${groups.map(([a, l]) => { const d = l.filter(i => got[i.name.toLowerCase()]).length; return `<button class="${a === aisle ? 'on' : ''} ${d === l.length ? 'full' : ''}" data-action="groAisle" data-v="${esc(a)}">${a} <i>${d}/${l.length}</i></button>`; }).join('')}</div>
+    ${groups.filter(([a]) => a === aisle).map(([, list]) => `
       <section class="card glass">${list.map(it => { const k = it.name.toLowerCase(), ph = foodPhoto(it.name, 120); return `<button class="check-row gro ${got[k] ? 'on' : ''}" data-action="groToggle" data-k="${esc(k)}">
         <span class="cb">${icon('check', 14, 2.2)}</span>${ph ? `<img class="gro-img" src="${ph}" alt="" loading="lazy">` : ''}<span class="gro-n">${esc(it.name)}<small>${it.why}</small></span>
         <span class="gro-ph">${it.phases.map(p => `<i style="background:${PHASE_COLOR.dark[p]}" title="${PHASES[p].name}"></i>`).join('')}</span></button>`; }).join('')}</section>`).join('')}
@@ -4324,6 +4329,7 @@ const actions = {
   mvTab: d => { ui.mvTab = d.v; render(); },
   stTab: d => { ui.stTab = d.v; render(); },
   pfTab: d => { ui.pfTab = d.v; render(); },
+  groAisle: d => { ui.groAisle = d.v; render(); const t = document.querySelector('.gro-tabs'), on = t && t.querySelector('.on'); if (on) t.scrollLeft = on.offsetLeft - (t.clientWidth - on.offsetWidth) / 2; },
   czTab: d => { ui.czTab = d.v; render(); },
   planOpen: d => { ui.planOpen = d.date || null; ui.planKind = 'date'; calRefresh(['.day-panel']); },
   planKind: d => { const name = document.getElementById('ev-name')?.value; ui.planKind = d.v; calRefresh(['.day-panel']); const i = document.getElementById('ev-name'); if (i && name) i.value = name; },
