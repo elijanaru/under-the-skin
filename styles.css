@@ -4546,3 +4546,15 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 /* Bigger crystal title with flourishes (user reference: ornate film title) */
 .beyond .bw-hand { width: min(100vw, 440px) !important; margin: 0 -18px !important; }
 .beyond .orn-l, .beyond .orn-r { display: none !important; }
+/* gate: the cut-rose photo as a soft header over the mist */
+.gate .gate-photo { display: block !important; height: clamp(200px, 31vh, 300px); margin: -64px -22px -30px; z-index: 0;
+  -webkit-mask-image: radial-gradient(85% 80% at 50% 42%, #000 50%, transparent 100%); mask-image: radial-gradient(85% 80% at 50% 42%, #000 50%, transparent 100%); }
+.gate .gate-photo img { object-position: 50% 50%; animation-name: roseDrift; }
+.gate .gate-photo::after { display: none; }
+.onb.gate .onb-title { margin-top: 0 !important; }
+@keyframes roseDrift { from { transform: scale(1.04); } to { transform: scale(1.1) translateX(-2%); } }
+.gate .gate-photo { -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent 98%) !important; mask-image: linear-gradient(180deg, #000 55%, transparent 98%) !important; }
+.gate .onb-top .gate-signin { text-shadow: 0 1px 6px rgba(40,30,34,.45) !important; }
+.gate .ac-consent a, .gate .ac-consent .link { color: var(--cream) !important; text-decoration: underline; }
+.beyond .welcome-still { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; animation: vaultDrift 30s ease-in-out infinite alternate; }
+@media (prefers-reduced-motion: reduce) { .beyond .welcome-still { animation: none; } }

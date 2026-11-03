@@ -4190,7 +4190,7 @@ function viewGate() {
   const anim = ui.onbAnim || ''; ui.onbAnim = '';
   return `<div class="onb no-fig gate ${anim}">${flash}
     <div class="onb-top"><button class="icon-btn dark" data-action="onbBack" aria-label="Back">${icon('chevL', 22)}</button><button class="link gate-signin" data-action="gateSignIn">Already have an account? <u>Sign in</u></button></div>
-    <div class="gate-photo" aria-hidden="true"><img src="images/gate-vault.jpg" alt="" decoding="async"></div>
+    <div class="gate-photo" aria-hidden="true"><img src="images/gate-rose.jpg" alt="" decoding="async"></div>
     <span class="gate-hud">PRIVATE · ENCRYPTED IN TRANSIT · EU</span>
     <h2 class="onb-title">Keep your cycle <span>safe with you</span></h2>
     <p class="gate-lead">A free account saves every period, symptom and note, and brings them back on any new phone.</p>
@@ -4690,7 +4690,7 @@ function mountFigures() {
   document.querySelectorAll('svg.uts-hand').forEach(fitHand);
   document.querySelectorAll('canvas.welcome3d').forEach(c => {
     const wrap = c.closest('.onb-welcome');
-    const fail = () => { if (!c.isConnected) return; const f = document.createElement('div'); f.className = 'fig-wrap welcome hero'; f.innerHTML = '<canvas class="figure" data-focus=""></canvas>'; c.replaceWith(f); mountFigures(); };
+    const fail = () => { if (!c.isConnected) return; const f = document.createElement('img'); f.className = 'welcome-still'; f.src = 'images/welcome-forest.jpg'; f.alt = ''; c.replaceWith(f); wrap?.classList.add('arrived', 'no3d'); }; // no WebGL: the misty forest still, never a dark screen
     c.addEventListener('welcome-fail', fail);
     import('./welcome3d.js').then(m => {
       if (!c.isConnected) return; if (!m.webglOK()) throw new Error('no webgl');
