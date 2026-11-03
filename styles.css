@@ -4802,3 +4802,11 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .spec-media > img { -webkit-mask-image: linear-gradient(#000 0%, #000 52%, rgba(0,0,0,.5) 74%, transparent 96%); mask-image: linear-gradient(#000 0%, #000 52%, rgba(0,0,0,.5) 74%, transparent 96%); }
 .spec-media:has(> img) { background: transparent !important; }
 .spec-media:has(> img) .spec-shade { background: linear-gradient(180deg, rgba(255,255,255,0) 40%, rgba(255,255,255,.35) 70%, transparent 100%) !important; }
+/* Hormone molecules float: a slow bob with a gentle tilt, each one on its own beat */
+@keyframes molFloat { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-7px) rotate(2.5deg); } }
+.mr-art, .mol-art .molb { display: block; animation: molFloat 5.6s ease-in-out infinite; will-change: transform; }
+.mr-c:nth-child(2) .mr-art { animation-delay: -1.9s; animation-duration: 6.2s; }
+.mr-c:nth-child(3) .mr-art { animation-delay: -3.7s; animation-duration: 5.1s; }
+.mr-c:nth-child(4) .mr-art { animation-delay: -1s; animation-duration: 6.6s; }
+.mr-c:active .mr-art { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .mr-art, .mol-art .molb { animation: none; } }
