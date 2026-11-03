@@ -747,13 +747,24 @@ function viewToday() {
     : `<section class="card checkin" data-action="nav" data-to="log"><div><div class="eyebrow">Daily check-in</div><h3>How do you feel today?</h3></div><span class="round-go">${icon('plus', 22)}</span></section>`}
 
     ${sectionTitle('Explore')}
-    <div class="explore">${[['rhythm', 'sun', 'Your rhythm', 'Sun, moon & body'], ['hormones', 'book', 'Hormones', 'What each one does'], ['guide', 'chart', 'Cycle guide', 'Day by day'], ['move', 'leaf', 'Move', 'Best training times'], ['cosmic', 'star', 'Your stars', 'Zodiac & moon'], ['habits', 'check', 'Habits', 'Daily checklist'], ['relief', 'heart', 'Relief', 'Cramps, PMS, sleep'], ['season', 'leaf', 'In season', 'Local foods'], ['tea', 'cup', 'Tea guide', 'For every need'], ['nutrients', 'drop', 'Nutrients', 'Food first, doses'], ]
-      .map(([to, ic, t, sub]) => `<button class="ex" data-action="nav" data-to="${to}"><span class="ex-ic">${icon(ic, 20)}</span><b>${t}</b><small>${sub}</small></button>`).join('')}</div>
+    ${exploreGrid(info)}
 
     ${tipsCard(info)}
     ${readsCard(info)}
     <p class="fine center">Predictions are estimates based on your logs — not medical advice or contraception.</p>
   </div>`;
+}
+// Explore: one live hero (today's moon + where she is), then a calm 3×3 grid of glass tiles.
+function exploreGrid(info) {
+  const m = Z.moonPhase(new Date()), lit = Math.round(m.illum * 100), wax = m.age < 14.77, sh = Math.round((1 - m.illum) * 56);
+  const tiles = [['hormones', 'book', 'Hormones', 'What each one does'], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`], ['move', 'leaf', 'Move', 'Best training times'], ['cosmic', 'star', 'Your stars', 'Zodiac & moon'], ['habits', 'check', 'Habits', 'Daily checklist'], ['relief', 'heart', 'Relief', 'Cramps, PMS, sleep'], ['season', 'bowl', 'In season', 'Local foods'], ['tea', 'cup', 'Tea guide', 'For every need'], ['nutrients', 'drop', 'Nutrients', 'Food first, doses']];
+  return `<button class="xp-hero" data-action="nav" data-to="rhythm">
+      <span class="xp-hud">Today · live</span>
+      <span class="xp-hl"><b>Your rhythm</b><small>Sun, moon &amp; body, lined up with your cycle</small></span>
+      <span class="xp-moon" style="--sh:${wax ? sh : -sh}px" aria-hidden="true"></span>
+      <span class="xp-stats"><span><small>Moon</small>${m.name}</span><span><small>Light</small><span><b>${lit}</b>%</span></span><span><small>You</small>${PHASES[info.phase].name}</span></span>
+      <span class="xp-go">${icon('chevR', 16)}</span></button>
+    <div class="xp-grid">${tiles.map(([to, ic, t, sub], i) => `<button class="xp" data-action="nav" data-to="${to}" style="--i:${i}"><span class="xp-n">${String(i + 1).padStart(2, '0')}</span><span class="xp-ic">${icon(ic, 18)}</span><b>${t}</b><small>${sub}</small></button>`).join('')}</div>`;
 }
 function logChips(l) {
   const out = [], e = x => `${LOG_EMOJI[x] ? LOG_EMOJI[x] + ' ' : ''}${x}`;
