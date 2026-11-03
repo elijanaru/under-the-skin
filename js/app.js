@@ -2387,12 +2387,20 @@ function viewSupp(id) {
     <p class="fine center">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}. Food first, supplements to fill the gaps.</p>
   </div>`;
 }
+const suppShort = x => { const w = x.name.replace(/\s*\(.*\)/, '').split(' '); return /^vitamin$/i.test(w[0]) ? w.slice(0, 2).join(' ') : w[0]; };
 function viewSupps() {
-  const now = M.info && M.info.phase;
-  return `<div class="pad">${sectionTitle('Supplements')}
-    <p class="body sm">What each one does, how much, and when in your cycle it helps most.</p>
-    <section class="card glass sup-list">${SUPP_LIB.filter(x => ttc() || !/prenatal|coq10/.test(x.id)).map(x => { const on = now && suppPhases(x).includes(now);
-      return `<button class="sup-row" data-action="nav" data-to="supp/${x.id}"><span class="sup-sym ${x.han ? 'han' : ''}">${x.sym}</span><span class="sup-t"><b>${x.name}</b><small>${x.dose} · ${x.when.toLowerCase()}</small></span>${on ? '<span class="sup-now">now</span>' : ''}${icon('chevR', 16)}</button>`; }).join('')}</section></div>`;
+  const now = M.info && M.info.phase, tab = ui.supTab || (now ? 'now' : 'all');
+  const L = SUPP_LIB.filter(x => ttc() || !/prenatal|coq10/.test(x.id)), on = L.filter(x => now && suppPhases(x).includes(now));
+  const dots = x => { const ph = suppPhases(x); return `<span class="sup-ph" aria-label="Best in ${ph.map(p => PHASES[p].name).join(', ')}">${PHASE_ORDER.map(p => `<i class="${ph.includes(p) ? 'on' : ''}" style="--c:${PHASE_COLOR.light[p]}"></i>`).join('')}</span>`; };
+  const row = x => `<button class="sup-row" data-action="nav" data-to="supp/${x.id}"><span class="sup-sym ${x.han ? 'han' : ''}">${x.sym}</span><span class="sup-t"><b>${x.name}</b><small>${x.dose} · ${x.when.toLowerCase()}</small><span class="sup-meta">${evBadge(x.ev)}${dots(x)}</span></span>${icon('chevR', 16)}</button>`;
+  return `${topbar('Supplements', { back: true })}<div class="pad">
+    <h1 class="page-h">Fill the <span>gaps</span></h1>
+    <p class="body sm">Food comes first. These cover what food alone often can’t, timed to your cycle, with the dose and the study behind each one.</p>
+    ${now && on.length ? `<section class="card sp-now"><div class="sp-k"><b>${on.length}</b><span>help in your<br>${PHASES[now].name.toLowerCase()} phase</span></div>
+      <div class="sp-bub">${on.slice(0, 4).map((x, i) => `<button class="sp-b" style="--i:${i}" data-action="nav" data-to="supp/${x.id}"><span class="sup-sym ${x.han ? 'han' : ''}">${x.sym}</span><small>${suppShort(x)}</small></button>`).join('')}</div></section>` : ''}
+    <div class="seg">${(now ? [['now', 'For now'], ['all', 'All']] : [['all', 'All']]).map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="supTab" data-v="${k}">${l}</button>`).join('')}</div>
+    <section class="card glass sup-list">${(tab === 'now' && on.length ? on : L).map(row).join('')}</section>
+    <p class="fine center">Dots show the phases each one helps most. Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}.</p></div>`;
 }
 function remedyScience(r, lib = REMEDY_SCIENCE) {
   const x = lib[r.id]; if (!x) return '';
@@ -4655,6 +4663,7 @@ const actions = {
   },
   rhView: d => { ui.rhView = d.v; render(); },
   mvTab: d => { ui.mvTab = d.v; render(); },
+  supTab: d => { ui.supTab = d.v; render(); },
   stTab: d => { ui.stTab = d.v; render(); },
   pfTab: d => { ui.pfTab = d.v; render(); },
   groAisle: d => { ui.groAisle = d.v; render(); const t = document.querySelector('.gro-tabs'), on = t && t.querySelector('.on'); if (on) t.scrollLeft = on.offsetLeft - (t.clientWidth - on.offsetWidth) / 2; },
