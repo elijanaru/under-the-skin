@@ -1035,6 +1035,15 @@ export const MIND_GUIDE = {
   peak: { energy: 3, mood: 3, social: 3, rest: 1 }, settle: { energy: 2, mood: 2, social: 2, rest: 2 },
   focus: { energy: 2, mood: 2, social: 1, rest: 2 }, premenstrual: { energy: 1, mood: 1, social: 1, rest: 3 },
 };
+// Hormone pages · what studies found (keys match HORMONE_LIBRARY names).
+const LAB_RANGES = { t: 'Where the “normal” numbers come from', ev: 'strong', s: 'Researchers measured LH, FSH, estradiol and progesterone in healthy women through each phase of the cycle. Labs use ranges like these, which is why “normal” depends on your cycle day.', c: 'Stricker et al. 2006, Clinical Chemistry and Laboratory Medicine' };
+export const HORMONE_SCIENCE = {
+  Oestrogen: [LAB_RANGES, { t: 'Your thinking stays sharp all month', ev: 'some', s: 'Even as estrogen rises and falls, memory, attention and reasoning showed no consistent change across the cycle.', c: 'Sundström Poromaa & Gingnell 2014, Frontiers in Neuroscience' }],
+  Progesterone: [LAB_RANGES],
+  FSH: [LAB_RANGES],
+  LH: [{ t: 'The surge comes before the egg', ev: 'strong', s: 'In a large hormone study, the egg was released roughly a day to a day and a half after the LH surge began. That is what ovulation tests pick up.', c: 'WHO Task Force 1980, American Journal of Obstetrics and Gynecology' }, LAB_RANGES],
+  Testosterone: [{ t: 'A small lift around ovulation', ev: 'some', s: 'Measured with precise lab methods, testosterone was a little higher in the middle of the cycle than at the start, which fits the drive and libido many women feel then.', c: 'Rothman et al. 2011, Steroids' }],
+};
 // Cycle guide · what large studies found about real cycles.
 export const CYCLE_SCIENCE = [
   { t: 'Few cycles are exactly 28 days', ev: 'strong', s: 'In over 600,000 cycles tracked in an app, the average cycle was about 29 days and only around 1 in 8 was exactly 28. The first half (before the egg is released) varied the most. The second half was steadier at about 12 days.', c: 'Bull et al. 2019, npj Digital Medicine' },
