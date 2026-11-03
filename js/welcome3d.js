@@ -47,7 +47,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
   const rimB = new THREE.PointLight(0xc9d6a0, 26, 12, 1.6); rimB.position.set(2.3, -0.4, -1.6); scene.add(rimB);
 
   const world = new THREE.Group(); scene.add(world);
-  world.position.x = -0.24; // her raised arm reaches right — shift so she reads centred
+  world.position.x = -0.08; // small nudge left for her raised arm; her body stays centred
   const body = new THREE.Group(); world.add(body);
 
   // ---- warp tunnel: streaks of light rushing past the camera ----

@@ -4640,3 +4640,6 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .bw-thin { display: flex; flex-direction: column; align-items: center; margin: 0 0 16px; font-family: 'Grenze Gotisch', serif; font-weight: 300; font-size: clamp(64px, 21vw, 92px); line-height: .78; letter-spacing: -.01em; color: #f7f2f4; text-shadow: 0 1px 14px rgba(48,40,50,.28); }
 .bw-thin span { display: block; }
 .bw-thin.bw-script2 { font-family: 'Great Vibes', cursive; font-weight: 400; font-size: clamp(76px, 25vw, 112px); line-height: 1; letter-spacing: 0; margin: 0 0 8px; white-space: nowrap; color: #faf5f7; text-shadow: 0 2px 18px rgba(48,40,50,.32); }
+/* Welcome: her lower body stays crisp down to the title (lighter blur and mist) */
+.beyond .bw-vignette::after { height: 28%; -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); }
+.beyond .bw-vignette::before { background: linear-gradient(180deg, transparent 58%, rgba(226,228,214,.18) 66%, rgba(160,176,140,.4) 80%, rgba(74,90,52,.4) 100%); }
