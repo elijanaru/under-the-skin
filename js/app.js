@@ -2886,7 +2886,7 @@ function viewNutrients() {
   return `${topbar('Nutrients', { back: true })}
   <div class="pad">
     <h1 class="page-h">Food first, <span>then a boost</span></h1>
-    <section class="card card-light nu-intro"><small>How to use this</small><p>Real food covers most of what your cycle needs. A supplement makes sense when you have the signs, a test shows you’re low, or a study dose clearly helps.</p></section>
+    <section class="card card-light nu-intro"><small>How to use this</small><p>Real food covers most of what your cycle needs. A supplement makes sense when you have the signs, a test shows you’re low, or a study dose clearly helps.</p><button class="sup-all" data-action="nav" data-to="supp">Supplement guide: doses and studies ${icon('chevR', 14)}</button></section>
     ${suppWeek()}
     ${now.length ? `${sectionTitle(`For your ${PHASES[ph].name.toLowerCase()} phase`)}<div class="nu-list">${now.map(card).join('')}</div>` : ''}
     ${sectionTitle(now.length ? 'All nutrients' : 'Nutrients')}

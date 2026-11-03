@@ -4602,3 +4602,4 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 
 .beyond .bw-hand { width: 68% !important; max-width: 270px; }
 .beyond .bw-hand { width: 62% !important; max-width: 250px; }
+.page-h { margin: 6px 0 18px; text-wrap: balance; }
