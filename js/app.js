@@ -1163,7 +1163,7 @@ function brainLinks(k) {
   if (!k || !RELIEF[k]) return '';
   const L = RELIEF_LINKS[k] || {}, help = ((state.reliefHelp || {})[k] || []).map(i => RELIEF[k].steps[i]).filter(Boolean);
   const tea = L.tea ? (TEA_GUIDE.find(t => t.k === L.tea) || { teas: [] }).teas[0] : null;
-  const pills = [tea ? `<button data-action="nav" data-to="tea/${L.tea}-0"><span>${tea[0]}</span>${tea[1]}</button>` : '',
+  const pills = [tea ? `<button data-action="nav" data-to="tea/${L.tea}-0"><span>${icon('cup', 14)}</span>${tea[1]}</button>` : '',
     ...(L.nu || []).slice(0, 2).map(id => { const n = NUTRIENTS.find(x => x.id === id); return n ? `<button data-action="nav" data-to="nutrients/${id}"><span>${nuIc(id, 16)}</span>${n.n}</button>` : ''; })].join('');
   return `${help.length ? `<div class="br-works"><small>♥ Works for you</small><p>${help.slice(0, 2).map(x => x.t).join(' · ')}</p></div>` : ''}
       ${pills ? `<div class="br-fix"><small>Teas & nutrients</small></div><div class="tea-more br-pills">${pills}</div>` : ''}`;
@@ -1976,7 +1976,7 @@ function viewRelief(id) {
       <span class="step-n">${i + 1}</span><div class="rs-b"><div class="rs-h"><b>${x.t}</b>${evBadge(x.ev)}</div><p class="body sm">${x.d}</p>${x.to ? `<button class="link rs-go" data-action="nav" data-to="${x.to}">Open ${icon('chevR', 12)}</button>` : ''}</div>
       <button class="rs-heart ${help.includes(i) ? 'on' : ''}" data-action="reliefHelp" data-k="${k}" data-i="${i}" aria-label="This helps me">${icon('heart', 18)}</button>
     </div>`; }).join('')}</section>
-    ${L.tea || L.nu ? `${sectionTitle('Teas & nutrients for this')}<div class="tea-more">${L.tea ? (TEA_GUIDE.find(t => t.k === L.tea) || { teas: [] }).teas.map((t, i) => `<button data-action="nav" data-to="tea/${L.tea}-${i}"><span>${t[0]}</span>${t[1]}</button>`).join('') : ''}${(L.nu || []).map(id => { const n = NUTRIENTS.find(x => x.id === id); return n ? `<button data-action="nav" data-to="nutrients/${id}"><span>${nuIc(id, 16)}</span>${n.n}</button>` : ''; }).join('')}</div>` : ''}
+    ${L.tea || L.nu ? `${sectionTitle('Teas & nutrients for this')}<div class="tea-more">${L.tea ? (TEA_GUIDE.find(t => t.k === L.tea) || { teas: [] }).teas.map((t, i) => `<button data-action="nav" data-to="tea/${L.tea}-${i}"><span>${icon('cup', 14)}</span>${t[1]}</button>`).join('') : ''}${(L.nu || []).map(id => { const n = NUTRIENTS.find(x => x.id === id); return n ? `<button data-action="nav" data-to="nutrients/${id}"><span>${nuIc(id, 16)}</span>${n.n}</button>` : ''; }).join('')}</div>` : ''}
     ${food ? `${sectionTitle('Eat')}<section class="card glass"><p class="body sm" style="margin:0 0 10px">${food.tip}</p><div class="foods">${food.foods.map(f => `<span class="food">${f}</span>`).join('')}</div></section>` : ''}
     <section class="card tcm-card"><div class="tcm-glyph">${icon('yinyang', 30)}</div><div class="tcm-main"><div class="eyebrow">Chinese medicine view</div><p class="body" style="margin-top:6px">${R.tcm}</p></div></section>
     ${R.doctor ? `<section class="card glass rl-doc"><span>🩺</span><div><small>See a doctor if</small><p>${R.doctor}</p></div></section>` : ''}
@@ -2734,17 +2734,17 @@ function sugarCurve(on) {
 // ---------- tea guide ----------
 function viewTea() {
   const info = M.info, td = info ? TEA_DAY[dayWindow(info)] : null, k = ui.teaK || (td ? 'cycle' : TEA_GUIDE[0].k);
-  const tea = ([g, n, why, how, ev, warn], i) => `<button class="card glass tea-c" data-action="nav" data-to="tea/${k}-${i}"><div class="tea-h"><span class="tea-g">${g}</span><b>${n}</b>${evBadge(ev)}<span class="tea-go">${icon('chevR', 16)}</span></div>
+  const tea = ([g, n, why, how, ev, warn], i) => `<button class="card glass tea-c" data-action="nav" data-to="tea/${k}-${i}"><div class="tea-h"><span class="tea-g">${icon('cup', 20)}</span><b>${n}</b>${evBadge(ev)}<span class="tea-go">${icon('chevR', 16)}</span></div>
     <p>${why}</p></button>`;
   const WIN = [['flow-start', 'Period · first days'], ['flow-end', 'End of period'], ['rising', 'Early rise'], ['building', 'Strong days'], ['peak', 'Ovulation'], ['settle', 'After ovulation'], ['focus', 'Mid second half'], ['premenstrual', 'Before the period']];
   const body = k === 'cycle'
-    ? `<div class="tea-cycle">${WIN.map(([w, t]) => { const x = TEA_DAY[w], now = info && dayWindow(info) === w; return `<button class="tc-row ${now ? 'now' : ''}" data-action="nav" data-to="tea/day-${w}"><span class="tea-g">${x[0]}</span><div><small>${t}${now ? ' · now' : ''}</small><b>${x[1]}</b><p>${x[2]}</p></div><span class="tea-go">${icon('chevR', 16)}</span></button>`; }).join('')}</div>`
+    ? `<div class="tea-cycle">${WIN.map(([w, t]) => { const x = TEA_DAY[w], now = info && dayWindow(info) === w; return `<button class="tc-row ${now ? 'now' : ''}" data-action="nav" data-to="tea/day-${w}"><span class="tea-g">${icon('cup', 20)}</span><div><small>${t}${now ? ' · now' : ''}</small><b>${x[1]}</b><p>${x[2]}</p></div><span class="tea-go">${icon('chevR', 16)}</span></button>`; }).join('')}</div>`
     : (TEA_GUIDE.find(x => x.k === k) || TEA_GUIDE[0]).teas.map(tea).join('');
   return `${topbar('Tea guide', { back: true })}
   <div class="pad">
     <h1 class="page-h">Tea for <span>every need</span></h1>
-    ${td ? `<section class="card card-light tea-today" data-action="nav" data-to="tea/day-${dayWindow(info)}" role="button"><small>Your tea today</small><div class="tea-h"><span class="tea-g">${td[0]}</span><b>${td[1]}</b>${evBadge(td[4])}</div><p>${td[2]}</p><p class="tea-how">☕ ${td[3]}</p><span class="pill-cta tea-cta">${icon('spark', 14)} Why it helps & how to brew</span></section>` : ''}
-    <div class="tea-tabs">${[['cycle', '🌙', 'By cycle'], ...TEA_GUIDE.map(x => [x.k, x.g, x.n])].map(([kk, g, n]) => `<button class="${kk === k ? 'on' : ''}" data-action="teaK" data-v="${kk}">${g} ${n}</button>`).join('')}</div>
+    ${td ? `<section class="card card-light tea-today" data-action="nav" data-to="tea/day-${dayWindow(info)}" role="button"><small>Your tea today</small><div class="tea-h"><span class="tea-g">${icon('cup', 20)}</span><b>${td[1]}</b>${evBadge(td[4])}</div><p>${td[2]}</p><p class="tea-how">${icon('clock', 13)} ${td[3]}</p><span class="pill-cta tea-cta">${icon('spark', 14)} Why it helps & how to brew</span></section>` : ''}
+    <div class="tea-tabs">${[['cycle', 'By cycle'], ...TEA_GUIDE.map(x => [x.k, x.n])].map(([kk, n]) => `<button class="${kk === k ? 'on' : ''}" data-action="teaK" data-v="${kk}">${n}</button>`).join('')}</div>
     ${body}
     <p class="fine center">Herbal teas are gentle support, not medicine. Pregnant, on medication or unsure? Ask your doctor or midwife first.</p>
   </div>`;
@@ -2770,7 +2770,7 @@ function viewTeaItem(id) {
   const cold = ['cold', 'cool'].includes(temp), nearBleed = ph === 'menstrual' || (info && dayWindow(info) === 'premenstrual');
   const cautions = [warn, ...P.map(p => p.caution)].filter((x, i, a) => x && a.indexOf(x) === i);
   return `<div class="pad">
-    ${specHero({ glyph: g, eyebrow: G ? `Tea for ${G.n.toLowerCase()}` : 'Tea', name: /tea|milk|coffee/i.test(n) ? n : `${n} tea`, label: 'Key ingredients',
+    ${specHero({ glyph: icon('cup', 56, 1.2), eyebrow: G ? `Tea for ${G.n.toLowerCase()}` : 'Tea', name: /tea|milk|coffee/i.test(n) ? n : `${n} tea`, label: 'Key ingredients',
       rows, lead: `${n} · ${EVIDENCE[ev].label.toLowerCase()}`, desc: why })}
     ${P.length ? `<section class="card glass tea-fit">
       <div class="tf-k">Best in your cycle</div>
@@ -2780,11 +2780,11 @@ function viewTeaItem(id) {
       ${cold && nearBleed ? `<p class="tea-warn">${icon('spark', 12)} Cooling in Chinese medicine. Around your period drink it hot and add a slice of ginger.</p>` : ''}
     </section>` : ''}
     ${sectionTitle('How to make it')}
-    <section class="card glass tea-how-c"><div class="th-steps">${[['☕', how], ['🫖', 'Cover the cup while it steeps, so the fragrant oils stay in your tea.'], ...(nearBleed ? [['🔥', 'Drink it hot or warm these days, never iced.']] : [])].map(([e, x]) => `<div><span>${e}</span><p>${x}</p></div>`).join('')}</div></section>
+    <section class="card glass tea-how-c"><div class="th-steps">${[['clock', how], ['cup', 'Cover the cup while it steeps, so the fragrant oils stay in your tea.'], ...(nearBleed ? [['thermo', 'Drink it hot or warm these days, never iced.']] : [])].map(([e, x]) => `<div><span>${icon(e, 18)}</span><p>${x}</p></div>`).join('')}</div></section>
     ${P.length ? `${sectionTitle('What studies found')}
     <section class="card glass tea-study">${P.map(p => `<div class="ts-i"><div class="ts-h"><b>${p.n}</b></div><p>${p.study}</p><small>${p.cite}</small></div>`).join('')}<div class="ts-ev">${evBadge(ev)} <span>${EVIDENCE[ev].label}</span></div></section>` : ''}
     ${cautions.length ? `${sectionTitle('Good to know')}<section class="card glass tea-care">${cautions.map(c => `<p>${icon('spark', 12)} ${c}</p>`).join('')}</section>` : ''}
-    ${G && G.teas.length > 1 ? `${sectionTitle(`More for ${G.n.toLowerCase()}`)}<div class="tea-more">${G.teas.map((x, i) => i === idx ? '' : `<button data-action="nav" data-to="tea/${G.k}-${i}"><span>${x[0]}</span>${x[1]}</button>`).join('')}</div>` : ''}
+    ${G && G.teas.length > 1 ? `${sectionTitle(`More for ${G.n.toLowerCase()}`)}<div class="tea-more">${G.teas.map((x, i) => i === idx ? '' : `<button data-action="nav" data-to="tea/${G.k}-${i}"><span>${icon('cup', 14)}</span>${x[1]}</button>`).join('')}</div>` : ''}
     <p class="fine center">Herbal teas are gentle support, not medicine. Pregnant, on medication or unsure? Ask your doctor or midwife first.</p>
   </div>`;
 }
