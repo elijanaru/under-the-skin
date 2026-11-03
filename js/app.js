@@ -1227,12 +1227,22 @@ function typicalSymptoms(phase) {
   }
   return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 3).map(x => x[0]);
 }
+// Around the period (Chinese medicine): fruit gets stewed, dairy warmed, nothing raw-cold.
+function warmChips(list, cat, warm) {
+  if (!warm) return list;
+  if (cat === 'fruit') return list.filter(([, n]) => !/orange|citrus|kiwi|melon/i.test(n)).map(([e, n]) => [e, /date|dried|stewed|baked|compote/i.test(n) ? n : `${/banana/i.test(n) ? 'Baked' : 'Stewed'} ${n.toLowerCase()}`]);
+  if (cat === 'dairy') return list.map(([e, n]) => [e, /milk/i.test(n) && !/warm/i.test(n) ? `${n}, warmed` : /yoghurt|yogurt|kefir/i.test(n) ? `${n}, at room temperature` : n]);
+  if (cat === 'veg') return list.map(([e, n]) => [e, /salad|raw/i.test(n) ? n.replace(/^raw\s+/i, 'Cooked ') : n]);
+  return list;
+}
 function eatCatInner(phase, cat) {
   const ct = EAT_CATS.find(c => c.k === cat); let C0 = EAT_GUIDE[phase].cats[cat];
   // trying to conceive: prenatal + CoQ10, and no ashwagandha
   if (cat === 'supps' && ttc()) C0 = [C0[0] + ' Trying to conceive: start a prenatal with folate.', [['🤰', 'Prenatal with methylfolate'], ['🔋', 'CoQ10'], ...C0[1].filter(([, n]) => !/Ashwagandha/.test(n))]];
+  const warm = warmWindow(M.info) && phase === (M.info && M.info.phase);
   return `<div class="ec-h"><span class="ec-g">${ct.g}</span><div><b>${ct.t}</b><p>${C0[0]}</p></div></div>
-      <div class="eat-foods">${C0[1].map(([g, n]) => `<span><i>${g}</i>${n}</span>`).join('')}</div>
+      ${warm && (cat === 'dairy' || cat === 'drinks') ? `<p class="eg-note warm">${icon('sun', 12)} These days: everything warm or at room temperature, nothing iced.</p>` : ''}
+      <div class="eat-foods">${warmChips(C0[1], cat, warm).map(([g, n]) => `<span><i>${g}</i>${n}</span>`).join('')}</div>
       ${cat === 'supps' ? `<p class="eg-note">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}.</p>` : ''}`;
 }
 // The two best dishes for each phase, as one photo card with the day, the phase and its tagline in the middle.
@@ -1380,7 +1390,7 @@ function plateSection(current) {
       <div class="pld-h"><b>${P.n}</b><span class="pld-p">${PLATE_SHARE[phase][sel]}%</span>${evBadge(PLATE_EV[sel] === 'strong' && phase !== 'menstrual' ? 'some' : PLATE_EV[sel])}</div>
       <p>${plateWhy(sel, phase)}${live ? ` <em>In season in ${country} now.</em>` : ''}</p>
       <div class="pld-foods">${foods.map(x => `<div>${x.photo ? `<img src="${x.photo}" alt="" loading="lazy">` : `<span>${x.g || '•'}</span>`}<small>${x.n}</small></div>`).join('')}</div>
-      ${(() => { const g = EAT_GUIDE[phase].cats[sel]; if (!g) return ''; const have = foods.map(x => x.n.toLowerCase()); const more = g[1].filter(([, n]) => !have.some(h => n.toLowerCase().includes(h) || h.includes(n.toLowerCase())));
+      ${(() => { const g = EAT_GUIDE[phase].cats[sel]; if (!g) return ''; const have = foods.map(x => x.n.toLowerCase()); const more = warmChips(g[1].filter(([, n]) => !have.some(h => n.toLowerCase().includes(h) || h.includes(n.toLowerCase()))), sel, warm);
         return more.length ? `<div class="pld-more"><small class="pld-mk">More for you</small><div class="eat-foods">${more.map(([e, n]) => `<span><i>${e}</i>${n}</span>`).join('')}</div></div>` : ''; })()}
     </div>
     <div class="pl-rules">
