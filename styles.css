@@ -4324,3 +4324,38 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 ::selection { background: rgba(230,177,196,.6); color: #304023; }
 /* Titles laid over photos: a soft mist halo keeps palm text readable */
 .spec-name h1, .spec-name small, .spec-name span { text-shadow: 0 0 22px rgba(246,238,240,.95), 0 0 6px rgba(246,238,240,.8); }
+
+/* ---------- Welcome, misty light: hand-lettered lockup, silk pill, forest to the bottom ---------- */
+.beyond .orn-l, .beyond .orn-r { display: none !important; }
+.beyond .bw-title-wrap { margin: 0 0 6px !important; color: #fff; }
+.bw-hand { width: min(88vw, 360px); margin: 0 auto !important; padding: 0 !important; line-height: 0 !important; font-size: 0 !important; }
+.uts-hand { width: 100%; height: auto; display: block; overflow: visible; filter: drop-shadow(0 2px 10px rgba(36,48,26,.35)); }
+.uts-hand .h-w { font-family: 'Monsieur La Doulaise', cursive; fill: #fff; fill-opacity: 0; stroke: #fff; stroke-width: .7; stroke-dasharray: 900; stroke-dashoffset: 900;
+  animation: handDraw 2.6s 3.3s cubic-bezier(.45,.05,.3,1) forwards, handFill 1.2s 5.1s ease forwards; }
+.uts-hand .h1 { font-size: 104px; }
+.uts-hand .h2 { font-size: 52px; animation-delay: 4s, 5.4s; }
+.uts-hand .h3 { font-size: 112px; animation-delay: 4.3s, 5.6s; }
+.uts-hand .h-swash { fill: none; stroke: #fff; stroke-width: 1.1; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: .9; animation: handDraw 1.6s 5.4s cubic-bezier(.45,.05,.3,1) forwards; }
+.uts-hand .h-swash.s2 { stroke-width: .8; opacity: .7; animation-delay: 5.8s; }
+@keyframes handDraw { to { stroke-dashoffset: 0; } }
+@keyframes handFill { to { fill-opacity: 1; stroke-width: .2; } }
+@media (prefers-reduced-motion: reduce) { .uts-hand .h-w, .uts-hand .h-swash { animation: none; stroke-dashoffset: 0; fill-opacity: 1; } }
+/* forest carries on to the bottom: only a light moss veil behind the text */
+.bw-vignette { background: radial-gradient(120% 60% at 50% 30%, transparent 60%, rgba(48,64,35,.18) 100%), linear-gradient(180deg, rgba(246,238,240,.25) 0%, transparent 18%, transparent 46%, rgba(48,64,35,.3) 64%, rgba(40,54,30,.5) 100%) !important; }
+.beyond .bw-sub2 { font-family: var(--font) !important; font-style: normal !important; font-weight: 300 !important; font-size: 17px !important; letter-spacing: .01em !important; color: #fff !important; text-shadow: 0 1px 12px rgba(36,48,26,.5); }
+.beyond .welcome-ui .bw-by { font-family: var(--font) !important; font-weight: 300 !important; font-size: 11px !important; letter-spacing: .22em !important; text-transform: uppercase !important; color: rgba(255,255,255,.85) !important; text-shadow: 0 1px 10px rgba(36,48,26,.5); }
+.beyond .welcome-ui .bw-by span { color: #f6dbe4 !important; }
+.beyond .pearl-btn { display: flex !important; align-items: center; justify-content: center; width: 100%; height: 58px !important; border-radius: 999px !important; cursor: pointer;
+  background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(246,219,228,.94) 55%, rgba(230,177,196,.96)) !important; color: #304023 !important; font-family: var(--font) !important; font-size: 18px !important; font-weight: 400 !important; letter-spacing: .02em !important; text-shadow: none !important;
+  border: 1px solid rgba(255,255,255,.9) !important; box-shadow: 0 10px 30px rgba(80,40,60,.25), inset 0 1px 0 #fff, inset 0 -8px 16px rgba(214,140,168,.25) !important; transition: transform .4s cubic-bezier(.2,.8,.2,1); }
+  background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(246,219,228,.92) 55%, rgba(230,177,196,.95)); color: #304023; font-family: var(--font); font-size: 18px; font-weight: 400; letter-spacing: .02em;
+  border: 1px solid rgba(255,255,255,.9); box-shadow: 0 10px 30px rgba(80,40,60,.25), inset 0 1px 0 #fff, inset 0 -8px 16px rgba(214,140,168,.25); transition: transform .4s cubic-bezier(.2,.8,.2,1); }
+.beyond .pearl-btn::before, .beyond .pearl-btn::after { display: none !important; }
+.beyond .pearl-btn span { background: none !important; color: inherit !important; text-shadow: none !important; -webkit-text-fill-color: currentColor !important; font: inherit !important; }
+.beyond .pearl-btn:active { transform: scale(.98); }
+.beyond .pearl-btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.beyond .welcome-signin { color: #fff !important; opacity: 1 !important; font-size: 14px; text-shadow: 0 1px 10px rgba(36,48,26,.5); }
+.beyond .welcome-privacy { color: rgba(255,255,255,.8) !important; text-shadow: 0 1px 10px rgba(36,48,26,.5); }
+
+.onb-welcome.beyond { background: #4a5a34 !important; }
+.onb-welcome.beyond .welcome3d { -webkit-mask-image: none !important; mask-image: none !important; }
