@@ -2683,6 +2683,15 @@ function viewTeaItem(id) {
 // ---------- nutrients: food first, a supplement when there's a reason ----------
 const PH4 = [['menstrual', 'Period'], ['follicular', 'Follicular'], ['ovulatory', 'Ovulation'], ['luteal', 'Luteal']];
 const phaseFit = (best, ph) => `<div class="tf-phases">${PH4.map(([k, l]) => `<span class="${best.includes(k) ? 'on' : ''} ${k === ph ? 'now' : ''}" style="--pc:${PHASE_COLOR.dark[k]}">${l}${k === ph ? '<i>you</i>' : ''}</span>`).join('')}</div>`;
+// Opal-style rings: how many of the last 7 days each logged supplement was taken.
+function suppWeek() {
+  const days = Array.from({ length: 7 }, (_, i) => getLog(C.iso(C.addDays(new Date(), -i))).supp || []);
+  const any = days.some(d => d.length), R = 27, Cc = 2 * Math.PI * R;
+  const items = SUPPS.filter(([n]) => NUTRIENTS.some(x => x.n === n)).map(([n, g]) => [n, g, days.filter(d => d.includes(n)).length, NUTRIENTS.find(x => x.n === n).id]);
+  return `<section class="card glass nu-week"><div class="nw-h"><small>Your last 7 days</small>${any ? '' : '<span>Nothing logged yet</span>'}</div>
+    <div class="mind-rings nw-rings">${items.map(([n, g, c, id], i) => `<button class="mv2-b r${c >= 5 ? 3 : c >= 3 ? 2 : c ? 1 : 0}" style="--i:${i}" data-action="nav" data-to="nutrients/${id}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * Math.max(.04, c / 7)).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-g">${g}</span><b>${n}</b><small>${c}/7 days</small></button>`).join('')}</div>
+    <div class="nw-f"><p>${any ? 'Taken most days counts. Tap one for the dose and the best food sources.' : 'Tick supplements in your daily check-in and your week fills in here.'}</p><button class="pill-cta" data-action="nav" data-to="log">${icon('plus', 14)} Log today</button></div></section>`;
+}
 function viewNutrients() {
   const ph = M.info && M.info.phase, now = ph ? NUTRIENTS.filter(x => x.p.includes(ph) && x.p.length < 4) : [];
   const card = x => `<button class="card glass nu-c" data-action="nav" data-to="nutrients/${x.id}"><span class="nu-g">${x.g}</span>
@@ -2691,6 +2700,7 @@ function viewNutrients() {
   <div class="pad">
     <h1 class="page-h">Food first, <span>then a boost</span></h1>
     <section class="card card-light nu-intro"><small>How to use this</small><p>Real food covers most of what your cycle needs. A supplement makes sense when you have the signs, a test shows you’re low, or a study dose clearly helps.</p></section>
+    ${suppWeek()}
     ${now.length ? `${sectionTitle(`For your ${PHASES[ph].name.toLowerCase()} phase`)}<div class="nu-list">${now.map(card).join('')}</div>` : ''}
     ${sectionTitle(now.length ? 'All nutrients' : 'Nutrients')}
     <div class="nu-list">${NUTRIENTS.filter(x => !now.includes(x)).map(card).join('')}</div>
