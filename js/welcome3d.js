@@ -24,10 +24,13 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 0.9;
-  renderer.setClearColor(0x050605, 1);
+  renderer.setClearColor(0xf6eef0, 1);
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x050605, 0.055);
+  scene.fog = new THREE.FogExp2(0xf1ece6, 0.035);
+  // misty forest with pink silk behind her, cover-fitted to the screen in resize()
+  const bg = new THREE.TextureLoader().load('images/welcome-forest.jpg', () => resize());
+  bg.colorSpace = THREE.SRGBColorSpace; scene.background = bg;
   const pmrem = new THREE.PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   scene.environmentIntensity = 0.35;
@@ -36,11 +39,11 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
   const CAM_END = new THREE.Vector3(0, -0.2, 5.1), CAM_START = new THREE.Vector3(0, 0.6, 26);
   camera.position.copy(reduce ? CAM_END : CAM_START);
 
-  // light: soft white key, deep-green and lime rims from behind
-  scene.add(new THREE.HemisphereLight(0xdfe8da, 0x07140c, 0.35));
+  // light: soft white key, blush and willow rims from behind, like morning sun through mist
+  scene.add(new THREE.HemisphereLight(0xfff4f6, 0x8c9768, 0.9));
   const key = new THREE.DirectionalLight(0xffffff, 1.1); key.position.set(1.5, 2.5, 4); scene.add(key);
-  const rimA = new THREE.PointLight(0x4fae74, 40, 12, 1.6); rimA.position.set(-2.2, 1.2, -2); scene.add(rimA);
-  const rimB = new THREE.PointLight(0xd4ef9a, 26, 12, 1.6); rimB.position.set(2.3, -0.4, -1.6); scene.add(rimB);
+  const rimA = new THREE.PointLight(0xe6b1c4, 40, 12, 1.6); rimA.position.set(-2.2, 1.2, -2); scene.add(rimA);
+  const rimB = new THREE.PointLight(0xc9d6a0, 26, 12, 1.6); rimB.position.set(2.3, -0.4, -1.6); scene.add(rimB);
 
   const world = new THREE.Group(); scene.add(world);
   world.position.x = -0.24; // her raised arm reaches right — shift so she reads centred
@@ -48,7 +51,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
 
   // ---- warp tunnel: streaks of light rushing past the camera ----
   const N = 1400, seg = new Float32Array(N * 6), speed = new Float32Array(N), col = new Float32Array(N * 6);
-  const palette = [new THREE.Color(0xd4ef9a), new THREE.Color(0x9fcf8c), new THREE.Color(0xffffff), new THREE.Color(0x4fae74)];
+  const palette = [new THREE.Color(0xe6b1c4), new THREE.Color(0xefd4dd), new THREE.Color(0xffffff), new THREE.Color(0x8c9768)];
   const spawn = (i, z) => {
     const a = Math.random() * Math.PI * 2, r = 1.6 + Math.pow(Math.random(), 0.6) * 9;
     const x = Math.cos(a) * r, y = Math.sin(a) * r * 1.3;
@@ -70,7 +73,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
   const DN = 700, dpos = new Float32Array(DN * 3);
   for (let i = 0; i < DN; i++) { dpos[i * 3] = (Math.random() - .5) * 14; dpos[i * 3 + 1] = (Math.random() - .5) * 12; dpos[i * 3 + 2] = (Math.random() - .5) * 14 - 2; }
   const dustGeo = new THREE.BufferGeometry(); dustGeo.setAttribute('position', new THREE.BufferAttribute(dpos, 3));
-  const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({ color: 0x9fcf8c, size: 0.025, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false }));
+  const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({ color: 0xefd4dd, size: 0.025, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false }));
   world.add(dust);
 
   // ---- the model, plus a holographic shell and particles that lift off the skin ----
@@ -82,7 +85,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
     fragmentShader: `uniform float uTime; uniform float uAmt; varying vec3 vN; varying vec3 vV; varying float vY;
       void main(){ float f = pow(1. - abs(dot(vN, vV)), 2.4);
         float scan = smoothstep(.0,.04, abs(fract(vY*1.1 - uTime*.12) - .5) - .44);
-        vec3 c = mix(vec3(.31,.68,.45), vec3(.83,.94,.6), f);
+        vec3 c = mix(vec3(.9,.69,.77), vec3(1.,.96,.97), f);
         gl_FragColor = vec4(c, (f*.85 + scan*.35) * uAmt); }`,
     transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
   });
@@ -94,7 +97,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
     root.scale.setScalar(s); root.position.set(-ctr.x * s, -ctr.y * s, -ctr.z * s);
     body.add(root);
     let mesh = null;
-    root.traverse(o => { if (o.isMesh) { mesh = o; o.material.envMapIntensity = 0.6; } });
+    root.traverse(o => { if (o.isMesh) { mesh = o; o.material.envMapIntensity = 1; o.material.color?.set(0xf4e4e9); if ('metalness' in o.material) { o.material.metalness = 0.15; o.material.roughness = 0.32; } } });
     if (!mesh) return;
     shell = new THREE.Mesh(mesh.geometry, shellMat);
     shell.position.copy(mesh.position); shell.quaternion.copy(mesh.quaternion); shell.scale.copy(mesh.scale).multiplyScalar(1.006);
@@ -110,7 +113,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
       moteSeed[i] = Math.random();
     }
     const mg = new THREE.BufferGeometry(); mg.setAttribute('position', new THREE.BufferAttribute(mp, 3));
-    motes = new THREE.Points(mg, new THREE.PointsMaterial({ color: 0xd4ef9a, size: 0.012 / s, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false }));
+    motes = new THREE.Points(mg, new THREE.PointsMaterial({ color: 0xfff4f6, size: 0.012 / s, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false }));
     motes.position.copy(mesh.position); motes.quaternion.copy(mesh.quaternion); motes.scale.copy(mesh.scale);
     mesh.parent.add(motes);
     body.scale.setScalar(0.001);
@@ -125,7 +128,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
   // ---- post ----
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.55, 0.5, 0.42);
+  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.45, 0.5, 0.86);
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
 
@@ -133,6 +136,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
     const r = canvas.getBoundingClientRect(), w = Math.max(1, r.width), h = Math.max(1, r.height);
     renderer.setSize(w, h, false); composer.setSize(w, h);
     camera.aspect = w / h;
+    if (bg.image) { const ia = bg.image.width / bg.image.height, ca = w / h; bg.repeat.set(ca < ia ? ca / ia : 1, ca < ia ? 1 : ia / ca); bg.offset.set((1 - bg.repeat.x) / 2, (1 - bg.repeat.y) / 2); }
     // keep the body the same size on wide screens
     camera.fov = w / h > 0.75 ? 26 : 32;
     camera.updateProjectionMatrix();
