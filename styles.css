@@ -4479,3 +4479,11 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .beyond .pearl-btn { background: linear-gradient(180deg, rgba(255,255,255,.22) 0%, rgba(34,46,26,.42) 48%, rgba(28,38,22,.55) 100%) !important;
   border: 1.5px solid rgba(255,255,255,.95) !important; }
 .beyond .pearl-btn span { font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,.4) !important; }
+/* Intro type: heavy, tight grotesk in off-white (Inter Tight) */
+.beyond .bw-sub2, .beyond .welcome-ui .bw-by, .beyond .pearl-btn, .beyond .pearl-btn span, .beyond .welcome-privacy { font-family: 'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif !important; }
+.beyond .bw-sub2 { font-weight: 700 !important; font-size: 23px !important; letter-spacing: -.045em !important; line-height: 1.05 !important; color: #f3f0ea !important; margin: 0 0 6px !important; }
+.beyond .welcome-ui .bw-by { font-weight: 700 !important; font-size: 15px !important; letter-spacing: -.035em !important; text-transform: none !important; color: #f3f0ea !important; margin: 0 0 20px !important; }
+.beyond .welcome-ui .bw-by span { color: #ffd9e6 !important; }
+.beyond .pearl-btn { font-weight: 800 !important; font-size: 22px !important; letter-spacing: -.04em !important; }
+.beyond .pearl-btn span { color: #f3f0ea !important; }
+.beyond .welcome-privacy { font-weight: 600 !important; font-size: 13.5px !important; letter-spacing: -.02em !important; color: #f3f0ea !important; }
