@@ -657,7 +657,7 @@ function viewOnboarding() {
         <p class="bw-by">Designed by women, <span>for women</span></p>
         <button class="pearl-btn" data-action="onbEnter"><span>Enter</span></button>
         ${A.configured() ? '<button class="link welcome-signin" data-action="nav" data-to="account">I already have an account · Sign in</button>' : ''}
-        <button class="link welcome-privacy" data-action="nav" data-to="privacy">Private by design: no account needed, never sold or tracked</button>
+        <button class="link welcome-privacy" data-action="nav" data-to="privacy">Private by design: we don’t track you or sell your data</button>
       </div>
       <div class="bw-flash"></div>
     </div>`;
