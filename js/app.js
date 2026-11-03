@@ -1979,7 +1979,7 @@ function learnedScore(n) {
   const goal = 6, v = Math.min(n, goal), R = 27, Cc = 2 * Math.PI * R;
   const word = v >= goal ? 'Knows your rhythm' : v >= 3 ? 'Getting precise' : v ? 'Getting to know you' : 'Just starting';
   return `<div class="ls-head"><div class="mv2-b r${v >= goal ? 3 : v ? 2 : 0}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * Math.max(.04, v / goal)).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-g">${v >= goal ? '✓' : `${v}/${goal}`}</span></div>
-    <div class="ls-t"><small>Prediction accuracy</small><b>${word}</b><span>${v >= goal ? 'Learned from 6+ cycles. Predictions follow your own rhythm.' : `${plural(goal - v, 'more cycle')} to learn your rhythm fully. Adding past periods counts too.`}</span>
+    <div class="ls-t"><small>Prediction accuracy</small><b>${word}</b><span>${v >= goal ? 'Learned from 6+ cycles. Predictions follow your own rhythm.' : `${plural(goal - v, 'more full cycle')} (period to period) to learn your rhythm. Adding past periods counts too.`}</span>
     ${v < goal ? `<button class="pill-cta" data-action="nav" data-to="calendar">${icon('plus', 14)} Add past periods</button>` : ''}</div></div>`;
 }
 function learnedCard() {
@@ -2008,7 +2008,7 @@ function headsUpCard() {
 // Before patterns exist: rings for exactly what unlocks them (6 energy days, a symptom 3 times, 2 cycles).
 function patternUnlock(P) {
   const eDays = P.eAvg.filter(v => v != null).length, symN = Object.values(state.logs).reduce((n, l) => n + (l.symptoms || []).length, 0), R = 27, Cc = 2 * Math.PI * R;
-  const items = [['⚡', 'Energy', eDays, 6, 'days'], ['🌀', 'Symptoms', symN, 3, 'logged'], ['🌙', 'Cycles', P.cycles, 2, 'cycles']];
+  const items = [['⚡', 'Energy', eDays, 6, 'days'], ['🌀', 'Symptoms', symN, 3, 'logged'], ['🌙', 'Cycles', P.cycles, 2, 'with check-ins']];
   return `<section class="card glass pat-unlock"><small>Unlock your patterns</small>
     <div class="mind-rings pu-rings">${items.map(([g, n, v, goal, u], i) => `<div class="mv2-b r${v >= goal ? 3 : v ? 2 : 0}" style="--i:${i}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * Math.max(.04, Math.min(1, v / goal))).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-g">${v >= goal ? '✓' : g}</span><b>${n}</b><small>${Math.min(v, goal)} of ${goal} ${u}</small></div>`).join('')}</div>
     <p>Check in on your energy and symptoms, and Underskin shows you <b>your</b> patterns: which days cramps, bloating or low moods tend to arrive, and how your energy really moves.</p>
