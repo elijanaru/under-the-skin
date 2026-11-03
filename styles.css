@@ -4241,3 +4241,5 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .br-emo { color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%); }
 .br-note .br-emo { color: inherit; }
 .br-note.warn { box-shadow: 0 0 0 1px rgba(212,42,64,.45); }
+.lg-chip { padding: 9px 15px; }
+.lg-ic { color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%); }

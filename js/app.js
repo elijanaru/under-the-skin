@@ -825,12 +825,12 @@ function exploreGrid(info) {
     <div class="xp-grid">${tiles.map(([to, ic, t, sub], i) => `<button class="xp" data-action="nav" data-to="${to}" style="--i:${i}"><span class="xp-ic">${icon(ic, 18)}</span><b>${t}</b><small>${sub}</small></button>`).join('')}</div>`;
 }
 function logChips(l) {
-  const out = [], e = x => `${LOG_EMOJI[x] ? LOG_EMOJI[x] + ' ' : ''}${x}`;
+  const out = [], e = x => `${icon(LOG_IC[x] || 'spark', 13)} ${x}`;
   if (l.flow) out.push(`${icon('drop', 13)} ${FLOWS.find(f => f.id === l.flow)?.label}`);
   if (l.fluid) out.push(e(l.fluid));
   [...(l.down || []), ...(l.symptoms || []), ...(l.moods || []), ...(l.disrupt || [])].forEach(s => out.push(e(s)));
   if (l.energy) out.push(`${icon('bolt', 13)} Energy ${l.energy}/5`);
-  if (l.sleep != null) out.push(`🌙 ${l.sleep}h sleep`);
+  if (l.sleep != null) out.push(`${icon('moon', 13)} ${l.sleep}h sleep`);
   (l.supp || []).forEach(x => out.push(`${icon('check', 13)} ${x}`));
   return out.map(x => `<span class="chip static">${x}</span>`).join('');
 }
@@ -1039,8 +1039,8 @@ function calSyncCard() {
     </section>`;
 }
 
-const LOG_SECS = [['flow', '🩸', 'Period & down there'], ['body', '🌸', 'Body'], ['mind', '🌙', 'Mind & mood'], ['rest', '⚡', 'Energy & sleep'],
-  ['desire', '🌹', 'Desire & intimacy'], ['fuel', '🍲', 'Food & supplements'], ['disrupt', '🌪️', 'Cycle disruptors'], ['note', '✍️', 'Note']];
+const LOG_SECS = [['flow', 'drop', 'Period & down there'], ['body', 'user', 'Body'], ['mind', 'mind', 'Mind & mood'], ['rest', 'bolt', 'Energy & sleep'],
+  ['desire', 'heart', 'Desire & intimacy'], ['fuel', 'bowl', 'Food & supplements'], ['disrupt', 'clock', 'Cycle disruptors'], ['note', 'book', 'Note']];
 const SLIDER_WORDS = { body: ['Rough', 'Meh', 'Okay', 'Good', 'Great'], mind: ['Heavy', 'Low', 'Okay', 'Good', 'Light'], drive: ['None', 'Low', 'Medium', 'High', 'On fire'] };
 function logSlider(field, q, l) {
   const v = l[field], set = v != null;
@@ -1055,7 +1055,7 @@ function viewLog() {
   const open = ui.logOpen = ui.logOpen || { flow: 1, body: 1 };
   const chips = (field, list, multi = true) => `<div class="lg-chips">${list.map(([v, e]) => {
     const on = multi ? (l[field] || []).includes(v) : l[field] === v;
-    return `<button class="lg-chip ${on ? 'on' : ''}" data-action="logSet" data-field="${field}" data-v="${esc(v)}" data-multi="${multi ? 1 : ''}"><span>${e}</span>${esc(v)}</button>`;
+    return `<button class="lg-chip ${on ? 'on' : ''}" data-action="logSet" data-field="${field}" data-v="${esc(v)}" data-multi="${multi ? 1 : ''}">${esc(v)}</button>`;
   }).join('')}</div>`;
   const has = f => (l[f] || []).length;
   const count = {
@@ -1090,7 +1090,7 @@ function viewLog() {
       <div><div class="eyebrow">${isToday ? 'Today' : fmt(d, { weekday: 'long' })}${di ? ` · Day ${di.cd} · ${PHASES[di.phase].name}` : ''}</div><h2>${fmt(d, { month: 'long', day: 'numeric' })}</h2></div>
       <button class="icon-btn" data-action="logMove" data-d="1" aria-label="Next day" ${isToday ? 'disabled' : ''}>${icon('chevR', 20)}</button></div>
     ${LOG_SECS.map(([id, e, t], i) => `<section class="lg-sec ${open[id] ? 'open' : ''}" style="animation-delay:${i * 40}ms">
-      <button class="lg-head" data-action="logSec" data-s="${id}" aria-expanded="${!!open[id]}"><span class="lg-ic">${e}</span><b>${t}</b>${count[id] ? `<small>${count[id]}</small>` : ''}<span class="lg-chev">${icon('chevR', 16)}</span></button>
+      <button class="lg-head" data-action="logSec" data-s="${id}" aria-expanded="${!!open[id]}"><span class="lg-ic">${icon(e, 18)}</span><b>${t}</b>${count[id] ? `<small>${count[id]}</small>` : ''}<span class="lg-chev">${icon('chevR', 16)}</span></button>
       ${open[id] ? `<div class="lg-in">${inner[id]}</div>` : ''}</section>`).join('')}
     <div class="lg-go"><button class="btn btn-light btn-block" data-action="nav" data-to="brain${isToday ? '' : '/' + k}" ${total ? '' : 'disabled'}>${icon('spark', 18)} ${total ? 'See what this means' : 'Tap what fits today'}</button></div>
   </div>`;
