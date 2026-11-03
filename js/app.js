@@ -786,12 +786,6 @@ function pearlWord(g, word) {
   g.dataset.box = `${x0} ${y0} ${x1 - x0} ${y1 - y0}`; // exact crystal bounds, so the word sits dead centre
   g.innerHTML = placed.sort((a, b) => a[0] - b[0]).map(([i, j, r]) => `<use class="p-bead" href="#crys" style="--d:${(i / W * 1.8).toFixed(2)}s" x="${(i - r).toFixed(1)}" y="${(j - r).toFixed(1)}" width="${(r * 2).toFixed(1)}" height="${(r * 2).toFixed(1)}" transform="rotate(${Math.round(rnd() * 45)} ${i} ${j})"/>`).join('') + big.map(star).join('');
 }
-// One small fact under each onboarding question: why we ask and how it shapes her plan.
-const ONB_STATS = {
-  6: { n: '83%', t: 'got pregnant within a year of stopping birth control: your own cycle comes back. We guide you through it.', c: 'Girum & Wasie 2018 · 22 studies', ev: 'strong' },
-  7: { n: '48%', t: 'fewer PMS symptoms with enough calcium. Small, phase-timed habits like this make your plan.', c: 'Thys-Jacobs et al. 1998', ev: 'strong' },
-  8: { n: '39 °C', t: 'of steady warmth eased period pain as well as ibuprofen. Your goals pick which of these you get.', c: 'Akin et al. 2001 · Obstet Gynecol', ev: 'some' },
-};
 function onbPromise() {
   const no = [['Subscriptions', 'One payment, yours for good'], ['Ads', 'Never, not even small ones'], ['Hidden fees', 'The price you see is all'], ['Selling your data', 'It stays yours, always'], ['Popups', 'No nagging to upgrade']];
   return `<div class="op">
@@ -892,13 +886,12 @@ function viewOnboarding() {
     9: roadmapHTML(planKeys(o), o.name.trim()),
     10: onbPromise(),
   }[s];
-  const st = ONB_STATS[s];
-  const statHTML = st ? `<aside class="onb-stat" aria-label="Why we ask"><b>${st.n}</b><p>${st.t}</p><small>${st.c} ${st.ev ? evBadge(st.ev) : ""}</small></aside>` : '';
+
   const flash = ui.flashOut ? '<div class="flash-out"></div>' : ''; ui.flashOut = false;
   const anim = ui.onbAnim || ''; ui.onbAnim = '';
   return `<div class="onb no-fig step-${s} ${anim}">${flash}
     <div class="onb-top"><button class="icon-btn dark" data-action="onbBack">${icon('chevL', 22)}</button>${dots}<span style="width:40px"></span></div>
-    <div class="onb-body">${body}${statHTML}</div>
+    <div class="onb-body">${body}</div>
     <div class="onb-foot">
       <button class="pearl-btn wide" data-action="onbNext" ${s === 1 && !o.name.trim() ? 'disabled' : ''}><span>${s === 10 ? 'Start my 3 free days' : s === 8 ? 'See my plan' : 'Continue'}</span></button>
       ${s === 10 ? '<p class="fine rm2-note">Underskin is a wellness app, not medical advice.</p>' : ''}
