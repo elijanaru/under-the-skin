@@ -219,13 +219,22 @@ function markOn(act, v, single) { document.querySelectorAll(`[data-action="${act
 function focusPicker(cur, act) { return `<div class="chips">${FOCUS.map(f => `<button class="chip ${cur.includes(f.k) ? 'on' : ''}" data-action="${act}" data-v="${f.k}">${f.t}</button>`).join('')}</div>`; }
 // Where each tip leads when tapped.
 const TIP_TO = { pms: 'article/progesterone-pms', skin: 'relief/Acne', sleep: 'article/sleep', mood: 'article/brain', energy: 'article/iron', eat: 'plan', tcm: 'article/yin-yang', hormones: 'hormones', body: 'move', bloat: 'relief/Bloating', regular: 'article/four-phases', ttc: 'article/ovulation-signs' };
+// Tip deck: a question, the tip, and one clear way in, per thing she wants help with.
+const TIP_DECK = { pms: ['drop', 'Cramps creeping in?', 'Ease my PMS'], skin: ['spark', 'Skin acting up?', 'Skin relief'], sleep: ['moon', 'Trouble winding down?', 'Sleep better'], mood: ['sun', 'Feeling up and down?', 'Mood & your brain'], energy: ['bolt', 'Running low?', 'Get my energy back'], eat: ['bowl', 'What should I eat today?', 'Open my plan'], tcm: ['yinyang', 'What is your inner season?', 'Yin & yang'], hormones: ['chart', 'What is my body doing?', 'See my hormones'], body: ['leaf', 'Want a strong, toned body?', 'Best training times'], bloat: ['cup', 'Feeling bloated?', 'Bloating relief'], regular: ['calendar', 'Want a steadier cycle?', 'The four phases'], ttc: ['heart', 'Trying for a baby?', 'Signs of egg release'] };
 function tipsCard(info) {
   const ph = info.phase, list = [];
   if (ttc()) list.push({ k: 'ttc', t: 'Trying to conceive', photo: 'Prolactin', tip: TTC_TIPS[info.cd >= info.ov - 5 && info.cd <= info.ov ? 'ovulatory' : ph] });
   focusKeys().forEach(k => { const f = FOCUS.find(x => x.k === k); if (f) list.push({ k, t: f.t, photo: f.photo, tip: TIPS[k][ph] }); });
   if (!list.length) return '';
+  const deck = list.slice(0, 6), n = String(deck.length).padStart(2, '0');
   return `${sectionTitle('Your tips today', ['Edit', 'profile'])}
-    <div class="tips">${list.slice(0, 6).map(x => { const u = hormonePhoto(x.photo, 300); return `<button class="tip" data-action="nav" data-to="${TIP_TO[x.k] || 'plan'}">${u ? `<img src="${u}" alt="" loading="lazy">` : ''}<div><small>${x.t}</small><p>${x.tip}</p></div><span class="tip-go">${icon('chevR', 15)}</span></button>`; }).join('')}</div>`;
+    <div class="td-hud"><span>${PHASES[ph].name} · day ${info.cd}</span><i></i><span>Swipe</span></div>
+    <div class="tdeck">${deck.map((x, i) => { const [ic, q, cta] = TIP_DECK[x.k] || ['spark', x.t, 'Show me'], u = hormonePhoto(x.photo, 700); return `<button class="td" data-action="nav" data-to="${TIP_TO[x.k] || 'plan'}" style="--i:${i}">
+      ${u ? `<img class="td-ph" src="${u}" alt="" loading="lazy">` : ''}<span class="td-glitch" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="td-top"><span class="td-k">${icon(ic, 14)} ${x.t}</span><b class="td-n">${String(i + 1).padStart(2, '0')}<small>/${n}</small></b></span>
+      <span class="td-orb" aria-hidden="true"><span class="td-ring"></span>${icon(ic, 30)}</span>
+      <span class="td-body"><b class="td-q">${q}</b><span class="td-p">${x.tip}</span>
+      <span class="td-cta">${icon('play', 13)} ${cta}</span></span></button>`; }).join('')}</div>`;
 }
 // Articles to read around today's tips: this phase first, then what she wants help with.
 const ARTICLE_PHOTO = { estrogen: 'Oestrogen', 'progesterone-pms': 'Progesterone', iron: 'Active vitamin D', 'yin-yang': 'Thyroid hormones', 'seed-cycling': 'Insulin', 'four-phases': 'LH', brain: 'Serotonin', sleep: 'Melatonin', 'ovulation-signs': 'FSH' };
