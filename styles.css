@@ -4867,3 +4867,11 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 
 .stage-light { opacity: .45; }
 .stage-bg { filter: contrast(1.45) saturate(1.05) brightness(.72) !important; }
+
+/* Plan hero: food names in white on a soft dark wash, the phase label a clean frosted pearl pill */
+.pfood .pf-l b, .pfood .pf-l { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(20,14,20,.5), 0 2px 16px rgba(20,14,20,.45) !important; }
+.pfood .pf-l b { font-weight: 500 !important; }
+.pf-full .pf-mid { background: linear-gradient(170deg, rgba(255,255,255,.82), rgba(255,255,255,.6)) !important; border: 1px solid #fff !important;
+  -webkit-backdrop-filter: blur(22px) saturate(1.5); backdrop-filter: blur(22px) saturate(1.5); box-shadow: inset 0 1px 0 #fff, 0 18px 40px rgba(20,14,20,.22) !important; }
+.pf-full .pf-mid b { color: var(--ink-hi) !important; font-weight: 300 !important; letter-spacing: -.02em; }
+.pfood2.pf-full::after, .pfood3.pf-full::after { background: linear-gradient(180deg, rgba(20,14,20,.38) 0%, rgba(20,14,20,0) 22%, rgba(20,14,20,0) 74%, rgba(20,14,20,.38) 100%) !important; }
