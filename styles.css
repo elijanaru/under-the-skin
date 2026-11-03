@@ -4050,3 +4050,26 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .ci2-mid b { font-size: 21px; font-weight: 500; letter-spacing: -.01em; line-height: 1.2; }
 .ci2-mid small { font-size: 13.5px; font-weight: 300; line-height: 1.5; color: rgba(244,245,240,.66); }
 .ci2-cta { margin: 4px 0 0; }
+
+/* ---------- 90-day plan card (clean) ---------- */
+.p9 { width: 100%; display: grid; gap: 14px; padding: 18px 10px 10px; margin-bottom: 18px; border-radius: 28px; text-align: left; color: #f4f5f0; font-family: var(--font); cursor: pointer; background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.09); transition: transform .25s cubic-bezier(.2,.8,.2,1); }
+.p9:active { transform: scale(.985); }
+.p9:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; }
+.p9-head, .p9-track, .p9-steps { margin: 0 8px; }
+.p9-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; }
+.p9-head > span:first-child { display: grid; gap: 3px; }
+.p9-head b { font-size: 20px; font-weight: 500; letter-spacing: -.01em; }
+.p9-head small { font-size: 13px; color: rgba(244,245,240,.62); }
+.p9-n { font-size: 13px; color: rgba(244,245,240,.56); white-space: nowrap; }
+.p9-n b { font-family: var(--dot); font-size: 30px; font-weight: 400; line-height: 1; color: var(--lime); margin-right: 2px; }
+.p9-track { display: block; height: 6px; border-radius: 6px; background: rgba(255,255,255,.08); overflow: hidden; }
+.p9-track i { display: block; height: 100%; border-radius: 6px; background: var(--lime); }
+.p9-steps { display: grid; }
+.p9-s { display: flex; gap: 12px; padding: 12px 0; align-items: flex-start; }
+.p9-s + .p9-s { border-top: 1px solid rgba(255,255,255,.07); }
+.p9-ic { flex: none; width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; color: var(--lime); background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77% / .1); }
+.p9-s > span:last-child { display: grid; gap: 3px; min-width: 0; }
+.p9-s b { font-size: 15px; font-weight: 500; }
+.p9-s small { font-size: 13px; font-weight: 300; line-height: 1.45; color: rgba(244,245,240,.66); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.p9-cta { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 13px; border-radius: 99px; font-size: 14.5px; font-weight: 500; color: #0a0d0a; background: #f4f5f0; }
+@media (prefers-reduced-motion: reduce) { .p9 { transition: none; } }

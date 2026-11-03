@@ -569,11 +569,12 @@ function planCard() {
   const p = state.profile, day = planDay();
   if (!day || day > 90) return '';
   const keys = planKeys(p), m = Math.min(2, Math.floor((day - 1) / 30));
-  return `<section class="card glass plan90" data-action="nav" data-to="roadmap">
-    <div class="p9-top"><span class="hud">YOUR 90-DAY PLAN · ${['RESET', 'REBUILD', 'GLOW'][m]}</span><span class="p9-day">Day <b>${day}</b>/90</span></div>
-    <div class="p9-bar"><i style="width:${Math.max(3, day / 90 * 100)}%"></i></div>
-    ${keys.slice(0, 3).map(k => `<div class="rm-step"><span class="rm-g">${ROADMAP[k].g}</span><div><b>${ROADMAP[k].t}</b><p>${ROADMAP[k].m[m]}</p></div></div>`).join('')}
-    <span class="link">See my roadmap ${icon('chevR', 14)}</span></section>`;
+  const IC = { offpill: 'leaf', comeback: 'calendar', pms: 'drop', skin: 'spark', body: 'bolt', bloat: 'cup', sleep: 'moon', mood: 'sun', energy: 'bolt', eat: 'bowl', tcm: 'yinyang', hormones: 'chart', regular: 'calendar' };
+  return `<button class="p9" data-action="nav" data-to="roadmap">
+    <span class="p9-head"><span><b>Your 90-day plan</b><small>Month ${m + 1} · ${['Reset', 'Rebuild', 'Glow'][m]}</small></span><span class="p9-n"><b>${day}</b>/90</span></span>
+    <span class="p9-track" aria-hidden="true"><i style="width:${Math.max(3, day / 90 * 100)}%"></i></span>
+    <span class="p9-steps">${keys.slice(0, 3).map(k => `<span class="p9-s"><span class="p9-ic">${icon(IC[k] || 'check', 16)}</span><span><b>${ROADMAP[k].t}</b><small>${ROADMAP[k].m[m]}</small></span></span>`).join('')}</span>
+    <span class="p9-cta">See my roadmap ${icon('chevR', 14)}</span></button>`;
 }
 function viewRoadmap() {
   const p = state.profile;
