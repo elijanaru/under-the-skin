@@ -3230,7 +3230,7 @@ function partnersCard(info) {
   const ps = state.partners || [];
   if (!ps.length) return `${sectionTitle('Your partner')}
     <button class="card partner-photo" data-action="nav" data-to="partners"><img src="images/partner-cinema.webp" alt="" loading="lazy"><span class="pp-shade"></span>
-      <span class="pp-in"><span class="hud">CONNECT · 2 PHONES</span><b>See where your partner is</b><small>Swap links and you’ll both see each other’s cycle, mood and energy here.</small></span>
+      <span class="pp-in"><span class="hud">CONNECT · 2 PHONES</span><b>See where your partner is</b><small>Swap links and you’ll both see each other’s cycle and energy here.</small></span>
       <span class="round-go">${icon('chevR', 20)}</span></button>`;
   const shown = ps.some(p => p.pin) ? ps.filter(p => p.pin) : ps.slice(0, 2);
   return `${sectionTitle(ps.length > 1 ? 'Your people' : 'Your partner', [ps.length > shown.length ? `All ${ps.length}` : 'All', 'partners'])}
@@ -3369,7 +3369,7 @@ function viewPartners(id) {
     <section class="sync-hero">
       <div class="sy-pair">${orb(me, mi, mi ? `You · day ${mi.cd}` : 'You')}<span class="sy-line"><i></i></span>${first ? orb(first, snapInfo(first, new Date()), `${esc(first.n)} · day ${snapInfo(first, new Date()).cd}`) : orb(null, null, 'Her')}</div>
       <h1 class="sy-h">See each other’s <span>rhythm</span></h1>
-      <p class="sy-sub">Swap links once. You see her phase, mood and energy, and she sees yours.</p>
+      <p class="sy-sub">Swap links once. You see where she is in her cycle and the energy that usually comes with it, and she sees yours.</p>
     </section>
 
     ${ps.length ? `${sectionTitle(`Your people · ${ps.length}`)}<p class="muted sm" style="margin:-6px 4px 10px">Pin the ones you want on your home screen.</p>
@@ -3393,7 +3393,7 @@ function viewPartners(id) {
         <div class="sy-paste"><input class="field sm" id="partnerLink" placeholder="…or paste it here" autocomplete="off"><button class="btn btn-ghost" data-action="addPartnerLink">Add</button></div></div></li>
     </ol>`; })()}
     <section class="card glass sy-priv">
-      <div><span class="hud">SHARED</span><ul><li>${icon('check', 13, 2.4)} First name</li><li>${icon('check', 13, 2.4)} Cycle day & phase</li><li>${icon('check', 13, 2.4)} Star sign, if added</li></ul></div>
+      <div><span class="hud">SHARED</span><ul><li>${icon('check', 13, 2.4)} First name</li><li>${icon('check', 13, 2.4)} Cycle day & phase</li><li>${icon('check', 13, 2.4)} Star sign & photo, if added</li></ul></div>
       <div><span class="hud">NEVER SHARED</span><ul class="no"><li>${icon('close', 13, 2.4)} Symptoms</li><li>${icon('close', 13, 2.4)} Moods</li><li>${icon('close', 13, 2.4)} Notes</li></ul></div>
     </section>
     <p class="fine center">Send a fresh link after each period to keep it exact.</p>
