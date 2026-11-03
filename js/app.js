@@ -2635,7 +2635,7 @@ function viewTea() {
   return `${topbar('Tea guide', { back: true })}
   <div class="pad">
     <h1 class="page-h">Tea for <span>every need</span></h1>
-    ${td ? `<section class="card card-light tea-today" data-action="nav" data-to="tea/day-${dayWindow(info)}" role="button"><small>Your tea today · tap for the details</small><div class="tea-h"><span class="tea-g">${td[0]}</span><b>${td[1]}</b>${evBadge(td[4])}</div><p>${td[2]}</p><p class="tea-how">☕ ${td[3]}</p></section>` : ''}
+    ${td ? `<section class="card card-light tea-today" data-action="nav" data-to="tea/day-${dayWindow(info)}" role="button"><small>Your tea today</small><div class="tea-h"><span class="tea-g">${td[0]}</span><b>${td[1]}</b>${evBadge(td[4])}</div><p>${td[2]}</p><p class="tea-how">☕ ${td[3]}</p><span class="pill-cta tea-cta">${icon('spark', 14)} Why it helps & how to brew</span></section>` : ''}
     <div class="tea-tabs">${[['cycle', '🌙', 'By cycle'], ...TEA_GUIDE.map(x => [x.k, x.g, x.n])].map(([kk, g, n]) => `<button class="${kk === k ? 'on' : ''}" data-action="teaK" data-v="${kk}">${g} ${n}</button>`).join('')}</div>
     ${body}
     <p class="fine center">Herbal teas are gentle support, not medicine. Pregnant, on medication or unsure? Ask your doctor or midwife first.</p>
