@@ -1884,3 +1884,23 @@ export const SUPP_LIB = [
     study: 'Women with a low egg reserve who took CoQ10 before IVF had more eggs retrieved and better embryos.',
     cite: 'Xu 2018', caution: 'Can lower blood pressure a little and interacts with warfarin: ask your doctor if you take either.' },
 ];
+
+// Whole-food sources for each supplement: food first, the capsule fills the gap
+export const SUPP_FOOD = {
+  magnesium: [['Pumpkin seeds', 'A small handful covers about a third of the day'], ['Dark chocolate (85%)', 'Two squares'], ['Spinach and chard', 'Lightly wilted'], ['Almonds and cashews', 'Soaked overnight']],
+  iron: [['Red meat and liver', 'The best-absorbed iron'], ['Egg yolks', 'From pasture-raised hens'], ['Lentils and spinach', 'With lemon or peppers for vitamin C'], ['Blackstrap molasses', 'A spoon in warm milk']],
+  'omega-3': [['Wild salmon, sardines, mackerel', 'Two or three times a week'], ['Pasture-raised eggs', 'Richer in omega-3 than caged'], ['Walnuts', 'A handful'], ['Flax and chia seeds', 'Ground, so the body can use them']],
+  'vitamin-c': [['Peppers', 'Raw: one red pepper is more than a day'], ['Kiwi and citrus', 'Whole fruit, not juice'], ['Berries', 'Fresh or frozen'], ['Sauerkraut', 'Raw and unpasteurised']],
+  ginger: [['Fresh ginger tea', 'Sliced root steeped in hot water'], ['Ginger in soups and stews', 'Warming for your period'], ['Grated into honey', 'A spoon in hot water']],
+  creatine: [['Red meat', 'About 1 g per 250 g'], ['Herring and salmon', 'Also rich in omega-3']],
+  'vitamin-d': [['Midday sun', '15–20 minutes on bare skin in summer'], ['Oily fish', 'Salmon, sardines, herring'], ['Egg yolks', 'From hens raised outdoors'], ['Butter from grass-fed cows', 'Also carries K2']],
+  'b-complex': [['Eggs', 'B12, B2 and folate in one'], ['Liver', 'Once a week covers most B vitamins'], ['Leafy greens', 'Folate, raw or lightly cooked'], ['Raw milk and cheese', 'B2 and B12']],
+  probiotic: [['Raw sauerkraut and kimchi', 'Unpasteurised, from the fridge'], ['Kefir and raw-milk yoghurt', 'A small glass a day'], ['Aged cheese', 'Live cultures'], ['Kombucha', 'Low in sugar']],
+  zinc: [['Oysters', 'The richest source by far'], ['Red meat', 'Beef and lamb'], ['Pumpkin seeds', 'Soaked or roasted'], ['Eggs and cheese', 'Every day helps']],
+  'vitamin-e': [['Sunflower seeds', 'A handful'], ['Almonds and hazelnuts', 'Soaked overnight'], ['Avocado', 'Half a day'], ['Cold-pressed olive oil', 'Raw, over salads']],
+  ashwagandha: [['Warm milk with spices', 'Cinnamon and cardamom in the evening'], ['A calm evening routine', 'The herb works best with it']],
+  b6: [['Salmon and tuna', 'Rich in B6'], ['Chicken and turkey', 'Light and easy'], ['Bananas', 'Ripe ones'], ['Potatoes and chickpeas', 'Cooked, with skin']],
+  calcium: [['Raw milk, yoghurt and cheese', 'The easiest source'], ['Sardines with bones', 'Calcium and omega-3'], ['Kale and broccoli', 'Lightly cooked'], ['Sesame seeds and tahini', 'A spoon a day']],
+  prenatal: [['Leafy greens', 'Natural folate'], ['Liver', 'Vitamin A and B12, a small portion weekly'], ['Eggs', 'Choline for the baby\'s brain'], ['Oily fish', 'Omega-3, low-mercury kinds']],
+  coq10: [['Heart and liver', 'Organ meats are richest'], ['Sardines and mackerel', 'Oily fish'], ['Beef', 'Grass-fed'], ['Broccoli and spinach', 'Smaller amounts']],
+};
