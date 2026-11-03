@@ -1090,8 +1090,6 @@ export const PURPOSES = [
 export const FOCUS = [
   { k: 'pms', t: 'Ease PMS & cramps', photo: 'Progesterone' },
   { k: 'skin', t: 'Clearer skin', photo: 'Active vitamin D' },
-  { k: 'sleep', t: 'Better sleep', photo: 'Melatonin' },
-  { k: 'mood', t: 'Balanced mood', photo: 'Serotonin' },
   { k: 'energy', t: 'More energy', photo: 'Adrenaline' },
   { k: 'eat', t: 'Eat for my cycle', photo: 'Insulin' },
   { k: 'tcm', t: 'Chinese medicine', photo: 'Thyroid hormones' },
