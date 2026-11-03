@@ -4717,3 +4717,10 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .chart-card.glass { background: linear-gradient(160deg, rgba(255,251,252,.9), rgba(250,240,244,.82)) !important; }
 .home .hub-rh h3, .home .hub-rh b, .home .hub-rh p { color: #fff !important; text-shadow: 0 1px 2px rgba(40,22,32,.4), 0 2px 18px rgba(40,22,32,.34); }
 .home .hub-rh h3 { background: none !important; -webkit-text-fill-color: #fff !important; filter: none !important; }
+
+/* Body text inside cards: one step heavier and solid palm green, so it reads on the grass */
+.glass .step p, .glass .ing span, .tea-study p, .tea-study small, .tea-care p, .nu-food .spec-row span, .glass .tide-s, .glass .body.sm {
+  font-weight: 400; color: #2f3d24;
+}
+.tea-study small { color: #4a5a3a; }
+.nu-next small { text-transform: none !important; letter-spacing: 0 !important; font-size: 12.5px; }

@@ -2266,6 +2266,7 @@ function viewRemedy(id) {
     <section class="card glass">${r.steps.map((x, i) => `<div class="step"><span class="step-n">${i + 1}</span><p>${x}</p></div>`).join('')}</section>
     ${remedyScience(r)}
     ${r.weeks ? `${sectionTitle('Week by week')}<section class="card glass">${r.weeks.map(w => `<div class="tide on"><span class="tide-g">${w.w}</span><div><div class="tide-n">${w.add}</div><div class="tide-s">${w.gain}</div></div></div>`).join('')}</section>` : ''}
+    ${(() => { const nx = REMEDIES[(REMEDIES.indexOf(r) + 1) % REMEDIES.length]; return `<button class="card glass nu-next" data-action="nav" data-to="remedy/${nx.id}"><small>Next remedy</small><b>${nx.name}</b>${icon('chevR', 16)}</button>`; })()}
     <p class="fine center">Traditional home remedies — not a replacement for medical care.</p>
   </div>`;
 }
@@ -2304,7 +2305,8 @@ function remedyScience(r, lib = REMEDY_SCIENCE) {
 const QTY = /^((?:juice of |pinch of |a |an )?[\d½¼¾⅓⅔.\/–-]+\s*(?:g|kg|ml|l|cups?|tbsp|tsp|handfuls?|cloves?|slices?|sticks?|pinch)?\b|pinch of|a handful of|handful of)\s*/i;
 function ingRow(s) {
   const m = String(s).match(QTY), rest = (m ? s.slice(m[0].length) : s).replace(/\s*\(.*?\)/g, '').replace(/^of\s+/i, '');
-  return [rest.charAt(0).toUpperCase() + rest.slice(1), m ? m[1].trim() : ''];
+  const q = m ? m[1].trim().replace(/\s+of$/i, '') : '';
+  return [rest.charAt(0).toUpperCase() + rest.slice(1), q.charAt(0).toUpperCase() + q.slice(1)];
 }
 function liquidArt(glyph, han, sym) {
   return `<div class="spec-liquid"><i></i><i></i><i></i></div>${glyph ? `<span class="spec-glyph ${han ? 'han' : ''} ${sym ? 'sym' : ''}">${glyph}</span>` : ''}`;
