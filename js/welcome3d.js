@@ -37,7 +37,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
   scene.environmentIntensity = 0.35;
 
   const camera = new THREE.PerspectiveCamera(32, 1, 0.05, 80);
-  const CAM_END = new THREE.Vector3(0, -0.1, 7.6), CAM_START = new THREE.Vector3(0, 0.6, 26);
+  const CAM_END = new THREE.Vector3(0, -0.1, 6.3), CAM_START = new THREE.Vector3(0, 0.6, 26);
   camera.position.copy(reduce ? CAM_END : CAM_START);
 
   // light: soft white key, blush and willow rims from behind, like morning sun through mist
