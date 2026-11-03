@@ -788,7 +788,6 @@ function pearlWord(g, word) {
 }
 // One small fact under each onboarding question: why we ask and how it shapes her plan.
 const ONB_STATS = {
-  2: { n: '0', t: 'photos leave your phone unless you switch on a private backup. No ads, no trackers.', c: 'Our privacy promise', ev: '' },
   3: { n: '5', t: 'elements link your birth year to a TCM body type, so your teas and rituals fit you.', c: 'Traditional Chinese Medicine', ev: 'tcm' },
   4: { n: '12.4 days', t: 'is the average phase after ovulation. From your last period we map all four phases today.', c: 'Bull et al. 2019 · npj Digital Medicine', ev: 'strong' },
   5: { n: '29.3 days', t: 'is the real average cycle. Not sure of yours? We learn it from your next period.', c: 'Bull et al. 2019 · npj Digital Medicine', ev: 'strong' },
