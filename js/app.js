@@ -957,7 +957,6 @@ function calDayCard(sd, si, slog, selLine, isFuture, hasFlow) {
     <div class="cd-mode"><span class="cd-m">${c.mode}</span><p>${c.why}</p></div>
     ${logged.length ? `<div class="cd-log">${logged.map(x => `<span>${LOG_EMOJI[x] || '•'} ${x}</span>`).join('')}</div>` : ''}
     ${dayEv.map(evCard).join('')}
-    ${isFuture ? `<div class="cd-plan">${planForm(C.iso(sd))}</div>` : ''}
     <div class="cd-cta">${isFuture ? '' : `<button class="pill-cta" data-action="logDay" data-date="${C.iso(sd)}">${icon('plus', 14)} ${logged.length ? 'Edit log' : 'Log this day'}</button>`}
       <button class="cd-link" data-action="nav" data-to="hormones">Your hormones ${icon('chevR', 14)}</button></div>
     <p class="cd-note">Estimated from your cycle · rings show where each hormone sits in its own monthly range.</p>
