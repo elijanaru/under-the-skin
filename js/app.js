@@ -518,7 +518,8 @@ function planKeys(p) {
   return k;
 }
 // "Research-backed results in 90 days": a winding thread of the results she picked, then the month-by-month plan
-function roadmapHTML(keys, name, day) {
+function roadmapHTML(...a) { return deEmoji(roadmapRaw(...a)); }
+function roadmapRaw(keys, name, day) {
   const H = 62, n = keys.length, X = [42, 58];
   const pts = keys.map((k, i) => [X[i % 2] * 3, i * H + H / 2]);
   const d = pts.map(([x, y], i) => i ? `C ${pts[i - 1][0]} ${y - H / 2}, ${x} ${pts[i - 1][1] + H / 2}, ${x} ${y}` : `M ${x} ${y}`).join(' ');
@@ -2922,7 +2923,10 @@ function rhythmRing(n, goal) {
 const PHASE_RHYTHM_2 = { menstrual: ['Slow down', 'Your hormones are at their lowest and your body is cleansing. Rest now, your energy comes back in a few days.'], follicular: ['Push', 'Estrogen is rising, so energy and focus climb. Start new things now.'], ovulatory: ['Push hard', 'Estrogen and testosterone peak. Your best days for big plans and people.'], luteal: ['Ease off', 'Progesterone rises and energy dips. Finish what you started and go to bed earlier.'] };
 const PHASE_RHYTHM = Object.fromEntries(Object.entries(PHASE_RHYTHM_2).map(([k, [a, b]]) => [k, `${a}. ${b}`]));
 // Emoji in the rhythm data, drawn as line icons.
-const EMI = { '⏰': 'clock', '☀️': 'sun', '🌅': 'sun', '🌇': 'sun', '🌙': 'moon', '🌞': 'sun', '🌤️': 'sun', '🌿': 'leaf', '🍋': 'drop', '🕯️': 'spark', '🥗': 'bowl', '🫶': 'heart', '🔥': 'bolt', '🌱': 'seed', '🌸': 'leaf', '🌕': 'moon' };
+const EMI = { '⏰': 'clock', '☀️': 'sun', '🌅': 'sun', '🌇': 'sun', '🌙': 'moon', '🌞': 'sun', '🌤️': 'sun', '🌿': 'leaf', '🍋': 'drop', '🕯️': 'spark', '🥗': 'bowl', '🫶': 'heart', '🔥': 'bolt', '🌱': 'seed', '🌸': 'leaf', '🌕': 'moon',
+  '✨': 'spark', '🪞': 'star', '🎨': 'drop', '💇‍♀️': 'user', '📓': 'book', '🍲': 'bowl', '🍬': 'berry', '🗓️': 'calendar', '🥩': 'fish', '🏋️': 'dumbbell', '🌬️': 'mind', '🔮': 'star', '♾️': 'spark', '😴': 'moon' };
+// Swap any emoji from EMI that sits alone in a tag (or starts a line) for its drawn icon.
+const deEmoji = (h, sz = 18) => Object.keys(EMI).reduce((t, e) => t.split(`>${e}<`).join(`>${emi(e, sz)}<`).split(`>${e} `).join(`>${emi(e, 14)} `), h);
 const emi = (e, sz = 18) => icon(EMI[e] || 'spark', sz);
 const rhAct = (x, done) => `<button class="rh-i ${done.includes(x.k) ? 'on' : ''}" data-action="rhTick" data-k="${x.k}"><span class="rh-g">${emi(x.g)}</span><span class="rh-t"><b>${x.t}</b><small>${x.s}</small></span><span class="rh-cb">${icon('check', 13, 2.6)}</span></button>`;
 // "What to do now" panel for a moment (used live and while scrubbing the sky).

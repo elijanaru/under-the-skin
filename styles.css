@@ -4256,3 +4256,4 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .rh-g, .mp-g, .dm-rail > span { display: grid; place-items: center; color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%); }
 .eat-tabs button > span, .meal-tabs button > span, .ec-g { display: inline-grid; place-items: center; }
 .ec-g { color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%); }
+.rm2-gc > span, .rm-g, .rm2-tabs button > span, .rm2-n svg { display: inline-grid; place-items: center; color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%); } .rm2-goals p svg { vertical-align: -2px; }
