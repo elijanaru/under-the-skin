@@ -796,6 +796,7 @@ function viewToday() {
     ${sectionTitle('Your hormones', ['Explore', 'hormones'])}
     <section class="card glass chart-card">${cycleChart(info, { id: 'today', compact: true })}
       <div class="cc-links"><button data-action="nav" data-to="guide">${icon('chart', 15)} How your cycle works</button><button data-action="nav" data-to="hormones">${icon('book', 15)} Each hormone</button></div></section>
+    ${moleculeRow(info)}
 
     ${planCard()}
     ${partnersCard(info)}
@@ -3155,6 +3156,13 @@ function viewHormones() {
 }
 // The hormone itself: its skeletal formula (small molecules) or its size (protein hormones).
 const PROTEIN_AA = { FSH: 'two chains of 92 and 111', LH: 'two chains of 92 and 121', Prolactin: 'one chain of 199', SHBG: 'two chains of 373', Insulin: 'two chains with 51 in total' };
+// Today: every hormone we can draw, as a swipe row of 3D models with what it does and where it is today.
+function moleculeRow(info) {
+  const list = HORMONE_LIBRARY.map((x, i) => [x, i]).filter(([x]) => MOL_BALL[x.n]);
+  return `<div class="mr-row" role="list">${list.map(([x, i]) => { const n = hxNow(x, info);
+    return `<button class="mr-c" role="listitem" data-action="nav" data-to="hormones/${i}"><span class="mr-art" aria-hidden="true">${MOL_BALL[x.n]}</span>
+      <b>${x.n === 'Oestrogen' ? 'Estrogen' : x.n}</b><small>${x.s}</small><em>${n.word}</em></button>`; }).join('')}</div>`;
+}
 function moleculeCard(n) {
   const m = MOLECULES[n];
   if (m) { const w = +MOL_BALL[n].match(/viewBox="[-\d.]+ [-\d.]+ ([\d.]+)/)[1];
