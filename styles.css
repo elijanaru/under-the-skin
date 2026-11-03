@@ -4245,3 +4245,5 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .lg-ic { color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%); }
 .ls-b span { display: grid; place-items: center; height: 32px; color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%); }
 .lv-g { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: #f4f5f0; color: #0b0d0b; }
+.sb-g { display: block; color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%); }
+.sg-chips button { display: inline-flex; align-items: center; gap: 6px; }

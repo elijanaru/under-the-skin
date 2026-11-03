@@ -1538,7 +1538,7 @@ function sugarSection(phase) {
       ${pat.length ? `<div class="sm-pat">${pat.slice(0, 2).map(x => `<div>${icon('chart', 14)}<span><b>Your pattern:</b> ${x.name.toLowerCase()} on ${x.from === x.to ? `day ${x.from}` : `days ${x.from}–${x.to}`} · use these tricks then</span></div>`).join('')}</div>` : ''}
       <div id="sg-chart" class="sb-chart">${sugarCurve(on)}</div>
       ${[['before', '1', 'Before you eat'], ['with', '2', 'With your meal'], ['daily', '3', 'Every day']].map(([w, n, t]) => `<div class="sb-step"><div class="sb-sh"><span>${n}</span>${t}</div>
-        <div class="sb-grid">${SUGAR_TRICKS.filter(x => x.w === w).map(x => `<button class="sb-t ${on.includes(x.k) ? 'on' : ''}" data-action="sugarTrick" data-v="${x.k}"><span class="sb-g">${x.g}</span><b>${x.n}</b><small>${x.t}</small><i class="sb-ck">${icon('check', 14, 2.6)}</i></button>`).join('')}</div></div>`).join('')}
+        <div class="sb-grid">${SUGAR_TRICKS.filter(x => x.w === w).map(x => `<button class="sb-t ${on.includes(x.k) ? 'on' : ''}" data-action="sugarTrick" data-v="${x.k}"><span class="sb-g">${icon(x.ic, 20)}</span><b>${x.n}</b><small>${x.t}</small><i class="sb-ck">${icon('check', 14, 2.6)}</i></button>`).join('')}</div></div>`).join('')}
     </section>`;
 }
 // Tricks overlap, so they don't simply add up: combined, the illustration caps the spike reduction at 50%.
@@ -2843,10 +2843,10 @@ function viewSugar() {
     <h1 class="page-h">Balance your <span>blood sugar</span></h1>
     ${whatsGoingOn(`Every meal makes your blood sugar rise. Big spikes bring cravings, energy crashes and make your body release lots of insulin — over time that speeds up ageing. Small tricks keep the curve gentle.${luteal ? ' <b>Right now, in your luteal phase, your body is a little less insulin-sensitive — these tricks help most this week.</b>' : ''}`)}
     <section class="card glass sugar"><div class="eyebrow">Your meal today · tap what you did</div><div id="sg-chart">${sugarCurve(on)}</div>
-      <div class="sg-chips">${SUGAR_TRICKS.map(t => `<button class="${on.includes(t.k) ? 'on' : ''}" data-action="sugarTrick" data-v="${t.k}">${t.g} ${t.n}</button>`).join('')}</div></section>
+      <div class="sg-chips">${SUGAR_TRICKS.map(t => `<button class="${on.includes(t.k) ? 'on' : ''}" data-action="sugarTrick" data-v="${t.k}">${icon(t.ic, 14)} ${t.n}</button>`).join('')}</div></section>
     <p class="sg-score">${icon('spark', 14)} Each trick adds a point to <button class="link" data-action="nav" data-to="rhythm">your rhythm today</button></p>
     ${sectionTitle('8 tricks')}
-    <div class="tricks">${SUGAR_TRICKS.map((t, i) => { const x = SUGAR_SCIENCE[t.k]; return `<section class="card glass trick"><span class="tr-n">${i + 1}</span><div><div class="tr-h"><b>${t.g} ${t.n}</b>${x ? evBadge(x.ev) : ''}</div><p>${t.d}</p>
+    <div class="tricks">${SUGAR_TRICKS.map((t, i) => { const x = SUGAR_SCIENCE[t.k]; return `<section class="card glass trick"><span class="tr-n">${i + 1}</span><div><div class="tr-h"><b>${t.n}</b>${x ? evBadge(x.ev) : ''}</div><p>${t.d}</p>
       ${x ? `<details class="tr-sci"><summary>What studies found ${icon('chevR', 12)}</summary><p>${x.s}</p><small>${x.c}</small>${x.care ? `<p class="tr-care">${icon('spark', 12)} ${x.care}</p>` : ''}</details>` : ''}</div></section>`; }).join('')}</div>
     ${sectionTitle('Your cycle and sugar')}
     <section class="card glass sg-cyc">${PHASE_ORDER.map(p => { const x = SUGAR_CYCLE[p], me = M.info && M.info.phase === p; return `<div class="sgc ${me ? 'me' : ''}" style="--pc:${PHASE_COLOR.dark[p]}"><i></i><div><b>${PHASES[p].name}${me ? ' <em>you</em>' : ''}</b><small>${x.t}</small><p>${x.d}</p></div></div>`; }).join('')}
