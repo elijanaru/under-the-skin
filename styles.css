@@ -4321,3 +4321,5 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .phone { background: radial-gradient(90% 45% at 90% -5%, rgba(214,140,168,.6), transparent 70%), radial-gradient(90% 50% at -10% 105%, rgba(108,130,62,.42), transparent 70%), radial-gradient(70% 40% at 0% 40%, rgba(140,151,104,.22), transparent 70%), linear-gradient(#ecd2da, #e6d6d6 55%, #dcdcc8); }
 .view { background: transparent; }
 ::selection { background: rgba(230,177,196,.6); color: #304023; }
+/* Titles laid over photos: a soft mist halo keeps palm text readable */
+.spec-name h1, .spec-name small, .spec-name span { text-shadow: 0 0 22px rgba(246,238,240,.95), 0 0 6px rgba(246,238,240,.8); }
