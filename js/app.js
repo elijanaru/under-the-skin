@@ -1974,6 +1974,14 @@ function myEnergy(info) {
   const P = patterns(), v = P.eAvg[Math.min(info.cd, info.L)];
   return v == null ? base : Math.max(.3, Math.min(.95, base * .5 + (.3 + (v - 1) / 4 * .62) * .5));
 }
+// How well Underskin knows her rhythm: cycles learned out of 6, as one Opal-style ring with the quickest way to sharpen it.
+function learnedScore(n) {
+  const goal = 6, v = Math.min(n, goal), R = 27, Cc = 2 * Math.PI * R;
+  const word = v >= goal ? 'Knows your rhythm' : v >= 3 ? 'Getting precise' : v ? 'Getting to know you' : 'Just starting';
+  return `<div class="ls-head"><div class="mv2-b r${v >= goal ? 3 : v ? 2 : 0}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * Math.max(.04, v / goal)).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-g">${v >= goal ? '✓' : `${v}/${goal}`}</span></div>
+    <div class="ls-t"><small>Prediction accuracy</small><b>${word}</b><span>${v >= goal ? 'Learned from 6+ cycles. Predictions follow your own rhythm.' : `${plural(goal - v, 'more cycle')} to learn your rhythm fully. Adding past periods counts too.`}</span>
+    ${v < goal ? `<button class="pill-cta" data-action="nav" data-to="calendar">${icon('plus', 14)} Add past periods</button>` : ''}</div></div>`;
+}
 function learnedCard() {
   const { stats, info } = M; if (!info) return '';
   const n = stats.lengths.length, P = patterns(), facts = [];
@@ -1986,7 +1994,7 @@ function learnedCard() {
   if (ev.length >= 5) { const [, d] = ev.reduce((a, b) => b[0] > a[0] ? b : a); facts.push(['Your energy peak', `Around day ${d}`, 'From your energy check-ins']); }
   P.list.filter(x => !MOODS.includes(x.name)).slice(0, 2).forEach(x => facts.push([x.name, x.from === x.to ? `Day ${x.from}` : `Days ${x.from}–${x.to}`, `Seen in ${x.cyclesN} of your cycles`]));
   return `${sectionTitle('What I’ve learned about you')}
-    <section class="card glass learned">${facts.map(([k, v, s]) => `<div class="lr"><span>${k}</span><b>${v}</b><small>${s}</small></div>`).join('')}
+    <section class="card glass learned">${learnedScore(n)}${facts.map(([k, v, s]) => `<div class="lr"><span>${k}</span><b>${v}</b><small>${s}</small></div>`).join('')}
     <p class="fine" style="margin:10px 0 0">The more you log — periods, energy, symptoms — the more personal every prediction gets.</p></section>`;
 }
 function headsUpCard() {

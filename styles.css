@@ -3964,3 +3964,12 @@ button.tip:active { transform: scale(.98); background: var(--glass-2); }
 .lr-prog { margin-top: 14px; }
 .lr-prog .mv2-g { font-size: 20px; color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%); }
 .lr-prog p b { font-weight: 400; }
+/* Insights: prediction accuracy ring */
+.ls-head { display: flex; gap: 14px; align-items: center; padding: 4px 0 14px; margin-bottom: 4px; border-bottom: 1px solid var(--line); }
+.ls-head .mv2-b { flex: none; width: 84px; padding: 0; background: none; border: 0; box-shadow: none; }
+.ls-head .mv2-g { font-family: 'Doto', monospace; font-size: 17px; }
+.ls-t { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.ls-t small { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: rgba(244,245,240,.6); }
+.ls-t b { font-size: 17px; font-weight: 400; color: #f4f5f0; }
+.ls-t span { font-size: 12.5px; line-height: 1.4; color: rgba(244,245,240,.66); }
+.ls-t .pill-cta { align-self: flex-start; margin-top: 8px; }
