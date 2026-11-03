@@ -635,10 +635,10 @@ function fitHand(svg) {
 // and packs round pearls along it, big where the stroke is thick and small where it is thin.
 function pearlWord(g, word) {
   const FS = 230, c = document.createElement('canvas'), x = c.getContext('2d', { willReadFrequently: true });
-  const lines = word.split('|'); x.font = `${FS}px 'Parisienne'`; if ('letterSpacing' in x) x.letterSpacing = `${Math.round(FS * .07)}px`;
+  const lines = word.split('|'); x.font = `${FS}px 'Parisienne'`; if ('letterSpacing' in x) x.letterSpacing = `${Math.round(FS * .01)}px`;
   const ws = lines.map(l => x.measureText(l).width), off = lines.length > 1 ? ws[0] * .34 : 0; // the second line steps in to the right
   const W = Math.ceil(Math.max(ws[0], off + (ws[1] || 0)) + FS * .8), H = Math.ceil(FS * (.45 + lines.length * .8));
-  c.width = W; c.height = H; x.font = `${FS}px 'Parisienne'`; if ('letterSpacing' in x) x.letterSpacing = `${Math.round(FS * .07)}px`; x.textBaseline = 'alphabetic';
+  c.width = W; c.height = H; x.font = `${FS}px 'Parisienne'`; if ('letterSpacing' in x) x.letterSpacing = `${Math.round(FS * .01)}px`; x.textBaseline = 'alphabetic';
   x.fillStyle = x.strokeStyle = '#000'; x.lineWidth = 6; x.lineJoin = 'round';
   lines.forEach((l, n) => { const lx = FS * .4 + (n ? off : 0), ly = FS * (.9 + n * .8); x.fillText(l, lx, ly); x.strokeText(l, lx, ly); });
   const px = x.getImageData(0, 0, W, H).data, D = new Float32Array(W * H), INF = 1e9;
@@ -662,7 +662,7 @@ function pearlWord(g, word) {
   if (g.dataset.vines) // filigree vines above and below the word, in smaller stones that taper to the tips (a curl ends in a bigger stone)
   { const wx0 = Math.min(...placed.map(p => p[0] - p[2])), wx1 = Math.max(...placed.map(p => p[0] + p[2])), wy0 = Math.min(...placed.map(p => p[1] - p[2])), wy1 = Math.max(...placed.map(p => p[1] + p[2]));
     const bw = wx1 - wx0, bh = Math.min(wy1 - wy0, bw * .5), P = (u, v) => `${(wx0 + u * bw).toFixed(1)} ${(v > .5 ? wy1 - (1 - v) * bh : wy0 + v * bh).toFixed(1)}`;
-    const V = [ // [path in box units, start radius, end radius]; each is mirrored to the right
+    const V = [ // left side: [path in box units, start radius, end radius]
       ['M .46 1.02 C .34 1.32, .16 1.32, .08 1.12 C .04 1.01, .12 .95, .16 1.04 C .18 1.09, .13 1.12, .12 1.07', 4.6, 2.2],
       ['M .24 1.22 C .22 1.40, .30 1.48, .34 1.40', 3, 1.8],
       ['M .30 .06 C .26 -.26, .34 -.44, .42 -.38 C .46 -.34, .43 -.27, .40 -.30', 3.8, 2],
@@ -675,7 +675,13 @@ function pearlWord(g, word) {
       // little crystal leaves sprouting off the vine, alternating sides
       for (let n = 1, f = .22; f < .8; f += .26, n++) { const a = tmp.getPointAtLength(L * f), b = tmp.getPointAtLength(Math.min(L, L * f + 2)), dx = b.x - a.x, dy = b.y - a.y, m = Math.hypot(dx, dy) || 1, s = n % 2 ? 1 : -1, nx = -dy / m * s, ny = dx / m * s, r = r0 * .8;
         [[1.9, .55], [3.6, .7], [5.1, .5]].forEach(([t, w]) => placed.push([a.x + (nx * t + dx / m * t * .6) * r, a.y + (ny * t + dy / m * t * .6) * r, r * w])); } };
-    V.forEach(([d, r0, r1]) => { vine(d, r0, r1); vine(d.replace(/(-?[\d.]+)([ ,]+-?[\d.]+)/g, (_, u, rest) => `${(1 - +u).toFixed(3)}${rest}`), r0, r1); });
+    const VR = [ // the right side answers the left with its own curls, so the frame is balanced but not mirrored
+      ['M .52 1.03 C .66 1.26, .80 1.38, .93 1.20 C .98 1.10, .90 1.02, .86 1.10 C .84 1.15, .89 1.17, .90 1.13', 4.6, 2.2],
+      ['M .72 1.30 C .76 1.46, .68 1.52, .64 1.44', 3, 1.8],
+      ['M .64 .04 C .70 -.30, .60 -.48, .54 -.40 C .51 -.35, .55 -.30, .57 -.33', 3.8, 2],
+      ['M .92 .06 C 1.00 -.16, .98 -.48, .88 -.56 C .83 -.59, .80 -.52, .84 -.49', 3.4, 2],
+      ['M .80 -.10 C .84 -.28, .80 -.40, .75 -.40', 2.6, 1.7]];
+    [...V, ...VR].forEach(([d, r0, r1]) => vine(d, r0, r1));
     tmp.remove(); }
   const x0 = Math.min(...placed.map(p => p[0] - p[2])), x1 = Math.max(...placed.map(p => p[0] + p[2])), y0 = Math.min(...placed.map(p => p[1] - p[2])), y1 = Math.max(...placed.map(p => p[1] + p[2]));
   g.dataset.box = `${x0} ${y0} ${x1 - x0} ${y1 - y0}`; // exact crystal bounds, so the word sits dead centre
@@ -4190,18 +4196,18 @@ function viewGate() {
   const anim = ui.onbAnim || ''; ui.onbAnim = '';
   return `<div class="onb no-fig gate ${anim}">${flash}
     <div class="onb-top"><button class="icon-btn dark" data-action="onbBack" aria-label="Back">${icon('chevL', 22)}</button><button class="link gate-signin" data-action="gateSignIn">Already have an account? <u>Sign in</u></button></div>
-    <div class="gate-photo" aria-hidden="true"><img src="images/gate-rose.jpg" alt="" decoding="async"></div>
-    <span class="gate-hud">PRIVATE · ENCRYPTED IN TRANSIT · EU</span>
+    <div class="gate-photo" aria-hidden="true"><img src="images/gate-rose.webp" alt="" decoding="async"></div>
     <h2 class="onb-title">Keep your cycle <span>safe with you</span></h2>
     <p class="gate-lead">A free account saves every period, symptom and note, and brings them back on any new phone.</p>
+    <button class="ac-btn ac-mail" data-action="gateEmail">${icon('user', 18)}<span>Continue with email</span></button>
     ${A.oauthOK('apple') ? `<button class="ac-btn ac-apple" data-action="acProvider" data-p="apple">${APPLE_SVG}<span>Continue with Apple</span></button>` : ''}
     ${A.oauthOK('google') ? `<button class="ac-btn ac-google" data-action="acProvider" data-p="google">${GOOGLE_SVG}<span>Continue with Google</span></button>` : ''}
-    <button class="ac-btn ac-mail" data-action="gateEmail">${icon('user', 18)}<span>Continue with email</span></button>
     <p class="ac-msg" id="ac-msg" role="status"></p>
-    <div class="ac-or"><span>or</span></div>
-    <button class="gate-skip" data-action="gateSkip">Use without an account</button>
-    <p class="gate-warn"><b>Your data won’t be saved anywhere else.</b> It lives only on this phone: if you delete the app, ${NATIVE ? 'clear its data' : 'clear your browser'} or change phones, it’s gone for good. You can create an account later in Profile.</p>
     <label class="ac-consent"><input type="checkbox" id="ac-consent"><span>I agree that my cycle and health logs are kept in my private account. I can delete them anytime. <a href="#/privacy">Privacy</a></span></label>
+    <div class="gate-later">
+      <button class="gate-skip" data-action="gateSkip">Use without an account</button>
+      <p class="gate-warn"><b>Your data won’t be saved anywhere else.</b> It lives only on this phone: if you delete the app, ${NATIVE ? 'clear its data' : 'clear your browser'} or change phones, it’s gone for good. You can create an account later in Profile.</p>
+    </div>
   </div>`;
 }
 const APPLE_SVG = `<svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor" aria-hidden="true"><path d="M16.37 12.78c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.09-2.01-3.76-2.04-1.6-.16-3.12.94-3.93.94-.81 0-2.06-.92-3.39-.89-1.74.03-3.35 1.01-4.25 2.57-1.81 3.14-.46 7.79 1.3 10.34.86 1.25 1.89 2.65 3.23 2.6 1.3-.05 1.79-.84 3.36-.84 1.57 0 2.01.84 3.38.81 1.4-.02 2.28-1.27 3.13-2.53.99-1.45 1.39-2.85 1.42-2.92-.03-.01-2.72-1.04-2.71-4.13zM13.8 5.15c.71-.87 1.2-2.07 1.06-3.27-1.03.04-2.28.69-3.02 1.55-.66.76-1.24 1.99-1.09 3.16 1.15.09 2.33-.58 3.05-1.44z"/></svg>`;
