@@ -93,7 +93,7 @@ p { margin: 0; }
 .tab-main.active { background: radial-gradient(circle at 50% 35%, #fff, var(--lime) 60%); }
 
 /* ---------- typography bits ---------- */
-.eyebrow { font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 400; }
+.eyebrow { font-size: 13px; letter-spacing: 0; text-transform: none; color: var(--muted); font-weight: 400; }
 .eyebrow.dark { color: #6b726a; }
 .muted { color: var(--muted); font-size: 14px; line-height: 1.5; }
 .body { color: #b7beb5; font-size: 14.5px; line-height: 1.55; margin-top: 10px; }
