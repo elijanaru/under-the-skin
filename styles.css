@@ -4599,3 +4599,10 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .beyond .bw-hand { width: 78% !important; max-width: 320px; margin: 0 auto !important; }
 .sup-all { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 10px 16px; border-radius: 22px; background: #fff; color: #304023; font: inherit; font-size: 13.5px; font-weight: 500; box-shadow: 0 6px 16px rgba(48,64,35,.12); }
 .beyond .bw-hand { width: 56% !important; max-width: 230px; }
+
+/* Welcome title: heavy, tight grotesk, the two words pressed into each other (user's Canva mock) */
+.beyond .bw-hand { display: none !important; }
+.bw-stack { display: flex; flex-direction: column; align-items: center; margin: 0 0 14px; font-family: 'Inter Tight', 'Helvetica Neue', Arial, sans-serif; font-weight: 900; font-size: clamp(70px, 24vw, 104px); letter-spacing: -.085em; line-height: .74; text-transform: lowercase; }
+.bw-stack span { display: block; padding-right: .085em; } /* the negative tracking eats the last letter's right side */
+.bw-stack .bs-u { color: rgba(196,190,210,.92); text-shadow: 0 1px 0 rgba(255,255,255,.5); }
+.bw-stack .bs-s { margin-top: -.2em; color: #161c10; position: relative; }
