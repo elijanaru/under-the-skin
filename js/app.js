@@ -8,7 +8,7 @@ import { mountFigure, mushroomArt, nautilusArt } from './figure.js';
 import { mountTorso } from './torso.js';
 import { RECIPE_PHOTOS, photoUrl, DISH_PHOTOS, dishPhoto, HORMONE_PHOTOS, hormonePhoto, CARE_PHOTOS, carePhoto, STAR_PHOTOS, starPhoto, foodPhoto, FOOD_PHOTOS } from './photos.js';
 import * as SZ from './seasonal.js';
-import { MOLECULES } from './molecules.js';
+import { MOLECULES, MOL_BALL } from './molecules.js';
 import { sunTimes, COUNTRY_GEO } from './sun.js';
 import * as A from './account.js';
 
@@ -3127,7 +3127,7 @@ function viewHormones() {
   const ph = PHASES[info.phase];
   const tile = (x, i) => { const n = hxNow(x, info); return `<button class="hxt ${n.r > .66 ? 'hi' : n.r < .2 ? 'lo' : ''}" data-action="nav" data-to="hormones/${i}">
       <span class="hxt-g">${x.g}</span><b>${x.n === 'Oestrogen' ? 'Estrogen' : x.n}</b><small class="hxt-s">${x.s}</small>
-      ${MOLECULES[x.n] ? `<span class="hxt-mol" aria-hidden="true">${MOLECULES[x.n].svg}</span>` : hxRing(n.r, i)}
+      ${MOL_BALL[x.n] ? `<span class="hxt-mol" aria-hidden="true">${MOL_BALL[x.n]}</span>` : hxRing(n.r, i)}
       <span class="hxt-now"><em>${n.word}${hxArrow(n.tr)}</em><span>${n.amt}</span></span></button>`; };
   const cyc = HORMONE_LIBRARY.map((x, i) => [x, i]).filter(([x]) => HX_KEY[x.n]), rest = HORMONE_LIBRARY.map((x, i) => [x, i]).filter(([x]) => !HX_KEY[x.n]);
   return `${topbar('Hormones', { back: true })}
@@ -3146,10 +3146,11 @@ function viewHormones() {
 const PROTEIN_AA = { FSH: 'two chains of 92 and 111', LH: 'two chains of 92 and 121', Prolactin: 'one chain of 199', SHBG: 'two chains of 373', Insulin: 'two chains with 51 in total' };
 function moleculeCard(n) {
   const m = MOLECULES[n];
-  if (m) { const w = +m.svg.match(/viewBox="[-\d.]+ [-\d.]+ ([\d.]+)/)[1];
+  if (m) { const w = +MOL_BALL[n].match(/viewBox="[-\d.]+ [-\d.]+ ([\d.]+)/)[1];
+    const key = [['C', 'Carbon', '#3f4340'], ['H', 'Hydrogen', '#e4e6e2'], ['O', 'Oxygen', '#d8261c'], ['N', 'Nitrogen', '#2a45d8'], ['I', 'Iodine', '#8a35b8']].filter(([e]) => new RegExp(e + '(?![a-z])').test(m.f));
     return `<section class="card glass mol-card"><div class="mol-h"><b>The molecule</b><span>${m.name} · ${m.f.replace(/(\d+)/g, '<sub>$1</sub>')}</span></div>
-      <div class="mol-art" style="--mw:${Math.round(w * 1.25)}px">${m.svg.replace('role="img"', `role="img" aria-label="Chemical structure of ${m.name}"`)}</div>
-      <small class="mol-k">Each corner is a carbon atom. Wedges show bonds pointing towards you.</small></section>`; }
+      <div class="mol-art" style="--mw:${Math.round(w * 1.15)}px">${MOL_BALL[n].replace('role="img"', `role="img" aria-label="3D model of ${m.name}"`)}</div>
+      <div class="mol-key">${key.map(([, t, c]) => `<span><i style="background:${c}"></i>${t}</span>`).join('')}</div></section>`; }
   return PROTEIN_AA[n] ? `<section class="card glass mol-card"><div class="mol-h"><b>The molecule</b><span>A protein</span></div><p class="mol-p">${n} is built from ${PROTEIN_AA[n]} amino acids, folded into a 3D shape. Far too big to draw as one small picture.</p></section>` : '';
 }
 function viewHormone(i) {
