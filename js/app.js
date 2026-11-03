@@ -589,11 +589,15 @@ function onbPlanHTML(keys, name) {
 
     <section class="o9-card o9-ba">
       <h3>It worked for <em>our founder</em></h3>
-      <div class="o9-pair">
-        <figure><img src="images/ba-founder-before.jpg" alt="Our founder before, running at the same pace every day" loading="lazy"><figcaption class="b">Before</figcaption></figure>
-        <figure><img src="images/ba-founder-after.jpg" alt="Our founder after 90 days of living with her hormones" loading="lazy"><figcaption class="a">After 90 days</figcaption></figure>
+      <div class="o9-cmp" style="--x:50%">
+        <img src="images/ba-slide-before.jpg" alt="Our founder before, running at the same pace every day">
+        <img class="o9-after" src="images/ba-slide-after.jpg" alt="Our founder after 90 days of living with her hormones">
+        <span class="o9-tag b">Before</span><span class="o9-tag a">After 90 days</span>
+        <span class="o9-hand" aria-hidden="true">${icon('chevL', 13, 2.6)}${icon('chevR', 13, 2.6)}</span>
+        <input class="o9-range" type="range" min="0" max="100" value="50" aria-label="Slide between before and after">
       </div>
-      <p class="o9-cap">Clearer skin, a calmer face and more glow. One woman’s story, not a promise.</p>
+      <ul class="o9-honest"><li>${icon('check', 12, 2.8)}No filter</li><li>${icon('check', 12, 2.8)}No makeup</li><li>${icon('check', 12, 2.8)}No surgery</li><li>${icon('check', 12, 2.8)}Same angle</li></ul>
+      <p class="o9-cap">Slide to see the change. One woman’s story, not a promise.</p>
     </section>
 
     <section class="o9-card o9-sci">
@@ -4887,6 +4891,7 @@ document.addEventListener('focusout', e => {
   render();
 });
 document.addEventListener('input', e => {
+  if (e.target.classList.contains('o9-range')) { e.target.parentElement.style.setProperty('--x', e.target.value + '%'); return; }
   const f = e.target.dataset?.input; if (!f) return;
   const [scope, key] = f.split('.'), v = e.target.value, isDate = e.target.type === 'date';
   if (isDate && v && +v.slice(0, 4) < 1900) return; // still typing the year (0001, 0019, 0199…): wait for all four digits

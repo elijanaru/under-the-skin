@@ -5205,12 +5205,24 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .o9-card { padding: 22px 18px 20px; border-radius: 30px; background: rgba(255,255,255,.82); border: 1px solid #fff;
   -webkit-backdrop-filter: blur(18px) saturate(1.2); backdrop-filter: blur(18px) saturate(1.2); box-shadow: 0 14px 34px rgba(31,43,22,.1), 0 1px 3px rgba(31,43,22,.05); }
 .o9-card h3 { font-size: 26px; line-height: 1.05; text-align: center; }
-.o9-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
-.o9-pair figure { position: relative; margin: 0; border-radius: 22px; overflow: hidden; aspect-ratio: 3 / 4; background: #e9e4e2; }
-.o9-pair img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 35%; }
-.o9-pair figcaption { position: absolute; left: 8px; bottom: 8px; padding: 6px 11px; border-radius: 99px; font-size: 12.5px; font-weight: 700; letter-spacing: -.01em; }
-.o9-pair .b { background: rgba(31,43,22,.72); color: #fff; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
-.o9-pair .a { background: #fff; color: #1f2b16; box-shadow: 0 4px 12px rgba(0,0,0,.18); }
+.o9-cmp { position: relative; margin-top: 16px; aspect-ratio: 600 / 760; border-radius: 24px; overflow: hidden; background: #e9e4e2; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.o9-cmp img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.o9-cmp .o9-after { clip-path: inset(0 0 0 var(--x)); }
+.o9-cmp::after { content: ''; position: absolute; z-index: 1; top: 0; bottom: 0; left: var(--x); width: 2px; margin-left: -1px; background: #fff; box-shadow: 0 0 12px rgba(0,0,0,.3); pointer-events: none; }
+.o9-hand { position: absolute; z-index: 2; top: 50%; left: var(--x); transform: translate(-50%, -50%); width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background: #fff; color: #1f2b16; box-shadow: 0 6px 18px rgba(0,0,0,.28); pointer-events: none; animation: o9Nudge 2.4s 1.2s ease-in-out 2; }
+@keyframes o9Nudge { 0%, 100% { margin-left: 0; } 30% { margin-left: -14px; } 65% { margin-left: 14px; } }
+.o9-tag { position: absolute; z-index: 2; bottom: 12px; padding: 6px 12px; border-radius: 99px; font-size: 13px; font-weight: 700; letter-spacing: -.01em; pointer-events: none; }
+.o9-tag.b { left: 12px; background: rgba(31,43,22,.72); color: #fff; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.o9-tag.a { right: 12px; background: #fff; color: #1f2b16; box-shadow: 0 4px 12px rgba(0,0,0,.18); }
+.o9-range { position: absolute; inset: 0; z-index: 3; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; -webkit-appearance: none; appearance: none; background: none; }
+.o9-range::-webkit-slider-thumb { -webkit-appearance: none; width: 64px; height: 600px; }
+.o9-range::-moz-range-thumb { width: 64px; height: 600px; border: 0; }
+.o9-honest { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.o9-honest li { display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; border-radius: 99px; background: #fff; box-shadow: 0 0 0 1px rgba(31,43,22,.12);
+  font-size: 13px; font-weight: 700; letter-spacing: -.01em; color: #1f2b16; }
+.o9-honest svg { color: var(--o9-moss); }
+@media (prefers-reduced-motion: reduce) { .o9-hand { animation: none; } }
 .o9-cap, .o9-sub { margin: 12px 4px 0; text-align: center; font-size: 14px; line-height: 1.45; font-weight: 500; color: var(--o9-mid); }
 .o9-sub { margin: 8px 4px 14px; }
 .o9-marq { margin: 0 -18px; overflow: hidden; -webkit-mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
@@ -5237,3 +5249,14 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .o9-how p { margin: 3px 0 0; font-size: 14px; line-height: 1.4; font-weight: 500; color: var(--o9-mid); }
 .o9 > * { animation: stepRise .9s cubic-bezier(.22,1,.36,1) both; } .o9 > :nth-child(2) { animation-delay: .12s; } .o9 > :nth-child(3) { animation-delay: .22s; } .o9 > :nth-child(4) { animation-delay: .3s; }
 @media (prefers-reduced-motion: reduce) { .o9 > *, .o9-marq > div { animation: none !important; } }
+/* journal pills: each its own soft colour with a matching laurel */
+.o9-j { --jc: #6c823e; --jb: #eef4e2; background: var(--jb) !important; box-shadow: 0 0 0 1px color-mix(in srgb, var(--jc) 35%, transparent), 0 4px 10px rgba(31,43,22,.06) !important; }
+.o9-j b { color: color-mix(in srgb, var(--jc) 70%, #1f2b16) !important; }
+.o9-j .o9-laurel { fill: var(--jc); stroke: var(--jc); }
+.o9-j:nth-child(7n+1) { --jc: #c4566f; --jb: #fbe6ec; }
+.o9-j:nth-child(7n+2) { --jc: #6c823e; --jb: #eaf2dc; }
+.o9-j:nth-child(7n+3) { --jc: #c08a1e; --jb: #fbf0d4; }
+.o9-j:nth-child(7n+4) { --jc: #7b62c4; --jb: #ede7fa; }
+.o9-j:nth-child(7n+5) { --jc: #3d7fa6; --jb: #e2eff7; }
+.o9-j:nth-child(7n+6) { --jc: #c46a3d; --jb: #fbe8dc; }
+.o9-j:nth-child(7n+7) { --jc: #3f8a6a; --jb: #ddf1e8; }
