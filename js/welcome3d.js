@@ -11,7 +11,7 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 const MODEL_URL = 'models/body2.glb';
-const BODY_Y = -0.4; // she sits low, so her lower body melts into the mist behind the title
+const BODY_Y = -0.08; // she sits higher so the title only meets her hips, where she fades into the mist
 let cached = null; // the parsed model is reused if the welcome screen is shown again
 const ease = t => 1 - Math.pow(1 - Math.min(1, Math.max(0, t)), 4);
 
@@ -37,7 +37,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
   scene.environmentIntensity = 0.35;
 
   const camera = new THREE.PerspectiveCamera(32, 1, 0.05, 80);
-  const CAM_END = new THREE.Vector3(0, -0.1, 6.3), CAM_START = new THREE.Vector3(0, 0.6, 26);
+  const CAM_END = new THREE.Vector3(0, -0.1, 6.9), CAM_START = new THREE.Vector3(0, 0.6, 26);
   camera.position.copy(reduce ? CAM_END : CAM_START);
 
   // light: soft white key, blush and willow rims from behind, like morning sun through mist
