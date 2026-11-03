@@ -625,9 +625,57 @@ function viewRoadmap() {
 }
 // Sizes the hand-lettered title to its real drawn letters once the script font has loaded, so swashes never leave the screen.
 function fitHand(svg) {
-  const go = () => { if (!svg.isConnected) return; const b = svg.querySelector('.h-g').getBBox(), p = 4;
+  const go = () => { if (!svg.isConnected) return; const g = svg.querySelector('.h-g');
+    if (g.dataset.word && !g.childElementCount) pearlWord(g, g.dataset.word);
+    const k = g.dataset.box ? g.dataset.box.split(' ').map(Number) : null, b = k ? { x: k[0], y: k[1], width: k[2], height: k[3] } : g.getBBox(), p = k ? 10 : 6;
     svg.setAttribute('viewBox', `${b.x - p} ${b.y - p} ${b.width + p * 2} ${b.height + p * 2}`); svg.classList.add('fit'); };
-  (document.fonts?.load ? document.fonts.load("100px 'Monsieur La Doulaise'") : Promise.resolve()).then(go, go);
+  (document.fonts?.load ? document.fonts.load("100px 'Parisienne'") : Promise.resolve()).then(go, go);
+}
+// Strings a word in pearls: draws it in the script font, finds the middle of every stroke (distance transform)
+// and packs round pearls along it, big where the stroke is thick and small where it is thin.
+function pearlWord(g, word) {
+  const FS = 230, c = document.createElement('canvas'), x = c.getContext('2d', { willReadFrequently: true });
+  const lines = word.split('|'); x.font = `${FS}px 'Parisienne'`;
+  const ws = lines.map(l => x.measureText(l).width), off = lines.length > 1 ? ws[0] * .34 : 0; // the second line steps in to the right
+  const W = Math.ceil(Math.max(ws[0], off + (ws[1] || 0)) + FS * .8), H = Math.ceil(FS * (.45 + lines.length * .8));
+  c.width = W; c.height = H; x.font = `${FS}px 'Parisienne'`; x.textBaseline = 'alphabetic';
+  x.fillStyle = x.strokeStyle = '#000'; x.lineWidth = 7; x.lineJoin = 'round';
+  lines.forEach((l, n) => { const lx = FS * .4 + (n ? off : 0), ly = FS * (.9 + n * .8); x.fillText(l, lx, ly); x.strokeText(l, lx, ly); });
+  const px = x.getImageData(0, 0, W, H).data, D = new Float32Array(W * H), INF = 1e9;
+  for (let i = 0; i < W * H; i++) D[i] = px[i * 4 + 3] > 100 ? INF : 0;
+  const at = (i, j) => (i < 0 || j < 0 || i >= W || j >= H) ? 0 : D[j * W + i];
+  for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) { const k = j * W + i; if (D[k]) D[k] = Math.min(D[k], at(i - 1, j) + 1, at(i, j - 1) + 1, at(i - 1, j - 1) + 1.414, at(i + 1, j - 1) + 1.414); }
+  for (let j = H - 1; j >= 0; j--) for (let i = W - 1; i >= 0; i--) { const k = j * W + i; if (D[k]) D[k] = Math.min(D[k], at(i + 1, j) + 1, at(i, j + 1) + 1, at(i + 1, j + 1) + 1.414, at(i - 1, j + 1) + 1.414); }
+  const cand = [];
+  for (let j = 1; j < H - 1; j++) for (let i = 1; i < W - 1; i++) { const d = D[j * W + i]; if (d < 2.2) continue;
+    if (d >= at(i - 1, j) && d >= at(i + 1, j) && d >= at(i, j - 1) && d >= at(i, j + 1)) cand.push([i, j, d]); }
+  cand.sort((a, b) => b[2] - a[2]);
+  const S = 24, grid = new Map(), placed = [], key = (a, b) => a + ',' + b;
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  for (const [i, j, d] of cand) {
+    const r = Math.min(17, d * (.88 + rnd() * .12)), gi = Math.floor(i / S), gj = Math.floor(j / S); let ok = true;
+    for (let a = gi - 1; a <= gi + 1 && ok; a++) for (let b = gj - 1; b <= gj + 1 && ok; b++) for (const q of grid.get(key(a, b)) || []) if (Math.hypot(q[0] - i, q[1] - j) < (q[2] + r) * .93) { ok = false; break; }
+    if (!ok) continue; const pr = [i, j, r]; placed.push(pr); (grid.get(key(gi, gj)) || grid.set(key(gi, gj), []).get(key(gi, gj))).push(pr);
+  }
+  const big = placed.slice().sort((a, b) => b[2] - a[2]).filter((p, n, arr) => arr.slice(0, n).every(q => Math.hypot(q[0] - p[0], q[1] - p[1]) > W * .1)).slice(0, 7);
+  const star = (p, n) => `<path class="p-star" style="animation-delay:${(n * .9).toFixed(1)}s" transform="translate(${p[0] - p[2] * .25} ${p[1] - p[2] * .3}) scale(${(p[2] / 4.2).toFixed(2)})" d="M0-10C.5-1.4 1.4-.5 10 0 1.4.5.5 1.4 0 10-.5 1.4-1.4.5-10 0-1.4-.5-.5-1.4 0-10Z"/>`;
+  // filigree vines above and below the word, in smaller stones that taper to the tips (a curl ends in a bigger stone)
+  { const wx0 = Math.min(...placed.map(p => p[0] - p[2])), wx1 = Math.max(...placed.map(p => p[0] + p[2])), wy0 = Math.min(...placed.map(p => p[1] - p[2])), wy1 = Math.max(...placed.map(p => p[1] + p[2]));
+    const bw = wx1 - wx0, bh = Math.min(wy1 - wy0, bw * .5), P = (u, v) => `${(wx0 + u * bw).toFixed(1)} ${(v > .5 ? wy1 - (1 - v) * bh : wy0 + v * bh).toFixed(1)}`;
+    const V = [ // [path in box units, start radius, end radius]
+      ['M .5 -.04 C .40 -.34, .22 -.36, .15 -.18 C .11 -.06, .20 .00, .25 -.08 C .28 -.15, .22 -.19, .19 -.14', 5, 2.4],
+      ['M .33 -.26 C .30 -.44, .40 -.50, .43 -.40', 3.4, 2],
+      ['M .5 1.04 C .62 1.36, .84 1.34, .91 1.14 C .94 1.02, .85 .97, .81 1.05 C .79 1.11, .85 1.14, .87 1.10', 5, 2.4],
+      ['M .70 1.28 C .70 1.44, .60 1.48, .57 1.38', 3.4, 2]];
+    const ns = 'http://www.w3.org/2000/svg', tmp = document.createElementNS(ns, 'path'); g.appendChild(tmp);
+    const vine = (d, r0, r1) => { tmp.setAttribute('d', d.replace(/(-?[\d.]+)[ ,]+(-?[\d.]+)/g, (_, u, v) => P(+u, +v)));
+      const L = tmp.getTotalLength(); let at = 0;
+      while (at <= L) { const k = at / L, r = r0 + (r1 - r0) * k, q = tmp.getPointAtLength(at); placed.push([q.x, q.y, r]); at += r * 2 + 1.2; } };
+    V.forEach(([d, r0, r1]) => { vine(d, r0, r1); vine(d.replace(/(-?[\d.]+)([ ,]+-?[\d.]+)/g, (_, u, rest) => `${(1 - +u).toFixed(3)}${rest}`), r0, r1); });
+    tmp.remove(); }
+  const x0 = Math.min(...placed.map(p => p[0] - p[2])), x1 = Math.max(...placed.map(p => p[0] + p[2])), y0 = Math.min(...placed.map(p => p[1] - p[2])), y1 = Math.max(...placed.map(p => p[1] + p[2]));
+  g.dataset.box = `${x0} ${y0} ${x1 - x0} ${y1 - y0}`; // exact crystal bounds, so the word sits dead centre
+  g.innerHTML = placed.sort((a, b) => a[0] - b[0]).map(([i, j, r]) => `<use class="p-bead" href="#crys" style="--d:${(i / W * 1.8).toFixed(2)}s" x="${(i - r).toFixed(1)}" y="${(j - r).toFixed(1)}" width="${(r * 2).toFixed(1)}" height="${(r * 2).toFixed(1)}" transform="rotate(${Math.round(rnd() * 45)} ${i} ${j})"/>`).join('') + big.map(star).join('');
 }
 function viewOnboarding() {
   const s = ui.onbStep, o = ui.onb;
@@ -645,12 +693,9 @@ function viewOnboarding() {
 <path d="M58 76 C44 84 26 82 16 74"/></g>
 <g fill="currentColor"><path d="M82 46 c6 -2 10 2 8 7 c-5 1 -9 -2 -8 -7z"/><path d="M64 30 c2 -6 8 -7 11 -3 c-3 5 -8 6 -11 3z"/><path d="M30 60 c-2 -6 2 -10 7 -8 c1 5 -2 9 -7 8z"/>
 <path d="M100 66 c4 -4 9 -3 10 1 c-4 4 -9 3 -10 -1z"/><circle cx="86" cy="10" r="2.4"/><circle cx="10" cy="20" r="2"/><circle cx="16" cy="74" r="2.2"/>
-<g transform="translate(46 12)"><circle r="3.2"/><circle cx="0" cy="-5" r="2.4"/><circle cx="4.8" cy="-1.5" r="2.4"/><circle cx="3" cy="4" r="2.4"/><circle cx="-3" cy="4" r="2.4"/><circle cx="-4.8" cy="-1.5" r="2.4"/></g></g></svg></span><h1 class="bw-script bw-hand" aria-label="Under the Skin"><svg class="uts-hand" viewBox="0 0 340 240" aria-hidden="true"><g class="h-g">
-          <text class="h-w h1" x="0" y="96">Under</text>
-          <text class="h-w h2" x="150" y="138">the</text>
-          <text class="h-w h3" x="70" y="226">Skin</text>
-          <path class="h-swash" pathLength="1" d="M40 246 C 110 262, 220 258, 290 238 C 318 230, 334 218, 338 206"/>
-        </g></svg></h1><span class="orn-r"><svg class="orn" viewBox="0 0 120 90" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+<g transform="translate(46 12)"><circle r="3.2"/><circle cx="0" cy="-5" r="2.4"/><circle cx="4.8" cy="-1.5" r="2.4"/><circle cx="3" cy="4" r="2.4"/><circle cx="-3" cy="4" r="2.4"/><circle cx="-4.8" cy="-1.5" r="2.4"/></g></g></svg></span><h1 class="bw-script bw-hand" aria-label="Underskin"><svg class="uts-hand pearl" viewBox="0 0 600 220" aria-hidden="true">
+          <defs><radialGradient id="crysRim" cx=".5" cy=".5" r=".5"><stop offset=".75" stop-color="#eef1f8"/><stop offset=".92" stop-color="#9aa3b8"/><stop offset="1" stop-color="#5d6478"/></radialGradient><radialGradient id="crysTab" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#fff"/><stop offset=".6" stop-color="#eef3fb"/><stop offset="1" stop-color="#bcc6da"/></radialGradient><symbol id="crys" viewBox="-10 -10 20 20"><circle r="10" fill="url(#crysRim)"/><path fill="#ffffff" d="M4.07 -1.68L8.50 -3.52L8.50 3.52L4.07 1.68Z"/><path fill="#c9d1e2" d="M4.07 1.68L8.50 3.52L3.52 8.50L1.68 4.07Z"/><path fill="#f7dbe8" d="M1.68 4.07L3.52 8.50L-3.52 8.50L-1.68 4.07Z"/><path fill="#8f9bb4" d="M-1.68 4.07L-3.52 8.50L-8.50 3.52L-4.07 1.68Z"/><path fill="#ffffff" d="M-4.07 1.68L-8.50 3.52L-8.50 -3.52L-4.07 -1.68Z"/><path fill="#cfe9e2" d="M-4.07 -1.68L-8.50 -3.52L-3.52 -8.50L-1.68 -4.07Z"/><path fill="#e9edf6" d="M-1.68 -4.07L-3.52 -8.50L3.52 -8.50L1.68 -4.07Z"/><path fill="#9ea8c0" d="M1.68 -4.07L3.52 -8.50L8.50 -3.52L4.07 -1.68Z"/><polygon points="4.07,-1.68 4.07,1.68 1.68,4.07 -1.68,4.07 -4.07,1.68 -4.07,-1.68 -1.68,-4.07 1.68,-4.07" fill="url(#crysTab)"/><path fill="#fff" d="M-2.6-5.6l1 2.2 2.2 1-2.2 1-1 2.2-1-2.2-2.2-1 2.2-1z" opacity=".95"/></symbol></defs>
+          <g class="h-g" data-word="Under|skin"></g></svg></h1><span class="orn-r"><svg class="orn" viewBox="0 0 120 90" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
 <path d="M118 60 C96 62 84 52 74 40 C64 28 50 22 38 28 C26 34 28 50 40 50 C50 50 50 38 42 38"/>
 <path d="M90 58 C86 72 72 80 58 76 C48 73 48 62 56 62 C62 62 62 70 56 70" />
 <path d="M74 40 C70 26 74 14 86 10 C94 8 98 16 92 20"/>

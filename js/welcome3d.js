@@ -36,7 +36,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
   scene.environmentIntensity = 0.35;
 
   const camera = new THREE.PerspectiveCamera(32, 1, 0.05, 80);
-  const CAM_END = new THREE.Vector3(0, -0.2, 5.1), CAM_START = new THREE.Vector3(0, 0.6, 26);
+  const CAM_END = new THREE.Vector3(0, -0.15, 6.3), CAM_START = new THREE.Vector3(0, 0.6, 26);
   camera.position.copy(reduce ? CAM_END : CAM_START);
 
   // light: soft white key, blush and willow rims from behind, like morning sun through mist
@@ -189,7 +189,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
       const g = reduce ? 1 : ease((t - tReady) / 2.2);
       const breathe = 1 + Math.sin(t * 0.9) * 0.006;
       body.scale.setScalar(Math.max(0.001, g) * breathe);
-      body.rotation.y = Math.sin(t * 0.18) * 0.5 + (1 - g) * -1.2;
+      body.rotation.y = Math.sin(t * 0.18) * 0.2 + (1 - g) * -1.2;
       body.position.y = Math.sin(t * 0.6) * 0.04;
       shellMat.uniforms.uTime.value = t; shellMat.uniforms.uAmt.value = 0.12 + 0.8 * (1 - g) + 0.08 * Math.sin(t * 1.3);
       if (motes) {
