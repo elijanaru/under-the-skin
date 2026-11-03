@@ -4189,3 +4189,7 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .sba-u{font-size:11px;color:rgba(244,245,240,.45)}
 .sba-c p{font-size:14px;line-height:1.45;margin:0 0 8px;font-weight:300}
 .sba-src{font-size:11px;color:rgba(244,245,240,.45)}
+
+/* Welcome title: the original Mrs Saint Delafield script */
+.bw-script { font-family: 'Mrs Saint Delafield', cursive !important; font-size: clamp(60px, 19vw, 84px) !important; line-height: 1 !important; padding: 0 6px !important; }
+.bw-ink { -webkit-text-stroke: .8px #e6dcc3; }
