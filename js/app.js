@@ -3372,7 +3372,7 @@ function viewPartners(id) {
       <li class="sy-st ${got ? 'is-done' : ''}">${got ? done() : '<span class="sy-n">03</span>'}<div class="sy-c">
         <span class="sy-who">You</span><b>Paste her link here</b><small>Copy the link she sent you, then tap below.</small>
         <button class="btn btn-light btn-block" data-action="pastePartner">${icon('plus', 16)} Paste her link</button>
-        <div class="sy-paste"><input class="field sm" id="partnerLink" placeholder="…or paste it here" autocomplete="off"><button class="btn btn-ghost" data-action="addPartnerLink">Add</button></div></div></li>
+        <div class="sy-paste"><input class="field sm" id="partnerLink" aria-label="Partner link" placeholder="…or paste it here" autocomplete="off"><button class="btn btn-ghost" data-action="addPartnerLink">Add</button></div></div></li>
     </ol>`; })()}
     <section class="card glass sy-priv">
       <div><span class="hud">SHARED</span><ul><li>${icon('check', 13, 2.4)} First name</li><li>${icon('check', 13, 2.4)} Cycle day & phase</li><li>${icon('check', 13, 2.4)} Star sign & photo, if added</li></ul></div>
@@ -4068,7 +4068,7 @@ function viewAccount() {
   const head = topbar('Account', { back: true });
   if (ui.acRecover) return `${head}<div class="pad ac">
     <section class="ac-hero card-light"><div class="eyebrow dark">Account</div><h2>Choose a new password</h2><p>At least 8 characters.</p></section>
-    <section class="card glass ac-form"><input class="field" id="ac-pw" type="password" autocomplete="new-password" placeholder="New password" minlength="8">
+    <section class="card glass ac-form"><input class="field" id="ac-pw" aria-label="Password" type="password" autocomplete="new-password" placeholder="New password" minlength="8">
       <button class="btn btn-light btn-block" data-action="acNewPw">Save new password</button><p class="ac-msg" id="ac-msg" role="status"></p></section></div>`;
   if (u) return `${head}<div class="pad ac">
     <section class="ac-hero card-light"><div class="eyebrow dark">Signed in</div><h2>Your data is saved</h2><p class="ac-email">${esc(u.email || '')}</p>
@@ -4090,8 +4090,8 @@ function viewAccount() {
     ${A.oauthOK('google') ? `<button class="ac-btn ac-google" data-action="acProvider" data-p="google">${GOOGLE_SVG}<span>${create ? 'Sign up' : 'Sign in'} with Google</span></button>` : ''}
     ${A.oauthOK('apple') || A.oauthOK('google') ? '<div class="ac-or"><span>or with email</span></div>' : ''}
     <section class="card glass ac-form">
-      <input class="field" id="ac-email" type="email" inputmode="email" autocomplete="email" placeholder="Email" value="${esc(ui.acEmail || '')}">
-      <input class="field" id="ac-pw" type="password" autocomplete="${create ? 'new-password' : 'current-password'}" placeholder="${create ? 'Password · at least 8 characters' : 'Password'}">
+      <input class="field" id="ac-email" aria-label="Email" type="email" inputmode="email" autocomplete="email" placeholder="Email" value="${esc(ui.acEmail || '')}">
+      <input class="field" id="ac-pw" aria-label="Password" type="password" autocomplete="${create ? 'new-password' : 'current-password'}" placeholder="${create ? 'Password · at least 8 characters' : 'Password'}">
       <button class="btn btn-light btn-block" data-action="acEmail">${create ? 'Create account' : 'Sign in'}</button>
       ${create ? '' : '<button class="link ac-forgot" data-action="acForgot">Forgot password?</button>'}
       <p class="ac-msg" id="ac-msg" role="status">${A.configured() ? '' : 'Accounts open very soon. Until then everything stays safely on this phone.'}</p>
