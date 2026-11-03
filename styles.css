@@ -4655,3 +4655,18 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
   linear-gradient(180deg, hsl(calc(var(--hb) + 0 * var(--hk)) calc(38% * var(--hs)) 86% / .5) 0%, hsl(calc(var(--hb) + 0 * var(--hk)) calc(30% * var(--hs)) 84% / .62) 45%, hsl(calc(var(--hb) + 0 * var(--hk)) calc(26% * var(--hs)) 82% / .72) 100%),
   url('images/intro-forest.jpg') center / cover no-repeat, var(--page) !important; }
 .home .hub { background: transparent; }
+
+/* Widgets lift off the forest: frosted pearl glass, crisp white edge, soft shadow */
+.glass, .card.glass, .hub, .home .hub {
+  background: linear-gradient(160deg, rgba(255,251,252,.8), rgba(250,240,244,.66)) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(1.25); backdrop-filter: blur(22px) saturate(1.25);
+  border: 1px solid rgba(255,255,255,.85) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 14px 34px rgba(70,40,55,.16), 0 2px 6px rgba(70,40,55,.06) !important; }
+.home .hub { background: transparent !important; -webkit-backdrop-filter: none; backdrop-filter: none; border: 0 !important; box-shadow: none !important; }
+.section-title { color: #2a3820; }
+/* Photo tiles: a pearl veil behind the words so they read on any photo; photo shows clearly below */
+.hub .dpt-g.pic i { background: linear-gradient(180deg, rgba(255,251,252,.94) 0%, rgba(255,251,252,.86) 38%, rgba(255,251,252,.35) 62%, rgba(255,251,252,0) 80%) !important; }
+.hub .dpt.has-pic { border: 1px solid rgba(255,255,255,.85) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 14px 32px rgba(70,40,55,.18) !important; }
+.hub .dpt.has-pic b, .hub .dpt.has-pic small, .hub .dpt.has-pic .dpt-k, .hub .dpt.has-pic .dpt-col { text-shadow: none; }
+.hub .dpt.has-pic small { opacity: 1; color: rgba(48,64,35,.86); }
+.hub-now { background: linear-gradient(160deg, rgba(255,251,252,.82), rgba(250,240,244,.68)) !important; -webkit-backdrop-filter: blur(22px) saturate(1.25); backdrop-filter: blur(22px) saturate(1.25); border: 1px solid rgba(255,255,255,.85) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 12px 28px rgba(70,40,55,.14) !important; }
