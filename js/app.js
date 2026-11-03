@@ -3629,7 +3629,6 @@ function viewSeason(jump) {
   const phase = M.info ? M.info.phase : null, warm = M.info && warmWindow(M.info);
   const fits = i => phase && i.ph.includes(phase);
   const items = all.filter(i => !kind || i.kind === kind), sel = all.find(i => i.f === ui.seasonFood);
-  const heroItem = [...all.filter(i => fits(i) && foodPhoto(i.f)), ...all.filter(i => foodPhoto(i.f))][0];
   const pic = (i, w = 300) => foodPhoto(i.f, w);
   const tile = i => `<button class="szt ${ui.seasonFood === i.f ? 'sel' : ''}" data-action="seasonFood" data-f="${esc(i.f)}">
       <span class="szt-img">${pic(i) ? `<img src="${pic(i)}" alt="" loading="lazy">` : ''}${fits(i) ? '<em>for you</em>' : ''}</span>
@@ -3657,7 +3656,7 @@ function viewSeason(jump) {
   }
   const forYou = all.filter(i => fits(i) && foodPhoto(i.f));
   return `<div class="pad sz2">
-  ${specHero({ photo: heroItem ? pic(heroItem, 1000) : '', glyph: 'leaf', eyebrow: `${country} · ${MONTHS[m - 1]}`, name: `In season now`, label: `${sn} food`,
+  ${specHero({ photo: `images/season-${{ Spring: 'spring', Summer: 'summer', 'Late summer': 'summer', Autumn: 'autumn', Winter: 'winter' }[sn]}.jpg`, glyph: 'leaf', eyebrow: `${country} · ${MONTHS[m - 1]}`, name: `In season now`, label: `${sn} food`,
       rows: [[`${all.length} foods`, 'fresh this month'], [`${all.filter(fits).length} for you`, phase ? `${PHASES[phase].name} phase` : 'your phase']], desc: 'This list changes by itself when the season does.' })}
     <section class="card glass sz-plain">
       <div class="szp-h"><b>What to eat in ${sn.toLowerCase()}</b>${evBadge('tcm')}</div>
