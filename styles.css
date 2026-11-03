@@ -4600,3 +4600,4 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .sup-all { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 10px 16px; border-radius: 22px; background: #fff; color: #304023; font: inherit; font-size: 13.5px; font-weight: 500; box-shadow: 0 6px 16px rgba(48,64,35,.12); }
 .beyond .bw-hand { width: 56% !important; max-width: 230px; }
 
+.beyond .bw-hand { width: 68% !important; max-width: 270px; }

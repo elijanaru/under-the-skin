@@ -635,13 +635,13 @@ function fitHand(svg) {
 // and packs round pearls along it, big where the stroke is thick and small where it is thin.
 function pearlWord(g, word) {
   // heavy broad-nib gothic, squeezed narrow, its thick strokes paved solid with stones
-  const FS = 230, SQ = .74, FONT = `900 ${FS}px 'Grenze Gotisch'`, c = document.createElement('canvas'), x = c.getContext('2d', { willReadFrequently: true });
-  const lines = word.split('|'); x.font = FONT; if ('letterSpacing' in x) x.letterSpacing = `${Math.round(FS * -.07)}px`;
+  const FS = 230, SQ = .8, FONT = `900 ${FS}px 'Grenze Gotisch'`, c = document.createElement('canvas'), x = c.getContext('2d', { willReadFrequently: true });
+  const lines = word.split('|'); x.font = FONT; if ('letterSpacing' in x) x.letterSpacing = `${Math.round(FS * -.03)}px`;
   const ws = lines.map(l => x.measureText(l).width * SQ), off = lines.length > 1 ? (ws[0] - ws[1]) / 2 : 0; // stacked lines, centred
-  const W = Math.ceil(Math.max(ws[0], off + (ws[1] || 0)) + FS * .8), H = Math.ceil(FS * (.64 + lines.length * .6));
-  c.width = W; c.height = H; x.font = FONT; if ('letterSpacing' in x) x.letterSpacing = `${Math.round(FS * -.07)}px`; x.textBaseline = 'alphabetic';
+  const W = Math.ceil(Math.max(ws[0], off + (ws[1] || 0)) + FS * .8), H = Math.ceil(FS * (.64 + lines.length * .68));
+  c.width = W; c.height = H; x.font = FONT; if ('letterSpacing' in x) x.letterSpacing = `${Math.round(FS * -.03)}px`; x.textBaseline = 'alphabetic';
   x.fillStyle = '#000'; x.setTransform(SQ, 0, 0, 1, 0, 0);
-  lines.forEach((l, n) => { const lx = (FS * .4 + (n ? off : 0)) / SQ, ly = FS * (.9 + n * .6); x.fillText(l, lx, ly); });
+  lines.forEach((l, n) => { const lx = (FS * .4 + (n ? off : 0)) / SQ, ly = FS * (.9 + n * .68); x.fillText(l, lx, ly); });
   x.setTransform(1, 0, 0, 1, 0, 0);
   const px = x.getImageData(0, 0, W, H).data, D = new Float32Array(W * H), INF = 1e9;
   for (let i = 0; i < W * H; i++) D[i] = px[i * 4 + 3] > 100 ? INF : 0;
@@ -654,7 +654,7 @@ function pearlWord(g, word) {
   const S = 24, grid = new Map(), placed = [], key = (a, b) => a + ',' + b;
   let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   for (const [i, j, d] of cand) {
-    const r = Math.min(9.5, d * (.86 + rnd() * .12)), gi = Math.floor(i / S), gj = Math.floor(j / S); let ok = true;
+    const r = Math.min(8, d * (.84 + rnd() * .12)), gi = Math.floor(i / S), gj = Math.floor(j / S); let ok = true;
     for (let a = gi - 1; a <= gi + 1 && ok; a++) for (let b = gj - 1; b <= gj + 1 && ok; b++) for (const q of grid.get(key(a, b)) || []) if (Math.hypot(q[0] - i, q[1] - j) < (q[2] + r) * .93) { ok = false; break; }
     if (!ok) continue; const pr = [i, j, r]; placed.push(pr); (grid.get(key(gi, gj)) || grid.set(key(gi, gj), []).get(key(gi, gj))).push(pr);
   }
