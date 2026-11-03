@@ -796,6 +796,12 @@ function onbPromise() {
   </div>`;
 }
 // The cycle question shows her actual cycle: four phase arcs sized from the length she picks, redrawn on every tap.
+function bcQHTML(o) {
+  return hormonalBC(o.bc) ? `<div class="bc-q"><h3>Would you like to come off it?</h3>
+    <p class="muted sm">We’ll guide you step by step.</p>
+    <div class="chips">${BC_PLAN.map(b => `<button class="chip ${o.bcPlan === b.k ? 'on' : ''}" data-action="onbBcPlan" data-v="${b.k}">${b.t}</button>`).join('')}</div>
+    ${o.bcPlan === 'stop' ? '<p class="fine">Talk to your doctor before you stop, and use condoms or a copper IUD if you don’t want to get pregnant: you can ovulate in your very first cycle.</p>' : ''}</div>` : '';
+}
 // Little drawings of each birth control method for the onboarding question.
 const BC_PIC = {
   none: `<svg viewBox="0 0 48 48"><defs><radialGradient id="bp-f" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#fff6f8"/><stop offset="1" stop-color="#ee9db3"/></radialGradient></defs>
@@ -889,10 +895,7 @@ function viewOnboarding() {
         ${o.unsure ? '<p class="muted sm">No problem — we’ll start with 28 days and learn your real cycle automatically as soon as you log your next period.</p>' : ''}`,
     6: `<h2 class="onb-title">Are you on <span>birth control?</span></h2>
         <div class="bc-list">${BIRTH_CONTROL.map(b => `<button class="bc-opt has-pic ${o.bc === b.k ? 'on' : ''}" data-action="onbBc" data-v="${b.k}"><span class="bc-pic">${BC_PIC[b.k] || ''}</span><span class="bc-tx"><b>${b.t}</b><small>${b.s}</small></span><i>${icon('check', 14, 2.6)}</i></button>`).join('')}</div>
-        ${hormonalBC(o.bc) ? `<div class="bc-q"><h3>Would you like to come off it?</h3>
-          <p class="muted sm">Your own cycle is where your energy, mood and glow come from. If you want it back, we’ll guide you step by step.</p>
-          <div class="chips">${BC_PLAN.map(b => `<button class="chip ${o.bcPlan === b.k ? 'on' : ''}" data-action="onbBcPlan" data-v="${b.k}">${b.t}</button>`).join('')}</div>
-          ${o.bcPlan === 'stop' ? '<p class="fine">Talk to your doctor before you stop, and use condoms or a copper IUD if you don’t want to get pregnant: you can ovulate in your very first cycle.</p>' : ''}</div>` : ''}`,
+        <div class="bc-slot">${bcQHTML(o)}</div>`,
     7: `<h2 class="onb-title">Why are <span>you here?</span></h2>
         ${purposePicker(o.purpose || 'know', 'onbPurpose', true)}`,
     8: `<h2 class="onb-title">What are <span>your goals?</span></h2>
@@ -4607,8 +4610,14 @@ const actions = {
   },
   onbBack: () => { if (ui.onbStep === 1 && ui.onbGateDone && !A.currentUser() && A.configured()) { ui.onbGateDone = false; ui.onbAnim = 'back'; render(); return; } ui.onbStep = Math.max(0, ui.onbStep - (ui.onbStep === 6 && ui.onb.noPeriod ? 2 : 1)); ui.onbAnim = 'back'; render(); },
   onbAgo: d => { const o = ui.onb; if (d.v === 'none') { o.noPeriod = !o.noPeriod; o.ago = null; } else { o.noPeriod = false; o.ago = +d.v; o.last = C.iso(C.addDays(new Date(), -d.v)); } render(); },
-  onbBc: d => { ui.onb.bc = d.v; if (!hormonalBC(d.v)) ui.onb.bcPlan = null; render(); },
-  onbBcPlan: d => { ui.onb.bcPlan = d.v; render(); },
+  // birth control taps update in place, so the screen and its background never redraw
+  onbBc: d => { const o = ui.onb, had = hormonalBC(o.bc); o.bc = d.v; if (!hormonalBC(d.v)) o.bcPlan = null;
+    const list = document.querySelector('.bc-list'), slot = document.querySelector('.bc-slot'); if (!list || !slot) return render();
+    list.querySelectorAll('.bc-opt').forEach(b => b.classList.toggle('on', b.dataset.v === d.v));
+    if (had !== hormonalBC(d.v)) { slot.innerHTML = bcQHTML(o); if (!had) slot.querySelector('.bc-q')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } },
+  onbBcPlan: d => { ui.onb.bcPlan = d.v; const q = document.querySelector('.bc-q'); if (!q) return render();
+    q.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c.dataset.v === d.v));
+    q.querySelector('.fine')?.remove(); if (d.v === 'stop') q.insertAdjacentHTML('beforeend', '<p class="fine">Talk to your doctor before you stop, and use condoms or a copper IUD if you don’t want to get pregnant: you can ovulate in your very first cycle.</p>'); },
   mealTab: d => { ui.mealTab = d.v; render(); },
   axis: d => { ui.axis = d.k; const box = document.querySelector('.sci-axis'); if (!box) return render();
     const t = document.createElement('div'); t.innerHTML = axisHTML(); box.replaceWith(t.firstElementChild); },

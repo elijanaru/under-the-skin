@@ -5149,3 +5149,5 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .onb.no-fig .bc-opt.on i { background: #304023 !important; border-color: #304023 !important; color: #fff !important; }
 .onb.no-fig .bc-opt i { border-color: rgba(48,64,35,.45) !important; background: rgba(255,255,255,.5); }
 .onb.no-fig .bc-opt.on .bc-pic { background: rgba(239,212,221,.55); }
+.onb .bc-slot:empty { display: none; }
+.onb .bc-slot .bc-q { animation: stepRise .7s cubic-bezier(.22,1,.36,1) both !important; }
