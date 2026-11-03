@@ -4097,3 +4097,8 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .nu-list { gap: 0 !important; }
 .nw-h small { font-size: 13px; letter-spacing: 0; text-transform: none; }
 .nu-c + .nu-c { border-top-color: rgba(255,255,255,.06) !important; }
+.nu-g { color: var(--lime); background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77% / .1) !important; border-radius: 50% !important; box-shadow: none !important; border: 0 !important; }
+.nw-rings .mv2-g { color: #f4f5f0; }
+.spec-glyph svg { color: #f4f5f0; width: 84px; height: 84px; }
+.nl-i > span { color: var(--lime); }
+.nw-rings .mv2-g svg { width: 18px !important; height: 18px !important; }

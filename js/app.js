@@ -1110,7 +1110,7 @@ function brainLinks(k) {
   const L = RELIEF_LINKS[k] || {}, help = ((state.reliefHelp || {})[k] || []).map(i => RELIEF[k].steps[i]).filter(Boolean);
   const tea = L.tea ? (TEA_GUIDE.find(t => t.k === L.tea) || { teas: [] }).teas[0] : null;
   const pills = [tea ? `<button data-action="nav" data-to="tea/${L.tea}-0"><span>${tea[0]}</span>${tea[1]}</button>` : '',
-    ...(L.nu || []).slice(0, 2).map(id => { const n = NUTRIENTS.find(x => x.id === id); return n ? `<button data-action="nav" data-to="nutrients/${id}"><span>${n.g}</span>${n.n}</button>` : ''; })].join('');
+    ...(L.nu || []).slice(0, 2).map(id => { const n = NUTRIENTS.find(x => x.id === id); return n ? `<button data-action="nav" data-to="nutrients/${id}"><span>${nuIc(id, 16)}</span>${n.n}</button>` : ''; })].join('');
   return `${help.length ? `<div class="br-works"><small>♥ Works for you</small><p>${help.slice(0, 2).map(x => x.t).join(' · ')}</p></div>` : ''}
       ${pills ? `<div class="br-fix"><small>Teas & nutrients</small></div><div class="tea-more br-pills">${pills}</div>` : ''}`;
 }
@@ -1908,7 +1908,7 @@ function viewRelief(id) {
       <span class="step-n">${i + 1}</span><div class="rs-b"><div class="rs-h"><b>${x.t}</b>${evBadge(x.ev)}</div><p class="body sm">${x.d}</p>${x.to ? `<button class="link rs-go" data-action="nav" data-to="${x.to}">Open ${icon('chevR', 12)}</button>` : ''}</div>
       <button class="rs-heart ${help.includes(i) ? 'on' : ''}" data-action="reliefHelp" data-k="${k}" data-i="${i}" aria-label="This helps me">${icon('heart', 18)}</button>
     </div>`; }).join('')}</section>
-    ${L.tea || L.nu ? `${sectionTitle('Teas & nutrients for this')}<div class="tea-more">${L.tea ? (TEA_GUIDE.find(t => t.k === L.tea) || { teas: [] }).teas.map((t, i) => `<button data-action="nav" data-to="tea/${L.tea}-${i}"><span>${t[0]}</span>${t[1]}</button>`).join('') : ''}${(L.nu || []).map(id => { const n = NUTRIENTS.find(x => x.id === id); return n ? `<button data-action="nav" data-to="nutrients/${id}"><span>${n.g}</span>${n.n}</button>` : ''; }).join('')}</div>` : ''}
+    ${L.tea || L.nu ? `${sectionTitle('Teas & nutrients for this')}<div class="tea-more">${L.tea ? (TEA_GUIDE.find(t => t.k === L.tea) || { teas: [] }).teas.map((t, i) => `<button data-action="nav" data-to="tea/${L.tea}-${i}"><span>${t[0]}</span>${t[1]}</button>`).join('') : ''}${(L.nu || []).map(id => { const n = NUTRIENTS.find(x => x.id === id); return n ? `<button data-action="nav" data-to="nutrients/${id}"><span>${nuIc(id, 16)}</span>${n.n}</button>` : ''; }).join('')}</div>` : ''}
     ${food ? `${sectionTitle('Eat')}<section class="card glass"><p class="body sm" style="margin:0 0 10px">${food.tip}</p><div class="foods">${food.foods.map(f => `<span class="food">${f}</span>`).join('')}</div></section>` : ''}
     <section class="card tcm-card"><div class="tcm-glyph">${icon('yinyang', 30)}</div><div class="tcm-main"><div class="eyebrow">Chinese medicine view</div><p class="body" style="margin-top:6px">${R.tcm}</p></div></section>
     ${R.doctor ? `<section class="card glass rl-doc"><span>🩺</span><div><small>See a doctor if</small><p>${R.doctor}</p></div></section>` : ''}
@@ -2720,17 +2720,20 @@ function viewTeaItem(id) {
 const PH4 = [['menstrual', 'Period'], ['follicular', 'Follicular'], ['ovulatory', 'Ovulation'], ['luteal', 'Luteal']];
 const phaseFit = (best, ph) => `<div class="tf-phases">${PH4.map(([k, l]) => `<span class="${best.includes(k) ? 'on' : ''} ${k === ph ? 'now' : ''}" style="--pc:${PHASE_COLOR.dark[k]}">${l}${k === ph ? '<i>you</i>' : ''}</span>`).join('')}</div>`;
 // Opal-style rings: how many of the last 7 days each logged supplement was taken.
+// Drawn line icon for each nutrient (no emoji).
+const NU_IC = { magnesium: 'seed', b6: 'banana', iron: 'drop', 'vitamin-d': 'sun', 'omega-3': 'fish', zinc: 'shell', calcium: 'milk', inositol: 'grain', vitex: 'berry' };
+const nuIc = (id, size = 20) => icon(NU_IC[id] || 'leaf', size);
 function suppWeek() {
   const days = Array.from({ length: 7 }, (_, i) => getLog(C.iso(C.addDays(new Date(), -i))).supp || []);
   const any = days.some(d => d.length), R = 27, Cc = 2 * Math.PI * R;
   const items = SUPPS.filter(([n]) => NUTRIENTS.some(x => x.n === n)).map(([n, g]) => [n, g, days.filter(d => d.includes(n)).length, NUTRIENTS.find(x => x.n === n).id]);
   return `<section class="card glass nu-week"><div class="nw-h"><small>Your last 7 days</small>${any ? '' : '<span>Nothing logged yet</span>'}</div>
-    <div class="mind-rings nw-rings">${items.map(([n, g, c, id], i) => `<button class="mv2-b r${c >= 5 ? 3 : c >= 3 ? 2 : c ? 1 : 0}" style="--i:${i}" data-action="nav" data-to="nutrients/${id}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * Math.max(.04, c / 7)).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-g">${g}</span><b>${n}</b><small>${c}/7 days</small></button>`).join('')}</div>
+    <div class="mind-rings nw-rings">${items.map(([n, g, c, id], i) => `<button class="mv2-b r${c >= 5 ? 3 : c >= 3 ? 2 : c ? 1 : 0}" style="--i:${i}" data-action="nav" data-to="nutrients/${id}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * Math.max(.04, c / 7)).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-g">${nuIc(id, 18)}</span><b>${n}</b><small>${c}/7 days</small></button>`).join('')}</div>
     <div class="nw-f"><p>${any ? 'Taken most days counts. Tap one for the dose and the best food sources.' : 'Tick supplements in your daily check-in and your week fills in here.'}</p><button class="pill-cta" data-action="nav" data-to="log">${icon('plus', 14)} Log today</button></div></section>`;
 }
 function viewNutrients() {
   const ph = M.info && M.info.phase, now = ph ? NUTRIENTS.filter(x => x.p.includes(ph) && x.p.length < 4) : [];
-  const card = x => `<button class="card glass nu-c" data-action="nav" data-to="nutrients/${x.id}"><span class="nu-g">${x.g}</span>
+  const card = x => `<button class="card glass nu-c" data-action="nav" data-to="nutrients/${x.id}"><span class="nu-g">${nuIc(x.id)}</span>
     <div class="nu-t"><b>${x.n}</b><small>${x.for}</small></div><div class="nu-r"><span class="nu-dose">${x.d[0][0]}</span>${evBadge(x.ev)}</div></button>`;
   return `${topbar('Nutrients', { back: true })}
   <div class="pad">
@@ -2747,16 +2750,16 @@ function viewNutrient(id) {
   const x = NUTRIENTS.find(n => n.id === id); if (!x) return viewNutrients();
   const ph = M.info && M.info.phase, i = NUTRIENTS.indexOf(x);
   return `<div class="pad">
-    ${specHero({ glyph: x.g, eyebrow: `For ${x.for.toLowerCase()}`, name: x.n, label: 'Key facts', rows: x.d, lead: `${x.n} · ${EVIDENCE[x.ev].label.toLowerCase()}`, desc: x.why })}
+    ${specHero({ glyph: nuIc(x.id, 64), eyebrow: `For ${x.for.toLowerCase()}`, name: x.n, label: 'Key facts', rows: x.d, lead: `${x.n} · ${EVIDENCE[x.ev].label.toLowerCase()}`, desc: x.why })}
     <section class="card glass tea-fit"><div class="tf-k">When it helps most</div>${phaseFit(x.p, ph)}</section>
     ${sectionTitle('Food first')}
     <section class="card glass nu-food">${x.f.map(([f, a]) => `<div class="spec-row"><b>${f}</b>${a ? `<span>${a}</span>` : ''}</div>`).join('')}</section>
     ${sectionTitle('Are you low?')}
-    <section class="card glass nu-low"><div class="nl-i"><span>🔎</span><div><small>Signs</small><p>${x.low}</p></div></div><div class="nl-i"><span>🧪</span><div><small>Test to ask for</small><p>${x.test}</p></div></div></section>
+    <section class="card glass nu-low"><div class="nl-i"><span>${icon('search', 18)}</span><div><small>Signs</small><p>${x.low}</p></div></div><div class="nl-i"><span>${icon('flask', 18)}</span><div><small>Test to ask for</small><p>${x.test}</p></div></div></section>
     ${sectionTitle('What studies found')}
     <section class="card glass tea-study"><div class="ts-i"><p>${x.study}</p><small>${x.cite}</small></div><div class="ts-ev">${evBadge(x.ev)} <span>${EVIDENCE[x.ev].label}</span></div></section>
     ${sectionTitle('Good to know')}<section class="card glass tea-care"><p>${icon('spark', 12)} ${x.caution}</p></section>
-    <button class="card glass nu-next" data-action="nav" data-to="nutrients/${NUTRIENTS[(i + 1) % NUTRIENTS.length].id}"><small>Next</small><b>${NUTRIENTS[(i + 1) % NUTRIENTS.length].g} ${NUTRIENTS[(i + 1) % NUTRIENTS.length].n}</b>${icon('chevR', 16)}</button>
+    <button class="card glass nu-next" data-action="nav" data-to="nutrients/${NUTRIENTS[(i + 1) % NUTRIENTS.length].id}"><small>Next</small><b>${NUTRIENTS[(i + 1) % NUTRIENTS.length].n}</b>${icon('chevR', 16)}</button>
     <p class="fine center">General information, not medical advice. Pregnant, on medication or unsure? Ask your doctor or pharmacist first.</p>
   </div>`;
 }
