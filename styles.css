@@ -5025,3 +5025,36 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .onb-welcome .bw-vignette::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 42%;
   backdrop-filter: blur(10px) saturate(1.05); -webkit-backdrop-filter: blur(10px) saturate(1.05);
   -webkit-mask: linear-gradient(180deg, transparent 0%, rgba(0,0,0,.55) 30%, #000 62%); mask: linear-gradient(180deg, transparent 0%, rgba(0,0,0,.55) 30%, #000 62%); }
+
+/* ---------- Natural, fluid intro motion ---------- */
+/* welcome: the words surface one after another out of the mist */
+.beyond .welcome-ui { animation: none; opacity: 1; transform: none; }
+.beyond .welcome-ui > * { opacity: 0; filter: blur(8px); transform: translateY(14px); animation: mistIn 1.6s cubic-bezier(.22,1,.36,1) forwards; }
+.beyond .welcome-ui > :nth-child(1) { animation-delay: 3.4s; } .beyond .welcome-ui > :nth-child(2) { animation-delay: 3.9s; }
+.beyond .welcome-ui > :nth-child(3) { animation-delay: 4.2s; } .beyond .welcome-ui > :nth-child(4) { animation-delay: 4.6s; }
+.beyond .welcome-ui > :nth-child(n+5) { animation-delay: 5s; }
+@keyframes mistIn { to { opacity: 1; filter: blur(0); transform: none; } }
+.beyond .welcome-ui > .pearl-btn { animation: mistIn 1.6s cubic-bezier(.22,1,.36,1) forwards, btnBreath 5s ease-in-out infinite; animation-delay: 4.6s, 6.4s; }
+@keyframes btnBreath { 0%,100% { transform: none; } 50% { transform: scale(1.025); } }
+/* entering: a pearly mist blooms instead of a dark flash, the words drift up and dissolve */
+.bw-flash { background: radial-gradient(circle at 50% 42%, #fff 0%, #fbf3f5 35%, #f3e6ea 70%, #efe4e8 100%) !important; transition: opacity 1.3s cubic-bezier(.4,0,.2,1) .35s !important; }
+.beyond.entering .bw-hero, .beyond.entering .welcome-ui, .beyond.entering .bw-top { transition: opacity 1s cubic-bezier(.4,0,.2,1), transform 1.6s cubic-bezier(.4,0,.2,1), filter 1.2s ease !important; transform: translateY(-24px) scale(1.04) !important; filter: blur(12px) !important; }
+.flash-out { background: radial-gradient(circle at 50% 42%, #fff 0%, #fbf3f5 40%, var(--page) 100%) !important; animation: flashOut 1.6s cubic-bezier(.4,0,.2,1) forwards !important; }
+/* onboarding steps: content rises gently, title first, then the rest, then the stat */
+.onb.fwd .onb-body > *, .onb.back .onb-body > * { animation: stepRise .9s cubic-bezier(.22,1,.36,1) both; }
+.onb.fwd .onb-body, .onb.back .onb-body, .onb.fwd .onb-foot, .onb.back .onb-foot { animation: none; }
+.onb.back .onb-body > * { animation-name: stepFall; }
+.onb .onb-body > :nth-child(2) { animation-delay: .08s; } .onb .onb-body > :nth-child(3) { animation-delay: .16s; }
+.onb .onb-body > :nth-child(4) { animation-delay: .24s; } .onb .onb-body > :nth-child(n+5) { animation-delay: .32s; }
+.onb.fwd .onb-foot { animation: stepRise 1s .3s cubic-bezier(.22,1,.36,1) both; }
+@keyframes stepRise { from { opacity: 0; transform: translateY(18px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes stepFall { from { opacity: 0; transform: translateY(-12px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+.onb-stat { animation: stepRise 1.1s .7s cubic-bezier(.22,1,.36,1) both !important; }
+/* arrival: the welcome card breathes out softly instead of zooming away */
+.arrive { transition: opacity 1.8s cubic-bezier(.4,0,.2,1), transform 2s cubic-bezier(.4,0,.2,1), filter 1.6s ease !important; }
+.arrive.out { transform: scale(1.06) !important; filter: blur(10px) !important; }
+.view.arrive-in .pad > * { animation: stepRise 1.4s cubic-bezier(.22,1,.36,1) forwards !important; }
+@media (prefers-reduced-motion: reduce) { .beyond .welcome-ui > *, .beyond .pearl-btn, .onb .onb-body > *, .onb-stat, .onb.fwd .onb-foot { animation: none !important; opacity: 1 !important; filter: none !important; transform: none !important; } }
+/* the phone frame never scrolls itself (focus or scrollIntoView could shift it and show a band of glow) */
+.phone { overflow: clip !important; }
+.onb .onb-body > .onb-greet { animation: none !important; } /* keeps its own fade, appears only once she types */

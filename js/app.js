@@ -3637,7 +3637,7 @@ function showSignal(sig, name, from) {
     ${from ? `<button class="btn btn-love btn-block" data-action="openLove" data-id="${from.id}">${icon('heart', 16)} Send love back</button>` : ''}
     <button class="btn btn-ghost btn-block" data-action="sigClose">Close</button></div>`;
   $app.appendChild(el);
-  import('./sfx.js').then(S => S.whoosh({ dur: 1.2, vol: 0.35, from: 600, to: 3200 })).catch(() => {});
+  import('./sfx.js').then(S => S.bowl({ notes: [783.99, 1046.5], gap: .14, vol: .06, decay: 2.4 })).catch(() => {});
 }
 let sigSource = null;
 async function startSignals() {
@@ -4551,8 +4551,8 @@ const actions = {
     if (el?.classList.contains('entering')) return;
     if (!w || !el) return actions.onbNext(d);
     el.classList.add('entering');
-    import('./sfx.js').then(S => S.whoosh({ dur: 1.3, vol: 0.3, from: 300, to: 3200, boom: true })).catch(() => {});
-    w.enter().then(() => { ui.flashOut = true; actions.onbNext(d); });
+    import('./sfx.js').then(S => S.enterSound()).catch(() => {});
+    w.enter(1.7).then(() => { ui.flashOut = true; actions.onbNext(d); });
   },
   onbUnsure: () => { ui.onb.unsure = !ui.onb.unsure; if (ui.onb.unsure) ui.onb.cycleLength = 28; render(); },
   onbNext: () => {
@@ -4861,9 +4861,9 @@ function mountFigures() {
     import('./welcome3d.js').then(m => {
       if (!c.isConnected) return; if (!m.webglOK()) throw new Error('no webgl');
       const w = m.mountWelcome3D(c, { onReady: () => wrap?.classList.add('arrived') });
-      // arrival whoosh: plays right away if sound is allowed, otherwise on the first touch
+      // arrival sound (a breeze and two soft bells): plays right away if sound is allowed, otherwise on the first touch
       import('./sfx.js').then(S => {
-        const intro = () => S.whoosh({ dur: 2.6, vol: 0.45, from: 180, to: 2600 });
+        const intro = () => S.introSound();
         if (navigator.userActivation?.hasBeenActive) intro();
         else wrap?.addEventListener('pointerdown', e => { if (!e.target.closest('[data-action="onbEnter"]')) intro(); }, { once: true });
       }).catch(() => {});
@@ -4890,7 +4890,7 @@ function playArrival(view) {
     <p class="ar-3">${ph.season}. Your rhythm is ready.</p></div>`;
   $app.appendChild(el);
   view.classList.add('arrive-in');
-  import('./sfx.js').then(S => { S.whoosh({ dur: 2.4, vol: 0.3, from: 150, to: 1400 }); setTimeout(() => S.whoosh({ dur: 1.2, vol: 0.5, from: 500, to: 5000, boom: true }), 3000); }).catch(() => {});
+  import('./sfx.js').then(S => S.arriveSound()).catch(() => {});
   setTimeout(() => el.classList.add('out'), 3400);
   setTimeout(() => { el.remove(); document.getElementById('view')?.classList.remove('arrive-in'); }, 5200);
 }

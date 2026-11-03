@@ -53,3 +53,43 @@ export function soft({ vol = 0.09 } = {}) {
     o.connect(g); g.connect(out); o.start(t); o.stop(t + 1.5);
   });
 }
+
+// ---- natural sounds: wind through leaves and soft singing-bowl tones (no whoosh, no boom) ----
+// Pinkish noise, low-passed, swelling and settling like a breeze moving through a forest.
+function pink(c, secs) {
+  const b = c.createBuffer(2, Math.ceil(c.sampleRate * secs), c.sampleRate);
+  for (let ch = 0; ch < 2; ch++) { const d = b.getChannelData(ch); let b0 = 0, b1 = 0, b2 = 0;
+    for (let i = 0; i < d.length; i++) { const w = Math.random() * 2 - 1; b0 = .99765 * b0 + w * .099; b1 = .963 * b1 + w * .2965; b2 = .57 * b2 + w * 1.0526; d[i] = (b0 + b1 + b2 + w * .1848) * .16; } }
+  const s = c.createBufferSource(); s.buffer = b; return s;
+}
+export function breeze({ dur = 3.2, vol = 0.22, bright = 1 } = {}) {
+  const c = ac(); if (!c) return false;
+  const t = c.currentTime, src = pink(c, dur + .3), lp = c.createBiquadFilter(), hp = c.createBiquadFilter(), g = c.createGain();
+  lp.type = 'lowpass'; lp.Q.value = .4; hp.type = 'highpass'; hp.frequency.value = 180;
+  // the filter opens and closes twice, like two gusts
+  lp.frequency.setValueAtTime(500, t);
+  lp.frequency.linearRampToValueAtTime(1400 * bright, t + dur * .35); lp.frequency.linearRampToValueAtTime(800, t + dur * .55);
+  lp.frequency.linearRampToValueAtTime(1900 * bright, t + dur * .75); lp.frequency.linearRampToValueAtTime(600, t + dur);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + dur * .4);
+  g.gain.setTargetAtTime(vol * .7, t + dur * .55, .3); g.gain.exponentialRampToValueAtTime(0.0001, t + dur + .2);
+  src.connect(hp); hp.connect(lp); lp.connect(g); g.connect(c.destination); src.start(t); src.stop(t + dur + .3);
+  return c.state === 'running';
+}
+// A soft bowl / wind-chime tone: sine partials with a slow shimmer and a long natural decay.
+export function bowl({ notes = [523.25], gap = .18, vol = 0.07, decay = 3.2, delay = 0 } = {}) {
+  const c = ac(); if (!c) return;
+  const t0 = c.currentTime + delay, lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 3200; lp.connect(c.destination);
+  notes.forEach((f, n) => {
+    const t = t0 + n * gap;
+    [[1, 1], [2.01, .28], [2.76, .12]].forEach(([m, a]) => {
+      const o = c.createOscillator(), g = c.createGain(), lfo = c.createOscillator(), lg = c.createGain();
+      o.type = 'sine'; o.frequency.value = f * m; lfo.frequency.value = 4.5 + n * .7; lg.gain.value = f * m * .0025; lfo.connect(lg); lg.connect(o.frequency);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol * a, t + .03); g.gain.exponentialRampToValueAtTime(0.0001, t + decay * (m === 1 ? 1 : .6));
+      o.connect(g); g.connect(lp); o.start(t); lfo.start(t); o.stop(t + decay + .1); lfo.stop(t + decay + .1);
+    });
+  });
+}
+// The three moments of the intro.
+export const introSound = () => { breeze({ dur: 4, vol: .18 }); bowl({ notes: [659.25, 783.99], gap: .9, vol: .045, decay: 3.6, delay: 1.2 }); };
+export const enterSound = () => { breeze({ dur: 2, vol: .2, bright: 1.4 }); bowl({ notes: [523.25, 659.25, 783.99, 1046.5], gap: .12, vol: .05, decay: 2.8, delay: .25 }); };
+export const arriveSound = () => { breeze({ dur: 3.4, vol: .14 }); bowl({ notes: [392, 523.25, 659.25], gap: .35, vol: .06, decay: 4, delay: .6 }); };

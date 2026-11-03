@@ -173,10 +173,10 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
     let camZ = THREE.MathUtils.lerp(CAM_START.z, CAM_END.z, k), camY = THREE.MathUtils.lerp(CAM_START.y, CAM_END.y, k);
     let warpSpeed = (1 - k) * 60 * warpBoost + 1.2;
     if (entering) {
-      const e = Math.min(1, (t - entering.t0) / entering.dur), ee = e * e * e;
+      const e = Math.min(1, (t - entering.t0) / entering.dur), ee = e * e * (3 - 2 * e); // smooth in and out, no sudden lunge
       camZ = CAM_END.z - ee * (CAM_END.z + 0.2); camY = CAM_END.y + ee * 0.25;
-      warpSpeed = 1.2 + ee * 90;
-      bloom.strength = 0.55 + ee * 2.8; bloom.threshold = 0.42 * (1 - ee);
+      warpSpeed = 1.2 + ee * 38;
+      bloom.strength = 0.55 + ee * 1.9; bloom.threshold = 0.42 * (1 - ee);
       if (e >= 1 && !entering.done) { entering.done = true; entering.resolve(); }
     }
     look.x += (look.tx - look.x) * 0.04; look.y += (look.ty - look.y) * 0.04;
