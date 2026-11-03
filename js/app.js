@@ -775,6 +775,7 @@ function logChips(l) {
   [...(l.down || []), ...(l.symptoms || []), ...(l.moods || []), ...(l.disrupt || [])].forEach(s => out.push(e(s)));
   if (l.energy) out.push(`${icon('bolt', 13)} Energy ${l.energy}/5`);
   if (l.sleep != null) out.push(`🌙 ${l.sleep}h sleep`);
+  (l.supp || []).forEach(x => out.push(`${icon('check', 13)} ${x}`));
   return out.map(x => `<span class="chip static">${x}</span>`).join('');
 }
 
@@ -3245,9 +3246,10 @@ function ptAvatar(p, cls = '') { return `<span class="pt-av ${cls}">${p.t ? `<im
 function partnersCard(info) {
   const ps = state.partners || [];
   if (!ps.length) return `${sectionTitle('Your partner')}
-    <button class="card partner-photo" data-action="nav" data-to="partners"><img src="images/partner-cinema.webp" alt="" loading="lazy"><span class="pp-shade"></span>
-      <span class="pp-in"><span class="hud">CONNECT · 2 PHONES</span><b>See where your partner is</b><small>Swap links and you’ll both see each other’s cycle and energy here.</small></span>
-      <span class="round-go">${icon('chevR', 20)}</span></button>`;
+    <button class="tf" data-action="nav" data-to="partners">
+      <span class="tf-media"><img src="images/partner-cinema.webp" alt="" loading="lazy"><span class="tf-k">${icon('users', 13)} Two phones</span><b class="tf-q">See where your partner is</b></span>
+      <span class="tf-p">Swap links and you’ll both see each other’s cycle and energy here.</span>
+      <span class="tf-cta">Connect with your partner ${icon('chevR', 14)}</span></button>`;
   const shown = ps.some(p => p.pin) ? ps.filter(p => p.pin) : ps.slice(0, 2);
   return `${sectionTitle(ps.length > 1 ? 'Your people' : 'Your partner', [ps.length > shown.length ? `All ${ps.length}` : 'All', 'partners'])}
     ${shown.map(p => { const pi = snapInfo(p, new Date()), ph = PHASES[pi.phase], en = Math.round(C.energyAt(pi.cd, pi.L, pi.P) * 100);
