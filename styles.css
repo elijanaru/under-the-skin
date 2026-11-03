@@ -4081,3 +4081,9 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .tf-phases span.now::after { display: none; }
 .spec-lead, .spec-desc { text-align: left; }
 .spec-desc { font-size: 14.5px; font-weight: 300; text-wrap: pretty; }
+
+/* ---------- Today hub: sentence-case labels ---------- */
+.hub-k > span:first-child { font-size: 17px; letter-spacing: -.005em; text-transform: none; color: #f4f5f0; font-weight: 400; }
+.hub-now small { font-size: 12.5px; letter-spacing: 0; text-transform: none; }
+.dpt-k { font-size: 12px; letter-spacing: 0; text-transform: none; }
+.hub-now { border-left-width: 1px; }
