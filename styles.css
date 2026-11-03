@@ -4201,3 +4201,18 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .cdot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 3px; vertical-align: -1px; box-shadow: 0 0 0 1px rgba(244,245,240,.25); }
 .fcol-dots { display: flex; align-items: center; gap: 2px; }
 .fcol-dots .cdot { width: 14px; height: 14px; }
+
+/* Today's open tip (food guide, tea, stress, stretch, meditate): black glass instead of white paper */
+.hub-tip.on { background: #0b0d0b; color: var(--paper); box-shadow: 0 0 0 1px rgba(244,245,240,.1), 0 16px 40px rgba(0,0,0,.5); }
+.hub-tip-in b { color: var(--paper); }
+.hub-tip-in p, .hub-tip-in ol, .hub-tip-in .fmeal p { color: rgba(244,245,240,.72); }
+.hub-tip ol li::marker, .fk, .fmeal small, .ht-how { color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%) !important; }
+.hub-tip .ht-g { background: rgba(255,255,255,.06); color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%); box-shadow: none; border: 1px solid rgba(244,245,240,.1); }
+.fcol { background: rgba(255,255,255,.045); border: 1px solid rgba(244,245,240,.1); box-shadow: none; }
+.hub-tip .fn { background: rgba(255,255,255,.045); border: 1px solid rgba(244,245,240,.1); box-shadow: none; }
+.hub-tip .fn span { color: hsl(calc(var(--hb) + 103 * var(--hk)) calc(41% * var(--hs)) 68%); }
+.fmeal { background: rgba(255,255,255,.045); border: 1px solid rgba(244,245,240,.1); box-shadow: none; }
+.fmeal > span { background: rgba(255,255,255,.08); color: var(--paper); box-shadow: none; }
+.hub-tip .ht-fast { background: rgba(255,255,255,.06); }
+.hub-tip .ev-some, .hub-tip .ev-strong, .hub-tip .ev-emerging, .hub-tip .ev-tcm { background: rgba(244,245,240,.1); color: var(--paper); }
+.hub-tip .fn-more { color: var(--paper) !important; opacity: 1; }
