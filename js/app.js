@@ -3967,7 +3967,7 @@ function viewShare() {
     </section>
     <button class="btn btn-light btn-block" data-action="shareSend">${icon('heart', 18)} Share link with ${aud === 'partner' ? 'my partner' : 'friends'}</button>
     <button class="btn btn-ghost btn-block" data-action="sharePreview">Preview what they'll see</button>
-    <p class="fine center">The link holds your name and cycle estimates only. Anyone with the link can view it — share it with people you trust.</p>
+    <p class="fine center">The link holds your name and cycle estimates, plus your photo and star sign if you added them. Never symptoms, moods or notes. Anyone with the link can view it — share it with people you trust.</p>
   </div>`;
 }
 function viewWith(q) {
@@ -4108,8 +4108,8 @@ function viewPrivacy() {
     <p><b>Delete your account anytime.</b> Profile → Account → “Delete account” erases your account and every copy of your data on our server straight away.</p>
     <p><b>Partner signals.</b> When you send love or a care nudge, only the signal type, your first name and a private inbox code pass through a free relay (ntfy.sh) to your partner’s app. Your cycle, symptoms and notes are never sent.</p>
     <p><b>No tracking.</b> No analytics, no advertising, no cookies for tracking.</p>
-    <p><b>Partner links.</b> When you share your cycle, the link contains only your first name and cycle estimates (last period start, average cycle and period length). Symptoms, moods and notes are never included. Anyone with the link can view it, so share it only with people you trust.</p>
-    <p><b>Images and fonts.</b> Recipe photos load from Unsplash and fonts from Google Fonts; the 3D graphics library loads from jsDelivr. These services receive standard web requests (like your IP address) but none of your health data.</p>
+    <p><b>Partner links.</b> When you share your cycle, the link contains your first name, cycle estimates (last period start, average cycle and period length, fertile days only if you turn them on) and a private code so love signals reach you. If you added them, it also holds your profile photo and the day and month of your birthday, for your star sign. Symptoms, moods and notes are never included. Anyone with the link can view it, so share it only with people you trust.</p>
+    <p><b>Images and fonts.</b> Food photos load from Unsplash and Pexels, fonts from Google Fonts, and the sign-in library from jsDelivr. These services receive standard web requests (like your IP address) but none of your health data.</p>
     <p><b>Delete anytime.</b> Profile → “Delete all data” erases everything from this device. Deleting the app or clearing your browser data does the same — so export a backup first if you want to keep it.</p>
     <p><b>Not medical advice.</b> Predictions are estimates based on your logs and traditional knowledge. Underskin is not a contraceptive and does not diagnose or treat any condition.</p>
   </div>`;
