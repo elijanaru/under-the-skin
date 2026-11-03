@@ -4087,3 +4087,13 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .hub-now small { font-size: 12.5px; letter-spacing: 0; text-transform: none; }
 .dpt-k { font-size: 12px; letter-spacing: 0; text-transform: none; }
 .hub-now { border-left-width: 1px; }
+
+/* ---------- nutrients: grouped list, calm labels, roomier week rings ---------- */
+.nu-intro small, .nw-h { font-size: 13px !important; letter-spacing: 0 !important; text-transform: none !important; }
+.nw-rings .mv2-b b { font-size: 10.5px; letter-spacing: -.01em; }
+.nu-c { margin: 0 !important; border-radius: 0 !important; border-bottom-width: 0 !important; box-shadow: none !important; }
+.nu-c:not(.nu-c + .nu-c) { border-top-left-radius: 24px !important; border-top-right-radius: 24px !important; }
+.nu-c:not(:has(+ .nu-c)) { border-bottom-left-radius: 24px !important; border-bottom-right-radius: 24px !important; border-bottom-width: 1px !important; margin-bottom: 18px !important; }
+.nu-list { gap: 0 !important; }
+.nw-h small { font-size: 13px; letter-spacing: 0; text-transform: none; }
+.nu-c + .nu-c { border-top-color: rgba(255,255,255,.06) !important; }
