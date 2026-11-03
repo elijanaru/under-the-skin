@@ -730,6 +730,20 @@ export const EVIDENCE = {
 
 // Whole-body relief guide per symptom: body, food link (SYMPTOM_FOODS), TCM, red flags.
 export const RELIEF = {
+  'Face fascia': {
+    why: 'Fascia is the thin, stretchy web under your skin that wraps every facial muscle. Jaw clenching, stress, screen posture and mouth breathing can leave it tight, so the face holds fluid and tension and looks puffy or tired. These hands-on releases are inspired by Oscar Patel’s thumb-pulling work. They feel lovely, but there are no clinical trials on them yet.',
+    steps: [
+      { t: 'Warm up the tissue', d: 'Clean, warm hands and a few drops of tallow or a cold-pressed oil. Stroke from the centre of your face outwards for a minute so the fascia softens before you work it.', ev: 'emerging' },
+      { t: 'Zyg pushing', d: 'Place your knuckles just under the cheekbones beside the nose. Press in gently and glide slowly outwards along the bone to the top of the ears. 5–10 slow passes.', ev: 'emerging' },
+      { t: 'Thumb pulling', d: 'Washed hands, short nails. Put your thumb inside your cheek and your fingers outside, gently pinch the cheek and pull it outwards and up towards the ear. Hold 5–10 seconds, then move to the next spot: near the corner of the mouth, mid-cheek, back by the molars. Firm but never painful.', ev: 'emerging' },
+      { t: 'Release the jaw', d: 'Find the masseter, the muscle that bulges when you clench. Press in with two fingers and slowly open and close your mouth 5 times. Very helpful if you clench at night.', ev: 'emerging' },
+      { t: 'Drain down the neck', d: 'Finish with light strokes from under the ears down the sides of the neck to the collarbone, 5–10 times, so the loosened fluid has somewhere to go.', ev: 'emerging' },
+      { t: 'Tongue up, nose breathing', d: 'Through the day, rest your whole tongue on the roof of your mouth, lips closed and teeth apart, breathing through your nose. Good resting posture keeps the face from tightening again.', ev: 'emerging' },
+      { t: 'Gua sha along the meridians', d: 'Flat stone, light pressure, upwards and outwards along the jaw and cheekbones, then down the neck. 3–5 minutes most days.', ev: 'tcm' },
+    ],
+    tcm: 'In Chinese medicine the Stomach and Large Intestine channels run over the cheeks and jaw. Gentle pressing and scraping moves qi and blood so the face looks warm and rosy. The face often holds more water before your period, so a short drainage routine helps most in the late luteal days.',
+    doctor: 'Jaw pain, clicking or locking that doesn’t settle (TMJ), pain or swelling after dental work, or numbness. Skip the treated area for 2 weeks after fillers or Botox, and don’t massage over open spots, mouth ulcers or cystic breakouts.',
+  },
   'Ovulation pain': {
     why: 'A one-sided twinge, cramp or dull ache low in your belly as the follicle stretches and releases the egg (“mittelschmerz”). A little fluid released with the egg can irritate the belly lining. It usually lasts minutes to 1–2 days and can switch sides from month to month.',
     steps: [

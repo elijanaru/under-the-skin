@@ -619,6 +619,12 @@ function promiseHTML(day) {
         <li><span>2</span><div><b>Do today’s plan</b><small>Eat, move and rest for your phase.</small></div><button class="pm-go" data-action="nav" data-to="today">Today</button></li>
         <li><span>3</span><div><b>Take your photos</b><small>Day 1 and day 90, same spot, same light.</small></div></li>
       </ol></section>
+    ${sectionTitle('Our founder’s before & after')}
+    <section class="card glass fba"><div class="ba-pair">
+      <figure><img src="images/ba-founder-before.jpg" alt="The founder before, living against her cycle" loading="lazy"><figcaption><b>Before</b><small>Running at the same pace every day</small></figcaption></figure>
+      <figure><img src="images/ba-founder-after.jpg" alt="The founder after, living with her hormones" loading="lazy"><figcaption><b>After</b><small>Living with my hormones</small></figcaption></figure></div>
+      <p class="fba-p">Clearer skin, calmer face, more glow. One woman’s story, not a promise: your own before &amp; after is below.</p>
+      <button class="link fba-go" data-action="nav" data-to="relief/Face%20fascia">How to release face fascia ${icon('chevR', 12)}</button></section>
     ${sectionTitle('Your before & after')}
     <section class="card glass ba"><div class="ba-pair">${slot('before', 'Before')}${slot('after', 'After')}</div>
       <p class="ba-note">${icon('check', 12)} Your photos stay on this phone only. They are never uploaded or backed up.</p></section>
@@ -1938,7 +1944,7 @@ function reliefKey(sym) { return RELIEF[sym] ? sym : MOOD_TO_RELIEF[sym] || null
 // What often bothers women in each part of the cycle (shown first, after anything she logged).
 const RELIEF_WINDOW = { 'flow-start': ['Cramps', 'Fatigue', 'Headache'], 'flow-end': ['Fatigue', 'Cramps'], rising: [], building: [], peak: ['Ovulation pain', 'Bloating'], settle: ['Bloating', 'Tender breasts'], focus: ['Tender breasts', 'Insomnia', 'Acne'], premenstrual: ['PMS mood', 'Bloating', 'Headache'] };
 // Drawn line icon for each relief topic (no emoji).
-const RELIEF_IC = { 'Ovulation pain': 'seed', Cramps: 'thermo', 'PMS mood': 'sun', Bloating: 'cup', Insomnia: 'moon', Acne: 'spark', Headache: 'mind', Fatigue: 'bolt', 'Tender breasts': 'heart' };
+const RELIEF_IC = { 'Face fascia': 'hand', 'Ovulation pain': 'seed', Cramps: 'thermo', 'PMS mood': 'sun', Bloating: 'cup', Insomnia: 'moon', Acne: 'spark', Headache: 'mind', Fatigue: 'bolt', 'Tender breasts': 'heart' };
 const reliefIc = (k, size = 20) => icon(RELIEF_IC[k] || 'leaf', size);
 function viewReliefIndex() {
   const recent = new Set();
