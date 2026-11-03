@@ -3012,13 +3012,15 @@ function hxNow(x, info) {
   return { r: .5, word: '', amt: '', note: '' };
 }
 const hxArrow = tr => tr === 'rising' ? ' ↗' : tr === 'falling' ? ' ↘' : '';
+// Small glowing level ring on each hormone tile (Opal-style bubble).
+function hxRing(r, i) { const R = 16, Cc = 2 * Math.PI * R; return `<svg class="hxt-ring" viewBox="0 0 40 40" style="--i:${i}" aria-hidden="true"><circle class="t" cx="20" cy="20" r="${R}"/><circle class="p" cx="20" cy="20" r="${R}" stroke-dasharray="${(Cc * Math.max(.05, Math.min(1, r))).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 20 20)"/></svg>`; }
 function viewHormones() {
   const { info } = M; if (!info) return viewToday();
   const r = route(); if (r.id != null && HORMONE_LIBRARY[+r.id]) return viewHormone(+r.id);
   const ph = PHASES[info.phase];
   const tile = (x, i) => { const n = hxNow(x, info); return `<button class="hxt ${n.r > .66 ? 'hi' : n.r < .2 ? 'lo' : ''}" data-action="nav" data-to="hormones/${i}">
       <span class="hxt-g">${x.g}</span><b>${x.n === 'Oestrogen' ? 'Estrogen' : x.n}</b><small class="hxt-s">${x.s}</small>
-      <span class="hxt-bar"><i style="width:${Math.round(n.r * 100)}%"></i></span>
+      ${hxRing(n.r, i)}
       <span class="hxt-now"><em>${n.word}${hxArrow(n.tr)}</em><span>${n.amt}</span></span></button>`; };
   const cyc = HORMONE_LIBRARY.map((x, i) => [x, i]).filter(([x]) => HX_KEY[x.n]), rest = HORMONE_LIBRARY.map((x, i) => [x, i]).filter(([x]) => !HX_KEY[x.n]);
   return `${topbar('Hormones', { back: true })}

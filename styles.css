@@ -3924,3 +3924,12 @@ button.tip:active { transform: scale(.98); background: var(--glass-2); }
 .card-light .ev-some, .card-light .ev-emerging { background: hsl(calc(var(--hb) + 145 * var(--hk)) calc(39% * var(--hs2)) 30% / .12); color: hsl(calc(var(--hb) + 145 * var(--hk)) calc(39% * var(--hs2)) 30%); }
 .card-light .ev-tcm { background: transparent; color: hsl(calc(var(--hb) + 145 * var(--hk)) calc(39% * var(--hs2)) 30%); border: 1px solid hsl(calc(var(--hb) + 145 * var(--hk)) calc(39% * var(--hs2)) 30% / .4); }
 .tea-cta { margin-top: 12px; background: #0b0d0b; color: #f4f5f0; }
+/* Hormone tiles: a glowing level ring instead of a flat bar */
+.hxt { position: relative; }
+.hxt-g, .hxt b { max-width: calc(100% - 44px); }
+.hxt-ring { position: absolute; top: 12px; right: 12px; width: 40px; height: 40px; }
+.hxt-ring .t { fill: rgba(255,255,255,.04); stroke: rgba(255,255,255,.1); stroke-width: 4; }
+.hxt-ring .p { fill: none; stroke: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%); stroke-width: 4; stroke-linecap: round; filter: drop-shadow(0 0 4px hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77% / .55)); animation: capDraw 1.2s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i) * 60ms + .15s); }
+.hxt.lo .hxt-ring .p { stroke: rgba(244,245,240,.45); filter: none; }
+.hxt-now { margin-top: 6px; }
+@media (prefers-reduced-motion: reduce) { .hxt-ring .p { animation: none; } }
