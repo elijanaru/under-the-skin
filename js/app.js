@@ -3781,15 +3781,18 @@ function viewRitual(id) {
 function viewPoint(phase) {
   const t = TCM[phase]; if (!t) return viewMissing();
   const p = t.point;
-  return `${topbar('Acupressure', { back: true })}
-  <div class="pad">
-    <section class="detail-hero point-hero">
+  const foot = `
       ${phase === 'ovulatory'
         ? `<svg viewBox="0 0 200 140" class="foot"><path d="M55 8 C 48 50, 46 95, 60 132 M145 8 C 152 50, 154 95, 140 132" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/><circle cx="100" cy="52" r="3" fill="none" stroke="rgba(255,255,255,.45)"/><path d="M100 60 V96" stroke="rgba(255,255,255,.18)" stroke-dasharray="3 4"/><circle cx="100" cy="96" r="7" fill="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" class="pulse-p"/></svg>`
         : `<svg viewBox="0 0 200 140" class="foot"><path d="M60 20 C 40 40, 38 90, 50 120 C 58 135, 95 135, 105 120 C 120 95, 112 60, 100 35 C 92 18, 72 10, 60 20 Z" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
-        <circle cx="${phase === 'luteal' ? 92 : phase === 'ovulatory' ? 78 : phase === 'follicular' ? 58 : 54}" cy="${phase === 'luteal' ? 40 : phase === 'ovulatory' ? 70 : phase === 'follicular' ? 108 : 92}" r="7" fill="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" class="pulse-pt"/></svg>`}
-      <div class="dh-in"><div class="eyebrow">${t.stage} · ${t.organ}</div><h1>${p.code} · ${p.name}</h1></div></section>
-    <section class="card card-light"><div class="eyebrow dark">Where</div><p class="dp-text">${p.where}</p><div class="eyebrow dark mt">What it does</div><p class="dp-text">${p.does}</p></section>
+        <circle cx="${phase === 'luteal' ? 92 : phase === 'ovulatory' ? 78 : phase === 'follicular' ? 58 : 54}" cy="${phase === 'luteal' ? 40 : phase === 'ovulatory' ? 70 : phase === 'follicular' ? 108 : 92}" r="7" fill="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" class="pulse-pt"/></svg>`}`;
+  return `<div class="pad">
+    ${specHero({ glyph: '穴', han: true, eyebrow: `Acupressure · ${t.stage}`, name: `${p.code} · ${p.name}`, label: 'Key facts',
+      rows: [[`${p.secs} s`, 'Press time'], [phase === 'ovulatory' ? 'One point' : 'Both sides', 'Where'], [t.organ, 'Organ']], lead: `${p.name} · what it does`, desc: p.does })}
+    <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit([phase], M.info && M.info.phase)}</section>
+    ${sectionTitle('Where to press')}
+    <section class="card card-light pt-where"><div class="pt-foot">${foot}</div><p class="dp-text">${p.where}</p></section>
+    ${sectionTitle('How to press')}
     <section class="card glass"><div class="step"><span class="step-n">1</span><p>Find the point — it often feels slightly tender.</p></div>
       <div class="step"><span class="step-n">2</span><p>${phase === 'ovulatory' ? 'Rest two fingertips on it and make slow small circles.' : 'Press firmly with your thumb, making slow small circles.'}</p></div>
       <div class="step"><span class="step-n">3</span><p>${phase === 'ovulatory' ? 'Keep the pressure gentle and breathe slowly into your belly. It sits on the midline, so there is only one.' : 'Breathe slowly into your belly. Repeat on the other side.'}</p></div></section>

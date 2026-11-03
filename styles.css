@@ -3952,3 +3952,10 @@ button.tip:active { transform: scale(.98); background: var(--glass-2); }
 .hxd-ring { position: relative; flex: none; display: grid; place-items: center; }
 .hxd-ring > * { grid-area: 1 / 1; }
 .hxd-ring small { font-size: 10px; letter-spacing: .06em; color: #3b443d; }
+/* Acupressure: foot diagram on a paper card */
+.pt-where { display: flex; align-items: center; gap: 14px; }
+.pt-foot { flex: none; width: 120px; }
+.pt-foot .foot { position: static; transform: none; width: 100%; height: auto; display: block; }
+.pt-where .foot path, .pt-where .foot circle[fill="none"] { stroke: rgba(11,13,11,.35); }
+.pt-where .foot circle:not([fill="none"]) { fill: hsl(calc(var(--hb) + 145 * var(--hk)) calc(39% * var(--hs2)) 30%); }
+.pt-where .dp-text { margin: 0; }
