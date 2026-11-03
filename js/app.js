@@ -1384,7 +1384,7 @@ function eatCatInner(phase, cat) {
   return `<div class="ec-h"><span class="ec-g">${icon(ct.ic, 22)}</span><div><b>${ct.t}</b><p>${C0[0]}</p></div></div>
       ${warm && (cat === 'dairy' || cat === 'drinks') ? `<p class="eg-note warm">${icon('sun', 12)} These days: everything warm or at room temperature, nothing iced.</p>` : ''}
       <div class="eat-foods">${warmChips(C0[1], cat, warm).map(([g, n]) => { const x = cat === 'supps' && suppOf(n); return x ? `<button class="eat-sup" data-action="nav" data-to="supp/${x.id}"><span>${n}</span>${icon('chevR', 14)}</button>` : `<span>${n}</span>`; }).join('')}</div>
-      ${cat === 'supps' ? `<p class="eg-note">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}.</p>` : ''}`;
+      ${cat === 'supps' ? `<p class="eg-note">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}.</p><button class="sup-all" data-action="nav" data-to="supp">All supplements: doses and studies ${icon('chevR', 14)}</button>` : ''}`;
 }
 // The two best dishes for each phase, as one photo card with the day, the phase and its tagline in the middle.
 // Menstrual photos (Pexels licence): broth by jenvit keiwalinsarid (3559899), steak (618775). Others: recipe photos (Unsplash).

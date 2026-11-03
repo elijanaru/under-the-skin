@@ -4597,3 +4597,4 @@ button.link::after, a.link::after, .cd-link::after { content: ''; position: abso
 .spec-glyph.sym { top: 30%; font-family: 'Outfit', sans-serif; font-weight: 200; font-size: 84px; letter-spacing: -.04em; color: #304023; }
 .beyond .bw-hand { width: calc(100% + 24px) !important; max-width: 440px; margin: 0 -12px !important; }
 .beyond .bw-hand { width: 78% !important; max-width: 320px; margin: 0 auto !important; }
+.sup-all { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 10px 16px; border-radius: 22px; background: #fff; color: #304023; font: inherit; font-size: 13.5px; font-weight: 500; box-shadow: 0 6px 16px rgba(48,64,35,.12); }
