@@ -5123,3 +5123,29 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
   drop-shadow(0 4px 6px rgba(30,14,8,.3)); }
 .bc-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .bc-opt.on .bc-pic { background: rgba(255,255,255,.5); }
+
+/* "Would you like to come off it?": frosted pearl card, dark ink, clear pill choices */
+.onb .bc-q { background: linear-gradient(160deg, rgba(255,255,255,.82), rgba(255,255,255,.62)) !important; border: 1px solid rgba(255,255,255,.95) !important;
+  box-shadow: 0 0 0 1px rgba(48,64,35,.06), 0 18px 36px -20px rgba(30,20,20,.5) !important; backdrop-filter: blur(18px) saturate(1.1); -webkit-backdrop-filter: blur(18px) saturate(1.1);
+  border-radius: 28px !important; padding: 20px 18px !important; gap: 8px; }
+.onb .bc-q h3 { color: #304023 !important; font-size: 19px !important; font-weight: 600 !important; letter-spacing: -.02em; margin: 0 !important; text-shadow: none !important; }
+.onb .bc-q p { color: #3f4c33 !important; font-size: 14.5px !important; font-weight: 400 !important; line-height: 1.45; margin: 0 0 6px !important; text-shadow: none !important; }
+.onb .bc-q .chips { display: flex; flex-direction: column; gap: 8px; }
+.onb .bc-q .chip { justify-content: flex-start; text-align: left; width: 100%; padding: 13px 16px !important; border-radius: 18px !important; font-size: 14.5px !important; font-weight: 500 !important;
+  background: #fff !important; color: #304023 !important; border: 1px solid rgba(48,64,35,.12) !important; box-shadow: 0 6px 14px -10px rgba(30,20,20,.4) !important; text-shadow: none !important; transition: background .25s, color .25s, transform .25s; }
+.onb .bc-q .chip.on { background: #304023 !important; color: #fff !important; border-color: #304023 !important; transform: scale(1.01); }
+.onb .bc-q .fine { color: #56624a !important; text-shadow: none !important; margin: 4px 0 0 !important; }
+.onb.no-fig .onb-body .bc-q p.muted, .onb.no-fig .onb-body .bc-q p.muted.sm { color: #3f4c33 !important; text-shadow: none !important; font-weight: 400 !important; }
+.onb.no-fig .onb-body .bc-q { margin-bottom: 8px; }
+/* birth control options: frosted, crisp text; the chosen one fills with a thick pearly haze */
+.onb.no-fig .bc-opt { background: linear-gradient(160deg, rgba(255,255,255,.5), rgba(255,255,255,.3)) !important; border: 1px solid rgba(255,255,255,.75) !important;
+  backdrop-filter: blur(14px) saturate(1.1); -webkit-backdrop-filter: blur(14px) saturate(1.1); box-shadow: 0 10px 24px -18px rgba(30,20,20,.55);
+  transition: background .45s cubic-bezier(.22,1,.36,1), box-shadow .45s, border-color .45s, transform .35s cubic-bezier(.22,1,.36,1); }
+.onb.no-fig .bc-opt b { color: #26331b !important; font-weight: 500 !important; text-shadow: 0 0 10px rgba(255,255,255,.55); }
+.onb.no-fig .bc-opt small { color: #3f4c33 !important; font-weight: 400 !important; }
+.onb.no-fig .bc-opt.on { background: radial-gradient(120% 140% at 20% 0%, #fff 0%, rgba(255,255,255,.92) 45%, rgba(250,240,244,.86) 100%) !important;
+  border-color: #304023 !important; box-shadow: 0 0 0 1.5px #304023, 0 0 34px rgba(255,255,255,.7), 0 16px 30px -18px rgba(30,20,20,.6) !important;
+  backdrop-filter: blur(24px) saturate(1.2); -webkit-backdrop-filter: blur(24px) saturate(1.2); transform: scale(1.015); }
+.onb.no-fig .bc-opt.on i { background: #304023 !important; border-color: #304023 !important; color: #fff !important; }
+.onb.no-fig .bc-opt i { border-color: rgba(48,64,35,.45) !important; background: rgba(255,255,255,.5); }
+.onb.no-fig .bc-opt.on .bc-pic { background: rgba(239,212,221,.55); }
