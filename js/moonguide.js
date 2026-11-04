@@ -77,3 +77,28 @@ export const STARS = {
   aquarius: { s: [[18, 34, 2], [34, 30, 2.6], [48, 40, 2.2], [60, 30, 2.4], [72, 44, 2], [44, 62, 2], [60, 74, 2], [80, 70, 2]], l: [[0, 1], [1, 2], [2, 3], [3, 4], [2, 5], [5, 6], [6, 7]] },
   pisces: { s: [[14, 26, 2], [24, 18, 2.2], [30, 30, 2], [32, 50, 2], [40, 70, 2.4], [56, 80, 3], [70, 70, 2], [84, 62, 2], [90, 72, 2]], l: [[0, 1], [1, 2], [2, 0], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 6]] },
 };
+
+// Manifestation, after Neville Goddard's teaching in "Feeling is the Secret" (1944), retold in our own words:
+// the wish is lived first as a feeling, as if it were already true. A spiritual practice for reflection.
+export const MANIFEST = {
+  scene: { name: 'One small scene', why: 'New beginnings start with a clear picture.',
+    short: ['Pick a moment', 'Step inside', 'Add a sense', 'Loop, let go'], steps: ['Pick one tiny moment that could only happen once your wish is real, like a friend hugging you and saying "I am so happy for you".', 'Close your eyes and step inside it. See it from your own eyes, not from outside.', 'Add one sense: a voice, a touch, the light in the room.', 'Loop the moment until it feels natural, then let it go.'] },
+  end: { name: 'Live in the end', why: 'Growing energy loves a clear direction.',
+    short: ['Ask how it feels', 'Find it in your body', 'Act as her', 'Return to the feeling'], steps: ['Ask yourself: if this were already true, how would I feel right now?', 'Find that feeling in your body: relief, quiet pride, ease.', 'Take one small action today the way that version of you would.', 'Whenever doubt comes, return to the feeling, not to the how.'] },
+  talk: { name: 'Change your inner talk', why: 'A day for choosing, so choose your words.',
+    short: ['Listen inside', 'Catch one', 'Rewrite it', 'Keep it going'], steps: ['Notice the silent conversations you have in your head today.', 'Catch one that pulls you away from your wish.', 'Replay it as if the wish were done: what would you and the other person say now?', 'Keep the new conversation going in your mind for a minute.'] },
+  feeling: { name: 'Feel it as done', why: 'The Moon is full of light. Let the feeling be full too.',
+    short: ['Breathe', 'Say thank you', 'Feel it done', 'Let it go'], steps: ['Sit or lie down and breathe slowly for a minute.', 'Say "thank you" for your wish as if it already happened.', 'Stay with the warm, settled feeling of having it, not the wanting.', 'End by smiling and letting it go, the way you post a letter.'] },
+  revision: { name: 'Revision', why: 'A waning Moon is for clearing what is old.',
+    short: ['Pick a moment', 'Replay it better', 'Feel the new one', 'Sleep on it'], steps: ['Tonight, think of one moment from today that did not go the way you wanted.', 'Replay it from the start, but this time it goes the way you wish it had.', 'Feel the new version as real until the old one loses its sting.', 'Go to sleep with the new version in mind.'] },
+  sats: { name: 'The drowsy moment', why: 'Rest makes the mind soft and open.',
+    short: ['Get drowsy', 'Play your scene', 'Feel, don’t force', 'Drift off'], steps: ['In bed, let your body get heavy, as if you are about to fall asleep.', 'In that drowsy state, play your short scene of the wish come true.', 'Do not force it. Just feel it as real and natural.', 'Fall asleep inside the feeling.'] },
+};
+// moon phase → main practice; her cycle phase → the practice that suits her body now
+export const MANIFEST_MOON = { new: 'scene', wax1: 'end', q1: 'talk', wax2: 'end', full: 'feeling', wan1: 'feeling', q3: 'revision', wan2: 'sats' };
+export const MANIFEST_CYCLE = {
+  menstrual: ['sats', 'During your period you sink into rest easily, so the drowsy moment before sleep comes almost by itself.'],
+  follicular: ['scene', 'Fresh energy and new ideas: a good time to draw a clear new picture.'],
+  ovulatory: ['end', 'You speak and act with ease now, so living as if it is done feels natural.'],
+  luteal: ['revision', 'You notice what is not working now. Revision turns that clarity into something kind.'],
+};

@@ -2412,6 +2412,17 @@ function moonPage(embed) {
 
     <section class="mn-aff"><small>Say it today</small><p>“${MG.MOON_AFFIRM[mn.sign][inward ? 0 : 1]}”</p></section>
 
+    ${(() => { const mk = MG.MANIFEST_MOON[pg.k] || 'feeling', cy = phase && MG.MANIFEST_CYCLE[phase], k = ui.maniK && MG.MANIFEST[ui.maniK] ? ui.maniK : mk, T = MG.MANIFEST[k], scene = (state.manifest || {})[todayISO()] || '';
+      const opts = [...new Set([mk, cy && cy[0]].filter(Boolean))];
+      return `<section class="card mn-mani"><div class="mm-h"><span class="mm-art" aria-hidden="true"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="17" class="mm-o"/><path d="M24 14c-5 4-5 16 0 20 5-4 5-16 0-20z" class="mm-s"/><circle cx="24" cy="24" r="3" class="mm-c"/></svg></span><div class="mn-k"><small>Manifest tonight</small><b>${opts.length > 1 ? 'Feel the wish as done' : T.name}</b></div></div>
+        ${opts.length > 1 ? `<div class="mm-pick">${opts.map(o => `<button class="${o === k ? 'on' : ''}" data-action="maniK" data-v="${o}">${o === mk ? `${icon('moon', 13)} For the moon` : `${icon('heart', 13)} For your body`}<b>${MG.MANIFEST[o].name}</b></button>`).join('')}</div>` : ''}
+        <p class="mm-why">${k === mk ? T.why : cy[1]}</p>
+        <ol class="mm-flow">${T.short.map((x, i) => `<li style="--i:${i}"><span>${i + 1}</span><b>${x}</b></li>`).join('')}</ol>
+        <details class="mm-more"><summary>Show me how ${icon('chevR', 14)}</summary>
+          <ol class="mm-steps">${T.steps.map(x => `<li>${x}</li>`).join('')}</ol>
+          <label class="mm-scene"><span>My scene, in the present tense</span><textarea class="field mn-ta" data-input="mani.today" rows="2" placeholder="I am… / I have… / It feels so good that…">${esc(scene)}</textarea></label>
+          <p class="mm-src">After Neville Goddard’s teaching in <i>Feeling is the Secret</i>: live the wish first as a feeling. A spiritual practice for reflection.</p></details></section>`; })()}
+
     ${starSections()}
 
     <section class="card mn-ask"><div class="mn-k"><small>Tonight's reflection</small><b>${pg.ask}</b></div>
@@ -5645,6 +5656,7 @@ const actions = {
   pfTab: d => { ui.pfTab = d.v; render(); },
   groAisle: d => { ui.groAisle = d.v; render(); const t = document.querySelector('.gro-tabs'), on = t && t.querySelector('.on'); if (on) t.scrollLeft = on.offsetLeft - (t.clientWidth - on.offsetWidth) / 2; },
   czTab: d => { ui.czTab = d.v; render(); },
+  maniK: d => { ui.maniK = d.v; render(); },
   czWhy: () => { if (ui.czTab && ui.czTab !== 'today') { ui.czTab = 'today'; render(); } const el = document.querySelector('.cx-why'); el && el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); },
   moonRit: d => { ui.moonRit = d.v; render(); },
   moonSave: d => {
@@ -5825,6 +5837,7 @@ document.addEventListener('input', e => {
   const f = e.target.dataset?.input; if (!f) return;
   if (f === 'ui.placeQ') { ui.placeQ = e.target.value; return; }
   if (f.startsWith('moon.')) { (ui.moonDraft = ui.moonDraft || {})[f.slice(5)] = e.target.value; return; }
+  if (f === 'mani.today') { const j = state.manifest = state.manifest || {}; if (e.target.value.trim()) j[todayISO()] = e.target.value; else delete j[todayISO()]; save(); return; }
   if (f === 'moonj.today') { const j = state.moonJournal = state.moonJournal || {}; if (e.target.value.trim()) j[todayISO()] = e.target.value; else delete j[todayISO()]; save(); return; }
   const [scope, key] = f.split('.'), v = e.target.value, isDate = e.target.type === 'date';
   if (isDate && v && +v.slice(0, 4) < 1900) return; // still typing the year (0001, 0019, 0199…): wait for all four digits

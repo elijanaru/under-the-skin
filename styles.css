@@ -6853,3 +6853,34 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .op-stars line { stroke: rgba(255,255,255,.75); stroke-width: .8; }
 .op-flash.b { display: none; }
 .op-flash { opacity: 1; filter: blur(3px) saturate(1.35); }
+/* Moon page: manifest tonight (after Neville Goddard), a calm white card with numbered steps */
+.mn .card.mn-mani { background: #fff !important; border: 1px solid rgba(48,64,35,.08) !important; border-radius: 30px; padding: 20px; color: var(--mn-ink); box-shadow: 0 14px 34px rgba(120,70,90,.08) !important; }
+.mm-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0 2px; }
+.mm-pick button { display: grid; gap: 2px; text-align: left; padding: 10px 12px; border-radius: 18px; border: 1px solid rgba(48,64,35,.14); background: #fbf7f8; color: #4b5a40; font: 400 12px var(--font); cursor: pointer; }
+.mm-pick button .ic { vertical-align: -2px; margin-right: 3px; }
+.mm-pick button b { font-size: 14px; font-weight: 500; color: #20301a; }
+.mm-pick button.on { background: #15141f; border-color: #15141f; color: rgba(255,255,255,.75); }
+.mm-pick button.on b { color: #fff; }
+.mm-why { margin: 10px 0 4px; font-size: 14.5px; line-height: 1.45; color: #34412b; }
+.mm-steps { counter-reset: mm; list-style: none; margin: 8px 0 0; padding: 0; }
+.mm-steps li { counter-increment: mm; position: relative; padding: 10px 0 10px 40px; font-size: 14.5px; line-height: 1.45; color: #20301a; border-top: 1px solid rgba(48,64,35,.08); }
+.mm-steps li::before { content: counter(mm); position: absolute; left: 0; top: 9px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font: 500 13px var(--font); color: #f0d9a6; background: #15141f; }
+.mm-scene { display: block; margin-top: 10px; }
+.mm-scene span { display: block; font-size: 12.5px; color: #5c6950; margin-bottom: 6px; }
+.mm-src { margin: 10px 0 0; font-size: 12px; line-height: 1.4; color: #5c6950; }
+.mm-h { display: flex; gap: 12px; align-items: center; }
+.mm-art { flex: none; width: 48px; height: 48px; border-radius: 50%; background: #15141f; display: grid; place-items: center; }
+.mm-art svg { width: 40px; height: 40px; }
+.mm-o { fill: none; stroke: rgba(240,217,166,.45); stroke-width: 1.2; stroke-dasharray: 0 3.2; stroke-linecap: round; }
+.mm-s { fill: none; stroke: #f0d9a6; stroke-width: 1.4; }
+.mm-c { fill: #fff; }
+.mm-flow { list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin: 14px 0 4px; padding: 0; position: relative; }
+.mm-flow::before { content: ''; position: absolute; left: 12.5%; right: 12.5%; top: 15px; border-top: 1.5px dotted rgba(48,64,35,.3); }
+.mm-flow li { position: relative; display: grid; justify-items: center; text-align: center; gap: 6px; }
+.mm-flow span { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font: 500 13px var(--font); color: #f0d9a6; background: #15141f; box-shadow: 0 0 0 4px #fff; }
+.mm-flow b { font-size: 12.5px; font-weight: 500; line-height: 1.25; color: #20301a; }
+.mm-more { margin-top: 12px; border-top: 1px solid rgba(48,64,35,.08); }
+.mm-more summary { list-style: none; display: flex; align-items: center; justify-content: center; gap: 4px; height: 44px; margin-top: 10px; border-radius: 24px; background: #15141f; color: #fff; font: 500 14px var(--font); cursor: pointer; }
+.mm-more summary::-webkit-details-marker { display: none; }
+.mm-more[open] summary { background: #f6f2f3; color: #20301a; }
+.mm-more[open] summary .ic { transform: rotate(90deg); }
