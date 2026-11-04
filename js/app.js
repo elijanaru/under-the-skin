@@ -1515,16 +1515,15 @@ function viewBrain(id) {
   const acts = R ? [...R.cards.filter(c => !c.good && c.fix).map(c => ({ id: c.s, e: SYM_EMOJI[c.s] || '🌿', t: c.s, why: firstLine(c.why), recs: planRecs(c, warmNow) })),
     ...R.notes.filter(x => x.tone === 'info').map(x => ({ id: x.t, e: x.emo, t: x.t, why: x.p, recs: [] }))] : [];
   const good = R ? [...R.notes.filter(x => x.tone === 'good'), ...R.cards.filter(c => c.good).map(c => ({ t: c.s, p: c.why }))] : [];
-  const n = warns.length + acts.length + good.length, done = ui.brDone = ui.brDone || {};
+  const n = warns.length + acts.length + good.length;
   const body = !R || !n ? `<section class="br-empty"><p>Log a few things and I’ll tell you exactly what to do today.</p><button class="btn btn-light" data-action="nav" data-to="log">${icon('plus', 18)} Check in</button></section>` : `
     ${warns.map(w => `<section class="bx-warn"><span class="bx-wi">!</span><div><small>Check this</small><b>${w.t}</b><p>${w.p}</p></div></section>`).join('')}
-    ${acts.length ? `<div class="br-h">Your plan for today</div>
-    <div class="bx-plan">${acts.map(x => { const on = done[k + x.id]; return `<section class="bx-t ${on ? 'done' : ''}">
-      <div class="bx-top"><span class="bx-e">${x.e}</span><b>${x.t}</b>
-        <button class="bx-tick" data-action="brTick" data-id="${esc(k + x.id)}" aria-pressed="${!!on}" aria-label="Mark as done">${on ? icon('check', 16) : ''}</button></div>
+    ${acts.length ? `<div class="br-h">What helps today</div>
+    <div class="bx-plan">${acts.map(x => `<section class="bx-t">
+      <div class="bx-top"><span class="bx-e">${x.e}</span><b>${x.t}</b></div>
       ${x.why ? `<p class="bx-why">${x.why}</p>` : ''}
       ${x.recs.length ? `<div class="bx-recs">${x.recs.map(r => `<button class="bx-r" data-action="nav" data-to="${r.to}">${r.cup ? `<span class="cup3" aria-hidden="true"><img src="${r.cup}" alt=""><i></i></span>` : r.img ? `<img src="${r.img}" alt="" loading="lazy">` : `<span class="bx-re">${r.e}</span>`}<span class="bx-rt"><small>${r.k}</small>${r.t}</span></button>`).join('')}</div>` : ''}
-    </section>`; }).join('')}</div>` : ''}
+    </section>`).join('')}</div>` : ''}
     ${good.length ? `<div class="br-h">Going well</div><div class="bx-good">${good.map(g => `<div><b>🌟 ${g.t}</b>${g.p ? `<p>${g.p}</p>` : ''}</div>`).join('')}</div>` : ''}`;
   return `<section class="br-hero br2">
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
@@ -1540,7 +1539,7 @@ function viewBrain(id) {
       </svg>
       <div class="br2-day"><span>${isToday ? 'Today' : fmt(C.parseISO(k), { month: 'short', day: 'numeric' })}</span>${R ? `<span>Day <b>${R.di.cd}</b></span><span class="br2-ph">${ph.name}</span>` : ''}</div>
       <h1 class="br2-h">What your body<em>is saying</em></h1>
-      ${n ? `<p class="br2-n">${acts.length ? `<b>${acts.length}</b> to do` : ''}${acts.length && warns.length ? ' · ' : ''}${warns.length ? `<b>${warns.length}</b> to check` : ''}${!acts.length && !warns.length ? 'All looking good' : ''}</p>` : ''}
+      ${n ? `<p class="br2-n">${acts.length ? `<b>${acts.length}</b> ${acts.length === 1 ? 'tip' : 'tips'}` : ''}${acts.length && warns.length ? ' · ' : ''}${warns.length ? `<b>${warns.length}</b> to check` : ''}${!acts.length && !warns.length ? 'All looking good' : ''}</p>` : ''}
     </div>
   </section>
   <div class="pad br br2b">
@@ -5318,7 +5317,6 @@ const actions = {
     const k = ui.logDate || todayISO(), y = { ...(state.logs[C.iso(C.addDays(C.parseISO(k), -1))] || {}) }; delete y.notes;
     setLog(k, y); ui.logOpen = { flow: 1, body: 1, mind: 1 }; render();
   },
-  brTick: d => { const b = ui.brDone = ui.brDone || {}; b[d.id] = !b[d.id]; render(); },
   logSet: d => {
     const k = ui.logDate || todayISO(), l = getLog(k);
     let v = d.field === 'energy' || d.field === 'drive' ? +d.v : d.v;
