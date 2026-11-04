@@ -1526,7 +1526,8 @@ function viewBrain(id) {
     </section>`).join('')}</div>` : ''}
     ${good.length ? `<div class="br-h">Going well</div><div class="bx-good">${good.map(g => `<div><b>🌟 ${g.t}</b>${g.p ? `<p>${g.p}</p>` : ''}</div>`).join('')}</div>` : ''}`;
   return `<section class="br-hero br2">
-    <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
+    <div class="br2-top"><button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
+    <button class="spec-btn br2-home" data-action="nav" data-to="today" aria-label="Home">${icon('home', 20)}</button></div>
     <div class="br2-card">
       <svg class="br2-pal" viewBox="0 0 160 140" aria-hidden="true">
         <g class="br2-bub"><rect x="96" y="6" width="58" height="34" rx="17" fill="#fff" stroke="#304023" stroke-width="2"/><path d="M106 38 l-6 10 l14 -9" fill="#fff" stroke="#304023" stroke-width="2" stroke-linejoin="round"/>
@@ -1545,6 +1546,7 @@ function viewBrain(id) {
   <div class="pad br br2b">
     ${body}
     ${R && isToday && R.up.length ? `<div class="br-h">Get ahead of it</div>${R.up.map(x => `<section class="br-up"><span class="hu-when">${x.inDays === 0 ? 'Today' : x.inDays === 1 ? 'Tomorrow' : `In ${x.inDays} days`}</span><div><b>${x.name}</b> usually on ${dayRange(x)}${QUICK_FIX[x.name] ? `<small>${QUICK_FIX[x.name]}</small>` : ''}</div></section>`).join('')}` : ''}
+    <button class="btn btn-dark btn-block br2-go" data-action="nav" data-to="today">${icon('home', 18)} Back to home</button>
     <button class="btn btn-ghost btn-block" data-action="logDay" data-date="${k}">Edit check-in</button>
     <p class="fine center">General information, not medical advice or contraception.</p>
   </div>`;
@@ -4937,6 +4939,7 @@ function viewGate() {
     <h2 class="onb-title">Keep your cycle <span>safe with you</span></h2>
     <p class="gate-lead">A free account saves every period, symptom and note, and brings them back on any new phone.</p>
     <label class="ac-consent"><input type="checkbox" id="ac-consent"><span>I agree that my cycle and health logs are kept in my private account. I can delete them anytime. <a href="#/privacy">Privacy</a></span></label>
+    <label class="ac-consent ac-terms"><input type="checkbox" id="ac-terms" ${termsOK() ? 'checked' : ''}><span>I understand Underskin is general wellness information, not medical advice. Before I try any tea, food, herb, supplement or remedy, I check it myself for allergies and for clashes with medicines I take, and I use it at my own responsibility. <a href="#/privacy">Terms</a></span></label>
     <button class="ac-btn ac-mail" data-action="gateEmail">${icon('user', 18)}<span>Continue with email</span></button>
     <form class="gate-form" onsubmit="return false" aria-hidden="${!f}">
       <div class="gf-seg" role="tablist"><button type="button" class="gf-c" data-action="gateMode" data-v="create" role="tab">Create account</button><button type="button" class="gf-s" data-action="gateMode" data-v="signin" role="tab">Sign in</button></div>
@@ -4991,7 +4994,7 @@ function viewAccount() {
     <section class="ac-hero card-light"><div class="eyebrow dark">${create ? 'Create account' : 'Welcome back'}</div><h2>${create ? 'Save your cycle' : 'Sign in'}</h2>
       <p>${create ? 'Keep your periods and logs safe in a private account, and take them to any new phone.' : 'Your periods, logs and plans come back onto this phone.'}</p></section>
     <div class="ac-seg" role="tablist"><button class="${create ? 'on' : ''}" data-action="acMode" data-v="create" role="tab" aria-selected="${create}">Create account</button><button class="${create ? '' : 'on'}" data-action="acMode" data-v="signin" role="tab" aria-selected="${!create}">Sign in</button></div>
-    ${create ? `<label class="ac-consent"><input type="checkbox" id="ac-consent"><span>I agree that my cycle and health logs are kept in my private account so they sync between my phones. I can delete them anytime. <a href="#/privacy">Privacy</a></span></label>` : ''}
+    ${create ? `<label class="ac-consent"><input type="checkbox" id="ac-consent"><span>I agree that my cycle and health logs are kept in my private account so they sync between my phones. I can delete them anytime. <a href="#/privacy">Privacy</a></span></label><label class="ac-consent ac-terms"><input type="checkbox" id="ac-terms" ${termsOK() ? 'checked' : ''}><span>I understand Underskin is general wellness information, not medical advice. Before I try any tea, food, herb, supplement or remedy, I check it myself for allergies and for clashes with medicines I take, and I use it at my own responsibility. <a href="#/privacy">Terms</a></span></label>` : ''}
     ${A.oauthOK('apple') ? `<button class="ac-btn ac-apple" data-action="acProvider" data-p="apple">${APPLE_SVG}<span>${create ? 'Sign up' : 'Sign in'} with Apple</span></button>` : ''}
     ${A.oauthOK('google') ? `<button class="ac-btn ac-google" data-action="acProvider" data-p="google">${GOOGLE_SVG}<span>${create ? 'Sign up' : 'Sign in'} with Google</span></button>` : ''}
     ${A.oauthOK('apple') || A.oauthOK('google') ? '<div class="ac-or"><span>or with email</span></div>' : ''}
@@ -5003,6 +5006,14 @@ function viewAccount() {
       <p class="ac-msg" id="ac-msg" role="status">${A.configured() ? '' : 'Accounts open very soon. Until then everything stays safely on this phone.'}</p>
     </section>
     <p class="fine">${create ? '' : 'By signing in you agree that your logs are kept in your private account. '}No account needed to use the app — without one, everything stays only on this phone.</p></div>`;
+}
+function termsSheet() {
+  return `<div class="tm-wrap" role="dialog" aria-modal="true" aria-labelledby="tm-h"><section class="tm-sheet">
+    <span class="tm-e" aria-hidden="true">🌿</span><h2 id="tm-h">One thing before you go on</h2>
+    <p>Underskin shares general wellness information, not medical advice. Teas, herbs, foods and supplements can cause allergies or clash with medicines.</p>
+    <p><b>Before you try anything, check every ingredient for allergies and medicine clashes yourself.</b> If you are pregnant, breastfeeding, on medication or have a health condition, ask your doctor or pharmacist first. You use the app’s ideas at your own responsibility.</p>
+    <button class="btn btn-dark btn-block" data-action="termsAgree">I understand and agree</button>
+    <a class="tm-link" href="#/privacy">Read the full terms</a></section></div>`;
 }
 function viewPrivacy() {
   return `${topbar('Privacy', { back: true })}
@@ -5018,6 +5029,9 @@ function viewPrivacy() {
     <p><b>Images and fonts.</b> Food photos load from Unsplash and Pexels, fonts from Google Fonts, and the sign-in library from jsDelivr. These services receive standard web requests (like your IP address) but none of your health data.</p>
     <p><b>Delete anytime.</b> Profile → “Delete all data” erases everything from this device. Deleting the app or clearing your browser data does the same — so export a backup first if you want to keep it.</p>
     <p><b>Not medical advice.</b> Predictions are estimates based on your logs and traditional knowledge. Underskin is not a contraceptive and does not diagnose or treat any condition.</p>
+    <p><b>Allergies and medicines are yours to check.</b> Teas, herbs, spices, foods, supplements, acupressure and movement ideas in the app are general wellness information. Before you try any of them, check every ingredient for allergies and intolerances, and for clashes with medicines you take. If you are pregnant, breastfeeding, on medication or have a health condition, ask your doctor or pharmacist first. You decide what to try, and you do so at your own responsibility.</p>
+    <p><b>Liability.</b> To the extent the law allows, Underskin and its makers are not liable for allergic reactions, side effects or other harm that come from using information in the app. This does not limit rights you have by law that cannot be limited.</p>
+    <p><b>Your agreement.</b> When you tick the box at sign-up, or tap “I understand and agree”, you confirm you have read this. The app stores the date you agreed.</p>
   </div>`;
 }
 
@@ -5083,7 +5097,16 @@ function demoState(name) {
 
 // ---------- actions ----------
 // Sign-up gate: accounts must be switched on, and creating one needs a clear yes to keeping health data.
+// Her own responsibility for allergies and medicine clashes: one clear tick, saved with the date she gave it.
+function termsOK() { return !!((state && state.termsAt) || +lsGet('uts.termsAt')); }
+function termsTick() {
+  const t = document.getElementById('ac-terms'); if (!t || !t.offsetParent) return true;
+  if (!t.checked) { acMsg('Please tick that you check for allergies yourself.', true); const l = t.closest('label'); l?.classList.add('need'); l?.scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
+  const at = Date.now(); try { localStorage.setItem('uts.termsAt', String(at)); } catch {} if (state) state.termsAt = state.termsAt || at;
+  return true;
+}
 function acReady() {
+  if (!termsTick()) return false;
   if (!A.configured()) { acMsg('Accounts open very soon. Until then everything stays safely on this phone.', true); return false; }
   const box = document.getElementById('ac-consent');
   if (box && box.offsetParent && !box.checked) { acMsg('Please tick the box to agree first.', true); const l = box.closest('label'); l?.classList.add('need'); l?.scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; } // the tick sits at the bottom of the gate
@@ -5162,7 +5185,8 @@ const actions = {
     save(); go('today'); render();
     if (state.partners?.length) { M = model(); syncTo(state.partners[0]); startSignals(); }
   },
-  gateSkip: () => { ui.onbGateDone = true; ui.onbAnim = 'fwd'; render(); },
+  gateSkip: () => { if (!termsTick()) return; ui.onbGateDone = true; ui.onbAnim = 'fwd'; render(); },
+  termsAgree: () => { const at = Date.now(); state.termsAt = at; try { localStorage.setItem('uts.termsAt', String(at)); } catch {} save(); render(); },
   // the email form opens right on the gate, no second page; classes toggle in place so the tick box keeps its state
   gateEmail: () => actions.gateMode({ v: ui.acMode === 'signin' ? 'signin' : 'create' }),
   gateSignIn: () => actions.gateMode({ v: 'signin' }),
@@ -5581,7 +5605,7 @@ function render() {
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];
   const html = (views[r.name] || viewToday)();
   const arriving = $app.querySelector('.arrive');
-  $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''} ${arriving ? 'arrive-in' : ''}" id="view">${html}</div>${tabs.includes(r.name) || !views[r.name] ? tabbar(r.name in views ? r.name : 'today') : ''}`;
+  $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''} ${arriving ? 'arrive-in' : ''}" id="view">${html}</div>${tabs.includes(r.name) || !views[r.name] ? tabbar(r.name in views ? r.name : 'today') : ''}${!termsOK() && r.name !== 'privacy' ? termsSheet() : ''}`;
   if (arriving) $app.appendChild(arriving);
   if (ui.loveFor) $app.insertAdjacentHTML('beforeend', loveSheet());
   const v = document.getElementById('view');

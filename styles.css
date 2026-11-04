@@ -6327,3 +6327,18 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .bz-lotus .lt-pad { fill: #8c9768; opacity: .55; }
 .bz-lotus .lt-water ellipse { fill: none; stroke: rgba(108,130,62,.25); stroke-width: 1; }
 .bz-lotus .lt-water ellipse + ellipse { stroke: rgba(108,130,62,.18); }
+
+/* one-time "your responsibility" sheet */
+.tm-wrap { position: fixed; inset: 0; z-index: 900; display: flex; align-items: flex-end; justify-content: center; background: rgba(32,48,26,.32); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); animation: tmIn .4s ease both; }
+.tm-sheet { width: 100%; max-width: 480px; padding: 26px 22px calc(24px + env(safe-area-inset-bottom)); border-radius: 32px 32px 0 0; background: #fff; color: #20301a; animation: tmUp .5s cubic-bezier(.2,.8,.2,1) both; }
+.tm-e { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 50%; background: #eef3e2; font-size: 26px; margin-bottom: 12px; }
+.tm-sheet h2 { margin: 0 0 10px; font: 400 23px/1.2 Outfit, sans-serif; }
+.tm-sheet p { margin: 0 0 10px; font: 400 14.5px/1.5 Outfit, sans-serif; color: #3a4a2e; } .tm-sheet p b { color: #20301a; font-weight: 500; }
+.tm-sheet .btn { margin-top: 8px; }
+.tm-link { display: block; margin-top: 12px; text-align: center; font: 400 13px Outfit, sans-serif; color: #4a5a3c; }
+.ac-terms span { font-size: 12.5px; }
+@keyframes tmIn { from { opacity: 0; } } @keyframes tmUp { from { transform: translateY(40px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .tm-wrap, .tm-sheet { animation: none; } }
+.br2 .br2-top { display: flex; justify-content: space-between; align-items: center; }
+.br2 .br2-top .spec-btn { position: relative; left: 0; right: 0; top: 0; margin: 0; }
+.br2b .br2-go { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
