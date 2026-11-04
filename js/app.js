@@ -1208,10 +1208,10 @@ function viewCalendar() {
       <button class="cal-editbtn" data-action="calEdit">${icon('drop', 15)} Edit period days</button>`}
     </section>
     ${events().some(e => e.date >= todayISO()) ? upcomingEvents() : ''}
+  </div>
+  <div class="pad mn mn-cal">${moonPage(true)}
     ${cp ? `<button class="cal2-cosmic" data-action="nav" data-to="cosmic"><span class="cal2-g">${cp.sign.glyph}</span><span><small>Your cosmic rhythm</small><b>${cp.sign.name} · ${cp.cz.element} ${cp.cz.animal.name}</b></span>${icon('chevR', 18)}</button>`
       : `<button class="cal2-cosmic" data-action="nav" data-to="cosmic"><span class="cal2-g">✦</span><span><small>Your cosmic rhythm</small><b>Add your birthday for personal readings</b></span>${icon('chevR', 18)}</button>`}
-    ${moonLink()}
-    ${starSections()}
   </div>`;
 }
 
@@ -2209,7 +2209,9 @@ function skyDust() { // fixed scatter of faint stars behind the moon
 const mnDay = d => d.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' });
 const mnTime = d => d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 const mnIn = d => { const n = Math.round((C.startOfDay(d) - C.startOfDay(new Date())) / 864e5); return n <= 0 ? 'today' : n === 1 ? 'tomorrow' : `in ${n} days`; };
-function viewMoon() {
+function viewMoon() { return `<div class="pad mn">${moonPage(false)}</div>`; }
+// the moon and her readings in one flow: full page at #/moon, and below the calendar (embed)
+function moonPage(embed) {
   const mn = moonData(), pg = MG.phaseGuideAt(mn.elong), ms = signOfK(mn.sign), phase = M.info && M.info.phase, inner = phase && MG.INNER_SEASON[phase];
   const inward = !phase || phase === 'menstrual' || phase === 'luteal', feel = MG.MOON_SIGN_FEEL[mn.sign];
   const c = birthChart(state.profile), tr = c && AS.transits(c), natal = c && c.planets[1], ord = n => n + ({ 1: 'st', 2: 'nd', 3: 'rd' }[n] || 'th');
@@ -2225,9 +2227,8 @@ function viewMoon() {
   const ritLead = rit === 'new'
     ? (nearNew ? 'The new moon is here. Name up to three things you want to grow this month.' : `The next new moon is ${mnDay(mn.nextNew)}. Write your intentions now or on the night.`)
     : (nearFull ? 'The full moon is here. Write what you are ready to let go of, then release it.' : `The next full moon is ${mnDay(mn.nextFull)}. Note what feels heavy so you can release it then.`);
-  return `<div class="pad mn">
-    <section class="mn-hero">${skyDust()}${starShape(mn.sign)}
-      <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
+  return `<section class="mn-hero ${embed ? 'emb' : ''}">${skyDust()}${starShape(mn.sign)}
+      ${embed ? '' : `<button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>`}
       <div class="mn-top"><small>The Moon tonight</small><b>${ms.glyph} Moon in ${ms.name}</b></div>
       <div class="mn-orb">${moonArt(mn.elong, 'mn-flat')}<canvas class="moon3d" data-e="${mn.elong.toFixed(1)}" aria-label="The Moon as it looks tonight, ${Math.round(mn.illum * 100)} percent lit. Drag to turn it."></canvas></div>
       <div class="mn-side l"><small>Moon day</small><b class="num">${Math.floor(mn.age) + 1}</b></div>
@@ -2242,6 +2243,8 @@ function viewMoon() {
       <div class="mn-feel"><span>${ms.glyph}</span><div><b>Moon in ${ms.name}: ${feel[0].toLowerCase()}</b><p>${feel[1]}</p></div></div></section>
 
     <section class="mn-aff"><small>Say it today</small><p>“${MG.MOON_AFFIRM[mn.sign][inward ? 0 : 1]}”</p></section>
+
+    ${starSections()}
 
     <section class="card mn-ask"><div class="mn-k"><small>Tonight's reflection</small><b>${pg.ask}</b></div>
       <textarea class="field mn-ta" data-input="moonj.today" rows="3" placeholder="Write freely. Only you can see this.">${esc(tj)}</textarea>
@@ -2272,8 +2275,7 @@ function viewMoon() {
     ${sectionTitle('The 8 moon phases')}
     <div class="mn-pg">${MG.PHASE_GUIDE.map(p => `<article class="mn-pc ${p === pg ? 'on' : ''}">${moonArt((p.at[0] + p.at[1]) / 2 % 360)}<small>${p === pg ? 'Now · ' : ''}${p.theme}</small><b>${p.name}</b><p>${p.heart}</p><p class="mn-pm">${p.mind}</p></article>`).join('')}</div>
 
-    <p class="fine center">The Moon's phase, sign and dates are calculated on your phone from real orbits. Astrology, moon rituals and the inner seasons are spiritual traditions for reflection, not science or medical advice.</p>
-  </div>`;
+    <p class="fine center">The Moon's phase, sign and dates are calculated on your phone from real orbits. Astrology, moon rituals and the inner seasons are spiritual traditions for reflection, not science or medical advice.</p>`;
 }
 // Full-bleed night-sky hero shared by both states of the cosmic page.
 function cosmicHero(title, sub, extra = '') {
