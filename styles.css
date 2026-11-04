@@ -5395,3 +5395,12 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .rnow-next b { display: block; font-size: 15px; font-weight: 500; color: #304023; }
 .rnow-next span { display: block; font-size: 13px; color: rgba(48,64,35,.7); }
 @media (prefers-reduced-motion: reduce) { .rh3-copy, .rnow-pulse { animation: none; } }
+/* sun & moon hero: a framed sunset window with rounded bottom, no muddy fade into the pearl page */
+.rh3 { border-radius: 0 0 34px 34px; padding-bottom: 30px; min-height: 470px;
+  box-shadow: 0 22px 50px -18px rgba(214,120,70,.45), 0 0 0 1px rgba(255,255,255,.5); }
+.rh3-shade { background: linear-gradient(180deg, rgba(20,8,4,.35) 0%, rgba(20,8,4,0) 24%, rgba(20,8,4,0) 42%, rgba(26,10,4,.5) 70%, rgba(36,14,6,.82) 100%); }
+.rh3::after { content: ''; position: absolute; inset: auto 0 0; height: 2px; z-index: 0; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(255,210,140,.75), transparent); }
+.rh3 + .pad { margin-top: 0; padding-top: 18px; }
+.rh3 + .pad::before { content: ''; position: absolute; left: 10%; right: 10%; top: -10px; height: 120px; z-index: -1; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(255,196,150,.35), transparent); filter: blur(10px); }
