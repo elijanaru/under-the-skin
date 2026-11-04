@@ -74,10 +74,13 @@ export function mountTeaCup(canvas, { onReady, onFail } = {}) {
   // pause while the hero is scrolled away or the app is hidden
   const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; }); io.observe(canvas);
 
-  // drag to turn the cup yourself
-  let drag = null, spin = 0, vel = 0;
-  const down = e => { drag = e.clientX; canvas.setPointerCapture?.(e.pointerId); };
-  const move = e => { if (drag == null) return; const d = (e.clientX - drag) * 0.012; drag = e.clientX; spin += d; vel = d; };
+  // drag sideways to turn the cup, up and down to look over the rim into the drink
+  let drag = null, dragY = 0, spin = 0, vel = 0, elev = 0.3, elevT = 0.3;
+  const down = e => { drag = e.clientX; dragY = e.clientY; canvas.setPointerCapture?.(e.pointerId); };
+  const move = e => {
+    if (drag == null) return; const d = (e.clientX - drag) * 0.012; drag = e.clientX; spin += d; vel = d;
+    elevT = Math.max(0.02, Math.min(1.15, elevT + (e.clientY - dragY) * 0.008)); dragY = e.clientY;
+  };
   const up = () => { drag = null; };
   canvas.addEventListener('pointerdown', down); canvas.addEventListener('pointermove', move);
   canvas.addEventListener('pointerup', up); canvas.addEventListener('pointercancel', up);
@@ -90,6 +93,9 @@ export function mountTeaCup(canvas, { onReady, onFail } = {}) {
     const dt = Math.min(0.05, clock.getDelta()), t = clock.elapsedTime;
     if (drag == null) { vel *= 0.94; spin += vel + (reduce ? 0 : dt * 0.32); }
     cup.rotation.y = spin;
+    elev += (elevT - elev) * 0.15;
+    const look = top * 0.45, R = 3.25;
+    camera.position.set(0, look + Math.sin(elev) * R, Math.cos(elev) * R); camera.lookAt(0, look, 0);
     const bob = reduce ? 0 : Math.sin(t * 1.1) * 0.025;
     cup.position.y = 0.04 + bob;
     shadow.material.opacity = 0.9 - bob * 6; shadow.scale.setScalar(1 - bob * 2);

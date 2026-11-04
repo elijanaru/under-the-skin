@@ -1317,6 +1317,35 @@ function logSlider(field, q, l) {
     <input type="range" min="1" max="5" step="1" value="${set ? v : 3}" data-input="log.${field}" aria-label="${q}">
     <div class="lg-ends"><span>${SLIDER_WORDS[field][0]}</span><span>${SLIDER_WORDS[field][4]}</span></div></div>`;
 }
+// A tea for what she logged in the check-in. [warm-window swap] keeps cooling herbs away from her period days.
+const SYMPTOM_TEA = {
+  Cramps: 'Ginger', 'Ovulation pain': 'Chamomile', 'Pelvic pain': 'Ginger', Headache: ['Peppermint', 'Ginger'], 'Back pain': 'Ginger', 'Joint pain': 'Ginger',
+  'Tender breasts': 'Dandelion leaf', Bloating: 'Fennel', Nausea: 'Ginger', Constipation: 'Dandelion leaf', Diarrhea: 'Chamomile', Cravings: 'Cinnamon', 'Big appetite': 'Cinnamon',
+  Acne: 'Spearmint', 'Oily skin': 'Spearmint', 'Dry skin': 'Rose', 'Hair shedding': 'Nettle', Fatigue: ['Green tea', 'Ginger & red dates'], Insomnia: 'Valerian root',
+  'Brain fog': 'Rosemary', Dizziness: 'Ginger & red dates', 'Cold hands & feet': 'Cinnamon', 'Feeling hot': ['Hibiscus', 'Rose'], 'Night sweats': 'Rose',
+  Anxious: 'Chamomile', Stressed: 'Lavender', Sad: 'Saffron', 'Low mood': 'Saffron', Tearful: 'Lemon balm', Sensitive: 'Lemon balm',
+  Irritable: 'Rose', Angry: 'Rose', 'Mood swings': 'Rose', Unmotivated: ['Green tea', 'Ginger & red dates'],
+};
+const SYM_GUIDE = { Cramps: 'cramps', 'Pelvic pain': 'cramps', 'Back pain': 'cramps', 'Joint pain': 'cramps', 'Ovulation pain': 'ovulation', Bloating: 'bloating', Constipation: 'bloating',
+  'Tender breasts': 'pms', Irritable: 'pms', Angry: 'pms', 'Mood swings': 'pms', Cravings: 'pms', Nausea: 'nausea', Headache: 'headache', Acne: 'skin', 'Oily skin': 'skin', 'Dry skin': 'skin',
+  'Hair shedding': 'skin', Fatigue: 'energy', Unmotivated: 'energy', Dizziness: 'heavy', Insomnia: 'sleep', 'Night sweats': 'sleep', Anxious: 'stress', Stressed: 'stress' };
+function teaRef(name, sym) { // the tea's page in the guide section that fits the symptom, else the first place it appears
+  const order = [SYM_GUIDE[sym], 'feel', ...TEA_GUIDE.map(g => g.k)];
+  for (const k of order) { const G = k && TEA_GUIDE.find(g => g.k === k), i = G ? G.teas.findIndex(t => t[1] === name) : -1; if (i >= 0) return { to: `tea/${G.k}-${i}`, why: G.teas[i][2] }; }
+  return null;
+}
+function logTeas(l, di) {
+  const warm = warmWindow(di), picks = new Map();
+  [...(l.symptoms || []), ...(l.moods || [])].forEach(s => {
+    const v = SYMPTOM_TEA[s]; if (!v) return; const n = Array.isArray(v) ? v[warm ? 1 : 0] : v;
+    if (!picks.has(n)) picks.set(n, []); picks.get(n).push(s);
+  });
+  const list = [...picks].slice(0, 2).map(([n, f]) => ({ n, f: f.map(x => x.toLowerCase()), r: teaRef(n, f[0]) })).filter(x => x.r);
+  if (!list.length) return '';
+  const and = f => f.length > 2 ? `${f.slice(0, 2).join(', ')} & more` : f.join(' & ');
+  return `<section class="lt-card"><div class="lt-h">${icon('cup', 16)} <b>Your tea for today</b></div>
+    ${list.map(x => `<button class="lt-t" data-action="nav" data-to="${x.r.to}"><img src="${teaPhoto(x.n, 200, 200)}" alt="" loading="lazy"><span><small>For your ${and(x.f)}</small><b>${x.n}</b><em>${x.r.why}</em></span>${icon('chevR', 16)}</button>`).join('')}</section>`;
+}
 function viewLog() {
   const k = ui.logDate || todayISO(), d = C.parseISO(k), l = getLog(k);
   const isToday = k === todayISO(), di = M.stats ? C.dayInfo(d, M.stats) : null;
@@ -1360,6 +1389,7 @@ function viewLog() {
     ${LOG_SECS.map(([id, e, t], i) => `<section class="lg-sec ${open[id] ? 'open' : ''}" style="animation-delay:${i * 40}ms">
       <button class="lg-head" data-action="logSec" data-s="${id}" aria-expanded="${!!open[id]}"><span class="lg-ic">${icon(e, 18)}</span><b>${t}</b>${count[id] ? `<small>${count[id]}</small>` : ''}<span class="lg-chev">${icon('chevR', 16)}</span></button>
       ${open[id] ? `<div class="lg-in">${inner[id]}</div>` : ''}</section>`).join('')}
+    ${logTeas(l, di)}
     <div class="lg-go"><button class="btn btn-light btn-block" data-action="nav" data-to="brain${isToday ? '' : '/' + k}" ${total ? '' : 'disabled'}>${icon('spark', 18)} ${total ? 'See what this means' : 'Tap what fits today'}</button></div>
   </div>`;
 }
@@ -1569,7 +1599,7 @@ function recipesFor(phase, info) {
 }
 
 // ---------- nourish (structured, evidence-graded) ----------
-function evBadge(ev) { return `<span class="ev ev-${ev}">${EVIDENCE[ev].short}</span>`; }
+function evBadge() { return ''; } // evidence labels are hidden everywhere (the user's call); data keeps them
 function recentSymptoms() {
   const out = {};
   for (let i = 0; i < 4; i++) (getLog(C.iso(C.addDays(new Date(), -i))).symptoms || []).forEach(s => { out[s] = 1; });
@@ -1761,7 +1791,7 @@ function plateSection(current) {
       <div class="pl-r tea"><img class="pl-tea" src="images/tea-ginger.webp" alt="A cup of warm ginger tea" loading="lazy"><div><b>To drink</b><span>${T.tea}. Your coffee fits too, best with food.</span></div></div>
     </div>
     <button class="card pl-meal" data-action="plRecipes"><span class="plm-k">Tonight’s plate</span><b>${PLATE_MEAL[phase][season]}</b><span class="plm-cta">See recipes ${icon('chevR', 14)}</span></button>
-    <p class="fine center">Meat and organs first, then what’s in season. Roots, beans, lentils and some grains are welcome. Shares are a gentle guide, not a rule. Cycle food: ${EVIDENCE.some.short} evidence · seasons: Traditional Chinese Medicine.</p>
+    <p class="fine center">Meat and organs first, then what’s in season. Roots, beans, lentils and some grains are welcome. Shares are a gentle guide, not a rule.</p>
   </section>`;
 }
 // Her food goal for the phase, shown right under the big phase photo.
@@ -1965,7 +1995,7 @@ function viewCosmic() {
       ${sectionTitle('The moon and your cycle')}
       <section class="card glass tea-study"><div class="ts-i"><p>A lunar month lasts 29.5 days and the average cycle 29.3, so the idea of a moon rhythm is old and lovely. Long-term diaries of 22 women showed their cycles fell in step with the moon now and then, more often in younger women and with longer cycles. Artificial light at night and age weakened the link.</p><small>Helfrich-Förster 2021 (Science Advances) · Bull 2019</small></div>
         <div class="ts-i"><p>Large app studies with millions of cycles found no overall sync. So the moon is a beautiful mirror for reflection, not something your body must follow. Darker nights and less screen light are the part with science behind them.</p><small>Clue app analysis of 7.5 million cycles</small></div>
-        <div class="ts-ev">${evBadge('emerging')} <span>${EVIDENCE.emerging.label}</span></div></section>`;
+        </section>`;
   }
   // 30 days ahead: the moon each night above the colour of her phase that day.
   function moonMonth() {
@@ -2225,7 +2255,7 @@ function viewReliefIndex() {
   return `${topbar('Relief', { back: true })}
   <div class="pad">
     <div class="page-art">${mushroomArt(0, 'corner')}<h1 class="page-h">Feel better, <span>gently</span></h1></div>
-    <p class="muted">What helps — body, food and Chinese medicine — with honest evidence labels.</p>
+    <p class="muted">What helps — body, food and Chinese medicine.</p>
     ${today}
     ${sectionTitle('Everything that helps')}
     <div class="relief-grid">${keys.map((k, i) => { const h = (state.reliefHelp || {})[k] || [], L = RELIEF_LINKS[k] || {};
@@ -2479,7 +2509,7 @@ function viewSupp(id) {
   const x = SUPP_LIB.find(s => s.id === id); if (!x) return viewMissing();
   const ph = suppPhases(x), now = M.info && M.info.phase;
   return `<div class="pad">
-    ${specHero({ glyph: x.sym, han: x.han, eyebrow: `Supplement · ${EVIDENCE[x.ev].label}`, sym: !x.han, name: x.name, label: 'How to take it',
+    ${specHero({ glyph: x.sym, han: x.han, eyebrow: 'Supplement', sym: !x.han, name: x.name, label: 'How to take it',
       rows: [['Dose', x.dose], ['Form', x.form], ['When', x.when]], desc: x.desc })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit(ph, now)}${ph.length === 4 ? '<small class="tf-all">Useful every day of your cycle</small>' : now && !ph.includes(now) ? `<small class="tf-all">Not a focus in your ${PHASES[now].name.toLowerCase()} phase</small>` : ''}</section>
     ${(SUPP_FOOD[x.id] || []).length ? `${sectionTitle('Food first')}<section class="card glass nu-food">${SUPP_FOOD[x.id].map(([f, a]) => `<div class="spec-row"><b>${f}</b><span>${a}</span></div>`).join('')}${warmWindow(M.info) ? '<small class="tf-all">You\u2019re in your warm window: pick the cooked and warm ones until your period ends.</small>' : ''}</section>` : ''}
@@ -2508,7 +2538,7 @@ function remedyScience(r, lib = REMEDY_SCIENCE) {
   return `${sectionTitle('Why it works')}
     <section class="card glass nu-food">${x.c.map(([c, d]) => `<div class="spec-row"><b>${c}</b><span>${d}</span></div>`).join('')}</section>
     ${sectionTitle('What studies found')}
-    <section class="card glass tea-study"><div class="ts-i"><p>${x.study}</p><small>${x.cite}</small></div><div class="ts-ev">${evBadge(x.ev)} <span>${EVIDENCE[x.ev].label}</span></div></section>
+    <section class="card glass tea-study"><div class="ts-i"><p>${x.study}</p><small>${x.cite}</small></div></section>
     ${x.caution ? `${sectionTitle('Good to know')}<section class="card glass tea-care"><p>${icon('spark', 12)} ${x.caution}</p></section>` : ''}`;
 }
 // Detail page: full photo on top, a frosted sheet slides over it with the 3 key items and a short description.
@@ -3064,7 +3094,7 @@ function viewTea() {
   const info = M.info, w = info ? dayWindow(info) : 'rising', td = TEA_DAY[w], k = ui.teaK, G = k && TEA_GUIDE.find(x => x.k === k);
   const steep = (td[3].match(/\d+(?:–\d+)?\s*min/) || [''])[0], near = w === 'flow-start' || w === 'flow-end' || w === 'premenstrual';
   return `<div class="pad tg">
-    <section class="tg-hero tg-3d"><img src="${teaPhoto(td[1], 900, 1100)}" alt="" decoding="async"><span class="tg-shade"></span><span class="tg-studio" aria-hidden="true"></span><canvas class="teacup3d" aria-label="${td[1]}, turning slowly. Drag to turn it."></canvas>
+    <section class="tg-hero tg-3d"><img src="${teaPhoto(td[1], 900, 1100)}" alt="" decoding="async"><span class="tg-shade"></span><span class="tg-studio" aria-hidden="true"></span><canvas class="teacup3d" aria-label="${td[1]}, turning slowly. Drag to turn it, or up and down to look inside."></canvas>
       <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
       <div class="tg-copy"><small>${info ? `Day ${info.cd} · ${PHASES[info.phase].name} · ` : ''}Your tea today</small><h1>${td[1]}</h1><p>${td[2]}</p>
         <span class="tg-chips">${steep ? `<span>${icon('clock', 13)} ${steep}</span>` : ''}<span>${icon('thermo', 13)} ${near ? 'Hot' : 'Warm'}</span></span>
@@ -3078,9 +3108,6 @@ function viewTea() {
 
     <div class="tg-sub"><b>How do you feel?</b><small>A tea for every mood</small></div>
     <div class="tg-feel">${TEA_GUIDE.find(g => g.k === 'feel').teas.map(([, n, why, , ev, , q], i) => `<button class="tg-f" data-action="nav" data-to="tea/feel-${i}"><img src="${teaPhoto(n, 200, 200)}" alt="" loading="lazy"><b>${q}</b><span class="tg-fp">${n}</span><small>${why}</small></button>`).join('')}</div>
-
-    <div class="tg-sub"><b>Through your cycle</b><small>Swipe for every part of your month</small></div>
-    <div class="hscroll tg-cyc">${TEA_WIN.map(([ww, t]) => { const x = TEA_DAY[ww], now = info && ww === w; return `<button class="tg-cc ${now ? 'now' : ''}" data-action="nav" data-to="tea/day-${ww}"><img src="${teaPhoto(x[1], 320, 360)}" alt="" loading="lazy">${now ? '<em>Now</em>' : ''}<small>${t}</small><b>${x[1]}</b></button>`; }).join('')}</div>
 
     <div class="tg-sub"><b>For what you need</b><small>Tap one to see its teas</small></div>
     <div class="tg-needs">${(() => { const used = new Set(); return TEA_GUIDE.filter(g => g.k !== 'feel').map(g => { const t = ['nausea', 'ovulation'].includes(g.k) ? `cover-${g.k}` : (g.teas.find(x => !used.has(teaPhoto(x[1]))) || g.teas[0])[1]; used.add(teaPhoto(t)); return [g, t]; }); })().map(([g, t]) => `<button class="tg-n ${g.k === k ? 'on' : ''}" data-action="teaK" data-v="${g.k === k ? '' : g.k}"><img src="${teaPhoto(t, 300, 220)}" alt="" loading="lazy"><span><b>${g.n}</b><small>${plural(g.teas.length, 'tea')}</small></span></button>`).join('')}</div>
@@ -3107,14 +3134,14 @@ function viewTeaItem(id) {
   if (!t) return viewTea();
   const [g, n, why, how, ev, warn] = t, steep = (how.match(/\d+(?:–\d+)?\s*min/) || [''])[0];
   const P = teaProfiles(n), info = M.info, ph = info && info.phase;
-  const rows = P.length > 1 ? P.flatMap(p => p.c.slice(0, 1).map(([c, d]) => [c, `${p.n} · ${d}`])).concat(P[0].c.slice(1, 2)) : P.length ? P[0].c : [[n, `${EVIDENCE[ev].short} evidence`], ...(steep ? [[steep, 'Steep']] : [])];
+  const rows = P.length > 1 ? P.flatMap(p => p.c.slice(0, 1).map(([c, d]) => [c, `${p.n} · ${d}`])).concat(P[0].c.slice(1, 2)) : P.length ? P[0].c : [[n, 'Your tea'], ...(steep ? [[steep, 'Steep']] : [])];
   // warmest herb wins: ginger makes a cool chamomile blend warm
   const temp = P.length ? TEMPS[Math.max(...P.map(p => TEMPS.indexOf(p.t)))] : '', best = [...new Set(P.flatMap(p => p.p))];
   const cold = ['cold', 'cool'].includes(temp), nearBleed = ph === 'menstrual' || (info && dayWindow(info) === 'premenstrual');
   const cautions = [warn, ...P.map(p => p.caution)].filter((x, i, a) => x && a.indexOf(x) === i);
   return `<div class="pad">
     ${specHero({ photo: teaPhoto(n, 800, 900), eyebrow: G ? `Tea for ${G.n.toLowerCase()}` : 'Tea', name: /tea|milk|coffee/i.test(n) ? n : `${n} tea`, label: 'Key ingredients',
-      rows, lead: `${n} · ${EVIDENCE[ev].label.toLowerCase()}`, desc: why })}
+      rows, lead: n, desc: why })}
     ${P.length ? `<section class="card glass tea-fit">
       <div class="tf-k">Best in your cycle</div>
       ${phaseFit(best, ph)}
@@ -3125,7 +3152,7 @@ function viewTeaItem(id) {
     ${sectionTitle('How to make it')}
     <section class="card glass tea-how-c"><div class="th-steps">${[['clock', how], ['cup', 'Cover the cup while it steeps, so the fragrant oils stay in your tea.'], ...(nearBleed ? [['thermo', 'Drink it hot or warm these days, never iced.']] : [])].map(([e, x]) => `<div><span>${icon(e, 18)}</span><p>${x}</p></div>`).join('')}</div></section>
     ${P.length ? `${sectionTitle('What studies found')}
-    <section class="card glass tea-study">${P.map(p => `<div class="ts-i"><div class="ts-h"><b>${p.n}</b></div><p>${p.study}</p><small>${p.cite}</small></div>`).join('')}<div class="ts-ev">${evBadge(ev)} <span>${EVIDENCE[ev].label}</span></div></section>` : ''}
+    <section class="card glass tea-study">${P.map(p => `<div class="ts-i"><div class="ts-h"><b>${p.n}</b></div><p>${p.study}</p><small>${p.cite}</small></div>`).join('')}</section>` : ''}
     ${cautions.length ? `${sectionTitle('Good to know')}<section class="card glass tea-care">${cautions.map(c => `<p>${icon('spark', 12)} ${c}</p>`).join('')}</section>` : ''}
     ${G && G.teas.length > 1 ? `${sectionTitle(`More for ${G.n.toLowerCase()}`)}<div class="tea-more">${G.teas.map((x, i) => i === idx ? '' : `<button data-action="nav" data-to="tea/${G.k}-${i}"><span>${icon('cup', 14)}</span>${x[1]}</button>`).join('')}</div>` : ''}
     <p class="fine center">Herbal teas are gentle support, not medicine. Pregnant, on medication or unsure? Ask your doctor or midwife first.</p>
@@ -3165,14 +3192,14 @@ function viewNutrient(id) {
   const x = NUTRIENTS.find(n => n.id === id); if (!x) return viewNutrients();
   const ph = M.info && M.info.phase, i = NUTRIENTS.indexOf(x);
   return `<div class="pad">
-    ${specHero({ glyph: nuIc(x.id, 64), eyebrow: `For ${x.for.toLowerCase()}`, name: x.n, label: 'Key facts', rows: x.d, lead: `${x.n} · ${EVIDENCE[x.ev].label.toLowerCase()}`, desc: x.why })}
+    ${specHero({ glyph: nuIc(x.id, 64), eyebrow: `For ${x.for.toLowerCase()}`, name: x.n, label: 'Key facts', rows: x.d, lead: x.n, desc: x.why })}
     <section class="card glass tea-fit"><div class="tf-k">When it helps most</div>${phaseFit(x.p, ph)}</section>
     ${sectionTitle('Food first')}
     <section class="card glass nu-food">${x.f.map(([f, a]) => `<div class="spec-row"><b>${f}</b>${a ? `<span>${a}</span>` : ''}</div>`).join('')}</section>
     ${sectionTitle('Are you low?')}
     <section class="card glass nu-low"><div class="nl-i"><span>${icon('search', 18)}</span><div><small>Signs</small><p>${x.low}</p></div></div><div class="nl-i"><span>${icon('flask', 18)}</span><div><small>Test to ask for</small><p>${x.test}</p></div></div></section>
     ${sectionTitle('What studies found')}
-    <section class="card glass tea-study"><div class="ts-i"><p>${x.study}</p><small>${x.cite}</small></div><div class="ts-ev">${evBadge(x.ev)} <span>${EVIDENCE[x.ev].label}</span></div></section>
+    <section class="card glass tea-study"><div class="ts-i"><p>${x.study}</p><small>${x.cite}</small></div></section>
     ${sectionTitle('Good to know')}<section class="card glass tea-care"><p>${icon('spark', 12)} ${x.caution}</p></section>
     <button class="card glass nu-next" data-action="nav" data-to="nutrients/${NUTRIENTS[(i + 1) % NUTRIENTS.length].id}"><small>Next</small><b>${NUTRIENTS[(i + 1) % NUTRIENTS.length].n}</b>${icon('chevR', 16)}</button>
     <p class="fine center">General information, not medical advice. Pregnant, on medication or unsure? Ask your doctor or pharmacist first.</p>
@@ -3349,7 +3376,7 @@ const RHYTHM_WHY = [
   { ic: 'clock', h: 'Your inner clock', ev: 'strong', p: 'Deep in your brain sits a master clock that runs on roughly 24 hours. Every organ, including your ovaries, has its own small clock that follows it. Light reaching special cells in your eyes is the main signal that resets it each day. When light comes at the wrong times (dark mornings indoors, bright screens at night), the clocks drift apart and sleep, mood, appetite and hormones all feel it.' },
   { ic: 'sun', h: 'Morning sun in your eyes', ev: 'strong', p: 'Daylight in the first hours after waking pulls your clock earlier, so melatonin (your sleep hormone) arrives on time at night. It also strengthens the natural cortisol rise that gives you morning energy. Even a cloudy sky outside is many times brighter than indoor light. 5–10 minutes on a sunny morning, longer when it’s grey. Look towards the sky, never straight into the sun.' },
   { ic: 'spark', h: 'Waking without an alarm', ev: 'some', p: 'An alarm cuts into a sleep cycle, which is why you can wake up groggy. If you can only wake with one, it usually means bedtime is too late for your body. Regular times matter most: going to bed and getting up at similar times each day is linked to better sleep, mood and metabolism. On your period, allow yourself extra rest.' },
-  { ic: 'leaf', h: 'Fresh air & a brief walk', ev: 'some', p: 'Moving gently outside in the morning adds more light, wakes up circulation and lifts mood. A short walk after meals also softens the blood-sugar rise (strong evidence). It doesn’t have to be a workout. Ten minutes counts.' },
+  { ic: 'leaf', h: 'Fresh air & a brief walk', ev: 'some', p: 'Moving gently outside in the morning adds more light, wakes up circulation and lifts mood. A short walk after meals also softens the blood-sugar rise. It doesn’t have to be a workout. Ten minutes counts.' },
   { ic: 'drop', h: 'Lemon water', ev: 'emerging', p: 'After 7–8 hours without drinking, your body is a little dry. Warm water with fresh lemon is a gentle way to rehydrate and adds some vitamin C.' },
   { ic: 'sun', h: 'Midday sun & vitamin D', ev: 'strong', p: 'Your skin makes vitamin D when the sun is high enough, mostly around midday in spring and summer. Short, regular exposure without burning works best. Your body does store vitamin D, in fat and the liver, so a sunny summer carries you some way into winter. In central and northern Europe the winter sun (about October to March) is too low to make much, so those stores slowly run down and many women are low by late winter. Ask for a blood test if you feel flat in winter.' },
   { ic: 'bowl', h: 'Biggest meal earlier', ev: 'some', p: 'Your body handles sugar better earlier in the day. The same meal eaten late at night raises blood sugar more than at lunch. Making lunch your main meal and keeping dinner lighter and earlier supports steady energy and deeper sleep.' },
@@ -3652,7 +3679,7 @@ function viewMove() {
     ${body}
     ${sectionTitle('What studies found')}
     <section class="card glass mv-sci">${MOVE_SCIENCE.map(x => `<details class="mvs"><summary><b>${x.t}</b>${evBadge(x.ev)}</summary><p>${x.s}</p><cite>${x.c}</cite></details>`).join('')}</section>
-    <p class="fine center">Research on training by cycle phase is still emerging and results are mixed (Emerging). Your strength doesn’t change across the cycle, only your energy does. Some women set personal bests on their period.</p>
+    <p class="fine center">Research on training by cycle phase is still emerging and results are mixed. Your strength doesn’t change across the cycle, only your energy does. Some women set personal bests on their period.</p>
   </div>`;
 }
 
@@ -4364,7 +4391,7 @@ function viewPoint(phase) {
       <div class="step"><span class="step-n">2</span><p>${phase === 'ovulatory' ? 'Rest two fingertips on it and make slow small circles.' : 'Press firmly with your thumb, making slow small circles.'}</p></div>
       <div class="step"><span class="step-n">3</span><p>${phase === 'ovulatory' ? 'Keep the pressure gentle and breathe slowly into your belly. It sits on the midline, so there is only one.' : 'Breathe slowly into your belly. Repeat on the other side.'}</p></div></section>
     <button class="btn btn-light btn-block" data-action="timer" data-title="${p.code} · ${p.name}" data-secs="${p.secs}">${icon('play', 16)} Press for ${p.secs} seconds</button>
-    ${POINT_SCIENCE[phase] ? `${sectionTitle('What studies found')}<section class="card glass tea-study"><div class="ts-i"><p>${POINT_SCIENCE[phase].study}</p><small>${POINT_SCIENCE[phase].cite}</small></div><div class="ts-ev">${evBadge(POINT_SCIENCE[phase].ev)} <span>${EVIDENCE[POINT_SCIENCE[phase].ev].label}</span></div></section>` : ''}
+    ${POINT_SCIENCE[phase] ? `${sectionTitle('What studies found')}<section class="card glass tea-study"><div class="ts-i"><p>${POINT_SCIENCE[phase].study}</p><small>${POINT_SCIENCE[phase].cite}</small></div></section>` : ''}
     ${sectionTitle('A point for every phase')}
     <div class="tea-more">${PHASE_ORDER.map(ph => `<button class="${ph === phase ? 'on' : ''}" data-action="nav" data-to="point/${ph}"><span style="color:${PHASE_COLOR.dark[ph]}">●</span>${TCM[ph].point.code} · ${PHASES[ph].name}</button>`).join('')}</div>
     <p class="fine center">Avoid strong pressure on SP6 and CV4 if you might be pregnant.</p>
@@ -4408,7 +4435,7 @@ function viewArticle(id) {
     ${a.keys ? `<section class="card glass art-keys"><div class="spec-k">Key numbers</div>${a.keys.map(([b, t]) => `<div class="spec-row"><b>${b}</b><span>${t}</span></div>`).join('')}</section>` : ''}
     ${a.body.map(p => `<p>${p}</p>`).join('')}
     ${a.to ? `<button class="card glass art-do" data-action="nav" data-to="${a.to}"><span>Try it in the app</span>${icon('chevR', 16)}</button>` : ''}
-    ${a.src ? `<section class="card glass tea-study art-src"><div class="ts-ev">${evBadge(a.ev)} <span>${EVIDENCE[a.ev].label}</span></div><small>Sources · ${a.src}</small></section>` : ''}
+    ${a.src ? `<section class="card glass tea-study art-src"><small>Sources · ${a.src}</small></section>` : ''}
     ${n ? `<button class="card nu-next art-next" data-action="nav" data-to="article/${n.id}">${readPic(n, 300) ? `<img src="${readPic(n, 300)}" alt="">` : ''}<span><small>Next read</small><b>${n.title}</b></span>${icon('chevR', 16)}</button>` : ''}
   </div>`;
 }
@@ -4717,7 +4744,7 @@ function viewWith(q) {
     ${role === 'partner' ? `${sectionTitle('What to give her')}
     <div class="hscroll">${sup.gifts.map((g, i) => `<div class="rcard gift g2">${giftArt(g)}<div class="rc-t">${esc(g.replace(/\s*😉/, ''))}</div></div>`).join('')}</div>
     ${sectionTitle('Maybe avoid')}<section class="card glass">${list(sup.avoid, 'no')}</section>
-    ${role === 'partner' ? `<section class="card glass tea-study pv-why"><div class="eyebrow">Why your support matters</div><div class="ts-i"><p>When partners took part in a programme for premenstrual distress, women felt more understood and less distressed than when they went alone. Small things count most: noticing, listening, taking something off her plate.</p><small>Ussher & Perz 2017</small></div><div class="ts-ev">${evBadge('some')} <span>${EVIDENCE.some.label}</span></div></section>` : ''}
+    ${role === 'partner' ? `<section class="card glass tea-study pv-why"><div class="eyebrow">Why your support matters</div><div class="ts-i"><p>When partners took part in a programme for premenstrual distress, women felt more understood and less distressed than when they went alone. Small things count most: noticing, listening, taking something off her plate.</p><small>Ussher & Perz 2017</small></div></section>` : ''}
     <section class="card tcm-card"><div class="tcm-glyph">${tcm.elementGlyph}</div><div class="tcm-main"><div class="eyebrow">Make her a cup of</div><h3>${tcm.tea.name}</h3><p class="body sm">${tcm.tea.why}</p></div></section>
     <section class="card card-light"><div class="eyebrow dark">Date idea</div><h3 class="dark-h">${esc(sup.date)}</h3></section>`
     : `<section class="card card-light"><div class="eyebrow dark">Plan idea</div><h3 class="dark-h">${esc(sup.plan)}</h3></section>`}

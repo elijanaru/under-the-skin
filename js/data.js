@@ -296,7 +296,7 @@ export const LETTERS = [
     keys: [['44%', 'of women see acne flare before their period'], ['7–10 days', 'before bleeding is when it starts'], ['Zinc', 'is often low in people with acne']],
     body: ['In a survey of 400 women, 44% had a premenstrual acne flare. As estrogen falls and progesterone peaks, oil glands work harder and pores swell, so spots appear about a week before bleeding.',
       'From the inside: steady blood sugar matters, since spikes raise insulin and that raises the hormones that feed oil glands. Protein and fibre at every meal help.',
-      'People with acne often have lower zinc levels, and zinc has some evidence of reducing spots. Oysters, beef and pumpkin seeds are the richest foods.',
+      'People with acne often have lower zinc levels, and zinc may help reduce spots. Oysters, beef and pumpkin seeds are the richest foods.',
       'This month: track spots in your check-in to see your own timing, pumpkin seeds and carrots daily, and gentle skin care in the premenstrual week rather than harsh scrubs.'],
     src: 'Stoll 2001 (Br J Dermatology) · Yee 2020 (Dermatologic Therapy, meta-analysis)', to: 'relief/Acne' },
   { id: 'letter-11', month: 11, tag: 'Darker days', title: 'Less light, lower mood before your period', lead: 'If November makes PMS heavier, light may be part of the answer.', pic: ['hormone', 'Serotonin'], mins: 3, ev: 'emerging',
@@ -683,7 +683,7 @@ export const NUTRITION = {
     energy: 'You may genuinely need a little more — an extra balanced snack is reasonable. Don’t fight hunger with willpower; plan for it.',
     plate: [['Roots & squash', 30], ['Veg', 30], ['Protein', 25], ['Nuts, seeds & fats', 15]],
     needs: [
-      { n: 'Calcium', target: '1,000–1,200 mg / day', why: 'The most consistent evidence of any nutrient for reducing PMS symptoms.', foods: ['Raw milk', 'Kefir', 'Yoghurt', 'Almonds', 'Sardines', 'Tahini'], ev: 'strong' },
+      { n: 'Calcium', target: '1,000–1,200 mg / day', why: 'The best-studied nutrient for easing PMS symptoms.', foods: ['Raw milk', 'Kefir', 'Yoghurt', 'Almonds', 'Sardines', 'Tahini'], ev: 'strong' },
       { n: 'Slow carbs', target: 'Every meal', why: 'Steady blood sugar means fewer cravings and mood dips; may support serotonin.', foods: ['Sweet potato', 'Squash', 'Beetroot', 'Chickpeas', 'Dates'], ev: 'some' },
       { n: 'Vitamin B6', target: '1.3 mg / day (food)', why: 'Mixed trials suggest help with PMS mood symptoms.', foods: ['Chickpeas', 'Bananas', 'Turkey', 'Salmon', 'Potatoes'], ev: 'some' },
       { n: 'Magnesium', target: '310–320 mg / day', why: 'May ease bloating, breast tenderness and sleep.', foods: ['Pumpkin seeds', 'Dark chocolate', 'Spinach', 'Cashews', 'Black beans'], ev: 'some' },
@@ -774,7 +774,7 @@ export const RELIEF = {
     why: 'The late-luteal drop in estrogen and progesterone affects serotonin, which can bring irritability, low mood and anxiety.',
     steps: [
       { t: 'Move most days', d: 'Regular aerobic exercise is one of the most recommended lifestyle steps for PMS.', ev: 'some' },
-      { t: 'Calcium-rich foods', d: '1,000–1,200 mg/day — the most consistent nutrient evidence for PMS.', ev: 'strong' },
+      { t: 'Calcium-rich foods', d: '1,000–1,200 mg/day — the best-studied nutrient for PMS.', ev: 'strong' },
       { t: 'Protect sleep', d: 'Poor sleep amplifies irritability. Same bedtime, cool room.', ev: 'some' },
       { t: 'Go easy on alcohol late luteal', d: 'It can worsen anxiety, low mood and sleep.', ev: 'emerging' },
       { t: 'Name it', d: 'Writing "this is day 26 talking" helps many women separate hormones from real problems.', ev: 'emerging' },
@@ -820,7 +820,7 @@ export const RELIEF = {
     steps: [
       { t: 'Hydrate first', d: 'A big glass of water, then reassess.', ev: 'some' },
       { t: 'Regular meals', d: 'Skipping meals is a common trigger.', ev: 'some' },
-      { t: 'Magnesium-rich foods', d: 'Some evidence for menstrual migraine prevention.', ev: 'some' },
+      { t: 'Magnesium-rich foods', d: 'May help prevent menstrual migraines.', ev: 'some' },
       { t: 'Dark, quiet rest', d: 'With a cool cloth on the forehead or neck.', ev: 'emerging' },
     ],
     tcm: 'Often Liver Yang rising — press LV3 on the foot, avoid skipping meals and late nights.',
@@ -843,7 +843,7 @@ export const RELIEF = {
     why: 'Estrogen and progesterone stimulate breast tissue in the luteal phase.',
     steps: [
       { t: 'Supportive bra', d: 'Including a soft one for sleep.', ev: 'some' },
-      { t: 'Go easy on salt', d: 'Commonly advised to ease fluid retention; evidence is mixed.', ev: 'emerging' },
+      { t: 'Go easy on salt', d: 'Commonly advised to ease fluid retention; results are mixed.', ev: 'emerging' },
       { t: 'Warm or cool compress', d: 'Whichever feels better.', ev: 'emerging' },
       { t: 'Chasteberry for 3 cycles', d: 'In a trial with 170 women it eased breast fullness along with mood and irritability.', ev: 'strong', to: 'nutrients/vitex' },
       { t: 'Flax seeds daily', d: '25 g ground flax a day eased cyclical breast pain in a small trial.', ev: 'emerging' },
