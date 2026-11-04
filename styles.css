@@ -5962,3 +5962,21 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .cf-t p { margin: 0; font-size: 12px; line-height: 1.4; color: #4a5a3a; }
 .cf-t span { font-size: 12px; line-height: 1.4; color: var(--a); font-weight: 500; }
 @media (prefers-reduced-motion: reduce) { .cf-c { animation: none; } }
+
+/* Move page cards: solid white, dark ink (more contrast) */
+.mv2-body .mv-dose, .mv2-body .mv2-list, .mv2-body .mv2-month, .mv2-body .mv2-tip { background: #fff !important; border: 0 !important; box-shadow: 0 8px 22px rgba(48,64,35,.08) !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+.mv2-body .mvd-k { font-size: 14px !important; font-weight: 500; letter-spacing: 0 !important; text-transform: none !important; color: #20301a; }
+.mv2-body .mvd-r { border-bottom-color: rgba(48,64,35,.1); } .mv2-body .mvd-r small { color: #4a5a3a; } .mv2-body .mvd-r b { color: #20301a; font-weight: 500; }
+.mv2-body .mvd-f { color: #5b6b48; }
+.mv2-body .mv2-li { border-bottom-color: rgba(48,64,35,.08); } .mv2-body .mv2-li b, .mv2-body .mv2-w b { color: #20301a; }
+.mv2-body .mv2-li small, .mv2-body .mv2-w p { color: #4a5a3a; } .mv2-body .mv2-li em { color: #4a5a3a; font-weight: 500; }
+.mv2-body .mv2-li.r3 em, .mv2-body .mv2-w.on .mv2-d, .mv2-body .mv2-w.on b em { color: hsl(calc(var(--hb) + 0 * var(--hk)) calc(55% * var(--hs)) 34%); }
+.mv2-body .mv2-li > i { background: rgba(48,64,35,.15); }
+.mv2-body .mv2-li.r3 > i { background: hsl(calc(var(--hb) + 0 * var(--hk)) calc(55% * var(--hs)) 40%); box-shadow: none; }
+.mv2-body .mv2-li.r2 > i { background: hsl(calc(var(--hb) + 0 * var(--hk)) calc(55% * var(--hs)) 40% / .45); }
+.mv2-body .mv2-li.r0 { opacity: .75; }
+.mv2-body .mv2-w { border-bottom-color: rgba(48,64,35,.08); }
+/* show more of the stardust video above the sheet */
+.mv3 { padding-top: max(52vh, 420px); }
+.mv3 .mv2-bg { height: calc(max(52vh, 420px) + 160px); }
+.mv3 .mv2-shade { height: calc(max(52vh, 420px) + 180px); background: linear-gradient(180deg, rgba(255,255,255,.1) 0%, rgba(255,255,255,0) 40%, rgba(246,238,240,.55) 78%, var(--bg) 100%); }

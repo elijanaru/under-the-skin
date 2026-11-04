@@ -3680,20 +3680,11 @@ function moveWave(days, info, L, P) {
     <small class="mvw-k">How hard your body wants to train</small></div>`;
 }
 function viewMove() {
-  const { info } = M, L = info.L, P = info.P, key = dayWindow(info), g = MOVE_GUIDE[key], D = MOVE_DOSE[key], tab = ui.mvTab || 'today';
+  const { info } = M, L = info.L, P = info.P, key = dayWindow(info), g = MOVE_GUIDE[key], D = MOVE_DOSE[key], tab = ui.mvTab === 'month' ? 'month' : 'today';
   const days = Array.from({ length: L }, (_, i) => windowAt(i + 1, L, P));
-  const spans = k => { const out = []; let s = null; days.forEach((w, i) => { const ok = MOVE_GUIDE[w].r[k] === 3; if (ok && s === null) s = i + 1; if ((!ok || i === L - 1) && s !== null) { out.push([s, ok ? i + 1 : i]); s = null; } }); return out; };
-  const rng = ([a, b]) => a === b ? `day ${a}` : `days ${a}–${b}`;
-  const strip = k => `<div class="mv-strip">${days.map((w, i) => `<i class="r${MOVE_GUIDE[w].r[k]} ${i + 1 === Math.min(info.cd, L) ? 'now' : ''}"></i>`).join('')}</div>`;
   const ranked = [...MOVES].sort((a, b) => g.r[b.k] - g.r[a.k]);
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const body = tab === 'best'
-    ? `${MOVES.map(m => { const sp = spans(m.k); return `<section class="mv2-row">
-        <div class="mv-rh"><b>${m.n}</b>${moveDots(g.r[m.k])}</div><small>${m.d}</small>
-        ${strip(m.k)}
-        <p>${sp.length ? `Best on ${sp.map(rng).join(' & ')} of your ${L}-day cycle.` : 'Fine any time. Follow your energy.'}</p></section>`; }).join('')}
-      <div class="mv-leg"><span><i class="r3"></i>Best</span><span><i class="r2"></i>Good</span><span><i class="r1"></i>Lighter</span><span><i class="r0"></i>Rest</span><span><i class="now"></i>Today</span></div>`
-    : tab === 'month'
+  const body = tab === 'month'
       ? `<section class="mv2-month">${Object.entries(MOVE_GUIDE).filter(([k]) => days.includes(k)).map(([k, x]) => { const idx = days.map((w, i) => w === k ? i + 1 : 0).filter(Boolean); return `<div class="mv2-w ${k === key ? 'on' : ''}"><span class="mv2-d">${idx[0] === idx[idx.length - 1] ? idx[0] : `${idx[0]}–${idx[idx.length - 1]}`}</span><div><b>${x.title}${k === key ? ' <em>· now</em>' : ''}</b><p>${x.tip}</p></div></div>`; }).join('')}</section>`
       : `<section class="mv2-tip"><span class="eyebrow">Why today</span><p>${g.tip}</p></section>
         <section class="card glass mv-dose"><div class="mvd-k">Your dose today</div>
@@ -3712,7 +3703,7 @@ function viewMove() {
     </div>
   </section>
   <div class="pad mv2-body">
-    <div class="seg">${[['today', 'Today'], ['best', 'Best days'], ['month', 'Your month']].map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="mvTab" data-v="${k}">${l}</button>`).join('')}</div>
+    <div class="seg">${[['today', 'Today'], ['month', 'Your month']].map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="mvTab" data-v="${k}">${l}</button>`).join('')}</div>
     ${body}
     <p class="fine center">Research on training by cycle phase is still emerging and results are mixed. Your strength doesn’t change across the cycle, only your energy does. Some women set personal bests on their period.</p>
   </div>`;
