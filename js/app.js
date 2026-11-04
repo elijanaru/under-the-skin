@@ -3773,7 +3773,7 @@ function viewBreathe() {
     <h1 class="bz-title"><small>A minute for you</small>Come back to<em>your breath</em></h1>
     <section class="bz">
       <div class="bz-stage"><i class="bz-guide"></i><i class="bz-halo"></i><i class="bz-rip"></i><i class="bz-rip r2"></i><div class="bz-ball"></div>
-        <div class="bz-txt"><b class="bz-t">Ready when you are</b><small class="bz-s">Five rounds, about a minute</small></div></div>
+        <div class="bz-txt"><b class="bz-t">You’re safe here</b><small class="bz-s">Soften your shoulders and your jaw</small></div></div>
       <div class="bz-n"></div>
       <div class="bz-pal">
         <svg class="bz-pet" viewBox="0 0 120 100" aria-hidden="true"><g class="bz-pet-b">
@@ -3796,7 +3796,7 @@ function viewBreathe() {
     </section>
   </div>`;
 }
-const SIGH = [['in', 'Breathe in', 'Deep, through your nose', 4000], ['top', 'One more sip', 'A little more air on top', 1500], ['out', 'Long breath out', 'Slowly, through your mouth', 8000], ['rest', 'Rest', '', 1500]];
+const SIGH = [['in', 'Breathe in', 'Fill up like a soft balloon', 4000], ['top', 'One more sip', 'Just a tiny bit more', 1500], ['out', 'Let it all go', 'Everything can melt away', 8000], ['rest', 'Rest here', 'You are here, and that is enough', 1500]];
 const PET_SAY = { in: 'Breathe in, slowly.', top: 'A little more…', out: 'Let it go.', rest: 'Stay in the present.' };
 function mountBreath(el) {
   const ball = el.querySelector('.bz-ball'), txt = el.querySelector('.bz-txt'), t = el.querySelector('.bz-t'), sub = el.querySelector('.bz-s'), cnt = el.querySelector('.bz-n'), btn = el.querySelector('.bz-go'), say = el.querySelector('.bz-say');
@@ -3816,7 +3816,7 @@ function mountBreath(el) {
   }
   function stop(done) {
     run = false; cancelAnimationFrame(raf); ball.style.transform = ''; el.dataset.ph = ''; el.style.setProperty('--b', 0);
-    swap(done ? 'Well done' : 'Ready when you are', done ? 'Notice how your body feels now' : 'Five rounds, about a minute', done ? 'You did so well. Let it go.' : 'Stay in the present.');
+    swap(done ? 'So proud of you' : 'You’re safe here', done ? 'Notice how soft you feel now' : 'Soften your shoulders and your jaw', done ? 'You did so well. Let it go.' : 'Stay in the present.');
     cnt.textContent = ''; btn.textContent = done ? 'Again' : 'Start';
   }
   const go = () => { if (run) return stop(false); run = true; btn.textContent = 'Stop'; t0 = performance.now(); raf = requestAnimationFrame(frame); };
