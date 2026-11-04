@@ -541,7 +541,7 @@ export const SUPPORT = {
     feel: 'Energy is at its lowest and cramps, back ache or tiredness are common. She may want quiet, warmth and fewer plans.',
     partner: {
       do: ['Take something off her plate without being asked', 'Bring a hot water bottle or heat pack', 'Plan a cosy night in — film, blanket, warm home-cooked food', 'Keep the house warm and offer warm drinks'],
-      avoid: ['Pushing big plans or late nights', 'Taking low energy personally', 'Iced drinks and raw, cold food (TCM: cold slows the flow)'],
+      avoid: ['Pushing big plans or late nights', 'Thinking her tiredness is about you', 'Iced drinks and raw, cold food (TCM: cold slows the flow)'],
       gifts: ['Hot water bottle', 'Dark chocolate', 'Ginger & red date tea', 'Fluffy socks', 'Magnesium bath salts'],
       say: 'No plans needed tonight — I’ll bring dinner and the heat pack. You just rest.',
       date: 'Sofa, blankets and her comfort film',
