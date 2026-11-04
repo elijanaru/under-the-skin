@@ -3818,7 +3818,7 @@ function mountBreath(el) {
     if (round >= ROUNDS) return stop(true);
     let m = e % CYC, i = 0; while (m >= SIGH[i][3]) { m -= SIGH[i][3]; i++; }
     const [k, a, b, ms] = SIGH[i], [s0, s1] = SC[k], sc = s0 + (s1 - s0) * ease(m / ms);
-    el.style.setProperty('--b', Math.min(1, (sc - .42) / .56).toFixed(3)); el.style.setProperty('--sp', ((sc - .42) / .68).toFixed(3));
+    el.style.setProperty('--b', ((sc - .42) / .68).toFixed(3)); // the extra sip opens the lotus that last bit wider el.style.setProperty('--sp', ((sc - .42) / .68).toFixed(3));
     if (el.dataset.ph !== k) { el.dataset.ph = k; swap(a, b, PET_SAY[k]); }
     cnt.textContent = `${round + 1} of ${ROUNDS}`;
     raf = requestAnimationFrame(frame);
