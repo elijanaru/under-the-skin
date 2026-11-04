@@ -6284,3 +6284,32 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .pt-art .pt-lab { font: 500 15px Outfit, sans-serif; fill: #20301a; } .pt-art .pt-sub { font: 400 11px Outfit, sans-serif; fill: #4a5a3c; }
 @keyframes ptRing { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(1.6); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .pt-art .pt-ring { animation: none; opacity: .5; } }
+
+/* breathe v3: a dark plum glow card with six soft circles that bloom open on the breath in and fold closed on the breath out */
+.bz { --b: 0; --sp: 0; }
+.bz .bz-stage { width: 100%; max-width: 360px; aspect-ratio: 1; border-radius: 34px; overflow: hidden; display: grid; place-items: center; position: relative;
+  background: radial-gradient(circle at 50% 52%, rgba(240,170,190,calc(.55 + var(--b) * .35)) 0%, #a24a6a 28%, #5a2442 55%, #2c1424 80%, #22101c 100%);
+  box-shadow: 0 18px 50px rgba(60,20,45,.28); }
+.bz .bz-guide, .bz .bz-halo, .bz .bz-rip { display: none; }
+.bz-card-h { position: absolute; top: 20px; left: 22px; right: 22px; display: flex; justify-content: space-between; align-items: baseline; color: #fff; z-index: 2; }
+.bz-card-h b { font: 400 24px Outfit, sans-serif; letter-spacing: -.01em; }
+.bz-card-h .bz-n { margin: 0; min-height: 0; font: 400 16px Doto, monospace; color: rgba(255,255,255,.85); }
+.bz .bz-ball { position: relative; inset: auto; width: 56%; height: 56%; border-radius: 0; background: none !important; box-shadow: none !important; transform: rotate(calc(var(--sp) * 45deg)) !important; }
+.bz .bz-ball::after { display: none; }
+.bz .bz-ball i { position: absolute; left: 50%; top: 50%; width: 52%; height: 52%; margin: -26% 0 0 -26%; border-radius: 50%;
+  background: radial-gradient(circle at 50% 40%, rgba(255,255,255,.5), rgba(255,235,245,.22) 70%); border: 1px solid rgba(255,255,255,.35);
+  mix-blend-mode: screen; transform: rotate(var(--a)) translateY(calc((.18 + var(--b) * .82) * -48%)) scale(calc(.55 + var(--b) * .45)); }
+.bz .bz-txt { margin-top: 18px; text-align: center; }
+.bz .bz-t { color: #20301a; } .bz .bz-t::before, .bz .bz-t::after { color: #a24a6a; }
+.bz .bz-s { display: inline-block; margin-top: 10px; padding: 8px 16px; border-radius: 99px; border: 1px solid rgba(48,64,35,.18); background: rgba(255,255,255,.7); color: #4a5a3c; }
+
+/* tea tiles: a little 3D cup floating with a soft shadow and steam */
+.cup3 { position: relative; flex: none; width: 52px; height: 52px; display: grid; place-items: center; }
+.cup3 img { position: relative; z-index: 1; width: 54px; height: 54px; object-fit: contain; animation: cupFloat 3.6s ease-in-out infinite; filter: drop-shadow(0 4px 4px rgba(48,64,35,.12)); }
+.cup3 i { position: absolute; bottom: 2px; left: 50%; width: 30px; height: 6px; margin-left: -15px; border-radius: 50%; background: rgba(48,64,35,.18); filter: blur(2px); animation: cupShadow 3.6s ease-in-out infinite; }
+.cup3::before { content: ''; position: absolute; z-index: 2; top: -6px; left: 50%; width: 8px; height: 14px; margin-left: -4px; border-radius: 50%; background: radial-gradient(rgba(255,255,255,.95), rgba(255,255,255,0) 70%); animation: cupSteam 3.6s ease-in-out infinite; }
+@keyframes cupFloat { 0%, 100% { transform: translateY(1px) rotate(-3deg); } 50% { transform: translateY(-5px) rotate(3deg); } }
+@keyframes cupShadow { 0%, 100% { transform: scale(1); opacity: .9; } 50% { transform: scale(.75); opacity: .5; } }
+@keyframes cupSteam { 0% { transform: translateY(4px) scale(.6); opacity: 0; } 40% { opacity: .9; } 100% { transform: translateY(-10px) scale(1.2); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .cup3 img, .cup3 i, .cup3::before { animation: none; } }
+.bz .bz-pal { margin-top: 14px; }

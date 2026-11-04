@@ -1501,7 +1501,7 @@ function planRecs(c, warm) {
   const out = [breathe ? { k: 'Breathe', t: 'Calm sigh, 1 min', e: '🫧', to: 'breathe' }
     : { k: 'Do this', t: cap, e: (FIX_EMOJI.find(([r]) => r.test(fix)) || [, '🌿'])[1], to: c.rk ? `relief/${encodeURIComponent(c.rk)}` : 'relief' }];
   const v = SYMPTOM_TEA[c.s], tea = v && (Array.isArray(v) ? v[warm ? 1 : 0] : v), ref = tea && teaRef(tea, c.s);
-  if (ref) out.push({ k: 'Sip', t: `${tea} tea`.replace(/ tea tea$/i, ' tea'), img: teaPhoto(tea, 200, 200), to: ref.to });
+  if (ref) out.push({ k: 'Sip', t: `${tea} tea`.replace(/ tea tea$/i, ' tea'), cup: /ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i.test(tea) ? 'images/cup-chai.webp' : 'images/cup-glass.webp', to: ref.to });
   else if (c.rk && !breathe) out.push({ k: 'More ways', t: 'Full relief guide', e: '✨', to: `relief/${encodeURIComponent(c.rk)}` });
   return out.slice(0, 2);
 }
@@ -1523,7 +1523,7 @@ function viewBrain(id) {
       <div class="bx-top"><span class="bx-e">${x.e}</span><b>${x.t}</b>
         <button class="bx-tick" data-action="brTick" data-id="${esc(k + x.id)}" aria-pressed="${!!on}" aria-label="Mark as done">${on ? icon('check', 16) : ''}</button></div>
       ${x.why ? `<p class="bx-why">${x.why}</p>` : ''}
-      ${x.recs.length ? `<div class="bx-recs">${x.recs.map(r => `<button class="bx-r" data-action="nav" data-to="${r.to}">${r.img ? `<img src="${r.img}" alt="" loading="lazy">` : `<span class="bx-re">${r.e}</span>`}<span class="bx-rt"><small>${r.k}</small>${r.t}</span></button>`).join('')}</div>` : ''}
+      ${x.recs.length ? `<div class="bx-recs">${x.recs.map(r => `<button class="bx-r" data-action="nav" data-to="${r.to}">${r.cup ? `<span class="cup3" aria-hidden="true"><img src="${r.cup}" alt=""><i></i></span>` : r.img ? `<img src="${r.img}" alt="" loading="lazy">` : `<span class="bx-re">${r.e}</span>`}<span class="bx-rt"><small>${r.k}</small>${r.t}</span></button>`).join('')}</div>` : ''}
     </section>`; }).join('')}</div>` : ''}
     ${good.length ? `<div class="br-h">Going well</div><div class="bx-good">${good.map(g => `<div><b>🌟 ${g.t}</b>${g.p ? `<p>${g.p}</p>` : ''}</div>`).join('')}</div>` : ''}`;
   return `<section class="br-hero br2">
@@ -3772,9 +3772,9 @@ function viewBreathe() {
   <div class="pad bz-pad">
     <h1 class="bz-title"><small>A minute for you</small>Come back to<em>your breath</em></h1>
     <section class="bz">
-      <div class="bz-stage"><i class="bz-guide"></i><i class="bz-halo"></i><i class="bz-rip"></i><i class="bz-rip r2"></i><div class="bz-ball"></div>
-        <div class="bz-txt"><b class="bz-t">Let that shi go</b><small class="bz-s">Soften your shoulders and your jaw</small></div></div>
-      <div class="bz-n"></div>
+      <div class="bz-stage"><div class="bz-card-h"><b>Breathe</b><span class="bz-n"></span></div>
+        <div class="bz-ball">${[0, 60, 120, 180, 240, 300].map(d => `<i style="--a:${d}deg"></i>`).join('')}</div></div>
+      <div class="bz-txt"><b class="bz-t">Let that shi go</b><small class="bz-s">Soften your shoulders and your jaw</small></div>
       <div class="bz-pal">
         <svg class="bz-pet" viewBox="0 0 120 100" aria-hidden="true"><g class="bz-pet-b">
           <path d="M22 86 C14 60 26 34 60 34 C94 34 106 60 98 86 Z" fill="#fff" stroke="#304023" stroke-width="2.4" stroke-linejoin="round"/>
@@ -3809,13 +3809,13 @@ function mountBreath(el) {
     if (round >= ROUNDS) return stop(true);
     let m = e % CYC, i = 0; while (m >= SIGH[i][3]) { m -= SIGH[i][3]; i++; }
     const [k, a, b, ms] = SIGH[i], [s0, s1] = SC[k], sc = s0 + (s1 - s0) * ease(m / ms);
-    ball.style.transform = `scale(${sc})`; el.style.setProperty('--b', ((sc - .42) / .68).toFixed(3));
+    el.style.setProperty('--b', Math.min(1, (sc - .42) / .56).toFixed(3)); el.style.setProperty('--sp', ((sc - .42) / .68).toFixed(3));
     if (el.dataset.ph !== k) { el.dataset.ph = k; swap(a, b, PET_SAY[k]); }
     cnt.textContent = `${round + 1} of ${ROUNDS}`;
     raf = requestAnimationFrame(frame);
   }
   function stop(done) {
-    run = false; cancelAnimationFrame(raf); ball.style.transform = ''; el.dataset.ph = ''; el.style.setProperty('--b', 0);
+    run = false; cancelAnimationFrame(raf); el.dataset.ph = ''; el.style.setProperty('--b', 0); el.style.setProperty('--sp', 0);
     swap(done ? 'So proud of you' : 'Let that shi go', done ? 'Notice how soft you feel now' : 'Soften your shoulders and your jaw', done ? 'You did so well. Let it go.' : 'Stay in the present.');
     cnt.textContent = ''; btn.textContent = done ? 'Again' : 'Start';
   }
