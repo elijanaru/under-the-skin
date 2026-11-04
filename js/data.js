@@ -395,7 +395,7 @@ export const BODY_GROUPS = [
   ['Pain', [['Cramps', '🌀'], ['Pelvic pain', '🔻'], ['Headache', '🤕'], ['Back pain', '🦴'], ['Joint pain', '🦵'], ['Tender breasts', '💗']]],
   ['Belly', [['Bloating', '🎈'], ['Nausea', '🤢'], ['Constipation', '🧱'], ['Diarrhea', '💧'], ['Cravings', '🍫']]],
   ['Skin & hair', [['Acne', '🔴'], ['Hair shedding', '🪮'], ['Glowing skin', '🌟']]],
-  ['Energy & sleep', [['Energetic', '⚡'], ['Fatigue', '🪫'], ['Brain fog', '🌫️'], ['Dizziness', '💫']]],
+  ['Energy & focus', [['Energetic', '⚡'], ['Fatigue', '🪫'], ['Brain fog', '🌫️'], ['Dizziness', '💫']]],
 ];
 export const MOOD_LIST = [['Calm', '🌿'], ['Happy', '😊'], ['Confident', '💅'], ['Sexy', '🌹'], ['Social', '🫶'], ['Creative', '🎨'],
   ['Sensitive', '🥺'], ['Anxious', '😰'], ['Irritable', '😤'], ['Low mood', '🌧️'], ['Unmotivated', '🫠']];

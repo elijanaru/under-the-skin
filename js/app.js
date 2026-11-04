@@ -1311,6 +1311,16 @@ function calSyncCard() {
 
 const LOG_SECS = [['flow', 'drop', 'Period & down there'], ['body', 'user', 'Body'], ['mind', 'mind', 'Mind & mood'], ['rest', 'bolt', 'Energy'],
   ['desire', 'heart', 'Desire & intimacy'], ['disrupt', 'clock', 'Cycle disruptors'], ['note', 'book', 'Note']];
+// What she is most likely to feel today: her own patterns first, then what's common in this phase.
+const PHASE_LIKELY = { menstrual: ['Cramps', 'Fatigue', 'Back pain', 'Bloating'], follicular: ['Energetic', 'Glowing skin', 'Acne', 'Headache'],
+  ovulatory: ['Energetic', 'Glowing skin', 'Bloating', 'Pelvic pain'], luteal: ['Bloating', 'Tender breasts', 'Cravings', 'Acne'] };
+function likelyToday(di) {
+  const all = BODY_GROUPS.flatMap(([, l]) => l), out = [];
+  if (di && M.stats.periods.length) patterns().list.filter(x => di.cd >= x.from && di.cd <= x.to).forEach(x => out.push(x.name));
+  if (di) out.push(...PHASE_LIKELY[di.phase]);
+  return [...new Set(out)].map(n => all.find(([v]) => v === n)).filter(Boolean).slice(0, 4);
+}
+const lgPick = (on, field, v, multi, cls, inner, lab = v) => `<button class="${cls} ${on ? 'on' : ''}" data-action="logSet" data-field="${field}" data-v="${esc(v)}" data-multi="${multi ? 1 : ''}" aria-pressed="${on}" aria-label="${esc(lab)}">${inner}</button>`;
 const DRIVE = [['🌙', 'Quiet'], ['🌸', 'Soft'], ['🌷', 'Warm'], ['🌹', 'Craving'], ['🔥', 'On fire']];
 const SLIDER_WORDS = { body: ['Rough', 'Meh', 'Okay', 'Good', 'Great'], mind: ['Heavy', 'Low', 'Okay', 'Good', 'Light'], drive: ['None', 'Low', 'Medium', 'High', 'On fire'] };
 function logSlider(field, q, l) {
@@ -1365,16 +1375,18 @@ function viewLog() {
   };
   const inner = {
     flow: `<div class="lg-k">Bleeding</div><p class="lg-why">${icon('spark', 12)}<span>Builds your periods, so your next period, egg release and phase get more exact.</span></p>
-      <div class="flow">${FLOWS.map(f => `<button class="flow-o ${l.flow === f.id ? 'on' : ''}" data-action="logSet" data-field="flow" data-v="${f.id}">
-        <span class="drops">${f.drops ? Array.from({ length: f.drops }, () => icon('drop', 15, 1.4)).join('') : '<i class="spot"></i>'}</span>${f.label}</button>`).join('')}</div>
-      <div class="lg-k">Discharge</div><p class="lg-why">${icon('spark', 12)}<span>Egg white is your fertile sign: it moves your egg release date to match your body.</span></p>${chips('fluid', DISCHARGE, false)}
-      <div class="lg-k">Anything else</div><p class="lg-why">${icon('spark', 12)}<span>Tells you when something is worth checking with a doctor.</span></p>${chips('down', DOWN_EXTRA)}`,
-    body: `${BODY_GROUPS.map(([g, list]) => `<div class="lg-k">${g}</div>${chips('symptoms', list)}`).join('')}`,
+      <div class="fd">${FLOWS.map((f, i) => lgPick(l.flow === f.id, 'flow', f.id, false, 'fd-o', `<i style="--s:${[14, 22, 30, 40][i]}px"></i><small>${f.label}</small>`, f.label)).join('')}</div>
+      <div class="lg-k">Discharge</div><p class="lg-why">${icon('spark', 12)}<span>Egg white is your fertile sign: it moves your egg release date to match your body.</span></p>
+      <div class="tx">${DISCHARGE.filter(([v]) => v !== 'Clumpy').map(([v, e]) => lgPick(l.fluid === v, 'fluid', v, false, `tx-o${v === 'Egg white' ? ' fert' : ''}`, `<span>${e}</span><small>${v}</small>`)).join('')}</div>
+      <div class="lg-k">Anything else</div><p class="lg-why">${icon('spark', 12)}<span>Tells you when something is worth checking with a doctor.</span></p>
+      <div class="fl">${lgPick(l.fluid === 'Clumpy', 'fluid', 'Clumpy', false, 'fl-o', '<span>☁️</span>Clumpy', 'Clumpy')}${DOWN_EXTRA.map(([v, e]) => lgPick((l.down || []).includes(v), 'down', v, true, 'fl-o', `<span>${e}</span>${v}`)).join('')}</div>`,
+    body: (() => { const lk = likelyToday(di), lkN = lk.map(([v]) => v), sym = l.symptoms || [];
+      return `${lk.length ? `<div class="lg-k">Likely today</div><div class="lk">${lk.map(([v, e]) => lgPick(sym.includes(v), 'symptoms', v, true, 'lk-o', `<span>${e}</span><small>${v}</small>`)).join('')}</div>` : ''}
+      ${BODY_GROUPS.map(([g, list]) => { const rest = list.filter(([v]) => !lkN.includes(v)); return rest.length ? `<div class="lg-k">${g}</div><div class="pl">${rest.map(([v, e]) => lgPick(sym.includes(v), 'symptoms', v, true, 'pl-o', `<span>${e}</span>${v}`)).join('')}</div>` : ''; }).join('')}`; })(),
     mind: ['Light', 'Heavy'].map(side => `<div class="lg-k">${side === 'Light' ? 'Feeling light' : 'Feeling heavy'}</div><div class="mb ${side === 'Light' ? 'up' : 'down'}">${MOOD_LIST.filter(([m]) => GOOD_FEELINGS.includes(m) === (side === 'Light')).map(([v, e], i) => {
       const on = (l.moods || []).includes(v); return `<button class="mb-b ${on ? 'on' : ''}" style="--i:${i}" data-action="logSet" data-field="moods" data-v="${esc(v)}" data-multi="1" aria-pressed="${on}"><span>${e}</span><small>${v}</small></button>`; }).join('')}</div>`).join(''),
-    rest: `<div class="lg-k">Energy</div>
-      <div class="energy-pick">${[1, 2, 3, 4, 5].map(n => `<button class="${l.energy >= n ? 'on' : ''}" data-action="logSet" data-field="energy" data-v="${n}"><b style="height:${30 + n * 12}%"></b></button>`).join('')}</div>
-      <div class="ep-labels"><span>Drained</span><span>Radiant</span></div>`,
+    rest: `<div class="bt"><div class="bt-body">${[1, 2, 3, 4, 5].map(n => `<button class="bt-c ${l.energy >= n ? 'on' : ''}" data-action="logSet" data-field="energy" data-v="${n}" aria-label="Energy ${n} of 5" aria-pressed="${l.energy === n}"></button>`).join('')}</div><i class="bt-cap"></i></div>
+      <div class="dz-l"><span>Drained</span><b>${l.energy ? ['Drained', 'Low', 'Okay', 'Good', 'Radiant'][l.energy - 1] : 'Tap your battery'}</b><span>Radiant</span></div>`,
     desire: `<div class="lg-k">Sex drive</div>
       <div class="dz"><div class="dz-track">
         ${DRIVE.map(([e, w], i) => `<button class="dz-s ${l.drive >= i + 1 ? 'lit' : ''} ${l.drive === i + 1 ? 'on' : ''}" style="--i:${i}" data-action="logSet" data-field="drive" data-v="${i + 1}" aria-label="Sex drive: ${w}" aria-pressed="${l.drive === i + 1}"><span>${e}</span></button>`).join('')}</div>
@@ -1383,7 +1395,7 @@ function viewLog() {
       <div class="sx">${INTIMACY.filter(([n]) => n.startsWith('Sex,')).map(([v, e]) => { const on = (l.intim || []).includes(v); return `<button class="sx-c ${on ? 'on' : ''}" data-action="logSet" data-field="intim" data-v="${esc(v)}" data-multi="1" aria-pressed="${on}"><span>${e}</span><small>${v.endsWith('unprotected') ? 'Unprotected' : 'Protected'}</small></button>`; }).join('')}</div>
       <p class="lg-fine">Private: only you see this. It’s never shared with partners.</p>`,
     fuel: `<div class="lg-k">Food</div>${chips('intake', INTAKE.filter(([n]) => n === 'Raw & cold food'))}<div class="lg-k">Supplements & medicine <button class="link lg-more" data-action="nav" data-to="nutrients">Doses & food first ${icon('chevR', 11)}</button></div>${chips('supp', SUPPS)}`,
-    disrupt: `<p class="lg-fine top">Things that can shift ovulation or your next period. Logging them helps me read your cycle right.</p>${chips('disrupt', DISRUPTORS.filter(([n]) => ['Alcohol', 'Illness', 'Travel', 'Big stress', 'Shock or loss'].includes(n)))}`,
+    disrupt: `<p class="lg-fine top">Things that can shift ovulation or your next period. Logging them helps me read your cycle right.</p><div class="rt">${DISRUPTORS.filter(([n]) => ['Alcohol', 'Illness', 'Travel', 'Big stress', 'Shock or loss'].includes(n)).map(([v, e]) => lgPick((l.disrupt || []).includes(v), 'disrupt', v, true, 'rt-o', `<span>${e}</span><small>${v}</small>`)).join('')}</div>`,
     note: `<textarea class="lg-note" rows="3" placeholder="Anything you want to remember about today…" data-input="log.notes">${esc(l.notes || '')}</textarea>`,
   };
   const total = Object.values(count).reduce((a, b) => a + b, 0);
@@ -1392,6 +1404,7 @@ function viewLog() {
     <div class="log-date"><button class="icon-btn" data-action="logMove" data-d="-1" aria-label="Previous day">${icon('chevL', 20)}</button>
       <div><div class="eyebrow">${isToday ? 'Today' : fmt(d, { weekday: 'long' })}${di ? ` · Day ${di.cd} · ${PHASES[di.phase].name}` : ''}</div><h2>${fmt(d, { month: 'long', day: 'numeric' })}</h2></div>
       <button class="icon-btn" data-action="logMove" data-d="1" aria-label="Next day" ${isToday ? 'disabled' : ''}>${icon('chevR', 20)}</button></div>
+    ${(() => { const y = state.logs[C.iso(C.addDays(d, -1))]; return !total && y && Object.keys(y).some(f => f !== 'notes') ? `<button class="lg-copy" data-action="logCopy">${icon('plus', 16)}<span><b>Same as yesterday</b><small>One tap, then change what’s different</small></span></button>` : ''; })()}
     ${LOG_SECS.map(([id, e, t], i) => `<section class="lg-sec ${open[id] ? 'open' : ''}" style="animation-delay:${i * 40}ms">
       <button class="lg-head" data-action="logSec" data-s="${id}" aria-expanded="${!!open[id]}"><span class="lg-ic">${icon(e, 18)}</span><b>${t}</b>${count[id] ? `<small>${count[id]}</small>` : ''}<span class="lg-chev">${icon('chevR', 16)}</span></button>
       ${open[id] ? `<div class="lg-in">${inner[id]}</div>` : ''}</section>`).join('')}
@@ -2378,7 +2391,6 @@ const QUICK_FIX = {
   'Cold hands & feet': 'Warm socks, a ginger foot soak and cooked warming food.',
   'Feeling hot': 'Cool water, mung beans or leafy greens, and a lighter blanket.',
   'Night sweats': 'A cooler bedroom, breathable sheets and a calm wind-down.',
-  Spotting: 'Nothing to do but note it. I’ll learn when it tends to happen.',
   Anxious: 'Breathe out longer than in: 4 in, 6 out, for two minutes.',
   Stressed: 'A 10-minute walk outside and one thing off today’s list.',
   Irritable: 'Eat something warm with protein and take 10 minutes alone.',
@@ -5211,6 +5223,10 @@ const actions = {
     ui.logDate = C.iso(n); render();
   },
   logSec: d => { const o = ui.logOpen = ui.logOpen || {}; o[d.s] = !o[d.s]; render(); },
+  logCopy: () => {
+    const k = ui.logDate || todayISO(), y = { ...(state.logs[C.iso(C.addDays(C.parseISO(k), -1))] || {}) }; delete y.notes;
+    setLog(k, y); ui.logOpen = { flow: 1, body: 1, mind: 1 }; render();
+  },
   brTick: d => { const b = ui.brDone = ui.brDone || {}; b[d.id] = !b[d.id]; render(); },
   logSet: d => {
     const k = ui.logDate || todayISO(), l = getLog(k);
