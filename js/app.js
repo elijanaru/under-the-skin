@@ -3357,6 +3357,7 @@ function viewRhythm() {
       <h1 class="rh3-h">Live with the <em>sun & moon</em></h1>
       <p class="rh3-sub">Light sets your inner clock. Follow the sun, and your sleep, mood and hormones follow.</p>
       <div class="rh3-chips"><span>${icon('sun', 14)} Rise <b>${hLabel(D.rise)}</b></span><span>Set <b>${hLabel(D.set)}</b></span><span>${moonIcon(moon, 14)} <b>${Math.round(moon.illum * 100)}%</b> moon</span></div>
+      <button class="rh3-loc" data-action="useGeo">${icon('pin', 15)}<span>${state.profile.geo ? 'Sun times for your location' : `Sun times for ${(() => { try { return new Intl.DisplayNames(['en'], { type: 'region' }).of(myCountry()); } catch (e) { return 'your country'; } })()}`}</span><b>${state.profile.geo ? 'Update' : 'Use my location'}</b></button>
     </div>
   </section>
   <div class="pad">
@@ -4809,7 +4810,7 @@ const actions = {
     document.querySelectorAll('.rh-ring').forEach(svg => { svg.outerHTML = rhythmRing(done.length, RH_GOAL); });
     if (i < 0) { plusOne(el); if (done.length === RH_GOAL) toast('🌕 Full rhythm today — beautiful'); }
   },
-  useGeo: () => { if (!navigator.geolocation) return toast('Location isn’t available'); navigator.geolocation.getCurrentPosition(p => { state.profile.geo = { lat: +p.coords.latitude.toFixed(2), lng: +p.coords.longitude.toFixed(2) }; save(); toast('Sun times set for where you are'); render(); }, () => toast('Location not allowed — using your country')); },
+  useGeo: () => { if (!navigator.geolocation) return toast('Location isn’t available'); navigator.geolocation.getCurrentPosition(p => { state.profile.geo = { lat: +p.coords.latitude.toFixed(2), lng: +p.coords.longitude.toFixed(2) }; save(); toast('Sun times set for where you are'); render(); }, () => toast('Location not allowed, using your country')); },
   teaK: d => { ui.teaK = d.v; render(); },
   shade: d => { const v = document.querySelector('.view'), y = v ? v.scrollTop : 0; ui.shade = ui.shade === +d.i ? -1 : +d.i; render(); const w = document.querySelector('.view'); if (w) w.scrollTop = y; },
   reliefHelp: (d, el) => {

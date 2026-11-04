@@ -5404,3 +5404,7 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .rh3 + .pad { margin-top: 0; padding-top: 18px; }
 .rh3 + .pad::before { content: ''; position: absolute; left: 10%; right: 10%; top: -10px; height: 120px; z-index: -1; pointer-events: none;
   background: radial-gradient(closest-side, rgba(255,196,150,.35), transparent); filter: blur(10px); }
+.rh3-loc { display: inline-flex; align-items: center; gap: 8px; margin-top: 12px; padding: 6px 6px 6px 13px; border-radius: 99px; font: inherit; font-size: 13px; cursor: pointer;
+  color: rgba(255,244,230,.88); background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.24); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); -webkit-tap-highlight-color: transparent; }
+.rh3-loc b { padding: 6px 12px; border-radius: 99px; background: #fff8ee; color: #3b2412; font-weight: 500; font-size: 12.5px; }
+.rh3-loc:active { transform: scale(.97); }
