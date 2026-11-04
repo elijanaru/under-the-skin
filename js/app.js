@@ -3392,7 +3392,7 @@ function viewRhythm() {
       <div class="eyebrow">The full story · your inner clock</div>
       <h2>Why your body <span>follows the sun</span></h2>
       <p class="rh-art-lead">For almost all of human history, women woke with the light, spent the day outside and slept when it got dark. Your body still expects that. Here is what each part of your day does, and how sure science is about it.</p>
-      ${RHYTHM_WHY.map((s, i) => `<section class="rh-art-s"><div class="rh-art-h"><span class="rh-art-ic">${s.ic === 'moon' && i === 11 ? moonIcon(moon, 20) : icon(s.ic, 20)}</span><h3>${s.h}</h3></div><p>${s.p}</p></section>`).join('')}
+      ${RHYTHM_WHY.map((s, i) => `<section class="rh-art-s"><div class="rh-art-h"><span class="rh-art-ic">${s.h === 'The moon' ? moonIcon(moon, 20) : icon(s.ic, 20)}</span><h3>${s.h}</h3></div><p>${s.p}</p></section>`).join('')}
       <div class="rh-art-sum"><b>In short</b><p>Light in the morning, sun at midday, people in the afternoon, dim at sunset, bed when you’re tired. Your body does the rest.</p></div>
     </article>
   </div>`;
