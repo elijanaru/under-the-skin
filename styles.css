@@ -5333,3 +5333,11 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .op-pet { width: 168px; height: 172px; margin: 4px auto 0; }
 .op-hero h2 { font-size: 34px; line-height: 1.02; }
 .op-hero h2 s::after { height: 3.5px; top: 52%; }
+/* cycle ring: bolder arcs and a light travelling around */
+.onb-ring { width: 190px; height: 190px; }
+.ocr-a { stroke-width: 20; }
+.ocr-spin { filter: drop-shadow(0 0 4px #fff) drop-shadow(0 0 10px rgba(255,255,255,.85)); mix-blend-mode: screen; }
+.ocr-head { fill: #fff; }
+.ocr-spin { transform-box: fill-box; transform-origin: 50% 50%; animation: ocrSpin 5.5s linear infinite; }
+@keyframes ocrSpin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .ocr-spin { animation: none; } }

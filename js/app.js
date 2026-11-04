@@ -908,6 +908,8 @@ function onbCycleRing(L, P) {
     <svg viewBox="-24 -24 248 248" aria-hidden="true"><g class="ocr-rot">
       <circle class="ocr-o" r="${R}" cx="100" cy="100"/>
       <g transform="translate(100 100) rotate(-90)">${parts.map(arc).join('')}</g></g>
+      <g transform="translate(100 100) rotate(-90)"><g class="ocr-spin">${[[56, .16, 6], [38, .34, 8], [22, .65, 10], [10, 1, 12]].map(([d, o, w]) => `<circle r="${R}" fill="none" stroke="#fff" stroke-width="${w}" stroke-linecap="round" stroke-opacity="${o}" stroke-dasharray="${d} ${(C - d).toFixed(1)}" stroke-dashoffset="${d}"/>`).join('')}
+        <circle class="ocr-head" cx="${R}" cy="0" r="6.5"/></g></g>
     </svg></div>`;
 }
 function viewOnboarding() {
