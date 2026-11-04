@@ -3222,8 +3222,6 @@ function viewTeaItem(id) {
     <section class="card glass tea-how-c"><div class="th-steps">${[['clock', how], ['cup', 'Cover the cup while it steeps, so the fragrant oils stay in your tea.'], ...(nearBleed ? [['thermo', 'Drink it hot or warm these days, never iced.']] : [])].map(([e, x]) => `<div><span>${icon(e, 18)}</span><p>${x}</p></div>`).join('')}</div></section>
     ${P.length ? `${sectionTitle('What studies found')}
     <section class="card glass tea-study">${P.map(p => `<div class="ts-i"><div class="ts-h"><b>${p.n}</b></div><p>${p.study}</p><small>${p.cite}</small></div>`).join('')}</section>` : ''}
-    ${cautions.length ? `${sectionTitle('Good to know')}<section class="card glass tea-care">${cautions.map(c => `<p>${icon('spark', 12)} ${c}</p>`).join('')}</section>` : ''}
-    ${G && G.teas.length > 1 ? `${sectionTitle(`More for ${G.n.toLowerCase()}`)}<div class="tea-more">${G.teas.map((x, i) => i === idx ? '' : `<button data-action="nav" data-to="tea/${G.k}-${i}"><span>${icon('cup', 14)}</span>${x[1]}</button>`).join('')}</div>` : ''}
     <p class="fine center">Herbal teas are gentle support, not medicine. Pregnant, on medication or unsure? Ask your doctor or midwife first.</p>
   </div>`;
 }
