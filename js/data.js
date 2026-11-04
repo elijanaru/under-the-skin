@@ -1631,7 +1631,7 @@ export const NUTRIENTS = [
     low: 'Tired all month, hair shedding, cold hands, craving ice, heavy or long periods.', test: 'Ferritin and a blood count. Many experts aim for ferritin above 30–50 µg/L.',
     study: 'Women who were tired but not anaemic, with ferritin under 50, had about half the fatigue after 12 weeks of iron. One dose every other day is absorbed better than daily doses.',
     cite: 'Vaucher 2012 · Stoffel 2017',
-    caution: 'Only supplement when a test shows you’re low: too much iron harms. Take it an hour apart from coffee, tea or milk. Keep away from children.' },
+    caution: 'Only supplement when a test shows you’re low: too much iron harms. Take it with vitamin C, and enjoy your coffee, tea or milk at another time of day so both work well. Keep away from children.' },
   { id: 'vitamin-d', n: 'Vitamin D', g: '☀️', for: 'Mood, cramps, immunity', ev: 'some', p: ['menstrual', 'follicular', 'ovulatory', 'luteal'],
     d: [['1000–2000 IU', 'a day in winter'], ['D3', 'best form'], ['With fat', 'at a meal']],
     why: 'More a hormone than a vitamin. Your skin makes it from midday sun; north of the Alps it can’t from about October to March.',

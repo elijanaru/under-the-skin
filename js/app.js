@@ -3260,16 +3260,16 @@ function viewNutrients() {
 function viewNutrient(id) {
   const x = NUTRIENTS.find(n => n.id === id); if (!x) return viewNutrients();
   const ph = M.info && M.info.phase, i = NUTRIENTS.indexOf(x);
-  return `<div class="pad">
+  return `<div class="pad sp2">
     ${specHero({ glyph: nuIc(x.id, 64), eyebrow: `For ${x.for.toLowerCase()}`, name: x.n, label: 'Key facts', rows: x.d, lead: x.n, desc: x.why })}
     <section class="card glass tea-fit"><div class="tf-k">When it helps most</div>${phaseFit(x.p, ph)}</section>
     ${sectionTitle('Food first')}
-    <section class="card glass nu-food">${x.f.map(([f, a]) => `<div class="spec-row"><b>${f}</b>${a ? `<span>${a}</span>` : ''}</div>`).join('')}</section>
+    <section class="card glass nu-food">${x.f.map(([f, a]) => `<div class="spec-row"><b>${f}</b>${a ? `<span>${a}</span>` : ''}</div>`).join('')}${warmWindow(M.info) ? '<small class="tf-all">You\u2019re in your warm window: pick the cooked and warm ones until your period ends.</small>' : ''}</section>
     ${sectionTitle('Are you low?')}
     <section class="card glass nu-low"><div class="nl-i"><span>${icon('search', 18)}</span><div><small>Signs</small><p>${x.low}</p></div></div><div class="nl-i"><span>${icon('flask', 18)}</span><div><small>Test to ask for</small><p>${x.test}</p></div></div></section>
     ${sectionTitle('What studies found')}
     <section class="card glass tea-study"><div class="ts-i"><p>${x.study}</p><small>${x.cite}</small></div></section>
-    ${sectionTitle('Good to know')}<section class="card glass tea-care"><p>${icon('spark', 12)} ${x.caution}</p></section>
+    <section class="ck-first"><span class="ck-i">!</span><div><small>Before you try it</small>${x.caution ? `<b>${x.caution}</b>` : ''}<p>Check foods and supplements for allergies and for clashes with medicines you take.</p></div></section>
     <button class="card glass nu-next" data-action="nav" data-to="nutrients/${NUTRIENTS[(i + 1) % NUTRIENTS.length].id}"><small>Next</small><b>${NUTRIENTS[(i + 1) % NUTRIENTS.length].n}</b>${icon('chevR', 16)}</button>
     <p class="fine center">General information, not medical advice. Pregnant, on medication or unsure? Ask your doctor or pharmacist first.</p>
   </div>`;
