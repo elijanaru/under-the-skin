@@ -626,18 +626,6 @@ function onbPlanHTML(keys, name) {
   </div>`;
 }
 const planDay = () => { const p = state.profile; return p.planStart ? C.diffDays(M.today, C.parseISO(p.planStart)) + 1 : 0; };
-// Today: where she is in her 90-day plan and this month's steps
-function planCard() {
-  const p = state.profile, day = planDay();
-  if (!day || day > 90) return '';
-  const keys = planKeys(p), m = Math.min(2, Math.floor((day - 1) / 30));
-  const IC = { offpill: 'leaf', comeback: 'calendar', pms: 'drop', skin: 'spark', body: 'bolt', bloat: 'cup', sleep: 'moon', mood: 'sun', energy: 'bolt', eat: 'bowl', tcm: 'yinyang', hormones: 'chart', regular: 'calendar' };
-  return `<button class="p9" data-action="nav" data-to="roadmap">
-    <span class="p9-head"><span><b>Your 90-day plan</b><small>Month ${m + 1} · ${['Reset', 'Rebuild', 'Glow'][m]}</small></span><span class="p9-n"><b>${day}</b>/90</span></span>
-    <span class="p9-track" aria-hidden="true"><i style="width:${Math.max(3, day / 90 * 100)}%"></i></span>
-    <span class="p9-steps">${keys.slice(0, 3).map(k => `<span class="p9-s"><span class="p9-ic">${icon(IC[k] || 'check', 16)}</span><span><b>${ROADMAP[k].t}</b><small>${ROADMAP[k].m[m]}</small></span></span>`).join('')}</span>
-    <span class="p9-cta">See my roadmap ${icon('chevR', 14)}</span></button>`;
-}
 // ---------- promise, how to follow, before & after ----------
 // Before & after photos stay on this phone only: their own storage key, never in the synced state.
 const BA_KEY = 'rhythm.ba';
@@ -1014,7 +1002,7 @@ function viewToday() {
       <button class="btn btn-dark" data-action="periodStart">My period started today</button></div>`
       : `<div class="card card-light empty"><h3>Log your period to begin</h3><p>Tap the day your last period started and we'll map your whole cycle.</p>
       <button class="btn btn-dark" data-action="nav" data-to="calendar">Open calendar</button></div>`}
-      ${planCard()}</div>`;
+</div>`;
   }
   const info = M.info, ph = PHASES[info.phase], tcm = TCM[info.phase], N = NUTRITION[info.phase];
   const energy = Math.round(myEnergy(info) * 100);
@@ -1067,10 +1055,9 @@ function viewToday() {
 
     ${sectionTitle('Your hormones', ['Explore', 'hormones'])}
     <section class="card glass chart-card">${cycleChart(info, { id: 'today', compact: true })}
-      <div class="cc-links"><button data-action="nav" data-to="guide">${icon('chart', 15)} How your cycle works</button><button data-action="nav" data-to="hormones">${icon('book', 15)} Each hormone</button></div></section>
+      <div class="cc-links one"><button data-action="nav" data-to="hormones">${icon('chart', 15)} Explore your hormones ${icon('chevR', 14)}</button></div></section>
     ${moleculeRow(info)}
 
-    ${planCard()}
     ${partnersCard(info)}
 
     ${logged ? `${sectionTitle('Today’s log', ['Edit', 'log'])}<section class="card glass"><div class="chips">${logChips(tlog)}</div><button class="br-cta" data-action="nav" data-to="brain">${icon('spark', 15)} What your body is saying ${icon('chevR', 15)}</button></section>`
@@ -1489,14 +1476,24 @@ function viewBrain(id) {
       ${c.rk ? `<button class="br-more" data-action="nav" data-to="relief/${encodeURIComponent(c.rk)}">Full relief guide ${icon('chevR', 14)}</button>` : ''}
     </section>`).join('')}`;
   const cyc = R ? R.P.cycles : 0, pct = Math.min(1, cyc / 3);
-  return `<section class="br-hero">
+  return `<section class="br-hero br2">
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
-    <span class="br-orb" aria-hidden="true"><i></i><i></i><i></i></span>
-    <div class="mv2-eyebrow">${isToday ? 'Today' : fmt(C.parseISO(k), { month: 'short', day: 'numeric' })}${R ? ` · Day ${R.di.cd} · ${ph.name}` : ''}</div>
-    <h1 class="rh2-h">What your body <em>is saying</em></h1>
-    ${n ? `<p class="mv2-now">${n} ${n === 1 ? 'thing' : 'things'} read${mine ? ` · ${mine} ${mine === 1 ? 'matches' : 'match'} your patterns` : ''}</p>` : ''}
+    <div class="br2-card">
+      <svg class="br2-pal" viewBox="0 0 160 140" aria-hidden="true">
+        <g class="br2-bub"><rect x="96" y="6" width="58" height="34" rx="17" fill="#fff" stroke="#304023" stroke-width="2"/><path d="M106 38 l-6 10 l14 -9" fill="#fff" stroke="#304023" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="113" cy="23" r="3.4" fill="#e0457b"/><circle cx="125" cy="23" r="3.4" fill="#e6a81e"/><circle cx="137" cy="23" r="3.4" fill="#3f8a2e"/></g>
+        <g class="br2-body"><path d="M72 30 C104 30 120 58 118 86 C116 116 96 132 70 132 C42 132 22 114 22 86 C22 56 42 30 72 30Z" fill="#fbe3ea" stroke="#304023" stroke-width="2.4"/>
+          <path d="M54 80 q6 -7 12 0" fill="none" stroke="#304023" stroke-width="2.6" stroke-linecap="round"/><path d="M80 80 q6 -7 12 0" fill="none" stroke="#304023" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M64 94 q9 8 18 0" fill="none" stroke="#304023" stroke-width="2.6" stroke-linecap="round"/>
+          <ellipse cx="46" cy="94" rx="7" ry="4.5" fill="#f4a9bf"/><ellipse cx="100" cy="94" rx="7" ry="4.5" fill="#f4a9bf"/>
+          <path d="M70 30 q-4 -12 6 -16 q-1 9 -6 16" fill="#6c823e" stroke="#304023" stroke-width="2" stroke-linejoin="round"/></g>
+      </svg>
+      <div class="br2-day"><span>${isToday ? 'Today' : fmt(C.parseISO(k), { month: 'short', day: 'numeric' })}</span>${R ? `<span>Day <b>${R.di.cd}</b></span><span class="br2-ph">${ph.name}</span>` : ''}</div>
+      <h1 class="br2-h">What your body<em>is saying</em></h1>
+      ${n ? `<p class="br2-n"><b>${n}</b> ${n === 1 ? 'thing' : 'things'} read${mine ? ` · ${mine} ${mine === 1 ? 'matches' : 'match'} your patterns` : ''}</p>` : ''}
+    </div>
   </section>
-  <div class="pad br">
+  <div class="pad br br2b">
     ${body}
     ${R && isToday && R.up.length ? `<div class="br-h">Coming up for you</div>${R.up.map(x => `<section class="br-up"><span class="hu-when">${x.inDays === 0 ? 'Today' : x.inDays === 1 ? 'Tomorrow' : `In ${x.inDays} days`}</span><div><b>${x.name}</b> usually on ${dayRange(x)}${QUICK_FIX[x.name] ? `<small>${QUICK_FIX[x.name]}</small>` : ''}</div></section>`).join('')}` : ''}
     <section class="br-learnbar"><div class="br-k">How well I know you</div>
@@ -4520,8 +4517,7 @@ function viewProfile() {
     </section>
     ${sectionTitle('Birth control')}
     <section class="card glass"><div class="chips">${BIRTH_CONTROL.map(b => `<button class="chip ${(p.bc || 'none') === b.k ? 'on' : ''}" data-action="setBc" data-v="${b.k}">${b.t}</button>`).join('')}</div>
-      ${hormonalBC(p.bc) ? `<p class="muted sm" style="margin:12px 0 8px">Coming off it?</p><div class="chips">${BC_PLAN.map(b => `<button class="chip ${p.bcPlan === b.k ? 'on' : ''}" data-action="setBcPlan" data-v="${b.k}">${b.t}</button>`).join('')}</div>` : ''}
-      <button class="link" data-action="restartPlan" style="margin-top:12px">Restart my 90-day plan from today</button></section>
+      ${hormonalBC(p.bc) ? `<p class="muted sm" style="margin:12px 0 8px">Coming off it?</p><div class="chips">${BC_PLAN.map(b => `<button class="chip ${p.bcPlan === b.k ? 'on' : ''}" data-action="setBcPlan" data-v="${b.k}">${b.t}</button>`).join('')}</div>` : ''}</section>
     ${M.info ? `<button class="card glass pf-link" data-action="nav" data-to="insights"><span>${icon('chart', 18)}</span><b>Your hormones & patterns<small>What the app has learned about you</small></b>${icon('chevR', 16)}</button>` : ''}`;
   else if (tab === 'alerts') body = `${remindersSection()}
     ${M.info ? calSyncCard() : ''}
@@ -4540,8 +4536,8 @@ function viewProfile() {
     <p class="fine">${A.currentUser() ? 'Stored on this device and privately in your account.' : 'Everything is stored privately on this device.'} Underskin gives wellbeing estimates based on your logs and on Traditional Chinese Medicine concepts; it is not medical advice and must not be used as contraception.</p>`;
   else body = `${sectionTitle('Why you’re here')}
     ${purposePicker(purpose(), 'setPurpose')}
-    ${sectionTitle('Your goals', ['90-day plan', 'roadmap'])}
-    <section class="card glass">${focusPicker(focusKeys(), 'setFocus')}<p class="fine" style="margin:10px 0 0">Your daily tips and your 90-day plan follow these.</p></section>
+    ${sectionTitle('Your goals')}
+    <section class="card glass">${focusPicker(focusKeys(), 'setFocus')}<p class="fine" style="margin:10px 0 0">Your daily tips follow these.</p></section>
     ${sectionTitle('Birthday & home')}
     <section class="card glass"><input class="field" type="date" data-input="profile.birthday" value="${p.birthday || ''}" max="${todayISO()}" aria-label="Birthday">
       <select class="field sm" data-input="profile.country" style="margin-top:10px" aria-label="Country">${SZ.COUNTRIES.map(([code, nm]) => `<option value="${code}" ${code === myCountry() ? 'selected' : ''}>${nm}</option>`).join('')}</select>
@@ -5065,7 +5061,6 @@ const actions = {
   setPurpose: d => { state.profile.purpose = d.v; save(); toast(d.v === 'conceive' ? 'Fertility guidance on' : 'Saved'); render(); },
   setBc: d => { const p = state.profile; p.bc = d.v; if (!hormonalBC(d.v)) delete p.bcPlan; else p.bcPlan = p.bcPlan || 'think'; save(); render(); },
   setBcPlan: d => { const p = state.profile; p.bcPlan = d.v; if (d.v === 'stop' && !p.bcStop) p.bcStop = todayISO(); save(); render(); },
-  restartPlan: () => { state.profile.planStart = todayISO(); save(); toast('Your 90-day plan starts today'); render(); },
   setFocus: d => { const f = state.profile.focus = focusKeys().slice(); const i = f.indexOf(d.v); i < 0 ? f.push(d.v) : f.splice(i, 1); save(); render(); },
   onbGoal: d => { const g = ui.onb.goals; const i = g.indexOf(d.v); i < 0 ? g.push(d.v) : g.splice(i, 1); render(); },
   onbDemo: () => { state = demoState(ui.onb.name.trim()); save(); go('today'); render(); },
