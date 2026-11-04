@@ -3147,14 +3147,14 @@ function viewAura() {
     <section class="card glass glow-card"><h3>${g[0]}</h3><p>${g[1]}</p>${evBadge(g[2])}</section>
   </div>`;
 }
-// One flower per phase, matched to its inner season and what the flower stands for (photos: Pexels).
+// One flower per phase, matched to its inner season and what the flower stands for (3D models in models/flower-*.glb, photos as fallback).
 const FLOWER = {
-  menstrual: { n: 'Snowdrop', m: 'flowers through winter, hope and rest' },
+  menstrual: { n: 'White lily', m: 'stillness, rest and a clean start' },
   follicular: { n: 'Cherry blossom', m: 'spring, fresh starts' },
   ovulatory: { n: 'Dahlia', m: 'summer in full bloom, confidence and grace' },
   luteal: { n: 'Lotus', m: 'calm, turning inward and renewal' },
 };
-const flowerImg = phase => `<img src="images/flower-${phase}.webp" alt="" decoding="async">`;
+const flowerImg = phase => `<img src="images/flower-${phase}.webp" alt="" decoding="async"><canvas class="flower3d" data-p="${phase}" aria-hidden="true"></canvas>`;
 // slow glowing spores drifting up through the home hero
 const SPORES = Array.from({ length: 16 }, (_, i) => `<i style="--x:${(i * 37) % 100}%;--s:${2 + (i * 7) % 5}px;--d:${11 + (i * 5) % 9}s;--dl:-${(i * 13) % 17}s;--w:${((i * 23) % 40) - 20}px"></i>`).join('');
 // Home stage: the cycle ring floats over a stone in a rocky canyon, the key numbers sit below it.
@@ -5715,6 +5715,14 @@ function mountFigures() {
         else wrap?.addEventListener('pointerdown', e => { if (!e.target.closest('[data-action="onbEnter"]')) intro(); }, { once: true });
       }).catch(() => {});
       welcome3d = w; unmountFigs.push(() => { w.destroy(); if (welcome3d === w) welcome3d = null; });
+    }).catch(fail);
+  });
+  // the phase flower in the Today bubble as a turning 3D bloom; the photo stays if 3D can't run
+  document.querySelectorAll('canvas.flower3d').forEach(c => {
+    const b = c.closest('.bubble'), fail = () => { b?.classList.remove('f3d-ready'); c.remove(); };
+    import('./flower3d.js').then(m => {
+      if (!c.isConnected) return; if (!m.webglOK()) throw new Error('no webgl');
+      unmountFigs.push(m.mountFlower(c, `models/flower-${c.dataset.p}.glb`, { onReady: () => b?.classList.add('f3d-ready'), onFail: fail }));
     }).catch(fail);
   });
   // the Moon page: the 3D moon lit to tonight's phase; the flat moon stays if 3D can't run

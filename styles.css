@@ -6567,3 +6567,8 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .mn-hero.emb .mn-ev { padding: 10px 9px; gap: 8px; }
 .mn-hero.emb .mn-ev i { width: 26px; height: 26px; }
 .mn-hero.emb .mn-ev small:last-child { font-size: 10.5px; }
+/* Today bubble: the phase flower as a slowly turning 3D bloom (photo underneath until it loads) */
+.bubble canvas.flower3d { position: absolute; inset: 2%; width: 96%; height: 96%; z-index: 0; opacity: 0; transition: opacity 1s ease; }
+.bubble.f3d-ready canvas.flower3d { opacity: 1; }
+.bubble img { transition: opacity .8s ease; }
+.bubble.f3d-ready img { opacity: 0; }
