@@ -3561,8 +3561,9 @@ function bindGuide() {
 // Typical amounts, mapped from the curve model onto standard lab ranges (an estimate for her cycle day, not a lab value).
 const H_AMT = { estrogen: ['pg/mL', .12, 30, .95, 300], progesterone: ['ng/mL', .07, .3, .85, 14], lh: ['IU/L', .1, 4, 1.25, 45], fsh: ['IU/L', .08, 2.5, .35, 13], testosterone: ['ng/dL', .06, 20, .13, 40] };
 const HX_KEY = { Oestrogen: 'estrogen', Progesterone: 'progesterone', FSH: 'fsh', LH: 'lh', Testosterone: 'testosterone' };
+const hAmtV = (k, cd, L, P) => { const [, r0, v0, r1, v1] = H_AMT[k], r = C.hormonesAt(cd, L, P)[k]; return Math.max(v0 * .8, v0 + (r - r0) / (r1 - r0) * (v1 - v0)); };
 function hAmount(k, cd, L, P) {
-  const [u, r0, v0, r1, v1] = H_AMT[k], r = C.hormonesAt(cd, L, P)[k], v = Math.max(v0 * .8, v0 + (r - r0) / (r1 - r0) * (v1 - v0));
+  const u = H_AMT[k][0], v = hAmtV(k, cd, L, P);
   return `${v < 2 ? v.toFixed(1) : v < 20 ? Math.round(v) : Math.round(v / 5) * 5} ${u}`;
 }
 const LV_WORD = r => C.hormoneLevel(r);
@@ -3672,7 +3673,8 @@ function viewHormone(i) {
     const col = (HORMONES.find(h => h.key === k) || FULL_H.find(h => h.key === k) || {}).color || 'hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)';
     curve = `<section class="card glass hxd-curve"><div class="eyebrow">Your month · ${L}-day cycle</div>
       <svg viewBox="0 0 ${W} ${H}" width="100%"><path d="${d_}" fill="none" stroke="${col}" stroke-width="2.4" stroke-linecap="round"/>
-        <line x1="${X(cd)}" x2="${X(cd)}" y1="4" y2="${H - 8}" stroke="#f4f5f0" stroke-dasharray="2 3" opacity=".6"/><circle cx="${X(cd)}" cy="${Y(rel(cd))}" r="5" fill="#f4f5f0"/>
+        <line x1="${X(cd)}" x2="${X(cd)}" y1="12" y2="${H - 12}" stroke="#20301a" stroke-dasharray="2 3" opacity=".45"/><circle cx="${X(cd)}" cy="${Y(rel(cd))}" r="5.5" fill="${col}" stroke="#fff" stroke-width="2.5"/>
+        <text x="${Math.min(W - 22, Math.max(22, X(cd)))}" y="9" text-anchor="middle" class="pat-ax hxd-today">Today</text>
         <text x="6" y="${H}" class="pat-ax">Day 1</text><text x="${W - 6}" y="${H}" text-anchor="end" class="pat-ax">Day ${L}</text></svg></section>`;
   }
   return `${topbar(name, { back: true })}
@@ -3681,7 +3683,7 @@ function viewHormone(i) {
       ${MOL_BALL[x.n] || PROT_BALL[x.n] ? `<span class="hxd-mol" aria-hidden="true">${MOL_BALL[x.n] || protBall(x.n)}</span>` : ''}</div>
     <section class="card card-light hxd-now"><div class="hxd-nl"><div class="eyebrow dark">You, right now · day ${cd}</div>
       <div class="hxd-row"><b>${n.word}${hxArrow(n.tr)}</b></div><span class="hxd-amt">${n.amt}</span>
-      <p>${n.note}</p></div><span class="hxd-ring">${hxRing(n.r, 0)}<small>${k ? 'this month' : 'level'}</small></span></section>
+      <p>${n.note}</p></div><span class="hxd-ring">${k ? (() => { let pk = 0; for (let d = 1; d <= L; d++) pk = Math.max(pk, hAmtV(k, d, L, P)); const f = Math.min(1, hAmtV(k, cd, L, P) / (pk || 1)); return `${hxRing(f, 0)}<span class="hxd-pct"><b>${Math.max(1, Math.round(100 * f))}%</b><small>of peak</small></span>`; })() : `${hxRing(n.r, 0)}<small>level</small>`}</span></section>
     ${curve}
     ${moleculeCard(x.n)}
     <section class="card glass hxd-b">
