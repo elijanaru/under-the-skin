@@ -1009,7 +1009,7 @@ export const MOVES = [
   { k: 'walk', n: 'Walks & rest', d: 'Nature walks, sauna, early nights' },
 ];
 export const MOVE_GUIDE = {
-  'flow-start': { title: 'Rest & restore', r: { lift: 0, hiit: 0, sport: 1, pilates: 1, yoga: 2, meditate: 3, walk: 3 }, tip: 'Hormones are at their lowest and your body is shedding. Walks, yin yoga and meditation — a natural time to turn inward. Go by feel: some women feel strong now, others want rest.' },
+  'flow-start': { title: 'Rest & restore', r: { lift: 0, hiit: 0, sport: 1, pilates: 1, yoga: 2, meditate: 3, walk: 3 }, tip: 'Hormones are at their lowest and your body is shedding. Walks, yin yoga and meditation — a natural time to turn inward.' },
   'flow-end': { title: 'Ease back in', r: { lift: 1, hiit: 1, sport: 2, pilates: 2, yoga: 3, meditate: 2, walk: 3 }, tip: 'As bleeding eases, start moving more: flowing yoga, pilates, light strength. Iron-rich food helps your energy come back.' },
   'rising': { title: 'Build strength', r: { lift: 2, hiit: 2, sport: 3, pilates: 2, yoga: 2, meditate: 1, walk: 2 }, tip: 'Rising estrogen improves recovery. A great window to try a new class and ramp up your training volume.' },
   'building': { title: 'Lift heavy', r: { lift: 3, hiit: 3, sport: 3, pilates: 2, yoga: 1, meditate: 1, walk: 2 }, tip: 'A good window for heavy lifting if you feel strong — some small studies that put more strength training into the follicular phase saw bigger gains.' },
