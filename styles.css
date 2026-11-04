@@ -6230,3 +6230,19 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .rx-t.on .rx-e { background: hsl(calc(var(--hb) + 0 * var(--hk)) calc(55% * var(--hs)) 88%); }
 .rx-t b { font: 500 16px/1.2 Outfit, sans-serif; } .rx-t small { display: flex; align-items: center; gap: 4px; font: 400 12.5px Outfit, sans-serif; color: #4a5a3c; }
 .rx-t i { position: absolute; top: 14px; right: 14px; padding: 3px 9px; border-radius: 99px; background: #304023; color: #fff; font: 500 10.5px Outfit, sans-serif; font-style: normal; }
+
+/* plan v2: emoji badge + title + tick, one-line why, two picture fixes */
+.br2b .bx-t { flex-direction: column; gap: 10px; padding: 16px; }
+.br2b .bx-top { display: flex; align-items: center; gap: 12px; }
+.br2b .bx-e { flex: none; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-size: 24px; background: hsl(calc(var(--hb) + 0 * var(--hk)) calc(55% * var(--hs)) 91%); }
+.br2b .bx-top b { flex: 1; font: 500 18px/1.2 Outfit, sans-serif; color: #20301a; }
+.br2b .bx-tick { width: 34px; height: 34px; border-width: 2px; }
+.br2b p.bx-why { margin: 0; font: 400 14px/1.45 Outfit, sans-serif; color: #3a4a2e; }
+.br2b .bx-recs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.br2b .bx-recs:has(> :only-child) { grid-template-columns: 1fr; }
+.br2b .bx-r { display: flex; align-items: center; gap: 10px; padding: 8px 10px 8px 8px; border: 0; border-radius: 20px; background: #f6f1ec; color: #20301a; text-align: left; cursor: pointer; min-width: 0; }
+.br2b .bx-r img, .br2b .bx-re { flex: none; width: 48px; height: 48px; border-radius: 15px; object-fit: cover; }
+.br2b .bx-re { display: grid; place-items: center; font-size: 26px; background: #fff; }
+.br2b .bx-rt { min-width: 0; font: 500 13.5px/1.25 Outfit, sans-serif; }
+.br2b .bx-rt small { display: block; font: 500 10.5px Outfit, sans-serif; letter-spacing: .05em; text-transform: uppercase; color: #6c823e; margin-bottom: 2px; }
+.br2b .bx-t.done .bx-why, .br2b .bx-t.done .bx-top b { text-decoration: line-through; text-decoration-color: rgba(48,64,35,.4); }

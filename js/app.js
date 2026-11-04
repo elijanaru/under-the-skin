@@ -1488,25 +1488,43 @@ function brainLinks(k) {
 const LOG_IC = Object.fromEntries([[BODY_GROUPS.flatMap(([, l]) => l), 'user'], [MOOD_LIST, 'mind'], [DISCHARGE, 'drop'], [DOWN_EXTRA, 'drop'], [INTIMACY, 'heart'],
   [INTAKE, 'bowl'], [SUPPS, 'flask'], [DISRUPTORS, 'bolt']].flatMap(([l, ic]) => l.map(([n]) => [n, ic])).concat([['Spotting', 'drop']]));
 const NOTE_IC = { '🥚': 'spark', '🌸': 'leaf', '🩸': 'drop', '🥩': 'fish', '💞': 'heart', '🌹': 'heart', '🫶': 'heart', '🌙': 'moon', '🌪️': 'clock', '🍷': 'cup', '🍲': 'thermo' };
+// The plan on the body page: one short why, then at most two fixes she can tap, each with a picture.
+const SYM_EMOJI = Object.fromEntries([...BODY_GROUPS.flatMap(([, l]) => l), ...MOOD_LIST, ['Spotting', '🩸']]);
+const firstLine = t => (t || '').split(/(?<=\.)\s/)[0];
+const FIX_EMOJI = [[/heat|hot water|warm (socks|bath)|foot soak/i, '🔥'], [/tea/i, '🍵'], [/magnesium/i, '🌰'], [/walk/i, '🚶‍♀️'], [/water|hydrat/i, '💧'], [/salt/i, '🧂'],
+  [/breath/i, '🫧'], [/sleep|night|bed/i, '🌙'], [/protein|egg/i, '🥚'], [/iron|meat/i, '🥩'], [/daylight|sun/i, '☀️'], [/bath/i, '🛁'], [/stretch|cat-cow|yoga/i, '🧘‍♀️'],
+  [/zinc|pumpkin/i, '🎃'], [/ginger/i, '🫚'], [/fennel|peppermint|mint/i, '🌿'], [/chocolate/i, '🍫'], [/banana|potato/i, '🍌'], [/bra\b/i, '👙'], [/cream|oil|cleanse|mask/i, '🧴'],
+  [/omega|salmon|fish/i, '🐟'], [/call|company|kind/i, '📞'], [/broth|congee|soup|warm meal|cooked/i, '🍲'], [/fibre|fiber/i, '🥦'], [/eat|meal|snack/i, '🍽️']];
+function planRecs(c, warm) {
+  const fix = c.fix.replace(/\.$/, '').split(/,\s*|\.\s+|;\s*/)[0], cap = fix.charAt(0).toUpperCase() + fix.slice(1);
+  const breathe = ['Anxious', 'Irritable', 'Sensitive', 'Low mood', 'Headache'].includes(c.s);
+  const out = [breathe ? { k: 'Breathe', t: 'Calm sigh, 1 min', e: '🫧', to: 'breathe' }
+    : { k: 'Do this', t: cap, e: (FIX_EMOJI.find(([r]) => r.test(fix)) || [, '🌿'])[1], to: c.rk ? `relief/${encodeURIComponent(c.rk)}` : 'relief' }];
+  const v = SYMPTOM_TEA[c.s], tea = v && (Array.isArray(v) ? v[warm ? 1 : 0] : v), ref = tea && teaRef(tea, c.s);
+  if (ref) out.push({ k: 'Sip', t: `${tea} tea`.replace(/ tea tea$/i, ' tea'), img: teaPhoto(tea, 200, 200), to: ref.to });
+  else if (c.rk && !breathe) out.push({ k: 'More ways', t: 'Full relief guide', e: '✨', to: `relief/${encodeURIComponent(c.rk)}` });
+  return out.slice(0, 2);
+}
 function viewBrain(id) {
   const k = id && /^\d{4}-\d\d-\d\d$/.test(id) ? id : todayISO(), R = brainRead(k);
   const ph = R ? PHASES[R.ph] : null, isToday = k === todayISO();
   // only what to do and what to watch: warnings first, then a tickable plan, then what's going well
   const warns = R ? [...R.notes.filter(x => x.tone === 'warn').map(x => ({ ic: NOTE_IC[x.emo] || 'spark', t: x.t, p: x.p })),
     ...R.cards.filter(c => c.other).map(c => ({ ic: LOG_IC[c.s] || 'spark', t: `About your ${c.s.toLowerCase()}`, p: c.other }))] : [];
-  const acts = R ? [...R.cards.filter(c => !c.good && c.fix && !c.fix.startsWith('Nothing')).map(c => ({ id: c.s, k: `For your ${c.s.toLowerCase()}`, ic: LOG_IC[c.s] || 'spark', t: c.fix, why: c.why, foods: c.foods, rk: c.rk, br: ['Anxious', 'Irritable', 'Sensitive', 'Low mood', 'Headache'].includes(c.s) })),
-    ...R.notes.filter(x => x.tone === 'info').map(x => ({ id: x.t, k: x.t, ic: NOTE_IC[x.emo] || 'spark', t: x.p, foods: [] }))] : [];
+  const warmNow = R && warmWindow(R.di);
+  const acts = R ? [...R.cards.filter(c => !c.good && c.fix).map(c => ({ id: c.s, e: SYM_EMOJI[c.s] || '🌿', t: c.s, why: firstLine(c.why), recs: planRecs(c, warmNow) })),
+    ...R.notes.filter(x => x.tone === 'info').map(x => ({ id: x.t, e: x.emo, t: x.t, why: x.p, recs: [] }))] : [];
   const good = R ? [...R.notes.filter(x => x.tone === 'good'), ...R.cards.filter(c => c.good).map(c => ({ t: c.s, p: c.why }))] : [];
   const n = warns.length + acts.length + good.length, done = ui.brDone = ui.brDone || {};
   const body = !R || !n ? `<section class="br-empty"><p>Log a few things and I’ll tell you exactly what to do today.</p><button class="btn btn-light" data-action="nav" data-to="log">${icon('plus', 18)} Check in</button></section>` : `
     ${warns.map(w => `<section class="bx-warn"><span class="bx-wi">!</span><div><small>Check this</small><b>${w.t}</b><p>${w.p}</p></div></section>`).join('')}
-    ${logTeas(R.l, R.di)}
     ${acts.length ? `<div class="br-h">Your plan for today</div>
-    <div class="bx-plan">${acts.map((x, i) => { const on = done[k + x.id]; return `<section class="bx-t ${on ? 'done' : ''}">
-      <button class="bx-tick" data-action="brTick" data-id="${esc(k + x.id)}" aria-pressed="${!!on}" aria-label="Mark as done">${on ? icon('check', 16) : `<span>${i + 1}</span>`}</button>
-      <div class="bx-b"><small>${icon(x.ic, 12)} ${x.k}</small><p>${x.t}</p>${x.why ? `<p class="bx-why"><b>Why</b> ${x.why}</p>` : ''}
-        ${x.foods.length ? `<div class="bx-eat"><em>Eat</em>${x.foods.map(f => `<span>${f}</span>`).join('')}</div>` : ''}
-        ${x.br || x.rk ? `<div class="bx-btns">${x.br ? `<button class="bx-go br" data-action="nav" data-to="breathe">🫧 Breathe with me</button>` : ''}${x.rk ? `<button class="bx-go" data-action="nav" data-to="relief/${encodeURIComponent(x.rk)}">How to ${icon('chevR', 12)}</button>` : ''}</div>` : ''}</div></section>`; }).join('')}</div>` : ''}
+    <div class="bx-plan">${acts.map(x => { const on = done[k + x.id]; return `<section class="bx-t ${on ? 'done' : ''}">
+      <div class="bx-top"><span class="bx-e">${x.e}</span><b>${x.t}</b>
+        <button class="bx-tick" data-action="brTick" data-id="${esc(k + x.id)}" aria-pressed="${!!on}" aria-label="Mark as done">${on ? icon('check', 16) : ''}</button></div>
+      ${x.why ? `<p class="bx-why">${x.why}</p>` : ''}
+      ${x.recs.length ? `<div class="bx-recs">${x.recs.map(r => `<button class="bx-r" data-action="nav" data-to="${r.to}">${r.img ? `<img src="${r.img}" alt="" loading="lazy">` : `<span class="bx-re">${r.e}</span>`}<span class="bx-rt"><small>${r.k}</small>${r.t}</span></button>`).join('')}</div>` : ''}
+    </section>`; }).join('')}</div>` : ''}
     ${good.length ? `<div class="br-h">Going well</div><div class="bx-good">${good.map(g => `<div><b>🌟 ${g.t}</b>${g.p ? `<p>${g.p}</p>` : ''}</div>`).join('')}</div>` : ''}`;
   return `<section class="br-hero br2">
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
