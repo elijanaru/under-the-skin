@@ -3847,7 +3847,7 @@ function viewStress() {
           <p>In through your nose for 4, out slowly for 6. A longer exhale calms your nervous system.</p>${evBadge('some')}</div></section>
         <h3 class="st2-h">Best ways to lower it</h3>${steps(sp[1])}
         <h3 class="st2-h">The science of calm</h3>
-        <section class="card glass cs-list">${CALM_SCIENCE.map(x => `<details class="cs"><summary><span class="cs-g">${x.g}</span><b>${x.t}</b>${evBadge(x.ev)}${icon('chevD', 14)}</summary><p>${x.s}</p><small>${x.c}</small></details>`).join('')}</section>`;
+        <section class="card glass cs-list">${CALM_SCIENCE.map(x => `<details class="cs"><summary><span class="cs-g">${x.g}</span><span class="cs-t"><b>${x.t}</b><small>${x.c.replace(/\s*\(.*?\)/g, '')}</small></span>${evBadge(x.ev)}${icon('chevD', 14)}</summary><p>${x.s}</p></details>`).join('')}</section>`;
   return `<section class="mv2 st2">
     <video class="mv2-bg" src="images/stress-meditate.mp4" poster="images/stress-meditate.webp" muted loop playsinline ${auto} preload="auto" aria-hidden="true"></video><span class="mv2-shade"></span>
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>

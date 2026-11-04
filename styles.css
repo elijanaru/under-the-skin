@@ -6357,3 +6357,10 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .hxd-pct b { font: 400 19px var(--dot); color: #20301a; }
 .hxd-pct small { margin-top: 3px; font-size: 9.5px !important; letter-spacing: .04em; color: #4a5a3a !important; }
 .hxd-curve .hxd-today { fill: #20301a; font-weight: 500; }
+
+/* stress page: high-contrast steps, study author and year visible on each science row */
+.st2 ~ .mv2-body .st2-step { background: #fff; border: 0; box-shadow: 0 6px 18px rgba(48,64,35,.07); }
+.st2 ~ .mv2-body .st2-step p { color: #20301a; }
+.cs-t { flex: 1; min-width: 0; display: grid; gap: 1px; }
+.cs-t b { font-weight: 500; font-size: 15px; color: #20301a; }
+.cs .cs-t small { display: block; margin: 0; padding: 0; text-align: left; font-size: 12px; color: #5b6b48; }
