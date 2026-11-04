@@ -6080,3 +6080,19 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .sp-day p { margin: 10px 0 0; font-size: 15px; font-weight: 500; color: #20301a; }
 .sp2 .sup-row b { color: #20301a; } .sp2 .sup-row small { color: #4a5a3a; }
 .sp2 .sp-now { background: #fff !important; box-shadow: 0 8px 22px rgba(48,64,35,.08); }
+/* Remedies on the white contrast system */
+.sp2 .tcm-card { background: #fff !important; border: 0 !important; box-shadow: 0 8px 22px rgba(48,64,35,.08) !important; color: #304023; }
+.sp2 .tcm-card .body, .sp2 .tcm-card .eyebrow { color: #304023 !important; } .sp2 .tcm-card .lime { color: hsl(calc(var(--hb) + 0 * var(--hk)) calc(55% * var(--hs)) 32%) !important; }
+.sp2 .ing { color: #20301a; border-bottom-color: rgba(48,64,35,.08); } .sp2 .ing .ic { color: #6c823e; }
+.sp2 .step p { color: #20301a; }
+.sp2 .tide-n { color: #20301a; } .sp2 .tide-s { color: #4a5a3a; }
+.sp2 .tea-study p { color: #20301a; } .sp2 .tea-study small { color: #5b6b48; }
+.sp2 .tea-care p { color: #8a3a4e; }
+.sp2 .nu-next b { color: #20301a; } .sp2 .nu-next small { color: #5b6b48; }
+.sp2 .lemon h3 { color: #20301a; } .sp2 .lemon .body, .sp2 .lm-foot { color: #4a5a3a; }
+/* dark buttons always carry white text (var(--text) became dark ink in the light theme) */
+.btn-dark { background: #304023; color: #fff; } .btn-dark .ic { color: #fff; }
+.cd .dp-actions .btn-dark { background: var(--paper); color: rgb(48,64,35); }
+/* phase chips: tinted fill, dark text, phase-coloured edge — readable for every phase */
+.sp2 .tf-phases span.on { color: #20301a !important; background: color-mix(in srgb, var(--pc) 26%, #fff) !important; border-color: var(--pc) !important; }
+.sp2 .tf-phases span.now { box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px #20301a; }
