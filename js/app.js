@@ -2518,13 +2518,25 @@ function viewRemedy(id) {
 // Supplement spec sheet: dose, form and timing on the glass sheet, then the phases it helps, studies and cautions.
 const suppOf = name => SUPP_LIB.find(x => x.m.test(name));
 const suppPhases = x => { const ph = PHASE_ORDER.filter(p => EAT_GUIDE[p].cats.supps[1].some(([, n]) => x.m.test(n))); return ph.length ? ph : PHASE_ORDER; };
+// Supplement page: when in her day to take it, as a sunrise-to-night line with a pin.
+function suppDay(when) {
+  const w = when.toLowerCase();
+  const at = /evening|dinner/.test(w) ? 76 : /morning|breakfast/.test(w) && /lunch/.test(w) ? 36 : /morning|breakfast/.test(w) ? 18 : /spread/.test(w) ? -1 : /meal/.test(w) ? 50 : -1;
+  const pins = at < 0 ? [18, 50, 76] : [at];
+  return `<section class="sp-day"><div class="tf-k">When in your day</div>
+    <div class="spd-line"><span class="spd-ic s">${icon('sun', 16)}</span><i class="spd-bar"></i><span class="spd-ic m">${icon('moon', 16)}</span>
+      ${pins.map(x => `<b class="spd-pin" style="--x:${x / 100}"></b>`).join('')}</div>
+    <div class="spd-lab"><span>Morning</span><span>Midday</span><span>Evening</span></div>
+    <p>${when}</p></section>`;
+}
 function viewSupp(id) {
   const x = SUPP_LIB.find(s => s.id === id); if (!x) return viewMissing();
   const ph = suppPhases(x), now = M.info && M.info.phase;
-  return `<div class="pad">
+  return `<div class="pad sp2">
     ${specHero({ glyph: x.sym, han: x.han, eyebrow: 'Supplement', sym: !x.han, name: x.name, label: 'How to take it',
       rows: [['Dose', x.dose], ['Form', x.form], ['When', x.when]], desc: x.desc })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit(ph, now)}${ph.length === 4 ? '<small class="tf-all">Useful every day of your cycle</small>' : now && !ph.includes(now) ? `<small class="tf-all">Not a focus in your ${PHASES[now].name.toLowerCase()} phase</small>` : ''}</section>
+    ${suppDay(x.when)}
     ${(SUPP_FOOD[x.id] || []).length ? `${sectionTitle('Food first')}<section class="card glass nu-food">${SUPP_FOOD[x.id].map(([f, a]) => `<div class="spec-row"><b>${f}</b><span>${a}</span></div>`).join('')}${warmWindow(M.info) ? '<small class="tf-all">You\u2019re in your warm window: pick the cooked and warm ones until your period ends.</small>' : ''}</section>` : ''}
     ${remedyScience(x, { [x.id]: x })}
     ${(() => { const L = SUPP_LIB.filter(y => ttc() || !/prenatal|coq10/.test(y.id)), nx = L[(L.indexOf(x) + 1) % L.length]; return `<button class="card glass nu-next" data-action="nav" data-to="supp/${nx.id}"><small>Next</small><b>${nx.name}</b>${icon('chevR', 16)}</button>`; })()}
@@ -2537,7 +2549,7 @@ function viewSupps() {
   const L = SUPP_LIB.filter(x => ttc() || !/prenatal|coq10/.test(x.id)), on = L.filter(x => now && suppPhases(x).includes(now));
   const dots = x => { const ph = suppPhases(x); return `<span class="sup-ph" aria-label="Best in ${ph.map(p => PHASES[p].name).join(', ')}">${PHASE_ORDER.map(p => `<i class="${ph.includes(p) ? 'on' : ''}" style="--c:${PHASE_COLOR.light[p]}"></i>`).join('')}</span>`; };
   const row = x => `<button class="sup-row" data-action="nav" data-to="supp/${x.id}"><span class="sup-sym ${x.han ? 'han' : ''}">${x.sym}</span><span class="sup-t"><b>${x.name}</b><small>${x.dose} · ${x.when.toLowerCase()}</small><span class="sup-meta">${evBadge(x.ev)}${dots(x)}</span></span>${icon('chevR', 16)}</button>`;
-  return `${topbar('Supplements', { back: true })}<div class="pad">
+  return `${topbar('Supplements', { back: true })}<div class="pad sp2">
     <h1 class="page-h">Fill the <span>gaps</span></h1>
     <p class="body sm">Food comes first. These cover what food alone often can’t, timed to your cycle, with the dose and the study behind each one.</p>
     ${now && on.length ? `<section class="card sp-now"><div class="sp-k"><b>${on.length}</b><span>help in your<br>${PHASES[now].name.toLowerCase()} phase</span></div>

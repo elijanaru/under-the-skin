@@ -6061,3 +6061,22 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .lg .ep-labels span, .lg .lg-fine { color: #4a5a3a !important; }
 .lg .lg-sleep { background: #f6f1ec !important; color: #20301a; } .lg .lg-sleep button { background: #fff !important; color: #20301a !important; }
 .lg .lg-note { background: #f6f1ec !important; color: #20301a !important; border: 0 !important; }
+
+/* Supplements v2: solid white cards, dark ink, readable phase chips, a when-in-your-day line */
+.sp2 .card.glass, .sp2 .spec-sheet, .sp2 .sp-day { background: #fff !important; border: 0 !important; box-shadow: 0 8px 22px rgba(48,64,35,.08) !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; color: #304023; }
+.sp2 .spec-row b, .sp2 .spec-lead { color: #20301a; } .sp2 .spec-row span, .sp2 .spec-desc { color: #3c4a2e; }
+.sp2 .tf-k { color: #20301a !important; font-weight: 500; }
+.sp2 .tf-phases span { color: #4a5a3a !important; background: #f6f1ec !important; border: 1.5px solid transparent !important; opacity: 1 !important; font-weight: 500; }
+.sp2 .tf-phases span.on { color: #fff !important; background: var(--pc) !important; }
+.sp2 .tf-phases span.now { border-color: #20301a !important; }
+.sp2 .tf-all { color: #4a5a3a !important; }
+.sp-day { margin: 0 0 14px; padding: 18px; border-radius: 28px; }
+.spd-line { position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; margin: 12px 0 6px; }
+.spd-ic { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; } .spd-ic.s { background: #f6edd2; color: #8a6a12; } .spd-ic.m { background: #ebe4f6; color: #6a4f9a; }
+.spd-bar { height: 6px; border-radius: 99px; background: linear-gradient(90deg, #f1d27a, #f4b9c9 55%, #b9a6e6); }
+.spd-pin { position: absolute; top: 50%; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; background: #fff; border: 4px solid #20301a; box-shadow: 0 2px 8px rgba(32,48,26,.25); }
+.spd-line .spd-pin { left: calc(38px + (100% - 76px) * var(--x, 0)); }
+.spd-lab { display: flex; justify-content: space-between; padding: 0 38px; font-size: 11.5px; color: #5b6b48; }
+.sp-day p { margin: 10px 0 0; font-size: 15px; font-weight: 500; color: #20301a; }
+.sp2 .sup-row b { color: #20301a; } .sp2 .sup-row small { color: #4a5a3a; }
+.sp2 .sp-now { background: #fff !important; box-shadow: 0 8px 22px rgba(48,64,35,.08); }
