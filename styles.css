@@ -2998,10 +2998,10 @@ button.hub-rh:active .hub-mg { transform: scale(.94); }
 .cal2-cosmic b { display: block; margin-top: 3px; font-size: 16px; font-weight: 500; }
 .cal2-g { width: 46px; height: 46px; flex: none; display: grid; place-items: center; border-radius: 50%; font-size: 22px; color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 34%); background: rgba(255,255,255,0.231); box-shadow: 0 0 22px hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77% / .25); }
 /* Calendar: period days as glossy blood drops; expected period in lighter blood; egg release as plain colour */
-.cal2 .cal-d.period { color: rgb(48,64,35); font-weight: 600; border-radius: 50% 50% 50% 50% / 56% 56% 44% 44%;
+.cal2 .cal-d.period { color: #fff; font-weight: 600; text-shadow: 0 1px 2px rgba(60,0,8,.45); border-radius: 50% 50% 50% 50% / 56% 56% 44% 44%;
   background: radial-gradient(circle at 34% 28%, rgba(255,253,253,0.6) 0 7%, rgba(255,255,255,0.0) 17%), radial-gradient(circle at 50% 60%, #d42a40, #8a0a1a 72%, #5e0510);
   box-shadow: 0 4px 14px rgba(170,20,40,.45), inset 0 -3px 6px rgba(60,0,8,.45); }
-.cal2 .cal-d.period-pred { color: rgba(48,64,35,0.908); border: 1.5px dashed rgba(212,42,64,.85); border-radius: 50% 50% 50% 50% / 56% 56% 44% 44%;
+.cal2 .cal-d.period-pred { color: #20301a; border: 1.5px dashed rgba(212,42,64,.85); border-radius: 50% 50% 50% 50% / 56% 56% 44% 44%;
   background: radial-gradient(circle at 34% 28%, rgba(255,255,255,0.396) 0 7%, rgba(255,255,255,0.0) 17%), radial-gradient(circle at 50% 60%, rgba(212,42,64,.38), rgba(138,10,26,.28) 72%); }
 .cal2 .cal-d.ovu { background: #e9c76a; color: rgb(48,64,35); box-shadow: none; }
 .cal2 .cal-d.fertile { background: rgba(233,199,106,.2); }
@@ -4732,7 +4732,7 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 /* ---------- Glass light (from the user's glassy wallet reference) ----------
    Clean pearl-white page with a faint dot screen at the top and soft coloured glows pooling at the bottom
    (her phase hue, peach, lime, moss). Frosted white cards and crisp dark type on top. */
-:root { --ink-hi: #304023; --ink-mid: #56624a; --ink-lo: #8a917f; }
+:root { --ink-hi: #304023; --ink-mid: #56624a; --ink-lo: #5c6950; }
 .phone { background: linear-gradient(180deg, #f8f7f9, #f2f0f4) !important; }
 /* The fine dot screen runs over the whole page, on top of the colour field and under the content */
 .phone::after { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
@@ -6364,3 +6364,22 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .cs-t { flex: 1; min-width: 0; display: grid; gap: 1px; }
 .cs-t b { font-weight: 500; font-size: 15px; color: #20301a; }
 .cs .cs-t small { display: block; margin: 0; padding: 0; text-align: left; font-size: 12px; color: #5b6b48; }
+
+.cal2 .cal-d.period .logdot { background: #fff; }
+.cal2 .cal-d.period .moonmark.full { background: #fff; } .cal2 .cal-d.period .moonmark.new { border-color: #fff; }
+/* contrast pass (4 Nov): every small text at least WCAG AA on its background */
+.fine { color: #4f5d40; }
+.food { background: #fff; color: #20301a; border: 1.5px solid rgba(48,64,35,.14); font-weight: 500; }
+.fcg-num { color: #20301a !important; }
+.gr-ph { color: #20301a !important; }
+.gr-e { color: #b8336f !important; } .gr-p { color: #2f7a50 !important; }
+.mv2-g { opacity: .85 !important; }
+.sy-who { color: #5b4a4c !important; }
+.bx-rt span, .bx-rt small { color: #4f6a22 !important; }
+.tg-title small, .tg-title span { color: #3c4a2e !important; }
+.nw-h small, .nw-h span { color: #3c4a2e !important; }
+.cf-t small, .cf-t span { color: #3c4a2e !important; }
+.fl-o.on { background: #c9333a !important; }
+.hxt-now span, .hxt-now small { color: #304023 !important; }
+.hb-bub b small { color: #3c4a2e !important; }
+.mv2-li small, .mv2-li span { color: #3c4a2e; }
