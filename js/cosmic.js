@@ -196,3 +196,42 @@ export const SIGN_DEPTH = {
   aquarius: { ruler: 'Uranus & Saturn', color: 'Electric blue', stone: 'Amethyst', emotions: 'You observe your feelings from a distance. Let them be felt, not just understood.', body: 'Ankles and circulation: keep moving and keep warm.', path: 'You are here to innovate and to change things for the collective.', social: 'Community-minded. You collect unusual, brilliant friends.', romance: 'Friendship first; you need space, honesty and a meeting of minds.', career: 'Tech, science, activism, the future: work that changes systems.', beauty: 'Experimental: new tech, unexpected colour, your own rules.', creativity: 'Original and visionary; ideas no one has tried yet.', sensuality: 'Curious and open-minded, sparked by the mind.', fragrance: 'Ozonic and unusual: violet leaf, aldehydes, sea air.' },
   pisces: { ruler: 'Neptune & Jupiter', color: 'Sea green & lavender', stone: 'Aquamarine', emotions: 'You absorb everything around you. Boundaries are self-care for you.', body: 'Feet and lymph: warm foot soaks, water and sleep heal you.', path: 'You are here to dream, heal and remind others of the magic.', social: 'The empath friend. Recharge alone after people.', romance: 'Romantic and soulful: you love with your whole being.', career: 'Art, music, healing, spirituality: intuition is your edge.', beauty: 'Dewy and dreamy: hydration, shimmer, water rituals.', creativity: 'Music, painting, poetry, dance: you channel more than you plan.', sensuality: 'Melting, emotional and dreamy, often in water.', fragrance: 'Aquatic florals: lotus, water lily, ylang-ylang.' },
 };
+
+// ---------- birth chart wording (Moon, Rising and the planets), used with js/astro.js ----------
+// One "style" per sign, so any planet in that sign reads naturally: "You love slowly, through the senses."
+export const SIGN_STYLE = {
+  aries: 'boldly, and fast', taurus: 'slowly, through the senses', gemini: 'curiously, in many directions', cancer: 'tenderly, protecting what you love',
+  leo: 'warmly, and out loud', virgo: 'carefully, with an eye for detail', libra: 'gracefully, looking for balance', scorpio: 'deeply, all the way',
+  sagittarius: 'freely, chasing meaning', capricorn: 'steadily, with a long plan', aquarius: 'your own way, a little ahead of your time', pisces: 'softly, through feeling and intuition',
+};
+export const PLANET_LINE = {
+  sun: s => `You shine ${s}.`, moon: s => `You feel ${s}.`, mercury: s => `You think and talk ${s}.`, venus: s => `You love ${s}.`,
+  mars: s => `You go after what you want ${s}.`, jupiter: s => `Luck grows when you live ${s}.`, saturn: s => `Your strength grows when you work ${s}.`,
+};
+export const PLANET_THEME = { sun: 'who you are', moon: 'your feelings', mercury: 'your mind', venus: 'love and beauty', mars: 'drive and desire', jupiter: 'growth and luck', saturn: 'structure and patience' };
+// Each part of the cycle has a planet that speaks loudest, which keeps the chart tied to her body.
+export const PHASE_PLANET = {
+  menstrual: ['moon', 'Your Moon leads during your period', 'Turn inward. This is how you need to be held right now:'],
+  follicular: ['mars', 'Your Mars wakes up after your period', 'Energy rises. This is how you start things best:'],
+  ovulatory: ['venus', 'Your Venus glows around ovulation', 'You are magnetic now. This is how you love and shine:'],
+  luteal: ['moon', 'Your Moon grows louder before your period', 'Feelings come closer to the surface. What soothes you:'],
+};
+export const DIGNITY_WORD = { home: 'At home', exalted: 'Exalted', detriment: 'Stretched', fall: 'Quiet' };
+export const DIGNITY_NOTE = { home: 'Strong and natural here.', exalted: 'At its very best here.', detriment: 'Works harder here, and grows wise.', fall: 'Speaks softly here. Give it time.' };
+// Whole-sign houses: what each part of life is about, and what the passing Moon asks for there.
+export const HOUSES = [
+  ['You & your body', 'Put yourself first today. A good day to begin something just for you.'],
+  ['Money & self-worth', 'Look at what you value. Small comforts and tidy money matters feel good.'],
+  ['Words & short trips', 'Messages, calls and short walks. Your words land well today.'],
+  ['Home & roots', 'Nest. Cook at home, call family, rest in your own space.'],
+  ['Joy, love & creating', 'Play, flirt, make something. Pleasure is the point today.'],
+  ['Health & routines', 'Tidy your days: sleep, food, movement. Small habits stick now.'],
+  ['Partners', 'One-to-one time matters. Listen closely and meet halfway.'],
+  ['Intimacy & letting go', 'Feelings run deep. Let go of something you no longer need.'],
+  ['Learning & far places', 'Read, plan a trip, look at the bigger picture.'],
+  ['Work & being seen', 'Your work is visible today. Let people see it.'],
+  ['Friends & hopes', 'Reach out to friends and dream a little bigger.'],
+  ['Rest & your inner world', 'Slow down, sleep more, journal. Your inner world asks for time.'],
+];
+export const ASPECT_VERB = { conjunction: 'meets', trine: 'flows with', sextile: 'opens a door to', square: 'pushes on', opposition: 'faces' };
+export const ASPECT_TONE = { conjunction: 'Strong and focused.', trine: 'Easy energy. Use it.', sextile: 'A small chance. Say yes.', square: 'Some friction. Go gently.', opposition: 'A tug between two sides. Find the middle.' };

@@ -4,6 +4,7 @@ import {
 import * as C from './cycle.js';
 import { icon } from './icons.js';
 import * as Z from './cosmic.js';
+import * as AS from './astro.js';
 import { mountFigure, mushroomArt, nautilusArt } from './figure.js';
 import { mountTorso } from './torso.js';
 import { RECIPE_PHOTOS, photoUrl, DISH_PHOTOS, dishPhoto, HORMONE_PHOTOS, hormonePhoto, CARE_PHOTOS, carePhoto, STAR_PHOTOS, starPhoto, foodPhoto, FOOD_PHOTOS, teaPhoto } from './photos.js';
@@ -962,12 +963,14 @@ function viewOnboarding() {
           <input type="file" accept="image/*" data-photo="onb" hidden></label>
         ${o.photo ? '' : '<button class="link" data-action="onbNext" style="align-self:center">Skip for now</button>'}`,
     3: `<div class="onb-planet"><img src="images/planet.jpg" alt=""></div><h2 class="onb-title">When were <span>you born?</span></h2>
-        <p class="muted">The moon you were born under, your sign and the seasons of the earth — your birthday connects them all to your cycle, so every insight is about you.</p>
+        <p class="muted">Your birthday gives your sign and birth moon. Add the time and place, and we draw your whole birth chart and link it to your cycle.</p>
         <input class="field big-in" type="date" data-input="onb.birthday" value="${o.birthday || ''}" max="${todayISO()}">
+        ${bd ? birthInputs('onb', o) : ''}
         ${bd ? `<div class="born"><div><span class="born-g">${bd.sign.glyph}</span><b>${bd.sign.name}</b><small>${bd.sign.el} sign</small></div>
           <div><span class="born-g">${moonIcon(bd.moon, 28)}</span><b>${bd.moon.name}</b><small>your birth moon</small></div>
           <div><span class="born-g han">${bd.cz.animal.han}</span><b>${bd.cz.element} ${bd.cz.animal.name}</b><small>Chinese year</small></div></div>
-          <p class="born-line">You’re now in sync — your cycle, the moon and your stars, all connected.</p>`
+          ${(() => { const c = birthChart(o); return c ? `<p class="born-3">${c.planets[1].glyph} Moon in <b>${signOfK(c.planets[1].sign).name}</b>${c.asc ? ` · ↑ <b>${signOfK(c.asc.sign).name}</b> rising` : ''}</p>` : ''; })()}
+          <p class="born-line">You’re now in sync: your cycle, the moon and your stars, all connected.</p>`
         : '<button class="link" data-action="onbNext" style="align-self:flex-start">Skip for now</button>'}`,
     4: `<div class="onb-cut"><img src="images/period.png" alt=""></div><h2 class="onb-title">When did your last <span>period start?</span></h2>
         <div class="ago">${[[7, 'About 1 week ago'], [14, '2 weeks ago'], [21, '3 weeks ago'], [30, 'About 1 month ago'], ['none', 'I don’t have a period right now']].map(([v, t]) =>
@@ -2026,6 +2029,77 @@ function viewStar(k) {
     <p class="fine center">Astrology is a tradition for reflection, not science. Your cycle part is based on typical hormone patterns.</p>
   </div>`;
 }
+// ---------- birth chart: traditional Western astrology in the style of flatlib, computed offline in js/astro.js ----------
+const signOfK = k => Z.SIGNS.find(x => x.k === k);
+function birthChart(p) {
+  if (!p || !/^\d{4}-\d\d-\d\d$/.test(p.birthday || '')) return null;
+  const key = [p.birthday, p.birthTime, p.birthPlace && p.birthPlace.lat, p.birthPlace && p.birthPlace.lng].join('|');
+  if (birthChart.k !== key) { birthChart.k = key; try { birthChart.v = AS.chart({ date: p.birthday, time: p.birthTime, place: p.birthPlace }); } catch { birthChart.v = null; } }
+  return birthChart.v;
+}
+// Without a birth time the Moon could sit in the sign next door when it is close to the edge.
+const moonSure = c => c.hasTime || (c.planets[1].deg > 6.5 && c.planets[1].deg < 23.5);
+async function placeFind(scope) {
+  const q = String((scope === 'onb' ? ui.onb.placeQ : ui.placeQ) || '').trim();
+  if (q.length < 2) { toast('Type the city you were born in'); return; }
+  ui.placeBusy = true; render();
+  try {
+    const j = await (await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=5&language=en&format=json`)).json();
+    ui.placeRes = (j.results || []).map(x => ({ name: [x.name, x.country].filter(Boolean).join(', '), area: x.admin1 && x.admin1 !== x.name && !x.admin1.includes(x.name) ? x.admin1 : '', lat: +x.latitude.toFixed(3), lng: +x.longitude.toFixed(3), tz: x.timezone }));
+    if (!ui.placeRes.length) toast('No place found. Try the nearest bigger city.');
+  } catch { ui.placeRes = []; toast('You seem to be offline. Try again in a moment.'); }
+  ui.placeBusy = false; render();
+}
+function birthInputs(scope, src) {
+  const pl = src.birthPlace, res = ui.placeRes || [], q = scope === 'onb' ? ui.onb.placeQ : ui.placeQ;
+  return `<div class="bi">
+    <label class="bi-row"><span>${icon('clock', 16)} Birth time</span><input class="field" type="time" data-input="${scope}.birthTime" value="${src.birthTime || ''}"></label>
+    ${pl ? `<div class="bi-row bi-pl"><span>${icon('pin', 16)} Born in</span><b>${esc(pl.name)}</b><button class="link" data-action="placeClear" data-scope="${scope}">Change</button></div>`
+      : `<div class="bi-find"><input class="field" data-input="${scope === 'onb' ? 'onb' : 'ui'}.placeQ" placeholder="City you were born in" value="${esc(q || '')}" autocomplete="off" enterkeyhint="search"><button class="btn btn-dark" data-action="placeFind" data-scope="${scope}" ${ui.placeBusy ? 'disabled' : ''}>${ui.placeBusy ? '…' : 'Find'}</button></div>
+        ${res.length ? `<div class="bi-res">${res.map((r, i) => `<button data-action="placePick" data-scope="${scope}" data-i="${i}">${icon('pin', 14)}<span>${esc(r.name)}${r.area ? `<small>${esc(r.area)}</small>` : ''}</span></button>`).join('')}</div>` : ''}`}
+    <p class="bi-note">${src.birthTime && pl ? 'Your Moon, Rising sign and houses are ready.' : 'Time and place give you your Rising sign and houses. The time is usually on your birth certificate.'}</p>
+  </div>`;
+}
+// The three that matter most: Sun, Moon, Rising, as round bubbles.
+function bigThree(c) {
+  const b = (g, k, sign, sub) => `<div class="b3"><span class="b3-g">${g}</span><b>${sign ? signOfK(sign).name : 'Add time'}</b><small>${k}${sub || ''}</small></div>`;
+  return `<div class="b3s">${b(c.planets[0].glyph, 'Sun', c.planets[0].sign)}${b(c.planets[1].glyph, 'Moon', c.planets[1].sign, moonSure(c) ? '' : ' · about')}${b('↑', 'Rising', c.asc && c.asc.sign)}</div>`;
+}
+function chartWheel(c) {
+  const cx = 150, cy = 150, base = c.asc ? c.asc.lon : 0, EL = { Fire: '#f6dde3', Earth: '#e6eecf', Air: '#f3eee6', Water: '#e3e7f4' };
+  const pt = (lon, r) => { const t = (180 + lon - base) * Math.PI / 180; return [cx + r * Math.cos(t), cy - r * Math.sin(t)]; };
+  const arc = (a0, a1, r0, r1) => { const [x0, y0] = pt(a0, r1), [x1, y1] = pt(a1, r1), [x2, y2] = pt(a1, r0), [x3, y3] = pt(a0, r0); return `M${x0.toFixed(1)} ${y0.toFixed(1)} A${r1} ${r1} 0 0 0 ${x1.toFixed(1)} ${y1.toFixed(1)} L${x2.toFixed(1)} ${y2.toFixed(1)} A${r0} ${r0} 0 0 1 ${x3.toFixed(1)} ${y3.toFixed(1)}Z`; };
+  const signs = Z.SIGNS.slice().sort((a, b) => AS.SIGN_KEYS.indexOf(a.k) - AS.SIGN_KEYS.indexOf(b.k));
+  let ring = signs.map((sg, i) => { const [gx, gy] = pt(i * 30 + 15, 127); return `<path d="${arc(i * 30, i * 30 + 30, 113, 141)}" fill="${EL[sg.el]}" stroke="#fff" stroke-width="1.5"/><text x="${gx.toFixed(1)}" y="${gy.toFixed(1)}" class="cw-sg">${sg.glyph}</text>`; }).join('');
+  // planets: step inward when two sit close together so the glyphs never overlap
+  const ps = c.planets.slice().sort((a, b) => a.lon - b.lon); let last = -99, lvl = 0;
+  const marks = ps.map(p => { lvl = p.lon - last < 9 ? (lvl + 1) % 3 : 0; last = p.lon; const r = 96 - lvl * 15, [x, y] = pt(p.lon, r), [tx, ty] = pt(p.lon, 113);
+    return `<line x1="${tx.toFixed(1)}" y1="${ty.toFixed(1)}" x2="${pt(p.lon, 108)[0].toFixed(1)}" y2="${pt(p.lon, 108)[1].toFixed(1)}" class="cw-tick"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="11" class="cw-pc ${p.k}"/><text x="${x.toFixed(1)}" y="${y.toFixed(1)}" class="cw-pg">${p.glyph}</text>`; }).join('');
+  const lines = c.aspects.filter(a => a.k !== 'conjunction').map(a => { const A = c.planets.find(p => p.k === a.a), B = c.planets.find(p => p.k === a.b), [x1, y1] = pt(A.lon, 58), [x2, y2] = pt(B.lon, 58);
+    return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" class="cw-as ${/square|opposition/.test(a.k) ? 'hard' : 'soft'}"/>`; }).join('');
+  const seg = lon => { const [x1, y1] = pt(lon, 60), [x2, y2] = pt(lon, 141); return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" class="cw-ax"/>`; };
+  const axis = c.asc ? (() => { const [lx, ly] = pt(c.asc.lon, 151), [nx, ny] = pt(c.mc.lon, 151);
+    return `${seg(c.asc.lon)}${seg(c.asc.lon + 180)}${seg(c.mc.lon)}<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" class="cw-al">AC</text><text x="${nx.toFixed(1)}" y="${ny.toFixed(1)}" class="cw-al">MC</text>`; })() : '';
+  return `<svg class="cw" viewBox="-12 -12 324 324" role="img" aria-label="Your birth chart wheel">${ring}<circle cx="${cx}" cy="${cy}" r="113" class="cw-in"/><circle cx="${cx}" cy="${cy}" r="58" class="cw-core"/>${lines}${axis}${marks}
+    <text x="${cx}" y="${cy - 7}" class="cw-c1">${new Date(c.date + 'T12:00').toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}</text><text x="${cx}" y="${cy + 12}" class="cw-c2">your sky at birth</text></svg>`;
+}
+function chartTab(cp) {
+  const p = state.profile, c = birthChart(p); if (!c) return '';
+  const phase = M.info && M.info.phase, tr = AS.transits(c), ord = n => n + ({ 1: 'st', 2: 'nd', 3: 'rd' }[n] || 'th');
+  const pp = phase && Z.PHASE_PLANET[phase], pl = pp && c.planets.find(x => x.k === pp[0]);
+  const ppText = pl && (pl.k === 'moon' ? (Z.SIGN_DEPTH[pl.sign] || {}).emotions : Z.PLANET_LINE[pl.k](Z.SIGN_STYLE[pl.sign]));
+  const pName = k => AS.PLANETS.find(x => x.k === k).name;
+  return `${c.hasTime ? '' : `<section class="card glass bi-card"><div class="eyebrow dark">Complete your chart</div><h3 class="dark-h">Add your birth time and place</h3>${birthInputs('profile', p)}</section>`}
+    <section class="card glass cw-card">${chartWheel(c)}${bigThree(c)}</section>
+    ${pl ? `<section class="cz-pp"><span class="cz-pp-g">${pl.glyph}</span><div><small>${pp[1]}</small><b>${pl.name} in ${signOfK(pl.sign).name}</b><p>${pp[2]} ${ppText}</p></div></section>` : ''}
+    ${sectionTitle('Today in your chart')}
+    <section class="card glass cz-sky"><div class="cz-sky-m"><span>${AS.PLANETS[1].glyph}</span><div><b>The Moon is in ${signOfK(tr.moon.sign).name}${tr.moon.house ? `, your ${ord(tr.moon.house)} house` : ''}</b>
+      <p>${tr.moon.house ? `${Z.HOUSES[tr.moon.house - 1][0]}. ${Z.HOUSES[tr.moon.house - 1][1]}` : `A day to move ${Z.SIGN_STYLE[tr.moon.sign]}. Add your birth time and place to see which part of your life it lights up.`}</p></div></div>
+      ${tr.hits.slice(0, 3).map(h => `<div class="cz-hit"><span class="cz-hit-g">${h.glyph}</span><div><b>${h.t === 'moon' ? 'The Moon' : pName(h.t)} ${Z.ASPECT_VERB[h.k]} your ${pName(h.n)}</b><small>${Z.PLANET_THEME[h.n].charAt(0).toUpperCase() + Z.PLANET_THEME[h.n].slice(1)} · ${Z.ASPECT_TONE[h.k]}</small></div></div>`).join('')}</section>
+    ${sectionTitle('Your planets')}
+    <section class="card glass cz-pl">${c.planets.map(x => `<div class="cz-pr"><span class="cz-pr-g">${x.glyph}</span><div class="cz-pr-t"><b>${x.name} in ${signOfK(x.sign).name} <i>${Math.floor(x.deg)}°</i></b><small>${x.house ? `${ord(x.house)} house · ${Z.HOUSES[x.house - 1][0]}` : Z.PLANET_THEME[x.k].charAt(0).toUpperCase() + Z.PLANET_THEME[x.k].slice(1)}</small><p>${Z.PLANET_LINE[x.k](Z.SIGN_STYLE[x.sign])}${x.dignity ? ` ${Z.DIGNITY_NOTE[x.dignity]}` : ''}</p></div>${x.dignity ? `<em class="cz-dg ${x.dignity}">${Z.DIGNITY_WORD[x.dignity]}</em>` : ''}</div>`).join('')}</section>
+    ${c.hasTime ? `${sectionTitle('Birth time and place')}<section class="card glass">${birthInputs('profile', p)}</section>` : ''}`;
+}
 function viewCosmic() {
   const cp = cosmicProfile(), now = new Date(), moon = Z.moonPhase(now);
   const phase = M.info ? M.info.phase : null;
@@ -2102,8 +2176,8 @@ function viewCosmic() {
   return `${cosmicHero(`${sign.name} <em>·</em> ${cz.element} ${cz.animal.name}`, `${sign.mode} ${sign.el} sign · ${cz.yin ? 'Yin' : 'Yang'} ${cz.element} year ${cz.year}`, `<div class="cz-badges">${badge(sign.glyph, 'Sign', sign.name)}${badge(cz.animal.han, 'Chinese year', cz.animal.name)}${badge(five.han, 'Element', cz.element)}</div>`)}
   <div class="pad mv2-body">
     ${phase ? `<section class="cz-today"><span class="eyebrow">${sign.el} in your ${PHASES[phase].name.toLowerCase()} phase</span><p>${Z.EL_PHASE[sign.el][phase]}</p></section>` : ''}
-    <div class="seg">${[['readings', 'Readings'], ['sign', 'Your sign'], ['moon', 'Moon']].map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="czTab" data-v="${k}">${l}</button>`).join('')}</div>
-    ${tab === 'sign' ? signTab : tab === 'moon' ? moonSection() : starSections()}
+    <div class="seg">${[['readings', 'Readings'], ['chart', 'Chart'], ['sign', 'Your sign'], ['moon', 'Moon']].map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="czTab" data-v="${k}">${l}</button>`).join('')}</div>
+    ${tab === 'chart' ? chartTab(cp) : tab === 'sign' ? signTab : tab === 'moon' ? moonSection() : starSections()}
     <p class="fine center">Astrology, the five elements and moon cycles are spiritual traditions for reflection, not science or medical advice. In Chinese astrology the year begins at Li Chun (~4 Feb).</p>
   </div>`;
 }
@@ -4684,6 +4758,7 @@ function viewProfile() {
     ${sectionTitle('Birthday & home')}
     <section class="card glass"><input class="field" type="date" data-input="profile.birthday" value="${p.birthday || ''}" max="${todayISO()}" aria-label="Birthday">
       <select class="field sm" data-input="profile.country" style="margin-top:10px" aria-label="Country">${SZ.COUNTRIES.map(([code, nm]) => `<option value="${code}" ${code === myCountry() ? 'selected' : ''}>${nm}</option>`).join('')}</select>
+      ${p.birthday ? birthInputs('profile', p) : ''}
       <p class="fine" style="margin:8px 0 0">Your birthday sets your sign, your country sets what's in season.</p>
       <button class="list-btn" data-action="nav" data-to="cosmic">${icon('star', 18)} See my cosmic rhythm</button>
       ${p.birthday && (state.partners || []).length ? `<button class="list-btn" data-action="shareSend">${icon('heart', 18)} Send my link so my people see my sign</button>` : ''}</section>`;
@@ -5028,6 +5103,7 @@ function viewPrivacy() {
     <p><b>Delete your account anytime.</b> Profile → Account → “Delete account” erases your account and every copy of your data on our server straight away.</p>
     <p><b>Partner signals.</b> When you send love or a care nudge, only the signal type, your first name and a private inbox code pass through a free relay (ntfy.sh) to your partner’s app. When you connect with a partner, the same relay carries what your link already holds (first name, cycle start and length, star sign, fertile days and today's mood if you share them) so you see each other without sending a second link. Symptoms and notes are never sent.</p>
     <p><b>No tracking.</b> No analytics, no advertising, no cookies for tracking.</p>
+    <p><b>Birth chart.</b> Your birth time and birth place are optional and stay with the rest of your data. Your chart is calculated on your phone. When you tap Find, only the city name you typed is sent to the Open-Meteo place search to get its coordinates and time zone.</p>
     <p><b>Partner links.</b> When you share your cycle, the link contains your first name, cycle estimates (last period start, average cycle and period length, fertile days only if you turn them on) and a private code so love signals reach you. If you added them, it also holds your profile photo and the day and month of your birthday, for your star sign, and today's mood if you log one and leave mood sharing on. Symptoms and notes are never included. Anyone with the link can view it, so share it only with people you trust.</p>
     <p><b>Images and fonts.</b> Food photos load from Unsplash and Pexels, fonts from Google Fonts, and the sign-in library from jsDelivr. These services receive standard web requests (like your IP address) but none of your health data.</p>
     <p><b>Delete anytime.</b> Profile → “Delete all data” erases everything from this device. Deleting the app or clearing your browser data does the same — so export a backup first if you want to keep it.</p>
@@ -5183,7 +5259,7 @@ const actions = {
     if (!o.noPeriod) for (let i = 0; i < o.periodLength; i++) { const d = C.addDays(s, i); if (d <= new Date()) logs[C.iso(d)] = { flow: i === 0 || i === 1 ? 'medium' : 'light' }; }
     ui.arrive = true;
     let pend = null; try { pend = b64d(localStorage.getItem('uts.pendingPartner') || ''); localStorage.removeItem('uts.pendingPartner'); } catch {}
-    state = { onboarded: true, profile: { name: o.name.trim(), cycleLength: o.unsure || o.noPeriod ? 28 : o.cycleLength, cycleUnsure: !!(o.unsure || o.noPeriod), noPeriod: !!o.noPeriod || undefined, bc: o.bc || 'none', bcPlan: hormonalBC(o.bc) ? o.bcPlan || 'think' : undefined, bcStop: o.bcPlan === 'stop' ? todayISO() : undefined, planStart: todayISO(), periodLength: o.periodLength, goals: o.goals, purpose: o.purpose || 'know', focus: (o.focus && o.focus.length) ? o.focus : ['hormones', 'energy', 'eat'], birthday: o.birthday || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
+    state = { onboarded: true, profile: { name: o.name.trim(), cycleLength: o.unsure || o.noPeriod ? 28 : o.cycleLength, cycleUnsure: !!(o.unsure || o.noPeriod), noPeriod: !!o.noPeriod || undefined, bc: o.bc || 'none', bcPlan: hormonalBC(o.bc) ? o.bcPlan || 'think' : undefined, bcStop: o.bcPlan === 'stop' ? todayISO() : undefined, planStart: todayISO(), periodLength: o.periodLength, goals: o.goals, purpose: o.purpose || 'know', focus: (o.focus && o.focus.length) ? o.focus : ['hormones', 'energy', 'eat'], birthday: o.birthday || undefined, birthTime: o.birthday && o.birthTime || undefined, birthPlace: o.birthday && o.birthPlace || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
     if (pend && pend.s && pend.c) state.partners = [{ ...pend, id: Date.now().toString(36), added: Date.now() }];
     save(); go('today'); render();
     if (state.partners?.length) { M = model(); syncTo(state.partners[0]); startSignals(); }
@@ -5305,6 +5381,9 @@ const actions = {
   pfTab: d => { ui.pfTab = d.v; render(); },
   groAisle: d => { ui.groAisle = d.v; render(); const t = document.querySelector('.gro-tabs'), on = t && t.querySelector('.on'); if (on) t.scrollLeft = on.offsetLeft - (t.clientWidth - on.offsetWidth) / 2; },
   czTab: d => { ui.czTab = d.v; render(); },
+  placeFind: d => placeFind(d.scope),
+  placePick: d => { const x = (ui.placeRes || [])[+d.i]; if (!x) return; const { area, ...r } = x; if (d.scope === 'onb') ui.onb.birthPlace = r; else { state.profile.birthPlace = r; save(); } ui.placeRes = []; ui.placeQ = ''; render(); },
+  placeClear: d => { if (d.scope === 'onb') ui.onb.birthPlace = null; else { delete state.profile.birthPlace; save(); } render(); },
   planOpen: d => { ui.planOpen = d.date || null; ui.planKind = 'date'; calRefresh(['.day-panel']); },
   planKind: d => { const name = document.getElementById('ev-name')?.value; ui.planKind = d.v; calRefresh(['.day-panel']); const i = document.getElementById('ev-name'); if (i && name) i.value = name; },
   planSave: d => { const t = (document.getElementById('ev-name')?.value || '').trim().slice(0, 40); events().push({ id: Date.now().toString(36), date: d.date, kind: ui.planKind || 'date', t }); ui.planOpen = null; save(); render(); toast('Planned ✓'); },
@@ -5449,6 +5528,11 @@ document.addEventListener('click', e => {
   const fn = actions[el.dataset.action];
   if (fn) { e.preventDefault(); fn(el.dataset, el); }
 });
+document.addEventListener('keydown', e => {
+  const f = e.target.dataset?.input; if (e.key !== 'Enter' || !/placeQ$/.test(f || '')) return;
+  e.preventDefault(); placeFind(f.startsWith('onb') ? 'onb' : 'profile');
+});
+document.addEventListener('change', e => { if (e.target.type === 'time' && /birthTime$/.test(e.target.dataset?.input || '')) render(); });
 document.addEventListener('focusout', e => {
   const t = e.target; if (t.type !== 'date' || !t.dataset?.input || !t.value || +t.value.slice(0, 4) < 1900) return;
   if (t.dataset.input === 'profile.birthday' && (state.partners || []).length) toast('Saved — send your link again so your people see your sign');
@@ -5457,6 +5541,7 @@ document.addEventListener('focusout', e => {
 document.addEventListener('input', e => {
   if (e.target.classList.contains('o9-range')) { e.target.parentElement.style.setProperty('--x', e.target.value + '%'); return; }
   const f = e.target.dataset?.input; if (!f) return;
+  if (f === 'ui.placeQ') { ui.placeQ = e.target.value; return; }
   const [scope, key] = f.split('.'), v = e.target.value, isDate = e.target.type === 'date';
   if (isDate && v && +v.slice(0, 4) < 1900) return; // still typing the year (0001, 0019, 0199…): wait for all four digits
   if (scope === 'onb') { ui.onb[key] = v; const b = document.querySelector('[data-action="onbNext"]'); if (b && ui.onbStep === 1) b.disabled = !v.trim();
