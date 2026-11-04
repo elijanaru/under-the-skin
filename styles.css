@@ -6342,3 +6342,10 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .br2 .br2-top { display: flex; justify-content: space-between; align-items: center; }
 .br2 .br2-top .spec-btn { position: relative; left: 0; right: 0; top: 0; margin: 0; }
 .br2b .br2-go { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
+
+/* remedy + supplement pages: one clear "before you try it" check, same red as the body page warnings */
+.ck-first { display: flex; gap: 12px; padding: 16px; margin: 4px 0 14px; border-radius: 24px; background: #fff; border: 2px solid #f2a3a3; box-shadow: 0 6px 18px rgba(200,60,60,.08); }
+.ck-i { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: #e5484d; color: #fff; font: 600 19px Outfit, sans-serif; }
+.ck-first small { display: block; font: 600 11px Outfit, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: #c0363b; }
+.ck-first b { display: block; margin: 3px 0 4px; font: 450 14.5px/1.45 Outfit, sans-serif; color: #20301a; }
+.ck-first p { margin: 2px 0 0; font: 400 13.5px/1.45 Outfit, sans-serif; color: #3a4a2e; }

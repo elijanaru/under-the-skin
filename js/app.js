@@ -2606,13 +2606,13 @@ function viewSupps() {
     <section class="card glass sup-list">${(tab === 'now' && on.length ? on : L).map(row).join('')}</section>
     <p class="fine center">Dots show the phases each one helps most. Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}.</p></div>`;
 }
-function remedyScience(r, lib = REMEDY_SCIENCE) {
+function remedyScience(r, lib = REMEDY_SCIENCE, check = true) {
   const x = lib[r.id]; if (!x) return '';
   return `${sectionTitle('Why it works')}
     <section class="card glass nu-food">${x.c.map(([c, d]) => `<div class="spec-row"><b>${c}</b><span>${d}</span></div>`).join('')}</section>
     ${sectionTitle('What studies found')}
     <section class="card glass tea-study"><div class="ts-i"><p>${x.study}</p><small>${x.cite}</small></div></section>
-    ${x.caution ? `${sectionTitle('Good to know')}<section class="card glass tea-care"><p>${icon('spark', 12)} ${x.caution}</p></section>` : ''}`;
+    ${x.caution || check ? `<section class="ck-first"><span class="ck-i">!</span><div><small>Before you try it</small>${x.caution ? `<b>${x.caution}</b>` : ''}${check ? '<p>Check every ingredient for allergies and for clashes with medicines you take.</p>' : ''}</div></section>` : ''}`;
 }
 // Detail page: full photo on top, a frosted sheet slides over it with the 3 key items and a short description.
 const QTY = /^((?:juice of |pinch of |a |an )?[\d½¼¾⅓⅔.\/–-]+\s*(?:g|kg|ml|l|cups?|tbsp|tsp|handfuls?|cloves?|slices?|sticks?|pinch)?\b|pinch of|a handful of|handful of)\s*/i;
@@ -4515,7 +4515,7 @@ function viewRitual(id) {
     ${sectionTitle('Steps')}
     <section class="card glass">${r.steps.map((s, i) => `<div class="step"><span class="step-n">${i + 1}</span><p>${s}</p></div>`).join('')}</section>
     <button class="btn btn-light btn-block" data-action="timer" data-title="${esc(r.name)}" data-secs="${r.mins * 60}">${icon('play', 16)} Start ${r.mins}-minute timer</button>
-    ${remedyScience(r, RITUAL_SCIENCE)}
+    ${remedyScience(r, RITUAL_SCIENCE, false)}
     ${(() => { const nx = RITUALS[(RITUALS.indexOf(r) + 1) % RITUALS.length]; return `<button class="card glass nu-next" data-action="nav" data-to="ritual/${nx.id}"><small>Next ritual</small><b>${nx.name}</b>${icon('chevR', 16)}</button>`; })()}
   </div>`;
 }
