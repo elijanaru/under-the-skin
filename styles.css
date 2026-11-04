@@ -6453,3 +6453,7 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .bi-res small { display: block; font-size: 12px; color: #4f5d40; }
 .bi-row .field { background: #f6f1ec !important; color: #20301a !important; -webkit-text-fill-color: #20301a; }
 .bi-pl .link { color: #4f6a22 !important; text-decoration: underline; }
+/* food tiles on Today: a soft dark fade under the name so the small labels read on bright photos */
+.sz-b::before { content: ''; position: absolute; z-index: -1; left: -11px; right: -10px; bottom: -10px; height: calc(100% + 34px); background: linear-gradient(to top, rgba(20,24,16,.62), rgba(20,24,16,0)); border-radius: 0 0 22px 22px; pointer-events: none; }
+.sz-b small { color: #fff !important; text-shadow: 0 1px 4px rgba(0,0,0,.45); font-weight: 500; }
+.sz-nat > small, .sz-nat span, .sz-nat p { color: #3c4a2e; }
