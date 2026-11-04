@@ -1956,9 +1956,47 @@ function starArt(k) {
   return `<svg class="sa" viewBox="0 0 220 200" aria-hidden="true"><defs><filter id="sg-${k}" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
     <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" filter="url(#sg-${k})">${STAR_ART[k] || ''}</g></svg>`;
 }
+// ---------- readings from her birth chart: each topic is read from the planet that rules it, in the sign and house it sits in ----------
+// [point, field in SIGN_DEPTH, what this placement says]; 'asc' = rising sign, 'mc' = top of the chart, 'h5' = 5th house sign
+const TOPIC_PLAN = {
+  emotions: [['moon', 'emotions', 'How you feel'], ['h4', 'emotions', 'What makes you feel safe']],
+  body: [['asc', 'body', 'Your body and first impression'], ['mars', 'body', 'Your physical energy']],
+  path: [['sun', 'path', 'Who you are becoming'], ['jupiter', 'path', 'Where you grow and get lucky']],
+  social: [['mercury', 'social', 'How you talk and connect'], ['jupiter', 'social', 'How you are generous']],
+  romance: [['venus', 'romance', 'How you love'], ['mars', 'romance', 'What draws you in']],
+  career: [['mc', 'career', 'Your calling'], ['saturn', 'career', 'Where you build mastery']],
+  beauty: [['venus', 'beauty', 'Your beauty'], ['asc', 'beauty', 'How your look reads']],
+  creativity: [['sun', 'creativity', 'Your creative fire'], ['h5', 'creativity', 'What you love to make']],
+  sensuality: [['venus', 'sensuality', 'What you desire'], ['mars', 'sensuality', 'How you go after it']],
+  fragrance: [['venus', 'fragrance', 'Your scent, from your Venus'], ['moon', 'fragrance', 'Your comfort scent, from your Moon']],
+  flower: [['venus', 'fragrance', 'Your Venus']],
+};
+const PT = { asc: ['↑', 'Rising'], mc: ['MC', 'Midheaven'], h4: ['⌂', '4th house'], h5: ['✦', '5th house'] };
+function chartRead(k) {
+  const c = birthChart(state.profile), plan = TOPIC_PLAN[k]; if (!c || !plan) return null;
+  const ord = n => n + ({ 1: 'st', 2: 'nd', 3: 'rd' }[n] || 'th');
+  const signAt = h => c.asc ? AS.SIGN_KEYS[(AS.SIGN_KEYS.indexOf(c.asc.sign) + h - 1) % 12] : null;
+  const rows = plan.map(([p, f, role]) => {
+    let sign, house, glyph, name, dig = '';
+    if (p === 'asc' || p === 'mc') { if (!c.asc) return null; sign = c[p].sign; house = p === 'asc' ? 1 : c.house(c.mc.lon); [glyph, name] = PT[p]; }
+    else if (p === 'h4' || p === 'h5') { sign = signAt(+p[1]); if (!sign) return null; house = +p[1]; [glyph, name] = PT[p]; }
+    else { const x = c.planets.find(y => y.k === p); sign = x.sign; house = x.house; glyph = x.glyph; name = x.name; dig = x.dignity; }
+    const line = (Z.SIGN_DEPTH[sign] || {})[f]; if (!line) return null;
+    const title = p === 'h4' || p === 'h5' ? `${signOfK(sign).name} on your ${name}` : p === 'asc' ? `${signOfK(sign).name} rising` : p === 'mc' ? `${signOfK(sign).name} Midheaven` : `${name} in ${signOfK(sign).name}${house ? `, ${ord(house)} house` : ''}`;
+    return { p, glyph, title, role, line, dig, sign, house };
+  }).filter(Boolean);
+  if (!rows.length) return null;
+  // today: the sky touching the planets of this topic
+  const tr = AS.transits(c), keys = plan.map(x => x[0]), pName = q => AS.PLANETS.find(x => x.k === q).name;
+  const hits = tr.hits.filter(h => keys.includes(h.n)).slice(0, 2).map(h => `${h.t === 'moon' ? 'The Moon' : pName(h.t)} ${Z.ASPECT_VERB[h.k]} your ${pName(h.n)} today: ${Z.ASPECT_TONE[h.k]}.`);
+  const main = AS.PLANETS.find(x => x.k === keys.find(q => AS.PLANETS.some(y => y.k === q)));
+  const sky = main && { name: main.name, glyph: main.glyph, sign: AS.signOf(tr.sky[main.k]), house: c.house(tr.sky[main.k]) };
+  return { rows, hits, sky, peek: rows[0].title.replace(/, \d+\w+ house$/, '') };
+}
 function starTile(k, cls = '') {
   const T = Z.STAR_TOPICS[k], phase = M.info ? M.info.phase : 'follicular';
-  const peek = k === 'moon' ? Z.moonPhase(new Date()).name : (T.phase[phase] || '').split(/[—.]/)[0];
+  const cr = k === 'moon' ? null : chartRead(k);
+  const peek = k === 'moon' ? Z.moonPhase(new Date()).name : cr ? cr.peek : (T.phase[phase] || '').split(/[—.:]/)[0];
   const ph_ = starPhoto(k, 600);
   return `<button class="st-tile ${cls} ${ph_ ? 'has-photo' : ''}" data-action="nav" data-to="cosmic/${k}">${ph_ ? `<img class="st-photo" src="${ph_}" alt="" loading="lazy"><span class="st-shade"></span>` : `<span class="st-art">${starArt(k)}</span>`}
     <span class="st-meta"><small>${STAR_N[k]}</small><b>${T.t}</b><em>${peek}</em></span></button>`;
@@ -1966,7 +2004,7 @@ function starTile(k, cls = '') {
 const constellation = (n, t) => `<div class="st-rule"><span>${n}</span><i></i><span>${t}</span></div>`;
 function starSections() {
   return `${constellation('I', 'Readings')}
-    <div class="st-head"><h2>Your <span>readings</span></h2><p>Your sign and your hormones, woven together for today</p></div>
+    <div class="st-head"><h2>Your <span>readings</span></h2><p>${birthChart(state.profile) ? 'Read from your birth chart, today\'s sky and your cycle' : 'Your sign and your hormones, woven together for today'}</p></div>
     <div class="st-grid two">${starTile('emotions', 'tall')}${starTile('body', 'tall')}</div>
     ${starTile('moon', 'wide solo')}
     ${constellation('II', 'Guidance')}
@@ -1981,7 +2019,7 @@ function starSections() {
 function viewStar(k) {
   const T = Z.STAR_TOPICS[k], cp = cosmicProfile(); if (!T) return viewMissing();
   const phase = M.info ? M.info.phase : 'follicular', ph = PHASES[phase], tc = TCM[phase], u = starPhoto(k, 1100), moon = Z.moonPhase(new Date());
-  const A = Z.TOPIC_ASTRO[k], S = cp ? cp.sign : null, SD = S ? Z.SIGN_DEPTH[S.k] : null;
+  const A = Z.TOPIC_ASTRO[k], S = cp ? cp.sign : null, SD = S ? Z.SIGN_DEPTH[S.k] : null, CR = k === 'moon' ? null : chartRead(k);
   const poss = n => /s$/.test(n) ? `${n}’` : `${n}’s`;
   const waxing = moon.age < 14.77, building = phase === 'follicular' || phase === 'ovulatory';
   const phaseLine = k === 'moon' ? (waxing === building ? 'The moon and your body are moving the same way right now. Go with it.' : 'The moon and your body are on different tides. Honour your body first, the moon second.') : T.phase[phase];
@@ -2001,12 +2039,12 @@ function viewStar(k) {
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
     <div class="mv2-eyebrow">${STAR_N[k] || ''} · ${S ? `${S.glyph} ${S.name}` : 'Your stars'} · ${ph.name}</div>
     <h1 class="rh2-h">${title}</h1>
-    <p class="mv2-now">${(k === 'moon' ? `${Math.round(moon.illum * 100)}% lit tonight` : (T.phase[phase] || '').split(/[—.]/)[0])}</p>
+    <p class="mv2-now">${(k === 'moon' ? `${Math.round(moon.illum * 100)}% lit tonight` : CR ? CR.rows.map(r => `${r.glyph} ${r.title.replace(/, \d+\w+ house$/, '')}`).join(' · ') : (T.phase[phase] || '').split(/[—.:]/)[0])}</p>
   </section>
   <div class="pad sd-body">
     <section class="sd-paper">
       <div class="sd-k">Today’s reading</div>
-      <p class="sd-q">${phaseLine}${signLine ? ` <span>${signLine}</span>` : ''}</p>
+      <p class="sd-q">${phaseLine}${CR ? ` <span>With your ${CR.rows[0].title.replace(/, \d+\w+ house$/, '')}: ${CR.rows[0].line.charAt(0).toLowerCase() + CR.rows[0].line.slice(1)}</span>` : signLine ? ` <span>${signLine}</span>` : ''}</p>
       <div class="sd-sig">${S ? `<b>${S.glyph}</b>` : ''}<span>${S ? `${S.name} × ` : ''}${ph.name} phase</span></div>
     </section>
     <div class="sd-two">
@@ -2021,6 +2059,10 @@ function viewStar(k) {
         <p>${ph.hormones.split('. ')[0]}. ${evBadge('some')}</p>
       </section>
     </div>
+    ${CR ? `<div class="sd-h">In your birth chart</div>
+    <section class="sd-card sd-chart">${CR.rows.map(r => `<div class="sdc-r"><span class="sdc-g">${r.glyph}</span><div><small>${r.role}</small><b>${r.title}</b><p>${r.line}${r.dig ? ` ${Z.DIGNITY_NOTE[r.dig]}` : ''}</p></div></div>`).join('')}
+      ${CR.sky || CR.hits.length ? `<div class="sdc-today"><small>Today's sky</small>${CR.sky ? `<p>${CR.sky.glyph} ${CR.sky.name} is in ${signOfK(CR.sky.sign).name}${CR.sky.house ? `, moving through your ${CR.sky.house}${({ 1: 'st', 2: 'nd', 3: 'rd' }[CR.sky.house] || 'th')} house: ${Z.HOUSES[CR.sky.house - 1][0].toLowerCase()}` : ''}.</p>` : ''}${CR.hits.map(h => `<p>${h}</p>`).join('')}</div>` : ''}
+    </section>` : ''}
     ${A ? `<section class="sd-card sd-astro"><div class="sd-planet">${A.glyph}</div><div><div class="sd-k">In astrology · ${A.planet} · ${A.house}</div><p>${A.why}</p></div></section>` : ''}
     ${seasons}
     <div class="sd-h">Try today</div>

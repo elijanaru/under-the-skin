@@ -31,6 +31,19 @@ export function mountFlower(canvas, url, { onReady, onFail, tilt = 0.32 } = {}) 
   const rimB = new THREE.PointLight(0xc9d6a0, 4, 8, 1.6); rimB.position.set(1.6, 0.2, -1.2); scene.add(rimB);
 
   const bloom = new THREE.Group(); scene.add(bloom);
+  // soft light behind the bloom and pollen-like motes drifting slowly around it
+  const dot = document.createElement('canvas'); dot.width = dot.height = 64;
+  const dg = dot.getContext('2d'), dr = dg.createRadialGradient(32, 32, 1, 32, 32, 31);
+  dr.addColorStop(0, 'rgba(255,255,255,1)'); dr.addColorStop(.35, 'rgba(255,240,246,.55)'); dr.addColorStop(1, 'rgba(255,240,246,0)'); dg.fillStyle = dr; dg.fillRect(0, 0, 64, 64);
+  const dotTex = new THREE.CanvasTexture(dot);
+  const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: dotTex, color: 0xfff0f5, transparent: true, opacity: 0, depthWrite: false }));
+  halo.scale.setScalar(1.5); halo.position.set(0, 0.02, -0.45); scene.add(halo);
+  const tints = [0xffffff, 0xffe3ec, 0xfff4d6, 0xeef6dc];
+  const motes = Array.from({ length: reduce ? 0 : 14 }, (_, i) => {
+    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: dotTex, color: tints[i % 4], transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending }));
+    s.userData = { a: i / 14 * Math.PI * 2, r: 0.42 + (i * 37 % 10) / 50, o: (i * 0.137) % 1, z: (i % 4) * 0.012 + 0.03 };
+    scene.add(s); return s;
+  });
   let alive = true, raf = 0, visible = true, ready = false, R = 3;
   const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder);
   (cache[url] ? Promise.resolve(cache[url]) : new Promise((res, rej) => loader.load(url, gl => { cache[url] = gl; res(gl); }, undefined, rej)))
@@ -64,6 +77,13 @@ export function mountFlower(canvas, url, { onReady, onFail, tilt = 0.32 } = {}) 
     bloom.rotation.set(reduce ? 0 : Math.sin(t * 0.6) * 0.05, spin, reduce ? 0 : Math.sin(t * 0.45) * 0.04);
     bloom.position.y = reduce ? 0 : Math.sin(t * 0.9) * 0.025;
     camera.position.set(0, Math.sin(tilt) * R, Math.cos(tilt) * R); camera.lookAt(0, 0, 0);
+    halo.material.opacity = 0.55 + Math.sin(t * 0.8) * 0.12; halo.quaternion.copy(camera.quaternion);
+    motes.forEach(m => {
+      const u = m.userData, k = (t * 0.05 + u.o) % 1, a = u.a + t * 0.12;
+      m.position.set(Math.cos(a) * u.r, -0.42 + k * 0.95, Math.sin(a) * u.r * 0.6);
+      m.scale.setScalar(u.z * (0.7 + Math.sin(k * Math.PI) * 0.6));
+      m.material.opacity = Math.sin(k * Math.PI) * 0.85;
+    });
     renderer.render(scene, camera);
   }
   frame();
