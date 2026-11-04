@@ -788,6 +788,15 @@ export const TEA_PHOTOS = {
   'Ginseng or tulsi': '1695798790639-c3c4294373ab', 'Your coffee': '1610632380989-680fe40816c6', 'Spearmint': '1498481548071-4d439c62cd6e', 'Burdock & nettle': '1594631252845-29fc4cc8cde9',
   'Chrysanthemum': '1605540443725-7e216f615d9f', 'Nettle': '1608158454932-bec5a8364a30', 'Red raspberry leaf': '1597318109735-d3612887d1ad', 'Hibiscus': '1563636680-28d36aeb83a4',
   'Ginger & cinnamon': '1610450622827-195cb7308af8', 'Chamomile & ginger': '1571934811356-5cc061b6821f', 'Tea': '1531969179221-3946e6b5a5e7',
+  'Valerian root': '1635739056558-6d8b9249ca93', 'Saffron': '1631189945107-34e33ff1c648', 'Lavender': '1523920290228-4f321a939b4c', 'Rosemary': '1586161665517-0325578c2784',
+  'Elderberry': '1723239714209-1f124b16572b', 'Mugwort': '1702353803708-9ce6929ef7f3',
+  'Vanilla chai': '1555251415-4716d9d0b8af',
+  // Autumn rituals and winter herbs on the Season page
+  'Jujube & ginger tea': '1537203374277-c6cf7cebea4a', 'Healing broth': '1765118527220-da9c7a560b13', 'Overnight herbal infusion': '1617854307432-13950e24ba07', 'Warm feet': '1613151848917-80e67f421fff',
+  'Honey bomb': '1606486746458-e44951581ade', 'Blackstrap molasses': '1709293290785-78004c7536ee', 'Morning lemon & ginger': '1682530016814-6a1c1311cd6e', 'Fire cider': '1590075435817-21621ae37bb9',
+  'Figs, dates & honeycomb': '1633972692167-276994bcbbd0', 'Deep sleep': '1666934209818-cd6a6d08bd8d',
+  'Astragalus': '1630623093163-6ee6c84d61e0', 'Red dates': '1537201872643-ff006e1f016f', 'Ginger root': '1630623093145-f606591c2546', 'Clove': '1701191310584-3f319e0e6c59',
+  'Cinnamon bark': '1758657996518-e67bd328854e', 'Goji berries': '1653989451597-21b2fa4036bf', 'Reishi': '1759585238939-0b122be68107', 'Chaga': '1696618086206-c32563cb3bc6', 'He shou wu': '1509156396595-449e10c5cd3e',
   'cover-nausea': '1618130070080-91f4d55a2383', 'cover-ovulation': '1759530539862-5f8ce627d930', // need tiles whose teas already have a photo above
 };
 export function teaPhoto(name, w = 600, h = Math.round(w * 1.1)) { const id = TEA_PHOTOS[name] || TEA_PHOTOS.Tea; return `https://images.unsplash.com/photo-${id}?w=${w}&h=${h}&fit=crop&auto=format&q=72`; }

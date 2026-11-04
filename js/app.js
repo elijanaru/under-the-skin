@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS,
+  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -3064,7 +3064,7 @@ function viewTea() {
   const info = M.info, w = info ? dayWindow(info) : 'rising', td = TEA_DAY[w], k = ui.teaK, G = k && TEA_GUIDE.find(x => x.k === k);
   const steep = (td[3].match(/\d+(?:–\d+)?\s*min/) || [''])[0], near = w === 'flow-start' || w === 'flow-end' || w === 'premenstrual';
   return `<div class="pad tg">
-    <section class="tg-hero"><img src="${teaPhoto(td[1], 900, 1100)}" alt="" decoding="async"><span class="tg-shade"></span>
+    <section class="tg-hero tg-3d"><img src="${teaPhoto(td[1], 900, 1100)}" alt="" decoding="async"><span class="tg-shade"></span><span class="tg-studio" aria-hidden="true"></span><canvas class="teacup3d" aria-label="${td[1]}, turning slowly. Drag to turn it."></canvas>
       <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
       <div class="tg-copy"><small>${info ? `Day ${info.cd} · ${PHASES[info.phase].name} · ` : ''}Your tea today</small><h1>${td[1]}</h1><p>${td[2]}</p>
         <span class="tg-chips">${steep ? `<span>${icon('clock', 13)} ${steep}</span>` : ''}<span>${icon('thermo', 13)} ${near ? 'Hot' : 'Warm'}</span></span>
@@ -3076,11 +3076,14 @@ function viewTea() {
 
     <div class="tg-title"><small>Everything in one place</small><h2>The ultimate <em>tea guide</em></h2></div>
 
+    <div class="tg-sub"><b>How do you feel?</b><small>A tea for every mood</small></div>
+    <div class="tg-feel">${TEA_GUIDE.find(g => g.k === 'feel').teas.map(([, n, why, , ev, , q], i) => `<button class="tg-f" data-action="nav" data-to="tea/feel-${i}"><img src="${teaPhoto(n, 200, 200)}" alt="" loading="lazy"><b>${q}</b><span class="tg-fp">${n}</span><small>${why}</small></button>`).join('')}</div>
+
     <div class="tg-sub"><b>Through your cycle</b><small>Swipe for every part of your month</small></div>
     <div class="hscroll tg-cyc">${TEA_WIN.map(([ww, t]) => { const x = TEA_DAY[ww], now = info && ww === w; return `<button class="tg-cc ${now ? 'now' : ''}" data-action="nav" data-to="tea/day-${ww}"><img src="${teaPhoto(x[1], 320, 360)}" alt="" loading="lazy">${now ? '<em>Now</em>' : ''}<small>${t}</small><b>${x[1]}</b></button>`; }).join('')}</div>
 
     <div class="tg-sub"><b>For what you need</b><small>Tap one to see its teas</small></div>
-    <div class="tg-needs">${(() => { const used = new Set(); return TEA_GUIDE.map(g => { const t = ['nausea', 'ovulation'].includes(g.k) ? `cover-${g.k}` : (g.teas.find(x => !used.has(teaPhoto(x[1]))) || g.teas[0])[1]; used.add(teaPhoto(t)); return [g, t]; }); })().map(([g, t]) => `<button class="tg-n ${g.k === k ? 'on' : ''}" data-action="teaK" data-v="${g.k === k ? '' : g.k}"><img src="${teaPhoto(t, 300, 220)}" alt="" loading="lazy"><span><b>${g.n}</b><small>${plural(g.teas.length, 'tea')}</small></span></button>`).join('')}</div>
+    <div class="tg-needs">${(() => { const used = new Set(); return TEA_GUIDE.filter(g => g.k !== 'feel').map(g => { const t = ['nausea', 'ovulation'].includes(g.k) ? `cover-${g.k}` : (g.teas.find(x => !used.has(teaPhoto(x[1]))) || g.teas[0])[1]; used.add(teaPhoto(t)); return [g, t]; }); })().map(([g, t]) => `<button class="tg-n ${g.k === k ? 'on' : ''}" data-action="teaK" data-v="${g.k === k ? '' : g.k}"><img src="${teaPhoto(t, 300, 220)}" alt="" loading="lazy"><span><b>${g.n}</b><small>${plural(g.teas.length, 'tea')}</small></span></button>`).join('')}</div>
     ${G ? `<section class="card tg-list" id="tg-list"><div class="tg-k"><b>Teas for ${G.n.toLowerCase()}</b><button class="tg-x" data-action="teaK" data-v="" aria-label="Close">${icon('close', 16)}</button></div>
       ${G.teas.map(([g, n, why], i) => `<button class="tg-li" data-action="nav" data-to="tea/${G.k}-${i}"><img src="${teaPhoto(n, 160, 160)}" alt="" loading="lazy"><span><b>${n}</b><small>${why}</small></span>${icon('chevR', 16)}</button>`).join('')}</section>` : ''}
 
@@ -4149,6 +4152,16 @@ function seasonArt(sn) {
     <path d="M50 92h120l-10 36c-1 4-4 6-8 6H68c-4 0-7-2-8-6z" fill="#f3e2d2"/><path d="M50 92h120" stroke="#e2c9b2" stroke-width="5" stroke-linecap="round"/>
     <path d="M62 106h96M66 118h88" stroke="#e8d3bf" stroke-width="2" stroke-linecap="round"/></svg>`;
 }
+// Season page: autumn rituals and winter herbs, shown through the cold half of the year.
+function seasonRituals(sn) {
+  if (!['Autumn', 'Winter'].includes(sn)) return '';
+  const rit = `${sectionTitle(`${sn === 'Winter' ? 'Winter' : 'Autumn'} rituals`)}<p class="sr-sub">Warm, replenish and protect your immunity as the season turns.</p>
+    <div class="sr-grid">${AUTUMN_RITUALS.map(([n, how, why, ev]) => `<details class="sr-c"><summary><img src="${teaPhoto(n, 320, 240)}" alt="" loading="lazy"><b>${n}</b><small>${why}</small></summary><p>${how}</p>${evBadge(ev)}</details>`).join('')}</div>`;
+  const herbs = `${sectionTitle('Winter herbs')}<p class="sr-sub">For immunity and warmth through the cold months. Tap one to see how to use it.</p>
+    <section class="card sr-herbs">${WINTER_HERBS.map(([n, cn, nat, what, how, warn, ev]) => `<details class="sr-h"><summary><img src="${teaPhoto(n, 160, 160)}" alt="" loading="lazy"><span><b>${n}</b><small>${cn}</small></span><em class="sr-nat ${nat}">${nat === 'warm' ? 'Warming' : 'Neutral'}</em></summary>
+      <p>${what}</p><div class="sr-how">${icon('cup', 14)} ${how}</div>${warn ? `<div class="sr-warn">${icon('spark', 13)} ${warn}</div>` : ''}${evBadge(ev)}</details>`).join('')}</section>`;
+  return sn === 'Winter' ? herbs + rit : rit + herbs;
+}
 function viewSeason(jump) {
   if (jump) {
     Object.assign(ui, { seasonView: jump === 'cook' ? 'cook' : 'month', seasonKind: null });
@@ -4206,6 +4219,7 @@ function viewSeason(jump) {
     ${forYou.length ? `${sectionTitle(`For your ${PHASES[phase].name.toLowerCase()} phase`)}
       <div class="hscroll">${forYou.map(i => `<button class="rcard has-photo" data-action="seasonFood" data-f="${esc(i.f)}"><img class="rc-photo" src="${pic(i, 500)}" alt="" loading="lazy"><span class="rc-shade"></span>
         <div class="rc-top"><span class="rc-k">${NATURE[i.nature][0]}${warm && i.nature === 'cool' ? ' · cook it' : ''}</span></div><div class="rc-t">${i.f}</div><div class="rc-m">${i.nut.slice(0, 2).join(' · ')}</div></button>`).join('')}</div>` : ''}
+    ${seasonRituals(sn)}
     <div class="sz-anchor" id="sz-tabs"></div>
     <div class="seg sz-tabs">${[['month', 'Foods'], ['cook', 'Recipes']].map(([k, l]) => `<button class="${view === k ? 'on' : ''}" data-action="seasonView" data-v="${k}">${l}</button>`).join('')}</div>
     ${body}
@@ -5292,6 +5306,14 @@ function mountFigures() {
         else wrap?.addEventListener('pointerdown', e => { if (!e.target.closest('[data-action="onbEnter"]')) intro(); }, { once: true });
       }).catch(() => {});
       welcome3d = w; unmountFigs.push(() => { w.destroy(); if (welcome3d === w) welcome3d = null; });
+    }).catch(fail);
+  });
+  // today's tea as a turning 3D cup; the tea photo stays if 3D can't run
+  document.querySelectorAll('canvas.teacup3d').forEach(c => {
+    const hero = c.closest('.tg-hero'), fail = () => { hero?.classList.remove('tg-3d', 'tg-ready'); c.remove(); };
+    import('./teacup3d.js').then(m => {
+      if (!c.isConnected) return; if (!m.webglOK()) throw new Error('no webgl');
+      unmountFigs.push(m.mountTeaCup(c, { onReady: () => hero?.classList.add('tg-ready'), onFail: fail }));
     }).catch(fail);
   });
   document.querySelectorAll('canvas.figure').forEach(c => {

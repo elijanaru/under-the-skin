@@ -1328,6 +1328,22 @@ export const SUGAR_CYCLE = {
 // ---------- Tea guide: the best teas for each problem ----------
 // Each tea: [emoji, name, what it does, how to make it, evidence, caution or ''].
 export const TEA_GUIDE = [
+  // "How do you feel?": a tea for each feeling. The 7th field is the question shown on the card.
+  { k: 'feel', g: '', n: 'How you feel', teas: [
+    ['', 'Chamomile', 'Calms the nervous system. In an 8-week trial chamomile eased mild anxiety.', '1 tbsp flowers, covered, 5–10 min. Sip warm.', 'some', 'Skip if allergic to ragweed or daisies.', 'Anxious?'],
+    ['', 'Valerian root', 'A calming root that may help you fall asleep faster.', '1 tsp dried root, 10 min, 30–60 min before bed.', 'emerging', 'Can make you drowsy. Not with sleeping pills or alcohol, and not in pregnancy.', 'Can’t sleep?'],
+    ['', 'Saffron', 'In trials, saffron lifted mild low mood and eased PMS.', '5–10 threads in hot water, 10 min.', 'some', 'A pinch a day is plenty. Not in pregnancy.', 'Feeling low?'],
+    ['', 'Lavender', 'Soothes a racing mind and tense nerves.', '1 tsp flowers, covered, 5 min.', 'emerging', '', 'Stressed?'],
+    ['', 'Lemon balm', 'Used for centuries to lift the spirits and soften a heavy heart.', '1 tbsp leaves, covered, 10 min.', 'emerging', '', 'Sad or grieving?'],
+    ['', 'Rosemary', 'In a small study, rosemary water helped people remember more.', '1 fresh sprig, 5–10 min.', 'emerging', 'Not in large amounts in pregnancy.', 'Scattered?'],
+    ['', 'Green tea', 'Calm energy for mood and memory: caffeine plus L-theanine.', '80 °C water, 2–3 min, before noon.', 'some', '', 'Need energy?'],
+    ['', 'Peppermint', 'Menthol relaxes tense muscles and clears your head.', '1 tbsp leaves, 5–7 min.', 'emerging', 'Skip if you have reflux.', 'Tense or foggy?'],
+    ['', 'Ginger', 'The best-studied tea for an upset stomach.', '4–5 slices fresh ginger, 10 min.', 'some', '', 'Nauseous?'],
+    ['', 'Elderberry', 'May shorten a cold if you start at the first sniffle.', '1 tbsp dried berries, simmer 15 min.', 'emerging', 'Always cook the berries. Raw ones upset the stomach.', 'Run down?'],
+    ['', 'Cinnamon', 'Naturally sweet, and may help keep your blood sugar steady.', '1 cinnamon stick, simmer 10 min.', 'emerging', 'Ceylon cinnamon is best for every day.', 'Sugar cravings?'],
+    ['', 'Hibiscus', 'Cooling and tart, and kind to your blood pressure.', '1 tbsp flowers, 5 min.', 'some', 'Lowers blood pressure, so go easy if yours is low. Drink it warm around your period.', 'Running hot?'],
+    ['', 'Mugwort', 'A traditional women’s herb for quiet evenings and vivid dreams.', '1 tsp, covered, 5 min, in the evening.', 'tcm', 'Never in pregnancy or while trying to conceive. Skip if allergic to ragweed.', 'Dreamy and inward?'],
+    ['', 'Vanilla chai', 'Black tea with cardamom, ginger and cloves, finished with warm milk and vanilla. Sweet, spicy and grounding.', 'Simmer black tea with 3 cardamom pods, 3 slices ginger, 2 cloves and a cinnamon stick for 5 min. Add warm milk and a drop of vanilla.', 'tcm', '', 'Need a hug?'] ] },
   { k: 'cramps', g: '🔥', n: 'Cramps', teas: [
     ['🫚', 'Ginger', 'Lowers the prostaglandins behind period pain. In studies it worked about as well as ibuprofen for some women.', '4–5 slices fresh ginger, 10 min. 2–3 cups a day from the day before your period.', 'some', ''],
     ['🌼', 'Chamomile', 'Relaxes the womb muscle and calms the nerves around the pain.', '1 tbsp flowers, covered, 5–10 min. Sip warm.', 'emerging', 'Skip if allergic to ragweed or daisies.'],
@@ -1902,3 +1918,29 @@ export const SUPP_FOOD = {
   prenatal: [['Leafy greens', 'Natural folate'], ['Liver', 'Vitamin A and B12, a small portion weekly'], ['Eggs', 'Choline for the baby\'s brain'], ['Oily fish', 'Omega-3, low-mercury kinds']],
   coq10: [['Heart and liver', 'Organ meats are richest'], ['Sardines and mackerel', 'Oily fish'], ['Beef', 'Grass-fed'], ['Broccoli and spinach', 'Smaller amounts']],
 };
+
+// Autumn rituals: warm, replenish and protect as the season turns. [name, how, why, evidence]
+export const AUTUMN_RITUALS = [
+  ['Jujube & ginger tea', 'Simmer 5 red dates and 3 slices of ginger for 15 min.', 'A classic Chinese drink to warm you and build Blood as the days get cold.', 'tcm'],
+  ['Healing broth', 'Simmer bones or mushrooms with vegetables for a few hours. Sip a warm mug every day.', 'Warm, mineral-rich and easy to digest when your body is rebuilding.', 'emerging'],
+  ['Overnight herbal infusion', 'Fill a jar with nettle and rose hips, pour over hot water and let it steep overnight.', 'A long steep pulls out more minerals and vitamin C than a quick cup.', 'emerging'],
+  ['Warm feet', 'Wool socks, and a ginger foot soak before bed.', 'Chinese medicine says cold enters through the feet. Warm feet also help you fall asleep.', 'tcm'],
+  ['Honey bomb', 'Raw honey with grated ginger, lemon zest and a pinch of cinnamon. Stir a spoon into warm water.', 'Honey soothes a sore throat and calms a cough.', 'some'],
+  ['Blackstrap molasses', 'One spoon in warm milk or tea.', 'Naturally rich in iron, calcium and magnesium.', 'some'],
+  ['Morning lemon & ginger', 'Warm water with half a lemon and a few slices of ginger when you wake.', 'A gentle, warming start for your digestion.', 'emerging'],
+  ['Fire cider', 'Raw apple cider vinegar with garlic, onion, ginger, horseradish, chili, citrus and raw honey. Steep 4 weeks, then take a spoon a day.', 'A fiery folk tonic for the cold season.', 'tcm'],
+  ['Figs, dates & honeycomb', 'A small plate in the afternoon.', 'Fibre, iron and natural sweetness for slow, steady energy.', 'some'],
+  ['Deep sleep', 'Lights low after sunset and in bed before 11.', 'People who sleep under 6 hours catch colds more often. Autumn is the season to rest more.', 'some'],
+];
+// Winter herbs for immunity and warmth. [name, Chinese name, nature, what, how, caution, evidence]
+export const WINTER_HERBS = [
+  ['Astragalus', 'Huang Qi', 'warm', 'Chinese medicine’s classic herb to strengthen your defences.', 'Simmer 3–4 slices in soup or tea.', 'Pause it while you have a fever or an infection.', 'tcm'],
+  ['Red dates', 'Da Zao', 'warm', 'Builds Blood and calms the mind.', '3–5 dates in tea or stews.', '', 'tcm'],
+  ['Ginger root', 'Sheng Jiang', 'warm', 'Warms you from the inside and settles your stomach.', 'Fresh slices in tea or broth.', '', 'some'],
+  ['Clove', 'Ding Xiang', 'warm', 'A deeply warming spice for cold hands and a cold tummy.', '2–3 cloves in chai or a warm drink.', 'Small amounts only.', 'tcm'],
+  ['Cinnamon bark', 'Rou Gui', 'warm', 'Warms and sweetens, and may help keep blood sugar steady.', '1 stick in tea, simmered 10 min.', 'Choose Ceylon cinnamon for every day.', 'emerging'],
+  ['Goji berries', 'Gou Qi Zi', 'neutral', 'Nourishes Blood and the eyes in Chinese medicine.', 'A small handful in tea, or as a snack.', 'Ask your doctor if you take blood thinners.', 'tcm'],
+  ['Reishi', 'Ling Zhi', 'neutral', 'The calming mushroom, used for sleep and immunity.', 'Simmer slices for 30 min, or stir powder into a hot drink.', 'Not with blood thinners or before surgery.', 'emerging'],
+  ['Chaga', 'Birch mushroom', 'neutral', 'Rich in antioxidants, brewed like a dark, earthy coffee.', 'Simmer a few chunks for an hour.', 'Very high in oxalates. Skip it with kidney stones or blood thinners.', 'emerging'],
+  ['He shou wu', 'Fo-ti', 'warm', 'A classic Chinese herb for hair and vitality.', 'Only the prepared root, from a practitioner.', 'Can harm the liver. Only with a qualified practitioner.', 'tcm'],
+];
