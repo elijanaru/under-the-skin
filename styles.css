@@ -5983,3 +5983,4 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 /* zoom the video out a little: a shorter frame needs less cover-scaling, the bottom fades into the page */
 .mv3 .mv2-bg { height: calc(max(52vh, 420px) + 40px); -webkit-mask-image: linear-gradient(180deg, #000 72%, transparent); mask-image: linear-gradient(180deg, #000 72%, transparent); }
 .mv3 .mv2-shade { height: calc(max(52vh, 420px) + 60px); background: linear-gradient(180deg, rgba(255,255,255,.08) 0%, rgba(255,255,255,0) 50%, rgba(246,238,240,.4) 86%, var(--bg) 100%); }
+.mv3 { padding-top: max(46vh, 380px); }
