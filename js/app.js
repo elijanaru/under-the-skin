@@ -2149,6 +2149,78 @@ function chartTab(cp) {
     <section class="card glass cz-pl">${c.planets.map(x => `<div class="cz-pr"><span class="cz-pr-g">${x.glyph}</span><div class="cz-pr-t"><b>${x.name} in ${signOfK(x.sign).name} <i>${Math.floor(x.deg)}°</i></b><small>${x.house ? `${ord(x.house)} house · ${Z.HOUSES[x.house - 1][0]}` : Z.PLANET_THEME[x.k].charAt(0).toUpperCase() + Z.PLANET_THEME[x.k].slice(1)}</small><p>${Z.PLANET_LINE[x.k](Z.SIGN_STYLE[x.sign])}${x.dignity ? ` ${Z.DIGNITY_NOTE[x.dignity]}` : ''}</p></div>${x.dignity ? `<em class="cz-dg ${x.dignity}">${Z.DIGNITY_WORD[x.dignity]}</em>` : ''}</div>`).join('')}</section>
     ${c.hasTime ? `${sectionTitle('Birth time and place')}<section class="card glass">${birthInputs('profile', p)}</section>` : ''}`;
 }
+// ---------- Cosmic rhythm, redesigned: a night hero with her birth chart drawn in light particles, the big three as
+// ring bubbles and today's line; below, white cards that explain everything in plain words ----------
+const ORD = n => n + ({ 1: 'st', 2: 'nd', 3: 'rd' }[n] || 'th');
+const pNameOf = k => AS.PLANETS.find(x => x.k === k).name;
+// the chart wheel as glowing dots: dotted sign ring, dotted house spokes, planets as bright stars
+function particleWheel(c) {
+  const cx = 160, cy = 160, base = c && c.asc ? c.asc.lon : 0;
+  const pt = (lon, r) => { const t = (180 + lon - base) * Math.PI / 180; return [cx + r * Math.cos(t), cy - r * Math.sin(t)]; };
+  const f = n => n.toFixed(1);
+  let rings = '', signs = '', spokes = '', planets = '', lines = '';
+  rings = [150, 128, 104].map((r, i) => `<circle cx="${cx}" cy="${cy}" r="${r}" class="pw-ring r${i}"/>`).join('');
+  for (let i = 0; i < 12; i++) {
+    const [x1, y1] = pt(i * 30, 104), [x2, y2] = pt(i * 30, 150), [gx, gy] = pt(i * 30 + 15, 139);
+    spokes += `<line x1="${f(x1)}" y1="${f(y1)}" x2="${f(x2)}" y2="${f(y2)}" class="pw-spoke"/>`;
+    signs += `<text x="${f(gx)}" y="${f(gy)}" class="pw-sg">${Z.SIGNS[i].glyph}</text>`;
+  }
+  if (c) {
+    // spread close planets apart along the ring (the tick still points to the true degree), alternate two radii in clusters
+    const ps = [...c.planets].sort((a, b) => a.lon - b.lon), disp = ps.map(p => p.lon);
+    for (let n = 0; n < 4; n++) for (let i = 1; i < disp.length; i++) if (disp[i] - disp[i - 1] < 13) { const mid = (disp[i] + disp[i - 1]) / 2; disp[i - 1] = mid - 6.5; disp[i] = mid + 6.5; }
+    ps.forEach((p, i) => { const close = (i > 0 && disp[i] - disp[i - 1] < 20) && i % 2 === 1, r = close ? 70 : 88; const [x, y] = pt(disp[i], r), [dx, dy] = pt(p.lon, 104), [ex, ey] = pt(disp[i], r + 11);
+      planets += `<line x1="${f(ex)}" y1="${f(ey)}" x2="${f(dx)}" y2="${f(dy)}" class="pw-tick"/><circle cx="${f(dx)}" cy="${f(dy)}" r="2.2" class="pw-dot"/><circle cx="${f(x)}" cy="${f(y)}" r="9" class="pw-halo"/><text x="${f(x)}" y="${f(y)}" class="pw-pg">${p.glyph}</text>`; });
+    lines = c.aspects.filter(a => a.k !== 'conjunction').slice(0, 10).map(a => { const A = c.planets.find(p => p.k === a.a), B = c.planets.find(p => p.k === a.b); if (!A || !B) return ''; const [x1, y1] = pt(A.lon, 58), [x2, y2] = pt(B.lon, 58); return `<line x1="${f(x1)}" y1="${f(y1)}" x2="${f(x2)}" y2="${f(y2)}" class="pw-asp ${a.k}"/>`; }).join('');
+    if (c.asc) { const [ax, ay] = pt(c.asc.lon, 162); planets += `<text x="${f(ax)}" y="${f(ay)}" class="pw-ac">AC</text>`; }
+  }
+  return `<svg class="pw" viewBox="0 0 320 320" role="img" aria-label="Your birth chart drawn as stars">
+    ${rings}${spokes}${signs}<circle cx="${cx}" cy="${cy}" r="58" class="pw-core"/>${lines}${planets}</svg>`;
+}
+function cosmicNight(cp, c) {
+  const mn = moonData(), ms = signOfK(mn.sign), tr = c && AS.transits(c), phase = M.info && M.info.phase;
+  const bub = (g, sign, k, mean) => `<div class="cn-b"><span class="cn-ring"><i>${g}</i><b>${sign ? signOfK(sign).name : '?'}</b></span><small>${k}</small><em>${mean}</em></div>`;
+  const today = tr ? (tr.moon.house ? `Moon in ${ms.name}, your ${ORD(tr.moon.house)} house` : `Moon in ${ms.name}`) : `Moon in ${ms.name}`;
+  const todayTip = tr && tr.moon.house ? Z.HOUSES[tr.moon.house - 1][1] : `A day to move ${Z.SIGN_STYLE[mn.sign]}.`;
+  return `<section class="cn">${skyDust()}
+    <div class="cn-top"><button class="cn-back" data-action="back" aria-label="Back">${icon('chevL', 20)}</button><span class="cn-pill">Cosmic rhythm</span><span class="cn-sp"></span></div>
+    <div class="cn-wheel">${particleWheel(c)}<div class="cn-core"><small>${c ? 'Your sky at birth' : 'Your birth chart'}</small><b>${c ? new Date(c.date + 'T12:00').toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }) : 'Add birthday'}</b></div></div>
+    <div class="cn-name"><small>Your big three</small><h1>${c ? `${signOfK(c.planets[0].sign).name} Sun` : `${cp.sign.name} Sun`}</h1></div>
+    <div class="cn-bubs">${c ? bub('☉', c.planets[0].sign, 'Sun', 'who you are') + bub('☽', c.planets[1].sign, 'Moon', 'how you feel') + bub('↑', c.asc && c.asc.sign, 'Rising', c.asc ? 'how you come across' : 'add birth time') : bub(cp.sign.glyph, cp.sign.k, 'Sun', 'who you are')}</div>
+    <div class="cn-today"><span class="cn-ti">${icon('moon', 16)}</span><div><small>Today · ${today}${phase ? ` · ${PHASES[phase].name}` : ''}</small><p>${todayTip}</p></div></div>
+  </section>`;
+}
+// Today tab: the three rhythms explained, today's sky in plain words, the phase planet, then the readings
+function cosmicToday(cp, c) {
+  const mn = moonData(), pg = MG.phaseGuideAt(mn.elong), ms = signOfK(mn.sign), info = M.info, phase = info && info.phase, inner = phase && MG.INNER_SEASON[phase];
+  const tr = c && AS.transits(c), pp = phase && c && Z.PHASE_PLANET[phase], pl = pp && c.planets.find(x => x.k === pp[0]);
+  const ppText = pl && (pl.k === 'moon' ? (Z.SIGN_DEPTH[pl.sign] || {}).emotions : Z.PLANET_LINE[pl.k](Z.SIGN_STYLE[pl.sign]));
+  const row = (cls, k, t, p) => `<div class="c3-r ${cls}"><span class="c3-dot"></span><div><small>${k}</small><b>${t}</b><p>${p}</p></div></div>`;
+  return `<section class="card c3"><div class="c3-h"><small>How to read this page</small><b>Three rhythms, one you</b></div>
+      ${info ? row('body', 'Your body · the cycle', `Day ${info.cd} · ${inner.name}`, 'Your hormones set your energy. This is the base of everything here.') : ''}
+      ${row('mood', 'Your mood · the Moon', `${pg.name} in ${ms.name}`, 'The Moon changes sign every two and a half days and colours how feelings show up.')}
+      ${row('self', 'Your self · your birth chart', c ? `${signOfK(c.planets[0].sign).name} Sun · ${signOfK(c.planets[1].sign).name} Moon${c.asc ? ` · ${signOfK(c.asc.sign).name} rising` : ''}` : `${cp.sign.name} Sun`, 'Where the planets stood when you were born. It does not change, it shows your style.')}
+      ${info ? `<div class="c3-all"><small>All together today</small><p>${MG.innerBlend(mn.waxing, phase)}</p></div>` : ''}</section>
+    ${pl ? `<section class="card cx-pp"><span class="cx-pg">${pl.glyph}</span><div><small>${pp[1]}</small><b>${pl.name} in ${signOfK(pl.sign).name}</b><p>${pp[2]} ${ppText.charAt(0).toLowerCase() + ppText.slice(1)}</p></div></section>` : ''}
+    ${tr ? `${sectionTitle("Today's sky, in plain words")}
+    <section class="card cx-sky">${tr.hits.slice(0, 4).map(h => `<div class="cx-hit"><span class="cx-hg">${h.glyph}</span><div><b>${h.t === 'moon' ? 'The Moon' : pNameOf(h.t)} ${Z.ASPECT_VERB[h.k]} your ${pNameOf(h.n)}</b><p>${Z.PLANET_THEME[h.n].charAt(0).toUpperCase() + Z.PLANET_THEME[h.n].slice(1)}: ${Z.ASPECT_TONE[h.k]}.</p></div></div>`).join('') || '<p class="cx-quiet">A quiet sky for you today. No planet is pressing on your chart, so follow your cycle.</p>'}</section>` : ''}
+    ${moonLink()}
+    ${starSections()}`;
+}
+// Chart tab: the wheel explained, then every placement as a clean spec sheet
+function cosmicChart(cp, c) {
+  const p = state.profile;
+  if (!c) return `<section class="card cx-add"><b>Add your birthday</b><p>Your birth chart is calculated on your phone from your birthday, time and place.</p><button class="btn btn-dark btn-block" data-action="nav" data-to="profile">Add birthday</button></section>`;
+  return `${c.hasTime ? '' : `<section class="card cx-add"><small>Make it exact</small><b>Add your birth time and place</b><p>Without them we know your planets' signs, but not your rising sign or houses.</p>${birthInputs('profile', p)}</section>`}
+    <section class="card cx-how"><div class="cx-hw"><b>☉ Planet</b><span>what part of you</span></div><div class="cx-hw"><b>♓︎ Sign</b><span>how it acts</span></div><div class="cx-hw"><b>12th house</b><span>where in life</span></div></section>
+    <section class="card cx-spec"><small class="cx-k">Your placements</small>
+      ${c.planets.map(x => `<div class="cx-pr"><div class="cx-pt"><b>${x.name}</b><span>${x.glyph} ${signOfK(x.sign).name} ${Math.floor(x.deg)}°</span></div>
+        <small>${Z.PLANET_THEME[x.k].charAt(0).toUpperCase() + Z.PLANET_THEME[x.k].slice(1)}${x.house ? ` · ${ORD(x.house)} house, ${Z.HOUSES[x.house - 1][0].toLowerCase()}` : ''}${x.dignity ? ` · <em class="cz-dg ${x.dignity}">${Z.DIGNITY_WORD[x.dignity]}</em>` : ''}</small>
+        <p>${Z.PLANET_LINE[x.k](Z.SIGN_STYLE[x.sign])}${x.dignity ? ` ${Z.DIGNITY_NOTE[x.dignity]}` : ''}</p></div>`).join('')}
+      ${c.asc ? `<div class="cx-pr"><div class="cx-pt"><b>Rising</b><span>↑ ${signOfK(c.asc.sign).name}</span></div><small>How you come across · your body</small><p>${(Z.SIGN_DEPTH[c.asc.sign] || {}).body || ''}</p></div>` : ''}
+    </section>
+    ${c.hasTime ? `${sectionTitle('Birth time and place')}<section class="card cx-add">${birthInputs('profile', p)}</section>` : ''}`;
+}
 function viewCosmic() {
   const cp = cosmicProfile(), now = new Date(), moon = Z.moonPhase(now);
   const phase = M.info ? M.info.phase : null;
@@ -2163,9 +2235,13 @@ function viewCosmic() {
   };
   const birthdayField = `<input class="field" type="date" data-input="profile.birthday" value="${state.profile.birthday || ''}" max="${todayISO()}">`;
   if (!cp) {
-    return `${cosmicHero('Your <em>cosmic rhythm</em>', 'Western zodiac, Chinese zodiac and the five elements, woven into your cycle.')}
-    <div class="pad mv2-body">
-      <section class="card glass">${birthdayField}<button class="btn btn-light btn-block" data-action="saveBirthday">Reveal my rhythm</button></section>
+    return `<section class="cn">${skyDust()}
+      <div class="cn-top"><button class="cn-back" data-action="back" aria-label="Back">${icon('chevL', 20)}</button><span class="cn-pill">Cosmic rhythm</span><span class="cn-sp"></span></div>
+      <div class="cn-wheel">${particleWheel(null)}<div class="cn-core"><small>Your birth chart</small><b>Waiting for you</b></div></div>
+      <div class="cn-name"><small>Your big three</small><h1>Your sky at birth</h1></div>
+      <p class="cn-lead">Add your birthday and we draw your chart and link it to your cycle and the Moon.</p></section>
+    <div class="pad czx">
+      <section class="card cx-add"><small>Start here</small><b>When were you born?</b>${birthdayField}<button class="btn btn-dark btn-block" data-action="saveBirthday">Reveal my rhythm</button></section>
       ${starSections()}
       ${moonSection()}
     </div>`;
@@ -2190,7 +2266,7 @@ function viewCosmic() {
         <b>${d.getDate()}</b><i style="background:${di ? PHASE_COLOR.dark[di.phase] : 'transparent'}"></i></div>`).join('')}</div>
         <div class="mm-key">${PHASE_ORDER.map(ph => `<span><i style="background:${PHASE_COLOR.dark[ph]}"></i>${PHASES[ph].name}</span>`).join('')}</div></section>`;
   }
-  const { sign, cz, five, bridge } = cp, tab = ui.czTab || 'readings';
+  const { sign, cz, five, bridge } = cp, tab = ['today', 'chart', 'moon', 'sign'].includes(ui.czTab) ? ui.czTab : 'today', bc = birthChart(state.profile);
   const badge = (g, k, v) => `<div class="cz-b"><span class="cz-g ${/[\u4e00-\u9fff]/.test(g) ? 'han' : ''}">${g}</span><b>${v}</b><small>${k}</small></div>`;
   const signTab = `
     ${sectionTitle(`${sign.glyph} ${sign.name}`)}
@@ -2222,13 +2298,11 @@ function viewCosmic() {
 
     ${sectionTitle('Birthday')}
     <section class="card glass">${birthdayField}</section>`;
-  return `${cosmicHero(`${sign.name} <em>·</em> ${cz.element} ${cz.animal.name}`, `${sign.mode} ${sign.el} sign · ${cz.yin ? 'Yin' : 'Yang'} ${cz.element} year ${cz.year}`, `<div class="cz-badges">${badge(sign.glyph, 'Sign', sign.name)}${badge(cz.animal.han, 'Chinese year', cz.animal.name)}${badge(five.han, 'Element', cz.element)}</div>`)}
-  <div class="pad mv2-body">
-    ${phase ? `<section class="cz-today"><span class="eyebrow">${sign.el} in your ${PHASES[phase].name.toLowerCase()} phase</span><p>${Z.EL_PHASE[sign.el][phase]}</p></section>` : ''}
-    ${tab === 'moon' ? '' : moonLink()}
-    <div class="seg">${[['readings', 'Readings'], ['chart', 'Chart'], ['sign', 'Your sign'], ['moon', 'Moon']].map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="czTab" data-v="${k}">${l}</button>`).join('')}</div>
-    ${tab === 'chart' ? chartTab(cp) : tab === 'sign' ? signTab : tab === 'moon' ? moonSection() : starSections()}
-    <p class="fine center">Astrology, the five elements and moon cycles are spiritual traditions for reflection, not science or medical advice. In Chinese astrology the year begins at Li Chun (~4 Feb).</p>
+  return `${cosmicNight(cp, bc)}
+  <div class="pad czx">
+    <div class="seg cx-seg">${[['today', 'Today'], ['chart', 'Chart'], ['moon', 'Moon'], ['sign', 'Signs']].map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="czTab" data-v="${k}">${l}</button>`).join('')}</div>
+    ${tab === 'chart' ? cosmicChart(cp, bc) : tab === 'sign' ? `${phase ? `<section class="cz-today"><span class="eyebrow">${sign.el} in your ${PHASES[phase].name.toLowerCase()} phase</span><p>${Z.EL_PHASE[sign.el][phase]}</p></section>` : ''}${signTab}` : tab === 'moon' ? moonSection() : cosmicToday(cp, bc)}
+    <p class="fine center">Your chart is calculated on your phone with the traditional Western method (planets, whole-sign houses, aspects). Astrology, the five elements and moon cycles are spiritual traditions for reflection, not science or medical advice.</p>
   </div>`;
 }
 // ---------- the Moon page: tonight's real moon, the inner weather it brings (heart, mind, spirit), the moon in her chart, rituals ----------
