@@ -1737,6 +1737,13 @@ function plateWheel(phase, season, sel, warm) {
     <circle cx="${cx}" cy="${cy}" r="${R + 6}" class="pl-well"/>
     <g filter="url(#pl-ds)">${segs}</g>${labels}</svg>`;
 }
+// What the Chinese-medicine idea for each phase means, in everyday words.
+const PLATE_TCM_PLAIN = {
+  menstrual: 'Your body is letting go and loses warmth with the blood. Keep it warm and flowing: warm, cooked meals and red foods like beetroot, dates and red meat help you rebuild. It’s your Water time, like winter, so rest more.',
+  follicular: 'Your blood is building back up and energy is rising. Fresh greens, sprouts and lighter meals help you grow. It’s your Wood time, like spring, so start new things.',
+  ovulatory: 'You’re at your peak, warm and outgoing. Colourful, fresh food keeps that heat in balance. It’s your Fire time, like summer, so go out and connect.',
+  luteal: 'Your body is slowing down and holding warmth for your period. Simple warm meals, roots and squash keep you calm and steady. It’s your Earth time, like late summer, so slow down.',
+};
 function plateSection(current) {
   ui.plNow = current;
   const phase = current, m = new Date().getMonth() + 1, nowSeason = SZ.seasonName(myCountry(), m);
@@ -1749,17 +1756,15 @@ function plateSection(current) {
     <div class="pl-head"><div class="mv2-eyebrow">Your plate today</div><h2>${PHASES[phase].name} × ${season.toLowerCase()}</h2><p>${PSn.aim} · ${T.el} season ${T.han}</p></div>
     <div class="pl-wheel ${ui.plAnim ? 'pl-anim' : ''}">${plateWheel(phase, season, sel, warm)}</div>
     <div class="pl-det" data-k="${sel}">
-      <div class="pld-h"><b>${P.n}</b><span class="pld-p">${PLATE_SHARE[phase][sel]}%</span>${evBadge(PLATE_EV[sel] === 'strong' && phase !== 'menstrual' ? 'some' : PLATE_EV[sel])}</div>
+      <div class="pld-h"><b>${P.n}</b><span class="pld-p">${PLATE_SHARE[phase][sel]}%</span></div>
       <p>${plateWhy(sel, phase)}${live ? ` <em>In season in ${country} now.</em>` : ''}</p>
       <div class="pld-foods">${foods.map(x => `<div>${x.photo ? `<img src="${x.photo}" alt="" loading="lazy">` : `<span>${x.g || '•'}</span>`}<small>${x.n}</small></div>`).join('')}</div>
-      ${(() => { const g = EAT_GUIDE[phase].cats[sel]; if (!g) return ''; const have = foods.map(x => x.n.toLowerCase()); const more = warmChips(g[1].filter(([, n]) => !have.some(h => n.toLowerCase().includes(h) || h.includes(n.toLowerCase()))), sel, warm);
-        return more.length ? `<div class="pld-more"><small class="pld-mk">More for you</small><div class="eat-foods">${more.map(([e, n]) => `<span>${n}</span>`).join('')}</div></div>` : ''; })()}
     </div>
     <div class="pl-rules">
-      <div class="pl-r"><b>Cook it</b><span>${cook}</span></div>
-      <div class="pl-r"><b>Taste of ${season.toLowerCase()} · ${T.han}</b><span>${PSn.taste[0]}. ${PSn.taste[1]}</span></div>
-      <div class="pl-r"><b>Your cycle in TCM</b><span>${tcm.principle}. ${tcm.stage}, ${tcm.element} element.</span></div>
-      <div class="pl-r"><b>To drink</b><span>${T.tea}. Your coffee fits too, best with food.</span></div>
+      <div class="pl-r"><i class="pl-ic">${icon('bowl', 18)}</i><div><b>Cook it</b><span>${cook}</span></div></div>
+      <div class="pl-r"><i class="pl-ic">${icon('leaf', 18)}</i><div><b>Taste of ${season.toLowerCase()} · ${T.han}</b><span>${PSn.taste[0]}. ${PSn.taste[1]}</span></div></div>
+      <div class="pl-r"><i class="pl-ic han">${tcm.elementGlyph}</i><div><b>Your cycle in Chinese medicine</b><span>${PLATE_TCM_PLAIN[phase]}</span></div></div>
+      <div class="pl-r tea"><img class="pl-tea" src="images/tea-ginger.webp" alt="A cup of warm ginger tea" loading="lazy"><div><b>To drink</b><span>${T.tea}. Your coffee fits too, best with food.</span></div></div>
     </div>
     <button class="card pl-meal" data-action="plRecipes"><span class="plm-k">Tonight’s plate</span><b>${PLATE_MEAL[phase][season]}</b><span class="plm-cta">See recipes ${icon('chevR', 14)}</span></button>
     <p class="fine center">Meat and organs first, then what’s in season. Roots, beans, lentils and some grains are welcome. Shares are a gentle guide, not a rule. Cycle food: ${EVIDENCE.some.short} evidence · seasons: Traditional Chinese Medicine.</p>
@@ -3994,7 +3999,8 @@ function seasonBento(info) {
       <img src="${foodPhoto(i.f, 320)}" alt="" loading="lazy"><span class="sz-shade"></span>
       ${info && i.ph.includes(info.phase) ? `<span class="sz-fit">${icon('spark', 11)} Your phase</span>` : ''}
       <span class="sz-b"><b>${i.f.replace(/\s*\(.*\)/, '')}</b><small><i class="nat ${i.nature}"></i>${NAT[i.nature]}</small></span></button>`).join('')}</div>
-    <button class="sz-more" data-action="nav" data-to="season"><span><b>Everything in season</b><small>All local foods and what to cook with them</small></span>${icon('chevR', 18)}</button>`;
+    <button class="sz-more2" data-action="nav" data-to="season"><span class="szm-pics">${top.slice(0, 3).map(i => `<img src="${foodPhoto(i.f, 120)}" alt="" loading="lazy">`).join('')}</span>
+      <span class="szm-t"><b>See all ${items.length} foods</b><small>and what to cook with them</small></span><span class="szm-go">${icon('chevR', 18)}</span></button>`;
 }
 function seasonCard() {
   const c = myCountry(), m = new Date().getMonth() + 1, items = SZ.seasonal(c, m), name = SZ.COUNTRIES.find(x => x[0] === c)?.[1];
@@ -4033,6 +4039,29 @@ const SEASON_PLAIN = {
   'Late summer': { eat: 'Sweet, golden harvest food: corn, squash and ripe fruit. Simple warm meals at regular times are easiest to digest.', tea: 'Chamomile, fennel or ginger' },
   Autumn: { eat: 'It turns cool and dry, so cook more: roots, pumpkin, stewed apples and pears, with warming spices like ginger and cinnamon.', tea: 'Ginger with raw honey, cinnamon, rooibos or chai' },
 };
+// The season told as a short story, with a little drawn basket of what's growing.
+const SEASON_STORY = {
+  Spring: { t: 'Everything is waking up', p: 'Buds open, the days grow longer and the first greens push through the soil. Your body wants to wake up too: lighter, fresher food with a little sour, like lemon or sauerkraut.', feel: 'Wood element and the liver. A time to move, stretch and start something new.' },
+  Summer: { t: 'The sun is at its highest', p: 'Long days, ripe fruit and gardens that overflow. Your body wants light, juicy food that cools you: berries, salads, cucumbers and fresh herbs.', feel: 'Fire element and the heart. A time for people, laughter and long evenings outside.' },
+  'Late summer': { t: 'The harvest turns golden', p: 'Corn, squash and ripe fruit are everywhere. Your body loves simple, sweet, warm meals now, eaten at regular times.', feel: 'Earth element, spleen and stomach. A time to slow down and feel grounded.' },
+  Autumn: { t: 'Nature is letting go', p: 'Leaves fall, the air turns crisp and the earth gives its last harvest: roots, pumpkins, apples and pears. Your body wants what the trees do: to slow down and keep its warmth inside.', feel: 'Metal element and the lungs. A time to breathe deeply, let go and tidy up.' },
+  Winter: { t: 'Everything rests', p: 'The days are short, the earth is quiet and life sits deep in the roots. Your body asks for slow-cooked, warm, nourishing food and longer nights.', feel: 'Water element and the kidneys. A time to rest, sleep longer and refill.' },
+};
+const SEASON_ART = { Spring: ['#a9d18e', '#f6bfcd', '#d6eab0', '#f6bfcd'], Summer: ['#ff9f8f', '#ffd36e', '#a6d78f', '#ffd36e'], 'Late summer': ['#f5c95c', '#e8a25a', '#c7d48a', '#e6c06a'], Autumn: ['#f2a65a', '#e57a6e', '#dcc66a', '#e0954c'], Winter: ['#f0c27b', '#c49a7a', '#e8d6c2', '#ffffff'] };
+function seasonArt(sn) {
+  const [a, b, c, k] = SEASON_ART[sn] || SEASON_ART.Autumn;
+  const bits = { Spring: '<path d="M0 0c3-4 8-4 8 0-3 4-8 4-8 0z"/>', Summer: '<circle r="3.4"/>', 'Late summer': '<ellipse rx="2.2" ry="4.4"/>', Autumn: '<path d="M0-5c4 2 5 6 0 10-5-4-4-8 0-10z"/>', Winter: '<path d="M0-4v8M-3.5-2l7 4M-3.5 2l7-4" stroke="#fff" stroke-width="1.4" stroke-linecap="round" fill="none"/>' }[sn] || '';
+  return `<svg class="sz-art" viewBox="0 0 220 150" aria-hidden="true">
+    <ellipse cx="110" cy="134" rx="74" ry="8" fill="rgba(48,64,35,.08)"/>
+    ${[[34, 34, 0], [182, 28, 1.2], [56, 70, 2.1], [170, 72, .6], [196, 54, 1.7]].map(([x, y, d]) => `<g class="sz-bit" style="--d:${d}s" transform="translate(${x} ${y})" fill="${k}">${bits}</g>`).join('')}
+    <circle cx="82" cy="82" r="26" fill="${b}"/><path d="M82 56c0-6 4-9 8-9" stroke="#6c823e" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="140" cy="80" r="24" fill="${c}"/><path d="M140 56c-2-6 1-9 5-10" stroke="#6c823e" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M145 49c6-4 12-2 13 1-5 3-10 3-13-1z" fill="#8fb26a"/>
+    <circle cx="111" cy="76" r="30" fill="${a}"/><path d="M111 46c0-7 3-10 7-11" stroke="#6c823e" stroke-width="3.4" fill="none" stroke-linecap="round"/><path d="M116 38c7-5 15-3 16 1-6 4-12 4-16-1z" fill="#8fb26a"/>
+    <circle cx="101" cy="76" r="2.6" fill="#3b2a1e"/><circle cx="121" cy="76" r="2.6" fill="#3b2a1e"/><path d="M104 85q7 6 14 0" stroke="#3b2a1e" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <circle cx="95" cy="83" r="4" fill="#ff8f9c" opacity=".5"/><circle cx="127" cy="83" r="4" fill="#ff8f9c" opacity=".5"/>
+    <path d="M50 92h120l-10 36c-1 4-4 6-8 6H68c-4 0-7-2-8-6z" fill="#f3e2d2"/><path d="M50 92h120" stroke="#e2c9b2" stroke-width="5" stroke-linecap="round"/>
+    <path d="M62 106h96M66 118h88" stroke="#e8d3bf" stroke-width="2" stroke-linecap="round"/></svg>`;
+}
 function viewSeason(jump) {
   if (jump) {
     Object.assign(ui, { seasonView: jump === 'cook' ? 'cook' : 'month', seasonKind: null });
@@ -4072,13 +4101,20 @@ function viewSeason(jump) {
   }
   const forYou = all.filter(i => fits(i) && foodPhoto(i.f));
   return `<div class="pad sz2">
-  ${specHero({ photo: `images/season-${{ Spring: 'spring', Summer: 'summer', 'Late summer': 'summer', Autumn: 'autumn', Winter: 'winter' }[sn]}.jpg`, glyph: 'leaf', eyebrow: `${country} · ${MONTHS[m - 1]}`, name: `In season now`, label: `${sn} food`,
-      rows: [[`${all.length} foods`, 'fresh this month'], [`${all.filter(fits).length} for you`, phase ? `${PHASES[phase].name} phase` : 'your phase']], desc: 'This list changes by itself when the season does.' })}
-    <section class="card glass sz-plain">
-      <div class="szp-h"><b>What to eat in ${sn.toLowerCase()}</b>${evBadge('tcm')}</div>
-      <p>${PL.eat}</p>
-      <div class="szp-r"><span>Tea</span><b>${PL.tea}</b></div>
-      <div class="szp-r"><span>Warming, neutral, cooling</span><b>Chinese medicine sorts food by what it does to your body heat. Warming foods heat you up, cooling foods cool you down. Around your period, choose warming food and cook the cooling ones.</b></div>
+  ${specHero({ photo: `images/season-${{ Spring: 'spring', Summer: 'summer', 'Late summer': 'summer', Autumn: 'autumn', Winter: 'winter' }[sn]}.jpg`, glyph: 'leaf', eyebrow: `${country} · ${MONTHS[m - 1]}`, name: `${sn} is here`, label: `What’s growing near you`,
+      rows: [[`${all.length} foods`, 'fresh this month'], [`${all.filter(fits).length} for you`, phase ? `kind to your ${PHASES[phase].name.toLowerCase()} phase` : 'for your phase']], desc: 'The list changes by itself as the season turns, so there’s always something new to try.' })}
+    <section class="card sz-story">
+      ${seasonArt(sn)}
+      <h2>${(SEASON_STORY[sn] || SEASON_STORY.Autumn).t}</h2>
+      <p class="sz-tale">${(SEASON_STORY[sn] || SEASON_STORY.Autumn).p}</p>
+      <div class="sz-rits">
+        <div class="sz-rit"><span>${icon('bowl', 18)}</span><div><small>Eat</small><b>${PL.eat}</b></div></div>
+        <div class="sz-rit"><span>${icon('cup', 18)}</span><div><small>Sip</small><b>${PL.tea}</b></div></div>
+        <div class="sz-rit"><span>${icon('yinyang', 18)}</span><div><small>Feel</small><b>${(SEASON_STORY[sn] || SEASON_STORY.Autumn).feel}</b></div></div>
+      </div>
+      <div class="sz-nat"><small>In Chinese medicine every food warms, cools or balances you</small>
+        <div>${[['warm', 'Warming', 'heats you up'], ['neutral', 'Neutral', 'balances'], ['cool', 'Cooling', 'cools you']].map(([k, n, d]) => `<span><i class="nat ${k}"></i><b>${n}</b>${d}</span>`).join('')}</div>
+        <p>Around your period, choose warming food and cook the cooling ones.</p></div>
     </section>
     ${forYou.length ? `${sectionTitle(`For your ${PHASES[phase].name.toLowerCase()} phase`)}
       <div class="hscroll">${forYou.map(i => `<button class="rcard has-photo" data-action="seasonFood" data-f="${esc(i.f)}"><img class="rc-photo" src="${pic(i, 500)}" alt="" loading="lazy"><span class="rc-shade"></span>
