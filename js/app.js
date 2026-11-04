@@ -359,11 +359,11 @@ function flowHero(info, { eyebrow, title, season, stats = [], badge = '', id = '
 
 // ---------- SVG: hormone cycle chart (interactive) ----------
 const HORMONES = [
-  { key: 'estrogen', name: 'Estrogen', color: '#ff8fc4', w: 3 },
-  { key: 'progesterone', name: 'Progesterone', color: '#8fcf7a', w: 3 },
-  { key: 'testosterone', name: 'Testosterone', color: '#ff4d4d', w: 2.6 },
+  { key: 'estrogen', name: 'Estrogen', color: '#e0457b', w: 3 },
+  { key: 'progesterone', name: 'Progesterone', color: '#3f8a2e', w: 3 },
+  { key: 'testosterone', name: 'Testosterone', color: '#e8590c', w: 2.6 },
 ];
-const BAND = { menstrual: 'rgba(235,164,166,.12)', follicular: 'rgba(159,207,140,.10)', ovulatory: 'rgba(255,214,107,.14)', luteal: 'rgba(185,148,240,.13)' };
+const BAND = { menstrual: 'rgba(224,69,123,.1)', follicular: 'rgba(63,138,46,.08)', ovulatory: 'rgba(230,170,30,.14)', luteal: 'rgba(120,90,200,.09)' };
 
 function chartGeom(L, compact) {
   const W = 360, H = compact ? 200 : 290;
@@ -409,7 +409,7 @@ function cycleChart(info, { id = 'cc', compact = false, who = 'You' } = {}) {
     <svg viewBox="0 0 ${W} ${H}" width="100%" class="cchart-svg">
       <defs>
         <filter id="${id}-glow" x="-10%" y="-30%" width="120%" height="160%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        <linearGradient id="${id}-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8fc4" stop-opacity=".16"/><stop offset="1" stop-color="#ff8fc4" stop-opacity="0"/></linearGradient>
+        <linearGradient id="${id}-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0457b" stop-opacity=".16"/><stop offset="1" stop-color="#e0457b" stop-opacity="0"/></linearGradient>
       </defs>
       ${bands}
       <path d="${area}" fill="url(#${id}-area)" class="area ${ui.hidden.estrogen ? 'off' : ''}"/>
@@ -584,7 +584,7 @@ function onbHormones() {
   const o = ui.onb, L = o.unsure ? 28 : (+o.cycleLength || 28), P = +o.periodLength || 5;
   const ago = o.last ? C.diffDays(new Date(), C.parseISO(o.last)) : (+o.ago || 0);
   const cd = o.noPeriod ? 1 : ((ago % L) + L) % L + 1, ph = (C.phaseRanges(L, P).find(r => cd >= r.from && cd <= r.to) || {}).key || 'menstrual';
-  const rows = [['#ff8fc4', 'Estrogen', 'Rises before ovulation: energy, confidence and glow.'], ['#8fcf7a', 'Progesterone', 'Leads after ovulation: calm, warmth and more need for rest.'], ['#ff4d4d', 'Testosterone', 'A small peak mid-cycle: drive and desire.']];
+  const rows = [['#e0457b', 'Estrogen', 'Rises before ovulation: energy, confidence and glow.'], ['#3f8a2e', 'Progesterone', 'Leads after ovulation: calm, warmth and more need for rest.'], ['#e8590c', 'Testosterone', 'A small peak mid-cycle: drive and desire.']];
   return `<section class="o9-card o9-hp">
       <h3>Your <em>hormones</em></h3>
       <p class="o9-sub">${o.noPeriod ? 'How a natural cycle moves. Your plan follows it as soon as your period is back.' : `Your ${L}-day cycle. You’re on day ${cd}, in your ${PHASES[ph].name.toLowerCase()} phase.`}</p>
@@ -2989,8 +2989,8 @@ function dayWindow(info) {
 // ---------- full cycle guide: hormones (shared scale) + ovaries + uterine lining + days ----------
 const FULL_H = [
   { key: 'lh', name: 'LH', color: '#b18cff' }, { key: 'fsh', name: 'FSH', color: '#6cc4ff' },
-  { key: 'estrogen', name: 'Estrogen', color: '#ff8fc4' }, { key: 'progesterone', name: 'Progesterone', color: '#8fcf7a' },
-  { key: 'testosterone', name: 'Testosterone', color: '#ff4d4d' },
+  { key: 'estrogen', name: 'Estrogen', color: '#e0457b' }, { key: 'progesterone', name: 'Progesterone', color: '#3f8a2e' },
+  { key: 'testosterone', name: 'Testosterone', color: '#e8590c' },
 ];
 function liningAt(cd, L, P, ov) { // relative endometrium thickness
   if (cd <= P) return 1 - 0.75 * (cd - 1) / Math.max(1, P - 1);
@@ -3001,11 +3001,11 @@ function liningAt(cd, L, P, ov) { // relative endometrium thickness
 function ovaryArt(cd, ov, L, x, y) {
   if (cd < ov) { // growing follicle: outer cells, fluid cavity (antrum) from ~a week before ovulation, egg
     const k = (cd - 1) / Math.max(1, ov - 2), r = 3.5 + 10 * k, an = cd >= ov - 7 ? r * (0.25 + 0.4 * k) : 0;
-    return `<g transform="translate(${x} ${y})"><circle r="${r}" fill="#ff8fc4" fill-opacity=".28" stroke="#ff8fc4" stroke-width="1.2"/>
+    return `<g transform="translate(${x} ${y})"><circle r="${r}" fill="#e0457b" fill-opacity=".28" stroke="#e0457b" stroke-width="1.2"/>
       ${an ? `<circle cx="${-r * .18}" cy="${r * .1}" r="${an}" fill="#bfe3ff" fill-opacity=".55"/>` : ''}<circle cx="${r * .35}" cy="${-r * .25}" r="${Math.max(1.6, r * .22)}" fill="#fff"/></g>`;
   }
-  if (cd === ov) return `<g transform="translate(${x} ${y})"><path d="M-12 -4 Q-14 -14 -3 -14 Q6 -16 11 -7 Q15 2 7 9 Q0 15 -7 10 Q-13 5 -12 -4Z" fill="#bfe3ff" fill-opacity=".5" stroke="#ff8fc4" stroke-width="1.4"/>
-    <circle cx="3" cy="16" r="3.4" fill="#fff" stroke="#ff8fc4"/><circle cx="7" cy="12" r="1" fill="#bfe3ff"/><circle cx="-1" cy="13" r=".8" fill="#bfe3ff"/></g>`;
+  if (cd === ov) return `<g transform="translate(${x} ${y})"><path d="M-12 -4 Q-14 -14 -3 -14 Q6 -16 11 -7 Q15 2 7 9 Q0 15 -7 10 Q-13 5 -12 -4Z" fill="#bfe3ff" fill-opacity=".5" stroke="#e0457b" stroke-width="1.4"/>
+    <circle cx="3" cy="16" r="3.4" fill="#fff" stroke="#e0457b"/><circle cx="7" cy="12" r="1" fill="#bfe3ff"/><circle cx="-1" cy="13" r=".8" fill="#bfe3ff"/></g>`;
   const d = cd - ov, life = L - ov, k = d <= 7 ? 0.55 + 0.45 * d / 7 : 1 - 0.6 * (d - 7) / Math.max(1, life - 7), r = 13 * k, pale = d > 9;
   return `<g transform="translate(${x} ${y})"><ellipse rx="${r * 1.15}" ry="${r}" fill="${pale ? '#e9e4d0' : '#f6dfa0'}" fill-opacity="${pale ? .5 : .85}" stroke="${pale ? '#cfc8ad' : '#e9c46a'}"/>
     ${pale ? '' : `<path d="M${-r * .5} 0 Q${-r * .2} ${-r * .3} 0 0 T${r * .5} 0" stroke="#c0392b" stroke-width="${Math.max(1, r * .18)}" fill="none" stroke-linecap="round"/>`}</g>`;
@@ -3015,11 +3015,11 @@ function fullCycleGuide(info) {
   const PC = PHASE_COLOR.dark, COL = { m: PC.menstrual, f: PC.follicular, o: PC.ovulatory, l: PC.luteal };
   const kind = d => d <= P ? 'm' : Math.abs(d - ov) <= 1 ? 'o' : d < ov ? 'f' : 'l';
   const stages = [
-    { k: 'm', name: 'Period', days: [1, P], art: 1, lining: 1, lead: [['Estrogen', '#ff8fc4', 'low'], ['Progesterone', 'hsl(calc(var(--hb) + 142 * var(--hk)) calc(57% * var(--hs2)) 60%)', 'low']],
+    { k: 'm', name: 'Period', days: [1, P], art: 1, lining: 1, lead: [['Estrogen', '#e0457b', 'low'], ['Progesterone', 'hsl(calc(var(--hb) + 142 * var(--hk)) calc(57% * var(--hs2)) 60%)', 'low']],
       text: 'Hormones are at their lowest, so last month’s lining sheds. Your brain sends FSH to start a new egg growing.' },
-    { k: 'f', name: 'Building up', days: [P + 1, ov - 2], art: Math.round((P + ov) / 2), lining: Math.round((P + ov) / 2), lead: [['Estrogen', '#ff8fc4', 'rising']],
+    { k: 'f', name: 'Building up', days: [P + 1, ov - 2], art: Math.round((P + ov) / 2), lining: Math.round((P + ov) / 2), lead: [['Estrogen', '#e0457b', 'rising']],
       text: 'One egg grows inside its follicle and makes more and more estrogen, which rebuilds the lining and lifts your energy.' },
-    { k: 'o', name: 'Egg release', days: [ov - 1, ov + 1], art: ov, lining: ov, lead: [['Estrogen', '#ff8fc4', 'peak'], ['LH', '#b18cff', 'surge'], ['Testosterone', '#ff4d4d', 'small lift']],
+    { k: 'o', name: 'Egg release', days: [ov - 1, ov + 1], art: ov, lining: ov, lead: [['Estrogen', '#e0457b', 'peak'], ['LH', '#b18cff', 'surge'], ['Testosterone', '#e8590c', 'small lift']],
       text: `Peak estrogen triggers the LH surge and the egg is released around day ${ov}. ${ttc() ? `Fertile window: about days ${ov - 5}–${ov + 1}.` : ''}` },
     { k: 'l', name: 'After ovulation', days: [ov + 2, L], art: ov + 6, lining: ov + 7, lead: [['Progesterone', 'hsl(calc(var(--hb) + 142 * var(--hk)) calc(57% * var(--hs2)) 60%)', 'high']],
       text: `The empty follicle becomes the “yellow body” and makes progesterone. The lining thickens. ${ttc() ? 'If there’s no pregnancy, both hormones drop and your period starts.' : 'Then both hormones drop and your period starts.'}` },
@@ -3070,7 +3070,7 @@ function guideRead(d, L, P, ov, cd) {
     <div class="gr-rows">
       <div class="gr-row"><span class="gr-ic"><svg viewBox="-17 -17 34 40" width="34" height="34">${ovaryArt(d, ov, L, 0, 0)}</svg></span><div><small>Ovary</small><p>${ovary}</p></div></div>
       <div class="gr-row"><span class="gr-ic gr-lin"><i style="height:${Math.max(10, Math.round(lin * 100))}%"></i></span><div><small>Lining</small><p>${lining}</p></div></div>
-      <div class="gr-row"><span class="gr-ic gr-hb">${bar(h.estrogen, '#ff8fc4')}${bar(h.progesterone, '#8fcfa8')}</span><div><small>Hormones</small><p><b class="gr-e">Estrogen</b> ${lv('estrogen')} · <b class="gr-p">Progesterone</b> ${lv('progesterone')}</p></div></div>
+      <div class="gr-row"><span class="gr-ic gr-hb">${bar(h.estrogen, '#e0457b')}${bar(h.progesterone, '#3f8a2e')}</span><div><small>Hormones</small><p><b class="gr-e">Estrogen</b> ${lv('estrogen')} · <b class="gr-p">Progesterone</b> ${lv('progesterone')}</p></div></div>
       <div class="gr-row"><span class="gr-ic gr-en">${icon('bolt', 18)}</span><div><small>Energy · ${en}%</small><span class="gr-bar"><i style="width:${en}%"></i></span></div></div>
     </div>`;
 }
