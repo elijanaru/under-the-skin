@@ -4606,11 +4606,6 @@ const HIS_BLOCKS = [
   [11, 15, 'Wind down', 'Testosterone is lower and you’re calmer and more open. The best time for her, for talks and for cooking together.', 'heart'],
   [15, 24, 'Rebuild', 'Sleep. Most of your testosterone is made in deep sleep, so 7 to 9 hours keeps your drive high tomorrow.', 'moon'],
 ];
-const HIS_SCIENCE = [
-  { t: 'A daily rise and fall', s: 'In healthy men, testosterone is highest in the morning and lowest in the evening. The swing is largest in younger men and gets smaller with age.', c: 'Brambilla et al. 2009, Journal of Clinical Endocrinology & Metabolism', ev: 'strong' },
-  { t: 'Sleep builds it', s: 'Young men who slept 5 hours a night for one week had 10 to 15% lower daytime testosterone.', c: 'Leproult & Van Cauter 2011, JAMA', ev: 'some' },
-  { t: 'Late afternoon strength', s: 'Strength and power tend to peak in the late afternoon, when body temperature is highest.', c: 'Atkinson & Reilly 1996, Sports Medicine', ev: 'some' },
-];
 function hisWake() { try { return +localStorage.getItem('uts.wake') || 7; } catch { return 7; } }
 function hisDay(info, name) {
   const w = hisWake(), h = nowH(), since = ((h - w) % 24 + 24) % 24, b = HIS_BLOCKS.find(x => since >= x[0] && since < x[1]);
@@ -4629,10 +4624,7 @@ function hisDay(info, name) {
         ${[0, 6, 12, 18, 24].map(t => `<text x="${X(t)}" y="${H - 4}" text-anchor="${t === 0 ? 'start' : t === 24 ? 'end' : 'middle'}" class="hc-ax">${hLabel(w + t)}</text>`).join('')}</svg>
       <div class="hc-wake"><span>I usually wake at</span>${[5, 6, 7, 8, 9].map(x => `<button class="${x === w ? 'on' : ''}" data-action="hisWake" data-v="${x}">${x}:00</button>`).join('')}</div></section>
     <section class="card his-blocks">${HIS_BLOCKS.map(([a, z, n, t, ic]) => `<div class="hb ${b[2] === n ? 'on' : ''}"><span class="hb-t">${hLabel(w + a)}</span><span class="hb-ic">${icon(ic, 16)}</span><div><b>${n}</b><p>${t}</p></div></div>`).join('')}</section>
-    <section class="card his-tog"><small>You two today</small><p>${together}</p></section>
-    ${sectionTitle('What studies found')}
-    <section class="card glass tea-study">${HIS_SCIENCE.map(x => `<div class="ts-i"><div class="ts-h"><b>${x.t}</b>${evBadge(x.ev)}</div><p>${x.s}</p><small>${x.c}</small></div>`).join('')}</section>
-    <p class="fine center">A typical daily pattern, not a measurement of you. Nothing to log, and nothing leaves your phone.</p>`;
+    <section class="card his-tog"><small>You two today</small><p>${together}</p></section>`;
 }
 function viewWith(q) {
   const snap = b64d(q.get('d') || '');
