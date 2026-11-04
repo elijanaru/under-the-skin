@@ -1374,11 +1374,11 @@ function viewLog() {
     desire: (l.drive ? 1 : 0) + has('intim'), disrupt: has('disrupt'), note: l.notes ? 1 : 0,
   };
   const inner = {
-    flow: `<div class="lg-k">Bleeding</div><p class="lg-why">${icon('spark', 12)}<span>Builds your periods, so your next period, egg release and phase get more exact.</span></p>
+    flow: `<div class="lg-k">Bleeding</div><p class="lg-why">${icon('spark', 12)}<span>Sharpens your period and egg release dates.</span></p>
       <div class="fd">${FLOWS.map((f, i) => lgPick(l.flow === f.id, 'flow', f.id, false, 'fd-o', `<i style="--s:${[14, 22, 30, 40][i]}px"></i><small>${f.label}</small>`, f.label)).join('')}</div>
-      <div class="lg-k">Discharge</div><p class="lg-why">${icon('spark', 12)}<span>Egg white is your fertile sign: it moves your egg release date to match your body.</span></p>
+      <div class="lg-k">Discharge</div><p class="lg-why">${icon('spark', 12)}<span>Egg white marks your fertile days.</span></p>
       <div class="tx">${DISCHARGE.filter(([v]) => v !== 'Clumpy').map(([v, e]) => lgPick(l.fluid === v, 'fluid', v, false, `tx-o${v === 'Egg white' ? ' fert' : ''}`, `<span>${e}</span><small>${v}</small>`)).join('')}</div>
-      <div class="lg-k">Anything else</div><p class="lg-why">${icon('spark', 12)}<span>Tells you when something is worth checking with a doctor.</span></p>
+      <div class="lg-k">Anything else</div><p class="lg-why">${icon('spark', 12)}<span>Flags what’s worth a doctor’s check.</span></p>
       <div class="fl">${lgPick(l.fluid === 'Clumpy', 'fluid', 'Clumpy', false, 'fl-o', '<span>☁️</span>Clumpy', 'Clumpy')}${DOWN_EXTRA.map(([v, e]) => lgPick((l.down || []).includes(v), 'down', v, true, 'fl-o', `<span>${e}</span>${v}`)).join('')}</div>`,
     body: (() => { const lk = likelyToday(di), lkN = lk.map(([v]) => v), sym = l.symptoms || [];
       return `${lk.length ? `<div class="lg-k">Likely today</div><div class="lk">${lk.map(([v, e]) => lgPick(sym.includes(v), 'symptoms', v, true, 'lk-o', `<span>${e}</span><small>${v}</small>`)).join('')}</div>` : ''}
@@ -1393,9 +1393,9 @@ function viewLog() {
         <div class="dz-l"><span>Quiet</span><b>${l.drive ? DRIVE[l.drive - 1][1] : 'Tap your level'}</b><span>On fire</span></div></div>
       <div class="lg-k">Sex today</div>
       <div class="sx">${INTIMACY.filter(([n]) => n.startsWith('Sex,')).map(([v, e]) => { const on = (l.intim || []).includes(v); return `<button class="sx-c ${on ? 'on' : ''}" data-action="logSet" data-field="intim" data-v="${esc(v)}" data-multi="1" aria-pressed="${on}"><span>${e}</span><small>${v.endsWith('unprotected') ? 'Unprotected' : 'Protected'}</small></button>`; }).join('')}</div>
-      <p class="lg-fine">Private: only you see this. It’s never shared with partners.</p>`,
+      <p class="lg-fine">Only you see this.</p>`,
     fuel: `<div class="lg-k">Food</div>${chips('intake', INTAKE.filter(([n]) => n === 'Raw & cold food'))}<div class="lg-k">Supplements & medicine <button class="link lg-more" data-action="nav" data-to="nutrients">Doses & food first ${icon('chevR', 11)}</button></div>${chips('supp', SUPPS)}`,
-    disrupt: `<p class="lg-fine top">Things that can shift ovulation or your next period. Logging them helps me read your cycle right.</p><div class="rt">${DISRUPTORS.filter(([n]) => ['Alcohol', 'Illness', 'Travel', 'Big stress', 'Shock or loss'].includes(n)).map(([v, e]) => lgPick((l.disrupt || []).includes(v), 'disrupt', v, true, 'rt-o', `<span>${e}</span><small>${v}</small>`)).join('')}</div>`,
+    disrupt: `<p class="lg-fine top">These can shift your cycle.</p><div class="rt">${DISRUPTORS.filter(([n]) => ['Alcohol', 'Illness', 'Travel', 'Big stress', 'Shock or loss'].includes(n)).map(([v, e]) => lgPick((l.disrupt || []).includes(v), 'disrupt', v, true, 'rt-o', `<span>${e}</span><small>${v}</small>`)).join('')}</div>`,
     note: `<textarea class="lg-note" rows="3" placeholder="Anything you want to remember about today…" data-input="log.notes">${esc(l.notes || '')}</textarea>`,
   };
   const total = Object.values(count).reduce((a, b) => a + b, 0);
@@ -1494,7 +1494,7 @@ function viewBrain(id) {
   // only what to do and what to watch: warnings first, then a tickable plan, then what's going well
   const warns = R ? [...R.notes.filter(x => x.tone === 'warn').map(x => ({ ic: NOTE_IC[x.emo] || 'spark', t: x.t, p: x.p })),
     ...R.cards.filter(c => c.other).map(c => ({ ic: LOG_IC[c.s] || 'spark', t: `About your ${c.s.toLowerCase()}`, p: c.other }))] : [];
-  const acts = R ? [...R.cards.filter(c => !c.good && c.fix && !c.fix.startsWith('Nothing')).map(c => ({ id: c.s, k: `For your ${c.s.toLowerCase()}`, ic: LOG_IC[c.s] || 'spark', t: c.fix, why: c.why, foods: c.foods, rk: c.rk })),
+  const acts = R ? [...R.cards.filter(c => !c.good && c.fix && !c.fix.startsWith('Nothing')).map(c => ({ id: c.s, k: `For your ${c.s.toLowerCase()}`, ic: LOG_IC[c.s] || 'spark', t: c.fix, why: c.why, foods: c.foods, rk: c.rk, br: ['Anxious', 'Irritable', 'Sensitive', 'Low mood', 'Headache'].includes(c.s) })),
     ...R.notes.filter(x => x.tone === 'info').map(x => ({ id: x.t, k: x.t, ic: NOTE_IC[x.emo] || 'spark', t: x.p, foods: [] }))] : [];
   const good = R ? [...R.notes.filter(x => x.tone === 'good'), ...R.cards.filter(c => c.good).map(c => ({ t: c.s, p: c.why }))] : [];
   const n = warns.length + acts.length + good.length, done = ui.brDone = ui.brDone || {};
@@ -1506,7 +1506,7 @@ function viewBrain(id) {
       <button class="bx-tick" data-action="brTick" data-id="${esc(k + x.id)}" aria-pressed="${!!on}" aria-label="Mark as done">${on ? icon('check', 16) : `<span>${i + 1}</span>`}</button>
       <div class="bx-b"><small>${icon(x.ic, 12)} ${x.k}</small><p>${x.t}</p>${x.why ? `<p class="bx-why"><b>Why</b> ${x.why}</p>` : ''}
         ${x.foods.length ? `<div class="bx-eat"><em>Eat</em>${x.foods.map(f => `<span>${f}</span>`).join('')}</div>` : ''}
-        ${x.rk ? `<button class="bx-go" data-action="nav" data-to="relief/${encodeURIComponent(x.rk)}">How to ${icon('chevR', 12)}</button>` : ''}</div></section>`; }).join('')}</div>` : ''}
+        ${x.br || x.rk ? `<div class="bx-btns">${x.br ? `<button class="bx-go br" data-action="nav" data-to="breathe">🫧 Breathe with me</button>` : ''}${x.rk ? `<button class="bx-go" data-action="nav" data-to="relief/${encodeURIComponent(x.rk)}">How to ${icon('chevR', 12)}</button>` : ''}</div>` : ''}</div></section>`; }).join('')}</div>` : ''}
     ${good.length ? `<div class="br-h">Going well</div><div class="bx-good">${good.map(g => `<div><b>🌟 ${g.t}</b>${g.p ? `<p>${g.p}</p>` : ''}</div>`).join('')}</div>` : ''}`;
   return `<section class="br-hero br2">
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
@@ -2391,7 +2391,7 @@ const QUICK_FIX = {
   'Cold hands & feet': 'Warm socks, a ginger foot soak and cooked warming food.',
   'Feeling hot': 'Cool water, mung beans or leafy greens, and a lighter blanket.',
   'Night sweats': 'A cooler bedroom, breathable sheets and a calm wind-down.',
-  Anxious: 'Breathe out longer than in: 4 in, 6 out, for two minutes.',
+  Anxious: 'Two breaths in through your nose, then one long breath out. Five rounds calm you fast.',
   Stressed: 'A 10-minute walk outside and one thing off today’s list.',
   Irritable: 'Eat something warm with protein and take 10 minutes alone.',
   Angry: 'Move it out of your body: a fast walk, then say what you need.',
@@ -3749,6 +3749,47 @@ function viewMove() {
 }
 
 // ---------- stress: why it hits today and how to bring it down ----------
+// Calm sigh: a deep breath in to almost full, one more short sip on top, then a long slow breath out.
+function viewBreathe() {
+  return `${topbar('Breathe', { back: true })}
+  <div class="pad bz-pad">
+    <section class="bz">
+      <div class="bz-stage"><i class="bz-guide"></i><div class="bz-ball"></div>
+        <div class="bz-txt"><b class="bz-t">Ready when you are</b><small class="bz-s">Five rounds, about a minute</small></div></div>
+      <div class="bz-n"></div>
+      <button class="bz-go">Start</button>
+    </section>
+    <section class="bz-how"><h3>The calm sigh</h3>
+      ${[['🌬️', 'Breathe in deep', 'Through your nose, until you are almost full.'], ['🫧', 'One more sip', 'A short extra breath in, right on top.'], ['🍃', 'Long breath out', 'Slowly through your mouth, twice as long.']].map(([e, t, p], i) => `<div class="bz-step"><span>${e}</span><div><b>${i + 1}. ${t}</b><p>${p}</p></div></div>`).join('')}
+      <p class="bz-why">The second sip opens the tiny air sacs in your lungs again, and the long breath out slows your heart. In a 2023 Stanford study (Balban and colleagues), five minutes a day of this lifted mood more than mindfulness meditation.</p>
+    </section>
+  </div>`;
+}
+const SIGH = [['in', 'Breathe in', 'Deep, through your nose', 4000], ['top', 'One more sip', 'A little more air on top', 1500], ['out', 'Long breath out', 'Slowly, through your mouth', 8000], ['rest', 'Rest', '', 1500]];
+function mountBreath(el) {
+  const ball = el.querySelector('.bz-ball'), t = el.querySelector('.bz-t'), sub = el.querySelector('.bz-s'), cnt = el.querySelector('.bz-n'), btn = el.querySelector('.bz-go');
+  const ROUNDS = 5, CYC = SIGH.reduce((a, x) => a + x[3], 0), SC = { in: [.42, .98], top: [.98, 1.1], out: [1.1, .42], rest: [.42, .42] };
+  const ease = x => .5 - Math.cos(Math.PI * x) / 2;
+  let raf = 0, t0 = 0, run = false;
+  function frame(now) {
+    const e = now - t0, round = Math.floor(e / CYC);
+    if (round >= ROUNDS) return stop(true);
+    let m = e % CYC, i = 0; while (m >= SIGH[i][3]) { m -= SIGH[i][3]; i++; }
+    const [k, a, b, ms] = SIGH[i], [s0, s1] = SC[k];
+    ball.style.transform = `scale(${s0 + (s1 - s0) * ease(m / ms)})`; el.dataset.ph = k;
+    if (t.textContent !== a) { t.textContent = a; sub.textContent = b; }
+    cnt.textContent = `${round + 1} of ${ROUNDS}`;
+    raf = requestAnimationFrame(frame);
+  }
+  function stop(done) {
+    run = false; cancelAnimationFrame(raf); ball.style.transform = ''; el.dataset.ph = '';
+    t.textContent = done ? 'Well done' : 'Ready when you are'; sub.textContent = done ? 'Notice how your body feels now' : 'Five rounds, about a minute';
+    cnt.textContent = ''; btn.textContent = done ? 'Again' : 'Start';
+  }
+  const go = () => { if (run) return stop(false); run = true; btn.textContent = 'Stop'; t0 = performance.now(); raf = requestAnimationFrame(frame); };
+  btn.addEventListener('click', go);
+  return () => { cancelAnimationFrame(raf); btn.removeEventListener('click', go); };
+}
 function viewStress() {
   const { info } = M, w = dayWindow(info), [lvl, calm] = CALM[w], sp = STRESS_PLAN[w], st = STRETCH[w], md = MEDITATE[w], tab = ui.stTab || 'calm';
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches, auto = still ? '' : 'autoplay';
@@ -3757,7 +3798,8 @@ function viewStress() {
     ? `<section class="st2-card"><span class="eyebrow">Meditate today</span><h3>${md[0]}</h3><p class="st2-sub">${md[1]}</p>${steps(md[2])}${evBadge('some')}</section>`
     : tab === 'stretch'
       ? `<section class="st2-card"><span class="eyebrow">Stretch today</span><h3>${st[0]}</h3><p class="st2-sub">${st[1]}</p>${steps(st[2])}${evBadge('some')}</section>`
-      : `<section class="st2-why"><span class="eyebrow">Why today</span><p>${sp[0]}</p><p class="st2-calm">${calm}</p></section>
+      : `<button class="bz-cta" data-action="nav" data-to="breathe"><i class="bz-mini"></i><span><b>Breathe with me</b><small>The calm sigh · 1 minute</small></span>${icon('chevR', 16)}</button>
+        <section class="st2-why"><span class="eyebrow">Why today</span><p>${sp[0]}</p><p class="st2-calm">${calm}</p></section>
         <section class="st2-breathe"><video src="images/stress-breathe.mp4" poster="images/stress-breathe.webp" muted loop playsinline ${auto} preload="metadata" aria-hidden="true"></video><span class="st2-bshade"></span>
           <div class="st2-bin"><span class="eyebrow">Fastest calm · 5 min</span><div class="st2-orb" aria-hidden="true"><i></i><b class="in">Breathe in</b><b class="out">Breathe out</b></div>
           <p>In through your nose for 4, out slowly for 6. A longer exhale calms your nervous system.</p>${evBadge('some')}</div></section>
@@ -5379,6 +5421,7 @@ let welcome3d = null; // the running welcome scene (for the fly-through on Enter
 let fig3d = null; // lazily loaded Three.js module (null = not tried, false = unavailable)
 function mountFigures() {
   unmountFigs.forEach(f => f()); unmountFigs = [];
+  document.querySelectorAll('.bz').forEach(el => unmountFigs.push(mountBreath(el)));
   document.querySelectorAll('canvas.torso').forEach(c => unmountFigs.push(mountTorso(c, c.parentElement.querySelector('.torso-mark'))));
   document.querySelectorAll('canvas.torso3d').forEach(c => {
     const grain = c.parentElement.querySelector('canvas.grain');
@@ -5479,7 +5522,7 @@ function render() {
   const ph = (ui.phasePreview || M.info?.phase) || ''; // the whole app takes the colour of her phase
   if (document.documentElement.dataset.phase !== ph) document.documentElement.dataset.phase = ph;
   const views = {
-    today: viewToday, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), plan: viewPlan, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: () => (r.id ? viewStar(r.id) : viewCosmic()), grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewHabits, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
+    today: viewToday, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: viewBreathe, plan: viewPlan, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: () => (r.id ? viewStar(r.id) : viewCosmic()), grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewHabits, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
     recipe: () => viewRecipe(r.id), ritual: () => viewRitual(r.id), point: () => viewPoint(r.id), article: () => viewArticle(r.id), learn: viewLearn,
   };
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];
