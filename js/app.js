@@ -1801,13 +1801,29 @@ function eatGoal(phase) {
       <div class="eg2-in"><div class="eyebrow">${PHASES[phase].name} · your goal</div><h2>${E.goal}</h2><p>${E.why}</p>
       <span class="eg-rule ${warm ? 'warm' : 'raw'}">${icon(warm ? 'sun' : 'leaf', 14)} Today: ${warm ? 'warm & cooked' : 'raw & fresh'}</span></div></section>`;
 }
+// Cycle foods decoded: what each phase asks of your plate, as a 2×2 of photo collages (current phase first).
+const CYCLE_FOODS = {
+  menstrual: ['The return', 'Rebuild your blood and iron, all warm and cooked.', ['Slow stews', 'Beef', 'Dark greens', 'Seaweed', 'Molasses', 'Dates'], ['Healing broth', 'Chard', 'Seaweed (gim & miyeok)', 'Blackstrap molasses']],
+  follicular: ['The garden wakes', 'Light, blood-building and kind to your liver.', ['Citrus', 'Lentils', 'Sprouts', 'Eggs', 'Liver', 'Beets'], ['Citrus', 'Beets', 'Pasture eggs', 'Soybean sprouts (kongnamul)']],
+  ovulatory: ['Full bloom', 'Hydrating, cooling and calming for inflammation.', ['Aloe', 'Berries', 'Seafood', 'Fresh herbs', 'Coconut'], ['Berries', 'Oysters', 'Sardines', 'Mint']],
+  luteal: ['The harvest', 'Warming, grounding and rich in minerals.', ['Root veg', 'Millet', 'Sesame', 'Ghee', 'Cinnamon'], ['Sweet potatoes', 'Pumpkin & winter squash', 'Carrots', 'Cinnamon bark']],
+};
+function cycleFoods(phase) {
+  const pic = n => FOOD_PHOTOS[n] ? foodPhoto(n, 240) : teaPhoto(n, 240, 240);
+  const order = [phase, ...PHASE_ORDER.filter(p => p !== phase)];
+  return `${sectionTitle('Cycle foods decoded')}
+    <p class="cf-sub">Each phase shifts your metabolism, your body heat and the nutrients you burn through. Eat with it and your hormones stay steadier while your reserves fill back up.</p>
+    <div class="cf-grid">${order.map((p, i) => { const [t, d, foods, ph] = CYCLE_FOODS[p]; return `<section class="cf-c ${p === phase ? 'now' : ''}" data-phase="${p}" style="--i:${i}">
+      <div class="cf-col">${ph.map(n => `<img src="${pic(n)}" alt="" loading="lazy">`).join('')}</div>
+      <div class="cf-t"><small>${PHASES[p].name}${p === phase ? ' · now' : ''}</small><b>${t}</b><p>${d}</p><span>${foods.join(', ')}</span></div></section>`; }).join('')}</div>`;
+}
 function nourishBody(current) {
   const phase = current, N = NUTRITION[phase], warm = warmWindow(M.info);
   const recs = RECIPES.filter(r => r.phases.includes(phase)).sort((a, b) => warm ? (!!b.warm - !!a.warm) : (!!b.raw - !!a.raw));
   const recent = recentSymptoms().filter(s => SYMPTOM_FOODS[s]).slice(0, 2);
   const ds = seasonalDishesToday(M.info, 4);
   const EXTRA = EAT_CATS.filter(c => !PLATE_PETALS.some(p => p.k === c.k)), cat = EXTRA.some(c => c.k === ui.eatCat) ? ui.eatCat : EXTRA[0].k;
-  return `${plateSection(phase)}${sectionTitle('Dairy, drinks & supplements')}
+  return `${plateSection(phase)}${cycleFoods(phase)}${sectionTitle('Dairy, drinks & supplements')}
     <div class="eat-tabs">${EXTRA.map(c => `<button class="${c.k === cat ? 'on' : ''}" data-action="eatCat" data-v="${c.k}"><span>${icon(c.ic, 16)}</span>${c.t}</button>`).join('')}</div>
     <section class="card glass eat-cat" data-phase="${phase}">${eatCatInner(phase, cat)}</section>
 
