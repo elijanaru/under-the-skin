@@ -2919,9 +2919,13 @@ function todayHub(info, energy, head = '') {
     <div class="stage-after">${ttc() && info.fertile ? `<span class="fh-badge">${icon('spark', 13)} Fertile</span>` : ''}
       ${PERIOD_FLOWS.includes(getLog(todayISO()).flow) && info.cd === 1 ? '' : `<button class="fh-period pp" data-action="periodStart"><span class="pp-drop">${icon('drop', 13, 2)}</span><span>My period started today</span></button>`}</div>
     <div class="hub-sec hub-rhythm">
-      <div class="hub-k"><span>Your rhythm today</span><button class="link" data-action="nav" data-to="rhythm">Your day ${icon('chevR', 12)}</button></div>
-      <button class="hub-rh" data-action="nav" data-to="rhythm" aria-label="Live with the sun and moon"><span class="hub-mg photo"><img src="images/rhythm-sun.webp" alt="" loading="lazy"></span><div><h3>${rh1}</h3><p>${rh2}</p></div></button>
-      <div class="hub-now"><small>Right now · ${m.n}</small><p>${m.brief}</p></div>
+      <button class="hrh" data-action="nav" data-to="rhythm" aria-label="Live with the sun and moon">
+        <img class="hrh-bg" src="images/sun-moon-poster.webp" alt="" loading="lazy"><span class="hrh-shade"></span>
+        <span class="hrh-top"><small>Your rhythm today</small><em>Your day ${icon('chevR', 12)}</em></span>
+        <b class="hrh-h">${rh1}</b><span class="hrh-p">${rh2}</span>
+        <span class="hrh-now">${(() => { const h = nowH(), p = Math.max(0, Math.min(1, (h - D.rise) / (D.set - D.rise))); return `<span class="hrh-arc"><small>${hLabel(D.rise)}</small><span class="hrh-line"><i style="width:${(p * 100).toFixed(0)}%"></i><u style="left:${(p * 100).toFixed(0)}%"></u></span><small>${hLabel(D.set)}</small></span>`; })()}
+          <small>Right now · ${m.n}</small><span>${m.brief}</span></span>
+      </button>
     </div>
     <div class="hub-sec hub-plan">
       <div class="hub-k"><span>Best things to do today</span><span class="hub-day">Day ${Math.min(info.cd, info.L)}</span></div>
@@ -3470,13 +3474,31 @@ function hxNow(x, info) {
 const hxArrow = tr => tr === 'rising' ? ' ↗' : tr === 'falling' ? ' ↘' : '';
 // Small glowing level ring on each hormone tile (Opal-style bubble).
 function hxRing(r, i) { const R = 16, Cc = 2 * Math.PI * R; return `<svg class="hxt-ring" viewBox="0 0 40 40" style="--i:${i}" aria-hidden="true"><circle class="t" cx="20" cy="20" r="${R}"/><circle class="p" cx="20" cy="20" r="${R}" stroke-dasharray="${(Cc * Math.max(.05, Math.min(1, r))).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 20 20)"/></svg>`; }
+// Protein hormones drawn as shiny bead chains (amino acids), in the same ball style as the small molecules.
+const PB_COL = { a: ['#ffe3ec', '#f29bb5', '#c5607f'], b: ['#efe8ff', '#b9a2e8', '#7d62bf'], g: ['#fff4d6', '#f1c96a', '#bf9530'], v: ['#eaf6df', '#9cc27a', '#5f8a3e'] };
+const pbDefs = () => `<defs>${Object.entries(PB_COL).map(([k, [l, m, d]]) => `<radialGradient id="pb-${k}" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="${l}"/><stop offset=".55" stop-color="${m}"/><stop offset="1" stop-color="${d}"/></radialGradient>`).join('')}</defs>`;
+function pbChain(pts, k, r = 5.6) {
+  const line = 'M' + pts.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' L');
+  return `<path d="${line}" fill="none" stroke="${PB_COL[k][2]}" stroke-opacity=".45" stroke-width="2.2" stroke-linejoin="round"/>${pts.map(([x, y], i) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r - (i % 3 === 1 ? .8 : 0)).toFixed(1)}" fill="url(#pb-${k})"/>`).join('')}`;
+}
+const pbRange = (n, f) => Array.from({ length: n }, (_, i) => f(i / (n - 1), i));
+const PROT_BALL = {
+  Insulin: () => { const A = pbRange(14, t => [-62 + t * 96, -22 + Math.sin(t * Math.PI * 2.2) * 9]), B = pbRange(20, t => [-78 + t * 150, 20 + Math.sin(t * Math.PI * 2.6 + 1) * 11]);
+    const br = [[3, 4], [9, 11]].map(([i, j]) => `<line x1="${A[i][0]}" y1="${A[i][1]}" x2="${B[j][0]}" y2="${B[j][1]}" stroke="#e0b24a" stroke-width="3" stroke-dasharray="3 3" stroke-linecap="round"/>`).join('');
+    return `${br}${pbChain(A, 'a')}${pbChain(B, 'b')}`; },
+  FSH: () => `${pbChain(pbRange(22, t => [-84 + t * 168, Math.sin(t * Math.PI * 3) * 20]), 'a')}${pbChain(pbRange(22, t => [-84 + t * 168, -Math.sin(t * Math.PI * 3) * 20]), 'b')}`,
+  LH: () => `${pbChain(pbRange(22, t => [-84 + t * 168, Math.sin(t * Math.PI * 3) * 20]), 'a')}${pbChain(pbRange(22, t => [-84 + t * 168, -Math.sin(t * Math.PI * 3) * 20]), 'g')}`,
+  Prolactin: () => pbChain(pbRange(34, t => { const c = Math.min(3, Math.floor(t * 4)), u = t * 4 - c, x = -60 + c * 40 + Math.sin(u * Math.PI * 6) * 7, y = (c % 2 ? 1 : -1) * (-40 + u * 80); return [x, y]; }), 'a'),
+  SHBG: () => `${pbChain(pbRange(15, t => { const a = Math.PI * (.62 + t * .76); return [-14 + Math.cos(a) * 46, Math.sin(a) * 40]; }), 'b')}${pbChain(pbRange(15, t => { const a = Math.PI * (-.38 + t * .76); return [14 + Math.cos(a) * 46, Math.sin(a) * 40]; }), 'b')}<circle r="12" fill="url(#pb-v)"/><circle r="12" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.5"/>`,
+};
+const protBall = n => PROT_BALL[n] ? `<svg class="molb prot" viewBox="-100 -58 200 116" role="img">${pbDefs()}${PROT_BALL[n]()}</svg>` : '';
 function viewHormones() {
   const { info } = M; if (!info) return viewToday();
   const r = route(); if (r.id != null && HORMONE_LIBRARY[+r.id]) return viewHormone(+r.id);
   const ph = PHASES[info.phase];
   const tile = (x, i) => { const n = hxNow(x, info); return `<button class="hxt ${n.r > .66 ? 'hi' : n.r < .2 ? 'lo' : ''}" data-action="nav" data-to="hormones/${i}">
       <span class="hxt-g">${x.g}</span><b>${x.n === 'Oestrogen' ? 'Estrogen' : x.n}</b><small class="hxt-s">${x.s}</small>
-      ${MOL_BALL[x.n] ? `<span class="hxt-mol" aria-hidden="true">${MOL_BALL[x.n]}</span>` : hxRing(n.r, i)}
+      ${MOL_BALL[x.n] || PROT_BALL[x.n] ? `<span class="hxt-mol" aria-hidden="true">${MOL_BALL[x.n] || protBall(x.n)}</span>` : hxRing(n.r, i)}
       <span class="hxt-now"><em>${n.word}${hxArrow(n.tr)}</em><span>${n.amt}</span></span></button>`; };
   const cyc = HORMONE_LIBRARY.map((x, i) => [x, i]).filter(([x]) => HX_KEY[x.n]), rest = HORMONE_LIBRARY.map((x, i) => [x, i]).filter(([x]) => !HX_KEY[x.n]);
   return `${topbar('Hormones', { back: true })}
