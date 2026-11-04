@@ -5408,3 +5408,73 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
   color: rgba(255,244,230,.88); background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.24); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); -webkit-tap-highlight-color: transparent; }
 .rh3-loc b { padding: 6px 12px; border-radius: 99px; background: #fff8ee; color: #3b2412; font-weight: 500; font-size: 12.5px; }
 .rh3-loc:active { transform: scale(.97); }
+
+/* ---------- Sun & moon page in dusk: the whole page continues the sunset video ---------- */
+.view:has(> .rh3) { --text: #fff4e6; --ink: #fff4e6; --muted: rgba(255,236,215,.66); --line: rgba(255,226,196,.16); --glass: rgba(255,236,215,.07); --paper: rgba(255,236,215,.06);
+  --lime: #ffd27a; --sage: #e9c78f; color: var(--text);
+  background: linear-gradient(180deg, #1c0d06 0, #22110b 520px, #2a1614 1100px, #2b1a24 1900px, #1e1620 100%); }
+.view:has(> .rh3) .rh3 { border-radius: 0; box-shadow: none; padding-bottom: 40px; }
+.view:has(> .rh3) .rh3::after { display: none; }
+.view:has(> .rh3) .rh3-shade { background: linear-gradient(180deg, rgba(20,8,4,.35) 0%, rgba(20,8,4,0) 24%, rgba(20,8,4,0) 42%, rgba(28,13,6,.6) 74%, #1f0f08 100%); }
+.view:has(> .rh3) .rh3 + .pad::before { background: radial-gradient(closest-side, rgba(255,170,90,.16), transparent); }
+.view:has(> .rh3) :is(.glass, .card.glass) { background: linear-gradient(160deg, rgba(255,236,215,.085), rgba(255,236,215,.035)); border: 1px solid var(--line); box-shadow: none; color: var(--text); }
+.view:has(> .rh3) .section-title h3 { color: #fff4e6; }
+.view:has(> .rh3) .section-title .link { color: #ffd27a; }
+/* the right-now card: warm frosted glass */
+.view:has(> .rh3) .rnow { background: linear-gradient(170deg, rgba(255,226,190,.13), rgba(255,226,190,.05)); border: 1px solid rgba(255,226,196,.2);
+  box-shadow: 0 24px 50px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,240,220,.18); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); }
+.view:has(> .rh3) .rnow-top small, .view:has(> .rh3) .rnow-next small { color: #ffc36b; }
+.view:has(> .rh3) .rnow-top b, .view:has(> .rh3) .rnow-next b, .view:has(> .rh3) .rnow-do h3 { color: #fff4e6; }
+.view:has(> .rh3) .rnow-top em { color: rgba(255,236,215,.8); background: rgba(255,236,215,.1); }
+.view:has(> .rh3) .rnow-brief, .view:has(> .rh3) .rnow-rest { color: rgba(255,236,215,.82); }
+.view:has(> .rh3) .rnow-do { border-top-color: rgba(255,226,196,.14); }
+.view:has(> .rh3) .rnow-tip, .view:has(> .rh3) .rnow-next span { color: rgba(255,236,215,.6); }
+.view:has(> .rh3) .rnow-t { fill: rgba(255,236,215,.6); }
+.view:has(> .rh3) .rnow-v { fill: #fff4e6; }
+.view:has(> .rh3) .rnow-night { fill: rgba(255,236,215,.78); }
+.view:has(> .rh3) .rnow-arc path[stroke-dasharray="2 6"] { stroke: rgba(255,236,215,.3); }
+.view:has(> .rh3) .rnow-arc line { stroke: rgba(255,236,215,.24); }
+.view:has(> .rh3) .rnow-next { background: rgba(255,200,110,.12); border-color: rgba(255,200,110,.28); }
+.view:has(> .rh3) .rnow-ni { background: rgba(255,210,122,.16); color: #ffd27a; }
+/* tick rows */
+.view:has(> .rh3) .rh-i, .view:has(> .rh3) .rnow-do .rh-i { background: rgba(255,236,215,.06); border-color: rgba(255,226,196,.16); color: #fff4e6; }
+.view:has(> .rh3) .rh-i .rh-g { color: #ffd27a; }
+.view:has(> .rh3) .rh-cb { border-color: rgba(255,236,215,.4); }
+.view:has(> .rh3) .rh-i.on, .view:has(> .rh3) .rnow-do .rh-i.on { background: rgba(255,200,110,.14); border-color: rgba(255,200,110,.4); }
+.view:has(> .rh3) .rh-i.on .rh-cb { background: #ffd27a; border-color: #ffd27a; color: #2a1614; }
+/* stats, day timeline, moon, week */
+.view:has(> .rh3) .rh-ring circle:first-child { stroke: rgba(255,236,215,.12); }
+.view:has(> .rh3) .rh-ring .rh-prog { stroke: #ffd27a; }
+.view:has(> .rh3) .rh-n { fill: #ffd27a; }
+.view:has(> .rh3) .rh-stats > div { background: rgba(255,236,215,.06); color: #fff4e6; }
+.view:has(> .rh3) .rh-stats span { color: #ffd27a; }
+.view:has(> .rh3) :is(.rh-phase, .rh-moonc p, .dm-p) { color: rgba(255,236,215,.75); }
+.view:has(> .rh3) .dm-rail span { background: rgba(255,236,215,.07); color: #ffd27a; }
+.view:has(> .rh3) .dm:not(:last-child) .dm-rail::after { background: linear-gradient(rgba(255,226,196,.25), rgba(255,226,196,.04)); }
+.view:has(> .rh3) .dm.on .dm-rail span { background: #ffd27a; border-color: #ffd27a; color: #2a1614; box-shadow: 0 0 24px rgba(255,200,110,.45); }
+.view:has(> .rh3) .dm.on .dm-h b { color: #ffd27a; }
+.view:has(> .rh3) .dm-h small { color: rgba(255,236,215,.6); }
+.view:has(> .rh3) .rh-week span { color: rgba(255,236,215,.6); }
+.view:has(> .rh3) .rh-week i { background: rgba(255,236,215,.16); }
+.view:has(> .rh3) .rh-week i.ok { background: #ffd27a; }
+.view:has(> .rh3) .toggle { background: rgba(255,236,215,.18); }
+.view:has(> .rh3) .toggle.on { background: #ffd27a; } .view:has(> .rh3) .toggle.on i { background: #2a1614; }
+.view:has(> .rh3) .list-btn { color: #fff4e6; }
+.view:has(> .rh3) .btn-light { background: #fff4e6; color: #2a1614; }
+/* the article: a dark reading sheet */
+.view:has(> .rh3) .rh-article { background: rgba(255,236,215,.05); border: 1px solid var(--line); color: #fff4e6; }
+.view:has(> .rh3) .rh-article :is(h2, h3, b) { color: #fff4e6; }
+.view:has(> .rh3) .rh-article h2 span, .view:has(> .rh3) .rh-article .eyebrow, .view:has(> .rh3) .rh-art-n { color: #ffd27a; }
+.view:has(> .rh3) .rh-article p { color: rgba(255,236,215,.78); }
+.view:has(> .rh3) .rh-art-s { border-color: var(--line); }
+.view:has(> .rh3) .rh-art-sum { background: rgba(255,200,110,.1); border-color: rgba(255,200,110,.25); }
+.view:has(> .rh3) .ev-emerging { background: rgba(255,236,215,.12); color: rgba(255,236,215,.85); }
+.view:has(> .rh3) .ev-strong { background: #ffd27a; color: #2a1614; }
+.view:has(> .rh3) .ev-some { background: rgba(255,210,122,.16); color: #ffd27a; }
+.view:has(> .rh3) .ev-tcm { background: transparent; color: #ffd27a; border-color: rgba(255,210,122,.4); }
+#app:has(.rh3) .statusbar { background: #1c0d06; color: #fff4e6; }
+#app:has(.rh3) .statusbar svg { color: #fff4e6; fill: currentColor; }
+#app:has(.rh3) .statusbar .island { background: #000; }
+.view:has(> .rh3) .section-title h3 { color: #fff4e6 !important; -webkit-text-fill-color: #fff4e6 !important; }
+.view:has(> .rh3) .section-title h3::before { background: #ffd27a !important; box-shadow: 0 0 12px rgba(255,200,110,.6) !important; }
+.view:has(> .rh3) .section-title::before { background: linear-gradient(90deg, rgba(255,210,122,.4), transparent) !important; }
