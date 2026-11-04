@@ -2998,31 +2998,36 @@ function fullCycleGuide(info) {
     <path d="${lining}" fill="#f2a5ad" fill-opacity=".6"/>${drops}
     ${Array.from({ length: L }, (_, i) => { const d = i + 1; return `<rect x="${(X(d) + .6).toFixed(1)}" y="${sy}" width="${(cw - 1.2).toFixed(1)}" height="12" rx="2" fill="${COL[kind(d)]}" ${d === cd ? 'stroke="#fff" stroke-width="1.8"' : ''}/>`; }).join('')}
     <g id="g-mark"><line x1="${X(cd + .5)}" x2="${X(cd + .5)}" y1="22" y2="${sy + 14}" stroke="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" stroke-width="1.5"/><circle cx="${X(cd + .5)}" cy="${sy + 6}" r="5" fill="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)"/>
-      <text id="g-mark-t" x="${X(cd + .5)}" y="${sy + 26}" text-anchor="middle" class="fcg-today">Today · day ${cd}</text></g>
+      <text id="g-mark-t" x="${X(cd + .5)}" y="${sy + 26}" text-anchor="${cd < L * .2 ? 'start' : cd > L * .8 ? 'end' : 'middle'}" class="fcg-today">Today · day ${cd}</text></g>
     <rect class="g-hit" x="0" y="0" width="${W}" height="206" fill="transparent"/>
     <text x="${x0}" y="${sy + 36}" class="fcg-k">Day 1</text><text x="${x1}" y="${sy + 36}" text-anchor="end" class="fcg-k">Day ${L}</text>
   </svg>`;
   return `<div class="fcg-body">
       <div class="guide" data-l="${L}" data-p="${P}" data-ov="${ov}" data-cd="${cd}">${diagram}
-        <p class="g-hint">${icon('chevL', 12)} Slide across to see any day ${icon('chevR', 12)}</p>
+        <div class="g-legend">${stages.map(st => `<span><i style="background:${COL[st.k]}"></i>${st.name}</span>`).join('')}</div>
+        <p class="g-hint">${icon('hand', 14)} Drag along the days to see what happens</p>
         <div class="g-read" id="g-read">${guideRead(cd, L, P, ov, cd)}</div></div>
       ${stages.map((st, i) => `<div class="fcg-st ${st.days[0] <= cd && cd <= st.days[1] ? 'on' : ''}" data-from="${st.days[0]}" data-to="${st.days[1]}">
-        <div class="fcg-hd"><span class="fcg-dot" style="background:${COL[st.k]}"></span><b>${i + 1}. ${st.name}</b><span class="fcg-days">${st.days[0] === st.days[1] ? `Day ${st.days[0]}` : `Days ${st.days[0]}–${st.days[1]}`}</span></div>
+        <div class="fcg-hd"><span class="fcg-num" style="background:${COL[st.k]}">${i + 1}</span><b>${st.name}</b><span class="fcg-days">${st.days[0] === st.days[1] ? `Day ${st.days[0]}` : `Days ${st.days[0]}–${st.days[1]}`}</span></div>
         <div class="fcg-lead">${st.lead.map(([n, c, w]) => `<span><i style="background:${c}"></i>${n} <em>${w}</em></span>`).join('')}</div>
         <p>${st.text}</p></div>`).join('')}
-      <p class="fine">Typical timing for your ${L}-day cycle — real days shift a little from cycle to cycle.</p>
+      <p class="fine">Typical timing for your ${L}-day cycle. Real days shift a little from cycle to cycle.</p>
     </div>`;
 }
 // what's happening on one day — shown under the guide as you slide
 function guideRead(d, L, P, ov, cd) {
-  const ph = C.phaseFor(d, L, P), h = C.hormonesRel(d, L, P);
-  const ovary = d < ov - 7 ? 'Several follicles are waking up' : d < ov ? 'One egg is growing bigger' : d === ov ? 'The egg is released today' : d <= ov + 9 ? 'The “yellow body” makes progesterone' : 'The yellow body shrinks — hormones fall';
-  const lining = d <= P ? 'Shedding — your period' : d < ov ? 'Rebuilding' : d <= ov + 7 ? 'Thickening' : ttc() ? 'Thick and ready — sheds if no pregnancy' : 'Thick — it sheds when your period starts';
-  const lv = k => C.hormoneLevel(h[k]).toLowerCase();
-  return `<div class="gr-h"><b>Day ${d}</b><span>${PHASES[ph].name}${d === cd ? ' · today' : ''}</span></div>
-    <div class="gr-rows"><div><small>Ovary</small><p>${ovary}</p></div><div><small>Lining</small><p>${lining}</p></div>
-    <div><small>Hormones</small><p><i style="background:#ff8fc4"></i>Estrogen ${lv('estrogen')} · <i style="background:hsl(calc(var(--hb) + 142 * var(--hk)) calc(57% * var(--hs2)) 60%)"></i>Progesterone ${lv('progesterone')}</p></div>
-    <div><small>Energy</small><p>${Math.round(C.energyAt(d, L, P) * 100)}%</p></div></div>`;
+  const ph = C.phaseFor(d, L, P), h = C.hormonesRel(d, L, P), col = PHASE_COLOR.dark[ph];
+  const ovary = d < ov - 7 ? 'Several little follicles are waking up' : d < ov ? 'One egg is growing bigger' : d === ov ? 'The egg is released today' : d <= ov + 9 ? 'The “yellow body” makes progesterone' : 'The yellow body shrinks, so hormones fall';
+  const lining = d <= P ? 'Shedding: this is your period' : d < ov ? 'Rebuilding, fresh and new' : d <= ov + 7 ? 'Getting thicker and softer' : ttc() ? 'Thick and ready, sheds if there’s no pregnancy' : 'Thick, it sheds when your period starts';
+  const lv = k => C.hormoneLevel(h[k]).toLowerCase(), en = Math.round(C.energyAt(d, L, P) * 100), lin = liningAt(d, L, P, ov);
+  const bar = (v, c) => `<i style="height:${Math.max(12, Math.round(v * 100))}%;background:${c}"></i>`;
+  return `<div class="gr-h"><b>Day ${d}</b><span class="gr-ph" style="--c:${col}">${PHASES[ph].name}${d === cd ? ' · today' : ''}</span></div>
+    <div class="gr-rows">
+      <div class="gr-row"><span class="gr-ic"><svg viewBox="-17 -17 34 40" width="34" height="34">${ovaryArt(d, ov, L, 0, 0)}</svg></span><div><small>Ovary</small><p>${ovary}</p></div></div>
+      <div class="gr-row"><span class="gr-ic gr-lin"><i style="height:${Math.max(10, Math.round(lin * 100))}%"></i></span><div><small>Lining</small><p>${lining}</p></div></div>
+      <div class="gr-row"><span class="gr-ic gr-hb">${bar(h.estrogen, '#ff8fc4')}${bar(h.progesterone, '#8fcfa8')}</span><div><small>Hormones</small><p><b class="gr-e">Estrogen</b> ${lv('estrogen')} · <b class="gr-p">Progesterone</b> ${lv('progesterone')}</p></div></div>
+      <div class="gr-row"><span class="gr-ic gr-en">${icon('bolt', 18)}</span><div><small>Energy · ${en}%</small><span class="gr-bar"><i style="width:${en}%"></i></span></div></div>
+    </div>`;
 }
 // ---------- blood sugar: interactive "with / without tricks" curve ----------
 function sugarDone() { return doneToday().filter(k => k.startsWith('sg-')).map(k => k.slice(3)); }
@@ -3419,7 +3424,7 @@ function bindGuide() {
     const show = d => {
       if (d === last) return; last = d;
       mark.setAttribute('transform', `translate(${(X(d + .5) - X(cd + .5)).toFixed(1)} 0)`);
-      lbl.textContent = d === cd ? `Today · day ${d}` : `Day ${d}`;
+      lbl.textContent = d === cd ? `Today · day ${d}` : `Day ${d}`; lbl.setAttribute('text-anchor', d < L * .2 ? 'start' : d > L * .8 ? 'end' : 'middle');
       read.innerHTML = guideRead(d, L, P, ov, cd);
       document.querySelectorAll('.fcg-st').forEach(st => st.classList.toggle('on', d >= +st.dataset.from && d <= +st.dataset.to));
       if (navigator.vibrate) navigator.vibrate(4);
@@ -4176,7 +4181,7 @@ function viewInsights() {
   if (tab === 'cycle') body = `
     <section class="card glass big-chart">${cycleChart(info, { id: 'ins' })}</section>
     ${learnedCard()}
-    <button class="card gro-cta" data-action="nav" data-to="guide"><span class="art-ic">${icon('chart', 20)}</span><span class="art-t">How your cycle works<small>Slide through every day: ovary, lining, hormones</small></span>${icon('chevR', 18)}</button>
+    <button class="card gro-cta" data-action="nav" data-to="guide"><span class="art-ic cyc"><svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true"><g fill="none" stroke-width="5" stroke-linecap="round" transform="rotate(-90 20 20)"><circle cx="20" cy="20" r="13" stroke="#e58b9f" stroke-dasharray="13 69"/><circle cx="20" cy="20" r="13" stroke="#9cc27a" stroke-dasharray="19 63" stroke-dashoffset="-16"/><circle cx="20" cy="20" r="13" stroke="#f1c96a" stroke-dasharray="8 74" stroke-dashoffset="-38"/><circle cx="20" cy="20" r="13" stroke="#b9a2e8" stroke-dasharray="33 49" stroke-dashoffset="-49"/></g><circle cx="20" cy="20" r="4.5" fill="#fff" stroke="#f1c96a" stroke-width="1.5"/></svg></span><span class="art-t">How your cycle works<small>Slide through every day: ovary, lining, hormones</small></span>${icon('chevR', 18)}</button>
     ${cycleFlag()}
     <section class="card card-light where">
       <div class="eyebrow dark">Where you are</div>
