@@ -6220,3 +6220,13 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .br2b .bx-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; } .br2b .bx-btns .bx-go { margin-top: 0; }
 .br2b .bx-go.br { background: #fbe6ee; color: #20301a; }
 @media (prefers-reduced-motion: reduce) { .bz-mini { animation: none; } }
+
+/* relief index: white picture tiles, the ones she logged lit in her phase */
+.rx-h { margin-top: 6px; } .rx-sub { margin-bottom: 14px; }
+.rx-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 24px; }
+.rx-t { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 16px; border: 0; border-radius: 26px; background: #fff; color: #20301a; text-align: left; box-shadow: 0 4px 16px rgba(48,64,35,.07); cursor: pointer; transition: transform .2s; }
+.rx-t:active { transform: scale(.97); }
+.rx-e { width: 52px; height: 52px; margin-bottom: 6px; border-radius: 50%; display: grid; place-items: center; font-size: 26px; background: #f6f1ec; }
+.rx-t.on .rx-e { background: hsl(calc(var(--hb) + 0 * var(--hk)) calc(55% * var(--hs)) 88%); }
+.rx-t b { font: 500 16px/1.2 Outfit, sans-serif; } .rx-t small { display: flex; align-items: center; gap: 4px; font: 400 12.5px Outfit, sans-serif; color: #4a5a3c; }
+.rx-t i { position: absolute; top: 14px; right: 14px; padding: 3px 9px; border-radius: 99px; background: #304023; color: #fff; font: 500 10.5px Outfit, sans-serif; font-style: normal; }

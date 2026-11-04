@@ -2283,6 +2283,7 @@ const RELIEF_WINDOW = { 'flow-start': ['Cramps', 'Fatigue', 'Headache'], 'flow-e
 // Drawn line icon for each relief topic (no emoji).
 const RELIEF_IC = { 'Face fascia': 'hand', 'Ovulation pain': 'seed', Cramps: 'thermo', 'PMS mood': 'sun', Bloating: 'cup', Insomnia: 'moon', Acne: 'spark', Headache: 'mind', Fatigue: 'bolt', 'Tender breasts': 'heart' };
 const reliefIc = (k, size = 20) => icon(RELIEF_IC[k] || 'leaf', size);
+const RELIEF_EMOJI = { 'Face fascia': '💆‍♀️', 'Ovulation pain': '🥚', Cramps: '🌀', 'PMS mood': '🌧️', Bloating: '🎈', Insomnia: '🌙', Acne: '🫧', Headache: '🤕', Fatigue: '🪫', 'Tender breasts': '💗' };
 function viewReliefIndex() {
   const recent = new Set();
   for (let i = 0; i < 4; i++) { const l = getLog(C.iso(C.addDays(new Date(), -i))); [...(l.symptoms || []), ...(l.moods || [])].forEach(s => { const k = reliefKey(s); if (k) recent.add(k); }); }
@@ -2296,15 +2297,13 @@ function viewReliefIndex() {
       <button class="pill-cta rl-cta" data-action="nav" data-to="log">${icon('plus', 14)} Log how you feel</button></section>` : '';
   return `${topbar('Relief', { back: true })}
   <div class="pad">
-    <div class="page-art">${mushroomArt(0, 'corner')}<h1 class="page-h">Feel better, <span>gently</span></h1></div>
-    <p class="muted">What helps — body, food and Chinese medicine.</p>
+    <h1 class="page-h rx-h">Feel better, <span>gently</span></h1>
+    <p class="muted rx-sub">What helps: body, food and Chinese medicine.</p>
     ${today}
+    <button class="bz-cta" data-action="nav" data-to="breathe"><i class="bz-mini"></i><span><b>Breathe with me</b><small>The calm sigh · 1 minute</small></span>${icon('chevR', 16)}</button>
     ${sectionTitle('Everything that helps')}
-    <div class="relief-grid">${keys.map((k, i) => { const h = (state.reliefHelp || {})[k] || [], L = RELIEF_LINKS[k] || {};
-      return `<button class="rcard tall relief-c" data-action="nav" data-to="relief/${encodeURIComponent(k)}">${glowArt(['drop', 'wave', 'orb', 'hill', 'crown', 'peak'][i % 6], 70 + i)}
-      <div class="rc-top"><span class="rc-k">${RELIEF[k].steps.length} ways</span>${recent.has(k) ? '<span class="rc-badge">Logged</span>' : ''}</div>
-      <span class="rl-g">${reliefIc(k, 26)}</span><div class="rc-t">${k}</div>
-      <div class="rl-first">${h.length ? `${icon('heart', 12)} ${h.length} work${h.length > 1 ? '' : 's'} for you` : `First: ${RELIEF[k].steps[0].t.toLowerCase()}`}</div></button>`; }).join('')}</div>
+    <div class="rx-grid">${keys.map(k => { const h = (state.reliefHelp || {})[k] || [];
+      return `<button class="rx-t ${recent.has(k) ? 'on' : ''}" data-action="nav" data-to="relief/${encodeURIComponent(k)}"><span class="rx-e">${RELIEF_EMOJI[k] || '🌿'}</span><b>${k}</b><small>${h.length ? `${icon('heart', 11)} ${h.length} work${h.length > 1 ? '' : 's'} for you` : `${RELIEF[k].steps.length} ways`}</small>${recent.has(k) ? '<i>Logged</i>' : ''}</button>`; }).join('')}</div>
   </div>`;
 }
 function viewRelief(id) {
