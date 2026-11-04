@@ -4488,19 +4488,20 @@ function viewInsights() {
 function viewRecipe(id) {
   const r = RECIPES.find(x => x.id === id); if (!r) return viewMissing();
   const fav = (state.favorites || []).includes(id);
-  return `<div class="pad">
+  return `<div class="pad sp2">
     ${specHero({ photo: photoUrl(r.id) ? photoUrl(r.id, 1000) : '', glyph: '🥣', eyebrow: `${r.meal} · ${r.time} min · ${r.kcal} kcal`, name: r.name,
-      rows: r.ingredients.map(ingRow), lead: `${r.name} — ${r.meal.toLowerCase()} for your ${r.phases.map(p => PHASES[p].name).join(' & ')} phase`,
+      rows: r.ingredients.map(ingRow), lead: `A ${r.meal.toLowerCase()} for your ${r.phases.map(p => PHASES[p].name).join(' & ')} phase`,
       desc: `Rich in ${r.nutrients.map(n => /^(Vitamin|Omega|B\d)/.test(n) ? n : n.toLowerCase()).join(', ')}. ${r.warm ? 'Warm and cooked, kind to your body around your period.' : r.raw ? 'Fresh and raw, best outside your period days.' : ''}`,
       extra: `<button class="spec-btn r fav ${fav ? 'on' : ''}" data-action="fav" data-id="${id}" aria-label="Save">${icon('heart', 20)}</button>` })}
     <section class="card glass tea-fit"><div class="tf-k">Made for${r.warm ? ' · warm & cooked' : r.raw ? ' · raw' : ''}</div>${phaseFit(r.phases, M.info && M.info.phase)}
-      ${r.raw && warmWindow(M.info) ? `<p class="tea-warn">${icon('yinyang', 12)} Raw and cold: Chinese medicine says save it for after your period.</p>` : ''}</section>
+      ${r.raw && warmWindow(M.info) ? `<p class="tea-warn">${icon('yinyang', 14)} Raw and cold: Chinese medicine says save it for after your period.</p>` : ''}</section>
     ${sectionTitle('Why it’s good for you')}
     <section class="card glass rn-list">${r.nutrients.map(n => { const [line, to] = NUTRIENT_ROLE[n] || ['']; return `<${to ? `button data-action="nav" data-to="nutrients/${to}"` : 'div'} class="rn"><b>${n}</b><p>${line}</p>${to ? icon('chevR', 15) : ''}</${to ? 'button' : 'div'}>`; }).join('')}</section>
     ${sectionTitle('Ingredients')}
     <section class="card glass">${r.ingredients.map((g, i) => { const k = id + i; return `<button class="check-row ${ui.checked[k] ? 'on' : ''}" data-action="check" data-k="${k}"><span class="cb">${icon('check', 14, 2.2)}</span>${g}</button>`; }).join('')}</section>
     ${sectionTitle('Method')}
     <section class="card glass">${r.steps.map((s, i) => `<div class="step"><span class="step-n">${i + 1}</span><p>${s}</p></div>`).join('')}</section>
+    <p class="fine center">Check every ingredient for allergies before you cook.</p>
     ${r.source ? `<p class="fine center">Adapted from <a class="src" href="${r.url}" target="_blank" rel="noopener">${r.source}</a></p>` : ''}
     ${RECIPE_PHOTOS[r.id] ? `<p class="fine center">Photo: <a class="src" href="${RECIPE_PHOTOS[r.id].page}?utm_source=under_the_skin&utm_medium=referral" target="_blank" rel="noopener">${esc(RECIPE_PHOTOS[r.id].by)}</a> on <a class="src" href="https://unsplash.com/?utm_source=under_the_skin&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></p>` : ''}
   </div>`;

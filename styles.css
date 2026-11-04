@@ -6349,3 +6349,5 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .ck-first small { display: block; font: 600 11px Outfit, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: #c0363b; }
 .ck-first b { display: block; margin: 3px 0 4px; font: 450 14.5px/1.45 Outfit, sans-serif; color: #20301a; }
 .ck-first p { margin: 2px 0 0; font: 400 13.5px/1.45 Outfit, sans-serif; color: #3a4a2e; }
+.sp2 .tea-warn { display: flex; gap: 8px; align-items: flex-start; margin: 12px 0 0; padding: 10px 12px; border-radius: 16px; background: #fdf0f2; color: #8a2f3f; font: 450 13.5px/1.45 Outfit, sans-serif; }
+.sp2 .tea-warn .ic { flex: none; margin-top: 3px; color: #c0363b; }
