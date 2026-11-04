@@ -5801,3 +5801,55 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .ls2-ic { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 16px; background: var(--bg); color: var(--ink); transform: rotate(-4deg); }
 .ls2-b:nth-child(even) .ls2-ic { transform: rotate(4deg); }
 .ls2-b small { font-size: 11.5px; line-height: 1.2; text-align: center; color: #304023; }
+
+/* ---------- Tea guide: big photo, why today, the ultimate guide ---------- */
+.tg { padding-top: 0; }
+.tg-hero { position: relative; margin: 0 -18px 16px; height: 520px; overflow: hidden; border-radius: 0 0 36px 36px; }
+.tg-hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; animation: tgDrift 24s ease-in-out infinite alternate; }
+.tg-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,24,14,.35), rgba(20,24,14,0) 28%, rgba(20,24,14,.15) 50%, rgba(28,36,20,.82) 100%); }
+.tg-hero .spec-btn { position: absolute; top: 54px; left: 18px; }
+.tg-copy { position: absolute; left: 22px; right: 22px; bottom: 24px; display: grid; gap: 8px; color: #fff; }
+.tg-copy small { font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: #f4c6d6; }
+.tg-copy h1 { margin: 0; font-size: 40px; font-weight: 300; letter-spacing: -.03em; line-height: 1.02; color: #fff !important; -webkit-text-fill-color: #fff !important; }
+.tg-copy p { margin: 0; font-size: 15px; line-height: 1.45; color: rgba(255,250,246,.92); max-width: 320px; }
+.tg-chips { display: flex; gap: 6px; } .tg-chips span { display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; border-radius: 99px; font-size: 12.5px; color: #fff; background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.tg-cta { justify-self: start; display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; padding: 12px 18px; border-radius: 99px; border: 0; background: #fff; color: #304023; font: inherit; font-size: 14.5px; font-weight: 500; cursor: pointer; box-shadow: 0 10px 24px rgba(0,0,0,.2); }
+@keyframes tgDrift { to { transform: scale(1.08) translateY(-2%); } }
+@media (prefers-reduced-motion: reduce) { .tg-hero > img { animation: none; } }
+
+.tg-why { padding: 18px; background: #fff; border-radius: 28px; color: #304023; display: grid; gap: 12px; }
+.tg-k { display: flex; align-items: center; justify-content: space-between; gap: 8px; } .tg-k b { font-size: 17px; font-weight: 500; }
+.tg-r { display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: start; }
+.tg-ri { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 14px; color: #304023; background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 88%); }
+.tg-ri[style*="--i:1"] { background: #f6dfe7; color: #9a3d58; } .tg-ri[style*="--i:2"] { background: #f3ead9; color: #7a5a2a; }
+.tg-r b { font-size: 15px; font-weight: 500; } .tg-r p { margin: 2px 0 0; font-size: 13.5px; line-height: 1.45; color: #4a5a3a; }
+.tg-brew { display: flex; gap: 8px; align-items: flex-start; padding: 12px 14px; border-radius: 18px; background: #f6eef0; font-size: 13.5px; line-height: 1.45; color: #304023; }
+.tg-brew .ic { flex: none; margin-top: 2px; color: #6c823e; }
+
+.tg-title { margin: 30px 4px 6px; } .tg-title small { font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: #8c9768; }
+.tg-title h2 { margin: 4px 0 0; font-size: 30px; font-weight: 300; letter-spacing: -.02em; color: #304023; } .tg-title em { font-style: normal; color: #9a3d58; }
+.tg-sub { display: flex; justify-content: space-between; align-items: baseline; margin: 20px 4px 10px; } .tg-sub b { font-size: 17px; font-weight: 500; color: #304023; } .tg-sub small { font-size: 12px; color: #5b6b48; }
+
+.tg-cyc { gap: 10px; }
+.tg-cc { position: relative; flex: 0 0 138px; display: grid; gap: 2px; padding: 0 0 12px; border: 0; border-radius: 24px; overflow: hidden; background: #fff; text-align: left; font: inherit; cursor: pointer; box-shadow: 0 8px 20px rgba(48,64,35,.08); }
+.tg-cc img { width: 100%; height: 150px; object-fit: cover; margin-bottom: 6px; }
+.tg-cc small { padding: 0 12px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #8c9768; } .tg-cc b { padding: 0 12px; font-size: 14.5px; font-weight: 500; color: #304023; line-height: 1.25; }
+.tg-cc em { position: absolute; top: 10px; left: 10px; padding: 4px 10px; border-radius: 99px; background: #fff; color: #304023; font-style: normal; font-size: 11.5px; font-weight: 500; }
+.tg-cc.now { box-shadow: 0 0 0 2px #304023, 0 8px 20px rgba(48,64,35,.12); }
+
+.tg-needs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tg-n { position: relative; height: 112px; border: 0; border-radius: 22px; overflow: hidden; padding: 0; font: inherit; cursor: pointer; text-align: left; }
+.tg-n img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.tg-n span { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 12px; background: linear-gradient(180deg, transparent 30%, rgba(24,32,16,.78)); }
+.tg-n b { font-size: 14.5px; font-weight: 500; color: #fff; line-height: 1.2; } .tg-n small { font-size: 11.5px; color: rgba(255,255,255,.85); }
+.tg-n.on { box-shadow: 0 0 0 3px #304023; }
+.tg-list { margin-top: 12px; padding: 16px; background: #fff; border-radius: 26px; color: #304023; display: grid; gap: 6px; scroll-margin-top: 70px; }
+.tg-x { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(48,64,35,.14); background: #fff; color: #304023; cursor: pointer; }
+.tg-li { display: grid; grid-template-columns: 58px 1fr 16px; gap: 12px; align-items: center; padding: 8px 4px; border: 0; border-top: 1px solid rgba(48,64,35,.07); background: none; text-align: left; font: inherit; color: #304023; cursor: pointer; }
+.tg-li img { width: 58px; height: 58px; border-radius: 16px; object-fit: cover; }
+.tg-li b { font-size: 15px; font-weight: 500; } .tg-li small { display: block; font-size: 12.5px; line-height: 1.4; color: #4a5a3a; margin-top: 2px; }
+
+.tg-tips { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.tg-t { padding: 14px; border-radius: 22px; background: #fff; color: #304023; display: grid; gap: 6px; align-content: start; }
+.tg-t span { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 12px; background: #e3ecc9; color: #304023; }
+.tg-t b { font-size: 14.5px; font-weight: 500; } .tg-t p { margin: 0; font-size: 12.5px; line-height: 1.45; color: #4a5a3a; }

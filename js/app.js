@@ -6,7 +6,7 @@ import { icon } from './icons.js';
 import * as Z from './cosmic.js';
 import { mountFigure, mushroomArt, nautilusArt } from './figure.js';
 import { mountTorso } from './torso.js';
-import { RECIPE_PHOTOS, photoUrl, DISH_PHOTOS, dishPhoto, HORMONE_PHOTOS, hormonePhoto, CARE_PHOTOS, carePhoto, STAR_PHOTOS, starPhoto, foodPhoto, FOOD_PHOTOS } from './photos.js';
+import { RECIPE_PHOTOS, photoUrl, DISH_PHOTOS, dishPhoto, HORMONE_PHOTOS, hormonePhoto, CARE_PHOTOS, carePhoto, STAR_PHOTOS, starPhoto, foodPhoto, FOOD_PHOTOS, teaPhoto } from './photos.js';
 import * as SZ from './seasonal.js';
 import { MOLECULES, MOL_BALL } from './molecules.js';
 import { sunTimes, COUNTRY_GEO } from './sun.js';
@@ -3048,20 +3048,44 @@ function sugarCurve(on) {
     <div class="sg-leg"><span><i class="red"></i>Without tricks</span><span><i></i>With your tricks · ${Math.round((1 - keep) * 100)}% smaller spike</span></div>`;
 }
 // ---------- tea guide ----------
+// Why today's tea fits where she is: three short reasons per part of the cycle.
+const TEA_REASONS = {
+  'flow-start': [['drop', 'Eases cramps', 'Ginger lowers prostaglandins, the messengers behind period cramps.'], ['thermo', 'Warms you from inside', 'Both are warming in Chinese medicine, just right while you bleed.'], ['heart', 'Settles your belly', 'Ginger calms the queasy feeling some period days bring.']],
+  'flow-end': [['drop', 'Refills minerals', 'Nettle brings iron, calcium and magnesium back after bleeding.'], ['leaf', 'A gentle rebuild', 'A mild leaf you can sip every day as your energy returns.'], ['bolt', 'Energy comes back', 'Iron carries oxygen. More of it means less tiredness.']],
+  rising: [['spark', 'Calm focus', 'Caffeine plus L-theanine gives clear energy without the jitters.'], ['leaf', 'Antioxidants', 'Green tea catechins look after your cells as estrogen climbs.'], ['sun', 'A morning ritual', 'Drink it before noon so your sleep stays deep.']],
+  building: [['bolt', 'Long, smooth energy', 'Whole ground leaf means more L-theanine for steady focus.'], ['dumbbell', 'Made for strong days', 'Your best days for training and big work.'], ['leaf', 'The whole leaf', 'You drink all of it, so you get all the antioxidants.']],
+  peak: [['sun', 'Cools you down', 'Ovulation runs warm. Hibiscus is cooling and tart.'], ['heart', 'Kind to your heart', 'Studies link hibiscus with healthier blood pressure.'], ['spark', 'For your glow days', 'Full of antioxidants and vitamin C.']],
+  settle: [['mind', 'Calm as progesterone rises', 'Lemon balm soothes restlessness and helps you unwind.'], ['moon', 'Better sleep', 'A cup in the afternoon or evening helps you drift off.'], ['leaf', 'Light and fresh', 'No caffeine, just a gentle lemony taste.']],
+  focus: [['spark', 'Clearer skin', 'Spearmint lowered androgens in small studies, which can calm pre-period breakouts.'], ['leaf', 'Easy digestion', 'Eases the gas and bloating that start to build now.'], ['cup', 'Twice a day', 'The studies used two cups a day.']],
+  premenstrual: [['heart', 'Softens PMS', 'Chamomile calms your nerves and lifts a low mood.'], ['drop', 'Gets ahead of cramps', 'Ginger works best when you start a day or two before.'], ['thermo', 'Warm only', 'Chinese medicine keeps everything warm before your period.']],
+};
+const TEA_WIN = [['flow-start', 'Period · first days'], ['flow-end', 'End of period'], ['rising', 'Early rise'], ['building', 'Strong days'], ['peak', 'Ovulation'], ['settle', 'After ovulation'], ['focus', 'Second half'], ['premenstrual', 'Before your period']];
 function viewTea() {
-  const info = M.info, td = info ? TEA_DAY[dayWindow(info)] : null, k = ui.teaK || (td ? 'cycle' : TEA_GUIDE[0].k);
-  const tea = ([g, n, why, how, ev, warn], i) => `<button class="card glass tea-c" data-action="nav" data-to="tea/${k}-${i}"><div class="tea-h"><span class="tea-g">${icon('cup', 20)}</span><b>${n}</b>${evBadge(ev)}<span class="tea-go">${icon('chevR', 16)}</span></div>
-    <p>${why}</p></button>`;
-  const WIN = [['flow-start', 'Period · first days'], ['flow-end', 'End of period'], ['rising', 'Early rise'], ['building', 'Strong days'], ['peak', 'Ovulation'], ['settle', 'After ovulation'], ['focus', 'Mid second half'], ['premenstrual', 'Before the period']];
-  const body = k === 'cycle'
-    ? `<div class="tea-cycle">${WIN.map(([w, t]) => { const x = TEA_DAY[w], now = info && dayWindow(info) === w; return `<button class="tc-row ${now ? 'now' : ''}" data-action="nav" data-to="tea/day-${w}"><span class="tea-g">${icon('cup', 20)}</span><div><small>${t}${now ? ' · now' : ''}</small><b>${x[1]}</b><p>${x[2]}</p></div><span class="tea-go">${icon('chevR', 16)}</span></button>`; }).join('')}</div>`
-    : (TEA_GUIDE.find(x => x.k === k) || TEA_GUIDE[0]).teas.map(tea).join('');
-  return `${topbar('Tea guide', { back: true })}
-  <div class="pad">
-    <h1 class="page-h">Tea for <span>every need</span></h1>
-    ${td ? `<section class="card card-light tea-today" data-action="nav" data-to="tea/day-${dayWindow(info)}" role="button"><small>Your tea today</small><div class="tea-h"><span class="tea-g">${icon('cup', 20)}</span><b>${td[1]}</b>${evBadge(td[4])}</div><p>${td[2]}</p><p class="tea-how">${icon('clock', 13)} ${td[3]}</p><span class="pill-cta tea-cta">${icon('spark', 14)} Why it helps & how to brew</span></section>` : ''}
-    <div class="tea-tabs">${[['cycle', 'By cycle'], ...TEA_GUIDE.map(x => [x.k, x.n])].map(([kk, n]) => `<button class="${kk === k ? 'on' : ''}" data-action="teaK" data-v="${kk}">${n}</button>`).join('')}</div>
-    ${body}
+  const info = M.info, w = info ? dayWindow(info) : 'rising', td = TEA_DAY[w], k = ui.teaK, G = k && TEA_GUIDE.find(x => x.k === k);
+  const steep = (td[3].match(/\d+(?:–\d+)?\s*min/) || [''])[0], near = w === 'flow-start' || w === 'flow-end' || w === 'premenstrual';
+  return `<div class="pad tg">
+    <section class="tg-hero"><img src="${teaPhoto(td[1], 900, 1100)}" alt="" decoding="async"><span class="tg-shade"></span>
+      <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
+      <div class="tg-copy"><small>${info ? `Day ${info.cd} · ${PHASES[info.phase].name} · ` : ''}Your tea today</small><h1>${td[1]}</h1><p>${td[2]}</p>
+        <span class="tg-chips">${steep ? `<span>${icon('clock', 13)} ${steep}</span>` : ''}<span>${icon('thermo', 13)} ${near ? 'Hot' : 'Warm'}</span></span>
+        <button class="tg-cta" data-action="nav" data-to="tea/day-${w}">How to brew it ${icon('chevR', 15)}</button></div></section>
+
+    <section class="card tg-why"><div class="tg-k"><b>Why this tea today</b>${evBadge(td[4])}</div>
+      ${TEA_REASONS[w].map(([ic, t, x], i) => `<div class="tg-r"><span class="tg-ri" style="--i:${i}">${icon(ic, 18)}</span><div><b>${t}</b><p>${x}</p></div></div>`).join('')}
+      <div class="tg-brew">${icon('cup', 16)} <span>${td[3]}</span></div></section>
+
+    <div class="tg-title"><small>Everything in one place</small><h2>The ultimate <em>tea guide</em></h2></div>
+
+    <div class="tg-sub"><b>Through your cycle</b><small>Swipe for every part of your month</small></div>
+    <div class="hscroll tg-cyc">${TEA_WIN.map(([ww, t]) => { const x = TEA_DAY[ww], now = info && ww === w; return `<button class="tg-cc ${now ? 'now' : ''}" data-action="nav" data-to="tea/day-${ww}"><img src="${teaPhoto(x[1], 320, 360)}" alt="" loading="lazy">${now ? '<em>Now</em>' : ''}<small>${t}</small><b>${x[1]}</b></button>`; }).join('')}</div>
+
+    <div class="tg-sub"><b>For what you need</b><small>Tap one to see its teas</small></div>
+    <div class="tg-needs">${(() => { const used = new Set(); return TEA_GUIDE.map(g => { const t = ['nausea', 'ovulation'].includes(g.k) ? `cover-${g.k}` : (g.teas.find(x => !used.has(teaPhoto(x[1]))) || g.teas[0])[1]; used.add(teaPhoto(t)); return [g, t]; }); })().map(([g, t]) => `<button class="tg-n ${g.k === k ? 'on' : ''}" data-action="teaK" data-v="${g.k === k ? '' : g.k}"><img src="${teaPhoto(t, 300, 220)}" alt="" loading="lazy"><span><b>${g.n}</b><small>${plural(g.teas.length, 'tea')}</small></span></button>`).join('')}</div>
+    ${G ? `<section class="card tg-list" id="tg-list"><div class="tg-k"><b>Teas for ${G.n.toLowerCase()}</b><button class="tg-x" data-action="teaK" data-v="" aria-label="Close">${icon('close', 16)}</button></div>
+      ${G.teas.map(([g, n, why], i) => `<button class="tg-li" data-action="nav" data-to="tea/${G.k}-${i}"><img src="${teaPhoto(n, 160, 160)}" alt="" loading="lazy"><span><b>${n}</b><small>${why}</small></span>${icon('chevR', 16)}</button>`).join('')}</section>` : ''}
+
+    <div class="tg-sub"><b>Brew it right</b><small>Four small things that make it work</small></div>
+    <div class="tg-tips">${[['thermo', 'Water heat', 'Green tea and matcha at 80 °C. Herbs, roots and spices at a full boil.'], ['cup', 'Cover the cup', 'A saucer on top keeps the healing oils in your tea, not in the air.'], ['clock', 'Steep long enough', 'Herbs need 5 to 10 minutes. Roots like ginger like 10 to 15.'], ['drop', 'Warm around your period', 'Hot, never iced, from a few days before until bleeding ends.']].map(([ic, t, x]) => `<div class="tg-t"><span>${icon(ic, 18)}</span><b>${t}</b><p>${x}</p></div>`).join('')}</div>
     <p class="fine center">Herbal teas are gentle support, not medicine. Pregnant, on medication or unsure? Ask your doctor or midwife first.</p>
   </div>`;
 }
@@ -3086,7 +3110,7 @@ function viewTeaItem(id) {
   const cold = ['cold', 'cool'].includes(temp), nearBleed = ph === 'menstrual' || (info && dayWindow(info) === 'premenstrual');
   const cautions = [warn, ...P.map(p => p.caution)].filter((x, i, a) => x && a.indexOf(x) === i);
   return `<div class="pad">
-    ${specHero({ glyph: icon('cup', 56, 1.2), eyebrow: G ? `Tea for ${G.n.toLowerCase()}` : 'Tea', name: /tea|milk|coffee/i.test(n) ? n : `${n} tea`, label: 'Key ingredients',
+    ${specHero({ photo: teaPhoto(n, 800, 900), eyebrow: G ? `Tea for ${G.n.toLowerCase()}` : 'Tea', name: /tea|milk|coffee/i.test(n) ? n : `${n} tea`, label: 'Key ingredients',
       rows, lead: `${n} · ${EVIDENCE[ev].label.toLowerCase()}`, desc: why })}
     ${P.length ? `<section class="card glass tea-fit">
       <div class="tf-k">Best in your cycle</div>
@@ -5039,7 +5063,7 @@ const actions = {
     if (i < 0) { plusOne(el); if (done.length === RH_GOAL) toast('🌕 Full rhythm today — beautiful'); }
   },
   useGeo: () => { if (!navigator.geolocation) return toast('Location isn’t available'); navigator.geolocation.getCurrentPosition(p => { state.profile.geo = { lat: +p.coords.latitude.toFixed(2), lng: +p.coords.longitude.toFixed(2) }; save(); toast('Sun times set for where you are'); render(); }, () => toast('Location not allowed, using your country')); },
-  teaK: d => { ui.teaK = d.v; render(); },
+  teaK: d => { ui.teaK = d.v || null; render(); if (d.v) setTimeout(() => document.getElementById('tg-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60); },
   shade: d => { const v = document.querySelector('.view'), y = v ? v.scrollTop : 0; ui.shade = ui.shade === +d.i ? -1 : +d.i; render(); const w = document.querySelector('.view'); if (w) w.scrollTop = y; },
   reliefHelp: (d, el) => {
     const H = state.reliefHelp = state.reliefHelp || {}, l = H[d.k] = H[d.k] || [], i = +d.i, at = l.indexOf(i);
