@@ -5785,3 +5785,19 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 @keyframes lbBob { 50% { transform: translateY(-3px) rotate(-3deg); } }
 @keyframes lbFloat { 0% { transform: translateY(0) scale(.7); opacity: 0; } 20% { opacity: .9; } 100% { transform: translateY(-90px) scale(1.1); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .lb2-env, .lb2-hearts i { animation: none; } }
+
+/* Send love sheet: white, sticker-like tiles with their own colours */
+.ls-card.ls2 { background: linear-gradient(180deg, #fff 0%, #fdf5f8 100%) !important; border-top: 1px solid rgba(230,128,156,.3); box-shadow: 0 -16px 40px rgba(48,64,35,.14); color: #304023; padding: 10px 18px 30px; }
+.ls2 .ls-grip { background: rgba(48,64,35,.16); }
+.ls2-head { display: flex; align-items: center; gap: 14px; padding: 4px 2px 16px; border-bottom: 1px solid rgba(48,64,35,.08); }
+.ls2-head h3 { margin: 0; font-size: 21px; font-weight: 500; letter-spacing: -.01em; color: #304023; }
+.ls2-head p { margin: 2px 0 0; font-size: 13px; color: #7a5a66; }
+.ls2-k { display: flex; align-items: center; gap: 6px; margin: 16px 4px 10px; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: #b0475f; }
+.ls2-k.care { color: #4f6a2a; } .ls2-k svg path { fill: currentColor; }
+.ls2-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.ls2-b { display: grid; justify-items: center; gap: 7px; padding: 12px 4px 10px; border-radius: 22px; border: 1px solid rgba(48,64,35,.07); background: #fff; font: inherit; cursor: pointer; box-shadow: 0 4px 12px rgba(48,64,35,.05); transition: transform .2s, box-shadow .2s; }
+.ls2-b:active { transform: scale(.9); }
+.ls2-b:hover { box-shadow: 0 8px 18px rgba(48,64,35,.1); }
+.ls2-ic { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 16px; background: var(--bg); color: var(--ink); transform: rotate(-4deg); }
+.ls2-b:nth-child(even) .ls2-ic { transform: rotate(4deg); }
+.ls2-b small { font-size: 11.5px; line-height: 1.2; text-align: center; color: #304023; }

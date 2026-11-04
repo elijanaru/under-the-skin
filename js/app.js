@@ -3712,10 +3712,11 @@ const SYNC = {
 function syncNote(a, b) { return SYNC[[a, b].sort().join('|')] || SYNC[[b, a].join('|')] || SYNC[[a, b].join('|')] || 'Different tides this week — whoever has more energy carries a little more, and you switch next week.'; }
 function ptAvatar(p, cls = '') { return `<span class="pt-av ${cls}">${p.t ? `<img src="${esc(p.t)}" alt="">` : esc((p.n || '?')[0])}${cls.includes('sm') ? '' : `<i style="background:${PHASE_COLOR.dark[snapInfo(p, new Date()).phase]}"></i>`}</span>`; }
 // The cute "send love" button: a smiling envelope with a heart seal, little hearts floating up.
-function loveBtn(p, big) {
-  const art = `<svg class="lb2-env" viewBox="0 0 64 56" aria-hidden="true"><rect x="6" y="14" width="52" height="36" rx="8" fill="#fff" stroke="#304023" stroke-width="2"/><path d="M8 18l24 18 24-18" fill="none" stroke="#304023" stroke-width="2" stroke-linejoin="round"/>
+function loveBtnArt() { return `<svg class="lb2-env" viewBox="0 0 64 56" aria-hidden="true"><rect x="6" y="14" width="52" height="36" rx="8" fill="#fff" stroke="#304023" stroke-width="2"/><path d="M8 18l24 18 24-18" fill="none" stroke="#304023" stroke-width="2" stroke-linejoin="round"/>
     <circle cx="22" cy="40" r="3" fill="#efb6c8" opacity=".8"/><circle cx="42" cy="40" r="3" fill="#efb6c8" opacity=".8"/><path d="M28 42q4 3 8 0" fill="none" stroke="#304023" stroke-width="1.8" stroke-linecap="round"/>
-    <path d="M32 33c-6-4-9-7-9-10.5a4.5 4.5 0 0 1 9-1.5 4.5 4.5 0 0 1 9 1.5c0 3.5-3 6.5-9 10.5z" fill="#e6809c" stroke="#304023" stroke-width="1.8" stroke-linejoin="round"/></svg>`;
+    <path d="M32 33c-6-4-9-7-9-10.5a4.5 4.5 0 0 1 9-1.5 4.5 4.5 0 0 1 9 1.5c0 3.5-3 6.5-9 10.5z" fill="#e6809c" stroke="#304023" stroke-width="1.8" stroke-linejoin="round"/></svg>`; }
+function loveBtn(p, big) {
+  const art = loveBtnArt();
   const hearts = [0, 1, 2, 3].map(i => `<i style="--d:${i * .9}s;--x:${[18, 38, 62, 80][i]}%">${HEART(i % 2 ? '#f4c6d6' : '#e6809c')}</i>`).join('');
   return `<button class="lb2 ${big ? 'big' : ''}" data-action="openLove" data-id="${p.id}" aria-label="Send love to ${esc(p.n)}">
     <span class="lb2-hearts" aria-hidden="true">${hearts}</span>
@@ -3837,15 +3838,20 @@ async function startSignals() {
   if (sigSource || !('EventSource' in window)) return;
   try { sigSource = new EventSource(`${RELAY}${id}/sse`); sigSource.onmessage = e => { try { const m = JSON.parse(e.data); if (m.event === 'message') handleSignal(m); } catch {} }; } catch {}
 }
+// Pastel disc + ink colour for each love tile, so the sheet reads like a little box of stickers.
+const LS_TINT = { hug: ['#fbe0e8', '#b0475f'], kiss: ['#f9d3dd', '#c2385c'], tea: ['#f3ead9', '#8a6a3a'], think: ['#ece6f6', '#6d5a9c'], strong: ['#fbefcf', '#a8781a'], date: ['#e6e4f2', '#4f4a82'], choc: ['#f0e0d6', '#7a4a36'], love: ['#ffd9e1', '#e0405f'],
+  eat: ['#e9f0d8', '#4f6a2a'], water: ['#dcecf0', '#2f6a7a'], rest: ['#e6e4f2', '#4f4a82'], walk: ['#e3ecc9', '#4f6a2a'] };
 function loveSheet() {
   const p = (state.partners || []).find(x => x.id === ui.loveFor); if (!p) return '';
   const sent = (state.loveSent || []).filter(x => x.to === p.id).length;
-  return `<div class="love-sheet" data-action="loveClose"><div class="ls-card" data-action="noop">
-    <div class="ls-grip"></div><div class="ls-head">${loveArt('lg')}<div><h3>Send love to ${esc(p.n)}</h3><p class="muted sm">${sent ? `You’ve sent ${sent} ${sent === 1 ? 'heart' : 'hearts'} so far` : (p.i ? 'Tap one — it lands in her app instantly' : 'Tap one — it opens your messages')}</p></div></div>
-    <div class="ls-grid">${LOVE.map(l => `<button class="ls-b" data-action="sendLove" data-k="${l.k}"><span>${icon(l.ic, 24)}</span><small>${l.t}</small></button>`).join('')}</div>
-    <div class="ls-sub">Care nudges</div>
-    <div class="ls-grid">${CARE.map(l => `<button class="ls-b care" data-action="sendLove" data-k="${l.k}"><span>${icon(l.ic, 24)}</span><small>${l.t}</small></button>`).join('')}</div>
-    <p class="ls-foot">${p.i ? `${icon('check', 12, 2.4)} Arrives straight in ${esc(p.n)}’s app` : `Sends as a message — ask ${esc(p.n)} to send you her link again to get love straight in her app`}</p></div></div>`;
+  const tile = l => { const [bg, ink] = LS_TINT[l.k] || ['#fbe0e8', '#b0475f']; return `<button class="ls2-b" data-action="sendLove" data-k="${l.k}" style="--bg:${bg};--ink:${ink}"><span class="ls2-ic">${icon(l.ic, 22, 1.9)}</span><small>${l.t}</small></button>`; };
+  return `<div class="love-sheet" data-action="loveClose"><div class="ls-card ls2" data-action="noop">
+    <div class="ls-grip"></div>
+    <div class="ls2-head"><span class="lb2-art">${loveBtnArt()}${ptAvatar(p, 'sm')}</span><div><h3>Send love to ${esc(p.n)}</h3><p>${sent ? `${sent} ${sent === 1 ? 'heart' : 'hearts'} sent so far` : 'Tap one and it lands on her phone'}</p></div></div>
+    <div class="ls2-k">${icon('heart', 13, 2)} Love</div>
+    <div class="ls2-grid">${LOVE.map(tile).join('')}</div>
+    <div class="ls2-k care">${icon('leaf', 13, 2)} Care nudges</div>
+    <div class="ls2-grid">${CARE.map(tile).join('')}</div></div></div>`;
 }
 function fmtAgo(t) { const m = Math.round((Date.now() - t) / 60000); return m < 1 ? 'just now' : m < 60 ? `${m} min ago` : m < 1440 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} d ago`; }
 function heartBurst(x, y) {
