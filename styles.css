@@ -6246,3 +6246,27 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .br2b .bx-rt { min-width: 0; font: 500 13.5px/1.25 Outfit, sans-serif; }
 .br2b .bx-rt small { display: block; font: 500 10.5px Outfit, sans-serif; letter-spacing: .05em; text-transform: uppercase; color: #6c823e; margin-bottom: 2px; }
 .br2b .bx-t.done .bx-why, .br2b .bx-t.done .bx-top b { text-decoration: line-through; text-decoration-color: rgba(48,64,35,.4); }
+
+/* breathe v2: soft title, halo that brightens as she fills, ripples on the breath out, a sleepy cat that breathes along */
+.bz-title { margin: 4px 0 0; text-align: center; font: 200 34px/1.1 Outfit, sans-serif; color: #20301a; letter-spacing: -.01em; }
+.bz-title small { display: block; margin-bottom: 8px; font: 500 11px Outfit, sans-serif; letter-spacing: .18em; text-transform: uppercase; color: #6c823e; }
+.bz-title em { display: block; font-style: normal; font-weight: 300; background: linear-gradient(90deg, #d93a6d, #b98be0 55%, #6c823e); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.bz { --b: 0; padding-top: 6px; }
+.bz-ball { transition: box-shadow .4s; box-shadow: 0 20px 60px rgba(224,69,123,calc(.16 + var(--b) * .22)), inset 0 -14px 40px rgba(255,255,255,.6), inset 10px 14px 30px rgba(255,255,255,.5); }
+.bz-ball::after { content: ''; position: absolute; inset: 8% 12% auto auto; width: 26%; height: 18%; border-radius: 50%; background: radial-gradient(rgba(255,255,255,.9), rgba(255,255,255,0) 70%); transform: rotate(-30deg); }
+.bz-halo { position: absolute; inset: -6%; border-radius: 50%; background: radial-gradient(circle, rgba(245,191,209,.55), rgba(185,139,224,.18) 55%, transparent 70%); opacity: calc(.25 + var(--b) * .75); transform: scale(calc(.6 + var(--b) * .5)); filter: blur(6px); pointer-events: none; }
+.bz-rip { position: absolute; inset: 0; margin: auto; width: 46%; height: 46%; border-radius: 50%; border: 2px solid rgba(217,58,109,.35); opacity: 0; pointer-events: none; }
+.bz[data-ph="out"] .bz-rip { animation: bzRip 4s ease-out infinite; } .bz[data-ph="out"] .bz-rip.r2 { animation-delay: 2s; }
+@keyframes bzRip { 0% { transform: scale(1); opacity: .7; } 100% { transform: scale(2.3); opacity: 0; } }
+.bz-txt.sw, .bz-say.sw { animation: bzSw .7s ease both; }
+@keyframes bzSw { from { opacity: 0; transform: translateY(6px); filter: blur(3px); } to { opacity: 1; transform: none; filter: none; } }
+.bz-pal { display: flex; align-items: flex-end; gap: 6px; margin: 4px 0 16px; }
+.bz-pet { width: 86px; height: 72px; overflow: visible; }
+.bz-pet-b { transform-origin: 60px 88px; transform: scale(calc(.94 + var(--b) * .1), calc(.92 + var(--b) * .14)); }
+.bz-z { animation: bzZ 3.5s ease-in-out infinite; } @keyframes bzZ { 0%, 100% { opacity: .3; transform: translateY(2px); } 50% { opacity: 1; transform: translateY(-4px); } }
+.bz-say { position: relative; margin: 0 0 40px; padding: 10px 16px; border-radius: 20px 20px 20px 6px; background: #fff; box-shadow: 0 4px 14px rgba(48,64,35,.1); font: 400 14px Outfit, sans-serif; color: #20301a; white-space: nowrap; }
+.bz-quote { position: relative; margin: 22px 0 0; padding: 26px 22px 20px; border-radius: 28px; background: linear-gradient(160deg, #fff, #fbf0f4); text-align: center; box-shadow: 0 4px 18px rgba(48,64,35,.06); }
+.bz-quote span { position: absolute; top: -6px; left: 50%; transform: translateX(-50%); font: 200 64px/1 Outfit, sans-serif; color: #e0457b; }
+.bz-quote blockquote { margin: 0; font: 300 18px/1.45 Outfit, sans-serif; color: #20301a; }
+.bz-quote figcaption { margin-top: 10px; font: 500 11.5px Outfit, sans-serif; letter-spacing: .06em; color: #6c823e; }
+@media (prefers-reduced-motion: reduce) { .bz[data-ph="out"] .bz-rip, .bz-z, .bz-txt.sw, .bz-say.sw { animation: none; } .bz-rip { display: none; } }

@@ -3770,12 +3770,26 @@ function viewMove() {
 function viewBreathe() {
   return `${topbar('Breathe', { back: true })}
   <div class="pad bz-pad">
+    <h1 class="bz-title"><small>A minute for you</small>Come back to<em>your breath</em></h1>
     <section class="bz">
-      <div class="bz-stage"><i class="bz-guide"></i><div class="bz-ball"></div>
+      <div class="bz-stage"><i class="bz-guide"></i><i class="bz-halo"></i><i class="bz-rip"></i><i class="bz-rip r2"></i><div class="bz-ball"></div>
         <div class="bz-txt"><b class="bz-t">Ready when you are</b><small class="bz-s">Five rounds, about a minute</small></div></div>
       <div class="bz-n"></div>
+      <div class="bz-pal">
+        <svg class="bz-pet" viewBox="0 0 120 100" aria-hidden="true"><g class="bz-pet-b">
+          <path d="M22 86 C14 60 26 34 60 34 C94 34 106 60 98 86 Z" fill="#fff" stroke="#304023" stroke-width="2.4" stroke-linejoin="round"/>
+          <path d="M34 42 L30 22 L48 34 M86 42 L90 22 L72 34" fill="#fff" stroke="#304023" stroke-width="2.4" stroke-linejoin="round"/>
+          <path d="M35 33 L33 27 L40 31 M85 33 L87 27 L80 31" fill="#f4a9bf"/>
+          <path d="M44 60 q6 5 12 0 M64 60 q6 5 12 0" fill="none" stroke="#304023" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M57 68 q3 3 6 0" fill="none" stroke="#304023" stroke-width="2" stroke-linecap="round"/>
+          <ellipse cx="38" cy="69" rx="6" ry="3.6" fill="#f4a9bf"/><ellipse cx="82" cy="69" rx="6" ry="3.6" fill="#f4a9bf"/>
+          <path d="M98 80 q16 -2 12 -18" fill="none" stroke="#304023" stroke-width="2.4" stroke-linecap="round"/></g>
+          <path class="bz-z" d="M100 14 h8 l-8 8 h8" fill="none" stroke="#8c9768" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p class="bz-say">Stay in the present.</p>
+      </div>
       <button class="bz-go">Start</button>
     </section>
+    <figure class="bz-quote"><span>“</span><blockquote>The past is already gone and the future has not yet come. See clearly what is here, now.</blockquote><figcaption>The Buddha, from the Bhaddekaratta Sutta</figcaption></figure>
     <section class="bz-how"><h3>The calm sigh</h3>
       ${[['🌬️', 'Breathe in deep', 'Through your nose, until you are almost full.'], ['🫧', 'One more sip', 'A short extra breath in, right on top.'], ['🍃', 'Long breath out', 'Slowly through your mouth, twice as long.']].map(([e, t, p], i) => `<div class="bz-step"><span>${e}</span><div><b>${i + 1}. ${t}</b><p>${p}</p></div></div>`).join('')}
       <p class="bz-why">The second sip opens the tiny air sacs in your lungs again, and the long breath out slows your heart. In a 2023 Stanford study (Balban and colleagues), five minutes a day of this lifted mood more than mindfulness meditation.</p>
@@ -3783,24 +3797,26 @@ function viewBreathe() {
   </div>`;
 }
 const SIGH = [['in', 'Breathe in', 'Deep, through your nose', 4000], ['top', 'One more sip', 'A little more air on top', 1500], ['out', 'Long breath out', 'Slowly, through your mouth', 8000], ['rest', 'Rest', '', 1500]];
+const PET_SAY = { in: 'Breathe in, slowly.', top: 'A little more…', out: 'Let it go.', rest: 'Stay in the present.' };
 function mountBreath(el) {
-  const ball = el.querySelector('.bz-ball'), t = el.querySelector('.bz-t'), sub = el.querySelector('.bz-s'), cnt = el.querySelector('.bz-n'), btn = el.querySelector('.bz-go');
+  const ball = el.querySelector('.bz-ball'), txt = el.querySelector('.bz-txt'), t = el.querySelector('.bz-t'), sub = el.querySelector('.bz-s'), cnt = el.querySelector('.bz-n'), btn = el.querySelector('.bz-go'), say = el.querySelector('.bz-say');
   const ROUNDS = 5, CYC = SIGH.reduce((a, x) => a + x[3], 0), SC = { in: [.42, .98], top: [.98, 1.1], out: [1.1, .42], rest: [.42, .42] };
   const ease = x => .5 - Math.cos(Math.PI * x) / 2;
   let raf = 0, t0 = 0, run = false;
+  const swap = (a, b, w) => { t.textContent = a; sub.textContent = b; say.textContent = w; txt.classList.remove('sw'); say.classList.remove('sw'); void txt.offsetWidth; txt.classList.add('sw'); say.classList.add('sw'); };
   function frame(now) {
     const e = now - t0, round = Math.floor(e / CYC);
     if (round >= ROUNDS) return stop(true);
     let m = e % CYC, i = 0; while (m >= SIGH[i][3]) { m -= SIGH[i][3]; i++; }
-    const [k, a, b, ms] = SIGH[i], [s0, s1] = SC[k];
-    ball.style.transform = `scale(${s0 + (s1 - s0) * ease(m / ms)})`; el.dataset.ph = k;
-    if (t.textContent !== a) { t.textContent = a; sub.textContent = b; }
+    const [k, a, b, ms] = SIGH[i], [s0, s1] = SC[k], sc = s0 + (s1 - s0) * ease(m / ms);
+    ball.style.transform = `scale(${sc})`; el.style.setProperty('--b', ((sc - .42) / .68).toFixed(3));
+    if (el.dataset.ph !== k) { el.dataset.ph = k; swap(a, b, PET_SAY[k]); }
     cnt.textContent = `${round + 1} of ${ROUNDS}`;
     raf = requestAnimationFrame(frame);
   }
   function stop(done) {
-    run = false; cancelAnimationFrame(raf); ball.style.transform = ''; el.dataset.ph = '';
-    t.textContent = done ? 'Well done' : 'Ready when you are'; sub.textContent = done ? 'Notice how your body feels now' : 'Five rounds, about a minute';
+    run = false; cancelAnimationFrame(raf); ball.style.transform = ''; el.dataset.ph = ''; el.style.setProperty('--b', 0);
+    swap(done ? 'Well done' : 'Ready when you are', done ? 'Notice how your body feels now' : 'Five rounds, about a minute', done ? 'You did so well. Let it go.' : 'Stay in the present.');
     cnt.textContent = ''; btn.textContent = done ? 'Again' : 'Start';
   }
   const go = () => { if (run) return stop(false); run = true; btn.textContent = 'Stop'; t0 = performance.now(); raf = requestAnimationFrame(frame); };
