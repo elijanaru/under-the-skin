@@ -3772,7 +3772,17 @@ function viewBreathe() {
     <h1 class="bz-title"><small>A minute for you</small>Come back to<em>your breath</em></h1>
     <section class="bz">
       <div class="bz-stage"><div class="bz-card-h"><b>Breathe</b><span class="bz-n"></span></div>
-        <div class="bz-ball">${[0, 60, 120, 180, 240, 300].map(d => `<i style="--a:${d}deg"></i>`).join('')}</div></div>
+        <svg class="bz-lotus" viewBox="-110 -120 220 170" aria-hidden="true">
+          <defs><linearGradient id="lpA" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#efd4dd"/><stop offset="1" stop-color="#fff"/></linearGradient>
+            <linearGradient id="lpB" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#e6a3bb"/><stop offset=".7" stop-color="#f6d6e1"/><stop offset="1" stop-color="#fff"/></linearGradient>
+            <radialGradient id="lpC"><stop offset="0" stop-color="#ffe7a0"/><stop offset="1" stop-color="#f3c45a" stop-opacity="0"/></radialGradient></defs>
+          <g class="lt-water"><ellipse cx="0" cy="22" rx="96" ry="12"/><ellipse cx="0" cy="22" rx="66" ry="8"/></g>
+          <path class="lt-pad" d="M-14 14 C -60 2, -102 10, -96 22 C -90 32, -40 34, -6 24 Z"/><path class="lt-pad" d="M14 14 C 60 2, 102 10, 96 22 C 90 32, 40 34, 6 24 Z"/>
+          <circle class="lt-glow" cx="0" cy="-26" r="34" fill="url(#lpC)"/>
+          ${[-78, 78, -54, 54, -28, 28, 0].map(t => `<path class="lt-p back" style="--t:${t}deg" d="M0 8 C -20 -18 -18 -62 0 -86 C 18 -62 20 -18 0 8 Z" fill="url(#lpA)"/>`).join('')}
+          ${[-46, 46, -18, 18].map(t => `<path class="lt-p front" style="--t:${t}deg" d="M0 10 C -17 -12 -15 -52 0 -70 C 15 -52 17 -12 0 10 Z" fill="url(#lpB)"/>`).join('')}
+          <path class="lt-p bud" d="M0 12 C -15 -8 -13 -42 0 -58 C 13 -42 15 -8 0 12 Z" fill="url(#lpB)"/>
+        </svg></div>
       <div class="bz-txt"><b class="bz-t">Let that shi go</b><small class="bz-s">Soften your shoulders and your jaw</small></div>
       <div class="bz-pal">
         <svg class="bz-pet" viewBox="0 0 120 100" aria-hidden="true"><g class="bz-pet-b">
