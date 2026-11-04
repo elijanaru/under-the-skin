@@ -577,6 +577,19 @@ const O9_STUDIES = [
 const O9_ALWAYS = ['Balanced hormones', 'Eating with your cycle', 'Ancient Eastern medicine for every phase', 'Your own tea guide', 'Living with your hormones, not against them'];
 const O9_JOURNALS = ['npj Digital Medicine', 'Am J Obstet Gynecol', 'PLoS ONE', 'Am J Clin Nutr', 'BMJ', 'Br J Sports Med', 'Obstetrics & Gynecology'];
 const laurel = side => `<svg class="o9-laurel ${side}" viewBox="0 0 14 30" aria-hidden="true"><path d="M11 29 C 4 24, 2 14, 6 2" fill="none"/>${[[5, 24, -40], [3.4, 18, -25], [3, 12, -10], [4.4, 6.5, 8]].map(([x, y, r]) => `<ellipse cx="${x}" cy="${y}" rx="1.8" ry="3.6" transform="rotate(${r} ${x} ${y})"/>`).join('')}</svg>`;
+// Her own hormone curve, drawn from what she just told us (cycle length, period length, last period).
+function onbHormones() {
+  const o = ui.onb, L = o.unsure ? 28 : (+o.cycleLength || 28), P = +o.periodLength || 5;
+  const ago = o.last ? C.diffDays(new Date(), C.parseISO(o.last)) : (+o.ago || 0);
+  const cd = o.noPeriod ? 1 : ((ago % L) + L) % L + 1, ph = (C.phaseRanges(L, P).find(r => cd >= r.from && cd <= r.to) || {}).key || 'menstrual';
+  const rows = [['#ff8fc4', 'Estrogen', 'Rises before ovulation: energy, confidence and glow.'], ['#8fcf7a', 'Progesterone', 'Leads after ovulation: calm, warmth and more need for rest.'], ['#ff4d4d', 'Testosterone', 'A small peak mid-cycle: drive and desire.']];
+  return `<section class="o9-card o9-hp">
+      <h3>Your <em>hormones</em></h3>
+      <p class="o9-sub">${o.noPeriod ? 'How a natural cycle moves. Your plan follows it as soon as your period is back.' : `Your ${L}-day cycle. You’re on day ${cd}, in your ${PHASES[ph].name.toLowerCase()} phase.`}</p>
+      ${cycleChart({ L, P, cd, phase: ph }, { id: 'onb9', compact: true })}
+      <div class="o9-hr">${rows.map(([c, n, t]) => `<div><i style="background:${c}"></i><p><b>${n}</b> ${t}</p></div>`).join('')}</div>
+    </section>`;
+}
 function onbPlanHTML(keys, name) {
   const badges = O9_JOURNALS.map(j => `<span class="o9-j">${laurel('l')}<b>${j}</b>${laurel('r')}</span>`).join('');
   return `<div class="o9">
@@ -607,10 +620,7 @@ function onbPlanHTML(keys, name) {
       <ol class="o9-st">${O9_STUDIES.map(x => `<li><span class="o9-n"><b>${x.n}</b><small>${x.u}</small></span><div><p>${x.t}</p><small>${x.cite} · <i>${x.j}</i> ${evBadge(x.ev)}</small></div></li>`).join('')}</ol>
     </section>
 
-    <section class="o9-card o9-how">
-      <h3>Your <em>90 days</em></h3>
-      <ol>${PLAN_METHOD.map((p, i) => `<li><span class="o9-mi">${i + 1}</span><div><b>${p.k}<small>${p.d}</small></b><p>${p.line}</p></div></li>`).join('')}</ol>
-    </section>
+    ${onbHormones()}
   </div>`;
 }
 const planDay = () => { const p = state.profile; return p.planStart ? C.diffDays(M.today, C.parseISO(p.planStart)) + 1 : 0; };

@@ -5265,3 +5265,10 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .snd-btn.float { position: absolute; z-index: 5; top: calc(env(safe-area-inset-top, 0px) + 14px); right: 16px; border-radius: 50%;
   background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.65); color: #fff; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
 .snd-btn[aria-pressed="true"] { opacity: .8; }
+/* step 9: her own hormone curve */
+.o9-hp .cchart { margin: 6px -4px 0; }
+.o9-hr { display: grid; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(31,43,22,.09); }
+.o9-hr > div { display: flex; gap: 10px; align-items: flex-start; }
+.o9-hr i { flex: none; width: 10px; height: 10px; margin-top: 5px; border-radius: 50%; }
+.o9-hr p { margin: 0; font-size: 14px; line-height: 1.4; font-weight: 500; color: var(--o9-mid); }
+.o9-hr b { font-weight: 700; color: var(--o9-ink); }
