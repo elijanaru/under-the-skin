@@ -5272,3 +5272,24 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .o9-hr i { flex: none; width: 10px; height: 10px; margin-top: 5px; border-radius: 50%; }
 .o9-hr p { margin: 0; font-size: 14px; line-height: 1.4; font-weight: 500; color: var(--o9-mid); }
 .o9-hr b { font-weight: 700; color: var(--o9-ink); }
+.ro-lvl { display: inline-flex; align-items: center; justify-content: flex-end; gap: 4px; }
+.ro-lvl .tr { display: inline-grid; place-items: center; width: 18px; height: 18px; margin: 0; border-radius: 50%; background: rgba(48,64,35,.07); color: #56624a; }
+.ro-lvl .tr.rising { color: #3f6a1f; background: rgba(108,130,62,.16); }
+.ro-lvl .tr.falling { color: #a2445c; background: rgba(196,86,111,.13); }
+.ro-lvl .tr svg { transition: transform .3s; }
+/* egg release: a clear golden marker — a dashed line, a labelled pill and a white egg */
+.egg-mark .egg-line { stroke: #c9961a; stroke-width: 1.4; stroke-dasharray: 3 3; opacity: .8; }
+.egg-mark .egg-pill { fill: #fff; stroke: #e8b52c; stroke-width: 1.2; filter: drop-shadow(0 2px 4px rgba(120,84,10,.18)); }
+.egg-mark .egg-t { font-family: var(--font); font-size: 9.5px; font-weight: 600; letter-spacing: 0; fill: #7a5a0c; }
+.egg-mark .egg-halo { fill: rgba(232,181,44,.22); }
+.egg-mark .egg-shell { fill: #fff; stroke: #c9961a; stroke-width: 1.6; }
+.egg-mark .egg-yolk { fill: #e8b52c; }
+.egg-ic { flex: none; overflow: visible; }
+.ro-egg { color: #6b5212; font-weight: 500; }
+/* level + where it is heading, as words: "Low · rising" */
+.ro-lvl .tr { width: auto; height: 20px; padding: 0 8px 0 5px; gap: 3px; display: inline-flex; align-items: center; border-radius: 99px; font-style: normal; font-size: 11.5px; font-weight: 600; }
+.ro-lvl .tr svg { width: 11px; height: 11px; }
+.ro-row { grid-template-columns: 92px minmax(24px, 1fr) auto; gap: 8px; }
+.ro-row { grid-template-columns: 104px minmax(20px, 1fr) auto; } .ro-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ro-lvl .tr { width: 20px; height: 20px; padding: 0; justify-content: center; }
+.ro-lvl .tr svg { width: 12px; height: 12px; }

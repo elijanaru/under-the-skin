@@ -414,9 +414,11 @@ function cycleChart(info, { id = 'cc', compact = false, who = 'You' } = {}) {
       ${bands}
       <path d="${area}" fill="url(#${id}-area)" class="area ${ui.hidden.estrogen ? 'off' : ''}"/>
       ${curves}
-      ${(() => { const ov = C.ovulationDay(L, P), ex = X(ov + 0.5), ey = bot - (compact ? 9 : 12); return `<g class="egg-mark" transform="translate(${ex.toFixed(1)} ${ey})"><title>LH surge → egg release · day ${ov}</title>
-        <circle r="${compact ? 6 : 7.5}" class="egg-halo"/><ellipse rx="${compact ? 3 : 3.6}" ry="${compact ? 3.8 : 4.6}" class="egg-shell"/><circle r="1.3" cy=".6" class="egg-yolk"/>
-        ${compact ? '' : `<text y="-12" text-anchor="middle" class="egg-t">egg · day ${ov}</text>`}</g>`; })()}
+      ${(() => { const ov = C.ovulationDay(L, P), ex = X(ov + 0.5), t = `Egg release · day ${ov}`, pw = t.length * 5.3 + 18, near = Math.abs(cd - ov) <= 4, px = Math.max(pw / 2 + 2, Math.min(W - pw / 2 - 2, near ? (cd >= ov ? ex - pw / 2 - 18 : ex + pw / 2 + 18) : ex)), py = top + 11, ey = bot - 12;
+        return `<g class="egg-mark"><title>LH surge → egg release · day ${ov}</title>
+        <line class="egg-line" x1="${ex.toFixed(1)}" y1="${py + 9}" x2="${ex.toFixed(1)}" y2="${ey - 8}"/>
+        <g transform="translate(${px.toFixed(1)} ${py})"><rect class="egg-pill" x="${(-pw / 2).toFixed(1)}" y="-9" width="${pw.toFixed(1)}" height="18" rx="9"/><text class="egg-t" y="3.4" text-anchor="middle">${t}</text></g>
+        <g transform="translate(${ex.toFixed(1)} ${ey})"><circle class="egg-halo" r="10"/><ellipse class="egg-shell" rx="5" ry="6.4" cy="-.4"/><circle class="egg-yolk" r="2.3" cy=".6"/></g></g>`; })()}
       <g class="here">
         <line x1="${mx}" x2="${mx}" y1="${top + 4}" y2="${bot - 4}" stroke="#fff" stroke-opacity=".55" stroke-dasharray="2 4"/>
         <circle cx="${mx}" cy="${my}" r="12" fill="#fff" opacity=".18" class="pulse"/>
@@ -432,22 +434,23 @@ function cycleChart(info, { id = 'cc', compact = false, who = 'You' } = {}) {
       </g>
       <rect class="hit" x="0" y="${top}" width="${W}" height="${bot - top}" fill="transparent"/>
     </svg>
-    <div class="legend ${compact ? 'static' : ''}">${HORMONES.map(h => `<${compact ? 'span' : `button data-action="toggleHormone" data-h="${h.key}"`} class="lg ${ui.hidden[h.key] ? 'off' : ''}"><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="${h.color}" stroke-width="${h.w}" stroke-linecap="round" ${h.dash ? `stroke-dasharray="${h.dash}"` : ''}/></svg>${h.name}</${compact ? 'span' : 'button'}>`).join('')}<span class="lg egg-lg"><span class="egg-dot"></span>Egg release</span></div>
+    <div class="legend ${compact ? 'static' : ''}">${HORMONES.map(h => `<${compact ? 'span' : `button data-action="toggleHormone" data-h="${h.key}"`} class="lg ${ui.hidden[h.key] ? 'off' : ''}"><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="${h.color}" stroke-width="${h.w}" stroke-linecap="round" ${h.dash ? `stroke-dasharray="${h.dash}"` : ''}/></svg>${h.name}</${compact ? 'span' : 'button'}>`).join('')}<span class="lg egg-lg"><svg class="egg-ic" viewBox="-7 -8 14 16" width="12" height="14" aria-hidden="true"><ellipse rx="5" ry="6.4" cy="-.4" fill="#fff" stroke="#c9961a" stroke-width="1.6"/><circle r="2.3" cy=".6" fill="#e8b52c"/></svg>Egg release</span></div>
     <div class="readout" id="${id}-read">${readout(info.cd, L, P, info.cd === cd ? true : false)}</div>
   </div>`;
 }
+// One drawn arrow per level: up for high and peak, flat for moderate, down for low.
+const trArrow = tr => `<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform:rotate(${tr === 'rising' ? -40 : tr === 'falling' ? 40 : 0}deg)"><path d="M2.5 8h11M9 3.5 13.5 8 9 12.5"/></svg>`;
 function readout(cdRaw, L, P, isYou) {
   const cd = Math.min(cdRaw, L);
   const ph = C.phaseFor(cd, L, P), h = C.hormonesRel(cd, L, P), tcm = TCM[ph];
   const rows = HORMONES.map(x => {
-    const tr = C.hormoneTrend(cd, L, P, x.key);
     return `<div class="ro-row"><span class="ro-name"><svg width="16" height="8"><line x1="1" y1="4" x2="15" y2="4" stroke="${x.color}" stroke-width="2.2" stroke-linecap="round" ${x.dash ? `stroke-dasharray="${x.dash}"` : ''}/></svg>${x.name}</span>
       <span class="ro-bar"><b style="width:${Math.round(h[x.key] * 100)}%;background:${x.color}"></b></span>
-      <span class="ro-lvl">${C.hormoneLevel(h[x.key])} <em class="tr ${tr}">${tr === 'rising' ? '↗' : tr === 'falling' ? '↘' : '→'}</em></span></div>`;
+      <span class="ro-lvl">${C.hormoneLevel(h[x.key])} ${(() => { const lv = C.hormoneLevel(h[x.key]), d = /High|Peak/.test(lv) ? 'rising' : lv === 'Low' ? 'falling' : 'steady'; return `<em class="tr ${d}">${trArrow(d)}</em>`; })()}</span></div>`;
   }).join('');
   return `<div class="ro-head"><div class="ro-phase">Day ${cdRaw} · ${PHASES[ph].name}</div></div>
     <div class="ro-rows">${rows}</div>
-    ${(() => { const ov = C.ovulationDay(L, P), d = ov - cd; return `<div class="ro-egg"><span class="egg-dot"></span>${d === 0 ? 'LH surge — egg releasing today' : d === 1 ? 'LH surge — egg release tomorrow' : d > 1 ? `Egg release in ${d} days · day ${ov}` : `Egg released on day ${ov}`}</div>`; })()}`;
+    ${(() => { const ov = C.ovulationDay(L, P), d = ov - cd; return `<div class="ro-egg"><svg class="egg-ic" viewBox="-7 -8 14 16" width="12" height="14" aria-hidden="true"><ellipse rx="5" ry="6.4" cy="-.4" fill="#fff" stroke="#c9961a" stroke-width="1.6"/><circle r="2.3" cy=".6" fill="#e8b52c"/></svg>${d === 0 ? 'LH surge — egg releasing today' : d === 1 ? 'LH surge — egg release tomorrow' : d > 1 ? `Egg release in ${d} days · day ${ov}` : `Egg released on day ${ov}`}</div>`; })()}`;
 }
 function bindCharts() {
   document.querySelectorAll('.cchart').forEach(el => {
