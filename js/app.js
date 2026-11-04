@@ -3773,7 +3773,7 @@ function viewBreathe() {
     <h1 class="bz-title"><small>A minute for you</small>Come back to<em>your breath</em></h1>
     <section class="bz">
       <div class="bz-stage"><i class="bz-guide"></i><i class="bz-halo"></i><i class="bz-rip"></i><i class="bz-rip r2"></i><div class="bz-ball"></div>
-        <div class="bz-txt"><b class="bz-t">You’re safe here</b><small class="bz-s">Soften your shoulders and your jaw</small></div></div>
+        <div class="bz-txt"><b class="bz-t">Let that shi go</b><small class="bz-s">Soften your shoulders and your jaw</small></div></div>
       <div class="bz-n"></div>
       <div class="bz-pal">
         <svg class="bz-pet" viewBox="0 0 120 100" aria-hidden="true"><g class="bz-pet-b">
@@ -3816,7 +3816,7 @@ function mountBreath(el) {
   }
   function stop(done) {
     run = false; cancelAnimationFrame(raf); ball.style.transform = ''; el.dataset.ph = ''; el.style.setProperty('--b', 0);
-    swap(done ? 'So proud of you' : 'You’re safe here', done ? 'Notice how soft you feel now' : 'Soften your shoulders and your jaw', done ? 'You did so well. Let it go.' : 'Stay in the present.');
+    swap(done ? 'So proud of you' : 'Let that shi go', done ? 'Notice how soft you feel now' : 'Soften your shoulders and your jaw', done ? 'You did so well. Let it go.' : 'Stay in the present.');
     cnt.textContent = ''; btn.textContent = done ? 'Again' : 'Start';
   }
   const go = () => { if (run) return stop(false); run = true; btn.textContent = 'Stop'; t0 = performance.now(); raf = requestAnimationFrame(frame); };
@@ -4500,10 +4500,10 @@ function viewRecipe(id) {
 }
 function viewRitual(id) {
   const r = RITUALS.find(x => x.id === id); if (!r) return viewMissing();
-  return `<div class="pad">
+  return `<div class="pad sp2">
     ${specHero({ photo: carePhoto(r.id, 1000), glyph: r.glyph, han: true, eyebrow: 'TCM ritual', name: r.name, label: 'At a glance',
       rows: [[`${r.mins} min`, 'Time'], [!M.info ? `${r.phases.length} phases` : r.phases.includes(M.info.phase) ? 'Good today' : `From ${PHASES[r.phases.find(p => PHASE_ORDER.indexOf(p) > PHASE_ORDER.indexOf(M.info.phase)) || r.phases[0]].name.toLowerCase()}`, 'Your cycle'], [`${r.steps.length} steps`, 'Simple']],
-      lead: `${r.name} — why it helps`, desc: r.why })}
+      lead: 'Why it helps', desc: r.why })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit(r.phases, M.info && M.info.phase)}</section>
     ${sectionTitle('Steps')}
     <section class="card glass">${r.steps.map((s, i) => `<div class="step"><span class="step-n">${i + 1}</span><p>${s}</p></div>`).join('')}</section>
@@ -4515,19 +4515,35 @@ function viewRitual(id) {
 function viewPoint(phase) {
   const t = TCM[phase]; if (!t) return viewMissing();
   const p = t.point;
-  const foot = `
-      ${phase === 'ovulatory'
-        ? `<svg viewBox="0 0 200 140" class="foot"><path d="M55 8 C 48 50, 46 95, 60 132 M145 8 C 152 50, 154 95, 140 132" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/><circle cx="100" cy="52" r="3" fill="none" stroke="rgba(255,255,255,.45)"/><path d="M100 60 V96" stroke="rgba(255,255,255,.18)" stroke-dasharray="3 4"/><circle cx="100" cy="96" r="7" fill="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" class="pulse-p"/></svg>`
-        : `<svg viewBox="0 0 200 140" class="foot"><path d="M60 20 C 40 40, 38 90, 50 120 C 58 135, 95 135, 105 120 C 120 95, 112 60, 100 35 C 92 18, 72 10, 60 20 Z" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
-        <circle cx="${phase === 'luteal' ? 92 : phase === 'ovulatory' ? 78 : phase === 'follicular' ? 58 : 54}" cy="${phase === 'luteal' ? 40 : phase === 'ovulatory' ? 70 : phase === 'follicular' ? 108 : 92}" r="7" fill="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" class="pulse-pt"/></svg>`}`;
-  return `<div class="pad">
+  // Hand-drawn where-to-press maps: inner ankle (SP6, KI3), lower belly (CV4), top of the foot (LV3).
+  const ink = 'fill="#fdf0f3" stroke="#304023" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"';
+  const dot = (x, y) => `<circle cx="${x}" cy="${y}" r="13" class="pt-ring"/><circle cx="${x}" cy="${y}" r="6.5" class="pt-dot"/>`;
+  const fingers = (x, y0, y1, w = 22) => Array.from({ length: 4 }, (_, i) => { const y = y0 + (y1 - y0) * (i + .5) / 4; return `<rect x="${x - w / 2}" y="${y - (y1 - y0) / 8 + 1.5}" width="${w}" height="${(y1 - y0) / 4 - 3}" rx="${(y1 - y0) / 8 - 1.5}" class="pt-fg"/>`; }).join('');
+  const ankle = `<path d="M70 4 C 72 40, 74 70, 78 96 C 66 108, 44 116, 26 122 C 16 126, 16 140, 30 141 L 132 141 C 146 141, 150 128, 140 110 C 132 96, 128 60, 130 4" ${ink}/>
+      <path d="M36 141 c 0 -6 6 -9 12 -9 M50 141 c 0 -5 5 -8 10 -8" fill="none" stroke="#304023" stroke-width="1.6" stroke-linecap="round" opacity=".5"/>
+      <ellipse cx="106" cy="104" rx="9" ry="7.5" fill="#f6dbe3" stroke="#304023" stroke-width="1.8"/>`;
+  const art = {
+    menstrual: `${ankle}${fingers(88, 52, 96, 20)}${dot(88, 48)}<text x="146" y="44" class="pt-lab">SP6</text><text x="146" y="60" class="pt-sub">4 fingers</text><text x="146" y="73" class="pt-sub">above</text>`,
+    follicular: `${ankle}${dot(124, 104)}<text x="146" y="64" class="pt-lab">KI3</text><text x="146" y="80" class="pt-sub">ankle</text><text x="146" y="93" class="pt-sub">hollow</text>`,
+    ovulatory: `<path d="M48 4 C 40 40, 44 80, 54 146 M152 4 C 160 40, 156 80, 146 146" fill="none" stroke="#304023" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M50 4 C 42 40, 46 80, 56 146 L 144 146 C 154 80, 158 40, 150 4 Z" fill="#fdf0f3"/>
+      <path d="M48 4 C 40 40, 44 80, 54 146 M152 4 C 160 40, 156 80, 146 146" fill="none" stroke="#304023" stroke-width="2.4" stroke-linecap="round"/>
+      <ellipse cx="100" cy="38" rx="3.2" ry="4.2" fill="#f6dbe3" stroke="#304023" stroke-width="2"/><text x="112" y="34" class="pt-sub">navel</text>
+      ${fingers(100, 46, 96, 30)}${dot(100, 104)}<text x="166" y="100" class="pt-lab">CV4</text>`,
+    luteal: `${[[73, 24, 11, 15], [96, 19, 7, 10], [112, 24, 6.5, 9], [126, 33, 6, 8], [138, 45, 5, 7]].map(([x, y, rx, ry]) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" ${ink}/>`).join('')}
+      <path d="M66 148 C 58 110, 52 72, 58 44 C 62 34, 84 34, 96 34 C 112 34, 140 46, 146 62 C 150 90, 140 122, 134 148 Z" ${ink}/>
+      <path d="M77 42 C 79 60, 81 76, 84 92 M98 38 C 97 58, 96 76, 95 92" fill="none" stroke="#304023" stroke-width="1.5" stroke-linecap="round" opacity=".35"/>
+      ${dot(89, 62)}<text x="154" y="72" class="pt-lab">LV3</text><text x="154" y="88" class="pt-sub">toe-bone</text><text x="154" y="101" class="pt-sub">dip</text>`,
+  };
+  const foot = `<svg viewBox="0 0 200 150" class="foot pt-art" role="img" aria-label="Where to press ${p.code}">${art[phase]}</svg>`;
+  return `<div class="pad sp2">
     ${specHero({ glyph: '穴', han: true, eyebrow: `Acupressure · ${t.stage}`, name: `${p.code} · ${p.name}`, label: 'Key facts',
       rows: [[`${p.secs} s`, 'Press time'], [phase === 'ovulatory' ? 'One point' : 'Both sides', 'Where'], [t.organ, 'Organ']], lead: `${p.name} · what it does`, desc: p.does })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit([phase], M.info && M.info.phase)}</section>
     ${sectionTitle('Where to press')}
     <section class="card card-light pt-where"><div class="pt-foot">${foot}</div><p class="dp-text">${p.where}</p></section>
     ${sectionTitle('How to press')}
-    <section class="card glass"><div class="step"><span class="step-n">1</span><p>Find the point — it often feels slightly tender.</p></div>
+    <section class="card glass"><div class="step"><span class="step-n">1</span><p>Find the point. It often feels a little tender.</p></div>
       <div class="step"><span class="step-n">2</span><p>${phase === 'ovulatory' ? 'Rest two fingertips on it and make slow small circles.' : 'Press firmly with your thumb, making slow small circles.'}</p></div>
       <div class="step"><span class="step-n">3</span><p>${phase === 'ovulatory' ? 'Keep the pressure gentle and breathe slowly into your belly. It sits on the midline, so there is only one.' : 'Breathe slowly into your belly. Repeat on the other side.'}</p></div></section>
     <button class="btn btn-light btn-block" data-action="timer" data-title="${p.code} · ${p.name}" data-secs="${p.secs}">${icon('play', 16)} Press for ${p.secs} seconds</button>
