@@ -1296,6 +1296,7 @@ function calSyncCard() {
 
 const LOG_SECS = [['flow', 'drop', 'Period & down there'], ['body', 'user', 'Body'], ['mind', 'mind', 'Mind & mood'], ['rest', 'bolt', 'Energy & sleep'],
   ['desire', 'heart', 'Desire & intimacy'], ['fuel', 'bowl', 'Food & supplements'], ['disrupt', 'clock', 'Cycle disruptors'], ['note', 'book', 'Note']];
+const LOG_DRIVE = [['1', '🌙', 'Low'], ['3', '🌷', 'Medium'], ['5', '🔥', 'High']];
 const SLIDER_WORDS = { body: ['Rough', 'Meh', 'Okay', 'Good', 'Great'], mind: ['Heavy', 'Low', 'Okay', 'Good', 'Light'], drive: ['None', 'Low', 'Medium', 'High', 'On fire'] };
 function logSlider(field, q, l) {
   const v = l[field], set = v != null;
@@ -1337,14 +1338,14 @@ function viewLog() {
   const k = ui.logDate || todayISO(), d = C.parseISO(k), l = getLog(k);
   const isToday = k === todayISO(), di = M.stats ? C.dayInfo(d, M.stats) : null;
   const open = ui.logOpen = ui.logOpen || { flow: 1, body: 1 };
-  const chips = (field, list, multi = true) => `<div class="lg-chips">${list.map(([v, e]) => {
-    const on = multi ? (l[field] || []).includes(v) : l[field] === v;
-    return `<button class="lg-chip ${on ? 'on' : ''}" data-action="logSet" data-field="${field}" data-v="${esc(v)}" data-multi="${multi ? 1 : ''}">${esc(v)}</button>`;
+  const chips = (field, list, multi = true) => `<div class="lg-chips">${list.map(([v, e, lab]) => {
+    const on = multi ? (l[field] || []).includes(v) : String(l[field]) === v;
+    return `<button class="lg-chip lg-tile ${on ? 'on' : ''}" data-action="logSet" data-field="${field}" data-v="${esc(v)}" data-multi="${multi ? 1 : ''}" aria-pressed="${on}"><span class="lt-e" aria-hidden="true">${e}</span><small>${esc(lab || v)}</small></button>`;
   }).join('')}</div>`;
   const has = f => (l[f] || []).length;
   const count = {
     flow: (l.flow ? 1 : 0) + (l.fluid ? 1 : 0) + has('down'),
-    body: (l.body ? 1 : 0) + has('symptoms'), mind: (l.mind ? 1 : 0) + has('moods'), rest: (l.energy ? 1 : 0) + (l.sleep != null ? 1 : 0),
+    body: has('symptoms'), mind: has('moods'), rest: (l.energy ? 1 : 0) + (l.sleep != null ? 1 : 0),
     desire: (l.drive ? 1 : 0) + has('intim'), fuel: has('intake') + has('supp'), disrupt: has('disrupt'), note: l.notes ? 1 : 0,
   };
   const inner = {
@@ -1353,18 +1354,17 @@ function viewLog() {
         <span class="drops">${f.drops ? Array.from({ length: f.drops }, () => icon('drop', 15, 1.4)).join('') : '<i class="spot"></i>'}</span>${f.label}</button>`).join('')}</div>
       <div class="lg-k">Discharge</div>${chips('fluid', DISCHARGE, false)}
       <div class="lg-k">Anything else</div>${chips('down', DOWN_EXTRA)}`,
-    body: `${logSlider('body', 'How does your body feel?', l)}
-      ${BODY_GROUPS.map(([g, list]) => `<div class="lg-k">${g}</div>${chips('symptoms', list)}`).join('')}`,
-    mind: `${logSlider('mind', 'How do you feel inside?', l)}<div class="lg-k">Moods</div>${chips('moods', MOOD_LIST)}`,
+    body: `${BODY_GROUPS.map(([g, list]) => `<div class="lg-k">${g}</div>${chips('symptoms', list)}`).join('')}`,
+    mind: `${chips('moods', MOOD_LIST)}`,
     rest: `<div class="lg-k">Energy</div>
       <div class="energy-pick">${[1, 2, 3, 4, 5].map(n => `<button class="${l.energy >= n ? 'on' : ''}" data-action="logSet" data-field="energy" data-v="${n}"><b style="height:${30 + n * 12}%"></b></button>`).join('')}</div>
       <div class="ep-labels"><span>Drained</span><span>Radiant</span></div>
       <div class="lg-k">Sleep last night</div>
       <div class="lg-sleep"><button data-action="logSleep" data-d="-0.5" aria-label="Less sleep">−</button><b>${l.sleep != null ? l.sleep : '–'}<small>hours</small></b><button data-action="logSleep" data-d="0.5" aria-label="More sleep">+</button></div>`,
-    desire: `${logSlider('drive', 'Sex drive', l)}<div class="lg-k">Today</div>${chips('intim', INTIMACY)}
+    desire: `<div class="lg-k">Sex drive</div>${chips('drive', LOG_DRIVE, false)}<div class="lg-k">Sex today</div>${chips('intim', INTIMACY.filter(([n]) => n.startsWith('Sex,')))}
       <p class="lg-fine">Private: only you see this. It’s never shared with partners.</p>`,
-    fuel: `<div class="lg-k">Today I had</div>${chips('intake', INTAKE)}<div class="lg-k">Supplements & medicine <button class="link lg-more" data-action="nav" data-to="nutrients">Doses & food first ${icon('chevR', 11)}</button></div>${chips('supp', SUPPS)}`,
-    disrupt: `<p class="lg-fine top">Things that can shift ovulation or your next period. Logging them helps me read your cycle right.</p>${chips('disrupt', DISRUPTORS)}`,
+    fuel: `<div class="lg-k">Food</div>${chips('intake', INTAKE.filter(([n]) => n === 'Raw & cold food'))}<div class="lg-k">Supplements & medicine <button class="link lg-more" data-action="nav" data-to="nutrients">Doses & food first ${icon('chevR', 11)}</button></div>${chips('supp', SUPPS)}`,
+    disrupt: `<p class="lg-fine top">Things that can shift ovulation or your next period. Logging them helps me read your cycle right.</p>${chips('disrupt', DISRUPTORS.filter(([n]) => ['Alcohol', 'Illness', 'Travel', 'Big stress', 'Shock or loss'].includes(n)))}`,
     note: `<textarea class="lg-note" rows="3" placeholder="Anything you want to remember about today…" data-input="log.notes">${esc(l.notes || '')}</textarea>`,
   };
   const total = Object.values(count).reduce((a, b) => a + b, 0);
@@ -5183,7 +5183,7 @@ const actions = {
   logSec: d => { const o = ui.logOpen = ui.logOpen || {}; o[d.s] = !o[d.s]; render(); },
   logSet: d => {
     const k = ui.logDate || todayISO(), l = getLog(k);
-    let v = d.field === 'energy' ? +d.v : d.v;
+    let v = d.field === 'energy' || d.field === 'drive' ? +d.v : d.v;
     if (d.multi) { const a = [...(l[d.field] || [])]; const i = a.indexOf(v); i < 0 ? a.push(v) : a.splice(i, 1); v = a; }
     else if (l[d.field] === v) v = null;
     setLog(k, { [d.field]: v }); render();
