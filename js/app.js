@@ -880,7 +880,7 @@ function viewOnboarding() {
   if (s === 0) {
     return `<div class="onb onb-welcome full dark beyond">
       <canvas class="welcome3d"></canvas>
-      <div class="bw-vignette"></div>
+      <div class="bw-vignette"></div>${sndBtn('float')}
       <div class="welcome-ui">
         <div class="bw-title-wrap"><span class="orn-l"><svg class="orn" viewBox="0 0 120 90" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
 <path d="M118 60 C96 62 84 52 74 40 C64 28 50 22 38 28 C26 34 28 50 40 50 C50 50 50 38 42 38"/>
@@ -954,7 +954,7 @@ function viewOnboarding() {
   const flash = ui.flashOut ? '<div class="flash-out"></div>' : ''; ui.flashOut = false;
   const anim = ui.onbAnim || ''; ui.onbAnim = '';
   return `<div class="onb no-fig step-${s} ${anim}">${flash}
-    <div class="onb-top"><button class="icon-btn dark" data-action="onbBack">${icon('chevL', 22)}</button>${dots}<span style="width:40px"></span></div>
+    <div class="onb-top"><button class="icon-btn dark" data-action="onbBack">${icon('chevL', 22)}</button>${dots}${sndBtn()}</div>
     <div class="onb-body">${body}</div>
     <div class="onb-foot">
       <button class="pearl-btn wide" data-action="onbNext" ${s === 1 && !o.name.trim() ? 'disabled' : ''}><span>${s === 10 ? 'Start my 3 free days' : s === 8 ? 'See my plan' : 'Continue'}</span></button>
@@ -4231,6 +4231,10 @@ function readPhoto(file) {
   });
 }
 // rain and birds under the onboarding: sound may only start after her first touch
+// Sound on / off for the intro (rain, birds and air), remembered on this phone.
+const sndMuted = () => { try { return localStorage.getItem('uts.sound') === 'off'; } catch (e) { return false; } };
+const sndBtn = cls => `<button class="icon-btn dark snd-btn ${cls || ''}" data-action="sound" aria-pressed="${sndMuted()}" aria-label="${sndMuted() ? 'Sound on' : 'Sound off'}">${sndIcon(sndMuted())}</button>`;
+const sndIcon = off => `<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/>${off ? '<path d="m16 9.5 5 5m0-5-5 5"/>' : '<path d="M16 9a4.5 4.5 0 0 1 0 6M18.6 6.5a8 8 0 0 1 0 11"/>'}</svg>`;
 const ambience = on => import('./sfx.js').then(S => S.ambience(on)).catch(() => {});
 document.addEventListener('pointerdown', () => { if (!state?.onboarded) ambience(true); });
 // Return in the gate's password field creates the account (or signs in) right there
@@ -4418,7 +4422,7 @@ function viewGate() {
   const anim = ui.onbAnim || ''; ui.onbAnim = '';
   const f = true, si = ui.acMode === 'signin'; // sign up / sign in are visible right away
   return `<div class="onb no-fig gate ${anim} ${f ? 'form-on' : ''} ${si ? 'mode-signin' : ''}">${flash}
-    <div class="onb-top"><button class="icon-btn dark" data-action="onbBack" aria-label="Back">${icon('chevL', 22)}</button><button class="link gate-signin" data-action="gateSignIn">Already have an account? <u>Sign in</u></button></div>
+    <div class="onb-top"><button class="icon-btn dark" data-action="onbBack" aria-label="Back">${icon('chevL', 22)}</button><button class="link gate-signin" data-action="gateSignIn">Already have an account? <u>Sign in</u></button>${sndBtn()}</div>
     <div class="gate-photo" aria-hidden="true"><img src="images/gate-rose.webp" alt="" decoding="async"></div>
     <h2 class="onb-title">Keep your cycle <span>safe with you</span></h2>
     <p class="gate-lead">A free account saves every period, symptom and note, and brings them back on any new phone.</p>
@@ -4629,6 +4633,12 @@ const actions = {
     w.enter(1.05).then(() => { ui.flashOut = true; actions.onbNext(d); });
   },
   onbUnsure: () => { ui.onb.unsure = !ui.onb.unsure; if (ui.onb.unsure) ui.onb.cycleLength = 28; render(); },
+  sound: (d, el) => {
+    const off = !sndMuted();
+    import('./sfx.js').then(S => S.setMuted(off)).catch(() => {});
+    try { localStorage.setItem('uts.sound', off ? 'off' : 'on'); } catch (e) {}
+    document.querySelectorAll('.snd-btn').forEach(b => { b.innerHTML = sndIcon(off); b.setAttribute('aria-pressed', off); b.setAttribute('aria-label', off ? 'Sound on' : 'Sound off'); });
+  },
   onbNext: () => {
     if (ui.onbStep === 6 && !ui.onb.bc) { toast('Pick one, so we can tailor your plan'); return; }
     if (ui.onbStep < 10) { ui.onbStep += ui.onbStep === 4 && ui.onb.noPeriod ? 2 : 1; ui.onbAnim = 'fwd'; render(); window.scrollTo(0, 0); return; }

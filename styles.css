@@ -5260,3 +5260,8 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .o9-j:nth-child(7n+5) { --jc: #3d7fa6; --jb: #e2eff7; }
 .o9-j:nth-child(7n+6) { --jc: #c46a3d; --jb: #fbe8dc; }
 .o9-j:nth-child(7n+7) { --jc: #3f8a6a; --jb: #ddf1e8; }
+/* sound on / off: a small glass button top right of the intro */
+.snd-btn { width: 40px; height: 40px; flex: none; display: grid; place-items: center; }
+.snd-btn.float { position: absolute; z-index: 5; top: calc(env(safe-area-inset-top, 0px) + 14px); right: 16px; border-radius: 50%;
+  background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.65); color: #fff; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.snd-btn[aria-pressed="true"] { opacity: .8; }

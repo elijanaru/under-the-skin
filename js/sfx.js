@@ -5,6 +5,14 @@ function ac() {
   if (ctx.state === 'suspended') ctx.resume();
   return ctx;
 }
+// One master volume for every sound, so a single tap mutes them all (remembered on this phone).
+let master = null, muted = (() => { try { return localStorage.getItem('uts.sound') === 'off'; } catch { return false; } })();
+function out(c) { if (!master) { master = c.createGain(); master.gain.value = muted ? 0 : 1; master.connect(c.destination); } return master; }
+export const isMuted = () => muted;
+export function setMuted(m) {
+  muted = !!m; try { localStorage.setItem('uts.sound', muted ? 'off' : 'on'); } catch {}
+  if (master && ctx) { const t = ctx.currentTime; master.gain.cancelScheduledValues(t); master.gain.setValueAtTime(master.gain.value, t); master.gain.linearRampToValueAtTime(muted ? 0 : 1, t + .4); }
+}
 function noise(c, secs) {
   const b = c.createBuffer(1, Math.ceil(c.sampleRate * secs), c.sampleRate), d = b.getChannelData(0);
   for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
@@ -20,13 +28,13 @@ export function whoosh({ dur = 1.6, vol = 0.5, from = 300, to = 3200, boom = fal
   g.gain.exponentialRampToValueAtTime(vol, t + dur * 0.6); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   const pan = c.createStereoPanner ? c.createStereoPanner() : null;
   if (pan) { pan.pan.setValueAtTime(-0.5, t); pan.pan.linearRampToValueAtTime(0.5, t + dur); }
-  src.connect(bp); bp.connect(g); (pan ? (g.connect(pan), pan) : g).connect(c.destination);
+  src.connect(bp); bp.connect(g); (pan ? (g.connect(pan), pan) : g).connect(out(c));
   src.start(t); src.stop(t + dur + 0.2);
   if (boom) { // soft low swell under the whoosh
     const o = c.createOscillator(), og = c.createGain(); o.type = 'sine';
     o.frequency.setValueAtTime(90, t + dur * 0.55); o.frequency.exponentialRampToValueAtTime(38, t + dur + 0.6);
     og.gain.setValueAtTime(0.0001, t + dur * 0.5); og.gain.exponentialRampToValueAtTime(vol * 0.9, t + dur * 0.7); og.gain.exponentialRampToValueAtTime(0.0001, t + dur + 0.8);
-    o.connect(og); og.connect(c.destination); o.start(t + dur * 0.5); o.stop(t + dur + 0.9);
+    o.connect(og); og.connect(out(c)); o.start(t + dur * 0.5); o.stop(t + dur + 0.9);
   }
   return c.state === 'running';
 }
@@ -39,14 +47,14 @@ export function chime({ vol = 0.12 } = {}) {
   [[1318.5, 0], [1975.5, 0.06]].forEach(([f, d]) => {
     const o = c.createOscillator(), g = c.createGain(); o.type = 'sine'; o.frequency.value = f;
     g.gain.setValueAtTime(0.0001, t + d); g.gain.exponentialRampToValueAtTime(vol, t + d + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + d + 0.6);
-    o.connect(g); g.connect(c.destination); o.start(t + d); o.stop(t + d + 0.65);
+    o.connect(g); g.connect(out(c)); o.start(t + d); o.stop(t + d + 0.65);
   });
 }
 // Very soft, warm bell for button presses: a mellow sine with a gentle octave and a quiet airy breath.
 export function soft({ vol = 0.09 } = {}) {
   const c = ac(); if (!c) return;
   const t = c.currentTime, out = c.createGain(), lp = c.createBiquadFilter();
-  lp.type = 'lowpass'; lp.frequency.value = 2400; out.gain.value = 1; out.connect(lp); lp.connect(c.destination);
+  lp.type = 'lowpass'; lp.frequency.value = 2400; out.gain.value = 1; out.connect(lp); lp.connect(out(c));
   [[523.25, 1], [1046.5, .35], [783.99, .25]].forEach(([f, a], i) => {
     const o = c.createOscillator(), g = c.createGain(); o.type = 'sine'; o.frequency.value = f;
     g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol * a, t + 0.02 + i * .01); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.4);
@@ -72,13 +80,13 @@ export function breeze({ dur = 3.2, vol = 0.22, bright = 1 } = {}) {
   lp.frequency.linearRampToValueAtTime(1900 * bright, t + dur * .75); lp.frequency.linearRampToValueAtTime(600, t + dur);
   g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + dur * .4);
   g.gain.setTargetAtTime(vol * .7, t + dur * .55, .3); g.gain.exponentialRampToValueAtTime(0.0001, t + dur + .2);
-  src.connect(hp); hp.connect(lp); lp.connect(g); g.connect(c.destination); src.start(t); src.stop(t + dur + .3);
+  src.connect(hp); hp.connect(lp); lp.connect(g); g.connect(out(c)); src.start(t); src.stop(t + dur + .3);
   return c.state === 'running';
 }
 // A soft bowl / wind-chime tone: sine partials with a slow shimmer and a long natural decay.
 export function bowl({ notes = [523.25], gap = .18, vol = 0.07, decay = 3.2, delay = 0 } = {}) {
   const c = ac(); if (!c) return;
-  const t0 = c.currentTime + delay, lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 3200; lp.connect(c.destination);
+  const t0 = c.currentTime + delay, lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 3200; lp.connect(out(c));
   notes.forEach((f, n) => {
     const t = t0 + n * gap;
     [[1, 1], [2.01, .28], [2.76, .12]].forEach(([m, a]) => {
@@ -101,7 +109,7 @@ export function ambience(on, { vol = .32, fade = on ? 2.5 : 3.5 } = {}) {
   if (on && !amb) {
     if (!ambLoading) ambLoading = fetch('sounds/forest-rain.m4a').then(r => r.arrayBuffer()).then(b => c.decodeAudioData(b)).then(buf => {
       const src = c.createBufferSource(), g = c.createGain(); src.buffer = buf; src.loop = true; g.gain.value = 0.0001;
-      src.connect(g); g.connect(c.destination); src.start(); amb = { src, g }; ambLoading = null; ambience(ambWant, { vol });
+      src.connect(g); g.connect(out(c)); src.start(); amb = { src, g }; ambLoading = null; ambience(ambWant, { vol });
     }).catch(() => { ambLoading = null; });
     return;
   }
