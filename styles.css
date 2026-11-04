@@ -5502,3 +5502,13 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .rh-scene svg { display: block; }
 .rh-art-ic { display: grid; place-items: center; width: 38px; height: 38px; flex: none; border-radius: 50%; color: #ffd27a;
   background: radial-gradient(circle at 50% 35%, rgba(255,210,122,.24), rgba(255,210,122,.06)); border: 1px solid rgba(255,210,122,.35); }
+/* seasonal food tiles: white titles on a soft dark fade for contrast */
+.sz-shade { background: linear-gradient(180deg, rgba(0,0,0,0) 38%, rgba(20,24,14,.28) 62%, rgba(20,24,14,.68) 100%) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,0.3); }
+.sz-b b { color: #fff !important; text-shadow: 0 1px 8px rgba(0,0,0,.35) !important; }
+.sz-b small { color: rgba(255,255,255,.92) !important; }
+/* photo cards (recipes, rituals, reads): white titles on a soft dark fade */
+.rcard.has-photo .rc-shade { background: linear-gradient(180deg, rgba(20,24,14,.32) 0%, rgba(20,24,14,0) 30%, rgba(20,24,14,0) 45%, rgba(20,24,14,.38) 68%, rgba(20,24,14,.74) 100%) !important; }
+.rcard.has-photo :is(.rc-t, .rc-k) { color: #fff !important; text-shadow: 0 1px 8px rgba(0,0,0,.35) !important; }
+.rcard.has-photo .rc-m { color: rgba(255,255,255,.88) !important; }
+.rcard.has-photo .rc-go { color: #fff; border-color: rgba(255,255,255,.55); background: rgba(255,255,255,.16); }
+.rcard.has-photo .rc-glyph { color: rgba(255,255,255,.7) !important; }
