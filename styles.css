@@ -5886,21 +5886,21 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 
 /* Tea hero: today's tea as a turning 3D cup in pearl light (falls back to the photo) */
 .tg-studio, .teacup3d { display: none; }
-.tg-3d .tg-studio { display: block; position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s ease;
+.tg-3d .tg-studio { display: block; position: absolute; inset: 0;
   background: radial-gradient(70% 46% at 50% 40%, #fff 0%, rgba(255,255,255,0) 70%),
     radial-gradient(60% 40% at 18% 96%, hsl(calc(var(--hb) + 330 * var(--hk)) calc(70% * var(--hs)) 86% / .9), transparent 70%),
     radial-gradient(55% 38% at 86% 92%, hsl(calc(var(--hb) + 80 * var(--hk)) calc(42% * var(--hs)) 84% / .85), transparent 70%),
     linear-gradient(180deg, #fbf7f8 0%, #f4ebee 100%); }
 .tg-3d .teacup3d { display: block; position: absolute; left: 0; right: 0; top: 60px; width: 100%; height: 330px; touch-action: none; cursor: grab; opacity: 0; transform: translateY(14px); transition: opacity 1.2s ease, transform 1.6s cubic-bezier(.16,1,.3,1); }
-.tg-ready .tg-studio, .tg-ready .teacup3d { opacity: 1; transform: none; }
-.tg-ready > img, .tg-ready .tg-shade { opacity: 0; transition: opacity 1.2s ease; }
-.tg-ready .tg-copy { color: #304023; }
-.tg-ready .tg-copy small { color: #8a5266; }
-.tg-ready .tg-copy h1 { color: #20301a !important; -webkit-text-fill-color: #20301a !important; }
-.tg-ready .tg-copy p { color: #4a5a3a; }
-.tg-ready .tg-chips span { background: rgba(255,255,255,.8); color: #304023; border-color: rgba(48,64,35,.12); }
-.tg-ready .tg-cta { background: #304023; color: #fff; }
-.tg-ready .spec-btn { background: rgba(255,255,255,.85); color: #304023; }
+.tg-ready .teacup3d { opacity: 1; transform: none; }
+.tg-3d > img, .tg-3d .tg-shade { display: none; }
+.tg-3d .tg-copy { color: #304023; }
+.tg-3d .tg-copy small { color: #8a5266; }
+.tg-3d .tg-copy h1 { color: #20301a !important; -webkit-text-fill-color: #20301a !important; }
+.tg-3d .tg-copy p { color: #4a5a3a; }
+.tg-3d .tg-chips span { background: rgba(255,255,255,.8); color: #304023; border-color: rgba(48,64,35,.12); }
+.tg-3d .tg-cta { background: #304023; color: #fff; }
+.tg-3d .spec-btn { background: rgba(255,255,255,.85); color: #304023; }
 @media (prefers-reduced-motion: reduce) { .tg-3d .teacup3d, .tg-3d .tg-studio { transition: none; } }
 
 /* Check-in: a tea for what she logged */
@@ -5914,5 +5914,5 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .lt-t em { display: block; font-style: normal; font-size: 12.5px; line-height: 1.4; color: #4a5a3a; }
 .lt-t > .ic { color: #8c9768; }
 @media (prefers-reduced-motion: reduce) { .lt-card { animation: none; } }
-.tg-hero.tg-ready { height: 600px; }
-.tg-ready .teacup3d { top: 56px; height: 320px; }
+.tg-hero.tg-3d { height: 600px; }
+.tg-3d .teacup3d { top: 56px; height: 320px; }

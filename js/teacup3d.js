@@ -75,7 +75,7 @@ export function mountTeaCup(canvas, { onReady, onFail } = {}) {
   const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; }); io.observe(canvas);
 
   // drag sideways to turn the cup, up and down to look over the rim into the drink
-  let drag = null, dragY = 0, spin = 0, vel = 0, elev = 0.3, elevT = 0.3;
+  let drag = null, dragY = 0, spin = 0, vel = 0, elev = 0.62, elevT = 0.62; // a little from above, so the tea shows
   const down = e => { drag = e.clientX; dragY = e.clientY; canvas.setPointerCapture?.(e.pointerId); };
   const move = e => {
     if (drag == null) return; const d = (e.clientX - drag) * 0.012; drag = e.clientX; spin += d; vel = d;
