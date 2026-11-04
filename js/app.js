@@ -3216,8 +3216,6 @@ function viewTeaItem(id) {
     ${P.length ? `<section class="card glass tea-fit">
       <div class="tf-k">Best in your cycle</div>
       ${phaseFit(best, ph)}
-      <div class="tf-k">Nature in Chinese medicine</div>
-      <div class="tf-temp"><div class="tf-bar">${TEMPS.map(x => `<span class="${x === temp ? 'on' : ''}">${x}</span>`).join('')}</div><small>${[...new Set(P.flatMap(p => p.o.split(' · ')))].join(' · ')}</small></div>
       ${cold && nearBleed ? `<p class="tea-warn">${icon('spark', 12)} Cooling in Chinese medicine. Around your period drink it hot and add a slice of ginger.</p>` : ''}
     </section>` : ''}
     ${sectionTitle('How to make it')}
