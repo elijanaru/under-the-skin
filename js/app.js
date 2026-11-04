@@ -3883,13 +3883,13 @@ function viewPartners(id) {
     ${ps.length >= 4 ? '<p class="fine center">You’re connected with 4 people, the most Underskin keeps. Remove someone to add a new person.</p>' : ''}
     ${ps.length >= 4 ? '' : (() => { const sent = !!me.linkSent, got = ps.length > 0, who = me.ptWho, done = () => `<span class="sy-n done">${icon('check', 15, 2.4)}</span>`;
       const ask = `<div class="sy-who-q"><b>Who is your partner?</b><small>So we send the right kind of link.</small>
-        <div class="sy-pick">${[['w', 'A woman', 'She tracks her own cycle too and you see each other'], ['m', 'A man', 'He just sees your rhythm. Nothing for him to track']].map(([k, t, d]) => `<button class="sy-opt ${who === k ? 'on' : ''}" data-action="ptWho" data-v="${k}" aria-pressed="${who === k}"><b>${t}</b><small>${d}</small></button>`).join('')}</div></div>`;
+        <div class="sy-pick">${[['w', 'A woman', 'She tracks her own cycle too and you see each other'], ['m', 'A man', 'He sees your rhythm, plus his own 24-hour day. Nothing to track']].map(([k, t, d]) => `<button class="sy-opt ${who === k ? 'on' : ''}" data-action="ptWho" data-v="${k}" aria-pressed="${who === k}"><b>${t}</b><small>${d}</small></button>`).join('')}</div></div>`;
       const send = who ? `<div class="sy-send"><button class="btn btn-dark" data-action="shareSend">${icon('share', 16)} Send link</button><button class="btn btn-light" data-action="shareEmail">${icon('mail', 16)} Email it</button></div>` : '';
       if (who === 'm') return `<div class="sy-head"><span class="hud">CONNECT · 2 STEPS</span><span class="sy-prog">${[sent, sent].map(x => `<i class="${x ? 'on' : ''}"></i>`).join('')}</span></div>
     <ol class="sy-flow">
       <li class="sy-st paper ${sent ? 'is-done' : ''}">${sent ? done() : '<span class="sy-n">01</span>'}<div class="sy-c">${ask}${send}</div></li>
       <li class="sy-st ${sent ? 'is-done' : ''}">${sent ? done() : '<span class="sy-n">02</span>'}<div class="sy-c">
-        <span class="sy-who">Him</span><b>He opens the link</b><small>No account and no tracking. He sees your phase, energy and how to show up, and it updates every day. He can save it to his home screen.</small></div></li>
+        <span class="sy-who">Him</span><b>He opens the link</b><small>No account and no tracking. He sees your phase, energy and how to show up, plus My day: his own 24-hour hormone rhythm. It updates every day and he can save it to his home screen.</small></div></li>
     </ol>`;
       return `<div class="sy-head"><span class="hud">${ps.length ? 'ADD SOMEONE NEW' : 'CONNECT · 2 STEPS'}</span><span class="sy-prog">${[sent, got].map(x => `<i class="${x ? 'on' : ''}"></i>`).join('')}</span></div>
     <ol class="sy-flow">
@@ -4598,6 +4598,42 @@ function partnerCare(info, name) {
     <div class="hscroll pt-eat">${foods.map(([f, why]) => `<div class="pte"><img src="${foodPhoto(f, 300)}" alt="" loading="lazy"><b>${esc(f)}</b><small>For ${why.toLowerCase()}</small></div>`).join('')}</div>
     ${warm ? `<p class="fine pt-warm">${icon('thermo', 13)} Serve it warm and cooked these days. No iced drinks or cold raw food.</p>` : ''}`;
 }
+// ---- His day: men run on a 24-hour hormone rhythm. A small page for the man she shares her link with. ----
+const HIS_BLOCKS = [
+  [0, 3, 'Peak drive', 'Testosterone is at its highest after waking. Best for hard training, hard thinking and big decisions.', 'bolt'],
+  [3, 7, 'Steady focus', 'Calm, clear and productive. Good for deep work, meetings and getting things done.', 'chart'],
+  [7, 11, 'Strongest body', 'Body temperature peaks in the late afternoon, so strength, speed and sport usually feel best now.', 'dumbbell'],
+  [11, 15, 'Wind down', 'Testosterone is lower and you’re calmer and more open. The best time for her, for talks and for cooking together.', 'heart'],
+  [15, 24, 'Rebuild', 'Sleep. Most of your testosterone is made in deep sleep, so 7 to 9 hours keeps your drive high tomorrow.', 'moon'],
+];
+const HIS_SCIENCE = [
+  { t: 'A daily rise and fall', s: 'In healthy men, testosterone is highest in the morning and lowest in the evening. The swing is largest in younger men and gets smaller with age.', c: 'Brambilla et al. 2009, Journal of Clinical Endocrinology & Metabolism', ev: 'strong' },
+  { t: 'Sleep builds it', s: 'Young men who slept 5 hours a night for one week had 10 to 15% lower daytime testosterone.', c: 'Leproult & Van Cauter 2011, JAMA', ev: 'some' },
+  { t: 'Late afternoon strength', s: 'Strength and power tend to peak in the late afternoon, when body temperature is highest.', c: 'Atkinson & Reilly 1996, Sports Medicine', ev: 'some' },
+];
+function hisWake() { try { return +localStorage.getItem('uts.wake') || 7; } catch { return 7; } }
+function hisDay(info, name) {
+  const w = hisWake(), h = nowH(), since = ((h - w) % 24 + 24) % 24, b = HIS_BLOCKS.find(x => since >= x[0] && since < x[1]);
+  const tAt = t => .5 + .42 * Math.cos(2 * Math.PI * (t - 1) / 24); // hours since waking, peak about an hour after waking
+  const W = 320, H = 110, X = t => 8 + t / 24 * (W - 16), Y = v => H - 22 - v * (H - 40);
+  let d = ''; for (let t = 0; t <= 24; t += .25) d += `${d ? 'L' : 'M'}${X(t).toFixed(1)} ${Y(tAt(t)).toFixed(1)}`;
+  const bands = HIS_BLOCKS.map(([a, z, n], i) => `<rect x="${X(a)}" y="6" width="${X(z) - X(a)}" height="${H - 26}" rx="8" fill="${['#efd4dd', '#f5f0e6', '#e3ecc9', '#f3e2ea', '#e6e4f2'][i]}" opacity=".7"/>`).join('');
+  const her = C.energyAt(info.cd, info.L, info.P), low = info.isPeriod || info.cd > info.L - 4;
+  const together = low ? `${name}'s energy is low this week. Use your morning drive for the jobs, then bring her your calm evening: warm food, no big plans.`
+    : her > .7 ? `You're both full of energy. Plan something active together in your late afternoon, when your body is strongest.`
+    : `${name} is steady and focused. Keep evenings easy and save the big plans for when her energy rises.`;
+  return `<section class="card his-now"><div class="hn-top"><span class="hn-ic">${icon(b[4], 20)}</span><div><small>Right now · ${hLabel(h)}</small><b>${b[2]}</b></div></div><p>${b[3]}</p></section>
+    <section class="card his-curve"><div class="hc-h"><b>Your testosterone today</b><small>Woke at ${hLabel(w)}</small></div>
+      <svg viewBox="0 0 ${W} ${H}" width="100%" aria-label="Testosterone over your day, highest after waking">${bands}<path d="${d}" fill="none" stroke="#304023" stroke-width="2.4" stroke-linecap="round"/>
+        <line x1="${X(since)}" x2="${X(since)}" y1="6" y2="${H - 20}" stroke="#304023" stroke-dasharray="2 3" opacity=".5"/><circle cx="${X(since)}" cy="${Y(tAt(since))}" r="5.5" fill="#fff" stroke="#304023" stroke-width="2"/>
+        ${[0, 6, 12, 18, 24].map(t => `<text x="${X(t)}" y="${H - 4}" text-anchor="${t === 0 ? 'start' : t === 24 ? 'end' : 'middle'}" class="hc-ax">${hLabel(w + t)}</text>`).join('')}</svg>
+      <div class="hc-wake"><span>I usually wake at</span>${[5, 6, 7, 8, 9].map(x => `<button class="${x === w ? 'on' : ''}" data-action="hisWake" data-v="${x}">${x}:00</button>`).join('')}</div></section>
+    <section class="card his-blocks">${HIS_BLOCKS.map(([a, z, n, t, ic]) => `<div class="hb ${b[2] === n ? 'on' : ''}"><span class="hb-t">${hLabel(w + a)}</span><span class="hb-ic">${icon(ic, 16)}</span><div><b>${n}</b><p>${t}</p></div></div>`).join('')}</section>
+    <section class="card his-tog"><small>You two today</small><p>${together}</p></section>
+    ${sectionTitle('What studies found')}
+    <section class="card glass tea-study">${HIS_SCIENCE.map(x => `<div class="ts-i"><div class="ts-h"><b>${x.t}</b>${evBadge(x.ev)}</div><p>${x.s}</p><small>${x.c}</small></div>`).join('')}</section>
+    <p class="fine center">A typical daily pattern, not a measurement of you. Nothing to log, and nothing leaves your phone.</p>`;
+}
 function viewWith(q) {
   const snap = b64d(q.get('d') || '');
   if (!snap || !snap.s || !snap.c) return `<div class="pad"><h1 class="page-h" style="margin-top:80px">Link not valid</h1><p class="muted">Ask her to send it again.</p></div>`;
@@ -4618,6 +4654,8 @@ function viewWith(q) {
   return `<header class="topbar">${state && state.onboarded ? `<button class="icon-btn dark" data-action="nav" data-to="partners" aria-label="Back">${icon('chevL', 22)}</button>` : '<span class="tb-spacer"></span>'}<div class="topbar-title">${name}’s rhythm</div><span style="width:40px"></span></header>
   ${mine ? `<div class="preview-bar">Preview — this is what she’ll see <button data-action="nav" data-to="partners">Done</button></div>` : ''}
   <div class="pad">
+    ${him ? `<div class="seg his-seg">${[['her', `${name}'s rhythm`], ['his', 'My day']].map(([k, l]) => `<button class="${(ui.hisTab || 'her') === k ? 'on' : ''}" data-action="hisTab" data-v="${k}">${l}</button>`).join('')}</div>` : ''}
+    ${him && ui.hisTab === 'his' ? `<h1 class="hello" style="margin:6px 0 16px">Your <b>24-hour rhythm</b></h1>${hisDay(info, name)}</div>` : `
     <div class="eyebrow">${role === 'partner' ? 'Partner view' : 'Friend view'} · ${fmt(today, { weekday: 'long', month: 'short', day: 'numeric' })}</div>
     <h1 class="hello" style="margin:6px 0 16px">${name} is in her<br><b>${ph.name} phase</b></h1>
     <section class="hub pt-stage">${stageHero(info, Math.round(C.energyAt(info.cd, info.L, info.P) * 100), { nav: false, id: 'with', fert: !!snap.f })}</section>
@@ -4655,7 +4693,7 @@ function viewWith(q) {
          <button class="link center-link" data-action="trackMine">I want to track my own cycle</button>`
       : `<a class="btn btn-light btn-block" href="#/today">Start tracking my cycle</a>
          <p class="fine center">Set up your own cycle and ${name} is added to your app. Then send her your link so you see each other.</p>`}
-  </div>`;
+  </div>`}`;
 }
 
 // ---------- account ----------
@@ -5123,6 +5161,8 @@ const actions = {
     try { await navigator.clipboard.writeText(url); toast('Link copied'); } catch { prompt('Copy this link', url); }
     sent();
   },
+  hisTab: d => { ui.hisTab = d.v; render(); document.getElementById('view').scrollTop = 0; },
+  hisWake: d => { try { localStorage.setItem('uts.wake', d.v); } catch {} render(); },
   trackMine: () => { try { localStorage.removeItem('uts.viewOnly'); } catch {} go('today'); },
   ptWho: d => { state.profile.ptWho = d.v; save(); render(); },
   shareEmail: () => {
@@ -5275,12 +5315,12 @@ function render() {
   }
   if (r.name === 'with') {
     $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewWith(r.q)}</div>`;
-    if (r.q.get('d')) refreshWith(r.q.get('d')); return;
+    decorateStudies($app); if (r.q.get('d')) refreshWith(r.q.get('d')); return;
   }
   let vo = null; if (!state || !state.onboarded) { try { vo = localStorage.getItem('uts.viewOnly'); } catch {} }
   if (vo) { // he opened her link before: the app is just her rhythm for him
     $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewWith(new URLSearchParams({ d: vo }))}</div>`;
-    refreshWith(vo); return;
+    decorateStudies($app); refreshWith(vo); return;
   }
   if (!state || !state.onboarded) {
     document.documentElement.dataset.phase = '';
