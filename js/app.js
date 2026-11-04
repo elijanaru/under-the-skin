@@ -3645,6 +3645,24 @@ function moveBubble(m, r, i) {
   return `<div class="mv2-b r${r}" style="--i:${i}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * pct / 100).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-g">${icon(MOVE_G[m.k], 18)}</span>
     <b>${MOVE_SHORT[m.k]}</b><small>${MV_WORD[r]}</small></div>`;
 }
+// Move hero graphic: how hard her body wants to train across the month, as a soft wave with today marked.
+function moveWave(days, info, L, P) {
+  const W = 320, H = 92, x = i => 6 + i / Math.max(1, L - 1) * (W - 12);
+  const raw = days.map(w => { const r = MOVE_GUIDE[w].r; return (r.lift + r.hiit + r.sport) / 9; });
+  const v = raw.map((_, i) => { let a = 0, n = 0; for (let j = i - 2; j <= i + 2; j++) if (raw[j] != null) { a += raw[j]; n++; } return a / n; }); // smoothed
+  const pts = v.map((y, i) => [x(i), 78 - y * 58]);
+  let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+  for (let i = 1; i < pts.length; i++) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], mx = (x0 + x1) / 2; d += ` C${mx.toFixed(1)} ${y0.toFixed(1)} ${mx.toFixed(1)} ${y1.toFixed(1)} ${x1.toFixed(1)} ${y1.toFixed(1)}`; }
+  const ci = Math.min(info.cd, L) - 1, [tx, ty] = pts[ci], ov = C.ovulationDay(L, P);
+  const lab = (i, t) => `<span style="left:${(x(i) / W * 100).toFixed(1)}%">${t}</span>`;
+  return `<div class="mv3-wave"><div class="mvw-plot"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
+      <defs><linearGradient id="mvw-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="mvw-s1"/><stop offset="1" class="mvw-s2"/></linearGradient></defs>
+      <path d="${d} L${W - 6} ${H} L6 ${H} Z" fill="url(#mvw-f)"/><path class="mvw-l" d="${d}"/>
+      <line class="mvw-now" x1="${tx.toFixed(1)}" y1="${(ty + 6).toFixed(1)}" x2="${tx.toFixed(1)}" y2="${H}"/></svg>
+    <i class="mvw-dot" style="left:${(tx / W * 100).toFixed(1)}%;top:${(ty / H * 100).toFixed(1)}%"></i></div>
+    <div class="mvw-lab">${lab(0, 'Period')}${lab(ov - 1, 'Peak')}${lab(L - 1, 'Slow')}</div>
+    <small class="mvw-k">How hard your body wants to train</small></div>`;
+}
 function viewMove() {
   const { info } = M, L = info.L, P = info.P, key = dayWindow(info), g = MOVE_GUIDE[key], D = MOVE_DOSE[key], tab = ui.mvTab || 'today';
   const days = Array.from({ length: L }, (_, i) => windowAt(i + 1, L, P));
@@ -3666,19 +3684,20 @@ function viewMove() {
           ${[['Intensity', D.int], ['Length', D.len], ['Warm-up', D.warm], ['Recovery', D.rec]].map(([t, v]) => `<div class="mvd-r"><small>${t}</small><b>${v}</b></div>`).join('')}
           <p class="mvd-f">RPE = how hard it feels, out of 10. Feel strong on a “rest” day? Go for it.</p></section>
         <div class="mv2-list">${ranked.map(m => `<div class="mv2-li r${g.r[m.k]}"><i></i><div><b>${m.n}</b><small>${m.d}</small></div><em>${MV_WORD[g.r[m.k]]}</em></div>`).join('')}</div>`;
-  return `<section class="mv2">
+  return `<section class="mv2 mv3">
     <video class="mv2-bg" src="images/move-stardust.mp4" poster="images/move-stardust.webp" muted loop playsinline ${still ? '' : 'autoplay'} preload="auto" aria-hidden="true"></video><span class="mv2-shade"></span>
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
-    <div class="mv2-eyebrow">Day ${info.cd} · ${PHASES[info.phase].name}</div>
-    <h1 class="rh2-h">Move with <em>your cycle</em></h1>
-    <p class="mv2-now">${g.title}</p>
-    <div class="mv2-bubbles">${ranked.map((m, i) => moveBubble(m, g.r[m.k], i)).join('')}</div>
+    <div class="mv3-sheet">
+      <div class="mv3-top"><span class="mv3-day"><small>Day</small><b>${info.cd}</b></span><span class="mv3-ph">${PHASES[info.phase].name}</span></div>
+      <h1 class="mv3-h"><span>Move with</span><em>your cycle</em></h1>
+      <p class="mv3-now"><span>${icon('bolt', 15)}</span>Today: <b>${g.title}</b></p>
+      ${moveWave(days, info, L, P)}
+      <div class="mv2-bubbles">${ranked.map((m, i) => moveBubble(m, g.r[m.k], i)).join('')}</div>
+    </div>
   </section>
   <div class="pad mv2-body">
     <div class="seg">${[['today', 'Today'], ['best', 'Best days'], ['month', 'Your month']].map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="mvTab" data-v="${k}">${l}</button>`).join('')}</div>
     ${body}
-    ${sectionTitle('What studies found')}
-    <section class="card glass mv-sci">${MOVE_SCIENCE.map(x => `<details class="mvs"><summary><b>${x.t}</b>${evBadge(x.ev)}</summary><p>${x.s}</p><cite>${x.c}</cite></details>`).join('')}</section>
     <p class="fine center">Research on training by cycle phase is still emerging and results are mixed. Your strength doesn’t change across the cycle, only your energy does. Some women set personal bests on their period.</p>
   </div>`;
 }
