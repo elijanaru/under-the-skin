@@ -416,8 +416,7 @@ function cycleChart(info, { id = 'cc', compact = false, who = 'You' } = {}) {
       ${curves}
       ${(() => { const ov = C.ovulationDay(L, P), ex = X(ov + 0.5), t = `Egg release · day ${ov}`, pw = t.length * 5.3 + 18, near = Math.abs(cd - ov) <= 4, px = Math.max(pw / 2 + 2, Math.min(W - pw / 2 - 2, near ? (cd >= ov ? ex - pw / 2 - 18 : ex + pw / 2 + 18) : ex)), py = top + 11, ey = bot - 12;
         return `<g class="egg-mark"><title>LH surge → egg release · day ${ov}</title>
-        <line class="egg-line" x1="${ex.toFixed(1)}" y1="${py + 9}" x2="${ex.toFixed(1)}" y2="${ey - 8}"/>
-        <g transform="translate(${px.toFixed(1)} ${py})"><rect class="egg-pill" x="${(-pw / 2).toFixed(1)}" y="-9" width="${pw.toFixed(1)}" height="18" rx="9"/><text class="egg-t" y="3.4" text-anchor="middle">${t}</text></g>
+        <line class="egg-line" x1="${ex.toFixed(1)}" y1="${top + 4}" x2="${ex.toFixed(1)}" y2="${ey - 8}"/>
         <g transform="translate(${ex.toFixed(1)} ${ey})"><circle class="egg-halo" r="10"/><ellipse class="egg-shell" rx="5" ry="6.4" cy="-.4"/><circle class="egg-yolk" r="2.3" cy=".6"/></g></g>`; })()}
       <g class="here">
         <line x1="${mx}" x2="${mx}" y1="${top + 4}" y2="${bot - 4}" stroke="#fff" stroke-opacity=".55" stroke-dasharray="2 4"/>
