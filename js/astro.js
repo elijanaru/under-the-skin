@@ -141,3 +141,34 @@ export function transits(natal, now = new Date()) {
   }
   return { moon: { lon: L.moon, sign: signOf(L.moon), house: natal.house(L.moon) }, sky: L, hits: hits.sort((x, y) => (x.t === 'moon' ? 0 : 1) - (y.t === 'moon' ? 0 : 1) || x.off - y.off) };
 }
+
+// ---------- the Moon page: real phase, age and the next new and full moon ----------
+// Elongation is the Moon's angle from the Sun: 0 new, 90 first quarter, 180 full, 270 last quarter.
+export const elongation = date => { const L = longitudes(date); return rev(L.moon - L.sun); };
+// first moment after `from` (within `days`) when the elongation crosses `target`
+function nextCross(from, target, days = 32) {
+  const off = t => rev(elongation(t) - target + 180) - 180; // -180..180, crosses 0 going up
+  let a = from, fa = off(a);
+  for (let h = 6; h <= days * 24; h += 6) {
+    const b = new Date(from.getTime() + h * 36e5), fb = off(b);
+    if (fa < 0 && fb >= 0 && fb - fa < 90) {
+      for (let i = 0; i < 24; i++) { const m = new Date((a.getTime() + b.getTime()) / 2); if (off(m) < 0) a = m; else b.setTime(m.getTime()); }
+      return new Date((a.getTime() + b.getTime()) / 2);
+    }
+    a = b; fa = fb;
+  }
+  return null;
+}
+function prevNew(now) { const back = new Date(now.getTime() - 31 * 864e5); let t = nextCross(back, 0), last = t; while (t && t <= now) { last = t; t = nextCross(new Date(t.getTime() + 864e5), 0); } return last; }
+export function moonNow(now = new Date()) {
+  const L = longitudes(now), e = rev(L.moon - L.sun), last = prevNew(now);
+  return { elong: e, illum: (1 - Math.cos(e * Math.PI / 180)) / 2, waxing: e < 180, sign: signOf(L.moon), deg: degIn(L.moon),
+    age: last ? (now - last) / 864e5 : e / 360 * 29.53, lastNew: last, nextNew: nextCross(now, 0), nextFull: nextCross(now, 180) };
+}
+// when the Moon next enters `sign` (about every 27.3 days), and whether it is there now
+export function moonInSign(sign, now = new Date()) {
+  const inIt = t => signOf(longitudes(t).moon) === sign;
+  if (inIt(now)) { let t = new Date(now); while (inIt(t)) t = new Date(t.getTime() + 36e5); return { now: true, until: t }; }
+  for (let h = 2; h < 30 * 24; h += 2) { const t = new Date(now.getTime() + h * 36e5); if (inIt(t)) { let s = new Date(t.getTime() - 2 * 36e5); while (!inIt(s)) s = new Date(s.getTime() + 15 * 6e4); return { now: false, from: s }; } }
+  return null;
+}

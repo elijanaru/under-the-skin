@@ -5,6 +5,7 @@ import * as C from './cycle.js';
 import { icon } from './icons.js';
 import * as Z from './cosmic.js';
 import * as AS from './astro.js';
+import * as MG from './moonguide.js';
 import { mountFigure, mushroomArt, nautilusArt } from './figure.js';
 import { mountTorso } from './torso.js';
 import { RECIPE_PHOTOS, photoUrl, DISH_PHOTOS, dishPhoto, HORMONE_PHOTOS, hormonePhoto, CARE_PHOTOS, carePhoto, STAR_PHOTOS, starPhoto, foodPhoto, FOOD_PHOTOS, teaPhoto } from './photos.js';
@@ -1209,6 +1210,7 @@ function viewCalendar() {
     ${events().some(e => e.date >= todayISO()) ? upcomingEvents() : ''}
     ${cp ? `<button class="cal2-cosmic" data-action="nav" data-to="cosmic"><span class="cal2-g">${cp.sign.glyph}</span><span><small>Your cosmic rhythm</small><b>${cp.sign.name} · ${cp.cz.element} ${cp.cz.animal.name}</b></span>${icon('chevR', 18)}</button>`
       : `<button class="cal2-cosmic" data-action="nav" data-to="cosmic"><span class="cal2-g">✦</span><span><small>Your cosmic rhythm</small><b>Add your birthday for personal readings</b></span>${icon('chevR', 18)}</button>`}
+    ${moonLink()}
     ${starSections()}
   </div>`;
 }
@@ -1922,6 +1924,11 @@ function cosmicProfile() {
   const sign = Z.sunSign(m, d), cz = Z.chineseZodiac(y, m, d);
   return { sign, cz, five: Z.FIVE[cz.element], bridge: Z.EL_BRIDGE[sign.el] };
 }
+// small night card that opens the Moon page
+function moonLink() {
+  const mn = moonData(), pg = MG.phaseGuideAt(mn.elong), ms = signOfK(mn.sign);
+  return `<button class="mn-link" data-action="nav" data-to="moon">${moonArt(mn.elong)}<span><small>${pg.name} · ${Math.round(mn.illum * 100)}% lit · in ${ms.name}</small><b>Your inner weather tonight</b><i>Heart, mind and spirit, plus your moon ritual</i></span>${icon('chevR', 18)}</button>`;
+}
 function cosmicCard() {
   const cp = cosmicProfile(), moon = Z.moonPhase(new Date());
   return `<button class="card cosmic-card" data-action="nav" data-to="cosmic">
@@ -2122,7 +2129,7 @@ function viewCosmic() {
     </div>`;
   }
   function moonSection() {
-    return `${sectionTitle('The moon tonight')}
+    return `${moonLink()}${sectionTitle('The moon tonight')}
       <section class="card glass moon-card">${moonSvg(moon.illum, moon.age < 14.77)}
         <div><div class="eyebrow">${Math.round(moon.illum * 100)}% lit · day ${Math.floor(moon.age) + 1} of the lunar month</div><h3>${moon.name}</h3><p class="body sm">${moon.ritual}</p></div></section>
       ${mc ? `<section class="card card-light"><div class="eyebrow dark">Your moon cycle · ${mc.when.toLowerCase()}</div><h3 class="dark-h">${mc.name} cycle</h3><p class="dp-text">${mc.meaning}</p></section>` : ''}
@@ -2176,9 +2183,96 @@ function viewCosmic() {
   return `${cosmicHero(`${sign.name} <em>·</em> ${cz.element} ${cz.animal.name}`, `${sign.mode} ${sign.el} sign · ${cz.yin ? 'Yin' : 'Yang'} ${cz.element} year ${cz.year}`, `<div class="cz-badges">${badge(sign.glyph, 'Sign', sign.name)}${badge(cz.animal.han, 'Chinese year', cz.animal.name)}${badge(five.han, 'Element', cz.element)}</div>`)}
   <div class="pad mv2-body">
     ${phase ? `<section class="cz-today"><span class="eyebrow">${sign.el} in your ${PHASES[phase].name.toLowerCase()} phase</span><p>${Z.EL_PHASE[sign.el][phase]}</p></section>` : ''}
+    ${tab === 'moon' ? '' : moonLink()}
     <div class="seg">${[['readings', 'Readings'], ['chart', 'Chart'], ['sign', 'Your sign'], ['moon', 'Moon']].map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="czTab" data-v="${k}">${l}</button>`).join('')}</div>
     ${tab === 'chart' ? chartTab(cp) : tab === 'sign' ? signTab : tab === 'moon' ? moonSection() : starSections()}
     <p class="fine center">Astrology, the five elements and moon cycles are spiritual traditions for reflection, not science or medical advice. In Chinese astrology the year begins at Li Chun (~4 Feb).</p>
+  </div>`;
+}
+// ---------- the Moon page: tonight's real moon, the inner weather it brings (heart, mind, spirit), the moon in her chart, rituals ----------
+function moonData() { const k = Math.floor(Date.now() / 6e4); if (moonData.k !== k) { moonData.k = k; moonData.v = AS.moonNow(new Date()); } return moonData.v; }
+function moonArt(e, cls = '') { // flat moon for the phase guide and the no-3D fallback; e = elongation in degrees
+  const r = 46, illum = (1 - Math.cos(e * Math.PI / 180)) / 2, waxing = e < 180, k = Math.cos(illum * Math.PI) * r;
+  return `<svg viewBox="0 0 120 120" class="mn-art ${cls}" aria-hidden="true"><circle cx="60" cy="60" r="${r}" fill="#2a323d" stroke="rgba(255,255,255,.32)" stroke-width="2"/>
+    <path d="M60 ${60 - r} A${r} ${r} 0 0 ${waxing ? 1 : 0} 60 ${60 + r} A${Math.abs(k).toFixed(2)} ${r} 0 0 ${(k > 0) === waxing ? 0 : 1} 60 ${60 - r}Z" fill="#f3efe6"/></svg>`;
+}
+function starShape(sign) {
+  const S = MG.STARS[sign]; if (!S) return '';
+  return `<svg class="mn-stars" viewBox="0 0 100 100" aria-hidden="true">${S.l.map(([a, b]) => `<line x1="${S.s[a][0]}" y1="${S.s[a][1]}" x2="${S.s[b][0]}" y2="${S.s[b][1]}"/>`).join('')}
+    ${S.s.map(([x, y, r], i) => `<circle class="mn-sg" cx="${x}" cy="${y}" r="${r * 1.9}"/><circle class="mn-st" cx="${x}" cy="${y}" r="${r * 0.62}" style="--i:${i}"/>`).join('')}</svg>`;
+}
+function skyDust() { // fixed scatter of faint stars behind the moon
+  let s = 7, out = ''; const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280;
+  for (let i = 0; i < 70; i++) out += `<circle cx="${(rnd() * 100).toFixed(1)}" cy="${(rnd() * 100).toFixed(1)}" r="${(0.12 + rnd() * 0.28).toFixed(2)}" opacity="${(0.25 + rnd() * 0.6).toFixed(2)}"/>`;
+  return `<svg class="mn-dust" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${out}</svg>`;
+}
+const mnDay = d => d.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' });
+const mnTime = d => d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+const mnIn = d => { const n = Math.round((C.startOfDay(d) - C.startOfDay(new Date())) / 864e5); return n <= 0 ? 'today' : n === 1 ? 'tomorrow' : `in ${n} days`; };
+function viewMoon() {
+  const mn = moonData(), pg = MG.phaseGuideAt(mn.elong), ms = signOfK(mn.sign), phase = M.info && M.info.phase, inner = phase && MG.INNER_SEASON[phase];
+  const inward = !phase || phase === 'menstrual' || phase === 'luteal', feel = MG.MOON_SIGN_FEEL[mn.sign];
+  const c = birthChart(state.profile), tr = c && AS.transits(c), natal = c && c.planets[1], ord = n => n + ({ 1: 'st', 2: 'nd', 3: 'rd' }[n] || 'th');
+  const ret = natal && AS.moonInSign(natal.sign);
+  const events = [['New moon', mn.nextNew, 'new'], ['Full moon', mn.nextFull, 'full']].filter(x => x[1]).sort((a, b) => a[1] - b[1]);
+  // rituals: intentions at the new moon, release at the full moon; the tab follows whichever is nearer
+  const notes = state.moonNotes || [], lastNew = notes.filter(n => n.type === 'new').at(-1), lastFull = notes.filter(n => n.type === 'full').at(-1);
+  const nearNew = mn.elong >= 337.5 || mn.elong < 30, nearFull = mn.elong >= 150 && mn.elong < 210;
+  const cur = lastNew && mn.lastNew && new Date(lastNew.date + 'T12:00') >= new Date(mn.lastNew - 7 * 864e5); // set for this moon month
+  const rit = ui.moonRit || (nearFull ? 'full' : nearNew ? 'new' : events[0][2]);
+  const draft = ui.moonDraft || (ui.moonDraft = {}), tj = (state.moonJournal || {})[todayISO()] || '';
+  const ritEvent = rit === 'new' ? (nearNew ? null : mn.nextNew) : (nearFull ? null : mn.nextFull);
+  const ritLead = rit === 'new'
+    ? (nearNew ? 'The new moon is here. Name up to three things you want to grow this month.' : `The next new moon is ${mnDay(mn.nextNew)}. Write your intentions now or on the night.`)
+    : (nearFull ? 'The full moon is here. Write what you are ready to let go of, then release it.' : `The next full moon is ${mnDay(mn.nextFull)}. Note what feels heavy so you can release it then.`);
+  return `<div class="pad mn">
+    <section class="mn-hero">${skyDust()}${starShape(mn.sign)}
+      <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
+      <div class="mn-top"><small>The Moon tonight</small><b>${ms.glyph} Moon in ${ms.name}</b></div>
+      <div class="mn-orb">${moonArt(mn.elong, 'mn-flat')}<canvas class="moon3d" data-e="${mn.elong.toFixed(1)}" aria-label="The Moon as it looks tonight, ${Math.round(mn.illum * 100)} percent lit. Drag to turn it."></canvas></div>
+      <div class="mn-side l"><small>Moon day</small><b class="num">${Math.floor(mn.age) + 1}</b></div>
+      <div class="mn-side r"><small>Lit</small><b class="num">${Math.round(mn.illum * 100)}%</b></div>
+      <div class="mn-name"><h1>${pg.name}</h1><p>${pg.theme} · ${mn.waxing ? 'waxing, growing brighter' : 'waning, growing darker'}</p></div>
+      <div class="mn-next">${events.map(([n, d, k]) => `<div class="mn-ev ${k}"><i>${moonArt(k === 'new' ? 0 : 180)}</i><span><small>${n}</small><b>${mnDay(d)}</b><small>${mnIn(d)} · ${mnTime(d)}</small></span></div>`).join('')}</div>
+    </section>
+
+    <section class="card mn-weather"><div class="mn-k"><small>Your inner weather</small><b>${pg.name}${inner ? ` × ${inner.name}` : ''}</b></div>
+      ${inner ? `<p class="mn-blend">${MG.innerBlend(mn.waxing, phase)}</p>` : ''}
+      ${[['heart', 'Heart', pg.heart, inner && inner.heart], ['mind', 'Mind', pg.mind, inner && inner.mind], ['star', 'Spirit', pg.spirit, inner && inner.spirit]].map(([ic, t, a, b], i) => `<div class="mn-row" style="--i:${i}"><span class="mn-ri ${ic}">${icon(ic, 18)}</span><div><b>${t}</b><p>${a}</p>${b ? `<p class="mn-in">${b}</p>` : ''}</div></div>`).join('')}
+      <div class="mn-feel"><span>${ms.glyph}</span><div><b>Moon in ${ms.name}: ${feel[0].toLowerCase()}</b><p>${feel[1]}</p></div></div></section>
+
+    <section class="mn-aff"><small>Say it today</small><p>“${MG.MOON_AFFIRM[mn.sign][inward ? 0 : 1]}”</p></section>
+
+    <section class="card mn-ask"><div class="mn-k"><small>Tonight's reflection</small><b>${pg.ask}</b></div>
+      <textarea class="field mn-ta" data-input="moonj.today" rows="3" placeholder="Write freely. Only you can see this.">${esc(tj)}</textarea>
+      <div class="mn-prac">${icon('spark', 16)}<p><b>One-minute practice · </b>${pg.practice}</p></div></section>
+
+    ${c ? `${sectionTitle('The Moon in your chart')}
+    <section class="card mn-chart">
+      <div class="mn-cr"><span class="mn-cg">☽</span><div><small>Today</small><b>Moon in ${ms.name}${tr.moon.house ? `, your ${ord(tr.moon.house)} house` : ''}</b>
+        <p>${tr.moon.house ? `${Z.HOUSES[tr.moon.house - 1][0]}. ${Z.HOUSES[tr.moon.house - 1][1]}` : 'Add your birth time and place to see which part of your life the Moon lights up today.'}</p></div></div>
+      <div class="mn-cr"><span class="mn-cg">↺</span><div><small>Your moon return${moonSure(c) ? '' : ' · about'}</small><b>${ret && ret.now ? `Today, until ${mnDay(ret.until)}` : ret ? `${mnDay(ret.from)} · ${mnIn(ret.from)}` : '—'}</b>
+        <p>Every 27 days the Moon comes back to ${signOfK(natal.sign).name}, where it was when you were born. Treat it as your emotional reset day: check in with yourself and do one thing that feels like home.</p></div></div>
+      ${tr.moon.house || c.hasTime ? '' : `<button class="link" data-action="nav" data-to="cosmic">Add birth time and place ${icon('chevR', 14)}</button>`}
+    </section>` : `<section class="card mn-chart"><div class="mn-cr"><span class="mn-cg">☽</span><div><b>Add your birthday</b><p>See which part of your life the Moon lights up and when your monthly moon return comes.</p></div></div><button class="btn btn-dark btn-block" data-action="nav" data-to="profile">Add birthday</button></section>`}
+
+    ${sectionTitle('Moon ritual')}
+    <section class="card mn-rit">
+      <div class="seg mn-seg">${[['new', 'New moon · intentions'], ['full', 'Full moon · release']].map(([k, l]) => `<button class="${rit === k ? 'on' : ''}" data-action="moonRit" data-v="${k}">${l}</button>`).join('')}</div>
+      <p class="mn-rl">${ritLead}</p>
+      ${rit === 'full' && lastNew ? `<div class="mn-past"><small>Your intentions from ${mnDay(new Date(lastNew.date + 'T12:00'))} · halfway check</small>${lastNew.items.map((t, i) => `<button class="mn-it ${lastNew.done && lastNew.done[i] ? 'done' : ''}" data-action="moonTick" data-id="${lastNew.id}" data-i="${i}">${icon('check', 14)}<span>${esc(t)}</span></button>`).join('')}</div>` : ''}
+      ${rit === 'new' && lastNew && !nearNew && cur ? `<div class="mn-past"><small>This month's intentions · set ${mnDay(new Date(lastNew.date + 'T12:00'))}</small>${lastNew.items.map((t, i) => `<button class="mn-it ${lastNew.done && lastNew.done[i] ? 'done' : ''}" data-action="moonTick" data-id="${lastNew.id}" data-i="${i}">${icon('check', 14)}<span>${esc(t)}</span></button>`).join('')}</div>` : ''}
+      ${rit === 'new' && lastNew && (nearNew || !cur) ? `<div class="mn-past"><small>Last time you wished for</small>${lastNew.items.map((t, i) => `<div class="mn-it ${lastNew.done && lastNew.done[i] ? 'done' : ''}">${icon('check', 14)}<span>${esc(t)}</span></div>`).join('')}</div>` : ''}
+      ${rit === 'full' && lastFull ? `<p class="mn-rel">${icon('leaf', 14)} You released ${lastFull.items.length} thing${lastFull.items.length === 1 ? '' : 's'} on ${mnDay(new Date(lastFull.date + 'T12:00'))}.</p>` : ''}
+      <div class="mn-ins">${[0, 1, 2].map(i => `<input class="field" data-input="moon.i${i}" value="${esc(draft['i' + i] || '')}" placeholder="${rit === 'new' ? ['I want to feel…', 'I will make time for…', 'I am open to…'][i] : ['I let go of…', 'I no longer need…', 'I forgive…'][i]}" maxlength="90">`).join('')}</div>
+      <button class="btn btn-dark btn-block" data-action="moonSave" data-t="${rit}">${rit === 'new' ? `${icon('spark', 16)} Set my intentions` : `${icon('leaf', 16)} Release it`}</button>
+      ${ritEvent ? `<p class="fine center">Saved with today's date. You can come back on ${mnDay(ritEvent)} too.</p>` : ''}
+    </section>
+
+    ${sectionTitle('The 8 moon phases')}
+    <div class="mn-pg">${MG.PHASE_GUIDE.map(p => `<article class="mn-pc ${p === pg ? 'on' : ''}">${moonArt((p.at[0] + p.at[1]) / 2 % 360)}<small>${p === pg ? 'Now · ' : ''}${p.theme}</small><b>${p.name}</b><p>${p.heart}</p><p class="mn-pm">${p.mind}</p></article>`).join('')}</div>
+
+    <p class="fine center">The Moon's phase, sign and dates are calculated on your phone from real orbits. Astrology, moon rituals and the inner seasons are spiritual traditions for reflection, not science or medical advice.</p>
   </div>`;
 }
 // Full-bleed night-sky hero shared by both states of the cosmic page.
@@ -5381,6 +5475,14 @@ const actions = {
   pfTab: d => { ui.pfTab = d.v; render(); },
   groAisle: d => { ui.groAisle = d.v; render(); const t = document.querySelector('.gro-tabs'), on = t && t.querySelector('.on'); if (on) t.scrollLeft = on.offsetLeft - (t.clientWidth - on.offsetWidth) / 2; },
   czTab: d => { ui.czTab = d.v; render(); },
+  moonRit: d => { ui.moonRit = d.v; render(); },
+  moonSave: d => {
+    const items = [0, 1, 2].map(i => String((ui.moonDraft || {})['i' + i] || '').trim()).filter(Boolean);
+    if (!items.length) return toast(d.t === 'new' ? 'Write at least one intention' : 'Write at least one thing to let go of');
+    (state.moonNotes = state.moonNotes || []).push({ id: Date.now().toString(36), type: d.t, date: todayISO(), items, done: [] });
+    ui.moonDraft = {}; save(); render(); toast(d.t === 'new' ? 'Intentions set. They will be here at the full moon' : 'Released. Let it go with your next out-breath');
+  },
+  moonTick: d => { const n = (state.moonNotes || []).find(x => x.id === d.id); if (!n) return; n.done = n.done || []; n.done[+d.i] = !n.done[+d.i]; save(); render(); },
   placeFind: d => placeFind(d.scope),
   placePick: d => { const x = (ui.placeRes || [])[+d.i]; if (!x) return; const { area, ...r } = x; if (d.scope === 'onb') ui.onb.birthPlace = r; else { state.profile.birthPlace = r; save(); } ui.placeRes = []; ui.placeQ = ''; render(); },
   placeClear: d => { if (d.scope === 'onb') ui.onb.birthPlace = null; else { delete state.profile.birthPlace; save(); } render(); },
@@ -5542,6 +5644,8 @@ document.addEventListener('input', e => {
   if (e.target.classList.contains('o9-range')) { e.target.parentElement.style.setProperty('--x', e.target.value + '%'); return; }
   const f = e.target.dataset?.input; if (!f) return;
   if (f === 'ui.placeQ') { ui.placeQ = e.target.value; return; }
+  if (f.startsWith('moon.')) { (ui.moonDraft = ui.moonDraft || {})[f.slice(5)] = e.target.value; return; }
+  if (f === 'moonj.today') { const j = state.moonJournal = state.moonJournal || {}; if (e.target.value.trim()) j[todayISO()] = e.target.value; else delete j[todayISO()]; save(); return; }
   const [scope, key] = f.split('.'), v = e.target.value, isDate = e.target.type === 'date';
   if (isDate && v && +v.slice(0, 4) < 1900) return; // still typing the year (0001, 0019, 0199…): wait for all four digits
   if (scope === 'onb') { ui.onb[key] = v; const b = document.querySelector('[data-action="onbNext"]'); if (b && ui.onbStep === 1) b.disabled = !v.trim();
@@ -5611,6 +5715,15 @@ function mountFigures() {
       welcome3d = w; unmountFigs.push(() => { w.destroy(); if (welcome3d === w) welcome3d = null; });
     }).catch(fail);
   });
+  // the Moon page: the 3D moon lit to tonight's phase; the flat moon stays if 3D can't run
+  document.querySelectorAll('canvas.moon3d').forEach(c => {
+    const orb = c.closest('.mn-orb'), fail = () => { orb?.classList.remove('mn-ready'); c.remove(); };
+    import('./moon3d.js').then(m => {
+      if (!c.isConnected) return; if (!m.webglOK()) throw new Error('no webgl');
+      unmountFigs.push(m.mountMoon(c, { elong: +c.dataset.e, onReady: () => orb?.classList.add('mn-ready'), onFail: fail }));
+    }).catch(fail);
+  });
+  document.querySelectorAll('.mn-pg').forEach(row => { const on = row.querySelector('.on'); if (on) row.scrollLeft = on.offsetLeft - (row.clientWidth - on.offsetWidth) / 2; });
   // today's tea as a turning 3D cup; the tea photo stays if 3D can't run
   document.querySelectorAll('canvas.teacup3d').forEach(c => {
     const hero = c.closest('.tg-hero'), fail = () => { hero?.classList.remove('tg-3d', 'tg-ready'); c.remove(); };
@@ -5687,7 +5800,7 @@ function render() {
   const ph = (ui.phasePreview || M.info?.phase) || ''; // the whole app takes the colour of her phase
   if (document.documentElement.dataset.phase !== ph) document.documentElement.dataset.phase = ph;
   const views = {
-    today: viewToday, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: viewBreathe, plan: viewPlan, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: () => (r.id ? viewStar(r.id) : viewCosmic()), grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewHabits, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
+    today: viewToday, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: viewBreathe, plan: viewPlan, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: () => (r.id ? viewStar(r.id) : viewCosmic()), moon: viewMoon, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewHabits, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
     recipe: () => viewRecipe(r.id), ritual: () => viewRitual(r.id), point: () => viewPoint(r.id), article: () => viewArticle(r.id), learn: viewLearn,
   };
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];
