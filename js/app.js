@@ -3324,30 +3324,49 @@ const RHYTHM_WHY = [
   { h: 'The moon', ev: 'emerging', p: 'An average cycle (about 29 days) is close to a moon cycle (29.5 days). A 2021 study following women over many years found that some cycles sometimes lined up with the moon, more often before artificial light was everywhere. It isn’t proven, so enjoy the moon as a gentle reminder of your own rhythm rather than a rule.' },
   { h: 'In Chinese medicine', ev: 'tcm', p: 'The day moves from yang (bright, outward, active) at noon to yin (dark, inward, restoring) at night. Rising with the light and resting with the dark keeps the two in balance. The new moon is seen as a yin time to rest, and the full moon as a yang time to go out and connect.' },
 ];
+// Today's sun, drawn as one arc from sunrise to sunset: the travelled part is gold, the sun sits where it is now.
+function sunArc(D, h, moon) {
+  const W = 320, x0 = 26, x1 = 294, hy = 104, A = 80, day = h >= D.rise && h <= D.set, p = Math.max(0, Math.min(1, (h - D.rise) / (D.set - D.rise)));
+  const P = q => [x0 + q * (x1 - x0), hy - Math.sin(q * Math.PI) * A], pts = q => { const o = []; for (let k = 0; k <= 48; k++) o.push(P(k / 48 * q).map(v => v.toFixed(1)).join(',')); return 'M' + o.join(' L'); };
+  const full = pts(1), [sx, sy] = P(p), noonX = P((D.noon - D.rise) / (D.set - D.rise))[0];
+  return `<div class="rnow-arc"><svg viewBox="0 0 ${W} 136" width="100%" aria-label="${day ? `The sun is ${Math.round(p * 100)}% across today’s sky` : `Night. The sun rises at ${hLabel(D.rise)}`}">
+    <defs><radialGradient id="rnow-glow"><stop offset="0" stop-color="#ffd76a" stop-opacity=".7"/><stop offset="1" stop-color="#ffd76a" stop-opacity="0"/></radialGradient>
+      <linearGradient id="rnow-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe7a0" stop-opacity=".55"/><stop offset="1" stop-color="#ffe7a0" stop-opacity="0"/></linearGradient>
+      <clipPath id="rnow-past"><rect x="0" y="0" width="${day ? sx.toFixed(1) : (h > D.set ? W : 0)}" height="${hy}"/></clipPath></defs>
+    <path d="${full} L${x1},${hy} L${x0},${hy}Z" fill="url(#rnow-fill)" clip-path="url(#rnow-past)"/>
+    <path d="${full}" fill="none" stroke="rgba(48,64,35,.22)" stroke-width="2" stroke-dasharray="2 6" stroke-linecap="round"/>
+    <path d="${full}" fill="none" stroke="#e9ae3a" stroke-width="3.5" stroke-linecap="round" clip-path="url(#rnow-past)"/>
+    <line x1="8" x2="${W - 8}" y1="${hy}" y2="${hy}" stroke="rgba(48,64,35,.28)" stroke-width="1.2"/>
+    <line x1="${noonX.toFixed(1)}" x2="${noonX.toFixed(1)}" y1="${hy - A - 6}" y2="${hy}" stroke="rgba(48,64,35,.12)" stroke-dasharray="2 4"/>
+    ${day ? `<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="24" fill="url(#rnow-glow)" class="rnow-pulse"/><circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="9" fill="#ffcf4d" stroke="#fff" stroke-width="2.5"/>`
+      : `<g transform="translate(${(W / 2 - 15)} ${hy - A + 4})" class="rnow-moon">${moonIcon(moon, 30)}</g><text x="${W / 2}" y="${hy - 12}" text-anchor="middle" class="rnow-night">Sun rises at ${hLabel(D.rise)}</text>`}
+    <text x="${x0}" y="${hy + 22}" text-anchor="middle" class="rnow-t">Sunrise</text><text x="${x0}" y="${hy + 36}" text-anchor="middle" class="rnow-v">${hLabel(D.rise)}</text>
+    <text x="${noonX.toFixed(1)}" y="${hy + 22}" text-anchor="middle" class="rnow-t">Midday</text><text x="${noonX.toFixed(1)}" y="${hy + 36}" text-anchor="middle" class="rnow-v">${hLabel(D.noon)}</text>
+    <text x="${x1}" y="${hy + 22}" text-anchor="middle" class="rnow-t">Sunset</text><text x="${x1}" y="${hy + 36}" text-anchor="middle" class="rnow-v">${hLabel(D.set)}</text>
+  </svg></div>`;
+}
 function viewRhythm() {
   const info = M.info, done = doneToday(), lv = rhythmLevel(), streak = rhythmStreak(), r = rem(), D = dayMoments(info), h = nowH(), cur = momentAt(D, h), moon = Z.moonPhase(new Date());
   const week = Array.from({ length: 7 }, (_, i) => { const d = C.addDays(new Date(), i - 6), c = ((state.rhythm || {})[C.iso(d)] || []).length; return `<div class="rw"><i style="height:${Math.max(6, c / RH_GOAL * 100)}%" class="${c >= 4 ? 'ok' : ''}"></i><span>${fmt(d, { weekday: 'narrow' })}</span></div>`; }).join('');
   const span = m => `${hLabel(m.from)}–${hLabel(m.to)}`;
-  const t = sunToday(), night = ['evening', 'bed', 'night'].includes(cur.id) || h < D.list[0].from;
-  const view = ui.rhView || (night ? 'moon' : 'sun');
-  const facts = view === 'sun'
-    ? `<div class="rh2-facts"><div><small>Sunrise</small><b>${hm(t.rise)}</b></div><div><small>Midday sun</small><b>${hm(t.noon)}</b></div><div><small>Sunset</small><b>${hm(t.set)}</b></div></div>`
-    : `<div class="rh2-facts"><div><small>Moon</small><b>${moon.name}</b></div><div><small>Lit</small><b>${Math.round(moon.illum * 100)}%</b></div><div><small>Age</small><b>${Math.round(moon.age)} d</b></div></div>`;
-  return `<section class="rh2 ${view}">
-    <div class="rh2-sky" aria-hidden="true"><i></i><i></i><i></i></div>
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches, i = D.list.indexOf(cur), nx = D.list[(i + 1) % D.list.length];
+  return `<section class="rh3">
+    <video class="rh3-vid" src="images/sun-moon.mp4" poster="images/sun-moon-poster.webp" muted loop playsinline ${still ? '' : 'autoplay'} preload="auto" aria-hidden="true"></video><span class="rh3-shade"></span>
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
-    <div class="rh2-orb" id="rh-orb" data-action="rhView" data-v="${view === 'sun' ? 'moon' : 'sun'}" role="button" aria-label="Switch between sun and moon">
-      <div class="rh2-in"><img src="images/sun-moon.webp" alt="Sun and moon" decoding="async"></div><i class="rh2-glass"></i></div>
-    <div class="rh2-switch"><button class="${view === 'sun' ? 'on' : ''}" data-action="rhView" data-v="sun">${icon('sun', 15)} Sun</button><button class="${view === 'moon' ? 'on' : ''}" data-action="rhView" data-v="moon">${moonIcon(moon, 15)} Moon</button></div>
-    <h1 class="rh2-h">Live with the <em>sun & moon</em></h1>
-    <p class="rh2-sub">${view === 'sun' ? 'Light sets your inner clock. Follow the sun, and your sleep, mood and hormones follow.' : moonLine()}</p>
-    ${facts}
+    <div class="rh3-copy">
+      <h1 class="rh3-h">Live with the <em>sun & moon</em></h1>
+      <p class="rh3-sub">Light sets your inner clock. Follow the sun, and your sleep, mood and hormones follow.</p>
+      <div class="rh3-chips"><span>${icon('sun', 14)} Rise <b>${hLabel(D.rise)}</b></span><span>Set <b>${hLabel(D.set)}</b></span><span>${moonIcon(moon, 14)} <b>${Math.round(moon.illum * 100)}%</b> moon</span></div>
+    </div>
   </section>
   <div class="pad">
-    <section class="card glass sky-card seamless">
-      ${skyDial(D)}
-      <p class="sky-hint">${icon('spark', 12)} Drag across the sky to see any time of day</p>
-      <div class="mpanel" id="mpanel" data-live="1">${momentPanel(cur, h, true)}</div>
+    <section class="card rnow">
+      <div class="rnow-top"><small>Right now · ${hLabel(h)}</small><b>${cur.n}</b><em>${span(cur)}</em></div>
+      ${sunArc(D, h, moon)}
+      <p class="rnow-brief">${cur.brief}</p>
+      ${cur.acts.length ? `<div class="rnow-do"><h3>Do this now</h3><div class="rh-list">${cur.acts.map(x => rhAct(x, done)).join('')}</div><small class="rnow-tip">Tap each one when it’s done</small></div>`
+        : `<div class="rnow-do"><h3>Do this now</h3><p class="rnow-rest">${icon('moon', 16)} Sleep. Nothing to do until the morning light.</p></div>`}
+      <div class="rnow-next"><span class="rnow-ni">${emi(nx.g, 18)}</span><div><small>Next · from ${hLabel(nx.from)}</small><b>${nx.n}</b>${nx.acts[0] ? `<span>${nx.acts[0].t}</span>` : ''}</div></div>
     </section>
     <div class="rh-stats"><div>${rhythmRing(done.length, RH_GOAL)}<small>${done.length} of ${RH_GOAL} today</small></div>
       <div><span>${emi('🔥', 18)}</span><b>${streak} ${streak === 1 ? 'day' : 'days'}</b><small>streak (4+ a day)</small></div>
