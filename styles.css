@@ -5478,3 +5478,27 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .view:has(> .rh3) .section-title h3 { color: #fff4e6 !important; -webkit-text-fill-color: #fff4e6 !important; }
 .view:has(> .rh3) .section-title h3::before { background: #ffd27a !important; box-shadow: 0 0 12px rgba(255,200,110,.6) !important; }
 .view:has(> .rh3) .section-title::before { background: linear-gradient(90deg, rgba(255,210,122,.4), transparent) !important; }
+/* dusk page: everything readable, white text, lighter boxes */
+.view:has(> .rh3) { --muted: rgba(255,248,240,.82); --line: rgba(255,236,215,.24); }
+.view:has(> .rh3) .rnow-next small { color: #fff !important; font-family: 'Doto', monospace; font-weight: 700; font-size: 12px; letter-spacing: .04em; }
+.view:has(> .rh3) :is(.rh-t b, .dm-h b, .rh-stats b, .stepper-row, .list-btn, .rh-moonc b, .rnow-next b) { color: #fff !important; }
+.view:has(> .rh3) :is(.rh-t small, .rh-stats small, .stepper-row small, .dm-h small, .dm-p, .rh-phase, .rh-moonc p, .rnow-tip, .rnow-next span, .rh-week span) { color: rgba(255,248,240,.82) !important; }
+.view:has(> .rh3) :is(.rh-i, .rnow-do .rh-i, .rh-stats > div, .dm-rail span) { background: rgba(255,240,225,.12); border-color: rgba(255,236,215,.26); }
+.view:has(> .rh3) :is(.glass, .card.glass) { background: linear-gradient(160deg, rgba(255,240,225,.14), rgba(255,240,225,.08)); border-color: rgba(255,236,215,.24); }
+.view:has(> .rh3) .dm.past { opacity: .75; }
+
+/* dusk page: misty mountain ridges stay at the bottom of the screen while the page scrolls over them */
+.view:has(> .rh3) { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 360' preserveAspectRatio='xMidYMax slice'%3E%3Cdefs%3E%3CradialGradient id='g' cx='.62' cy='.42' r='.5'%3E%3Cstop offset='0' stop-color='%23ffb877' stop-opacity='.32'/%3E%3Cstop offset='1' stop-color='%23ffb877' stop-opacity='0'/%3E%3C/radialGradient%3E%3ClinearGradient id='m' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23ffd6b0' stop-opacity='.12'/%3E%3Cstop offset='1' stop-color='%23ffd6b0' stop-opacity='0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='360' fill='url%28%23g%29'/%3E%3Cpath d='M0 190 L40 160 L78 176 L120 128 L162 170 L210 138 L246 158 L290 112 L334 156 L372 140 L400 152 V360 H0Z' fill='%234a2a2e' opacity='.55'/%3E%3Cpath d='M0 190 L40 160 L78 176 L120 128 L162 170 L210 138 L246 158 L290 112 L334 156 L372 140 L400 152 V230 H0Z' fill='url%28%23m%29'/%3E%3Cpath d='M0 236 L52 204 L96 226 L150 186 L204 222 L252 196 L300 228 L352 200 L400 218 V360 H0Z' fill='%233a1f22' opacity='.8'/%3E%3Cpath d='M0 282 L70 252 L130 274 L196 244 L262 272 L330 250 L400 268 V360 H0Z' fill='%232a1618'/%3E%3Cpath d='M0 322 L80 300 L160 318 L240 296 L320 316 L400 302 V360 H0Z' fill='%231e1013'/%3E%3C/svg%3E") center bottom / 100% auto no-repeat, linear-gradient(180deg, #1c0d06 0%, #24120d 45%, #2c1820 100%); }
+.view:has(> .rh3) :is(.glass, .card.glass) { background: linear-gradient(160deg, rgba(255,240,225,.13), rgba(255,240,225,.06)) !important; border-color: rgba(255,236,215,.22) !important;
+  box-shadow: inset 0 1px 0 rgba(255,240,220,.12) !important; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+/* back arrow: clear on the video */
+.rh3 > .spec-btn { color: #fff; background: rgba(20,8,4,.45); border: 1px solid rgba(255,240,225,.45); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: 0 6px 18px rgba(0,0,0,.3); }
+.rh3 > .spec-btn svg { stroke-width: 2.4; }
+/* video: zoomed in a little and lifted, so the sun sits above the title */
+.rh3-vid { transform: scale(1.18) translateY(-9%); transform-origin: 50% 40%; }
+/* the story: own drawn sunset scene and small icon discs instead of labels */
+.view:has(> .rh3) .rh-article { margin-top: 30px; padding-top: 0; overflow: hidden; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.rh-scene { margin: 0 -20px 16px; line-height: 0; }
+.rh-scene svg { display: block; }
+.rh-art-ic { display: grid; place-items: center; width: 38px; height: 38px; flex: none; border-radius: 50%; color: #ffd27a;
+  background: radial-gradient(circle at 50% 35%, rgba(255,210,122,.24), rgba(255,210,122,.06)); border: 1px solid rgba(255,210,122,.35); }
