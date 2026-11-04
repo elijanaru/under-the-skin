@@ -200,9 +200,9 @@ export const SIGN_DEPTH = {
 // ---------- birth chart wording (Moon, Rising and the planets), used with js/astro.js ----------
 // One "style" per sign, so any planet in that sign reads naturally: "You love slowly, through the senses."
 export const SIGN_STYLE = {
-  aries: 'boldly, and fast', taurus: 'slowly, through the senses', gemini: 'curiously, in many directions', cancer: 'tenderly, protecting what you love',
-  leo: 'warmly, and out loud', virgo: 'carefully, with an eye for detail', libra: 'gracefully, looking for balance', scorpio: 'deeply, all the way',
-  sagittarius: 'freely, chasing meaning', capricorn: 'steadily, with a long plan', aquarius: 'your own way, a little ahead of your time', pisces: 'softly, through feeling and intuition',
+  aries: 'boldly and fast', taurus: 'slowly, through the senses', gemini: 'curiously, in many directions', cancer: 'tenderly, keeping your people close',
+  leo: 'warmly and out loud', virgo: 'carefully, with an eye for detail', libra: 'gracefully, looking for balance', scorpio: 'deeply, all the way',
+  sagittarius: 'freely, chasing meaning', capricorn: 'steadily, with a long plan', aquarius: 'your own way, a little ahead of your time', pisces: 'softly, led by intuition',
 };
 export const PLANET_LINE = {
   sun: s => `You shine ${s}.`, moon: s => `You feel ${s}.`, mercury: s => `You think and talk ${s}.`, venus: s => `You love ${s}.`,
