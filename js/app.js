@@ -844,13 +844,37 @@ function pearlWord(g, word) {
   g.dataset.box = `${x0} ${y0} ${x1 - x0} ${y1 - y0}`; // exact crystal bounds, so the word sits dead centre
   g.innerHTML = placed.sort((a, b) => a[0] - b[0]).map(([i, j, r]) => `<use class="p-bead" href="#crys" style="--d:${(i / W * 1.8).toFixed(2)}s" x="${(i - r).toFixed(1)}" y="${(j - r).toFixed(1)}" width="${(r * 2).toFixed(1)}" height="${(r * 2).toFixed(1)}" transform="rotate(${Math.round(rnd() * 45)} ${i} ${j})"/>`).join('') + big.map(star).join('');
 }
+// A tiny pearl pet with a leaf sprout, waving and hugging a heart: the face of "no subscriptions".
+function promisePet() {
+  return `<svg class="op-pet" viewBox="14 8 136 140" aria-hidden="true"><defs>
+      <radialGradient id="opp-b" cx="38%" cy="30%" r="78%"><stop offset="0" stop-color="#fff"/><stop offset=".55" stop-color="#fdeef3"/><stop offset="1" stop-color="#f1c3d3"/></radialGradient>
+      <radialGradient id="opp-h" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#ff9fb8"/><stop offset="1" stop-color="#d94d74"/></radialGradient></defs>
+    <ellipse class="op-pet-sh" cx="80" cy="140" rx="34" ry="5.5" fill="rgba(60,30,40,.14)"/>
+    <g class="op-pet-body">
+      <path d="M80 44 C 75 32, 77 22, 87 17 C 92 27, 89 37, 80 44 Z" fill="#8fae5a"/><path d="M80 44 C 81 35, 84 26, 87 18" stroke="#5f7d36" stroke-width="1.4" fill="none"/>
+      <path d="M74 42 C 66 36, 58 37, 55 41 C 61 46, 68 46, 74 42 Z" fill="#a4c46c"/>
+      <ellipse cx="80" cy="90" rx="46" ry="44" fill="url(#opp-b)" stroke="#fff" stroke-width="2"/>
+      <path class="op-pet-wave" d="M37 82 C 26 74, 22 62, 27 56" stroke="#efc0cf" stroke-width="9" stroke-linecap="round" fill="none"/>
+      <ellipse cx="60" cy="94" rx="7" ry="4.2" fill="#f3a3b9" opacity=".8"/><ellipse cx="100" cy="94" rx="7" ry="4.2" fill="#f3a3b9" opacity=".8"/>
+      <path d="M60 82 q6 -8 12 0 M88 82 q6 -8 12 0" stroke="#2c3a20" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <path d="M72 96 q8 9 16 0 Z" fill="#c4566f"/>
+      <g class="op-pet-heart" transform="translate(98 112)"><path d="M0 8 C -14 -2, -10 -14, 0 -7 C 10 -14, 14 -2, 0 8 Z" fill="url(#opp-h)" stroke="#fff" stroke-width="1.6"/></g>
+      <path d="M118 100 C 112 110, 104 114, 98 113" stroke="#efc0cf" stroke-width="9" stroke-linecap="round" fill="none"/>
+    </g>
+    <g class="op-pet-sp"><path d="M136 34 l2 6 6 2 -6 2 -2 6 -2 -6 -6 -2 6 -2z" fill="#e8b52c"/><path d="M24 26 l1.5 4 4 1.5 -4 1.5 -1.5 4 -1.5 -4 -4 -1.5 4 -1.5z" fill="#c4566f"/><circle cx="142" cy="74" r="2.4" fill="#8fae5a"/></g>
+  </svg>`;
+}
 function onbPromise() {
-  const no = [['Subscriptions', 'One payment, yours for good'], ['Ads', 'Never, not even small ones'], ['Hidden fees', 'The price you see is all'], ['Selling your data', 'It stays yours, always'], ['Popups', 'No nagging to upgrade']];
-  return `<div class="op">
-    <h2 class="onb-title">We hate <span>subscriptions</span></h2>
-    <p class="muted">We’re a small team and this is our passion project. Try everything free for 3 days. If you love it, unlock the full app with one payment.</p>
-    <div class="op-steps"><div><b>Today</b><span>Full app, free</span></div><i></i><div><b>Day 3</b><span>Decide, no charge before</span></div><i></i><div><b>Forever</b><span>One payment</span></div></div>
-    <ul class="op-no">${no.map(([a, b]) => `<li><span class="op-x">${icon('close', 12, 2.4)}</span><div><b>No ${a.toLowerCase()}</b><small>${b}</small></div></li>`).join('')}</ul>
+  const no = [['subscriptions', 'One payment, yours for good'], ['ads', 'Never, not even small ones'], ['hidden fees', 'The price you see is all'], ['selling your data', 'It stays yours, always'], ['popups', 'No nagging to upgrade']];
+  const steps = [['gift', 'Today', 'Full app, free'], ['calendar', 'Day 3', 'Decide, no charge before'], ['heart', 'Forever', 'One payment']];
+  return `<div class="op op2">
+    <section class="op-hero">
+      ${promisePet()}
+      <h2>We hate<br><s>subscriptions</s></h2>
+      <p>We’re a small team and this is our passion project. Try everything free for 3 days. If you love it, unlock the full app with one payment.</p>
+    </section>
+    <section class="op-card op-path">${steps.map(([ic, t, d], i) => `<div class="op-st ${i === 0 ? 'now' : ''}"><span>${icon(ic, 17)}</span><b>${t}</b><small>${d}</small></div>`).join('')}</section>
+    <section class="op-card"><ul class="op-no">${no.map(([a, b]) => `<li><span class="op-x">${icon('close', 12, 2.6)}</span><div><b>No ${a}</b><small>${b}</small></div></li>`).join('')}</ul></section>
   </div>`;
 }
 // The cycle question shows her actual cycle: four phase arcs sized from the length she picks, redrawn on every tap.
