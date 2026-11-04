@@ -222,19 +222,34 @@ function focusPicker(cur, act) { return `<div class="chips">${FOCUS.map(f => `<b
 const TIP_TO = { pms: 'article/progesterone-pms', skin: 'relief/Acne', sleep: 'article/sleep', mood: 'article/brain', energy: 'article/iron', eat: 'plan', tcm: 'article/yin-yang', hormones: 'hormones', body: 'move', bloat: 'relief/Bloating', regular: 'article/four-phases', ttc: 'article/ovulation-signs' };
 // Tip deck: a question, the tip, and one clear way in, per thing she wants help with.
 const TIP_DECK = { pms: ['drop', 'Cramps creeping in?', 'Ease my PMS'], skin: ['spark', 'Skin acting up?', 'Skin relief'], sleep: ['moon', 'Trouble winding down?', 'Sleep better'], mood: ['sun', 'Feeling up and down?', 'Mood & your brain'], energy: ['bolt', 'Running low?', 'Get my energy back'], eat: ['bowl', 'What should I eat today?', 'Open my plan'], tcm: ['yinyang', 'What is your inner season?', 'Yin & yang'], hormones: ['chart', 'What is my body doing?', 'See my hormones'], body: ['leaf', 'Want a strong, toned body?', 'Best training times'], bloat: ['cup', 'Feeling bloated?', 'Bloating relief'], regular: ['calendar', 'Want a steadier cycle?', 'The four phases'], ttc: ['heart', 'Trying for a baby?', 'Signs of egg release'] };
+// A tip from her own check-ins: a pattern due today or tomorrow, a hard symptom from the last two days, or her fertile sign.
+function checkinTip(info) {
+  const tip = (t, deck, to) => ({ k: 'mine', t: 'From your check-ins', photo: 'Progesterone', tip: t, deck, to });
+  const rel = n => reliefKey(n) ? `relief/${encodeURIComponent(reliefKey(n))}` : 'log';
+  const up = M.stats.periods.length ? upcomingPatterns(patterns()).find(x => x.inDays <= 1 && QUICK_FIX[x.name]) : null;
+  if (up) return tip(`${up.name} usually comes on ${dayRange(up)} for you. Get ahead of it: ${QUICK_FIX[up.name]}`, ['spark', `${up.name} ${up.inDays ? 'tomorrow' : 'today'}?`, 'Get ahead of it'], rel(up.name));
+  for (const d of [0, -1]) {
+    const l = state.logs[C.iso(C.addDays(new Date(), d))] || {};
+    const s = [...(l.symptoms || []), ...(l.moods || [])].find(x => QUICK_FIX[x] && !GOOD_FEELINGS.includes(x));
+    if (s) return tip(`You logged ${s.toLowerCase()} ${d ? 'yesterday' : 'today'}. ${QUICK_FIX[s]}`, ['spark', `Still feeling ${s.toLowerCase()}?`, 'What helps'], rel(s));
+    if (l.fluid === 'Egg white') return tip(`Your egg-white sign moved your egg release to day ${info.ov}. Energy, confidence and desire peak around now.`, ['heart', 'Your fertile days are here', 'See my hormones'], 'hormones');
+  }
+  return null;
+}
 function tipsCard(info) {
-  const ph = info.phase, list = [];
+  const ph = info.phase, list = [], mine = checkinTip(info);
+  if (mine) list.push(mine);
   if (ttc()) list.push({ k: 'ttc', t: 'Trying to conceive', photo: 'Prolactin', tip: TTC_TIPS[info.cd >= info.ov - 5 && info.cd <= info.ov ? 'ovulatory' : ph] });
   focusKeys().forEach(k => { const f = FOCUS.find(x => x.k === k); if (f) list.push({ k, t: f.t, photo: f.photo, tip: TIPS[k][ph] }); });
   if (!list.length) return '';
-  const [lead, ...rest] = list.slice(0, 6), D = x => TIP_DECK[x.k] || ['spark', x.t, 'Show me'];
+  const [lead, ...rest] = list.slice(0, 6), D = x => x.deck || TIP_DECK[x.k] || ['spark', x.t, 'Show me'];
   const [lic, lq, lcta] = D(lead), lu = hormonePhoto(lead.photo, 900);
   return `${sectionTitle('Your tips today', ['Edit', 'profile'])}
-    <button class="tf" data-action="nav" data-to="${TIP_TO[lead.k] || 'plan'}">
+    <button class="tf" data-action="nav" data-to="${lead.to || TIP_TO[lead.k] || 'plan'}">
       <span class="tf-media">${lu ? `<img src="${lu}" alt="" loading="lazy">` : ''}<span class="tf-tag">${icon(lic, 13)} ${lead.t}</span><b class="tf-q">${lq}</b></span>
       <span class="tf-p">${lead.tip}</span>
       <span class="tf-cta">${lcta} ${icon('chevR', 14)}</span></button>
-    ${rest.length ? `<div class="tl">${rest.map(x => { const [, q] = D(x), u = hormonePhoto(x.photo, 200); return `<button class="tl-r" data-action="nav" data-to="${TIP_TO[x.k] || 'plan'}">${u ? `<img src="${u}" alt="" loading="lazy">` : '<span class="tl-ph"></span>'}<span class="tl-t"><b>${q}</b><small>${x.t}</small></span><span class="tl-go">${icon('chevR', 14)}</span></button>`; }).join('')}</div>` : ''}`;
+    ${rest.length ? `<div class="tl">${rest.map(x => { const [, q] = D(x), u = hormonePhoto(x.photo, 200); return `<button class="tl-r" data-action="nav" data-to="${x.to || TIP_TO[x.k] || 'plan'}">${u ? `<img src="${u}" alt="" loading="lazy">` : '<span class="tl-ph"></span>'}<span class="tl-t"><b>${q}</b><small>${x.t}</small></span><span class="tl-go">${icon('chevR', 14)}</span></button>`; }).join('')}</div>` : ''}`;
 }
 // Articles to read around today's tips: this phase first, then what she wants help with.
 const ARTICLE_PHOTO = { estrogen: 'Oestrogen', 'progesterone-pms': 'Progesterone', iron: 'Active vitamin D', 'yin-yang': 'Thyroid hormones', 'seed-cycling': 'Insulin', 'four-phases': 'LH', brain: 'Serotonin', sleep: 'Melatonin', 'ovulation-signs': 'FSH' };
@@ -1294,9 +1309,9 @@ function calSyncCard() {
     </section>`;
 }
 
-const LOG_SECS = [['flow', 'drop', 'Period & down there'], ['body', 'user', 'Body'], ['mind', 'mind', 'Mind & mood'], ['rest', 'bolt', 'Energy & sleep'],
-  ['desire', 'heart', 'Desire & intimacy'], ['fuel', 'bowl', 'Food & supplements'], ['disrupt', 'clock', 'Cycle disruptors'], ['note', 'book', 'Note']];
-const LOG_DRIVE = [['1', '🌙', 'Low'], ['3', '🌷', 'Medium'], ['5', '🔥', 'High']];
+const LOG_SECS = [['flow', 'drop', 'Period & down there'], ['body', 'user', 'Body'], ['mind', 'mind', 'Mind & mood'], ['rest', 'bolt', 'Energy'],
+  ['desire', 'heart', 'Desire & intimacy'], ['disrupt', 'clock', 'Cycle disruptors'], ['note', 'book', 'Note']];
+const DRIVE = [['🌙', 'Quiet'], ['🌸', 'Soft'], ['🌷', 'Warm'], ['🌹', 'Craving'], ['🔥', 'On fire']];
 const SLIDER_WORDS = { body: ['Rough', 'Meh', 'Okay', 'Good', 'Great'], mind: ['Heavy', 'Low', 'Okay', 'Good', 'Light'], drive: ['None', 'Low', 'Medium', 'High', 'On fire'] };
 function logSlider(field, q, l) {
   const v = l[field], set = v != null;
@@ -1345,23 +1360,27 @@ function viewLog() {
   const has = f => (l[f] || []).length;
   const count = {
     flow: (l.flow ? 1 : 0) + (l.fluid ? 1 : 0) + has('down'),
-    body: has('symptoms'), mind: has('moods'), rest: (l.energy ? 1 : 0) + (l.sleep != null ? 1 : 0),
-    desire: (l.drive ? 1 : 0) + has('intim'), fuel: has('intake') + has('supp'), disrupt: has('disrupt'), note: l.notes ? 1 : 0,
+    body: has('symptoms'), mind: has('moods'), rest: l.energy ? 1 : 0,
+    desire: (l.drive ? 1 : 0) + has('intim'), disrupt: has('disrupt'), note: l.notes ? 1 : 0,
   };
   const inner = {
-    flow: `<div class="lg-k">Bleeding</div>
+    flow: `<div class="lg-k">Bleeding</div><p class="lg-why">${icon('spark', 12)}<span>Builds your periods, so your next period, egg release and phase get more exact.</span></p>
       <div class="flow">${FLOWS.map(f => `<button class="flow-o ${l.flow === f.id ? 'on' : ''}" data-action="logSet" data-field="flow" data-v="${f.id}">
         <span class="drops">${f.drops ? Array.from({ length: f.drops }, () => icon('drop', 15, 1.4)).join('') : '<i class="spot"></i>'}</span>${f.label}</button>`).join('')}</div>
-      <div class="lg-k">Discharge</div>${chips('fluid', DISCHARGE, false)}
-      <div class="lg-k">Anything else</div>${chips('down', DOWN_EXTRA)}`,
+      <div class="lg-k">Discharge</div><p class="lg-why">${icon('spark', 12)}<span>Egg white is your fertile sign: it moves your egg release date to match your body.</span></p>${chips('fluid', DISCHARGE, false)}
+      <div class="lg-k">Anything else</div><p class="lg-why">${icon('spark', 12)}<span>Tells you when something is worth checking with a doctor.</span></p>${chips('down', DOWN_EXTRA)}`,
     body: `${BODY_GROUPS.map(([g, list]) => `<div class="lg-k">${g}</div>${chips('symptoms', list)}`).join('')}`,
-    mind: `${chips('moods', MOOD_LIST)}`,
+    mind: ['Light', 'Heavy'].map(side => `<div class="lg-k">${side === 'Light' ? 'Feeling light' : 'Feeling heavy'}</div><div class="mb ${side === 'Light' ? 'up' : 'down'}">${MOOD_LIST.filter(([m]) => GOOD_FEELINGS.includes(m) === (side === 'Light')).map(([v, e], i) => {
+      const on = (l.moods || []).includes(v); return `<button class="mb-b ${on ? 'on' : ''}" style="--i:${i}" data-action="logSet" data-field="moods" data-v="${esc(v)}" data-multi="1" aria-pressed="${on}"><span>${e}</span><small>${v}</small></button>`; }).join('')}</div>`).join(''),
     rest: `<div class="lg-k">Energy</div>
       <div class="energy-pick">${[1, 2, 3, 4, 5].map(n => `<button class="${l.energy >= n ? 'on' : ''}" data-action="logSet" data-field="energy" data-v="${n}"><b style="height:${30 + n * 12}%"></b></button>`).join('')}</div>
-      <div class="ep-labels"><span>Drained</span><span>Radiant</span></div>
-      <div class="lg-k">Sleep last night</div>
-      <div class="lg-sleep"><button data-action="logSleep" data-d="-0.5" aria-label="Less sleep">−</button><b>${l.sleep != null ? l.sleep : '–'}<small>hours</small></b><button data-action="logSleep" data-d="0.5" aria-label="More sleep">+</button></div>`,
-    desire: `<div class="lg-k">Sex drive</div>${chips('drive', LOG_DRIVE, false)}<div class="lg-k">Sex today</div>${chips('intim', INTIMACY.filter(([n]) => n.startsWith('Sex,')))}
+      <div class="ep-labels"><span>Drained</span><span>Radiant</span></div>`,
+    desire: `<div class="lg-k">Sex drive</div>
+      <div class="dz"><div class="dz-track">
+        ${DRIVE.map(([e, w], i) => `<button class="dz-s ${l.drive >= i + 1 ? 'lit' : ''} ${l.drive === i + 1 ? 'on' : ''}" style="--i:${i}" data-action="logSet" data-field="drive" data-v="${i + 1}" aria-label="Sex drive: ${w}" aria-pressed="${l.drive === i + 1}"><span>${e}</span></button>`).join('')}</div>
+        <div class="dz-l"><span>Quiet</span><b>${l.drive ? DRIVE[l.drive - 1][1] : 'Tap your level'}</b><span>On fire</span></div></div>
+      <div class="lg-k">Sex today</div>
+      <div class="sx">${INTIMACY.filter(([n]) => n.startsWith('Sex,')).map(([v, e]) => { const on = (l.intim || []).includes(v); return `<button class="sx-c ${on ? 'on' : ''}" data-action="logSet" data-field="intim" data-v="${esc(v)}" data-multi="1" aria-pressed="${on}"><span>${e}</span><small>${v.endsWith('unprotected') ? 'Unprotected' : 'Protected'}</small></button>`; }).join('')}</div>
       <p class="lg-fine">Private: only you see this. It’s never shared with partners.</p>`,
     fuel: `<div class="lg-k">Food</div>${chips('intake', INTAKE.filter(([n]) => n === 'Raw & cold food'))}<div class="lg-k">Supplements & medicine <button class="link lg-more" data-action="nav" data-to="nutrients">Doses & food first ${icon('chevR', 11)}</button></div>${chips('supp', SUPPS)}`,
     disrupt: `<p class="lg-fine top">Things that can shift ovulation or your next period. Logging them helps me read your cycle right.</p>${chips('disrupt', DISRUPTORS.filter(([n]) => ['Alcohol', 'Illness', 'Travel', 'Big stress', 'Shock or loss'].includes(n)))}`,
@@ -1376,8 +1395,7 @@ function viewLog() {
     ${LOG_SECS.map(([id, e, t], i) => `<section class="lg-sec ${open[id] ? 'open' : ''}" style="animation-delay:${i * 40}ms">
       <button class="lg-head" data-action="logSec" data-s="${id}" aria-expanded="${!!open[id]}"><span class="lg-ic">${icon(e, 18)}</span><b>${t}</b>${count[id] ? `<small>${count[id]}</small>` : ''}<span class="lg-chev">${icon('chevR', 16)}</span></button>
       ${open[id] ? `<div class="lg-in">${inner[id]}</div>` : ''}</section>`).join('')}
-    ${logTeas(l, di)}
-    <div class="lg-go"><button class="btn btn-light btn-block" data-action="nav" data-to="brain${isToday ? '' : '/' + k}" ${total ? '' : 'disabled'}>${icon('spark', 18)} ${total ? 'See what this means' : 'Tap what fits today'}</button></div>
+    <div class="lg-go"><button class="btn btn-light btn-block" data-action="nav" data-to="brain${isToday ? '' : '/' + k}" ${total ? '' : 'disabled'}>${total ? `Continue ${icon('chevR', 18)}` : 'Tap what fits today'}</button></div>
   </div>`;
 }
 
@@ -1408,9 +1426,9 @@ function brainRead(k) {
   const note = (emo, t, p, ev, tone = 'info') => notes.push({ emo, t, p, ev, tone });
   // signs from down there
   if (l.fluid === 'Egg white') {
-    const diff = di.cd - ov;
-    Math.abs(diff) <= 3 ? note('🥚', 'Your fertile sign', `Stretchy, clear discharge is estrogen at its peak, right on time for your predicted ovulation around day ${ov}.`, 'strong', 'good')
-      : note('🥚', `Fertile sign ${diff < 0 ? 'earlier' : 'later'} than predicted`, `Egg-white discharge on day ${di.cd} suggests ovulation may come ${diff < 0 ? 'earlier' : 'later'} than day ${ov} this cycle. I’ll keep watching.`, 'strong');
+    const Pd = M.stats.avgPeriod, base = Math.max(Pd + 3, Math.min(L - 5, L - (M.stats.ovSeen.luteal || 14))), diff = di.cd - base;
+    Math.abs(diff) <= 1 ? note('🥚', 'Your fertile sign', `Stretchy, clear discharge is estrogen at its peak, right on time for egg release around day ${ov}.`, 'strong', 'good')
+      : note('🥚', `Egg release moved to day ${ov}`, `Your egg-white sign came ${Math.abs(diff)} ${Math.abs(diff) === 1 ? 'day' : 'days'} ${diff < 0 ? 'earlier' : 'later'} than I predicted, so I moved this cycle’s egg release and fertile days to match your body.`, 'strong', 'good');
   }
   if (l.fluid === 'Clumpy' || (l.down || []).some(x => ['Unusual colour', 'Strong smell', 'Itching', 'Burning'].includes(x)))
     note('🌸', 'Your intimate balance', 'Clumpy discharge, a new colour or smell, itching or burning can mean a yeast or bacterial imbalance. If it lasts more than a few days, see a doctor or pharmacist.', 'strong', 'warn');
@@ -1460,22 +1478,23 @@ const NOTE_IC = { '🥚': 'spark', '🌸': 'leaf', '🩸': 'drop', '🥩': 'fish
 function viewBrain(id) {
   const k = id && /^\d{4}-\d\d-\d\d$/.test(id) ? id : todayISO(), R = brainRead(k);
   const ph = R ? PHASES[R.ph] : null, isToday = k === todayISO();
-  const n = R ? R.cards.length + R.notes.length : 0, mine = R ? R.cards.filter(c => c.learn.startsWith('Your pattern')).length : 0;
-  const tone = { warn: 'Worth knowing', good: 'Good sign', info: 'For today' };
-  const body = !R || !n ? `<section class="br-empty"><p>Log a few things and I’ll tell you what they mean for your cycle.</p><button class="btn btn-light" data-action="nav" data-to="log">${icon('plus', 18)} Check in</button></section>` : `
-    ${R.notes.map((x, i) => `<section class="br-note ${x.tone}"><span class="br-emo">${icon(NOTE_IC[x.emo] || 'spark', 20)}</span><div><div class="br-k">${tone[x.tone]} ${x.ev ? evBadge(x.ev) : ''}</div><b>${x.t}</b><p>${x.p}</p></div></section>`).join('')}
-    ${R.cards.length ? `<div class="br-h">What you logged</div>` : ''}
-    ${R.cards.map((c, i) => `<section class="br-card ${c.good ? 'good' : ''}">
-      <div class="br-top"><span class="br-emo">${icon(LOG_IC[c.s] || 'spark', 20)}</span><b>${c.s}</b>${evBadge(c.ev)}</div>
-      ${c.why ? `<p class="br-why">${c.why}</p>` : ''}
-      <div class="br-learn">${icon('spark', 13)}<span>${c.learn}</span></div>
-      ${c.fix ? `<div class="br-fix"><small>Try</small><p>${c.fix}</p></div>` : ''}
-      ${c.foods.length ? `<div class="foods">${c.foods.map(x => `<span class="food">${x}</span>`).join('')}</div>` : ''}
-      ${brainLinks(c.rk)}
-      ${c.other ? `<p class="br-other">${c.other}</p>` : ''}
-      ${c.rk ? `<button class="br-more" data-action="nav" data-to="relief/${encodeURIComponent(c.rk)}">Full relief guide ${icon('chevR', 14)}</button>` : ''}
-    </section>`).join('')}`;
-  const cyc = R ? R.P.cycles : 0, pct = Math.min(1, cyc / 3);
+  // only what to do and what to watch: warnings first, then a tickable plan, then what's going well
+  const warns = R ? [...R.notes.filter(x => x.tone === 'warn').map(x => ({ ic: NOTE_IC[x.emo] || 'spark', t: x.t, p: x.p })),
+    ...R.cards.filter(c => c.other).map(c => ({ ic: LOG_IC[c.s] || 'spark', t: `About your ${c.s.toLowerCase()}`, p: c.other }))] : [];
+  const acts = R ? [...R.cards.filter(c => !c.good && c.fix && !c.fix.startsWith('Nothing')).map(c => ({ id: c.s, k: `For your ${c.s.toLowerCase()}`, ic: LOG_IC[c.s] || 'spark', t: c.fix, why: c.why, foods: c.foods, rk: c.rk })),
+    ...R.notes.filter(x => x.tone === 'info').map(x => ({ id: x.t, k: x.t, ic: NOTE_IC[x.emo] || 'spark', t: x.p, foods: [] }))] : [];
+  const good = R ? [...R.notes.filter(x => x.tone === 'good'), ...R.cards.filter(c => c.good).map(c => ({ t: c.s, p: c.why }))] : [];
+  const n = warns.length + acts.length + good.length, done = ui.brDone = ui.brDone || {};
+  const body = !R || !n ? `<section class="br-empty"><p>Log a few things and I’ll tell you exactly what to do today.</p><button class="btn btn-light" data-action="nav" data-to="log">${icon('plus', 18)} Check in</button></section>` : `
+    ${warns.map(w => `<section class="bx-warn"><span class="bx-wi">!</span><div><small>Check this</small><b>${w.t}</b><p>${w.p}</p></div></section>`).join('')}
+    ${logTeas(R.l, R.di)}
+    ${acts.length ? `<div class="br-h">Your plan for today</div>
+    <div class="bx-plan">${acts.map((x, i) => { const on = done[k + x.id]; return `<section class="bx-t ${on ? 'done' : ''}">
+      <button class="bx-tick" data-action="brTick" data-id="${esc(k + x.id)}" aria-pressed="${!!on}" aria-label="Mark as done">${on ? icon('check', 16) : `<span>${i + 1}</span>`}</button>
+      <div class="bx-b"><small>${icon(x.ic, 12)} ${x.k}</small><p>${x.t}</p>${x.why ? `<p class="bx-why"><b>Why</b> ${x.why}</p>` : ''}
+        ${x.foods.length ? `<div class="bx-eat"><em>Eat</em>${x.foods.map(f => `<span>${f}</span>`).join('')}</div>` : ''}
+        ${x.rk ? `<button class="bx-go" data-action="nav" data-to="relief/${encodeURIComponent(x.rk)}">How to ${icon('chevR', 12)}</button>` : ''}</div></section>`; }).join('')}</div>` : ''}
+    ${good.length ? `<div class="br-h">Going well</div><div class="bx-good">${good.map(g => `<div><b>🌟 ${g.t}</b>${g.p ? `<p>${g.p}</p>` : ''}</div>`).join('')}</div>` : ''}`;
   return `<section class="br-hero br2">
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
     <div class="br2-card">
@@ -1490,15 +1509,12 @@ function viewBrain(id) {
       </svg>
       <div class="br2-day"><span>${isToday ? 'Today' : fmt(C.parseISO(k), { month: 'short', day: 'numeric' })}</span>${R ? `<span>Day <b>${R.di.cd}</b></span><span class="br2-ph">${ph.name}</span>` : ''}</div>
       <h1 class="br2-h">What your body<em>is saying</em></h1>
-      ${n ? `<p class="br2-n"><b>${n}</b> ${n === 1 ? 'thing' : 'things'} read${mine ? ` · ${mine} ${mine === 1 ? 'matches' : 'match'} your patterns` : ''}</p>` : ''}
+      ${n ? `<p class="br2-n">${acts.length ? `<b>${acts.length}</b> to do` : ''}${acts.length && warns.length ? ' · ' : ''}${warns.length ? `<b>${warns.length}</b> to check` : ''}${!acts.length && !warns.length ? 'All looking good' : ''}</p>` : ''}
     </div>
   </section>
   <div class="pad br br2b">
     ${body}
-    ${R && isToday && R.up.length ? `<div class="br-h">Coming up for you</div>${R.up.map(x => `<section class="br-up"><span class="hu-when">${x.inDays === 0 ? 'Today' : x.inDays === 1 ? 'Tomorrow' : `In ${x.inDays} days`}</span><div><b>${x.name}</b> usually on ${dayRange(x)}${QUICK_FIX[x.name] ? `<small>${QUICK_FIX[x.name]}</small>` : ''}</div></section>`).join('')}` : ''}
-    <section class="br-learnbar"><div class="br-k">How well I know you</div>
-      <div class="br-bar"><i style="width:${Math.max(6, pct * 100)}%"></i></div>
-      <p>${cyc >= 3 ? `Learned from ${cyc} cycles of check-ins. Your patterns and heads-ups are personal now.` : `${cyc} of 3 cycles logged. Keep checking in and I’ll start predicting your symptoms before they arrive.`}</p></section>
+    ${R && isToday && R.up.length ? `<div class="br-h">Get ahead of it</div>${R.up.map(x => `<section class="br-up"><span class="hu-when">${x.inDays === 0 ? 'Today' : x.inDays === 1 ? 'Tomorrow' : `In ${x.inDays} days`}</span><div><b>${x.name}</b> usually on ${dayRange(x)}${QUICK_FIX[x.name] ? `<small>${QUICK_FIX[x.name]}</small>` : ''}</div></section>`).join('')}` : ''}
     <button class="btn btn-ghost btn-block" data-action="logDay" data-date="${k}">Edit check-in</button>
     <p class="fine center">General information, not medical advice or contraception.</p>
   </div>`;
@@ -2409,6 +2425,8 @@ function learnedCard() {
   facts.push(['Your period', `About ${stats.avgPeriod} days`, stats.periods.length ? `From ${stats.periods.length} logged ${stats.periods.length === 1 ? 'period' : 'periods'}` : 'Default until you log']);
   const np = info.nextStart, lo = C.addDays(np, -pm), hi = C.addDays(np, pm);
   facts.push(['Next period', fmt(np, { month: 'short', day: 'numeric' }), n ? `Most likely ${fmt(lo, { month: 'short', day: 'numeric' })} – ${fmt(hi, { month: 'short', day: 'numeric' })}` : 'Gets sharper with every period you log']);
+  const os = stats.ovSeen;
+  if (os.cd || os.luteal) facts.push(['Your egg release', `Around day ${info.ov}`, os.cd ? 'From your egg-white sign this cycle' : `Learned from ${plural(os.cycles, 'cycle')} of discharge check-ins`]);
   const ev = P.eAvg.map((v, d) => [v, d]).filter(([v]) => v != null);
   if (ev.length >= 5) { const [, d] = ev.reduce((a, b) => b[0] > a[0] ? b : a); facts.push(['Your energy peak', `Around day ${d}`, 'From your energy check-ins']); }
   P.list.filter(x => !MOODS.includes(x.name)).slice(0, 2).forEach(x => facts.push([x.name, x.from === x.to ? `Day ${x.from}` : `Days ${x.from}–${x.to}`, `Seen in ${x.cyclesN} of your cycles`]));
@@ -5193,6 +5211,7 @@ const actions = {
     ui.logDate = C.iso(n); render();
   },
   logSec: d => { const o = ui.logOpen = ui.logOpen || {}; o[d.s] = !o[d.s]; render(); },
+  brTick: d => { const b = ui.brDone = ui.brDone || {}; b[d.id] = !b[d.id]; render(); },
   logSet: d => {
     const k = ui.logDate || todayISO(), l = getLog(k);
     let v = d.field === 'energy' || d.field === 'drive' ? +d.v : d.v;

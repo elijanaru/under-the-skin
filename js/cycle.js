@@ -41,10 +41,32 @@ export function cycleStats(state) {
     .filter(p => p.length <= 10).slice(-6).map(p => p.length);
   const avgPeriod = plens.length ? Math.round(mean(plens)) : state.profile.periodLength;
   const variation = recent.length > 1 ? Math.max(...recent) - Math.min(...recent) : 0;
-  return { logs, periods, lengths, avgCycle, avgPeriod, variation };
+  const ovSeen = learnLuteal(logs, periods, avgCycle);
+  return { logs, periods, lengths, avgCycle, avgPeriod, variation, ovSeen };
 }
 
-export function ovulationDay(L, P) { return clamp(L - 14, P + 3, L - 5); }
+// Egg-white discharge is the peak fertile sign: the last egg-white day of a cycle is taken as her egg release.
+// From those days we learn her own luteal length (egg release to next period, 14 by default), and an
+// egg-white day in the current cycle moves this cycle's egg release straight to it.
+let LUTEAL = 14;
+function learnLuteal(logs, periods, L) {
+  const egg = Object.keys(logs).filter(k => logs[k].fluid === 'Egg white').sort().map(parseISO);
+  const seen = [], past = [];
+  periods.forEach((p, i) => {
+    const next = periods[i + 1], end = next ? next.start : addDays(p.start, 60);
+    const ds = egg.filter(d => d >= addDays(p.start, p.length + 2) && d < end);
+    if (!ds.length) return;
+    const cd = diffDays(ds[ds.length - 1], p.start) + 1;
+    if (next) { const lut = diffDays(next.start, p.start) - cd + 1; if (lut >= 9 && lut <= 18) past.push(lut); }
+    seen.push({ start: p.start, cd, current: !next });
+  });
+  const cur = seen.find(x => x.current);
+  const learned = past.length ? Math.round(mean(past.slice(-4))) : null;
+  LUTEAL = cur && cur.cd < L - 3 ? L - cur.cd : learned || 14;
+  return { cycles: seen.length, cd: cur ? cur.cd : null, luteal: learned };
+}
+
+export function ovulationDay(L, P) { return clamp(L - LUTEAL, P + 3, L - 5); }
 
 export function phaseFor(cd, L, P) {
   const ov = ovulationDay(L, P);

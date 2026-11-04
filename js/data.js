@@ -392,14 +392,13 @@ export const PERIOD_FLOWS = ['light', 'medium', 'heavy'];
 
 // ---- Check-in (the "+" tab): groups, emoji and order are our own ----
 export const BODY_GROUPS = [
-  ['Pain', [['Cramps', '🌀'], ['Ovulation pain', '✴️'], ['Pelvic pain', '🔻'], ['Headache', '🤕'], ['Back pain', '🦴'], ['Joint pain', '🦵'], ['Tender breasts', '💗']]],
-  ['Belly', [['Bloating', '🎈'], ['Nausea', '🤢'], ['Constipation', '🧱'], ['Diarrhea', '💧'], ['Cravings', '🍫'], ['Big appetite', '🍽️']]],
-  ['Skin & hair', [['Acne', '🔴'], ['Oily skin', '✨'], ['Dry skin', '🍂'], ['Hair shedding', '🪮'], ['Glowing skin', '🌟']]],
-  ['Energy & sleep', [['Energetic', '⚡'], ['Fatigue', '🪫'], ['Insomnia', '🌙'], ['Brain fog', '🌫️'], ['Dizziness', '💫']]],
-  ['Warm & cold', [['Cold hands & feet', '🧊'], ['Feeling hot', '🔥'], ['Night sweats', '💦']]],
+  ['Pain', [['Cramps', '🌀'], ['Pelvic pain', '🔻'], ['Headache', '🤕'], ['Back pain', '🦴'], ['Joint pain', '🦵'], ['Tender breasts', '💗']]],
+  ['Belly', [['Bloating', '🎈'], ['Nausea', '🤢'], ['Constipation', '🧱'], ['Diarrhea', '💧'], ['Cravings', '🍫']]],
+  ['Skin & hair', [['Acne', '🔴'], ['Hair shedding', '🪮'], ['Glowing skin', '🌟']]],
+  ['Energy & sleep', [['Energetic', '⚡'], ['Fatigue', '🪫'], ['Brain fog', '🌫️'], ['Dizziness', '💫']]],
 ];
-export const MOOD_LIST = [['Calm', '🌿'], ['Happy', '😊'], ['Relaxed', '😌'], ['Confident', '💅'], ['Sexy', '🌹'], ['Social', '🫶'], ['Creative', '🎨'],
-  ['Sensitive', '🥺'], ['Tearful', '🥲'], ['Anxious', '😰'], ['Stressed', '😵‍💫'], ['Irritable', '😤'], ['Angry', '😠'], ['Sad', '😔'], ['Low mood', '🌧️'], ['Mood swings', '🎢'], ['Indifferent', '😶'], ['Unmotivated', '🫠']];
+export const MOOD_LIST = [['Calm', '🌿'], ['Happy', '😊'], ['Confident', '💅'], ['Sexy', '🌹'], ['Social', '🫶'], ['Creative', '🎨'],
+  ['Sensitive', '🥺'], ['Anxious', '😰'], ['Irritable', '😤'], ['Low mood', '🌧️'], ['Unmotivated', '🫠']];
 export const GOOD_FEELINGS = ['Energetic', 'Glowing skin', 'Calm', 'Happy', 'Relaxed', 'Confident', 'Sexy', 'Social', 'Creative'];
 export const DISCHARGE = [['Dry', '🏜️'], ['Sticky', '🍯'], ['Creamy', '🥛'], ['Watery', '💧'], ['Egg white', '🥚'], ['Clumpy', '☁️']];
 export const DOWN_EXTRA = [['Blood clots', '🩸'], ['Unusual colour', '🎨'], ['Strong smell', '👃'], ['Itching', '🌶️'], ['Burning', '🔥']];
