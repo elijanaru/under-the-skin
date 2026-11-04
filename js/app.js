@@ -574,6 +574,7 @@ const O9_STUDIES = [
   { n: '6', u: 'weeks', t: 'Of more fruit and vegetables gave faces a visibly healthier, golden glow.', cite: 'Whitehead et al. 2012', j: 'PLoS ONE', ev: 'some' },
   { n: '12', u: 'weeks', t: 'On a low-sugar diet cut acne spots in a controlled trial.', cite: 'Smith et al. 2007', j: 'Am J Clin Nutr', ev: 'some' },
 ];
+const O9_ALWAYS = ['Balanced hormones', 'Eating with your cycle', 'Ancient Eastern medicine for every phase', 'Your own tea guide', 'Living with your hormones, not against them'];
 const O9_JOURNALS = ['npj Digital Medicine', 'Am J Obstet Gynecol', 'PLoS ONE', 'Am J Clin Nutr', 'BMJ', 'Br J Sports Med', 'Obstetrics & Gynecology'];
 const laurel = side => `<svg class="o9-laurel ${side}" viewBox="0 0 14 30" aria-hidden="true"><path d="M11 29 C 4 24, 2 14, 6 2" fill="none"/>${[[5, 24, -40], [3.4, 18, -25], [3, 12, -10], [4.4, 6.5, 8]].map(([x, y, r]) => `<ellipse cx="${x}" cy="${y}" rx="1.8" ry="3.6" transform="rotate(${r} ${x} ${y})"/>`).join('')}</svg>`;
 function onbPlanHTML(keys, name) {
@@ -584,7 +585,7 @@ function onbPlanHTML(keys, name) {
       <p>Built around your goals and your own cycle.</p>
       <figure class="o9-lily"><img src="images/read-lilies.webp" alt="A lily opening from bud to full bloom" loading="lazy">
         <ol>${[['Day 1', 'Start'], ['Day 30', 'Reset'], ['Day 60', 'Rebuild'], ['Day 90', 'Glow']].map(([d, t]) => `<li><b>${d}</b><small>${t}</small></li>`).join('')}</ol></figure>
-      <ul class="o9-goals">${keys.map(k => `<li><span>${icon('check', 13, 2.6)}</span>${ROADMAP[k].o}</li>`).join('')}</ul>
+      <ul class="o9-goals">${[...new Set([...keys.map(k => ROADMAP[k].o), ...O9_ALWAYS])].map(t => `<li><span>${icon('check', 13, 2.6)}</span>${t}</li>`).join('')}</ul>
     </section>
 
     <section class="o9-card o9-ba">
@@ -597,7 +598,6 @@ function onbPlanHTML(keys, name) {
         <input class="o9-range" type="range" min="0" max="100" value="50" aria-label="Slide between before and after">
       </div>
       <ul class="o9-honest"><li>${icon('check', 12, 2.8)}No filter</li><li>${icon('check', 12, 2.8)}No makeup</li><li>${icon('check', 12, 2.8)}No surgery</li><li>${icon('check', 12, 2.8)}Same angle</li></ul>
-      <p class="o9-cap">Slide to see the change. One woman’s story, not a promise.</p>
     </section>
 
     <section class="o9-card o9-sci">
