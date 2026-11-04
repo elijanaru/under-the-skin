@@ -1087,16 +1087,10 @@ function viewToday() {
     <p class="fine center">Predictions are estimates based on your logs — not medical advice or contraception.</p>
   </div>`;
 }
-// Explore: one live hero (today's moon + where she is), then a calm 3×3 grid of glass tiles.
+// Explore: a calm grid of tiles.
 function exploreGrid(info) {
-  const m = Z.moonPhase(new Date()), lit = Math.round(m.illum * 100), wax = m.age < 14.77, sh = Math.round((1 - m.illum) * 56);
   const tiles = [['hormones', 'book', 'Hormones', 'What each one does'], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`], ['move', 'leaf', 'Move', 'Best training times'], ['cosmic', 'star', 'Your stars', 'Zodiac & moon'], ['habits', 'check', 'Habits', 'Daily checklist'], ['relief', 'heart', 'Relief', 'Cramps, PMS, sleep'], ['season', 'bowl', 'In season', 'Local foods'], ['tea', 'cup', 'Tea guide', 'For every need'], ['nutrients', 'drop', 'Nutrients', 'Food first, doses']];
-  return `<button class="xp-hero" data-action="nav" data-to="rhythm">
-      <span class="xp-hl"><b>Your rhythm</b><small>Sun, moon &amp; body, lined up with your cycle</small></span>
-      <span class="xp-moon" style="--sh:${wax ? sh : -sh}px" aria-hidden="true"></span>
-      <span class="xp-stats"><span><small>Moon</small>${m.name}</span><span><small>Light</small><span><b>${lit}</b>%</span></span><span><small>You</small>${PHASES[info.phase].name}</span></span>
-      <span class="xp-go">${icon('chevR', 16)}</span></button>
-    <div class="xp-grid">${tiles.map(([to, ic, t, sub], i) => `<button class="xp" data-action="nav" data-to="${to}" style="--i:${i}"><span class="xp-ic">${icon(ic, 18)}</span><b>${t}</b><small>${sub}</small></button>`).join('')}</div>`;
+  return `<div class="xp-grid">${tiles.map(([to, ic, t, sub], i) => `<button class="xp" data-action="nav" data-to="${to}" style="--i:${i}"><span class="xp-ic">${icon(ic, 18)}</span><b>${t}</b><small>${sub}</small></button>`).join('')}</div>`;
 }
 function logChips(l) {
   const out = [], e = x => `${icon(LOG_IC[x] || 'spark', 13)} ${x}`;
@@ -3717,6 +3711,18 @@ const SYNC = {
 };
 function syncNote(a, b) { return SYNC[[a, b].sort().join('|')] || SYNC[[b, a].join('|')] || SYNC[[a, b].join('|')] || 'Different tides this week — whoever has more energy carries a little more, and you switch next week.'; }
 function ptAvatar(p, cls = '') { return `<span class="pt-av ${cls}">${p.t ? `<img src="${esc(p.t)}" alt="">` : esc((p.n || '?')[0])}${cls.includes('sm') ? '' : `<i style="background:${PHASE_COLOR.dark[snapInfo(p, new Date()).phase]}"></i>`}</span>`; }
+// The cute "send love" button: a smiling envelope with a heart seal, little hearts floating up.
+function loveBtn(p, big) {
+  const art = `<svg class="lb2-env" viewBox="0 0 64 56" aria-hidden="true"><rect x="6" y="14" width="52" height="36" rx="8" fill="#fff" stroke="#304023" stroke-width="2"/><path d="M8 18l24 18 24-18" fill="none" stroke="#304023" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="22" cy="40" r="3" fill="#efb6c8" opacity=".8"/><circle cx="42" cy="40" r="3" fill="#efb6c8" opacity=".8"/><path d="M28 42q4 3 8 0" fill="none" stroke="#304023" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M32 33c-6-4-9-7-9-10.5a4.5 4.5 0 0 1 9-1.5 4.5 4.5 0 0 1 9 1.5c0 3.5-3 6.5-9 10.5z" fill="#e6809c" stroke="#304023" stroke-width="1.8" stroke-linejoin="round"/></svg>`;
+  const hearts = [0, 1, 2, 3].map(i => `<i style="--d:${i * .9}s;--x:${[18, 38, 62, 80][i]}%">${HEART(i % 2 ? '#f4c6d6' : '#e6809c')}</i>`).join('');
+  return `<button class="lb2 ${big ? 'big' : ''}" data-action="openLove" data-id="${p.id}" aria-label="Send love to ${esc(p.n)}">
+    <span class="lb2-hearts" aria-hidden="true">${hearts}</span>
+    <span class="lb2-art">${art}${ptAvatar(p, 'sm')}</span>
+    <span class="lb2-t"><b>Send love to ${esc(p.n)}</b><small>A little heart lands on ${esc(p.n)}’s phone</small></span>
+    <span class="lb2-go">${icon('heart', 16, 2)}</span></button>`;
+}
 function partnersCard(info) {
   const ps = state.partners || [];
   if (!ps.length) return `${sectionTitle('Your partner')}
@@ -3736,7 +3742,7 @@ function partnersCard(info) {
           <span class="pt-meter"><b style="width:${en}%"></b></span>
           <small>${partnerStatus(pi, p)} · ${en}% energy</small>
           <small class="pt-sync">${icon('heart', 12)} ${syncNote(info.phase, pi.phase)}</small></span>${icon('chevR', 16)}</button>
-        <button class="love-btn sm" data-action="openLove" data-id="${p.id}">${loveArt('sm')}<span class="lb-t"><b>Send love to ${esc(p.n)}</b></span>${icon('chevR', 16)}</button>`; }).join('')}`;
+        ${loveBtn(p)}`; }).join('')}`;
 }
 // One line saying what is happening for her right now / next.
 function partnerStatus(pi, p) {
@@ -3983,7 +3989,7 @@ function viewPartner(p) {
         <div class="card glass tile cos"><span class="cos-g">${moonIcon(moon, 30)}</span><small>Moon & her cycle</small><b>${moon.name}</b><span class="muted sm">${sync}</span></div>
       </div>`; })()}
     ${(() => { const got = (state.sigLog || []).filter(x => x.pid === p.id).slice(0, 3); return got.length ? `<section class="card glass sig-log"><div class="eyebrow">From ${esc(p.n)}</div>${got.map(x => { const g = SIGNALS.find(y => y.k === x.k); return `<div class="sl"><span>${g ? g.g : '❤️'}</span><b>${g ? g.t : ''}</b><small>${fmtAgo(x.at)}</small></div>`; }).join('')}</section>` : ''; })()}
-    <button class="love-btn" data-action="openLove" data-id="${p.id}">${loveArt()}<span class="lb-t"><b>Send love</b><small>to ${esc(p.n)}</small></span>${icon('chevR', 18)}</button>
+    ${loveBtn(p, true)}
 
     ${moodDesire(pi, p)}
     ${partnerCare(pi, esc(p.n))}
