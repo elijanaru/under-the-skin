@@ -7602,3 +7602,4 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .sd-capw small { font-size: 10px; color: rgba(255,255,255,.75); white-space: nowrap; }
 .sd-caps { gap: 9px; }
 .sd-h { margin-bottom: 10px; }
+.two-tiles.one { grid-template-columns: 1fr; }
