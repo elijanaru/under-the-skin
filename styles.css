@@ -7896,3 +7896,38 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .sb-t.sb-pic small { color: rgba(48,64,35,.78); }
 .cup3d-w canvas.teacup3d { display: block; }
 .cf2 .cf-c .cf-more, .cf2 .cf-c .cf-more svg { color: #fff !important; stroke: currentColor; }
+
+/* Breathe: the pond card (Opal pattern). Dark ink card, the lotus as the one hero object, a big Doto countdown,
+   one ring bubble per step of the breath, a solid white pill to start. Phase tint only as a soft wash at the bottom. */
+.bz .bz-stage { aspect-ratio: auto; max-width: 380px; padding: 22px 18px 20px; display: flex; flex-direction: column; align-items: center; gap: 0;
+  background: radial-gradient(120% 60% at 50% 108%, hsl(calc(var(--hb) + 0 * var(--hk)) calc(42% * var(--hs)) 46% / .55), transparent 70%), linear-gradient(180deg, #1b2915 0%, #20301a 55%, #263a1f 100%);
+  border: 1px solid rgba(255,255,255,.08); box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 22px 48px rgba(32,48,26,.3); }
+.bz .bz-card-h { position: static; width: 100%; color: #fff; align-items: flex-start; }
+.bz .bz-card-h span:first-child { display: grid; gap: 3px; }
+.bz .bz-card-h small { font: 500 10.5px Outfit, sans-serif; letter-spacing: .16em; text-transform: uppercase; color: hsl(calc(var(--hb) + 0 * var(--hk)) calc(55% * var(--hs)) 80%); }
+.bz .bz-card-h b { font: 400 22px Outfit, sans-serif; color: #fff; }
+.bz .bz-card-h .bz-n { color: rgba(255,255,255,.75); font-size: 14px; }
+.bz .bz-lotus { width: 78%; margin: 4px 0 -6px; }
+.bz .bz-lotus .lt-p { stroke: rgba(255,255,255,.35); opacity: 1; }
+.bz .bz-lotus .lt-pad { fill: #8c9768; opacity: .9; }
+.bz .bz-lotus .lt-water ellipse { stroke: rgba(255,255,255,.16); }
+.bz .bz-lotus .lt-glow { opacity: calc(var(--b) * .55); }
+.bz-num { display: grid; justify-items: center; gap: 2px; margin-top: 4px; color: #fff; }
+.bz-big { font: 400 64px/1 Doto, monospace; letter-spacing: -.02em; }
+.bz-word { font: 400 13.5px Outfit, sans-serif; color: rgba(255,255,255,.78); min-height: 1.2em; }
+.bz-rings { display: flex; justify-content: center; gap: 12px; margin: 16px 0 18px; }
+.bzr { position: relative; display: grid; justify-items: center; width: 52px; color: #fff; }
+.bzr svg { width: 46px; height: 46px; transform: rotate(-90deg); }
+.bzr circle { fill: rgba(255,255,255,.06); stroke: rgba(255,255,255,.16); stroke-width: 3; }
+.bzr .bzr-p { fill: none; stroke-width: 3.2; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: calc(100 - var(--p) * 100); }
+.bzr.in .bzr-p, .bzr.top .bzr-p { stroke: hsl(calc(var(--hb) + 330 * var(--hk)) calc(70% * var(--hs)) 78%); }
+.bzr.hold .bzr-p, .bzr.rest .bzr-p { stroke: #c9bff0; } .bzr.out .bzr-p { stroke: #c4d68c; }
+.bzr b { position: absolute; top: 0; height: 46px; display: grid; place-items: center; font: 400 14px Doto, monospace; }
+.bzr small { margin-top: 5px; font: 400 11.5px Outfit, sans-serif; color: rgba(255,255,255,.7); }
+.bzr.on small { color: #fff; font-weight: 500; }
+.bzr.on circle:first-child { fill: rgba(255,255,255,.14); }
+.bz .bz-stage .bz-go { min-width: 170px; background: #fff; color: #20301a; box-shadow: 0 8px 22px rgba(0,0,0,.25); }
+.bz .bz-txt { margin-top: 20px; }
+.bz .bz-txt .bz-t { display: none; }
+.bz .bz-txt { margin-top: 18px; }
+.bz .bz-stage { background: radial-gradient(110% 45% at 50% 112%, hsl(calc(var(--hb) + 0 * var(--hk)) calc(50% * var(--hs)) 72% / .2), transparent 70%), linear-gradient(180deg, #1b2915 0%, #20301a 60%, #24361d 100%); }

@@ -4606,7 +4606,7 @@ function viewBreathe(from) {
     <div class="bzp" role="tablist" aria-label="Choose a breathing practice">${[rec, ...BREATH_ORDER.filter(x => x !== rec)].map(x => `<button class="bzp-o ${x === k ? 'on' : ''}" role="tab" aria-selected="${x === k}" data-action="bzPick" data-v="${x}">
       ${x === rec ? `<em>${phase ? 'For your phase' : 'Start here'}</em>` : ''}<span class="bzp-g">${BREATHS[x].g}</span><b>${BREATHS[x].name}</b><small>${BREATHS[x].when}</small></button>`).join('')}</div>
     <section class="bz" data-pat="${k}">
-      <div class="bz-stage"><div class="bz-card-h"><b>Breathe</b><span class="bz-n"></span></div>
+      <div class="bz-stage"><div class="bz-card-h"><span><small>${k === rec ? (phase ? 'For your phase' : 'Start here') : B.when}</small><b>${B.name}</b></span><span class="bz-n"></span></div>
         <svg class="bz-lotus" viewBox="-110 -120 220 170" aria-hidden="true">
           <defs><linearGradient id="lpA" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#efd4dd"/><stop offset="1" stop-color="#fff"/></linearGradient>
             <linearGradient id="lpB" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#e6a3bb"/><stop offset=".7" stop-color="#f6d6e1"/><stop offset="1" stop-color="#fff"/></linearGradient>
@@ -4617,7 +4617,10 @@ function viewBreathe(from) {
           ${[-78, 78, -54, 54, -28, 28, 0].map(t => `<path class="lt-p back" style="--t:${t}deg" d="M0 8 C -20 -18 -18 -62 0 -86 C 18 -62 20 -18 0 8 Z" fill="url(#lpA)"/>`).join('')}
           ${[-46, 46, -18, 18].map(t => `<path class="lt-p front" style="--t:${t}deg" d="M0 10 C -17 -12 -15 -52 0 -70 C 15 -52 17 -12 0 10 Z" fill="url(#lpB)"/>`).join('')}
           <path class="lt-p bud" d="M0 12 C -15 -8 -13 -42 0 -58 C 13 -42 15 -8 0 12 Z" fill="url(#lpB)"/>
-        </svg></div>
+        </svg>
+        <div class="bz-num"><b class="bz-big dotnum">${Math.round(B.steps.reduce((a, x) => a + x[3], 0) / 1000)}</b><small class="bz-word">seconds a breath</small></div>
+        <div class="bz-rings" aria-hidden="true">${B.steps.map(([t, , , ms], i) => `<span class="bzr ${t}" style="--p:0"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="19"/><circle class="bzr-p" cx="22" cy="22" r="19" pathLength="100"/></svg><b>${+(ms / 1000).toFixed(1)}</b><small>${t === 'rest' && B.steps.some(x => x[0] === 'hold') ? 'Hold' : BZ_WORD[t]}</small></span>`).join('')}</div>
+        <button class="bz-go">Start</button></div>
       <div class="bz-txt"><b class="bz-t">Let that shi go</b><small class="bz-s">Soften your shoulders and your jaw</small></div>
       <div class="bz-pal">
         <svg class="bz-pet" viewBox="0 0 120 100" aria-hidden="true"><g class="bz-pet-b">
@@ -4631,7 +4634,6 @@ function viewBreathe(from) {
           <path class="bz-z" d="M100 14 h8 l-8 8 h8" fill="none" stroke="#8c9768" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <p class="bz-say">Stay in the present.</p>
       </div>
-      <button class="bz-go">Start</button>
     </section>
     ${from === 'stress' && M.info ? cortisolSec(M.info) : ''}
     <figure class="bz-quote"><span>“</span><blockquote>The past is already gone and the future has not yet come. See clearly what is here, now.</blockquote><figcaption>The Buddha, from the Bhaddekaratta Sutta</figcaption></figure>
@@ -4653,6 +4655,8 @@ function mountBreath(el) {
   const ball = el.querySelector('.bz-ball'), txt = el.querySelector('.bz-txt'), t = el.querySelector('.bz-t'), sub = el.querySelector('.bz-s'), cnt = el.querySelector('.bz-n'), btn = el.querySelector('.bz-go'), say = el.querySelector('.bz-say');
   const pk = document.querySelector('.bzp'), on = pk && pk.querySelector('.on'); if (on) pk.scrollLeft = Math.max(0, on.offsetLeft - 16); // keep her pick in view
   const B = BREATHS[el.dataset.pat] || BREATHS.sigh, STEPS = B.steps, ROUNDS = B.rounds, CYC = STEPS.reduce((a, x) => a + x[3], 0);
+  const big = el.querySelector('.bz-big'), word = el.querySelector('.bz-word'), rings = [...el.querySelectorAll('.bzr')], still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (still) el.style.setProperty('--b', .5);
   // scale of the lotus at the start and end of each step: in opens, the sip opens a touch more, holds stay, out closes
   let lv = .42; const SC = STEPS.map(([k]) => { const s0 = lv; lv = k === 'in' ? (STEPS.some(x => x[0] === 'top') ? .98 : 1.06) : k === 'top' ? 1.1 : k === 'out' ? .42 : lv; return [s0, lv]; });
   const ease = x => .5 - Math.cos(Math.PI * x) / 2;
@@ -4663,13 +4667,16 @@ function mountBreath(el) {
     if (round >= ROUNDS) return stop(true);
     let m = e % CYC, i = 0; while (m >= STEPS[i][3]) { m -= STEPS[i][3]; i++; }
     const [k, a, b, ms] = STEPS[i], [s0, s1] = SC[i], sc = s0 + (s1 - s0) * ease(m / ms);
-    el.style.setProperty('--b', ((sc - .42) / .68).toFixed(3));
-    const ph = k + i; if (el.dataset.st !== ph) { el.dataset.st = ph; el.dataset.ph = k; swap(a, b, PET_SAY[k]); }
+    if (!still) el.style.setProperty('--b', ((sc - .42) / .68).toFixed(3));
+    const left = String(Math.max(1, Math.ceil((ms - m) / 1000))); if (big.textContent !== left) big.textContent = left;
+    rings.forEach((r, j) => r.style.setProperty('--p', j < i ? 1 : j === i ? (m / ms).toFixed(3) : 0));
+    const ph = k + i; if (el.dataset.st !== ph) { el.dataset.st = ph; el.dataset.ph = k; swap(a, b, PET_SAY[k]); word.textContent = a; rings.forEach((r, j) => r.classList.toggle('on', j === i)); }
     cnt.textContent = `${round + 1} of ${ROUNDS}`;
     raf = requestAnimationFrame(frame);
   }
   function stop(done) {
-    run = false; cancelAnimationFrame(raf); el.dataset.ph = ''; el.dataset.st = ''; el.style.setProperty('--b', 0); el.style.setProperty('--sp', 0);
+    run = false; cancelAnimationFrame(raf); el.dataset.ph = ''; el.dataset.st = ''; el.style.setProperty('--b', still ? .5 : 0); el.style.setProperty('--sp', 0);
+    big.textContent = String(Math.round(CYC / 1000)); word.textContent = 'seconds a breath'; rings.forEach(r => { r.style.setProperty('--p', 0); r.classList.remove('on'); });
     swap(done ? 'So proud of you' : 'Let that shi go', done ? 'Notice how soft you feel now' : 'Soften your shoulders and your jaw', done ? 'You did so well. Let it go.' : 'Stay in the present.');
     cnt.textContent = ''; btn.textContent = done ? 'Again' : 'Start';
   }
