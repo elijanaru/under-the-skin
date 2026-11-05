@@ -7508,3 +7508,23 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .home .stage-after .fh-period.ps3, .stage-after .fh-period.ps3 { min-width: 0; gap: 10px; height: 46px; padding: 0 22px 0 18px; font: 500 15px var(--font); color: #20301a;
   background: #fff; border: 1px solid rgba(32,48,26,.08); box-shadow: 0 8px 22px rgba(48,64,35,.1); }
 .ps3-dot { width: 10px; height: 10px; border-radius: 50%; background: #d42a40; box-shadow: 0 0 0 4px rgba(212,42,64,.12); flex: none; }
+/* Move: today's training as a traffic light */
+.ml { display: grid; gap: 10px; margin-bottom: 18px; }
+.ml-b { padding: 12px; border-radius: 26px; background: #fff; box-shadow: 0 10px 26px rgba(48,64,35,.08); border: 1px solid rgba(48,64,35,.06); }
+.ml-h { display: flex; align-items: center; gap: 8px; margin: 2px 4px 10px; }
+.ml-h i { width: 12px; height: 12px; border-radius: 50%; }
+.ml-h b { flex: 1; font-size: 16px; font-weight: 600; color: #20301a; }
+.ml-h small { font: 700 15px var(--dot); color: rgba(32,48,26,.5); }
+.ml-b.go .ml-h i { background: #5f8a2e; box-shadow: 0 0 0 4px rgba(95,138,46,.16); }
+.ml-b.mid .ml-h i { background: #d9a43b; box-shadow: 0 0 0 4px rgba(217,164,59,.18); }
+.ml-b.no .ml-h i { background: #c2463c; box-shadow: 0 0 0 4px rgba(194,70,60,.14); }
+.ml-b.go { background: linear-gradient(180deg, #f1f7e6, #fff 70%); }
+.ml-c { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ml-i { position: relative; display: flex; align-items: center; gap: 9px; min-height: 58px; padding: 7px 10px 7px 7px; border-radius: 18px; border: 1px solid rgba(48,64,35,.08); background: #fbfaf7; text-align: left; font: inherit; color: #20301a; cursor: pointer; }
+.ml-i img { flex: none; width: 42px; height: 42px; border-radius: 50%; object-fit: cover; }
+.ml-i b { display: block; font-size: 13px; font-weight: 500; line-height: 1.2; }
+.ml-i small { display: block; margin-top: 3px; font-size: 12.5px; line-height: 1.35; color: rgba(32,48,26,.72); }
+.ml-i.on { grid-column: 1 / -1; background: #fff; border-color: rgba(48,64,35,.18); }
+.ml-i em { position: absolute; top: -6px; right: 8px; padding: 2px 8px; border-radius: 10px; font: 600 10px var(--font); font-style: normal; color: #fff; background: #5f8a2e; }
+.ml-b.no .ml-i { opacity: .62; } .ml-b.no .ml-i img { filter: grayscale(1); }
+.ml-b.no .ml-i b { text-decoration: line-through; text-decoration-color: rgba(194,70,60,.6); }

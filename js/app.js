@@ -4346,6 +4346,13 @@ function moveWave(days, info, L, P) {
     <div class="mvw-lab">${lab(0, 'Period')}${lab(ov - 1, 'Peak')}${lab(L - 1, 'Slow')}</div>
     <small class="mvw-k">How hard your body wants to train</small></div>`;
 }
+// Today's training as a traffic light: Go for it, Go lighter, Skip today; each move a photo chip, tap for what it is.
+function moveLights(ranked, g) {
+  const bands = [['go', 'Go for it', m => g.r[m.k] >= 2], ['mid', 'Go lighter', m => g.r[m.k] === 1], ['no', 'Skip today', m => g.r[m.k] === 0]];
+  return `<section class="ml">${bands.map(([c, t, f]) => { const L = ranked.filter(f); if (!L.length) return '';
+    return `<div class="ml-b ${c}"><div class="ml-h"><i></i><b>${t}</b><small>${L.length}</small></div><div class="ml-c">${L.map(m => { const on = ui.mvLi === m.k;
+      return `<button class="ml-i ${on ? 'on' : ''}" data-action="mvLi" data-k="${m.k}" aria-expanded="${on}"><img src="images/tile-${m.k}.webp" alt="" loading="lazy"><span><b>${m.n}</b>${on ? `<small>${m.d}</small>` : ''}</span>${g.r[m.k] === 3 ? '<em>Best</em>' : ''}</button>`; }).join('')}</div></div>`; }).join('')}</section>`;
+}
 function viewMove() {
   const { info } = M, L = info.L, P = info.P, key = dayWindow(info), g = MOVE_GUIDE[key], D = MOVE_DOSE[key], tab = ui.mvTab === 'month' ? 'month' : 'today';
   const days = Array.from({ length: L }, (_, i) => windowAt(i + 1, L, P));
@@ -4356,15 +4363,15 @@ function viewMove() {
       : `<section class="mv2-tip"><span class="eyebrow">Why today</span><p>${g.tip}</p></section>
         <section class="card glass mv-dose"><div class="mvd-k">Your dose today</div>
           ${[['Intensity', D.int], ['Length', D.len], ['Warm-up', D.warm], ['Recovery', D.rec]].map(([t, v]) => `<div class="mvd-r"><small>${t}</small><b>${v}</b></div>`).join('')}
-          <p class="mvd-f">RPE = how hard it feels, out of 10. Feel strong on a “rest” day? Go for it.</p></section>
-        <div class="mv2-list">${ranked.map(m => `<div class="mv2-li r${g.r[m.k]}"><i></i><div><b>${m.n}</b><small>${m.d}</small></div><em>${MV_WORD[g.r[m.k]]}</em></div>`).join('')}</div>`;
+          <p class="mvd-f">Feel strong on a rest day? Go for it.</p></section>
+        ${moveLights(ranked, g)}`;
   return `<section class="mv2 mv3">
     <video class="mv2-bg" src="images/move-stardust.mp4" poster="images/move-stardust.webp" muted loop playsinline ${still ? '' : 'autoplay'} preload="auto" aria-hidden="true"></video><span class="mv2-shade"></span>
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
     <div class="mv3-sheet">
       <div class="mv3-top"><span class="mv3-day"><small>Day</small><b>${info.cd}</b></span><span class="mv3-ph">${PHASES[info.phase].name}</span></div>
       <h1 class="mv3-h"><span>Today, do</span><em>${ranked[0].n}</em></h1>
-      <p class="mv3-now"><span>${icon('bolt', 15)}</span><b>${D.len}</b> · ${D.int.split(' · ')[0]}${ranked[1] && g.r[ranked[1].k] >= g.r[ranked[0].k] ? ` · or ${ranked[1].n.toLowerCase()}` : ''}</p>
+      <p class="mv3-now"><span>${icon('bolt', 15)}</span><b>${D.len}</b> · ${D.int.split(':')[0]}${ranked[1] && g.r[ranked[1].k] >= g.r[ranked[0].k] ? ` · or ${ranked[1].n.toLowerCase()}` : ''}</p>
       ${moveWave(days, info, L, P)}
       <div class="mv2-bubbles">${ranked.map((m, i) => moveBubble(m, g.r[m.k], i)).join('')}</div>
     </div>
@@ -4373,7 +4380,6 @@ function viewMove() {
     <div class="seg">${[['today', 'Today'], ['month', 'Your month']].map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="mvTab" data-v="${k}">${l}</button>`).join('')}</div>
     ${body}
     ${trainSafe()}
-    <p class="fine center">Research on training by cycle phase is still emerging and results are mixed. Your strength doesn’t change across the cycle, only your energy does. Some women set personal bests on their period.</p>
   </div>`;
 }
 
@@ -6110,6 +6116,7 @@ const actions = {
   planTab: d => { ui.planTab = d.v; if (route().name !== 'plan') go('plan'); else render(); },
   toggleHormone: d => { ui.hidden[d.h] = !ui.hidden[d.h]; render(); },
   enWhy: () => { ui.enWhy = !ui.enWhy; render(); },
+  mvLi: d => { ui.mvLi = ui.mvLi === d.k ? null : d.k; render(); },
   enPart: d => { ui.enPart = ui.enPart === d.k ? null : d.k; render(); },
   tsOpen: d => { ui.tsOpen = ui.tsOpen === d.k ? null : d.k; render(); },
   grStudy: d => { ui.grStudy = ui.grStudy === +d.i ? null : +d.i; render(); },

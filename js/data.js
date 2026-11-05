@@ -1018,16 +1018,16 @@ export const MOVE_GUIDE = {
   'premenstrual': { title: 'Slow down', r: { lift: 1, hiit: 0, sport: 1, pilates: 2, yoga: 3, meditate: 3, walk: 3 }, tip: 'Energy drops before your period. Yin yoga, stretching, walks and meditation calm cramps and moods — rest is training too.' },
 };
 
-// How much to move in each stretch of the cycle (RPE = how hard it feels, out of 10).
+// How much to move in each stretch of the cycle (intensity in talk-test words).
 export const MOVE_DOSE = {
-  'flow-start': { int: 'Easy · RPE 3–5', len: '20–40 min', warm: '5 min, gentle', rec: 'Warmth after, sleep 8 h+' },
-  'flow-end': { int: 'Easy to moderate · RPE 4–6', len: '30–45 min', warm: '8 min', rec: 'An easy day between hard ones' },
-  rising: { int: 'Moderate to hard · RPE 6–8', len: '45–60 min', warm: '10 min', rec: '48 h per muscle group' },
-  building: { int: 'Hard if you feel strong · RPE 7–9', len: '45–60 min', warm: '10 min', rec: '48 h per muscle group' },
-  peak: { int: 'Hard if you feel strong · RPE 7–9', len: '45–60 min', warm: '12–15 min, dynamic + landings', rec: '48 h per muscle group' },
-  settle: { int: 'Moderate · RPE 6–7', len: '40–60 min', warm: '10 min', rec: 'Longer rests between sets, more water' },
-  focus: { int: 'Steady · RPE 5–7', len: '45–75 min', warm: '10 min', rec: 'Extra water and a pinch of salt' },
-  premenstrual: { int: 'Easy · RPE 3–5', len: '20–40 min', warm: '8 min', rec: 'Early nights, magnesium-rich food' },
+  'flow-start': { int: 'Easy: you can chat', len: '20–40 min', warm: '5 min, gentle', rec: 'Warmth after, sleep 8 h+' },
+  'flow-end': { int: 'Easy to medium: short sentences', len: '30–45 min', warm: '8 min', rec: 'An easy day between hard ones' },
+  rising: { int: 'Medium to hard: a few words', len: '45–60 min', warm: '10 min', rec: '48 h per muscle group' },
+  building: { int: 'Hard if you feel strong: no talking', len: '45–60 min', warm: '10 min', rec: '48 h per muscle group' },
+  peak: { int: 'Hard if you feel strong: no talking', len: '45–60 min', warm: '12–15 min, dynamic + landings', rec: '48 h per muscle group' },
+  settle: { int: 'Medium: a few words', len: '40–60 min', warm: '10 min', rec: 'Longer rests between sets, more water' },
+  focus: { int: 'Steady: short sentences', len: '45–75 min', warm: '10 min', rec: 'Extra water and a pinch of salt' },
+  premenstrual: { int: 'Easy: you can chat', len: '20–40 min', warm: '8 min', rec: 'Early nights, magnesium-rich food' },
 };
 // What research found on training across the cycle.
 export const MOVE_SCIENCE = [
