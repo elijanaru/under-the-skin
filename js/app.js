@@ -3269,6 +3269,15 @@ function lemonState() {
   if (day > 28) return { ...L, day, over: true };
   return { ...L, day, week: Math.ceil(day / 7), doneToday: !!(L.done || {})[todayISO()], count: Object.keys(L.done || {}).length };
 }
+// Remedy: everything to make it on one card. Ingredients as amount tiles, then the steps as a numbered dot flow.
+function remedyMake(r) {
+  const tiles = r.ingredients.map(g => { const [n, q] = ingRow(g), opt = /^optional/i.test(g);
+    return `<div class="rm-i ${opt ? 'opt' : ''}">${q || opt ? `<b>${q || 'Optional'}</b>` : ''}<span>${n.replace(/^Optional:\s*/i, '')}</span></div>`; }).join('');
+  return `<section class="card glass rm-make">
+    <div class="rm-h"><h3>${r.days ? 'Each morning' : 'Make it'}</h3><span><b class="dotnum">${r.ingredients.length}</b> things <b class="dotnum">${r.steps.length}</b> steps</span></div>
+    <div class="rm-is">${tiles}</div>
+    <ol class="rm-st">${r.steps.map(x => `<li><p>${x}</p></li>`).join('')}</ol></section>`;
+}
 function viewRemedy(id) {
   const r = REMEDIES.find(x => x.id === id); if (!r) return viewMissing();
   const info = M.info, warm = warmWindow(info), organPhase = PHASE_ORDER.find(p => TCM[p].organ.includes(r.organ));
@@ -3277,7 +3286,7 @@ function viewRemedy(id) {
     const ls = lemonState();
     if (!ls || ls.over) {
       tracker = `<section class="card card-light"><div class="eyebrow dark">28-day ritual</div><h3 class="dark-h">${ls?.over ? 'Ready for another round?' : 'Start your 28 days'}</h3>
-        <p class="dp-text">${info && info.cd === 1 ? 'Today is day 1 of your cycle — the perfect day to begin.' : info ? `Best started on day 1 of your cycle — your next one is in ${plural(info.daysToPeriod, 'day')}. You can also start today.` : ''}</p>
+        <p class="dp-text">${info && info.cd === 1 ? 'Today is day 1 of your cycle, the perfect day to begin.' : info ? `Best started on day 1 of your cycle — your next one is in ${plural(info.daysToPeriod, 'day')}. You can also start today.` : ''}</p>
         <button class="btn btn-dark btn-block" data-action="lemonStart">${icon('play', 16)} Start today</button></section>`;
     } else {
       const wk = r.weeks[Math.min(ls.week, 4) - 1];
@@ -3292,19 +3301,15 @@ function viewRemedy(id) {
   return `<div class="pad sp2">
     ${specHero({ photo: carePhoto(r.id, 1000), glyph: r.glyph, han: true, eyebrow: `${r.nature} · ${r.element} · ${r.organ}`, name: r.name,
       rows: r.ingredients.map(ingRow), desc: r.why })}
-    <section class="card glass tea-fit"><div class="tf-k">Best in your cycle${r.raw ? ' · raw days' : ''}</div>${phaseFit(r.phases, M.info && M.info.phase)}${r.phases.length === 4 ? '<small class="tf-all">Good every day of your cycle</small>' : ''}</section>
-    ${r.raw && warm ? `<section class="card flag"><span class="bn-ic">${icon('yinyang', 18)}</span><div class="bn-t"><b>Not today</b><p>You’re in your warm window — Chinese medicine keeps raw and cold food away during your period and the days before. Save this for your follicular phase.</p></div></section>` : ''}
+    <section class="card glass tea-fit"><div class="tf-k">Best in your cycle${r.raw ? ' · raw days' : ''}</div>${phaseFit(r.phases, M.info && M.info.phase)}${r.phases.length === 4 ? '<small class="tf-all">Good every day of your cycle</small>' : ''}
+      ${organPhase ? `<div class="rm-tcm"><span class="rm-han">${Z.FIVE[r.element].han}</span><p><b>${r.organ}</b> is the organ of your <b>${PHASES[organPhase].name.toLowerCase()}</b> phase in Chinese medicine (${TCM[organPhase].element}).</p></div>` : ''}</section>
+    ${r.raw && warm ? `<section class="card flag"><span class="bn-ic">${icon('yinyang', 18)}</span><div class="bn-t"><b>Not today</b><p>You’re in your warm window. Chinese medicine keeps raw and cold food away during your period and the days before. Save this for your follicular phase.</p></div></section>` : ''}
     ${tracker}
-    ${organPhase ? `<section class="card tcm-card"><div class="tcm-glyph">${Z.FIVE[r.element].han}</div><div class="tcm-main"><div class="eyebrow">How it connects</div>
-      <p class="body sm">${r.organ} is the organ of your <b class="lime">${PHASES[organPhase].name}</b> phase (${TCM[organPhase].element}).</p></div></section>` : ''}
-    ${sectionTitle(r.days ? 'You need' : 'Ingredients')}
-    <section class="card glass">${r.ingredients.map(g => `<div class="ing">${icon('leaf', 14)}<span>${g}</span></div>`).join('')}</section>
-    ${sectionTitle('How')}
-    <section class="card glass">${r.steps.map((x, i) => `<div class="step"><span class="step-n">${i + 1}</span><p>${x}</p></div>`).join('')}</section>
+    ${remedyMake(r)}
     ${remedyScience(r)}
     ${r.weeks ? `${sectionTitle('Week by week')}<section class="card glass">${r.weeks.map(w => `<div class="tide on"><span class="tide-g">${w.w}</span><div><div class="tide-n">${w.add}</div><div class="tide-s">${w.gain}</div></div></div>`).join('')}</section>` : ''}
     ${(() => { const nx = REMEDIES[(REMEDIES.indexOf(r) + 1) % REMEDIES.length]; return `<button class="card glass nu-next" data-action="nav" data-to="remedy/${nx.id}"><small>Next remedy</small><b>${nx.name}</b>${icon('chevR', 16)}</button>`; })()}
-    <p class="fine center">Traditional home remedies — not a replacement for medical care.</p>
+    <p class="fine center">Traditional home remedies, not a replacement for medical care.</p>
   </div>`;
 }
 // Supplement spec sheet: dose, form and timing on the glass sheet, then the phases it helps, studies and cautions.
