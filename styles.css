@@ -2392,7 +2392,7 @@ button, a, [data-action] { touch-action: manipulation; }
 .gate .onb-top .gate-signin { margin: 0; font-size: 13px; color: rgba(244, 245, 240, .75); text-shadow: 0 1px 8px rgba(0,0,0,.8); }
 .gate-photo { position: relative; height: clamp(220px, 36vh, 340px); margin: -70px -22px -46px; overflow: hidden; z-index: 0;
   -webkit-mask-image: linear-gradient(to bottom, #000 40%, rgba(0,0,0,.55) 68%, transparent 96%); mask-image: linear-gradient(to bottom, #000 40%, rgba(0,0,0,.55) 68%, transparent 96%); }
-.gate-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; animation: vaultDrift 26s ease-in-out infinite alternate; }
+.gate-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; animation: vaultDrift 26s ease-in-out infinite alternate; }
 .gate-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,.55), transparent 30%), radial-gradient(120% 70% at 50% 35%, transparent 55%, rgba(0,0,0,.65)); }
 .gate > .gate-hud { position: relative; z-index: 1; text-align: center; margin: 0 0 -4px; color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77% / .7); }
 .gate .onb-title { position: relative; z-index: 1; }
@@ -2556,7 +2556,7 @@ input[type="date"].field::-webkit-date-and-time-value { text-align: center; }
 .rcard .rc-k.now { background: var(--lime); color: #fff; padding: 4px 10px; border-radius: 12px; font-size: 11px; letter-spacing: .04em; }
 /* partner invite: photo card */
 .partner-photo { position: relative; display: block; width: 100%; height: 230px; padding: 0; overflow: hidden; border-radius: 30px; border: 1px solid hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 40% / .18); background: rgb(246,238,240); color: rgb(48,64,35); font: inherit; text-align: left; cursor: pointer; }
-.partner-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; filter: saturate(.85) brightness(.92); transition: transform 1.2s ease; }
+.partner-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; filter: saturate(.85) brightness(.92); transition: transform 1.2s ease; }
 .partner-photo:active img { transform: scale(1.03); }
 .partner-photo .pp-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.113) 25%, rgba(255,255,255,0.385) 100%); }
 .partner-photo .pp-in { position: absolute; left: 20px; right: 76px; bottom: 18px; display: flex; flex-direction: column; gap: 5px; }
@@ -3021,7 +3021,7 @@ button.hub-rh:active .hub-mg { transform: scale(.94); }
 
 /* ---------- Cosmic rhythm: night-sky hero, three round badges, tabs ---------- */
 .cz-hero { padding-top: max(40vh, 290px); }
-.cz-hero .mv2-bg { object-position: 50% 30%; height: 82%; }
+.cz-hero .mv2-bg { object-position: 50% 60%; height: 82%; }
 .cz-badges { display: flex; justify-content: center; gap: 12px; margin-top: 20px; }
 .cz-b { width: 96px; display: grid; justify-items: center; gap: 3px; }
 .cz-g { width: 64px; height: 64px; display: grid; place-items: center; border-radius: 50%; margin-bottom: 6px; font-size: 28px; color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 34%);
@@ -7115,3 +7115,125 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .wkp-more p { margin: 4px 0 0; font-size: 13.5px; line-height: 1.45; color: rgba(255,255,255,.85); }
 @media (prefers-reduced-motion: reduce) { .wkp-more { animation: none; } }
 .wkp-t { align-content: start; }
+
+/* ---------- Push or slow down v2: big word, 4-step meter, three short lines ---------- */
+.cp2-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 6px 0 14px; }
+.cp2-mode { font-size: 38px; font-weight: 600; letter-spacing: -.03em; line-height: 1; color: #20301a; }
+.cp2.lvl-3 .cp2-mode { color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(55% * var(--hs)) 36%); }
+.cp2-meter { display: flex; align-items: flex-end; gap: 4px; height: 34px; }
+.cp2-meter i { width: 9px; border-radius: 4px; background: rgba(48,64,35,.12); }
+.cp2-meter i:nth-child(1) { height: 30%; } .cp2-meter i:nth-child(2) { height: 55%; } .cp2-meter i:nth-child(3) { height: 78%; } .cp2-meter i:nth-child(4) { height: 100%; }
+.cp2-meter i.on { background: #20301a; }
+.cp2.lvl-3 .cp2-meter i.on { background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(55% * var(--hs)) 40%); }
+.cp2-rows { display: grid; gap: 6px; }
+.cp2-rows > div { display: grid; grid-template-columns: 28px 64px 1fr; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 16px; background: rgba(255,255,255,.75); }
+.cp2-rows small { font-size: 12px; color: rgba(48,64,35,.7); }
+.cp2-rows b { font-size: 14.5px; font-weight: 500; color: #20301a; }
+.cp2-ic { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; }
+.cp2-ic.do { background: #20301a; color: #fff; } .cp2-ic.no { background: #f6e3e9; color: #a2445d; } .cp2-ic.mv { background: #eef2e4; color: #3f5226; }
+.cp2-note { margin: 10px 0 0; font-size: 13px; color: #304023; font-weight: 500; }
+.cp2-more { margin-top: 8px; }
+.cp2-more summary { list-style: none; display: inline-flex; align-items: center; gap: 4px; padding: 6px 2px; font-size: 13px; color: #6c823e; cursor: pointer; }
+.cp2-more summary::-webkit-details-marker { display: none; }
+.cp2-more[open] summary svg { transform: rotate(180deg); }
+.cp2-more p { margin: 6px 0 0; font-size: 13.5px; line-height: 1.5; color: #304023; }
+.cp2-more p b { font-weight: 500; }
+.cp2-more .cp2-line { color: #6c823e; }
+/* Check-in: quiet period button, and Continue floats above the tab bar */
+.lg-pstart { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; margin-bottom: 4px; border-radius: 18px; border: 1px dashed rgba(212,42,64,.45); background: rgba(255,255,255,.7); text-align: left; font: inherit; color: #20301a; cursor: pointer; }
+.lg-pstart > svg:first-child { color: #c23a52; flex: none; }
+.lg-pstart span { flex: 1; display: grid; }
+.lg-pstart b { font-size: 14.5px; font-weight: 500; } .lg-pstart small { font-size: 12px; color: rgba(48,64,35,.7); }
+.lg-go { margin-top: 6px; }
+.lg { padding-bottom: 130px; }
+/* Calendar: the tapped day as one line */
+.cdl { display: flex; align-items: center; gap: 12px; margin-top: 12px; padding: 10px 10px 10px 14px; border-radius: 20px; background: rgba(255,255,255,.8); border: 1px solid rgba(48,64,35,.1); }
+.cdl > i { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+.cdl > span { flex: 1; display: grid; min-width: 0; }
+.cdl small { font-size: 12px; color: rgba(48,64,35,.7); } .cdl b { font-size: 15px; font-weight: 500; color: #20301a; }
+.cdl-go { display: inline-flex; align-items: center; gap: 5px; padding: 9px 14px; border-radius: 999px; border: 0; background: #20301a; color: #fff; font: inherit; font-size: 13.5px; font-weight: 500; cursor: pointer; }
+/* Moon, simply: tap the head to learn the phases, two things to do today */
+.wx2 { padding: 16px; }
+.wx2-head { display: flex; align-items: center; gap: 14px; width: 100%; padding: 0; border: 0; background: none; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+.wx2-moon { width: 58px; height: 58px; flex: none; border-radius: 50%; background: #1d2530; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(29,37,48,.18); }
+.wx2-moon .mn-art { width: 54px; height: 54px; }
+.wx2-t { flex: 1; display: grid; gap: 2px; min-width: 0; }
+.wx2-t small { font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: #6c823e; font-weight: 500; }
+.wx2-t b { font-size: 21px; font-weight: 500; color: #20301a; letter-spacing: -.01em; }
+.wx2-t em { font-style: normal; font-size: 13.5px; color: rgba(48,64,35,.78); }
+.wx2-q { width: 30px; height: 30px; flex: none; border-radius: 50%; display: grid; place-items: center; background: #20301a; color: #fff; font-size: 15px; font-weight: 500; }
+.wx2-learn { margin-top: 14px; padding: 14px; border-radius: 20px; background: rgba(246,238,240,.7); animation: rise .5s ease both; }
+.wx2-cycle { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; }
+.wx2-cycle span { display: grid; justify-items: center; gap: 4px; padding: 6px 0; border-radius: 12px; }
+.wx2-cycle i { width: 26px; height: 26px; border-radius: 50%; background: #1d2530; display: grid; place-items: center; }
+.wx2-cycle .mn-art { width: 24px; height: 24px; }
+.wx2-cycle small { font-size: 10px; color: rgba(48,64,35,.7); }
+.wx2-cycle span.on { background: #fff; box-shadow: 0 2px 10px rgba(48,64,35,.12); }
+.wx2-cycle span.on small { color: #20301a; font-weight: 500; }
+.wx2-words { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; margin: 12px 0 8px; }
+.wx2-words span { font-size: 12.5px; color: rgba(48,64,35,.8); } .wx2-words b { font-weight: 500; color: #20301a; }
+.wx2-learn p { margin: 0 0 8px; font-size: 13px; line-height: 1.5; color: #304023; }
+.wx2-do { display: grid; gap: 8px; margin-top: 14px; }
+.wx2-do > div { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 18px; background: rgba(255,255,255,.8); border: 1px solid rgba(48,64,35,.08); }
+.wx2-do > div > span:last-child { display: grid; }
+.wx2-do small { font-size: 11.5px; color: rgba(48,64,35,.7); } .wx2-do b { font-size: 15px; font-weight: 500; color: #20301a; }
+.wx2-do em { font-style: normal; font-size: 13px; color: rgba(48,64,35,.8); }
+.wx2-ic { width: 32px; height: 32px; flex: none; border-radius: 50%; display: grid; place-items: center; }
+.wx2-ic.moon { background: #1d2530; color: #f3efe6; } .wx2-ic.body { background: #f6e3e9; color: #a2445d; }
+.wx2-blend { margin: 10px 2px 0; font-size: 13px; line-height: 1.5; color: rgba(48,64,35,.85); }
+.wx2-tabs { display: flex; gap: 6px; margin-top: 12px; }
+.wx2-tabs button { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 8px 0; border-radius: 999px; border: 1px solid rgba(48,64,35,.14); background: rgba(255,255,255,.6); font: inherit; font-size: 13px; color: #304023; cursor: pointer; }
+.wx2-tabs button.on { background: #20301a; color: #fff; border-color: #20301a; }
+@media (prefers-reduced-motion: reduce) { .wx2-learn { animation: none; } }
+/* Partner: a soft couple photo above the two orbs */
+.sy-photo { position: relative; border-radius: 30px; overflow: hidden; aspect-ratio: 16 / 10; box-shadow: 0 14px 34px rgba(48,64,35,.14); }
+.sy-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; display: block; }
+.sy-photo::after { content: ''; position: absolute; inset: auto 0 0; height: 40%; background: linear-gradient(transparent, rgba(246,238,240,.55)); }
+.sy-photo + .sy-pair { margin-top: -44px; position: relative; z-index: 1; }
+.sy-photo + .sy-pair .sy-av { box-shadow: 0 0 0 4px #fff, 0 8px 20px rgba(48,64,35,.18); }
+/* Calendar shows only three things: period, fertile, egg release. Other days stay plain. */
+.cal2 .cal-d:is(.ph-menstrual, .ph-follicular, .ph-ovulatory, .ph-luteal):not(.period):not(.period-pred):not(.fertile):not(.ovu) { background: rgba(255,255,255,.62); }
+/* ---------- Saved tips: a bookmark on every tip, steps she can do now ---------- */
+.sv-btn { flex: none; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; border: 1px solid rgba(48,64,35,.16); background: rgba(255,255,255,.85); color: #304023; cursor: pointer; transition: transform .2s ease, background .2s ease; }
+.sv-btn:active { transform: scale(.9); }
+.sv-btn.on { background: #20301a; border-color: #20301a; color: #fff; }
+.sv-btn.on svg path { fill: currentColor; }
+.sv-btn.float { position: absolute; top: 18px; right: 18px; z-index: 2; box-shadow: 0 6px 16px rgba(32,48,26,.18); }
+.tf-w { position: relative; }
+.dos { display: grid; gap: 6px; padding: 14px 10px 6px; }
+.dos-w { display: inline-flex; align-items: center; gap: 5px; justify-self: start; padding: 3px 10px; border-radius: 999px; background: #eef2e4; color: #3f5226; font-size: 12px; font-weight: 500; }
+.dos > b { font-size: 18px; font-weight: 500; color: #20301a; letter-spacing: -.01em; }
+.dos ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; counter-reset: st; }
+.dos li { counter-increment: st; display: flex; gap: 10px; align-items: baseline; font-size: 14px; line-height: 1.4; color: #304023; }
+.dos li::before { content: counter(st); flex: none; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: #20301a; color: #fff; font-size: 11px; font-weight: 500; transform: translateY(-1px); }
+.tl-rw { display: flex; align-items: center; gap: 10px; }
+.tl-rw + .tl-rw { border-top: 1px solid rgba(48,64,35,0.177); }
+.tl-rw .tl-r { flex: 1; min-width: 0; }
+.tl-rw .tl-t b { color: #20301a; }
+.wx2-do > div .sv-btn { margin-left: auto; }
+.sv-lead { margin: 4px 4px 14px; font-size: 14px; color: rgba(48,64,35,.8); }
+.sv-c { padding: 16px; margin-bottom: 12px; background: rgba(255,255,255,.88); }
+.sv-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.sv-t { font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: #6c823e; font-weight: 500; }
+.sv-a { display: block; margin: 4px 0 10px; font-size: 20px; font-weight: 500; color: #20301a; letter-spacing: -.01em; }
+.sv-s { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.sv-s li { display: flex; gap: 10px; align-items: baseline; font-size: 14.5px; line-height: 1.4; color: #304023; }
+.sv-s li span { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: #20301a; color: #fff; font-size: 11.5px; font-weight: 500; transform: translateY(-1px); }
+.sv-f { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
+.sv-empty { display: grid; justify-items: center; gap: 8px; padding: 40px 20px; text-align: center; color: #304023; }
+.sv-empty b { font-size: 18px; font-weight: 500; } .sv-empty small { font-size: 13.5px; color: rgba(48,64,35,.75); max-width: 260px; }
+.sv-empty .btn { margin-top: 8px; }
+/* Today: "Period started?" as a clear log button, sitting right under the stats */
+.home .stage-after .fh-period.ps2, .stage-after .fh-period.ps2 { display: inline-flex; align-items: center; gap: 12px; width: auto; min-width: 250px; margin: -14px auto 0 !important; padding: 7px 8px 7px 7px; border-radius: 999px;
+  background: #fff; border: 1px solid rgba(212,42,64,.25); box-shadow: 0 10px 26px rgba(48,64,35,.16); animation: none; color: #20301a; text-align: left; }
+.ps2 .pp-drop { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: #d42a40; color: #fff; flex: none; }
+.ps2 .pp-drop svg { width: 16px !important; height: 16px !important; }
+.ps2-t { flex: 1; display: grid; line-height: 1.2; }
+.ps2-t b { font-size: 15px; font-weight: 500; color: #20301a; } .ps2-t small { font-size: 12px; color: rgba(48,64,35,.72); }
+.ps2-go { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: #20301a; color: #fff; flex: none; }
+.ps2-go svg { width: 15px !important; height: 15px !important; }
+/* Predicted period days: solid red like logged ones */
+.cal2 .cal-d.period-pred { color: #fff; font-weight: 600; border: 0; text-shadow: 0 1px 2px rgba(60,0,8,.45);
+  background: radial-gradient(circle at 34% 28%, rgba(255,253,253,0.6) 0 7%, rgba(255,255,255,0) 17%), radial-gradient(circle at 50% 60%, #d42a40, #8a0a1a 72%, #5e0510);
+  box-shadow: 0 4px 14px rgba(170,20,40,.4), inset 0 -3px 6px rgba(60,0,8,.45); }
+.cal2 .cal-d.period-pred .logdot { background: #fff; }

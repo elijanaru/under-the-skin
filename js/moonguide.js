@@ -108,6 +108,19 @@ export const WX_MOON = {
   new: ['Quiet', 'Seeding', 'Stillness'], wax1: ['Hopeful', 'Gathering', 'Trust'], q1: ['Brave', 'Deciding', 'Courage'], wax2: ['Restless', 'Polishing', 'Patience'],
   full: ['Loud', 'Clear', 'Gratitude'], wan1: ['Warm', 'Reflective', 'Generous'], q3: ['Forgiving', 'Clearing', 'Space'], wan2: ['Tender', 'Dreamy', 'Surrender'],
 };
+// Each moon phase in plain words: what it looks like, and two things she can do today.
+export const MOON_PLAIN = {
+  new: ['The moon is dark, you can barely see it', ['Write one wish', 'Keep plans light']],
+  wax1: ['A thin sliver, growing a little each night', ['Take one small first step', 'Say your goal out loud']],
+  q1: ['Half lit and still growing', ['Make the decision', 'Do the scary task first']],
+  wax2: ['Almost full, still growing', ['Polish what you started', 'Be patient with details']],
+  full: ['Round and fully lit', ['Celebrate a win', 'Write what you let go of']],
+  wan1: ['Just past full, starting to shrink', ['Thank someone', 'Share what you learned']],
+  q3: ['Half lit and shrinking', ['Cancel one thing that drains you', 'Clear a drawer or inbox']],
+  wan2: ['A thin sliver, getting smaller each night', ['Go to bed early', 'Let your mind wander']],
+};
+export const MOON_WORDS = [['Waxing', 'growing brighter'], ['Waning', 'getting darker'], ['Crescent', 'less than half lit'], ['Gibbous', 'more than half lit']];
+export const BODY_DO = { menstrual: 'Rest and stay warm', follicular: 'Start something new', ovulatory: 'Speak up and connect', luteal: 'Finish and tidy up' };
 export const WX_BODY = {
   menstrual: ['Raw', 'Intuitive', 'Inward', .25, 'Low'], follicular: ['Playful', 'Fresh', 'Alive', .7, 'Rising'],
   ovulatory: ['Open', 'Fluent', 'Radiant', .95, 'High'], luteal: ['Sharp', 'Sorting', 'Honest', .45, 'Easing'],

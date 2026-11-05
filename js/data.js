@@ -1963,3 +1963,79 @@ export const SUPP_PAIR = {
   prenatal: { w: [['Omega-3 (DHA)', 'For the baby’s brain and eyes'], ['Breakfast', 'Easier on the stomach']], a: [['Coffee and tea', 'Enjoy them an hour apart, so the iron absorbs']] },
   coq10: { w: [['A meal with fat', 'Fat-soluble, absorbed much better with food'], ['Omega-3', 'Both support egg quality']], a: [] },
 };
+
+// Every tip as something she can do right away: [action, step 1, step 2, when]. Shown under the tip and in Saved.
+export const TIP_DO = {
+  body: {
+    menstrual: ['Walk 20 minutes and add protein', 'Slow walk or 10 min of stretching', 'A palm of eggs, meat or fish at each meal', 'Today'],
+    follicular: ['Add a little weight', 'Pick one lift and add 1 to 2 kg', 'Or do 2 more reps per set', 'Next session'],
+    ovulatory: ['Go for your strongest lift', '10 min warm up first', 'Try your heaviest set or a short sprint', 'This week'],
+    luteal: ['Lift steady and eat a bit more', 'Keep the same weight as last week', 'Add a sweet potato or extra egg to one meal', 'Today'],
+  },
+  bloat: {
+    menstrual: ['Make a ginger or fennel tea', 'Slice fresh ginger or 1 tsp fennel seeds into hot water', 'Have warm, cooked meals today', 'After meals'],
+    follicular: ['Add one fermented food', 'A spoon of sauerkraut or a glass of kefir', 'Once a day with a meal', 'Today'],
+    ovulatory: ['Drink and add fibre', 'A big glass of water with each meal', 'Add berries or seeds to breakfast', 'Today'],
+    luteal: ['Walk after dinner', '10 slow minutes after your main meal', 'Swap a salty snack for avocado or banana', 'Tonight'],
+  },
+  regular: {
+    menstrual: ['Log today and eat iron', 'Tap the + and mark your flow', 'Add red meat, liver or lentils to one meal', 'Today'],
+    follicular: ['Eat three real meals', 'No skipped breakfast this week', 'Include potato, rice or fruit with lunch', 'This week'],
+    ovulatory: ['Check your discharge', 'Clear and stretchy means ovulation is close', 'Log it as Egg white', 'Today'],
+    luteal: ['Protect your sleep', 'Same bedtime every night this week', 'One calm thing before bed: bath, book or breath', 'Tonight'],
+  },
+  pms: {
+    menstrual: ['Heat and magnesium for cramps', 'Hot water bottle on your belly for 20 min', 'A square of dark chocolate or a handful of pumpkin seeds', 'Now'],
+    follicular: ['Build your buffer', 'Protein at every meal this week', 'Red meat or eggs twice this week for iron', 'This week'],
+    ovulatory: ['Water and fibre', 'A glass of water with each meal', 'Add berries or a spoon of seeds to one meal', 'Today'],
+    luteal: ['Calm evening plate', 'Salmon or eggs plus a banana at dinner', 'A handful of seeds as your night snack', 'Tonight'],
+  },
+  skin: {
+    menstrual: ['Go gentle on your skin', 'Use a rich moisturiser morning and night', 'Skip scrubs and new products this week', 'Tonight'],
+    follicular: ['Try the new thing now', 'Book the facial or test that new product', 'Your skin tolerates more this week', 'This week'],
+    ovulatory: ['Cleanse at night, eat zinc', 'Gentle cleanse before bed', 'Pumpkin seeds or oysters once today', 'Tonight'],
+    luteal: ['Treat spots early', 'Cleanse morning and night', 'Swap one sweet snack for nuts or fruit', 'Today'],
+  },
+  sleep: {
+    menstrual: ['Go to bed 30 min earlier', 'Warm drink and a hot water bottle', 'Lights low from 9pm', 'Tonight'],
+    follicular: ['Keep one bedtime', 'Pick a time and keep it all week', 'Same wake time, even at weekends', 'This week'],
+    ovulatory: ['Cool, dark bedroom', 'Open a window or lower the heating', 'Blackout curtains or an eye mask', 'Tonight'],
+    luteal: ['Cool room and a magnesium bath', 'A cup of Epsom salt in a warm bath', 'Phone away 1 hour before bed', 'Tonight'],
+  },
+  mood: {
+    menstrual: ['Cancel one thing', 'Pick the plan you dread and move it', 'Use the time to rest or journal', 'Today'],
+    follicular: ['Say yes to something new', 'Plan one new thing for this week', 'Write down three goals for the month', 'This week'],
+    ovulatory: ['Have the big talk', 'Ask, pitch or say what you need', 'Book it for the next two days', 'Today'],
+    luteal: ['Daylight and kindness', '15 min outside before noon', 'Swap one harsh thought for what you’d tell a friend', 'Today'],
+  },
+  energy: {
+    menstrual: ['Walk, eat iron, sleep early', 'A gentle 20 min walk', 'Red meat or lentils at dinner, bed by 10:30', 'Today'],
+    follicular: ['Train a little harder', 'Add one harder session this week', 'Try a new class or route', 'This week'],
+    ovulatory: ['Use the peak', 'Your hardest workout or a sprint', 'Plan the social thing', 'Today'],
+    luteal: ['Steady pace, bigger plate', 'Choose a steady run or ride over sprints', 'Add a snack: yoghurt, nuts or fruit', 'Today'],
+  },
+  eat: {
+    menstrual: ['Cook a warm, iron-rich bowl', 'Soup or stew with beef or bone broth', 'Add a few red dates', 'Tonight'],
+    follicular: ['Make a fresh plate', 'Eggs with a crisp salad and lemon', 'A spoon of sauerkraut on the side', 'Lunch'],
+    ovulatory: ['Eat light and colourful', 'A bowl of berries with raw yoghurt', 'A big colourful salad at lunch', 'Today'],
+    luteal: ['Roast some roots', 'Sweet potato or squash in the oven, 35 min', 'Add pumpkin seeds on top for magnesium', 'Dinner'],
+  },
+  tcm: {
+    menstrual: ['Keep warm, sip ginger', 'Socks on and a scarf for your lower back', 'Ginger tea instead of iced drinks', 'Today'],
+    follicular: ['Rebuild with sleep and goji', 'In bed before 11pm', 'A handful of goji berries or 3 red dates', 'Today'],
+    ovulatory: ['Stay cool and move', 'Fresh fruit as a snack', 'Time outside and plenty of water', 'Today'],
+    luteal: ['Keep things moving', 'A daily 20 min walk', 'Cinnamon or cardamom in your tea or food', 'Today'],
+  },
+  hormones: {
+    menstrual: ['Notice your reset', 'Rate your energy 1 to 5 tonight', 'Log it, you will see the pattern next month', 'Tonight'],
+    follicular: ['Watch your lift', 'Log mood and energy once a day', 'Compare with last week', 'This week'],
+    ovulatory: ['Spot the peak signs', 'Check for clear, stretchy discharge', 'Log energy and desire', 'Today'],
+    luteal: ['Expect warmer and hungrier', 'Eat a bit more without guilt', 'Log how you sleep', 'This week'],
+  },
+};
+export const TTC_DO = {
+  menstrual: ['Start your prenatal', 'One with folate, iron and omega-3', 'Take it with breakfast every day', 'Today'],
+  follicular: ['Eat for egg quality', 'Eggs or oily fish once a day', 'Leafy greens with lunch', 'This week'],
+  ovulatory: ['Your best days', 'Sex today and tomorrow', 'Check for clear, stretchy discharge', 'Today'],
+  luteal: ['Stay warm and wait', 'Warm meals and gentle walks', 'Test if your period is a day late', 'This week'],
+};

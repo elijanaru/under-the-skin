@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
+  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -239,20 +239,44 @@ function checkinTip(info) {
   }
   return null;
 }
+// Saved tips: every tip is an action she can do now, and the bookmark keeps it on her Saved page.
+const TIPREG = {};
+const isSaved = id => (state.savedTips || []).some(x => x.id === id);
+function regTip(id, t, d, to) { if (d) TIPREG[id] = { id, t, a: d[0], s: [d[1], d[2]], w: d[3], to }; return id; }
+const saveBtn = (id, cls = '') => `<button class="sv-btn ${cls} ${isSaved(id) ? 'on' : ''}" data-action="saveTip" data-id="${id}" aria-pressed="${isSaved(id)}" aria-label="${isSaved(id) ? 'Saved' : 'Save this tip'}">${icon('save', 17, 1.8)}</button>`;
+const doSteps = d => `<span class="dos"><span class="dos-w">${icon('clock', 12)} ${d[3]}</span><b>${d[0]}</b><ol><li>${d[1]}</li><li>${d[2]}</li></ol></span>`;
 function tipsCard(info) {
   const ph = info.phase, list = [], mine = checkinTip(info);
   if (mine) list.push(mine);
-  if (ttc()) list.push({ k: 'ttc', t: 'Trying to conceive', photo: 'Prolactin', tip: TTC_TIPS[info.cd >= info.ov - 5 && info.cd <= info.ov ? 'ovulatory' : ph] });
-  focusKeys().forEach(k => { const f = FOCUS.find(x => x.k === k); if (f) list.push({ k, t: f.t, photo: f.photo, tip: TIPS[k][ph] }); });
+  const tph = info.cd >= info.ov - 5 && info.cd <= info.ov ? 'ovulatory' : ph;
+  if (ttc()) list.push({ k: 'ttc', t: 'Trying to conceive', photo: 'Prolactin', tip: TTC_TIPS[tph], d: TTC_DO[tph], id: `ttc-${tph}` });
+  focusKeys().forEach(k => { const f = FOCUS.find(x => x.k === k); if (f) list.push({ k, t: f.t, photo: f.photo, tip: TIPS[k][ph], d: TIP_DO[k] && TIP_DO[k][ph], id: `${k}-${ph}` }); });
   if (!list.length) return '';
   const [lead, ...rest] = list.slice(0, 6), D = x => x.deck || TIP_DECK[x.k] || ['spark', x.t, 'Show me'];
-  const [lic, lq, lcta] = D(lead), lu = hormonePhoto(lead.photo, 900);
-  return `${sectionTitle('Your tips today', ['Edit', 'profile'])}
-    <button class="tf" data-action="nav" data-to="${lead.to || TIP_TO[lead.k] || 'plan'}">
+  const [lic, lq, lcta] = D(lead), lu = hormonePhoto(lead.photo, 900), to = x => x.to || TIP_TO[x.k] || 'plan';
+  list.forEach(x => x.d && regTip(x.id, x.t, x.d, to(x)));
+  const n = (state.savedTips || []).length;
+  return `${sectionTitle('Your tips today', n ? [`${icon('save', 12)} Saved · ${n}`, 'saved'] : ['Edit', 'profile'])}
+    <div class="tf-w">
+    <button class="tf" data-action="nav" data-to="${to(lead)}">
       <span class="tf-media">${lu ? `<img src="${lu}" alt="" loading="lazy">` : ''}<span class="tf-tag">${icon(lic, 13)} ${lead.t}</span><b class="tf-q">${lq}</b></span>
-      <span class="tf-p">${lead.tip}</span>
+      ${lead.d ? doSteps(lead.d) : `<span class="tf-p">${lead.tip}</span>`}
       <span class="tf-cta">${lcta} ${icon('chevR', 14)}</span></button>
-    ${rest.length ? `<div class="tl">${rest.map(x => { const [, q] = D(x), u = hormonePhoto(x.photo, 200); return `<button class="tl-r" data-action="nav" data-to="${x.to || TIP_TO[x.k] || 'plan'}">${u ? `<img src="${u}" alt="" loading="lazy">` : '<span class="tl-ph"></span>'}<span class="tl-t"><b>${q}</b><small>${x.t}</small></span><span class="tl-go">${icon('chevR', 14)}</span></button>`; }).join('')}</div>` : ''}`;
+      ${lead.d ? saveBtn(lead.id, 'float') : ''}</div>
+    ${rest.length ? `<div class="tl">${rest.map(x => { const [, q] = D(x), u = hormonePhoto(x.photo, 200); return `<div class="tl-rw"><button class="tl-r" data-action="nav" data-to="${to(x)}">${u ? `<img src="${u}" alt="" loading="lazy">` : '<span class="tl-ph"></span>'}<span class="tl-t"><b>${x.d ? x.d[0] : q}</b><small>${x.d ? `${x.d[1]} · ${x.d[3]}` : x.t}</small></span></button>${x.d ? saveBtn(x.id) : `<span class="tl-go">${icon('chevR', 14)}</span>`}</div>`; }).join('')}</div>` : ''}`;
+}
+function viewSaved() {
+  const L = state.savedTips || [];
+  return `${topbar('Saved tips', { back: true })}
+  <div class="pad sv">
+    <p class="sv-lead">${L.length ? `${L.length} ${L.length === 1 ? 'tip' : 'tips'} you can use any day. Tap the bookmark to remove one.` : 'Tap the bookmark on any tip and it lands here, ready to use.'}</p>
+    ${L.length ? L.slice().reverse().map(x => `<section class="card sv-c">
+      <div class="sv-h"><span class="sv-t">${x.t}</span>${saveBtn(x.id)}</div>
+      <b class="sv-a">${x.a}</b>
+      <ol class="sv-s">${x.s.map((st, i) => `<li><span>${i + 1}</span>${st}</li>`).join('')}</ol>
+      <div class="sv-f"><span class="dos-w">${icon('clock', 12)} ${x.w}</span>${x.to ? `<button class="link" data-action="nav" data-to="${x.to}">Why it helps ${icon('chevR', 12)}</button>` : ''}</div>
+    </section>`).join('') : `<div class="sv-empty">${icon('save', 30, 1.4)}<b>Nothing saved yet</b><small>Your tips on Today and the moon page each have a bookmark.</small><button class="btn btn-dark" data-action="nav" data-to="today">See today’s tips</button></div>`}
+  </div>`;
 }
 // Articles to read around today's tips: this phase first, then what she wants help with.
 const ARTICLE_PHOTO = { estrogen: 'Oestrogen', 'progesterone-pms': 'Progesterone', iron: 'Active vitamin D', 'yin-yang': 'Thyroid hormones', 'seed-cycling': 'Insulin', 'four-phases': 'LH', brain: 'Serotonin', sleep: 'Melatonin', 'ovulation-signs': 'FSH' };
@@ -1180,12 +1204,6 @@ function calTop(inf, fStart, nextOv, short) {
     <div class="cal3-row"><div class="cal3-num"><span class="eyebrow">${inf.isPeriod ? 'Your period' : inf.late ? 'Your period' : 'Next period'}</span>
       <b class="dotnum">${big[0]}</b><p>${big[1]}</p><small>${sub}</small></div>
       <div class="cdial-w">${calDial(inf)}</div></div>
-    <div class="cal3-bubs">
-      ${bub(PH_HEX[inf.phase], 'Phase', ph.name, ph.season || 'now')}
-      ${bub('#d6a443', 'Fertile', fertileNow ? 'Now' : dOv - 5 > 0 ? `In ${dOv - 5} d` : 'Closed', `${short(fStart)} to ${short(nextOv)}`)}
-      ${bub('#e9c76a', 'Egg release', dOv === 0 ? 'Today' : short(nextOv), dOv === 0 ? 'estimate' : `in ${dOv} ${dOv === 1 ? 'day' : 'days'}`)}
-    </div>
-    <div class="cal3-key">${PHASE_ORDER.map(p => `<span><i style="background:${PH_HEX[p]}"></i>${PHASES[p].name}</span>`).join('')}</div>
   </section>`;
 }
 function viewCalendar() {
@@ -1237,8 +1255,8 @@ function viewCalendar() {
         <div class="cp-m">${Array.from({ length: 12 }, (_, i) => `<button class="${ui.calPick === m.getFullYear() && i === m.getMonth() ? 'on' : ''} ${ui.calPick === today.getFullYear() && i === today.getMonth() ? 'now' : ''}" data-action="calSetMonth" data-m="${i}">${fmt(new Date(2000, i, 1), { month: 'short' })}</button>`).join('')}</div></div>`
       : `<div class="cal-grid ${slide}">${cells}</div>`}
       ${ui.calEdit ? `<div class="cal-editbar"><span>Tap each day you bled</span><button class="btn btn-light cal-done" data-action="calEdit">Done</button></div>`
-        : `<div class="cal2-legend"><span><i class="lg-p"></i>Period</span><span><i class="lg-pp"></i>Expected period</span><span><i class="lg-f"></i>Fertile</span><span><i class="lg-o"></i>Egg release</span></div>
-      ${calDayCard(sd, si, slog, selLine, isFuture, hasFlow)}
+        : `<div class="cal2-legend"><span><i class="lg-p"></i>Period</span><span><i class="lg-f"></i>Fertile</span><span><i class="lg-o"></i>Egg release</span></div>
+      ${calDayLine(sd, si, slog, selLine, isFuture)}
       <button class="cal-editbtn" data-action="calEdit">${icon('drop', 15)} Edit period days</button>`}
     </section>
     ${events().some(e => e.date >= todayISO()) ? upcomingEvents() : ''}
@@ -1249,6 +1267,13 @@ function viewCalendar() {
   </div>`;
 }
 
+// The tapped day as one quiet line: the date, what it is, one pill to log it.
+function calDayLine(sd, si, slog, selLine, isFuture) {
+  const c = si ? (si.periodActual || si.periodPredicted ? '#d42a40' : si.isOvulation ? '#d6a443' : si.fertile ? '#c9b98a' : PH_HEX[si.phase]) : '#c9c9c9';
+  const logged = !!(slog.symptoms?.length || slog.moods?.length || slog.flow || slog.notes);
+  return `<div class="cdl day-panel"><i style="background:${c}"></i><span><small>${fmt(sd, { weekday: 'short', month: 'short', day: 'numeric' })}</small><b>${selLine || 'No cycle data yet'}</b></span>
+    ${isFuture ? '' : `<button class="cdl-go" data-action="logDay" data-date="${C.iso(sd)}">${icon(logged ? 'check' : 'plus', 14)} ${logged ? 'Edit' : 'Log'}</button>`}</div>`;
+}
 // The tapped day as a glass card: hormone and energy rings, her mode for the day, what she logged.
 function calDayCard(sd, si, slog, selLine, isFuture, hasFlow) {
   const head = `<div class="cd-h"><div><small>${fmt(sd, { weekday: 'long', month: 'long', day: 'numeric' })}</small><b>${selLine || 'No cycle data yet'}</b></div>
@@ -1402,6 +1427,8 @@ function viewLog() {
   const k = ui.logDate || todayISO(), d = C.parseISO(k), l = getLog(k);
   const isToday = k === todayISO(), di = M.stats ? C.dayInfo(d, M.stats) : null;
   const open = ui.logOpen = ui.logOpen || { flow: 1, body: 1 };
+  // Bleeding is only asked for around her period; otherwise one quiet button opens it.
+  const bleedOn = !di || di.phase === 'menstrual' || di.isPeriod || di.late || (di.daysToPeriod <= 2) || !!l.flow || ui.showBleed === k;
   const chips = (field, list, multi = true) => `<div class="lg-chips">${list.map(([v, e, lab]) => {
     const on = multi ? (l[field] || []).includes(v) : String(l[field]) === v;
     return `<button class="lg-chip lg-tile ${on ? 'on' : ''}" data-action="logSet" data-field="${field}" data-v="${esc(v)}" data-multi="${multi ? 1 : ''}" aria-pressed="${on}"><span class="lt-e" aria-hidden="true">${e}</span><small>${esc(lab || v)}</small></button>`;
@@ -1413,8 +1440,9 @@ function viewLog() {
     desire: (l.drive ? 1 : 0) + has('intim'), disrupt: has('disrupt'), note: l.notes ? 1 : 0,
   };
   const inner = {
-    flow: `<div class="lg-k">Bleeding</div><p class="lg-why">${icon('spark', 12)}<span>Sharpens your period and egg release dates.</span></p>
-      <div class="fd">${FLOWS.map((f, i) => lgPick(l.flow === f.id, 'flow', f.id, false, 'fd-o', `<i style="--s:${[14, 22, 30, 40][i]}px"></i><small>${f.label}</small>`, f.label)).join('')}</div>
+    flow: `${bleedOn ? `<div class="lg-k">Bleeding</div><p class="lg-why">${icon('spark', 12)}<span>Sharpens your period and egg release dates.</span></p>
+      <div class="fd">${FLOWS.map((f, i) => lgPick(l.flow === f.id, 'flow', f.id, false, 'fd-o', `<i style="--s:${[14, 22, 30, 40][i]}px"></i><small>${f.label}</small>`, f.label)).join('')}</div>`
+      : `<button class="lg-pstart" data-action="logBleed">${icon('drop', 16)}<span><b>My period started</b><small>Or log bleeding or spotting</small></span>${icon('chevR', 15)}</button>`}
       <div class="lg-k">Discharge</div><p class="lg-why">${icon('spark', 12)}<span>Egg white marks your fertile days.</span></p>
       <div class="tx">${DISCHARGE.filter(([v]) => v !== 'Clumpy').map(([v, e]) => lgPick(l.fluid === v, 'fluid', v, false, `tx-o${v === 'Egg white' ? ' fert' : ''}`, `<span>${e}</span><small>${v}</small>`)).join('')}</div>
       <div class="lg-k">Anything else</div><p class="lg-why">${icon('spark', 12)}<span>Flags what’s worth a doctor’s check.</span></p>
@@ -2421,17 +2449,26 @@ function maniFeel() {
       <em><b class="dotnum">${n}</b>of 7 nights</em></div></div>`;
 }
 function innerWeather(mn, pg, phase, inner, ms, feel) {
-  const wm = MG.WX_MOON[pg.k] || MG.WX_MOON.new, wb = phase && MG.WX_BODY[phase], open = ui.wxOpen;
-  const lit = Math.round(mn.illum * 100);
-  const meter = (k, lab, v, word, cls) => `<div class="wx-m ${cls}"><span>${lab}</span><i><b style="width:${Math.max(6, v)}%"></b></i><em>${word}</em></div>`;
-  const T = [['heart', 'Heart', 0, pg.heart, inner && inner.heart], ['mind', 'Mind', 1, pg.mind, inner && inner.mind], ['star', 'Spirit', 2, pg.spirit, inner && inner.spirit]];
+  const plain = MG.MOON_PLAIN[pg.k] || MG.MOON_PLAIN.new, open = ui.wxOpen, learn = open === 'learn';
+  const T = [['heart', 'Heart', pg.heart, inner && inner.heart], ['mind', 'Mind', pg.mind, inner && inner.mind], ['star', 'Spirit', pg.spirit, inner && inner.spirit]];
   const cur = T.find(t => t[0] === open);
-  return `<section class="card mn-weather wx">
-    <div class="mn-k"><small>Your inner weather</small><b>${pg.name}${inner ? ` × ${inner.name}` : ''}</b></div>
-    <div class="wx-meters">${meter('m', `${icon('moon', 14)} Moon light`, lit, `${lit}%`, 'moon')}${wb ? meter('b', `${icon('heart', 14)} Your energy`, wb[3] * 100, wb[4], 'body') : ''}</div>
-    ${inner ? `<p class="wx-blend">${MG.innerBlend(mn.waxing, phase)}</p>` : ''}
-    <div class="wx-tiles">${T.map(([ic, t, i]) => `<button class="wx-t ${open === ic ? 'on' : ''}" data-action="wxOpen" data-v="${ic}" aria-expanded="${open === ic}"><span class="wx-ic">${icon(ic, 18)}</span><small>${t}</small><b>${wm[i]}</b>${wb ? `<em>${icon('heart', 10)} ${wb[i]}</em>` : ''}</button>`).join('')}</div>
-    ${cur ? `<div class="wx-more"><div class="wx-r"><span class="wx-tag moon">${icon('moon', 12)} Moon</span><p>${cur[3]}</p></div>${cur[4] ? `<div class="wx-r"><span class="wx-tag body">${icon('heart', 12)} You</span><p>${cur[4]}</p></div>` : ''}</div>` : `<p class="wx-hint">Tap Heart, Mind or Spirit for the full reading</p>`}
+  return `<section class="card mn-weather wx2">
+    <button class="wx2-head" data-action="wxOpen" data-v="learn" aria-expanded="${learn}">
+      <span class="wx2-moon">${moonArt(mn.elong)}</span>
+      <span class="wx2-t"><small>Tonight’s moon · ${pg.theme}</small><b>${pg.name}</b><em>${plain[0]}</em></span>
+      <span class="wx2-q">${learn ? icon('chevD', 16) : '?'}</span></button>
+    ${learn ? `<div class="wx2-learn">
+      <div class="wx2-cycle">${MG.PHASE_GUIDE.map(g => `<span class="${g.k === pg.k ? 'on' : ''}"><i>${moonArt((g.at[0] + g.at[1]) / 2)}</i><small>${g.theme}</small></span>`).join('')}</div>
+      <div class="wx2-words">${MG.MOON_WORDS.map(([w, m]) => `<span><b>${w}</b> ${m}</span>`).join('')}</div>
+      <p>The moon takes 29.5 days to go from dark to full and back. Many traditions use each stage as a mood for the month: begin at the new moon, act while it grows, let go while it shrinks.</p>
+      <a class="link" href="#/moon">The full moon guide ${icon('chevR', 12)}</a></div>` : ''}
+    <div class="wx2-do">
+      <div><span class="wx2-ic moon">${icon('moon', 15)}</span><span><small>The moon says</small><b>${plain[1][0]}</b><em>${plain[1][1]}</em></span>${saveBtn(regTip(`moon-${pg.k}`, `${pg.name} · moon`, [`${pg.theme} with the moon`, plain[1][0], plain[1][1], 'Tonight'], 'moon'))}</div>
+      ${phase ? `<div><span class="wx2-ic body">${icon('heart', 15)}</span><span><small>Your body says · ${inner.name}</small><b>${MG.BODY_DO[phase]}</b></span></div>` : ''}
+    </div>
+    ${inner ? `<p class="wx2-blend">${MG.innerBlend(mn.waxing, phase)}</p>` : ''}
+    <div class="wx2-tabs">${T.map(([ic, t]) => `<button class="${open === ic ? 'on' : ''}" data-action="wxOpen" data-v="${ic}" aria-expanded="${open === ic}">${icon(ic, 14)} ${t}</button>`).join('')}</div>
+    ${cur ? `<div class="wx-more"><div class="wx-r"><span class="wx-tag moon">${icon('moon', 12)} Moon</span><p>${cur[2]}</p></div>${cur[3] ? `<div class="wx-r"><span class="wx-tag body">${icon('heart', 12)} You</span><p>${cur[3]}</p></div>` : ''}</div>` : ''}
     <details class="wx-sign"><summary><span>${ms.glyph}</span><b>Moon in ${ms.name}: ${feel[0].toLowerCase()}</b>${icon('chevD', 14)}</summary><p>${feel[1]}</p></details>
   </section>`;
 }
@@ -3360,16 +3397,27 @@ function auraStreak() {
   while (auraDay(C.iso(d)).length) { s++; d = C.addDays(d, -1); }
   return s;
 }
+// Short words for the push / slow down card: do, go easy on, move.
+const COMPASS_SHORT = {
+  'flow-start': ['Plan & reflect', 'Big launches', 'Walk & stretch'], 'flow-end': ['Small tasks, set goals', 'Cramming', 'Gentle movement'],
+  rising: ['Start new things', 'Overbooking', 'Try something new'], building: ['Big tasks & decisions', 'Skipping sleep', 'Hardest sessions'],
+  peak: ['Pitch, present, ask', 'Saying yes to all', 'Dance, sprint, lift'], settle: ['Finish & deep work', 'Starting five things', 'Steady strength'],
+  focus: ['Wrap up & organise', 'Late nights', 'Pilates & walks'], premenstrual: ['Only what’s due', 'Harsh self-talk', 'Gentle & warm'],
+};
 function compassSec(info) {
-  const c = compassFor(info), e = getLog(todayISO()).energy;
-  const listen = e && c.lvl >= 2 && e <= 2 ? 'You logged low energy. Today, follow your body, not the calendar.'
-    : e && c.lvl <= 1 && e >= 4 ? 'You feel strong today. Enjoy it, gently.' : COMPASS_LINE[c.lvl];
-  return `<div class="hub-sec hub-compass">
-      <div class="hub-k"><span>Push or slow down?</span><button class="link" data-action="calSync">Add to my calendar ${icon('chevR', 12)}</button></div>
-      <div class="cp-head"><b class="cp-mode lvl-${c.lvl}">${c.mode}</b><p>${c.why}</p></div>
-      <div class="cp-gauge" role="img" aria-label="Energy: ${c.mode}">${MODES.map((m, i) => `<span class="${i === c.lvl ? 'on' : i < c.lvl ? 'fill' : ''}">${m}</span>`).join('')}</div>
-      <div class="cp-rows"><div><small>Lean into</small>${c.work}</div><div><small>Go easy on</small>${c.ease}</div><div><small>Body</small>${c.body}</div></div>
-      <p class="cp-line">${listen}</p>
+  const w = dayWindow(info), c = COMPASS[w], S = COMPASS_SHORT[w], e = getLog(todayISO()).energy;
+  const listen = e && c.lvl >= 2 && e <= 2 ? 'You logged low energy. Follow your body, not the calendar.'
+    : e && c.lvl <= 1 && e >= 4 ? 'You feel strong today. Enjoy it, gently.' : '';
+  return `<div class="hub-sec hub-compass cp2 lvl-${c.lvl}">
+      <div class="hub-k"><span>Push or slow down?</span><button class="link" data-action="nav" data-to="rhythm">Your day ${icon('chevR', 12)}</button></div>
+      <div class="cp2-top"><b class="cp2-mode">${c.mode}</b><span class="cp2-meter" role="img" aria-label="Energy level ${c.lvl + 1} of 4">${[0, 1, 2, 3].map(i => `<i class="${i <= c.lvl ? 'on' : ''}"></i>`).join('')}</span></div>
+      <div class="cp2-rows">
+        <div><span class="cp2-ic do">${icon('check', 14, 2.2)}</span><small>Do</small><b>${S[0]}</b></div>
+        <div><span class="cp2-ic no">${icon('close', 13, 2.2)}</span><small>Go easy</small><b>${S[1]}</b></div>
+        <div><span class="cp2-ic mv">${icon('bolt', 14)}</span><small>Move</small><b>${S[2]}</b></div>
+      </div>
+      ${listen ? `<p class="cp2-note">${listen}</p>` : ''}
+      <details class="cp2-more"><summary>Why ${icon('chevD', 13)}</summary><p>${c.why}</p><p><b>Lean into:</b> ${c.work}</p><p><b>Go easy on:</b> ${c.ease}</p><p><b>Body:</b> ${c.body}</p><p class="cp2-line">${COMPASS_LINE[c.lvl]}</p></details>
     </div>`;
 }
 function viewAura() {
@@ -3435,16 +3483,8 @@ function todayHub(info, energy, head = '') {
   return `<section class="hub"><div class="hub-life" aria-hidden="true">${SPORES}</div>${head}
     ${stageHero(info, energy)}
     <div class="stage-after">${ttc() && info.fertile ? `<span class="fh-badge">${icon('spark', 13)} Fertile</span>` : ''}
-      ${PERIOD_FLOWS.includes(getLog(todayISO()).flow) && info.cd === 1 ? '' : `<button class="fh-period pp" data-action="periodStart"><span class="pp-drop">${icon('drop', 13, 2)}</span><span>My period started today</span></button>`}</div>
-    <div class="hub-sec hub-rhythm">
-      <button class="hrh" data-action="nav" data-to="rhythm" aria-label="Live with the sun and moon">
-        <img class="hrh-bg" src="images/sun-moon-poster.webp" alt="" loading="lazy"><span class="hrh-shade"></span>
-        <span class="hrh-top"><small>Your rhythm today</small><em>Your day ${icon('chevR', 12)}</em></span>
-        <b class="hrh-h">${rh1}</b><span class="hrh-p">${rh2}</span>
-        <span class="hrh-now">${(() => { const h = nowH(), p = Math.max(0, Math.min(1, (h - D.rise) / (D.set - D.rise))); return `<span class="hrh-arc"><small>${hLabel(D.rise)}</small><span class="hrh-line"><i style="width:${(p * 100).toFixed(0)}%"></i><u style="left:${(p * 100).toFixed(0)}%"></u></span><small>${hLabel(D.set)}</small></span>`; })()}
-          <small>Right now · ${m.n}</small><span>${m.brief}</span></span>
-      </button>
-    </div>
+      ${PERIOD_FLOWS.includes(getLog(todayISO()).flow) && info.cd === 1 ? '' : `<button class="fh-period pp ps2" data-action="periodStart"><span class="pp-drop">${icon('drop', 16, 2)}</span><span class="ps2-t"><b>Period started?</b><small>Tap to log today as day 1</small></span><span class="ps2-go">${icon('plus', 15, 2.2)}</span></button>`}</div>
+    ${compassSec(info)}
     <div class="hub-sec hub-plan">
       <div class="hub-k"><span>Best things to do today</span><span class="hub-day">Day ${Math.min(info.cd, info.L)}</span></div>
       ${todayTiles(info)}
@@ -4407,7 +4447,7 @@ function partnersCard(info) {
   const ps = state.partners || [];
   if (!ps.length) return `${sectionTitle('Your partner')}
     <button class="tf" data-action="nav" data-to="partners">
-      <span class="tf-media"><img src="images/partner-cinema.webp" alt="" loading="lazy"><span class="tf-tag">${icon('users', 13)} Two phones</span><b class="tf-q">See where your partner is</b></span>
+      <span class="tf-media"><img src="images/partner-hands.jpg" alt="" loading="lazy"><span class="tf-tag">${icon('users', 13)} Two phones</span><b class="tf-q">See where your partner is</b></span>
       <span class="tf-p">Swap links and you’ll both see each other’s cycle and energy here.</span>
       <span class="tf-cta">Connect with your partner ${icon('chevR', 14)}</span></button>`;
   if (ps.length > 1) return `${sectionTitle('Your people', ['All', 'partners'])}
@@ -4561,6 +4601,7 @@ function viewPartners(id) {
   return `${topbar('Partner', { back: true })}
   <div class="pad">
     <section class="sync-hero">
+      <div class="sy-photo"><img src="images/partner-hands.jpg" alt=""></div>
       <div class="sy-pair">${orb(me, mi, mi ? `You · day ${mi.cd}` : 'You')}<span class="sy-line"><i></i></span>${first ? orb(first, snapInfo(first, new Date()), `${esc(first.n)} · day ${snapInfo(first, new Date()).cd}`) : orb(null, null, 'Partner')}</div>
       <h1 class="sy-h">See each other’s <span>rhythm</span></h1>
       <p class="sy-sub">Send one link. Your partner sees your phase and energy every day. If she tracks too, you see each other.</p>
@@ -5198,6 +5239,7 @@ function viewProfile() {
     ${M.info ? `<button class="card glass pf-link" data-action="nav" data-to="insights"><span>${icon('chart', 18)}</span><b>Your hormones & patterns<small>What the app has learned about you</small></b>${icon('chevR', 16)}</button>` : ''}`;
   else if (tab === 'alerts') body = `${remindersSection()}
     ${M.info ? calSyncCard() : ''}
+    <button class="card glass pf-link" data-action="nav" data-to="saved"><span>${icon('save', 18)}</span><b>Saved tips<small>${(state.savedTips || []).length} saved, ready to use</small></b>${icon('chevR', 16)}</button>
     ${sectionTitle('Partner mode')}
     <section class="card glass"><button class="list-btn" data-action="nav" data-to="share">${icon('heart', 18)} Share my cycle with partner & friends</button>
       <button class="list-btn" data-action="nav" data-to="partners">${icon('chart', 18)} See my partners' dashboard</button>
@@ -5913,6 +5955,11 @@ const actions = {
   },
   planTab: d => { ui.planTab = d.v; if (route().name !== 'plan') go('plan'); else render(); },
   toggleHormone: d => { ui.hidden[d.h] = !ui.hidden[d.h]; render(); },
+  saveTip: d => {
+    const L = state.savedTips = state.savedTips || [], i = L.findIndex(x => x.id === d.id);
+    if (i >= 0) { L.splice(i, 1); toast('Removed from Saved'); } else { const t = TIPREG[d.id]; if (!t) return; L.push({ ...t, at: todayISO() }); toast('Saved · find it in Saved tips'); if (navigator.vibrate) navigator.vibrate(8); }
+    save(); render();
+  },
   fav: d => { const f = state.favorites = state.favorites || []; const i = f.indexOf(d.id); i < 0 ? f.push(d.id) : f.splice(i, 1); save(); render(); },
   check: d => { ui.checked[d.k] = !ui.checked[d.k]; render(); },
   timer: d => { ui.timer = { title: d.title, secs: +d.secs, remaining: +d.secs, running: true, done: false }; renderOverlay(); startTick(); },
@@ -5937,6 +5984,7 @@ const actions = {
   openPartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (p) { const { id, ...snap } = p; location.hash = '#/with?d=' + b64e(snap); } },
   removePartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (!p || !confirm(`Remove ${p.n}?`)) return; state.partners = state.partners.filter(x => x.id !== d.id); save(); if (route().name === 'partners') go('partners'); else render(); },
   seasonView: d => { ui.seasonView = d.v; render(); },
+  logBleed: () => { ui.showBleed = ui.logDate || todayISO(); render(); },
   maniFeel: d => { const F = state.maniFeel = state.maniFeel || {}, t = todayISO(), v = +d.v; if (F[t] === v) delete F[t]; else F[t] = v; save(); render(); },
   wxOpen: d => { ui.wxOpen = ui.wxOpen === d.v ? null : d.v; render(); },
   wkPan: d => { const v = +d.v; ui.wkPan = ui.wkPan && ui.wkPan[0] === d.k && ui.wkPan[1] === v ? null : [d.k, v]; render(); },
@@ -6196,7 +6244,7 @@ function render() {
   const ph = (ui.phasePreview || M.info?.phase) || ''; // the whole app takes the colour of her phase
   if (document.documentElement.dataset.phase !== ph) document.documentElement.dataset.phase = ph;
   const views = {
-    today: viewToday, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: viewBreathe, plan: viewPlan, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: () => (r.id ? viewStar(r.id) : viewCosmic()), moon: viewMoon, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewHabits, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), world: () => viewWorld(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
+    today: viewToday, saved: viewSaved, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: viewBreathe, plan: viewPlan, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: () => (r.id ? viewStar(r.id) : viewCosmic()), moon: viewMoon, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewHabits, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), world: () => viewWorld(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
     recipe: () => viewRecipe(r.id), ritual: () => viewRitual(r.id), point: () => viewPoint(r.id), article: () => viewArticle(r.id), learn: viewLearn,
   };
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];
