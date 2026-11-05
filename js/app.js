@@ -2189,47 +2189,34 @@ function viewStar(k) {
     S && T.el[S.el] && T.el[S.el] !== signLine ? T.el[S.el] : null,
     `${tc.element} season in TCM: ${tc.principle.toLowerCase()}.`,
   ].filter(Boolean);
-  return `<section class="mv2 sd-hero">
-    <img class="mv2-bg" src="${u || starPhoto('sky', 1100)}" alt="" decoding="async"><span class="mv2-shade"></span>
-    <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
-    <div class="mv2-eyebrow">${STAR_N[k] || ''} · ${S ? `${S.glyph} ${S.name}` : 'Your stars'} · ${ph.name}</div>
-    <h1 class="rh2-h">${title}</h1>
-    <p class="mv2-now">${(k === 'moon' ? `${Math.round(moon.illum * 100)}% lit tonight` : CR ? CR.rows.map(r => `${r.glyph} ${r.title.replace(/, \d+\w+ house$/, '')}`).join(' · ') : (T.phase[phase] || '').split(/[—.:]/)[0])}</p>
-  </section>
-  <div class="pad sd-body">
-    <section class="sd-paper">
-      <div class="sd-k">Today’s reading</div>
-      <p class="sd-q">${phaseLine}${CR ? ` <span>With your ${CR.rows[0].title.replace(/, \d+\w+ house$/, '')}: ${CR.rows[0].line.charAt(0).toLowerCase() + CR.rows[0].line.slice(1)}</span>` : signLine ? ` <span>${signLine}</span>` : ''}</p>
-      <div class="sd-sig">${S ? `<b>${S.glyph}</b>` : ''}<span>${S ? `${S.name} × ` : ''}${ph.name} phase</span></div>
-    </section>
-    <div class="sd-two">
-      <section class="sd-card">
-        <div class="sd-k">Your sign</div>
-        ${S ? `<div class="sd-big">${S.glyph}</div><b class="sd-t">${S.name}</b><small>${S.el} · ${S.mode} · ruled by ${SD.ruler}</small>
-          <p>${S.gift}.</p>` : `<p>Add your birthday to read this for your sign.</p><button class="sd-btn" data-action="nav" data-to="profile">Add birthday</button>`}
-      </section>
-      <section class="sd-card">
-        <div class="sd-k">Your cycle</div>
-        <div class="sd-big han">${tc.elementGlyph}</div><b class="sd-t">${ph.name}</b><small>${ph.season} · ${tc.element} · ${tc.organ}</small>
-        <p>${ph.hormones.split('. ')[0]}. ${evBadge('some')}</p>
-      </section>
-    </div>
-    ${CR ? `<div class="sd-h">In your birth chart</div>
-    <section class="sd-card sd-chart">${CR.rows.map(r => `<div class="sdc-r"><span class="sdc-g">${r.glyph}</span><div><small>${r.role}</small><b>${r.title}</b><p>${r.line}${r.dig ? ` ${Z.DIGNITY_NOTE[r.dig]}` : ''}</p></div></div>`).join('')}
-      ${CR.sky || CR.hits.length ? `<div class="sdc-today"><small>Today's sky</small>${CR.sky ? `<p>${CR.sky.glyph} ${CR.sky.name} is in ${signOfK(CR.sky.sign).name}${CR.sky.house ? `, moving through your ${CR.sky.house}${({ 1: 'st', 2: 'nd', 3: 'rd' }[CR.sky.house] || 'th')} house: ${Z.HOUSES[CR.sky.house - 1][0].toLowerCase()}` : ''}.</p>` : ''}${CR.hits.map(h => `<p>${h}</p>`).join('')}</div>` : ''}
-    </section>` : ''}
-    ${A ? `<section class="sd-card sd-astro"><div class="sd-planet">${A.glyph}</div><div><div class="sd-k">In astrology · ${A.planet} · ${A.house}</div><p>${A.why}</p></div></section>` : ''}
-    ${seasons}
-    <div class="sd-h">Try today</div>
-    <ol class="sd-try">${tries.map(t => `<li>${t}</li>`).join('')}</ol>
-    ${S ? `<div class="sd-h">${poss(S.name)} essentials</div>
-    <div class="sd-facts">
-      <div><small>Element</small><b>${S.el}</b></div><div><small>Ruler</small><b>${SD.ruler}</b></div>
-      <div><small>Body</small><b>${S.body}</b></div><div><small>Colour</small><b>${SD.color}</b></div>
-      <div><small>Stone</small><b>${SD.stone}</b></div><div><small>Flower</small><b>${Z.SIGN_FLOWER[S.k]}</b></div>
-    </div>
-    <section class="sd-card sd-light"><div class="sd-k">Your gift</div><p>${S.gift}.</p><div class="sd-k">Your shadow</div><p>${S.shadow}.</p></section>
-    <section class="sd-aff"><small>Say it today</small><p>“${S.aff}”</p></section>` : ''}
+  const split = t => { const i = t.indexOf(': '); return i > 0 && i < 40 ? [t.slice(0, i), t.slice(i + 2)] : ['', t]; };
+  const chip = (g, n, v) => `<span class="zs-chip"><small>${n}</small><b>${g ? `${g} ` : ''}${v}</b></span>`;
+  return `<div class="pad zs">
+    <section class="zs-photo"><img src="${u || starPhoto('sky', 1100)}" alt="" decoding="async">
+      <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button></section>
+    <div class="zs-head"><span class="zs-eye">${STAR_N[k] || 'Your stars'} · ${ph.name} phase</span><h1>${title}</h1>${k === 'moon' ? `<p>${Math.round(moon.illum * 100)}% lit tonight</p>` : ''}</div>
+
+    ${S ? `<section class="zs-sign" style="--zc:${({ Fire: '#c2563a', Earth: '#5f7a34', Air: '#4a7ea8', Water: '#4a5aa0' })[S.el] || '#20301a'}">
+      <div class="zs-sign-top"><span class="zs-glyph">${S.glyph}</span><span><small>Your sign</small><b>${S.name}</b><em>${S.el} · ruled by ${SD.ruler}</em></span></div>
+      <p class="zs-says">${signLine || S.gift + '.'}</p>
+      <div class="zs-chips">${chip('', 'Colour', SD.color)}${chip('', 'Stone', SD.stone)}${chip('', 'Flower', Z.SIGN_FLOWER[S.k])}</div>
+    </section>` : `<section class="zs-sign"><p class="zs-says">Add your birthday and this page reads ${T ? T.t.toLowerCase() : 'it'} for your sign.</p><button class="btn btn-dark" data-action="nav" data-to="profile">Add birthday</button></section>`}
+
+    <section class="zs-today" style="--c:${PH_HEX[phase]}"><span class="zs-dot"></span><div><small>Today · ${ph.name} · ${ph.season}</small><p>${phaseLine}</p></div></section>
+
+    <h2 class="zs-h">Try today</h2>
+    <ol class="zs-try">${tries.slice(0, 3).map((t, i) => { const [h, x] = split(t); return `<li><i>${i + 1}</i><span>${h ? `<b>${h}</b>` : ''}${x}</span></li>`; }).join('')}</ol>
+
+    ${S ? `<div class="zs-two"><section class="zs-gift"><small>${icon('spark', 13)} Your gift</small><p>${S.gift}.</p></section><section class="zs-shadow"><small>${icon('moon', 13)} Watch for</small><p>${S.shadow}.</p></section></div>` : ''}
+
+    ${k === 'moon' ? '' : `<h2 class="zs-h">${T.t} through your month</h2>
+    <div class="zs-month">${order.map(p => `<div class="${p === phase ? 'on' : ''}" style="--c:${PH_HEX[p]}"><span class="zs-dot"></span><div><b>${PHASES[p].name}${p === phase ? ' <em>now</em>' : ''}</b><p>${T.phase[p]}</p></div></div>`).join('')}</div>`}
+
+    ${CR || A ? `<details class="zs-more"><summary>${icon('star', 15)} In your birth chart ${icon('chevD', 14)}</summary>
+      ${CR ? CR.rows.map(r => `<div class="sdc-r"><span class="sdc-g">${r.glyph}</span><div><small>${r.role}</small><b>${r.title}</b><p>${r.line}</p></div></div>`).join('') : ''}
+      ${A ? `<div class="sdc-r"><span class="sdc-g">${A.glyph}</span><div><small>${A.planet} · ${A.house}</small><p>${A.why}</p></div></div>` : ''}</details>` : ''}
+
+    ${S ? `<section class="zs-aff"><small>Say it today</small><p>“${S.aff}”</p></section>` : ''}
     <p class="fine center">Astrology is a tradition for reflection, not science. Your cycle part is based on typical hormone patterns.</p>
   </div>`;
 }
