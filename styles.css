@@ -7466,3 +7466,41 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .xp2 .xp-ic { background: #20301a !important; color: #fff !important; }
 .xp2 .xp-l b { margin: 0; font-size: 15px; color: #20301a !important; }
 .xp2 .xp-l small { min-height: 0; font-size: 11.5px; color: rgba(32,48,26,.7) !important; }
+.mv3-h em { font-size: 42px; line-height: 1.02; }
+/* Body map: the floating aura woman in the middle, lines to five parts of her body, each with what to do today */
+.en.en2 { margin-top: 16px; text-align: center; }
+.em-head small { display: block; font-size: 12.5px; color: rgba(32,48,26,.7); }
+.em-head b { display: block; margin-top: 2px; font-size: 34px; font-weight: 600; letter-spacing: -.03em; line-height: 1.05; color: var(--en-ink); }
+.em-map { position: relative; width: 340px; max-width: 100%; height: 300px; margin: 4px auto 0; }
+.em-svg { position: absolute; inset: 0; width: 340px; height: 300px; overflow: visible; pointer-events: none; z-index: 2; }
+.em-svg path { fill: none; stroke: var(--en-ink); stroke-width: 1; opacity: .45; stroke-dasharray: 2 3; transition: opacity .3s; }
+.em-svg path.on { opacity: 1; stroke-dasharray: none; stroke-width: 1.4; }
+.em-dot { fill: #fff; stroke: var(--en-ink); stroke-width: 1.6; }
+.em-dot.on { fill: var(--en-ink); }
+.em-fig { position: absolute; left: 75px; top: 30px; width: 190px; z-index: 1; }
+.em-fig::after { content: ''; position: absolute; left: 50%; bottom: -20px; width: 130px; height: 16px; transform: translateX(-50%); border-radius: 50%;
+  background: radial-gradient(closest-side, var(--en-ink), transparent); opacity: .2; animation: enShadow 6s ease-in-out infinite; }
+.em-fig img { display: block; width: 190px; height: auto; image-rendering: pixelated; filter: drop-shadow(0 10px 18px rgba(32,48,26,.12)); animation: emHover 6s ease-in-out infinite; }
+@keyframes emHover { 50% { transform: translateY(-7px); } }
+.em-pct { position: absolute; right: 0; top: 18px; text-align: right; }
+.em-pct b { display: block; font: 700 30px/1 var(--dot); color: var(--en-ink); }
+.em-pct small { font-size: 11px; color: rgba(32,48,26,.65); }
+.em-l { position: absolute; width: 96px; padding: 7px 9px; border-radius: 14px; border: 1px solid rgba(255,255,255,.95); background: rgba(255,255,255,.86); box-shadow: 0 6px 16px rgba(48,64,35,.1);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); text-align: left; font: inherit; color: #20301a; cursor: pointer; z-index: 3; transition: transform .2s, background .3s; }
+.em-l.l { left: 0; } .em-l.r { right: 0; }
+.em-l small { display: flex; align-items: center; gap: 4px; font-size: 10.5px; letter-spacing: .04em; color: var(--en-ink); font-weight: 500; }
+.em-l b { display: block; margin-top: 2px; font-size: 12.5px; font-weight: 500; line-height: 1.2; }
+.em-l.on { background: var(--en-ink); border-color: var(--en-ink); color: #fff; } .em-l.on small { color: rgba(255,255,255,.85); }
+.em-l:active { transform: scale(.97); }
+.em-hint { margin: 10px 0 0; font-size: 12.5px; color: rgba(32,48,26,.6); }
+.em-open { margin-top: 12px; padding: 16px; border-radius: 26px; background: #fff; box-shadow: 0 12px 28px rgba(48,64,35,.1); text-align: left; animation: rise .4s ease both; }
+.em-oh { display: flex; align-items: center; gap: 10px; }
+.em-oh > div { flex: 1; } .em-oh small { display: block; font-size: 12px; color: rgba(32,48,26,.65); } .em-oh b { font-size: 19px; font-weight: 500; color: #20301a; }
+.em-oi { width: 38px; height: 38px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--en-bg); color: var(--en-ink); }
+.em-open > p { margin: 10px 0; font-size: 14px; line-height: 1.5; color: #304023; }
+.em-steps { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 7px; }
+.em-steps li { display: flex; gap: 9px; align-items: flex-start; font-size: 14px; line-height: 1.35; color: #20301a; }
+.em-steps i { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font: 600 11px var(--font); font-style: normal; background: #20301a; color: #fff; }
+.em-go { margin-top: 12px; width: 100%; height: 44px; border-radius: 24px; border: 1px solid rgba(32,48,26,.14); background: #fbfaf7; font: 500 14px var(--font); color: #20301a; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; }
+@media (prefers-reduced-motion: reduce) { .em-fig img, .em-fig::after { animation: none; } }
+@media (max-width: 370px) { .em-map { width: 340px; max-width: none; left: 50%; transform: translateX(-50%) scale(.88); transform-origin: top center; margin-bottom: -34px; } }

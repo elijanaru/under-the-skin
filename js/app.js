@@ -12,6 +12,7 @@ import { RECIPE_PHOTOS, photoUrl, DISH_PHOTOS, dishPhoto, HORMONE_PHOTOS, hormon
 import * as SZ from './seasonal.js';
 import { WORLD, worldOf, PHASE_EAT, PANTRY } from './world.js';
 import { TRAIN_SAFE, TRAIN_SAFE_CREDIT } from './athlete.js';
+import { BODY_MAP, BODY_PIN } from './bodymap.js';
 import { GROUND_NOW, GROUND_WHERE, GROUND_PHASE, GROUND_MOON, GROUND_ROOTS, GROUND_STUDIES, GROUND_CAUTION } from './ground.js';
 import { MOLECULES, MOL_BALL } from './molecules.js';
 import { sunTimes, COUNTRY_GEO } from './sun.js';
@@ -3536,17 +3537,25 @@ const COMPASS_SHORT = {
   peak: ['Pitch, present, ask', 'Saying yes to all', 'Dance, sprint, lift'], settle: ['Finish & deep work', 'Starting five things', 'Steady strength'],
   focus: ['Wrap up & organise', 'Late nights', 'Pilates & walks'], premenstrual: ['Only what’s due', 'Harsh self-talk', 'Gentle & warm'],
 };
-// Under the period button: a pixel aura figure tinted by her energy, today's mode, one thing to do and one to skip.
+// Under the period button: the pixel aura woman floating in the middle, tinted by her energy, with lines to five parts of her body.
+// Each label says what to do for that part today; tap it to see what is going on there and the two steps.
 function energyCard(info, energy) {
-  const w = dayWindow(info), c = COMPASS[w], S = COMPASS_SHORT[w], open = ui.enWhy;
-  return `<div class="en lvl-${c.lvl}">
-    <button class="en-main" data-action="enWhy" aria-expanded="${!!open}">
-      <span class="en-fig"><img src="images/pixel-aura-${c.lvl}.png" alt="" width="120" height="104"></span>
-      <span class="en-t"><small>Today · ${energy}% energy</small><b>${c.mode}</b>
-        <span class="en-r do">${icon('check', 13, 2.4)}<span><em>Do</em>${S[0]}</span></span>
-        <span class="en-r no">${icon('close', 12, 2.4)}<span><em>Don’t</em>${S[1]}</span></span></span></button>
-    ${open ? `<div class="en-why"><p>${c.why}</p><p><b>Move:</b> ${S[2]}</p><p class="en-line">${COMPASS_LINE[c.lvl]}</p></div>` : ''}
-  </div>`;
+  const w = dayWindow(info), c = COMPASS[w], parts = BODY_MAP[info.phase], open = parts.find(p => p.k === ui.enPart);
+  const pin = k => BODY_PIN[k];
+  const lines = parts.map(p => { const [lx, ly, sd, bx, by] = pin(p.k), x0 = sd === 'l' ? 96 : 244; return `<path class="${open && open.k === p.k ? 'on' : ''}" d="M${x0} ${ly + 16} H${sd === 'l' ? x0 + 14 : x0 - 14} L${bx} ${by}"/><circle class="em-dot ${open && open.k === p.k ? 'on' : ''}" cx="${bx}" cy="${by}" r="3.6"/>`; }).join('');
+  const labels = parts.map(p => { const [lx, ly, sd] = pin(p.k); return `<button class="em-l ${sd} ${open && open.k === p.k ? 'on' : ''}" style="top:${ly}px" data-action="enPart" data-k="${p.k}" aria-expanded="${open && open.k === p.k ? 'true' : 'false'}"><small>${icon(p.ic, 11)} ${p.label}</small><b>${p.d}</b></button>`; }).join('');
+  return `<section class="en en2 lvl-${c.lvl}">
+    <div class="em-head"><small>Day ${info.cd} · ${PHASES[info.phase].name} · your body today</small><b>${c.mode}</b></div>
+    <div class="em-map"><svg class="em-svg" viewBox="0 0 340 300" aria-hidden="true">${lines}</svg>
+      <span class="em-fig"><img src="images/pixel-aura-${c.lvl}.png" alt="Your body today"></span>
+      <span class="em-pct"><b>${energy}</b><small>% energy</small></span>${labels}</div>
+    ${open ? `<div class="em-open"><div class="em-oh"><span class="em-oi">${icon(open.ic, 16)}</span><div><small>${open.label} · today</small><b>${open.d}</b></div>${saveBtn(regTip(`body-${info.phase}-${open.k}`, open.label, [open.d, open.steps[0], open.steps[1], 'Today'], open.to))}</div>
+      <p>${open.what}</p>
+      <ol class="em-steps">${open.steps.map((t, i) => `<li><i>${i + 1}</i>${t}</li>`).join('')}</ol>
+      <div class="en-r no">${icon('close', 12, 2.4)}<span><em>Skip today</em>${open.avoid}</span></div>
+      <button class="em-go" data-action="nav" data-to="${open.to}">${open.link} ${icon('chevR', 14)}</button></div>`
+    : '<p class="em-hint">Tap a part of your body to see what it needs</p>'}
+  </section>`;
 }
 function compassSec(info) {
   const w = dayWindow(info), c = COMPASS[w], S = COMPASS_SHORT[w], e = getLog(todayISO()).energy;
@@ -4355,8 +4364,8 @@ function viewMove() {
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
     <div class="mv3-sheet">
       <div class="mv3-top"><span class="mv3-day"><small>Day</small><b>${info.cd}</b></span><span class="mv3-ph">${PHASES[info.phase].name}</span></div>
-      <h1 class="mv3-h"><span>Move with</span><em>your cycle</em></h1>
-      <p class="mv3-now"><span>${icon('bolt', 15)}</span>Today: <b>${g.title}</b></p>
+      <h1 class="mv3-h"><span>Today, do</span><em>${ranked[0].n}</em></h1>
+      <p class="mv3-now"><span>${icon('bolt', 15)}</span><b>${D.len}</b> · ${D.int.split(' · ')[0]}${ranked[1] && g.r[ranked[1].k] >= g.r[ranked[0].k] ? ` · or ${ranked[1].n.toLowerCase()}` : ''}</p>
       ${moveWave(days, info, L, P)}
       <div class="mv2-bubbles">${ranked.map((m, i) => moveBubble(m, g.r[m.k], i)).join('')}</div>
     </div>
@@ -6102,6 +6111,7 @@ const actions = {
   planTab: d => { ui.planTab = d.v; if (route().name !== 'plan') go('plan'); else render(); },
   toggleHormone: d => { ui.hidden[d.h] = !ui.hidden[d.h]; render(); },
   enWhy: () => { ui.enWhy = !ui.enWhy; render(); },
+  enPart: d => { ui.enPart = ui.enPart === d.k ? null : d.k; render(); },
   tsOpen: d => { ui.tsOpen = ui.tsOpen === d.k ? null : d.k; render(); },
   grStudy: d => { ui.grStudy = ui.grStudy === +d.i ? null : +d.i; render(); },
   saveTip: d => {
