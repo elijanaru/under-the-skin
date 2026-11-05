@@ -1279,7 +1279,7 @@ function viewToday() {
 // Explore: every button a full photo with a frosted label.
 function exploreGrid(info) {
   const tiles = [['manifest', 'spark', 'Manifest', 'Live it as done', 'images/forest-calm.jpg'], ['hormones', 'book', 'Hormones', 'What each one does', hormonePhoto('Oestrogen', 500)], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/forest-path.jpg'],
-    ['move', 'leaf', 'Move', 'Best training times', 'images/tile-hiit.webp'], ['ground', 'leaf', 'Grounding', 'Bare feet, 15 min', 'images/tile-ground.webp'], ['relief', 'heart', 'Relief', 'Cramps, PMS, sleep', carePhoto('foot-soak', 500)],
+    ['relief', 'heart', 'Relief', 'Cramps, PMS, sleep', carePhoto('foot-soak', 500)],
     ['season', 'bowl', 'In season', 'Local foods', 'images/season-fruit.webp'], ['tea', 'cup', 'Tea guide', 'For every need', 'images/tea-ginger.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/tile-meditate.webp']];
   return `<div class="xp-grid xp2">${tiles.map(([to, ic, t, sub, img], i) => `<button class="xp ${i === 0 ? 'wide' : ''}" data-action="nav" data-to="${to}" style="--i:${i}">${img ? `<img src="${img}" alt="" loading="lazy">` : ''}<span class="xp-l"><span class="xp-ic">${icon(ic, 15)}</span><span><b>${t}</b><small>${sub}</small></span></span></button>`).join('')}</div>`;
 }
