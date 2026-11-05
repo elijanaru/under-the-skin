@@ -254,18 +254,17 @@ function tipsCard(info) {
   if (ttc()) list.push({ k: 'ttc', t: 'Trying to conceive', photo: 'Prolactin', tip: TTC_TIPS[tph], d: TTC_DO[tph], id: `ttc-${tph}` });
   focusKeys().forEach(k => { const f = FOCUS.find(x => x.k === k); if (f) list.push({ k, t: f.t, photo: f.photo, tip: TIPS[k][ph], d: TIP_DO[k] && TIP_DO[k][ph], id: `${k}-${ph}` }); });
   if (!list.length) return '';
-  const [lead, ...rest] = list.slice(0, 6), D = x => x.deck || TIP_DECK[x.k] || ['spark', x.t, 'Show me'];
+  const [lead] = list, D = x => x.deck || TIP_DECK[x.k] || ['spark', x.t, 'Show me'];
   const [lic, lq, lcta] = D(lead), lu = hormonePhoto(lead.photo, 900), to = x => x.to || TIP_TO[x.k] || 'plan';
-  list.forEach(x => x.d && regTip(x.id, x.t, x.d, to(x)));
+  if (lead.d) regTip(lead.id, lead.t, lead.d, to(lead));
   const n = (state.savedTips || []).length;
-  return `${sectionTitle('Your tips today', n ? [`${icon('save', 12)} Saved · ${n}`, 'saved'] : ['Edit', 'profile'])}
+  return `${sectionTitle('Your tip today', n ? [`${icon('save', 12)} Saved · ${n}`, 'saved'] : ['Edit', 'profile'])}
     <div class="tf-w">
     <button class="tf" data-action="nav" data-to="${to(lead)}">
       <span class="tf-media">${lu ? `<img src="${lu}" alt="" loading="lazy">` : ''}<span class="tf-tag">${icon(lic, 13)} ${lead.t}</span><b class="tf-q">${lq}</b></span>
       ${lead.d ? doSteps(lead.d) : `<span class="tf-p">${lead.tip}</span>`}
       <span class="tf-cta">${lcta} ${icon('chevR', 14)}</span></button>
-      ${lead.d ? saveBtn(lead.id, 'float') : ''}</div>
-    ${rest.length ? `<div class="tl">${rest.map(x => { const [, q] = D(x), u = hormonePhoto(x.photo, 200); return `<div class="tl-rw"><button class="tl-r" data-action="nav" data-to="${to(x)}">${u ? `<img src="${u}" alt="" loading="lazy">` : '<span class="tl-ph"></span>'}<span class="tl-t"><b>${x.d ? x.d[0] : q}</b><small>${x.d ? `${x.d[1]} · ${x.d[3]}` : x.t}</small></span></button>${x.d ? saveBtn(x.id) : `<span class="tl-go">${icon('chevR', 14)}</span>`}</div>`; }).join('')}</div>` : ''}`;
+      ${lead.d ? saveBtn(lead.id, 'float') : ''}</div>`;
 }
 // ---------- one page per "Best things to do today" tile ----------
 const FRIENDS = {
@@ -1227,18 +1226,36 @@ function viewToday() {
       <span class="ci2-mid"><span><b>How do you feel today?</b><small>Mood, energy, sleep and body. Each check-in sharpens your predictions.</small></span></span>
       <span class="ci2-cta">Log today ${icon('chevR', 14)}</span></button>`}
 
+    ${tipsCard(info)}
+    ${habitsHome(info)}
+
     ${sectionTitle('Explore')}
     ${exploreGrid(info)}
 
-    ${tipsCard(info)}
     ${readsCard(info)}
     <p class="fine center">Predictions are estimates based on your logs — not medical advice or contraception.</p>
   </div>`;
 }
-// Explore: a calm grid of tiles.
+// Explore: every button a full photo with a frosted label.
 function exploreGrid(info) {
-  const tiles = [['hormones', 'book', 'Hormones', 'What each one does'], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`], ['move', 'leaf', 'Move', 'Best training times'], ['cosmic', 'star', 'Your stars', 'Zodiac & moon'], ['habits', 'check', 'Habits', 'Daily checklist'], ['relief', 'heart', 'Relief', 'Cramps, PMS, sleep'], ['season', 'bowl', 'In season', 'Local foods'], ['tea', 'cup', 'Tea guide', 'For every need'], ['nutrients', 'drop', 'Nutrients', 'Food first, doses']];
-  return `<div class="xp-grid">${tiles.map(([to, ic, t, sub], i) => `<button class="xp" data-action="nav" data-to="${to}" style="--i:${i}"><span class="xp-ic">${icon(ic, 18)}</span><b>${t}</b><small>${sub}</small></button>`).join('')}</div>`;
+  const tiles = [['cosmic', 'star', 'Your stars', 'Zodiac & moon', starPhoto('sky', 700)], ['hormones', 'book', 'Hormones', 'What each one does', hormonePhoto('Oestrogen', 500)], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/forest-path.jpg'],
+    ['move', 'leaf', 'Move', 'Best training times', 'images/tile-hiit.webp'], ['habits', 'check', 'Habits', 'Daily checklist', carePhoto('lemon-water', 500)], ['relief', 'heart', 'Relief', 'Cramps, PMS, sleep', carePhoto('foot-soak', 500)],
+    ['season', 'bowl', 'In season', 'Local foods', 'images/season-fruit.webp'], ['tea', 'cup', 'Tea guide', 'For every need', 'images/tea-ginger.webp'], ['nutrients', 'drop', 'Nutrients', 'Food first, doses', carePhoto('gut-smoothie', 500)]];
+  return `<div class="xp-grid xp2">${tiles.map(([to, ic, t, sub, img], i) => `<button class="xp ${i === 0 ? 'wide' : ''}" data-action="nav" data-to="${to}" style="--i:${i}">${img ? `<img src="${img}" alt="" loading="lazy">` : ''}<span class="xp-l"><span class="xp-ic">${icon(ic, 15)}</span><span><b>${t}</b><small>${sub}</small></span></span></button>`).join('')}</div>`;
+}
+// Home: today's habits as a cute tick list; her phase's habits first, a little sprout that grows leaves as she ticks.
+const HB_SHORT = { 'phone-free': ['mind', 'Phone-free hour'], calm: ['heart', '10 min calm'], coffee: ['cup', 'Coffee with food'], sleep: ['moon', '7 to 9h sleep'], 'real-food': ['bowl', 'Real food'], 'alcohol-free': ['drop', 'No alcohol'], 'no-blue': ['sun', 'Dim screens at night'], move: ['leaf', 'Move your body'], nature: ['seed', 'Time in nature'], clean: ['spark', 'Clean beauty'], 'warm-feet': ['thermo', 'Warm feet'], 'egg-yolks': ['shell', 'Egg yolks'] };
+function habitsHome(info) {
+  const list = HABITS.filter(h => h.g === 'protect' && HB_SHORT[h.id]), ids = list.map(h => h.id), done = habitsDone(todayISO()).filter(id => ids.includes(id));
+  const focus = info ? HABIT_FOCUS[info.phase].filter(id => ids.includes(id)) : [];
+  const pick = [...focus, ...ids.filter(id => !focus.includes(id))].slice(0, 6), n = pick.filter(id => done.includes(id)).length;
+  const leaves = pick.map((_, i) => { const y = 52 - i * 7.5, l = i % 2 === 0; return `<path class="${i < n ? 'on' : ''}" d="M30 ${y} q${l ? -13 : 13} -2 ${l ? -15 : 15} -11 q${l ? 11 : -11} 1 ${l ? 15 : -15} 11z"/>`; }).join('');
+  return `${sectionTitle('Daily habits', ['All', 'habits'])}
+    <section class="card hh">
+      <div class="hh-top"><svg class="hh-sprout" viewBox="0 0 60 64" aria-hidden="true"><path class="hh-stem" d="M30 62 V${52 - (pick.length - 1) * 7.5 - 8}"/>${leaves}</svg>
+        <div><b class="hh-n">${n}<small>/${pick.length}</small></b><span>${n === pick.length ? 'All done. Your hormones thank you.' : n ? 'Growing nicely, keep going' : 'Tick one to grow a leaf'}</span></div></div>
+      <div class="hh-list">${pick.map(id => { const [ic, t] = HB_SHORT[id], on = done.includes(id); return `<button class="hh-i ${on ? 'on' : ''}" data-action="habitTick" data-id="${id}" aria-pressed="${on}"><span class="hh-cb">${icon(on ? 'check' : ic, 14, on ? 2.6 : 1.8)}</span><span>${t}</span>${focus.includes(id) ? '<i class="hh-ph" title="Good for your phase"></i>' : ''}</button>`; }).join('')}</div>
+    </section>`;
 }
 function logChips(l) {
   const out = [], e = x => `${icon(LOG_IC[x] || 'spark', 13)} ${x}`;
@@ -1368,12 +1385,32 @@ function viewCalendar() {
     </section>
     ${events().some(e => e.date >= todayISO()) ? upcomingEvents() : ''}
   </div>
-  <div class="pad mn mn-cal">${moonPage(true)}
-    ${cp ? `<button class="cal2-cosmic" data-action="nav" data-to="cosmic"><span class="cal2-g">${cp.sign.glyph}</span><span><small>Your cosmic rhythm</small><b>${cp.sign.name} · ${cp.cz.element} ${cp.cz.animal.name}</b></span>${icon('chevR', 18)}</button>`
-      : `<button class="cal2-cosmic" data-action="nav" data-to="cosmic"><span class="cal2-g">✦</span><span><small>Your cosmic rhythm</small><b>Add your birthday for personal readings</b></span>${icon('chevR', 18)}</button>`}
+  <div class="pad sw-pad">${starsWidget()}
   </div>`;
 }
 
+// Under the calendar: her stars as one big black widget, the 3D moon as the hero, today's sky number, three ring bubbles, one white pill into the full page.
+function starsWidget() {
+  const cp = cosmicProfile(), bc = cp ? birthChart(state.profile) : null, sc = cp ? skyScore(bc) : null;
+  const mn = moonData(), pg = MG.phaseGuideAt(mn.elong), ms = signOfK(mn.sign), info = M.info, phase = info && info.phase;
+  const sunK = bc ? bc.planets[0].sign : cp ? cp.sign.k : null, sun = sunK ? signOfK(sunK) : null;
+  const L = (M.stats && M.stats.cycleLength) || state.profile.cycleLength || 28, lit = Math.round(mn.illum * 100);
+  const top = sc && sc.rows[0], msg = !cp ? 'Add your birthday and your stars, the moon and your cycle become one daily reading.' : top ? top.say : sc ? sc.el.say : `A day to move ${Z.SIGN_STYLE[mn.sign]}.`;
+  const three = bc ? `${sun.name} Sun · ${signOfK(bc.planets[1].sign).name} Moon${bc.asc ? ` · ${signOfK(bc.asc.sign).name} rising` : ''}` : sun ? `${sun.name} Sun` : 'Zodiac & moon';
+  return `<section class="cn cn2 sw">${skyDust()}
+    <button class="sw-top" data-action="nav" data-to="cosmic"><span class="cn-pill">${icon('star', 14)} Your stars</span><span class="sw-go" aria-label="Open your stars">${icon('chevR', 18)}</span></button>
+    <div class="sw-sky">${starShape(sunK || mn.sign)}
+      <div class="mn-orb sw-orb">${moonArt(mn.elong, 'mn-flat')}<canvas class="moon3d" data-e="${mn.elong.toFixed(1)}" aria-label="The Moon as it looks tonight, ${lit} percent lit. Drag to turn it."></canvas></div></div>
+    <button class="sw-moon" data-action="nav" data-to="moon">${ms.glyph} ${pg.name} · ${lit}% lit ${icon('chevR', 13)}</button>
+    <div class="cn-score ${sc ? sc.tone : ''}"><small>${sc ? 'Today’s sky for you' : 'Your stars'}</small>${sc ? `<b>${sc.s}</b><span>${sc.word}</span>` : `<h1>Your sky</h1>`}</div>
+    <div class="cn-rings">
+      ${ringBub(info ? info.cd / L : 0, info ? info.cd : '–', 'day', 'Body', info ? MG.INNER_SEASON[phase].name : 'your cycle', 'body')}
+      ${ringBub(mn.illum, lit, '%', 'Moon', `in ${ms.name}`, 'moon')}
+      ${ringBub(bc ? bc.planets[0].deg / 30 : 0.5, sun ? sun.glyph : '✦', '', 'Self', sun ? `${sun.name} Sun` : 'add birthday', 'self')}
+    </div>
+    <div class="cn-msg"><small>${three}</small><p>${msg}</p><button class="cn-cta" data-action="nav" data-to="cosmic">${cp ? 'Open your stars' : 'Add my birthday'}</button></div>
+  </section>`;
+}
 // The tapped day as one quiet line: the date, what it is, one pill to log it.
 function calDayLine(sd, si, slog, selLine, isFuture) {
   const c = si ? (si.periodActual || si.periodPredicted ? '#d42a40' : si.isOvulation ? '#d6a443' : si.fertile ? '#c9b98a' : PH_HEX[si.phase]) : '#c9c9c9';
@@ -3400,7 +3437,7 @@ function todayTiles(info, only) {
   const w = dayWindow(info), g = MOVE_GUIDE[w], [lvl] = CALM[w], ph = info.phase, warm = warmWindow(info);
   const best = MOVES.filter(m => g.r[m.k] === 3);
   const pp = PEOPLE_PLAN[ph], st = STRETCH[w], md = MEDITATE[w], open = ui.hubTip;
-  const pics = { Sport: `move-${best[0]?.k || 'yoga'}`, Eat: 'season-veg', Friends: 'move-yoga', Stress: 'move-lift', Stretch: 'move-walk', Meditate: 'move-meditate', Tea: 'move-hiit' };
+  const pics = { Sport: `move-${best[0]?.k || 'yoga'}`, Eat: 'season-veg', Friends: 'move-yoga', Stress: 'move-lift', Stretch: 'move-walk', Ground: 'move-ground', Tea: 'move-hiit' };
   const tile = (cls, act, g_, k, t, s_) => `<button class="dpt ${cls} ${pics[k] ? 'has-pic' : ''} ${act.tip && open === act.tip ? 'open' : ''}" ${act.to ? `data-action="nav" data-to="${act.to}"` : `data-action="hubTip" data-k="${act.tip}"`}>${pics[k] ? `<span class="dpt-g pic"><img class="pb" src="images/${pics[k].replace('move-', 'tile-')}.webp" alt="" loading="lazy"><img class="ps" src="images/${pics[k].replace('move-', 'tile-')}.webp" alt="" loading="lazy"><i></i></span>` : `<span class="dpt-g">${g_}</span>`}<span class="dpt-k">${k}</span><b>${t}</b><small>${s_}</small>${act.tip ? `<span class="dpt-more">${icon('plus', 14, 2.2)}</span>` : ''}</button>`;
   const fn = FOOD_NEEDS[w], fm = FOOD_MEALS[w], sp = STRESS_PLAN[w], td = TEA_DAY[w];
   const tips = {
@@ -3429,7 +3466,7 @@ function todayTiles(info, only) {
       ${tile('t-deep', { to: 'do/friends' }, PEOPLE_G[ph], 'Friends', pp[0], pp[1])}
       ${tile(`calm lv${lvl}`, { to: 'breathe/stress' }, '🪷', 'Stress', `${['', 'Low', 'Medium', 'High'][lvl]}<i class="dc-bar"><b style="width:${lvl * 33.3}%"></b></i>`, `Best: ${sp[1][0].toLowerCase()}`)}
       ${tile('t-sage', { to: 'do/stretch' }, '🤸', 'Stretch', st[0], st[1])}
-      ${tile('t-glow', { to: 'do/meditate' }, '🧘', 'Meditate', md[0], md[1])}
+      ${tile('t-glow', { to: 'ground' }, '🌿', 'Ground', GROUND_PHASE[ph].t, GROUND_PHASE[ph].d[1])}
       ${tile('t-tea', { to: 'do/tea' }, td[0], 'Tea', td[1], td[2])}
     </div>
     <div class="hub-tip ${open && (open === 'eat' || open === 'tea' || tips[open]) ? 'on' : ''}" id="hub-tip">${open ? tipBody(open) : ''}</div>`;
