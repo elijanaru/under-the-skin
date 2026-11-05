@@ -2668,7 +2668,7 @@ function viewReliefIndex() {
     <h1 class="page-h rx-h">Feel better, <span>gently</span></h1>
     <p class="muted rx-sub">What helps: body, food and Chinese medicine.</p>
     ${today}
-    <button class="bz-cta" data-action="nav" data-to="breathe"><i class="bz-mini"></i><span><b>Breathe with me</b><small>The calm sigh · 1 minute</small></span>${icon('chevR', 16)}</button>
+    <button class="bz-cta" data-action="nav" data-to="breathe"><i class="bz-mini"></i><span><b>Breathe with me</b><small>${((info && BREATHS[BREATH_FOR[info.phase]]) || BREATHS.sigh).name}${info ? " · for your phase" : ""}</small></span>${icon('chevR', 16)}</button>
     ${sectionTitle('Everything that helps')}
     <div class="rx-grid">${keys.map(k => { const h = (state.reliefHelp || {})[k] || [];
       return `<button class="rx-t ${recent.has(k) ? 'on' : ''}" data-action="nav" data-to="relief/${encodeURIComponent(k)}"><span class="rx-e">${RELIEF_EMOJI[k] || '🌿'}</span><b>${k}</b><small>${h.length ? `${icon('heart', 11)} ${h.length} work${h.length > 1 ? '' : 's'} for you` : `${RELIEF[k].steps.length} ways`}</small>${recent.has(k) ? '<i>Logged</i>' : ''}</button>`; }).join('')}</div>
@@ -4114,12 +4114,46 @@ function viewMove() {
 }
 
 // ---------- stress: why it hits today and how to bring it down ----------
+// Breathing practices, one suited to each part of the cycle. Steps: [type, title, line, ms]; type in|top|hold|out|rest.
+const BREATHS = {
+  sigh: { name: 'Calm sigh', g: '🫧', when: 'Any time', for: 'Fast calm in one minute', rounds: 5,
+    steps: [['in', 'Breathe in', 'Fill up like a soft balloon', 4000], ['top', 'One more sip', 'Just a tiny bit more', 1500], ['out', 'Let it all go', 'Everything can melt away', 8000], ['rest', 'Rest here', 'You are here, and that is enough', 1500]],
+    how: [['Breathe in deep', 'Through your nose, until you are almost full.'], ['One more sip', 'A short extra breath in, right on top.'], ['Long breath out', 'Slowly through your mouth, twice as long.']],
+    why: 'The second sip opens the tiny air sacs in your lungs again, and the long breath out slows your heart. In a 2023 Stanford study (Balban and colleagues), five minutes a day lifted mood more than mindfulness meditation.' },
+  belly: { name: 'Warm belly breath', g: '🔥', when: 'Period days', for: 'Softens cramps and tension', rounds: 8,
+    steps: [['in', 'Breathe into your hands', 'Let your belly rise under them', 4000], ['out', 'Breathe out slowly', 'Feel the warmth sink in', 6000]],
+    how: [['Warm your hands', 'Rub your palms together, then rest them below your navel.'], ['Belly rises', 'Breathe in through your nose for 4, only your belly moves.'], ['Long breath out', 'Out for 6, let your pelvis go soft.']],
+    why: 'Slow belly breathing with a longer breath out switches on the rest-and-digest side of the nervous system, which relaxes smooth muscle like the womb. Small trials in women with period pain found deep breathing eased pain. Warm hands add the warmth Chinese medicine loves during the period.' },
+  box: { name: 'Box breathing', g: '▢', when: 'Follicular', for: 'Steady focus for new plans', rounds: 6,
+    steps: [['in', 'Breathe in', 'Count to four', 4000], ['hold', 'Hold softly', 'Stay full, shoulders down', 4000], ['out', 'Breathe out', 'Count to four', 4000], ['rest', 'Hold empty', 'Calm and still', 4000]],
+    how: [['In for 4', 'Through your nose.'], ['Hold for 4', 'Soft, no strain.'], ['Out for 4, hold for 4', 'Then start again. Picture tracing the sides of a square.']],
+    why: 'Even counts give a busy, fresh-energy mind a simple rhythm to follow. It is used by pilots and athletes to stay clear under pressure, and suits the follicular phase when you start many new things.' },
+  even: { name: 'Even breathing', g: '〰', when: 'Ovulation', for: 'Calm, open and connected', rounds: 8,
+    steps: [['in', 'Breathe in', 'Slow and smooth', 5500], ['out', 'Breathe out', 'Just as slow', 5500]],
+    how: [['In for about 5', 'Smooth, through your nose.'], ['Out for about 5', 'The same length, like a gentle wave.'], ['About 5 to 6 breaths a minute', 'Keep going for a few minutes.']],
+    why: 'Around 5 to 6 breaths a minute is the rhythm where heart rate and breath fall in step, called resonance breathing. Reviews of heart-rate variability research (Lehrer and Gevirtz 2014) link it to calmer stress responses. A good anchor for bright, social ovulation days.' },
+  478: { name: '4-7-8 breathing', g: '🌙', when: 'Luteal & before your period', for: 'Quiets a busy mind for sleep', rounds: 4,
+    steps: [['in', 'Breathe in', 'Through your nose for four', 4000], ['hold', 'Hold', 'Gently, for seven', 7000], ['out', 'Breathe out', 'Slowly through your mouth for eight', 8000]],
+    how: [['In for 4', 'Quietly through your nose.'], ['Hold for 7', 'Gently, with a soft jaw.'], ['Out for 8', 'Slowly through the mouth, with a soft whoosh.']],
+    why: 'A very long breath out gives the strongest calming signal, which helps when progesterone falls and sleep gets lighter before your period. Made popular by Dr Andrew Weil. Four rounds are enough to start; skip the hold if it makes you dizzy.' },
+};
+const BREATH_ORDER = ['sigh', 'belly', 'box', 'even', '478'];
+const BREATH_FOR = { menstrual: 'belly', follicular: 'box', ovulatory: 'even', luteal: '478' };
+// a tiny timeline of one breath: in, hold, out and rest as coloured segments
+function breathBar(k) {
+  const B = BREATHS[k], tot = B.steps.reduce((a, x) => a + x[3], 0);
+  return `<span class="bzb">${B.steps.map(([t, , , ms]) => `<i class="${t}" style="flex:${ms}"><b>${Math.round(ms / 1000)}</b></i>`).join('')}</span><small class="bzb-k">${Math.round(tot / 1000)} s a breath · ${B.rounds} rounds</small>`;
+}
 // Calm sigh: a deep breath in to almost full, one more short sip on top, then a long slow breath out.
 function viewBreathe() {
+  const phase = M.info && M.info.phase, rec = BREATH_FOR[phase] || 'sigh', k = BREATHS[ui.bzK] ? ui.bzK : rec, B = BREATHS[k];
+  const mn = moonData(), moonLine = mn.waxing ? 'The Moon is growing: an even rhythm keeps your energy steady.' : 'The Moon is waning: let your breath out be the longest part.';
   return `${topbar('Breathe', { back: true })}
   <div class="pad bz-pad">
     <h1 class="bz-title"><small>A minute for you</small>Come back to<em>your breath</em></h1>
-    <section class="bz">
+    <div class="bzp" role="tablist" aria-label="Choose a breathing practice">${[rec, ...BREATH_ORDER.filter(x => x !== rec)].map(x => `<button class="bzp-o ${x === k ? 'on' : ''}" role="tab" aria-selected="${x === k}" data-action="bzPick" data-v="${x}">
+      ${x === rec ? `<em>${phase ? 'For your phase' : 'Start here'}</em>` : ''}<span class="bzp-g">${BREATHS[x].g}</span><b>${BREATHS[x].name}</b><small>${BREATHS[x].when}</small></button>`).join('')}</div>
+    <section class="bz" data-pat="${k}">
       <div class="bz-stage"><div class="bz-card-h"><b>Breathe</b><span class="bz-n"></span></div>
         <svg class="bz-lotus" viewBox="-110 -120 220 170" aria-hidden="true">
           <defs><linearGradient id="lpA" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#efd4dd"/><stop offset="1" stop-color="#fff"/></linearGradient>
@@ -4148,32 +4182,38 @@ function viewBreathe() {
       <button class="bz-go">Start</button>
     </section>
     <figure class="bz-quote"><span>“</span><blockquote>The past is already gone and the future has not yet come. See clearly what is here, now.</blockquote><figcaption>The Buddha, from the Bhaddekaratta Sutta</figcaption></figure>
-    <section class="bz-how"><h3>The calm sigh</h3>
-      ${[['🌬️', 'Breathe in deep', 'Through your nose, until you are almost full.'], ['🫧', 'One more sip', 'A short extra breath in, right on top.'], ['🍃', 'Long breath out', 'Slowly through your mouth, twice as long.']].map(([e, t, p], i) => `<div class="bz-step"><span>${e}</span><div><b>${i + 1}. ${t}</b><p>${p}</p></div></div>`).join('')}
-      <p class="bz-why">The second sip opens the tiny air sacs in your lungs again, and the long breath out slows your heart. In a 2023 Stanford study (Balban and colleagues), five minutes a day of this lifted mood more than mindfulness meditation.</p>
+    <section class="bz-how"><div class="bzh-h"><span class="bzp-g">${B.g}</span><div><small>${B.when}</small><h3>${B.name}</h3></div></div>
+      <p class="bzh-for">${B.for}. ${moonLine}</p>
+      ${breathBar(k)}
+      <details class="bzh-more"><summary>How and why ${icon('chevD', 14)}</summary>
+        ${B.how.map(([t, p], i) => `<div class="bz-step"><span>${i + 1}</span><div><b>${t}</b><p>${p}</p></div></div>`).join('')}
+        <p class="bz-why">${B.why}</p></details>
     </section>
   </div>`;
 }
 const SIGH = [['in', 'Breathe in', 'Fill up like a soft balloon', 4000], ['top', 'One more sip', 'Just a tiny bit more', 1500], ['out', 'Let it all go', 'Everything can melt away', 8000], ['rest', 'Rest here', 'You are here, and that is enough', 1500]];
-const PET_SAY = { in: 'Breathe in, slowly.', top: 'A little more…', out: 'Let it go.', rest: 'Stay in the present.' };
+const PET_SAY = { in: 'Breathe in, slowly.', top: 'A little more…', hold: 'Hold it softly…', out: 'Let it go.', rest: 'Stay in the present.' };
 function mountBreath(el) {
   const ball = el.querySelector('.bz-ball'), txt = el.querySelector('.bz-txt'), t = el.querySelector('.bz-t'), sub = el.querySelector('.bz-s'), cnt = el.querySelector('.bz-n'), btn = el.querySelector('.bz-go'), say = el.querySelector('.bz-say');
-  const ROUNDS = 5, CYC = SIGH.reduce((a, x) => a + x[3], 0), SC = { in: [.42, .98], top: [.98, 1.1], out: [1.1, .42], rest: [.42, .42] };
+  const pk = document.querySelector('.bzp'), on = pk && pk.querySelector('.on'); if (on) pk.scrollLeft = Math.max(0, on.offsetLeft - 16); // keep her pick in view
+  const B = BREATHS[el.dataset.pat] || BREATHS.sigh, STEPS = B.steps, ROUNDS = B.rounds, CYC = STEPS.reduce((a, x) => a + x[3], 0);
+  // scale of the lotus at the start and end of each step: in opens, the sip opens a touch more, holds stay, out closes
+  let lv = .42; const SC = STEPS.map(([k]) => { const s0 = lv; lv = k === 'in' ? (STEPS.some(x => x[0] === 'top') ? .98 : 1.06) : k === 'top' ? 1.1 : k === 'out' ? .42 : lv; return [s0, lv]; });
   const ease = x => .5 - Math.cos(Math.PI * x) / 2;
   let raf = 0, t0 = 0, run = false;
   const swap = (a, b, w) => { t.textContent = a; sub.textContent = b; say.textContent = w; txt.classList.remove('sw'); say.classList.remove('sw'); void txt.offsetWidth; txt.classList.add('sw'); say.classList.add('sw'); };
   function frame(now) {
     const e = now - t0, round = Math.floor(e / CYC);
     if (round >= ROUNDS) return stop(true);
-    let m = e % CYC, i = 0; while (m >= SIGH[i][3]) { m -= SIGH[i][3]; i++; }
-    const [k, a, b, ms] = SIGH[i], [s0, s1] = SC[k], sc = s0 + (s1 - s0) * ease(m / ms);
-    el.style.setProperty('--b', ((sc - .42) / .68).toFixed(3)); // the extra sip opens the lotus that last bit wider el.style.setProperty('--sp', ((sc - .42) / .68).toFixed(3));
-    if (el.dataset.ph !== k) { el.dataset.ph = k; swap(a, b, PET_SAY[k]); }
+    let m = e % CYC, i = 0; while (m >= STEPS[i][3]) { m -= STEPS[i][3]; i++; }
+    const [k, a, b, ms] = STEPS[i], [s0, s1] = SC[i], sc = s0 + (s1 - s0) * ease(m / ms);
+    el.style.setProperty('--b', ((sc - .42) / .68).toFixed(3));
+    const ph = k + i; if (el.dataset.st !== ph) { el.dataset.st = ph; el.dataset.ph = k; swap(a, b, PET_SAY[k]); }
     cnt.textContent = `${round + 1} of ${ROUNDS}`;
     raf = requestAnimationFrame(frame);
   }
   function stop(done) {
-    run = false; cancelAnimationFrame(raf); el.dataset.ph = ''; el.style.setProperty('--b', 0); el.style.setProperty('--sp', 0);
+    run = false; cancelAnimationFrame(raf); el.dataset.ph = ''; el.dataset.st = ''; el.style.setProperty('--b', 0); el.style.setProperty('--sp', 0);
     swap(done ? 'So proud of you' : 'Let that shi go', done ? 'Notice how soft you feel now' : 'Soften your shoulders and your jaw', done ? 'You did so well. Let it go.' : 'Stay in the present.');
     cnt.textContent = ''; btn.textContent = done ? 'Again' : 'Start';
   }
@@ -4189,7 +4229,7 @@ function viewStress() {
     ? `<section class="st2-card"><span class="eyebrow">Meditate today</span><h3>${md[0]}</h3><p class="st2-sub">${md[1]}</p>${steps(md[2])}${evBadge('some')}</section>`
     : tab === 'stretch'
       ? `<section class="st2-card"><span class="eyebrow">Stretch today</span><h3>${st[0]}</h3><p class="st2-sub">${st[1]}</p>${steps(st[2])}${evBadge('some')}</section>`
-      : `<button class="bz-cta" data-action="nav" data-to="breathe"><i class="bz-mini"></i><span><b>Breathe with me</b><small>The calm sigh · 1 minute</small></span>${icon('chevR', 16)}</button>
+      : `<button class="bz-cta" data-action="nav" data-to="breathe"><i class="bz-mini"></i><span><b>Breathe with me</b><small>${((info && BREATHS[BREATH_FOR[info.phase]]) || BREATHS.sigh).name}${info ? " · for your phase" : ""}</small></span>${icon('chevR', 16)}</button>
         <section class="st2-why"><span class="eyebrow">Why today</span><p>${sp[0]}</p><p class="st2-calm">${calm}</p></section>
         <section class="st2-breathe"><video src="images/stress-breathe.mp4" poster="images/stress-breathe.webp" muted loop playsinline ${auto} preload="metadata" aria-hidden="true"></video><span class="st2-bshade"></span>
           <div class="st2-bin"><span class="eyebrow">Fastest calm · 5 min</span><div class="st2-orb" aria-hidden="true"><i></i><b class="in">Breathe in</b><b class="out">Breathe out</b></div>
@@ -5656,6 +5696,7 @@ const actions = {
   pfTab: d => { ui.pfTab = d.v; render(); },
   groAisle: d => { ui.groAisle = d.v; render(); const t = document.querySelector('.gro-tabs'), on = t && t.querySelector('.on'); if (on) t.scrollLeft = on.offsetLeft - (t.clientWidth - on.offsetWidth) / 2; },
   czTab: d => { ui.czTab = d.v; render(); },
+  bzPick: d => { ui.bzK = d.v; render(); },
   maniK: d => { ui.maniK = d.v; render(); },
   czWhy: () => { if (ui.czTab && ui.czTab !== 'today') { ui.czTab = 'today'; render(); } const el = document.querySelector('.cx-why'); el && el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); },
   moonRit: d => { ui.moonRit = d.v; render(); },
