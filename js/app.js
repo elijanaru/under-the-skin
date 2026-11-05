@@ -2709,6 +2709,27 @@ const MANI_ART = {
   sats: '<path d="M3 11c3 4.5 15 4.5 18 0"/><path d="M6 14.5l-1.5 2M10 16l-.5 2.5M14 16l.5 2.5M18 14.5l1.5 2"/>',
 };
 const maniArt = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${MANI_ART[k]}</svg>`;
+// The teaching behind the page: Neville Goddard's idea in four steps, in our own words (never quoted),
+// framed as a spiritual practice. The step her phase leans on is lit in her phase colour.
+const MANI_IDEA = [
+  ['spark', 'Imagine', 'See the wish as already done, in one small scene.', 'follicular'],
+  ['heart', 'Feel', 'The feeling makes it real to you, the words alone do not.', 'ovulatory'],
+  ['moon', 'Sleep on it', 'The mood you drift off in sinks in the deepest.', 'menstrual'],
+  ['clock', 'Persist', 'Come back to the feeling until it feels normal.', 'luteal'],
+];
+function maniIdea(phase) {
+  return `<section class="mfi">
+    <div class="mfi-flow">${MANI_IDEA.map(([ic, t, d, p], i) => `<div class="mfi-s ${p === phase ? 'now' : ''}" style="--c:${PH_HEX[p]}">
+      <span class="mfi-ic">${icon(ic, 18)}</span><div><b><em class="dotnum">${i + 1}</em>${t}${p === phase ? '<i>your phase</i>' : ''}</b><small>${d}</small></div></div>`).join('')}</div>
+    <p class="mfi-by">From the teaching of <b>Neville Goddard</b> (1905 to 1972), shared in his short 1944 book on feeling, told here in our own words.</p>
+    <details class="mfi-more"><summary>Read the idea ${icon('chevD', 13)}</summary>
+      <p>Goddard taught that your inner life comes first. What you keep feeling to be true about yourself slowly shapes how you act, what you notice and what you go after.</p>
+      <p>So instead of asking or hoping, you quietly take on the feeling of already having it. Not by force: you rest in it, the way you relax into a warm bath.</p>
+      <p>He saw the drowsy state before sleep as the easiest door, because the busy mind is quiet and the last feeling of the day stays with you through the night.</p>
+      <p>Your cycle changes how easy each step feels. Imagining comes easily in the fresh follicular days, feeling is strongest around ovulation, the drowsy moment is natural on your period, and the luteal phase is for staying with it.</p>
+      <p class="mfi-note">A spiritual practice for reflection and calm, not a science. It works alongside action, never instead of it.</p></details>
+  </section>`;
+}
 function viewManifest() {
   const phase = M.info && M.info.phase, cy = phase && MG.MANIFEST_CYCLE[phase], mk = cy ? cy[0] : 'feeling';
   const k = MANI_TECH.includes(ui.maniK) ? ui.maniK : mk, T = MG.MANIFEST[k], scene = (state.manifest || {})[todayISO()] || '';
@@ -2727,6 +2748,8 @@ function viewManifest() {
     <div class="mfm">${PHASE_ORDER.map(p => { const t = MG.MANIFEST_CYCLE[p][0]; return `<button class="mfm-p ${p === phase ? 'now' : ''} ${t === k ? 'on' : ''}" style="--c:${PH_HEX[p]}" data-action="maniK" data-v="${t}"><i></i><small>${PHASES[p].name}${p === phase ? ' · now' : ''}</small><span class="mfm-a">${maniArt(t)}</span><b>${MG.MANIFEST[t].name}</b></button>`; }).join('')}</div>
     ${sectionTitle('Six ways to try')}
     <div class="mfw">${MANI_TECH.map(o => { const bp = MANI_BEST[o]; return `<button class="mfw-c ${o === k ? 'on' : ''}" style="--c:${bp ? PH_HEX[bp] : '#6c823e'}" data-action="maniK" data-v="${o}"><span class="mfw-a">${maniArt(o)}</span><b>${MG.MANIFEST[o].name}</b><small>${MANI_WHY[o]}</small><em>${bp ? `Best: ${PHASES[bp].name.toLowerCase()}` : 'Any day'}</em></button>`; }).join('')}</div>
+    ${sectionTitle('The idea behind it')}
+    ${maniIdea(phase)}
   </div>`;
 }
 function viewMoon() { return `<div class="pad mn">${moonPage(false)}</div>`; }
