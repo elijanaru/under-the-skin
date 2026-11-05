@@ -11,6 +11,7 @@ import { mountTorso } from './torso.js';
 import { RECIPE_PHOTOS, photoUrl, DISH_PHOTOS, dishPhoto, HORMONE_PHOTOS, hormonePhoto, CARE_PHOTOS, carePhoto, STAR_PHOTOS, starPhoto, foodPhoto, FOOD_PHOTOS, teaPhoto } from './photos.js';
 import * as SZ from './seasonal.js';
 import { WORLD, worldOf, PHASE_EAT, PANTRY } from './world.js';
+import { GROUND_NOW, GROUND_WHERE, GROUND_PHASE, GROUND_MOON, GROUND_ROOTS, GROUND_STUDIES, GROUND_CAUTION } from './ground.js';
 import { MOLECULES, MOL_BALL } from './molecules.js';
 import { sunTimes, COUNTRY_GEO } from './sun.js';
 import * as A from './account.js';
@@ -264,6 +265,98 @@ function tipsCard(info) {
       <span class="tf-cta">${lcta} ${icon('chevR', 14)}</span></button>
       ${lead.d ? saveBtn(lead.id, 'float') : ''}</div>
     ${rest.length ? `<div class="tl">${rest.map(x => { const [, q] = D(x), u = hormonePhoto(x.photo, 200); return `<div class="tl-rw"><button class="tl-r" data-action="nav" data-to="${to(x)}">${u ? `<img src="${u}" alt="" loading="lazy">` : '<span class="tl-ph"></span>'}<span class="tl-t"><b>${x.d ? x.d[0] : q}</b><small>${x.d ? `${x.d[1]} · ${x.d[3]}` : x.t}</small></span></button>${x.d ? saveBtn(x.id) : `<span class="tl-go">${icon('chevR', 14)}</span>`}</div>`; }).join('')}</div>` : ''}`;
+}
+// ---------- one page per "Best things to do today" tile ----------
+const FRIENDS = {
+  menstrual: { ideas: ['Film night at home', 'A slow walk and talk with one friend', 'Let people bring you soup'], skip: 'Big parties and late nights', why: 'With hormones at their lowest, most women want fewer, closer people. Warm touch and hugs release oxytocin, which can soften pain and stress.' },
+  follicular: { ideas: ['Try a new class with a friend', 'Plan a trip or a weekend', 'Say yes to meeting someone new'], skip: 'Cancelling out of habit', why: 'Rising estrogen lifts dopamine, the curiosity chemical. New people and new places feel exciting instead of tiring now.' },
+  ovulatory: { ideas: ['Dinner, dancing or a party', 'Have the big conversation', 'Plan a date night'], skip: 'Staying home out of guilt', why: 'Estrogen and testosterone peak. Words come easily, confidence is high and you are at your most social.' },
+  luteal: { ideas: ['One close friend over tea', 'Cook together at home', 'A voice note instead of meeting when tired'], skip: 'Overbooking and late-night arguments', why: 'Progesterone calms you but also makes you more sensitive to stress and criticism. Small, warm and familiar feels best.' },
+};
+const TOPIC_PIC = { eat: 'images/season-veg.webp', friends: 'images/partner-hands.jpg', stretch: 'images/move-walk.webp', meditate: 'images/move-meditate.webp', tea: 'images/tea-ginger.webp' };
+function viewTopic(k) {
+  const info = M.info; if (!info || !TOPIC_PIC[k]) return viewMissing();
+  const w = dayWindow(info), ph = info.phase, P = PHASES[ph];
+  const head = { eat: ['Eat', FOOD_NEEDS[w][0]], friends: ['Friends', PEOPLE_PLAN[ph][0]], stretch: ['Stretch', STRETCH[w][0]], meditate: ['Meditate', MEDITATE[w][0]], tea: ['Tea', TEA_DAY[w][1]] }[k];
+  const steps = k === 'stretch' ? STRETCH[w] : k === 'meditate' ? MEDITATE[w] : null;
+  let body = '';
+  if (steps) body = `<section class="card tp-card"><p class="tp-lead">${steps[1]}</p><ol class="gr-steps">${steps[2].map((t, i) => `<li><i>${i + 1}</i><span><b>${t}</b></span></li>`).join('')}</ol>
+      <div class="tp-f"><span class="dos-w">${icon('clock', 12)} Today</span>${saveBtn(regTip(`${k}-${w}`, head[0], [steps[0], steps[2][0], steps[2][1] || '', 'Today'], `do/${k}`))}</div></section>
+    <button class="bz-cta" data-action="nav" data-to="breathe"><i class="bz-mini"></i><span><b>Breathe with me</b><small>A guided breath for your phase</small></span>${icon('chevR', 16)}</button>`;
+  else if (k === 'friends') { const F = FRIENDS[ph];
+    body = `<section class="card tp-card"><div class="tp-k">${icon('heart', 14)} Ideas for today</div>
+      <div class="tp-ideas">${F.ideas.map((t, i) => `<span><i>${i + 1}</i>${t}</span>`).join('')}</div>
+      <div class="en-r no tp-skip">${icon('close', 12, 2.4)}<span><em>Skip</em>${F.skip}</span></div>
+      <div class="tp-f"><span class="dos-w">${icon('clock', 12)} This week</span>${saveBtn(regTip(`friends-${ph}`, 'Friends', [PEOPLE_PLAN[ph][0], F.ideas[0], F.ideas[1], 'This week'], 'do/friends'))}</div>
+      <details class="gr-why"><summary>Why in this phase ${icon('chevD', 13)}</summary><p>${F.why}</p></details></section>
+    ${sectionTitle('Across your cycle')}
+    <section class="card tp-card"><div class="tp-cyc">${PHASE_ORDER.map(p => `<span class="${p === ph ? 'on' : ''}" style="--c:${PH_HEX[p]}"><i></i><small>${PHASES[p].name}</small><b>${PEOPLE_PLAN[p][0]}</b></span>`).join('')}</div></section>`; }
+  else body = `<section class="card tp-card tp-wrap">${todayTiles(info, k)}</section>`;
+  return `${topbar(head[0], { back: true })}
+  <div class="pad tp">
+    <section class="tp-hero"><img src="${TOPIC_PIC[k]}" alt=""><span class="tp-hero-t"><small>Day ${Math.min(info.cd, info.L)} · ${P.name}</small><b>${head[1]}</b></span></section>
+    ${body}
+  </div>`;
+}
+// Stress opens Breathe with this on top: her cortisol through the day, her stress level today, and why breath brings it down.
+function cortisolSec(info) {
+  const w = dayWindow(info), [lvl, txt] = CALM[w], h = nowH(), pts = [];
+  for (let x = 0; x <= 24; x += .5) { const v = x < 6 ? .25 + x * .02 : x < 7 ? .37 + (x - 6) * .6 : .97 * Math.exp(-(x - 7) / 6.5) + .08; pts.push([x, Math.min(1, v)]); }
+  const X = x => 10 + x / 24 * 300, Y = v => 92 - v * 78, d = pts.map(([x, v], i) => `${i ? 'L' : 'M'}${X(x).toFixed(1)} ${Y(v).toFixed(1)}`).join(' ');
+  const nv = pts.reduce((a, b) => Math.abs(b[0] - h) < Math.abs(a[0] - h) ? b : a)[1];
+  return `<section class="card ct">
+    <div class="ct-h"><span><small>Your stress hormone</small><b>Cortisol today</b></span><span class="ct-lv lv${lvl}"><i class="dc-bar"><b style="width:${lvl * 33.3}%"></b></i>${['', 'Low', 'Medium', 'High'][lvl]}</span></div>
+    <svg class="ct-g" viewBox="0 0 320 110" aria-label="Cortisol is highest after waking and lowest at night">
+      <path d="${d} L310 96 L10 96 Z" fill="rgba(214,164,67,.16)"/><path d="${d}" fill="none" stroke="#c48a2c" stroke-width="2.4" stroke-linecap="round"/>
+      <line x1="${X(h).toFixed(1)}" x2="${X(h).toFixed(1)}" y1="10" y2="96" stroke="#20301a" stroke-dasharray="3 4" stroke-width="1.2"/>
+      <circle cx="${X(h).toFixed(1)}" cy="${Y(nv).toFixed(1)}" r="5.5" fill="#fff" stroke="#20301a" stroke-width="2.4"/>
+      ${[[7, 'Wake'], [13, 'Midday'], [22, 'Night']].map(([x, t]) => `<text x="${X(x)}" y="108" text-anchor="middle">${t}</text>`).join('')}</svg>
+    <p class="ct-p">${txt}</p>
+    <div class="ct-how">${[['wind', 'Breathe out longer', 'than you breathe in'], ['heart', 'Your heart slows', 'via the vagus nerve'], ['mind', 'Cortisol settles', 'within minutes']].map(([g, a, b], i) => `<span><i>${i + 1}</i><b>${a}</b><small>${b}</small></span>`).join('<u></u>')}</div>
+    <details class="gr-why"><summary>What studies found ${icon('chevD', 13)}</summary><p><b>Ma et al. 2017</b> (Frontiers in Psychology): 8 weeks of slow belly breathing lowered saliva cortisol and improved focus in 40 adults.</p><p><b>Balban et al. 2023</b> (Cell Reports Medicine): 5 minutes a day of breathing with long out-breaths lifted mood and lowered breathing rate more than meditation.</p><p>Cortisol peaks about 30 to 45 minutes after you wake and falls toward night. In the days before your period stress tends to hit harder, so slow breathing matters most then.</p></details>
+  </section>`;
+}
+// ---------- grounding: bare skin on the earth ----------
+const groundCta = () => `<button class="gr-cta" data-action="nav" data-to="ground"><img src="images/ground-roots.jpg" alt="" loading="lazy"><span><b>Ground yourself</b><small>Bare feet on the earth · 15 min</small></span>${icon('chevR', 16)}</button>`;
+function viewGround() {
+  const info = M.info, ph = info && info.phase, P = ph && GROUND_PHASE[ph], mn = moonData(), gm = GROUND_MOON[mn.waxing ? 'wax' : 'wane'];
+  const late = info && info.daysToPeriod <= 3 && !info.isPeriod, phd = P && (late && ph === 'luteal' ? P.d : P.d);
+  const card = (id, title, d) => `<div class="gr-do"><div class="gr-do-h"><span class="dos-w">${icon('clock', 12)} ${d[3]}</span>${saveBtn(regTip(id, title, d, 'ground'))}</div><b>${d[0]}</b><ol><li>${d[1]}</li><li>${d[2]}</li></ol></div>`;
+  const open = ui.grStudy;
+  return `${topbar('Grounding', { back: true })}
+  <div class="pad gr">
+    <section class="gr-hero"><img src="images/ground-roots.jpg" alt="A woman meditating on the forest floor with golden roots growing into the earth">
+      <span class="gr-hero-t"><small>Earthing</small><b>Ground yourself</b><em>Bare skin on the earth. Your body takes on the ground’s calm, steady charge.</em></span>
+      <span class="gr-hero-n"><b class="dotnum">15</b><small>min a day</small></span></section>
+
+    ${sectionTitle('Try it now')}
+    <section class="card gr-card">
+      <div class="gr-flow">${[['Shoes off', 'Skin touches earth'], ['Stay 15 min', 'Phone away'], ['Breathe down', 'Feel your soles']].map(([a, b], i) => `<span><i>${i + 1}</i><b>${a}</b><small>${b}</small></span>`).join('<u></u>')}</div>
+      ${card('ground-now', 'Grounding', GROUND_NOW)}
+    </section>
+
+    ${P ? `${sectionTitle(`For your ${PHASES[ph].name.toLowerCase()} phase`)}
+    <section class="card gr-card gr-ph" style="--c:${PH_HEX[ph]}">
+      <div class="gr-ph-h"><span class="gr-ph-dot"></span><b>${P.t}</b>${ph === 'menstrual' || late ? `<span class="gr-warm">${icon('thermo', 12)} Keep warm</span>` : ''}</div>
+      ${card(`ground-${ph}`, `Grounding · ${PHASES[ph].name}`, phd)}
+      <details class="gr-why"><summary>Why in this phase ${icon('chevD', 13)}</summary><p>${P.why}</p></details>
+    </section>` : ''}
+
+    ${sectionTitle('Where to stand')}
+    <section class="card gr-card"><div class="gr-where">${GROUND_WHERE.map(([n, v, t]) => `<div class="${v ? '' : 'no'}"><span class="gr-m" aria-label="${v ? `Connects ${v} of 3` : 'Blocks it'}">${[1, 2, 3].map(i => `<i class="${i <= v ? 'on' : ''}"></i>`).join('')}</span><b>${n}</b><small>${t}</small></div>`).join('')}</div></section>
+
+    ${sectionTitle('Golden roots')}
+    <section class="card gr-card gr-roots">
+      <div class="gr-rt"><span class="gr-moon">${moonArt(mn.elong)}</span><span><small>${mn.waxing ? 'Moon growing' : 'Moon shrinking'}</small><b>${gm[0]}</b><em>${gm[1]}</em></span></div>
+      <ol class="gr-steps">${GROUND_ROOTS.steps.map(([a, b], i) => `<li><i>${i + 1}</i><span><b>${a}</b><small>${b}</small></span></li>`).join('')}</ol>
+      <div class="gr-rt-f"><span class="dos-w">${icon('clock', 12)} ${GROUND_ROOTS.mins} min</span><span class="gr-rt-s">${saveBtn(regTip('ground-roots', 'Grounding · roots', GROUND_ROOTS.d, 'ground'))}</span></div>
+      <p class="gr-fine">An old visualisation used in many traditions. Treat it as a calming practice.</p>
+    </section>
+
+    ${sectionTitle('What studies found')}
+    <section class="card gr-card gr-st">${GROUND_STUDIES.map(([a, y, j, f, d], i) => `<button class="gr-s ${open === i ? 'on' : ''}" data-action="grStudy" data-i="${i}" aria-expanded="${open === i}"><span class="gr-y">${y}</span><span class="gr-s-t"><b>${f}</b><small>${a} · ${j}</small></span>${icon('chevD', 14)}</button>${open === i ? `<p class="gr-s-d">${d}</p>` : ''}`).join('')}
+      <p class="gr-caution">${icon('spark', 13)} ${GROUND_CAUTION}</p></section>
+  </div>`;
 }
 function viewSaved() {
   const L = state.savedTips || [];
@@ -2761,7 +2854,7 @@ function viewReliefIndex() {
     <h1 class="page-h rx-h">Feel better, <span>gently</span></h1>
     <p class="muted rx-sub">What helps: body, food and Chinese medicine.</p>
     ${today}
-    <button class="bz-cta" data-action="nav" data-to="breathe"><i class="bz-mini"></i><span><b>Breathe with me</b><small>${((info && BREATHS[BREATH_FOR[info.phase]]) || BREATHS.sigh).name}${info ? " · for your phase" : ""}</small></span>${icon('chevR', 16)}</button>
+    <button class="bz-cta" data-action="nav" data-to="breathe"><i class="bz-mini"></i><span><b>Breathe with me</b><small>${((info && BREATHS[BREATH_FOR[info.phase]]) || BREATHS.sigh).name}${info ? " · for your phase" : ""}</small></span>${icon('chevR', 16)}</button>${groundCta()}
     ${sectionTitle('Everything that helps')}
     <div class="rx-grid">${keys.map(k => { const h = (state.reliefHelp || {})[k] || [];
       return `<button class="rx-t ${recent.has(k) ? 'on' : ''}" data-action="nav" data-to="relief/${encodeURIComponent(k)}"><span class="rx-e">${RELIEF_EMOJI[k] || '🌿'}</span><b>${k}</b><small>${h.length ? `${icon('heart', 11)} ${h.length} work${h.length > 1 ? '' : 's'} for you` : `${RELIEF[k].steps.length} ways`}</small>${recent.has(k) ? '<i>Logged</i>' : ''}</button>`; }).join('')}</div>
@@ -3302,7 +3395,7 @@ const FOOD_DOT = { '🔴': '#a8362e', '⚫': '#151515', '🟢': '#5d8a48', '🟠
 const colDots = c => [...c].filter(x => FOOD_DOT[x]).map(x => `<i class="cdot" style="background:${FOOD_DOT[x]}"></i>`).join('');
 const noEmoji = t => String(t).replace(/^[\p{Extended_Pictographic}\uFE0F\u200D]+\s*/u, '');
 // Today's best things to do, as big tiles. Stress, stretch and meditate open in place with the how-to.
-function todayTiles(info) {
+function todayTiles(info, only) {
   const w = dayWindow(info), g = MOVE_GUIDE[w], [lvl] = CALM[w], ph = info.phase, warm = warmWindow(info);
   const best = MOVES.filter(m => g.r[m.k] === 3);
   const pp = PEOPLE_PLAN[ph], st = STRETCH[w], md = MEDITATE[w], open = ui.hubTip;
@@ -3328,14 +3421,15 @@ function todayTiles(info) {
     return `<div class="hub-tip-in"><span class="ht-g">${x[0]}</span><div><b>${x[1]}</b><p>${x[2]}</p>${x[3] ? `<ol>${x[3].map(t => `<li>${t}</li>`).join('')}</ol>` : ''}
       ${k === 'stress' ? `<p class="ht-fast">${icon('bolt', 13)} Fastest calm: breathe out longer than you breathe in, for 5 minutes.</p>` : ''}${evBadge(x[4])}</div></div>`;
   };
+  if (only) return tipBody(only);
   return `<div class="dpt-grid">
       ${tile('wide hero-move', { to: 'move' }, icon(MOVE_G[best[0]?.k] || 'leaf', 22), 'Sport', g.title, best.map(m => m.n).slice(0, 3).join(' · '))}
-      ${tile('t-paper', { tip: 'eat' }, '🥗', 'Eat', fn[0], `<span class="dpt-col">${colDots(fm.col[0])} ${fm.col[1]} foods</span>${fn[1].map(x => x[0].slice(x[0].indexOf(' ') + 1)).slice(0, 3).join(' · ')}<br><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
-      ${tile('t-deep', { to: 'rhythm' }, PEOPLE_G[ph], 'Friends', pp[0], pp[1])}
-      ${tile(`calm lv${lvl}`, { to: 'stress' }, '🪷', 'Stress', `${['', 'Low', 'Medium', 'High'][lvl]}<i class="dc-bar"><b style="width:${lvl * 33.3}%"></b></i>`, `Best: ${sp[1][0].toLowerCase()}`)}
-      ${tile('t-sage', { tip: 'stretch' }, '🤸', 'Stretch', st[0], st[1])}
-      ${tile('t-glow', { tip: 'meditate' }, '🧘', 'Meditate', md[0], md[1])}
-      ${tile('t-tea', { tip: 'tea' }, td[0], 'Tea', td[1], td[2])}
+      ${tile('t-paper', { to: 'do/eat' }, '🥗', 'Eat', fn[0], `<span class="dpt-col">${colDots(fm.col[0])} ${fm.col[1]} foods</span>${fn[1].map(x => x[0].slice(x[0].indexOf(' ') + 1)).slice(0, 3).join(' · ')}<br><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
+      ${tile('t-deep', { to: 'do/friends' }, PEOPLE_G[ph], 'Friends', pp[0], pp[1])}
+      ${tile(`calm lv${lvl}`, { to: 'breathe/stress' }, '🪷', 'Stress', `${['', 'Low', 'Medium', 'High'][lvl]}<i class="dc-bar"><b style="width:${lvl * 33.3}%"></b></i>`, `Best: ${sp[1][0].toLowerCase()}`)}
+      ${tile('t-sage', { to: 'do/stretch' }, '🤸', 'Stretch', st[0], st[1])}
+      ${tile('t-glow', { to: 'do/meditate' }, '🧘', 'Meditate', md[0], md[1])}
+      ${tile('t-tea', { to: 'do/tea' }, td[0], 'Tea', td[1], td[2])}
     </div>
     <div class="hub-tip ${open && (open === 'eat' || open === 'tea' || tips[open]) ? 'on' : ''}" id="hub-tip">${open ? tipBody(open) : ''}</div>`;
 }
@@ -3404,6 +3498,18 @@ const COMPASS_SHORT = {
   peak: ['Pitch, present, ask', 'Saying yes to all', 'Dance, sprint, lift'], settle: ['Finish & deep work', 'Starting five things', 'Steady strength'],
   focus: ['Wrap up & organise', 'Late nights', 'Pilates & walks'], premenstrual: ['Only what’s due', 'Harsh self-talk', 'Gentle & warm'],
 };
+// Under the period button: a pixel aura figure tinted by her energy, today's mode, one thing to do and one to skip.
+function energyCard(info, energy) {
+  const w = dayWindow(info), c = COMPASS[w], S = COMPASS_SHORT[w], open = ui.enWhy;
+  return `<div class="en lvl-${c.lvl}">
+    <button class="en-main" data-action="enWhy" aria-expanded="${!!open}">
+      <span class="en-fig"><img src="images/pixel-aura-${c.lvl}.png" alt="" width="120" height="104"></span>
+      <span class="en-t"><small>Today · ${energy}% energy</small><b>${c.mode}</b>
+        <span class="en-r do">${icon('check', 13, 2.4)}<span><em>Do</em>${S[0]}</span></span>
+        <span class="en-r no">${icon('close', 12, 2.4)}<span><em>Don’t</em>${S[1]}</span></span></span></button>
+    ${open ? `<div class="en-why"><p>${c.why}</p><p><b>Move:</b> ${S[2]}</p><p class="en-line">${COMPASS_LINE[c.lvl]}</p></div>` : ''}
+  </div>`;
+}
 function compassSec(info) {
   const w = dayWindow(info), c = COMPASS[w], S = COMPASS_SHORT[w], e = getLog(todayISO()).energy;
   const listen = e && c.lvl >= 2 && e <= 2 ? 'You logged low energy. Follow your body, not the calendar.'
@@ -3483,8 +3589,8 @@ function todayHub(info, energy, head = '') {
   return `<section class="hub"><div class="hub-life" aria-hidden="true">${SPORES}</div>${head}
     ${stageHero(info, energy)}
     <div class="stage-after">${ttc() && info.fertile ? `<span class="fh-badge">${icon('spark', 13)} Fertile</span>` : ''}
-      ${PERIOD_FLOWS.includes(getLog(todayISO()).flow) && info.cd === 1 ? '' : `<button class="fh-period pp ps2" data-action="periodStart"><span class="pp-drop">${icon('drop', 16, 2)}</span><span class="ps2-t"><b>Period started?</b><small>Tap to log today as day 1</small></span><span class="ps2-go">${icon('plus', 15, 2.2)}</span></button>`}</div>
-    ${compassSec(info)}
+      ${PERIOD_FLOWS.includes(getLog(todayISO()).flow) && info.cd === 1 ? '' : `<button class="fh-period pp ps2" data-action="periodStart"><span class="pp-drop">${icon('drop', 16, 2)}</span><span class="ps2-t"><b>Period started?</b><small>Tap to log today as day 1</small></span><span class="ps2-go">${icon('plus', 15, 2.2)}</span></button>`}
+      ${energyCard(info, energy)}</div>
     <div class="hub-sec hub-plan">
       <div class="hub-k"><span>Best things to do today</span><span class="hub-day">Day ${Math.min(info.cd, info.L)}</span></div>
       ${todayTiles(info)}
@@ -4270,11 +4376,12 @@ function breathFx(k) {
   return `<div class="bzfx">${[['Calm', 'leaf'], ['Focus', 'spark'], ['Sleep', 'moon'], ['Cramps', 'drop']].map(([t, ic], i) => `<div class="bzfx-i ${v[i] === 3 ? 'top' : ''}"><span>${icon(ic, 15)}</span><small>${t}</small><i>${[1, 2, 3].map(n => `<b class="${n <= v[i] ? 'on' : ''}"></b>`).join('')}</i></div>`).join('')}</div>`;
 }
 // Calm sigh: a deep breath in to almost full, one more short sip on top, then a long slow breath out.
-function viewBreathe() {
+function viewBreathe(from) {
   const phase = M.info && M.info.phase, rec = BREATH_FOR[phase] || 'sigh', k = BREATHS[ui.bzK] ? ui.bzK : rec, B = BREATHS[k];
   const mn = moonData(), moonLine = mn.waxing ? 'The Moon is growing: an even rhythm keeps your energy steady.' : 'The Moon is waning: let your breath out be the longest part.';
   return `${topbar('Breathe', { back: true })}
   <div class="pad bz-pad">
+    ${from === 'stress' && M.info ? cortisolSec(M.info) : ''}
     <h1 class="bz-title"><small>A minute for you</small>Come back to<em>your breath</em></h1>
     <div class="bzp" role="tablist" aria-label="Choose a breathing practice">${[rec, ...BREATH_ORDER.filter(x => x !== rec)].map(x => `<button class="bzp-o ${x === k ? 'on' : ''}" role="tab" aria-selected="${x === k}" data-action="bzPick" data-v="${x}">
       ${x === rec ? `<em>${phase ? 'For your phase' : 'Start here'}</em>` : ''}<span class="bzp-g">${BREATHS[x].g}</span><b>${BREATHS[x].name}</b><small>${BREATHS[x].when}</small></button>`).join('')}</div>
@@ -4356,7 +4463,7 @@ function viewStress() {
     ? `<section class="st2-card"><span class="eyebrow">Meditate today</span><h3>${md[0]}</h3><p class="st2-sub">${md[1]}</p>${steps(md[2])}${evBadge('some')}</section>`
     : tab === 'stretch'
       ? `<section class="st2-card"><span class="eyebrow">Stretch today</span><h3>${st[0]}</h3><p class="st2-sub">${st[1]}</p>${steps(st[2])}${evBadge('some')}</section>`
-      : `<button class="bz-cta" data-action="nav" data-to="breathe"><i class="bz-mini"></i><span><b>Breathe with me</b><small>${((info && BREATHS[BREATH_FOR[info.phase]]) || BREATHS.sigh).name}${info ? " · for your phase" : ""}</small></span>${icon('chevR', 16)}</button>
+      : `<button class="bz-cta" data-action="nav" data-to="breathe"><i class="bz-mini"></i><span><b>Breathe with me</b><small>${((info && BREATHS[BREATH_FOR[info.phase]]) || BREATHS.sigh).name}${info ? " · for your phase" : ""}</small></span>${icon('chevR', 16)}</button>${groundCta()}
         <section class="st2-why"><span class="eyebrow">Why today</span><p>${sp[0]}</p><p class="st2-calm">${calm}</p></section>
         <section class="st2-breathe"><video src="images/stress-breathe.mp4" poster="images/stress-breathe.webp" muted loop playsinline ${auto} preload="metadata" aria-hidden="true"></video><span class="st2-bshade"></span>
           <div class="st2-bin"><span class="eyebrow">Fastest calm · 5 min</span><div class="st2-orb" aria-hidden="true"><i></i><b class="in">Breathe in</b><b class="out">Breathe out</b></div>
@@ -5955,6 +6062,8 @@ const actions = {
   },
   planTab: d => { ui.planTab = d.v; if (route().name !== 'plan') go('plan'); else render(); },
   toggleHormone: d => { ui.hidden[d.h] = !ui.hidden[d.h]; render(); },
+  enWhy: () => { ui.enWhy = !ui.enWhy; render(); },
+  grStudy: d => { ui.grStudy = ui.grStudy === +d.i ? null : +d.i; render(); },
   saveTip: d => {
     const L = state.savedTips = state.savedTips || [], i = L.findIndex(x => x.id === d.id);
     if (i >= 0) { L.splice(i, 1); toast('Removed from Saved'); } else { const t = TIPREG[d.id]; if (!t) return; L.push({ ...t, at: todayISO() }); toast('Saved · find it in Saved tips'); if (navigator.vibrate) navigator.vibrate(8); }
@@ -6244,7 +6353,7 @@ function render() {
   const ph = (ui.phasePreview || M.info?.phase) || ''; // the whole app takes the colour of her phase
   if (document.documentElement.dataset.phase !== ph) document.documentElement.dataset.phase = ph;
   const views = {
-    today: viewToday, saved: viewSaved, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: viewBreathe, plan: viewPlan, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: () => (r.id ? viewStar(r.id) : viewCosmic()), moon: viewMoon, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewHabits, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), world: () => viewWorld(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
+    today: viewToday, saved: viewSaved, ground: viewGround, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: () => viewBreathe(r.id), do: () => viewTopic(r.id), plan: viewPlan, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: () => (r.id ? viewStar(r.id) : viewCosmic()), moon: viewMoon, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewHabits, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), world: () => viewWorld(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
     recipe: () => viewRecipe(r.id), ritual: () => viewRitual(r.id), point: () => viewPoint(r.id), article: () => viewArticle(r.id), learn: viewLearn,
   };
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];
