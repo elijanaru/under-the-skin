@@ -5837,7 +5837,7 @@ function viewGate() {
     <h2 class="onb-title">Keep your cycle <span>safe with you</span></h2>
     <p class="gate-lead">A free account saves every period, symptom and note, and brings them back on any new phone.</p>
     <label class="ac-consent"><input type="checkbox" id="ac-consent"><span>I agree that my cycle and health logs are kept in my private account. I can delete them anytime. <a href="#/privacy">Privacy</a></span></label>
-    <label class="ac-consent ac-terms"><input type="checkbox" id="ac-terms" ${termsOK() ? 'checked' : ''}><span>I understand Underskin is general wellness information, not medical advice. Before I try any tea, food, herb, supplement or remedy, I check it myself for allergies and for clashes with medicines I take, and I use it at my own responsibility. <a href="#/privacy">Terms</a></span></label>
+    <label class="ac-consent ac-terms"><input type="checkbox" id="ac-terms" ${termsOK() ? 'checked' : ''}><span>I understand Underskin is general wellness information, not medical advice. Everything I try from it (food, tea, herbs, supplements, remedies, training, breathing, grounding and every other idea) is my own choice, at my own risk and my own responsibility. I check allergies, medicines and my health myself, and I ask a doctor when unsure. <a href="#/privacy">Terms</a></span></label>
     <button class="ac-btn ac-mail" data-action="gateEmail">${icon('user', 18)}<span>Continue with email</span></button>
     <form class="gate-form" onsubmit="return false" aria-hidden="${!f}">
       <div class="gf-seg" role="tablist"><button type="button" class="gf-c" data-action="gateMode" data-v="create" role="tab">Create account</button><button type="button" class="gf-s" data-action="gateMode" data-v="signin" role="tab">Sign in</button></div>
@@ -5892,7 +5892,7 @@ function viewAccount() {
     <section class="ac-hero card-light"><div class="eyebrow dark">${create ? 'Create account' : 'Welcome back'}</div><h2>${create ? 'Save your cycle' : 'Sign in'}</h2>
       <p>${create ? 'Keep your periods and logs safe in a private account, and take them to any new phone.' : 'Your periods, logs and plans come back onto this phone.'}</p></section>
     <div class="ac-seg" role="tablist"><button class="${create ? 'on' : ''}" data-action="acMode" data-v="create" role="tab" aria-selected="${create}">Create account</button><button class="${create ? '' : 'on'}" data-action="acMode" data-v="signin" role="tab" aria-selected="${!create}">Sign in</button></div>
-    ${create ? `<label class="ac-consent"><input type="checkbox" id="ac-consent"><span>I agree that my cycle and health logs are kept in my private account so they sync between my phones. I can delete them anytime. <a href="#/privacy">Privacy</a></span></label><label class="ac-consent ac-terms"><input type="checkbox" id="ac-terms" ${termsOK() ? 'checked' : ''}><span>I understand Underskin is general wellness information, not medical advice. Before I try any tea, food, herb, supplement or remedy, I check it myself for allergies and for clashes with medicines I take, and I use it at my own responsibility. <a href="#/privacy">Terms</a></span></label>` : ''}
+    ${create ? `<label class="ac-consent"><input type="checkbox" id="ac-consent"><span>I agree that my cycle and health logs are kept in my private account so they sync between my phones. I can delete them anytime. <a href="#/privacy">Privacy</a></span></label><label class="ac-consent ac-terms"><input type="checkbox" id="ac-terms" ${termsOK() ? 'checked' : ''}><span>I understand Underskin is general wellness information, not medical advice. Everything I try from it (food, tea, herbs, supplements, remedies, training, breathing, grounding and every other idea) is my own choice, at my own risk and my own responsibility. I check allergies, medicines and my health myself, and I ask a doctor when unsure. <a href="#/privacy">Terms</a></span></label>` : ''}
     ${A.oauthOK('apple') ? `<button class="ac-btn ac-apple" data-action="acProvider" data-p="apple">${APPLE_SVG}<span>${create ? 'Sign up' : 'Sign in'} with Apple</span></button>` : ''}
     ${A.oauthOK('google') ? `<button class="ac-btn ac-google" data-action="acProvider" data-p="google">${GOOGLE_SVG}<span>${create ? 'Sign up' : 'Sign in'} with Google</span></button>` : ''}
     ${A.oauthOK('apple') || A.oauthOK('google') ? '<div class="ac-or"><span>or with email</span></div>' : ''}
@@ -5908,8 +5908,8 @@ function viewAccount() {
 function termsSheet() {
   return `<div class="tm-wrap" role="dialog" aria-modal="true" aria-labelledby="tm-h"><section class="tm-sheet">
     <span class="tm-e" aria-hidden="true">🌿</span><h2 id="tm-h">One thing before you go on</h2>
-    <p>Underskin shares general wellness information, not medical advice. Teas, herbs, foods and supplements can cause allergies or clash with medicines.</p>
-    <p><b>Before you try anything, check every ingredient for allergies and medicine clashes yourself.</b> If you are pregnant, breastfeeding, on medication or have a health condition, ask your doctor or pharmacist first. You use the app’s ideas at your own responsibility.</p>
+    <p>Underskin shares general wellness information, not medical advice. Food, teas, herbs, supplements, remedies, training, breathing and grounding can all affect your body.</p>
+    <p><b>Everything you try is your own choice, at your own risk and your own responsibility.</b> Check every ingredient for allergies and medicine clashes, and listen to your body. If you are pregnant, breastfeeding, on medication or have a health condition, ask your doctor or pharmacist first.</p>
     <button class="btn btn-dark btn-block" data-action="termsAgree">I understand and agree</button>
     <a class="tm-link" href="#/privacy">Read the full terms</a></section></div>`;
 }
@@ -5929,7 +5929,8 @@ function viewPrivacy() {
     <p><b>Delete anytime.</b> Profile → “Delete all data” erases everything from this device. Deleting the app or clearing your browser data does the same — so export a backup first if you want to keep it.</p>
     <p><b>Not medical advice.</b> Predictions are estimates based on your logs and traditional knowledge. Underskin is not a contraceptive and does not diagnose or treat any condition.</p>
     <p><b>Allergies and medicines are yours to check.</b> Teas, herbs, spices, foods, supplements, acupressure and movement ideas in the app are general wellness information. Before you try any of them, check every ingredient for allergies and intolerances, and for clashes with medicines you take. If you are pregnant, breastfeeding, on medication or have a health condition, ask your doctor or pharmacist first. You decide what to try, and you do so at your own responsibility.</p>
-    <p><b>Liability.</b> To the extent the law allows, Underskin and its makers are not liable for allergic reactions, side effects or other harm that come from using information in the app. This does not limit rights you have by law that cannot be limited.</p>
+    <p><b>Your own responsibility.</b> Everything in the app is general information: food, drinks, teas, herbs, supplements, remedies, acupressure, training, breathing, grounding, manifesting, cycle and fertile-day predictions and every other idea. You decide what to try and how, and you do it at your own risk and your own responsibility. Listen to your body and stop if something feels wrong.</p>
+    <p><b>Liability.</b> To the fullest extent the law allows, Underskin and its makers are not liable for any injury, illness, allergic reaction, side effect, pregnancy, loss or other harm that comes from using the app or acting on its information. This does not limit rights you have by law that cannot be limited.</p>
     <p><b>Your agreement.</b> When you tick the box at sign-up, or tap “I understand and agree”, you confirm you have read this. The app stores the date you agreed.</p>
   </div>`;
 }
@@ -5997,11 +5998,12 @@ function demoState(name) {
 // ---------- actions ----------
 // Sign-up gate: accounts must be switched on, and creating one needs a clear yes to keeping health data.
 // Her own responsibility for allergies and medicine clashes: one clear tick, saved with the date she gave it.
-function termsOK() { return !!((state && state.termsAt) || +lsGet('uts.termsAt')); }
+const TERMS_SINCE = Date.UTC(2026, 10, 5); // wording widened to everything in the app: everyone agrees again once
+function termsOK() { return Math.max(+(state && state.termsAt) || 0, +lsGet('uts.termsAt') || 0) >= TERMS_SINCE; }
 function termsTick() {
   const t = document.getElementById('ac-terms'); if (!t || !t.offsetParent) return true;
-  if (!t.checked) { acMsg('Please tick that you check for allergies yourself.', true); const l = t.closest('label'); l?.classList.add('need'); l?.scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
-  const at = Date.now(); try { localStorage.setItem('uts.termsAt', String(at)); } catch {} if (state) state.termsAt = state.termsAt || at;
+  if (!t.checked) { acMsg('Please tick that you use the app at your own responsibility.', true); const l = t.closest('label'); l?.classList.add('need'); l?.scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
+  const at = Date.now(); try { localStorage.setItem('uts.termsAt', String(at)); } catch {} if (state) state.termsAt = at;
   return true;
 }
 function acReady() {
