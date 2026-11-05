@@ -7895,3 +7895,4 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .sb-t.sb-pic.on .sb-ph img { transform: scale(1.04); }
 .sb-t.sb-pic small { color: rgba(48,64,35,.78); }
 .cup3d-w canvas.teacup3d { display: block; }
+.cf2 .cf-c .cf-more, .cf2 .cf-c .cf-more svg { color: #fff !important; stroke: currentColor; }
