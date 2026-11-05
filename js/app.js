@@ -358,8 +358,8 @@ function flowRing(info, id = 'fr', showOv = true) {
   </svg>`;
 }
 const PHASE_WELCOME = {
-  menstrual: { feel: 'Quieter and more inward — rest is productive now.', soak: 'warm soups, red meat & beetroot, ginger tea, heat on your belly.' },
-  follicular: { feel: 'Lighter, curious and motivated as estrogen rises.', soak: 'fresh greens, sprouts, eggs, citrus — and new ideas.' },
+  menstrual: { feel: 'Quieter and more inward — rest is productive now.', soak: 'warm soups, red meat & red dates, ginger tea, heat on your belly.' },
+  follicular: { feel: 'Lighter, curious and motivated as estrogen rises.', soak: 'fresh greens, eggs, citrus — and new ideas.' },
   ovulatory: { feel: 'Confident, social and glowing — your peak energy.', soak: 'raw salads, berries, oysters, sunshine and good company.' },
   luteal: { feel: 'Grounded at first, then more sensitive before your period.', soak: 'sweet potato, roots, magnesium, dark chocolate, early nights.' },
 };
@@ -1847,8 +1847,8 @@ function plateWheel(phase, season, sel, warm) {
 }
 // What the Chinese-medicine idea for each phase means, in everyday words.
 const PLATE_TCM_PLAIN = {
-  menstrual: 'Your body is letting go and loses warmth with the blood. Keep it warm and flowing: warm, cooked meals and red foods like beetroot, dates and red meat help you rebuild. It’s your Water time, like winter, so rest more.',
-  follicular: 'Your blood is building back up and energy is rising. Fresh greens, sprouts and lighter meals help you grow. It’s your Wood time, like spring, so start new things.',
+  menstrual: 'Your body is letting go and loses warmth with the blood. Keep it warm and flowing: warm, cooked meals and red foods like red dates, goji and red meat help you rebuild. It’s your Water time, like winter, so rest more.',
+  follicular: 'Your blood is building back up and energy is rising. Fresh herbs, eggs and lighter meals help you grow. It’s your Wood time, like spring, so start new things.',
   ovulatory: 'You’re at your peak, warm and outgoing. Colourful, fresh food keeps that heat in balance. It’s your Fire time, like summer, so go out and connect.',
   luteal: 'Your body is slowing down and holding warmth for your period. Simple warm meals, roots and squash keep you calm and steady. It’s your Earth time, like late summer, so slow down.',
 };
@@ -3161,21 +3161,21 @@ const FOOD_NEEDS = {
   premenstrual: ['Warm, calming & mineral-rich', [
     ['🌙 Magnesium + B6', 'Together they ease PMS, bloating and low mood.', 'Pumpkin seeds, cacao, banana, salmon', 'some'],
     ['🥛 Calcium', 'Can ease PMS mood swings and cramps.', 'Warm raw milk, cheese baked into warm dishes, sesame', 'some'],
-    ['🍌 Potassium', 'Helps with water retention and bloating.', 'Banana, avocado, potatoes, cooked spinach', 'some'],
+    ['🍌 Potassium', 'Helps with water retention and bloating.', 'Banana, avocado, potatoes, coconut water', 'some'],
     ['🫚 Warm & cooked only', 'No raw or cold food now. Warmth eases what’s coming.', 'Stews, soups, ginger, cinnamon', 'tcm']]],
 };
 // Colour focus and three meal ideas per part of the cycle: a broth or soup, something raw (warm swap when raw is off) and meat or fish.
 const FOOD_MEALS = {
-  'flow-start': { col: ['🔴⚫', 'Dark red & black', 'Red builds blood and black warms the kidneys in TCM. Red meat and black sesame bring iron.', 'Beetroot, red meat, black sesame, cooked blackberries, dates'],
-    broth: ['Beef bone broth with ginger', 'Simmer bones 6–12 h with ginger and a little beetroot. Sip a warm mug with every meal.'],
+  'flow-start': { col: ['🔴⚫', 'Dark red & black', 'Red builds blood and black warms the kidneys in TCM. Red meat and black sesame bring iron.', 'Red meat, black sesame, cooked blackberries, red dates'],
+    broth: ['Beef bone broth with ginger', 'Simmer bones 6–12 h with ginger and a few red dates. Sip a warm mug with every meal.'],
     raw: null, warmAlt: ['Baked apple with cinnamon', 'Cooked fruit instead of raw: warm, sweet and easy on cramps.'],
     meat: ['Slow-cooked beef or lamb stew', 'Or chicken liver fried with onions: the richest iron you can eat.'] },
-  'flow-end': { col: ['🔴', 'Red', 'Red foods bring iron and the vitamin C to absorb it.', 'Beef, red peppers, beetroot, cherries, tomatoes'],
+  'flow-end': { col: ['🔴', 'Red', 'Red foods bring iron and the vitamin C to absorb it.', 'Beef, red peppers, cherries, tomatoes'],
     broth: ['Chicken soup with root veg', 'Whole chicken, carrots, celery and parsley, simmered slowly. Rebuilds after bleeding.'],
     raw: ['Red pepper & tomato plate', 'Raw red pepper strips with tomato and olive oil, next to your iron-rich meal.'], warmAlt: ['Roasted red peppers', 'Soft roasted peppers with olive oil and salt.'],
     meat: ['Steak with peppers', 'Beef or lamb with peppers: iron plus vitamin C on one plate.'] },
   rising: { col: ['🟢', 'Green', 'Green foods feed the gut that clears used estrogen. In TCM, green supports the liver in spring.', 'Leafy greens, herbs, cucumber, kiwi, sprouts, avocado'],
-    broth: ['Green herb & chicken broth', 'Light clear broth with spinach, parsley and spring onion stirred in at the end.'],
+    broth: ['Green herb & chicken broth', 'Light clear broth with parsley, coriander and spring onion stirred in at the end.'],
     raw: ['Big green salad with sauerkraut', 'Leafy greens, cucumber, avocado, herbs and a spoon of sauerkraut, with olive oil and lemon.'], warmAlt: ['Sautéed greens', 'Greens wilted in butter with garlic.'],
     meat: ['Wild fish with greens', 'Pan-fried trout or salmon on a bed of greens with lemon.'] },
   building: { col: ['🟢🟠', 'Green & orange', 'Greens for fibre, orange for beta-carotene and steady carbs on strong days.', 'Carrots, sweet potato, apricots, leafy greens, herbs'],
@@ -4728,7 +4728,7 @@ function seasonWheel(cur, mine) {
 // Plain-language Chinese medicine for each season, and teas people actually drink.
 const SEASON_PLAIN = {
   Winter: { eat: 'It’s cold outside, so eat warm: slow-cooked stews, broths, roots and beans. Hot meals keep you warm from the inside.', tea: 'Ginger, cinnamon, or chai with warm raw milk' },
-  Spring: { eat: 'Lighter food after winter: fresh greens, sprouts, herbs and a little sour, like lemon or sauerkraut. Lightly cooked or raw.', tea: 'Nettle, fresh mint or green tea' },
+  Spring: { eat: 'Lighter food after winter: fresh greens, herbs and a little sour, like lemon or sauerkraut. Lightly cooked or raw.', tea: 'Nettle, fresh mint or green tea' },
   Summer: { eat: 'It’s hot outside, so eat lighter and fresher: fruit, salads, raw vegetables and juicy foods that cool you down.', tea: 'Peppermint, hibiscus or green tea' },
   'Late summer': { eat: 'Sweet, golden harvest food: corn, squash and ripe fruit. Simple warm meals at regular times are easiest to digest.', tea: 'Chamomile, fennel or ginger' },
   Autumn: { eat: 'It turns cool and dry, so cook more: roots, pumpkin, stewed apples and pears, with warming spices like ginger and cinnamon.', tea: 'Ginger with raw honey, cinnamon, rooibos or chai' },
@@ -4982,7 +4982,7 @@ function viewRecipe(id) {
     <section class="card glass">${r.steps.map((s, i) => `<div class="step"><span class="step-n">${i + 1}</span><p>${s}</p></div>`).join('')}</section>
     <p class="fine center">Check every ingredient for allergies before you cook.</p>
     ${r.source ? `<p class="fine center">Adapted from <a class="src" href="${r.url}" target="_blank" rel="noopener">${r.source}</a></p>` : ''}
-    ${RECIPE_PHOTOS[r.id] ? `<p class="fine center">Photo: <a class="src" href="${RECIPE_PHOTOS[r.id].page}?utm_source=under_the_skin&utm_medium=referral" target="_blank" rel="noopener">${esc(RECIPE_PHOTOS[r.id].by)}</a> on <a class="src" href="https://unsplash.com/?utm_source=under_the_skin&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></p>` : ''}
+    ${RECIPE_PHOTOS[r.id]?.by ? `<p class="fine center">Photo: <a class="src" href="${RECIPE_PHOTOS[r.id].page}?utm_source=under_the_skin&utm_medium=referral" target="_blank" rel="noopener">${esc(RECIPE_PHOTOS[r.id].by)}</a> on <a class="src" href="https://unsplash.com/?utm_source=under_the_skin&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></p>` : ''}
   </div>`;
 }
 function viewRitual(id) {

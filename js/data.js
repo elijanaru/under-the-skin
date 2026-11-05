@@ -16,7 +16,7 @@ export const PHASES = {
     hormones: 'Estrogen and progesterone are at their lowest, which signals your uterine lining to shed. Low hormones can mean lower energy and a quieter, more inward mind — your body is doing real work.',
     superpower: { title: 'Reflection', text: 'A natural moment to look back on the past month, notice what is working and set gentle intentions.' },
     nourish: { title: 'Replenish & warm', text: 'Rebuild iron and minerals lost through bleeding. Warm, cooked, comforting meals feel best.' },
-    foods: ['Lentils', 'Spinach', 'Grass-fed beef', 'Dark chocolate', 'Beetroot', 'Ginger tea', 'Bone broth', 'Kidney beans'],
+    foods: ['Lentils', 'Seaweed', 'Grass-fed beef', 'Dark chocolate', 'Red dates', 'Ginger tea', 'Bone broth', 'Kidney beans'],
     nutrients: ['Iron', 'Vitamin C', 'Magnesium', 'Omega-3'],
     mind: { title: 'Review & plan', text: 'Journal, review goals, plan the month ahead. Keep your calendar light and say no to extras.' },
     social: { title: 'Cosy & close', text: 'Low-key plans, solo time, a night in with someone who feels easy.' },
@@ -30,7 +30,7 @@ export const PHASES = {
     hormones: 'A new egg starts to ripen and estrogen begins to climb. Rising estrogen lifts mood, energy and motivation, and supports muscle building — a great window to start something new.',
     superpower: { title: 'Creativity', text: 'Curiosity is high and new things feel exciting. Brainstorm, learn, experiment.' },
     nourish: { title: 'Fresh & light', text: 'Lean protein, fermented foods and lots of fresh produce to support rising estrogen.' },
-    foods: ['Eggs', 'Avocado', 'Raw sauerkraut', 'Broccoli', 'Citrus', 'Sprouts', 'Chicken', 'Flax seeds'],
+    foods: ['Eggs', 'Avocado', 'Raw sauerkraut', 'Broccoli', 'Citrus', 'Radishes', 'Chicken', 'Flax seeds'],
     nutrients: ['B vitamins', 'Zinc', 'Probiotics', 'Vitamin E'],
     mind: { title: 'Start & brainstorm', text: 'Kick off projects, map out ideas, tackle the things that need fresh thinking.' },
     social: { title: 'Say yes', text: 'Meet new people, try the new spot, plan the trip.' },
@@ -71,20 +71,20 @@ export const RECIPES = [
   {
     id: 'iron-lentil-soup', name: 'Iron Glow Lentil Soup', phases: ['menstrual'], time: 35, kcal: 420, meal: 'Dinner',
     nutrients: ['Iron', 'Fibre', 'Vitamin C'],
-    ingredients: ['1 cup red lentils', '1 onion, diced', '2 garlic cloves', '1 tbsp fresh ginger', '1 tsp turmeric', '400 ml coconut milk', '700 ml vegetable broth', '2 handfuls spinach', '½ lemon'],
-    steps: ['Soften onion, garlic and ginger in a little olive oil for 5 minutes.', 'Add turmeric, lentils, coconut milk and broth. Simmer 20 minutes.', 'Stir in spinach until wilted.', 'Finish with lemon juice — vitamin C helps you absorb the iron.'],
+    ingredients: ['1 cup red lentils', '1 onion, diced', '2 garlic cloves', '1 tbsp fresh ginger', '1 tsp turmeric', '400 ml coconut milk', '700 ml vegetable broth', '1 handful fresh coriander', '½ lemon'],
+    steps: ['Soften onion, garlic and ginger in a little olive oil for 5 minutes.', 'Add turmeric, lentils, coconut milk and broth. Simmer 20 minutes.', 'Stir in the chopped coriander.', 'Finish with lemon juice — vitamin C helps you absorb the iron.'],
   },
   {
-    id: 'cacao-beet-smoothie', name: 'Cacao Beet Smoothie', phases: ['luteal'], time: 5, kcal: 310, meal: 'Breakfast',  raw: true,
+    id: 'cacao-beet-smoothie', name: 'Cacao Date Smoothie', phases: ['luteal'], time: 5, kcal: 310, meal: 'Breakfast',  raw: true,
     nutrients: ['Magnesium', 'Iron', 'Potassium'],
-    ingredients: ['1 small cooked beetroot', '1 ripe banana (not frozen)', '1 tbsp raw cacao', '1 tbsp almond butter', '250 ml almond or homemade nut milk', 'Pinch of cinnamon'],
+    ingredients: ['2 soft Medjool dates', '1 ripe banana (not frozen)', '1 tbsp raw cacao', '1 tbsp almond butter', '250 ml almond or homemade nut milk', 'Pinch of cinnamon'],
     steps: ['Blend everything until smooth.', 'Top with cacao nibs or pumpkin seeds for extra magnesium.'],
   },
   {
     id: 'spring-green-bowl', name: 'Spring Green Bowl', phases: ['follicular'], time: 20, kcal: 480, meal: 'Lunch',
     nutrients: ['Protein', 'Probiotics', 'B vitamins'],
-    ingredients: ['2 soft-boiled eggs', '½ avocado', '3 tbsp kimchi', '1 cup broccoli florets', '1 handful sprouts', '1 tbsp flax seeds', 'Lemon & tahini dressing'],
-    steps: ['Steam broccoli for 4 minutes.', 'Boil eggs for 6½ minutes, then cool and peel.', 'Build the bowl with sprouts, broccoli, avocado, kimchi and eggs.', 'Sprinkle flax and drizzle with dressing.'],
+    ingredients: ['2 soft-boiled eggs', '½ avocado', '3 tbsp kimchi', '1 cup broccoli florets', '4 radishes, sliced', '1 tbsp flax seeds', 'Lemon & tahini dressing'],
+    steps: ['Steam broccoli for 4 minutes.', 'Boil eggs for 6½ minutes, then cool and peel.', 'Build the bowl with radishes, broccoli, avocado, kimchi and eggs.', 'Sprinkle flax and drizzle with dressing.'],
   },
   {
     id: 'citrus-salmon-salad', name: 'Citrus Salmon Salad', phases: ['follicular', 'ovulatory'], time: 25, kcal: 520, meal: 'Dinner',
@@ -107,37 +107,37 @@ export const RECIPES = [
   {
     id: 'sweet-potato-bowl', name: 'Sweet Potato Comfort Bowl', phases: ['luteal'], time: 40, kcal: 560, meal: 'Dinner',
     nutrients: ['Complex carbs', 'Vitamin B6', 'Magnesium'],
-    ingredients: ['1 sweet potato, cubed', '1 can chickpeas', '1 handful rocket', '2 handfuls kale', '1 tbsp pumpkin seeds', 'Tahini-maple dressing', 'Smoked paprika'],
-    steps: ['Roast sweet potato and chickpeas with paprika at 200°C for 30 minutes.', 'Massage kale with a little dressing.', 'Layer kale, rocket, roasted veg and chickpeas.', 'Top with pumpkin seeds and more dressing.'],
+    ingredients: ['1 sweet potato, cubed', '1 can chickpeas', '1 handful rocket', '2 handfuls lamb’s lettuce', '1 tbsp pumpkin seeds', 'Tahini-maple dressing', 'Smoked paprika'],
+    steps: ['Roast sweet potato and chickpeas with paprika at 200°C for 30 minutes.', 'Toss the lamb’s lettuce with a little dressing.', 'Layer the lamb’s lettuce, rocket, roasted veg and chickpeas.', 'Top with pumpkin seeds and more dressing.'],
   },
   {
-    id: 'raw-beet-slaw', name: 'Warm Beet & Apple Bowl', phases: ['menstrual'], time: 15, kcal: 330, meal: 'Breakfast', warm: true,
+    id: 'raw-beet-slaw', name: 'Warm Carrot & Apple Bowl', phases: ['menstrual'], time: 15, kcal: 330, meal: 'Breakfast', warm: true,
     nutrients: ['Iron', 'Vitamin C', 'Folate'],
-    ingredients: ['1 beetroot, grated', '1 apple, diced', '1 carrot, grated', '2 tbsp pumpkin seeds', 'Juice of ½ lemon', '1 tsp fresh grated ginger', '½ tsp cinnamon', '1 tbsp ghee or olive oil', 'Pinch of sea salt'],
-    steps: ['Warm the ghee in a pan and add ginger and cinnamon for 30 seconds.', 'Add beetroot, carrot and apple; cook gently for 6–8 minutes until soft.', 'Season with salt, finish with lemon — its vitamin C helps you absorb the iron.', 'Top with pumpkin seeds and eat warm.'],
+    ingredients: ['1 small parsnip, grated', '1 apple, diced', '2 carrots, grated', '2 tbsp pumpkin seeds', 'Juice of ½ lemon', '1 tsp fresh grated ginger', '½ tsp cinnamon', '1 tbsp ghee or olive oil', 'Pinch of sea salt'],
+    steps: ['Warm the ghee in a pan and add ginger and cinnamon for 30 seconds.', 'Add parsnip, carrots and apple; cook gently for 6–8 minutes until soft.', 'Season with salt, finish with lemon — its vitamin C helps you absorb the iron.', 'Top with pumpkin seeds and eat warm.'],
   },
   {
     id: 'living-green-salad', name: 'Living Green Salad', phases: ['ovulatory', 'follicular'], time: 15, kcal: 430, meal: 'Lunch', raw: true,
     nutrients: ['Fibre', 'Antioxidants', 'Probiotics'],
-    ingredients: ['2 handfuls rocket & spinach', '½ cucumber', '1 handful sprouts', '½ avocado', '3 tbsp raw sauerkraut', '1 tbsp hemp seeds', 'Pomegranate seeds', 'Lemon, olive oil & raw honey dressing'],
-    steps: ['Slice cucumber and avocado.', 'Pile greens and sprouts into a big bowl.', 'Add avocado, sauerkraut, pomegranate and hemp.', 'Drizzle with dressing just before eating.'],
+    ingredients: ['2 handfuls rocket & lamb’s lettuce', '½ cucumber', '4 radishes, sliced', '½ avocado', '3 tbsp raw sauerkraut', '1 tbsp hemp seeds', 'Pomegranate seeds', 'Lemon, olive oil & raw honey dressing'],
+    steps: ['Slice cucumber and avocado.', 'Pile the greens and radishes into a big bowl.', 'Add avocado, sauerkraut, pomegranate and hemp.', 'Drizzle with dressing just before eating.'],
   },
   {
     id: 'ginger-bone-broth', name: 'Ginger Bone Broth Soup', phases: ['menstrual'], time: 25, kcal: 380, meal: 'Lunch', warm: true,
     nutrients: ['Iron', 'Collagen', 'Minerals'],
-    ingredients: ['600 ml bone broth', '1 thumb fresh ginger, sliced', '6 red dates', '1 tbsp goji berries', '150 g shredded pasture chicken', '2 handfuls spinach', 'Spring onion & sea salt'],
-    steps: ['Simmer broth with ginger and red dates for 15 minutes.', 'Add chicken and goji; warm through for 5 minutes.', 'Stir in spinach until just wilted.', 'Season and sip slowly — TCM’s classic period bowl.'],
+    ingredients: ['600 ml bone broth', '1 thumb fresh ginger, sliced', '6 red dates', '1 tbsp goji berries', '150 g shredded pasture chicken', '2 baby bok choy, halved', 'Spring onion & sea salt'],
+    steps: ['Simmer broth with ginger and red dates for 15 minutes.', 'Add chicken and goji; warm through for 5 minutes.', 'Add the bok choy for the last 2 minutes.', 'Season and sip slowly — TCM’s classic period bowl.'],
   },
   {
-    id: 'beef-beet-stew', name: 'Grass-fed Beef & Beet Stew', phases: ['menstrual'], time: 90, kcal: 540, meal: 'Dinner', warm: true,
+    id: 'beef-beet-stew', name: 'Grass-fed Beef & Root Stew', phases: ['menstrual'], time: 90, kcal: 540, meal: 'Dinner', warm: true,
     nutrients: ['Heme iron', 'Zinc', 'B12'],
-    ingredients: ['400 g grass-fed beef, cubed', '2 beetroots, chunked', '2 carrots', '1 onion', '3 garlic cloves', '1 tsp cinnamon', '500 ml bone broth', 'Fresh parsley & lemon'],
-    steps: ['Brown the beef in a heavy pot, then soften onion and garlic.', 'Add beetroot, carrots, cinnamon and broth.', 'Cover and simmer gently for 75 minutes until tender.', 'Finish with parsley and lemon for vitamin C.'],
+    ingredients: ['400 g grass-fed beef, cubed', '2 parsnips, chunked', '2 carrots', '1 onion', '3 garlic cloves', '1 tsp cinnamon', '500 ml bone broth', 'Fresh parsley & lemon'],
+    steps: ['Brown the beef in a heavy pot, then soften onion and garlic.', 'Add parsnips, carrots, cinnamon and broth.', 'Cover and simmer gently for 75 minutes until tender.', 'Finish with parsley and lemon for vitamin C.'],
   },
   {
     id: 'green-goddess-smoothie', name: 'Green Goddess Smoothie', phases: ['follicular', 'ovulatory'], time: 5, kcal: 340, meal: 'Breakfast', raw: true,
     nutrients: ['Vitamin C', 'Fibre', 'Healthy fats'],
-    ingredients: ['2 handfuls spinach', '1 kiwi', '½ avocado', '1 green apple', '1 tbsp hemp seeds', 'Juice of ½ lemon', '250 ml coconut water'],
+    ingredients: ['1 handful fresh mint & parsley', '1 kiwi', '½ avocado', '1 green apple', '1 tbsp hemp seeds', 'Juice of ½ lemon', '250 ml coconut water'],
     steps: ['Blend everything until silky.', 'Drink fresh — living food is best right away.'],
   },
   {
@@ -153,10 +153,10 @@ export const RECIPES = [
     steps: ['Blitz basil, pumpkin seeds, garlic, oil and lemon into a pesto.', 'Toss with courgette noodles.', 'Top with halved tomatoes and a few whole seeds.'],
   },
   {
-    id: 'rainbow-wraps', name: 'Rainbow Collard Wraps', phases: ['ovulatory'], time: 15, kcal: 380, meal: 'Lunch', raw: true,
+    id: 'rainbow-wraps', name: 'Rainbow Lettuce Wraps', phases: ['ovulatory'], time: 15, kcal: 380, meal: 'Lunch', raw: true,
     nutrients: ['Fibre', 'Antioxidants', 'Protein'],
-    ingredients: ['4 large collard or cabbage leaves', '4 tbsp hummus', '1 carrot, julienned', '½ red pepper, sliced', '½ cucumber', 'Red cabbage & sprouts', 'Tahini-lemon drizzle'],
-    steps: ['Shave the thick stem off each leaf.', 'Spread with hummus and pile in the vegetables.', 'Drizzle with tahini, roll tightly and slice.'],
+    ingredients: ['6 large butter lettuce leaves', '4 tbsp hummus', '1 carrot, julienned', '½ red pepper, sliced', '½ cucumber', 'Radishes & fresh herbs', 'Tahini-lemon drizzle'],
+    steps: ['Wash and dry the leaves.', 'Spread with hummus and pile in the vegetables.', 'Drizzle with tahini, roll tightly and slice.'],
   },
   {
     id: 'squash-walnut-soup', name: 'Roasted Squash & Walnut Soup', phases: ['luteal', 'menstrual'], time: 45, kcal: 420, meal: 'Dinner', warm: true,
@@ -173,8 +173,8 @@ export const RECIPES = [
   {
     id: 'chickpea-curry', name: 'Sweet Potato & Chickpea Curry', phases: ['luteal'], time: 35, kcal: 520, meal: 'Dinner', warm: true,
     nutrients: ['Vitamin B6', 'Slow carbs', 'Fibre'],
-    ingredients: ['1 sweet potato, cubed', '1 can chickpeas', '400 ml coconut milk', '2 tsp curry spices & turmeric', '1 thumb ginger', '2 handfuls spinach', 'Coriander & lime'],
-    steps: ['Soften ginger and spices in a little coconut oil.', 'Add sweet potato, chickpeas and coconut milk; simmer 20 minutes.', 'Stir in spinach, finish with lime and coriander. No rice needed.'],
+    ingredients: ['1 sweet potato, cubed', '1 can chickpeas', '400 ml coconut milk', '2 tsp curry spices & turmeric', '1 thumb ginger', '1 cup green peas', 'Coriander & lime'],
+    steps: ['Soften ginger and spices in a little coconut oil.', 'Add sweet potato, chickpeas and coconut milk; simmer 20 minutes.', 'Stir in the peas, finish with lime and coriander. No rice needed.'],
   },
   {
     id: 'liver-pancakes', name: 'Liver Pancakes', phases: ['menstrual', 'follicular'], time: 15, kcal: 380, meal: 'Breakfast', warm: true, source: 'Heart & Soil', url: 'https://heartandsoil.co/blog/category/animal-based-diet/animal-based-recipes/',
@@ -247,7 +247,7 @@ export const LETTERS = [
     keys: [['3 routes', 'liver, gut and kidneys'], ['Fibre', 'more estrogen leaves with your stool'], ['Broccoli & co', 'shift estrogen to gentler forms']],
     body: ['Used estrogen is packed up by your liver and sent into your gut to leave the body. Some gut bacteria can unpack it again, and then it goes back into your blood. Researchers call this group of bacteria the estrobolome.',
       'Fibre tips the balance. In a classic study, women eating more fibre passed more estrogen out with their stool and had lower estrogen levels in their blood.',
-      'Cruciferous vegetables (broccoli, cabbage, kale, rocket) contain compounds that move estrogen toward its gentler, “2-hydroxy” form. In a feeding study, more of these vegetables raised that ratio.',
+      'Cruciferous vegetables (broccoli, cabbage, cauliflower, rocket) contain compounds that move estrogen toward its gentler, “2-hydroxy” form. In a feeding study, more of these vegetables raised that ratio.',
       'This month, as spring wakes the Liver in Chinese medicine: wild garlic and fresh greens, a daily portion of fermented vegetables, and brassicas lightly cooked or raw outside your warm days.'],
     src: 'Goldin 1982 (NEJM) · Fowke 2000 (Cancer Epidemiol Biomarkers Prev) · Baker 2017 (Maturitas, estrobolome review)', to: 'season' },
   { id: 'letter-04', month: 4, tag: 'Allergies', title: 'Hay fever, histamine & your hormones', lead: 'If your allergies flare at certain points of your cycle, this is why.', pic: ['food', 'Nettle'], mins: 3, ev: 'emerging',
@@ -608,15 +608,15 @@ export const NUTRITION = {
     energy: 'Appetite is usually normal. Eat regularly — skipping meals makes fatigue and cramps worse.',
     plate: [['Cooked veg & greens', 40], ['Iron-rich protein', 30], ['Roots & stewed fruit', 20], ['Nuts, seeds & fats', 10]],
     needs: [
-      { n: 'Iron', target: '18 mg / day', why: 'Rebuilds what bleeding takes. Heme iron (red meat, fish) absorbs best; pair plant iron with vitamin C.', foods: ['Red meat', 'Lentils', 'Spinach', 'Sardines', 'Pumpkin seeds', 'Beetroot'], ev: 'strong' },
+      { n: 'Iron', target: '18 mg / day', why: 'Rebuilds what bleeding takes. Heme iron (red meat, fish) absorbs best; pair plant iron with vitamin C.', foods: ['Red meat', 'Liver', 'Lentils', 'Sardines', 'Pumpkin seeds', 'Blackstrap molasses'], ev: 'strong' },
       { n: 'Vitamin C', target: 'With every iron meal', why: 'Can multiply absorption of plant iron.', foods: ['Peppers', 'Citrus', 'Kiwi', 'Strawberries', 'Broccoli'], ev: 'strong' },
       { n: 'Omega-3', target: '2 portions oily fish / week', why: 'Small trials show less period pain with fish oil.', foods: ['Salmon', 'Sardines', 'Walnuts', 'Chia', 'Flax'], ev: 'some' },
-      { n: 'Magnesium', target: '310–320 mg / day', why: 'Relaxes smooth muscle; small trials suggest cramp relief.', foods: ['Dark chocolate 70%+', 'Almonds', 'Spinach', 'Black beans', 'Avocado'], ev: 'some' },
+      { n: 'Magnesium', target: '310–320 mg / day', why: 'Relaxes smooth muscle; small trials suggest cramp relief.', foods: ['Dark chocolate 70%+', 'Almonds', 'Pumpkin seeds', 'Black beans', 'Avocado'], ev: 'some' },
       { n: 'Ginger', target: '1–2 g / day', why: 'Several trials find ginger eases menstrual pain about as well as common painkillers.', foods: ['Fresh ginger', 'Ginger tea'], ev: 'some' },
       { n: 'Warming foods', target: 'Every meal', why: 'TCM keeps the womb warm so Blood flows smoothly.', foods: ['Soups & stews', 'Stewed fruit', 'Red dates', 'Cinnamon'], ev: 'tcm' },
     ],
     day: [
-      { meal: 'Breakfast', what: 'Warm Beet & Apple Bowl with ginger & pumpkin seeds', recipe: 'raw-beet-slaw' },
+      { meal: 'Breakfast', what: 'Warm Carrot & Apple Bowl with ginger & pumpkin seeds', recipe: 'raw-beet-slaw' },
       { meal: 'Lunch', what: 'Iron Glow Lentil Soup with a squeeze of lemon', recipe: 'iron-lentil-soup' },
       { meal: 'Snack', what: 'Magnesium Bliss Bites or 2 squares dark chocolate', recipe: 'magnesium-bites' },
       { meal: 'Dinner', what: 'Salmon, roast sweet potato & wilted greens', recipe: null },
@@ -668,7 +668,7 @@ export const NUTRITION = {
       { meal: 'Breakfast', what: 'Raw Berry Chia Bowl', recipe: 'berry-quinoa-bowl' },
       { meal: 'Lunch', what: 'Living Green Salad', recipe: 'living-green-salad' },
       { meal: 'Snack', what: 'Pumpkin seeds & a pear', recipe: null },
-      { meal: 'Dinner', what: 'Glow Stir-Fry with broccoli & sprouts', recipe: 'cruciferous-stir-fry' },
+      { meal: 'Dinner', what: 'Glow Stir-Fry with broccoli & Brussels sprouts', recipe: 'cruciferous-stir-fry' },
       { meal: 'Drink', what: 'Rose & hawthorn tea, lots of water', recipe: null },
     ],
     limit: [
@@ -683,10 +683,10 @@ export const NUTRITION = {
     plate: [['Roots & squash', 30], ['Veg', 30], ['Protein', 25], ['Nuts, seeds & fats', 15]],
     needs: [
       { n: 'Calcium', target: '1,000–1,200 mg / day', why: 'The best-studied nutrient for easing PMS symptoms.', foods: ['Raw milk', 'Kefir', 'Yoghurt', 'Almonds', 'Sardines', 'Tahini'], ev: 'strong' },
-      { n: 'Slow carbs', target: 'Every meal', why: 'Steady blood sugar means fewer cravings and mood dips; may support serotonin.', foods: ['Sweet potato', 'Squash', 'Beetroot', 'Chickpeas', 'Dates'], ev: 'some' },
+      { n: 'Slow carbs', target: 'Every meal', why: 'Steady blood sugar means fewer cravings and mood dips; may support serotonin.', foods: ['Sweet potato', 'Squash', 'Parsnips', 'Chickpeas', 'Dates'], ev: 'some' },
       { n: 'Vitamin B6', target: '1.3 mg / day (food)', why: 'Mixed trials suggest help with PMS mood symptoms.', foods: ['Chickpeas', 'Bananas', 'Turkey', 'Salmon', 'Potatoes'], ev: 'some' },
-      { n: 'Magnesium', target: '310–320 mg / day', why: 'May ease bloating, breast tenderness and sleep.', foods: ['Pumpkin seeds', 'Dark chocolate', 'Spinach', 'Cashews', 'Black beans'], ev: 'some' },
-      { n: 'Potassium', target: 'Plenty', why: 'Balances sodium and helps with water retention.', foods: ['Bananas', 'Avocado', 'Coconut water', 'Beans', 'Spinach'], ev: 'emerging' },
+      { n: 'Magnesium', target: '310–320 mg / day', why: 'May ease bloating, breast tenderness and sleep.', foods: ['Pumpkin seeds', 'Dark chocolate', 'Bananas', 'Cashews', 'Black beans'], ev: 'some' },
+      { n: 'Potassium', target: 'Plenty', why: 'Balances sodium and helps with water retention.', foods: ['Bananas', 'Avocado', 'Coconut water', 'Beans', 'Sweet potato'], ev: 'emerging' },
       { n: 'Move Liver Qi', target: 'Daily', why: 'TCM: smooth Qi flow prevents PMS, tension and bloating.', foods: ['Rose tea', 'Tangerine peel', 'Radish', 'Fennel', 'Lemon'], ev: 'tcm' },
     ],
     day: [
@@ -709,9 +709,9 @@ export const SYMPTOM_FOODS = {
   Cramps: { foods: ['Ginger tea', 'Salmon', 'Dark chocolate', 'Pumpkin seeds'], tip: 'Ginger, omega-3 and magnesium have the best small-trial support. Keep your belly warm.', ev: 'some' },
   Bloating: { foods: ['Peppermint tea', 'Bananas', 'Cucumber', 'Fennel'], tip: 'Cut back on salt and fizzy drinks; potassium-rich foods help balance water.', ev: 'emerging' },
   Cravings: { foods: ['Greek yoghurt', 'Dates + almonds', 'Apple + nut butter', 'Dark chocolate'], tip: 'Pair carbs with protein so blood sugar stays steady. Hunger in the luteal phase is real.', ev: 'some' },
-  Fatigue: { foods: ['Lentils + lemon', 'Red meat', 'Spinach', 'Eggs'], tip: 'Think iron + vitamin C. If tiredness lasts, ask for a ferritin test.', ev: 'strong' },
+  Fatigue: { foods: ['Lentils + lemon', 'Red meat', 'Liver', 'Eggs'], tip: 'Think iron + vitamin C. If tiredness lasts, ask for a ferritin test.', ev: 'strong' },
   Acne: { foods: ['Pumpkin seeds', 'Salmon', 'Berries', 'Green tea'], tip: 'Lower-sugar, lower-dairy days and zinc-rich foods may help hormonal breakouts.', ev: 'emerging' },
-  Headache: { foods: ['Water', 'Spinach', 'Almonds', 'Banana'], tip: 'Hydrate first; magnesium-rich foods may help hormone-related headaches.', ev: 'some' },
+  Headache: { foods: ['Water', 'Pumpkin seeds', 'Almonds', 'Banana'], tip: 'Hydrate first; magnesium-rich foods may help hormone-related headaches.', ev: 'some' },
   Insomnia: { foods: ['Kiwi', 'Tart cherries', 'Warm raw milk & honey', 'Pumpkin seeds'], tip: 'A light, naturally sweet snack before bed — banana or a few dates — can help.', ev: 'emerging' },
   Constipation: { foods: ['Prunes', 'Kiwi', 'Chia pudding', 'Warm water'], tip: 'Progesterone slows digestion — fibre plus plenty of fluid.', ev: 'strong' },
   'Tender breasts': { foods: ['Flax seeds', 'Leafy greens', 'Herbal tea'], tip: 'Going easy on salt and wearing a supportive bra are the most common advice.', ev: 'emerging' },
@@ -828,7 +828,7 @@ export const RELIEF = {
   Fatigue: {
     why: 'Low hormones during your period, iron loss and poor late-luteal sleep all drain energy.',
     steps: [
-      { t: 'Iron + vitamin C', d: 'Lentils with lemon, red meat, spinach with peppers.', ev: 'strong' },
+      { t: 'Iron + vitamin C', d: 'Lentils with lemon, red meat, beans with peppers.', ev: 'strong' },
       { t: 'Daylight in the morning', d: '10 minutes outside helps set your body clock and energy.', ev: 'some' },
       { t: 'Lower the bar', d: 'Move non-essential tasks to your follicular phase.', ev: 'emerging' },
       { t: 'Protein at breakfast', d: 'Eggs, cheese or yogurt in the morning keep blood sugar and energy steadier than a sweet start.', ev: 'some', to: 'sugar' },
@@ -859,7 +859,7 @@ export const GOTTES = {
   sub: 'Food as it was created — whole, natural, alive.',
   principles: [
     { t: 'Unprocessed & natural', d: 'Whole foods in their original form. No additives, artificial sweeteners, preservatives or refined oils.' },
-    { t: 'Raw & living — outside your period', d: 'Fresh fruit, vegetables, sprouts, nuts and seeds. During your period, switch to warm and cooked.' },
+    { t: 'Raw & living — outside your period', d: 'Fresh fruit, vegetables, herbs, nuts and seeds. During your period, switch to warm and cooked.' },
     { t: 'Few grains', d: 'Roots, squash, fruit and legumes carry the carbs instead.' },
     { t: 'Raw & fermented', d: 'Raw honey, raw sauerkraut and kimchi for natural enzymes and probiotics.' },
     { t: 'Clean animal foods', d: 'Raw milk, kefir, pasture eggs, wild fish, grass-fed meat.' },
@@ -898,7 +898,7 @@ export const REMEDIES = [
     steps: ['Grate or ribbon the carrot.', 'Toss with oil, vinegar and salt.', 'Eat between meals, daily. Pause during your period and the 3 days before (warm days) — swap for cooked carrots.'] },
   { id: 'heart-foods', name: 'Heart Support', glyph: '紅', organ: 'Heart', element: 'Fire', nature: 'Daily foods', phases: ['ovulatory', 'luteal', 'menstrual', 'follicular'],
     why: 'Foods and nutrients for heart and circulation: magnesium, omega-3, CoQ10, vitamin D3 + K2, selenium and B vitamins.',
-    ingredients: ['Pomegranate', 'Raw cacao', 'Beetroot', 'Raw garlic', 'Turmeric', 'Extra-virgin olive oil', 'Black seed oil', 'Wild fish (omega-3)'],
+    ingredients: ['Pomegranate', 'Raw cacao', 'Raw garlic', 'Turmeric', 'Extra-virgin olive oil', 'Black seed oil', 'Wild fish (omega-3)'],
     steps: ['Add one or two of these foods to your day.', 'Pomegranate and cacao support the heart every day.', 'Talk to your doctor before adding supplements, especially with heart conditions or medication.'] },
 ];
 
@@ -1147,7 +1147,7 @@ export const TIPS = {
     luteal: 'Steady efforts beat sprints. Eat a little more — your body burns more energy now.',
   },
   eat: {
-    menstrual: 'Warm, iron-rich meals: soups, red meat, beetroot and bone broth.',
+    menstrual: 'Warm, iron-rich meals: soups, red meat, red dates and bone broth.',
     follicular: 'Fresh and raw: crisp salads, eggs, citrus and fermented foods.',
     ovulatory: 'Light and colourful: berries, salads, oysters and lots of fibre.',
     luteal: 'Grounding carbs: sweet potato, roots and squash, plus magnesium.',
@@ -1203,7 +1203,7 @@ export const EAT_GUIDE = {
   } },
   ovulatory: { goal: 'Shine at your peak', why: 'Estrogen peaks and your egg is released. Light, raw, colourful food, zinc and fibre support you — and help clear the extra estrogen.', cats: {
     protein: ['Zinc and lighter proteins for your peak.', F('🦪 Oysters | 🐟 Salmon | 🦐 Shellfish | 🥚 Eggs | 🍗 Chicken | 🐟 Sardines')],
-    veg: ['Colourful, hydrating veg — plus lightly cooked broccoli or kale to help clear extra estrogen.', F('🍅 Tomatoes | 🥒 Cucumber | 🫑 Red peppers | 🥬 Romaine lettuce | 🥒 Courgette ribbons | 🍆 Grilled aubergine')],
+    veg: ['Colourful, hydrating veg — plus lightly cooked broccoli or cauliflower to help clear extra estrogen.', F('🍅 Tomatoes | 🥒 Cucumber | 🫑 Red peppers | 🥬 Romaine lettuce | 🥒 Courgette ribbons | 🍆 Grilled aubergine')],
     fats: ['Light fats and antioxidants.', F('🥑 Avocado | 🫒 Olive oil | 🌻 Sesame & sunflower seeds | 🥥 Coconut | 🐟 Oily fish')],
     carbs: ['Fibre-rich carbs keep you light.', F('🍞 Sourdough | 🫘 Chickpeas | 🌽 Sweetcorn | 🥔 Potatoes | 🍌 Banana | 🍠 Sweet potato')],
     fruit: ['Raw and hydrating.', F('🍓 Strawberries | 🫐 Blueberries | 🍉 Watermelon | 🥭 Mango | 🍒 Cherries | 🍇 Grapes')],
@@ -1245,11 +1245,11 @@ export const PLATE_SPICE_WHY = {
 };
 // How the five TCM seasons change the plate.
 export const PLATE_SEASON = {
-  Winter: { aim: 'Warm & store', cook: 'Slow-cooked, braised and baked. Raw food at room temperature, at midday.', taste: ['Salty', 'A little sea salt, seaweed and bone broth support the Kidney. Not too much.'], veg: ['🥬 Kale', '🥕 Carrots', '🧅 Leeks', '🥬 Cabbage'], fruit: ['🍎 Apples', '🍐 Pears', '🍊 Citrus'] },
-  Spring: { aim: 'Fresh & moving', cook: 'Steamed, quick sautés, sprouts and raw greens.', taste: ['Sour', 'Lemon, sauerkraut and a little vinegar help the Liver move energy after winter.'], veg: ['🌿 Wild garlic', '🥬 Spinach', '🌱 Asparagus', '🔴 Radishes'], fruit: ['🍓 Strawberries', '🌱 Rhubarb', '🍋 Lemons'] },
+  Winter: { aim: 'Warm & store', cook: 'Slow-cooked, braised and baked. Raw food at room temperature, at midday.', taste: ['Salty', 'A little sea salt, seaweed and bone broth support the Kidney. Not too much.'], veg: ['🥦 Brussels sprouts', '🥕 Carrots', '🧅 Leeks', '🥬 Cabbage'], fruit: ['🍎 Apples', '🍐 Pears', '🍊 Citrus'] },
+  Spring: { aim: 'Fresh & moving', cook: 'Steamed, quick sautés, fresh herbs and raw greens.', taste: ['Sour', 'Lemon, sauerkraut and a little vinegar help the Liver move energy after winter.'], veg: ['🌿 Wild garlic', '🥬 Lettuce', '🌱 Asparagus', '🔴 Radishes'], fruit: ['🍓 Strawberries', '🌱 Rhubarb', '🍋 Lemons'] },
   Summer: { aim: 'Light & cool', cook: 'Raw and fresh, quick grilling. Cool, but not iced.', taste: ['Bitter', 'Rocket, dandelion and bitter leaves cool the Heart and help digestion.'], veg: ['🍅 Tomatoes', '🥒 Cucumber', '🥒 Courgette', '🫑 Peppers'], fruit: ['🍒 Cherries', '🫐 Berries', '🍉 Melon'] },
   'Late summer': { aim: 'Sweet & grounding', cook: 'Steamed, stewed and gently cooked, with some raw ripe fruit.', taste: ['Sweet', 'Naturally sweet roots, corn and squash strengthen the Spleen. Not sugar.'], veg: ['🌽 Sweetcorn', '🎃 Squash', '🫛 Green beans', '🍆 Aubergine'], fruit: ['🍑 Plums', '🍇 Grapes', '🫐 Blackberries'] },
-  Autumn: { aim: 'Moisten & protect', cook: 'Roasted, baked and braised. Soups and stewed pears keep the Lung moist.', taste: ['Pungent', 'Onion, ginger, radish and garlic open the Lung and protect against cold wind.'], veg: ['🎃 Pumpkin', '🥬 Kale', '🫚 Beetroot', '🍄 Mushrooms'], fruit: ['🍐 Pears', '🍎 Apples', '🍈 Quince'] },
+  Autumn: { aim: 'Moisten & protect', cook: 'Roasted, baked and braised. Soups and stewed pears keep the Lung moist.', taste: ['Pungent', 'Onion, ginger, radish and garlic open the Lung and protect against cold wind.'], veg: ['🎃 Pumpkin', '🥦 Broccoli', '🥕 Parsnips', '🍄 Mushrooms'], fruit: ['🍐 Pears', '🍎 Apples', '🍈 Quince'] },
 };
 const PS = s => s.split('|').map(x => x.trim());
 // [protein, roots & carbs, fats & seeds, spices & herbs] for each phase × season.
@@ -1286,8 +1286,8 @@ export const PLATE_GRID = {
 // One plate to cook, for each phase × season.
 export const PLATE_MEAL = {
   menstrual: { Winter: 'Slow-braised lamb with sweet potato, black beans and ginger', Spring: 'Beef and leek stew with new potatoes and a soft egg', Summer: 'Warm chicken broth with courgette, potatoes and fresh ginger', 'Late summer': 'Chicken and squash stew with cinnamon and red dates', Autumn: 'Mussels in ginger broth with roasted parsnips and chestnuts' },
-  follicular: { Winter: 'Salmon with lentils, steamed kale and black sesame', Spring: 'Herb omelette with spring greens, new potatoes and sauerkraut', Summer: 'Raw salad with prawns, cucumber, avocado, herbs and pumpkin seeds', 'Late summer': 'Eggs with sweetcorn, tomatoes and basil, raw kefir on the side', Autumn: 'Salmon with buckwheat, roasted beetroot and a raw apple slaw' },
-  ovulatory: { Winter: 'Salmon with roasted chickpeas and lightly cooked kale', Spring: 'Prawns with asparagus, radishes and new potatoes', Summer: 'Sardines with a tomato, cucumber and herb salad, berries after', 'Late summer': 'Grilled mackerel with a sweetcorn salad and ripe plums', Autumn: 'Salmon with broccoli, chickpeas and a walnut-pear salad' },
+  follicular: { Winter: 'Salmon with lentils, steamed broccoli and black sesame', Spring: 'Herb omelette with spring greens, new potatoes and sauerkraut', Summer: 'Raw salad with prawns, cucumber, avocado, herbs and pumpkin seeds', 'Late summer': 'Eggs with sweetcorn, tomatoes and basil, raw kefir on the side', Autumn: 'Salmon with buckwheat, roasted parsnips and a raw apple slaw' },
+  ovulatory: { Winter: 'Salmon with roasted chickpeas and lightly cooked broccoli', Spring: 'Prawns with asparagus, radishes and new potatoes', Summer: 'Sardines with a tomato, cucumber and herb salad, berries after', 'Late summer': 'Grilled mackerel with a sweetcorn salad and ripe plums', Autumn: 'Salmon with broccoli, chickpeas and a walnut-pear salad' },
   luteal: { Winter: 'Beef and root-veg stew with chestnuts and cinnamon', Spring: 'Turkey with roasted fennel, sweet potato and sesame', Summer: 'Chicken with roasted aubergine, potatoes and tahini', 'Late summer': 'Squash and millet bowl with beef, butter and cinnamon', Autumn: 'Turkey and squash bake with sunflower seeds and a stewed pear' },
 };
 
@@ -1611,7 +1611,7 @@ export const NUTRIENTS = [
   { id: 'magnesium', n: 'Magnesium', g: '🌰', for: 'PMS, cramps, sleep', ev: 'some', p: ['luteal', 'menstrual'],
     d: [['200–250 mg', 'a day in trials'], ['Glycinate', 'gentlest form'], ['Evening', 'calms before sleep']],
     why: 'Relaxes muscles, including the womb, and calms the nervous system. Levels tend to dip in the second half of the cycle.',
-    f: [['Pumpkin seeds', '30 g ≈ 150 mg'], ['Raw cacao or dark chocolate', '30 g ≈ 65 mg'], ['Almonds', '30 g ≈ 80 mg'], ['Spinach, cooked', '½ cup ≈ 78 mg'], ['Buckwheat', '1 cup ≈ 86 mg']],
+    f: [['Pumpkin seeds', '30 g ≈ 150 mg'], ['Raw cacao or dark chocolate', '30 g ≈ 65 mg'], ['Almonds', '30 g ≈ 80 mg'], ['Black beans, cooked', '½ cup ≈ 60 mg'], ['Buckwheat', '1 cup ≈ 86 mg']],
     low: 'Cramps, twitching eyelids, poor sleep, chocolate cravings before your period.', test: 'Blood tests miss most of it; go by symptoms.',
     study: '200 mg a day eased water retention, breast tenderness and bloating in the second and later cycles. In a Cochrane review, magnesium relieved period pain better than placebo, and 250 mg with 40 mg B6 eased PMS more than either alone.',
     cite: 'Walker 1998 · Proctor 2001 (Cochrane) · Fathizadeh 2010',
@@ -1699,9 +1699,9 @@ export const REMEDY_SCIENCE = {
   'carrot-salad': { ev: 'emerging', c: [['Insoluble fibre', 'Carries used hormones out through the gut'], ['Falcarinol', 'Natural compound in raw carrots'], ['Beta-carotene', 'Turns into vitamin A for skin']],
     study: 'No trials on carrots and hormones yet. Women who ate more fibre had lower estrogen levels across the cycle, because fibre helps the gut clear what the liver has used.',
     cite: 'Gaskins 2009 (BioCycle)', caution: 'Raw and cooling in Chinese medicine: pause it during your period and the 2–3 days before, and eat cooked carrots instead. Lots of carrots can tint your palms slightly orange, which is harmless and fades.' },
-  'heart-foods': { ev: 'some', c: [['Cacao flavanols', 'Gently lower blood pressure'], ['Beetroot nitrates', 'Turn into nitric oxide, widen vessels'], ['Omega-3', 'From wild fish, steadies the heart rhythm']],
-    study: 'Cacao flavanols lowered blood pressure a little in a Cochrane review. Beetroot juice lowered the top number by about 4 mmHg.',
-    cite: 'Ried 2017 (Cochrane) · Siervo 2013 (meta-analysis)', caution: 'Beetroot can turn urine pink, which is harmless. On heart or blood-thinning medicine, ask your doctor before supplements.' },
+  'heart-foods': { ev: 'some', c: [['Cacao flavanols', 'Gently lower blood pressure'], ['Garlic allicin', 'Relaxes the vessel walls'], ['Omega-3', 'From wild fish, steadies the heart rhythm']],
+    study: 'Cacao flavanols lowered blood pressure a little in a Cochrane review. Garlic lowered the top number by about 8 mmHg in people with high blood pressure.',
+    cite: 'Ried 2017 (Cochrane) · Ried 2016 (meta-analysis)', caution: 'Raw garlic can upset an empty stomach, so eat it with food. On heart or blood-thinning medicine, ask your doctor before supplements.' },
 };
 
 // Relief → the teas and nutrients that belong to it, plus a glyph for the tile.

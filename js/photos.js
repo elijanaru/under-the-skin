@@ -6,9 +6,9 @@ export const RECIPE_PHOTOS = {
   "page": "https://unsplash.com/photos/soup-in-white-ceramic-bowl-KGw62KtHzxA"
  },
  "cacao-beet-smoothie": {
-  "src": "https://images.unsplash.com/photo-1643470758221-45463a3d210a",
-  "by": "Bakd&Raw by Karolin Baitinger",
-  "page": "https://unsplash.com/photos/a-purple-smoothie-in-a-glass-with-a-spoon-G-qUSofkSr4"
+  "src": "https://images.unsplash.com/photo-1633972692167-276994bcbbd0",
+  "by": "",
+  "page": ""
  },
  "spring-green-bowl": {
   "src": "https://images.unsplash.com/photo-1650330151304-5db3ca9b3b6c",
@@ -36,9 +36,10 @@ export const RECIPE_PHOTOS = {
   "page": "https://unsplash.com/photos/plate-full-of-salad-with-spice-on-top-of-brown-board-fk6IiypMWss"
  },
  "raw-beet-slaw": {
-  "src": "https://images.unsplash.com/photo-1639402480805-ea8ef529e028",
-  "by": "Annemarie Schaepman",
-  "page": "https://unsplash.com/photos/a-bowl-filled-with-beets-sitting-on-top-of-a-wooden-table-C-bYGgfDZ7E"
+  "src": "https://images.pexels.com/photos/16812115/pexels-photo-16812115.jpeg",
+  "site": "Pexels",
+  "by": "",
+  "page": ""
  },
  "living-green-salad": {
   "src": "https://images.unsplash.com/photo-1564929360162-73cd686db4a1",
@@ -133,7 +134,7 @@ export const RECIPE_PHOTOS = {
 };
 export function photoUrl(id, w = 600) {
   const p = RECIPE_PHOTOS[id];
-  return p ? `${p.src}?w=${w}&q=70&auto=format&fit=crop` : null;
+  return p ? (p.src.includes('pexels') ? `${p.src}?auto=compress&cs=tinysrgb&w=${w}` : `${p.src}?w=${w}&q=70&auto=format&fit=crop`) : null;
 }
 
 // Seasonal dish photos, keyed by dish name.
@@ -721,7 +722,7 @@ export const DISH_PHOTOS = {
 };
 export function dishPhoto(name, w = 400) {
   const p = DISH_PHOTOS[name];
-  return p ? `${p.src}?w=${w}&q=70&auto=format&fit=crop` : null;
+  return p ? (p.src.includes('pexels') ? `${p.src}?auto=compress&cs=tinysrgb&w=${w}` : `${p.src}?w=${w}&q=70&auto=format&fit=crop`) : null;
 }
 
 // Real Unsplash photos (free licence) for the hormone explainer.
@@ -743,7 +744,7 @@ export const HORMONE_PHOTOS = {
 };
 export function hormonePhoto(n, w = 700) {
   const p = HORMONE_PHOTOS[n];
-  return p ? `${p.src}?w=${w}&q=70&auto=format&fit=crop` : null;
+  return p ? (p.src.includes('pexels') ? `${p.src}?auto=compress&cs=tinysrgb&w=${w}` : `${p.src}?w=${w}&q=70&auto=format&fit=crop`) : null;
 }
 
 // Real Unsplash photos for rituals and home remedies (filled in below).
@@ -763,7 +764,7 @@ export const CARE_PHOTOS = {
 };
 export function carePhoto(id, w = 600) {
   const p = CARE_PHOTOS[id];
-  return p ? `${p.src}?w=${w}&q=70&auto=format&fit=crop` : null;
+  return p ? (p.src.includes('pexels') ? `${p.src}?auto=compress&cs=tinysrgb&w=${w}` : `${p.src}?w=${w}&q=70&auto=format&fit=crop`) : null;
 }
 
 // Real Unsplash photos for the "Your stars" tiles (filled in below).
