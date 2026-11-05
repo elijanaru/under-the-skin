@@ -34,3 +34,14 @@ export const TRAIN_SAFE = [
     'Most women undereat protein at breakfast. Start there.'],
 ];
 export const TRAIN_SAFE_CREDIT = 'Topics from the open reading list Awesome Female Athlete Performance (WinSportsLab, CC BY 4.0).';
+// When each check matters most in the cycle (highlighted on the phase strip).
+export const TRAIN_WHEN = { fuel: ['menstrual', 'follicular', 'ovulatory', 'luteal'], iron: ['menstrual'], bone: ['menstrual', 'follicular', 'ovulatory', 'luteal'], knee: ['ovulatory'], heat: ['luteal'], protein: ['luteal'] };
+// One big number per check, for the graphic: [number, unit, line]
+export const TRAIN_NUM = {
+  fuel: ['30', 'kcal per kg lean mass', 'Eat below this for days and your cycle hormones drop'],
+  iron: ['3–6', 'hours', 'After training, iron is absorbed less in this window'],
+  bone: ['+2.9%', 'spine bone', 'after 8 months of heavy lifting twice a week'],
+  knee: ['−33%', 'injuries', 'with a 20 minute warm-up before every session'],
+  heat: ['+0.4', '°C', 'warmer core in the second half of your cycle'],
+  protein: ['1.6', 'g per kg', 'a day is where muscle gains level off'],
+};

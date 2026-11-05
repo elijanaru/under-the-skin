@@ -7528,3 +7528,48 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .ml-i em { position: absolute; top: -6px; right: 8px; padding: 2px 8px; border-radius: 10px; font: 600 10px var(--font); font-style: normal; color: #fff; background: #5f8a2e; }
 .ml-b.no .ml-i { opacity: .62; } .ml-b.no .ml-i img { filter: grayscale(1); }
 .ml-b.no .ml-i b { text-decoration: line-through; text-decoration-color: rgba(194,70,60,.6); }
+/* Train safe v2: graphic first */
+.ts2-h { display: flex; align-items: center; gap: 10px; }
+.ts2-h b { flex: 1; font-size: 19px; font-weight: 600; color: #20301a; }
+.ts2-h .ts-ic { margin: 0; }
+.ts2-big { display: flex; align-items: center; gap: 14px; margin: 14px 0 6px; padding: 14px; border-radius: 20px; background: #20301a; color: #fff; }
+.ts2-n { flex: none; display: grid; text-align: center; min-width: 84px; }
+.ts2-n b { font: 700 30px/1 var(--dot); color: #e6f0c8; }
+.ts2-n small { margin-top: 4px; font-size: 11px; color: rgba(255,255,255,.7); }
+.ts2-big p { margin: 0; font-size: 14px; line-height: 1.4; color: #fff; }
+.tsv { display: block; width: 100%; height: auto; margin: 8px 0 4px; overflow: visible; }
+.tsv-bad { fill: #e7b3ab; } .tsv-mid { fill: #efdcae; } .tsv-good { fill: #a9c77f; }
+.tsv-mark { stroke: #20301a; stroke-width: 2; stroke-linecap: round; }
+.tsv-axis { stroke: rgba(32,48,26,.2); stroke-width: 1.5; }
+.tsv-t { font: 600 11px var(--font); fill: #20301a; } .tsv-t.w { fill: #20301a; font-size: 10.5px; }
+.tsv-s { font: 400 10.5px var(--font); fill: rgba(32,48,26,.65); }
+.tsv .c { text-anchor: middle; } .tsv .e { text-anchor: end; }
+.tsv-knees { display: flex; align-items: center; gap: 8px; margin: 10px 0 4px; }
+.tsv-knees span { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: #f3d8d3; color: #a2443c; }
+.tsv-knees span.off { background: #eef2e4; color: #9aa88a; position: relative; }
+.tsv-knees span.off::after { content: ''; position: absolute; left: 8px; right: 8px; top: 50%; height: 2px; background: #5f8a2e; transform: rotate(-35deg); }
+.tsv-knees small { flex: 1; font-size: 13px; color: #304023; line-height: 1.35; }
+.tsv-heat { display: flex; gap: 10px; margin: 10px 0 4px; }
+.tsv-heat > span { flex: 1; display: grid; grid-template-columns: 22px 1fr; grid-template-rows: auto auto; column-gap: 10px; align-items: end; padding: 10px 12px; border-radius: 18px; background: #f6f3ee; }
+.tsv-heat i { grid-row: 1 / span 2; position: relative; width: 14px; height: 58px; border-radius: 8px; background: #fff; border: 1.5px solid rgba(32,48,26,.2); overflow: hidden; }
+.tsv-heat i::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: var(--h); background: #e0a46c; }
+.tsv-heat .hot i::after { background: #d9573f; }
+.tsv-heat b { font: 700 20px/1 var(--dot); color: #20301a; } .tsv-heat small { font-size: 11.5px; color: rgba(32,48,26,.7); }
+.tsv-palm { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 10px 0 4px; }
+.tsv-palm span { display: grid; justify-items: center; gap: 2px; padding: 10px 4px; border-radius: 16px; background: #f6f3ee; color: #6c823e; }
+.tsv-palm b { font: 700 14px var(--dot); color: #20301a; } .tsv-palm small { font-size: 10.5px; color: rgba(32,48,26,.65); }
+.tsv-palm p { grid-column: 1 / -1; margin: 4px 2px 0; font-size: 12.5px; color: rgba(32,48,26,.7); }
+.ts2-do { margin-top: 12px; padding: 12px 14px; border-radius: 20px; background: #f1f7e6; }
+.ts2-do small { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500; color: #4d6328; }
+.ts2-do ol { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; }
+.ts2-do li { display: flex; gap: 9px; font-size: 14px; line-height: 1.35; color: #20301a; }
+.ts2-do li i { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font: 600 11px var(--font); font-style: normal; background: #20301a; color: #fff; }
+.ts-when { margin-top: 12px; }
+.ts-when > small { display: block; margin: 0 2px 6px; font-size: 12px; color: rgba(32,48,26,.65); }
+.ts-when > div { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+.ts-when span { position: relative; display: grid; justify-items: center; gap: 4px; padding: 8px 2px 7px; border-radius: 14px; background: #f6f3ee; font-size: 11px; color: rgba(32,48,26,.45); }
+.ts-when span i { width: 12px; height: 12px; border-radius: 50%; background: rgba(32,48,26,.15); }
+.ts-when span.on { background: #fff; color: #20301a; font-weight: 500; box-shadow: 0 0 0 1.5px var(--c) inset; }
+.ts-when span.on i { background: var(--c); }
+.ts-when span em { position: absolute; top: -7px; padding: 1px 6px; border-radius: 8px; font: 600 9.5px var(--font); font-style: normal; color: #fff; background: #20301a; }
+.ts2-more { margin-top: 10px; }

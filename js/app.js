@@ -11,7 +11,7 @@ import { mountTorso } from './torso.js';
 import { RECIPE_PHOTOS, photoUrl, DISH_PHOTOS, dishPhoto, HORMONE_PHOTOS, hormonePhoto, CARE_PHOTOS, carePhoto, STAR_PHOTOS, starPhoto, foodPhoto, FOOD_PHOTOS, teaPhoto } from './photos.js';
 import * as SZ from './seasonal.js';
 import { WORLD, worldOf, PHASE_EAT, PANTRY } from './world.js';
-import { TRAIN_SAFE, TRAIN_SAFE_CREDIT } from './athlete.js';
+import { TRAIN_SAFE, TRAIN_SAFE_CREDIT, TRAIN_WHEN, TRAIN_NUM } from './athlete.js';
 import { BODY_MAP, BODY_PIN } from './bodymap.js';
 import { GROUND_NOW, GROUND_WHERE, GROUND_PHASE, GROUND_MOON, GROUND_ROOTS, GROUND_STUDIES, GROUND_CAUTION } from './ground.js';
 import { MOLECULES, MOL_BALL } from './molecules.js';
@@ -318,16 +318,39 @@ function cortisolSec(info) {
   </section>`;
 }
 // Move page: six health checks for women who train, each a tile that opens two steps, why, and one study.
+// Train safe: six tiles; the open one is a graphic first (one big number and a small chart), then two steps, when in the cycle it matters, and the reading behind one tap.
+function tsViz(k) {
+  const W = 300;
+  if (k === 'fuel') { const x = v => 14 + v / 60 * (W - 28); return `<svg viewBox="0 0 ${W} 64" class="tsv"><rect x="14" y="22" width="${x(30) - 14}" height="14" rx="7" class="tsv-bad"/><rect x="${x(30)}" y="22" width="${x(45) - x(30)}" height="14" class="tsv-mid"/><rect x="${x(45)}" y="22" width="${W - 14 - x(45)}" height="14" rx="7" class="tsv-good"/>
+    <line x1="${x(30)}" y1="14" x2="${x(30)}" y2="44" class="tsv-mark"/><text x="${x(30)}" y="10" class="tsv-t c">30</text><text x="${x(45)}" y="10" class="tsv-t c">45</text>
+    <text x="14" y="58" class="tsv-s">Cycle switches off</text><text x="${W - 14}" y="58" class="tsv-s e">Healthy fuel</text></svg>`; }
+  if (k === 'iron') { const x = h => 14 + h / 12 * (W - 28); return `<svg viewBox="0 0 ${W} 64" class="tsv"><line x1="14" y1="30" x2="${W - 14}" y2="30" class="tsv-axis"/>
+    <rect x="${x(3)}" y="18" width="${x(6) - x(3)}" height="24" rx="8" class="tsv-bad"/><text x="${(x(3) + x(6)) / 2}" y="34" class="tsv-t c w">absorbs less</text>
+    <rect x="${x(0) - 2}" y="18" width="${x(2) - x(0) + 2}" height="24" rx="8" class="tsv-good"/><text x="${(x(0) + x(2)) / 2}" y="34" class="tsv-t c w">eat iron</text>
+    ${[0, 3, 6, 9, 12].map(h => `<text x="${x(h)}" y="58" class="tsv-s c">${h === 0 ? 'Train' : `+${h}h`}</text>`).join('')}</svg>`; }
+  if (k === 'bone') { const y0 = 40, s = 9; return `<svg viewBox="0 0 ${W} 72" class="tsv"><line x1="20" y1="${y0}" x2="${W - 20}" y2="${y0}" class="tsv-axis"/>
+    <rect x="70" y="${y0 - 2.9 * s}" width="56" height="${2.9 * s}" rx="6" class="tsv-good"/><text x="98" y="${y0 - 2.9 * s - 5}" class="tsv-t c">+2.9%</text><text x="98" y="${y0 + 26}" class="tsv-s c">Heavy lifting</text>
+    <rect x="174" y="${y0}" width="56" height="${1.2 * s}" rx="6" class="tsv-bad"/><text x="202" y="${y0 + 1.2 * s + 13}" class="tsv-t c">−1.2%</text><text x="202" y="${y0 - 6}" class="tsv-s c">Light exercise</text></svg>`; }
+  if (k === 'knee') return `<div class="tsv-knees">${[0, 1, 2].map(i => `<span class="${i === 2 ? 'off' : ''}">${icon('bolt', 20)}</span>`).join('')}<small>3 injuries become 2 with the warm-up</small></div>`;
+  if (k === 'heat') return `<div class="tsv-heat"><span><i style="--h:44%"></i><b>36.4°</b><small>First half</small></span><span class="hot"><i style="--h:78%"></i><b>36.8°</b><small>After ovulation</small></span></div>`;
+  if (k === 'protein') return `<div class="tsv-palm">${['Breakfast', 'Lunch', 'Snack', 'Dinner'].map(m => `<span>${icon('hand', 22)}<b>24 g</b><small>${m}</small></span>`).join('')}<p>At 60 kg: about 96 g a day, one palm per meal</p></div>`;
+  return '';
+}
 function trainSafe() {
-  const open = ui.tsOpen, x = TRAIN_SAFE.find(t => t[0] === open);
+  const open = ui.tsOpen, x = TRAIN_SAFE.find(t => t[0] === open), ph = M.info && M.info.phase;
+  const strip = k => `<div class="ts-when"><small>When it matters most</small><div>${PHASE_ORDER.map(p => `<span class="${TRAIN_WHEN[k].includes(p) ? 'on' : ''} ${p === ph ? 'now' : ''}" style="--c:${PH_HEX[p]}"><i></i>${PHASES[p].name}${p === ph ? '<em>now</em>' : ''}</span>`).join('')}</div></div>`;
   return `${sectionTitle('Train safe')}
     <div class="ts-grid">${TRAIN_SAFE.map(([k, g, t, l]) => `<button class="ts ${k === open ? 'on' : ''}" data-action="tsOpen" data-k="${k}" aria-expanded="${k === open}"><span class="ts-ic">${icon(g, 18)}</span><b>${t}</b><small>${l}</small></button>`).join('')}</div>
-    ${x ? `<section class="card ts-more">
-      <div class="gr-do"><div class="gr-do-h"><span class="dos-w">${icon('check', 12)} Do this</span>${saveBtn(regTip(`train-${x[0]}`, 'Train safe', [x[2], x[4][0], x[4][1], 'This week'], 'move'))}</div><b>${x[2]}</b><ol><li>${x[4][0]}</li><li>${x[4][1]}</li></ol></div>
-      <p class="ts-why">${x[5]}</p>
-      <div class="ts-study"><span class="gr-y">${x[6][0].match(/\d{4}/)[0]}</span><span><b>${x[6][0].replace(/ \d{4}$/, '')}</b><small>${x[6][1]}</small></span></div>
+    ${x ? (() => { const N = TRAIN_NUM[x[0]]; return `<section class="card ts-more ts2">
+      <div class="ts2-h"><span class="ts-ic">${icon(x[1], 18)}</span><b>${x[2]}</b>${saveBtn(regTip(`train-${x[0]}`, 'Train safe', [x[2], x[4][0], x[4][1], 'This week'], 'move'))}</div>
+      <div class="ts2-big"><div class="ts2-n"><b>${N[0]}</b><small>${N[1]}</small></div><p>${N[2]}</p></div>
+      ${tsViz(x[0])}
+      <div class="ts2-do"><small>${icon('check', 12)} Do this</small><ol>${x[4].map((t, i) => `<li><i>${i + 1}</i>${t}</li>`).join('')}</ol></div>
+      ${strip(x[0])}
       <p class="ts-ph">${icon('moon', 13)} ${x[7]}</p>
-    </section>` : ''}
+      <details class="gr-why ts2-more"><summary>Why, and the study ${icon('chevD', 13)}</summary><p class="ts-why">${x[5]}</p>
+        <div class="ts-study"><span class="gr-y">${x[6][0].match(/\d{4}/)[0]}</span><span><b>${x[6][0].replace(/ \d{4}$/, '')}</b><small>${x[6][1]}</small></span></div></details>
+    </section>`; })() : ''}
     <p class="ts-credit">${TRAIN_SAFE_CREDIT}</p>`;
 }
 // ---------- grounding: bare skin on the earth ----------
@@ -1245,7 +1268,7 @@ function exploreGrid(info) {
   return `<div class="xp-grid xp2">${tiles.map(([to, ic, t, sub, img], i) => `<button class="xp ${i === 0 ? 'wide' : ''}" data-action="nav" data-to="${to}" style="--i:${i}">${img ? `<img src="${img}" alt="" loading="lazy">` : ''}<span class="xp-l"><span class="xp-ic">${icon(ic, 15)}</span><span><b>${t}</b><small>${sub}</small></span></span></button>`).join('')}</div>`;
 }
 // Home: today's habits as a cute tick list; her phase's habits first, a little sprout that grows leaves as she ticks.
-const HB_SHORT = { 'phone-free': ['mind', 'Phone-free hour'], calm: ['heart', '10 min calm'], coffee: ['cup', 'Coffee with food'], sleep: ['moon', '7 to 9h sleep'], 'real-food': ['bowl', 'Real food'], 'alcohol-free': ['drop', 'No alcohol'], 'no-blue': ['sun', 'Dim screens at night'], move: ['leaf', 'Move your body'], nature: ['seed', 'Time in nature'], clean: ['spark', 'Clean beauty'], 'warm-feet': ['thermo', 'Warm feet'], 'egg-yolks': ['shell', 'Egg yolks'] };
+const HB_SHORT = { 'phone-free': ['mind', 'Phone-free hour'], calm: ['heart', '10 min meditation'], coffee: ['cup', 'Coffee with food'], sleep: ['moon', '7 to 9h sleep'], 'real-food': ['bowl', 'Real food'], 'alcohol-free': ['drop', 'No alcohol'], 'no-blue': ['sun', 'Dim screens at night'], move: ['leaf', 'Move your body'], nature: ['seed', 'Time in nature'], clean: ['spark', 'Clean beauty'], 'warm-feet': ['thermo', 'Warm feet'], 'egg-yolks': ['shell', 'Egg yolks'] };
 function habitsHome(info) {
   const list = HABITS.filter(h => h.g === 'protect' && HB_SHORT[h.id]), ids = list.map(h => h.id), done = habitsDone(todayISO()).filter(id => ids.includes(id));
   const focus = info ? HABIT_FOCUS[info.phase].filter(id => ids.includes(id)) : [];
