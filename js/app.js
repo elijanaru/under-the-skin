@@ -10,6 +10,7 @@ import { mountFigure, mushroomArt, nautilusArt } from './figure.js';
 import { mountTorso } from './torso.js';
 import { RECIPE_PHOTOS, photoUrl, DISH_PHOTOS, dishPhoto, HORMONE_PHOTOS, hormonePhoto, CARE_PHOTOS, carePhoto, STAR_PHOTOS, starPhoto, foodPhoto, FOOD_PHOTOS, teaPhoto } from './photos.js';
 import * as SZ from './seasonal.js';
+import { WORLD, worldOf, PHASE_EAT } from './world.js';
 import { MOLECULES, MOL_BALL } from './molecules.js';
 import { sunTimes, COUNTRY_GEO } from './sun.js';
 import * as A from './account.js';
@@ -1863,8 +1864,8 @@ function eatGoal(phase) {
 }
 // Cycle foods decoded: what each phase asks of your plate, as a 2×2 of photo collages (current phase first).
 const CYCLE_FOODS = {
-  menstrual: ['The return', 'Rebuild your blood and iron, all warm and cooked.', ['Slow stews', 'Beef', 'Dark greens', 'Seaweed', 'Molasses', 'Dates'], ['Healing broth', 'Chard', 'Seaweed (gim & miyeok)', 'Blackstrap molasses']],
-  follicular: ['The garden wakes', 'Light, blood-building and kind to your liver.', ['Citrus', 'Lentils', 'Sprouts', 'Eggs', 'Liver', 'Beets'], ['Citrus', 'Beets', 'Pasture eggs', 'Soybean sprouts (kongnamul)']],
+  menstrual: ['The return', 'Rebuild your blood and iron, all warm and cooked.', ['Slow stews', 'Beef', 'Bone broth', 'Seaweed', 'Molasses', 'Dates'], ['Healing broth', 'Red meat', 'Seaweed (gim & miyeok)', 'Blackstrap molasses']],
+  follicular: ['The garden wakes', 'Light, blood-building and kind to your liver.', ['Citrus', 'Lentils', 'Eggs', 'Liver', 'Wild salmon', 'Kimchi'], ['Citrus', 'Wild salmon', 'Pasture eggs', 'Aged kimchi (mugeunji)']],
   ovulatory: ['Full bloom', 'Hydrating, cooling and calming for inflammation.', ['Aloe', 'Berries', 'Seafood', 'Fresh herbs', 'Coconut'], ['Berries', 'Oysters', 'Sardines', 'Mint']],
   luteal: ['The harvest', 'Warming, grounding and rich in minerals.', ['Root veg', 'Millet', 'Sesame', 'Ghee', 'Cinnamon'], ['Sweet potatoes', 'Pumpkin & winter squash', 'Carrots', 'Cinnamon bark']],
 };
@@ -1883,7 +1884,7 @@ function nourishBody(current) {
   const recent = recentSymptoms().filter(s => SYMPTOM_FOODS[s]).slice(0, 2);
   const ds = seasonalDishesToday(M.info, 4);
   const EXTRA = EAT_CATS.filter(c => !PLATE_PETALS.some(p => p.k === c.k)), cat = EXTRA.some(c => c.k === ui.eatCat) ? ui.eatCat : EXTRA[0].k;
-  return `${plateSection(phase)}${cycleFoods(phase)}${sectionTitle('Dairy, drinks & supplements')}
+  return `${plateSection(phase)}${worldStrip(phase)}${cycleFoods(phase)}${sectionTitle('Dairy, drinks & supplements')}
     <div class="eat-tabs">${EXTRA.map(c => `<button class="${c.k === cat ? 'on' : ''}" data-action="eatCat" data-v="${c.k}"><span>${icon(c.ic, 16)}</span>${c.t}</button>`).join('')}</div>
     <section class="card glass eat-cat" data-phase="${phase}">${eatCatInner(phase, cat)}</section>
 
@@ -4793,6 +4794,55 @@ function viewSeason(jump) {
   </div>`;
 }
 
+// ---------- World kitchen: dishes from eight food regions for each cycle phase ----------
+const WK_ROLE = {
+  B6: ['Helps your brain make serotonin, steadying PMS mood.', 'b6'], Warmth: ['Warming food, kind to the womb around your period.'],
+  Iodine: ['Feeds your thyroid, which sets your energy and cycle.'], 'Vitamin K': ['For healthy clotting and strong bones.'],
+  Hydration: ['Water-rich food for skin and steady energy.'], 'Vitamin D': ['Mood, immunity and egg quality.', 'vitamin-d'],
+  Calm: ['A warm, soothing drink for a calmer evening.'], 'Good fats': ['Your hormones are built from fat and cholesterol.'],
+  Enzymes: ['Fresh fruit enzymes that help digestion.'], Lycopene: ['A red antioxidant from tomatoes, best with olive oil.'],
+};
+const wkRole = n => NUTRIENT_ROLE[n] || WK_ROLE[n] || [''];
+const WK_HOME = { med: 'med', korea: 'korea', north: 'nordic', central: 'nordic' };
+function wkHome() { return WK_HOME[SZ.countryRegion(myCountry())] || 'med'; }
+function wkOrder() { const h = wkHome(); return [worldOf(h), ...WORLD.filter(r => r.k !== h)]; }
+function worldStrip(phase) {
+  return `${sectionTitle('Eat around the world', ['All 8', 'world'])}
+    <div class="hscroll wk-strip">${wkOrder().map(r => { const d = r.dishes[phase][0]; return `<button class="rcard has-photo" data-action="worldGo" data-k="${r.k}"><img class="rc-photo" src="${foodPhoto(r.pic, 500)}" alt="" loading="lazy"><span class="rc-shade"></span>
+      <div class="rc-top"><span class="rc-k">${r.k === wkHome() ? 'Near you' : '2 dishes'}</span></div><div class="rc-t">${r.name}</div><div class="rc-m">${d.n}</div></button>`; }).join('')}</div>`;
+}
+function wkDish(d, phase, i) {
+  const now = M.info && M.info.phase === phase, warmNow = M.info && warmWindow(M.info), ph = foodPhoto(d.pic, 700);
+  return `<details class="card wk-d" style="--i:${i}"><summary>
+      <span class="wk-img">${ph ? `<img src="${ph}" alt="" loading="lazy" onerror="this.remove()">` : ''}<span class="dish-tag ${d.warm ? 'w' : 'r'}">${d.warm ? 'Warm' : 'Raw'}</span></span>
+      <span class="wk-t"><b>${d.n}</b><span class="wk-g">${d.g.map(g => `<em>${g}</em>`).join('')}</span>
+        <small>${d.key.join(' · ')}</small></span>
+      <span class="wk-cta">How to make it ${icon('chevD', 14)}</span></summary>
+    <div class="wk-body">
+      <div class="wk-k">Method</div><p>${d.how}</p>
+      ${!d.warm && warmNow ? `<p class="tea-warn">${icon('yinyang', 14)} Your period is close: save raw dishes for after it.</p>` : ''}
+      <div class="wk-k">Why ${now ? 'now' : `in your ${PHASES[phase].name.toLowerCase()} phase`}</div>
+      <div class="rn-list wk-rn">${d.g.map(n => { const [line, to] = wkRole(n); return `<${to ? `button data-action="nav" data-to="nutrients/${to}"` : 'div'} class="rn"><b>${n}</b><p>${line}</p>${to ? icon('chevR', 15) : ''}</${to ? 'button' : 'div'}>`; }).join('')}</div>
+    </div></details>`;
+}
+function wkCenter() { const w = document.querySelector('.wk-regs'), b = w && w.querySelector('.on'); if (b) w.scrollLeft = b.offsetLeft - (w.clientWidth - b.offsetWidth) / 2; }
+function viewWorld(id) {
+  if (id && worldOf(id)) { ui.worldReg = id; ui.lastRoute = 'world'; history.replaceState(null, '', '#/world'); }
+  const R = worldOf(ui.worldReg) || worldOf(wkHome()), mine = M.info ? M.info.phase : null;
+  const phase = ui.worldPhase || mine || 'follicular', PE = PHASE_EAT[phase], ds = R.dishes[phase];
+  const warm = ds.filter(d => d.warm).length;
+  return `<div class="pad wk">
+    ${specHero({ photo: foodPhoto(R.pic, 1000), glyph: 'bowl', eyebrow: 'World kitchen', name: R.name, label: R.note,
+      rows: [[`${ds.length} dishes`, warm === ds.length ? 'all warm & cooked' : warm ? `${warm} warm · ${ds.length - warm} raw` : 'fresh & raw'], [`${PHASES[phase].name}`, phase === mine ? 'your phase now' : 'phase']] })}
+    <div class="wk-regs">${wkOrder().map(r => `<button class="${r.k === R.k ? 'on' : ''}" data-action="worldReg" data-k="${r.k}"><img src="${foodPhoto(r.pic, 120)}" alt="" loading="lazy"><span>${r.name.replace(' & Central European', '')}</span></button>`).join('')}</div>
+    <div class="wk-ph">${PHASE_ORDER.map(p => `<button class="${p === phase ? 'on' : ''}" data-phase="${p}" data-action="worldPhase" data-v="${p}"><i></i><b>${PHASES[p].name}</b>${p === mine ? '<small>you</small>' : ''}</button>`).join('')}</div>
+    <section class="card wk-rule" data-phase="${phase}"><span class="wk-ic">${icon(phase === 'menstrual' || phase === 'luteal' ? 'bowl' : 'leaf', 20)}</span>
+      <div><b>${PE[0]}</b><p>${PE[1]}</p></div></section>
+    ${ds.map((d, i) => wkDish(d, phase, i)).join('')}
+    <p class="fine center">Traditional dishes, made the natural way. Check every ingredient for allergies.</p>
+  </div>`;
+}
+
 function viewInsights() {
   const { stats } = M, info = M.info;
   if (!info) return `${topbar('Insights')}<div class="pad"><p class="muted">Log a period to unlock insights.</p></div>`;
@@ -5792,6 +5842,9 @@ const actions = {
   openPartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (p) { const { id, ...snap } = p; location.hash = '#/with?d=' + b64e(snap); } },
   removePartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (!p || !confirm(`Remove ${p.n}?`)) return; state.partners = state.partners.filter(x => x.id !== d.id); save(); if (route().name === 'partners') go('partners'); else render(); },
   seasonView: d => { ui.seasonView = d.v; render(); },
+  worldGo: d => { ui.worldReg = d.k; ui.worldPhase = null; go('world'); setTimeout(wkCenter, 120); },
+  worldReg: d => { ui.worldReg = d.k; render(); wkCenter(); },
+  worldPhase: d => { ui.worldPhase = d.v; render(); },
   seasonGo: d => { Object.assign(ui, { seasonFood: d.f, seasonView: 'month', seasonFilter: 'all', seasonMonth: null }); go('season'); setTimeout(() => document.querySelector('.sf-detail')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150); },
   seasonFood: d => { ui.seasonFood = ui.seasonFood === d.f ? null : d.f; render(); if (ui.seasonFood) document.querySelector('.sf-detail')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); },
   seasonFilter: d => { ui.seasonFilter = d.v; render(); },
@@ -6045,7 +6098,7 @@ function render() {
   const ph = (ui.phasePreview || M.info?.phase) || ''; // the whole app takes the colour of her phase
   if (document.documentElement.dataset.phase !== ph) document.documentElement.dataset.phase = ph;
   const views = {
-    today: viewToday, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: viewBreathe, plan: viewPlan, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: () => (r.id ? viewStar(r.id) : viewCosmic()), moon: viewMoon, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewHabits, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
+    today: viewToday, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: viewBreathe, plan: viewPlan, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: () => (r.id ? viewStar(r.id) : viewCosmic()), moon: viewMoon, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewHabits, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), world: () => viewWorld(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
     recipe: () => viewRecipe(r.id), ritual: () => viewRitual(r.id), point: () => viewPoint(r.id), article: () => viewArticle(r.id), learn: viewLearn,
   };
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];

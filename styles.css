@@ -6914,3 +6914,46 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .bzh-more[open] summary .ic { transform: rotate(180deg); }
 .bzh-more .bz-step span { font: 500 15px Outfit, sans-serif; color: #f0d9a6; background: #15141f; width: 30px; height: 30px; }
 .bzp { scroll-padding: 0 16px; }
+
+/* ---------- World kitchen ---------- */
+.wk-strip .rcard .rc-m { font-size: 12px; opacity: .9; }
+.wk-regs { display: flex; gap: 8px; overflow-x: auto; margin: 18px -16px 0; padding: 2px 16px 6px; scrollbar-width: none; scroll-padding: 0 16px; }
+.wk-regs::-webkit-scrollbar { display: none; }
+.wk-regs button { flex: none; display: inline-flex; align-items: center; gap: 8px; padding: 5px 14px 5px 5px; border-radius: 99px; border: 1px solid rgba(48,64,35,.14); background: #fff; color: #304023; font: 400 13.5px var(--font); cursor: pointer; }
+.wk-regs img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
+.wk-regs button.on { background: #15141f; border-color: #15141f; color: #fff; }
+.wk-ph { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 14px 0 0; padding: 5px; border-radius: 24px; background: rgba(255,255,255,.7); border: 1px solid rgba(48,64,35,.1); }
+.wk-ph button { position: relative; display: grid; justify-items: center; gap: 5px; padding: 10px 2px 9px; border-radius: 19px; border: 0; background: none; color: #4b5a40; font: 400 12px var(--font); cursor: pointer; }
+.wk-ph b { font-weight: 500; font-size: 12.5px; color: #304023; }
+.wk-ph i { width: 10px; height: 10px; border-radius: 50%; background: var(--pc); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pc) 22%, transparent); }
+.wk-ph small { position: absolute; top: 5px; right: 7px; font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: #6c823e; }
+.wk-ph button.on { background: #fff; box-shadow: 0 6px 16px rgba(48,64,35,.1); }
+.wk-ph button.on b { color: #20301a; }
+.wk-ph [data-phase="menstrual"] { --pc: #d9768f; } .wk-ph [data-phase="follicular"] { --pc: #6c823e; }
+.wk-ph [data-phase="ovulatory"] { --pc: #d6a443; } .wk-ph [data-phase="luteal"] { --pc: #9b87c4; }
+.wk-rule { display: flex; gap: 14px; align-items: flex-start; margin-top: 14px; padding: 16px 18px; background: #fff; }
+.wk-ic { flex: none; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: #20301a; }
+.wk-rule b { display: block; font-size: 16px; font-weight: 500; color: #20301a; }
+.wk-rule p { margin: 3px 0 0; font-size: 13.5px; line-height: 1.5; color: rgba(48,64,35,.85); }
+.wk-d { padding: 0; overflow: hidden; margin-top: 14px; background: #fff; animation: rise .6s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i) * 90ms); }
+.wk-d summary { list-style: none; cursor: pointer; display: block; }
+.wk-d summary::-webkit-details-marker { display: none; }
+.wk-img { position: relative; display: block; aspect-ratio: 16 / 9; background: #efe6e9; }
+.wk-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.wk-img .dish-tag { position: absolute; top: 12px; left: 12px; }
+.wk-img .dish-tag.r { background: #fff; border: 0; color: #304023; }
+.wk-t { display: grid; gap: 7px; padding: 14px 18px 2px; }
+.wk-t b { font-size: 19px; font-weight: 500; color: #20301a; line-height: 1.25; }
+.wk-t small { font-size: 12.5px; color: #6c7a5c; }
+.wk-g { display: flex; flex-wrap: wrap; gap: 5px; }
+.wk-g em { font-style: normal; font-size: 11.5px; padding: 3px 9px; border-radius: 99px; background: #eef2e4; color: #3f5226; }
+.wk-cta { display: inline-flex; align-items: center; gap: 4px; margin: 10px 18px 16px; padding: 8px 15px; border-radius: 99px; background: #15141f; color: #fff; font-size: 12.5px; }
+.wk-cta svg { transition: transform .3s; }
+.wk-d[open] .wk-cta svg { transform: rotate(180deg); }
+.wk-body { padding: 0 18px 12px; border-top: 1px solid rgba(48,64,35,.08); }
+.wk-k { margin: 14px 0 4px; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: #6c823e; }
+.wk-body > p { margin: 0; font-size: 14px; line-height: 1.55; color: #304023; }
+.wk-body .tea-warn { margin-top: 10px; background: #f6eef0; }
+.wk-rn { padding: 0; }
+.wk-rn .rn:last-child { border-bottom: 0; }
+@media (prefers-reduced-motion: reduce) { .wk-d { animation: none; } }
