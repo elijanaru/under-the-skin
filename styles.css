@@ -7391,3 +7391,17 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .zs-aff { margin-bottom: 14px; padding: 20px; border-radius: 26px; background: linear-gradient(160deg, #2c3d22, #20301a); color: #fff; text-align: center; }
 .zs-aff small { font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; opacity: .75; } .zs-aff p { margin: 8px 0 0; font-size: 20px; line-height: 1.35; }
 .zs-chips { display: grid; grid-template-columns: repeat(3, 1fr); } .zs-chip { min-width: 0; } .zs-chip b { font-size: 12.5px; line-height: 1.25; }
+/* Move page: Train safe */
+.ts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.ts { display: grid; gap: 4px; align-content: start; padding: 14px; border-radius: 22px; border: 1px solid rgba(48,64,35,.1); background: rgba(255,255,255,.88); text-align: left; font: inherit; color: #20301a; cursor: pointer; transition: transform .2s ease; }
+.ts:active { transform: scale(.97); }
+.ts.on { background: #20301a; color: #fff; border-color: #20301a; } .ts.on small { color: rgba(255,255,255,.8); } .ts.on .ts-ic { background: rgba(255,255,255,.14); color: #fff; }
+.ts-ic { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: #eef2e4; color: #3f5226; margin-bottom: 4px; }
+.ts b { font-size: 15px; font-weight: 500; } .ts small { font-size: 12.5px; line-height: 1.35; color: rgba(48,64,35,.75); }
+.ts-more { padding: 14px; background: rgba(255,255,255,.92); margin-bottom: 10px; animation: rise .4s ease both; }
+.ts-why { margin: 12px 2px; font-size: 14px; line-height: 1.5; color: #304023; }
+.ts-study { display: flex; gap: 12px; align-items: flex-start; padding: 12px; border-radius: 18px; background: #f6f3ee; }
+.ts-study > span:last-child { display: grid; gap: 2px; } .ts-study b { font-size: 14px; font-weight: 500; color: #20301a; } .ts-study small { font-size: 13px; line-height: 1.45; color: #304023; }
+.ts-ph { display: flex; gap: 8px; margin: 12px 2px 0; font-size: 13.5px; line-height: 1.45; color: #4a5a3c; } .ts-ph svg { flex: none; margin-top: 2px; }
+.ts-credit { margin: 0 4px 16px; font-size: 11.5px; color: rgba(48,64,35,.6); }
+@media (prefers-reduced-motion: reduce) { .ts-more { animation: none; } }

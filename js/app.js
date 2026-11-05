@@ -11,6 +11,7 @@ import { mountTorso } from './torso.js';
 import { RECIPE_PHOTOS, photoUrl, DISH_PHOTOS, dishPhoto, HORMONE_PHOTOS, hormonePhoto, CARE_PHOTOS, carePhoto, STAR_PHOTOS, starPhoto, foodPhoto, FOOD_PHOTOS, teaPhoto } from './photos.js';
 import * as SZ from './seasonal.js';
 import { WORLD, worldOf, PHASE_EAT, PANTRY } from './world.js';
+import { TRAIN_SAFE, TRAIN_SAFE_CREDIT } from './athlete.js';
 import { GROUND_NOW, GROUND_WHERE, GROUND_PHASE, GROUND_MOON, GROUND_ROOTS, GROUND_STUDIES, GROUND_CAUTION } from './ground.js';
 import { MOLECULES, MOL_BALL } from './molecules.js';
 import { sunTimes, COUNTRY_GEO } from './sun.js';
@@ -315,6 +316,19 @@ function cortisolSec(info) {
     <div class="ct-how">${[['wind', 'Breathe out longer', 'than you breathe in'], ['heart', 'Your heart slows', 'via the vagus nerve'], ['mind', 'Cortisol settles', 'within minutes']].map(([g, a, b], i) => `<span><i>${i + 1}</i><b>${a}</b><small>${b}</small></span>`).join('<u></u>')}</div>
     <details class="gr-why"><summary>What studies found ${icon('chevD', 13)}</summary><p><b>Ma et al. 2017</b> (Frontiers in Psychology): 8 weeks of slow belly breathing lowered saliva cortisol and improved focus in 40 adults.</p><p><b>Balban et al. 2023</b> (Cell Reports Medicine): 5 minutes a day of breathing with long out-breaths lifted mood and lowered breathing rate more than meditation.</p><p>Cortisol peaks about 30 to 45 minutes after you wake and falls toward night. In the days before your period stress tends to hit harder, so slow breathing matters most then.</p></details>
   </section>`;
+}
+// Move page: six health checks for women who train, each a tile that opens two steps, why, and one study.
+function trainSafe() {
+  const open = ui.tsOpen, x = TRAIN_SAFE.find(t => t[0] === open);
+  return `${sectionTitle('Train safe')}
+    <div class="ts-grid">${TRAIN_SAFE.map(([k, g, t, l]) => `<button class="ts ${k === open ? 'on' : ''}" data-action="tsOpen" data-k="${k}" aria-expanded="${k === open}"><span class="ts-ic">${icon(g, 18)}</span><b>${t}</b><small>${l}</small></button>`).join('')}</div>
+    ${x ? `<section class="card ts-more">
+      <div class="gr-do"><div class="gr-do-h"><span class="dos-w">${icon('check', 12)} Do this</span>${saveBtn(regTip(`train-${x[0]}`, 'Train safe', [x[2], x[4][0], x[4][1], 'This week'], 'move'))}</div><b>${x[2]}</b><ol><li>${x[4][0]}</li><li>${x[4][1]}</li></ol></div>
+      <p class="ts-why">${x[5]}</p>
+      <div class="ts-study"><span class="gr-y">${x[6][0].match(/\d{4}/)[0]}</span><span><b>${x[6][0].replace(/ \d{4}$/, '')}</b><small>${x[6][1]}</small></span></div>
+      <p class="ts-ph">${icon('moon', 13)} ${x[7]}</p>
+    </section>` : ''}
+    <p class="ts-credit">${TRAIN_SAFE_CREDIT}</p>`;
 }
 // ---------- grounding: bare skin on the earth ----------
 const groundCta = () => `<button class="gr-cta" data-action="nav" data-to="ground"><img src="images/ground-roots.jpg" alt="" loading="lazy"><span><b>Ground yourself</b><small>Bare feet on the earth · 15 min</small></span>${icon('chevR', 16)}</button>`;
@@ -4313,6 +4327,7 @@ function viewMove() {
   <div class="pad mv2-body">
     <div class="seg">${[['today', 'Today'], ['month', 'Your month']].map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="mvTab" data-v="${k}">${l}</button>`).join('')}</div>
     ${body}
+    ${trainSafe()}
     <p class="fine center">Research on training by cycle phase is still emerging and results are mixed. Your strength doesn’t change across the cycle, only your energy does. Some women set personal bests on their period.</p>
   </div>`;
 }
@@ -6050,6 +6065,7 @@ const actions = {
   planTab: d => { ui.planTab = d.v; if (route().name !== 'plan') go('plan'); else render(); },
   toggleHormone: d => { ui.hidden[d.h] = !ui.hidden[d.h]; render(); },
   enWhy: () => { ui.enWhy = !ui.enWhy; render(); },
+  tsOpen: d => { ui.tsOpen = ui.tsOpen === d.k ? null : d.k; render(); },
   grStudy: d => { ui.grStudy = ui.grStudy === +d.i ? null : +d.i; render(); },
   saveTip: d => {
     const L = state.savedTips = state.savedTips || [], i = L.findIndex(x => x.id === d.id);

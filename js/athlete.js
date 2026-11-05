@@ -1,0 +1,36 @@
+// Train safe: the health checks every woman who trains should know. Topics follow the open reading list
+// "Awesome Female Athlete Performance" (WinSportsLab, CC BY 4.0); the wording is ours, studies cited by author and year.
+// [key, icon, title, one line, [do 1, do 2], why, [study, finding], phase note]
+export const TRAIN_SAFE = [
+  ['fuel', 'bowl', 'Eat enough', 'A missed period can mean too little fuel',
+    ['Eat a real meal within 2 hours after training', 'Avoid hard sessions on an empty stomach most days'],
+    'When you burn more than you eat for weeks, the brain turns down the hormones that run your cycle. Periods get lighter, later or stop, and bones, mood and recovery suffer. Sports medicine calls this low energy availability.',
+    ['Loucks & Thuma 2003', 'Eating below about 30 kcal per kg of lean mass a day disrupted the LH pulses that drive ovulation within days.'],
+    'If your cycle gets longer or skips while you train more, eat more before you train less.'],
+  ['iron', 'drop', 'Iron', 'Periods, sweat and running all cost iron',
+    ['Red meat, liver or mussels 2 to 3 times a week', 'Ask for a ferritin test if you feel tired for weeks'],
+    'You lose iron with every period, in sweat and when your feet strike the ground. After hard training a hormone called hepcidin blocks iron uptake for several hours, so timing matters.',
+    ['Peeling et al. 2009', 'Hepcidin rose 3 to 6 hours after a run, which means iron eaten in that window is absorbed less well.'],
+    'Eat your iron meal before training or at breakfast, and at least on the heavy days of your period.'],
+  ['bone', 'dumbbell', 'Strong bones', 'Lifting and jumping build them',
+    ['Lift heavy 2 times a week', 'Add 20 small jumps or skips on most days'],
+    'Estrogen protects bone, so long gaps without a period weaken it. Heavy lifting and impact are the strongest signals to build bone at any age. Calcium and vitamin D come from raw milk, cheese, sardines and sun.',
+    ['Watson et al. 2018', 'In the LIFTMOR trial, women with low bone density who lifted heavy twice a week gained bone in the spine and hip.'],
+    'Your strength does not change across the cycle, so you can lift in every phase.'],
+  ['knee', 'leaf', 'Protect your knees', 'Women tear the ACL far more often',
+    ['10 minutes of warm-up: lunges, single-leg balance, soft landings', 'Land with knees over your toes, not caving in'],
+    'Women injure the ACL several times more often than men in the same sports, from hip shape, landing style and hormones. A short warm-up that trains balance and landing is the best prevention.',
+    ['Soligard et al. 2008', 'A 20-minute warm-up programme cut injuries by about a third in over 1,800 young female footballers.'],
+    'Ligaments may be a little looser around ovulation, so take extra care with jumps and quick turns that week.'],
+  ['heat', 'thermo', 'Heat after ovulation', 'You run warmer in the second half',
+    ['Train in the cooler hours of the day', 'Drink more and add a pinch of salt on hot days'],
+    'After ovulation, progesterone raises your core temperature by about half a degree. The same workout in the heat feels harder, and you start sweating later.',
+    ['Baker & Driver 2007', 'Body temperature sits about 0.3 to 0.5 °C higher in the luteal phase, day and night.'],
+    'In the luteal phase, pre-cool with a cold drink and expect hot sessions to feel tougher. That is normal.'],
+  ['protein', 'fish', 'Protein', 'Spread it over the day',
+    ['A palm of protein at every meal', 'Eggs, fish, meat or raw yoghurt after training'],
+    'Muscle repairs best with protein spread over 3 to 4 meals. In the luteal phase the body breaks down a little more protein, so the after-training meal matters more.',
+    ['Morton et al. 2018', 'A review of 49 trials found muscle gains level off at about 1.6 g of protein per kg of body weight a day.'],
+    'Most women undereat protein at breakfast. Start there.'],
+];
+export const TRAIN_SAFE_CREDIT = 'Topics from the open reading list Awesome Female Athlete Performance (WinSportsLab, CC BY 4.0).';
