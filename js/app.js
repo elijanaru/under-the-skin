@@ -3196,27 +3196,60 @@ function patternsSection() {
   const P = patterns(), L = P.L, info = M.info;
   // energy: your logged average vs the hormone model
   const W = 340, H = 120, X = d => 10 + (d - 1) / (L - 1) * (W - 20), Y = v => H - 14 - (v - 1) / 4 * (H - 30);
-  let model = '', mine = '', dots = '';
+  let model = '', mine = '';
   for (let d = 1; d <= L; d++) model += `${d === 1 ? 'M' : 'L'}${X(d).toFixed(1)} ${Y(1 + 4 * C.energyAt(d, L, M.stats.avgPeriod)).toFixed(1)}`;
   const pts = [];
   for (let d = 1; d <= L; d++) { // 3-day smoothing over logged days
     const w = [P.eAvg[d - 1], P.eAvg[d], P.eAvg[d + 1]].filter(v => v != null);
     if (P.eAvg[d] != null && w.length) pts.push([d, w.reduce((a, b) => a + b, 0) / w.length]);
   }
-  pts.forEach(([d, v], i) => { mine += `${i ? 'L' : 'M'}${X(d).toFixed(1)} ${Y(v).toFixed(1)}`; dots += `<circle cx="${X(d).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="2.2" fill="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)"/>`; });
-  const bands = C.phaseRanges(L, M.stats.avgPeriod).map(r => `<rect x="${X(r.from) - 4}" y="4" width="${X(r.to) - X(r.from) + 8}" height="${H - 18}" rx="8" fill="${BAND[r.key]}"/>`).join('');
-  const energyCard = pts.length >= 6 ? `<section class="card glass">
-      <div class="eyebrow">Energy · your logs vs your hormones</div>
-      <svg viewBox="0 0 ${W} ${H}" width="100%" class="pat-svg">${bands}
-        <path d="${model}" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5" stroke-dasharray="4 4"/>
-        <path d="${mine}" fill="none" stroke="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" stroke-width="2.4" stroke-linejoin="round"/>${dots}
-        ${info ? `<line x1="${X(Math.min(info.cd, L))}" x2="${X(Math.min(info.cd, L))}" y1="6" y2="${H - 14}" stroke="#fff" stroke-dasharray="2 3" opacity=".6"/>` : ''}
+  pts.forEach(([d, v], i) => { mine += `${i ? 'L' : 'M'}${X(d).toFixed(1)} ${Y(v).toFixed(1)}`; });
+  const ranges = C.phaseRanges(L, M.stats.avgPeriod);
+  let energyCard = '';
+  if (pts.length >= 6) {
+    // her best stretch: the run of logged days around her peak that stays close to it
+    const pk = pts.reduce((m, p, i) => (p[1] > pts[m][1] ? i : m), 0), top = pts[pk][1];
+    let ia = pk, ib = pk;
+    while (ia > 0 && pts[ia - 1][1] >= top - .4) ia--;
+    while (ib < pts.length - 1 && pts[ib + 1][1] >= top - .4) ib++;
+    const bA = pts[ia][0], bB = pts[ib][0], bPh = C.phaseFor(pts[pk][0], L, M.stats.avgPeriod);
+    // how closely her logs follow the hormone forecast (0 to 100)
+    const diffs = pts.map(([d, v]) => Math.abs(v - (1 + 4 * C.energyAt(d, L, M.stats.avgPeriod))));
+    const inStep = Math.round(100 * (1 - diffs.reduce((x, y) => x + y, 0) / diffs.length / 4));
+    // average logged energy in each phase, out of 5
+    const phAvg = ranges.map(r => { const v = P.eAvg.slice(r.from, r.to + 1).filter(x => x != null); return { k: r.key, v: v.length ? v.reduce((x, y) => x + y, 0) / v.length : null }; });
+    const low = phAvg.filter(x => x.v != null).sort((x, y) => x.v - y.v)[0];
+    const flat = top - Math.min(...pts.map(p => p[1])) < .6;
+    const head = flat ? 'Your energy stays even' : `Best on days ${bA === bB ? bA : `${bA} to ${bB}`}`;
+    const sub = flat ? 'Your logs barely change across the month.' : `In your ${PHASES[bPh].name.toLowerCase()} phase. Lowest in your ${PHASES[low.k].name.toLowerCase()} days.`;
+    const area = `${mine}L${X(pts[pts.length - 1][0]).toFixed(1)} ${H - 14}L${X(pts[0][0]).toFixed(1)} ${H - 14}Z`;
+    const ring = x => { const c = PH_HEX[x.k], p = x.v == null ? 0 : (x.v - 1) / 4 * 100;
+      return `<div class="en-b" style="--c:${c}"><span><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="18" pathLength="100" class="en-bt"/><circle cx="22" cy="22" r="18" pathLength="100" class="en-bf" style="stroke-dasharray:${p.toFixed(0)} 100"/></svg><b>${x.v == null ? '·' : x.v.toFixed(1)}</b></span><small>${PHASES[x.k].name}</small></div>`; };
+    const todayX = info ? X(Math.min(info.cd, L)) : null;
+    energyCard = `<section class="card glass en2">
+      <div class="en-top"><div><small>Your energy</small><h3>${head}</h3><p>${sub}</p></div>
+        <div class="en-step"><b>${inStep}<i>%</i></b><small>in step with your hormones</small></div></div>
+      <svg viewBox="0 0 ${W} ${H}" width="100%" class="pat-svg en-svg" role="img" aria-label="${head}. ${sub}">
+        <defs><linearGradient id="enFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#304023" stop-opacity=".16"/><stop offset="1" stop-color="#304023" stop-opacity="0"/></linearGradient></defs>
+        ${ranges.map(r => `<rect x="${X(r.from) - 4}" y="4" width="${X(r.to) - X(r.from) + 8}" height="${H - 18}" rx="8" fill="${PH_HEX[r.key]}" opacity=".14"/>`).join('')}
+        ${flat ? '' : `<rect x="${X(bA) - 6}" y="4" width="${X(bB) - X(bA) + 12}" height="${H - 18}" rx="8" fill="none" stroke="#304023" stroke-opacity=".4" stroke-dasharray="3 3"/>`}
+        <path d="${area}" fill="url(#enFill)"/>
+        <path d="${model}" fill="none" stroke="#304023" stroke-opacity=".4" stroke-width="1.4" stroke-dasharray="4 4"/>
+        <path d="${mine}" fill="none" stroke="#20301a" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+        ${pts.map(([d, v]) => `<circle cx="${X(d).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="2.3" fill="#fff" stroke="#20301a" stroke-width="1.4"/>`).join('')}
+        ${todayX != null ? `<line x1="${todayX}" x2="${todayX}" y1="6" y2="${H - 14}" stroke="${PH_HEX[info.phase]}" stroke-width="2"/><text x="${todayX}" y="0" text-anchor="middle" class="en-now">Today</text>` : ''}
         <text x="10" y="${H - 1}" class="pat-ax">Day 1</text><text x="${W - 10}" y="${H - 1}" text-anchor="end" class="pat-ax">Day ${L}</text></svg>
-      <div class="pat-leg"><span><i class="me"></i>You (logged)</span><span><i class="mo"></i>Hormone forecast</span></div>
-    </section>` : '';
+      <div class="pat-leg"><span><i class="me"></i>You (logged)</span><span><i class="mo"></i>Hormone forecast</span>${flat ? '' : '<span><i class="bs"></i>Best days</span>'}</div>
+      <div class="en-bs">${phAvg.map(ring).join('')}</div>
+      <details class="en-more"><summary>What this shows ${icon('chevD', 13)}</summary>
+        <p>The solid line is the energy you logged, averaged over all your cycles for each day. The dashed line is what your hormones predict: energy rises with estrogen and testosterone before ovulation, settles with progesterone after it, and dips in the last days before your period.</p>
+        <p>The rings are your average energy in each phase, out of 5. ${inStep >= 80 ? 'Your logs follow your hormones closely, so you can plan around them.' : 'Your logs drift from the forecast, so sleep, stress or training may be moving your energy more than your cycle does.'}</p>
+        <p>Use it to plan: put the demanding things on your best days and keep the low days lighter. Your abilities stay the same all month, only how it feels to use them changes.</p></details>
+    </section>`;
+  }
   const rows = P.list.slice(0, 6).map(x => `<div class="pat-row">
       <div class="pat-h"><b>${x.name}</b><span>${x.from === x.to ? `day ${x.from}` : `days ${x.from}–${x.to}`} · ${PHASES[x.phase].name}</span></div>
-      <div class="pat-strip">${x.days.slice(1).map((v, i) => `<i style="opacity:${v ? .25 + .75 * v / x.max : 1};background:${v ? PHASE_COLOR.dark[C.phaseFor(i + 1, L, M.stats.avgPeriod)] : 'rgba(255,255,255,.05)'}"></i>`).join('')}</div>
+      <div class="pat-strip">${x.days.slice(1).map((v, i) => `<i style="opacity:${v ? .25 + .75 * v / x.max : 1};background:${v ? PH_HEX[C.phaseFor(i + 1, L, M.stats.avgPeriod)] : 'rgba(32,48,26,.07)'}"></i>`).join('')}</div>
     </div>`).join('');
   return `${sectionTitle('Your patterns')}
     ${P.list.length || energyCard ? `${energyCard}
