@@ -1900,22 +1900,22 @@ export const SUPP_LIB = [
 
 // Whole-food sources for each supplement: food first, the capsule fills the gap
 export const SUPP_FOOD = {
-  magnesium: [['Pumpkin seeds', 'A small handful covers about a third of the day'], ['Dark chocolate (85%)', 'Two squares'], ['Spinach and chard', 'Lightly wilted'], ['Almonds and cashews', 'Soaked overnight']],
-  iron: [['Red meat and liver', 'The best-absorbed iron'], ['Egg yolks', 'From pasture-raised hens'], ['Lentils and spinach', 'With lemon or peppers for vitamin C'], ['Blackstrap molasses', 'A spoon in warm milk']],
+  magnesium: [['Pumpkin seeds', 'A small handful covers about a third of the day'], ['Dark chocolate (85%)', 'Two squares'], ['Black and white beans', 'Soaked and slow-cooked'], ['Almonds and cashews', 'Soaked overnight']],
+  iron: [['Red meat and liver', 'The best-absorbed iron'], ['Egg yolks', 'From pasture-raised hens'], ['Lentils and beans', 'With lemon or peppers for vitamin C'], ['Blackstrap molasses', 'A spoon in warm milk']],
   'omega-3': [['Wild salmon, sardines, mackerel', 'Two or three times a week'], ['Pasture-raised eggs', 'Richer in omega-3 than caged'], ['Walnuts', 'A handful'], ['Flax and chia seeds', 'Ground, so the body can use them']],
   'vitamin-c': [['Peppers', 'Raw: one red pepper is more than a day'], ['Kiwi and citrus', 'Whole fruit, not juice'], ['Berries', 'Fresh or frozen'], ['Sauerkraut', 'Raw and unpasteurised']],
   ginger: [['Fresh ginger tea', 'Sliced root steeped in hot water'], ['Ginger in soups and stews', 'Warming for your period'], ['Grated into honey', 'A spoon in hot water']],
   creatine: [['Red meat', 'About 1 g per 250 g'], ['Herring and salmon', 'Also rich in omega-3']],
   'vitamin-d': [['Midday sun', '15–20 minutes on bare skin in summer'], ['Oily fish', 'Salmon, sardines, herring'], ['Egg yolks', 'From hens raised outdoors'], ['Butter from grass-fed cows', 'Also carries K2']],
-  'b-complex': [['Eggs', 'B12, B2 and folate in one'], ['Liver', 'Once a week covers most B vitamins'], ['Leafy greens', 'Folate, raw or lightly cooked'], ['Raw milk and cheese', 'B2 and B12']],
+  'b-complex': [['Eggs', 'B12, B2 and folate in one'], ['Liver', 'Once a week covers most B vitamins'], ['Avocado and asparagus', 'Gentle folate, low in oxalate'], ['Raw milk and cheese', 'B2 and B12']],
   probiotic: [['Raw sauerkraut and kimchi', 'Unpasteurised, from the fridge'], ['Kefir and raw-milk yoghurt', 'A small glass a day'], ['Aged cheese', 'Live cultures'], ['Kombucha', 'Low in sugar']],
   zinc: [['Oysters', 'The richest source by far'], ['Red meat', 'Beef and lamb'], ['Pumpkin seeds', 'Soaked or roasted'], ['Eggs and cheese', 'Every day helps']],
   'vitamin-e': [['Sunflower seeds', 'A handful'], ['Almonds and hazelnuts', 'Soaked overnight'], ['Avocado', 'Half a day'], ['Cold-pressed olive oil', 'Raw, over salads']],
   ashwagandha: [['Warm milk with spices', 'Cinnamon and cardamom in the evening'], ['A calm evening routine', 'The herb works best with it']],
   b6: [['Salmon and tuna', 'Rich in B6'], ['Chicken and turkey', 'Light and easy'], ['Bananas', 'Ripe ones'], ['Potatoes and chickpeas', 'Cooked, with skin']],
-  calcium: [['Raw milk, yoghurt and cheese', 'The easiest source'], ['Sardines with bones', 'Calcium and omega-3'], ['Kale and broccoli', 'Lightly cooked'], ['Sesame seeds and tahini', 'A spoon a day']],
-  prenatal: [['Leafy greens', 'Natural folate'], ['Liver', 'Vitamin A and B12, a small portion weekly'], ['Eggs', 'Choline for the baby\'s brain'], ['Oily fish', 'Omega-3, low-mercury kinds']],
-  coq10: [['Heart and liver', 'Organ meats are richest'], ['Sardines and mackerel', 'Oily fish'], ['Beef', 'Grass-fed'], ['Broccoli and spinach', 'Smaller amounts']],
+  calcium: [['Raw milk, yoghurt and cheese', 'The easiest source'], ['Sardines with bones', 'Calcium and omega-3'], ['Broccoli and bok choy', 'Lightly cooked, easy to absorb'], ['Sesame seeds and tahini', 'A spoon a day']],
+  prenatal: [['Avocado and asparagus', 'Natural folate'], ['Liver', 'Vitamin A and B12, a small portion weekly'], ['Eggs', 'Choline for the baby\'s brain'], ['Oily fish', 'Omega-3, low-mercury kinds']],
+  coq10: [['Heart and liver', 'Organ meats are richest'], ['Sardines and mackerel', 'Oily fish'], ['Beef', 'Grass-fed'], ['Broccoli and cauliflower', 'Smaller amounts']],
 };
 
 // Autumn rituals: warm, replenish and protect as the season turns. [name, how, why, evidence]
@@ -1943,3 +1943,23 @@ export const WINTER_HERBS = [
   ['Chaga', 'Birch mushroom', 'neutral', 'Rich in antioxidants, brewed like a dark, earthy coffee.', 'Simmer a few chunks for an hour.', 'Very high in oxalates. Skip it with kidney stones or blood thinners.', 'emerging'],
   ['He shou wu', 'Fo-ti', 'warm', 'A classic Chinese herb for hair and vitality.', 'Only the prepared root, from a practitioner.', 'Can harm the liver. Only with a qualified practitioner.', 'tcm'],
 ];
+
+// What each supplement likes to be taken with, and what to keep a few hours apart (absorption and timing).
+export const SUPP_PAIR = {
+  magnesium: { w: [['Vitamin B6', 'Helps magnesium into your cells; together they eased PMS more than either alone'], ['Vitamin D', 'Magnesium is needed to switch vitamin D on']], a: [['Zinc or iron', 'They compete for the same doors in the gut, so take them at another meal']] },
+  iron: { w: [['Vitamin C', 'A glass of orange juice or a pepper multiplies what you absorb'], ['An empty-ish stomach', 'Morning, before breakfast, if your stomach is fine with it']], a: [['Calcium and dairy', 'Calcium blocks iron, so keep 2 hours between them'], ['Coffee and tea', 'Enjoy them an hour before or after, so both work well'], ['Zinc', 'Take it at a different meal']] },
+  'omega-3': { w: [['A meal with fat', 'Absorbed up to three times better than on an empty stomach'], ['Vitamin E', 'Protects the delicate oil from oxidising']], a: [] },
+  'vitamin-c': { w: [['Iron-rich meals', 'Turns plant iron into the form your gut takes up'], ['Collagen or bone broth', 'Vitamin C is needed to build collagen']], a: [] },
+  ginger: { w: [['A warm drink', 'Warming and soothing for period cramps'], ['Food', 'Gentler on the stomach']], a: [] },
+  creatine: { w: [['A meal with protein and carbs', 'Insulin helps carry it into muscle'], ['Plenty of water', 'Creatine pulls water into muscle']], a: [] },
+  'vitamin-d': { w: [['A meal with fat', 'It is fat-soluble, so it needs fat to be absorbed'], ['Magnesium', 'Activates vitamin D in the body'], ['K2', 'Guides calcium into bones, not arteries']], a: [] },
+  'b-complex': { w: [['Breakfast', 'B vitamins help turn food into energy']], a: [['Late evening', 'Some women find B vitamins too awakening at night']] },
+  probiotic: { w: [['Fermented food', 'Sauerkraut, kimchi and kefir feed the same friendly bacteria'], ['Fibre', 'Roots, beans and fruit are food for them']], a: [['Very hot drinks', 'Heat can harm live cultures, so let your tea cool a little first']] },
+  zinc: { w: [['A protein meal', 'Protein helps zinc absorb and avoids nausea']], a: [['Iron and calcium', 'They compete with zinc, so take them at different meals']] },
+  'vitamin-e': { w: [['A meal with fat', 'Fat-soluble, best with avocado, nuts or olive oil'], ['Omega-3', 'Protects the oil from oxidising']], a: [] },
+  ashwagandha: { w: [['Warm milk', 'The traditional way, in the evening'], ['A calm routine', 'It supports, it does not replace rest']], a: [['Sleeping pills or sedatives', 'It can add to their effect, so ask your doctor']] },
+  b6: { w: [['Magnesium', 'The classic PMS pair']], a: [] },
+  calcium: { w: [['Vitamin D', 'Needed to absorb calcium'], ['Magnesium', 'Keeps calcium in balance']], a: [['Iron', 'Keep 2 hours between them'], ['Zinc', 'Take it at a different meal']] },
+  prenatal: { w: [['Omega-3 (DHA)', 'For the baby’s brain and eyes'], ['Breakfast', 'Easier on the stomach']], a: [['Coffee and tea', 'Enjoy them an hour apart, so the iron absorbs']] },
+  coq10: { w: [['A meal with fat', 'Fat-soluble, absorbed much better with food'], ['Omega-3', 'Both support egg quality']], a: [] },
+};

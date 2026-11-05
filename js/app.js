@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
+  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -2979,12 +2979,27 @@ function viewSupps() {
     <section class="card glass sup-list">${(tab === 'now' && on.length ? on : L).map(row).join('')}</section>
     <p class="fine center">Dots show the phases each one helps most. Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}.</p></div>`;
 }
+// Science block for remedies, rituals and supplements: a numbered pathway, one card per study with its year, then cautions.
+function studyCards(study, cite) {
+  const ss = study.split(/(?<=\.)\s+(?=[A-Z])/), cs = cite.split(' · ');
+  const pairs = ss.length === cs.length ? ss.map((t, i) => [t, cs[i]]) : [[study, cite]];
+  return `<div class="stc ${pairs.length === 1 ? 'one' : ''}">${pairs.map(([t, c], i) => { const y = (c.match(/\b(1[89]\d\d|20\d\d)\b/) || [])[1] || '', tag = (c.match(/\(([^)]+)\)/) || [])[1] || '', who = c.replace(/\([^)]*\)/g, '').replace(y, '').trim();
+    return `<article class="stc-c" style="--i:${i}"><div class="stc-h"><b class="dotnum">${y}</b><span>${who}${tag ? `<em>${tag}</em>` : ''}</span></div><p>${t}</p></article>`; }).join('')}</div>`;
+}
+function suppPairs(id) {
+  const P = SUPP_PAIR[id]; if (!P) return '';
+  const row = (k, [n, d]) => `<details class="pr-r ${k}"><summary><span class="pr-ic">${k === 'w' ? '+' : '⇆'}</span><b>${n}</b>${icon('chevD', 14)}</summary><p>${d}</p></details>`;
+  return `${sectionTitle('Take it with')}
+    <section class="card pr-card"><div class="pr-k"><span>Pairs well</span></div>${P.w.map(x => row('w', x)).join('')}
+      ${P.a.length ? `<div class="pr-k apart"><span>Keep a few hours apart</span></div>${P.a.map(x => row('a', x)).join('')}` : ''}</section>`;
+}
 function remedyScience(r, lib = REMEDY_SCIENCE, check = true) {
   const x = lib[r.id]; if (!x) return '';
-  return `${sectionTitle('Why it works')}
-    <section class="card glass nu-food">${x.c.map(([c, d]) => `<div class="spec-row"><b>${c}</b><span>${d}</span></div>`).join('')}</section>
+  return `${sectionTitle('How it works')}
+    <section class="card mech">${x.c.map(([c, d], i) => `<div class="mech-r"><span class="mech-n dotnum">${i + 1}</span><div><b>${c}</b><p>${d}</p></div></div>`).join('')}</section>
+    ${lib === REMEDY_SCIENCE || lib === RITUAL_SCIENCE ? '' : suppPairs(r.id)}
     ${sectionTitle('What studies found')}
-    <section class="card glass tea-study"><div class="ts-i"><p>${x.study}</p><small>${x.cite}</small></div></section>
+    ${studyCards(x.study, x.cite)}
     ${x.caution || check ? `<section class="ck-first"><span class="ck-i">!</span><div><small>Before you try it</small>${x.caution ? `<b>${x.caution}</b>` : ''}${check ? '<p>Check every ingredient for allergies and for clashes with medicines you take.</p>' : ''}</div></section>` : ''}`;
 }
 // Detail page: full photo on top, a frosted sheet slides over it with the 3 key items and a short description.
