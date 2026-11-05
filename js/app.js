@@ -160,7 +160,7 @@ function topbar(title, { back } = {}) {
     <button class="icon-btn dark" data-action="nav" data-to="profile" aria-label="Menu">${icon('menu', 22)}</button></header>`;
 }
 function tabbar(active) {
-  const items = [['today', 'home', 'Today'], ['calendar', 'calendar', 'Calendar'], ['log', 'plus', 'Log'], ['plan', 'yinyang', 'Nourish & rituals'], ['insights', 'chart', 'Insights']];
+  const items = [['today', 'home', 'Today'], ['calendar', 'calendar', 'Calendar'], ['log', 'plus', 'Log'], ['plan', 'bowl', 'Food guide'], ['insights', 'chart', 'Insights']];
   return `<nav class="tabbar">${items.map(([to, ic, label]) =>
     `<button class="tab ${to === 'log' ? 'tab-main' : ''} ${active === to ? 'active' : ''}" data-action="nav" data-to="${to}" aria-label="${label}">${icon(ic, to === 'log' ? 26 : 21)}</button>`).join('')}</nav>`;
 }
@@ -231,7 +231,7 @@ const TIP_DECK = { pms: ['drop', 'Cramps creeping in?', 'Ease my PMS'], skin: ['
 // A tip from her own check-ins: a pattern due today or tomorrow, a hard symptom from the last two days, or her fertile sign.
 function checkinTip(info) {
   const tip = (t, deck, to) => ({ k: 'mine', t: 'From your check-ins', photo: 'Progesterone', tip: t, deck, to });
-  const rel = n => reliefKey(n) ? `relief/${encodeURIComponent(reliefKey(n))}` : 'log';
+  const rel = n => reliefKey(n) ? `relief/${encodeURIComponent(reliefKey(n))}` : 'relief';
   const up = M.stats.periods.length ? upcomingPatterns(patterns()).find(x => x.inDays <= 1 && QUICK_FIX[x.name]) : null;
   if (up) return tip(`${up.name} usually comes on ${dayRange(up)} for you. Get ahead of it: ${QUICK_FIX[up.name]}`, ['spark', `${up.name} ${up.inDays ? 'tomorrow' : 'today'}?`, 'Get ahead of it'], rel(up.name));
   for (const d of [0, -1]) {
@@ -355,6 +355,7 @@ function trainSafe() {
 }
 // ---------- grounding: bare skin on the earth ----------
 const groundCta = () => `<button class="gr-cta" data-action="nav" data-to="ground"><img src="images/ground-roots.jpg" alt="" loading="lazy"><span><b>Ground yourself</b><small>Bare feet on the earth · 15 min</small></span>${icon('chevR', 16)}</button>`;
+const habitsCta = () => `<button class="gr-cta" data-action="nav" data-to="habits"><img src="${carePhoto('lemon-water', 300) || 'images/tea-ginger.webp'}" alt="" loading="lazy"><span><b>Daily habits that help</b><small>Your checklist · small things, every day</small></span>${icon('chevR', 16)}</button>`;
 function viewGround() {
   const info = M.info, ph = info && info.phase, P = ph && GROUND_PHASE[ph];
   const late = info && info.daysToPeriod <= 3 && !info.isPeriod, phd = P && (late && ph === 'luteal' ? P.d : P.d);
@@ -1236,6 +1237,8 @@ function viewToday() {
       <button class="rcard ${carePhoto(ritual.id) ? 'has-photo' : ''}" data-action="nav" data-to="ritual/${ritual.id}">${careArt(ritual.id, 'crown', 2)}<div class="rc-top"><span class="rc-k">Ritual</span><span class="rc-go">${icon('chevR', 16)}</span></div><div class="rc-t">${ritual.name}</div><div class="rc-m">${ritual.mins} min</div></button>
     </div>
 
+    ${habitsHome(info)}
+
     ${sectionTitle('Your hormones', ['Explore', 'hormones'])}
     <section class="card glass chart-card">${cycleChart(info, { id: 'today', compact: true })}
       <div class="cc-links one"><button data-action="nav" data-to="hormones">${icon('chart', 15)} Explore your hormones ${icon('chevR', 14)}</button></div></section>
@@ -1250,7 +1253,6 @@ function viewToday() {
       <span class="ci2-cta">Log today ${icon('chevR', 14)}</span></button>`}
 
     ${tipsCard(info)}
-    ${habitsHome(info)}
 
     ${sectionTitle('Explore')}
     ${exploreGrid(info)}
@@ -1262,7 +1264,7 @@ function viewToday() {
 // Explore: every button a full photo with a frosted label.
 function exploreGrid(info) {
   const tiles = [['manifest', 'spark', 'Manifest', 'Live it as done', 'images/forest-calm.jpg'], ['hormones', 'book', 'Hormones', 'What each one does', hormonePhoto('Oestrogen', 500)], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/forest-path.jpg'],
-    ['move', 'leaf', 'Move', 'Best training times', 'images/tile-hiit.webp'], ['habits', 'check', 'Habits', 'Daily checklist', carePhoto('lemon-water', 500)], ['relief', 'heart', 'Relief', 'Cramps, PMS, sleep', carePhoto('foot-soak', 500)],
+    ['move', 'leaf', 'Move', 'Best training times', 'images/tile-hiit.webp'], ['ground', 'leaf', 'Grounding', 'Bare feet, 15 min', 'images/tile-ground.webp'], ['relief', 'heart', 'Relief', 'Cramps, PMS, sleep', carePhoto('foot-soak', 500)],
     ['season', 'bowl', 'In season', 'Local foods', 'images/season-fruit.webp'], ['tea', 'cup', 'Tea guide', 'For every need', 'images/tea-ginger.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/tile-meditate.webp']];
   return `<div class="xp-grid xp2">${tiles.map(([to, ic, t, sub, img], i) => `<button class="xp ${i === 0 ? 'wide' : ''}" data-action="nav" data-to="${to}" style="--i:${i}">${img ? `<img src="${img}" alt="" loading="lazy">` : ''}<span class="xp-l"><span class="xp-ic">${icon(ic, 15)}</span><span><b>${t}</b><small>${sub}</small></span></span></button>`).join('')}</div>`;
 }
@@ -2919,7 +2921,7 @@ function viewReliefIndex() {
     <h1 class="page-h rx-h">Feel better, <span>gently</span></h1>
     <p class="muted rx-sub">What helps: body, food and Chinese medicine.</p>
     ${today}
-    <button class="bz-cta" data-action="nav" data-to="breathe"><i class="bz-mini"></i><span><b>Breathe with me</b><small>${((info && BREATHS[BREATH_FOR[info.phase]]) || BREATHS.sigh).name}${info ? " · for your phase" : ""}</small></span>${icon('chevR', 16)}</button>${groundCta()}
+    <button class="bz-cta" data-action="nav" data-to="breathe"><i class="bz-mini"></i><span><b>Breathe with me</b><small>${((info && BREATHS[BREATH_FOR[info.phase]]) || BREATHS.sigh).name}${info ? " · for your phase" : ""}</small></span>${icon('chevR', 16)}</button>${groundCta()}${habitsCta()}
     ${sectionTitle('Everything that helps')}
     <div class="rx-grid">${keys.map(k => { const h = (state.reliefHelp || {})[k] || [];
       return `<button class="rx-t ${recent.has(k) ? 'on' : ''}" data-action="nav" data-to="relief/${encodeURIComponent(k)}"><span class="rx-e">${RELIEF_EMOJI[k] || '🌿'}</span><b>${k}</b><small>${h.length ? `${icon('heart', 11)} ${h.length} work${h.length > 1 ? '' : 's'} for you` : `${RELIEF[k].steps.length} ways`}</small>${recent.has(k) ? '<i>Logged</i>' : ''}</button>`; }).join('')}</div>
@@ -3472,12 +3474,32 @@ const FOOD_DOT = { '🔴': '#a8362e', '⚫': '#151515', '🟢': '#5d8a48', '🟠
 const colDots = c => [...c].filter(x => FOOD_DOT[x]).map(x => `<i class="cdot" style="background:${FOOD_DOT[x]}"></i>`).join('');
 const noEmoji = t => String(t).replace(/^[\p{Extended_Pictographic}\uFE0F\u200D]+\s*/u, '');
 // Today's best things to do, as big tiles. Stress, stretch and meditate open in place with the how-to.
+const picSrc = p => p.includes('/') ? p : `images/${p.replace('move-', 'tile-')}.webp`;
+// One relief move for today: from what she logged in the last two days, else what is common in this part of her cycle.
+const RELIEF_PHOTO = { 'Face fascia': 'belly-massage', 'Ovulation pain': 'belly-massage', Cramps: 'belly-massage', 'PMS mood': 'heart-breath', Bloating: 'lemon-water', Insomnia: 'early-sleep', Acne: 'carrot-salad', Headache: 'foot-soak', Fatigue: 'circulation-shot', 'Tender breasts': 'liver-stretch' };
+function reliefPick(w) {
+  const logged = [];
+  for (const d of [0, -1]) { const l = getLog(C.iso(C.addDays(new Date(), d))); [...(l.symptoms || []), ...(l.moods || [])].forEach(x => { const k = reliefKey(x); if (k && !logged.includes(k)) logged.push(k); }); }
+  const k = logged[0] || (RELIEF_WINDOW[w] || [])[0] || 'Face fascia';
+  const steps = RELIEF[k].steps.filter(x => !/ibuprofen|naproxen|paracetamol|pain relief|doctor/i.test(x.t + ' ' + x.d) && !/\btea\b|\b[A-Z]{2,3}\d/i.test(x.t));
+  return { k, st: steps[dayNum(new Date()) % steps.length], mine: !!logged[0] };
+}
+// Cortisol as a little vial: full and rising when stress runs high, low and settled when calm.
+function cortisolVial(lvl) {
+  const f = [0, .3, .62, .94][lvl], y = 10 + 66 * (1 - f);
+  return `<svg class="cv" viewBox="0 0 44 92" aria-hidden="true"><rect x="9" y="6" width="26" height="74" rx="13" class="cv-g"/>
+    <clipPath id="cvc"><rect x="9" y="6" width="26" height="74" rx="13"/></clipPath>
+    <rect x="9" y="${y.toFixed(1)}" width="26" height="${(80 - y).toFixed(1)}" class="cv-f" clip-path="url(#cvc)"/>
+    <path d="M9 ${y.toFixed(1)} q6.5 -3 13 0 t13 0" class="cv-w" clip-path="url(#cvc)"/>
+    ${lvl === 3 ? '<path d="M22 2 l-5 6 h10z" class="cv-up"/>' : ''}
+    <rect x="9" y="6" width="26" height="74" rx="13" class="cv-o"/><rect x="14" y="14" width="4" height="22" rx="2" class="cv-hl"/></svg>`;
+}
 function todayTiles(info, only) {
   const w = dayWindow(info), g = MOVE_GUIDE[w], [lvl] = CALM[w], ph = info.phase, warm = warmWindow(info);
   const best = MOVES.filter(m => g.r[m.k] === 3);
-  const pp = PEOPLE_PLAN[ph], st = STRETCH[w], md = MEDITATE[w], open = ui.hubTip;
-  const pics = { Sport: `move-${best[0]?.k || 'yoga'}`, Eat: 'season-veg', Friends: 'move-yoga', Stress: 'move-lift', Stretch: 'move-walk', Ground: 'move-ground', Tea: 'move-hiit' };
-  const tile = (cls, act, g_, k, t, s_) => `<button class="dpt ${cls} ${pics[k] ? 'has-pic' : ''} ${act.tip && open === act.tip ? 'open' : ''}" ${act.to ? `data-action="nav" data-to="${act.to}"` : `data-action="hubTip" data-k="${act.tip}"`}>${pics[k] ? `<span class="dpt-g pic"><img class="pb" src="images/${pics[k].replace('move-', 'tile-')}.webp" alt="" loading="lazy"><img class="ps" src="images/${pics[k].replace('move-', 'tile-')}.webp" alt="" loading="lazy"><i></i></span>` : `<span class="dpt-g">${g_}</span>`}<span class="dpt-k">${k}</span><b>${t}</b><small>${s_}</small>${act.tip ? `<span class="dpt-more">${icon('plus', 14, 2.2)}</span>` : ''}</button>`;
+  const pp = PEOPLE_PLAN[ph], st = STRETCH[w], md = MEDITATE[w], open = ui.hubTip, rp = reliefPick(w);
+  const pics = { Sport: `move-${best[0]?.k || 'yoga'}`, Eat: 'season-veg', Friends: 'move-yoga', Stress: 'move-lift', Relief: carePhoto(RELIEF_PHOTO[rp.k] || 'foot-soak', 400) || 'move-walk', Ground: 'move-ground', Tea: 'move-hiit' };
+  const tile = (cls, act, g_, k, t, s_) => `<button class="dpt ${cls} ${pics[k] ? 'has-pic' : ''} ${act.tip && open === act.tip ? 'open' : ''}" ${act.to ? `data-action="nav" data-to="${act.to}"` : `data-action="hubTip" data-k="${act.tip}"`}>${pics[k] ? `<span class="dpt-g pic"><img class="pb" src="${picSrc(pics[k])}" alt="" loading="lazy"><img class="ps" src="${picSrc(pics[k])}" alt="" loading="lazy"><i></i></span>` : `<span class="dpt-g">${g_}</span>`}<span class="dpt-k">${k}</span><b>${t}</b><small>${s_}</small>${act.tip ? `<span class="dpt-more">${icon('plus', 14, 2.2)}</span>` : ''}</button>`;
   const fn = FOOD_NEEDS[w], fm = FOOD_MEALS[w], sp = STRESS_PLAN[w], td = TEA_DAY[w];
   const tips = {
     stress: [icon('mind', 22), `Stress today: ${['', 'low', 'medium', 'high'][lvl]}`, sp[0], sp[1], 'some'],
@@ -3502,11 +3524,11 @@ function todayTiles(info, only) {
   return `<div class="dpt-grid">
       ${tile('wide hero-move', { to: 'move' }, icon(MOVE_G[best[0]?.k] || 'leaf', 22), 'Sport', g.title, best.map(m => m.n).slice(0, 3).join(' · '))}
       ${tile('t-paper', { to: 'do/eat' }, '🥗', 'Eat', fn[0], `<span class="dpt-col">${colDots(fm.col[0])} ${fm.col[1]} foods</span>${fn[1].map(x => x[0].slice(x[0].indexOf(' ') + 1)).slice(0, 3).join(' · ')}<br><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
-      ${tile('t-deep', { to: 'do/friends' }, PEOPLE_G[ph], 'Friends', pp[0], pp[1])}
-      ${tile(`calm lv${lvl}`, { to: 'breathe/stress' }, '🪷', 'Stress', `${['', 'Low', 'Medium', 'High'][lvl]}<i class="dc-bar"><b style="width:${lvl * 33.3}%"></b></i>`, `Best: ${sp[1][0].toLowerCase()}`)}
-      ${tile('t-sage', { to: 'do/stretch' }, '🤸', 'Stretch', st[0], st[1])}
-      ${tile('t-glow', { to: 'ground' }, '🌿', 'Ground', GROUND_PHASE[ph].t, GROUND_PHASE[ph].d[1])}
-      ${tile('t-tea', { to: 'do/tea' }, td[0], 'Tea', td[1], td[2])}
+      ${tile('t-deep', { to: 'do/friends' }, PEOPLE_G[ph], 'Friends', FRIENDS[ph].ideas[0], `<span class="dpt-fr">${icon('check', 12, 2.4)} ${FRIENDS[ph].ideas[1]}</span><span class="dpt-fr no">${icon('close', 12, 2.4)} Skip: ${FRIENDS[ph].skip.charAt(0).toLowerCase() + FRIENDS[ph].skip.slice(1)}</span>`)}
+      ${tile(`calm lv${lvl} t-cort`, { to: 'breathe/stress' }, cortisolVial(lvl), 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
+      ${tile('t-sage ph-full keep', { to: `relief/${encodeURIComponent(rp.k)}` }, '🌿', 'Relief', rp.st.t, `${rp.mine ? 'You logged' : 'Common now:'} ${rp.k.toLowerCase()}`)}
+      ${tile('t-glow ph-full', { to: 'ground' }, '🌿', 'Ground', GROUND_PHASE[ph].t, '')}
+      ${tile('t-tea t-cup', { to: 'do/tea' }, `<img class="dpt-cup" src="images/${/ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i.test(td[1]) ? 'cup-chai' : 'cup-glass'}.webp" alt="" loading="lazy">`, 'Tea for today', td[1], td[2])}
     </div>
     <div class="hub-tip ${open && (open === 'eat' || open === 'tea' || tips[open]) ? 'on' : ''}" id="hub-tip">${open ? tipBody(open) : ''}</div>`;
 }
@@ -4494,7 +4516,6 @@ function viewBreathe(from) {
   const phase = M.info && M.info.phase, rec = BREATH_FOR[phase] || 'sigh', k = BREATHS[ui.bzK] ? ui.bzK : rec, B = BREATHS[k];
   return `${topbar('Breathe', { back: true })}
   <div class="pad bz-pad">
-    ${from === 'stress' && M.info ? cortisolSec(M.info) : ''}
     <h1 class="bz-title"><small>A minute for you</small>Come back to<em>your breath</em></h1>
     <div class="bzp" role="tablist" aria-label="Choose a breathing practice">${[rec, ...BREATH_ORDER.filter(x => x !== rec)].map(x => `<button class="bzp-o ${x === k ? 'on' : ''}" role="tab" aria-selected="${x === k}" data-action="bzPick" data-v="${x}">
       ${x === rec ? `<em>${phase ? 'For your phase' : 'Start here'}</em>` : ''}<span class="bzp-g">${BREATHS[x].g}</span><b>${BREATHS[x].name}</b><small>${BREATHS[x].when}</small></button>`).join('')}</div>
@@ -4526,6 +4547,7 @@ function viewBreathe(from) {
       </div>
       <button class="bz-go">Start</button>
     </section>
+    ${from === 'stress' && M.info ? cortisolSec(M.info) : ''}
     <figure class="bz-quote"><span>“</span><blockquote>The past is already gone and the future has not yet come. See clearly what is here, now.</blockquote><figcaption>The Buddha, from the Bhaddekaratta Sutta</figcaption></figure>
     <section class="bz-how"><div class="bzh-h"><span class="bzp-g">${B.g}</span><div><small>${B.when}</small><h3>${B.name}</h3></div></div>
       <p class="bzh-for">${B.for}.</p>

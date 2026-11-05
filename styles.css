@@ -7637,3 +7637,35 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 @keyframes mvBob { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-3px) rotate(2deg); } }
 @media (prefers-reduced-motion: reduce) { .mv2-ph { animation: none; } }
 .mv2-b .mv2-ph i svg { width: 12px; height: 12px; margin: 0; grid-area: auto; }
+/* Friends tile: today's social plan as two short lines */
+.dpt-fr { display: flex; align-items: flex-start; gap: 6px; margin-top: 6px; font-size: 13px; line-height: 1.3; color: #20301a; font-weight: 500; }
+.dpt-fr svg { flex: none; margin-top: 2px; width: 16px; height: 16px; padding: 2px; border-radius: 50%; background: #20301a; color: #fff; box-sizing: border-box; }
+.dpt-fr.no { color: #4b5a40; font-weight: 400; }
+.dpt-fr.no svg { background: rgba(48,64,35,.14); color: #304023; }
+/* Tea tile: the 3D cup hovering top right, the tea's name below */
+.dpt.t-cup .dpt-g { position: absolute; top: 8px; right: 6px; width: 92px; height: 92px; display: block; }
+.dpt.t-cup .dpt-cup { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 10px 12px rgba(32,48,26,.22)); animation: cupFloat 6s ease-in-out infinite; }
+.dpt.t-cup .dpt-k { position: relative; margin-top: 74px; }
+@keyframes cupFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@media (prefers-reduced-motion: reduce) { .dpt.t-cup .dpt-cup { animation: none; } }
+/* Ground tile: the photo itself, crisp, with one glass label */
+.hub .dpt.ph-full .dpt-g.pic i { background: linear-gradient(180deg, rgba(20,28,16,0) 45%, rgba(20,28,16,.55) 100%) !important; }
+.hub .dpt.ph-full .dpt-g.pic .ps { opacity: 1 !important; filter: saturate(1.1) contrast(1.05) !important; }
+.hub .dpt.ph-full .dpt-k, .hub .dpt.ph-full b { position: relative; color: #fff !important; text-shadow: 0 1px 8px rgba(0,0,0,.35); }
+.hub .dpt.ph-full { justify-content: flex-end; }
+.hub .dpt.ph-full small { display: none; }
+/* Stress tile: cortisol vial graphic + a Breathe now pill */
+.hub .dpt.t-cort .dpt-g { position: absolute; top: 12px; right: 12px; width: 40px; height: 84px; display: block; }
+.cv { width: 100%; height: 100%; overflow: visible; }
+.cv-g { fill: rgba(255,255,255,.7); }
+.cv-f { fill: hsl(calc(var(--hb) + 10 * var(--hk)) calc(62% * var(--hs)) 56%); }
+.lv1 .cv-f { fill: #8c9768; } .lv2 .cv-f { fill: hsl(calc(var(--hb) + 30 * var(--hk)) calc(70% * var(--hs)) 62%); }
+.cv-w { fill: none; stroke: rgba(255,255,255,.7); stroke-width: 1.4; }
+.cv-o { fill: none; stroke: #20301a; stroke-width: 2; }
+.cv-hl { fill: rgba(255,255,255,.75); }
+.cv-up { fill: #20301a; }
+.hub .dpt.t-cort b { padding-right: 46px; }
+.hub .dpt.t-cort b .dc-bar { display: none; }
+.dpt-go { display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; padding: 7px 12px; border-radius: 999px; background: #fff; color: #20301a; font-weight: 600; font-size: 12.5px; box-shadow: 0 4px 12px rgba(32,48,26,.12); }
+.hub .dpt.ph-full.keep small { display: block; position: relative; color: rgba(255,255,255,.92) !important; text-shadow: 0 1px 8px rgba(0,0,0,.35); }
+.hub .dpt.ph-full.keep .dpt-g.pic i { background: linear-gradient(180deg, rgba(20,28,16,0) 30%, rgba(20,28,16,.62) 100%) !important; }
