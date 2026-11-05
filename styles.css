@@ -7819,3 +7819,79 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 @keyframes cybGrow { from { transform: scaleX(0); } }
 .cyb-e { background: #dfe8cf; } .cyb-r.now .cyb-e { opacity: .55; }
 .cyb-bar i:empty { flex: none; }
+
+/* Cycle foods decoded: arched photo window, round food stickers, phase-tinted card, food chips */
+.cf2 { grid-template-columns: 1fr 1fr; gap: 12px; }
+.cf2 .cf-c { position: relative; display: block; padding: 8px 8px 14px; border: 0; border-radius: 30px; overflow: visible; background: linear-gradient(180deg, #fff 0%, color-mix(in srgb, var(--c) 14%, #fff) 100%); box-shadow: 0 10px 24px rgba(48,64,35,.08); }
+.cf2 .cf-c.now { box-shadow: 0 0 0 2px var(--c), 0 12px 26px color-mix(in srgb, var(--c) 30%, transparent); }
+.cf2 .cf-arch { position: relative; height: 150px; border-radius: 80px 80px 22px 22px; overflow: hidden; }
+.cf2 .cf-arch img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 1.2s cubic-bezier(.2,.8,.2,1); }
+.cf2 .cf-c:active .cf-arch img { transform: scale(1.05); }
+.cf-now { position: absolute; top: 10px; left: 50%; translate: -50% 0; display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 99px; background: #fff; color: #20301a; font-size: 11.5px; font-weight: 500; box-shadow: 0 4px 10px rgba(32,48,26,.15); }
+.cf-now svg { color: var(--c); }
+.cf2 .cf-stk { display: flex; justify-content: center; margin: -22px 0 4px; position: relative; z-index: 1; }
+.cf2 .cf-stk img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; margin: 0 -5px; box-shadow: 0 5px 12px rgba(48,64,35,.18); animation: cfBob 5s ease-in-out infinite; animation-delay: calc(var(--k) * -1.3s + var(--i) * -.4s); }
+@keyframes cfBob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -4px; } }
+.cf2 .cf-t { display: grid; gap: 4px; padding: 4px 6px 0; text-align: center; justify-items: center; }
+.cf2 .cf-t small { display: inline-flex; align-items: center; gap: 5px; padding: 0; background: none; font-size: 11.5px; font-weight: 500; color: color-mix(in srgb, var(--c) 70%, #20301a); }
+.cf2 .cf-t small i { width: 7px; height: 7px; border-radius: 50%; background: var(--c); }
+.cf2 .cf-t b { font-size: 17px; font-weight: 500; color: #20301a; line-height: 1.2; }
+.cf2 .cf-t p { margin: 0; font-size: 12.5px; line-height: 1.4; color: rgba(48,64,35,.78); }
+.cf-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 6px; }
+.cf-chips em { font-style: normal; padding: 3px 8px; border-radius: 99px; background: #fff; border: 1px solid color-mix(in srgb, var(--c) 30%, transparent); font-size: 11px; font-weight: 500; color: #304023; }
+@media (prefers-reduced-motion: reduce) { .cf2 .cf-stk img { animation: none; } }
+.eb-panel { display: block; } .ebp-in { display: grid; grid-template-columns: 64px 1fr; gap: 14px; align-items: start; }
+.ebp-in.pop { animation: ebPop .45s cubic-bezier(.2,.8,.2,1); }
+.eb-warm { display: flex; align-items: center; gap: 6px; margin: 12px 0 0; padding: 8px 12px; border-radius: 14px; background: #fff; color: #9a3b4a; font-size: 12.5px; font-weight: 500; line-height: 1.35; }
+.eb-warm svg { flex: none; }
+@media (prefers-reduced-motion: reduce) { .ebp-in.pop { animation: none; } }
+.hub .dpt.ph-full.ph-vid .dpt-g i { background: linear-gradient(180deg, rgba(20,16,26,0) 45%, rgba(20,16,26,.7) 100%); }
+.hub .dpt.ph-full.ph-vid { display: flex; flex-direction: column; justify-content: flex-end; }
+.plt-cup { position: relative; overflow: hidden; }
+.cup3d-w { position: relative; display: block; width: 100%; height: 100%; }
+.cup3d-w canvas.teacup3d { position: absolute; inset: -12%; width: 124%; height: 124%; opacity: 0; transition: opacity .8s ease; pointer-events: none; }
+.cup3d-w.tg-ready canvas.teacup3d { opacity: 1; } .cup3d-w.tg-ready img { opacity: 0; transition: opacity .8s ease; }
+
+.cf2 .cf-c { cursor: pointer; transition: transform .35s cubic-bezier(.2,.8,.2,1); } .cf2 .cf-c:active { transform: scale(.97); }
+.cf2 .cf-c.open { box-shadow: 0 0 0 2px var(--c), 0 14px 28px color-mix(in srgb, var(--c) 30%, transparent); }
+.cf-more { display: inline-flex; align-items: center; gap: 3px; margin-top: 8px; padding: 5px 11px; border-radius: 99px; background: #20301a; color: #fff; font-size: 11.5px; font-weight: 500; }
+.cf2 .cf-c.open .cf-more svg { transform: rotate(180deg); }
+.cfs { position: relative; margin-top: 12px; padding: 18px 18px 16px; border-radius: 30px; background: linear-gradient(180deg, #fff, color-mix(in srgb, var(--c) 12%, #fff)); box-shadow: 0 12px 26px rgba(48,64,35,.1); animation: ebPop .45s cubic-bezier(.2,.8,.2,1); }
+.cfs small { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: color-mix(in srgb, var(--c) 70%, #20301a); } .cfs small i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+.cfs b { display: block; margin: 6px 0 4px; font-size: 21px; font-weight: 500; color: #20301a; } .cfs p { margin: 0 0 14px; font-size: 13.5px; line-height: 1.5; color: rgba(48,64,35,.85); }
+.cfs-x { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border: 0; border-radius: 50%; display: grid; place-items: center; background: #fff; color: #20301a; box-shadow: 0 3px 8px rgba(48,64,35,.12); }
+.cfs-f { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.cfs-f span { display: grid; justify-items: center; gap: 5px; text-align: center; } .cfs-f img { width: 62px; height: 62px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 5px 12px rgba(48,64,35,.15); }
+.cfs-f em { font-style: normal; font-size: 11px; line-height: 1.25; color: #304023; }
+.cfs-c { justify-content: flex-start; margin-top: 14px; }
+@media (prefers-reduced-motion: reduce) { .cfs { animation: none; } }
+.ebp-w { display: flex; gap: 6px; align-items: flex-start; margin-top: 6px; padding: 8px 10px; border-radius: 14px; background: #fff; color: #9a3b4a; font-size: 12px; font-weight: 500; line-height: 1.4; }
+.ebp-w svg { flex: none; margin-top: 1px; }
+.plt-cup.cup3d-w { display: grid; place-items: center; }
+/* Milk, drinks & supplements tabs: one white pill bar, the active tab in dark ink */
+.eat-tabs.eb-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin: 0 0 12px; padding: 5px; border-radius: 99px; background: #fff; box-shadow: 0 6px 16px rgba(48,64,35,.08); overflow: visible; }
+.eat-tabs.eb-tabs button { justify-content: center; gap: 6px; padding: 9px 6px; border: 0; border-radius: 99px; background: transparent; color: #304023; font-size: 13px; font-weight: 500; white-space: nowrap; transition: background .3s, color .3s; }
+.eat-tabs.eb-tabs button.on { background: #20301a; color: #fff; }
+.eat-tabs.eb-tabs .ebt-e { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #f4efe6; font-size: 14px; }
+.eat-tabs.eb-tabs button.on .ebt-e { background: #fff; }
+/* Plate rules as three soft tinted cards with icon bubbles */
+.pl .pl-rules { display: grid; gap: 10px; padding: 0; margin-top: 14px; }
+.pl .pl-r { grid-template-columns: 52px 1fr; align-items: center; gap: 14px; padding: 14px 16px 14px 12px; border: 0 !important; border-radius: 26px; background: linear-gradient(120deg, #fff 30%, var(--rt)); box-shadow: 0 8px 18px rgba(48,64,35,.07); }
+.pl .pl-r.r1 { --rt: #fbe9dc; --rb: #f6d6bf; } .pl .pl-r.r2 { --rt: #e9f0dc; --rb: #d6e3c0; } .pl .pl-r.r3 { --rt: #eee6f6; --rb: #dccff0; }
+.pl .pl-r .pl-ic { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 26px; background: radial-gradient(circle at 35% 30%, #fff, var(--rb)); box-shadow: 0 6px 12px rgba(48,64,35,.12), inset 0 -3px 8px rgba(255,255,255,.6); color: #20301a; }
+.pl .pl-r .pl-ic.han { font-family: 'Noto Serif SC', serif; font-size: 24px; }
+.pl .pl-r b { display: flex; align-items: center; gap: 6px; font-size: 15px !important; font-weight: 500; letter-spacing: 0 !important; text-transform: none !important; color: #20301a; margin-bottom: 2px; }
+.pl-han { font-style: normal; font-family: 'Noto Serif SC', serif; font-size: 13px; padding: 1px 7px; border-radius: 99px; background: #fff; color: #4f6a2a; }
+.pl .pl-r span { font-size: 13.5px; line-height: 1.45; color: rgba(48,64,35,.85); }
+/* Blood sugar tricks as photo cards */
+.sb-t.sb-pic { padding: 6px 6px 12px; gap: 3px; border: 0; border-radius: 24px; background: #fff; box-shadow: 0 8px 18px rgba(48,64,35,.08); }
+.sb-t.sb-pic b, .sb-t.sb-pic small { padding-left: 6px; padding-right: 6px; } .sb-t.sb-pic b { margin-top: 6px; color: #20301a; }
+.sb-ph { position: relative; display: block; width: 100%; height: 86px; border-radius: 19px; overflow: visible; }
+.sb-ph img { width: 100%; height: 100%; object-fit: cover; border-radius: 19px; display: block; transition: transform .6s cubic-bezier(.2,.8,.2,1); }
+.sb-ph em { position: absolute; left: 8px; bottom: -12px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: #fff; font-style: normal; font-size: 16px; box-shadow: 0 4px 10px rgba(48,64,35,.18); }
+.sb-t.sb-pic .sb-ck { top: 12px; right: 12px; background: rgba(255,255,255,.85); border-color: #fff; }
+.sb-t.sb-pic.on { background: #fff; box-shadow: 0 0 0 2px #20301a, 0 10px 20px rgba(48,64,35,.14); }
+.sb-t.sb-pic.on .sb-ck { background: #20301a; border-color: #20301a; color: #fff; }
+.sb-t.sb-pic.on .sb-ph img { transform: scale(1.04); }
+.sb-t.sb-pic small { color: rgba(48,64,35,.78); }
+.cup3d-w canvas.teacup3d { display: block; }

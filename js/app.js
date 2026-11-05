@@ -1941,7 +1941,7 @@ const EB_WHY = [[/kefir|yoghurt/i, 'Live cultures for a calm gut and clearer ski
   [/matcha|green tea/i, 'Calm focus: caffeine with L-theanine.'], [/cacao/i, 'Magnesium for cravings, cramps and calm.'], [/ginger/i, 'Warms the belly and eases cramps.'], [/red date/i, 'Builds blood in Chinese medicine, gently sweet.'],
   [/raspberry leaf/i, 'A classic tea for the womb, mild and earthy.'], [/broth/i, 'Minerals, collagen and warmth.'], [/nettle/i, 'Iron and minerals after bleeding.'], [/chamomile/i, 'Helps you wind down before sleep.'],
   [/hibiscus/i, 'Tart, cooling and full of antioxidants.'], [/coconut water/i, 'Potassium for hot, sweaty days.'], [/lemon/i, 'A fresh start with vitamin C.'], [/mineral water/i, 'Magnesium and calcium you can drink.'], [/juice/i, 'Greens in a glass for your liver.']];
-const EB_PIC = [[/kefir/i, () => foodPhoto('Kefir', 240)], [/yoghurt/i, () => foodPhoto('Greek yoghurt', 240)], [/milk/i, () => foodPhoto('Grass-fed raw milk & butter', 240)], [/cheese/i, () => foodPhoto('Fresh sheep & goat cheese', 240)],
+const EB_PIC = [[/kefir/i, () => foodPhoto('Kefir', 240)], [/yoghurt/i, () => foodPhoto('Greek yoghurt', 240)], [/milk/i, () => foodPhoto('Grass-fed raw milk & butter', 240)], [/butter|ghee/i, () => 'https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=240&h=240&fit=crop&auto=format&q=72'], [/cheese/i, () => foodPhoto('Fresh sheep & goat cheese', 240)],
   [/red date/i, () => teaPhoto('Ginger & red dates', 240, 240)], [/ginger/i, () => teaPhoto('Ginger', 240, 240)], [/chamomile/i, () => teaPhoto('Chamomile', 240, 240)], [/nettle/i, () => teaPhoto('Nettle leaf', 240, 240)]];
 const EB_TINT = { dairy: ['#fbf3e6', '#f3e2c4'], drinks: ['#f0f4e6', '#dce7c8'], supps: ['#f3edf8', '#e2d6f0'] };
 function eatCatInner(phase, cat) {
@@ -1950,14 +1950,13 @@ function eatCatInner(phase, cat) {
   if (cat === 'supps' && ttc()) C0 = [C0[0] + ' Trying to conceive: start a prenatal with folate.', [['🤰', 'Prenatal with methylfolate'], ['🔋', 'CoQ10'], ...C0[1].filter(([, n]) => !/Ashwagandha/.test(n))]];
   const warm = warmWindow(M.info) && phase === (M.info && M.info.phase), [t1, t2] = EB_TINT[cat] || EB_TINT.drinks;
   const items = warmChips(C0[1], cat, warm).map(([g, n]) => {
-    const x = cat === 'supps' && suppOf(n), why = x ? x.desc.split('. ')[0] + '.' : (EB_WHY.find(([r]) => r.test(n)) || [0, C0[0]])[1], pic = (EB_PIC.find(([r]) => r.test(n)) || [])[1]?.();
+    const x = cat === 'supps' && suppOf(n), why = x ? x.desc.split('. ')[0] + '.' : (EB_WHY.find(([r]) => r.test(n)) || [0, C0[0]])[1], pic = cat === 'supps' ? null : (EB_PIC.find(([r]) => r.test(n)) || [])[1]?.();
     const face = pic ? `<img src="${pic}" alt="" loading="lazy"><i>${g}</i>` : `<em>${g}</em>`;
-    return { n, face, panel: `<span class="ebp-f">${face}</span><span class="ebp-t"><b>${n}</b><small>${why}</small>${x ? `<span class="ebp-d"><span>${icon('drop', 12)} ${x.dose}</span><span>${icon('clock', 12)} ${x.when}</span></span><button class="ebp-go" data-action="nav" data-to="supp/${x.id}">Doses and studies ${icon('chevR', 13)}</button>` : ''}</span>` };
+    return { n, face, panel: `<span class="ebp-f">${face}</span><span class="ebp-t"><b>${n}</b><small>${why}</small>${/raw milk|milk, warmed|warm raw/i.test(n) && cat !== 'supps' ? `<span class="ebp-w">${icon('thermo', 13)} Warm raw milk very gently on low heat, only until it feels warm on your lip. Never boil it, or the good enzymes and bacteria are lost.</span>` : ''}${x ? `<span class="ebp-d"><span>${icon('drop', 12)} ${x.dose}</span><span>${icon('clock', 12)} ${x.when}</span></span><button class="ebp-go" data-action="nav" data-to="supp/${x.id}">Doses and studies ${icon('chevR', 13)}</button>` : ''}</span>` };
   });
   return `<p class="eb-lead">${C0[0]}</p>
-      ${warm && (cat === 'dairy' || cat === 'drinks') ? `<p class="eg-note warm">${icon('sun', 12)} These days: everything warm or at room temperature, nothing iced.</p>` : ''}
       <div class="eb-grid" style="--t1:${t1};--t2:${t2}">${items.map((x, i) => `<button class="eb-i ${i ? '' : 'on'}" data-action="ebPick" style="--i:${i}"><span class="eb-b">${x.face}</span><small>${x.n.replace(/\s*\(.*\)$/, '')}</small><template>${x.panel}</template></button>`).join('')}</div>
-      <div class="eb-panel" aria-live="polite">${items[0]?.panel || ''}</div>
+      <div class="eb-panel"><div class="ebp-in" aria-live="polite">${items[0]?.panel || ''}</div>${warm && (cat === 'dairy' || cat === 'drinks') ? `<p class="eb-warm">${icon('sun', 13)} These days: everything warm or at room temperature, nothing iced.</p>` : ''}</div>
       ${cat === 'supps' ? `<p class="eg-note">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}.</p><button class="sup-all" data-action="nav" data-to="supp">All supplements: doses and studies ${icon('chevR', 14)}</button>` : ''}`;
 }
 // The two best dishes for each phase, as one photo card with the day, the phase and its tagline in the middle.
@@ -2114,20 +2113,19 @@ function plateSection(current) {
       <div class="pld-foods">${foods.map(x => `<div>${x.photo ? `<img src="${x.photo}" alt="" loading="lazy">` : `<span>${x.g || '•'}</span>`}<small>${x.n}</small></div>`).join('')}</div>
     </div>
     <div class="pl-rules">
-      <div class="pl-r"><i class="pl-ic">${icon('bowl', 18)}</i><div><b>Cook it</b><span>${cook}</span></div></div>
-      <div class="pl-r"><i class="pl-ic">${icon('leaf', 18)}</i><div><b>Taste of ${season.toLowerCase()} · ${T.han}</b><span>${PSn.taste[0]}. ${PSn.taste[1]}</span></div></div>
-      <div class="pl-r"><i class="pl-ic han">${tcm.elementGlyph}</i><div><b>Your cycle in Chinese medicine</b><span>${PLATE_TCM_PLAIN[phase]}</span></div></div>
+      <div class="pl-r r1"><i class="pl-ic">🍲</i><div><b>Cook it</b><span>${cook}</span></div></div>
+      <div class="pl-r r2"><i class="pl-ic">${{ Spring: '🌱', Summer: '🍒', 'Late summer': '🌽', Autumn: '🧄', Winter: '🫚' }[season] || '🌿'}</i><div><b>Taste of ${season.toLowerCase()} <em class="pl-han">${T.han}</em></b><span>${PSn.taste[0]}. ${PSn.taste[1]}</span></div></div>
+      <div class="pl-r r3"><i class="pl-ic han">${tcm.elementGlyph}</i><div><b>Your cycle in Chinese medicine</b><span>${PLATE_TCM_PLAIN[phase]}</span></div></div>
     </div>
     ${plTea()}
     ${plTonight(phase, warm)}
-    <p class="fine center">Meat and organs first, then what’s in season. Roots, beans, lentils and some grains are welcome. Shares are a gentle guide, not a rule.</p>
   </section>`;
 }
 // Tea for today as a full recommendation: the floating cup, the tea and why.
 function plTea() {
   const td = TEA_DAY[M.info ? dayWindow(M.info) : 'rising'], chai = /ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i.test(td[1]);
-  return `<button class="card pl-teac" data-action="nav" data-to="do/tea"><span class="plt-cup"><img src="images/${chai ? 'cup-chai' : 'cup-glass'}.webp" alt="" loading="lazy"></span>
-    <span class="plt-t"><small>Tea for today</small><b>${td[1]}</b><em>${td[2]}</em><span class="plt-c">Your coffee fits too, best with food.</span></span>${icon('chevR', 16)}</button>`;
+  return `<button class="card pl-teac" data-action="nav" data-to="do/tea"><span class="plt-cup cup3d-w"><img src="images/${chai ? 'cup-chai' : 'cup-glass'}.webp" alt="" loading="lazy"><canvas class="teacup3d" aria-label="${td[1]}, turning slowly"></canvas></span>
+    <span class="plt-t"><small>Tea for today</small><b>${td[1]}</b><em>${td[2]}</em></span>${icon('chevR', 16)}</button>`;
 }
 // Tonight's plate: one real recipe for her phase, with its photo, a new one every day.
 function plTonight(phase, warm) {
@@ -2157,17 +2155,27 @@ function cycleFoods(phase) {
   const order = [phase, ...PHASE_ORDER.filter(p => p !== phase)];
   return `${sectionTitle('Cycle foods decoded')}
     <p class="cf-sub">Each phase shifts your metabolism, your body heat and the nutrients you burn through. Eat with it and your hormones stay steadier while your reserves fill back up.</p>
-    <div class="cf-grid">${order.map((p, i) => { const [t, d, foods, ph] = CYCLE_FOODS[p]; return `<section class="cf-c ${p === phase ? 'now' : ''}" data-phase="${p}" style="--i:${i}">
-      <div class="cf-col">${ph.map(n => `<img src="${pic(n)}" alt="" loading="lazy">`).join('')}</div>
-      <div class="cf-t"><small>${PHASES[p].name}${p === phase ? ' · now' : ''}</small><b>${t}</b><p>${d}</p><span>${foods.join(', ')}</span></div></section>`; }).join('')}</div>`;
+    <div class="cf-grid cf2">${order.map((p, i) => { const [t, d, foods, ph] = CYCLE_FOODS[p], big = (n, w) => FOOD_PHOTOS[n] ? foodPhoto(n, w) : teaPhoto(n, w, Math.round(w * 1.15)); return `<section class="cf-c ${p === phase ? 'now' : ''}" data-phase="${p}" data-action="cfOpen" data-p="${p}" role="button" tabindex="0" aria-label="${PHASES[p].name} foods: ${t}" style="--i:${i};--c:${PH_HEX[p]}">
+      <div class="cf-arch"><img src="${big(ph[0], 420)}" alt="" loading="lazy">${p === phase ? `<span class="cf-now">${icon('heart', 11, 2.2)} now</span>` : ''}</div>
+      <div class="cf-stk">${ph.slice(1).map((n, k) => `<img src="${pic(n)}" alt="" loading="lazy" style="--k:${k}">`).join('')}</div>
+      <div class="cf-t"><small><i></i>${PHASES[p].name}</small><b>${t}</b><p>${d}</p><span class="cf-chips">${foods.slice(0, 4).map(f => `<em>${f}</em>`).join('')}</span><span class="cf-more">See why ${icon('chevD', 12)}</span></div></section>`; }).join('')}</div>
+    <div class="cf-sheet" aria-live="polite"></div>`;
+}
+// Tapping a cycle-food card opens its detail under the grid: the goal, why, and every food with a photo.
+function cfSheet(p) {
+  const [t, , foods, ph] = CYCLE_FOODS[p], E = EAT_GUIDE[p], pic = n => FOOD_PHOTOS[n] ? foodPhoto(n, 200) : teaPhoto(n, 200, 200);
+  return `<div class="cfs" style="--c:${PH_HEX[p]}"><button class="cfs-x" data-action="cfOpen" data-p="${p}" aria-label="Close">${icon('close', 14, 2.2)}</button>
+    <small><i></i>${PHASES[p].name} · ${t}</small><b>${E.goal}</b><p>${E.why}</p>
+    <div class="cfs-f">${ph.map(n => `<span><img src="${pic(n)}" alt="" loading="lazy"><em>${n}</em></span>`).join('')}</div>
+    <div class="cf-chips cfs-c">${foods.map(f => `<em>${f}</em>`).join('')}</div></div>`;
 }
 function nourishBody(current) {
   const phase = current, N = NUTRITION[phase], warm = warmWindow(M.info);
   const recs = RECIPES.filter(r => r.phases.includes(phase)).sort((a, b) => warm ? (!!b.warm - !!a.warm) : (!!b.raw - !!a.raw));
   const recent = recentSymptoms().filter(s => SYMPTOM_FOODS[s]).slice(0, 2);
   const EXTRA = EAT_CATS.filter(c => !PLATE_PETALS.some(p => p.k === c.k)), cat = EXTRA.some(c => c.k === ui.eatCat) ? ui.eatCat : EXTRA[0].k;
-  return `${plateSection(phase)}${cycleFoods(phase)}${sectionTitle('Dairy, drinks & supplements')}
-    <div class="eat-tabs eb-tabs">${EXTRA.map(c => `<button class="${c.k === cat ? 'on' : ''}" data-action="eatCat" data-v="${c.k}"><span class="ebt-e">${{ dairy: '🥛', drinks: '🍵', supps: '💊' }[c.k] || ''}</span>${c.k === 'drinks' ? 'Drinks' : c.t}</button>`).join('')}</div>
+  return `${plateSection(phase)}${cycleFoods(phase)}${sectionTitle('Milk, drinks & supplements')}
+    <div class="eat-tabs eb-tabs">${EXTRA.map(c => `<button class="${c.k === cat ? 'on' : ''}" data-action="eatCat" data-v="${c.k}"><span class="ebt-e">${{ dairy: '🥛', drinks: '🍵', supps: '💊' }[c.k] || ''}</span>${{ dairy: 'Milk & cheese', drinks: 'Drinks' }[c.k] || c.t}</button>`).join('')}</div>
     <section class="card eat-cat eb" data-phase="${phase}">${eatCatInner(phase, cat)}</section>
 
     <span id="pl-recipes"></span>${sectionTitle('Recipes for you')}
@@ -2183,6 +2191,9 @@ function nourishBody(current) {
 
 // Blood-sugar tricks inside Nourish. Her own pattern shows only when her logs reveal one.
 const SUGAR_SYMPTOMS = ['Cravings', 'Fatigue', 'Dizziness'];
+// A real photo for each blood-sugar trick, with its emoji as a little badge.
+const SB_PIC = { fibre: () => foodPhoto('Aged kimchi (mugeunji)', 360), move: () => 'images/tile-walk.webp', acv: () => foodPhoto('Apples', 360), tea: () => teaPhoto('Tea', 360, 240),
+  berberine: () => teaPhoto('Dandelion leaf', 360, 240), d3mg: () => 'images/rhythm-sun.webp', minerals: () => foodPhoto('Oysters', 360), spices: () => teaPhoto('Cinnamon', 360, 240) };
 function sugarSection(phase) {
   const on = sugarDone(), pat = M.info ? patterns().list.filter(x => SUGAR_SYMPTOMS.includes(x.name)) : [];
   const luteal = phase === 'luteal';
@@ -2194,7 +2205,7 @@ function sugarSection(phase) {
       ${pat.length ? `<div class="sm-pat">${pat.slice(0, 2).map(x => `<div>${icon('chart', 14)}<span><b>Your pattern:</b> ${x.name.toLowerCase()} on ${x.from === x.to ? `day ${x.from}` : `days ${x.from}–${x.to}`} · use these tricks then</span></div>`).join('')}</div>` : ''}
       <div id="sg-chart" class="sb-chart">${sugarCurve(on)}</div>
       ${[['before', '1', 'Before you eat'], ['with', '2', 'With your meal'], ['daily', '3', 'Every day']].map(([w, n, t]) => `<div class="sb-step"><div class="sb-sh"><span>${n}</span>${t}</div>
-        <div class="sb-grid">${SUGAR_TRICKS.filter(x => x.w === w).map(x => `<button class="sb-t ${on.includes(x.k) ? 'on' : ''}" data-action="sugarTrick" data-v="${x.k}"><span class="sb-g">${icon(x.ic, 20)}</span><b>${x.n}</b><small>${x.t}</small><i class="sb-ck">${icon('check', 14, 2.6)}</i></button>`).join('')}</div></div>`).join('')}
+        <div class="sb-grid">${SUGAR_TRICKS.filter(x => x.w === w).map(x => `<button class="sb-t sb-pic ${on.includes(x.k) ? 'on' : ''}" data-action="sugarTrick" data-v="${x.k}"><span class="sb-ph">${SB_PIC[x.k] ? `<img src="${SB_PIC[x.k]()}" alt="" loading="lazy">` : ''}<em>${x.g}</em></span><b>${x.n}</b><small>${x.t}</small><i class="sb-ck">${icon('check', 14, 2.6)}</i></button>`).join('')}</div></div>`).join('')}
     </section>`;
 }
 // Tricks overlap, so they don't simply add up: combined, the illustration caps the spike reduction at 50%.
@@ -3573,7 +3584,7 @@ function todayTiles(info, only) {
   const w = dayWindow(info), g = MOVE_GUIDE[w], [lvl] = CALM[w], ph = info.phase, warm = warmWindow(info);
   const best = MOVES.filter(m => g.r[m.k] === 3);
   const pp = PEOPLE_PLAN[ph], st = STRETCH[w], md = MEDITATE[w], open = ui.hubTip, rp = reliefPick(w);
-  const pics = { Eat: 'season-veg', Friends: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&q=70&auto=format&fit=crop', Stress: 'move-lift', Relief: carePhoto(RELIEF_PHOTO[rp.k] || 'foot-soak', 400) || 'move-walk', Ground: 'move-ground', Tea: 'move-hiit' };
+  const pics = { Eat: 'season-veg', Friends: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&q=70&auto=format&fit=crop', Stress: 'move-lift', Relief: carePhoto(RELIEF_PHOTO[rp.k] || 'foot-soak', 400) || 'move-walk', Tea: 'move-hiit' };
   const tile = (cls, act, g_, k, t, s_) => `<button class="dpt ${cls} ${pics[k] ? 'has-pic' : ''} ${act.tip && open === act.tip ? 'open' : ''}" ${act.to ? `data-action="nav" data-to="${act.to}"` : `data-action="hubTip" data-k="${act.tip}"`}>${pics[k] ? `<span class="dpt-g pic"><img class="pb" src="${picSrc(pics[k])}" alt="" loading="lazy"><img class="ps" src="${picSrc(pics[k])}" alt="" loading="lazy"><i></i></span>` : `<span class="dpt-g">${g_}</span>`}<span class="dpt-k">${k}</span><b>${t}</b><small>${s_}</small>${act.tip ? `<span class="dpt-more">${icon('plus', 14, 2.2)}</span>` : ''}</button>`;
   const fn = FOOD_NEEDS[w], fm = FOOD_MEALS[w], sp = STRESS_PLAN[w], td = TEA_DAY[w];
   const tips = {
@@ -3597,13 +3608,13 @@ function todayTiles(info, only) {
   };
   if (only) return tipBody(only);
   return `<div class="dpt-grid">
-      ${tile('wide hero-move ph-vid', { to: 'move' }, `<video class="dpt-vid" src="images/move-stardust.mp4" poster="images/move-stardust.webp" muted loop playsinline ${matchMedia('(prefers-reduced-motion: reduce)').matches ? '' : 'autoplay'} preload="metadata" aria-hidden="true"></video><i></i>`, 'Sport', g.title, best.map(m => m.n).slice(0, 3).join(' · '))}
+      ${tile('wide hero-move ph-vid', { to: 'move' }, `<video class="dpt-vid" src="images/move-stardust.mp4" poster="images/move-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Sport', g.title, best.map(m => m.n).slice(0, 3).join(' · '))}
       ${tile('t-paper', { to: 'do/eat' }, '🥗', 'Eat', fn[0], `<span class="dpt-col">${colDots(fm.col[0])} ${fm.col[1]} foods</span>${fn[1].map(x => x[0].slice(x[0].indexOf(' ') + 1)).slice(0, 3).join(' · ')}<br><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
       ${tile('t-deep ph-full keep ph-fr', { to: 'do/friends' }, PEOPLE_G[ph], 'Friends', FRIENDS[ph].ideas[0], `<span class="dpt-fr">${icon('check', 12, 2.4)} ${FRIENDS[ph].ideas[1]}</span><span class="dpt-fr no">${icon('close', 12, 2.4)} Skip: ${FRIENDS[ph].skip.charAt(0).toLowerCase() + FRIENDS[ph].skip.slice(1)}</span>`)}
       ${tile(`calm lv${lvl} t-cort`, { to: 'breathe/stress' }, cortisolVial(lvl), 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
       ${tile('t-sage ph-full keep', { to: 'relief' }, '🌿', 'Relief', rp.st.t, `${rp.mine ? 'You logged' : 'Common now:'} ${rp.k.toLowerCase()}`)}
-      ${tile('t-glow ph-full', { to: 'ground' }, '🌿', 'Ground', GROUND_PHASE[ph].t, '')}
-      ${tile('t-tea t-cup', { to: 'do/tea' }, `<img class="dpt-cup" src="images/${/ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i.test(td[1]) ? 'cup-chai' : 'cup-glass'}.webp" alt="" loading="lazy">`, 'Tea for today', td[1], td[2])}
+      ${tile('t-glow ph-full ph-vid', { to: 'ground' }, `<video class="dpt-vid" src="images/ground-cat.mp4" poster="images/ground-cat.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Ground', GROUND_PHASE[ph].t, '')}
+      ${tile('t-tea t-cup', { to: 'do/tea' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/${/ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i.test(td[1]) ? 'cup-chai' : 'cup-glass'}.webp" alt="" loading="lazy"><canvas class="teacup3d" aria-label="${td[1]}, turning slowly"></canvas></span>`, 'Tea for today', td[1], td[2])}
     </div>
     <div class="hub-tip ${open && (open === 'eat' || open === 'tea' || tips[open]) ? 'on' : ''}" id="hub-tip">${open ? tipBody(open) : ''}</div>`;
 }
@@ -6214,10 +6225,17 @@ const actions = {
     const c = document.getElementById('sg-chart'); if (c) c.innerHTML = sugarCurve(sugarDone());
     const sc = document.getElementById('sg-score'); if (sc) { sc.innerHTML = sugarScore(sugarDone()); sc.classList.remove('pop'); void sc.offsetWidth; sc.classList.add('pop'); }
   },
+  cfOpen: (d, el) => {
+    const sh = document.querySelector('.cf-sheet'); if (!sh) return;
+    const same = sh.dataset.p === d.p && sh.innerHTML;
+    document.querySelectorAll('.cf2 .cf-c').forEach(c => c.classList.toggle('open', !same && c.dataset.p === d.p));
+    if (same) { sh.innerHTML = ''; sh.dataset.p = ''; return; }
+    sh.dataset.p = d.p; sh.innerHTML = cfSheet(d.p); sh.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  },
   ebPick: (d, el) => {
     const box = el.closest('.eat-cat'); if (!box) return;
     box.querySelectorAll('.eb-i.on').forEach(x => x.classList.remove('on')); el.classList.add('on');
-    const p = box.querySelector('.eb-panel'); p.innerHTML = el.querySelector('template').innerHTML; p.classList.remove('pop'); void p.offsetWidth; p.classList.add('pop');
+    const p = box.querySelector('.ebp-in'); p.innerHTML = el.querySelector('template').innerHTML; p.classList.remove('pop'); void p.offsetWidth; p.classList.add('pop');
   },
   eatCat: (d, el) => {
     ui.eatCat = d.v; const card = document.querySelector('.eat-cat'); if (!card) return render();
@@ -6474,12 +6492,23 @@ function mountFigures() {
   });
   document.querySelectorAll('.mn-pg').forEach(row => { const on = row.querySelector('.on'); if (on) row.scrollLeft = on.offsetLeft - (row.clientWidth - on.offsetWidth) / 2; });
   // today's tea as a turning 3D cup; the tea photo stays if 3D can't run
+  // The 3D cup only loads once its card is on screen and the phone is idle, so the app opens fast.
   document.querySelectorAll('canvas.teacup3d').forEach(c => {
-    const hero = c.closest('.tg-hero'), fail = () => { hero?.classList.remove('tg-3d', 'tg-ready'); c.remove(); };
-    import('./teacup3d.js').then(m => {
+    const hero = c.closest('.tg-hero, .cup3d-w'), fail = () => { hero?.classList.remove('tg-3d', 'tg-ready'); c.remove(); };
+    const start = () => import('./teacup3d.js').then(m => {
       if (!c.isConnected) return; if (!m.webglOK()) throw new Error('no webgl');
       unmountFigs.push(m.mountTeaCup(c, { onReady: () => hero?.classList.add('tg-ready'), onFail: fail }));
     }).catch(fail);
+    const idle = f => (window.requestIdleCallback ? requestIdleCallback(f, { timeout: 1500 }) : setTimeout(f, 300));
+    if (!('IntersectionObserver' in window)) return idle(start);
+    const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); idle(start); } }, { rootMargin: '200px' });
+    io.observe(hero || c);
+  });
+  // Looping tile videos download and play only while they are on screen.
+  document.querySelectorAll('video.dpt-vid').forEach(v => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) v.play().catch(() => {}); else v.pause(); }), { rootMargin: '100px' });
+    io.observe(v);
   });
   document.querySelectorAll('canvas.figure').forEach(c => {
     const opts = { focus: c.dataset.focus || null, mode: c.closest('.welcome') ? 'full' : 'lite', intro: !!c.closest('.welcome') };
