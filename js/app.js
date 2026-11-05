@@ -3547,8 +3547,7 @@ function energyCard(info, energy) {
   return `<section class="en en2 lvl-${c.lvl}">
     <div class="em-head"><b>${c.mode}</b></div>
     <div class="em-map"><svg class="em-svg" viewBox="0 0 340 300" aria-hidden="true">${lines}</svg>
-      <span class="em-fig"><img src="images/pixel-aura-${c.lvl}.png" alt="Your body today"></span>
-      <span class="em-pct"><b>${energy}</b><small>% energy</small></span>${labels}</div>
+      <span class="em-fig"><img src="images/pixel-aura-${c.lvl}.png" alt="Your body today"></span>${labels}</div>
     ${open ? `<div class="em-open"><div class="em-oh"><span class="em-oi">${icon(open.ic, 16)}</span><div><small>${open.label} · today</small><b>${open.d}</b></div>${saveBtn(regTip(`body-${info.phase}-${open.k}`, open.label, [open.d, open.steps[0], open.steps[1], 'Today'], open.to))}</div>
       <p>${open.what}</p>
       <ol class="em-steps">${open.steps.map((t, i) => `<li><i>${i + 1}</i>${t}</li>`).join('')}</ol>
@@ -3636,7 +3635,7 @@ function todayHub(info, energy, head = '') {
   return `<section class="hub"><div class="hub-life" aria-hidden="true">${SPORES}</div>${head}
     ${stageHero(info, energy)}
     <div class="stage-after">${ttc() && info.fertile ? `<span class="fh-badge">${icon('spark', 13)} Fertile</span>` : ''}
-      ${PERIOD_FLOWS.includes(getLog(todayISO()).flow) && info.cd === 1 ? '' : `<button class="fh-period pp ps2" data-action="periodStart"><span class="pp-drop">${icon('drop', 16, 2)}</span><span class="ps2-t"><b>Period started?</b><small>Tap to log today as day 1</small></span><span class="ps2-go">${icon('plus', 15, 2.2)}</span></button>`}
+      ${PERIOD_FLOWS.includes(getLog(todayISO()).flow) && info.cd === 1 ? '' : `<button class="fh-period pp ps2 ps3" data-action="periodStart" aria-label="Period started? Log today as day 1"><i class="ps3-dot"></i>Period started?</button>`}
       ${energyCard(info, energy)}</div>
     <div class="hub-sec hub-plan">
       <div class="hub-k"><span>Best things to do today</span><span class="hub-day">Day ${Math.min(info.cd, info.L)}</span></div>
