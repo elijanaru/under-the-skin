@@ -377,7 +377,7 @@ function viewGround() {
   const open = ui.grStudy;
   return `${topbar('Grounding', { back: true })}
   <div class="pad gr">
-    <section class="gr-hero"><img src="images/ground-roots.jpg" alt="A woman meditating on the forest floor with golden roots growing into the earth">
+    <section class="gr-hero"><video class="dpt-vid" src="images/ground-cat.mp4" poster="images/ground-cat.webp" muted loop playsinline preload="none" aria-label="A ginger cat rolling happily in the warm dust"></video>
       <span class="gr-hero-t"><small>Earthing</small><b>Ground yourself</b><em>Bare skin on the earth. Your body takes on the ground’s calm, steady charge.</em></span>
       <span class="gr-hero-n"><b class="dotnum">15</b><small>min a day</small></span></section>
 

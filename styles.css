@@ -7242,7 +7242,7 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .gr-cta img { width: 58px; height: 58px; border-radius: 20px; object-fit: cover; object-position: 50% 60%; }
 .gr-cta span { flex: 1; display: grid; } .gr-cta b { font-size: 16px; font-weight: 500; } .gr-cta small { font-size: 12.5px; color: #4a5a3c; }
 .gr-hero { position: relative; border-radius: 32px; overflow: hidden; aspect-ratio: 4 / 4.4; box-shadow: 0 16px 40px rgba(32,48,26,.2); margin-top: 6px; }
-.gr-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
+.gr-hero img, .gr-hero video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
 .gr-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,16,12,0) 45%, rgba(20,16,12,.72)); }
 .gr-hero-t { position: absolute; left: 20px; right: 110px; bottom: 20px; z-index: 1; display: grid; gap: 4px; color: #fff; }
 .gr-hero-t small { font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; opacity: .85; }
