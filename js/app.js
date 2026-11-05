@@ -1422,9 +1422,33 @@ function viewCalendar() {
       ${calDayLine(sd, si, slog, selLine, isFuture)}
       <button class="cal-editbtn" data-action="calEdit">${icon('drop', 15)} Edit period days</button>`}
     </section>
+    ${cycleBars()}
     ${events().some(e => e.date >= todayISO()) ? upcomingEvents() : ''}
   </div>
 `;
+}
+// Under the calendar: her last cycles as bars (period days red, the rest in the cycle's phase tints), length in Doto, tap for dates.
+function cycleBars() {
+  const ps = M.stats.periods, info = M.info; if (!info || ps.length < 2) return '';
+  const rows = [];
+  for (let i = Math.max(0, ps.length - 7); i < ps.length - 1; i++) { const L = C.diffDays(ps[i + 1].start, ps[i].start); if (L >= 15 && L <= 60) rows.push({ s: ps[i].start, P: Math.min(ps[i].length, L), L }); }
+  if (!rows.length) return '';
+  const cur = { s: info.cycleStart, P: info.P, L: info.L, now: Math.min(info.cd, info.L) };
+  const all = [...rows, cur], max = Math.max(...all.map(r => r.L), 35), avg = M.stats.avgCycle, pm = Math.max(1, Math.round(M.stats.variation / 2));
+  const sd = d => fmt(d, { month: 'short', day: 'numeric' }), pct = n => (n / max * 100).toFixed(1);
+  const row = (r, i) => { const ov = Math.max(r.P + 1, r.L - 14), end = C.addDays(r.s, r.L - 1);
+    return `<details class="cyb-r ${r.now ? 'now' : ''}" style="--i:${i}"><summary><span class="cyb-d">${r.now ? 'Now' : sd(r.s)}</span>
+      <span class="cyb-bar"><i class="cyb-p" style="width:${pct(r.P)}%"></i><i class="cyb-e" style="width:${pct(Math.max(0, ov - 6 - r.P))}%"></i><i class="cyb-f" style="width:${pct(Math.max(0, Math.min(5, ov - 1 - r.P)))}%"></i><i class="cyb-o" style="width:${pct(1)}%"></i><i class="cyb-l" style="width:${pct(r.L - ov)}%"></i>${r.now ? `<b class="cyb-you" style="left:${pct(r.now - .5)}%"></b>` : ''}</span>
+      <span class="cyb-n">${r.now ? r.now : r.L}</span></summary>
+      <p>${r.now ? `Started ${sd(r.s)} · day ${r.now} of about ${r.L} · next period around ${sd(info.nextStart)}` : `${sd(r.s)} to ${sd(end)} · period ${plural(r.P, 'day')} · egg release around day ${ov}`}</p></details>`; };
+  const diff = rows.length > 1 ? M.stats.variation : 0;
+  return `${sectionTitle('Your last cycles')}
+    <section class="card cyb">
+      <div class="cyb-top"><div><small>Average</small><b>${avg}</b><span>days</span></div><div><small>Varies</small><b>±${pm}</b><span>days</span></div><div><small>Period</small><b>${M.stats.avgPeriod}</b><span>days</span></div></div>
+      <p class="cyb-sum">${diff <= 4 ? 'Steady: your cycles stay within a few days of each other.' : diff <= 7 ? 'A little changeable, which is common. Stress, travel and illness move the first half.' : 'Your cycles vary quite a lot. Keep logging, and talk to a doctor if it keeps happening.'}</p>
+      <div class="cyb-rows" style="--avg:${pct(avg)}">${all.map(row).join('')}<span class="cyb-avg" aria-hidden="true"></span></div>
+      <div class="cyb-leg"><span><i class="cyb-p"></i>Period</span><span><i class="cyb-e"></i>Early</span><span><i class="cyb-f"></i>Fertile</span><span><i class="cyb-o"></i>Egg</span><span><i class="cyb-l"></i>Second half</span><span><i class="cyb-a"></i>Average</span></div>
+    </section>`;
 }
 
 // Under the calendar: the moon as one big black widget, the 3D moon as the hero, how lit it is, three ring bubbles, one white pill into the moon page.
