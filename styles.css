@@ -7967,3 +7967,9 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .md-bar i { display: block; width: 0; height: 100%; border-radius: inherit; background: hsl(calc(var(--hb) + 330 * var(--hk)) calc(70% * var(--hs)) 82%); transition: width .3s linear; }
 .md-hear { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 16px; padding: 7px 14px; border: 1px solid rgba(255,255,255,.22); border-radius: 99px; background: rgba(255,255,255,.08); color: rgba(255,255,255,.88); font: 400 12.5px Outfit, sans-serif; cursor: pointer; }
 .md-hear .ic { stroke: currentColor; }
+
+/* Profile avatar: a crisp dark-ink disc with a white initial and a thin phase-tint ring, no glow */
+.profile-head .avatar:not(.has-photo) { background: #20301a !important; color: #fff; font: 300 34px Outfit, sans-serif; border: 0;
+  box-shadow: 0 0 0 3px #fff, 0 0 0 4.5px hsl(calc(var(--hb) + 0 * var(--hk)) calc(55% * var(--hs)) 70%), 0 10px 24px rgba(32,48,26,.22) !important; }
+.profile-head .avatar.has-photo { border: 0; box-shadow: 0 0 0 3px #fff, 0 0 0 4.5px hsl(calc(var(--hb) + 0 * var(--hk)) calc(55% * var(--hs)) 70%), 0 10px 24px rgba(32,48,26,.22) !important; }
+.profile-head .av-edit { background: #fff; color: #20301a; border: 0; box-shadow: 0 3px 10px rgba(32,48,26,.25); }
