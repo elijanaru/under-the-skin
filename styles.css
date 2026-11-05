@@ -7931,3 +7931,32 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .bz .bz-txt .bz-t { display: none; }
 .bz .bz-txt { margin-top: 18px; }
 .bz .bz-stage { background: radial-gradient(110% 45% at 50% 112%, hsl(calc(var(--hb) + 0 * var(--hk)) calc(50% * var(--hs)) 72% / .2), transparent 70%), linear-gradient(180deg, #1b2915 0%, #20301a 60%, #24361d 100%); }
+
+/* Supplement spec sheet: How much is safe, her dose against the official daily limit */
+.sf { padding: 18px 18px 14px; color: #20301a; }
+.sf-h { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.sf-h p { margin: 6px 0 0; font: 400 13.5px/1.4 Outfit, sans-serif; color: #3a4a2e; }
+.sf-h p b { font-weight: 500; color: #20301a; }
+.sf-n { flex: none; display: grid; justify-items: end; text-align: right; }
+.sf-n b { font: 400 30px/1 Doto, monospace; color: #20301a; }
+.sf-n small { margin-top: 3px; font: 400 11.5px Outfit, sans-serif; color: #4a5a3c; }
+.sf-bar { position: relative; height: 16px; margin: 30px 0 10px; border-radius: 99px; background: rgba(48,64,35,.06); }
+.sf-bar i { position: absolute; top: 0; bottom: 0; }
+.sf-ok { left: 0; border-radius: 99px 0 0 99px; background: #dfe8c6; }
+.sf-over { right: 0; border-radius: 0 99px 99px 0; background: repeating-linear-gradient(135deg, #f1c9d4 0 5px, #f8e2e8 5px 10px); }
+.sf-dose { top: 3px !important; bottom: 3px !important; border-radius: 99px; background: #20301a; box-shadow: 0 2px 6px rgba(32,48,26,.3); }
+.sf-lim { position: absolute; top: -6px; bottom: -6px; width: 2px; margin-left: -1px; background: #a24a6a; border-radius: 2px; }
+.sf-lim small { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 2px; font: 500 11px Outfit, sans-serif; color: #a24a6a; white-space: nowrap; }
+.sf-k { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 400 11.5px Outfit, sans-serif; color: #4a5a3c; }
+.sf-k span { display: inline-flex; align-items: center; gap: 5px; }
+.sf-k i { width: 12px; height: 8px; border-radius: 99px; }
+.sf-k i.d { background: #20301a; } .sf-k i.o { background: #dfe8c6; } .sf-k i.x { background: repeating-linear-gradient(135deg, #f1c9d4 0 3px, #f8e2e8 3px 6px); }
+.sf-more { margin-top: 10px; border-top: 1px solid rgba(48,64,35,.08); padding-top: 8px; }
+.sf-more summary { list-style: none; display: flex; align-items: center; gap: 6px; font: 500 13px Outfit, sans-serif; color: #304023; cursor: pointer; }
+.sf-more summary::-webkit-details-marker { display: none; }
+.sf-more[open] summary .ic { transform: rotate(180deg); }
+.sf-more p { margin: 6px 0 2px; font: 400 13px/1.45 Outfit, sans-serif; color: #3a4a2e; }
+.sf-h { display: grid; gap: 0; }
+.sf-n { display: flex; align-items: baseline; gap: 7px; justify-items: start; text-align: left; margin-top: 8px; }
+.sf-n b { font-size: 36px; } .sf-n small { margin: 0; font-size: 13px; }
+.sf-h p { margin-top: 6px; }

@@ -3265,6 +3265,34 @@ function suppDay(when) {
     <div class="spd-lab"><span>Morning</span><span>Midday</span><span>Evening</span></div>
     <p>${when}</p></section>`;
 }
+// How much is safe: her dose against the official daily limit, as one bar (EFSA where Europe set one).
+// [low, high, limit, unit, who set it, what the limit counts]
+const SAFE_UL = {
+  magnesium: [200, 250, 250, 'mg', 'EU', 'Counts magnesium from supplements only. Magnesium in food does not count toward it.'],
+  iron: [18, 25, 40, 'mg', 'EU', 'Counts iron from food and supplements together. More only when your doctor treats low iron.'],
+  zinc: [15, 25, 25, 'mg', 'EU', 'Counts zinc from food and supplements together. Oysters are very rich, so on oyster days skip the capsule.'],
+  'vitamin-d': [1000, 2000, 4000, 'IU', 'EU', 'Counts all vitamin D you take. Higher amounts only with a blood test and your doctor.'],
+  'vitamin-e': [200, 200, 450, 'IU', 'EU', 'About 300 mg of natural vitamin E, from food and supplements together.'],
+  b6: [0, 12, 12, 'mg', 'EU', 'Counts B6 from food and supplements. Tingling hands or feet is the sign to stop.'],
+  calcium: [1000, 1200, 2500, 'mg', 'EU', 'Counts calcium from food and supplements together, so your raw milk and cheese count too.'],
+  'omega-3': [1, 2, 5, 'g', 'EU', 'EPA and DHA together. Up to this amount did not raise bleeding risk in healthy adults.'],
+  'vitamin-c': [250, 500, 2000, 'mg', 'US', 'Europe set no limit. Above the US limit, loose stools and stomach upset are common.'],
+  prenatal: [400, 400, 1000, 'µg', 'EU', 'Counts folic acid and methylfolate from pills. Folate from greens and liver does not count.'],
+};
+function suppSafe(id) {
+  const S = SAFE_UL[id]; if (!S) return '';
+  const [lo, hi, ul, u, who, note] = S, top = Math.max(ul * 1.3, hi * 1.1), pc = v => (v / top * 100).toFixed(1);
+  const dose = lo === 0 ? `≤${hi}` : lo === hi ? `${hi}` : `${lo}–${hi}`, at = hi >= ul;
+  return `<section class="card glass sf"><div class="sf-h"><div class="tf-k">How much is safe</div>
+      <span class="sf-n"><b class="dotnum">${dose}</b><small>${u} a day</small></span>
+      <p>${at ? 'Your dose stays at or under' : 'Your dose stays well under'} the ${who === 'EU' ? 'EU' : 'US'} safe limit of <b>${ul} ${u}</b> a day.</p></div>
+    <div class="sf-bar" role="img" aria-label="Your dose ${dose} ${u}, safe limit ${ul} ${u}">
+      <i class="sf-ok" style="width:${pc(ul)}%"></i><i class="sf-over" style="left:${pc(ul)}%"></i>
+      <i class="sf-dose" style="left:${pc(lo)}%;width:max(10px, ${(pc(hi) - pc(lo)).toFixed(1)}%)"></i>
+      <span class="sf-lim" style="left:${pc(ul)}%"><small>Limit</small></span></div>
+    <div class="sf-k"><span><i class="d"></i>Your dose</span><span><i class="o"></i>Safe every day</span><span><i class="x"></i>Too much</span></div>
+    <details class="sf-more"><summary>What the limit means ${icon('chevD', 13)}</summary><p>The most you can take every day, for years, that experts found safe for nearly all adults. ${note}</p></details></section>`;
+}
 function viewSupp(id) {
   const x = SUPP_LIB.find(s => s.id === id); if (!x) return viewMissing();
   const ph = suppPhases(x), now = M.info && M.info.phase;
@@ -3272,6 +3300,7 @@ function viewSupp(id) {
     ${specHero({ glyph: x.sym, han: x.han, eyebrow: 'Supplement', sym: !x.han, name: x.name, label: 'How to take it',
       rows: [['Dose', x.dose], ['Form', x.form], ['When', x.when]], desc: x.desc })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit(ph, now)}${ph.length === 4 ? '<small class="tf-all">Useful every day of your cycle</small>' : now && !ph.includes(now) ? `<small class="tf-all">Not a focus in your ${PHASES[now].name.toLowerCase()} phase</small>` : ''}</section>
+    ${suppSafe(x.id)}
     ${suppDay(x.when)}
     ${(SUPP_FOOD[x.id] || []).length ? `${sectionTitle('Food first')}<section class="card glass nu-food">${SUPP_FOOD[x.id].map(([f, a]) => `<div class="spec-row"><b>${f}</b><span>${a}</span></div>`).join('')}${warmWindow(M.info) ? '<small class="tf-all">You\u2019re in your warm window: pick the cooked and warm ones until your period ends.</small>' : ''}</section>` : ''}
     ${remedyScience(x, { [x.id]: x })}
