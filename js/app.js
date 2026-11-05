@@ -3545,7 +3545,7 @@ function energyCard(info, energy) {
   const lines = parts.map(p => { const [lx, ly, sd, bx, by] = pin(p.k), x0 = sd === 'l' ? 96 : 244; return `<path class="${open && open.k === p.k ? 'on' : ''}" d="M${x0} ${ly + 16} H${sd === 'l' ? x0 + 14 : x0 - 14} L${bx} ${by}"/><circle class="em-dot ${open && open.k === p.k ? 'on' : ''}" cx="${bx}" cy="${by}" r="3.6"/>`; }).join('');
   const labels = parts.map(p => { const [lx, ly, sd] = pin(p.k); return `<button class="em-l ${sd} ${open && open.k === p.k ? 'on' : ''}" style="top:${ly}px" data-action="enPart" data-k="${p.k}" aria-expanded="${open && open.k === p.k ? 'true' : 'false'}"><small>${icon(p.ic, 11)} ${p.label}</small><b>${p.d}</b></button>`; }).join('');
   return `<section class="en en2 lvl-${c.lvl}">
-    <div class="em-head"><small>Day ${info.cd} · ${PHASES[info.phase].name} · your body today</small><b>${c.mode}</b></div>
+    <div class="em-head"><b>${c.mode}</b></div>
     <div class="em-map"><svg class="em-svg" viewBox="0 0 340 300" aria-hidden="true">${lines}</svg>
       <span class="em-fig"><img src="images/pixel-aura-${c.lvl}.png" alt="Your body today"></span>
       <span class="em-pct"><b>${energy}</b><small>% energy</small></span>${labels}</div>
