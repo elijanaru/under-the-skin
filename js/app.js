@@ -3189,6 +3189,20 @@ function viewSupp(id) {
   </div>`;
 }
 const suppShort = x => { const w = x.name.replace(/\s*\(.*\)/, '').split(' '); return /^vitamin$/i.test(w[0]) ? w.slice(0, 2).join(' ') : w[0]; };
+// Supplements: today's stack as a day timeline, each capsule sits at the time of day she takes it; tap one for its spec sheet.
+const SUPP_SLOT = { iron: [0], 'vitamin-c': [0], 'b-complex': [0], b6: [0], creatine: [0], prenatal: [0], coq10: [0], ginger: [0, 1, 2, 3], 'omega-3': [1], 'vitamin-d': [1], probiotic: [1], 'vitamin-e': [1], calcium: [1, 2], zinc: [2], magnesium: [3], ashwagandha: [3] };
+function suppStack(on, now) {
+  const slots = [['sun', 'Morning', 'Breakfast'], ['bowl', 'Midday', 'Lunch'], ['cup', 'Evening', 'Dinner'], ['moon', 'Night', 'Bedtime']];
+  const cols = slots.map((sl, i) => ({ sl, L: on.filter(x => (SUPP_SLOT[x.id] || [1]).includes(i)) }));
+  const apart = on.some(x => x.id === 'iron') && on.some(x => x.id === 'calcium');
+  return `<section class="sd">
+    <div class="sd-h"><div><small>${PHASES[now].name} phase</small><b>Your stack today</b></div><span class="sd-n"><b>${on.length}</b><small>picks</small></span></div>
+    <div class="sd-line"><i></i></div>
+    <div class="sd-cols">${cols.map(({ sl: [ic, t, m], L }) => `<div class="sd-c ${L.length ? '' : 'empty'}"><span class="sd-ic">${icon(ic, 16)}</span><b>${t}</b><small>${m}</small>
+      <div class="sd-caps">${L.map(x => `<button class="sd-capw" data-action="nav" data-to="supp/${x.id}" aria-label="${x.name}, ${x.dose}"><span class="sd-cap ${x.han ? 'han' : ''}">${x.sym}</span><small>${suppShort(x)}</small></button>`).join('') || '<span class="sd-none">·</span>'}</div></div>`).join('')}</div>
+    ${apart ? `<p class="sd-note">${icon('clock', 12)} Iron in the morning, calcium later: keep them 2 hours apart</p>` : `<p class="sd-note">${icon('check', 12)} Tap a capsule for the dose, the timing and the study</p>`}
+  </section>`;
+}
 function viewSupps() {
   const now = M.info && M.info.phase, tab = ui.supTab || (now ? 'now' : 'all');
   const L = SUPP_LIB.filter(x => ttc() || !/prenatal|coq10/.test(x.id)), on = L.filter(x => now && suppPhases(x).includes(now));
@@ -3197,8 +3211,7 @@ function viewSupps() {
   return `${topbar('Supplements', { back: true })}<div class="pad sp2">
     <h1 class="page-h">Fill the <span>gaps</span></h1>
     <p class="body sm">Food comes first. These cover what food alone often can’t, timed to your cycle, with the dose and the study behind each one.</p>
-    ${now && on.length ? `<section class="card sp-now"><div class="sp-k"><b>${on.length}</b><span>help in your<br>${PHASES[now].name.toLowerCase()} phase</span></div>
-      <div class="sp-bub">${on.slice(0, 4).map((x, i) => `<button class="sp-b" style="--i:${i}" data-action="nav" data-to="supp/${x.id}"><span class="sup-sym ${x.han ? 'han' : ''}">${x.sym}</span><small>${suppShort(x)}</small></button>`).join('')}</div></section>` : ''}
+    ${now && on.length ? suppStack(on, now) : ''}
     <div class="seg">${(now ? [['now', 'For now'], ['all', 'All']] : [['all', 'All']]).map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="supTab" data-v="${k}">${l}</button>`).join('')}</div>
     <section class="card glass sup-list">${(tab === 'now' && on.length ? on : L).map(row).join('')}</section>
     <p class="fine center">Dots show the phases each one helps most. Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}.</p></div>`;

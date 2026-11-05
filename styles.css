@@ -7573,3 +7573,32 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .ts-when span.on i { background: var(--c); }
 .ts-when span em { position: absolute; top: -7px; padding: 1px 6px; border-radius: 8px; font: 600 9.5px var(--font); font-style: normal; color: #fff; background: #20301a; }
 .ts2-more { margin-top: 10px; }
+/* Supplements: today's stack as a day timeline */
+.sd { margin: 14px 0 16px; padding: 18px 14px 14px; border-radius: 30px; color: #fff; background: radial-gradient(90% 70% at 50% 0%, #2b3a24 0%, #1a2416 60%, #121a10 100%); box-shadow: 0 18px 40px rgba(32,48,26,.22); }
+.sd-h { display: flex; align-items: center; justify-content: space-between; padding: 0 4px; }
+.sd-h small { display: block; font-size: 12px; color: rgba(255,255,255,.7); }
+.sd-h > div b { font-size: 22px; font-weight: 500; letter-spacing: -.01em; }
+.sd-n { display: grid; justify-items: center; width: 58px; height: 58px; align-content: center; border-radius: 50%; border: 1.5px solid hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77% / .7); }
+.sd-n b { font: 700 22px/1 var(--dot); color: #e6f0c8; } .sd-n small { font-size: 9.5px; color: rgba(255,255,255,.65); }
+.sd-line { position: relative; height: 2px; margin: 18px 12% -27px; background: linear-gradient(90deg, #f3d9a0, #e6f0c8 45%, #c9b8f0); border-radius: 2px; opacity: .55; }
+.sd-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.sd-c { position: relative; display: grid; justify-items: center; align-content: start; gap: 2px; text-align: center; }
+.sd-ic { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; margin-bottom: 4px; background: #233020; border: 1.5px solid rgba(255,255,255,.22); color: #f3e7c4; }
+.sd-c:nth-child(4) .sd-ic { color: #d8ccf4; }
+.sd-c b { font-size: 13px; font-weight: 500; } .sd-c > small { font-size: 10.5px; color: rgba(255,255,255,.6); }
+.sd-caps { display: grid; gap: 6px; margin-top: 10px; justify-items: center; }
+.sd-cap { width: 54px; height: 30px; border-radius: 16px; border: 0; font: 600 12.5px var(--font); color: #20301a; cursor: pointer;
+  background: linear-gradient(90deg, #fff 0 50%, #e6f0c8 50% 100%); box-shadow: 0 4px 10px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.8); transition: transform .2s; }
+.sd-cap.han { font-family: 'Noto Serif SC', serif; }
+.sd-cap:active { transform: scale(.94); }
+.sd-c:nth-child(4) .sd-cap { background: linear-gradient(90deg, #fff 0 50%, #ddd2f6 50% 100%); }
+.sd-c:nth-child(1) .sd-cap { background: linear-gradient(90deg, #fff 0 50%, #f6e3b4 50% 100%); }
+.sd-none { color: rgba(255,255,255,.3); font-size: 18px; }
+.sd-c.empty b, .sd-c.empty > small { opacity: .5; }
+.sd-note { display: flex; align-items: center; gap: 6px; margin: 14px 4px 0; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.12); font-size: 12.5px; color: rgba(255,255,255,.8); }
+.sd .sd-h > div b { color: #fff !important; }
+.sd-capw { display: grid; justify-items: center; gap: 3px; padding: 0; border: 0; background: none; font: inherit; color: #fff; cursor: pointer; }
+.sd-capw .sd-cap { display: grid; place-items: center; }
+.sd-capw small { font-size: 10px; color: rgba(255,255,255,.75); white-space: nowrap; }
+.sd-caps { gap: 9px; }
+.sd-h { margin-bottom: 10px; }
