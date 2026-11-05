@@ -7612,3 +7612,19 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .mfp-t b { font-size: 30px; font-weight: 500; line-height: 1.05; }
 .mfp-t em { font-style: normal; font-size: 14px; line-height: 1.4; opacity: .9; }
 .mfp-pick { margin-bottom: 24px; }
+/* Breath wave: one breath as a curve with a dot riding it */
+.bzh-when { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 12px; padding: 6px 12px; border-radius: 999px; background: #20301a; color: #fff; font: 500 12.5px Outfit, sans-serif; }
+.bzw { margin: 2px 0 14px; padding: 12px 12px 10px; border-radius: 22px; background: #f6f3ee; border: 1px solid rgba(48,64,35,.07); }
+.bzw svg { display: block; width: 100%; height: auto; overflow: visible; }
+.bzw-a { fill: hsl(calc(var(--hb) + 330 * var(--hk)) calc(60% * var(--hs)) 88%); opacity: .75; }
+.bzw-l { fill: none; stroke: #20301a; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.bzw-div { stroke: rgba(48,64,35,.18); stroke-width: 1; stroke-dasharray: 2 4; }
+.bzw-g.in { fill: hsl(calc(var(--hb) + 330 * var(--hk)) calc(60% * var(--hs)) 66%); }
+.bzw-g.top { fill: hsl(calc(var(--hb) + 330 * var(--hk)) calc(60% * var(--hs)) 52%); }
+.bzw-g.hold { fill: #9d8fd0; } .bzw-g.out { fill: #6c823e; } .bzw-g.rest { fill: #c9c4b8; }
+.bzw-dot { fill: #fff; stroke: #20301a; stroke-width: 2.6; }
+.bzw-k { display: flex; gap: 2px; margin-top: 6px; }
+.bzw-k span { display: grid; justify-items: center; min-width: 0; line-height: 1.1; }
+.bzw-k b { font: 600 14px Outfit, sans-serif; color: #20301a; }
+.bzw-k small { font: 500 10.5px Outfit, sans-serif; color: #4b5a40; }
+.bzw .bzb-k { text-align: center; margin-top: 8px; }

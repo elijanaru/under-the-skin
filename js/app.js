@@ -4438,7 +4438,7 @@ const BREATHS = {
     steps: [['in', 'Breathe in', 'Slow and smooth', 5500], ['out', 'Breathe out', 'Just as slow', 5500]],
     how: [['In for about 5', 'Smooth, through your nose.'], ['Out for about 5', 'The same length, like a gentle wave.'], ['About 5 to 6 breaths a minute', 'Keep going for a few minutes.']],
     why: 'Around 5 to 6 breaths a minute is the rhythm where heart rate and breath fall in step, called resonance breathing. Reviews of heart-rate variability research (Lehrer and Gevirtz 2014) link it to calmer stress responses. A good anchor for bright, social ovulation days.' },
-  478: { name: '4-7-8 breathing', g: '🌙', when: 'Luteal & before your period', for: 'Quiets a busy mind for sleep', rounds: 4,
+  478: { name: '4-7-8 breathing', g: '💤', when: 'Luteal & before your period', for: 'Quiets a busy mind for sleep', rounds: 4,
     steps: [['in', 'Breathe in', 'Through your nose for four', 4000], ['hold', 'Hold', 'Gently, for seven', 7000], ['out', 'Breathe out', 'Slowly through your mouth for eight', 8000]],
     how: [['In for 4', 'Quietly through your nose.'], ['Hold for 7', 'Gently, with a soft jaw.'], ['Out for 8', 'Slowly through the mouth, with a soft whoosh.']],
     why: 'A very long breath out gives the strongest calming signal, which helps when progesterone falls and sleep gets lighter before your period. Made popular by Dr Andrew Weil. Four rounds are enough to start; skip the hold if it makes you dizzy.' },
@@ -4450,6 +4450,26 @@ const BZ_WORD = { in: 'In', top: 'Sip', hold: 'Hold', out: 'Out', rest: 'Rest' }
 function breathBar(k) {
   const B = BREATHS[k], tot = B.steps.reduce((a, x) => a + x[3], 0), sec = ms => `${+(ms / 1000).toFixed(1)}`.replace(/\.0$/, '');
   return `<span class="bzb">${B.steps.map(([t, , , ms]) => `<i class="${t}" style="flex:${Math.max(ms, 2600)}"><b>${sec(ms)}s</b><small>${t === 'rest' && B.steps.some(x => x[0] === 'hold') ? 'Hold' : BZ_WORD[t]}</small></i>`).join('')}</span><small class="bzb-k">${Math.round(tot / 1000)} s a breath · ${B.rounds} rounds · about ${Math.max(1, Math.round(tot * B.rounds / 60000))} min</small>`;
+}
+// One breath as a wave: the curve rises as the lungs fill, stays flat on a hold, falls on the long breath out.
+// x is real time, so a longer breath out is a longer slope; a dot rides the curve at the real pace.
+const BZ_WHEN = { sigh: 'When stress spikes, 1 to 3 breaths already help', belly: 'Lying down, a warm pad on your belly', box: 'Before a big talk or a new task', even: '5 minutes in the afternoon slump', 478: 'In bed, lights off' };
+function breathWave(k) {
+  const B = BREATHS[k], tot = B.steps.reduce((a, x) => a + x[3], 0), W = 300, LO = 74, HI = 18, sec = ms => `${+(ms / 1000).toFixed(1)}`.replace(/\.0$/, '');
+  const hasTop = B.steps.some(x => x[0] === 'top');
+  let x = 0, y = LO; const seg = B.steps.map(([t, , , ms]) => { const x0 = x, y0 = y; x += ms / tot * W; y = t === 'in' ? (hasTop ? HI + 10 : HI) : t === 'top' ? HI - 4 : t === 'out' ? LO : y; return { t, ms, x0, y0, x1: x, y1: y }; });
+  const d = `M0 ${LO} ` + seg.map(g => { const h = (g.x1 - g.x0) / 2; return `C${(g.x0 + h).toFixed(1)} ${g.y0} ${(g.x1 - h).toFixed(1)} ${g.y1} ${g.x1.toFixed(1)} ${g.y1}`; }).join(' ');
+  const kt = [0, ...seg.map(g => (g.x1 / W).toFixed(4))].join(';'), still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const word = t => t === 'rest' && B.steps.some(z => z[0] === 'hold') ? 'Hold' : BZ_WORD[t];
+  return `<div class="bzw"><svg viewBox="-6 6 312 80" role="img" aria-label="One breath: ${seg.map(g => `${word(g.t).toLowerCase()} ${sec(g.ms)} seconds`).join(', ')}">
+      <path d="${d} L${W} 84 L0 84Z" class="bzw-a"/>
+      ${seg.slice(1).map(g => `<line x1="${g.x0.toFixed(1)}" x2="${g.x0.toFixed(1)}" y1="10" y2="84" class="bzw-div"/>`).join('')}
+      ${seg.map(g => `<rect x="${(g.x0 + 1).toFixed(1)}" y="80" width="${Math.max(2, g.x1 - g.x0 - 2).toFixed(1)}" height="5" rx="2.5" class="bzw-g ${g.t}"/>`).join('')}
+      <path d="${d}" class="bzw-l"/>
+      <circle r="6" cx="0" cy="${LO}" class="bzw-dot">${still ? '' : `<animate attributeName="cx" dur="${tot}ms" repeatCount="indefinite" values="${[0, ...seg.map(g => g.x1.toFixed(1))].join(';')}" keyTimes="${kt}"/><animate attributeName="cy" dur="${tot}ms" repeatCount="indefinite" values="${[LO, ...seg.map(g => g.y1)].join(';')}" keyTimes="${kt}" calcMode="spline" keySplines="${seg.map(() => '.5 0 .5 1').join(';')}"/>`}</circle>
+    </svg>
+    <div class="bzw-k">${seg.map(g => `<span class="${g.t}" style="flex:${g.ms}"><b>${sec(g.ms)}s</b><small>${word(g.t)}</small></span>`).join('')}</div>
+    <small class="bzb-k">${Math.round(tot / 1000)} s a breath · ${B.rounds} rounds · about ${Math.max(1, Math.round(tot * B.rounds / 60000))} min</small></div>`;
 }
 // What each practice does most, as 1 to 3 dots, plus the study behind it.
 const BZ_FX = { sigh: [3, 2, 2, 1], belly: [2, 1, 2, 3], box: [2, 3, 1, 1], even: [3, 2, 2, 1], 478: [3, 1, 3, 1] };
@@ -4504,7 +4524,8 @@ function viewBreathe(from) {
     <figure class="bz-quote"><span>“</span><blockquote>The past is already gone and the future has not yet come. See clearly what is here, now.</blockquote><figcaption>The Buddha, from the Bhaddekaratta Sutta</figcaption></figure>
     <section class="bz-how"><div class="bzh-h"><span class="bzp-g">${B.g}</span><div><small>${B.when}</small><h3>${B.name}</h3></div></div>
       <p class="bzh-for">${B.for}.</p>
-      ${breathBar(k)}
+      <span class="bzh-when">${icon('clock', 13)} ${BZ_WHEN[k] || B.when}</span>
+      ${breathWave(k)}
       ${breathFx(k)}
       <details class="bzh-more"><summary>How and why ${icon('chevD', 14)}</summary>
         ${B.how.map(([t, p], i) => `<div class="bz-step"><span>${i + 1}</span><div><b>${t}</b><p>${p}</p></div></div>`).join('')}
