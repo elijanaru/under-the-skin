@@ -356,7 +356,7 @@ function trainSafe() {
 // ---------- grounding: bare skin on the earth ----------
 const groundCta = () => `<button class="gr-cta" data-action="nav" data-to="ground"><img src="images/ground-roots.jpg" alt="" loading="lazy"><span><b>Ground yourself</b><small>Bare feet on the earth · 15 min</small></span>${icon('chevR', 16)}</button>`;
 function viewGround() {
-  const info = M.info, ph = info && info.phase, P = ph && GROUND_PHASE[ph], mn = moonData(), gm = GROUND_MOON[mn.waxing ? 'wax' : 'wane'];
+  const info = M.info, ph = info && info.phase, P = ph && GROUND_PHASE[ph];
   const late = info && info.daysToPeriod <= 3 && !info.isPeriod, phd = P && (late && ph === 'luteal' ? P.d : P.d);
   const card = (id, title, d) => `<div class="gr-do"><div class="gr-do-h"><span class="dos-w">${icon('clock', 12)} ${d[3]}</span>${saveBtn(regTip(id, title, d, 'ground'))}</div><b>${d[0]}</b><ol><li>${d[1]}</li><li>${d[2]}</li></ol></div>`;
   const open = ui.grStudy;
@@ -384,7 +384,6 @@ function viewGround() {
 
     ${sectionTitle('Golden roots')}
     <section class="card gr-card gr-roots">
-      <div class="gr-rt"><span class="gr-moon">${moonArt(mn.elong)}</span><span><small>${mn.waxing ? 'Moon growing' : 'Moon shrinking'}</small><b>${gm[0]}</b><em>${gm[1]}</em></span></div>
       <ol class="gr-steps">${GROUND_ROOTS.steps.map(([a, b], i) => `<li><i>${i + 1}</i><span><b>${a}</b><small>${b}</small></span></li>`).join('')}</ol>
       <div class="gr-rt-f"><span class="dos-w">${icon('clock', 12)} ${GROUND_ROOTS.mins} min</span><span class="gr-rt-s">${saveBtn(regTip('ground-roots', 'Grounding · roots', GROUND_ROOTS.d, 'ground'))}</span></div>
       <p class="gr-fine">An old visualisation used in many traditions. Treat it as a calming practice.</p>
@@ -405,7 +404,7 @@ function viewSaved() {
       <b class="sv-a">${x.a}</b>
       <ol class="sv-s">${x.s.map((st, i) => `<li><span>${i + 1}</span>${st}</li>`).join('')}</ol>
       <div class="sv-f"><span class="dos-w">${icon('clock', 12)} ${x.w}</span>${x.to ? `<button class="link" data-action="nav" data-to="${x.to}">Why it helps ${icon('chevR', 12)}</button>` : ''}</div>
-    </section>`).join('') : `<div class="sv-empty">${icon('save', 30, 1.4)}<b>Nothing saved yet</b><small>Your tips on Today and the moon page each have a bookmark.</small><button class="btn btn-dark" data-action="nav" data-to="today">See today’s tips</button></div>`}
+    </section>`).join('') : `<div class="sv-empty">${icon('save', 30, 1.4)}<b>Nothing saved yet</b><small>Tips on Today and across the app each have a bookmark.</small><button class="btn btn-dark" data-action="nav" data-to="today">See today’s tips</button></div>`}
   </div>`;
 }
 // Articles to read around today's tips: this phase first, then what she wants help with.
@@ -1262,7 +1261,7 @@ function viewToday() {
 }
 // Explore: every button a full photo with a frosted label.
 function exploreGrid(info) {
-  const tiles = [['moon', 'moon', 'The moon', 'Phases & rituals', starPhoto('moon', 700)], ['hormones', 'book', 'Hormones', 'What each one does', hormonePhoto('Oestrogen', 500)], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/forest-path.jpg'],
+  const tiles = [['manifest', 'spark', 'Manifest', 'Live it as done', 'images/forest-calm.jpg'], ['hormones', 'book', 'Hormones', 'What each one does', hormonePhoto('Oestrogen', 500)], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/forest-path.jpg'],
     ['move', 'leaf', 'Move', 'Best training times', 'images/tile-hiit.webp'], ['habits', 'check', 'Habits', 'Daily checklist', carePhoto('lemon-water', 500)], ['relief', 'heart', 'Relief', 'Cramps, PMS, sleep', carePhoto('foot-soak', 500)],
     ['season', 'bowl', 'In season', 'Local foods', 'images/season-fruit.webp'], ['tea', 'cup', 'Tea guide', 'For every need', 'images/tea-ginger.webp'], ['nutrients', 'drop', 'Nutrients', 'Food first, doses', carePhoto('gut-smoothie', 500)]];
   return `<div class="xp-grid xp2">${tiles.map(([to, ic, t, sub, img], i) => `<button class="xp ${i === 0 ? 'wide' : ''}" data-action="nav" data-to="${to}" style="--i:${i}">${img ? `<img src="${img}" alt="" loading="lazy">` : ''}<span class="xp-l"><span class="xp-ic">${icon(ic, 15)}</span><span><b>${t}</b><small>${sub}</small></span></span></button>`).join('')}</div>`;
@@ -1408,8 +1407,7 @@ function viewCalendar() {
     </section>
     ${events().some(e => e.date >= todayISO()) ? upcomingEvents() : ''}
   </div>
-  <div class="pad sw-pad">${moonWidget()}
-  </div>`;
+`;
 }
 
 // Under the calendar: the moon as one big black widget, the 3D moon as the hero, how lit it is, three ring bubbles, one white pill into the moon page.
@@ -2589,13 +2587,15 @@ const MANI_TIP = [
   ['Almost real', 'Lovely. Carry that feeling into one small thing you do tomorrow.'],
   ['Felt real', 'Now let it be, the way you do not dig up a seed to check on it. Return to the feeling, not the how.'],
 ];
+// How real it felt, 1 to 5: a ring that fills from the centre.
+const feelDot = x => `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-width="1.2"/><circle cx="12" cy="12" r="${(1.6 + x * 1.8).toFixed(1)}" fill="currentColor" fill-opacity="${(.35 + x * .13).toFixed(2)}"/></svg>`;
 function maniFeel() {
   const F = state.maniFeel || {}, t = todayISO(), v = F[t] || 0;
   const days = Array.from({ length: 7 }, (_, i) => C.addDays(new Date(), i - 6)), n = days.filter(d => F[C.iso(d)]).length;
-  return `<div class="mf"><div class="mf-h"><b>How real did it feel?</b><small>tap a moon</small></div>
-    <div class="mf-moons">${[1, 2, 3, 4, 5].map(x => `<button class="${x === v ? 'on' : ''}" data-action="maniFeel" data-v="${x}" aria-label="${MANI_TIP[x - 1][0]}">${moonArt(MANI_E[x])}</button>`).join('')}</div>
+  return `<div class="mf"><div class="mf-h"><b>How real did it feel?</b><small>tap a circle</small></div>
+    <div class="mf-moons">${[1, 2, 3, 4, 5].map(x => `<button class="${x === v ? 'on' : ''}" data-action="maniFeel" data-v="${x}" aria-label="${MANI_TIP[x - 1][0]}">${feelDot(x)}</button>`).join('')}</div>
     ${v ? `<p class="mf-tip"><b>${MANI_TIP[v - 1][0]}.</b> ${MANI_TIP[v - 1][1]}</p>` : ''}
-    <div class="mf-week">${days.map(d => { const r = F[C.iso(d)]; return `<span class="${C.iso(d) === t ? 'now' : ''}">${r ? moonArt(MANI_E[r]) : '<i></i>'}<small>${fmt(d, { weekday: 'narrow' })}</small></span>`; }).join('')}
+    <div class="mf-week">${days.map(d => { const r = F[C.iso(d)]; return `<span class="${C.iso(d) === t ? 'now' : ''}">${r ? feelDot(r) : '<i></i>'}<small>${fmt(d, { weekday: 'narrow' })}</small></span>`; }).join('')}
       <em><b class="dotnum">${n}</b>of 7 nights</em></div></div>`;
 }
 function innerWeather(mn, pg, phase, inner, ms, feel) {
@@ -2620,6 +2620,26 @@ function innerWeather(mn, pg, phase, inner, ms, feel) {
     <div class="wx2-tabs">${T.map(([ic, t]) => `<button class="${open === ic ? 'on' : ''}" data-action="wxOpen" data-v="${ic}" aria-expanded="${open === ic}">${icon(ic, 14)} ${t}</button>`).join('')}</div>
     ${cur ? `<div class="wx-more"><div class="wx-r"><span class="wx-tag moon">${icon('moon', 12)} Moon</span><p>${cur[2]}</p></div>${cur[3] ? `<div class="wx-r"><span class="wx-tag body">${icon('heart', 12)} You</span><p>${cur[3]}</p></div>` : ''}</div>` : ''}
   </section>`;
+}
+// Manifest: Neville Goddard's way of living the wish as a feeling, picked for her cycle phase. Steps as a graphic, how-to behind a tap.
+const MANI_TECH = ['scene', 'end', 'talk', 'feeling', 'revision', 'sats'];
+function viewManifest() {
+  const phase = M.info && M.info.phase, cy = phase && MG.MANIFEST_CYCLE[phase], mk = cy ? cy[0] : 'feeling';
+  const k = MANI_TECH.includes(ui.maniK) ? ui.maniK : mk, T = MG.MANIFEST[k], scene = (state.manifest || {})[todayISO()] || '';
+  return `${topbar('Manifest', { back: true })}
+  <div class="pad mn mfp">
+    <section class="mfp-hero"><img src="images/forest-calm.jpg" alt="" decoding="async"><span class="mfp-shade"></span>
+      <span class="mfp-t"><small>${k === mk && phase ? `For your ${PHASES[phase].name.toLowerCase()} phase` : 'Today’s practice'}</small><b>${T.name}</b><em>${k === mk && cy ? cy[1] : T.why}</em></span></section>
+    <section class="card mn-mani">
+      <ol class="mm-flow">${T.short.map((x, i) => `<li style="--i:${i}"><span>${i + 1}</span><b>${x}</b></li>`).join('')}</ol>
+      ${maniFeel()}
+      <details class="mm-more"><summary>Show me how ${icon('chevR', 14)}</summary>
+        <ol class="mm-steps">${T.steps.map(x => `<li>${x}</li>`).join('')}</ol>
+        <label class="mm-scene"><span>My scene, in the present tense</span><textarea class="field mn-ta" data-input="mani.today" rows="2" placeholder="I am… / I have… / It feels so good that…">${esc(scene)}</textarea></label>
+        <p class="mm-src">After Neville Goddard’s teaching in <i>Feeling is the Secret</i>: live the wish first as a feeling. A spiritual practice for reflection.</p></details></section>
+    ${sectionTitle('Six ways to try')}
+    <div class="mm-pick mfp-pick">${MANI_TECH.map(o => `<button class="${o === k ? 'on' : ''}" data-action="maniK" data-v="${o}">${o === mk ? `${icon('heart', 13)} For your body` : `${icon('spark', 13)} Technique`}<b>${MG.MANIFEST[o].name}</b></button>`).join('')}</div>
+  </div>`;
 }
 function viewMoon() { return `<div class="pad mn">${moonPage(false)}</div>`; }
 // the moon and her readings in one flow: full page at #/moon, and below the calendar (embed)
@@ -3974,7 +3994,7 @@ function rhythmStreak() {
 }
 function rhythmLevel() {
   const total = Object.values(state.rhythm || {}).reduce((a, v) => a + v.length, 0);
-  const L = [[0, '🌱', 'Seed'], [40, '🌿', 'Sprout'], [120, '🌸', 'Bloom'], [300, '🌕', 'Full moon']];
+  const L = [[0, '🌱', 'Seed'], [40, '🌿', 'Sprout'], [120, '🌸', 'Bloom'], [300, '🌻', 'Glow']];
   let cur = L[0], next = L[1]; L.forEach((l, i) => { if (total >= l[0]) { cur = l; next = L[i + 1]; } });
   return { total, cur, next };
 }
@@ -4002,7 +4022,7 @@ function momentPanel(m, h, live) {
   const done = doneToday();
   return `<div class="mp-head"><span class="mp-g">${emi(m.g, 22)}</span><div><small>${live ? `Right now · ${hLabel(h)}` : `At ${hLabel(h)}`}</small><b>${m.n}</b></div>${live ? '' : '<button class="mp-now" data-action="skyNow">Now</button>'}</div>
     <p class="mp-brief">${m.brief}</p>
-    ${m.acts.length ? `<div class="rh-list">${m.acts.map(x => rhAct(x, done)).join('')}</div>` : `<p class="mp-moon">${moonLine()}</p>`}`;
+    ${m.acts.length ? `<div class="rh-list">${m.acts.map(x => rhAct(x, done)).join('')}</div>` : `<p class="mp-moon">Nothing to do right now. Rest.</p>`}`;
 }
 function rhythmCard(info) {
   const done = doneToday(), D = dayMoments(info), h = nowH(), m = momentAt(D, h), streak = rhythmStreak();
@@ -4021,7 +4041,7 @@ function skyMarker(D, h) {
   const x = skyX(h), y = skyY(D, h), day = y < SKY.hy, moon = Z.moonPhase(new Date());
   return `<line x1="${x.toFixed(1)}" x2="${x.toFixed(1)}" y1="14" y2="${SKY.H - 34}" stroke="rgba(244,245,240,.35)" stroke-dasharray="2 4"/>
     ${day ? `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="26" fill="url(#sky-sun)" class="sun-glow"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="9" fill="#f4f5f0"/>`
-      : `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" opacity=".6"/><g transform="translate(${(x - 13).toFixed(1)} 26)">${moonIcon(moon, 26)}</g>`}
+      : `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" opacity=".6"/>`}
     <rect x="${(x - 24).toFixed(1)}" y="${SKY.H - 30}" width="48" height="20" rx="10" fill="#f4f5f0"/><text x="${x.toFixed(1)}" y="${SKY.H - 16}" text-anchor="middle" class="sky-tm">${hLabel(h)}</text>`;
 }
 function skyDial(D) {
@@ -4081,8 +4101,7 @@ const RHYTHM_WHY = [
   { ic: 'bowl', h: 'Biggest meal earlier', ev: 'some', p: 'Your body handles sugar better earlier in the day. The same meal eaten late at night raises blood sugar more than at lunch. Making lunch your main meal and keeping dinner lighter and earlier supports steady energy and deeper sleep.' },
   { ic: 'moon', h: 'Dim the evening', ev: 'strong', p: 'Bright and blue-rich light after dark holds back melatonin and pushes your clock later. Watching the sunset, then switching to warm, low lights and putting screens away tells your body the day is over. Candles and lamps instead of ceiling lights are enough.' },
   { ic: 'moon', h: 'Sleep when you’re tired', ev: 'strong', p: 'Sleep is when your body repairs, growth hormone peaks, the brain clears waste and hunger hormones reset. Short or irregular sleep raises cortisol and cravings and can make cycles less regular. When you feel the first wave of tiredness, go. Pushing past it often brings a “second wind” that keeps you up.' },
-  { ic: 'moon', h: 'The moon', ev: 'emerging', p: 'An average cycle (about 29 days) is close to a moon cycle (29.5 days). A 2021 study following women over many years found that some cycles sometimes lined up with the moon, more often before artificial light was everywhere.' },
-  { ic: 'yinyang', h: 'In Chinese medicine', ev: 'tcm', p: 'The day moves from yang (bright, outward, active) at noon to yin (dark, inward, restoring) at night. Rising with the light and resting with the dark keeps the two in balance. The new moon is seen as a yin time to rest, and the full moon as a yang time to go out and connect.' },
+  { ic: 'yinyang', h: 'In Chinese medicine', ev: 'tcm', p: 'The day moves from yang (bright, outward, active) at noon to yin (dark, inward, restoring) at night. Rising with the light and resting with the dark keeps the two in balance.' },
 ];
 // Today's sun, drawn as one arc from sunrise to sunset: the travelled part is gold, the sun sits where it is now.
 function sunArc(D, h, moon) {
@@ -4099,7 +4118,7 @@ function sunArc(D, h, moon) {
     <line x1="8" x2="${W - 8}" y1="${hy}" y2="${hy}" stroke="rgba(48,64,35,.28)" stroke-width="1.2"/>
     <line x1="${noonX.toFixed(1)}" x2="${noonX.toFixed(1)}" y1="${hy - A - 6}" y2="${hy}" stroke="rgba(48,64,35,.12)" stroke-dasharray="2 4"/>
     ${day ? `<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="24" fill="url(#rnow-glow)" class="rnow-pulse"/><circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="9" fill="#ffcf4d" stroke="#fff" stroke-width="2.5"/>`
-      : `<g transform="translate(${(W / 2 - 15)} ${hy - A + 4})" class="rnow-moon">${moonIcon(moon, 30)}</g><text x="${W / 2}" y="${hy - 12}" text-anchor="middle" class="rnow-night">Sun rises at ${hLabel(D.rise)}</text>`}
+      : `<g transform="translate(${(W / 2 - 15)} ${hy - A + 4})" class="rnow-moon">${icon('moon', 30)}</g><text x="${W / 2}" y="${hy - 12}" text-anchor="middle" class="rnow-night">Sun rises at ${hLabel(D.rise)}</text>`}
     <text x="${x0}" y="${hy + 22}" text-anchor="middle" class="rnow-t">Sunrise</text><text x="${x0}" y="${hy + 36}" text-anchor="middle" class="rnow-v">${hLabel(D.rise)}</text>
     <text x="${noonX.toFixed(1)}" y="${hy + 22}" text-anchor="middle" class="rnow-t">Midday</text><text x="${noonX.toFixed(1)}" y="${hy + 36}" text-anchor="middle" class="rnow-v">${hLabel(D.noon)}</text>
     <text x="${x1}" y="${hy + 22}" text-anchor="middle" class="rnow-t">Sunset</text><text x="${x1}" y="${hy + 36}" text-anchor="middle" class="rnow-v">${hLabel(D.set)}</text>
@@ -4114,9 +4133,9 @@ function viewRhythm() {
     <video class="rh3-vid" src="images/sun-moon.mp4" poster="images/sun-moon-poster.webp" muted loop playsinline ${still ? '' : 'autoplay'} preload="auto" aria-hidden="true"></video><span class="rh3-shade"></span>
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
     <div class="rh3-copy">
-      <h1 class="rh3-h">Live with the <em>sun & moon</em></h1>
+      <h1 class="rh3-h">Live with the <em>sun</em></h1>
       <p class="rh3-sub">Light sets your inner clock. Follow the sun, and your sleep, mood and hormones follow.</p>
-      <div class="rh3-chips"><span>${icon('sun', 14)} Rise <b>${hLabel(D.rise)}</b></span><span>Set <b>${hLabel(D.set)}</b></span><span>${moonIcon(moon, 14)} <b>${Math.round(moon.illum * 100)}%</b> moon</span></div>
+      <div class="rh3-chips"><span>${icon('sun', 14)} Rise <b>${hLabel(D.rise)}</b></span><span>Set <b>${hLabel(D.set)}</b></span></div>
       <button class="rh3-loc" data-action="useGeo">${icon('pin', 15)}<span>${state.profile.geo ? 'Sun times for your location' : `Sun times for ${(() => { try { return new Intl.DisplayNames(['en'], { type: 'region' }).of(myCountry()); } catch (e) { return 'your country'; } })()}`}</span><b>${state.profile.geo ? 'Update' : 'Use my location'}</b></button>
     </div>
   </section>
@@ -4138,7 +4157,6 @@ function viewRhythm() {
       <div class="dm-rail"><span>${emi(m.g, 16)}</span></div>
       <div class="dm-body"><div class="dm-h"><b>${m.n}</b><small>${span(m)}</small></div>
         ${m.acts.length ? `<div class="rh-list">${m.acts.map(x => rhAct(x, done)).join('')}</div>` : `<p class="dm-p">${m.brief}</p>`}</div></section>`).join('')}</div>
-    <section class="card glass rh-moonc"><div>${moonIcon(moon, 40)}</div><div><b>${moon.name}</b><p>${moonLine()}</p></div></section>
     ${sectionTitle('Your week')}<section class="card glass"><div class="rh-week">${week}</div></section>
     ${sectionTitle('Gentle reminders')}
     <section class="card glass"><div class="stepper-row"><span>Follow the sun<small>Morning light, midday sun, sunset wind-down, bedtime</small></span><button class="toggle ${r.rhythm ? 'on' : ''}" data-action="remToggle" data-k="rhythm" role="switch" aria-checked="${!!r.rhythm}" aria-label="Follow the sun"><i></i></button></div>
@@ -4153,7 +4171,7 @@ function viewRhythm() {
       <div class="eyebrow">The full story · your inner clock</div>
       <h2>Why your body <span>follows the sun</span></h2>
       <p class="rh-art-lead">For almost all of human history, women woke with the light, spent the day outside and slept when it got dark. Your body still expects that. Here is what each part of your day does, and how sure science is about it.</p>
-      ${RHYTHM_WHY.map((s, i) => `<section class="rh-art-s"><div class="rh-art-h"><span class="rh-art-ic">${s.h === 'The moon' ? moonIcon(moon, 20) : icon(s.ic, 20)}</span><h3>${s.h}</h3></div><p>${s.p}</p></section>`).join('')}
+      ${RHYTHM_WHY.map((s, i) => `<section class="rh-art-s"><div class="rh-art-h"><span class="rh-art-ic">${icon(s.ic, 20)}</span><h3>${s.h}</h3></div><p>${s.p}</p></section>`).join('')}
       <div class="rh-art-sum"><b>In short</b><p>Light in the morning, sun at midday, people in the afternoon, dim at sunset, bed when you’re tired. Your body does the rest.</p></div>
     </article>
   </div>`;
@@ -4449,7 +4467,6 @@ function breathFx(k) {
 // Calm sigh: a deep breath in to almost full, one more short sip on top, then a long slow breath out.
 function viewBreathe(from) {
   const phase = M.info && M.info.phase, rec = BREATH_FOR[phase] || 'sigh', k = BREATHS[ui.bzK] ? ui.bzK : rec, B = BREATHS[k];
-  const mn = moonData(), moonLine = mn.waxing ? 'The Moon is growing: an even rhythm keeps your energy steady.' : 'The Moon is waning: let your breath out be the longest part.';
   return `${topbar('Breathe', { back: true })}
   <div class="pad bz-pad">
     ${from === 'stress' && M.info ? cortisolSec(M.info) : ''}
@@ -4486,7 +4503,7 @@ function viewBreathe(from) {
     </section>
     <figure class="bz-quote"><span>“</span><blockquote>The past is already gone and the future has not yet come. See clearly what is here, now.</blockquote><figcaption>The Buddha, from the Bhaddekaratta Sutta</figcaption></figure>
     <section class="bz-how"><div class="bzh-h"><span class="bzp-g">${B.g}</span><div><small>${B.when}</small><h3>${B.name}</h3></div></div>
-      <p class="bzh-for">${B.for}. ${moonLine}</p>
+      <p class="bzh-for">${B.for}.</p>
       ${breathBar(k)}
       ${breathFx(k)}
       <details class="bzh-more"><summary>How and why ${icon('chevD', 14)}</summary>
@@ -4885,10 +4902,7 @@ function viewPartner(p) {
       const real = p.md === todayISO() && p.m?.length;
       return `<section class="card glass feel-card"><div class="eyebrow">${real ? `${esc(p.n)} logged today` : 'How she’s feeling'}</div>
         <div class="feel-chips">${(real ? p.m.map(esc) : moods).map(m => `<span class="${real ? 'real' : ''}">${m}</span>`).join('')}</div>
-        <p class="body sm">${partnerRead(pi, p).split('. ').slice(1, 2).join('')}.</p></section>
-      <div class="two-tiles one">
-        <div class="card glass tile cos"><span class="cos-g">${moonIcon(moon, 30)}</span><small>Moon & her cycle</small><b>${moon.name}</b><span class="muted sm">${sync}</span></div>
-      </div>`; })()}
+        <p class="body sm">${partnerRead(pi, p).split('. ').slice(1, 2).join('')}.</p></section>`; })()}
     ${(() => { const got = (state.sigLog || []).filter(x => x.pid === p.id).slice(0, 3); return got.length ? `<section class="card glass sig-log"><div class="eyebrow">From ${esc(p.n)}</div>${got.map(x => { const g = SIGNALS.find(y => y.k === x.k); return `<div class="sl"><span>${g ? g.g : '❤️'}</span><b>${g ? g.t : ''}</b><small>${fmtAgo(x.at)}</small></div>`; }).join('')}</section>` : ''; })()}
     ${loveBtn(p, true)}
 
@@ -6418,7 +6432,7 @@ function render() {
   const ph = (ui.phasePreview || M.info?.phase) || ''; // the whole app takes the colour of her phase
   if (document.documentElement.dataset.phase !== ph) document.documentElement.dataset.phase = ph;
   const views = {
-    today: viewToday, saved: viewSaved, ground: viewGround, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: () => viewBreathe(r.id), do: () => viewTopic(r.id), plan: viewPlan, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: viewMoon, moon: viewMoon, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewHabits, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), world: () => viewWorld(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
+    today: viewToday, saved: viewSaved, ground: viewGround, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: () => viewBreathe(r.id), do: () => viewTopic(r.id), plan: viewPlan, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: viewCalendar, manifest: viewManifest, moon: viewCalendar, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewHabits, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), world: () => viewWorld(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
     recipe: () => viewRecipe(r.id), ritual: () => viewRitual(r.id), point: () => viewPoint(r.id), article: () => viewArticle(r.id), learn: viewLearn,
   };
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];
