@@ -1159,6 +1159,35 @@ function upcomingEvents() {
   return `${sectionTitle('Coming up')}
     ${list.length ? `<div class="ev-list">${list.slice(0, 6).map(evCard).join('')}</div>` : `<p class="fine" style="margin:0 4px 10px">Tap a future day above and plan a date, exam, trip or presentation. You’ll see which phase you’ll be in and how to prepare.</p>`}`;
 }
+// Calendar top: one dial of her cycle with today's marker, the big number, and three bubbles.
+const PH_HEX = { menstrual: '#d9768f', follicular: '#6c823e', ovulatory: '#d6a443', luteal: '#9b87c4' };
+function calDial(inf, size = 132) {
+  const L = inf.L, cx = size / 2, r = size / 2 - 10, gap = 1.2, runs = [];
+  for (let d = 1; d <= L; d++) { const p = C.phaseFor(d, L, inf.P); if (runs.length && runs[runs.length - 1].p === p) runs[runs.length - 1].b = d; else runs.push({ p, a: d, b: d }); }
+  const ang = d => -90 + (d - 1) / L * 360, cd = Math.min(inf.cd, L);
+  const arcs = runs.map(({ p, a, b }) => `<path d="${arcPath(cx, cx, r, ang(a) + gap, ang(b + 1) - gap)}" stroke="${PH_HEX[p]}" stroke-width="${p === inf.phase ? 11 : 7}" stroke-linecap="round" fill="none" opacity="${p === inf.phase ? 1 : .55}"/>`).join('');
+  const [mx, my] = polar(cx, cx, r, ang(cd + .5));
+  return `<svg class="cdial" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" aria-hidden="true">${arcs}
+    <circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="8.5" fill="#fff" stroke="#20301a" stroke-width="2.5"/></svg>
+    <span class="cdial-c"><small>Day</small><b>${inf.cd}</b><em>of ${L}</em></span>`;
+}
+function calTop(inf, fStart, nextOv, short) {
+  const fertileNow = inf.fertile && !inf.isPeriod, dOv = inf.daysToOv, ph = PHASES[inf.phase];
+  const big = inf.isPeriod ? [`${inf.cd}`, 'day of your period'] : inf.late ? [`${inf.late}`, inf.late === 1 ? 'day late' : 'days late'] : [`${inf.daysToPeriod}`, inf.daysToPeriod === 1 ? 'day to your period' : 'days to your period'];
+  const sub = inf.isPeriod ? `Next one ${fmt(C.addDays(inf.cycleStart, inf.L), { weekday: 'short', month: 'short', day: 'numeric' })}` : inf.late ? 'A late period is common. Stress and travel can shift it.' : `Expected ${fmt(inf.nextStart, { weekday: 'short', month: 'short', day: 'numeric' })}`;
+  const bub = (c, k, v, s) => `<div class="cb3" style="--c:${c}"><i></i><small>${k}</small><b>${v}</b><span>${s}</span></div>`;
+  return `<section class="cal3">
+    <div class="cal3-row"><div class="cal3-num"><span class="eyebrow">${inf.isPeriod ? 'Your period' : inf.late ? 'Your period' : 'Next period'}</span>
+      <b class="dotnum">${big[0]}</b><p>${big[1]}</p><small>${sub}</small></div>
+      <div class="cdial-w">${calDial(inf)}</div></div>
+    <div class="cal3-bubs">
+      ${bub(PH_HEX[inf.phase], 'Phase', ph.name, ph.season || 'now')}
+      ${bub('#d6a443', 'Fertile', fertileNow ? 'Now' : dOv - 5 > 0 ? `In ${dOv - 5} d` : 'Closed', `${short(fStart)} to ${short(nextOv)}`)}
+      ${bub('#e9c76a', 'Egg release', dOv === 0 ? 'Today' : short(nextOv), dOv === 0 ? 'estimate' : `in ${dOv} ${dOv === 1 ? 'day' : 'days'}`)}
+    </div>
+    <div class="cal3-key">${PHASE_ORDER.map(p => `<span><i style="background:${PH_HEX[p]}"></i>${PHASES[p].name}</span>`).join('')}</div>
+  </section>`;
+}
 function viewCalendar() {
   const { stats, today } = M;
   const m = ui.calMonth ? C.parseISO(ui.calMonth) : new Date(today.getFullYear(), today.getMonth(), 1);
@@ -1193,13 +1222,7 @@ function viewCalendar() {
   const slide = ui.calSlide ? (ui.calSlide > 0 ? 'slide-l' : 'slide-r') : ''; ui.calSlide = 0;
   const inf = M.info, fStart = nextOv ? C.addDays(nextOv, -5) : null;
   const short = d => fmt(d, { month: 'short', day: 'numeric' });
-  const answer = inf ? `<section class="cal2-top">
-      <div class="cal2-main"><span class="eyebrow">${inf.isPeriod ? 'Your period' : inf.late ? 'Your period is late' : 'Next period'}</span>
-        <h2>${inf.isPeriod ? `Day <b>${inf.cd}</b>` : inf.late ? `<b>${inf.late}</b> ${inf.late === 1 ? 'day' : 'days'} late` : `In <b>${inf.daysToPeriod}</b> ${inf.daysToPeriod === 1 ? 'day' : 'days'}`}</h2>
-        <p>${inf.isPeriod ? `Next one expected ${fmt(C.addDays(inf.cycleStart, inf.L), { weekday: 'short', month: 'long', day: 'numeric' })}` : `Expected ${fmt(nextP, { weekday: 'long', month: 'long', day: 'numeric' })}`}</p></div>
-      <div class="cal2-facts">
-        <div><small>Fertile window</small><b>${short(fStart)} – ${short(nextOv)}</b><span>egg release ~${short(nextOv)}</span></div>
-      </div></section>` : '';
+  const answer = inf ? calTop(inf, fStart, nextOv, short) : '';
   const selLine = si ? (si.periodActual ? `Period · day ${si.cd}` : si.periodPredicted ? 'Period expected' : si.isOvulation ? 'Egg release (estimate)' : si.fertile ? `Fertile · ${PHASES[si.phase].name}` : `${PHASES[si.phase].name} · day ${si.cd}`) : '';
   const cp = cosmicProfile();
   return `${topbar('Calendar')}

@@ -6957,3 +6957,36 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .wk-rn { padding: 0; }
 .wk-rn .rn:last-child { border-bottom: 0; }
 @media (prefers-reduced-motion: reduce) { .wk-d { animation: none; } }
+
+/* ---------- Calendar top v3: cycle dial + big number + bubbles ---------- */
+.cal3 { padding: 20px 18px 16px; border-radius: 30px; background: #fff; color: #20301a; margin-bottom: 18px; box-shadow: 0 14px 34px rgba(48,64,35,.10); }
+.cal3-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.cal3-num .eyebrow { color: #6c823e; }
+.cal3-num > b { display: block; font-family: 'Doto', monospace; font-weight: 800; font-size: 64px; line-height: .95; margin-top: 6px; color: #20301a; }
+.cal3-num p { margin: 4px 0 0; font-size: 16px; font-weight: 500; color: #20301a; }
+.cal3-num small { display: block; margin-top: 3px; font-size: 13px; color: rgba(48,64,35,.75); }
+.cdial-w { position: relative; flex: none; width: 132px; height: 132px; }
+.cdial { display: block; }
+.cdial-c { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; line-height: 1.05; }
+.cdial-c small { font-size: 11px; color: rgba(48,64,35,.7); }
+.cdial-c b { font-family: 'Doto', monospace; font-weight: 800; font-size: 30px; color: #20301a; }
+.cdial-c em { font-style: normal; font-size: 11px; color: rgba(48,64,35,.7); }
+.cal3-bubs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-top: 16px; }
+.cb3 { position: relative; padding: 11px 10px 10px; border-radius: 20px; background: color-mix(in srgb, var(--c) 13%, #fff); border: 1px solid color-mix(in srgb, var(--c) 30%, transparent); min-width: 0; }
+.cb3 i { position: absolute; top: 12px; right: 10px; width: 9px; height: 9px; border-radius: 50%; background: var(--c); }
+.cb3 small { display: block; font-size: 11.5px; color: rgba(48,64,35,.75); }
+.cb3 b { display: block; margin-top: 3px; font-size: 16px; font-weight: 500; color: #20301a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cb3 span { display: block; margin-top: 1px; font-size: 11px; color: rgba(48,64,35,.7); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal3-key { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 14px; margin-top: 14px; font-size: 12px; color: rgba(48,64,35,.8); }
+.cal3-key span { display: inline-flex; align-items: center; gap: 6px; }
+.cal3-key i { width: 10px; height: 10px; border-radius: 50%; }
+/* phase days read clearly on the grid, matching the dial */
+.cal2 .cal-d.ph-menstrual:not(.period):not(.period-pred) { background: rgba(217,118,143,.16); }
+.cal2 .cal-d.ph-follicular { background: rgba(108,130,62,.13); }
+.cal2 .cal-d.ph-ovulatory { background: rgba(214,164,67,.2); }
+.cal2 .cal-d.ph-luteal { background: rgba(155,135,196,.16); }
+.cal2 .cal-d.fertile { background: rgba(214,164,67,.28); }
+.cal2 .cal-d.ovu { background: #d6a443; color: #20301a; font-weight: 600; }
+.cal2 .cal-d { color: #20301a; }
+.cal2 .cal-d.today { box-shadow: inset 0 0 0 2px #20301a; }
+.cal2-legend .lg-o { background: #d6a443; } .cal2-legend .lg-f { background: rgba(214,164,67,.4); }
