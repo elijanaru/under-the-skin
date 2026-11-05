@@ -7669,3 +7669,25 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .dpt-go { display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; padding: 7px 12px; border-radius: 999px; background: #fff; color: #20301a; font-weight: 600; font-size: 12.5px; box-shadow: 0 4px 12px rgba(32,48,26,.12); }
 .hub .dpt.ph-full.keep small { display: block; position: relative; color: rgba(255,255,255,.92) !important; text-shadow: 0 1px 8px rgba(0,0,0,.35); }
 .hub .dpt.ph-full.keep .dpt-g.pic i { background: linear-gradient(180deg, rgba(20,28,16,0) 30%, rgba(20,28,16,.62) 100%) !important; }
+/* Manifest: the month strip and six technique cards */
+.mfm { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 18px; }
+.mfm-p { position: relative; display: grid; justify-items: start; gap: 4px; padding: 14px 8px 10px; border-radius: 20px; border: 1px solid rgba(48,64,35,.08); background: rgba(255,255,255,.82); text-align: left; color: #20301a; font: inherit; cursor: pointer; overflow: hidden; }
+.mfm-p i { position: absolute; left: 0; right: 0; top: 0; height: 5px; background: var(--c); }
+.mfm-p small { font-size: 10.5px; color: #4b5a40; }
+.mfm-a { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: color-mix(in srgb, var(--c) 18%, #fff); color: #20301a; }
+.mfm-a svg { width: 18px; height: 18px; }
+.mfm-p b { font-size: 12.5px; font-weight: 600; line-height: 1.2; }
+.mfm-p.now { background: #20301a; color: #fff; border-color: #20301a; box-shadow: 0 10px 22px -12px rgba(32,48,26,.6); }
+.mfm-p.now small { color: rgba(255,255,255,.8); }
+.mfm-p.now .mfm-a { background: var(--c); color: #fff; }
+.mfw { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 26px; }
+.mfw-c { display: grid; justify-items: start; align-content: start; gap: 5px; padding: 14px; border-radius: 24px; border: 1px solid rgba(48,64,35,.08); background: #fff; color: #20301a; text-align: left; font: inherit; cursor: pointer; box-shadow: 0 6px 16px -10px rgba(32,48,26,.25); }
+.mfw-a { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 14px; background: color-mix(in srgb, var(--c) 16%, #fff); color: #20301a; margin-bottom: 2px; }
+.mfw-a svg { width: 22px; height: 22px; }
+.mfw-c b { font-size: 15px; font-weight: 600; line-height: 1.2; }
+.mfw-c small { font-size: 12.5px; line-height: 1.35; color: #4b5a40; }
+.mfw-c em { font-style: normal; font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 999px; background: color-mix(in srgb, var(--c) 16%, #fff); color: #20301a; margin-top: 2px; }
+.mfw-c.on { background: #20301a; color: #fff; border-color: #20301a; }
+.mfw-c.on small { color: rgba(255,255,255,.8); }
+.mfw-c.on .mfw-a { background: var(--c); color: #fff; }
+.mfw-c.on em { background: rgba(255,255,255,.14); color: #fff; }
