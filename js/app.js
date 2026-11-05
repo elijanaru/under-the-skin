@@ -2402,6 +2402,24 @@ const mnDay = d => d.toLocaleDateString(undefined, { weekday: 'short', day: 'num
 const mnTime = d => d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 const mnIn = d => { const n = Math.round((C.startOfDay(d) - C.startOfDay(new Date())) / 864e5); return n <= 0 ? 'today' : n === 1 ? 'tomorrow' : `in ${n} days`; };
 // Inner weather: moon light vs her energy as two meters, then Heart / Mind / Spirit as forecast tiles; the full reading opens under a tile.
+// After the practice: how real did it feel? Five moons from new to full, the last 7 nights as a strip, and a tip for tonight.
+const MANI_E = [0, 0, 45, 90, 125, 180];
+const MANI_TIP = [
+  ['Far away', 'That is normal at the start. Tonight try it as you fall asleep, when your body is heavy and your mind is soft.'],
+  ['A glimpse', 'Shrink the scene: one moment, one sentence, one touch. Small and vivid beats big and blurry.'],
+  ['Getting closer', 'Stay in it a little longer and notice one detail you have not seen before.'],
+  ['Almost real', 'Lovely. Carry that feeling into one small thing you do tomorrow.'],
+  ['Felt real', 'Now let it be, the way you do not dig up a seed to check on it. Return to the feeling, not the how.'],
+];
+function maniFeel() {
+  const F = state.maniFeel || {}, t = todayISO(), v = F[t] || 0;
+  const days = Array.from({ length: 7 }, (_, i) => C.addDays(new Date(), i - 6)), n = days.filter(d => F[C.iso(d)]).length;
+  return `<div class="mf"><div class="mf-h"><b>How real did it feel?</b><small>tap a moon</small></div>
+    <div class="mf-moons">${[1, 2, 3, 4, 5].map(x => `<button class="${x === v ? 'on' : ''}" data-action="maniFeel" data-v="${x}" aria-label="${MANI_TIP[x - 1][0]}">${moonArt(MANI_E[x])}</button>`).join('')}</div>
+    ${v ? `<p class="mf-tip"><b>${MANI_TIP[v - 1][0]}.</b> ${MANI_TIP[v - 1][1]}</p>` : ''}
+    <div class="mf-week">${days.map(d => { const r = F[C.iso(d)]; return `<span class="${C.iso(d) === t ? 'now' : ''}">${r ? moonArt(MANI_E[r]) : '<i></i>'}<small>${fmt(d, { weekday: 'narrow' })}</small></span>`; }).join('')}
+      <em><b class="dotnum">${n}</b>of 7 nights</em></div></div>`;
+}
 function innerWeather(mn, pg, phase, inner, ms, feel) {
   const wm = MG.WX_MOON[pg.k] || MG.WX_MOON.new, wb = phase && MG.WX_BODY[phase], open = ui.wxOpen;
   const lit = Math.round(mn.illum * 100);
@@ -2455,6 +2473,7 @@ function moonPage(embed) {
         ${opts.length > 1 ? `<div class="mm-pick">${opts.map(o => `<button class="${o === k ? 'on' : ''}" data-action="maniK" data-v="${o}">${o === mk ? `${icon('moon', 13)} For the moon` : `${icon('heart', 13)} For your body`}<b>${MG.MANIFEST[o].name}</b></button>`).join('')}</div>` : ''}
         <p class="mm-why">${k === mk ? T.why : cy[1]}</p>
         <ol class="mm-flow">${T.short.map((x, i) => `<li style="--i:${i}"><span>${i + 1}</span><b>${x}</b></li>`).join('')}</ol>
+        ${maniFeel()}
         <details class="mm-more"><summary>Show me how ${icon('chevR', 14)}</summary>
           <ol class="mm-steps">${T.steps.map(x => `<li>${x}</li>`).join('')}</ol>
           <label class="mm-scene"><span>My scene, in the present tense</span><textarea class="field mn-ta" data-input="mani.today" rows="2" placeholder="I am… / I have… / It feels so good that…">${esc(scene)}</textarea></label>
@@ -5909,6 +5928,7 @@ const actions = {
   openPartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (p) { const { id, ...snap } = p; location.hash = '#/with?d=' + b64e(snap); } },
   removePartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (!p || !confirm(`Remove ${p.n}?`)) return; state.partners = state.partners.filter(x => x.id !== d.id); save(); if (route().name === 'partners') go('partners'); else render(); },
   seasonView: d => { ui.seasonView = d.v; render(); },
+  maniFeel: d => { const F = state.maniFeel = state.maniFeel || {}, t = todayISO(), v = +d.v; if (F[t] === v) delete F[t]; else F[t] = v; save(); render(); },
   wxOpen: d => { ui.wxOpen = ui.wxOpen === d.v ? null : d.v; render(); },
   worldGo: d => { ui.worldReg = d.k; ui.worldPhase = null; go('world'); setTimeout(wkCenter, 120); },
   worldReg: d => { ui.worldReg = d.k; render(); wkCenter(); },
