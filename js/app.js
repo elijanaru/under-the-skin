@@ -10,7 +10,7 @@ import { mountFigure, mushroomArt, nautilusArt } from './figure.js';
 import { mountTorso } from './torso.js';
 import { RECIPE_PHOTOS, photoUrl, DISH_PHOTOS, dishPhoto, HORMONE_PHOTOS, hormonePhoto, CARE_PHOTOS, carePhoto, STAR_PHOTOS, starPhoto, foodPhoto, FOOD_PHOTOS, teaPhoto } from './photos.js';
 import * as SZ from './seasonal.js';
-import { WORLD, worldOf, PHASE_EAT } from './world.js';
+import { WORLD, worldOf, PHASE_EAT, PANTRY } from './world.js';
 import { MOLECULES, MOL_BALL } from './molecules.js';
 import { sunTimes, COUNTRY_GEO } from './sun.js';
 import * as A from './account.js';
@@ -4912,6 +4912,14 @@ function wkDish(d, phase, i) {
     </div></details>`;
 }
 function wkCenter() { const w = document.querySelector('.wk-regs'), b = w && w.querySelector('.on'); if (b) w.scrollLeft = b.offsetLeft - (w.clientWidth - b.offsetWidth) / 2; }
+function wkPantry(k) {
+  const P = PANTRY[k]; if (!P) return '';
+  const open = ui.wkPan && ui.wkPan[0] === k ? ui.wkPan[1] : -1, cur = P[open];
+  return `${sectionTitle('The pantry')}
+    <div class="wkp">${P.map(([n, pic, g], i) => { const u = foodPhoto(pic, 300) || teaPhoto(pic, 300, 300); return `<button class="wkp-t ${i === open ? 'on' : ''}" data-action="wkPan" data-k="${k}" data-v="${i}" aria-expanded="${i === open}">
+      <span class="wkp-img">${u ? `<img src="${u}" alt="" loading="lazy" onerror="this.remove()">` : ''}</span><b>${n}</b><small>${g}</small></button>`; }).join('')}</div>
+    ${cur ? `<div class="wkp-more"><b>${cur[0]}</b><p>${cur[3]}</p></div>` : '<p class="wx-hint">Tap a staple for how to use it</p>'}`;
+}
 function viewWorld(id) {
   if (id && worldOf(id)) { ui.worldReg = id; ui.lastRoute = 'world'; history.replaceState(null, '', '#/world'); }
   const R = worldOf(ui.worldReg) || worldOf(wkHome()), mine = M.info ? M.info.phase : null;
@@ -4925,6 +4933,7 @@ function viewWorld(id) {
     <section class="card wk-rule" data-phase="${phase}"><span class="wk-ic">${icon(phase === 'menstrual' || phase === 'luteal' ? 'bowl' : 'leaf', 20)}</span>
       <div><b>${PE[0]}</b><p>${PE[1]}</p></div></section>
     ${ds.map((d, i) => wkDish(d, phase, i)).join('')}
+    ${wkPantry(R.k)}
     <p class="fine center">Traditional dishes, made the natural way. Check every ingredient for allergies.</p>
   </div>`;
 }
@@ -5930,6 +5939,7 @@ const actions = {
   seasonView: d => { ui.seasonView = d.v; render(); },
   maniFeel: d => { const F = state.maniFeel = state.maniFeel || {}, t = todayISO(), v = +d.v; if (F[t] === v) delete F[t]; else F[t] = v; save(); render(); },
   wxOpen: d => { ui.wxOpen = ui.wxOpen === d.v ? null : d.v; render(); },
+  wkPan: d => { const v = +d.v; ui.wkPan = ui.wkPan && ui.wkPan[0] === d.k && ui.wkPan[1] === v ? null : [d.k, v]; render(); },
   worldGo: d => { ui.worldReg = d.k; ui.worldPhase = null; go('world'); setTimeout(wkCenter, 120); },
   worldReg: d => { ui.worldReg = d.k; render(); wkCenter(); },
   worldPhase: d => { ui.worldPhase = d.v; render(); },

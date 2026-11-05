@@ -92,3 +92,40 @@ export const WORLD = [
       d('Sweet potato & black-eyed peas', true, 'Sweet potatoes', ['Sweet potato', 'Black-eyed peas', 'Ginger'], ['Slow carbs', 'B6'], 'Simmer black-eyed peas with sweet potato, tomato, ginger and a little palm oil.')] } },
 ];
 export const worldOf = k => WORLD.find(r => r.k === k);
+
+// Each region's pantry: four staples that define the kitchen, what they give her hormones, and how to use them.
+// [name, photo key in FOOD_PHOTOS, gives, how to use it]
+export const PANTRY = {
+  med: [['Olive oil', 'Olives', 'Polyphenols that calm inflammation', 'Raw over salads and soups; its oleocanthal works a little like a gentle painkiller.'],
+    ['Sardines & anchovies', 'Anchovies', 'Omega-3, calcium, vitamin D', 'Small fish are low in mercury and the bones bring calcium.'],
+    ['Fresh sheep cheese', 'Fresh sheep & goat cheese', 'Protein, calcium', 'Raw-milk feta or pecorino with fruit and herbs.'],
+    ['Wild herbs', 'Rosemary & oregano', 'Antioxidants, gentle digestion', 'Oregano, thyme and rosemary in every pan.']],
+  eastasia: [['Shiitake', 'Shiitake', 'Vitamin D, immune support', 'Sun-dry them gill side up for a few hours and their vitamin D climbs.'],
+    ['Fresh ginger', 'Ginger', 'Warmth, eases cramps', 'Sliced into broths and teas, most of all around your period.'],
+    ['Red dates (jujube)', 'Jujubes (daechu)', 'Iron support, calm sleep', 'Simmered in soups and teas, a classic blood tonic in Chinese medicine.'],
+    ['Seaweed', 'Seaweed (gim & miyeok)', 'Iodine for your thyroid', 'A little often: in miso soup or toasted as a snack.']],
+  korea: [['Doenjang & kimchi', 'Aged kimchi (mugeunji)', 'Live cultures, gut and estrogen balance', 'Aged kimchi on the side, and doenjang stirred into soups off the boil so its cultures survive.'],
+    ['Perilla oil', 'Perilla leaves (kkaennip)', 'Plant omega-3 (ALA)', 'Raw over namul and rice; it spoils fast, keep it cool.'],
+    ['Miyeok seaweed', 'Seaweed (gim & miyeok)', 'Iodine, iron, minerals', 'The birthday and after-birth soup that rebuilds blood.'],
+    ['Gochugaru', 'Peppers (gochu)', 'Warming, vitamin C', 'Chili flakes that warm a cold body in winter.']],
+  southasia: [['Ghee', 'Grass-fed raw milk & butter', 'Fat-soluble vitamins A, D, K2', 'Cook spices in it so their goodness dissolves.'],
+    ['Turmeric', 'Root vegetables', 'Curcumin, calms inflammation', 'Always with black pepper and fat, which raise absorption many times.'],
+    ['Mung beans', 'Peas', 'Gentle protein, easy to digest', 'The kindest legume: soak, then cook into dal.'],
+    ['Cardamom & cinnamon', 'Figs', 'Steadier blood sugar, warmth', 'In warm milk, chai and slow curries.']],
+  latam: [['Black beans', 'Peas & broad beans', 'Iron, fibre, magnesium', 'Soak overnight and cook slowly with bay and onion.'],
+    ['Avocado', 'Avocado', 'Healthy fats, potassium', 'Half a day; fat helps you take up the vitamins in your veg.'],
+    ['Limes', 'Lemons', 'Vitamin C for iron uptake', 'Squeeze over beans and meat to absorb more iron.'],
+    ['Pumpkin seeds (pepitas)', 'Pumpkin', 'Zinc and magnesium', 'Toasted, a handful a day, great for the second half of your cycle.']],
+  mideast: [['Tahini', 'Almonds', 'Calcium, lignans', 'Sesame paste over roasted veg and in dressings.'],
+    ['Pomegranate', 'Pomegranate', 'Polyphenols, antioxidants', 'Seeds over salads, molasses in dressings.'],
+    ['Dates', 'Figs', 'Quick energy, potassium', 'Two or three before a walk; traditionally eaten late in pregnancy.'],
+    ['Za’atar & sumac', 'Rosemary & oregano', 'Antioxidants, bright sour taste', 'Sumac adds a lemony tang without the acid.']],
+  nordic: [['Wild salmon', 'Wild salmon', 'Omega-3, vitamin D', 'Cured, smoked or baked; the vitamin D matters in dark winters.'],
+    ['Lingonberries & bilberries', 'Bilberries', 'Anthocyanins, vitamin C', 'Wild berries carry far more pigment than farmed ones.'],
+    ['Kefir & cultured cream', 'Kefir', 'Probiotics, calcium', 'A small glass a day for a calmer gut.'],
+    ['Rye & roots', 'Root vegetables', 'Slow carbs, fibre', 'Roots before grains; a little rye sourdough is enough.']],
+  westafrica: [['Groundnuts', 'Almonds', 'Protein, magnesium, B3', 'Ground into rich, warming stews.'],
+    ['Scotch bonnet', 'Peppers', 'Capsaicin, warmth, vitamin C', 'One whole pepper in the pot gives heat without fire.'],
+    ['Sweet potatoes', 'Sweet potatoes', 'Slow carbs, vitamin A', 'Roasted or stewed, a steady fuel before your period.'],
+    ['Palm & leafy stews', 'Collards & mustard greens', 'Vitamin A, minerals', 'Greens are always cooked, the traditional way.']],
+};
