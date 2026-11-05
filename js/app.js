@@ -1263,7 +1263,7 @@ function viewToday() {
 function exploreGrid(info) {
   const tiles = [['manifest', 'spark', 'Manifest', 'Live it as done', 'images/forest-calm.jpg'], ['hormones', 'book', 'Hormones', 'What each one does', hormonePhoto('Oestrogen', 500)], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/forest-path.jpg'],
     ['move', 'leaf', 'Move', 'Best training times', 'images/tile-hiit.webp'], ['habits', 'check', 'Habits', 'Daily checklist', carePhoto('lemon-water', 500)], ['relief', 'heart', 'Relief', 'Cramps, PMS, sleep', carePhoto('foot-soak', 500)],
-    ['season', 'bowl', 'In season', 'Local foods', 'images/season-fruit.webp'], ['tea', 'cup', 'Tea guide', 'For every need', 'images/tea-ginger.webp'], ['nutrients', 'drop', 'Nutrients', 'Food first, doses', carePhoto('gut-smoothie', 500)]];
+    ['season', 'bowl', 'In season', 'Local foods', 'images/season-fruit.webp'], ['tea', 'cup', 'Tea guide', 'For every need', 'images/tea-ginger.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/tile-meditate.webp']];
   return `<div class="xp-grid xp2">${tiles.map(([to, ic, t, sub, img], i) => `<button class="xp ${i === 0 ? 'wide' : ''}" data-action="nav" data-to="${to}" style="--i:${i}">${img ? `<img src="${img}" alt="" loading="lazy">` : ''}<span class="xp-l"><span class="xp-ic">${icon(ic, 15)}</span><span><b>${t}</b><small>${sub}</small></span></span></button>`).join('')}</div>`;
 }
 // Home: today's habits as a cute tick list; her phase's habits first, a little sprout that grows leaves as she ticks.
@@ -4357,11 +4357,11 @@ function moveCard(info) {
     <button class="card move-card photo" data-action="nav" data-to="move">${u ? `<img src="${u}" alt="" loading="lazy"><span class="mv-shade"></span>` : ''}
       <div class="mv-in"><h3>${g.title}</h3><div class="mv-best">${best.map(b => `<span>${b}</span>`).join('')}</div></div></button>`;
 }
-const MOVE_SHORT = { lift: 'Lift', hiit: 'HIIT', sport: 'Cardio', pilates: 'Pilates', yoga: 'Yoga', meditate: 'Breathe', walk: 'Walk' };
+const MOVE_SHORT = { lift: 'Lift', hiit: 'HIIT', sport: 'Cardio', pilates: 'Pilates', yoga: 'Yoga', meditate: 'Meditate', walk: 'Walk' };
 // Round score bubble (Oura-style): the ring fills with how good today is for that kind of movement.
 function moveBubble(m, r, i) {
   const pct = [10, 38, 70, 100][r], R = 27, Cc = 2 * Math.PI * R;
-  return `<div class="mv2-b r${r}" style="--i:${i}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * pct / 100).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-g">${icon(MOVE_G[m.k], 18)}</span>
+  return `<div class="mv2-b r${r}" style="--i:${i}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * pct / 100).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-ph"><img src="images/tile-${m.k}.webp" alt="" loading="lazy"><i>${icon(MOVE_G[m.k], 12, 2)}</i></span>
     <b>${MOVE_SHORT[m.k]}</b><small>${MV_WORD[r]}</small></div>`;
 }
 // Move hero graphic: how hard her body wants to train across the month, as a soft wave with today marked.
@@ -4398,7 +4398,7 @@ function viewMove() {
       ? `<section class="mv2-month">${Object.entries(MOVE_GUIDE).filter(([k]) => days.includes(k)).map(([k, x]) => { const idx = days.map((w, i) => w === k ? i + 1 : 0).filter(Boolean); return `<div class="mv2-w ${k === key ? 'on' : ''}"><span class="mv2-d">${idx[0] === idx[idx.length - 1] ? idx[0] : `${idx[0]}–${idx[idx.length - 1]}`}</span><div><b>${x.title}${k === key ? ' <em>· now</em>' : ''}</b><p>${x.tip}</p></div></div>`; }).join('')}</section>`
       : `<section class="mv2-tip"><span class="eyebrow">Why today</span><p>${g.tip}</p></section>
         <section class="card glass mv-dose"><div class="mvd-k">Your dose today</div>
-          ${[['Intensity', D.int], ['Length', D.len], ['Warm-up', D.warm], ['Recovery', D.rec]].map(([t, v]) => `<div class="mvd-r"><small>${t}</small><b>${v}</b></div>`).join('')}
+          ${[['How hard', D.int], ['How long', D.len], ['Warm-up', D.warm], ['Recovery', D.rec]].map(([t, v]) => `<div class="mvd-r"><small>${t}</small><b>${v}</b></div>`).join('')}
           <p class="mvd-f">Feel strong on a rest day? Go for it.</p></section>
         ${moveLights(ranked, g)}`;
   return `<section class="mv2 mv3">
@@ -4443,7 +4443,11 @@ const BREATHS = {
     how: [['In for 4', 'Quietly through your nose.'], ['Hold for 7', 'Gently, with a soft jaw.'], ['Out for 8', 'Slowly through the mouth, with a soft whoosh.']],
     why: 'A very long breath out gives the strongest calming signal, which helps when progesterone falls and sleep gets lighter before your period. Made popular by Dr Andrew Weil. Four rounds are enough to start; skip the hold if it makes you dizzy.' },
 };
-const BREATH_ORDER = ['sigh', 'belly', 'box', 'even', '478'];
+BREATHS.still = { name: '10 min meditation', g: '🪷', when: 'Any time', for: 'Sit still and let your mind settle', rounds: 60,
+  steps: [['in', 'Breathe in', 'Notice the air coming in', 4000], ['out', 'Breathe out', 'Let your thoughts drift past', 6000]],
+  how: [['Sit tall', 'On a cushion or a chair, hands on your thighs, eyes closed or soft.'], ['Follow the breath', 'Feel the air at your nose or your belly rising. Nothing to change.'], ['Wander, return', 'Your mind will wander. Each time you notice, come back to the breath. That return is the practice.']],
+  why: 'Ten minutes of attention on the breath trains the brain to notice a thought and let it go, instead of following it. Over weeks this lowers everyday stress and makes sleep and mood steadier. Morning, before your phone, is the easiest time to keep it.' };
+const BREATH_ORDER = ['still', 'sigh', 'belly', 'box', 'even', '478'];
 const BREATH_FOR = { menstrual: 'belly', follicular: 'box', ovulatory: 'even', luteal: '478' };
 // a tiny timeline of one breath: in, hold, out and rest as coloured segments
 const BZ_WORD = { in: 'In', top: 'Sip', hold: 'Hold', out: 'Out', rest: 'Rest' };
@@ -4453,7 +4457,7 @@ function breathBar(k) {
 }
 // One breath as a wave: the curve rises as the lungs fill, stays flat on a hold, falls on the long breath out.
 // x is real time, so a longer breath out is a longer slope; a dot rides the curve at the real pace.
-const BZ_WHEN = { sigh: 'When stress spikes, 1 to 3 breaths already help', belly: 'Lying down, a warm pad on your belly', box: 'Before a big talk or a new task', even: '5 minutes in the afternoon slump', 478: 'In bed, lights off' };
+const BZ_WHEN = { still: 'Morning, before you pick up your phone', sigh: 'When stress spikes, 1 to 3 breaths already help', belly: 'Lying down, a warm pad on your belly', box: 'Before a big talk or a new task', even: '5 minutes in the afternoon slump', 478: 'In bed, lights off' };
 function breathWave(k) {
   const B = BREATHS[k], tot = B.steps.reduce((a, x) => a + x[3], 0), W = 300, LO = 74, HI = 18, sec = ms => `${+(ms / 1000).toFixed(1)}`.replace(/\.0$/, '');
   const hasTop = B.steps.some(x => x[0] === 'top');
@@ -4472,8 +4476,9 @@ function breathWave(k) {
     <small class="bzb-k">${Math.round(tot / 1000)} s a breath · ${B.rounds} rounds · about ${Math.max(1, Math.round(tot * B.rounds / 60000))} min</small></div>`;
 }
 // What each practice does most, as 1 to 3 dots, plus the study behind it.
-const BZ_FX = { sigh: [3, 2, 2, 1], belly: [2, 1, 2, 3], box: [2, 3, 1, 1], even: [3, 2, 2, 1], 478: [3, 1, 3, 1] };
+const BZ_FX = { still: [3, 3, 2, 1], sigh: [3, 2, 2, 1], belly: [2, 1, 2, 3], box: [2, 3, 1, 1], even: [3, 2, 2, 1], 478: [3, 1, 3, 1] };
 const BZ_STUDY = {
+  still: ['A review of 47 trials found that about eight weeks of mindfulness meditation eased anxiety, low mood and pain.', 'Goyal 2014 (JAMA Internal Medicine)'],
   sigh: ['Five minutes a day of cyclic sighing lifted mood and slowed resting breathing more than mindfulness meditation did.', 'Balban 2023 (Cell Reports Medicine)'],
   belly: ['A review of slow-breathing studies found it turns up the calming rest-and-digest side of the nervous system and lowers anxiety.', 'Zaccaro 2018 (review)'],
   box: ['In the same Stanford trial as the calm sigh, box breathing also lifted mood and eased anxiety day by day.', 'Balban 2023 (Cell Reports Medicine)'],

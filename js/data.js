@@ -1020,14 +1020,14 @@ export const MOVE_GUIDE = {
 
 // How much to move in each stretch of the cycle (intensity in talk-test words).
 export const MOVE_DOSE = {
-  'flow-start': { int: 'Easy: you can chat', len: '20–40 min', warm: '5 min, gentle', rec: 'Warmth after, sleep 8 h+' },
-  'flow-end': { int: 'Easy to medium: short sentences', len: '30–45 min', warm: '8 min', rec: 'An easy day between hard ones' },
-  rising: { int: 'Medium to hard: a few words', len: '45–60 min', warm: '10 min', rec: '48 h per muscle group' },
-  building: { int: 'Hard if you feel strong: no talking', len: '45–60 min', warm: '10 min', rec: '48 h per muscle group' },
-  peak: { int: 'Hard if you feel strong: no talking', len: '45–60 min', warm: '12–15 min, dynamic + landings', rec: '48 h per muscle group' },
-  settle: { int: 'Medium: a few words', len: '40–60 min', warm: '10 min', rec: 'Longer rests between sets, more water' },
-  focus: { int: 'Steady: short sentences', len: '45–75 min', warm: '10 min', rec: 'Extra water and a pinch of salt' },
-  premenstrual: { int: 'Easy: you can chat', len: '20–40 min', warm: '8 min', rec: 'Early nights, magnesium-rich food' },
+  'flow-start': { int: 'Gentle: like a walk and talk', len: '20–40 min', warm: '5 min, gentle', rec: 'Warmth after, sleep 8 h+' },
+  'flow-end': { int: 'Light: you can still talk', len: '30–45 min', warm: '8 min', rec: 'An easy day between hard ones' },
+  rising: { int: 'Medium to hard: you get out of breath', len: '45–60 min', warm: '10 min', rec: '48 h per muscle group' },
+  building: { int: 'Hard if you feel strong: out of breath', len: '45–60 min', warm: '10 min', rec: '48 h per muscle group' },
+  peak: { int: 'Hard if you feel strong: out of breath', len: '45–60 min', warm: '12–15 min, dynamic + landings', rec: '48 h per muscle group' },
+  settle: { int: 'Medium: a little out of breath', len: '40–60 min', warm: '10 min', rec: 'Longer rests between sets, more water' },
+  focus: { int: 'Steady: warm, but you can still talk', len: '45–75 min', warm: '10 min', rec: 'Extra water and a pinch of salt' },
+  premenstrual: { int: 'Gentle: like a walk and talk', len: '20–40 min', warm: '8 min', rec: 'Early nights, magnesium-rich food' },
 };
 // What research found on training across the cycle.
 export const MOVE_SCIENCE = [
