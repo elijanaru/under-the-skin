@@ -4647,8 +4647,10 @@ function viewBreathe(from) {
           ${[-46, 46, -18, 18].map(t => `<path class="lt-p front" style="--t:${t}deg" d="M0 10 C -17 -12 -15 -52 0 -70 C 15 -52 17 -12 0 10 Z" fill="url(#lpB)"/>`).join('')}
           <path class="lt-p bud" d="M0 12 C -15 -8 -13 -42 0 -58 C 13 -42 15 -8 0 12 Z" fill="url(#lpB)"/>
         </svg>
-        <div class="bz-num"><b class="bz-big dotnum">${Math.round(B.steps.reduce((a, x) => a + x[3], 0) / 1000)}</b><small class="bz-word">seconds a breath</small></div>
-        <div class="bz-rings" aria-hidden="true">${B.steps.map(([t, , , ms], i) => `<span class="bzr ${t}" style="--p:0"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="19"/><circle class="bzr-p" cx="22" cy="22" r="19" pathLength="100"/></svg><b>${+(ms / 1000).toFixed(1)}</b><small>${t === 'rest' && B.steps.some(x => x[0] === 'hold') ? 'Hold' : BZ_WORD[t]}</small></span>`).join('')}</div>
+        ${k === 'still' ? `<div class="bz-num md"><b class="bz-big dotnum" role="timer">10:00</b><small class="bz-word">minutes, then a soft bell</small></div>
+        <div class="md-bar" aria-hidden="true"><i></i></div>
+        <button class="md-hear" type="button">${icon('bell', 14)} Hear the bell</button>` : `<div class="bz-num"><b class="bz-big dotnum">${Math.round(B.steps.reduce((a, x) => a + x[3], 0) / 1000)}</b><small class="bz-word">seconds a breath</small></div>
+        <div class="bz-rings" aria-hidden="true">${B.steps.map(([t, , , ms], i) => `<span class="bzr ${t}" style="--p:0"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="19"/><circle class="bzr-p" cx="22" cy="22" r="19" pathLength="100"/></svg><b>${+(ms / 1000).toFixed(1)}</b><small>${t === 'rest' && B.steps.some(x => x[0] === 'hold') ? 'Hold' : BZ_WORD[t]}</small></span>`).join('')}</div>`}
         <button class="bz-go">Start</button></div>
       <div class="bz-txt"><b class="bz-t">Let that shi go</b><small class="bz-s">Soften your shoulders and your jaw</small></div>
       <div class="bz-pal">
@@ -4680,9 +4682,50 @@ function viewBreathe(from) {
 }
 const SIGH = [['in', 'Breathe in', 'Fill up like a soft balloon', 4000], ['top', 'One more sip', 'Just a tiny bit more', 1500], ['out', 'Let it all go', 'Everything can melt away', 8000], ['rest', 'Rest here', 'You are here, and that is enough', 1500]];
 const PET_SAY = { in: 'Breathe in, slowly.', top: 'A little more…', hold: 'Hold it softly…', out: 'Let it go.', rest: 'Stay in the present.' };
+// A soft singing-bowl bell, made in the browser (no sound file): a few bowl-like partials, each a slightly
+// detuned pair so it shimmers, struck twice and left to fade. Returns the oscillators so a pause can cancel it.
+let _bell = null;
+function bellCtx() { try { _bell = _bell || new (window.AudioContext || window.webkitAudioContext)(); if (_bell.state === 'suspended') _bell.resume(); return _bell; } catch { return null; } }
+function ringBell(ctx, t, vol = 1, once = false) {
+  const out = [], f0 = 220, P = [[1, 1, 9], [2.71, .45, 6], [5.15, .2, 3.5], [8.4, .08, 2.2]];
+  (once ? [[0, 1]] : [[0, 1], [5, .55]]).forEach(([dt, m]) => P.forEach(([r, a, dec]) => [1, 1.004].forEach(det => {
+    const o = ctx.createOscillator(), g = ctx.createGain(), t0 = t + dt;
+    o.type = 'sine'; o.frequency.value = f0 * r * det;
+    g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(.11 * a * m * vol, t0 + .01); g.gain.exponentialRampToValueAtTime(.0001, t0 + dec);
+    o.connect(g).connect(ctx.destination); o.start(t0); o.stop(t0 + dec + .1); out.push(o);
+  })));
+  return out;
+}
+// 10 minute meditation: just a quiet countdown on the pond card, a bell at the end. The bell is scheduled on the
+// audio clock when she starts, so it rings on time even if the page is in the background; the screen is kept awake.
+function mountMeditate(el) {
+  const big = el.querySelector('.bz-big'), word = el.querySelector('.bz-word'), btn = el.querySelector('.bz-go'), bar = el.querySelector('.md-bar i'), hear = el.querySelector('.md-hear'), say = el.querySelector('.bz-say');
+  const TOTAL = 600000; let left = TOTAL, endAt = 0, iv = 0, nodes = [], lock = null, st = 'idle';
+  el.style.setProperty('--b', .7);
+  const fmt = ms => { const x = Math.ceil(ms / 1000); return `${Math.floor(x / 60)}:${String(x % 60).padStart(2, '0')}`; };
+  const show = () => { big.textContent = fmt(left); bar.style.width = `${((1 - left / TOTAL) * 100).toFixed(2)}%`; };
+  const unring = () => { nodes.forEach(n => { try { n.stop(); } catch {} }); nodes = []; };
+  const release = () => { try { lock && lock.release(); } catch {} lock = null; };
+  function finish() { clearInterval(iv); st = 'done'; left = 0; show(); navigator.vibrate?.([180, 120, 180]); btn.textContent = 'Again'; word.textContent = 'Well done. Notice how you feel.'; if (say) say.textContent = 'You did so well.'; el.dataset.ph = ''; release(); }
+  const tick = () => { left = Math.max(0, endAt - performance.now()); show(); if (left <= 0) finish(); };
+  function start() {
+    if (st === 'done') left = TOTAL;
+    const ctx = bellCtx(); unring(); if (ctx) nodes = ringBell(ctx, ctx.currentTime + left / 1000);
+    endAt = performance.now() + left; clearInterval(iv); iv = setInterval(tick, 250); st = 'run'; show();
+    btn.textContent = 'Pause'; word.textContent = 'Eyes soft, follow your breath'; if (say) say.textContent = 'Stay in the present.'; el.dataset.ph = 'still';
+    navigator.wakeLock?.request('screen').then(l => { lock = l; }).catch(() => {});
+  }
+  function pause() { left = Math.max(0, endAt - performance.now()); clearInterval(iv); unring(); release(); st = 'pause'; show(); btn.textContent = 'Resume'; word.textContent = 'Paused. Take your time.'; el.dataset.ph = ''; }
+  const go = () => (st === 'run' ? pause() : start());
+  const hearIt = () => { const ctx = bellCtx(); if (ctx) ringBell(ctx, ctx.currentTime + .05, .8, true); };
+  btn.addEventListener('click', go); hear && hear.addEventListener('click', hearIt);
+  show();
+  return () => { clearInterval(iv); unring(); release(); btn.removeEventListener('click', go); hear && hear.removeEventListener('click', hearIt); };
+}
 function mountBreath(el) {
   const ball = el.querySelector('.bz-ball'), txt = el.querySelector('.bz-txt'), t = el.querySelector('.bz-t'), sub = el.querySelector('.bz-s'), cnt = el.querySelector('.bz-n'), btn = el.querySelector('.bz-go'), say = el.querySelector('.bz-say');
   const pk = document.querySelector('.bzp'), on = pk && pk.querySelector('.on'); if (on) pk.scrollLeft = Math.max(0, on.offsetLeft - 16); // keep her pick in view
+  if (el.dataset.pat === 'still') return mountMeditate(el);
   const B = BREATHS[el.dataset.pat] || BREATHS.sigh, STEPS = B.steps, ROUNDS = B.rounds, CYC = STEPS.reduce((a, x) => a + x[3], 0);
   const big = el.querySelector('.bz-big'), word = el.querySelector('.bz-word'), rings = [...el.querySelectorAll('.bzr')], still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (still) el.style.setProperty('--b', .5);
@@ -5997,7 +6040,7 @@ function startTick() {
     const t = ui.timer; if (!t) { clearInterval(tick); return; }
     if (!t.running || t.done) return;
     t.remaining--;
-    if (t.remaining <= 0) { t.remaining = 0; t.done = true; t.running = false; navigator.vibrate?.(200); }
+    if (t.remaining <= 0) { t.remaining = 0; t.done = true; t.running = false; navigator.vibrate?.(200); const c = bellCtx(); if (c) ringBell(c, c.currentTime + .05); }
     renderOverlay();
   }, 1000);
 }
@@ -6335,7 +6378,7 @@ const actions = {
   },
   fav: d => { const f = state.favorites = state.favorites || []; const i = f.indexOf(d.id); i < 0 ? f.push(d.id) : f.splice(i, 1); save(); render(); },
   check: d => { ui.checked[d.k] = !ui.checked[d.k]; render(); },
-  timer: d => { ui.timer = { title: d.title, secs: +d.secs, remaining: +d.secs, running: true, done: false }; renderOverlay(); startTick(); },
+  timer: d => { bellCtx(); ui.timer = { title: d.title, secs: +d.secs, remaining: +d.secs, running: true, done: false }; renderOverlay(); startTick(); },
   timerToggle: () => { ui.timer.running = !ui.timer.running; renderOverlay(); },
   timerClose: () => { ui.timer = null; clearInterval(tick); renderOverlay(); },
   dismissRem: d => { rem().dismissed[d.id] = todayISO(); save(); render(); },

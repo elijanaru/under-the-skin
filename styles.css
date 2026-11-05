@@ -7960,3 +7960,10 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .sf-n { display: flex; align-items: baseline; gap: 7px; justify-items: start; text-align: left; margin-top: 8px; }
 .sf-n b { font-size: 36px; } .sf-n small { margin: 0; font-size: 13px; }
 .sf-h p { margin-top: 6px; }
+
+/* 10 min meditation: a quiet countdown on the pond card, a hairline of progress, the bell to preview */
+.bz-num.md .bz-big { font-size: 58px; letter-spacing: 0; }
+.md-bar { width: 72%; height: 4px; margin: 16px 0 12px; border-radius: 99px; background: rgba(255,255,255,.14); overflow: hidden; }
+.md-bar i { display: block; width: 0; height: 100%; border-radius: inherit; background: hsl(calc(var(--hb) + 330 * var(--hk)) calc(70% * var(--hs)) 82%); transition: width .3s linear; }
+.md-hear { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 16px; padding: 7px 14px; border: 1px solid rgba(255,255,255,.22); border-radius: 99px; background: rgba(255,255,255,.08); color: rgba(255,255,255,.88); font: 400 12.5px Outfit, sans-serif; cursor: pointer; }
+.md-hear .ic { stroke: currentColor; }
