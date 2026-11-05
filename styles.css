@@ -7714,3 +7714,23 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .hub .dpt.ph-fr .dpt-k, .hub .dpt.ph-fr b { text-shadow: 0 1px 10px rgba(0,0,0,.5); }
 .hub .dpt.ph-full.keep.ph-fr .dpt-g.pic i { background: linear-gradient(180deg, rgba(20,22,16,.66) 0%, rgba(20,22,16,.5) 45%, rgba(20,22,16,.82) 100%) !important; }
 .hub .dpt.ph-fr::before { display: none !important; }
+/* Grounding fixes: card radius, 15 min badge off the text, a drawn scene per surface */
+.gr-card.gr-ph { border-radius: 30px !important; }
+.gr-hero-n { top: 18px; bottom: auto; width: 72px; height: 72px; }
+.gr-where > div { padding: 0 0 12px; overflow: hidden; }
+.gr-where > div > :not(.gr-art) { margin-left: 12px; margin-right: 12px; }
+.gr-art { display: block; height: 62px; margin-bottom: 8px; border-radius: 18px 18px 0 0; overflow: hidden; }
+.gr-art svg { width: 100%; height: 100%; display: block; }
+
+/* Golden roots: white card with an earth-and-roots graphic */
+.gr-card.gr-roots { background: rgba(255,255,255,.92) !important; border: 1px solid rgba(48,64,35,.1); border-radius: 30px !important; padding-top: 12px; }
+.gr-rart { position: relative; height: 120px; border-radius: 20px; overflow: hidden; margin-bottom: 16px; }
+.gr-rart svg { width: 100%; height: 100%; display: block; }
+.gr-rart span { position: absolute; left: 14px; bottom: 12px; font-size: 12.5px; font-weight: 500; color: #f6e3b4; letter-spacing: .02em; }
+.gr-rl path { stroke-dasharray: 120; stroke-dashoffset: 120; animation: grRoot 4.5s ease-out forwards, grGlow 6s ease-in-out 4.5s infinite; }
+.gr-rl path:nth-child(n+2) { animation-delay: .6s, 5.1s; } .gr-rl path:nth-child(n+4) { animation-delay: 1.2s, 5.7s; } .gr-rl path:nth-child(n+6) { animation-delay: 1.8s, 6.3s; }
+@keyframes grRoot { to { stroke-dashoffset: 0; } }
+@keyframes grGlow { 50% { stroke: #f6d38a; } }
+@media (prefers-reduced-motion: reduce) { .gr-rl path { animation: none; stroke-dashoffset: 0; } }
+.gr-rart span { left: auto; right: 14px; bottom: auto; top: 9px; color: #304023; }
+.gr-rart span { left: 14px; right: auto; }

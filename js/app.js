@@ -354,6 +354,15 @@ function trainSafe() {
     <p class="ts-credit">${TRAIN_SAFE_CREDIT}</p>`;
 }
 // ---------- grounding: bare skin on the earth ----------
+// A tiny drawn scene for each surface in "Where to stand" (same order as GROUND_WHERE).
+const GROUND_ART = [
+  '<svg viewBox="0 0 120 56"><rect width="120" height="56" fill="#efdcbc"/><path d="M0 0h120v16c-14 6-24-4-40 2s-26 8-40 2S12 12 0 18z" fill="#a9cdd0"/><path d="M0 18c12-6 26 2 40-2s24-8 40-2 26 4 40-2" fill="none" stroke="#fff" stroke-width="2" opacity=".8"/><g fill="#caa77a"><ellipse cx="44" cy="34" rx="4" ry="6.5"/><ellipse cx="58" cy="44" rx="4" ry="6.5"/><ellipse cx="74" cy="32" rx="4" ry="6.5"/></g></svg>',
+  `<svg viewBox="0 0 120 56"><rect width="120" height="56" fill="#e3ecd3"/><g fill="none" stroke="#6c823e" stroke-width="2.4" stroke-linecap="round">${Array.from({ length: 14 }, (_, i) => `<path d="M${6 + i * 8.4} 56c${i % 2 ? 2 : -2}-10 ${i % 3 - 1}-20 ${i % 2 ? 4 : -3}-${24 + (i * 7) % 14}"/>`).join('')}</g><g fill="#fff" stroke="#9fc3c8" stroke-width=".8"><circle cx="22" cy="24" r="2.4"/><circle cx="64" cy="18" r="2.8"/><circle cx="96" cy="28" r="2.2"/></g></svg>`,
+  '<svg viewBox="0 0 120 56"><rect width="120" height="56" fill="#8a6a4f"/><rect width="120" height="18" fill="#dfe6d0"/><path d="M0 18c20-4 40 3 60 0s40-3 60 0v38H0z" fill="#7a5b42"/><g fill="#a3876c"><circle cx="20" cy="40" r="2"/><circle cx="92" cy="44" r="2.4"/><circle cx="76" cy="32" r="1.6"/></g><path d="M58 30V12" stroke="#6c823e" stroke-width="2.4" stroke-linecap="round"/><path d="M58 18c-8-2-12-7-12-11 7 0 12 5 12 11zM58 15c7-2 11-6 11-10-6 0-11 4-11 10z" fill="#8c9768"/></svg>',
+  '<svg viewBox="0 0 120 56"><rect width="120" height="56" fill="#cfe3e4"/><circle cx="92" cy="14" r="7" fill="#f3d9a4"/><g fill="none" stroke="#6f9ea4" stroke-width="2.4" stroke-linecap="round"><path d="M4 30c8-5 16 5 24 0s16-5 24 0 16 5 24 0 16-5 24 0 16 5 24 0"/><path d="M-4 42c8-5 16 5 24 0s16-5 24 0 16 5 24 0 16-5 24 0 16 5 24 0"/></g><path d="M0 50c20-4 40 4 60 0s40-4 60 0v6H0z" fill="#efdcbc"/></svg>',
+  '<svg viewBox="0 0 120 56"><rect width="120" height="56" fill="#ebe7df"/><g fill="#b8b0a3"><ellipse cx="26" cy="40" rx="16" ry="9"/><ellipse cx="62" cy="44" rx="20" ry="9"/><ellipse cx="98" cy="38" rx="14" ry="8"/></g><g fill="#cfc8bc"><ellipse cx="44" cy="28" rx="11" ry="6"/><ellipse cx="82" cy="26" rx="9" ry="5"/></g></svg>',
+  '<svg viewBox="0 0 120 56"><rect width="120" height="56" fill="#4b4b49"/><path d="M8 30h22M46 30h22M84 30h22" stroke="#e9e6df" stroke-width="3" stroke-linecap="round"/><circle cx="60" cy="28" r="15" fill="none" stroke="#e48aa1" stroke-width="4"/><path d="M49 39l22-22" stroke="#e48aa1" stroke-width="4" stroke-linecap="round"/></svg>',
+];
 const groundCta = () => `<button class="gr-cta" data-action="nav" data-to="ground"><img src="images/ground-roots.jpg" alt="" loading="lazy"><span><b>Ground yourself</b><small>Bare feet on the earth · 15 min</small></span>${icon('chevR', 16)}</button>`;
 const habitsCta = () => `<button class="gr-cta" data-action="nav" data-to="habits"><img src="${carePhoto('lemon-water', 300) || 'images/tea-ginger.webp'}" alt="" loading="lazy"><span><b>Daily habits that help</b><small>Your checklist · small things, every day</small></span>${icon('chevR', 16)}</button>`;
 function viewGround() {
@@ -381,10 +390,11 @@ function viewGround() {
     </section>` : ''}
 
     ${sectionTitle('Where to stand')}
-    <section class="card gr-card"><div class="gr-where">${GROUND_WHERE.map(([n, v, t]) => `<div class="${v ? '' : 'no'}"><span class="gr-m" aria-label="${v ? `Connects ${v} of 3` : 'Blocks it'}">${[1, 2, 3].map(i => `<i class="${i <= v ? 'on' : ''}"></i>`).join('')}</span><b>${n}</b><small>${t}</small></div>`).join('')}</div></section>
+    <section class="card gr-card"><div class="gr-where">${GROUND_WHERE.map(([n, v, t], i) => `<div class="${v ? '' : 'no'}"><span class="gr-art">${GROUND_ART[i] || ''}</span><span class="gr-m" aria-label="${v ? `Connects ${v} of 3` : 'Blocks it'}">${[1, 2, 3].map(i => `<i class="${i <= v ? 'on' : ''}"></i>`).join('')}</span><b>${n}</b><small>${t}</small></div>`).join('')}</div></section>
 
     ${sectionTitle('Golden roots')}
     <section class="card gr-card gr-roots">
+      <div class="gr-rart" aria-hidden="true"><svg viewBox="0 0 320 120" preserveAspectRatio="xMidYMid slice"><rect width="320" height="34" fill="#e9e2d2"/><rect y="34" width="320" height="86" fill="#3a2e22"/><path d="M0 34h320" stroke="#6c823e" stroke-width="3"/><g fill="#6c823e"><path d="M118 34c-2-8 1-14 3-16 0 6 1 11-1 16z"/><path d="M268 34c2-9-1-15-3-17 0 7-1 12 1 17z"/><path d="M220 34c-1-6 1-10 3-12 0 5 0 9-1 12z"/></g><circle cx="160" cy="22" r="9" fill="#304023"/><path d="M146 34c0-8 6-12 14-12s14 4 14 12z" fill="#304023"/><g class="gr-rl" fill="none" stroke="#e6b65a" stroke-linecap="round"><path stroke-width="3" d="M160 36c0 20-2 40 0 78"/><path stroke-width="2.4" d="M160 52c-14 8-30 14-52 34"/><path stroke-width="2.4" d="M160 56c16 8 32 16 50 36"/><path stroke-width="1.8" d="M128 70c-14 4-30 4-50 14"/><path stroke-width="1.8" d="M190 74c16 2 34 4 54 16"/><path stroke-width="1.4" d="M108 86c-8 8-14 16-16 26"/><path stroke-width="1.4" d="M210 92c6 8 10 14 12 22"/><path stroke-width="1.4" d="M160 84c-8 10-12 18-14 30"/></g></svg><span>Roots down</span></div>
       <ol class="gr-steps">${GROUND_ROOTS.steps.map(([a, b], i) => `<li><i>${i + 1}</i><span><b>${a}</b><small>${b}</small></span></li>`).join('')}</ol>
       <div class="gr-rt-f"><span class="dos-w">${icon('clock', 12)} ${GROUND_ROOTS.mins} min</span><span class="gr-rt-s">${saveBtn(regTip('ground-roots', 'Grounding · roots', GROUND_ROOTS.d, 'ground'))}</span></div>
       <p class="gr-fine">An old visualisation used in many traditions. Treat it as a calming practice.</p>
@@ -3539,7 +3549,7 @@ function todayTiles(info, only) {
       ${tile('t-paper', { to: 'do/eat' }, '🥗', 'Eat', fn[0], `<span class="dpt-col">${colDots(fm.col[0])} ${fm.col[1]} foods</span>${fn[1].map(x => x[0].slice(x[0].indexOf(' ') + 1)).slice(0, 3).join(' · ')}<br><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
       ${tile('t-deep ph-full keep ph-fr', { to: 'do/friends' }, PEOPLE_G[ph], 'Friends', FRIENDS[ph].ideas[0], `<span class="dpt-fr">${icon('check', 12, 2.4)} ${FRIENDS[ph].ideas[1]}</span><span class="dpt-fr no">${icon('close', 12, 2.4)} Skip: ${FRIENDS[ph].skip.charAt(0).toLowerCase() + FRIENDS[ph].skip.slice(1)}</span>`)}
       ${tile(`calm lv${lvl} t-cort`, { to: 'breathe/stress' }, cortisolVial(lvl), 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
-      ${tile('t-sage ph-full keep', { to: `relief/${encodeURIComponent(rp.k)}` }, '🌿', 'Relief', rp.st.t, `${rp.mine ? 'You logged' : 'Common now:'} ${rp.k.toLowerCase()}`)}
+      ${tile('t-sage ph-full keep', { to: 'relief' }, '🌿', 'Relief', rp.st.t, `${rp.mine ? 'You logged' : 'Common now:'} ${rp.k.toLowerCase()}`)}
       ${tile('t-glow ph-full', { to: 'ground' }, '🌿', 'Ground', GROUND_PHASE[ph].t, '')}
       ${tile('t-tea t-cup', { to: 'do/tea' }, `<img class="dpt-cup" src="images/${/ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i.test(td[1]) ? 'cup-chai' : 'cup-glass'}.webp" alt="" loading="lazy">`, 'Tea for today', td[1], td[2])}
     </div>
