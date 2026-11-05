@@ -3859,13 +3859,13 @@ function fullCycleGuide(info) {
   const PC = PHASE_COLOR.dark, COL = { m: PC.menstrual, f: PC.follicular, o: PC.ovulatory, l: PC.luteal };
   const kind = d => d <= P ? 'm' : Math.abs(d - ov) <= 1 ? 'o' : d < ov ? 'f' : 'l';
   const stages = [
-    { k: 'm', name: 'Period', days: [1, P], art: 1, lining: 1, lead: [['Estrogen', '#e0457b', 'low'], ['Progesterone', 'hsl(calc(var(--hb) + 142 * var(--hk)) calc(57% * var(--hs2)) 60%)', 'low']],
+    { k: 'm', name: 'Period', days: [1, P], art: 1, lining: 1, lead: [['Estrogen', '#e0457b', 'low'], ['Progesterone', '#5d8a3a', 'low']],
       text: 'Hormones are at their lowest, so last month’s lining sheds. Your brain sends FSH to start a new egg growing.' },
     { k: 'f', name: 'Building up', days: [P + 1, ov - 2], art: Math.round((P + ov) / 2), lining: Math.round((P + ov) / 2), lead: [['Estrogen', '#e0457b', 'rising']],
       text: 'One egg grows inside its follicle and makes more and more estrogen, which rebuilds the lining and lifts your energy.' },
     { k: 'o', name: 'Egg release', days: [ov - 1, ov + 1], art: ov, lining: ov, lead: [['Estrogen', '#e0457b', 'peak'], ['LH', '#b18cff', 'surge'], ['Testosterone', '#e8590c', 'small lift']],
       text: `Peak estrogen triggers the LH surge and the egg is released around day ${ov}. ${ttc() ? `Fertile window: about days ${ov - 5}–${ov + 1}.` : ''}` },
-    { k: 'l', name: 'After ovulation', days: [ov + 2, L], art: ov + 6, lining: ov + 7, lead: [['Progesterone', 'hsl(calc(var(--hb) + 142 * var(--hk)) calc(57% * var(--hs2)) 60%)', 'high']],
+    { k: 'l', name: 'After ovulation', days: [ov + 2, L], art: ov + 6, lining: ov + 7, lead: [['Progesterone', '#5d8a3a', 'high']],
       text: `The empty follicle becomes the “yellow body” and makes progesterone. The lining thickens. ${ttc() ? 'If there’s no pregnancy, both hormones drop and your period starts.' : 'Then both hormones drop and your period starts.'}` },
   ];
   // picture: ovaries across the month, the uterine lining, and the days
@@ -3897,9 +3897,13 @@ function fullCycleGuide(info) {
         <p class="g-hint">${icon('hand', 14)} Drag along the days to see what happens</p>
         <div class="g-read" id="g-read">${guideRead(cd, L, P, ov, cd)}</div></div>
       ${stages.map((st, i) => `<div class="fcg-st ${st.days[0] <= cd && cd <= st.days[1] ? 'on' : ''}" data-from="${st.days[0]}" data-to="${st.days[1]}">
-        <div class="fcg-hd"><span class="fcg-num" style="background:${COL[st.k]}">${i + 1}</span><b>${st.name}</b><span class="fcg-days">${st.days[0] === st.days[1] ? `Day ${st.days[0]}` : `Days ${st.days[0]}–${st.days[1]}`}</span></div>
+        <div class="fcg-row2"><div class="fcg-tx">
+          <div class="fcg-hd"><span class="fcg-num" style="background:${COL[st.k]}">${i + 1}</span><b>${st.name}</b></div>
+          <span class="fcg-days">${st.days[0] === st.days[1] ? `Day ${st.days[0]}` : `Days ${st.days[0]}–${st.days[1]}`}</span>
+          <p class="fcg-short">${STAGE_SHORT[st.k]}</p></div>
+          ${stageSpark(st.days, L, P, COL[st.k])}</div>
         <div class="fcg-lead">${st.lead.map(([n, c, w]) => `<span><i style="background:${c}"></i>${n} <em>${w}</em></span>`).join('')}</div>
-        <p>${st.text}</p></div>`).join('')}
+        <details class="fcg-more"><summary>What happens ${icon('chevD', 13)}</summary><p>${st.text}</p></details></div>`).join('')}
       <p class="fine">Typical timing for your ${L}-day cycle. Real days shift a little from cycle to cycle.</p>
     </div>`;
 }
@@ -4312,6 +4316,20 @@ function viewRhythm() {
       <div class="rh-art-sum"><b>In short</b><p>Light in the morning, sun at midday, people in the afternoon, dim at sunset, bed when you’re tired. Your body does the rest.</p></div>
     </article>
   </div>`;
+}
+// Cycle guide phase cards: one line each, and a tiny picture of the whole month's estrogen and progesterone
+// with this stage's days lit up, so she sees where it sits before reading anything.
+const STAGE_SHORT = { m: 'Both hormones are low and the lining sheds.', f: 'Estrogen climbs and your energy rises.', o: 'Estrogen peaks and the egg is released.', l: 'Progesterone rises, then both drop.' };
+function stageSpark([a, b], L, P, col) {
+  const W = 112, H = 46, X = d => ((d - 1) / L * W), Y = v => (H - 4 - v / 1 * (H - 10));
+  const line = k => { let d = ''; for (let t = 1; t <= L + 1; t += .5) d += `${d ? 'L' : 'M'}${X(t).toFixed(1)} ${Y(C.hormonesAt(t, L, P)[k]).toFixed(1)}`; return d; };
+  const id = `fs${a}`;
+  return `<svg class="fcg-spark" viewBox="0 0 ${W} ${H}" aria-hidden="true">
+    <defs><clipPath id="${id}"><rect x="${X(a).toFixed(1)}" y="0" width="${(X(b + 1) - X(a)).toFixed(1)}" height="${H}"/></clipPath></defs>
+    <rect x="${X(a).toFixed(1)}" y="0" width="${(X(b + 1) - X(a)).toFixed(1)}" height="${H}" rx="6" fill="${col}" opacity=".28"/>
+    <path d="${line('estrogen')}" class="sp-e dim"/><path d="${line('progesterone')}" class="sp-p dim"/>
+    <g clip-path="url(#${id})"><path d="${line('estrogen')}" class="sp-e"/><path d="${line('progesterone')}" class="sp-p"/></g>
+  </svg>`;
 }
 function viewGuide() {
   const info = M.info; if (!info) return viewMissing();

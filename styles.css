@@ -7973,3 +7973,20 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
   box-shadow: 0 0 0 3px #fff, 0 0 0 4.5px hsl(calc(var(--hb) + 0 * var(--hk)) calc(55% * var(--hs)) 70%), 0 10px 24px rgba(32,48,26,.22) !important; }
 .profile-head .avatar.has-photo { border: 0; box-shadow: 0 0 0 3px #fff, 0 0 0 4.5px hsl(calc(var(--hb) + 0 * var(--hk)) calc(55% * var(--hs)) 70%), 0 10px 24px rgba(32,48,26,.22) !important; }
 .profile-head .av-edit { background: #fff; color: #20301a; border: 0; box-shadow: 0 3px 10px rgba(32,48,26,.25); }
+
+/* Cycle guide phase cards: text left, tiny month curve right, long read behind a tap */
+.fcg-row2 { display: flex; align-items: center; gap: 12px; }
+.fcg-tx { flex: 1; min-width: 0; }
+.fcg-tx .fcg-hd b { font-size: 17px; color: #20301a; }
+.fcg-tx .fcg-days { display: block; margin: 3px 0 0 36px; font-size: 12px; }
+.fcg-st .fcg-short { margin: 8px 0 0; font: 500 14px/1.35 Outfit, sans-serif; color: #20301a; }
+.fcg-spark { flex: none; width: 112px; height: 46px; overflow: visible; }
+.fcg-spark path { fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.fcg-spark .sp-e { stroke: #e0457b; } .fcg-spark .sp-p { stroke: #5d8a3a; }
+.fcg-spark .dim { stroke-width: 1.4; opacity: .25; }
+.fcg-st .fcg-lead { margin-top: 10px; }
+.fcg-more { margin-top: 8px; border-top: 1px solid rgba(48,64,35,.08); padding-top: 8px; }
+.fcg-more summary { list-style: none; display: inline-flex; align-items: center; gap: 5px; font: 500 13px Outfit, sans-serif; color: #304023; cursor: pointer; }
+.fcg-more summary::-webkit-details-marker { display: none; }
+.fcg-more[open] summary .ic { transform: rotate(180deg); }
+.fcg-st .fcg-more p { margin: 6px 0 0; }
