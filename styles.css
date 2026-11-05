@@ -7058,3 +7058,23 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .wx-sign p { margin: 8px 0 2px 40px; font-size: 13.5px; line-height: 1.45; color: rgba(48,64,35,.85); }
 @media (prefers-reduced-motion: reduce) { .wx-more { animation: none; } .wx-m i b { transition: none; } }
 .wx-t em { display: inline-flex; align-items: center; gap: 3px; }
+
+/* ---------- Breathe: labelled breath bar, effect dots, study ---------- */
+.bzb { height: 46px; gap: 4px; }
+.bzb i { display: grid; place-content: center; justify-items: center; gap: 0; line-height: 1.1; border-radius: 12px; }
+.bzb b { font: 600 14px Outfit, sans-serif; }
+.bzb i small { font: 500 10.5px Outfit, sans-serif; opacity: .8; }
+.bzfx { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 14px; }
+.bzfx-i { display: grid; justify-items: center; gap: 4px; padding: 10px 4px 9px; border-radius: 16px; background: #f7f5f0; border: 1px solid rgba(48,64,35,.08); }
+.bzfx-i > span { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: #4b5a40; }
+.bzfx-i small { font-size: 11.5px; color: #304023; }
+.bzfx-i i { display: flex; gap: 3px; }
+.bzfx-i i b { width: 7px; height: 7px; border-radius: 50%; background: rgba(48,64,35,.15); }
+.bzfx-i i b.on { background: #6c823e; }
+.bzfx-i.top { background: #20301a; border-color: #20301a; }
+.bzfx-i.top > span { background: rgba(255,255,255,.14); color: #fff; }
+.bzfx-i.top small { color: #fff; }
+.bzfx-i.top i b { background: rgba(255,255,255,.25); } .bzfx-i.top i b.on { background: #c9dc8c; }
+.bz-study { margin-top: 12px; }
+.bz-study .stc { margin: 0; padding: 0 0 4px; }
+.bz-study .stc-c { box-shadow: none; background: #fbf9f6; }

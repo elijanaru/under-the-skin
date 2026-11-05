@@ -4171,7 +4171,7 @@ const BREATHS = {
   sigh: { name: 'Calm sigh', g: '🫧', when: 'Any time', for: 'Fast calm in one minute', rounds: 5,
     steps: [['in', 'Breathe in', 'Fill up like a soft balloon', 4000], ['top', 'One more sip', 'Just a tiny bit more', 1500], ['out', 'Let it all go', 'Everything can melt away', 8000], ['rest', 'Rest here', 'You are here, and that is enough', 1500]],
     how: [['Breathe in deep', 'Through your nose, until you are almost full.'], ['One more sip', 'A short extra breath in, right on top.'], ['Long breath out', 'Slowly through your mouth, twice as long.']],
-    why: 'The second sip opens the tiny air sacs in your lungs again, and the long breath out slows your heart. In a 2023 Stanford study (Balban and colleagues), five minutes a day lifted mood more than mindfulness meditation.' },
+    why: 'The second sip opens the tiny air sacs in your lungs again, and the long breath out slows your heart.' },
   belly: { name: 'Warm belly breath', g: '🔥', when: 'Period days', for: 'Softens cramps and tension', rounds: 8,
     steps: [['in', 'Breathe into your hands', 'Let your belly rise under them', 4000], ['out', 'Breathe out slowly', 'Feel the warmth sink in', 6000]],
     how: [['Warm your hands', 'Rub your palms together, then rest them below your navel.'], ['Belly rises', 'Breathe in through your nose for 4, only your belly moves.'], ['Long breath out', 'Out for 6, let your pelvis go soft.']],
@@ -4192,9 +4192,23 @@ const BREATHS = {
 const BREATH_ORDER = ['sigh', 'belly', 'box', 'even', '478'];
 const BREATH_FOR = { menstrual: 'belly', follicular: 'box', ovulatory: 'even', luteal: '478' };
 // a tiny timeline of one breath: in, hold, out and rest as coloured segments
+const BZ_WORD = { in: 'In', top: 'Sip', hold: 'Hold', out: 'Out', rest: 'Rest' };
 function breathBar(k) {
-  const B = BREATHS[k], tot = B.steps.reduce((a, x) => a + x[3], 0);
-  return `<span class="bzb">${B.steps.map(([t, , , ms]) => `<i class="${t}" style="flex:${ms}"><b>${Math.round(ms / 1000)}</b></i>`).join('')}</span><small class="bzb-k">${Math.round(tot / 1000)} s a breath · ${B.rounds} rounds</small>`;
+  const B = BREATHS[k], tot = B.steps.reduce((a, x) => a + x[3], 0), sec = ms => `${+(ms / 1000).toFixed(1)}`.replace(/\.0$/, '');
+  return `<span class="bzb">${B.steps.map(([t, , , ms]) => `<i class="${t}" style="flex:${Math.max(ms, 2600)}"><b>${sec(ms)}s</b><small>${t === 'rest' && B.steps.some(x => x[0] === 'hold') ? 'Hold' : BZ_WORD[t]}</small></i>`).join('')}</span><small class="bzb-k">${Math.round(tot / 1000)} s a breath · ${B.rounds} rounds · about ${Math.max(1, Math.round(tot * B.rounds / 60000))} min</small>`;
+}
+// What each practice does most, as 1 to 3 dots, plus the study behind it.
+const BZ_FX = { sigh: [3, 2, 2, 1], belly: [2, 1, 2, 3], box: [2, 3, 1, 1], even: [3, 2, 2, 1], 478: [3, 1, 3, 1] };
+const BZ_STUDY = {
+  sigh: ['Five minutes a day of cyclic sighing lifted mood and slowed resting breathing more than mindfulness meditation did.', 'Balban 2023 (Cell Reports Medicine)'],
+  belly: ['A review of slow-breathing studies found it turns up the calming rest-and-digest side of the nervous system and lowers anxiety.', 'Zaccaro 2018 (review)'],
+  box: ['In the same Stanford trial as the calm sigh, box breathing also lifted mood and eased anxiety day by day.', 'Balban 2023 (Cell Reports Medicine)'],
+  even: ['Breathing at about six breaths a minute raised heart-rate variability, a sign of a calmer, more flexible stress response.', 'Lehrer & Gevirtz 2014 (review)'],
+  478: ['In young adults short on sleep, a few minutes of 4-7-8 breathing raised heart-rate variability and eased blood pressure.', 'Vierra 2022 (Heliyon)'],
+};
+function breathFx(k) {
+  const v = BZ_FX[k] || BZ_FX.sigh;
+  return `<div class="bzfx">${[['Calm', 'leaf'], ['Focus', 'spark'], ['Sleep', 'moon'], ['Cramps', 'drop']].map(([t, ic], i) => `<div class="bzfx-i ${v[i] === 3 ? 'top' : ''}"><span>${icon(ic, 15)}</span><small>${t}</small><i>${[1, 2, 3].map(n => `<b class="${n <= v[i] ? 'on' : ''}"></b>`).join('')}</i></div>`).join('')}</div>`;
 }
 // Calm sigh: a deep breath in to almost full, one more short sip on top, then a long slow breath out.
 function viewBreathe() {
@@ -4237,9 +4251,11 @@ function viewBreathe() {
     <section class="bz-how"><div class="bzh-h"><span class="bzp-g">${B.g}</span><div><small>${B.when}</small><h3>${B.name}</h3></div></div>
       <p class="bzh-for">${B.for}. ${moonLine}</p>
       ${breathBar(k)}
+      ${breathFx(k)}
       <details class="bzh-more"><summary>How and why ${icon('chevD', 14)}</summary>
         ${B.how.map(([t, p], i) => `<div class="bz-step"><span>${i + 1}</span><div><b>${t}</b><p>${p}</p></div></div>`).join('')}
-        <p class="bz-why">${B.why}</p></details>
+        <p class="bz-why">${B.why}</p>
+        ${BZ_STUDY[k] ? `<div class="bz-study">${studyCards(...BZ_STUDY[k])}</div>` : ''}</details>
     </section>
   </div>`;
 }
