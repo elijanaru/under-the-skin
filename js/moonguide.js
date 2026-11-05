@@ -102,3 +102,13 @@ export const MANIFEST_CYCLE = {
   ovulatory: ['end', 'You speak and act with ease now, so living as if it is done feels natural.'],
   luteal: ['revision', 'You notice what is not working now. Revision turns that clarity into something kind.'],
 };
+
+// One-word forecasts for the inner-weather tiles: heart, mind, spirit.
+export const WX_MOON = {
+  new: ['Quiet', 'Seeding', 'Stillness'], wax1: ['Hopeful', 'Gathering', 'Trust'], q1: ['Brave', 'Deciding', 'Courage'], wax2: ['Restless', 'Polishing', 'Patience'],
+  full: ['Loud', 'Clear', 'Gratitude'], wan1: ['Warm', 'Reflective', 'Generous'], q3: ['Forgiving', 'Clearing', 'Space'], wan2: ['Tender', 'Dreamy', 'Surrender'],
+};
+export const WX_BODY = {
+  menstrual: ['Raw', 'Intuitive', 'Inward', .25, 'Low'], follicular: ['Playful', 'Fresh', 'Alive', .7, 'Rising'],
+  ovulatory: ['Open', 'Fluent', 'Radiant', .95, 'High'], luteal: ['Sharp', 'Sorting', 'Honest', .45, 'Easing'],
+};

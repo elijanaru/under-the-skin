@@ -2401,6 +2401,22 @@ function skyDust() { // fixed scatter of faint stars behind the moon
 const mnDay = d => d.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' });
 const mnTime = d => d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 const mnIn = d => { const n = Math.round((C.startOfDay(d) - C.startOfDay(new Date())) / 864e5); return n <= 0 ? 'today' : n === 1 ? 'tomorrow' : `in ${n} days`; };
+// Inner weather: moon light vs her energy as two meters, then Heart / Mind / Spirit as forecast tiles; the full reading opens under a tile.
+function innerWeather(mn, pg, phase, inner, ms, feel) {
+  const wm = MG.WX_MOON[pg.k] || MG.WX_MOON.new, wb = phase && MG.WX_BODY[phase], open = ui.wxOpen;
+  const lit = Math.round(mn.illum * 100);
+  const meter = (k, lab, v, word, cls) => `<div class="wx-m ${cls}"><span>${lab}</span><i><b style="width:${Math.max(6, v)}%"></b></i><em>${word}</em></div>`;
+  const T = [['heart', 'Heart', 0, pg.heart, inner && inner.heart], ['mind', 'Mind', 1, pg.mind, inner && inner.mind], ['star', 'Spirit', 2, pg.spirit, inner && inner.spirit]];
+  const cur = T.find(t => t[0] === open);
+  return `<section class="card mn-weather wx">
+    <div class="mn-k"><small>Your inner weather</small><b>${pg.name}${inner ? ` × ${inner.name}` : ''}</b></div>
+    <div class="wx-meters">${meter('m', `${icon('moon', 14)} Moon light`, lit, `${lit}%`, 'moon')}${wb ? meter('b', `${icon('heart', 14)} Your energy`, wb[3] * 100, wb[4], 'body') : ''}</div>
+    ${inner ? `<p class="wx-blend">${MG.innerBlend(mn.waxing, phase)}</p>` : ''}
+    <div class="wx-tiles">${T.map(([ic, t, i]) => `<button class="wx-t ${open === ic ? 'on' : ''}" data-action="wxOpen" data-v="${ic}" aria-expanded="${open === ic}"><span class="wx-ic">${icon(ic, 18)}</span><small>${t}</small><b>${wm[i]}</b>${wb ? `<em>${icon('heart', 10)} ${wb[i]}</em>` : ''}</button>`).join('')}</div>
+    ${cur ? `<div class="wx-more"><div class="wx-r"><span class="wx-tag moon">${icon('moon', 12)} Moon</span><p>${cur[3]}</p></div>${cur[4] ? `<div class="wx-r"><span class="wx-tag body">${icon('heart', 12)} You</span><p>${cur[4]}</p></div>` : ''}</div>` : `<p class="wx-hint">Tap Heart, Mind or Spirit for the full reading</p>`}
+    <details class="wx-sign"><summary><span>${ms.glyph}</span><b>Moon in ${ms.name}: ${feel[0].toLowerCase()}</b>${icon('chevD', 14)}</summary><p>${feel[1]}</p></details>
+  </section>`;
+}
 function viewMoon() { return `<div class="pad mn">${moonPage(false)}</div>`; }
 // the moon and her readings in one flow: full page at #/moon, and below the calendar (embed)
 function moonPage(embed) {
@@ -2429,10 +2445,7 @@ function moonPage(embed) {
       <div class="mn-next">${events.map(([n, d, k]) => `<div class="mn-ev ${k}"><i>${moonArt(k === 'new' ? 0 : 180)}</i><span><small>${n}</small><b>${mnDay(d)}</b><small>${mnIn(d)} · ${mnTime(d)}</small></span></div>`).join('')}</div>
     </section>
 
-    <section class="card mn-weather"><div class="mn-k"><small>Your inner weather</small><b>${pg.name}${inner ? ` × ${inner.name}` : ''}</b></div>
-      ${inner ? `<p class="mn-blend">${MG.innerBlend(mn.waxing, phase)}</p>` : ''}
-      ${[['heart', 'Heart', pg.heart, inner && inner.heart], ['mind', 'Mind', pg.mind, inner && inner.mind], ['star', 'Spirit', pg.spirit, inner && inner.spirit]].map(([ic, t, a, b], i) => `<div class="mn-row" style="--i:${i}"><span class="mn-ri ${ic}">${icon(ic, 18)}</span><div><b>${t}</b><p>${a}</p>${b ? `<p class="mn-in">${b}</p>` : ''}</div></div>`).join('')}
-      <div class="mn-feel"><span>${ms.glyph}</span><div><b>Moon in ${ms.name}: ${feel[0].toLowerCase()}</b><p>${feel[1]}</p></div></div></section>
+    ${innerWeather(mn, pg, phase, inner, ms, feel)}
 
     <section class="mn-aff"><small>Say it today</small><p>“${MG.MOON_AFFIRM[mn.sign][inward ? 0 : 1]}”</p></section>
 
@@ -5880,6 +5893,7 @@ const actions = {
   openPartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (p) { const { id, ...snap } = p; location.hash = '#/with?d=' + b64e(snap); } },
   removePartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (!p || !confirm(`Remove ${p.n}?`)) return; state.partners = state.partners.filter(x => x.id !== d.id); save(); if (route().name === 'partners') go('partners'); else render(); },
   seasonView: d => { ui.seasonView = d.v; render(); },
+  wxOpen: d => { ui.wxOpen = ui.wxOpen === d.v ? null : d.v; render(); },
   worldGo: d => { ui.worldReg = d.k; ui.worldPhase = null; go('world'); setTimeout(wkCenter, 120); },
   worldReg: d => { ui.worldReg = d.k; render(); wkCenter(); },
   worldPhase: d => { ui.worldPhase = d.v; render(); },
