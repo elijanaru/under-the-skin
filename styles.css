@@ -8135,3 +8135,9 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .hub .dpt.t-eat small .dpt-rule { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 99px; background: rgba(255,255,255,.92); color: #20301a; font: 500 12px Outfit, sans-serif; }
 .hub .dpt.t-eat video { filter: brightness(.78); }
 .hub .dpt.t-eat .dpt-k, .hub .dpt.t-eat > b { text-shadow: 0 1px 14px rgba(20,30,15,.75); }
+
+/* Eat tile: today's dish as a turning 3D soup bowl, like the tea cup beside it */
+.hub .dpt.t-dish .dpt-g { width: 140px; height: 104px; }
+.hub .dpt.t-dish b { font-size: 17px; line-height: 1.2; }
+.hub .dpt.t-dish small { margin-top: 8px; }
+.hub .dpt.t-dish small .dpt-rule { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 99px; background: #fff; border: 1px solid rgba(48,64,35,.12); color: #20301a; font: 500 12px Outfit, sans-serif; box-shadow: 0 4px 12px rgba(32,48,26,.08); }

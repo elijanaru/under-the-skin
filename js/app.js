@@ -3677,6 +3677,8 @@ function todayTiles(info, only) {
   const pics = { Friends: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&q=70&auto=format&fit=crop', Stress: 'move-lift', Tea: 'move-hiit' };
   const tile = (cls, act, g_, k, t, s_) => `<button class="dpt ${cls} ${pics[k] ? 'has-pic' : ''} ${act.tip && open === act.tip ? 'open' : ''}" ${act.to ? `data-action="nav" data-to="${act.to}"` : `data-action="hubTip" data-k="${act.tip}"`}>${pics[k] ? `<span class="dpt-g pic"><img class="pb" src="${picSrc(pics[k])}" alt="" loading="lazy"><img class="ps" src="${picSrc(pics[k])}" alt="" loading="lazy"><i></i></span>` : `<span class="dpt-g">${g_}</span>`}<span class="dpt-k">${k}</span><b>${t}</b><small>${s_}</small>${act.tip ? `<span class="dpt-more">${icon('plus', 14, 2.2)}</span>` : ''}</button>`;
   const fn = FOOD_NEEDS[w], fm = FOOD_MEALS[w], sp = STRESS_PLAN[w], td = TEA_DAY[w];
+  // today's dish: the same one the body map shows for her gut
+  const dish = (BODY_MAP[ph].find(x => x.k === 'gut') || {}).d || fn[0];
   const tips = {
     stress: [icon('mind', 22), `Stress today: ${['', 'low', 'medium', 'high'][lvl]}`, sp[0], sp[1], 'some'],
     stretch: [icon('leaf', 22), st[0], st[1], st[2], 'some'],
@@ -3699,7 +3701,7 @@ function todayTiles(info, only) {
   if (only) return tipBody(only);
   return `<div class="dpt-grid">
       ${tile('wide hero-move ph-vid', { to: 'move' }, `<video class="dpt-vid" src="images/move-stardust.mp4" poster="images/move-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Sport', g.title, best.map(m => m.n).slice(0, 3).join(' · '))}
-      ${tile('t-glow ph-full ph-vid t-eat', { to: 'do/eat' }, `<video class="dpt-vid" src="images/eat-stardust.mp4" poster="images/eat-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Eat', fn[0], `<span class="dpt-col">${colDots(fm.col[0])} ${fm.col[1]} foods</span>${fn[1].map(x => x[0].slice(x[0].indexOf(' ') + 1)).slice(0, 3).join(' · ')}<br><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
+      ${tile('t-tea t-cup t-dish', { to: 'do/eat' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/dish-soup.webp" alt="" loading="lazy"><canvas class="teacup3d" data-model="models/soup.glb" data-elev="0.9" aria-label="${dish}, turning slowly"></canvas></span>`, 'Eat today', dish, `<span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
       ${tile('t-deep ph-full keep ph-fr', { to: 'do/friends' }, PEOPLE_G[ph], 'Friends', FRIENDS[ph].ideas[0], `<span class="dpt-fr">${icon('check', 12, 2.4)} ${FRIENDS[ph].ideas[1]}</span><span class="dpt-fr no">${icon('close', 12, 2.4)} Skip: ${FRIENDS[ph].skip.charAt(0).toLowerCase() + FRIENDS[ph].skip.slice(1)}</span>`)}
       ${tile('t-sage ph-full ph-vid', { to: 'relief' }, `<video class="dpt-vid" src="images/relief-stardust.mp4" poster="images/relief-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Relief', rp.st.t, `${rp.mine ? 'You logged' : 'Common now:'} ${rp.k.toLowerCase()}`)}
       ${tile(`calm lv${lvl} t-cort`, { to: 'breathe/stress' }, cortisolVial(lvl), 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
@@ -6675,7 +6677,7 @@ function mountFigures() {
     const hero = c.closest('.tg-hero, .cup3d-w'), fail = () => { hero?.classList.remove('tg-3d', 'tg-ready'); c.remove(); };
     const start = () => import('./teacup3d.js').then(m => {
       if (!c.isConnected) return; if (!m.webglOK()) throw new Error('no webgl');
-      unmountFigs.push(m.mountTeaCup(c, { onReady: () => hero?.classList.add('tg-ready'), onFail: fail }));
+      unmountFigs.push(m.mountTeaCup(c, { model: c.dataset.model || undefined, elev: c.dataset.elev ? +c.dataset.elev : undefined, onReady: () => hero?.classList.add('tg-ready'), onFail: fail }));
     }).catch(fail);
     const idle = f => (window.requestIdleCallback ? requestIdleCallback(f, { timeout: 1500 }) : setTimeout(f, 300));
     if (!('IntersectionObserver' in window)) return idle(start);

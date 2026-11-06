@@ -5,15 +5,16 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const MODEL_URL = 'models/teacup.glb';
-let cached = null; // parsed once, reused every time the tea page opens
+const cached = {}; // each model is parsed once, reused every time its card opens
 
 export function webglOK() {
   try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch { return false; }
 }
 
-export function mountTeaCup(canvas, { onReady, onFail } = {}) {
+// Also shows today's dish (a soup bowl) on the Eat tile: pass model, elev (camera height) and preserve (for a poster capture).
+export function mountTeaCup(canvas, { onReady, onFail, model = MODEL_URL, elev: e0 = 0.62, preserve = false } = {}) {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'low-power' });
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'low-power', preserveDrawingBuffer: preserve });
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
@@ -53,7 +54,7 @@ export function mountTeaCup(canvas, { onReady, onFail } = {}) {
 
   let alive = true, raf = 0, ready = false, visible = true;
   const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder);
-  (cached ? Promise.resolve(cached) : new Promise((res, rej) => loader.load(MODEL_URL, gl => { cached = gl; res(gl); }, undefined, rej)))
+  (cached[model] ? Promise.resolve(cached[model]) : new Promise((res, rej) => loader.load(model, gl => { cached[model] = gl; res(gl); }, undefined, rej)))
     .then(gl => {
       if (!alive) return;
       const m = gl.scene.clone(true);
@@ -75,7 +76,7 @@ export function mountTeaCup(canvas, { onReady, onFail } = {}) {
   const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; }); io.observe(canvas);
 
   // drag sideways to turn the cup, up and down to look over the rim into the drink
-  let drag = null, dragY = 0, spin = 0, vel = 0, elev = 0.62, elevT = 0.62; // a little from above, so the tea shows
+  let drag = null, dragY = 0, spin = 0, vel = 0, elev = e0, elevT = e0; // a little from above, so the tea shows
   const down = e => { drag = e.clientX; dragY = e.clientY; canvas.setPointerCapture?.(e.pointerId); };
   const move = e => {
     if (drag == null) return; const d = (e.clientX - drag) * 0.012; drag = e.clientX; spin += d; vel = d;
