@@ -1249,7 +1249,7 @@ const F = s => s.split('|').map(x => x.trim()).map(x => [x.slice(0, x.indexOf(' 
 export const EAT_GUIDE = {
   menstrual: { goal: 'Replenish & warm', why: 'Estrogen and progesterone are at their lowest and you lose iron with every bleed. Warm, cooked, mineral-rich food refills you and eases cramps.', cats: {
     protein: ['Iron and B12 from animal foods replace what you lose.', F('🥩 Grass-fed beef | 🍲 Bone broth | 🐟 Wild salmon | 🦪 Mussels | 🥚 Pasture eggs | 🍗 Chicken thighs | 🐑 Lamb | 🫀 Liver')],
-    veg: ['Cook them — soft, warm, low-oxalate vegetables are easy to digest.', F('🎃 Pumpkin | 🥕 Roasted carrots | 🍄 Mushrooms | 🧅 Leeks & onions | 🥒 Cooked courgette | 🍅 Stewed tomatoes | 🫑 Roasted peppers')],
+    veg: ['Cook them: soft, warm, low-oxalate vegetables are easy to digest.', F('🎃 Pumpkin | 🥕 Roasted carrots | 🍄 Mushrooms | 🧅 Leeks & onions | 🥒 Cooked courgette | 🍅 Stewed tomatoes | 🫑 Roasted peppers')],
     fats: ['Warming fats calm the inflammation behind cramps.', F('🧈 Butter & ghee | 🥚 Egg yolks | 🐟 Oily fish | 🫒 Olive oil | 🌰 Walnuts | 🥥 Coconut oil')],
     carbs: ['Gentle, cooked carbs keep your energy up without spikes.', F('🍞 Toasted sourdough | 🍠 Sweet potato | 🎃 Squash | 🥔 Potatoes | 🫘 Black beans | 🌰 Chestnuts | 🥕 Parsnips')],
     fruit: ['Stewed, warm fruit is easy on your belly.', F('🍎 Stewed apple | 🍐 Baked pear | 🔴 Red dates | 🍒 Warm cherry compote | 🟤 Dried figs')],
@@ -1262,19 +1262,19 @@ export const EAT_GUIDE = {
     veg: ['Gentle, low-oxalate veggies are easy on your gut and still bring fibre and colour while estrogen rises.', F('🥒 Cucumber | 🥬 Butter lettuce | 🥒 Courgette | 🫑 Bell peppers | 🍅 Tomatoes | 🥕 Raw carrots | 🫒 Olives')],
     fats: ['Healthy fats are the raw material of your hormones.', F('🥑 Avocado | 🫒 Olive oil | 🌰 Flax & pumpkin seeds | 🥥 Coconut | 🥜 Almonds')],
     carbs: ['Light, steady carbs match your rising energy.', F('🍞 Sourdough | 🍠 Sweet potato | 🫘 Lentils | 🥔 Baby potatoes | 🍌 Banana | 🌾 Buckwheat')],
-    fruit: ['Fresh, raw fruit — vitamin C helps you absorb iron.', F('🍊 Citrus | 🥝 Kiwi | 🍓 Berries | 🍋 Lemon | 🍑 Stone fruit | 🍍 Pineapple | 🍏 Green apple')],
+    fruit: ['Fresh, raw fruit: its vitamin C helps you absorb iron.', F('🍊 Citrus | 🥝 Kiwi | 🍓 Berries | 🍋 Lemon | 🍑 Stone fruit | 🍍 Pineapple | 🍏 Green apple')],
     dairy: ['Fermented raw dairy feeds the gut that clears used estrogen.', F('🍶 Raw kefir | 🥛 Raw milk | 🧀 Raw cheese | 🥣 Raw yoghurt')],
-    drinks: ['Your energy is rising — coffee or matcha both fit. Matcha gives a smoother lift thanks to L-theanine.', F('🍵 Matcha | ☕ Coffee | 🍋 Lemon water | 🌿 Nettle tea | 🥤 Green juice')],
+    drinks: ['Your energy is rising, so coffee or matcha both fit. Matcha gives a smoother lift thanks to L-theanine.', F('🍵 Matcha | ☕ Coffee | 🍋 Lemon water | 🌿 Nettle tea | 🥤 Green juice')],
     supps: ['Build strength and support rising estrogen.', F('💪 Creatine 3–5 g | ☀️ Vitamin D3 + K2 | 🧬 B-complex | 🦠 Probiotic | ⚪ Zinc')],
   } },
-  ovulatory: { goal: 'Shine at your peak', why: 'Estrogen peaks and your egg is released. Light, raw, colourful food, zinc and fibre support you — and help clear the extra estrogen.', cats: {
+  ovulatory: { goal: 'Shine at your peak', why: 'Estrogen peaks and your egg is released. Light, raw, colourful food, zinc and fibre support you and help clear the extra estrogen.', cats: {
     protein: ['Zinc and lighter proteins for your peak.', F('🦪 Oysters | 🐟 Salmon | 🦐 Shellfish | 🥚 Eggs | 🍗 Chicken | 🐟 Sardines')],
-    veg: ['Colourful, hydrating veg — plus lightly cooked broccoli or cauliflower to help clear extra estrogen.', F('🍅 Tomatoes | 🥒 Cucumber | 🫑 Red peppers | 🥬 Romaine lettuce | 🥒 Courgette ribbons | 🍆 Grilled aubergine')],
+    veg: ['Colourful, hydrating veg, plus lightly cooked broccoli or cauliflower to help clear extra estrogen.', F('🍅 Tomatoes | 🥒 Cucumber | 🫑 Red peppers | 🥬 Romaine lettuce | 🥒 Courgette ribbons | 🍆 Grilled aubergine')],
     fats: ['Light fats and antioxidants.', F('🥑 Avocado | 🫒 Olive oil | 🌻 Sesame & sunflower seeds | 🥥 Coconut | 🐟 Oily fish')],
     carbs: ['Fibre-rich carbs keep you light.', F('🍞 Sourdough | 🫘 Chickpeas | 🌽 Sweetcorn | 🥔 Potatoes | 🍌 Banana | 🍠 Sweet potato')],
     fruit: ['Raw and hydrating.', F('🍓 Strawberries | 🫐 Blueberries | 🍉 Watermelon | 🥭 Mango | 🍒 Cherries | 🍇 Grapes')],
     dairy: ['Light and cooling.', F('🥣 Raw yoghurt | 🍶 Kefir | 🧀 Fresh goat cheese | 🥛 Raw milk smoothie')],
-    drinks: ['Peak energy — an iced matcha or coffee is perfect. Hydrate well.', F('🧊 Iced matcha | ☕ Coffee | 🥥 Coconut water | 💧 Mineral water | 🌺 Hibiscus tea')],
+    drinks: ['Peak energy: an iced matcha or coffee is perfect. Hydrate well.', F('🧊 Iced matcha | ☕ Coffee | 🥥 Coconut water | 💧 Mineral water | 🌺 Hibiscus tea')],
     supps: ['Support your peak and help clear extra estrogen.', F('💪 Creatine 3–5 g | 🐟 Omega-3 | ⚪ Zinc | 🍊 Vitamin C | 🌻 Vitamin E')],
   } },
   luteal: { goal: 'Steady & ground', why: 'Progesterone rises and your body burns a little more energy. Grounding cooked food, complex carbs and magnesium keep your blood sugar and mood steady.', cats: {

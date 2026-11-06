@@ -8176,3 +8176,20 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .sd-all-n i { width: 6px; height: 6px; border-radius: 50%; background: #e6f0c8; }
 .sd-all-n b { margin-left: 4px; font-size: 18px; color: #f3e7c4; }
 .sd-c.empty { padding: 0; }
+
+/* Eat › Your plate today: cook, taste and element as three tiles, the full sentence under the one she taps */
+.plr { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; }
+.plr-t { display: grid; justify-items: start; gap: 4px; padding: 12px 10px 12px 12px; border-radius: 20px; border: 1px solid rgba(48,64,35,.1); background: rgba(255,255,255,.92); color: #20301a; font: inherit; text-align: left; cursor: pointer; box-shadow: 0 8px 20px -14px rgba(32,48,26,.35); transition: background .25s, color .25s; }
+.plr-ic { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 17px; background: #f1f3e8; color: #6c823e; margin-bottom: 4px; }
+.plr-ic.han { font-family: var(--han); font-size: 17px; color: #c27a8f; }
+.plr-t small { font-size: 11px; color: #5d6b51; }
+.plr-t b { font-size: 14px; font-weight: 600; line-height: 1.2; }
+.plr-t.on { background: #20301a; color: #fff; border-color: #20301a; }
+.plr-t.on small { color: rgba(255,255,255,.72); }
+.plr-t.on .plr-ic { background: rgba(255,255,255,.14); color: #fff; }
+.plr-d { margin-top: 8px; padding: 14px 16px; border-radius: 20px; background: rgba(255,255,255,.92); border: 1px solid rgba(48,64,35,.1); animation: plrIn .35s ease; }
+.plr-d b { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: #20301a; }
+.plr-d p { margin: 4px 0 0; font-size: 13.5px; line-height: 1.5; color: #3d4a33; }
+.plr-hint { margin: 8px 2px 0; font-size: 12px; color: #5d6b51; }
+@keyframes plrIn { from { opacity: 0; transform: translateY(-4px); } }
+@media (prefers-reduced-motion: reduce) { .plr-d { animation: none; } }

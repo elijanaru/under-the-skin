@@ -2096,6 +2096,13 @@ const PLATE_TCM_PLAIN = {
   ovulatory: 'You’re at your peak, warm and outgoing. Colourful, fresh food keeps that heat in balance. It’s your Fire time, like summer, so go out and connect.',
   luteal: 'Your body is slowing down and holding warmth for your period. Simple warm meals, roots and squash keep you calm and steady. It’s your Earth time, like late summer, so slow down.',
 };
+// Three short rules for the plate (cook, taste, element) as tiles; the full sentence opens under the tile she taps.
+const PLATE_COOK_SHORT = { Winter: 'Slow-cooked', Spring: 'Steamed & fresh', Summer: 'Raw & fresh', 'Late summer': 'Gently cooked', Autumn: 'Roasted & braised' };
+function plRules(R) {
+  const open = R.find(r => r[0] === ui.plRule);
+  return `<div class="plr">${R.map(([k, ic, kick, v]) => `<button class="plr-t ${open && open[0] === k ? 'on' : ''}" data-action="plRule" data-v="${k}" aria-expanded="${!!open && open[0] === k}">${ic}<small>${kick}</small><b>${v}</b></button>`).join('')}</div>
+    ${open ? `<div class="plr-d"><b>${open[4]}</b><p>${open[5]}</p></div>` : '<p class="plr-hint">Tap one to see why</p>'}`;
+}
 function plateSection(current) {
   ui.plNow = current;
   const phase = current, m = new Date().getMonth() + 1, nowSeason = SZ.seasonName(myCountry(), m);
@@ -2112,11 +2119,11 @@ function plateSection(current) {
       <p>${plateWhy(sel, phase)}${live ? ` <em>In season in ${country} now.</em>` : ''}</p>
       <div class="pld-foods">${foods.map(x => `<div>${x.photo ? `<img src="${x.photo}" alt="" loading="lazy">` : `<span>${x.g || '•'}</span>`}<small>${x.n}</small></div>`).join('')}</div>
     </div>
-    <div class="pl-rules">
-      <div class="pl-r r1"><i class="pl-ic">🍲</i><div><b>Cook it</b><span>${cook}</span></div></div>
-      <div class="pl-r r2"><i class="pl-ic">${{ Spring: '🌱', Summer: '🍒', 'Late summer': '🌽', Autumn: '🧄', Winter: '🫚' }[season] || '🌿'}</i><div><b>Taste of ${season.toLowerCase()} <em class="pl-han">${T.han}</em></b><span>${PSn.taste[0]}. ${PSn.taste[1]}</span></div></div>
-      <div class="pl-r r3"><i class="pl-ic han">${tcm.elementGlyph}</i><div><b>Your cycle in Chinese medicine</b><span>${PLATE_TCM_PLAIN[phase]}</span></div></div>
-    </div>
+    ${plRules([
+      ['cook', `<i class="plr-ic">${icon(warm ? 'thermo' : 'leaf', 18)}</i>`, 'Cook', warm ? 'Warm & cooked' : phase === 'luteal' ? 'Lean warmer' : PLATE_COOK_SHORT[season] || 'Fresh & cooked', 'How to cook today', cook],
+      ['taste', `<i class="plr-ic">${{ Spring: '🌱', Summer: '🍒', 'Late summer': '🌽', Autumn: '🧄', Winter: '🫚' }[season] || '🌿'}</i>`, 'Taste', PSn.taste[0], `Taste of ${season.toLowerCase()} <em class="pl-han">${T.han}</em>`, PSn.taste[1]],
+      ['tcm', `<i class="plr-ic han">${tcm.elementGlyph}</i>`, 'Element', `${tcm.element} time`, 'Your cycle in Chinese medicine', PLATE_TCM_PLAIN[phase]],
+    ])}
     ${plTea()}
     ${plTonight(phase, warm)}
   </section>`;
@@ -6394,6 +6401,7 @@ const actions = {
   czTab: d => { ui.czTab = d.v; render(); },
   bzPick: d => { ui.bzK = d.v; render(); },
   bzPhase: d => { ui.bzK = d.v; render(); setTimeout(() => { const v = document.getElementById('view'), z = document.querySelector('.bz'); if (v && z) v.scrollTo({ top: v.scrollTop + z.getBoundingClientRect().top - 90, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }, 60); },
+  plRule: d => { ui.plRule = ui.plRule === d.v ? null : d.v; render(); },
   maniK: d => { ui.maniK = d.v; render(); setTimeout(() => { const v = document.getElementById('view'); if (v) v.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }, 60); },
   czWhy: () => { if (ui.czTab && ui.czTab !== 'today') { ui.czTab = 'today'; render(); } const el = document.querySelector('.cx-why'); el && el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); },
   moonRit: d => { ui.moonRit = d.v; render(); },
