@@ -8129,3 +8129,9 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .bz-how .bzh-h h3 { font-size: 18px; }
 .bz-how .bzh-h { margin-bottom: 10px; }
 .bzm-key .i { background: linear-gradient(90deg, #d9768f 25%, #6c823e 25% 50%, #d6a443 50% 75%, #9b87c4 75%); }
+/* Eat tile with video: keep only the warm-or-raw rule, as a white chip */
+.hub .dpt.ph-full.t-eat small { display: block; font-size: 0; margin-top: 8px; }
+.hub .dpt.t-eat small .dpt-col, .hub .dpt.t-eat small br { display: none; }
+.hub .dpt.t-eat small .dpt-rule { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 99px; background: rgba(255,255,255,.92); color: #20301a; font: 500 12px Outfit, sans-serif; }
+.hub .dpt.t-eat video { filter: brightness(.78); }
+.hub .dpt.t-eat .dpt-k, .hub .dpt.t-eat > b { text-shadow: 0 1px 14px rgba(20,30,15,.75); }
