@@ -3703,8 +3703,8 @@ function todayTiles(info, only) {
       ${tile('t-deep ph-full keep ph-fr', { to: 'do/friends' }, PEOPLE_G[ph], 'Friends', FRIENDS[ph].ideas[0], `<span class="dpt-fr">${icon('check', 12, 2.4)} ${FRIENDS[ph].ideas[1]}</span><span class="dpt-fr no">${icon('close', 12, 2.4)} Skip: ${FRIENDS[ph].skip.charAt(0).toLowerCase() + FRIENDS[ph].skip.slice(1)}</span>`)}
       ${tile(`calm lv${lvl} t-cort`, { to: 'breathe/stress' }, cortisolVial(lvl), 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
       ${tile('t-sage ph-full ph-vid', { to: 'relief' }, `<video class="dpt-vid" src="images/relief-stardust.mp4" poster="images/relief-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Relief', rp.st.t, `${rp.mine ? 'You logged' : 'Common now:'} ${rp.k.toLowerCase()}`)}
-      ${tile('t-glow ph-full ph-vid', { to: 'ground' }, `<video class="dpt-vid" src="images/ground-cat.mp4" poster="images/ground-cat.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Ground', GROUND_PHASE[ph].t, '')}
       ${tile('t-tea t-cup', { to: 'do/tea' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/${/ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i.test(td[1]) ? 'cup-chai' : 'cup-glass'}.webp" alt="" loading="lazy"><canvas class="teacup3d" aria-label="${td[1]}, turning slowly"></canvas></span>`, 'Tea for today', td[1], td[2])}
+      ${tile('t-glow ph-full ph-vid', { to: 'ground' }, `<video class="dpt-vid" src="images/ground-cat.mp4" poster="images/ground-cat.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Ground', GROUND_PHASE[ph].t, '')}
     </div>
     <div class="hub-tip ${open && (open === 'eat' || open === 'tea' || tips[open]) ? 'on' : ''}" id="hub-tip">${open ? tipBody(open) : ''}</div>`;
 }
