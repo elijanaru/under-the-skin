@@ -4654,8 +4654,8 @@ const BREATHS = {
     how: [['In for 4', 'Through your nose.'], ['Hold for 4', 'Soft, no strain.'], ['Out for 4, hold for 4', 'Then start again. Picture tracing the sides of a square.']],
     why: 'Even counts give a busy, fresh-energy mind a simple rhythm to follow. It is used by pilots and athletes to stay clear under pressure, and suits the follicular phase when you start many new things.' },
   even: { name: 'Even breathing', g: '〰', when: 'Ovulation', for: 'Calm, open and connected', rounds: 8,
-    steps: [['in', 'Breathe in', 'Slow and smooth', 5500], ['out', 'Breathe out', 'Just as slow', 5500]],
-    how: [['In for about 5', 'Smooth, through your nose.'], ['Out for about 5', 'The same length, like a gentle wave.'], ['About 5 to 6 breaths a minute', 'Keep going for a few minutes.']],
+    steps: [['in', 'Breathe in', 'Slow and smooth', 5000], ['out', 'Breathe out', 'Just as slow', 5000]],
+    how: [['In for 5', 'Smooth, through your nose.'], ['Out for 5', 'The same length, like a gentle wave.'], ['6 breaths a minute', 'Keep going for a few minutes.']],
     why: 'Around 5 to 6 breaths a minute is the rhythm where heart rate and breath fall in step, called resonance breathing. Reviews of heart-rate variability research (Lehrer and Gevirtz 2014) link it to calmer stress responses. A good anchor for bright, social ovulation days.' },
   478: { name: '4-7-8 breathing', g: '💤', when: 'Luteal & before your period', for: 'Quiets a busy mind for sleep', rounds: 4,
     steps: [['in', 'Breathe in', 'Through your nose for four', 4000], ['hold', 'Hold', 'Gently, for seven', 7000], ['out', 'Breathe out', 'Slowly through your mouth for eight', 8000]],
@@ -4709,6 +4709,20 @@ function breathFx(k) {
   return `<div class="bzfx">${[['Calm', 'leaf'], ['Focus', 'spark'], ['Sleep', 'moon'], ['Cramps', 'drop']].map(([t, ic], i) => `<div class="bzfx-i ${v[i] === 3 ? 'top' : ''}"><span>${icon(ic, 15)}</span><small>${t}</small><i>${[1, 2, 3].map(n => `<b class="${n <= v[i] ? 'on' : ''}"></b>`).join('')}</i></div>`).join('')}</div>`;
 }
 // Calm sigh: a deep breath in to almost full, one more short sip on top, then a long slow breath out.
+// A breath for every phase: the four practices as tiles in their phase colour, the rhythm in seconds and a
+// little bar of one breath (in, hold, out) so she sees its shape. Tapping one loads it on the pond card above.
+function breathMonth(phase, k) {
+  const seg = { in: 'i', top: 'i', hold: 'h', out: 'o', rest: 'h' };
+  return `${sectionTitle('A breath for every phase')}
+    <div class="bzm">${PHASE_ORDER.map(p => { const id = BREATH_FOR[p], B = BREATHS[id], tot = B.steps.reduce((a, x) => a + x[3], 0);
+      const nums = B.steps.filter(x => x[0] !== 'top').map(x => +(x[3] / 1000).toFixed(1)).join('·');
+      return `<button class="bzm-t ${p === phase ? 'now' : ''} ${id === k ? 'on' : ''}" style="--c:${PH_HEX[p]}" data-action="bzPhase" data-v="${id}">
+        <span class="bzm-p"><i></i>${PHASES[p].name}${p === phase ? '<em>Now</em>' : ''}</span>
+        <b class="dotnum">${nums}</b><small>${B.name}</small>
+        <span class="bzm-bar" aria-hidden="true">${B.steps.map(x => `<i class="${seg[x[0]]}" style="flex:${x[3]}"></i>`).join('')}</span>
+        <span class="bzm-for">${B.for}</span></button>`; }).join('')}</div>
+    <div class="bzm-key"><span><i class="i"></i>In</span><span><i class="h"></i>Hold</span><span><i class="o"></i>Out</span><span class="bzm-s">seconds</span></div>`;
+}
 function viewBreathe(from) {
   const phase = M.info && M.info.phase, rec = BREATH_FOR[phase] || 'sigh', k = BREATHS[ui.bzK] ? ui.bzK : rec, B = BREATHS[k];
   return `${topbar('Breathe', { back: true })}
@@ -4748,10 +4762,10 @@ function viewBreathe(from) {
         <p class="bz-say">Stay in the present.</p>
       </div>
     </section>
+    ${breathMonth(phase, k)}
     ${from === 'stress' && M.info ? cortisolSec(M.info) : ''}
     <figure class="bz-quote"><span>“</span><blockquote>The past is already gone and the future has not yet come. See clearly what is here, now.</blockquote><figcaption>The Buddha, from the Bhaddekaratta Sutta</figcaption></figure>
-    <section class="bz-how"><div class="bzh-h"><span class="bzp-g">${B.g}</span><div><small>${B.when}</small><h3>${B.name}</h3></div></div>
-      <p class="bzh-for">${B.for}.</p>
+    <section class="bz-how"><div class="bzh-h"><div><small>Why this one</small><h3>${B.for}</h3></div></div>
       <span class="bzh-when">${icon('clock', 13)} ${BZ_WHEN[k] || B.when}</span>
       ${breathWave(k)}
       ${breathFx(k)}
@@ -6365,6 +6379,7 @@ const actions = {
   groAisle: d => { ui.groAisle = d.v; render(); const t = document.querySelector('.gro-tabs'), on = t && t.querySelector('.on'); if (on) t.scrollLeft = on.offsetLeft - (t.clientWidth - on.offsetWidth) / 2; },
   czTab: d => { ui.czTab = d.v; render(); },
   bzPick: d => { ui.bzK = d.v; render(); },
+  bzPhase: d => { ui.bzK = d.v; render(); setTimeout(() => { const v = document.getElementById('view'), z = document.querySelector('.bz'); if (v && z) v.scrollTo({ top: v.scrollTop + z.getBoundingClientRect().top - 90, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }, 60); },
   maniK: d => { ui.maniK = d.v; render(); },
   czWhy: () => { if (ui.czTab && ui.czTab !== 'today') { ui.czTab = 'today'; render(); } const el = document.querySelector('.cx-why'); el && el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); },
   moonRit: d => { ui.moonRit = d.v; render(); },
