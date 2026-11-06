@@ -444,7 +444,7 @@ const READ_PHOTO = { 'letter-01': '1581714161666-dade083654ae', 'letter-02': '15
   'letter-12': '1640331703778-9aac4d988e26', 'four-phases': '1787822976738-d44fa2a85e4f', estrogen: '1544507888-56d73eb6046e', 'progesterone-pms': '1614088685112-0a760b71a3c8',
   'yin-yang': '1745864709009-457569a2aed1', iron: '1588168333986-5078d3ae3976', 'seed-cycling': '1651241587503-a874db54a1a7', brain: '1491975474562-1f4e30bc9468',
   sleep: '1522587750645-7e0e798b2b59', 'ovulation-signs': '1594790628624-9e563bea851d' };
-const READ_LOCAL = { 'letter-09': 'images/read-lilies.webp', 'eat-cycle': 'images/season-veg.webp', 'train-cycle': 'images/move-lift.webp', bloating: 'images/tea-ginger.webp' }; // our own photos: lilies opening, bud to bloom, like a cycle
+const READ_LOCAL = { 'four-phases': 'images/read-seasons.webp', 'letter-09': 'images/read-lilies.webp', 'eat-cycle': 'images/season-veg.webp', 'train-cycle': 'images/move-lift.webp', bloating: 'images/tea-ginger.webp' }; // our own photos: lilies opening, bud to bloom, like a cycle
 function readPic(x, w = 900) {
   if (READ_LOCAL[x.id]) return READ_LOCAL[x.id];
   const u = READ_PHOTO[x.id]; if (u) return `https://images.unsplash.com/photo-${u}?w=${w}&h=${Math.round(w * 1.3)}&fit=crop&auto=format&q=70`;
@@ -1273,7 +1273,7 @@ function viewToday() {
     ${exploreGrid(info)}
 
     ${readsCard(info)}
-    <p class="fine center">Predictions are estimates based on your logs — not medical advice or contraception.</p>
+    <p class="fine center">Predictions are estimates based on your logs, not medical advice or contraception.</p>
   </div>`;
 }
 // Explore: every button a full photo with a frosted label.
