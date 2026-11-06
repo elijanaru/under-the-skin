@@ -12,7 +12,7 @@ export function webglOK() {
 }
 
 // Also shows today's dish (a soup bowl) on the Eat tile: pass model, elev (camera height) and preserve (for a poster capture).
-export function mountTeaCup(canvas, { onReady, onFail, model = MODEL_URL, elev: e0 = 0.62, fit = 1.45, preserve = false } = {}) {
+export function mountTeaCup(canvas, { onReady, onFail, model = MODEL_URL, elev: e0 = 0.62, fit = 1.45, steam: steamOn = true, shadow: shadowOn = true, preserve = false } = {}) {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'low-power', preserveDrawingBuffer: preserve });
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
@@ -39,14 +39,14 @@ export function mountTeaCup(canvas, { onReady, onFail, model = MODEL_URL, elev: 
   const g = sc.getContext('2d'), rg = g.createRadialGradient(64, 64, 4, 64, 64, 62);
   rg.addColorStop(0, 'rgba(48,64,35,.34)'); rg.addColorStop(1, 'rgba(48,64,35,0)'); g.fillStyle = rg; g.fillRect(0, 0, 128, 128);
   const shadow = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.5), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), transparent: true, depthWrite: false }));
-  shadow.rotation.x = -Math.PI / 2; shadow.position.y = -0.02; scene.add(shadow);
+  shadow.rotation.x = -Math.PI / 2; shadow.position.y = -0.02; if (shadowOn) scene.add(shadow);
 
   // steam: a few soft white wisps that rise and fade above the cup
   const wisp = document.createElement('canvas'); wisp.width = wisp.height = 64;
   const wg = wisp.getContext('2d'), wr = wg.createRadialGradient(32, 32, 2, 32, 32, 30);
   wr.addColorStop(0, 'rgba(255,255,255,.9)'); wr.addColorStop(1, 'rgba(255,255,255,0)'); wg.fillStyle = wr; wg.fillRect(0, 0, 64, 64);
   const wispTex = new THREE.CanvasTexture(wisp);
-  const steam = Array.from({ length: reduce ? 0 : 7 }, (_, i) => {
+  const steam = Array.from({ length: reduce || !steamOn ? 0 : 7 }, (_, i) => {
     const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: wispTex, transparent: true, opacity: 0, depthWrite: false }));
     s.userData = { o: i / 7, x: (Math.random() - .5) * .18 }; scene.add(s); return s;
   });

@@ -3662,16 +3662,6 @@ function reliefPick(w) {
   const steps = RELIEF[k].steps.filter(x => !/ibuprofen|naproxen|paracetamol|pain relief|doctor/i.test(x.t + ' ' + x.d) && !/\btea\b|\b[A-Z]{2,3}\d/i.test(x.t));
   return { k, st: steps[dayNum(new Date()) % steps.length], mine: !!logged[0] };
 }
-// Cortisol as a little vial: full and rising when stress runs high, low and settled when calm.
-function cortisolVial(lvl) {
-  const f = [0, .3, .62, .94][lvl], y = 10 + 66 * (1 - f);
-  return `<svg class="cv" viewBox="0 0 44 92" aria-hidden="true"><rect x="9" y="6" width="26" height="74" rx="13" class="cv-g"/>
-    <clipPath id="cvc"><rect x="9" y="6" width="26" height="74" rx="13"/></clipPath>
-    <rect x="9" y="${y.toFixed(1)}" width="26" height="${(80 - y).toFixed(1)}" class="cv-f" clip-path="url(#cvc)"/>
-    <path d="M9 ${y.toFixed(1)} q6.5 -3 13 0 t13 0" class="cv-w" clip-path="url(#cvc)"/>
-    ${lvl === 3 ? '<path d="M22 2 l-5 6 h10z" class="cv-up"/>' : ''}
-    <rect x="9" y="6" width="26" height="74" rx="13" class="cv-o"/><rect x="14" y="14" width="4" height="22" rx="2" class="cv-hl"/></svg>`;
-}
 // Today's dish on the Eat tile, one warm bowl for each part of her cycle, shown as a turning 3D model.
 const DISH_3D = {
   pho: { model: 'models/pho.glb', img: 'images/dish-pho.webp', fit: 1.45 },
@@ -3721,7 +3711,7 @@ function todayTiles(info, only) {
       ${tile('t-tea t-cup t-dish', { to: 'do/eat' }, `<span class="cup3d-w"><img class="dpt-cup" src="${D.img}" alt="" loading="lazy"><canvas class="teacup3d" data-model="${D.model}" data-elev="0.9" data-fit="${D.fit}" aria-label="${dish.t}, turning slowly"></canvas></span>`, 'Eat today', dish.t, `<span class="dpt-why">${dish.why}</span><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
       ${tile('t-deep ph-full keep ph-fr', { to: 'do/friends' }, PEOPLE_G[ph], 'Friends', FRIENDS[ph].ideas[0], `<span class="dpt-fr">${icon('check', 12, 2.4)} ${FRIENDS[ph].ideas[1]}</span><span class="dpt-fr no">${icon('close', 12, 2.4)} Skip: ${FRIENDS[ph].skip.charAt(0).toLowerCase() + FRIENDS[ph].skip.slice(1)}</span>`)}
       ${tile('t-sage ph-full ph-vid', { to: 'relief' }, `<video class="dpt-vid" src="images/relief-stardust.mp4" poster="images/relief-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Relief', rp.st.t, `${rp.mine ? 'You logged' : 'Common now:'} ${rp.k.toLowerCase()}`)}
-      ${tile(`calm lv${lvl} t-cort`, { to: 'breathe/stress' }, cortisolVial(lvl), 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
+      ${tile(`calm lv${lvl} t-cort t-mol`, { to: 'breathe/stress' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/cortisol-mol.webp" alt="" loading="lazy"><canvas class="teacup3d" data-model="models/cortisol.glb" data-elev="0.3" data-fit="1.9" data-steam="0" data-shadow="0" aria-label="The cortisol molecule, turning slowly"></canvas></span>`, 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}<span class="cv-lv" aria-hidden="true">${[1, 2, 3].map(i => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</span>`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
       ${tile('t-tea t-cup', { to: 'do/tea' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/${/ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i.test(td[1]) ? 'cup-chai' : 'cup-glass'}.webp" alt="" loading="lazy"><canvas class="teacup3d" aria-label="${td[1]}, turning slowly"></canvas></span>`, 'Tea for today', td[1], td[2])}
       ${tile('t-glow ph-full ph-vid', { to: 'ground' }, `<video class="dpt-vid" src="images/ground-cat.mp4" poster="images/ground-cat.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Ground', GROUND_PHASE[ph].t, '')}
     </div>
@@ -6694,7 +6684,7 @@ function mountFigures() {
     const hero = c.closest('.tg-hero, .cup3d-w'), fail = () => { hero?.classList.remove('tg-3d', 'tg-ready'); c.remove(); };
     const start = () => import('./teacup3d.js').then(m => {
       if (!c.isConnected) return; if (!m.webglOK()) throw new Error('no webgl');
-      unmountFigs.push(m.mountTeaCup(c, { model: c.dataset.model || undefined, elev: c.dataset.elev ? +c.dataset.elev : undefined, fit: c.dataset.fit ? +c.dataset.fit : undefined, onReady: () => hero?.classList.add('tg-ready'), onFail: fail }));
+      unmountFigs.push(m.mountTeaCup(c, { model: c.dataset.model || undefined, elev: c.dataset.elev ? +c.dataset.elev : undefined, fit: c.dataset.fit ? +c.dataset.fit : undefined, steam: c.dataset.steam !== '0', shadow: c.dataset.shadow !== '0', onReady: () => hero?.classList.add('tg-ready'), onFail: fail }));
     }).catch(fail);
     const idle = f => (window.requestIdleCallback ? requestIdleCallback(f, { timeout: 1500 }) : setTimeout(f, 300));
     if (!('IntersectionObserver' in window)) return idle(start);

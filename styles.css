@@ -8155,3 +8155,13 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .mfa-c.on { border-color: #20301a; box-shadow: 0 0 0 1.5px #20301a, 0 10px 24px -16px rgba(32,48,26,.35); }
 .mfa-c.on .mfa-go { background: #fff; color: #20301a; border: 1px solid rgba(32,48,26,.2); }
 .hub .dpt.t-dish small .dpt-why { display: block; font-size: 12.5px; line-height: 1.35; color: #4b5a40; margin-bottom: 8px; }
+
+/* Cortisol tile: the cortisol molecule turning slowly on top, the level as a three-step meter next to the word */
+.hub .dpt.t-cort.t-mol .dpt-g { position: relative; top: auto; right: auto; width: calc(100% + 16px); height: 86px; margin: -8px -8px 4px; }
+.hub .dpt.t-cort.t-mol b { padding-right: 0; display: flex; align-items: center; gap: 10px; }
+.cv-lv { display: inline-flex; gap: 3px; }
+.cv-lv i { width: 14px; height: 7px; border-radius: 4px; background: rgba(32,48,26,.12); }
+.cv-lv i.on { background: hsl(calc(var(--hb) + 10 * var(--hk)) calc(62% * var(--hs)) 56%); }
+.lv1 .cv-lv i.on { background: #8c9768; } .lv2 .cv-lv i.on { background: hsl(calc(var(--hb) + 30 * var(--hk)) calc(70% * var(--hs)) 62%); }
+.hub .dpt.t-cort.t-mol .dpt-g { background: none; box-shadow: none; border-radius: 0; }
+.hub .dpt.t-mol .dpt-cup { position: absolute; inset: -12%; width: 124%; height: 124%; object-fit: contain; }
