@@ -91,6 +91,8 @@ export const MANIFEST = {
     short: ['Breathe', 'Say thank you', 'Feel it done', 'Let it go'], steps: ['Sit or lie down and breathe slowly for a minute.', 'Say "thank you" for your wish as if it already happened.', 'Stay with the warm, settled feeling of having it, not the wanting.', 'End by smiling and letting it go, the way you post a letter.'] },
   revision: { name: 'Revision', why: 'A waning Moon is for clearing what is old.',
     short: ['Pick a moment', 'Replay it better', 'Feel the new one', 'Sleep on it'], steps: ['Tonight, think of one moment from today that did not go the way you wanted.', 'Replay it from the start, but this time it goes the way you wish it had.', 'Feel the new version as real until the old one loses its sting.', 'Go to sleep with the new version in mind.'] },
+  lullaby: { name: 'A lullaby phrase', why: 'A few soft words carry the feeling into sleep.',
+    short: ['Pick 3 words', 'Get drowsy', 'Repeat softly', 'Fall asleep'], steps: ['Choose a short phrase that would only make sense if your wish were already true, like "it is done" or "thank you, it happened".', 'In bed, let your body get heavy and your breath slow down.', 'Repeat the phrase quietly in your mind, over and over, the way you would hum a lullaby.', 'Let the words get slower and softer until you fall asleep with them.'] },
   sats: { name: 'The drowsy moment', why: 'Rest makes the mind soft and open.',
     short: ['Get drowsy', 'Play your scene', 'Feel, don’t force', 'Drift off'], steps: ['In bed, let your body get heavy, as if you are about to fall asleep.', 'In that drowsy state, play your short scene of the wish come true.', 'Do not force it. Just feel it as real and natural.', 'Fall asleep inside the feeling.'] },
 };

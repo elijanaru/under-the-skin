@@ -8141,3 +8141,16 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .hub .dpt.t-dish b { font-size: 17px; line-height: 1.2; }
 .hub .dpt.t-dish small { margin-top: 8px; }
 .hub .dpt.t-dish small .dpt-rule { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 99px; background: #fff; border: 1px solid rgba(48,64,35,.12); color: #20301a; font: 500 12px Outfit, sans-serif; box-shadow: 0 4px 12px rgba(32,48,26,.08); }
+
+/* Manifest › Any day of your cycle: three practices in a swipe row (the four phase ones live in Your month) */
+.mfa { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 18px; margin: 0 -18px 26px; padding: 2px 18px 8px; scrollbar-width: none; }
+.mfa::-webkit-scrollbar { display: none; }
+.mfa-c { flex: 0 0 64%; scroll-snap-align: start; display: grid; justify-items: start; align-content: start; gap: 6px; padding: 16px; border-radius: 26px; border: 1px solid rgba(48,64,35,.1); background: rgba(255,255,255,.92); color: #20301a; text-align: left; font: inherit; cursor: pointer; box-shadow: 0 10px 24px -16px rgba(32,48,26,.35); }
+.mfa-a { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 16px; background: #eef1e4; color: #304023; margin-bottom: 4px; }
+.mfa-a svg { width: 24px; height: 24px; }
+.mfa-c b { font-size: 17px; font-weight: 600; line-height: 1.2; }
+.mfa-c small { font-size: 13px; line-height: 1.4; color: #4b5a40; }
+.mfa-c em { display: inline-flex; align-items: center; gap: 5px; font-style: normal; font-size: 11.5px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: #eef1e4; color: #304023; }
+.mfa-go { margin-top: 6px; display: inline-flex; align-items: center; gap: 4px; padding: 8px 14px; border-radius: 999px; background: #20301a; color: #fff; font-size: 13px; font-weight: 500; }
+.mfa-c.on { border-color: #20301a; box-shadow: 0 0 0 1.5px #20301a, 0 10px 24px -16px rgba(32,48,26,.35); }
+.mfa-c.on .mfa-go { background: #fff; color: #20301a; border: 1px solid rgba(32,48,26,.2); }

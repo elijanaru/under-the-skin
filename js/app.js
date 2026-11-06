@@ -2697,15 +2697,17 @@ function innerWeather(mn, pg, phase, inner, ms, feel) {
   </section>`;
 }
 // Manifest: Neville Goddard's way of living the wish as a feeling, picked for her cycle phase. Steps as a graphic, how-to behind a tap.
-const MANI_TECH = ['scene', 'end', 'talk', 'feeling', 'revision', 'sats'];
-const MANI_WHY = { scene: 'Picture one small moment that proves it is real.', end: 'Act and feel as if it already happened.', talk: 'Catch the inner chat and rewrite it kindly.', feeling: 'Stay with the feeling, let go of the how.', revision: 'At night, replay a hard moment the way you wished.', sats: 'Play your scene as you drift off to sleep.' };
-const MANI_BEST = { sats: 'menstrual', scene: 'follicular', end: 'ovulatory', revision: 'luteal' };
+const MANI_TECH = ['scene', 'end', 'talk', 'feeling', 'revision', 'sats', 'lullaby'];
+// practices that suit any day of the cycle, with how long they take
+const MANI_ANY = [['talk', '1 min, anytime'], ['feeling', '3 min'], ['lullaby', 'As you fall asleep']];
+const MANI_WHY = { scene: 'Picture one small moment that proves it is real.', end: 'Act and feel as if it already happened.', talk: 'Catch the inner chat and rewrite it kindly.', feeling: 'Stay with the feeling, let go of the how.', revision: 'At night, replay a hard moment the way you wished.', lullaby: 'Repeat a few soft words that mean it is done.', sats: 'Play your scene as you drift off to sleep.' };
 const MANI_ART = {
   scene: '<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M6 16l4-5 3 3 2-2 3 4"/><circle cx="16" cy="9" r="1.4"/>',
   end: '<path d="M6 21V4"/><path d="M6 4h11l-2 4 2 4H6"/>',
   talk: '<path d="M4 6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-6l-5 4v-4a3 3 0 0 1-2-3z"/><path d="M8 9h8M8 12h5"/>',
   feeling: '<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/>',
   revision: '<path d="M4 12a8 8 0 1 0 2.3-5.7"/><path d="M4 4v4h4"/><path d="M12 8v4l3 2"/>',
+  lullaby: '<path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>',
   sats: '<path d="M3 11c3 4.5 15 4.5 18 0"/><path d="M6 14.5l-1.5 2M10 16l-.5 2.5M14 16l.5 2.5M18 14.5l1.5 2"/>',
 };
 const maniArt = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${MANI_ART[k]}</svg>`;
@@ -2746,8 +2748,8 @@ function viewManifest() {
         <p class="mm-src">After Neville Goddard’s teaching in <i>Feeling is the Secret</i>: live the wish first as a feeling. A spiritual practice for reflection.</p></details></section>
     ${sectionTitle('Your month of manifesting')}
     <div class="mfm">${PHASE_ORDER.map(p => { const t = MG.MANIFEST_CYCLE[p][0]; return `<button class="mfm-p ${p === phase ? 'now' : ''} ${t === k ? 'on' : ''}" style="--c:${PH_HEX[p]}" data-action="maniK" data-v="${t}"><i></i><small>${PHASES[p].name}${p === phase ? ' · now' : ''}</small><span class="mfm-a">${maniArt(t)}</span><b>${MG.MANIFEST[t].name}</b></button>`; }).join('')}</div>
-    ${sectionTitle('Six ways to try')}
-    <div class="mfw">${MANI_TECH.map(o => { const bp = MANI_BEST[o]; return `<button class="mfw-c ${o === k ? 'on' : ''}" style="--c:${bp ? PH_HEX[bp] : '#6c823e'}" data-action="maniK" data-v="${o}"><span class="mfw-a">${maniArt(o)}</span><b>${MG.MANIFEST[o].name}</b><small>${MANI_WHY[o]}</small><em>${bp ? `Best: ${PHASES[bp].name.toLowerCase()}` : 'Any day'}</em></button>`; }).join('')}</div>
+    ${sectionTitle('Any day of your cycle')}
+    <div class="mfa" role="list">${MANI_ANY.map(([o, t]) => `<button class="mfa-c ${o === k ? 'on' : ''}" role="listitem" data-action="maniK" data-v="${o}"><span class="mfa-a">${maniArt(o)}</span><b>${MG.MANIFEST[o].name}</b><small>${MANI_WHY[o]}</small><em>${icon('clock', 12)} ${t}</em><span class="mfa-go">${o === k ? 'On top now' : `Try it ${icon('chevR', 12)}`}</span></button>`).join('')}</div>
     ${sectionTitle('The idea behind it')}
     ${maniIdea(phase)}
   </div>`;
@@ -6382,7 +6384,7 @@ const actions = {
   czTab: d => { ui.czTab = d.v; render(); },
   bzPick: d => { ui.bzK = d.v; render(); },
   bzPhase: d => { ui.bzK = d.v; render(); setTimeout(() => { const v = document.getElementById('view'), z = document.querySelector('.bz'); if (v && z) v.scrollTo({ top: v.scrollTop + z.getBoundingClientRect().top - 90, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }, 60); },
-  maniK: d => { ui.maniK = d.v; render(); },
+  maniK: d => { ui.maniK = d.v; render(); setTimeout(() => { const v = document.getElementById('view'); if (v) v.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }, 60); },
   czWhy: () => { if (ui.czTab && ui.czTab !== 'today') { ui.czTab = 'today'; render(); } const el = document.querySelector('.cx-why'); el && el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); },
   moonRit: d => { ui.moonRit = d.v; render(); },
   moonSave: d => {
