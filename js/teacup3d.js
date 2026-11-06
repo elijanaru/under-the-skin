@@ -12,7 +12,7 @@ export function webglOK() {
 }
 
 // Also shows today's dish (a soup bowl) on the Eat tile: pass model, elev (camera height) and preserve (for a poster capture).
-export function mountTeaCup(canvas, { onReady, onFail, model = MODEL_URL, elev: e0 = 0.62, preserve = false } = {}) {
+export function mountTeaCup(canvas, { onReady, onFail, model = MODEL_URL, elev: e0 = 0.62, fit = 1.45, preserve = false } = {}) {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'low-power', preserveDrawingBuffer: preserve });
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
@@ -59,7 +59,7 @@ export function mountTeaCup(canvas, { onReady, onFail, model = MODEL_URL, elev: 
       if (!alive) return;
       const m = gl.scene.clone(true);
       const box = new THREE.Box3().setFromObject(m), size = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());
-      const s = 1.45 / Math.max(size.x, size.z);
+      const s = fit / Math.max(size.x, size.z);
       m.scale.setScalar(s); m.position.set(-c.x * s, -box.min.y * s, -c.z * s);
       cup.add(m); top = size.y * s;
       ready = true; onReady && onReady();

@@ -3672,6 +3672,22 @@ function cortisolVial(lvl) {
     ${lvl === 3 ? '<path d="M22 2 l-5 6 h10z" class="cv-up"/>' : ''}
     <rect x="9" y="6" width="26" height="74" rx="13" class="cv-o"/><rect x="14" y="14" width="4" height="22" rx="2" class="cv-hl"/></svg>`;
 }
+// Today's dish on the Eat tile, one warm bowl for each part of her cycle, shown as a turning 3D model.
+const DISH_3D = {
+  pho: { model: 'models/pho.glb', img: 'images/dish-pho.webp', fit: 1.45 },
+  ramen: { model: 'models/soup.glb', img: 'images/dish-soup.webp', fit: 1.45 },
+  miso: { model: 'models/miso.glb', img: 'images/dish-miso.webp', fit: 1.2 },
+};
+const DISH_DAY = {
+  'flow-start': { m: 'pho', t: 'Beef pho with ginger', why: 'Bone broth and beef bring back the iron you lose.' },
+  'flow-end': { m: 'ramen', t: 'Bone broth ramen with egg', why: 'Broth, egg and noodles to rebuild your energy.' },
+  rising: { m: 'miso', t: 'Salmon miso soup', why: 'Fermented miso helps clear estrogen, salmon builds.' },
+  building: { m: 'miso', t: 'Salmon miso soup', why: 'Protein and omega-3 for the egg that is ripening.' },
+  peak: { m: 'pho', t: 'Pho with fresh herbs', why: 'Herbs and greens help your liver clear the peak.' },
+  settle: { m: 'ramen', t: 'Chicken ramen with egg', why: 'You burn more now. A warm, filling bowl stops the dips.' },
+  focus: { m: 'ramen', t: 'Chicken ramen with egg', why: 'Steady protein and carbs keep cravings calm.' },
+  premenstrual: { m: 'miso', t: 'Salmon miso soup', why: 'Warm and gentle, with omega-3 for the cramps ahead.' },
+};
 function todayTiles(info, only) {
   const w = dayWindow(info), g = MOVE_GUIDE[w], [lvl] = CALM[w], ph = info.phase, warm = warmWindow(info);
   const best = MOVES.filter(m => g.r[m.k] === 3);
@@ -3679,8 +3695,7 @@ function todayTiles(info, only) {
   const pics = { Friends: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&q=70&auto=format&fit=crop', Stress: 'move-lift', Tea: 'move-hiit' };
   const tile = (cls, act, g_, k, t, s_) => `<button class="dpt ${cls} ${pics[k] ? 'has-pic' : ''} ${act.tip && open === act.tip ? 'open' : ''}" ${act.to ? `data-action="nav" data-to="${act.to}"` : `data-action="hubTip" data-k="${act.tip}"`}>${pics[k] ? `<span class="dpt-g pic"><img class="pb" src="${picSrc(pics[k])}" alt="" loading="lazy"><img class="ps" src="${picSrc(pics[k])}" alt="" loading="lazy"><i></i></span>` : `<span class="dpt-g">${g_}</span>`}<span class="dpt-k">${k}</span><b>${t}</b><small>${s_}</small>${act.tip ? `<span class="dpt-more">${icon('plus', 14, 2.2)}</span>` : ''}</button>`;
   const fn = FOOD_NEEDS[w], fm = FOOD_MEALS[w], sp = STRESS_PLAN[w], td = TEA_DAY[w];
-  // today's dish: the same one the body map shows for her gut
-  const dish = (BODY_MAP[ph].find(x => x.k === 'gut') || {}).d || fn[0];
+  const dish = DISH_DAY[w], D = DISH_3D[dish.m];
   const tips = {
     stress: [icon('mind', 22), `Stress today: ${['', 'low', 'medium', 'high'][lvl]}`, sp[0], sp[1], 'some'],
     stretch: [icon('leaf', 22), st[0], st[1], st[2], 'some'],
@@ -3703,7 +3718,7 @@ function todayTiles(info, only) {
   if (only) return tipBody(only);
   return `<div class="dpt-grid">
       ${tile('wide hero-move ph-vid', { to: 'move' }, `<video class="dpt-vid" src="images/move-stardust.mp4" poster="images/move-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Sport', g.title, best.map(m => m.n).slice(0, 3).join(' · '))}
-      ${tile('t-tea t-cup t-dish', { to: 'do/eat' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/dish-soup.webp" alt="" loading="lazy"><canvas class="teacup3d" data-model="models/soup.glb" data-elev="0.9" aria-label="${dish}, turning slowly"></canvas></span>`, 'Eat today', dish, `<span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
+      ${tile('t-tea t-cup t-dish', { to: 'do/eat' }, `<span class="cup3d-w"><img class="dpt-cup" src="${D.img}" alt="" loading="lazy"><canvas class="teacup3d" data-model="${D.model}" data-elev="0.9" data-fit="${D.fit}" aria-label="${dish.t}, turning slowly"></canvas></span>`, 'Eat today', dish.t, `<span class="dpt-why">${dish.why}</span><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
       ${tile('t-deep ph-full keep ph-fr', { to: 'do/friends' }, PEOPLE_G[ph], 'Friends', FRIENDS[ph].ideas[0], `<span class="dpt-fr">${icon('check', 12, 2.4)} ${FRIENDS[ph].ideas[1]}</span><span class="dpt-fr no">${icon('close', 12, 2.4)} Skip: ${FRIENDS[ph].skip.charAt(0).toLowerCase() + FRIENDS[ph].skip.slice(1)}</span>`)}
       ${tile('t-sage ph-full ph-vid', { to: 'relief' }, `<video class="dpt-vid" src="images/relief-stardust.mp4" poster="images/relief-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Relief', rp.st.t, `${rp.mine ? 'You logged' : 'Common now:'} ${rp.k.toLowerCase()}`)}
       ${tile(`calm lv${lvl} t-cort`, { to: 'breathe/stress' }, cortisolVial(lvl), 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
@@ -6679,7 +6694,7 @@ function mountFigures() {
     const hero = c.closest('.tg-hero, .cup3d-w'), fail = () => { hero?.classList.remove('tg-3d', 'tg-ready'); c.remove(); };
     const start = () => import('./teacup3d.js').then(m => {
       if (!c.isConnected) return; if (!m.webglOK()) throw new Error('no webgl');
-      unmountFigs.push(m.mountTeaCup(c, { model: c.dataset.model || undefined, elev: c.dataset.elev ? +c.dataset.elev : undefined, onReady: () => hero?.classList.add('tg-ready'), onFail: fail }));
+      unmountFigs.push(m.mountTeaCup(c, { model: c.dataset.model || undefined, elev: c.dataset.elev ? +c.dataset.elev : undefined, fit: c.dataset.fit ? +c.dataset.fit : undefined, onReady: () => hero?.classList.add('tg-ready'), onFail: fail }));
     }).catch(fail);
     const idle = f => (window.requestIdleCallback ? requestIdleCallback(f, { timeout: 1500 }) : setTimeout(f, 300));
     if (!('IntersectionObserver' in window)) return idle(start);

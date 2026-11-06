@@ -8154,3 +8154,4 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .mfa-go { margin-top: 6px; display: inline-flex; align-items: center; gap: 4px; padding: 8px 14px; border-radius: 999px; background: #20301a; color: #fff; font-size: 13px; font-weight: 500; }
 .mfa-c.on { border-color: #20301a; box-shadow: 0 0 0 1.5px #20301a, 0 10px 24px -16px rgba(32,48,26,.35); }
 .mfa-c.on .mfa-go { background: #fff; color: #20301a; border: 1px solid rgba(32,48,26,.2); }
+.hub .dpt.t-dish small .dpt-why { display: block; font-size: 12.5px; line-height: 1.35; color: #4b5a40; margin-bottom: 8px; }
