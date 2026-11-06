@@ -8193,3 +8193,24 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .plr-hint { margin: 8px 2px 0; font-size: 12px; color: #5d6b51; }
 @keyframes plrIn { from { opacity: 0; transform: translateY(-4px); } }
 @media (prefers-reduced-motion: reduce) { .plr-d { animation: none; } }
+
+/* Cycle guide › What studies found: four fact tiles (big Doto number, dot graphic, one line); the study opens on tap */
+.cyf { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cyf-t { display: grid; align-content: start; justify-items: start; gap: 8px; padding: 16px 14px; border-radius: 24px; border: 1px solid rgba(48,64,35,.1); background: rgba(255,255,255,.92); color: #20301a; font: inherit; text-align: left; cursor: pointer; box-shadow: 0 10px 24px -16px rgba(32,48,26,.35); transition: background .25s, color .25s; }
+.cyf-t > b { font-size: 30px; line-height: 1; font-weight: 400; color: #20301a; display: flex; align-items: baseline; gap: 6px; }
+.cyf-t > b small { font-family: Outfit, sans-serif; font-size: 13px; font-weight: 500; }
+.cyf-t > span { font-size: 13px; line-height: 1.35; color: #3d4a33; }
+.cyf-dots { display: flex; flex-wrap: wrap; gap: 4px; max-width: 120px; }
+.cyf-dots i { width: 9px; height: 9px; border-radius: 50%; background: rgba(48,64,35,.14); }
+.cyf-dots i.on { background: #d9768f; }
+.cyf-win { display: flex; gap: 3px; }
+.cyf-win i { width: 14px; height: 9px; border-radius: 4px; background: #e9dcae; }
+.cyf-win i.egg { background: #d6a443; }
+.cyf-age { width: 80px; height: 24px; color: #6c823e; fill: #6c823e; }
+.cyf-t.on { background: #20301a; color: #fff; border-color: #20301a; }
+.cyf-t.on > b, .cyf-t.on > span { color: #fff; }
+.cyf-t.on .cyf-dots i { background: rgba(255,255,255,.22); } .cyf-t.on .cyf-dots i.on { background: #efb3c4; }
+.cyf-t.on .cyf-age { color: #c9d6a0; fill: #c9d6a0; }
+.cyf-d small { display: block; margin-top: 8px; font-size: 12px; color: #5d6b51; }
+.cyf-dots { flex-wrap: nowrap; gap: 3px; max-width: none; }
+.cyf-dots i { width: 8px; height: 8px; }

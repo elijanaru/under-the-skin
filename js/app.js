@@ -4416,12 +4416,31 @@ function stageSpark([a, b], L, P, col) {
     <g clip-path="url(#${id})"><path d="${line('estrogen')}" class="sp-e"/><path d="${line('progesterone')}" class="sp-p"/></g>
   </svg>`;
 }
+// What studies found about real cycles, as four fact tiles: a big number, a small dot graphic and one line.
+// The study itself (what was found, who and when) opens under the tile she taps.
+const CYCLE_FACT = [
+  { n: '1 in 8', k: 'cycles is exactly 28 days', g: [8, 1] },
+  { n: '25→45', k: 'between these ages, cycles get a little shorter', g: 'age' },
+  { n: '3 in 10', k: 'women have all their fertile days between day 10 and 17', g: [10, 3] },
+  { n: '6', u: 'days', k: 'is how long the fertile window lasts', g: 'window' },
+];
+function factArt(g) {
+  if (Array.isArray(g)) return `<span class="cyf-dots">${Array.from({ length: g[0] }, (_, i) => `<i class="${i < g[1] ? 'on' : ''}"></i>`).join('')}</span>`;
+  if (g === 'window') return `<span class="cyf-win">${Array.from({ length: 6 }, (_, i) => `<i class="${i === 5 ? 'egg' : ''}"></i>`).join('')}</span>`;
+  return `<svg class="cyf-age" viewBox="0 0 80 24" aria-hidden="true"><path d="M4 6 C 30 6, 50 18, 76 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="4" cy="6" r="3.5"/><circle cx="76" cy="18" r="3.5"/></svg>`;
+}
+function cycleFacts() {
+  const i = ui.cyFact, x = CYCLE_SCIENCE[i];
+  return `<div class="cyf">${CYCLE_FACT.map((f, j) => `<button class="cyf-t ${i === j ? 'on' : ''}" data-action="cyFact" data-v="${j}" aria-expanded="${i === j}">
+      <b class="dotnum">${f.n}${f.u ? `<small>${f.u}</small>` : ''}</b>${factArt(f.g)}<span>${f.k}</span></button>`).join('')}</div>
+    ${x ? `<div class="plr-d cyf-d"><b>${x.t}</b><p>${x.s}</p><small>${x.c}</small></div>` : '<p class="plr-hint">Tap a number for the study behind it</p>'}`;
+}
 function viewGuide() {
   const info = M.info; if (!info) return viewMissing();
   return `${topbar('Cycle guide', { back: true })}
   <div class="pad"><h1 class="page-h">How your <span>cycle works</span></h1>${fullCycleGuide(info)}
     ${sectionTitle('What studies found')}
-    <section class="card glass tea-study">${CYCLE_SCIENCE.map(x => `<div class="ts-i"><div class="ts-h"><b>${x.t}</b>${evBadge(x.ev)}</div><p>${x.s}</p><small>${x.c}</small></div>`).join('')}</section>
+    ${cycleFacts()}
     <p class="fine center">Your own days may differ. Log your periods and the app learns your real rhythm.</p></div>`;
 }
 function bindGuide() {
@@ -6401,6 +6420,7 @@ const actions = {
   czTab: d => { ui.czTab = d.v; render(); },
   bzPick: d => { ui.bzK = d.v; render(); },
   bzPhase: d => { ui.bzK = d.v; render(); setTimeout(() => { const v = document.getElementById('view'), z = document.querySelector('.bz'); if (v && z) v.scrollTo({ top: v.scrollTop + z.getBoundingClientRect().top - 90, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }, 60); },
+  cyFact: d => { const j = +d.v; ui.cyFact = ui.cyFact === j ? null : j; render(); },
   plRule: d => { ui.plRule = ui.plRule === d.v ? null : d.v; render(); },
   maniK: d => { ui.maniK = d.v; render(); setTimeout(() => { const v = document.getElementById('view'); if (v) v.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }, 60); },
   czWhy: () => { if (ui.czTab && ui.czTab !== 'today') { ui.czTab = 'today'; render(); } const el = document.querySelector('.cx-why'); el && el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); },
