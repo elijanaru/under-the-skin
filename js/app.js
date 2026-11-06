@@ -1279,9 +1279,9 @@ function viewToday() {
 // Explore: every button a full photo with a frosted label.
 function exploreGrid(info) {
   const tiles = [['manifest', 'spark', 'Manifest', 'Live it as done', 'images/forest-calm.jpg'], ['hormones', 'book', 'Hormones', 'What each one does', hormonePhoto('Oestrogen', 500)], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/forest-path.jpg'],
-    ['relief', 'heart', 'Relief', 'Cramps, PMS, sleep', carePhoto('foot-soak', 500)],
+    ['relief', 'heart', 'Relief', 'Cramps, PMS, sleep', 'images/relief-stardust.webp', 'images/relief-stardust.mp4'],
     ['season', 'bowl', 'In season', 'Local foods', 'images/season-fruit.webp'], ['tea', 'cup', 'Tea guide', 'For every need', 'images/tea-ginger.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/tile-meditate.webp']];
-  return `<div class="xp-grid xp2">${tiles.map(([to, ic, t, sub, img], i) => `<button class="xp ${i === 0 ? 'wide' : ''}" data-action="nav" data-to="${to}" style="--i:${i}">${img ? `<img src="${img}" alt="" loading="lazy">` : ''}<span class="xp-l"><span class="xp-ic">${icon(ic, 15)}</span><span><b>${t}</b><small>${sub}</small></span></span></button>`).join('')}</div>`;
+  return `<div class="xp-grid xp2">${tiles.map(([to, ic, t, sub, img, vid], i) => `<button class="xp ${i === 0 ? 'wide' : ''}" data-action="nav" data-to="${to}" style="--i:${i}">${vid ? `<video class="dpt-vid" src="${vid}" poster="${img}" muted loop playsinline preload="none" aria-hidden="true"></video>` : img ? `<img src="${img}" alt="" loading="lazy">` : ''}<span class="xp-l"><span class="xp-ic">${icon(ic, 15)}</span><span><b>${t}</b><small>${sub}</small></span></span></button>`).join('')}</div>`;
 }
 // Home: today's habits as a cute tick list; her phase's habits first, a little sprout that grows leaves as she ticks.
 const HB_SHORT = { 'phone-free': ['mind', 'Phone-free hour'], calm: ['heart', '10 min meditation'], coffee: ['cup', 'Coffee with food'], sleep: ['moon', '7 to 9h sleep'], 'real-food': ['bowl', 'Real food'], 'alcohol-free': ['drop', 'No alcohol'], 'no-blue': ['sun', 'Dim screens at night'], move: ['leaf', 'Move your body'], nature: ['seed', 'Time in nature'], clean: ['spark', 'Clean beauty'], 'warm-feet': ['thermo', 'Warm feet'], 'egg-yolks': ['shell', 'Egg yolks'] };
@@ -3674,7 +3674,7 @@ function todayTiles(info, only) {
   const w = dayWindow(info), g = MOVE_GUIDE[w], [lvl] = CALM[w], ph = info.phase, warm = warmWindow(info);
   const best = MOVES.filter(m => g.r[m.k] === 3);
   const pp = PEOPLE_PLAN[ph], st = STRETCH[w], md = MEDITATE[w], open = ui.hubTip, rp = reliefPick(w);
-  const pics = { Eat: 'season-veg', Friends: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&q=70&auto=format&fit=crop', Stress: 'move-lift', Relief: carePhoto(RELIEF_PHOTO[rp.k] || 'foot-soak', 400) || 'move-walk', Tea: 'move-hiit' };
+  const pics = { Eat: 'season-veg', Friends: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&q=70&auto=format&fit=crop', Stress: 'move-lift', Tea: 'move-hiit' };
   const tile = (cls, act, g_, k, t, s_) => `<button class="dpt ${cls} ${pics[k] ? 'has-pic' : ''} ${act.tip && open === act.tip ? 'open' : ''}" ${act.to ? `data-action="nav" data-to="${act.to}"` : `data-action="hubTip" data-k="${act.tip}"`}>${pics[k] ? `<span class="dpt-g pic"><img class="pb" src="${picSrc(pics[k])}" alt="" loading="lazy"><img class="ps" src="${picSrc(pics[k])}" alt="" loading="lazy"><i></i></span>` : `<span class="dpt-g">${g_}</span>`}<span class="dpt-k">${k}</span><b>${t}</b><small>${s_}</small>${act.tip ? `<span class="dpt-more">${icon('plus', 14, 2.2)}</span>` : ''}</button>`;
   const fn = FOOD_NEEDS[w], fm = FOOD_MEALS[w], sp = STRESS_PLAN[w], td = TEA_DAY[w];
   const tips = {
@@ -3702,7 +3702,7 @@ function todayTiles(info, only) {
       ${tile('t-paper', { to: 'do/eat' }, '🥗', 'Eat', fn[0], `<span class="dpt-col">${colDots(fm.col[0])} ${fm.col[1]} foods</span>${fn[1].map(x => x[0].slice(x[0].indexOf(' ') + 1)).slice(0, 3).join(' · ')}<br><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
       ${tile('t-deep ph-full keep ph-fr', { to: 'do/friends' }, PEOPLE_G[ph], 'Friends', FRIENDS[ph].ideas[0], `<span class="dpt-fr">${icon('check', 12, 2.4)} ${FRIENDS[ph].ideas[1]}</span><span class="dpt-fr no">${icon('close', 12, 2.4)} Skip: ${FRIENDS[ph].skip.charAt(0).toLowerCase() + FRIENDS[ph].skip.slice(1)}</span>`)}
       ${tile(`calm lv${lvl} t-cort`, { to: 'breathe/stress' }, cortisolVial(lvl), 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
-      ${tile('t-sage ph-full keep', { to: 'relief' }, '🌿', 'Relief', rp.st.t, `${rp.mine ? 'You logged' : 'Common now:'} ${rp.k.toLowerCase()}`)}
+      ${tile('t-sage ph-full ph-vid', { to: 'relief' }, `<video class="dpt-vid" src="images/relief-stardust.mp4" poster="images/relief-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Relief', rp.st.t, `${rp.mine ? 'You logged' : 'Common now:'} ${rp.k.toLowerCase()}`)}
       ${tile('t-glow ph-full ph-vid', { to: 'ground' }, `<video class="dpt-vid" src="images/ground-cat.mp4" poster="images/ground-cat.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Ground', GROUND_PHASE[ph].t, '')}
       ${tile('t-tea t-cup', { to: 'do/tea' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/${/ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i.test(td[1]) ? 'cup-chai' : 'cup-glass'}.webp" alt="" loading="lazy"><canvas class="teacup3d" aria-label="${td[1]}, turning slowly"></canvas></span>`, 'Tea for today', td[1], td[2])}
     </div>

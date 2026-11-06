@@ -8103,3 +8103,4 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .view:has(> .rh3) .rh-article .rhw-r p { color: #304023; }
 .view:has(> .rh3) .rhw-key { color: rgba(255,244,230,.82); }
 .rhw-key .rhw-night { box-shadow: 0 0 0 1.5px rgba(255,244,230,.7); }
+.xp2 .xp video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
