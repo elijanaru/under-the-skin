@@ -112,7 +112,8 @@ export function dayInfo(date, stats) {
   const phase = cd > L ? 'luteal' : phaseFor(cd, L, P);
   const log = logs[iso(d)] || {};
   const periodActual = PERIOD_FLOWS.includes(log.flow);
-  const periodPredicted = !periodActual && d > today && cd <= P;
+  // today counts too: on day 2 of her period before she has logged today, she is still on her period
+  const periodPredicted = !periodActual && d >= today && cd <= P;
   const nextStart = (startP === last && !predicted) ? anchor : addDays(start, L);
   const isToday = d.getTime() === today.getTime();
   return {
