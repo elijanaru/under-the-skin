@@ -8078,3 +8078,28 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .lt-track.deck .lt-cta { background: #20301a; color: #fff; box-shadow: none; }
 .lt-track.deck .lt-tag { background: rgba(255,255,255,.92); border-color: transparent; color: #20301a; font-weight: 500; }
 .lt-track.deck .lt-tag i { background: #20301a; color: #fff; }
+
+/* Sun rhythm: "Why your body follows the sun" as tap-to-open rows, a time-of-day dot on each */
+.rhw-key { display: flex; flex-wrap: wrap; gap: 6px 12px; margin: 4px 0 12px; font: 400 12px Outfit, sans-serif; color: #4a5a3c; }
+.rhw-key span { display: inline-flex; align-items: center; gap: 5px; }
+.rhw-key i { width: 10px; height: 10px; border-radius: 50%; }
+.rhw { display: grid; gap: 8px; }
+.rhw-r { border-radius: 22px; background: #fff; border: 1px solid rgba(32,48,26,.08); box-shadow: 0 4px 14px rgba(32,48,26,.05); }
+.rhw-r summary { list-style: none; display: flex; align-items: center; gap: 12px; padding: 12px 14px; cursor: pointer; color: #20301a; }
+.rhw-r summary::-webkit-details-marker { display: none; }
+.rhw-r summary > .ic { flex: none; color: #6c823e; transition: transform .3s ease; }
+.rhw-r[open] summary > .ic { transform: rotate(180deg); }
+.rhw-ic { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: #20301a; }
+.rhw-t { flex: 1; min-width: 0; }
+.rhw-t b { display: block; font: 500 15.5px Outfit, sans-serif; }
+.rhw-t small { display: block; margin-top: 1px; font: 400 12.5px/1.35 Outfit, sans-serif; color: #4a5a3c; }
+.rhw-r p { margin: 0; padding: 0 16px 14px 66px; font: 400 14px/1.55 Outfit, sans-serif; color: #304023; }
+.rhw-am, .rhw-key .rhw-am { background: #f6d2b8; }
+.rhw-noon, .rhw-key .rhw-noon { background: #f3d77e; }
+.rhw-eve, .rhw-key .rhw-eve { background: #d9c8ee; }
+.rhw-night, .rhw-key .rhw-night { background: #20301a; color: #fff; }
+.rhw-all, .rhw-key .rhw-all { background: #dfe6cc; }
+.view:has(> .rh3) .rh-article .rhw-r .rhw-t b { color: #20301a; }
+.view:has(> .rh3) .rh-article .rhw-r p { color: #304023; }
+.view:has(> .rh3) .rhw-key { color: rgba(255,244,230,.82); }
+.rhw-key .rhw-night { box-shadow: 0 0 0 1.5px rgba(255,244,230,.7); }
