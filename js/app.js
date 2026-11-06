@@ -3373,16 +3373,21 @@ function viewSupp(id) {
 }
 const suppShort = x => { const w = x.name.replace(/\s*\(.*\)/, '').split(' '); return /^vitamin$/i.test(w[0]) ? w.slice(0, 2).join(' ') : w[0]; };
 // Supplements: today's stack as a day timeline, each capsule sits at the time of day she takes it; tap one for its spec sheet.
-const SUPP_SLOT = { iron: [0], 'vitamin-c': [0], 'b-complex': [0], b6: [0], creatine: [0], prenatal: [0], coq10: [0], ginger: [0, 1, 2, 3], 'omega-3': [1], 'vitamin-d': [1], probiotic: [1], 'vitamin-e': [1], calcium: [1, 2], zinc: [2], magnesium: [3], ashwagandha: [3] };
+const SUPP_SLOT = { iron: [0], 'vitamin-c': [0], 'b-complex': [0], b6: [0], creatine: [0], prenatal: [0], coq10: [0], ginger: [0, 1, 2, 3], 'omega-3': [1], 'vitamin-d': [1], probiotic: [1], 'vitamin-e': [1], calcium: [1, 2], zinc: [2], magnesium: [2], ashwagandha: [3] };
 function suppStack(on, now) {
   const slots = [['sun', 'Morning', 'Breakfast'], ['bowl', 'Midday', 'Lunch'], ['cup', 'Evening', 'Dinner'], ['moon', 'Night', 'Bedtime']];
-  const cols = slots.map((sl, i) => ({ sl, L: on.filter(x => (SUPP_SLOT[x.id] || [1]).includes(i)) }));
+  // a pick taken at every meal (ginger on period days) shows once as an all-day strip, not four times
+  const daily = on.filter(x => (SUPP_SLOT[x.id] || []).length === 4), timed = on.filter(x => !daily.includes(x));
+  const cols = slots.map((sl, i) => ({ sl, L: timed.filter(x => (SUPP_SLOT[x.id] || [1]).includes(i)) }));
   const apart = on.some(x => x.id === 'iron') && on.some(x => x.id === 'calcium');
   return `<section class="sd">
     <div class="sd-h"><div><small>${PHASES[now].name} phase</small><b>Your stack today</b></div><span class="sd-n"><b>${on.length}</b><small>picks</small></span></div>
     <div class="sd-line"><i></i></div>
     <div class="sd-cols">${cols.map(({ sl: [ic, t, m], L }) => `<div class="sd-c ${L.length ? '' : 'empty'}"><span class="sd-ic">${icon(ic, 16)}</span><b>${t}</b><small>${m}</small>
       <div class="sd-caps">${L.map(x => `<button class="sd-capw" data-action="nav" data-to="supp/${x.id}" aria-label="${x.name}, ${x.dose}"><span class="sd-cap ${x.han ? 'han' : ''}">${x.sym}</span><small>${suppShort(x)}</small></button>`).join('') || '<span class="sd-none">·</span>'}</div></div>`).join('')}</div>
+    ${daily.map(x => { const n = (x.dose.match(/(\d+) times a day/) || [])[1] || '4'; return `<button class="sd-all" data-action="nav" data-to="supp/${x.id}" aria-label="${x.name}, ${x.dose}">
+      <span class="sd-cap ${x.han ? 'han' : ''}">${x.sym}</span><span class="sd-all-t"><b>${suppShort(x)}, all day</b><small>${x.dose.replace(/,? ?\d+ times a day/, '')} at each time, morning to bedtime</small></span>
+      <span class="sd-all-n" aria-hidden="true">${Array.from({ length: 4 }, () => '<i></i>').join('')}<b class="dotnum">${n}×</b></span></button>`; }).join('')}
     ${apart ? `<p class="sd-note">${icon('clock', 12)} Iron in the morning, calcium later: keep them 2 hours apart</p>` : `<p class="sd-note">${icon('check', 12)} Tap a capsule for the dose, the timing and the study</p>`}
   </section>`;
 }
