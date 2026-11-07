@@ -2707,6 +2707,8 @@ function innerWeather(mn, pg, phase, inner, ms, feel) {
 const MANI_TECH = ['scene', 'end', 'talk', 'feeling', 'revision', 'sats', 'lullaby'];
 // practices that suit any day of the cycle, with how long they take
 const MANI_ANY = [['talk', '1 min, anytime'], ['feeling', '3 min'], ['lullaby', 'As you fall asleep']];
+// why each practice suits that phase, in two short lines: what her body gives her, and when to do it
+const MANI_FIT = { menstrual: ['You sink into rest easily', 'As you fall asleep'], follicular: ['Fresh, new energy', 'In the morning'], ovulatory: ['Easy to speak and act', 'All through the day'], luteal: ['You see what to change', 'Before sleep'] };
 const MANI_WHY = { scene: 'Picture one small moment that proves it is real.', end: 'Act and feel as if it already happened.', talk: 'Catch the inner chat and rewrite it kindly.', feeling: 'Stay with the feeling, let go of the how.', revision: 'At night, replay a hard moment the way you wished.', lullaby: 'Repeat a few soft words that mean it is done.', sats: 'Play your scene as you drift off to sleep.' };
 const MANI_ART = {
   scene: '<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M6 16l4-5 3 3 2-2 3 4"/><circle cx="16" cy="9" r="1.4"/>',
@@ -2754,7 +2756,10 @@ function viewManifest() {
         <label class="mm-scene"><span>My scene, in the present tense</span><textarea class="field mn-ta" data-input="mani.today" rows="2" placeholder="I am… / I have… / It feels so good that…">${esc(scene)}</textarea></label>
         <p class="mm-src">After Neville Goddard’s teaching in <i>Feeling is the Secret</i>: live the wish first as a feeling. A spiritual practice for reflection.</p></details></section>
     ${sectionTitle('Your month of manifesting')}
-    <div class="mfm">${PHASE_ORDER.map(p => { const t = MG.MANIFEST_CYCLE[p][0]; return `<button class="mfm-p ${p === phase ? 'now' : ''} ${t === k ? 'on' : ''}" style="--c:${PH_HEX[p]}" data-action="maniK" data-v="${t}"><i></i><small>${PHASES[p].name}${p === phase ? ' · now' : ''}</small><span class="mfm-a">${maniArt(t)}</span><b>${MG.MANIFEST[t].name}</b></button>`; }).join('')}</div>
+    <div class="mfm">${PHASE_ORDER.map(p => { const t = MG.MANIFEST_CYCLE[p][0], [fit, when] = MANI_FIT[p]; return `<button class="mfm-p ${p === phase ? 'now' : ''} ${t === k ? 'on' : ''}" style="--c:${PH_HEX[p]}" data-action="maniK" data-v="${t}">
+      <span class="mfm-h"><i></i>${PHASES[p].name}${p === phase ? '<em>Now</em>' : ''}</span>
+      <span class="mfm-r"><span class="mfm-a">${maniArt(t)}</span><b>${MG.MANIFEST[t].name}</b></span>
+      <small>${fit}</small><span class="mfm-w">${icon('clock', 11)}${when}</span></button>`; }).join('')}</div>
     ${sectionTitle('Any day of your cycle')}
     <div class="mfa" role="list">${MANI_ANY.map(([o, t]) => `<button class="mfa-c ${o === k ? 'on' : ''}" role="listitem" data-action="maniK" data-v="${o}"><span class="mfa-a">${maniArt(o)}</span><b>${MG.MANIFEST[o].name}</b><small>${MANI_WHY[o]}</small><em>${icon('clock', 12)} ${t}</em><span class="mfa-go">${o === k ? 'On top now' : `Try it ${icon('chevR', 12)}`}</span></button>`).join('')}</div>
     ${sectionTitle('The idea behind it')}
