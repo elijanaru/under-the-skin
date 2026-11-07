@@ -1966,22 +1966,33 @@ export const SUPP_LIB = [
 
 // Whole-food sources for each supplement: food first, the capsule fills the gap
 export const SUPP_FOOD = {
-  magnesium: [['Pumpkin seeds', 'A small handful covers about a third of the day'], ['Dark chocolate (85%)', 'Two squares'], ['Black and white beans', 'Soaked and slow-cooked'], ['Almonds and cashews', 'Soaked overnight']],
+  magnesium: [['Pumpkin seeds', 'Soaked or lightly roasted'], ['Dark chocolate (85%)', 'After a meal, with your tea or coffee'], ['Black and white beans', 'Soaked and slow-cooked'], ['Almonds and cashews', 'Soaked overnight']],
   iron: [['Red meat and liver', 'The best-absorbed iron'], ['Egg yolks', 'From pasture-raised hens'], ['Lentils and beans', 'With lemon or peppers for vitamin C'], ['Blackstrap molasses', 'A spoon in warm milk']],
   'omega-3': [['Wild salmon, sardines, mackerel', 'Two or three times a week'], ['Pasture-raised eggs', 'Richer in omega-3 than caged'], ['Walnuts', 'A handful'], ['Flax and chia seeds', 'Ground, so the body can use them']],
-  'vitamin-c': [['Peppers', 'Raw: one red pepper is more than a day'], ['Kiwi and citrus', 'Whole fruit, not juice'], ['Berries', 'Fresh or frozen'], ['Sauerkraut', 'Raw and unpasteurised']],
+  'vitamin-c': [['Peppers', 'Raw in salads, cooked on warm days'], ['Kiwi and citrus', 'Whole fruit, not juice'], ['Berries', 'Fresh or frozen'], ['Sauerkraut', 'Raw and unpasteurised']],
   ginger: [['Fresh ginger tea', 'Sliced root steeped in hot water'], ['Ginger in soups and stews', 'Warming for your period'], ['Grated into honey', 'A spoon in hot water']],
   creatine: [['Red meat', 'About 1 g per 250 g'], ['Herring and salmon', 'Also rich in omega-3']],
   'vitamin-d': [['Midday sun', '15–20 minutes on bare skin in summer'], ['Oily fish', 'Salmon, sardines, herring'], ['Egg yolks', 'From hens raised outdoors'], ['Butter from grass-fed cows', 'Also carries K2']],
   'b-complex': [['Eggs', 'B12, B2 and folate in one'], ['Liver', 'Once a week covers most B vitamins'], ['Avocado and asparagus', 'Gentle folate, low in oxalate'], ['Raw milk and cheese', 'B2 and B12']],
   probiotic: [['Raw sauerkraut and kimchi', 'Unpasteurised, from the fridge'], ['Kefir and raw-milk yoghurt', 'A small glass a day'], ['Aged cheese', 'Live cultures'], ['Kombucha', 'Low in sugar']],
-  zinc: [['Oysters', 'The richest source by far'], ['Red meat', 'Beef and lamb'], ['Pumpkin seeds', 'Soaked or roasted'], ['Eggs and cheese', 'Every day helps']],
+  zinc: [['Oysters', 'Above the daily limit, so once a week is plenty'], ['Red meat', 'Beef and lamb'], ['Pumpkin seeds', 'Soaked or roasted'], ['Eggs and cheese', 'Every day helps']],
   'vitamin-e': [['Sunflower seeds', 'A handful'], ['Almonds and hazelnuts', 'Soaked overnight'], ['Avocado', 'Half a day'], ['Cold-pressed olive oil', 'Raw, over salads']],
   ashwagandha: [['Warm milk with spices', 'Cinnamon and cardamom in the evening'], ['A calm evening routine', 'The herb works best with it']],
   b6: [['Salmon and tuna', 'Rich in B6'], ['Chicken and turkey', 'Light and easy'], ['Bananas', 'Ripe ones'], ['Potatoes and chickpeas', 'Cooked, with skin']],
   calcium: [['Raw milk, yoghurt and cheese', 'The easiest source'], ['Sardines with bones', 'Calcium and omega-3'], ['Broccoli and bok choy', 'Lightly cooked, easy to absorb'], ['Sesame seeds and tahini', 'A spoon a day']],
   prenatal: [['Avocado and asparagus', 'Natural folate'], ['Liver', 'Vitamin A and B12, a small portion weekly'], ['Eggs', 'Choline for the baby\'s brain'], ['Oily fish', 'Omega-3, low-mercury kinds']],
   coq10: [['Heart and liver', 'Organ meats are richest'], ['Sardines and mackerel', 'Oily fish'], ['Beef', 'Grass-fed'], ['Broccoli and cauliflower', 'Smaller amounts']],
+};
+
+// How much one serving gives, against a woman's daily need (USDA food tables, rounded down).
+// need: [amount, unit]; rows follow SUPP_FOOD in order: [serving, amount] or null when there is no fair number.
+export const SUPP_FOOD_AMT = {
+  magnesium: { need: [310, 'mg'], rows: [['30 g, a small handful', 150], ['2 squares, 20 g', 45], ['1 cup cooked', 120], ['30 g, a handful', 80]] },
+  iron: { need: [18, 'mg'], rows: [['100 g liver, cooked', 6.5], ['2 yolks', 0.9], ['1 cup cooked lentils', 6.6], ['1 tablespoon', 3.6]] },
+  zinc: { need: [8, 'mg'], rows: [['6 oysters', 30], ['100 g beef, cooked', 5], ['30 g', 2.2], ['2 eggs + 30 g cheese', 2.4]] },
+  calcium: { need: [1000, 'mg'], rows: [['1 glass of milk, 250 ml', 300], ['1 small tin, 90 g', 350], ['1 cup cooked bok choy', 160], ['1 tablespoon tahini', 65]] },
+  'vitamin-c': { need: [75, 'mg'], rows: [['1 red pepper', 150], ['1 kiwi', 64], ['1 cup strawberries', 85], ['½ cup', 10]] },
+  'vitamin-d': { need: [600, 'IU'], rows: [null, ['100 g salmon', 500], ['2 yolks', 80], null] },
 };
 
 // Autumn rituals: warm, replenish and protect as the season turns. [name, how, why, evidence]

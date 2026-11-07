@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
+  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -3370,6 +3370,20 @@ function suppSafe(id) {
     <div class="sf-k"><span><i class="d"></i>Your dose</span><span><i class="o"></i>Safe every day</span><span><i class="x"></i>Too much</span></div>
     <details class="sf-more"><summary>What the limit means ${icon('chevD', 13)}</summary><p>The most you can take every day, for years, that experts found safe for nearly all adults. ${note}</p></details></section>`;
 }
+// Food first: each food with what one serving gives, as a bar against her daily need
+const fmtAmt = v => v < 10 && v % 1 ? String(v) : String(Math.round(v));
+function suppFoodHead(id) {
+  const A = SUPP_FOOD_AMT[id]; if (!A) return '';
+  return `<div class="ff-h"><span>One serving gives</span><span>You need <b class="dotnum">${A.need[0]}</b> ${A.need[1]} a day</span></div>`;
+}
+function suppFoodRow(id, [f, tip], i) {
+  const A = SUPP_FOOD_AMT[id], r = A && A.rows[i];
+  if (!r) return `<div class="spec-row"><b>${f}</b><span>${tip}</span></div>`;
+  const [serv, v] = r, pc = Math.round(v / A.need[0] * 100), over = pc > 100;
+  return `<div class="ff-r"><div class="ff-t"><b>${f}</b><span class="ff-v"><b class="dotnum">${fmtAmt(v)}</b>${A.need[1]}</span></div>
+    <div class="ff-bar ${over ? 'over' : ''}" role="img" aria-label="About ${pc}% of your day"><span><i style="width:${Math.min(100, Math.max(3, pc))}%"></i></span><em>${over ? `${+(v / A.need[0]).toFixed(v / A.need[0] < 2 ? 1 : 0)}× your day` : `${pc}%`}</em></div>
+    <small>${serv} · ${tip}</small></div>`;
+}
 function viewSupp(id) {
   const x = SUPP_LIB.find(s => s.id === id); if (!x) return viewMissing();
   const ph = suppPhases(x), now = M.info && M.info.phase;
@@ -3379,7 +3393,7 @@ function viewSupp(id) {
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit(ph, now)}${ph.length === 4 ? '<small class="tf-all">Useful every day of your cycle</small>' : now && !ph.includes(now) ? `<small class="tf-all">Not a focus in your ${PHASES[now].name.toLowerCase()} phase</small>` : ''}</section>
     ${suppSafe(x.id)}
     ${suppDay(x.when)}
-    ${(SUPP_FOOD[x.id] || []).length ? `${sectionTitle('Food first')}<section class="card glass nu-food">${SUPP_FOOD[x.id].map(([f, a]) => `<div class="spec-row"><b>${f}</b><span>${a}</span></div>`).join('')}${warmWindow(M.info) ? '<small class="tf-all">You\u2019re in your warm window: pick the cooked and warm ones until your period ends.</small>' : ''}</section>` : ''}
+    ${(SUPP_FOOD[x.id] || []).length ? `${sectionTitle('Food first')}<section class="card glass nu-food">${suppFoodHead(x.id)}${SUPP_FOOD[x.id].map((r, i) => suppFoodRow(x.id, r, i)).join('')}${warmWindow(M.info) ? '<small class="tf-all">You\u2019re in your warm window: pick the cooked and warm ones until your period ends.</small>' : ''}</section>` : ''}
     ${remedyScience(x, { [x.id]: x })}
     ${(() => { const L = SUPP_LIB.filter(y => ttc() || !/prenatal|coq10/.test(y.id)), nx = L[(L.indexOf(x) + 1) % L.length]; return `<button class="card glass nu-next" data-action="nav" data-to="supp/${nx.id}"><small>Next</small><b>${nx.name}</b>${icon('chevR', 16)}</button>`; })()}
     <p class="fine center">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}. Food first, supplements to fill the gaps.</p>
