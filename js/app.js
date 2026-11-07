@@ -629,14 +629,16 @@ const trArrow = tr => `<svg viewBox="0 0 16 16" width="13" height="13" fill="non
 function readout(cdRaw, L, P, isYou) {
   const cd = Math.min(cdRaw, L);
   const ph = C.phaseFor(cd, L, P), h = C.hormonesRel(cd, L, P), tcm = TCM[ph];
+  // which way each hormone is heading: today against tomorrow in the model (after the last day the next cycle starts)
+  const nx = C.hormonesRel(cd >= L ? 1 : cd + 1, L, P);
   const rows = HORMONES.map(x => {
     return `<div class="ro-row"><span class="ro-name"><svg width="16" height="8"><line x1="1" y1="4" x2="15" y2="4" stroke="${x.color}" stroke-width="2.2" stroke-linecap="round" ${x.dash ? `stroke-dasharray="${x.dash}"` : ''}/></svg>${x.name}</span>
-      <span class="ro-bar"><b style="width:${Math.round(h[x.key] * 100)}%;background:${x.color}"></b></span>
-      <span class="ro-lvl">${C.hormoneLevel(h[x.key])} ${(() => { const lv = C.hormoneLevel(h[x.key]), d = /High|Peak/.test(lv) ? 'rising' : lv === 'Low' ? 'falling' : 'steady'; return `<em class="tr ${d}">${trArrow(d)}</em>`; })()}</span></div>`;
+      <span class="ro-bar"><b style="width:${Math.max(6, Math.round(h[x.key] * 100))}%;background:${x.color}"></b></span>
+      <span class="ro-lvl">${C.hormoneLevel(h[x.key])} ${(() => { const dv = nx[x.key] - h[x.key], d = dv > .015 ? 'rising' : dv < -.015 ? 'falling' : 'steady'; return `<em class="tr ${d}" title="${d === 'steady' ? 'Holding steady' : d === 'rising' ? 'Rising' : 'Falling'} over the next day">${trArrow(d)}</em>`; })()}</span></div>`;
   }).join('');
   return `<div class="ro-head"><div class="ro-phase">Day ${cdRaw} · ${PHASES[ph].name}</div></div>
     <div class="ro-rows">${rows}</div>
-    ${(() => { const ov = C.ovulationDay(L, P), d = ov - cd; return `<div class="ro-egg"><svg class="egg-ic" viewBox="-7 -8 14 16" width="12" height="14" aria-hidden="true"><ellipse rx="5" ry="6.4" cy="-.4" fill="#fff" stroke="#c9961a" stroke-width="1.6"/><circle r="2.3" cy=".6" fill="#e8b52c"/></svg>${d === 0 ? 'LH surge — egg releasing today' : d === 1 ? 'LH surge — egg release tomorrow' : d > 1 ? `Egg release in ${d} days · day ${ov}` : `Egg released on day ${ov}`}</div>`; })()}`;
+    ${(() => { const ov = C.ovulationDay(L, P), d = ov - cd; return `<div class="ro-egg"><svg class="egg-ic" viewBox="-7 -8 14 16" width="12" height="14" aria-hidden="true"><ellipse rx="5" ry="6.4" cy="-.4" fill="#fff" stroke="#c9961a" stroke-width="1.6"/><circle r="2.3" cy=".6" fill="#e8b52c"/></svg>${d === 0 ? 'Egg release today' : d === 1 ? 'Egg release tomorrow' : d > 1 ? `Egg release in ${d} days · day ${ov}` : `Egg released on day ${ov}`}</div>`; })()}`;
 }
 function bindCharts() {
   document.querySelectorAll('.cchart').forEach(el => {

@@ -8234,3 +8234,12 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .bzw-d .now small { color: #20301a; font-weight: 500; }
 .bzw-d .now i { box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(32,48,26,.35); }
 @media (max-width: 360px) { .bzw { flex-wrap: wrap; } }
+
+/* Insights › day readout: a visible track for each hormone level, ink names, true direction arrows */
+.ro-rows { gap: 9px; }
+.ro-name { color: #20301a; font-weight: 500; }
+.ro-bar { height: 8px; border-radius: 8px; background: rgba(32,48,26,.08); box-shadow: inset 0 1px 2px rgba(32,48,26,.06); }
+.ro-bar b { border-radius: 8px; }
+.ro-lvl { color: #20301a; font-weight: 500; }
+.ro-lvl .tr.steady { color: #56624a; background: rgba(48,64,35,.07); }
+.ro-lvl .tr.steady svg { transform: none; }
