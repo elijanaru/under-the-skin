@@ -8214,3 +8214,19 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .cyf-d small { display: block; margin-top: 8px; font-size: 12px; color: #5d6b51; }
 .cyf-dots { flex-wrap: nowrap; gap: 3px; max-width: none; }
 .cyf-dots i { width: 8px; height: 8px; }
+
+/* Breathe › your breath this week: seven days, a filled dot for each day she finished a session */
+.bzw { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 4px 0 22px; padding: 14px 16px; border-radius: 26px; border: 1px solid rgba(32,48,26,.08); background: #fff; box-shadow: 0 6px 18px rgba(32,48,26,.06); color: #20301a; }
+.bzw-h { display: grid; gap: 2px; min-width: 0; }
+.bzw-h small { white-space: nowrap; font-size: 11px; letter-spacing: .04em; color: #6c823e; }
+.bzw-h b { font-weight: 500; font-size: 15px; white-space: nowrap; }
+.bzw-h .dotnum { font-size: 28px; margin-right: 3px; vertical-align: -3px; }
+.bzw-d { display: flex; gap: 6px; }
+.bzw-d span { display: grid; justify-items: center; gap: 4px; width: 22px; }
+.bzw-d i { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid rgba(32,48,26,.18); background: #fff; }
+.bzw-d .on i { border-color: transparent; background: hsl(calc(var(--hb) + 0 * var(--hk)) calc(38% * var(--hs)) 42%); }
+.bzw-d em { font-style: normal; font-size: 9px; color: #fff; line-height: 1; }
+.bzw-d small { font-size: 10px; color: rgba(32,48,26,.5); }
+.bzw-d .now small { color: #20301a; font-weight: 500; }
+.bzw-d .now i { box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(32,48,26,.35); }
+@media (max-width: 360px) { .bzw { flex-wrap: wrap; } }

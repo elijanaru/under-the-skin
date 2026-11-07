@@ -4763,6 +4763,20 @@ function breathMonth(phase, k) {
         <span class="bzm-for">${B.for}</span></button>`; }).join('')}</div>
     <div class="bzm-key"><span><i class="i"></i>In</span><span><i class="h"></i>Hold</span><span><i class="o"></i>Out</span><span class="bzm-s">seconds</span></div>`;
 }
+// her breath this week: one dot for each day she finished a full session (breathing or the still sit)
+function breathWeek() {
+  const L = state.breathLog || {}, t = todayISO();
+  const days = Array.from({ length: 7 }, (_, i) => C.addDays(new Date(), i - 6)), n = days.filter(d => L[C.iso(d)]).length;
+  return `<div class="bzw" aria-label="You breathed on ${n} of the last 7 days"><div class="bzw-h"><small>Breathed this week</small><b><span class="dotnum">${n}</span> of 7 days</b></div>
+    <div class="bzw-d">${days.map(d => { const k = C.iso(d), v = L[k] || 0; return `<span class="${k === t ? 'now' : ''} ${v ? 'on' : ''}"><i>${v > 1 ? `<em class="dotnum">${Math.min(v, 9)}</em>` : ''}</i><small>${fmt(d, { weekday: 'narrow' })}</small></span>`; }).join('')}</div></div>`;
+}
+function breathDone() {
+  const L = state.breathLog = state.breathLog || {}, t = todayISO(); L[t] = (L[t] || 0) + 1;
+  // keep only the last 60 days
+  const cut = C.iso(C.addDays(new Date(), -60)); Object.keys(L).forEach(k => { if (k < cut) delete L[k]; });
+  save();
+  const w = document.querySelector('.bzw'); if (w) w.outerHTML = breathWeek();
+}
 function viewBreathe(from) {
   const phase = M.info && M.info.phase, rec = BREATH_FOR[phase] || 'sigh', k = BREATHS[ui.bzK] ? ui.bzK : rec, B = BREATHS[k];
   return `${topbar('Breathe', { back: true })}
@@ -4802,6 +4816,7 @@ function viewBreathe(from) {
         <p class="bz-say">Stay in the present.</p>
       </div>
     </section>
+    ${breathWeek()}
     ${breathMonth(phase, k)}
     ${from === 'stress' && M.info ? cortisolSec(M.info) : ''}
     <figure class="bz-quote"><span>“</span><blockquote>The past is already gone and the future has not yet come. See clearly what is here, now.</blockquote><figcaption>The Buddha, from the Bhaddekaratta Sutta</figcaption></figure>
@@ -4842,7 +4857,7 @@ function mountMeditate(el) {
   const show = () => { big.textContent = fmt(left); bar.style.width = `${((1 - left / TOTAL) * 100).toFixed(2)}%`; };
   const unring = () => { nodes.forEach(n => { try { n.stop(); } catch {} }); nodes = []; };
   const release = () => { try { lock && lock.release(); } catch {} lock = null; };
-  function finish() { clearInterval(iv); st = 'done'; left = 0; show(); navigator.vibrate?.([180, 120, 180]); btn.textContent = 'Again'; word.textContent = 'Well done. Notice how you feel.'; if (say) say.textContent = 'You did so well.'; el.dataset.ph = ''; release(); }
+  function finish() { clearInterval(iv); st = 'done'; breathDone(); left = 0; show(); navigator.vibrate?.([180, 120, 180]); btn.textContent = 'Again'; word.textContent = 'Well done. Notice how you feel.'; if (say) say.textContent = 'You did so well.'; el.dataset.ph = ''; release(); }
   const tick = () => { left = Math.max(0, endAt - performance.now()); show(); if (left <= 0) finish(); };
   function start() {
     if (st === 'done') left = TOTAL;
@@ -4872,7 +4887,7 @@ function mountBreath(el) {
   const swap = (a, b, w) => { t.textContent = a; sub.textContent = b; say.textContent = w; txt.classList.remove('sw'); say.classList.remove('sw'); void txt.offsetWidth; txt.classList.add('sw'); say.classList.add('sw'); };
   function frame(now) {
     const e = now - t0, round = Math.floor(e / CYC);
-    if (round >= ROUNDS) return stop(true);
+    if (round >= ROUNDS) { breathDone(); return stop(true); }
     let m = e % CYC, i = 0; while (m >= STEPS[i][3]) { m -= STEPS[i][3]; i++; }
     const [k, a, b, ms] = STEPS[i], [s0, s1] = SC[i], sc = s0 + (s1 - s0) * ease(m / ms);
     if (!still) el.style.setProperty('--b', ((sc - .42) / .68).toFixed(3));
