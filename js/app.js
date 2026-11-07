@@ -3914,13 +3914,22 @@ function stageHero(info, energy, o = {}) {
     </div>
   </div>`;
 }
+// The period pill under the hero: on her logged period days it asks about today's flow;
+// "Period started?" only when it is due, late, predicted or under 6 days away (never mid-period, where it would start a new cycle)
+function periodPill(info) {
+  const flow = getLog(todayISO()).flow;
+  // on her period: a logged flow day, or a predicted day inside a period whose start she logged
+  if (info.periodActual || PERIOD_FLOWS.includes(flow) || (info.periodPredicted && !info.predicted)) return `<button class="fh-period pp ps2 ps3" data-action="nav" data-to="log" aria-label="Log today's flow, period day ${info.cd}"><i class="ps3-dot"></i>${PERIOD_FLOWS.includes(flow) ? `Flow logged · day ${info.cd}` : `How’s your flow today?`}</button>`;
+  if (info.late || info.dueToday || info.periodPredicted || info.daysToPeriod <= 5) return `<button class="fh-period pp ps2 ps3" data-action="periodStart" aria-label="Period started? Log today as day 1"><i class="ps3-dot"></i>Period started?</button>`;
+  return '';
+}
 function todayHub(info, energy, head = '') {
   const ph = PHASES[info.phase], tcm = TCM[info.phase], [rh1, rh2] = PHASE_RHYTHM_2[info.phase];
   const D = dayMoments(info), m = momentAt(D, nowH());
   return `<section class="hub"><div class="hub-life" aria-hidden="true">${SPORES}</div>${head}
     ${stageHero(info, energy)}
     <div class="stage-after">${ttc() && info.fertile ? `<span class="fh-badge">${icon('spark', 13)} Fertile</span>` : ''}
-      ${PERIOD_FLOWS.includes(getLog(todayISO()).flow) && info.cd === 1 ? '' : `<button class="fh-period pp ps2 ps3" data-action="periodStart" aria-label="Period started? Log today as day 1"><i class="ps3-dot"></i>Period started?</button>`}
+      ${periodPill(info)}
       ${energyCard(info, energy)}</div>
     <div class="hub-sec hub-plan">
       <div class="hub-k"><span>Best things to do today</span><span class="hub-day">Day ${Math.min(info.cd, info.L)}</span></div>
@@ -6517,7 +6526,7 @@ const actions = {
     if (state.profile.noPeriod) delete state.profile.noPeriod;
     const before = C.cycleStats(state), k = todayISO(); setLog(k, { flow: 'medium' });
     const after = C.cycleStats(state);
-    toast(after.lengths.length && after.avgCycle !== before.avgCycle ? `Period logged · your cycle is now ${after.avgCycle} days` : 'Period logged — take it easy today'); render();
+    toast(after.lengths.length && after.avgCycle !== before.avgCycle ? `Period logged · your cycle is now ${after.avgCycle} days` : 'Period logged. Take it easy today'); render();
   },
   togglePeriod: () => {
     const k = ui.calSelected, l = getLog(k);
