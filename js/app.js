@@ -3079,13 +3079,20 @@ function cycleFlag() {
   const a = ps[ps.length - 2], b = ps[ps.length - 1], gap = C.diffDays(b.start, a.start);
   const key = C.iso(b.start);
   if ((state.flagDismissed || '') === key) return '';
-  let msg = '';
-  if (gap < 15) msg = `Your latest period was logged ${gap} days after the previous one. If that was spotting or a mis-tap, remove it in the calendar so predictions stay accurate.`;
-  else if (gap < 21) msg = `Your last cycle was ${gap} days — shorter than the usual 21–35. One short cycle is common; if it keeps happening, mention it to your doctor.`;
-  else if (gap > 35) msg = `Your last cycle was ${gap} days — longer than the usual 21–35. Stress, travel or illness can do this; if it keeps happening, mention it to your doctor.`;
-  if (!msg) return '';
-  return `<section class="card flag"><span class="bn-ic">${icon('spark', 18)}</span><div class="bn-t"><b>Unusual cycle</b><p>${msg}</p>
-    <div class="flag-acts"><button class="link" data-action="flagEdit" data-date="${key}">Open calendar</button><button class="link muted-l" data-action="flagDismiss" data-k="${key}">It’s correct</button></div></div></section>`;
+  const [head, msg] = gap < 15 ? [`Two periods ${gap} days apart`, 'Spotting or a mis-tap? Fix it so your predictions stay right.']
+    : gap < 21 ? [`A short cycle: ${gap} days`, 'One short cycle is common. If it keeps happening, tell your doctor.']
+    : gap > 35 ? [`A long cycle: ${gap} days`, 'Stress, travel or illness can do this. If it repeats, tell your doctor.'] : [];
+  if (!head) return '';
+  // where this gap sits on a 0 to 50 day line, next to the usual 21 to 35 days and her own average
+  const X = d => (Math.min(50, Math.max(0, d)) / 50 * 100).toFixed(1), avg = Math.round(M.stats.avgCycle);
+  return `<section class="card flag fl2"><div class="fl2-h"><span class="bn-ic">${icon('spark', 18)}</span><div><small>Unusual cycle</small><b>${head}</b></div></div>
+    <div class="fl2-line" role="img" aria-label="This cycle ${gap} days, usual 21 to 35, your average ${avg}">
+      <i class="fl2-ok" style="left:${X(21)}%;width:${(X(35) - X(21)).toFixed(1)}%"></i>
+      <span class="fl2-avg" style="left:${X(avg)}%"><small>You ${avg}</small></span>
+      <span class="fl2-me" style="left:${X(gap)}%"><b class="dotnum">${gap}</b></span></div>
+    <div class="fl2-ax"><span>0</span><span style="left:${X(21)}%">21</span><span style="left:${X(35)}%">35</span><span>50 days</span></div>
+    <p>${msg}</p>
+    <div class="fl2-acts">${gap < 15 ? `<button class="fl2-b on" data-action="flagEdit" data-date="${key}">${icon('calendar', 14)} Fix in calendar</button>` : ''}<button class="fl2-b" data-action="flagDismiss" data-k="${key}">${icon('check', 14)} It’s correct</button></div></section>`;
 }
 
 // ---------- personal patterns (learned from logs) ----------

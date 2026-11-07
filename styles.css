@@ -8259,3 +8259,24 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .ff-bar.over i { background: #20301a; }
 .ff-bar em { min-width: 38px; text-align: right; font-style: normal; font-size: 11.5px; font-weight: 600; color: #304023; }
 .ff-r small { font-size: 12px; line-height: 1.35; color: #4b5a40; }
+
+/* Home › Unusual cycle: where this cycle sits on a day line, next to the usual 21 to 35 and her own average */
+.flag.fl2 { display: grid; gap: 12px; padding: 16px 18px 16px; }
+.fl2-h { display: flex; align-items: center; gap: 12px; }
+.fl2-h small { display: block; font-size: 11.5px; color: #6c823e; letter-spacing: .02em; }
+.fl2-h b { font-size: 17px; font-weight: 600; color: #20301a; line-height: 1.2; }
+.fl2-line { position: relative; height: 10px; margin: 30px 4px 0; border-radius: 10px; background: rgba(32,48,26,.08); }
+.fl2-ok { position: absolute; top: 0; bottom: 0; border-radius: 10px; background: color-mix(in srgb, #6c823e 45%, #fff); }
+.fl2-avg { position: absolute; top: -3px; width: 2px; height: 16px; margin-left: -1px; background: #304023; border-radius: 2px; }
+.fl2-avg small { position: absolute; bottom: 19px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 10.5px; color: #304023; }
+.fl2-me { position: absolute; top: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px; display: grid; place-items: center; border-radius: 50%; background: hsl(calc(var(--hb) + 0 * var(--hk)) calc(52% * var(--hs)) 44%); box-shadow: 0 0 0 3px #fff, 0 4px 10px rgba(32,48,26,.25); }
+.fl2-me b { font-size: 11px; color: #fff; font-weight: 400; }
+.fl2-ax { position: relative; height: 14px; margin: 0 4px; font-size: 10.5px; color: rgba(32,48,26,.55); }
+.fl2-ax span { position: absolute; top: 0; transform: translateX(-50%); }
+.fl2-ax span:first-child { left: 0; transform: none; }
+.fl2-ax span:last-child { right: 0; transform: none; }
+.flag.fl2 p { margin: 0; font-size: 13.5px; line-height: 1.45; color: #304023; }
+.fl2-acts { display: flex; gap: 8px; flex-wrap: wrap; }
+.fl2-b { display: inline-flex; align-items: center; gap: 6px; padding: 9px 15px; border-radius: 999px; border: 1px solid rgba(32,48,26,.18); background: #fff; color: #20301a; font: 500 13.5px Outfit, sans-serif; cursor: pointer; }
+.fl2-b.on { background: #20301a; border-color: #20301a; color: #fff; }
+.fl2-b svg { width: 14px; height: 14px; }
