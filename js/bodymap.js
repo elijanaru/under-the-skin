@@ -32,4 +32,4 @@ export const BODY_MAP = {
   ],
 };
 // where each part sits on the 340 x 300 map: [label x, label y, side, body point x, body point y]
-export const BODY_PIN = { mind: [0, 34, 'l', 168, 58], heart: [0, 118, 'l', 168, 118], gut: [0, 214, 'l', 160, 150], womb: [340, 118, 'r', 176, 166], legs: [340, 232, 'r', 222, 204] };
+export const BODY_PIN = { mind: [0, 36, 'l', 168, 58], heart: [0, 128, 'l', 168, 118], gut: [0, 220, 'l', 160, 150], womb: [340, 82, 'r', 176, 166], legs: [340, 174, 'r', 222, 204] };

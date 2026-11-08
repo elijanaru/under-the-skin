@@ -8373,3 +8373,8 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .hub .dpt.ph-fr .dpt-fr svg { margin-top: 0; }
 .hub .dpt.ph-fr .dpt-fr.no { background: rgba(255,255,255,.08); text-decoration: line-through; text-decoration-color: rgba(255,255,255,.5); }
 .hub .dpt.ph-fr small { display: grid; justify-items: start; }
+
+/* Today › Eat tile: the photo of the recipe she is recommended today (same as Tonight's plate), cut as a round plate */
+.hub .dpt.t-dish .dish-ph { display: block; width: 118px; height: 118px; margin: 0 auto; border-radius: 50%; overflow: hidden; box-shadow: 0 14px 26px -10px rgba(32,48,26,.45), 0 0 0 4px #fff; }
+.hub .dpt.t-dish .dish-ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hub .dpt.t-dish .dpt-g:has(.dish-ph) { height: 126px; display: grid; place-items: center; }

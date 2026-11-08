@@ -2141,11 +2141,17 @@ function plTea() {
     <span class="plt-t"><small>Tea for today</small><b>${td[1]}</b><em>${td[2]}</em></span>${icon('chevR', 16)}</button>`;
 }
 // Tonight's plate: one real recipe for her phase, with its photo, a new one every day.
-function plTonight(phase, warm) {
+// The same recipe is the Eat tile on Today, so both always name one dish.
+function tonightRecipe(phase, warm) {
   const pool = RECIPES.filter(r => r.phases.includes(phase) && (r.meal === 'Dinner' || r.meal === 'Lunch') && (!warm || !r.raw));
   const list = pool.length ? pool : RECIPES.filter(r => r.phases.includes(phase));
-  if (!list.length) return '';
-  const day = Math.floor((C.startOfDay(new Date()) - new Date(2026, 0, 1)) / 864e5), r = list[((day % list.length) + list.length) % list.length], u = photoUrl(r.id, 900);
+  if (!list.length) return null;
+  const day = Math.floor((C.startOfDay(new Date()) - new Date(2026, 0, 1)) / 864e5);
+  return list[((day % list.length) + list.length) % list.length];
+}
+function plTonight(phase, warm) {
+  const r = tonightRecipe(phase, warm); if (!r) return '';
+  const u = photoUrl(r.id, 900);
   return `<button class="card pl-tonight" data-action="nav" data-to="recipe/${r.id}">${u ? `<img src="${u}" alt="${esc(r.name)}" loading="lazy">` : glowArt('orb', 7)}<span class="plto-sh"></span>
     <span class="plto-t"><small>Tonight’s plate · ${r.time} min</small><b>${r.name}</b><span class="plm-cta">Cook it ${icon('chevR', 14)}</span></span></button>`;
 }
@@ -3736,6 +3742,9 @@ const DISH_DAY = {
   focus: { m: 'ramen', t: 'Chicken ramen with egg', why: 'Steady protein and carbs keep cravings calm.' },
   premenstrual: { m: 'miso', t: 'Salmon miso soup', why: 'Warm and gentle, with omega-3 for the cramps ahead.' },
 };
+// One short line on what the dish gives her: "Heme iron, zinc and B12 for your period."
+const recWhy = r => { const n = (r.nutrients || []).slice(0, 3).map((x, i) => i && /^[A-Z][a-z]/.test(x) ? x.charAt(0).toLowerCase() + x.slice(1) : x), l = n.length > 1 ? `${n.slice(0, -1).join(', ')} and ${n[n.length - 1]}` : n[0];
+  return l ? `${l} in one plate.` : 'Made for this part of your cycle.'; };
 function todayTiles(info, only) {
   const w = dayWindow(info), g = MOVE_GUIDE[w], [lvl] = CALM[w], ph = info.phase, warm = warmWindow(info);
   const best = MOVES.filter(m => g.r[m.k] === 3);
@@ -3743,7 +3752,7 @@ function todayTiles(info, only) {
   const pics = { Stress: 'move-lift', Tea: 'move-hiit' };
   const tile = (cls, act, g_, k, t, s_) => `<button class="dpt ${cls} ${pics[k] ? 'has-pic' : ''} ${act.tip && open === act.tip ? 'open' : ''}" ${act.to ? `data-action="nav" data-to="${act.to}"` : `data-action="hubTip" data-k="${act.tip}"`}>${pics[k] ? `<span class="dpt-g pic"><img class="pb" src="${picSrc(pics[k])}" alt="" loading="lazy"><img class="ps" src="${picSrc(pics[k])}" alt="" loading="lazy"><i></i></span>` : `<span class="dpt-g">${g_}</span>`}<span class="dpt-k">${k}</span><b>${t}</b><small>${s_}</small>${act.tip ? `<span class="dpt-more">${icon('plus', 14, 2.2)}</span>` : ''}</button>`;
   const fn = FOOD_NEEDS[w], fm = FOOD_MEALS[w], sp = STRESS_PLAN[w], td = TEA_DAY[w];
-  const dish = DISH_DAY[w], D = DISH_3D[dish.m];
+  const dish = DISH_DAY[w], D = DISH_3D[dish.m], rec0 = tonightRecipe(ph, warm), rec = rec0 && photoUrl(rec0.id) ? rec0 : null;
   const tips = {
     stress: [icon('mind', 22), `Stress today: ${['', 'low', 'medium', 'high'][lvl]}`, sp[0], sp[1], 'some'],
     stretch: [icon('leaf', 22), st[0], st[1], st[2], 'some'],
@@ -3766,7 +3775,7 @@ function todayTiles(info, only) {
   if (only) return tipBody(only);
   return `<div class="dpt-grid">
       ${tile('wide hero-move ph-vid', { to: 'move' }, `<video class="dpt-vid" src="images/move-stardust.mp4" poster="images/move-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Sport', g.title, best.map(m => m.n).slice(0, 3).join(' · '))}
-      ${tile('t-tea t-cup t-dish', { to: 'do/eat' }, `<span class="cup3d-w"><img class="dpt-cup" src="${D.img}" alt="" loading="lazy"><canvas class="teacup3d" data-model="${D.model}" data-elev="0.9" data-fit="${D.fit}" aria-label="${dish.t}, turning slowly"></canvas></span>`, 'Eat today', dish.t, `<span class="dpt-why">${dish.why}</span><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
+      ${rec ? tile('t-tea t-cup t-dish', { to: `recipe/${rec.id}` }, `<span class="dish-ph"><img src="${photoUrl(rec.id, 400)}" alt="" loading="lazy"></span>`, 'Eat today', rec.name, `<span class="dpt-why">${recWhy(rec)}</span><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`) : tile('t-tea t-cup t-dish', { to: 'do/eat' }, `<span class="cup3d-w"><img class="dpt-cup" src="${D.img}" alt="" loading="lazy"><canvas class="teacup3d" data-model="${D.model}" data-elev="0.9" data-fit="${D.fit}" aria-label="${dish.t}, turning slowly"></canvas></span>`, 'Eat today', dish.t, `<span class="dpt-why">${dish.why}</span><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
       ${tile('t-deep ph-full keep ph-fr ph-vid', { to: 'do/friends' }, `<video class="dpt-vid" src="images/friends-sunset.mp4" poster="images/friends-sunset.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Friends', FRIENDS_TILE[ph][0], `<span class="dpt-fr">${icon('check', 12, 2.4)} ${FRIENDS_TILE[ph][1]}</span><span class="dpt-fr no">${icon('close', 12, 2.4)} ${FRIENDS_TILE[ph][2]}</span>`)}
       ${tile('t-sage ph-full ph-vid', { to: 'relief' }, `<video class="dpt-vid" src="images/relief-stardust.mp4" poster="images/relief-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Relief', rp.st.t, `${rp.mine ? 'You logged' : 'Common now:'} ${rp.k.toLowerCase()}`)}
       ${tile(`calm lv${lvl} t-cort t-mol`, { to: 'breathe/stress' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/cortisol-mol.webp" alt="" loading="lazy"><canvas class="teacup3d" data-model="models/cortisol.glb" data-elev="0.3" data-fit="1.9" data-steam="0" data-shadow="0" aria-label="The cortisol molecule, turning slowly"></canvas></span>`, 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}<span class="cv-lv" aria-hidden="true">${[1, 2, 3].map(i => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</span>`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
