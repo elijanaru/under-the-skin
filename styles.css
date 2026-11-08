@@ -9216,3 +9216,9 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 
 /* No rubber-band past the top or bottom of a page (web and PWA; the iOS app turns bounce off natively) */
 html, body { overscroll-behavior-y: none; }
+
+/* Home tiles as a calm mosaic: the tall recipe card spans two rows, Sun and Relief sit stacked beside it as near-squares; Ground runs wide */
+.hub .dpt-grid > .dpt.t-dish { grid-row: span 2; }
+.hub .dpt-grid > .dpt.ph-sun, .hub .dpt-grid > .dpt.t-sage { min-height: 168px !important; height: auto; }
+.hub .dpt-grid > .dpt.wide.t-glow { min-height: 112px !important; }
+.hub .dpt.ph-sun > small { display: none !important; }
