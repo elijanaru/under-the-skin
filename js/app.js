@@ -1159,7 +1159,7 @@ function viewOnboarding() {
   const bd = o.birthday ? (() => { const [y, m, d] = o.birthday.split('-').map(Number); const sign = Z.sunSign(m, d), moon = Z.moonPhase(new Date(y, m - 1, d, 12)), cz = Z.chineseZodiac(y, m, d); return { sign, moon, cz }; })() : null;
   const body = {
     1: ui.onbWhere ? `<div class="onb-avatar where"><span class="where-emo" aria-hidden="true">🌍</span></div><h2 class="onb-title">Where do <span>you live?</span></h2>
-        <select id="onb-country" class="field big-in" data-input="onb.country" aria-label="Country">${SZ.COUNTRIES.map(([code, nm]) => `<option value="${code}" ${code === (o.country || myCountry()) ? 'selected' : ''}>${nm}</option>`).join('')}</select>
+        ${countryPicker('onb', o.country || myCountry(), 'cp-onb')}
         <div class="onb-why"><b>Why we ask</b>
           <p>${icon('leaf', 14)} What’s in season to eat where you are</p>
           <p>${icon('sun', 14)} Your sunrise, sunset and daylight</p>
@@ -5730,6 +5730,25 @@ function seasonalDishesToday(info, n = 2) {
   return ds.slice(0, n);
 }
 function myCountry() { return state?.profile?.country || SZ.guessCountry(); }
+// Country picker: a search field over the A to Z list (112 countries), the current one pinned on top. Filters in place, no re-render.
+const CP_ALIAS = { US: 'usa america united states', GB: 'uk england britain scotland wales great britain', NL: 'holland', DE: 'deutschland', AT: 'osterreich', CH: 'schweiz suisse svizzera', ES: 'espana', IT: 'italia', FR: 'francais', AE: 'uae emirates dubai abu dhabi', KR: 'korea seoul', CZ: 'czechia', HK: 'hongkong', SA: 'ksa', TW: 'taiwan', MX: 'mejico', BR: 'brasil', PL: 'polska', GR: 'hellas', TR: 'turkiye', NZ: 'aotearoa', IE: 'eire', PH: 'pilipinas', IN: 'bharat', JP: 'nippon', CN: 'zhongguo', RU: 'rossiya', UA: 'ukraina', SE: 'sverige', NO: 'norge', DK: 'danmark', FI: 'suomi', HR: 'hrvatska', HU: 'magyarorszag', LT: 'lietuva', LV: 'latvija', EE: 'eesti', MK: 'north macedonia', BA: 'bosnia herzegovina', CI: 'ivory coast' };
+const cpNorm = t => String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]/g, ' ');
+function flagOf(c) { return /^[A-Z]{2}$/.test(c) ? String.fromCodePoint(...[...c].map(ch => 127397 + ch.charCodeAt(0))) : '🌍'; }
+function countryPicker(scope, cur, cls = '') {
+  const name = SZ.COUNTRIES.find(x => x[0] === cur)?.[1] || cur;
+  const row = (c, n, extra = '') => `<button type="button" role="option" class="cp-row ${c === cur ? 'on' : ''} ${extra}" aria-selected="${c === cur}" data-action="pickCountry" data-scope="${scope}" data-v="${c}" data-k="${esc(cpNorm(n + ' ' + c + ' ' + (CP_ALIAS[c] || '')))}"><span class="cp-f" aria-hidden="true">${flagOf(c)}</span><span class="cp-n">${n}</span><span class="cp-ok" aria-hidden="true">${icon('check', 15, 2.6)}</span></button>`;
+  return `<div class="cpick ${cls}">
+    <label class="cp-q">${icon('search', 18)}<input type="search" data-cpq placeholder="Search your country" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" aria-label="Search your country"></label>
+    <div class="cp-list" role="listbox" aria-label="Countries">${row(cur, name, 'cp-cur')}<span class="cp-sep">A to Z</span>${SZ.COUNTRIES.map(([c, n]) => row(c, n)).join('')}<p class="cp-none" hidden>No match. Try the name in English.</p></div>
+  </div>`;
+}
+function cpFilter(inp) {
+  const box = inp.closest('.cpick'), q = cpNorm(inp.value).trim(), words = q.split(/\s+/).filter(Boolean);
+  let n = 0;
+  box.querySelectorAll('.cp-row:not(.cp-cur)').forEach(r => { const k = ' ' + r.dataset.k, hit = !words.length || words.every(w => k.includes(' ' + w)); r.hidden = !hit; if (hit) n++; });
+  box.querySelector('.cp-cur').hidden = !!words.length; box.querySelector('.cp-sep').hidden = !!words.length;
+  box.querySelector('.cp-none').hidden = n > 0; box.querySelector('.cp-list').scrollTop = 0;
+}
 function phaseFoodWords(phase) {
   const words = new Set();
   [...PHASES[phase].foods, ...TCM[phase].foods, ...NUTRITION[phase].needs.flatMap(n => n.foods)]
@@ -5887,7 +5906,7 @@ function viewSeason(jump) {
     <div class="sz-anchor" id="sz-tabs"></div>
     <div class="seg sz-tabs">${[['month', 'Foods'], ['cook', 'Recipes']].map(([k, l]) => `<button class="${view === k ? 'on' : ''}" data-action="seasonView" data-v="${k}">${l}</button>`).join('')}</div>
     ${body}
-    <div class="season-ctl"><label class="fine" for="sz-country">Your country</label><select id="sz-country" class="field sm" data-input="profile.country">${SZ.COUNTRIES.map(([code, nm]) => `<option value="${code}" ${code === c ? 'selected' : ''}>${nm}</option>`).join('')}</select></div>
+    <div class="season-ctl"><span class="fine">Your country</span>${countryPicker('profile', c)}</div>
     <p class="fine center">Typical local growing seasons; they shift a little with weather and area. Forage only what you can identify with certainty.</p>
   </div>`;
 }
@@ -6382,7 +6401,7 @@ function viewProfile() {
     ${sectionTitle('Your goals')}
     <section class="card glass">${focusPicker(focusKeys(), 'setFocus')}<p class="fine" style="margin:10px 0 0">Your daily tips follow these.</p></section>
     ${sectionTitle('Home')}
-    <section class="card glass"><select class="field sm" data-input="profile.country" style="margin-top:10px" aria-label="Country">${SZ.COUNTRIES.map(([code, nm]) => `<option value="${code}" ${code === myCountry() ? 'selected' : ''}>${nm}</option>`).join('')}</select>
+    <section class="card glass">${countryPicker('profile', myCountry())}
       <p class="fine" style="margin:8px 0 0">Your country sets what's in season.</p></section>`;
   const signedOut = A.configured() && !A.currentUser();
   return `${topbar('Profile', { back: true })}
@@ -6638,15 +6657,15 @@ function viewGate() {
     <div class="gate-head"><h2 class="onb-title">Keep your cycle <span>safe with you</span></h2>
     <p class="gate-lead">A free account saves every period, symptom and note, and brings them back on any new phone.</p></div>
     <div class="gate-card">
-    <div class="gate-checks">
-    <label class="ac-consent"><input type="checkbox" id="ac-consent"><span>Keep my logs in my private account. I can delete them anytime. <a href="#/privacy">Privacy</a></span></label>
-    <label class="ac-consent ac-terms"><input type="checkbox" id="ac-terms" ${termsOK() ? 'checked' : ''}><span>Underskin is wellness information, not medical advice. What I try is my own choice and responsibility, and I ask a doctor when unsure. <a href="#/privacy">Terms</a></span></label>
-    </div>
     <button class="ac-btn ac-mail" data-action="gateEmail">${icon('user', 18)}<span>Continue with email</span></button>
     <form class="gate-form" onsubmit="return false" aria-hidden="${!f}">
       <div class="gf-seg" role="tablist"><button type="button" class="gf-c" data-action="gateMode" data-v="create" role="tab">Create account</button><button type="button" class="gf-s" data-action="gateMode" data-v="signin" role="tab">Sign in</button></div>
       <input class="field" id="ac-email" aria-label="Email" type="email" inputmode="email" autocomplete="email" placeholder="Email" value="${esc(ui.acEmail || '')}" ${f ? '' : 'tabindex="-1"'}>
       <input class="field" id="ac-pw" aria-label="Password" type="password" autocomplete="${si ? 'current-password' : 'new-password'}" placeholder="${si ? 'Password' : 'Password · at least 8 characters'}" ${f ? '' : 'tabindex="-1"'}>
+      <div class="gate-checks">
+      <label class="ac-consent"><input type="checkbox" id="ac-consent"><span>Keep my logs in my private account. I can delete them anytime. <a href="#/privacy">Privacy</a></span></label>
+      <label class="ac-consent ac-terms"><input type="checkbox" id="ac-terms" ${termsOK() ? 'checked' : ''}><span>Underskin is wellness information, not medical advice. What I try is my own choice and responsibility, and I ask a doctor when unsure. <a href="#/privacy">Terms</a></span></label>
+      </div>
       <button type="button" class="ac-btn ac-go" data-action="acEmail"><span class="gf-c">Create my account</span><span class="gf-s">Sign in</span></button>
       <button type="button" class="link ac-forgot gf-s" data-action="acForgot">Forgot password?</button>
     </form>
@@ -6821,6 +6840,15 @@ function acReady() {
 }
 function acMsg(t, bad) { const m = document.getElementById('ac-msg'); if (m) { m.textContent = t; m.classList.toggle('bad', !!bad); } }
 const actions = {
+  pickCountry: (d, el) => {
+    const v = d.v; if (!v) return;
+    if (d.scope === 'profile') { state.profile.country = v; save(); render(); toast(`Home set to ${SZ.COUNTRIES.find(x => x[0] === v)?.[1] || v}`); return; }
+    ui.onb.country = v;
+    const box = el.closest('.cpick'), name = SZ.COUNTRIES.find(x => x[0] === v)?.[1] || v;
+    box.querySelectorAll('.cp-row').forEach(r => { const on = r.dataset.v === v && !r.classList.contains('cp-cur'); r.classList.toggle('on', on); r.setAttribute('aria-selected', on); });
+    const cur = box.querySelector('.cp-cur'); cur.dataset.v = v; cur.querySelector('.cp-f').textContent = flagOf(v); cur.querySelector('.cp-n').textContent = name; cur.classList.add('on');
+    const q = box.querySelector('[data-cpq]'); q.value = ''; q.blur(); cpFilter(q);
+  },
 
   acMode: d => { ui.acMode = d.v; ui.acEmail = document.getElementById('ac-email')?.value || ui.acEmail; render(); },
   acProvider: async (d, el) => {
@@ -7232,6 +7260,7 @@ document.addEventListener('click', e => {
   if (fn) { e.preventDefault(); fn(el.dataset, el); }
 });
 document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.matches?.('[data-cpq]')) { e.preventDefault(); const r = [...e.target.closest('.cpick').querySelectorAll('.cp-row:not(.cp-cur)')].find(x => !x.hidden); if (r) r.click(); else e.target.blur(); return; }
   const f = e.target.dataset?.input; if (e.key !== 'Enter' || !/placeQ$/.test(f || '')) return;
   e.preventDefault(); placeFind(f.startsWith('onb') ? 'onb' : 'profile');
 });
@@ -7251,6 +7280,7 @@ document.addEventListener('input', e => {
     return;
   }
   if (e.target.classList.contains('o9-range')) { e.target.parentElement.style.setProperty('--x', e.target.value + '%'); return; }
+  if (e.target.matches?.('[data-cpq]')) { cpFilter(e.target); return; }
   const f = e.target.dataset?.input; if (!f) return;
   if (f === 'ui.placeQ') { ui.placeQ = e.target.value; return; }
   if (f.startsWith('moon.')) { (ui.moonDraft = ui.moonDraft || {})[f.slice(5)] = e.target.value; return; }
