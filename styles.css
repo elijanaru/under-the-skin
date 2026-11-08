@@ -9261,3 +9261,39 @@ html, body { overscroll-behavior-y: none; }
 .ph-auth .ac-code-go.busy { opacity: .6; pointer-events: none; }
 .ph-auth .ph-tip { margin: 0; text-align: center; font-size: 12px; color: #6b6a62; }
 .onb.gate .ph-auth .ph-tip { color: #6b6a62 !important; text-shadow: none !important; }
+
+/* Guard your mood (Manifest): three-step graphic, swap counter with a 7-day strip, phase note */
+.mgd { margin-bottom: 22px; padding: 16px; border-radius: 28px; border: 1px solid rgba(32,48,26,.08); background: #fff; box-shadow: 0 8px 22px rgba(32,48,26,.07); color: #20301a; }
+.mgd-flow { display: grid; grid-template-columns: 1fr 14px 1fr 14px 1fr; align-items: start; gap: 4px; }
+.mgd-s { display: grid; justify-items: center; text-align: center; gap: 5px; }
+.mgd-ic { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 16px; background: #eef1e4; color: #304023; }
+.mgd-ic svg { width: 22px; height: 22px; }
+.mgd-s:last-child .mgd-ic { background: #20301a; color: #fff; }
+.mgd-s b { font-size: 14.5px; font-weight: 600; line-height: 1.15; }
+.mgd-s small { font-size: 12px; line-height: 1.35; color: #4b5a40; }
+.mgd-ar { align-self: start; margin-top: 22px; height: 0; border-top: 1.5px dashed rgba(48,64,35,.35); position: relative; }
+.mgd-ar::after { content: ''; position: absolute; right: -1px; top: -4.5px; width: 6px; height: 6px; border-top: 1.5px solid rgba(48,64,35,.45); border-right: 1.5px solid rgba(48,64,35,.45); transform: rotate(45deg); }
+.mgd-count { display: grid; grid-template-columns: auto 1fr; grid-template-areas: "n w" "go go"; gap: 12px 14px; align-items: end; margin-top: 16px; padding: 14px; border-radius: 22px; background: #20301a; color: #fff; }
+.mgd-n { grid-area: n; display: grid; gap: 2px; }
+.mgd-n b { font-family: 'Doto', monospace; font-size: 46px; font-weight: 700; line-height: .9; color: #fff; }
+.mgd-n small { font-size: 12px; color: rgba(255,255,255,.72); }
+.mgd-week { grid-area: w; display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; height: 64px; }
+.mgd-week span { display: grid; grid-template-rows: 1fr auto; justify-items: center; gap: 4px; }
+.mgd-week span::before { content: none; }
+.mgd-week i { align-self: end; width: 100%; max-width: 16px; border-radius: 6px; background: rgba(255,255,255,.22); }
+.mgd-week span.now i { background: #cfe0a6; }
+.mgd-week small { font-size: 10.5px; color: rgba(255,255,255,.6); }
+.mgd-week span.now small { color: #fff; font-weight: 600; }
+.mgd-go { grid-area: go; display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 46px; border: 0; border-radius: 999px; background: #fff; color: #20301a; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; transition: transform .2s ease; }
+.mgd-go svg { width: 18px; height: 18px; }
+.mgd-go:active { transform: scale(.97); }
+.mgd-ph { display: flex; gap: 10px; align-items: flex-start; margin: 14px 2px 0; font-size: 13.5px; line-height: 1.45; color: #304023; }
+.mgd-ph i { flex: none; width: 10px; height: 10px; margin-top: 5px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 22%, transparent); }
+.mgd-ph b { font-weight: 600; margin-right: 2px; }
+.mgd-more { margin-top: 12px; border-top: 1px solid rgba(32,48,26,.08); padding-top: 10px; }
+.mgd-more summary { display: flex; justify-content: space-between; align-items: center; list-style: none; cursor: pointer; font-size: 14px; font-weight: 600; color: #20301a; }
+.mgd-more summary::-webkit-details-marker { display: none; }
+.mgd-more p { font-size: 14px; line-height: 1.55; color: #3c4a33; margin: 10px 0 0; }
+
+/* Today: the Push / Slow down word is white, with a soft shadow so it still reads on the light page */
+.hub .en .em-head b { color: #fff !important; text-shadow: 0 1px 2px rgba(32,48,26,.28), 0 6px 22px rgba(32,48,26,.22); }

@@ -2829,6 +2829,39 @@ function maniLanded() {
       <p>He called the path that follows a bridge of small events: a call, a chance meeting, an idea in the shower. Your part is to notice them and take the next step.</p></details>
   </section>`;
 }
+// Guard your mood: Goddard taught that the feelings you keep dwelling on are the ones that take root,
+// so through the day you catch an unwanted mood, stop feeding it and swap to the feeling of the wish done (our own words).
+const GUARD_ART = {
+  see: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
+  stop: '<path d="M7 12V6.5a1.5 1.5 0 0 1 3 0V11m0-5.5V5a1.5 1.5 0 0 1 3 0v6m0-5a1.5 1.5 0 0 1 3 0v6m0-3.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1.5a6 6 0 0 1-4.6-2.1L4.6 15.5a1.6 1.6 0 0 1 2.4-2.1L8.5 15"/>',
+  swap: '<path d="M17 3l3 3-3 3"/><path d="M4 11V9a3 3 0 0 1 3-3h13"/><path d="M7 21l-3-3 3-3"/><path d="M20 13v2a3 3 0 0 1-3 3H4"/>',
+};
+const GUARD_STEP = [['see', 'Notice', 'Name the mood: worry, envy, “not enough”.'], ['stop', 'Don’t feed it', 'No arguing with it, no replaying it.'], ['swap', 'Swap', 'Ask: how would I feel if it were done? Go there for one breath.']];
+const GUARD_PH = {
+  menstrual: 'Low moods pass faster when you rest. One swap is plenty today.',
+  follicular: 'Your mood lifts easily now. Practise the swap while it feels light.',
+  ovulatory: 'Words come easily. Say the new sentence out loud.',
+  luteal: 'Moods hit harder before your period. Noticing already counts.',
+};
+function maniGuard(phase) {
+  const G = state.maniGuard || {}, t = todayISO(), n = G[t] || 0;
+  const days = Array.from({ length: 7 }, (_, i) => C.addDays(new Date(), i - 6)), max = Math.max(3, ...days.map(d => G[C.iso(d)] || 0));
+  const gart = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${GUARD_ART[k]}</svg>`;
+  return `<section class="mgd">
+    <div class="mgd-flow">${GUARD_STEP.map(([k, t, d], i) => `<div class="mgd-s"><span class="mgd-ic">${gart(k)}</span><b>${t}</b><small>${d}</small></div>${i < 2 ? '<i class="mgd-ar" aria-hidden="true"></i>' : ''}`).join('')}</div>
+    <div class="mgd-count">
+      <div class="mgd-n"><b class="dotnum">${n}</b><small>${n === 1 ? 'swap' : 'swaps'} today</small></div>
+      <div class="mgd-week" aria-label="Swaps in the last 7 days">${days.map(d => { const v = G[C.iso(d)] || 0; return `<span class="${C.iso(d) === t ? 'now' : ''}"><i style="height:${v ? Math.max(14, Math.round(v / max * 100)) : 6}%"></i><small>${fmt(d, { weekday: 'narrow' })}</small></span>`; }).join('')}</div>
+      <button class="mgd-go" data-action="maniGuard">${gart('swap')}<span>I swapped one</span></button>
+    </div>
+    ${phase ? `<p class="mgd-ph" style="--c:${PH_HEX[phase]}"><i></i><span><b>${PHASES[phase].name}</b> ${GUARD_PH[phase]}</span></p>` : ''}
+    <details class="mgd-more"><summary>Why the mood matters ${icon('chevD', 13)}</summary>
+      <p>Goddard saw every feeling you keep returning to as a seed. Whatever you dwell on, you quietly agree with, and that agreement starts to show in how you act and what you notice.</p>
+      <p>So he did not ask people to fight a bad mood. Fighting keeps your attention on it. Instead, you simply stop feeding it and move your attention to the feeling you would have if the wish were already true.</p>
+      <p>It is a gentle habit, not a test. Some days you will catch one mood, some days ten. Each swap is a small vote for the person you are becoming.</p>
+      <p class="mm-src">After Neville Goddard’s teaching on watching your feelings, in our own words. A spiritual practice for reflection. If low moods stay for weeks, talk to a doctor or someone you trust.</p></details>
+  </section>`;
+}
 function maniIdea(phase) {
   return `<section class="mfi">
     <div class="mfi-flow">${MANI_IDEA.map(([ic, t, d, p], i) => `<div class="mfi-s ${p === phase ? 'now' : ''}" style="--c:${PH_HEX[p]}">
@@ -2884,6 +2917,8 @@ function viewManifest() {
       <small>${fit}</small><span class="mfm-w">${icon('clock', 11)}${when}</span></button>`; }).join('')}</div>
     ${sectionTitle('Any day of your cycle')}
     <div class="mfa" role="list">${MANI_ANY.map(([o, t]) => `<button class="mfa-c ${o === k ? 'on' : ''}" role="listitem" data-action="maniK" data-v="${o}"><span class="mfa-a">${maniArt(o)}</span><b>${MG.MANIFEST[o].name}</b><small>${MANI_WHY[o]}</small><em>${icon('clock', 12)} ${t}</em><span class="mfa-go">${o === k ? 'On top now' : `Try it ${icon('chevR', 12)}`}</span></button>`).join('')}</div>
+    ${sectionTitle('Guard your mood today')}
+    ${maniGuard(phase)}
     ${sectionTitle('How you know it landed')}
     ${maniLanded()}
     ${sectionTitle('The idea behind it')}
@@ -4108,13 +4143,13 @@ function stageHero(info, energy, o = {}) {
   </div>`;
 }
 // The period pill under the hero: on her logged period days it asks about today's flow;
-// "Period started?" only when it is due, late, predicted or under 6 days away (never mid-period, where it would start a new cycle)
+// "Period started?" on every other day (never mid-period, where it would start a new cycle)
 function periodPill(info) {
   const flow = getLog(todayISO()).flow;
   // on her period: a logged flow day, or a predicted day inside a period whose start she logged
   if (info.periodActual || PERIOD_FLOWS.includes(flow) || (info.periodPredicted && !info.predicted)) return `<button class="fh-period pp ps2 ps3" data-action="nav" data-to="log" aria-label="Log today's flow, period day ${info.cd}"><i class="ps3-dot"></i>${PERIOD_FLOWS.includes(flow) ? `Flow logged · day ${info.cd}` : `How’s your flow today?`}</button>`;
-  if (info.late || info.dueToday || info.periodPredicted || info.daysToPeriod <= 5) return `<button class="fh-period pp ps2 ps3" data-action="periodStart" aria-label="Period started? Log today as day 1"><i class="ps3-dot"></i>Period started?</button>`;
-  return '';
+  // always there when she is not bleeding, so an early period can be logged any day
+  return `<button class="fh-period pp ps2 ps3" data-action="periodStart" aria-label="Period started? Log today as day 1"><i class="ps3-dot"></i>Period started?</button>`;
 }
 function todayHub(info, energy, head = '') {
   const ph = PHASES[info.phase], tcm = TCM[info.phase], [rh1, rh2] = PHASE_RHYTHM_2[info.phase];
@@ -7178,6 +7213,7 @@ const actions = {
   removePartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (!p || !confirm(`Remove ${p.n}?`)) return; state.partners = state.partners.filter(x => x.id !== d.id); save(); if (route().name === 'partners') go('partners'); else render(); },
   seasonView: d => { ui.seasonView = d.v; render(); },
   logBleed: () => { ui.showBleed = ui.logDate || todayISO(); render(); },
+  maniGuard: () => { const G = state.maniGuard = state.maniGuard || {}, t = todayISO(); G[t] = Math.min(99, (G[t] || 0) + 1); save(); render(); },
   maniFeel: d => { const F = state.maniFeel = state.maniFeel || {}, t = todayISO(), v = +d.v; if (F[t] === v) delete F[t]; else F[t] = v; save(); render(); },
   wxOpen: d => { ui.wxOpen = ui.wxOpen === d.v ? null : d.v; render(); },
   wkPan: d => { const v = +d.v; ui.wkPan = ui.wkPan && ui.wkPan[0] === d.k && ui.wkPan[1] === v ? null : [d.k, v]; render(); },
