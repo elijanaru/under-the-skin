@@ -9295,5 +9295,5 @@ html, body { overscroll-behavior-y: none; }
 .mgd-more summary::-webkit-details-marker { display: none; }
 .mgd-more p { font-size: 14px; line-height: 1.55; color: #3c4a33; margin: 10px 0 0; }
 
-/* Today: the Push / Slow down word is white, with a soft shadow so it still reads on the light page */
-.hub .en .em-head b { color: #fff !important; text-shadow: 0 1px 2px rgba(32,48,26,.28), 0 6px 22px rgba(32,48,26,.22); }
+/* Today: the Push / Slow down word in the app's moss green (a touch deeper than #6c823e so it reads on the light page) */
+.hub .en .em-head b { color: #56702c !important; text-shadow: none; }
