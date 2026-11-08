@@ -4194,18 +4194,33 @@ function viewNutrients() {
     <p class="fine center">General information, not medical advice. Pregnant, on medication or unsure? Ask your doctor or pharmacist first.</p>
   </div>`;
 }
+// Nutrient page › Food first: each food as a bar against her daily need, read from "30 g ≈ 150 mg".
+const NU_NEED = { magnesium: [310, 'mg'], b6: [1.3, 'mg'], iron: [18, 'mg'], 'vitamin-d': [600, 'IU'], 'omega-3': [0.25, 'g', 'EPA + DHA'], zinc: [8, 'mg'], calcium: [1000, 'mg'] };
+function nuFood(x) {
+  const N = NU_NEED[x.id];
+  const rows = x.f.map(([f, a]) => {
+    const m = N && String(a).match(/^(.*?)\s*≈\s*([\d.]+)(?:–([\d.]+))?\s*(mg|IU|g)\b/);
+    if (!m || m[4] !== N[1]) return `<div class="spec-row"><b>${f}</b>${a ? `<span>${a}</span>` : ''}</div>`;
+    const v = m[3] ? (+m[2] + +m[3]) / 2 : +m[2], val = m[3] ? `${m[2]}–${m[3]}` : m[2], k = v / N[0], pc = Math.round(k * 100);
+    return `<div class="ff-r"><div class="ff-t"><b>${f}</b><span class="ff-v"><b class="dotnum">${val}</b>${N[1]}</span></div>
+      <div class="ff-bar ${pc > 100 ? 'over' : ''}" role="img" aria-label="About ${pc}% of your day"><span><i style="width:${Math.min(100, Math.max(3, pc))}%"></i></span><em>${pc > 100 ? `${+k.toFixed(k < 2 ? 1 : 0)}× your day` : `${pc}%`}</em></div>
+      <small>${m[1]}</small></div>`;
+  });
+  return `${N ? `<div class="ff-h"><span>One serving gives</span><span>You need <b class="dotnum">${N[0]}</b> ${N[1]}${N[2] ? ` ${N[2]}` : ''} a day</span></div>` : ''}${rows.join('')}`;
+}
 function viewNutrient(id) {
   const x = NUTRIENTS.find(n => n.id === id); if (!x) return viewNutrients();
   const ph = M.info && M.info.phase, i = NUTRIENTS.indexOf(x);
   return `<div class="pad sp2">
-    ${specHero({ glyph: nuIc(x.id, 64), eyebrow: `For ${x.for.toLowerCase()}`, name: x.n, label: 'Key facts', rows: x.d, lead: x.n, desc: x.why })}
+    ${specHero({ glyph: nuIc(x.id, 64), eyebrow: `For ${/^[A-Z]{2}/.test(x.for) ? x.for : x.for.charAt(0).toLowerCase() + x.for.slice(1)}`, name: x.n, label: 'Key facts', rows: x.d, lead: x.n, desc: x.why })}
     <section class="card glass tea-fit"><div class="tf-k">When it helps most</div>${phaseFit(x.p, ph)}</section>
+    ${suppSafe(x.id)}
     ${sectionTitle('Food first')}
-    <section class="card glass nu-food">${x.f.map(([f, a]) => `<div class="spec-row"><b>${f}</b>${a ? `<span>${a}</span>` : ''}</div>`).join('')}${warmWindow(M.info) ? '<small class="tf-all">You\u2019re in your warm window: pick the cooked and warm ones until your period ends.</small>' : ''}</section>
+    <section class="card glass nu-food">${nuFood(x)}${warmWindow(M.info) ? '<small class="tf-all">You\u2019re in your warm window: pick the cooked and warm ones until your period ends.</small>' : ''}</section>
     ${sectionTitle('Are you low?')}
     <section class="card glass nu-low"><div class="nl-i"><span>${icon('search', 18)}</span><div><small>Signs</small><p>${x.low}</p></div></div><div class="nl-i"><span>${icon('flask', 18)}</span><div><small>Test to ask for</small><p>${x.test}</p></div></div></section>
     ${sectionTitle('What studies found')}
-    <section class="card glass tea-study"><div class="ts-i"><p>${x.study}</p><small>${x.cite}</small></div></section>
+    ${studyCards(x.study, x.cite)}
     <section class="ck-first"><span class="ck-i">!</span><div><small>Before you try it</small>${x.caution ? `<b>${x.caution}</b>` : ''}<p>Check foods and supplements for allergies and for clashes with medicines you take.</p></div></section>
     <button class="card glass nu-next" data-action="nav" data-to="nutrients/${NUTRIENTS[(i + 1) % NUTRIENTS.length].id}"><small>Next</small><b>${NUTRIENTS[(i + 1) % NUTRIENTS.length].n}</b>${icon('chevR', 16)}</button>
     <p class="fine center">General information, not medical advice. Pregnant, on medication or unsure? Ask your doctor or pharmacist first.</p>
