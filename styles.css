@@ -7708,6 +7708,8 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .hub .dpt.t-cup { text-align: center; align-items: center; }
 .hub .dpt.t-cup .dpt-g { position: relative; top: auto; right: auto; width: 128px; height: 108px; margin: -4px auto 2px; }
 .hub .dpt.t-cup .dpt-k { margin-top: 0; }
+/* the title is a flex box, so text-align alone leaves a short name (Nettle leaf) on the left: centre it like the rest of the tile */
+.hub .dpt.t-cup b { justify-content: center; text-align: center; }
 .hub .dpt.ph-fr .dpt-g.pic i { background: linear-gradient(180deg, rgba(20,22,16,.15) 0%, rgba(20,22,16,.45) 40%, rgba(20,22,16,.8) 100%) !important; }
 .hub .dpt.ph-fr { justify-content: flex-start; }
 .hub .dpt.ph-fr .dpt-fr { position: relative; color: #fff !important; }
