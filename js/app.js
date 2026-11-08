@@ -5091,6 +5091,7 @@ function breathGuide(phase, k) {
   const mine = BREATH_FOR[phase], order = [mine, ...BREATH_ORDER.filter(x => x !== mine)];
   const FX = [['Calm', 'leaf'], ['Focus', 'spark'], ['Sleep', 'moon'], ['Cramps', 'drop']];
   return `${sectionTitle('What each breath does')}
+    <p class="bwx-hint">${order.length} practices · swipe ${icon('chevR', 12)}</p>
     <div class="bwx">${order.map(id => { const B = BREATHS[id], col = BZ_COL[id] || '#6c823e', fx = BZ_FX[id] || [];
       return `<article class="bwx-c ${id === k ? 'on' : ''}" style="--c:${col}">
         <div class="bwx-h"><span class="bwx-g">${B.g}</span><div><b>${B.name}</b><small>${B.for}</small></div>${id === mine ? '<em>For you now</em>' : ''}</div>
@@ -5102,6 +5103,24 @@ function breathGuide(phase, k) {
             ${BZ_STUDY[id] ? `<div class="bz-study">${studyCards(...BZ_STUDY[id])}</div>` : ''}</details>
           <button class="bwx-go" data-action="bzPhase" data-v="${id}">${id === k ? 'In the player' : `${icon('play', 12)} Try it`}</button></div>
       </article>`; }).join('')}</div>`;
+}
+// Her month as one strip with a breath for each phase: the bar shows where she is today, each tile opens that breath in the player.
+const BZ_PH_WHY = { menstrual: 'Hormones at their lowest. Warm hands, slow belly, cramps soften.', follicular: 'Energy climbs. Even counts keep a fresh, busy mind clear.',
+  ovulatory: 'Your brightest days. Slow waves keep you calm and open.', luteal: 'Progesterone peaks, then falls. Long breaths out bring sleep.' };
+const BZ_PH_NAME = { menstrual: 'Period', follicular: 'Follicular', ovulatory: 'Ovulation', luteal: 'Luteal' };
+function breathCycle(k) {
+  const info = M.info; if (!info) return '';
+  const L = info.L || M.stats.avgCycle, P = M.stats.avgPeriod, R = C.phaseRanges(L, P), cd = Math.min(info.cd, L);
+  return `<section class="bzc">
+    <div class="bzc-h"><div><small>Your breath through the month</small><b>One practice for each phase</b></div><span class="bzc-day"><b>${cd}</b><small>day</small></span></div>
+    <div class="bzc-bar" aria-hidden="true">${R.map(r => `<i class="${r.key === info.phase ? 'on' : ''}" style="flex:${r.to - r.from + 1};--c:${PH_HEX[r.key]}"></i>`).join('')}
+      <span class="bzc-now" style="left:${((cd - .5) / L * 100).toFixed(1)}%"></span></div>
+    <div class="bzc-g">${R.map(r => { const id = BREATH_FOR[r.key], B = BREATHS[id], now = r.key === info.phase;
+      return `<button class="bzc-t ${now ? 'now' : ''} ${id === k ? 'sel' : ''}" style="--c:${PH_HEX[r.key]}" data-action="bzPhase" data-v="${id}" aria-label="${BZ_PH_NAME[r.key]}, days ${r.from} to ${r.to}: ${B.name}. ${BZ_PH_WHY[r.key]}">
+        <span class="bzc-ph"><i></i>${BZ_PH_NAME[r.key]}<small>${r.from === r.to ? `day ${r.from}` : `days ${r.from}–${r.to}`}</small>${now ? '<em>Now</em>' : ''}</span>
+        <b>${B.name}</b>${breathShape(B, PH_HEX[r.key])}
+        <small class="bzc-why">${BZ_PH_WHY[r.key]}</small></button>`; }).join('')}</div>
+  </section>`;
 }
 // her breath this week: one dot for each day she finished a full session (breathing or the still sit)
 function breathWeek() {
@@ -5191,6 +5210,7 @@ function viewBreathe(from) {
         <p class="bz-say">Stay in the present.</p>
       </div>
     </section>
+    ${breathCycle(k)}
     ${breathWeek()}
     ${calmRemCard()}
     ${from === 'stress' && M.info ? cortisolSec(M.info) : ''}

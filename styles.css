@@ -8653,7 +8653,10 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .ct3 .ct-foot { display: flex; align-items: center; gap: 6px; margin: 8px 0 2px; font-size: 13px; font-weight: 500; color: #304023; }
 
 /* Breathe › What each breath does: one card per practice */
-.bwx { display: grid; gap: 12px; }
+.bwx { display: grid; grid-auto-flow: column; grid-auto-columns: 84%; gap: 12px; align-items: start; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -18px; padding: 4px 18px 14px; scroll-padding: 0 18px; scrollbar-width: none; overscroll-behavior-x: contain; }
+.bwx::-webkit-scrollbar { display: none; }
+.bwx > .bwx-c { scroll-snap-align: start; }
+.bwx-hint { display: flex; align-items: center; gap: 4px; margin: -6px 2px 8px; font-size: 12px; color: #5a684e; }
 .bwx-c { padding: 14px 14px 12px; border-radius: 26px; background: rgba(255,255,255,.95); border: 1px solid rgba(48,64,35,.1); box-shadow: 0 10px 24px rgba(31,43,22,.06); }
 .bwx-c.on { box-shadow: 0 0 0 2px var(--c), 0 10px 24px rgba(31,43,22,.08); }
 .bwx-h { display: flex; align-items: center; gap: 10px; }
@@ -8952,3 +8955,32 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .uvw-more p { font-size: 13px; line-height: 1.55; color: rgba(48,64,35,.78); margin: 8px 0 0; }
 @media (max-width: 360px) { .uvw-main { grid-template-columns: 124px 1fr; } .uvw-g { width: 124px; } }
 @media (prefers-reduced-motion: reduce) { .uvw-dot { animation: none; } .uvw-prog i, .uvw-st, .uvw-sw button { transition: none; } }
+
+/* Breathe: one breath for each phase of her month */
+.bzc { margin: 14px 0; padding: 16px 14px 14px; border-radius: 28px; background: rgba(255,255,255,.95); border: 1px solid rgba(48,64,35,.1); box-shadow: 0 12px 28px rgba(31,43,22,.07); }
+.bzc-h { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.bzc-h small { display: block; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #6c823e; }
+.bzc-h b { display: block; font-size: 18px; font-weight: 500; color: #20301a; letter-spacing: -.01em; margin-top: 2px; }
+.bzc-day { display: grid; place-items: center; width: 54px; height: 54px; flex: none; border-radius: 50%; background: #20301a; color: #fff; line-height: 1; }
+.bzc-day b { font-family: 'Doto', monospace; font-weight: 800; font-size: 22px; color: #fff; }
+.bzc-day small { font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; opacity: .75; margin-top: -6px; }
+.bzc-bar { position: relative; display: flex; gap: 3px; height: 10px; margin: 14px 2px 12px; }
+.bzc-bar i { border-radius: 99px; background: var(--c); opacity: .35; }
+.bzc-bar i.on { opacity: 1; }
+.bzc-now { position: absolute; top: -5px; width: 4px; height: 20px; margin-left: -2px; border-radius: 99px; background: #20301a; box-shadow: 0 0 0 2px #fff; }
+.bzc-g { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.bzc-t { text-align: left; display: flex; flex-direction: column; gap: 4px; padding: 11px 11px 10px; border-radius: 20px; background: color-mix(in srgb, var(--c) 8%, #fbfaf7); border: 1px solid color-mix(in srgb, var(--c) 22%, transparent); color: #20301a; transition: transform .25s; }
+.bzc-t:active { transform: scale(.98); }
+.bzc-t.now { background: #20301a; border-color: #20301a; color: #fff; }
+.bzc-t.sel:not(.now) { box-shadow: 0 0 0 2px var(--c); }
+.bzc-ph { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; font-weight: 600; }
+.bzc-ph i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+.bzc-ph small { font-weight: 400; font-size: 11px; opacity: .7; }
+.bzc-ph em { margin-left: auto; font-style: normal; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 99px; background: var(--c); color: #fff; }
+.bzc-t > b { font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
+.bzc-t .bsh { margin: 2px 0 0; } .bzc-t .bsh svg { height: 30px; }
+.bzc-t.now .bsh path { stroke: rgba(255,255,255,.75); } .bzc-t.now .bsh path.bs-in { stroke: var(--c) !important; }
+.bzc-t.now .bsh-l i, .bzc-t.now .bsh-l i b { color: rgba(255,255,255,.8); }
+.bzc-why { font-size: 11.5px; line-height: 1.35; color: #5a684e; }
+.bzc-t.now .bzc-why { color: rgba(255,255,255,.78); }
+@media (prefers-reduced-motion: reduce) { .bzc-t { transition: none; } }
