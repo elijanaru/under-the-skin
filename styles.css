@@ -9019,3 +9019,26 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .uvw-more { border-top-color: rgba(43,27,18,.12); }
 .uvw-more summary { color: #4a3427; }
 .uvw-more p { color: #4a3427; }
+/* Home: the Sun & moon tile, sunrise and sunset under the action */
+.hub .dpt.ph-sun .dpt-fr.dpt-sun { color: rgba(255,255,255,.88) !important; font-weight: 400; font-family: 'Outfit', sans-serif; }
+.hub .dpt.ph-sun .dpt-fr.dpt-sun svg { background: rgba(255,255,255,.25); color: #fff; }
+.dsun { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.dsun svg { display: block; width: 100%; height: auto; overflow: visible; }
+.dsun-t { font-family: 'Doto', monospace; font-weight: 800; font-size: 11px; fill: #fff; }
+.dsun-l { font-family: 'Outfit', sans-serif; font-size: 8.5px; letter-spacing: .1em; text-transform: uppercase; fill: rgba(255,255,255,.7); }
+.dsun-now { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; padding: 6px 12px 6px 6px; border-radius: 99px; background: rgba(255,255,255,.94); color: #20301a; font-size: 13px; font-weight: 600; line-height: 1.1; }
+.dsun-now > svg { width: 24px; height: 24px; padding: 5px; border-radius: 50%; background: #20301a; color: #ffcf4d; box-sizing: border-box; flex: none; }
+.dsun-now small { display: block; font-size: 9.5px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: #6b7a5c; }
+.hub .dpt.ph-sun small { display: block; }
+.hub .dpt.ph-full.ph-fr.ph-vid.ph-sun .dpt-g i { background: linear-gradient(180deg, rgba(24,10,4,.55) 0%, rgba(24,10,4,.62) 55%, rgba(24,10,4,.45) 100%) !important; }
+.hub .dpt.ph-sun > small { flex: 1; display: flex; }
+.hub .dpt.ph-sun .dsun { flex: 1; }
+.hub .dpt.ph-sun .dsun svg { margin-top: 6px; }
+.hub .dpt.ph-sun .dsun-now { margin-top: auto; }
+.hub .dpt.ph-sun .dsun-now small { color: #6b7a5c !important; text-shadow: none; }
+.hub .dpt.ph-sun .dsun-now { position: absolute; left: 14px; bottom: 14px; margin: 0; z-index: 1; }
+.hub .dpt.ph-sun .dsun svg { margin-top: 14px; }
+.hub .dpt.ph-full.ph-fr.ph-vid.ph-sun .dpt-g i { background: linear-gradient(180deg, rgba(24,10,4,.5) 0%, rgba(24,10,4,.66) 50%, rgba(24,10,4,.78) 100%) !important; }
+.hub .dpt.ph-sun .dsun svg { margin-top: 18px; }
+.dsun-t { font-size: 10.5px; }
+.hub .dpt.ph-full.ph-fr.ph-vid.ph-sun .dpt-g i { background: linear-gradient(180deg, rgba(24,10,4,.55) 0%, rgba(24,10,4,.78) 45%, rgba(24,10,4,.82) 100%) !important; }

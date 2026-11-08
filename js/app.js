@@ -3880,6 +3880,26 @@ const DISH_DAY = {
 // One short line on what the dish gives her: "Heme iron, zinc and B12 for your period."
 const recWhy = r => { const n = (r.nutrients || []).slice(0, 3).map((x, i) => i && /^[A-Z][a-z]/.test(x) ? x.charAt(0).toLowerCase() + x.slice(1) : x), l = n.length > 1 ? `${n.slice(0, -1).join(', ')} and ${n[n.length - 1]}` : n[0];
   return l ? `${l} in one plate.` : 'Made for this part of your cycle.'; };
+// Home tile: the whole day as one smooth curve (like the sun's height over 24 h). Above the horizon it is bright,
+// below it faint; one dot is the sun now, sunrise and sunset sit where the curve crosses the horizon.
+function sunTileArt(D, h, cur) {
+  const W = 140, hy = 52, N = 24 - (D.set - D.rise), X = t => t / 24 * W;
+  const Y = t => (t >= D.rise && t <= D.set ? hy - 40 * Math.sin(Math.PI * (t - D.rise) / (D.set - D.rise)) : hy + 12 * Math.sin(Math.PI * ((t > D.set ? t - D.set : t + 24 - D.set) / N)));
+  const pts = []; for (let k = 0; k <= 96; k++) { const t = k / 96 * 24; pts.push(`${X(t).toFixed(1)},${Y(t).toFixed(1)}`); }
+  const d = 'M' + pts.join(' L'), day = h >= D.rise && h <= D.set, nx = X(h), ny = Y(h);
+  const lab = (t, top, bot) => { const x = Math.max(17, Math.min(W - 17, X(t))); return `<text x="${x.toFixed(1)}" y="${(hy + 28).toFixed(1)}" text-anchor="middle" class="dsun-t">${top}</text><text x="${x.toFixed(1)}" y="${(hy + 38).toFixed(1)}" text-anchor="middle" class="dsun-l">${bot}</text>`; };
+  return `<span class="dsun"><svg viewBox="0 0 ${W} 94" role="img" aria-label="${day ? 'Daytime' : 'Night'}: sunrise ${hLabel(D.rise)}, sunset ${hLabel(D.set)}">
+    <defs><clipPath id="dsun-up"><rect x="0" y="0" width="${W}" height="${hy.toFixed(1)}"/></clipPath></defs>
+    <line x1="0" x2="${W}" y1="${hy.toFixed(1)}" y2="${hy.toFixed(1)}" stroke="rgba(255,255,255,.28)" stroke-width="1"/>
+    <path d="${d}" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="${d} L${W} ${hy} L0 ${hy}Z" fill="rgba(255,211,107,.16)" clip-path="url(#dsun-up)"/>
+    <path d="${d}" fill="none" stroke="#ffd36b" stroke-width="2.8" stroke-linecap="round" clip-path="url(#dsun-up)"/>
+    <circle cx="${X(D.rise).toFixed(1)}" cy="${hy.toFixed(1)}" r="2.6" fill="#ffd36b"/><circle cx="${X(D.set).toFixed(1)}" cy="${hy.toFixed(1)}" r="2.6" fill="#ffd36b"/>
+    ${day ? `<circle cx="${nx.toFixed(1)}" cy="${ny.toFixed(1)}" r="11" fill="rgba(255,211,107,.22)"/><circle cx="${nx.toFixed(1)}" cy="${ny.toFixed(1)}" r="6.5" fill="#ffd36b" stroke="#fff" stroke-width="2"/>`
+      : `<circle cx="${nx.toFixed(1)}" cy="${ny.toFixed(1)}" r="6.5" fill="#efeadf" stroke="#2a1a10" stroke-width="2"/><circle cx="${(nx + 2.6).toFixed(1)}" cy="${(ny - 2.2).toFixed(1)}" r="5" fill="#2a1a10"/>`}
+    ${lab(D.rise, hLabel(D.rise), 'rise')}${lab(D.set, hLabel(D.set), 'set')}
+  </svg><span class="dsun-now">${icon(!day || cur.id === 'evening' ? 'moon' : 'sun', 13, 2.2)}<span><small>Now</small>${cur.n}</span></span></span>`;
+}
 function todayTiles(info, only) {
   const w = dayWindow(info), g = MOVE_GUIDE[w], [lvl] = CALM[w], ph = info.phase, warm = warmWindow(info);
   const best = MOVES.filter(m => g.r[m.k] === 3);
@@ -3911,11 +3931,12 @@ function todayTiles(info, only) {
   return `<div class="dpt-grid">
       ${tile('wide hero-move ph-vid', { to: 'move' }, `<video class="dpt-vid" src="images/move-stardust.mp4" poster="images/move-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Sport', g.title, best.map(m => m.n).slice(0, 3).join(' · '))}
       ${rec ? tile(`t-tea t-cup t-dish${recD && recD.hero ? ' t-big' : ''}`, { to: `recipe/${rec.id}` }, recD ? `<span class="cup3d-w"><img class="dpt-cup" src="${recD.img}" alt="" loading="lazy"><canvas class="teacup3d" data-model="${recD.model}" data-elev="${recD.elev || 0.9}" data-fit="${recD.tileFit || recD.fit}"${recD.steam === 0 ? ' data-steam="0"' : ''} aria-label="${esc(rec.name)}, turning slowly"></canvas></span>` : `<span class="dish-ph"><img src="${photoUrl(rec.id, 400)}" alt="" loading="lazy"></span>`, 'Eat today', rec.name, `<span class="dpt-why">${recWhy(rec)}</span><span class="dpt-rule">${icon('clock', 12)} ${rec.time >= 60 ? `${Math.floor(rec.time / 60)} h${rec.time % 60 ? ` ${rec.time % 60}` : ''}` : `${rec.time} min`} · Cook it ${icon('chevR', 12)}</span>`) : tile('t-tea t-cup t-dish', { to: 'do/eat' }, `<span class="cup3d-w"><img class="dpt-cup" src="${D.img}" alt="" loading="lazy"><canvas class="teacup3d" data-model="${D.model}" data-elev="0.9" data-fit="${D.fit}" aria-label="${dish.t}, turning slowly"></canvas></span>`, 'Eat today', dish.t, `<span class="dpt-why">${dish.why}</span><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
-      ${tile('t-deep ph-full keep ph-fr ph-vid', { to: 'do/friends' }, `<video class="dpt-vid" src="images/friends-sunset.mp4" poster="images/friends-sunset.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Friends', FRIENDS_TILE[ph][0], `<span class="dpt-fr">${icon('check', 12, 2.4)} ${FRIENDS_TILE[ph][1]}</span><span class="dpt-fr no">${icon('close', 12, 2.4)} ${FRIENDS_TILE[ph][2]}</span>`)}
+      ${(() => { const D = dayMoments(info), h = nowH(), cur = momentAt(D, h); return tile('t-deep ph-full keep ph-fr ph-vid ph-sun', { to: 'rhythm' }, `<video class="dpt-vid" src="images/sun-moon.mp4" poster="images/sun-moon-poster.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Sun & moon', 'Follow the light', sunTileArt(D, h, cur)); })()}
       ${tile('t-sage ph-full ph-vid', { to: 'relief' }, `<video class="dpt-vid" src="images/relief-stardust.mp4" poster="images/relief-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Relief', rp.st.t, `${rp.mine ? 'You logged' : 'Common now:'} ${rp.k.toLowerCase()}`)}
       ${tile(`calm lv${lvl} t-cort t-mol`, { to: 'breathe/stress' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/cortisol-mol.webp" alt="" loading="lazy"><canvas class="teacup3d" data-model="models/cortisol.glb" data-elev="0.3" data-fit="1.9" data-steam="0" data-shadow="0" aria-label="The cortisol molecule, turning slowly"></canvas></span>`, 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}<span class="cv-lv" aria-hidden="true">${[1, 2, 3].map(i => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</span>`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
       ${tile('t-tea t-cup', { to: 'do/tea' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/${/ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i.test(td[1]) ? 'cup-chai' : 'cup-glass'}.webp" alt="" loading="lazy"><canvas class="teacup3d" aria-label="${td[1]}, turning slowly"></canvas></span>`, 'Tea for today', td[1], td[2])}
       ${tile('t-glow ph-full ph-vid', { to: 'ground' }, `<video class="dpt-vid" src="images/ground-cat.mp4" poster="images/ground-cat.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Ground', GROUND_PHASE[ph].t, '')}
+      ${tile('wide t-deep ph-full keep ph-fr ph-vid ph-frw', { to: 'do/friends' }, `<video class="dpt-vid" src="images/friends-sunset.mp4" poster="images/friends-sunset.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Friends', FRIENDS_TILE[ph][0], `<span class="dpt-fr">${icon('check', 12, 2.4)} ${FRIENDS_TILE[ph][1]}</span><span class="dpt-fr no">${icon('close', 12, 2.4)} ${FRIENDS_TILE[ph][2]}</span>`)}
     </div>
     <div class="hub-tip ${open && (open === 'eat' || open === 'tea' || tips[open]) ? 'on' : ''}" id="hub-tip">${open ? tipBody(open) : ''}</div>`;
 }
