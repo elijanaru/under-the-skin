@@ -1287,7 +1287,12 @@ function exploreGrid(info) {
   const tiles = [['manifest', 'spark', 'Manifest', 'Live it as done', 'images/forest-calm.jpg'], ['hormones', 'book', 'Hormones', 'What each one does', hormonePhoto('Oestrogen', 500)], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/forest-path.jpg'],
     ['relief', 'heart', 'Relief', 'Cramps, PMS, sleep', 'images/relief-stardust.webp', 'images/relief-stardust.mp4'],
     ['season', 'bowl', 'In season', 'Local foods', 'images/season-fruit.webp'], ['tea', 'cup', 'Tea guide', 'For every need', 'images/tea-ginger.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/tile-meditate.webp']];
-  return `<div class="xp-grid xp2">${tiles.map(([to, ic, t, sub, img, vid], i) => `<button class="xp ${i === 0 ? 'wide' : ''}" data-action="nav" data-to="${to}" style="--i:${i}">${vid ? `<video class="dpt-vid" src="${vid}" poster="${img}" muted loop playsinline preload="none" aria-hidden="true"></video>` : img ? `<img src="${img}" alt="" loading="lazy">` : ''}<span class="xp-l"><span class="xp-ic">${icon(ic, 15)}</span><span><b>${t}</b><small>${sub}</small></span></span></button>`).join('')}</div>`;
+  // round photo bubbles in a 2-3-2 honeycomb, each with its own coloured rim and the name on the photo
+  const rim = ['#a98bd0', '#d4708f', '#7f9a4c', '#e08aa5', '#d9a441', '#c98a52', '#6fa49a'];
+  const bub = ([to, ic, t, sub, img, vid], i) => `<button class="xb" data-action="nav" data-to="${to}" style="--i:${i};--rim:${rim[i]}" aria-label="${t}: ${sub}">${vid ? `<video class="dpt-vid" src="${vid}" poster="${img}" muted loop playsinline preload="none" aria-hidden="true"></video>` : `<img src="${img}" alt="" loading="lazy">`}<span class="xb-t">${t}</span></button>`;
+  const rows = [tiles.slice(0, 2), tiles.slice(2, 5), tiles.slice(5)];
+  let k = 0;
+  return `<div class="xp3">${rows.map(r => `<div class="xp3-r">${r.map(x => bub(x, k++)).join('')}</div>`).join('')}</div>`;
 }
 // Home: today's habits as a cute tick list; her phase's habits first, a little sprout that grows leaves as she ticks.
 const HB_SHORT = { 'phone-free': ['mind', 'Phone-free hour'], calm: ['heart', '10 min meditation'], coffee: ['cup', 'Coffee with food'], sleep: ['moon', '7 to 9h sleep'], 'real-food': ['bowl', 'Real food'], 'alcohol-free': ['drop', 'No alcohol'], 'no-blue': ['sun', 'Dim screens at night'], move: ['leaf', 'Move your body'], nature: ['seed', 'Time in nature'], clean: ['spark', 'Clean beauty'], 'warm-feet': ['thermo', 'Warm feet'], 'egg-yolks': ['shell', 'Egg yolks'] };
