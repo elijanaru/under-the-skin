@@ -3211,7 +3211,7 @@ function learnedCard() {
   P.list.filter(x => !MOODS.includes(x.name)).slice(0, 2).forEach(x => facts.push([x.name, x.from === x.to ? `Day ${x.from}` : `Days ${x.from}–${x.to}`, `Seen in ${x.cyclesN} of your cycles`]));
   return `${sectionTitle('What I’ve learned about you')}
     <section class="card glass learned">${learnedScore(n)}${facts.map(([k, v, s]) => `<div class="lr"><span>${k}</span><b>${v}</b><small>${s}</small></div>`).join('')}
-    <p class="fine" style="margin:10px 0 0">The more you log — periods, energy, symptoms — the more personal every prediction gets.</p></section>`;
+    <p class="fine" style="margin:10px 0 0">The more you log (periods, energy, symptoms), the more personal every prediction gets.</p></section>`;
 }
 function headsUpCard() {
   const P = patterns(), up = upcomingPatterns(P);
@@ -5614,17 +5614,17 @@ function viewInsights() {
     (l.moods || []).forEach(s => { moodBy[di.phase] = moodBy[di.phase] || {}; moodBy[di.phase][s] = (moodBy[di.phase][s] || 0) + 1; });
     if (l.energy) { energyBy[di.phase] = energyBy[di.phase] || []; energyBy[di.phase].push(l.energy); }
   }
-  const top = Object.entries(counts).sort((a, b) => b[1].n - a[1].n).slice(0, 5);
-  const topMax = top.length ? top[0][1].n : 1;
-  const symRows = top.map(([s, v]) => {
-    const p = Object.entries(v.by).sort((a, b) => b[1] - a[1])[0][0];
-    return `<div class="sym"><span class="sym-n">${s}</span><span class="sym-bar"><b style="width:${v.n / topMax * 100}%;background:${PHASE_COLOR.dark[p]}"></b></span><span class="sym-p">${PHASES[p].name}</span></div>`;
-  }).join('');
-  const phaseRows = PHASE_ORDER.map(p => {
+  // By phase: one tile per phase with her average energy, her most logged mood and her most logged symptom there
+  const phaseTiles = PHASE_ORDER.map(p => {
     const e = energyBy[p], avg = e ? e.reduce((a, b) => a + b, 0) / e.length : 0;
-    const mood = moodBy[p] ? Object.entries(moodBy[p]).sort((a, b) => b[1] - a[1])[0][0] : '—';
-    return `<div class="pp"><span class="pp-dot" style="background:${PHASE_COLOR.dark[p]}"></span><span class="pp-n">${PHASES[p].name}</span>
-      <span class="pp-e">${e ? [1, 2, 3, 4, 5].map(n => `<i class="${avg >= n - 0.5 ? 'on' : ''}"></i>`).join('') : '<small class="pp-none">No check-ins yet</small>'}</span><span class="pp-m">${mood}</span></div>`;
+    const md = moodBy[p] ? Object.entries(moodBy[p]).sort((a, b) => b[1] - a[1])[0] : null;
+    const sy = Object.entries(counts).map(([n, v]) => [n, v.by[p] || 0]).filter(x => x[1]).sort((a, b) => b[1] - a[1])[0];
+    return `<div class="bph ${p === info.phase ? 'now' : ''}" style="--c:${PH_HEX[p]}">
+      <span class="bph-h"><i></i>${PHASES[p].name}${p === info.phase ? '<em>Now</em>' : ''}</span>
+      <span class="bph-e">${e ? `<b class="dotnum">${avg.toFixed(1)}</b><small>/5 energy</small>` : '<small class="bph-none">No energy logs yet</small>'}</span>
+      <span class="bph-m" aria-hidden="true">${[1, 2, 3, 4, 5].map(n => `<i class="${e && avg >= n - .5 ? 'on' : ''}"></i>`).join('')}</span>
+      <span class="bph-r">${icon('heart', 13)}${md ? `${md[0]} <small>${plural(md[1], 'day')}</small>` : '<small>No moods yet</small>'}</span>
+      <span class="bph-r">${icon('drop', 13)}${sy ? `${sy[0]} <small>${sy[1]}×</small>` : '<small>No symptoms</small>'}</span></div>`;
   }).join('');
 
   const tab = ui.insTab || 'cycle'; const read = state.read || {};
@@ -5638,9 +5638,8 @@ function viewInsights() {
     ${patternsSection()}
     ${learnedCard()}
     ${sectionTitle('By phase')}
-    <section class="card glass"><div class="pp head"><span></span><span class="pp-n">Phase</span><span class="pp-e">Energy</span><span class="pp-m">Top mood</span></div>${phaseRows}</section>
-    ${sectionTitle('Most logged symptoms')}
-    <section class="card glass">${symRows || `<p class="muted" style="margin:0">Log symptoms to see which phase they cluster in.</p><button class="pill-cta" style="margin-top:12px" data-action="nav" data-to="log">${icon('plus', 14)} Log a symptom</button>`}</section>`;
+    <section class="bph-g">${phaseTiles}</section>
+    <p class="bph-k">From your check-ins: average energy, the mood and the symptom you logged most in each phase.</p>`;
   else body = `
     <div class="lg-grid">${[['relief', 'heart', 'Relief guide', 'Cramps, PMS, sleep, skin'], ['habits', 'check', 'Hormone habits', 'A daily checklist'], ['hormones', 'chart', 'Your hormones', 'All 14, explained'], ['move', 'leaf', 'Move with your cycle', 'Lift, sprint or rest']].map(([to, g, t, sub], i) => `<button class="card glass lg-t" style="--i:${i}" data-action="nav" data-to="${to}"><span class="lg-g">${icon(g, 18)}</span><b>${t}</b><small>${sub}</small>${icon('chevR', 14)}</button>`).join('')}</div>
     ${[info.phase, ...PHASE_ORDER.filter(p => p !== info.phase), null].map(p => { const list = ARTICLES.filter(a => a.phase === p); return list.length ? `${sectionTitle(p ? PHASES[p].name + (p === info.phase ? ' · now' : '') : 'Foundations')}
