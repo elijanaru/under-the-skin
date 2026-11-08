@@ -14,7 +14,65 @@
   <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Ballet:opsz@16..72&family=Mrs+Saint+Delafield&family=Monsieur+La+Doulaise&family=Parisienne&family=Grenze+Gotisch:wght@300;400;700;900&family=Great+Vibes&family=Yellowtail&family=Inter+Tight:wght@500;600;700;800;900&family=IM+Fell+English+SC&family=IM+Fell+English:ital@1&family=Outfit:wght@200;300;400;500;600;700;800&family=Doto:wght@600;800&family=Noto+Serif+SC:wght@300;500&display=swap" rel="stylesheet">
+  <!-- fonts never block the first paint: the opening animation covers the swap -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800&family=Doto:wght@600;800&family=Noto+Serif+SC:wght@300;500&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800&family=Doto:wght@600;800&family=Noto+Serif+SC:wght@300;500&display=swap" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ballet:opsz@16..72&family=Mrs+Saint+Delafield&family=Monsieur+La+Doulaise&family=Parisienne&family=Grenze+Gotisch:wght@300;400;700;900&family=Great+Vibes&family=Yellowtail&family=Inter+Tight:wght@500;600;700;800;900&family=IM+Fell+English+SC&family=IM+Fell+English:ital@1&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800&family=Doto:wght@600;800&family=Noto+Serif+SC:wght@300;500&display=swap"></noscript>
+  <!-- fetch every module app.js needs at the same time instead of one after another -->
+  <link rel="modulepreload" href="js/app.js">
+  <link rel="modulepreload" href="js/config.js">
+  <link rel="modulepreload" href="js/data.js">
+  <link rel="modulepreload" href="js/cycle.js">
+  <link rel="modulepreload" href="js/icons.js">
+  <link rel="modulepreload" href="js/cosmic.js">
+  <link rel="modulepreload" href="js/astro.js">
+  <link rel="modulepreload" href="js/moonguide.js">
+  <link rel="modulepreload" href="js/figure.js">
+  <link rel="modulepreload" href="js/torso.js">
+  <link rel="modulepreload" href="js/photos.js">
+  <link rel="modulepreload" href="js/seasonal.js">
+  <link rel="modulepreload" href="js/world.js">
+  <link rel="modulepreload" href="js/athlete.js">
+  <link rel="modulepreload" href="js/bodymap.js">
+  <link rel="modulepreload" href="js/ground.js">
+  <link rel="modulepreload" href="js/molecules.js">
+  <link rel="modulepreload" href="js/sun.js">
+  <link rel="modulepreload" href="js/account.js">
+  <style>
+    /* Opening animation: a hand-drawn sprout grows, two leaves open, a blush bud, then the name */
+    #splash { position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center; background:
+      radial-gradient(60% 34% at 18% 100%, rgba(255, 214, 190, .55), transparent 70%),
+      radial-gradient(55% 30% at 82% 100%, rgba(208, 226, 160, .55), transparent 70%),
+      radial-gradient(70% 40% at 50% 0%, rgba(239, 212, 221, .7), transparent 70%), #f6eef0;
+      transition: opacity .55s ease, visibility .55s; }
+    #splash.out { opacity: 0; visibility: hidden; }
+    #splash .sp { display: grid; justify-items: center; gap: 14px; transform: translateY(-4vh); transition: transform .55s cubic-bezier(.2,.8,.2,1); }
+    #splash.out .sp { transform: translateY(-4vh) scale(1.06); }
+    #splash svg { width: 150px; height: 200px; overflow: visible; }
+    #splash .sw { transform-origin: 60px 140px; animation: spSway 3.2s 1.5s ease-in-out infinite; }
+    #splash .ln { fill: none; stroke: #304023; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+    #splash .soil { stroke: rgba(48,64,35,.35); stroke-width: 1.4; animation: spDraw .5s ease-out forwards; }
+    #splash .stem { animation: spDraw .75s .2s cubic-bezier(.5,0,.3,1) forwards; }
+    #splash .lf { fill: rgba(108,130,62,0); }
+    #splash .l1 { animation: spDraw .5s .75s ease-out forwards, spFill .6s 1.05s ease forwards; }
+    #splash .l2 { animation: spDraw .5s .9s ease-out forwards, spFill .6s 1.2s ease forwards; }
+    #splash .bud { fill: #e6b1c4; transform-origin: 60px 64px; transform: scale(0); animation: spBud .55s 1.15s cubic-bezier(.3,1.6,.5,1) forwards; }
+    #splash .bud2 { fill: #efd4dd; }
+    #splash .wm { font-family: Outfit, -apple-system, 'Helvetica Neue', sans-serif; font-weight: 300; font-size: 26px; letter-spacing: .32em; text-indent: .32em; color: #20301a; opacity: 0; animation: spWord .7s 1.15s ease forwards; }
+    #splash .bar { width: 64px; height: 2px; border-radius: 2px; background: rgba(48,64,35,.12); overflow: hidden; opacity: 0; animation: spWord .4s 1.4s ease forwards; }
+    #splash .bar i { display: block; width: 40%; height: 100%; border-radius: 2px; background: #6c823e; animation: spBar 1.2s 1.4s ease-in-out infinite; }
+    @keyframes spDraw { to { stroke-dashoffset: 0; } }
+    @keyframes spFill { to { fill: rgba(108,130,62,.85); } }
+    @keyframes spBud { to { transform: scale(1); } }
+    @keyframes spWord { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    @keyframes spBar { from { transform: translateX(-110%); } to { transform: translateX(260%); } }
+    @keyframes spSway { 50% { transform: rotate(2.2deg); } }
+    @media (prefers-reduced-motion: reduce) {
+      #splash *, #splash .sw { animation: none !important; }
+      #splash .ln { stroke-dashoffset: 0; } #splash .lf { fill: rgba(108,130,62,.85); } #splash .bud { transform: none; } #splash .wm, #splash .bar { opacity: 1; }
+    }
+  </style>
   <link rel="stylesheet" href="styles.css">
   <script type="importmap">
   { "imports": {
@@ -24,6 +82,29 @@
   </script>
 </head>
 <body>
+<div id="splash" role="img" aria-label="Underskin is opening">
+  <div class="sp">
+    <svg viewBox="0 0 120 160" aria-hidden="true"><g class="sw">
+      <path class="ln soil" pathLength="1" d="M34 140 C 48 137, 72 137, 86 140"/>
+      <path class="ln stem" pathLength="1" d="M60 140 C 57 118, 63 96, 60 68"/>
+      <path class="ln lf l1" pathLength="1" d="M59.5 108 C 46 107, 36 98, 33 86 C 46 85, 57 93, 59.5 108 Z"/>
+      <path class="ln lf l2" pathLength="1" d="M60.5 92 C 73 89, 83 79, 86 67 C 73 67, 62 76, 60.5 92 Z"/>
+      <g class="bud"><ellipse cx="60" cy="60" rx="7.5" ry="9.5"/><ellipse class="bud2" cx="57.5" cy="57" rx="2.6" ry="4"/></g>
+    </g></svg>
+    <div class="wm">UNDERSKIN</div>
+    <div class="bar"><i></i></div>
+  </div>
+</div>
+<script>
+  // stays at least until the sprout has grown, and until the app has drawn its first screen
+  (function () {
+    var t0 = Date.now(), calm = matchMedia('(prefers-reduced-motion: reduce)').matches, min = calm ? 450 : 1650, done = false;
+    function hide() { if (done) return; done = true; var el = document.getElementById('splash'); if (!el) return;
+      setTimeout(function () { el.classList.add('out'); setTimeout(function () { el.remove(); }, 650); }, Math.max(0, min - (Date.now() - t0))); }
+    window.__appReady = hide;
+    setTimeout(hide, 7000); // never trap her behind it
+  })();
+</script>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><radialGradient id="mg-c" cx="35%" cy="30%" r="70%"><stop offset="0" stop-color="#8d928e"/><stop offset=".45" stop-color="#3a3e3b"/><stop offset="1" stop-color="#121412"/></radialGradient><radialGradient id="mg-h" cx="35%" cy="30%" r="70%"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#e4e6e2"/><stop offset="1" stop-color="#9a9e9a"/></radialGradient><radialGradient id="mg-o" cx="35%" cy="30%" r="70%"><stop offset="0" stop-color="#ff8a7a"/><stop offset=".45" stop-color="#d8261c"/><stop offset="1" stop-color="#5e0b06"/></radialGradient><radialGradient id="mg-n" cx="35%" cy="30%" r="70%"><stop offset="0" stop-color="#9fb2ff"/><stop offset=".45" stop-color="#2a45d8"/><stop offset="1" stop-color="#0b1660"/></radialGradient><radialGradient id="mg-i" cx="35%" cy="30%" r="70%"><stop offset="0" stop-color="#d79cf2"/><stop offset=".45" stop-color="#8a35b8"/><stop offset="1" stop-color="#3a0f52"/></radialGradient><radialGradient id="mg-s" cx="35%" cy="30%" r="70%"><stop offset="0" stop-color="#fff59a"/><stop offset=".45" stop-color="#e6d21a"/><stop offset="1" stop-color="#6e6200"/></radialGradient><radialGradient id="mg-p" cx="35%" cy="30%" r="70%"><stop offset="0" stop-color="#ffc07a"/><stop offset=".45" stop-color="#e8780f"/><stop offset="1" stop-color="#6e3200"/></radialGradient></defs></svg>
   <svg width="0" height="0" style="position:absolute"><filter id="ink"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.6"/></filter></svg>
   <div class="stage">

@@ -7293,3 +7293,4 @@ setInterval(() => { if (state?.onboarded) { M = model(); fireNotifications(); } 
 window.addEventListener('hashchange', () => { if (route().name !== 'log') ui.logDate = null; if (route().name !== 'calendar') ui.calEdit = false; render(); });
 setInterval(() => { const sb = document.querySelector('.statusbar span'); if (sb) sb.textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(/\s?[AP]M/, ''); }, 30000);
 render();
+requestAnimationFrame(() => window.__appReady && window.__appReady());

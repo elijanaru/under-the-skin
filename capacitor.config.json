@@ -2,19 +2,20 @@
   "appId": "com.elijanaru.undertheskin",
   "appName": "Underskin",
   "webDir": "www",
-  "backgroundColor": "#050605",
+  "backgroundColor": "#f6eef0",
   "ios": {
     "contentInset": "never",
-    "backgroundColor": "#050605"
+    "backgroundColor": "#f6eef0"
   },
   "android": {
-    "backgroundColor": "#050605"
+    "backgroundColor": "#f6eef0"
   },
   "plugins": {
     "SplashScreen": {
-      "launchShowDuration": 600,
-      "backgroundColor": "#050605",
-      "showSpinner": false
+      "launchShowDuration": 300,
+      "backgroundColor": "#f6eef0",
+      "showSpinner": false,
+      "launchFadeOutDuration": 200
     },
     "SystemBars": {
       "style": "DARK"
