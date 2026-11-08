@@ -2978,7 +2978,15 @@ function eatTodayCard(info) {
 }
 
 // ---------- reminders ----------
-const REM_DEFAULT = { period: true, periodDays: 2, phase: true, cycle: true, rhythm: true, checkin: true, checkinHour: 20, dismissed: {}, fired: {} };
+const REM_DEFAULT = { period: true, periodDays: 2, phase: true, cycle: true, rhythm: true, checkin: true, checkinHour: 20, calm: true, calmHour: 18, dismissed: {}, fired: {} };
+const hr12 = h => `${((h + 11) % 12) + 1}${h < 12 ? 'am' : 'pm'}`;
+// How stressed she is today: 2 = she logged stress, 1 = a high-stress part of her cycle, 0 = calm
+const STRESS_MOODS = ['Stressed', 'Anxious', 'Irritable', 'Angry', 'Overwhelmed'];
+function stressToday(info) {
+  const l = state.logs[todayISO()] || {};
+  if ((l.moods || []).some(m => STRESS_MOODS.includes(m)) || (l.disrupt || []).some(x => ['Big stress', 'Shock or loss'].includes(x))) return 2;
+  return info && CALM[dayWindow(info)][0] === 3 ? 1 : 0;
+}
 function rem() { return state.reminders = { ...REM_DEFAULT, dismissed: {}, fired: {}, ...(state.reminders || {}) }; }
 function dueReminders() {
   if (!M || !M.info) return [];
@@ -3009,6 +3017,12 @@ function dueReminders() {
     if (info.daysToOv === 1) out.push({ id: 'cy-ov', icon: 'sun', title: 'High-energy days start tomorrow', body: 'Energy often peaks around ovulation. A nice time for a harder workout or a night out, if you feel like it.' });
     events().filter(e => e.date === C.iso(C.addDays(new Date(), 1))).forEach(e => { const x = evInfo(e); out.push({ id: 'ev-' + e.id, icon: 'calendar', title: `Tomorrow: ${evName(e)}`, body: x ? x.prep : 'Get ready tonight.', to: 'calendar' }); });
   }
+  // daily calm: once a day at her hour, or right away when she logs stress; quiet once she has breathed today
+  if (r.calm && !(state.breathLog || {})[today]) {
+    const st = stressToday(info);
+    if (st === 2) out.push({ id: 'calm-now', icon: 'leaf', title: 'Stressed? Breathe with me for 3 minutes', body: 'You logged stress today. Breathing out longer than in calms your nervous system within minutes.', to: 'breathe/stress' });
+    else if (new Date().getHours() >= r.calmHour) out.push({ id: 'calm-daily', icon: 'leaf', title: st ? 'A high-stress day in your cycle' : 'Your 10 minutes of calm', body: st ? 'Your body is under more strain today. Ten slow minutes now lowers cortisol before bed.' : 'Sit, breathe slowly and let the day settle. Ten minutes is enough.', to: 'breathe/stress' });
+  }
   if (r.checkin && !state.logs[today] && new Date().getHours() >= r.checkinHour) {
     out.push({ id: 'checkin', icon: 'heart', title: 'How are you feeling today?', body: 'A 10-second check-in helps Underskin learn your patterns.', to: 'log' });
   }
@@ -3035,13 +3049,15 @@ function reminderBanners() {
 function remindersSection() {
   const r = rem(), perm = 'Notification' in window ? Notification.permission : 'unsupported';
   const tg = (k, label, sub) => `<div class="stepper-row"><span>${label}<small>${sub}</small></span><button class="toggle ${r[k] ? 'on' : ''}" data-action="remToggle" data-k="${k}" role="switch" aria-checked="${!!r[k]}" aria-label="${label}"><i></i></button></div>`;
-  const hr = h => `${((h + 11) % 12) + 1}${h < 12 ? 'am' : 'pm'}`;
+  const hr = hr12;
   return `${sectionTitle('Reminders')}
     <section class="card glass">
       ${tg('period', 'Period coming', 'A heads-up before it starts')}
       ${r.period ? `<div class="stepper-row sub"><span>Days before</span>${stepper('periodDays', r.periodDays, 'rem')}</div>` : ''}
       ${tg('phase', 'New phase', 'When your hormones shift')}
       ${tg('cycle', 'Cycle tips', 'Magnesium before your period, warm food, early nights, plans coming up')}
+      ${tg('calm', 'Daily calm', 'Meditation every day, right away when you log stress')}
+      ${r.calm ? `<div class="stepper-row sub"><span>Every day at</span><div class="stepper"><button data-action="remCalmHour" data-d="-1">−</button><span class="num">${hr(r.calmHour)}</span><button data-action="remCalmHour" data-d="1">+</button></div></div>` : ''}
       ${tg('checkin', 'Daily check-in', 'If you haven’t logged yet')}
       ${r.checkin ? `<div class="stepper-row sub"><span>From</span><div class="stepper"><button data-action="remHour" data-d="-1">−</button><span class="num">${hr(r.checkinHour)}</span><button data-action="remHour" data-d="1">+</button></div></div>` : ''}
       ${perm === 'granted' ? `<p class="fine" style="margin:8px 0 0">${icon('check', 13)} Phone notifications on</p>`
@@ -4863,6 +4879,14 @@ function breathWeek() {
   return `<div class="bwk" aria-label="You breathed on ${n} of the last 7 days"><div class="bwk-h"><small>Breathed this week</small><b><span class="dotnum">${n}</span> of 7 days</b></div>
     <div class="bwk-d">${days.map(d => { const k = C.iso(d), v = L[k] || 0; return `<span class="${k === t ? 'now' : ''} ${v ? 'on' : ''}"><i>${v > 1 ? `<em class="dotnum">${Math.min(v, 9)}</em>` : ''}</i><small>${fmt(d, { weekday: 'narrow' })}</small></span>`; }).join('')}</div></div>`;
 }
+// Breathe page: the daily calm reminder, a bell with her time and a switch; stressed days get an extra nudge
+function calmRemCard() {
+  const r = rem(), st = M.info ? stressToday(M.info) : 0;
+  return `<section class="crm ${r.calm ? 'on' : ''}"><span class="crm-ic">${icon('bell', 20)}</span>
+    <div class="crm-t"><b>Daily calm reminder</b><small>${r.calm ? `Every day at ${hr12(r.calmHour)}, and right away when you log stress` : 'A nudge to meditate every day, sooner on stressed days'}</small>
+      ${r.calm ? `<span class="crm-h"><button data-action="remCalmHour" data-d="-1" aria-label="Earlier">−</button><b class="dotnum">${hr12(r.calmHour)}</b><button data-action="remCalmHour" data-d="1" aria-label="Later">+</button>${st ? `<em>${st === 2 ? 'Stressed today' : 'High-stress day'}</em>` : ''}</span>` : ''}</div>
+    <button class="toggle ${r.calm ? 'on' : ''}" data-action="calmRem" role="switch" aria-checked="${r.calm}" aria-label="Daily calm reminder"><i></i></button></section>`;
+}
 function breathDone() {
   const L = state.breathLog = state.breathLog || {}, t = todayISO(); L[t] = (L[t] || 0) + 1;
   // keep only the last 60 days
@@ -4910,6 +4934,7 @@ function viewBreathe(from) {
       </div>
     </section>
     ${breathWeek()}
+    ${calmRemCard()}
     ${breathMonth(phase, k)}
     ${from === 'stress' && M.info ? cortisolSec(M.info) : ''}
     <figure class="bz-quote"><span>“</span><blockquote>The past is already gone and the future has not yet come. See clearly what is here, now.</blockquote><figcaption>The Buddha, from the Bhaddekaratta Sutta</figcaption></figure>
@@ -6630,6 +6655,8 @@ const actions = {
   dismissRem: d => { rem().dismissed[d.id] = todayISO(); save(); render(); },
   remToggle: d => { const r = rem(); r[d.k] = !r[d.k]; save(); render(); },
   remHour: d => { const r = rem(); r.checkinHour = (r.checkinHour + +d.d + 24) % 24; save(); render(); },
+  remCalmHour: d => { const r = rem(); r.calmHour = (r.calmHour + +d.d + 24) % 24; save(); render(); },
+  calmRem: async () => { const r = rem(); r.calm = !r.calm; save(); if (r.calm && 'Notification' in window && Notification.permission === 'default') { try { await Notification.requestPermission(); } catch { /* unsupported */ } } render(); fireNotifications(); },
   remPermission: async () => { try { await Notification.requestPermission(); } catch { /* unsupported */ } render(); fireNotifications(); },
   flagDismiss: d => { state.flagDismissed = d.k; save(); render(); },
   flagEdit: d => { ui.calSelected = d.date; const x = C.parseISO(d.date); ui.calMonth = C.iso(new Date(x.getFullYear(), x.getMonth(), 1)); go('calendar'); },
