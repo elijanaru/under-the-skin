@@ -309,42 +309,37 @@ function viewTopic(k) {
 // Stress opens Breathe with this on top: her cortisol through the day, her stress level today, and why breath brings it down.
 const CT_V = x => x < 7.6 ? .12 + .88 * Math.exp(-(((x - 7.6) / 1.1) ** 2)) : .1 + .9 * Math.exp(-(x - 7.6) / 5);
 const CT_TIP = [[5, 'Lowest', 'Deep sleep and repair. Your body rests its alarm.'], [7, 'Rising', 'Your body gets you ready to wake.'], [9.5, 'Morning peak', 'A healthy peak. Get daylight and protein, no need to calm it.'], [14, 'Easing', 'Your best hours for focus and hard tasks.'], [18, 'Afternoon', 'A 3 min breath break stops stress pushing it back up.'], [22, 'Evening', 'Long out-breaths help it fall so you can sleep.'], [24.1, 'Low', 'Screens off. Melatonin takes over now.']];
-const ctX = x => 34 + x / 24 * 276, ctY = v => 96 - v * 80;
+const ctX = x => 10 + x / 24 * 300, ctY = v => 94 - v * 80;
 const ctTime = x => { const h = Math.floor(x) % 24, m = Math.round((x % 1) * 60); return `${h % 12 || 12}${m ? `:${String(m).padStart(2, '0')}` : ''} ${h < 12 ? 'am' : 'pm'}`; };
 function ctRead(x) { const v = CT_V(x), [, word, tip] = CT_TIP.find(t => x < t[0]); return { v, word, tip, lvl: v > .7 ? 'High' : v > .35 ? 'Medium' : 'Low' }; }
-// drag or tap along the curve: the marker, the time, the level and what helps at that hour follow her finger
+// drag or tap along the curve: the dot and the one headline follow her finger
 function ctScrub(inp) {
-  const box = inp.closest('.ct'), x = +inp.value, r = ctRead(x), cx = ctX(x).toFixed(1), cy = ctY(r.v).toFixed(1);
-  const m = box.querySelector('.ct-m'), ln = box.querySelector('.ct-ln'); m.setAttribute('cx', cx); m.setAttribute('cy', cy); ln.setAttribute('x1', cx); ln.setAttribute('x2', cx);
-  box.querySelector('.ct-rt').textContent = ctTime(x); box.querySelector('.ct-rw').textContent = r.word; box.querySelector('.ct-rl').textContent = r.lvl;
-  box.querySelector('.ct-rl').className = `ct-rl l${r.lvl[0]}`; box.querySelector('.ct-rp').textContent = r.tip;
-  inp.setAttribute('aria-valuetext', `${ctTime(x)}: ${r.word}, ${r.lvl.toLowerCase()} cortisol`);
+  const box = inp.closest('.ct'), x = +inp.value, r = ctRead(x), cx = ctX(x).toFixed(1), cy = ctY(r.v).toFixed(1), m = box.querySelector('.ct-m');
+  m.setAttribute('cx', cx); m.setAttribute('cy', cy);
+  box.querySelector('.ct-hl').innerHTML = `Cortisol is <b class="l${r.lvl[0]}">${r.lvl.toLowerCase()}</b> at ${ctTime(x)}`;
+  box.querySelector('.ct-tip').textContent = r.tip;
+  inp.setAttribute('aria-valuetext', `${ctTime(x)}: ${r.lvl.toLowerCase()} cortisol`);
 }
 document.addEventListener('input', e => { if (e.target.matches && e.target.matches('.ct-range')) ctScrub(e.target); });
-// Stress opens Breathe with this on top: her cortisol through the day (drag to explore), her stress level today, and why breath brings it down.
+// Stress opens Breathe with this on top: one headline, one tip, one clean curve of her day (slide along it), studies behind a tap.
 function cortisolSec(info) {
-  const w = dayWindow(info), [lvl, txt] = CALM[w], h = nowH(), pts = [];
+  const h = nowH(), pts = [];
   for (let x = 0; x <= 24; x += .25) pts.push([x, CT_V(x)]);
   const d = pts.map(([x, v], i) => `${i ? 'L' : 'M'}${ctX(x).toFixed(1)} ${ctY(v).toFixed(1)}`).join(' ');
-  const r = ctRead(h), nx = ctX(h).toFixed(1), ny = ctY(r.v).toFixed(1);
-  return `<section class="card ct ct2">
-    <div class="ct-h"><span><small>Your stress hormone</small><b>Cortisol today</b></span><span class="ct-lv lv${lvl}"><i class="dc-bar"><b style="width:${lvl * 33.3}%"></b></i>${['', 'Low', 'Medium', 'High'][lvl]} stress</span></div>
-    <div class="ct-read" aria-live="polite"><b class="ct-rt dotnum">${ctTime(h)}</b><span><em class="ct-rw">${r.word}</em><i class="ct-rl l${r.lvl[0]}">${r.lvl}</i></span><p class="ct-rp">${r.tip}</p></div>
+  const r = ctRead(h);
+  return `<section class="card ct ct3">
+    <small class="ct-k">Your stress hormone</small>
+    <h3 class="ct-hl">Cortisol is <b class="l${r.lvl[0]}">${r.lvl.toLowerCase()}</b> right now</h3>
+    <p class="ct-tip">${r.tip}</p>
     <div class="ct-wrap">
-      <svg class="ct-g" viewBox="0 0 320 124" aria-hidden="true">
-        <defs><linearGradient id="ctF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6a443" stop-opacity=".34"/><stop offset="1" stop-color="#d6a443" stop-opacity=".04"/></linearGradient></defs>
-        ${[[.85, 'High'], [.5, 'Mid'], [.15, 'Low']].map(([v, t]) => `<line x1="34" x2="310" y1="${ctY(v)}" y2="${ctY(v)}" class="ct-grid"/><text x="28" y="${ctY(v) + 3}" text-anchor="end" class="ct-ax">${t}</text>`).join('')}
-        <rect x="${ctX(0)}" y="12" width="${ctX(6) - ctX(0)}" height="84" class="ct-night"/><rect x="${ctX(21)}" y="12" width="${ctX(24) - ctX(21)}" height="84" class="ct-night"/>
-        <path d="${d} L${ctX(24)} 96 L${ctX(0)} 96 Z" fill="url(#ctF)"/><path d="${d}" fill="none" stroke="#b07a22" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-        <g class="ct-now"><circle cx="${nx}" cy="${ny}" r="3.5" fill="#20301a"/><text x="${nx}" y="${Math.max(10, +ny - 9)}" text-anchor="middle" class="ct-nowt">now</text></g>
-        <line class="ct-ln" x1="${nx}" x2="${nx}" y1="12" y2="96" stroke="#20301a" stroke-dasharray="3 4" stroke-width="1.2"/>
-        <circle class="ct-m" cx="${nx}" cy="${ny}" r="7.5" fill="#fff" stroke="#20301a" stroke-width="2.6"/>
-        ${[[0, '12am', 'start'], [6, '6am', 'middle'], [12, '12pm', 'middle'], [18, '6pm', 'middle'], [24, '12am', 'end']].map(([x, t, a]) => `<text x="${ctX(x)}" y="114" text-anchor="${a}" class="ct-ax">${t}</text>`).join('')}</svg>
-      <input class="ct-range" type="range" min="0" max="24" step="0.25" value="${(Math.round(h * 4) / 4).toFixed(2)}" aria-label="Move through the day to see your cortisol"></div>
-    <p class="ct-hint">${icon('chevL', 12)} Drag along the curve ${icon('chevR', 12)}</p>
-    <p class="ct-p">${txt}</p>
-    <div class="ct-how">${[['wind', 'Breathe out longer', 'than you breathe in'], ['heart', 'Your heart slows', 'via the vagus nerve'], ['mind', 'Cortisol settles', 'within minutes']].map(([g, a, b], i) => `<span><i>${i + 1}</i><b>${a}</b><small>${b}</small></span>`).join('<u></u>')}</div>
-    <details class="gr-why"><summary>What studies found ${icon('chevD', 13)}</summary><p><b>Ma et al. 2017</b> (Frontiers in Psychology): 8 weeks of slow belly breathing lowered saliva cortisol and improved focus in 40 adults.</p><p><b>Balban et al. 2023</b> (Cell Reports Medicine): 5 minutes a day of breathing with long out-breaths lifted mood and lowered breathing rate more than meditation.</p><p>Cortisol peaks about 30 to 45 minutes after you wake and falls toward night. In the days before your period stress tends to hit harder, so slow breathing matters most then.</p></details>
+      <svg class="ct-g" viewBox="0 0 320 112" aria-hidden="true">
+        <defs><linearGradient id="ctF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6a443" stop-opacity=".3"/><stop offset="1" stop-color="#d6a443" stop-opacity="0"/></linearGradient></defs>
+        <path d="${d} L${ctX(24)} 96 L${ctX(0)} 96 Z" fill="url(#ctF)"/><path d="${d}" fill="none" stroke="#b07a22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle class="ct-m" cx="${ctX(h).toFixed(1)}" cy="${ctY(r.v).toFixed(1)}" r="8" fill="#fff" stroke="#20301a" stroke-width="3"/>
+        ${[[6, '6am'], [12, '12pm'], [18, '6pm']].map(([x, t]) => `<text x="${ctX(x)}" y="110" text-anchor="middle" class="ct-ax">${t}</text>`).join('')}</svg>
+      <input class="ct-range" type="range" min="0" max="24" step="0.25" value="${(Math.round(h * 4) / 4).toFixed(2)}" aria-label="Slide through your day"></div>
+    <p class="ct-foot">${icon('leaf', 13)} Breathing out longer than in lowers it within minutes.</p>
+    <details class="gr-why"><summary>What studies found ${icon('chevD', 13)}</summary><p><b>Ma et al. 2017</b> (Frontiers in Psychology): 8 weeks of slow belly breathing lowered saliva cortisol and improved focus in 40 adults.</p><p><b>Balban et al. 2023</b> (Cell Reports Medicine): 5 minutes a day of breathing with long out-breaths lifted mood and lowered breathing rate more than meditation.</p><p>Cortisol peaks about 30 to 45 minutes after you wake and falls toward night.</p></details>
   </section>`;
 }
 // Move page: six health checks for women who train, each a tile that opens two steps, why, and one study.
@@ -4932,59 +4927,35 @@ function breathFx(k) {
   return `<div class="bzfx">${[['Calm', 'leaf'], ['Focus', 'spark'], ['Sleep', 'moon'], ['Cramps', 'drop']].map(([t, ic], i) => `<div class="bzfx-i ${v[i] === 3 ? 'top' : ''}"><span>${icon(ic, 15)}</span><small>${t}</small><i>${[1, 2, 3].map(n => `<b class="${n <= v[i] ? 'on' : ''}"></b>`).join('')}</i></div>`).join('')}</div>`;
 }
 // Calm sigh: a deep breath in to almost full, one more short sip on top, then a long slow breath out.
-// A breath for every phase: the four practices as tiles in their phase colour, the rhythm in seconds and a
-// little bar of one breath (in, hold, out) so she sees its shape. Tapping one loads it on the pond card above.
-// Why the breath changes across the month: progesterone drives breathing, so after ovulation she breathes a little
-// faster and shallower (blood CO2 runs lower). A small curve over the four phases with today on it; the study behind a tap.
-function breathDrive() {
-  const info = M.info, L = (info && info.L) || (M.stats && M.stats.avgCycle) || 28, P = M.stats ? M.stats.avgPeriod : 5, ov = C.ovulationDay(L, P);
-  const W = 300, H = 92, X = d => 10 + (d - 1) / (L - 1) * (W - 20);
-  const drive = d => { const t = d - ov; return t <= 0 ? .18 : .18 + .62 * Math.sin(Math.PI * Math.min(1, t / (L - ov + 1))) ** 1.3; };
-  const Y = v => H - 18 - v * (H - 34);
-  const pts = Array.from({ length: L }, (_, i) => [X(i + 1), Y(drive(i + 1))]);
-  const path = pts.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join('');
-  const ranges = C.phaseRanges(L, P), cd = info ? Math.min(info.cd, L) : null, ph = info && info.phase;
-  const now = ph === 'luteal' ? 'You’re in it now: lengthen every out-breath.' : ph === 'menstrual' ? 'Back to calm now: slow belly breaths feel easy.' : 'Your breath is at its calmest now. Use it to train focus.';
-  return `<section class="card bdr">
-    <div class="bdr-h"><span class="bdr-ic" aria-hidden="true">${icon('leaf', 16)}</span><div><small>Why it changes</small><h3>Progesterone speeds up your breath</h3></div></div>
-    <svg viewBox="0 0 ${W} ${H}" class="bdr-svg" role="img" aria-label="Breathing drive across your cycle: low before ovulation, higher after it">
-      ${ranges.map(r => `<rect x="${X(r.from) - 3}" y="6" width="${X(r.to) - X(r.from) + 6}" height="${H - 22}" rx="7" fill="${PH_HEX[r.key]}" opacity=".16"/>`).join('')}
-      <line x1="${X(ov)}" x2="${X(ov)}" y1="6" y2="${H - 16}" stroke="#304023" stroke-opacity=".35" stroke-dasharray="3 3"/>
-      <path d="${path}" fill="none" stroke="#20301a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-      ${cd ? `<circle cx="${X(cd).toFixed(1)}" cy="${Y(drive(cd)).toFixed(1)}" r="5.5" fill="#fff" stroke="${PH_HEX[ph]}" stroke-width="3"/>` : ''}
-      <text x="${X(ov)}" y="${H - 3}" text-anchor="middle" class="bdr-ax">egg release</text>
-      <text x="10" y="${H - 3}" class="bdr-ax">Day 1</text><text x="${W - 10}" y="${H - 3}" text-anchor="end" class="bdr-ax">Day ${L}</text></svg>
-    <div class="bdr-two"><span><i class="lo"></i><b>Before</b>Slower, deeper</span><span><i class="hi"></i><b>After</b>Faster, shallower</span></div>
-    <p class="bdr-now">${now}</p>
-    <details class="bdr-more"><summary>What studies found ${icon('chevD', 13)}</summary>
-      ${studyCards('Healthy women breathed more and had lower carbon dioxide in their blood in the luteal phase, when progesterone peaks. Progesterone acts on the breathing centre in the brain, the same reason pregnancy can feel breathless.', 'Slatkovska 2006 (Respir Physiol Neurobiol)')}
-      <p>That is why the long out-breaths, like 4-7-8, sit in your luteal phase: a slow exhale gently counters the faster breath.</p></details>
-  </section>`;
-}
-// One breath drawn as its shape: the line rises while she breathes in, stays flat while she holds, falls as she breathes out.
-// Box breathing literally draws a box. Each part is labelled underneath with its word and seconds.
+// one breath drawn as its shape: rises on the breath in, flat on a hold, falls on the breath out
 function breathShape(B, col) {
   const hasHold = B.steps.some(x => x[0] === 'hold'), st = [];
   B.steps.forEach(([k, , , ms]) => { if (k === 'top' && st.length) st[st.length - 1][1] += ms; else st.push([k === 'rest' && hasHold ? 'hold' : k, ms]); });
   const tot = st.reduce((n, x) => n + x[1], 0), W = 140, Hh = 34, top = 5, bot = Hh - 3;
   let x = 2, y = bot, segs = '';
-  st.forEach(([k, ms], i) => { const w = (W - 4) * ms / tot, y2 = k === 'in' ? top : k === 'out' ? bot : y;
+  st.forEach(([k, ms]) => { const w = (W - 4) * ms / tot, y2 = k === 'in' ? top : k === 'out' ? bot : y;
     segs += `<path d="M${x.toFixed(1)} ${y} L${(x + w).toFixed(1)} ${y2}" class="bs-${k}" ${k === 'in' ? `style="stroke:${col}"` : ''}/>`; x += w; y = y2; });
   return `<span class="bsh" aria-hidden="true"><svg viewBox="0 0 ${W} ${Hh}" preserveAspectRatio="none">${segs}</svg>
     <span class="bsh-l">${st.map(([k, ms]) => `<i style="flex:${ms}"><b>${{ in: 'In', out: 'Out', hold: 'Hold', rest: 'Rest' }[k]}</b> ${+(ms / 1000).toFixed(1)}</i>`).join('')}</span></span>`;
 }
-function breathMonth(phase, k) {
-  const seg = { in: 'i', top: 'i', hold: 'h', out: 'o', rest: 'h' };
-  return `${sectionTitle('A breath for every phase')}
-    ${breathDrive()}
-    <div class="bzm">${PHASE_ORDER.map(p => { const id = BREATH_FOR[p], B = BREATHS[id], tot = B.steps.reduce((a, x) => a + x[3], 0);
-      const nums = B.steps.filter(x => x[0] !== 'top').map(x => +(x[3] / 1000).toFixed(1)).join('·');
-      return `<button class="bzm-t ${p === phase ? 'now' : ''} ${id === k ? 'on' : ''}" style="--c:${PH_HEX[p]}" data-action="bzPhase" data-v="${id}">
-        <span class="bzm-p"><i></i>${PHASES[p].name}${p === phase ? '<em>Now</em>' : ''}</span>
-        <b class="dotnum">${nums}</b><small>${B.name}</small>
-        ${breathShape(B, PH_HEX[p])}
-        <span class="bzm-for">${B.for}</span></button>`; }).join('')}</div>
-`;
+// What each breath does: one card per practice, her phase's breath first
+const BZ_DOES = { still: 'Trains your mind to notice a thought and let it go. Calmer days and deeper sleep.', sigh: 'The fastest way to calm down. One or two sighs slow your heart within seconds.', belly: 'Relaxes your belly and womb, so cramps and tension soften.', box: 'Gives a busy mind a steady rhythm, so you stay clear under pressure.', even: 'Brings your heart and breath into step. You feel calm and open.', 478: 'The long breath out tells your body it is safe to fall asleep.' };
+const BZ_COL = { still: '#6c823e', sigh: '#5f93a8', belly: '#d9768f', box: '#6c823e', even: '#c99327', 478: '#8f79bd' };
+function breathGuide(phase, k) {
+  const mine = BREATH_FOR[phase], order = [mine, ...BREATH_ORDER.filter(x => x !== mine)];
+  const FX = [['Calm', 'leaf'], ['Focus', 'spark'], ['Sleep', 'moon'], ['Cramps', 'drop']];
+  return `${sectionTitle('What each breath does')}
+    <div class="bwx">${order.map(id => { const B = BREATHS[id], col = BZ_COL[id] || '#6c823e', fx = BZ_FX[id] || [];
+      return `<article class="bwx-c ${id === k ? 'on' : ''}" style="--c:${col}">
+        <div class="bwx-h"><span class="bwx-g">${B.g}</span><div><b>${B.name}</b><small>${B.for}</small></div>${id === mine ? '<em>For you now</em>' : ''}</div>
+        <div class="bwx-art">${breathShape(B, col)}</div>
+        <p class="bwx-does">${BZ_DOES[id] || B.for}</p>
+        <div class="bwx-tags">${FX.filter((_, i) => fx[i] === 3).map(([t, ic]) => `<span>${icon(ic, 12)} ${t}</span>`).join('')}<span class="w">${icon('clock', 12)} ${BZ_WHEN[id] || B.when}</span></div>
+        <div class="bwx-f"><details class="bwx-more"><summary>How to do it ${icon('chevD', 13)}</summary>
+            ${B.how.map(([t, p], i) => `<div class="bz-step"><span>${i + 1}</span><div><b>${t}</b><p>${p}</p></div></div>`).join('')}
+            ${BZ_STUDY[id] ? `<div class="bz-study">${studyCards(...BZ_STUDY[id])}</div>` : ''}</details>
+          <button class="bwx-go" data-action="bzPhase" data-v="${id}">${id === k ? 'In the player' : `${icon('play', 12)} Try it`}</button></div>
+      </article>`; }).join('')}</div>`;
 }
 // her breath this week: one dot for each day she finished a full session (breathing or the still sit)
 function breathWeek() {
@@ -4995,11 +4966,20 @@ function breathWeek() {
 }
 // Breathe page: the daily calm reminder, a bell with her time and a switch; stressed days get an extra nudge
 function calmRemCard() {
-  const r = rem(), st = M.info ? stressToday(M.info) : 0;
-  return `<section class="crm ${r.calm ? 'on' : ''}"><span class="crm-ic">${icon('bell', 20)}</span>
-    <div class="crm-t"><b>Daily calm reminder</b><small>${r.calm ? `Every day at ${hr12(r.calmHour)}, and right away when you log stress` : 'A nudge to meditate every day, sooner on stressed days'}</small>
-      ${r.calm ? `<span class="crm-h"><button data-action="remCalmHour" data-d="-1" aria-label="Earlier">−</button><b class="dotnum">${hr12(r.calmHour)}</b><button data-action="remCalmHour" data-d="1" aria-label="Later">+</button>${st ? `<em>${st === 2 ? 'Stressed today' : 'High-stress day'}</em>` : ''}</span>` : ''}</div>
-    <button class="toggle ${r.calm ? 'on' : ''}" data-action="calmRem" role="switch" aria-checked="${r.calm}" aria-label="Daily calm reminder"><i></i></button></section>`;
+  const r = rem(), st = M.info ? stressToday(M.info) : 0, h = r.calmHour, hh = h % 12 || 12, ap = h < 12 ? 'am' : 'pm';
+  // the whole top row is the switch, so she can tap anywhere on it
+  return `<section class="crm2 ${r.calm ? 'on' : ''}">
+    <button class="crm2-top" data-action="calmRem" role="switch" aria-checked="${r.calm}" aria-label="Daily calm reminder">
+      <span class="crm2-ic">${icon('bell', 20)}</span>
+      <span class="crm2-t"><b>Daily calm</b><small>${r.calm ? `On · a nudge to breathe at ${hr12(h)}` : 'Off · tap to turn on'}</small></span>
+      <span class="crm2-sw" aria-hidden="true"><i>${r.calm ? icon('check', 14, 2.6) : ''}</i></span></button>
+    ${r.calm ? `<div class="crm2-time">
+        <button data-action="remCalmHour" data-d="-1" aria-label="One hour earlier">−</button>
+        <span class="crm2-clock"><b class="dotnum">${hh}:00</b><em>${ap}</em><small>every day</small></span>
+        <button data-action="remCalmHour" data-d="1" aria-label="One hour later">+</button></div>
+      <p class="crm2-also"><span>⚡</span>And right away when you log stress${st ? `<em>${st === 2 ? 'Stressed today' : 'High-stress day'}</em>` : ''}</p>`
+    : `<p class="crm2-off">A gentle nudge every evening to breathe for a few minutes, and sooner on stressed days.</p>`}
+  </section>`;
 }
 function breathDone() {
   const L = state.breathLog = state.breathLog || {}, t = todayISO(); L[t] = (L[t] || 0) + 1;
@@ -5007,6 +4987,24 @@ function breathDone() {
   const cut = C.iso(C.addDays(new Date(), -60)); Object.keys(L).forEach(k => { if (k < cut) delete L[k]; });
   save();
   const w = document.querySelector('.bwk'); if (w) w.outerHTML = breathWeek();
+}
+// A quote for each day, chosen for where she is in her cycle: three per part of the cycle, turning daily.
+// Public-domain sources and translations only (Legge, Müller, Gummere, Long, KJV, 19th-century writers).
+const DAY_QUOTES = {
+  'flow-start': [['Rest is not idleness.', 'John Lubbock, The Use of Life'], ['Let it be still, and it will gradually become clear.', 'Lao Tzu, Tao Te Ching'], ['To every thing there is a season, and a time to every purpose under the heaven.', 'Ecclesiastes 3:1']],
+  'flow-end': ['“Hope” is the thing with feathers that perches in the soul.', 'I exist as I am, that is enough.', 'The past is already gone and the future has not yet come. See clearly what is here, now.'].map((t, i) => [t, ['Emily Dickinson', 'Walt Whitman, Song of Myself', 'The Buddha, from the Bhaddekaratta Sutta'][i]]),
+  rising: [['The journey of a thousand li commences with a single step.', 'Lao Tzu, Tao Te Ching'], ['Begin at once to live, and count each separate day as a separate life.', 'Seneca, Letters to Lucilius'], ['I dwell in Possibility.', 'Emily Dickinson']],
+  building: [['The mountains are calling and I must go.', 'John Muir'], ['Write it on your heart that every day is the best day in the year.', 'Ralph Waldo Emerson'], ['Live in each season as it passes; breathe the air, drink the drink, taste the fruit.', 'Henry David Thoreau, Journal']],
+  peak: [['I celebrate myself, and sing myself.', 'Walt Whitman, Song of Myself'], ['Nature always wears the colors of the spirit.', 'Ralph Waldo Emerson, Nature'], ['A time to keep silence, and a time to speak.', 'Ecclesiastes 3:7']],
+  settle: [['In every walk with nature one receives far more than he seeks.', 'John Muir'], ['Look within. Within is the fountain of good, and it will ever bubble up, if thou wilt ever dig.', 'Marcus Aurelius, Meditations'], ['The past is already gone and the future has not yet come. See clearly what is here, now.', 'The Buddha, from the Bhaddekaratta Sutta']],
+  focus: [['All that we are is the result of what we have thought.', 'The Dhammapada'], ['Everywhere means nowhere.', 'Seneca, Letters to Lucilius'], ['I went to the woods because I wished to live deliberately.', 'Henry David Thoreau, Walden']],
+  premenstrual: [['We suffer more from imagination than from reality.', 'Seneca, Letters to Lucilius'], ['I exist as I am, that is enough.', 'Walt Whitman, Song of Myself'], ['Let it be still, and it will gradually become clear.', 'Lao Tzu, Tao Te Ching']],
+};
+function dayQuote() {
+  const w = M.info ? dayWindow(M.info) : 'settle', list = DAY_QUOTES[w] || DAY_QUOTES.settle;
+  const n = Math.floor((C.parseISO(todayISO()) - new Date(2026, 0, 1)) / 864e5);
+  const [t, by] = list[((n % list.length) + list.length) % list.length], lab = (TEA_WIN.find(x => x[0] === w) || [, ''])[1];
+  return `<figure class="bz-quote">${lab ? `<small class="bzq-k">Today’s words · ${lab}</small>` : ''}<span>“</span><blockquote>${t}</blockquote><figcaption>${by}</figcaption></figure>`;
 }
 function viewBreathe(from) {
   const phase = M.info && M.info.phase, rec = BREATH_FOR[phase] || 'sigh', k = BREATHS[ui.bzK] ? ui.bzK : rec, B = BREATHS[k];
@@ -5049,18 +5047,9 @@ function viewBreathe(from) {
     </section>
     ${breathWeek()}
     ${calmRemCard()}
-    ${breathMonth(phase, k)}
     ${from === 'stress' && M.info ? cortisolSec(M.info) : ''}
-    <figure class="bz-quote"><span>“</span><blockquote>The past is already gone and the future has not yet come. See clearly what is here, now.</blockquote><figcaption>The Buddha, from the Bhaddekaratta Sutta</figcaption></figure>
-    <section class="bz-how"><div class="bzh-h"><div><small>Why this one</small><h3>${B.for}</h3></div></div>
-      <span class="bzh-when">${icon('clock', 13)} ${BZ_WHEN[k] || B.when}</span>
-      ${breathWave(k)}
-      ${breathFx(k)}
-      <details class="bzh-more"><summary>How and why ${icon('chevD', 14)}</summary>
-        ${B.how.map(([t, p], i) => `<div class="bz-step"><span>${i + 1}</span><div><b>${t}</b><p>${p}</p></div></div>`).join('')}
-        <p class="bz-why">${B.why}</p>
-        ${BZ_STUDY[k] ? `<div class="bz-study">${studyCards(...BZ_STUDY[k])}</div>` : ''}</details>
-    </section>
+    ${breathGuide(phase, k)}
+    ${dayQuote()}
   </div>`;
 }
 const SIGH = [['in', 'Breathe in', 'Fill up like a soft balloon', 4000], ['top', 'One more sip', 'Just a tiny bit more', 1500], ['out', 'Let it all go', 'Everything can melt away', 8000], ['rest', 'Rest here', 'You are here, and that is enough', 1500]];
