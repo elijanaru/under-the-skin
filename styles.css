@@ -8280,3 +8280,28 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .fl2-b { display: inline-flex; align-items: center; gap: 6px; padding: 9px 15px; border-radius: 999px; border: 1px solid rgba(32,48,26,.18); background: #fff; color: #20301a; font: 500 13.5px Outfit, sans-serif; cursor: pointer; }
 .fl2-b.on { background: #20301a; border-color: #20301a; color: #fff; }
 .fl2-b svg { width: 14px; height: 14px; }
+
+/* Manifest › How you know it landed: three signs as tiles, then a dotted path for letting the how come */
+.mfl { margin-bottom: 22px; padding: 16px; border-radius: 28px; border: 1px solid rgba(32,48,26,.08); background: #fff; box-shadow: 0 8px 22px rgba(32,48,26,.07); color: #20301a; }
+.mfl-s { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.mfl-t { display: grid; justify-items: start; align-content: start; gap: 5px; padding: 12px 10px; border-radius: 20px; background: hsl(calc(var(--hb) + 0 * var(--hk)) calc(30% * var(--hs)) 96%); }
+.mfl-t span { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; background: #20301a; color: #fff; }
+.mfl-t span svg { width: 16px; height: 16px; }
+.mfl-t b { font-size: 14px; font-weight: 600; line-height: 1.15; }
+.mfl-t small { font-size: 11.5px; line-height: 1.35; color: #4b5a40; }
+.mfl-path { display: grid; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(32,48,26,.08); }
+.mfl-line { position: relative; display: flex; align-items: center; justify-content: space-between; height: 30px; padding: 0 2px; }
+.mfl-line::before { content: ''; position: absolute; left: 6px; right: 18px; top: 50%; border-top: 2px dashed rgba(32,48,26,.25); }
+.mfl-line i { position: relative; width: 12px; height: 12px; border-radius: 50%; background: #fff; border: 2px solid hsl(calc(var(--hb) + 0 * var(--hk)) calc(45% * var(--hs)) 48%); }
+.mfl-line i:nth-child(2) { opacity: .85; } .mfl-line i:nth-child(3) { opacity: .7; } .mfl-line i:nth-child(4) { opacity: .55; }
+.mfl-line span { position: relative; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: #20301a; color: #fff; }
+.mfl-line span svg { width: 15px; height: 15px; }
+.mfl-path b { display: block; font-size: 15px; font-weight: 600; }
+.mfl-path small { display: block; margin-top: 3px; font-size: 13px; line-height: 1.4; color: #4b5a40; }
+.mfl-more { margin-top: 12px; border-top: 1px solid rgba(32,48,26,.08); padding-top: 10px; }
+.mfl-more summary { display: flex; align-items: center; justify-content: space-between; list-style: none; cursor: pointer; font-size: 14px; font-weight: 500; color: #20301a; }
+.mfl-more summary::-webkit-details-marker { display: none; }
+.mfl-more[open] summary svg { transform: rotate(180deg); }
+.mfl-more p { margin: 10px 0 0; font-size: 13.5px; line-height: 1.5; color: #304023; }
+@media (prefers-reduced-motion: no-preference) { .mfl-line i { animation: mflStep 4s ease-in-out infinite; } .mfl-line i:nth-child(2) { animation-delay: .5s; } .mfl-line i:nth-child(3) { animation-delay: 1s; } .mfl-line i:nth-child(4) { animation-delay: 1.5s; } }
+@keyframes mflStep { 0%, 70%, 100% { transform: scale(1); } 35% { transform: scale(1.25); } }

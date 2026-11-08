@@ -2730,6 +2730,19 @@ const MANI_IDEA = [
   ['moon', 'Sleep on it', 'The mood you drift off in sinks in the deepest.', 'menstrual'],
   ['clock', 'Persist', 'Come back to the feeling until it feels normal.', 'luteal'],
 ];
+// Neville Goddard's signs that the feeling has settled, and his idea of letting the route appear (in our own words)
+const MANI_SIGN = [['heart', 'Relief', 'The wanting softens into a quiet thank you.'], ['leaf', 'Normal', 'It feels like an old fact, not a big event.'], ['check', 'No checking', 'You stop looking for proof. You just expect it.']];
+function maniLanded() {
+  return `<section class="mfl">
+    <div class="mfl-s">${MANI_SIGN.map(([ic, t, d]) => `<div class="mfl-t"><span>${icon(ic, 17)}</span><b>${t}</b><small>${d}</small></div>`).join('')}</div>
+    <div class="mfl-path"><div class="mfl-line" aria-hidden="true"><i></i><i></i><i></i><i></i><span>${icon('star', 15)}</span></div>
+      <div><b>Then let the how come</b><small>You don’t plan the route. Small events line up one by one, and you follow the ones that feel right.</small></div></div>
+    <details class="mfl-more"><summary>Read more ${icon('chevD', 13)}</summary>
+      <p>Goddard said a wish is settled when you no longer feel the need to wish for it. The hunger turns into calm, the way you stop thinking about dinner once you have eaten.</p>
+      <p>If you catch yourself checking or doubting, don’t fight it. Go back to your scene tonight and rest in it again until it feels ordinary.</p>
+      <p>He called the path that follows a bridge of small events: a call, a chance meeting, an idea in the shower. Your part is to notice them and take the next step.</p></details>
+  </section>`;
+}
 function maniIdea(phase) {
   return `<section class="mfi">
     <div class="mfi-flow">${MANI_IDEA.map(([ic, t, d, p], i) => `<div class="mfi-s ${p === phase ? 'now' : ''}" style="--c:${PH_HEX[p]}">
@@ -2764,6 +2777,8 @@ function viewManifest() {
       <small>${fit}</small><span class="mfm-w">${icon('clock', 11)}${when}</span></button>`; }).join('')}</div>
     ${sectionTitle('Any day of your cycle')}
     <div class="mfa" role="list">${MANI_ANY.map(([o, t]) => `<button class="mfa-c ${o === k ? 'on' : ''}" role="listitem" data-action="maniK" data-v="${o}"><span class="mfa-a">${maniArt(o)}</span><b>${MG.MANIFEST[o].name}</b><small>${MANI_WHY[o]}</small><em>${icon('clock', 12)} ${t}</em><span class="mfa-go">${o === k ? 'On top now' : `Try it ${icon('chevR', 12)}`}</span></button>`).join('')}</div>
+    ${sectionTitle('How you know it landed')}
+    ${maniLanded()}
     ${sectionTitle('The idea behind it')}
     ${maniIdea(phase)}
   </div>`;
