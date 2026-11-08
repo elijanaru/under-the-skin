@@ -1155,7 +1155,7 @@ function viewOnboarding() {
       <div class="bw-flash"></div>
     </div>`;
   }
-  if (s === 1 && !ui.onbGateDone && !A.currentUser() && A.configured()) return viewGate(); // no sign-up screen until accounts are switched on
+  if (s === 1 && !ui.onbGateDone && !A.currentUser() && A.configured() && socialOK()) return viewGate(); // no sign-up screen until accounts are switched on
   const bd = o.birthday ? (() => { const [y, m, d] = o.birthday.split('-').map(Number); const sign = Z.sunSign(m, d), moon = Z.moonPhase(new Date(y, m - 1, d, 12)), cz = Z.chineseZodiac(y, m, d); return { sign, moon, cz }; })() : null;
   const body = {
     1: ui.onbWhere ? `<div class="onb-avatar where"><span class="where-emo" aria-hidden="true">🌍</span></div><h2 class="onb-title">Where do <span>you live?</span></h2>
@@ -6343,8 +6343,6 @@ const sndIcon = off => `<svg viewBox="0 0 24 24" width="19" height="19" fill="no
 const ambience = on => import('./sfx.js').then(S => S.ambience(on)).catch(() => {});
 document.addEventListener('pointerdown', () => { if (!state?.onboarded) ambience(true); });
 // Return in the gate's password field creates the account (or signs in) right there
-document.addEventListener('keydown', e => { if (e.key !== 'Enter') return; const id = e.target.id; if (id !== 'ac-phone' && id !== 'ac-code') return; e.preventDefault(); const b = e.target.closest('.ph-auth')?.querySelector(id === 'ac-code' ? '[data-action="acCode"]' : '.ph-s1 [data-action="acPhone"]'); if (b) b.click(); });
-document.addEventListener('change', e => { if (e.target.id !== 'ac-cc') return; ui.acCC = e.target.value; const v = e.target.closest('.ph-cc')?.querySelector('.ph-cc-v'); if (v) v.textContent = `${flagOf(e.target.value)} +${DIAL[e.target.value] || ''}`; });
 document.addEventListener('change', e => {
   const t = e.target, scope = t.dataset?.photo, f = t.files?.[0]; if (!scope || !f) return;
   readPhoto(f).then(d => {
@@ -6657,7 +6655,7 @@ function viewGate() {
     <div class="gate-head"><h2 class="onb-title">Keep your cycle <span>safe with you</span></h2>
     <p class="gate-lead">A free account saves every period, symptom and note, and brings them back on any new phone. New or coming back, the steps are the same.</p></div>
     <div class="gate-card">
-    ${phoneAuth()}
+    ${socialAuth()}
     </div>
     <div class="gate-later">
       <button class="gate-skip" data-action="gateSkip">Use without an account</button>
@@ -6700,44 +6698,22 @@ function viewAccount() {
   return `${head}<div class="pad ac">
     <section class="ac-hero card-light"><div class="eyebrow dark">Account</div><h2>Save your cycle</h2>
       <p>Keep your periods and logs safe in a private account and take them to any new phone. New or coming back, the steps are the same.</p></section>
-    <section class="card glass ac-form ac-phone">${phoneAuth()}</section>
+    <section class="card glass ac-form ac-phone">${socialAuth()}</section>
     <p class="fine">No account needed to use the app. Without one, everything stays only on this phone.</p></div>`;
 }
-// Phone number (text code), then Apple and Google. The ticks sit right above the first button.
-const DIAL = {AD:376,AE:971,AF:93,AL:355,AM:374,AR:54,AT:43,AU:61,AZ:994,BA:387,BD:880,BE:32,BG:359,BH:973,BN:673,BO:591,BR:55,BT:975,BY:375,CA:1,CH:41,CL:56,CN:86,CO:57,CY:357,CZ:420,DE:49,DK:45,EC:593,EE:372,ES:34,FI:358,FR:33,GB:44,GE:995,GR:30,GY:592,HK:852,HR:385,HU:36,ID:62,IE:353,IL:972,IN:91,IQ:964,IR:98,IS:354,IT:39,JO:962,JP:81,KG:996,KH:855,KR:82,KW:965,KZ:7,LA:856,LB:961,LI:423,LK:94,LT:370,LU:352,LV:371,MC:377,MD:373,ME:382,MK:389,MM:95,MN:976,MO:853,MT:356,MV:960,MX:52,MY:60,NL:31,NO:47,NP:977,NZ:64,OM:968,PE:51,PH:63,PK:92,PL:48,PS:970,PT:351,PY:595,QA:974,RO:40,RS:381,RU:7,SA:966,SE:46,SG:65,SI:386,SK:421,SM:378,SR:597,SY:963,TH:66,TJ:992,TL:670,TM:993,TR:90,TW:886,UA:380,US:1,UY:598,UZ:998,VE:58,VN:84,XK:383,YE:967,ZA:27};
-function phoneAuth() {
-  const cc = ui.acCC || (ui.onb && ui.onb.country) || myCountry(), list = SZ.COUNTRIES.filter(([c]) => DIAL[c]);
-  const social = A.oauthOK('apple') || A.oauthOK('google');
-  return `<div class="ph-auth" data-step="${ui.acStep === 'code' ? 'code' : 'phone'}">
-    <div class="ph-s1">
-      <div class="ph-row"><label class="ph-cc"><span class="ph-cc-v">${flagOf(cc)} +${DIAL[cc] || ''}</span><select id="ac-cc" aria-label="Country code">${list.map(([c, n]) => `<option value="${c}" ${c === cc ? 'selected' : ''}>${n} +${DIAL[c]}</option>`).join('')}</select></label>
-        <input class="field" id="ac-phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="Mobile number" value="${esc(ui.acPhoneRaw || '')}" aria-label="Mobile number"></div>
-      <div class="gate-checks">
-        <label class="ac-consent"><input type="checkbox" id="ac-consent"><span>Keep my logs in my private account. I can delete them anytime. <a href="#/privacy">Privacy</a></span></label>
-        <label class="ac-consent ac-terms"><input type="checkbox" id="ac-terms" ${termsOK() ? 'checked' : ''}><span>Underskin is wellness information, not medical advice. What I try is my own choice and responsibility, and I ask a doctor when unsure. <a href="#/privacy">Terms</a></span></label>
-      </div>
-      <button type="button" class="ac-btn ac-go" data-action="acPhone">${icon('mail', 18)}<span>Text me a code</span></button>
-      ${social ? `<div class="ph-or"><span>or</span></div>` : ''}
-      ${A.oauthOK('apple') ? `<button class="ac-btn ac-apple" data-action="acProvider" data-p="apple">${APPLE_SVG}<span>Continue with Apple</span></button>` : ''}
-      ${A.oauthOK('google') ? `<button class="ac-btn ac-google" data-action="acProvider" data-p="google">${GOOGLE_SVG}<span>Continue with Google</span></button>` : ''}
+// Sign in with Apple or Google only (free, no passwords). The ticks sit right above the buttons.
+const socialOK = () => A.oauthOK('apple') || A.oauthOK('google');
+function socialAuth() {
+  if (!socialOK()) return `<div class="ph-auth"><p class="ph-sent">Sign in with Apple or Google in the Underskin app on your phone.</p></div>`;
+  return `<div class="ph-auth">
+    <div class="gate-checks">
+      <label class="ac-consent"><input type="checkbox" id="ac-consent"><span>Keep my logs in my private account. I can delete them anytime. <a href="#/privacy">Privacy</a></span></label>
+      <label class="ac-consent ac-terms"><input type="checkbox" id="ac-terms" ${termsOK() ? 'checked' : ''}><span>Underskin is wellness information, not medical advice. What I try is my own choice and responsibility, and I ask a doctor when unsure. <a href="#/privacy">Terms</a></span></label>
     </div>
-    <div class="ph-s2">
-      <p class="ph-sent">We texted a 6-digit code to <b class="ph-num">${esc(ui.acPhone || '')}</b></p>
-      <input class="field ph-code" id="ac-code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*" maxlength="6" placeholder="······" aria-label="6-digit code">
-      <button type="button" class="ac-btn ac-go" data-action="acCode"><span>Verify and continue</span></button>
-      <div class="ph-links"><button type="button" class="link" data-action="acPhoneBack">Change number</button><button type="button" class="link" data-action="acPhone" data-again="1">Send a new code</button></div>
-    </div>
+    ${A.oauthOK('apple') ? `<button class="ac-btn ac-apple" data-action="acProvider" data-p="apple">${APPLE_SVG}<span>Continue with Apple</span></button>` : ''}
+    ${A.oauthOK('google') ? `<button class="ac-btn ac-google" data-action="acProvider" data-p="google">${GOOGLE_SVG}<span>Continue with Google</span></button>` : ''}
     <p class="ac-msg" id="ac-msg" role="status">${A.configured() ? '' : 'Accounts open very soon. Until then everything stays safely on this phone.'}</p>
   </div>`;
-}
-// Turns what she typed into +countrycode number (drops spaces, dashes and a leading 0)
-function e164(raw, cc) {
-  let t = String(raw || '').trim().replace(/[\s\-().\/]/g, '');
-  if (t.startsWith('00')) t = '+' + t.slice(2);
-  if (t.startsWith('+')) return /^\+\d{7,15}$/.test(t) ? t : '';
-  t = t.replace(/^0+/, '');
-  const n = '+' + (DIAL[cc] || '') + t;
-  return /^\+\d{7,15}$/.test(n) ? n : '';
 }
 function termsSheet() {
   return `<div class="tm-wrap" role="dialog" aria-modal="true" aria-labelledby="tm-h"><section class="tm-sheet">
@@ -6866,30 +6842,6 @@ const actions = {
     acMsg(''); el.classList.add('busy');
     try { await A.withProvider(d.p); el.classList.remove('busy'); } catch (e) { el.classList.remove('busy'); acMsg(e.message, true); }
   },
-  acPhone: async (d, el) => {
-    const cc = document.getElementById('ac-cc')?.value || ui.acCC, raw = document.getElementById('ac-phone')?.value ?? ui.acPhoneRaw;
-    const phone = d.again ? ui.acPhone : e164(raw, cc);
-    ui.acPhoneRaw = raw; ui.acCC = cc;
-    if (!phone) return acMsg('Enter your mobile number.', true);
-    if (!d.again && !acReady()) return;
-    const box = el.closest('.ph-auth');
-    el.classList.add('busy'); acMsg('');
-    try {
-      await A.sendPhoneCode(phone); ui.acPhone = phone; ui.acStep = 'code';
-      box.dataset.step = 'code'; box.querySelector('.ph-num').textContent = phone;
-      const ci = box.querySelector('#ac-code'); ci.value = ''; setTimeout(() => ci.focus({ preventScroll: true }), 120);
-      acMsg(d.again ? 'New code sent.' : '');
-    } catch (e) { acMsg(e.message, true); }
-    el.classList.remove('busy');
-  },
-  acCode: async (d, el) => {
-    const code = (document.getElementById('ac-code')?.value || '').replace(/\D/g, '');
-    if (code.length !== 6) return acMsg('Enter the 6-digit code from the text.', true);
-    el.classList.add('busy'); acMsg('');
-    try { await A.verifyPhoneCode(ui.acPhone, code); ui.acStep = null; } catch (e) { acMsg(e.message, true); }
-    el.classList.remove('busy');
-  },
-  acPhoneBack: (d, el) => { ui.acStep = null; const box = el.closest('.ph-auth'); box.dataset.step = 'phone'; acMsg(''); box.querySelector('#ac-phone')?.focus({ preventScroll: true }); },
   acNewPw: async () => {
     const pw = document.getElementById('ac-pw')?.value || '';
     if (pw.length < 8) return acMsg('At least 8 characters.', true);

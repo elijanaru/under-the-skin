@@ -1,4 +1,4 @@
-// Accounts and cloud sync: Sign in with a phone number (text code), Apple or Google (Supabase).
+// Accounts and cloud sync: Sign in with Apple or Google (Supabase).
 // Local-first: the app works fully without an account; signing in only adds a private copy in the cloud.
 import { SUPABASE_URL, SUPABASE_ANON_KEY, GOOGLE_WEB_CLIENT_ID, GOOGLE_IOS_CLIENT_ID, WEB_OAUTH } from './config.js';
 
@@ -57,9 +57,6 @@ function nice(m = '') {
   if (/password.*(6|characters)/i.test(m)) return 'Choose a password with at least 8 characters.';
   if (/email not confirmed/i.test(m)) return 'Please confirm your email first. Check your inbox.';
   if (/rate limit/i.test(m)) return 'Too many tries. Wait a minute and try again.';
-  if (/phone.*(disabled|not enabled)|unsupported phone provider|sms provider/i.test(m)) return 'Phone sign-in opens very soon. Use Apple or Google for now.';
-  if (/invalid phone|phone.*format/i.test(m)) return 'Check the number: country code plus your mobile number.';
-  if (/token.*(expired|invalid)|otp.*(expired|invalid)/i.test(m)) return 'That code is not right or has expired. Send a new one.';
   return m || 'Something went wrong. Try again.';
 }
 
@@ -90,17 +87,6 @@ export async function withProvider(provider) {
   const c = await client();
   const { error } = await c.auth.signInWithOAuth({ provider, options: { redirectTo: redirect() } });
   fail(error); // the page now leaves for Apple/Google and comes back signed in
-}
-// Phone: one flow for new and returning women. A 6-digit code arrives by text; entering it signs in (and creates the account the first time).
-export async function sendPhoneCode(phone) {
-  const c = await client();
-  const { error } = await c.auth.signInWithOtp({ phone });
-  fail(error);
-}
-export async function verifyPhoneCode(phone, token) {
-  const c = await client();
-  const { error } = await c.auth.verifyOtp({ phone, token, type: 'sms' });
-  fail(error);
 }
 export async function signUp(email, password) {
   const c = await client();
