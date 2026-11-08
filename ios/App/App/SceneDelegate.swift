@@ -30,4 +30,9 @@ class UTSBridgeViewController: CAPBridgeViewController {
         webView?.scrollView.bounces = false
         webView?.scrollView.alwaysBounceVertical = false
     }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        webView?.scrollView.bounces = false
+        webView?.scrollView.alwaysBounceVertical = false
+    }
 }

@@ -9216,6 +9216,8 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 
 /* No rubber-band past the top or bottom of a page (web and PWA; the iOS app turns bounce off natively) */
 html, body { overscroll-behavior-y: none; }
+/* Home and every page scroll inside .view: stop that scroller rubber-banding past its top too, so the dotted page never shows */
+.view { overscroll-behavior-y: none; }
 
 /* Sun tile: full row height beside the recipe card; label + clear action title + sun times at the bottom, like the other video tiles */
 .hub .dpt-grid > .dpt.ph-sun { align-self: stretch; justify-content: flex-end !important; }
