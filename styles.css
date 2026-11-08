@@ -9297,3 +9297,22 @@ html, body { overscroll-behavior-y: none; }
 
 /* Today: the Push / Slow down word in the app's moss green (a touch deeper than #6c823e so it reads on the light page) */
 .hub .en .em-head b { color: #56702c !important; text-shadow: none; }
+
+/* Onboarding on iPhone: the back and sound buttons (and everything under them) start below the status bar and notch */
+.onb { padding-top: max(16px, calc(var(--sat) + 8px)) !important; }
+.onb-welcome { padding-top: max(16px, calc(var(--sat) + 8px)) !important; }
+
+/* Onboarding tidy (8 Nov 2026): titles line up with the text under them; goals and "why are you here"
+   fit above the button on an iPhone; emoji sit on a soft chip so pale ones (⚡ 🫧) still read */
+.onb.no-fig .onb-title { padding-left: 0 !important; padding-right: 0 !important; }
+.onb .ftiles { gap: 8px !important; }
+.onb .ftiles .ft { flex-direction: row !important; align-items: center !important; gap: 10px !important; padding: 10px 12px !important; min-height: 58px; line-height: 1.2; font-weight: 500; }
+.onb .ftiles .ft > span { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 12px; background: rgba(255,255,255,.9); font-size: 20px !important; box-shadow: 0 2px 6px rgba(32,48,26,.12); }
+.onb .purp.full { gap: 10px !important; margin-bottom: 14px; }
+/* the period picture on "When did your last period start?" no longer reaches up into the progress dots */
+.onb.step-4 .onb-cut { margin-top: 4px !important; }
+.onb.step-4 .onb-cut img { max-height: 160px; width: auto; }
+/* "Your plan is ready": a breath of space between the last card and Continue */
+.onb.step-9 .onb-body { padding-bottom: 16px; }
+/* the free-trial step: the button bar fades in sooner so the card text below doesn't show through the small print */
+.onb.step-10 .onb-foot { background: linear-gradient(rgba(246,238,240,0), rgba(246,238,240,.98) 24%) !important; }
