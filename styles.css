@@ -8984,3 +8984,37 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .bzc-why { font-size: 11.5px; line-height: 1.35; color: #5a684e; }
 .bzc-t.now .bzc-why { color: rgba(255,255,255,.78); }
 @media (prefers-reduced-motion: reduce) { .bzc-t { transition: none; } }
+/* UV card in warm cocoa, so it sits in the brown sun page instead of a white block */
+.uvw { background: linear-gradient(180deg, #3d281b 0%, #2e1d14 100%); border: 1px solid rgba(255,214,170,.13); box-shadow: 0 18px 40px rgba(10,4,2,.35), inset 0 1px 0 rgba(255,230,200,.08); color: #f7ebdc; }
+.uvw-top small { color: #f0c27a; }
+.uvw-top em { background: rgba(255,235,210,.08); color: rgba(247,235,220,.75); }
+.uvw-n { fill: #fff7ec; }
+.uvw-st { background: rgba(255,235,210,.07); }
+.uvw-st.warn { background: rgba(226,96,78,.22); }
+.uvw-st b, .uvw-st b.w { color: #fff7ec; }
+.uvw-st small { color: rgba(247,235,220,.66); }
+.uvw-bt { fill: rgba(247,235,220,.5); }
+.uvw-pk { fill: #fff7ec; }
+.uvw-bars rect.now { stroke: #fff7ec; }
+.uvw-nowl { stroke: rgba(247,235,220,.4); }
+.uvw-nowt { fill: rgba(247,235,220,.6); }
+.uvw-win { color: rgba(247,235,220,.78); }
+.uvw-win b { color: #fff7ec; }
+.uvw-d { background: rgba(233,174,58,.10); border-color: rgba(240,194,122,.24); }
+.uvw-dh span { color: rgba(247,235,220,.82); }
+.uvw-dh b { color: #fff7ec; }
+.uvw-dh i { color: rgba(247,235,220,.5); }
+.uvw-prog { background: rgba(255,235,210,.1); }
+.uvw-dm { color: rgba(247,235,220,.62); }
+.uvw-ok { color: #b9d98c; }
+.uvw-btn { box-shadow: 0 8px 22px rgba(10,4,2,.35); }
+.uvw-btn.on { background: #f0c27a; color: #2e1d14; }
+.uvw-btn.on .uvw-dot { background: #2e1d14; }
+.uvw-sk-h small { color: rgba(247,235,220,.55); }
+.uvw-sk-h span { color: rgba(247,235,220,.66); }
+.uvw-sk-h b { color: #fff7ec; }
+.uvw-sw button { box-shadow: inset 0 0 0 1.5px rgba(255,235,210,.28); }
+.uvw-sw button.on { box-shadow: 0 0 0 2.5px #2e1d14, 0 0 0 4.5px #f7ebdc; }
+.uvw-more { border-top-color: rgba(255,235,210,.1); }
+.uvw-more summary { color: rgba(247,235,220,.78); }
+.uvw-more p { color: rgba(247,235,220,.75); }
