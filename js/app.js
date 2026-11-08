@@ -1158,7 +1158,7 @@ function viewOnboarding() {
   if (s === 1 && !ui.onbGateDone && !A.currentUser() && A.configured()) return viewGate(); // no sign-up screen until accounts are switched on
   const bd = o.birthday ? (() => { const [y, m, d] = o.birthday.split('-').map(Number); const sign = Z.sunSign(m, d), moon = Z.moonPhase(new Date(y, m - 1, d, 12)), cz = Z.chineseZodiac(y, m, d); return { sign, moon, cz }; })() : null;
   const body = {
-    1: ui.onbWhere ? `<div class="onb-avatar where">${icon('sun', 46, 1.6)}</div><h2 class="onb-title">Where do <span>you live?</span></h2>
+    1: ui.onbWhere ? `<div class="onb-avatar where"><span class="where-emo" aria-hidden="true">🌍</span></div><h2 class="onb-title">Where do <span>you live?</span></h2>
         <select id="onb-country" class="field big-in" data-input="onb.country" aria-label="Country">${SZ.COUNTRIES.map(([code, nm]) => `<option value="${code}" ${code === (o.country || myCountry()) ? 'selected' : ''}>${nm}</option>`).join('')}</select>
         <div class="onb-why"><b>Why we ask</b>
           <p>${icon('leaf', 14)} What’s in season to eat where you are</p>

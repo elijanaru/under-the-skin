@@ -8,7 +8,27 @@ export const COUNTRIES = [
   ['FI', 'Finland', 'north'], ['FR', 'France', 'central'], ['ES', 'Spain', 'med'], ['IT', 'Italy', 'med'], ['PT', 'Portugal', 'med'], ['GR', 'Greece', 'med'],
   ['HR', 'Croatia', 'med'], ['TR', 'Türkiye', 'med'], ['US', 'United States', 'us'], ['CA', 'Canada', 'canada'],
   ['KR', 'South Korea', 'korea'], ['AU', 'Australia', 'aus'], ['NZ', 'New Zealand', 'aus'], ['ZA', 'South Africa', 'aus'],
-];
+  // rest of Europe
+  ['LU', 'Luxembourg', 'central'], ['LI', 'Liechtenstein', 'central'], ['SK', 'Slovakia', 'central'], ['HU', 'Hungary', 'central'], ['SI', 'Slovenia', 'central'],
+  ['RO', 'Romania', 'central'], ['BG', 'Bulgaria', 'central'], ['RS', 'Serbia', 'central'], ['BA', 'Bosnia and Herzegovina', 'central'], ['XK', 'Kosovo', 'central'],
+  ['ME', 'Montenegro', 'med'], ['MK', 'North Macedonia', 'med'], ['AL', 'Albania', 'med'], ['MT', 'Malta', 'med'], ['CY', 'Cyprus', 'med'], ['MC', 'Monaco', 'med'],
+  ['AD', 'Andorra', 'med'], ['SM', 'San Marino', 'med'], ['IS', 'Iceland', 'north'], ['EE', 'Estonia', 'north'], ['LV', 'Latvia', 'north'], ['LT', 'Lithuania', 'north'],
+  ['UA', 'Ukraine', 'central'], ['MD', 'Moldova', 'central'], ['BY', 'Belarus', 'central'], ['RU', 'Russia', 'north'],
+  // Asia
+  ['IN', 'India', 'india'], ['PK', 'Pakistan', 'india'], ['BD', 'Bangladesh', 'india'], ['NP', 'Nepal', 'india'], ['BT', 'Bhutan', 'india'], ['LK', 'Sri Lanka', 'tropical'],
+  ['MV', 'Maldives', 'tropical'], ['CN', 'China', 'eastasia'], ['JP', 'Japan', 'eastasia'], ['TW', 'Taiwan', 'eastasia'], ['HK', 'Hong Kong', 'eastasia'], ['MO', 'Macau', 'eastasia'],
+  ['MN', 'Mongolia', 'north'], ['TH', 'Thailand', 'tropical'], ['VN', 'Vietnam', 'tropical'], ['ID', 'Indonesia', 'tropical'], ['MY', 'Malaysia', 'tropical'],
+  ['SG', 'Singapore', 'tropical'], ['PH', 'Philippines', 'tropical'], ['KH', 'Cambodia', 'tropical'], ['LA', 'Laos', 'tropical'], ['MM', 'Myanmar', 'tropical'],
+  ['BN', 'Brunei', 'tropical'], ['TL', 'Timor-Leste', 'tropical'], ['KZ', 'Kazakhstan', 'central'], ['UZ', 'Uzbekistan', 'central'], ['KG', 'Kyrgyzstan', 'central'],
+  ['TJ', 'Tajikistan', 'central'], ['TM', 'Turkmenistan', 'med'], ['AF', 'Afghanistan', 'med'], ['IR', 'Iran', 'med'], ['IQ', 'Iraq', 'med'], ['SA', 'Saudi Arabia', 'med'],
+  ['AE', 'United Arab Emirates', 'med'], ['QA', 'Qatar', 'med'], ['KW', 'Kuwait', 'med'], ['BH', 'Bahrain', 'med'], ['OM', 'Oman', 'med'], ['YE', 'Yemen', 'med'],
+  ['JO', 'Jordan', 'med'], ['LB', 'Lebanon', 'med'], ['SY', 'Syria', 'med'], ['IL', 'Israel', 'med'], ['PS', 'Palestine', 'med'], ['GE', 'Georgia', 'med'],
+  ['AM', 'Armenia', 'med'], ['AZ', 'Azerbaijan', 'med'],
+  // South America (and Mexico)
+  ['AR', 'Argentina', 'aus'], ['CL', 'Chile', 'aus'], ['UY', 'Uruguay', 'aus'], ['BR', 'Brazil', 'tropical'], ['CO', 'Colombia', 'tropical'], ['PE', 'Peru', 'tropical'],
+  ['EC', 'Ecuador', 'tropical'], ['VE', 'Venezuela', 'tropical'], ['BO', 'Bolivia', 'tropical'], ['PY', 'Paraguay', 'tropical'], ['GY', 'Guyana', 'tropical'],
+  ['SR', 'Suriname', 'tropical'], ['MX', 'Mexico', 'tropical'],
+].sort((a, b) => a[1].localeCompare(b[1], 'en'));
 
 const all = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 const r = (a, b) => (a <= b ? Array.from({ length: b - a + 1 }, (_, i) => a + i) : [...r(a, 12), ...r(1, b)]);
@@ -123,6 +143,41 @@ const KOREA = [
 ];
 
 // Fungi: wild seasons where they grow, plus farmed ones that are fresh all year.
+// Tropics (South and Southeast Asia, tropical South America): steady warmth, fruit through the year
+const TROPICAL = [
+  ['Mango', 'fruit', r(3, 7)], ['Papaya', 'fruit', all], ['Bananas', 'fruit', all], ['Pineapple', 'fruit', all], ['Coconut', 'fruit', all],
+  ['Passion fruit', 'fruit', all], ['Guava', 'fruit', r(8, 2)], ['Avocado', 'fruit', r(5, 10)], ['Lychee', 'fruit', r(5, 7)], ['Rambutan', 'fruit', r(5, 9)],
+  ['Mangosteen', 'fruit', r(5, 9)], ['Jackfruit', 'fruit', r(3, 8)], ['Dragon fruit', 'fruit', r(5, 11)], ['Starfruit', 'fruit', all], ['Limes', 'fruit', all],
+  ['Tamarind', 'fruit', r(12, 4)], ['Sweet potatoes', 'veg', all], ['Cassava', 'veg', all], ['Taro', 'veg', r(8, 2)], ['Pumpkin & squash', 'veg', all],
+  ['Long beans', 'veg', all], ['Okra', 'veg', all], ['Aubergine', 'veg', all], ['Water spinach', 'veg', all], ['Bitter gourd', 'veg', all],
+  ['Chayote', 'veg', all], ['Corn', 'veg', r(6, 10)], ['Plantains', 'veg', all], ['Bamboo shoots', 'veg', r(5, 9)], ['Chillies', 'veg', all],
+  ['Ginger & turmeric root', 'herb', all], ['Lemongrass', 'herb', all], ['Coriander', 'herb', all], ['Thai basil', 'herb', all],
+  ['Cacao', 'other', r(10, 3)], ['Cashews', 'other', r(3, 5)],
+];
+// India and its neighbours: cool winter, hot summer, monsoon
+const INDIA = [
+  ['Carrots', 'veg', r(11, 2)], ['Cauliflower', 'veg', r(11, 2)], ['Green peas', 'veg', r(11, 2)], ['Spinach (palak)', 'veg', r(11, 2)],
+  ['Mustard greens (sarson)', 'veg', r(11, 2)], ['Radish (mooli)', 'veg', r(11, 2)], ['Beetroot', 'veg', r(11, 2)], ['Cabbage', 'veg', r(11, 2)],
+  ['Sweet potatoes (shakarkandi)', 'veg', r(11, 2)], ['Amla (Indian gooseberry)', 'fruit', r(11, 2)], ['Oranges & kinnow', 'fruit', r(12, 2)],
+  ['Guava', 'fruit', r(11, 2)], ['Strawberries', 'fruit', r(12, 2)], ['Fresh turmeric', 'herb', r(11, 2)], ['Fenugreek leaves (methi)', 'herb', r(11, 2)],
+  ['Mango', 'fruit', r(4, 7)], ['Raw green mango', 'fruit', r(3, 5)], ['Jackfruit', 'fruit', r(3, 6)], ['Litchi', 'fruit', r(5, 6)],
+  ['Watermelon & muskmelon', 'fruit', r(3, 6)], ['Jamun', 'fruit', r(6, 7)], ['Bottle gourd (lauki)', 'veg', r(3, 9)], ['Ridge gourd', 'veg', r(4, 9)],
+  ['Bitter gourd (karela)', 'veg', r(3, 9)], ['Cucumber', 'veg', r(3, 7)], ['Okra (bhindi)', 'veg', r(4, 9)], ['Drumsticks (moringa pods)', 'veg', r(2, 5)],
+  ['Corn (bhutta)', 'veg', r(7, 9)], ['Colocasia (arbi)', 'veg', r(8, 11)], ['Pumpkin', 'veg', r(8, 12)], ['Pomegranate', 'fruit', r(9, 2)],
+  ['Custard apple (sitaphal)', 'fruit', r(9, 11)], ['Plums', 'fruit', r(6, 7)], ['Tender coconut', 'fruit', all], ['Bananas', 'fruit', all], ['Papaya', 'fruit', all],
+  ['Mint', 'herb', r(3, 9)], ['Curry leaves', 'herb', all], ['Coriander', 'herb', r(10, 3)],
+];
+// East Asia (China, Japan, Taiwan): four clear seasons
+const EASTASIA = [
+  ['Napa cabbage', 'veg', r(11, 2)], ['Daikon radish', 'veg', r(11, 3)], ['Spinach', 'veg', r(11, 3)], ['Leeks & spring onions', 'veg', r(11, 3)],
+  ['Lotus root', 'veg', r(10, 3)], ['Burdock root', 'veg', r(10, 3)], ['Bamboo shoots', 'veg', r(3, 5)], ['Spring wild greens', 'veg', r(3, 5)],
+  ['Snow peas', 'veg', r(4, 6)], ['Broad beans', 'veg', r(4, 6)], ['Asparagus', 'veg', r(4, 6)], ['Edamame', 'veg', r(7, 9)], ['Eggplant', 'veg', r(6, 9)],
+  ['Cucumber', 'veg', r(6, 8)], ['Tomatoes', 'veg', r(6, 9)], ['Bitter melon', 'veg', r(6, 9)], ['Okra', 'veg', r(7, 9)], ['Sweet potatoes', 'veg', r(9, 12)],
+  ['Taro', 'veg', r(9, 12)], ['Kabocha pumpkin', 'veg', r(9, 12)], ['Chestnuts', 'other', r(9, 11)], ['Ginkgo nuts', 'other', r(10, 11)],
+  ['Strawberries', 'fruit', r(1, 5)], ['Loquats', 'fruit', r(5, 6)], ['Cherries', 'fruit', r(5, 6)], ['Ume plums', 'fruit', [6]], ['Peaches', 'fruit', r(7, 8)],
+  ['Watermelon', 'fruit', r(7, 8)], ['Grapes', 'fruit', r(8, 10)], ['Asian pears', 'fruit', r(8, 10)], ['Persimmons', 'fruit', r(10, 12)],
+  ['Apples', 'fruit', r(9, 2)], ['Mandarins', 'fruit', r(11, 2)], ['Yuzu', 'fruit', r(11, 12)], ['Ginger', 'herb', all], ['Shiso', 'herb', r(6, 9)],
+];
 const FARMED = ['Oyster & shiitake mushrooms', 'fungi', all];
 const FUNGI = {
   central: [FARMED, ['Porcini', 'fungi', r(8, 10)], ['Morels', 'fungi', [4, 5]]],
@@ -132,8 +187,11 @@ const FUNGI = {
   canada: [FARMED, ['Morels', 'fungi', [5, 6]], ['Chanterelles', 'fungi', r(7, 9)]],
   korea: [['Oyster mushrooms (neutari)', 'fungi', all], ['Enoki (paengi)', 'fungi', all]],
   aus: [FARMED, ['Pine mushrooms (saffron milk caps)', 'fungi', r(3, 6)], ['Slippery jacks', 'fungi', r(3, 6)]],
+  tropical: [FARMED, ['Straw mushrooms', 'fungi', all]],
+  india: [FARMED, ['Button mushrooms', 'fungi', r(10, 3)]],
+  eastasia: [['Shiitake', 'fungi', all], ['Enoki', 'fungi', all], ['Matsutake', 'fungi', [9, 10]]],
 };
-const DATA = Object.fromEntries(Object.entries({ central: CENTRAL, north: NORTH, med: MED, us: US, canada: CANADA, korea: KOREA, aus: AUS }).map(([k, v]) => [k, [...v, ...FUNGI[k]]]));
+const DATA = Object.fromEntries(Object.entries({ central: CENTRAL, north: NORTH, med: MED, us: US, canada: CANADA, korea: KOREA, aus: AUS, tropical: TROPICAL, india: INDIA, eastasia: EASTASIA }).map(([k, v]) => [k, [...v, ...FUNGI[k]]]));
 const FUNGUS = /mushroom|chanterelle|shiitake|morel|porcini|songi|enoki|maitake|slippery jack/i;
 
 // TCM season for the month (southern regions are shifted by 6 months).
@@ -156,12 +214,12 @@ export const SEASON_TCM = {
     tea: 'Ginger with raw honey, cinnamon, rooibos or chai', ritual: { t: 'Letting go', steps: ['Take 10 deep breaths in fresh air every morning.', 'Declutter one drawer, closet or inbox.', 'Gently stew a pear with ginger and eat it warm.'] } },
 };
 
-export function countryRegion(code) { return (COUNTRIES.find(c => c[0] === code) || COUNTRIES[0])[2]; }
+export function countryRegion(code) { return (COUNTRIES.find(c => c[0] === code) || ['DE', 'Germany', 'central'])[2]; }
 export function guessCountry() {
   const l = (navigator.language || 'de-DE').split('-');
   const code = (l[1] || '').toUpperCase();
   if (COUNTRIES.some(c => c[0] === code)) return code;
-  return { de: 'DE', en: 'GB', fr: 'FR', es: 'ES', it: 'IT', nl: 'NL', pt: 'PT', el: 'GR', pl: 'PL', sv: 'SE', da: 'DK', nb: 'NO', tr: 'TR', cs: 'CZ', ko: 'KR' }[l[0]] || 'DE';
+  return { de: 'DE', en: 'GB', fr: 'FR', es: 'ES', it: 'IT', nl: 'NL', pt: 'PT', el: 'GR', pl: 'PL', sv: 'SE', da: 'DK', nb: 'NO', tr: 'TR', cs: 'CZ', ko: 'KR', hi: 'IN', ja: 'JP', zh: 'CN', th: 'TH', vi: 'VN', id: 'ID', ms: 'MY', ar: 'AE', he: 'IL', ru: 'RU', uk: 'UA', hu: 'HU', ro: 'RO', bg: 'BG', sk: 'SK', sl: 'SI', hr: 'HR', sr: 'RS', et: 'EE', lv: 'LV', lt: 'LT', is: 'IS', fi: 'FI' }[l[0]] || 'DE';
 }
 export function seasonal(code, month) {
   const region = countryRegion(code);
