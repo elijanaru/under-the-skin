@@ -8726,3 +8726,11 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .cyb-r.now .cyb-e, .cyb-r.now .cyb-l, .cyb-r.now .cyb-f { opacity: 1; }
 .cyb-bar { position: relative; }
 .cyb-fut { position: absolute; top: -1px; bottom: -1px; border-radius: 0 6px 6px 0; background: repeating-linear-gradient(135deg, rgba(255,255,255,.72) 0 3px, rgba(255,255,255,.5) 3px 6px); pointer-events: none; }
+
+/* Remedy page: the fourth spec line (how long, keeps, pause) under the cycle strip */
+.rx-more { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 10px 12px; border-radius: 16px; background: rgba(255,255,255,.85); border: 1px solid rgba(48,64,35,.1); }
+.rx-more > span { flex: none; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: #20301a; color: #f3f0e6; }
+.rx-more p { margin: 0; font-size: 13px; line-height: 1.35; color: #4b5741; }
+.rx-more b { display: block; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; font-weight: 600; color: #6c823e; }
+.rx-more.now { background: hsl(calc(var(--hb, 345) + 0 * var(--hk, 1)) calc(55% * var(--hs, 1)) 95%); border-color: hsl(calc(var(--hb, 345) + 0 * var(--hk, 1)) calc(45% * var(--hs, 1)) 80%); }
+.rx-more.now > span { background: #b8323f; color: #fff; } .rx-more.now b { color: #9b2a35; }
