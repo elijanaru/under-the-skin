@@ -3731,7 +3731,16 @@ const DISH_3D = {
   pho: { model: 'models/pho.glb', img: 'images/dish-pho.webp', fit: 1.45 },
   ramen: { model: 'models/soup.glb', img: 'images/dish-soup.webp', fit: 1.45 },
   miso: { model: 'models/miso.glb', img: 'images/dish-miso.webp', fit: 1.2 },
+  stew: { model: 'models/stew.glb', img: 'images/dish-stew.webp', fit: 1.75 },
+  veg: { model: 'models/veg-plate.glb', img: 'images/dish-veg.webp', fit: 1.45, steam: 0 },
 };
+// Which 3D model looks most like today's recipe; no close match keeps the recipe's own photo.
+const DISH_MATCH = [
+  [/caldereta|stew|curry|lentil soup|squash.*soup|goulash|chili/i, 'stew'],
+  [/stir-fry|pesto noodles|rainbow|wraps|salmon salad|fajita/i, 'veg'],
+  [/miso/i, 'miso'], [/ramen/i, 'ramen'], [/pho|bone broth/i, 'pho'],
+];
+const dishModel = r => { const m = DISH_MATCH.find(([re]) => re.test(r.name)); return m ? DISH_3D[m[1]] : null; };
 const DISH_DAY = {
   'flow-start': { m: 'pho', t: 'Beef pho with ginger', why: 'Bone broth and beef bring back the iron you lose.' },
   'flow-end': { m: 'ramen', t: 'Bone broth ramen with egg', why: 'Broth, egg and noodles to rebuild your energy.' },
@@ -3752,7 +3761,7 @@ function todayTiles(info, only) {
   const pics = { Stress: 'move-lift', Tea: 'move-hiit' };
   const tile = (cls, act, g_, k, t, s_) => `<button class="dpt ${cls} ${pics[k] ? 'has-pic' : ''} ${act.tip && open === act.tip ? 'open' : ''}" ${act.to ? `data-action="nav" data-to="${act.to}"` : `data-action="hubTip" data-k="${act.tip}"`}>${pics[k] ? `<span class="dpt-g pic"><img class="pb" src="${picSrc(pics[k])}" alt="" loading="lazy"><img class="ps" src="${picSrc(pics[k])}" alt="" loading="lazy"><i></i></span>` : `<span class="dpt-g">${g_}</span>`}<span class="dpt-k">${k}</span><b>${t}</b><small>${s_}</small>${act.tip ? `<span class="dpt-more">${icon('plus', 14, 2.2)}</span>` : ''}</button>`;
   const fn = FOOD_NEEDS[w], fm = FOOD_MEALS[w], sp = STRESS_PLAN[w], td = TEA_DAY[w];
-  const dish = DISH_DAY[w], D = DISH_3D[dish.m], rec0 = tonightRecipe(ph, warm), rec = rec0 && photoUrl(rec0.id) ? rec0 : null;
+  const dish = DISH_DAY[w], D = DISH_3D[dish.m], rec0 = tonightRecipe(ph, warm), rec = rec0 && (photoUrl(rec0.id) || dishModel(rec0)) ? rec0 : null, recD = rec && dishModel(rec);
   const tips = {
     stress: [icon('mind', 22), `Stress today: ${['', 'low', 'medium', 'high'][lvl]}`, sp[0], sp[1], 'some'],
     stretch: [icon('leaf', 22), st[0], st[1], st[2], 'some'],
@@ -3775,7 +3784,7 @@ function todayTiles(info, only) {
   if (only) return tipBody(only);
   return `<div class="dpt-grid">
       ${tile('wide hero-move ph-vid', { to: 'move' }, `<video class="dpt-vid" src="images/move-stardust.mp4" poster="images/move-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Sport', g.title, best.map(m => m.n).slice(0, 3).join(' · '))}
-      ${rec ? tile('t-tea t-cup t-dish', { to: `recipe/${rec.id}` }, `<span class="dish-ph"><img src="${photoUrl(rec.id, 400)}" alt="" loading="lazy"></span>`, 'Eat today', rec.name, `<span class="dpt-why">${recWhy(rec)}</span><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`) : tile('t-tea t-cup t-dish', { to: 'do/eat' }, `<span class="cup3d-w"><img class="dpt-cup" src="${D.img}" alt="" loading="lazy"><canvas class="teacup3d" data-model="${D.model}" data-elev="0.9" data-fit="${D.fit}" aria-label="${dish.t}, turning slowly"></canvas></span>`, 'Eat today', dish.t, `<span class="dpt-why">${dish.why}</span><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
+      ${rec ? tile('t-tea t-cup t-dish', { to: `recipe/${rec.id}` }, recD ? `<span class="cup3d-w"><img class="dpt-cup" src="${recD.img}" alt="" loading="lazy"><canvas class="teacup3d" data-model="${recD.model}" data-elev="0.9" data-fit="${recD.fit}"${recD.steam === 0 ? ' data-steam="0"' : ''} aria-label="${esc(rec.name)}, turning slowly"></canvas></span>` : `<span class="dish-ph"><img src="${photoUrl(rec.id, 400)}" alt="" loading="lazy"></span>`, 'Eat today', rec.name, `<span class="dpt-why">${recWhy(rec)}</span><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`) : tile('t-tea t-cup t-dish', { to: 'do/eat' }, `<span class="cup3d-w"><img class="dpt-cup" src="${D.img}" alt="" loading="lazy"><canvas class="teacup3d" data-model="${D.model}" data-elev="0.9" data-fit="${D.fit}" aria-label="${dish.t}, turning slowly"></canvas></span>`, 'Eat today', dish.t, `<span class="dpt-why">${dish.why}</span><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
       ${tile('t-deep ph-full keep ph-fr ph-vid', { to: 'do/friends' }, `<video class="dpt-vid" src="images/friends-sunset.mp4" poster="images/friends-sunset.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Friends', FRIENDS_TILE[ph][0], `<span class="dpt-fr">${icon('check', 12, 2.4)} ${FRIENDS_TILE[ph][1]}</span><span class="dpt-fr no">${icon('close', 12, 2.4)} ${FRIENDS_TILE[ph][2]}</span>`)}
       ${tile('t-sage ph-full ph-vid', { to: 'relief' }, `<video class="dpt-vid" src="images/relief-stardust.mp4" poster="images/relief-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Relief', rp.st.t, `${rp.mine ? 'You logged' : 'Common now:'} ${rp.k.toLowerCase()}`)}
       ${tile(`calm lv${lvl} t-cort t-mol`, { to: 'breathe/stress' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/cortisol-mol.webp" alt="" loading="lazy"><canvas class="teacup3d" data-model="models/cortisol.glb" data-elev="0.3" data-fit="1.9" data-steam="0" data-shadow="0" aria-label="The cortisol molecule, turning slowly"></canvas></span>`, 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}<span class="cv-lv" aria-hidden="true">${[1, 2, 3].map(i => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</span>`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
