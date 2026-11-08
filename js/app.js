@@ -1916,7 +1916,8 @@ function viewPlan() {
         <div class="spx-t"><small>Your superpower now</small><h3>${ph.superpower.title}</h3><p>${ph.superpower.text}</p></div>
         <details class="rfx-why"><summary>What’s going on ${icon('chevD', 13)}</summary><p>${P.mind}</p></details></section>
       ${MG ? `<section class="mind-today"><div class="mvd-k">Your mind today · typical</div><div class="mind-rings">${rings}</div><p class="mvd-f">Your abilities stay the same all month. Energy and mood shift, and every woman’s pattern is her own.</p></section>` : ''}
-      <div class="mind-grid mg2">${rows.map(([ic, o, k], i) => `<div class="mg" style="--i:${i}"><span class="mg-ic">${icon(ic, 20)}</span><small>${k}</small><b>${o.title}</b><p>${o.text}</p></div>`).join('')}</div>
+      <div class="mg3" role="list">${rows.map(([ic, o, k], i) => `<div class="mg3-c t${i}" role="listitem" style="--i:${i}"><span class="mg3-e" aria-hidden="true">${['📝', '🫶', '🛁'][i]}</span><em>${k}</em><b>${o.title}</b><p>${o.text}</p>
+        <svg class="mg3-paw" viewBox="0 0 40 40" aria-hidden="true"><ellipse cx="20" cy="26" rx="8" ry="6.5"/><circle cx="10" cy="16" r="3.4"/><circle cx="16.5" cy="10.5" r="3.4"/><circle cx="23.5" cy="10.5" r="3.4"/><circle cx="30" cy="16" r="3.4"/></svg></div>`).join('')}</div>
       ${sectionTitle('Your month')}
       <div class="month-strip">${PHASE_ORDER.map(p => `<div class="ms ${p === phase ? 'on' : ''}"><i style="background:${PHASE_COLOR.dark[p]}"></i><b>${PHASES[p].name}</b><span>${PHASES[p].superpower.title}</span></div>`).join('')}</div>
       ${sectionTitle('What studies found')}

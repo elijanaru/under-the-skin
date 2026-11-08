@@ -8464,3 +8464,25 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .spx-art { display: grid; place-items: end center; }
 .spx-art .pet-cat { position: static; width: 104px; filter: none; }
 .spx-art::after { content: ''; width: 76px; height: 10px; margin-top: -16px; border-radius: 50%; background: rgba(32,48,26,.12); filter: blur(3px); }
+
+/* Mind › Work, Social, Self-care: a swipeable row of soft pastel cards (sage, blush, lilac), a big emoji in a white bubble, a tag, the title, and a tiny paw print in the corner */
+.mg3 { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; margin: 6px -16px 18px; padding: 6px 16px 14px; scrollbar-width: none; }
+.mg3::-webkit-scrollbar { display: none; }
+.mg3-c { --bg: #e7eedd; --ink: #4f6630; position: relative; flex: 0 0 76%; scroll-snap-align: center; padding: 18px 18px 20px; border-radius: 28px; overflow: hidden;
+  background: linear-gradient(165deg, #fff 0%, var(--bg) 70%); border: 1px solid rgba(48,64,35,.08); box-shadow: 0 14px 28px -18px rgba(32,48,26,.4); }
+.mg3-c.t1 { --bg: #f8dfe8; --ink: #a8455f; }
+.mg3-c.t2 { --bg: #ebe2f6; --ink: #6c4f9a; }
+.mg3-e { display: grid; place-items: center; width: 58px; height: 58px; border-radius: 50%; background: #fff; font-size: 30px; line-height: 1; box-shadow: 0 8px 16px -8px rgba(32,48,26,.35); }
+.mg3-c em { display: inline-block; margin-top: 14px; padding: 4px 10px; border-radius: 99px; font: 500 11px Outfit, sans-serif; letter-spacing: .06em; text-transform: uppercase; font-style: normal; color: var(--ink); background: rgba(255,255,255,.75); }
+.mg3-c b { display: block; margin: 8px 0 6px; font-size: 21px; line-height: 1.15; font-weight: 500; color: #20301a; }
+.mg3-c p { margin: 0; font-size: 13.5px; line-height: 1.45; color: #4b5a40; max-width: 30ch; }
+.mg3-paw { position: absolute; right: 14px; top: 14px; width: 30px; fill: var(--ink); opacity: .16; transform: rotate(18deg); }
+.mg3-c:nth-child(2) .mg3-paw { transform: rotate(-14deg); }
+/* Ring bubbles (Your mind today, Move, nutrients week): solid pearl-white instead of see-through, with a crisp edge and a soft lift */
+.view:not(:has(> .rh3)) .mv2-b { background: rgba(255,255,255,.92) !important; border-color: rgba(48,64,35,.13) !important; box-shadow: 0 12px 24px -16px rgba(32,48,26,.4) !important; }
+.view:not(:has(> .rh3)) .mv2-b b { color: #20301a; }
+.view:not(:has(> .rh3)) .mv2-b small { color: #5a684e; }
+.mind-today .mvd-f { color: #4b5a40; }
+.month-strip .ms { background: rgba(255,255,255,.92) !important; border-color: rgba(48,64,35,.13) !important; box-shadow: 0 10px 22px -16px rgba(32,48,26,.4); }
+.month-strip .ms.on { border-color: hsl(calc(var(--hb) + 0 * var(--hk)) calc(45% * var(--hs)) 55%) !important; }
+.month-strip .ms b { color: #20301a; } .month-strip .ms span { color: #4b5a40; }
