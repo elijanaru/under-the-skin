@@ -279,6 +279,8 @@ const FRIENDS = {
   ovulatory: { ideas: ['Dinner, dancing or a party', 'Have the big conversation', 'Plan a date night'], skip: 'Staying home out of guilt', why: 'Estrogen and testosterone peak. Words come easily, confidence is high and you are at your most social.' },
   luteal: { ideas: ['One close friend over tea', 'Cook together at home', 'A voice note instead of meeting when tired'], skip: 'Overbooking and late-night arguments', why: 'Progesterone calms you but also makes you more sensitive to stress and criticism. Small, warm and familiar feels best.' },
 };
+// the Today tile in a few words: [title, do, skip]
+const FRIENDS_TILE = { menstrual: ['Film night at home', 'A slow walk', 'Big parties'], follicular: ['A new class together', 'Meet someone new', 'Cancelling plans'], ovulatory: ['Dinner or dancing', 'The big talk', 'Hiding at home'], luteal: ['Tea with one friend', 'Cook together', 'Late arguments'] };
 const TOPIC_PIC = { eat: 'images/season-veg.webp', friends: 'images/partner-hands.jpg', stretch: 'images/move-walk.webp', meditate: 'images/move-meditate.webp', tea: 'images/tea-ginger.webp' };
 function viewTopic(k) {
   const info = M.info; if (!info || !TOPIC_PIC[k]) return viewMissing();
@@ -1194,6 +1196,8 @@ function stepper(field, val, scope, big) {
     <span class="num">${val}</span><button data-action="step" data-field="${field}" data-d="1" data-scope="${scope}">+</button></div>`;
 }
 
+// a soft, filled blood drop with a highlight for iron and period reminders
+const DROP_ART = `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><defs><linearGradient id="alDrop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2788f"/><stop offset="1" stop-color="#a8344f"/></linearGradient></defs><path d="M12 2.8c3.4 4.4 6.6 8 6.6 11.7a6.6 6.6 0 0 1-13.2 0C5.4 10.8 8.6 7.2 12 2.8z" fill="url(#alDrop)"/><path d="M8.9 14.2c0 1.8 1.1 3.2 2.6 3.6" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="1.6" stroke-linecap="round"/></svg>`;
 function viewToday() {
   const { stats, today } = M;
   const name = esc(state.profile.name || 'you');
@@ -1216,7 +1220,7 @@ function viewToday() {
   if (ttc()) chips.push(`<span class="hchip ${info.fertile ? 'hl' : ''}">${icon('spark', 14)} ${info.fertile ? 'Fertile' : 'Low fertility'}</span>`);
 
   // one compact "heads-up" card: reminders, unusual cycle, learned patterns
-  const alerts = dueReminders().filter(x => !/^(phase-|rh-)/.test(x.id)).map(x => `<div class="al-row"><span class="al-ic">${icon(x.icon, 15)}</span>
+  const alerts = dueReminders().filter(x => !/^(phase-|rh-)/.test(x.id)).map(x => `<div class="al-row"><span class="al-ic ${x.icon === 'drop' ? 'drop' : ''}">${x.icon === 'drop' ? DROP_ART : icon(x.icon, 17)}</span>
       <span class="al-t" ${x.to ? `data-action="nav" data-to="${x.to}"` : ''}><b>${esc(x.title)}</b><small>${esc(x.body)}</small></span>
       <button class="bn-x" data-action="dismissRem" data-id="${x.id}" aria-label="Dismiss">${icon('close', 14)}</button></div>`);
   upcomingPatterns(patterns()).forEach(x => { const rk = reliefKey(x.name); alerts.push(`<div class="al-row" ${rk ? `data-action="nav" data-to="relief/${encodeURIComponent(rk)}"` : ''}>
@@ -1446,10 +1450,10 @@ function cycleBars() {
   const diff = rows.length > 1 ? M.stats.variation : 0;
   return `${sectionTitle('Your last cycles')}
     <section class="card cyb">
-      <div class="cyb-top"><div><small>Average</small><b>${avg}</b><span>days</span></div><div><small>Varies</small><b>±${pm}</b><span>days</span></div><div><small>Period</small><b>${M.stats.avgPeriod}</b><span>days</span></div></div>
-      <p class="cyb-sum">${diff <= 4 ? 'Steady: your cycles stay within a few days of each other.' : diff <= 7 ? 'A little changeable, which is common. Stress, travel and illness move the first half.' : 'Your cycles vary quite a lot. Keep logging, and talk to a doctor if it keeps happening.'}</p>
-      <div class="cyb-rows" style="--avg:${pct(avg)}">${all.map(row).join('')}<span class="cyb-avg" aria-hidden="true"></span></div>
-      <div class="cyb-leg"><span><i class="cyb-p"></i>Period</span><span><i class="cyb-e"></i>Early</span><span><i class="cyb-f"></i>Fertile</span><span><i class="cyb-o"></i>Egg</span><span><i class="cyb-l"></i>Second half</span><span><i class="cyb-a"></i>Average</span></div>
+      <div class="cyb-top2"><span class="cyb-big"><b class="dotnum">${avg}</b><small>day cycle</small></span>
+        <span class="cyb-chips"><em class="${diff <= 4 ? 'ok' : diff <= 7 ? 'mid' : 'hi'}">${diff <= 4 ? 'Steady' : diff <= 7 ? 'A bit changeable' : 'Varies a lot'} ±${pm}</em><em>${icon('drop', 12)} Period ${M.stats.avgPeriod} days</em></span></div>
+      <div class="cyb-rows">${all.map(row).join('')}</div>
+      <div class="cyb-leg"><span><i class="cyb-p"></i>Period</span><span><i class="cyb-f"></i>Fertile</span><span><i class="cyb-o"></i>Egg</span><small>Tap a row for dates</small></div>
     </section>`;
 }
 
@@ -3098,14 +3102,13 @@ function cycleFlag() {
     : gap < 21 ? [`A short cycle: ${gap} days`, 'One short cycle is common. If it keeps happening, tell your doctor.']
     : gap > 35 ? [`A long cycle: ${gap} days`, 'Stress, travel or illness can do this. If it repeats, tell your doctor.'] : [];
   if (!head) return '';
-  // where this gap sits on a 0 to 50 day line, next to the usual 21 to 35 days and her own average
-  const X = d => (Math.min(50, Math.max(0, d)) / 50 * 100).toFixed(1), avg = Math.round(M.stats.avgCycle);
+  // two bars on one 0 to 50 day scale: this cycle against her usual, with the usual 21 to 35 range as a band behind
+  const p = d => Math.min(50, Math.max(1, d)) / 50, avg = Math.round(M.stats.avgCycle);
   return `<section class="card flag fl2"><div class="fl2-h"><span class="bn-ic">${icon('spark', 18)}</span><div><small>Unusual cycle</small><b>${head}</b></div></div>
-    <div class="fl2-line" role="img" aria-label="This cycle ${gap} days, usual 21 to 35, your average ${avg}">
-      <i class="fl2-ok" style="left:${X(21)}%;width:${(X(35) - X(21)).toFixed(1)}%"></i>
-      <span class="fl2-avg" style="left:${X(avg)}%"><small>You ${avg}</small></span>
-      <span class="fl2-me" style="left:${X(gap)}%"><b class="dotnum">${gap}</b></span></div>
-    <div class="fl2-ax"><span>0</span><span style="left:${X(21)}%">21</span><span style="left:${X(35)}%">35</span><span>50 days</span></div>
+    <div class="fl3" role="img" aria-label="This cycle ${gap} days, your usual ${avg} days, the usual range is 21 to 35 days" style="--a:${p(21)};--b:${p(35)}">
+      <span class="fl3-l">This time</span><b class="fl3-n me"><span class="dotnum">${gap}</span> days</b><span class="fl3-t"><i class="me" style="--p:${p(gap)}"></i></span>
+      <span class="fl3-l">Your usual</span><b class="fl3-n"><span class="dotnum">${avg}</span> days</b><span class="fl3-t"><i style="--p:${p(avg)}"></i></span>
+      <span></span><span></span><small class="fl3-k"><i></i>usual range, 21 to 35 days</small></div>
     <p>${msg}</p>
     <div class="fl2-acts">${gap < 15 ? `<button class="fl2-b on" data-action="flagEdit" data-date="${key}">${icon('calendar', 14)} Fix in calendar</button>` : ''}<button class="fl2-b" data-action="flagDismiss" data-k="${key}">${icon('check', 14)} It’s correct</button></div></section>`;
 }
@@ -3737,7 +3740,7 @@ function todayTiles(info, only) {
   const w = dayWindow(info), g = MOVE_GUIDE[w], [lvl] = CALM[w], ph = info.phase, warm = warmWindow(info);
   const best = MOVES.filter(m => g.r[m.k] === 3);
   const pp = PEOPLE_PLAN[ph], st = STRETCH[w], md = MEDITATE[w], open = ui.hubTip, rp = reliefPick(w);
-  const pics = { Friends: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&q=70&auto=format&fit=crop', Stress: 'move-lift', Tea: 'move-hiit' };
+  const pics = { Stress: 'move-lift', Tea: 'move-hiit' };
   const tile = (cls, act, g_, k, t, s_) => `<button class="dpt ${cls} ${pics[k] ? 'has-pic' : ''} ${act.tip && open === act.tip ? 'open' : ''}" ${act.to ? `data-action="nav" data-to="${act.to}"` : `data-action="hubTip" data-k="${act.tip}"`}>${pics[k] ? `<span class="dpt-g pic"><img class="pb" src="${picSrc(pics[k])}" alt="" loading="lazy"><img class="ps" src="${picSrc(pics[k])}" alt="" loading="lazy"><i></i></span>` : `<span class="dpt-g">${g_}</span>`}<span class="dpt-k">${k}</span><b>${t}</b><small>${s_}</small>${act.tip ? `<span class="dpt-more">${icon('plus', 14, 2.2)}</span>` : ''}</button>`;
   const fn = FOOD_NEEDS[w], fm = FOOD_MEALS[w], sp = STRESS_PLAN[w], td = TEA_DAY[w];
   const dish = DISH_DAY[w], D = DISH_3D[dish.m];
@@ -3764,7 +3767,7 @@ function todayTiles(info, only) {
   return `<div class="dpt-grid">
       ${tile('wide hero-move ph-vid', { to: 'move' }, `<video class="dpt-vid" src="images/move-stardust.mp4" poster="images/move-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Sport', g.title, best.map(m => m.n).slice(0, 3).join(' · '))}
       ${tile('t-tea t-cup t-dish', { to: 'do/eat' }, `<span class="cup3d-w"><img class="dpt-cup" src="${D.img}" alt="" loading="lazy"><canvas class="teacup3d" data-model="${D.model}" data-elev="0.9" data-fit="${D.fit}" aria-label="${dish.t}, turning slowly"></canvas></span>`, 'Eat today', dish.t, `<span class="dpt-why">${dish.why}</span><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
-      ${tile('t-deep ph-full keep ph-fr', { to: 'do/friends' }, PEOPLE_G[ph], 'Friends', FRIENDS[ph].ideas[0], `<span class="dpt-fr">${icon('check', 12, 2.4)} ${FRIENDS[ph].ideas[1]}</span><span class="dpt-fr no">${icon('close', 12, 2.4)} Skip: ${FRIENDS[ph].skip.charAt(0).toLowerCase() + FRIENDS[ph].skip.slice(1)}</span>`)}
+      ${tile('t-deep ph-full keep ph-fr ph-vid', { to: 'do/friends' }, `<video class="dpt-vid" src="images/friends-sunset.mp4" poster="images/friends-sunset.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Friends', FRIENDS_TILE[ph][0], `<span class="dpt-fr">${icon('check', 12, 2.4)} ${FRIENDS_TILE[ph][1]}</span><span class="dpt-fr no">${icon('close', 12, 2.4)} ${FRIENDS_TILE[ph][2]}</span>`)}
       ${tile('t-sage ph-full ph-vid', { to: 'relief' }, `<video class="dpt-vid" src="images/relief-stardust.mp4" poster="images/relief-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Relief', rp.st.t, `${rp.mine ? 'You logged' : 'Common now:'} ${rp.k.toLowerCase()}`)}
       ${tile(`calm lv${lvl} t-cort t-mol`, { to: 'breathe/stress' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/cortisol-mol.webp" alt="" loading="lazy"><canvas class="teacup3d" data-model="models/cortisol.glb" data-elev="0.3" data-fit="1.9" data-steam="0" data-shadow="0" aria-label="The cortisol molecule, turning slowly"></canvas></span>`, 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}<span class="cv-lv" aria-hidden="true">${[1, 2, 3].map(i => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</span>`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
       ${tile('t-tea t-cup', { to: 'do/tea' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/${/ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i.test(td[1]) ? 'cup-chai' : 'cup-glass'}.webp" alt="" loading="lazy"><canvas class="teacup3d" aria-label="${td[1]}, turning slowly"></canvas></span>`, 'Tea for today', td[1], td[2])}
