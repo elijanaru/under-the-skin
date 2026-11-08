@@ -1325,8 +1325,10 @@ function habitsHome(info) {
   return `${sectionTitle('Daily habits', ['All', 'habits'])}
     <section class="card hh">
       <div class="hh-top"><svg class="hh-sprout" viewBox="0 0 60 64" aria-hidden="true"><path class="hh-stem" d="M30 62 V${52 - (pick.length - 1) * 7.5 - 8}"/>${leaves}</svg>
-        <div><b class="hh-n">${n}<small>/${pick.length}</small></b><span>${n === pick.length ? 'All done. Your hormones thank you.' : n ? 'Growing nicely, keep going' : 'Tick one to grow a leaf'}</span></div></div>
+        <div class="hh-txt"><b class="hh-n">${n}<small>/${pick.length}</small></b><span>${n === pick.length ? 'All done. Your hormones thank you.' : n ? 'Growing nicely, keep going' : 'Tick one to grow a leaf'}</span>
+          <span class="hh-bar" aria-hidden="true">${pick.map((_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</span></div></div>
       <div class="hh-list">${pick.map(id => { const [ic, t] = HB_SHORT[id], on = done.includes(id); return `<button class="hh-i ${on ? 'on' : ''}" data-action="habitTick" data-id="${id}" aria-pressed="${on}"><span class="hh-cb">${icon(on ? 'check' : ic, 14, on ? 2.6 : 1.8)}</span><span>${t}</span>${focus.includes(id) ? '<i class="hh-ph" title="Good for your phase"></i>' : ''}</button>`; }).join('')}</div>
+      ${focus.length && info ? `<p class="hh-key"><i class="hh-ph"></i>Extra good in your ${PHASES[info.phase].name.toLowerCase()} phase</p>` : ''}
     </section>`;
 }
 function logChips(l) {

@@ -9364,3 +9364,21 @@ html, body { overscroll-behavior-y: none; }
 .sp2 .spec-media:not(.liquid) .spec-btn { background: rgba(255,255,255,.92) !important; color: #20301a !important; }
 .sp2 .spec-media:not(.liquid) .spec-name::before { display: none; }
 .sp-capchip { top: max(16px, env(safe-area-inset-top)); }
+
+/* Home: daily habits with more contrast (big counter, progress bar, solid chips, explained phase dot) */
+.hh-txt { flex: 1; min-width: 0; }
+.hh-top b.hh-n { font-size: 44px; letter-spacing: .02em; }
+.hh-top b.hh-n small { font-size: 20px; color: rgba(32,48,26,.6); }
+.hh-top .hh-txt > span:not(.hh-bar) { font-size: 14px; font-weight: 500; color: #304023; }
+.hh-bar { display: flex !important; gap: 4px; margin-top: 8px !important; }
+.hh-bar i { flex: 1; height: 6px; border-radius: 3px; background: rgba(48,64,35,.1); transition: background .4s; }
+.hh-bar i.on { background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(45% * var(--hs)) 36%); }
+.hh-sprout { background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(38% * var(--hs)) 91%); }
+.hh-i { background: #fff; border-color: rgba(48,64,35,.14); font-weight: 500; box-shadow: 0 2px 6px rgba(32,48,26,.05); }
+.hh-cb { border: 0; background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(38% * var(--hs)) 91%); color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(45% * var(--hs)) 30%); }
+.hh-i.on { background: #20301a; border-color: #20301a; }
+.hh-i.on > span:nth-child(2) { color: #fff; }
+.hh-i.on .hh-cb { background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(50% * var(--hs)) 72%); border: 0; color: #20301a; }
+.hh-ph { background: hsl(calc(var(--hb) + 330 * var(--hk)) calc(62% * var(--hs)) 56%); }
+.hh-key { display: flex; align-items: center; gap: 7px; margin: 10px 4px 0; font-size: 12.5px; color: rgba(48,64,35,.75); }
+.hh-key .hh-ph { position: static; flex: none; }
