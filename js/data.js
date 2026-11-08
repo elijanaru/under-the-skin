@@ -467,6 +467,15 @@ export const MOOD_LIST = [['Calm', '🌿'], ['Happy', '😊'], ['Confident', '�
   ['Sensitive', '🥺'], ['Anxious', '😰'], ['Irritable', '😤'], ['Low mood', '🌧️'], ['Unmotivated', '🫠']];
 export const GOOD_FEELINGS = ['Energetic', 'Glowing skin', 'Calm', 'Happy', 'Relaxed', 'Confident', 'Sexy', 'Social', 'Creative'];
 export const DISCHARGE = [['Dry', '🏜️'], ['Sticky', '🍯'], ['Creamy', '🥛'], ['Watery', '💧'], ['Egg white', '🥚'], ['Clumpy', '☁️']];
+// Period blood colours for the log, with a one-line meaning shown when she picks one.
+export const BLOOD_COL = [
+  ['Bright red', '#c81e34', 'Fresh blood and a steady flow. Typical for your heavier days.'],
+  ['Dark red', '#7c1424', 'Blood that waited a little, often on waking or late in your period. Normal.'],
+  ['Brown', '#6e3b22', 'Older blood, common at the very start and end of a period. Normal.'],
+  ['Pink', '#e79aab', 'A light flow or blood mixed with fluid. Often seen at the start, end or with spotting.'],
+  ['Orange', '#d8732f', 'Blood mixed with fluid, usually fine. With itching or a strong smell, see a doctor.'],
+  ['Grey', '#8d8f8a', 'Grey can point to an infection, especially with a smell. Worth a doctor’s check soon.'],
+];
 export const DOWN_EXTRA = [['Blood clots', '🩸'], ['Unusual colour', '🎨'], ['Strong smell', '👃'], ['Itching', '🌶️'], ['Burning', '🔥']];
 export const INTIMACY = [['Sex, protected', '🛡️'], ['Sex, unprotected', '💞'], ['Masturbation', '🌸'], ['Orgasm', '🎆'], ['Making out', '💋'], ['Fantasies', '💭'], ['I initiated', '🙋‍♀️'], ['Partner initiated', '🤝']];
 export const INTAKE = [['Coffee', '☕'], ['Tea', '🍵'], ['Raw milk', '🥛'], ['Warm cooked meals', '🍲'], ['Raw & cold food', '🥗'], ['Sweets', '🍬'], ['Lots of water', '💧'], ['Skipped a meal', '⏳'], ['Late dinner', '🌙']];

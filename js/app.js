@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, PHASE_COLOR, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
+  PHASES, PHASE_ORDER, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -1312,6 +1312,7 @@ function logChips(l) {
   const out = [], e = x => `${icon(LOG_IC[x] || 'spark', 13)} ${x}`;
   if (l.flow) out.push(`${icon('drop', 13)} ${FLOWS.find(f => f.id === l.flow)?.label}`);
   if (l.fluid) out.push(e(l.fluid));
+  if (l.bcol) out.push(`${icon('drop', 13)} ${l.bcol}`);
   [...(l.down || []), ...(l.symptoms || []), ...(l.moods || []), ...(l.disrupt || [])].forEach(s => out.push(e(s)));
   if (l.energy) out.push(`${icon('bolt', 13)} Energy ${l.energy}/5`);
   if (l.sleep != null) out.push(`${icon('moon', 13)} ${l.sleep}h sleep`);
@@ -1641,6 +1642,7 @@ function viewLog() {
   const isToday = k === todayISO(), di = M.stats ? C.dayInfo(d, M.stats) : null;
   const open = ui.logOpen = ui.logOpen || { flow: 1, body: 1 };
   // Bleeding is only asked for around her period; otherwise one quiet button opens it.
+  const bleeding = !!l.flow || !!l.bcol || (di && di.isPeriod && !l.fluid);
   const bleedOn = !di || di.phase === 'menstrual' || di.isPeriod || di.late || (di.daysToPeriod <= 2) || !!l.flow || ui.showBleed === k;
   const chips = (field, list, multi = true) => `<div class="lg-chips">${list.map(([v, e, lab]) => {
     const on = multi ? (l[field] || []).includes(v) : String(l[field]) === v;
@@ -1648,7 +1650,7 @@ function viewLog() {
   }).join('')}</div>`;
   const has = f => (l[f] || []).length;
   const count = {
-    flow: (l.flow ? 1 : 0) + (l.fluid ? 1 : 0) + has('down'),
+    flow: (l.flow ? 1 : 0) + (l.fluid ? 1 : 0) + (l.bcol ? 1 : 0) + has('down'),
     body: has('symptoms'), mind: has('moods'), rest: l.energy ? 1 : 0,
     desire: (l.drive ? 1 : 0) + has('intim'), disrupt: has('disrupt'), note: l.notes ? 1 : 0,
   };
@@ -1656,10 +1658,17 @@ function viewLog() {
     flow: `${bleedOn ? `<div class="lg-k">Bleeding</div><p class="lg-why">${icon('spark', 12)}<span>Sharpens your period and egg release dates.</span></p>
       <div class="fd">${FLOWS.map((f, i) => lgPick(l.flow === f.id, 'flow', f.id, false, 'fd-o', `<i style="--s:${[14, 22, 30, 40][i]}px"></i><small>${f.label}</small>`, f.label)).join('')}</div>`
       : `<button class="lg-pstart" data-action="logBleed">${icon('drop', 16)}<span><b>My period started</b><small>Or log bleeding or spotting</small></span>${icon('chevR', 15)}</button>`}
-      <div class="lg-k">Discharge</div><p class="lg-why">${icon('spark', 12)}<span>Egg white marks your fertile days.</span></p>
-      <div class="tx">${DISCHARGE.filter(([v]) => v !== 'Clumpy').map(([v, e]) => lgPick(l.fluid === v, 'fluid', v, false, `tx-o${v === 'Egg white' ? ' fert' : ''}`, `<span>${e}</span><small>${v}</small>`)).join('')}</div>
+      ${bleeding ? `<div class="lg-k">Colour</div><p class="lg-why">${icon('spark', 12)}<span>The colour shows how fresh the blood is.</span></p>
+      <div class="bcl">${BLOOD_COL.map(([v, c]) => lgPick(l.bcol === v, 'bcol', v, false, 'bcl-o', `<i style="--c:${c}"></i><small>${v}</small>`)).join('')}</div>
+      ${l.bcol ? `<p class="bcl-say">${BLOOD_COL.find(b => b[0] === l.bcol)?.[2] || ''}</p>` : ''}`
+      : `<div class="lg-k">Discharge</div><p class="lg-why">${icon('spark', 12)}<span>Egg white marks your fertile days.</span></p>
+      <div class="tx">${DISCHARGE.filter(([v]) => v !== 'Clumpy').map(([v, e]) => lgPick(l.fluid === v, 'fluid', v, false, `tx-o${v === 'Egg white' ? ' fert' : ''}`, `<span>${e}</span><small>${v}</small>`)).join('')}</div>`}
       <div class="lg-k">Anything else</div><p class="lg-why">${icon('spark', 12)}<span>Flags what’s worth a doctor’s check.</span></p>
-      <div class="fl">${lgPick(l.fluid === 'Clumpy', 'fluid', 'Clumpy', false, 'fl-o', '<span>☁️</span>Clumpy', 'Clumpy')}${DOWN_EXTRA.map(([v, e]) => lgPick((l.down || []).includes(v), 'down', v, true, 'fl-o', `<span>${e}</span>${v}`)).join('')}</div>`,
+      <div class="fl">${lgPick(l.fluid === 'Clumpy', 'fluid', 'Clumpy', false, 'fl-o', '<span>☁️</span>Clumpy', 'Clumpy')}${DOWN_EXTRA.map(([v, e]) => lgPick((l.down || []).includes(v), 'down', v, true, 'fl-o', `<span>${e}</span>${v}`)).join('')}</div>
+      <details class="lg-star"><summary><span class="lg-star-i" aria-hidden="true">✦</span>What counts as an unusual colour? ${icon('chevD', 13)}</summary>
+        <div class="lg-star-b"><p><b>Discharge:</b> healthy is clear, white or cream. Green, yellow-green or grey, especially with a smell or itch, is unusual.</p>
+        <p><b>Period:</b> bright red, dark red, brown and pink are all normal. Grey, or orange with a smell, is unusual.</p>
+        <p>One odd day is rarely a worry. If it lasts more than a few days, see a doctor or pharmacist.</p></div></details>`,
     body: (() => { const lk = likelyToday(di), lkN = lk.map(([v]) => v), sym = l.symptoms || [];
       return `${lk.length ? `<div class="lg-k">Likely today</div><div class="lk">${lk.map(([v, e]) => lgPick(sym.includes(v), 'symptoms', v, true, 'lk-o', `<span>${e}</span><small>${v}</small>`)).join('')}</div>` : ''}
       ${BODY_GROUPS.map(([g, list]) => { const rest = list.filter(([v]) => !lkN.includes(v)); return rest.length ? `<div class="lg-k">${g}</div><div class="pl">${rest.map(([v, e]) => lgPick(sym.includes(v), 'symptoms', v, true, 'pl-o', `<span>${e}</span>${v}`)).join('')}</div>` : ''; }).join('')}`; })(),
@@ -1725,6 +1734,7 @@ function brainRead(k) {
   }
   if (l.fluid === 'Clumpy' || (l.down || []).some(x => ['Unusual colour', 'Strong smell', 'Itching', 'Burning'].includes(x)))
     note('🌸', 'Your intimate balance', 'Clumpy discharge, a new colour or smell, itching or burning can mean a yeast or bacterial imbalance. If it lasts more than a few days, see a doctor or pharmacist.', 'strong', 'warn');
+  if (l.bcol === 'Grey' || (l.bcol === 'Orange' && (l.down || []).some(x => ['Strong smell', 'Itching'].includes(x)))) note('🩸', 'About that colour', BLOOD_COL.find(b => b[0] === l.bcol)[2], 'strong', 'warn');
   if ((l.down || []).includes('Blood clots')) note('🩸', 'About clots', 'Small clots on heavy days are normal. Clots bigger than a coin, or soaking a pad or tampon every hour, are worth checking with a doctor.', 'strong', 'warn');
   if (l.flow === 'heavy') note('🥩', 'Heavy day', 'Refill iron: red meat, lentils, dark greens with a squeeze of lemon, and keep warm.', 'strong');
   // sex and desire

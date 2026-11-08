@@ -8510,3 +8510,20 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .op-pet-body { will-change: transform; }
 .onb.step-10 .onb-foot { position: sticky; bottom: 0; z-index: 3; margin: 0 -22px -30px; padding: 26px 22px 22px; background: linear-gradient(to bottom, rgba(246,238,240,0), rgba(246,238,240,.94) 38%); animation-fill-mode: backwards; }
 .onb.step-10 .onb-foot .fine { color: #4b5741 !important; text-shadow: none; }
+
+/* Log › period: blood colour swatches (shown on bleeding days instead of discharge) and the ✦ unusual-colour explainer */
+.lg .bcl { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin: 4px 0 10px; }
+.lg .bcl-o { border: 0; background: #fff; border-radius: 18px; padding: 10px 2px 8px; display: flex; flex-direction: column; align-items: center; gap: 6px; color: #20301a; cursor: pointer; box-shadow: 0 0 0 1px rgba(48,64,35,.1), 0 4px 10px rgba(31,43,22,.06); transition: box-shadow .2s, transform .2s; }
+.lg .bcl-o i { width: 26px; height: 26px; border-radius: 50% 50% 50% 50% / 58% 58% 42% 42%; background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.45), transparent 45%), var(--c); box-shadow: inset 0 -2px 4px rgba(0,0,0,.18); }
+.lg .bcl-o small { font: 500 10.5px Outfit, sans-serif; line-height: 1.15; text-align: center; }
+.lg .bcl-o.on { box-shadow: 0 0 0 2px #20301a, 0 6px 14px rgba(31,43,22,.12); transform: translateY(-1px); }
+.lg .bcl-say { margin: 0 0 14px; padding: 10px 14px; border-radius: 16px; background: rgba(255,255,255,.9); border: 1px solid rgba(48,64,35,.1); font-size: 13px; line-height: 1.4; color: #304023; }
+.lg .lg-star { margin: 10px 0 4px; border-radius: 16px; background: rgba(255,255,255,.9); border: 1px solid rgba(48,64,35,.1); }
+.lg .lg-star summary { list-style: none; display: flex; align-items: center; gap: 8px; padding: 10px 14px; font-size: 13px; font-weight: 500; color: #20301a; cursor: pointer; }
+.lg .lg-star summary::-webkit-details-marker { display: none; }
+.lg .lg-star summary svg { margin-left: auto; transition: transform .25s; }
+.lg .lg-star[open] summary svg { transform: rotate(180deg); }
+.lg-star-i { width: 22px; height: 22px; flex: none; display: grid; place-items: center; border-radius: 50%; background: #20301a; color: #f6e7b8; font-size: 12px; }
+.lg-star-b { padding: 0 14px 12px 44px; }
+.lg-star-b p { margin: 0 0 6px; font-size: 12.5px; line-height: 1.45; color: #3f4c33; }
+@media (prefers-reduced-motion: reduce) { .lg .bcl-o, .lg .lg-star summary svg { transition: none; } }
