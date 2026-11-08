@@ -9213,3 +9213,6 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .hub .dpt.ph-full.ph-fr.ph-vid.ph-sun .dpt-g i { background: linear-gradient(180deg, rgba(20,8,2,.42) 0%, rgba(20,8,2,0) 30%, rgba(20,8,2,0) 58%, rgba(20,8,2,.5) 100%) !important; }
 .hub .dpt.ph-sun .dsun { margin: auto 0 0 !important; }
 .hub .dpt.ph-sun .dsun-l, .hub .dpt.ph-sun .dsun-t { fill: #fff !important; }
+
+/* No rubber-band past the top or bottom of a page (web and PWA; the iOS app turns bounce off natively) */
+html, body { overscroll-behavior-y: none; }
