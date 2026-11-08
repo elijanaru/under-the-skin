@@ -2823,6 +2823,27 @@ function maniIdea(phase) {
       <p class="mfi-note">A spiritual practice for reflection and calm, not a science. It works alongside action, never instead of it.</p></details>
   </section>`;
 }
+// Build your scene: one short moment that could only happen after the wish came true,
+// with a place, a person, a line they say and something you feel or touch (after Neville Goddard's teaching)
+const SCENE_F = [['place', 'pin', 'Where are you?', 'In my own bright studio'], ['who', 'users', 'Who is with you?', 'My best friend'], ['line', 'lips', 'What do they say?', 'I knew you would do it'], ['touch', 'hand', 'What do you feel?', 'Her hug, warm and tight']];
+function sceneLine(S) {
+  const t = x => esc((S[x] || '').trim().replace(/[.!“”"]+$/g, '').replace(/^[“"]/, '')), p = t('place'), w = t('who'), l = t('line'), h = t('touch');
+  if (!p && !w && !l && !h) return '<span class="msb-empty">Your scene appears here as you fill the four frames.</span>';
+  const cap = x => x.charAt(0).toUpperCase() + x.slice(1);
+  return [p && `<b>${cap(p)}</b>.`, (w || l) && `${w ? `<b>${cap(w)}</b>` : 'Someone'} ${l ? `says <b>“${cap(l)}.”</b>` : 'is there with you.'}`, h && `I feel <b>${h.charAt(0).toLowerCase() + h.slice(1)}</b>.`].filter(Boolean).join(' ');
+}
+function sceneBuilder() {
+  const S = state.maniScene || {}, n = SCENE_F.filter(([k]) => (S[k] || '').trim()).length;
+  return `<section class="card msb">
+    <div class="msb-h"><div><small>Your scene</small><h3>One moment, after it came true</h3></div><b class="msb-n"><span class="dotnum">${n}</span>/4</b></div>
+    <div class="msb-film">${SCENE_F.map(([k, ic, q, ph], i) => `<label class="msb-f ${(S[k] || '').trim() ? 'on' : ''}" style="--i:${i}"><span class="msb-ic">${icon(ic, 16)}</span><small>${q}</small><input class="msb-in" data-input="scene.${k}" value="${esc(S[k] || '')}" placeholder="${ph}" maxlength="60" autocomplete="off"></label>`).join('')}</div>
+    <div class="msb-play"><span class="msb-loop" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M17 3l3 3-3 3"/><path d="M4 11V9a3 3 0 0 1 3-3h13"/><path d="M7 21l-3-3 3-3"/><path d="M20 13v2a3 3 0 0 1-3 3H4"/></svg></span><p class="msb-line">${sceneLine(S)}</p></div>
+    <p class="msb-how">Close your eyes, play it as if you are there, and replay it until it feels normal. Then let sleep take it.</p>
+    <details class="msb-more"><summary>Why a tiny scene works ${icon('chevD', 13)}</summary>
+      <div class="msb-why">${[['spark', 'It implies the end', 'Pick a moment that could only happen after the wish came true, like a friend congratulating you.'], ['hand', 'Touch and sound make it real', 'A hug, a handshake, a voice you know. The body believes what it feels more than what it reads.'], ['clock', 'A few seconds, on loop', 'Short enough to replay in five seconds. Repeat it until it stops feeling new.'], ['moon', 'Same scene each night', 'Keep it until it feels like a memory. Change it only when the wish itself changes.']].map(([ic, t, d]) => `<div><span>${icon(ic, 14)}</span><p><b>${t}</b>${d}</p></div>`).join('')}</div>
+      <p class="mm-src">After Neville Goddard’s teaching, in our own words. A spiritual practice for reflection.</p></details>
+  </section>`;
+}
 function viewManifest() {
   const phase = M.info && M.info.phase, cy = phase && MG.MANIFEST_CYCLE[phase], mk = cy ? cy[0] : 'feeling';
   const k = MANI_TECH.includes(ui.maniK) ? ui.maniK : mk, T = MG.MANIFEST[k], scene = (state.manifest || {})[todayISO()] || '';
@@ -2835,8 +2856,8 @@ function viewManifest() {
       ${maniFeel()}
       <details class="mm-more"><summary>Show me how ${icon('chevR', 14)}</summary>
         <ol class="mm-steps">${T.steps.map(x => `<li>${x}</li>`).join('')}</ol>
-        <label class="mm-scene"><span>My scene, in the present tense</span><textarea class="field mn-ta" data-input="mani.today" rows="2" placeholder="I am… / I have… / It feels so good that…">${esc(scene)}</textarea></label>
         <p class="mm-src">After Neville Goddard’s teaching in <i>Feeling is the Secret</i>: live the wish first as a feeling. A spiritual practice for reflection.</p></details></section>
+    ${sceneBuilder()}
     ${sectionTitle('Your month of manifesting')}
     <div class="mfm">${PHASE_ORDER.map(p => { const t = MG.MANIFEST_CYCLE[p][0], [fit, when] = MANI_FIT[p]; return `<button class="mfm-p ${p === phase ? 'now' : ''} ${t === k ? 'on' : ''}" style="--c:${PH_HEX[p]}" data-action="maniK" data-v="${t}">
       <span class="mfm-h"><i></i>${PHASES[p].name}${p === phase ? '<em>Now</em>' : ''}</span>
@@ -6868,6 +6889,8 @@ document.addEventListener('input', e => {
   const f = e.target.dataset?.input; if (!f) return;
   if (f === 'ui.placeQ') { ui.placeQ = e.target.value; return; }
   if (f.startsWith('moon.')) { (ui.moonDraft = ui.moonDraft || {})[f.slice(5)] = e.target.value; return; }
+  if (f.startsWith('scene.')) { const S = state.maniScene = state.maniScene || {}, k = f.slice(6); if (e.target.value.trim()) S[k] = e.target.value; else delete S[k]; save();
+    const box = e.target.closest('.msb'); if (box) { e.target.closest('.msb-f').classList.toggle('on', !!e.target.value.trim()); box.querySelector('.msb-line').innerHTML = sceneLine(S); box.querySelector('.msb-n .dotnum').textContent = SCENE_F.filter(([x]) => (S[x] || '').trim()).length; } return; }
   if (f === 'mani.today') { const j = state.manifest = state.manifest || {}; if (e.target.value.trim()) j[todayISO()] = e.target.value; else delete j[todayISO()]; save(); return; }
   if (f === 'moonj.today') { const j = state.moonJournal = state.moonJournal || {}; if (e.target.value.trim()) j[todayISO()] = e.target.value; else delete j[todayISO()]; save(); return; }
   const [scope, key] = f.split('.'), v = e.target.value, isDate = e.target.type === 'date';

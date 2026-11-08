@@ -8680,3 +8680,44 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 
 /* Breathe › today's quote label */
 .bzq-k { display: block; text-align: center; margin-bottom: 4px; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: #6c823e; font-weight: 500; }
+
+/* Manifest › Build your scene: four film frames that fill in, then the scene as one line on loop */
+.msb { padding: 18px 16px 12px; background: rgba(255,255,255,.95) !important; border: 1px solid rgba(48,64,35,.1) !important; }
+.msb-h { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.msb-h small { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #6c823e; font-weight: 500; }
+.msb-h h3 { margin: 3px 0 0; font-size: 19px; font-weight: 500; color: #20301a; letter-spacing: -.01em; line-height: 1.2; }
+.msb-n { flex: none; padding: 5px 11px; border-radius: 99px; background: #20301a; color: #f3f0e6; font: 500 12px Outfit, sans-serif; }
+.msb-n .dotnum { font-size: 15px; margin-right: 1px; }
+.msb-film { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 14px 0 10px; }
+.msb-f { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 10px 10px 8px; border-radius: 18px; cursor: text;
+  background: hsl(calc(var(--hb, 340) + 0 * var(--hk, 1)) calc(30% * var(--hs, 1)) 96%); border: 1px solid rgba(48,64,35,.08); transition: background .5s ease, color .5s ease; }
+.msb-f::after { content: ''; position: absolute; top: 9px; right: 10px; width: 6px; height: 6px; border-radius: 50%; background: rgba(48,64,35,.15); transition: background .5s ease; }
+.msb-ic { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: #fff; color: #304023; box-shadow: 0 1px 3px rgba(31,43,22,.12); }
+.msb-f small { font-size: 12px; font-weight: 600; color: #20301a; }
+.msb-in { width: 100%; min-width: 0; border: 0; border-bottom: 1px dashed rgba(48,64,35,.25); background: transparent; padding: 4px 0 3px; font: 400 13px Outfit, sans-serif; color: #20301a; outline: none; }
+.msb-in::placeholder { color: rgba(48,64,35,.42); }
+.msb-in:focus { border-bottom: 1px solid #304023; }
+.msb-f.on { background: #20301a; border-color: #20301a; }
+.msb-f.on::after { background: #b9d27a; }
+.msb-f.on small { color: #c9d6a8; }
+.msb-f.on .msb-in { color: #fff; border-bottom-color: rgba(255,255,255,.25); }
+.msb-f.on .msb-ic { background: #33452a; color: #e6efcf; box-shadow: none; }
+.msb-f:focus-within { box-shadow: 0 0 0 2px #6c823e; }
+.msb-play { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 18px; background: #f6f3ee; }
+.msb-loop { flex: none; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: #20301a; }
+.msb-loop svg { width: 15px; height: 15px; fill: none; stroke: #e6efcf; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; animation: msbLoop 9s linear infinite; }
+@keyframes msbLoop { to { transform: rotate(360deg); } }
+.msb-line { margin: 4px 0 0; font-size: 15px; line-height: 1.45; color: #304023; }
+.msb-line b { font-weight: 600; color: #20301a; }
+.msb-empty { color: #7a8570; font-size: 13.5px; }
+.msb-how { margin: 10px 2px 2px; font-size: 13px; line-height: 1.4; color: #4b5741; }
+.msb-more { margin-top: 6px; border-top: 1px solid rgba(48,64,35,.08); }
+.msb-more summary { list-style: none; display: flex; align-items: center; justify-content: space-between; padding: 10px 2px 4px; font-size: 13.5px; font-weight: 500; color: #304023; cursor: pointer; }
+.msb-more summary::-webkit-details-marker { display: none; }
+.msb-more[open] summary svg { transform: rotate(180deg); }
+.msb-why { display: grid; gap: 10px; padding: 8px 0 4px; }
+.msb-why > div { display: flex; gap: 10px; align-items: flex-start; }
+.msb-why span { flex: none; width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; background: #eef2e4; color: #304023; }
+.msb-why p { margin: 0; font-size: 13px; line-height: 1.4; color: #4b5741; }
+.msb-why b { display: block; font-size: 13.5px; font-weight: 600; color: #20301a; }
+@media (prefers-reduced-motion: reduce) { .msb-loop svg { animation: none; } .msb-f, .msb-f::after { transition: none; } }
