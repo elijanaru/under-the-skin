@@ -13,7 +13,7 @@ export const PHASES = {
     name: 'Menstrual',
     season: 'Inner winter',
     tagline: 'Rest, release, reset.',
-    hormones: 'Estrogen and progesterone are at their lowest, which signals your uterine lining to shed. Low hormones can mean lower energy and a quieter, more inward mind — your body is doing real work.',
+    hormones: 'Estrogen and progesterone are at their lowest, which signals your uterine lining to shed. Low hormones can mean lower energy and a quieter, more inward mind. Your body is doing real work.',
     superpower: { title: 'Reflection', text: 'A natural moment to look back on the past month, notice what is working and set gentle intentions.' },
     nourish: { title: 'Replenish & warm', text: 'Rebuild iron and minerals lost through bleeding. Warm, cooked, comforting meals feel best.' },
     foods: ['Lentils', 'Seaweed', 'Grass-fed beef', 'Dark chocolate', 'Red dates', 'Ginger tea', 'Bone broth', 'Kidney beans'],
@@ -27,7 +27,7 @@ export const PHASES = {
     name: 'Follicular',
     season: 'Inner spring',
     tagline: 'Fresh energy, new ideas.',
-    hormones: 'A new egg starts to ripen and estrogen begins to climb. Rising estrogen lifts mood, energy and motivation, and supports muscle building — a great window to start something new.',
+    hormones: 'A new egg starts to ripen and estrogen begins to climb. Rising estrogen lifts mood, energy and motivation, and supports muscle building. A great window to start something new.',
     superpower: { title: 'Creativity', text: 'Curiosity is high and new things feel exciting. Brainstorm, learn, experiment.' },
     nourish: { title: 'Fresh & light', text: 'Lean protein, fermented foods and lots of fresh produce to support rising estrogen.' },
     foods: ['Eggs', 'Avocado', 'Raw sauerkraut', 'Broccoli', 'Citrus', 'Radishes', 'Chicken', 'Flax seeds'],
@@ -41,14 +41,14 @@ export const PHASES = {
     name: 'Ovulatory',
     season: 'Inner summer',
     tagline: 'Magnetic, bold, bright.',
-    hormones: 'Estrogen peaks, your egg is released and testosterone gets a small boost. Many women feel their most energetic, confident and social — and communication flows easily.',
+    hormones: 'Estrogen peaks, your egg is released and testosterone gets a small boost. Many women feel their most energetic, confident and social. And communication flows easily.',
     superpower: { title: 'Communication', text: 'Confidence and social energy often peak. Many women enjoy pitching, presenting and honest conversations now.' },
     nourish: { title: 'Fibre & antioxidants', text: 'Fibre and cruciferous veg help your body clear excess estrogen. Lighter meals feel great.' },
     foods: ['Berries', 'Cucumber', 'Asparagus', 'Salmon', 'Almonds', 'Leafy greens', 'Tomatoes', 'Brussels sprouts'],
     nutrients: ['Fibre', 'Antioxidants', 'Glutathione', 'Zinc'],
     mind: { title: 'Speak up', text: 'Negotiate, present, record content, have the conversation you have been putting off.' },
     social: { title: 'Be seen', text: 'Dates, events, collaborations, big group plans.' },
-    selfcare: { title: 'Glow & show up', text: 'Skin often looks its best now — the perfect week for photos.' },
+    selfcare: { title: 'Glow & show up', text: 'Skin often looks its best now. The perfect week for photos.' },
     affirmation: 'My energy is magnetic and my voice matters.',
   },
   luteal: {
@@ -72,7 +72,7 @@ export const RECIPES = [
     id: 'iron-lentil-soup', name: 'Iron Glow Lentil Soup', phases: ['menstrual'], time: 35, kcal: 420, meal: 'Dinner',
     nutrients: ['Iron', 'Fibre', 'Vitamin C'],
     ingredients: ['1 cup red lentils', '1 onion, diced', '2 garlic cloves', '1 tbsp fresh ginger', '1 tsp turmeric', '400 ml coconut milk', '700 ml vegetable broth', '1 handful fresh coriander', '½ lemon'],
-    steps: ['Soften onion, garlic and ginger in a little olive oil for 5 minutes.', 'Add turmeric, lentils, coconut milk and broth. Simmer 20 minutes.', 'Stir in the chopped coriander.', 'Finish with lemon juice — vitamin C helps you absorb the iron.'],
+    steps: ['Soften onion, garlic and ginger in a little olive oil for 5 minutes.', 'Add turmeric, lentils, coconut milk and broth. Simmer 20 minutes.', 'Stir in the chopped coriander.', 'Finish with lemon juice. Vitamin C helps you absorb the iron.'],
   },
   {
     id: 'cacao-beet-smoothie', name: 'Cacao Date Smoothie', phases: ['luteal'], time: 5, kcal: 310, meal: 'Breakfast',  raw: true,
@@ -114,7 +114,7 @@ export const RECIPES = [
     id: 'raw-beet-slaw', name: 'Warm Carrot & Apple Bowl', phases: ['menstrual'], time: 15, kcal: 330, meal: 'Breakfast', warm: true,
     nutrients: ['Iron', 'Vitamin C', 'Folate'],
     ingredients: ['1 small parsnip, grated', '1 apple, diced', '2 carrots, grated', '2 tbsp pumpkin seeds', 'Juice of ½ lemon', '1 tsp fresh grated ginger', '½ tsp cinnamon', '1 tbsp ghee or olive oil', 'Pinch of sea salt'],
-    steps: ['Warm the ghee in a pan and add ginger and cinnamon for 30 seconds.', 'Add parsnip, carrots and apple; cook gently for 6–8 minutes until soft.', 'Season with salt, finish with lemon — its vitamin C helps you absorb the iron.', 'Top with pumpkin seeds and eat warm.'],
+    steps: ['Warm the ghee in a pan and add ginger and cinnamon for 30 seconds.', 'Add parsnip, carrots and apple; cook gently for 6–8 minutes until soft.', 'Season with salt, finish with lemon. Its vitamin C helps you absorb the iron.', 'Top with pumpkin seeds and eat warm.'],
   },
   {
     id: 'living-green-salad', name: 'Living Green Salad', phases: ['ovulatory', 'follicular'], time: 15, kcal: 430, meal: 'Lunch', raw: true,
@@ -126,7 +126,7 @@ export const RECIPES = [
     id: 'ginger-bone-broth', name: 'Ginger Bone Broth Soup', phases: ['menstrual'], time: 25, kcal: 380, meal: 'Lunch', warm: true,
     nutrients: ['Iron', 'Collagen', 'Minerals'],
     ingredients: ['600 ml bone broth', '1 thumb fresh ginger, sliced', '6 red dates', '1 tbsp goji berries', '150 g shredded pasture chicken', '2 baby bok choy, halved', 'Spring onion & sea salt'],
-    steps: ['Simmer broth with ginger and red dates for 15 minutes.', 'Add chicken and goji; warm through for 5 minutes.', 'Add the bok choy for the last 2 minutes.', 'Season and sip slowly — TCM’s classic period bowl.'],
+    steps: ['Simmer broth with ginger and red dates for 15 minutes.', 'Add chicken and goji; warm through for 5 minutes.', 'Add the bok choy for the last 2 minutes.', 'Season and sip slowly. TCM’s classic period bowl.'],
   },
   {
     id: 'beef-beet-stew', name: 'Grass-fed Beef & Root Stew', phases: ['menstrual'], time: 90, kcal: 540, meal: 'Dinner', warm: true,
@@ -138,7 +138,7 @@ export const RECIPES = [
     id: 'green-goddess-smoothie', name: 'Green Goddess Smoothie', phases: ['follicular', 'ovulatory'], time: 5, kcal: 340, meal: 'Breakfast', raw: true,
     nutrients: ['Vitamin C', 'Fibre', 'Healthy fats'],
     ingredients: ['1 handful fresh mint & parsley', '1 kiwi', '½ avocado', '1 green apple', '1 tbsp hemp seeds', 'Juice of ½ lemon', '250 ml coconut water'],
-    steps: ['Blend everything until silky.', 'Drink fresh — living food is best right away.'],
+    steps: ['Blend everything until silky.', 'Drink fresh: living food is best right away.'],
   },
   {
     id: 'egg-kraut-plate', name: 'Pasture Egg & Kraut Plate', phases: ['follicular'], time: 10, kcal: 450, meal: 'Breakfast',
@@ -180,7 +180,7 @@ export const RECIPES = [
     id: 'liver-pancakes', name: 'Liver Pancakes', phases: ['menstrual', 'follicular'], time: 15, kcal: 380, meal: 'Breakfast', warm: true, source: 'Heart & Soil', url: 'https://heartandsoil.co/blog/category/animal-based-diet/animal-based-recipes/',
     nutrients: ['Heme iron', 'Vitamin A', 'B12'],
     ingredients: ['60 g raw grass-fed beef liver', '3 pasture eggs', '2 tbsp melted ghee or butter', 'Pinch of sea salt', 'Optional: 1 banana', 'Raw honey & berries to serve'],
-    steps: ['Blend liver, eggs, melted fat and salt (plus banana if using) until completely smooth.', 'Melt a little butter in a pan over medium heat.', 'Pour small rounds, cook until bubbles form and edges set, then flip.', 'Serve warm with raw honey and fruit — the easiest way to eat liver. Liver is very rich in vitamin A: once a week is plenty, especially when pregnant or trying to conceive.'],
+    steps: ['Blend liver, eggs, melted fat and salt (plus banana if using) until completely smooth.', 'Melt a little butter in a pan over medium heat.', 'Pour small rounds, cook until bubbles form and edges set, then flip.', 'Serve warm with raw honey and fruit. The easiest way to eat liver. Liver is very rich in vitamin A: once a week is plenty, especially when pregnant or trying to conceive.'],
   },
   {
     id: 'bone-marrow', name: 'Roasted Bone Marrow', phases: ['menstrual', 'luteal'], time: 25, kcal: 440, meal: 'Dinner', warm: true, source: 'Heart & Soil', url: 'https://heartandsoil.co/blog/category/animal-based-diet/animal-based-recipes/',
@@ -198,13 +198,13 @@ export const RECIPES = [
     id: 'animal-tacos', name: 'Animal-Based Tacos', phases: ['ovulatory', 'follicular'], time: 30, kcal: 620, meal: 'Dinner', source: 'Heart & Soil', url: 'https://heartandsoil.co/blog/category/animal-based-diet/animal-based-recipes/',
     nutrients: ['Protein', 'Calcium', 'Vitamin C'],
     ingredients: ['1 cup grated raw cheddar', '3 large eggs', '250 g ground beef', '200 g wild prawns', 'Lemon & salt', 'Salsa: pineapple, cucumber, lime, salt'],
-    steps: ['Whisk eggs and cheddar; cook thin rounds in a pan, flipping once — these are the tortillas.', 'Brown the beef with salt; cook prawns with salt and lemon until pink.', 'Dice pineapple and cucumber, toss with lime and salt.', 'Fill the tortillas and top with salsa.'],
+    steps: ['Whisk eggs and cheddar; cook thin rounds in a pan, flipping once. These are the tortillas.', 'Brown the beef with salt; cook prawns with salt and lemon until pink.', 'Dice pineapple and cucumber, toss with lime and salt.', 'Fill the tortillas and top with salsa.'],
   },
   {
     id: 'brazilian-lemonade', name: 'Brazilian Lemonade', phases: ['ovulatory', 'follicular'], time: 10, kcal: 210, meal: 'Drink', raw: true, source: 'Heart & Soil', url: 'https://heartandsoil.co/blog/category/animal-based-diet/animal-based-recipes/',
     nutrients: ['Vitamin C', 'Electrolytes', 'Calcium'],
     ingredients: ['2 whole limes, quartered', '3 tbsp maple syrup or raw honey', '3 tbsp sweetened condensed raw milk (or raw cream)', '500 ml water'],
-    steps: ['Blend limes with water for only 10–15 seconds (longer turns it bitter).', 'Strain well.', 'Blend again with sweetener and condensed milk until frothy.', 'Enjoy on raw-first days — skip it during your period.'],
+    steps: ['Blend limes with water for only 10–15 seconds (longer turns it bitter).', 'Strain well.', 'Blend again with sweetener and condensed milk until frothy.', 'Enjoy on raw-first days. Skip it during your period.'],
   },
   {
     id: 'raw-cream-icecream', name: 'Raw Cream Ice Cream', phases: ['ovulatory', 'follicular'], time: 20, kcal: 330, meal: 'Snack', raw: true, source: 'Heart & Soil', url: 'https://heartandsoil.co/blog/category/animal-based-diet/animal-based-recipes/',
@@ -216,13 +216,13 @@ export const RECIPES = [
     id: 'sweet-potato-brownies', name: 'Sweet Potato Brownies', phases: ['luteal', 'menstrual'], time: 35, kcal: 140, meal: 'Snack', warm: true, source: '@belleadri', url: 'https://www.tiktok.com/@belleadri',
     nutrients: ['Magnesium', 'Slow carbs', 'Potassium'],
     ingredients: ['1 sweet potato, cooked & mashed', '1 ripe banana', '2 tbsp raw cacao or cocoa powder', '2 tbsp yoghurt (or kefir)', '1 tsp cinnamon', 'Optional: dark chocolate chips'],
-    steps: ['Heat the oven to 180°C and line a small dish.', 'Mash sweet potato and banana, then mix in cacao, yoghurt and cinnamon.', 'Spread out, top with chocolate chips if you like.', 'Bake 20–25 minutes. Eat warm — perfect for luteal chocolate cravings.'],
+    steps: ['Heat the oven to 180°C and line a small dish.', 'Mash sweet potato and banana, then mix in cacao, yoghurt and cinnamon.', 'Spread out, top with chocolate chips if you like.', 'Bake 20–25 minutes. Eat warm: perfect for luteal chocolate cravings.'],
   },
   {
     id: 'magnesium-bites', name: 'Magnesium Bliss Bites', phases: ['luteal', 'menstrual'], time: 15, kcal: 110, meal: 'Snack',
     nutrients: ['Magnesium', 'Healthy fats', 'Fibre'],
     ingredients: ['1 cup dates', '½ cup pumpkin seeds', '¼ cup sunflower seeds', '2 tbsp cacao', '1 tbsp nut butter', 'Pinch of sea salt'],
-    steps: ['Blitz everything in a food processor until sticky.', 'Roll into 12 balls.', 'Chill for 20 minutes. Keeps 1 week in the fridge — around your period, let them come to room temperature first.'],
+    steps: ['Blitz everything in a food processor until sticky.', 'Roll into 12 balls.', 'Chill for 20 minutes. Keeps 1 week in the fridge. Around your period, let them come to room temperature first.'],
   },
 ];
 
@@ -538,12 +538,12 @@ export const GOALS = [
 export const TCM = {
   menstrual: {
     stage: 'Blood phase', element: 'Water', elementGlyph: '水', organ: 'Kidney', yin: 0.55,
-    essence: 'Yang turns back to Yin. The body empties and Blood must move freely and smoothly — warmth helps it flow.',
+    essence: 'Yang turns back to Yin. The body empties and Blood must move freely and smoothly. Warmth helps it flow.',
     principle: 'Move & warm the Blood',
     tea: { name: 'Ginger & red date tea', why: 'Warms the womb and gently moves Blood; red dates nourish what is lost.' },
     foods: ['Ginger', 'Red dates (jujube)', 'Black beans', 'Bone broth', 'Stewed apple', 'Raw honey', 'Cinnamon'],
     avoid: ['Raw & cold food', 'Iced drinks', 'Cold smoothies', 'Late nights'],
-    point: { code: 'SP6', name: 'Sanyinjiao', where: 'Four finger-widths above the inner ankle bone, just behind the shin.', does: 'Meeting point of Spleen, Liver and Kidney — eases cramps and calms the lower belly.', secs: 90 },
+    point: { code: 'SP6', name: 'Sanyinjiao', where: 'Four finger-widths above the inner ankle bone, just behind the shin.', does: 'Meeting point of Spleen, Liver and Kidney. Eases cramps and calms the lower belly.', secs: 90 },
     ritual: 'Keep your feet and lower back warm. A ginger foot soak before bed is the classic TCM period ritual.',
   },
   follicular: {
@@ -553,28 +553,28 @@ export const TCM = {
     tea: { name: 'Goji & chrysanthemum', why: 'Goji nourishes Liver Blood and Yin; chrysanthemum keeps things light and clear.' },
     foods: ['Goji berries', 'Black sesame', 'Eggs', 'Dark leafy greens', 'Mulberries', 'Seaweed', 'Mung beans'],
     avoid: ['Over-exercising to exhaustion', 'Skipping meals', 'Processed food'],
-    point: { code: 'KI3', name: 'Taixi', where: 'In the hollow between the inner ankle bone and the Achilles tendon.', does: 'Source point of the Kidney — builds Yin and steady energy.', secs: 60 },
-    ritual: 'Go to bed before 11pm — in TCM, Blood returns to the Liver during sleep to be restored.',
+    point: { code: 'KI3', name: 'Taixi', where: 'In the hollow between the inner ankle bone and the Achilles tendon.', does: 'Source point of the Kidney. Builds Yin and steady energy.', secs: 60 },
+    ritual: 'Go to bed before 11pm. In TCM, Blood returns to the Liver during sleep to be restored.',
   },
   ovulatory: {
     stage: 'Yin to Yang', element: 'Fire', elementGlyph: '火', organ: 'Heart', yin: 0.5,
-    essence: 'Yin reaches its fullest point and transforms into Yang — the turning of the tide. Energy is outward, bright and warm.',
+    essence: 'Yin reaches its fullest point and transforms into Yang. The turning of the tide. Energy is outward, bright and warm.',
     principle: 'Support the transformation',
     tea: { name: 'Rose & hawthorn tea', why: 'Rose gently moves Qi and lifts the Heart; hawthorn keeps circulation smooth.' },
     foods: ['Walnuts', 'Lotus seeds', 'Cherries', 'Lamb or lentils', 'Berries', 'Bitter greens'],
     avoid: ['Overheating', 'Very spicy food', 'Stress overload'],
-    point: { code: 'CV4', name: 'Guanyuan', where: 'Four finger-widths below your navel, on the midline.', does: 'The "gate of origin" — strengthens the lower belly and supports the shift to Yang.', secs: 60 },
-    ritual: 'Gentle movement and laughter keep Heart Qi open. Share your warmth — this is your social, fiery season.',
+    point: { code: 'CV4', name: 'Guanyuan', where: 'Four finger-widths below your navel, on the midline.', does: 'The "gate of origin": strengthens the lower belly and supports the shift to Yang.', secs: 60 },
+    ritual: 'Gentle movement and laughter keep Heart Qi open. Share your warmth: this is your social, fiery season.',
   },
   luteal: {
     stage: 'Yang phase', element: 'Earth', elementGlyph: '土', organ: 'Spleen & Liver', yin: 0.25,
-    essence: 'Yang warms the body (your temperature rises). Liver Qi must flow freely — when it stagnates, PMS, breast tenderness and irritability appear.',
+    essence: 'Yang warms the body (your temperature rises). Liver Qi must flow freely. When it stagnates, PMS, breast tenderness and irritability appear.',
     principle: 'Warm Yang & soothe Liver Qi',
     tea: { name: 'Rose & orange-peel tea', why: 'Rose and dried tangerine peel (chen pi) move stuck Liver Qi and ease bloating.' },
     foods: ['Sweet potato', 'Pumpkin', 'Squash', 'Root veg', 'Cinnamon', 'Fennel', 'Radish'],
     avoid: ['Greasy & fried food', 'Excess sugar', 'Alcohol', 'Holding in frustration'],
-    point: { code: 'LV3', name: 'Taichong', where: 'On the top of the foot, in the dip between the big and second toe bones.', does: 'Smooths Liver Qi — the go-to point for PMS, irritability and tension.', secs: 90 },
-    ritual: 'Move stuck Qi: walk, stretch your sides, sigh it out. Warm, cooked meals keep the Spleen strong against bloating — especially in the days before your period.',
+    point: { code: 'LV3', name: 'Taichong', where: 'On the top of the foot, in the dip between the big and second toe bones.', does: 'Smooths Liver Qi: the go-to point for PMS, irritability and tension.', secs: 90 },
+    ritual: 'Move stuck Qi: walk, stretch your sides, sigh it out. Warm, cooked meals keep the Spleen strong against bloating. Especially in the days before your period.',
   },
 };
 
@@ -582,7 +582,7 @@ export const TCM = {
 export const RITUALS = [
   { id: 'foot-soak', name: 'Ginger foot soak', phases: ['menstrual', 'luteal'], mins: 15, glyph: '姜',
     steps: ['Simmer 5 slices of fresh ginger in 1 litre of water for 10 minutes.', 'Pour into a basin and top up with warm water.', 'Soak your feet for 15 minutes until you feel warm through.', 'Dry well and put on socks.'],
-    why: 'Draws warmth down to the feet and lower belly — classic for cramps and cold hands and feet.' },
+    why: 'Draws warmth down to the feet and lower belly. Classic for cramps and cold hands and feet.' },
   { id: 'belly-massage', name: 'Warm belly massage', phases: ['menstrual', 'luteal'], mins: 5, glyph: '暖',
     steps: ['Rub your palms together until warm.', 'Place them below your navel and breathe slowly.', 'Massage in slow clockwise circles for 3 minutes.', 'Rest your hands there for 10 breaths.'],
     why: 'Moves Qi and Blood in the lower Dantian and relaxes the uterus.' },
@@ -596,7 +596,7 @@ export const RITUALS = [
     steps: ['Gently stew a chopped apple or pear with a splash of water.', 'Add red dates, goji, cinnamon and a slice of ginger.', 'Top with raw honey and a few walnuts. Eat warm.'],
     why: 'Warm, naturally sweet food builds Qi and Blood without taxing digestion.' },
   { id: 'heart-breath', name: 'Heart-opening breath', phases: ['ovulatory', 'follicular'], mins: 5, glyph: '心',
-    steps: ['Sit tall, palms resting on your chest.', 'Inhale for 4, feeling the chest widen.', 'Exhale for 6 with a soft "haaa" — the Heart healing sound.', 'Repeat for 5 minutes.'],
+    steps: ['Sit tall, palms resting on your chest.', 'Inhale for 4, feeling the chest widen.', 'Exhale for 6 with a soft "haaa": the Heart healing sound.', 'Repeat for 5 minutes.'],
     why: 'The Heart houses the Shen (spirit). Calm breath keeps your bright ovulatory energy grounded.' },
 ];
 
@@ -605,44 +605,44 @@ export const SUPPORT = {
   menstrual: {
     feel: 'Energy is at its lowest and cramps, back ache or tiredness are common. She may want quiet, warmth and fewer plans.',
     partner: {
-      do: ['Take something off her plate without being asked', 'Bring a hot water bottle or heat pack', 'Plan a cosy night in — film, blanket, warm home-cooked food', 'Keep the house warm and offer warm drinks'],
+      do: ['Take something off her plate without being asked', 'Bring a hot water bottle or heat pack', 'Plan a cosy night in. Film, blanket, warm home-cooked food', 'Keep the house warm and offer warm drinks'],
       avoid: ['Pushing big plans or late nights', 'Thinking her tiredness is about you', 'Iced drinks and raw, cold food (TCM: cold slows the flow)'],
       gifts: ['Hot water bottle', 'Dark chocolate', 'Ginger & red date tea', 'Fluffy socks', 'Magnesium bath salts'],
-      say: 'No plans needed tonight — I’ll bring dinner and the heat pack. You just rest.',
+      say: 'No plans needed tonight. I’ll bring dinner and the heat pack. You just rest.',
       date: 'Sofa, blankets and her comfort film',
     },
     friend: {
       do: ['Check in with a low-pressure message', 'Offer a slow walk or a coffee instead of a night out', 'Drop off snacks'],
       plan: 'Low-key catch-up at home',
-      say: 'Thinking of you — want me to drop off chocolate and gossip later? 🍫',
+      say: 'Thinking of you: want me to drop off chocolate and gossip later? 🍫',
     },
   },
   follicular: {
     feel: 'Energy and mood are climbing. She is likely curious, optimistic and up for something new.',
     partner: {
-      do: ['Suggest trying something new together', 'Back her new ideas and plans', 'Get active together — a hike, a class, a dance', 'Make space for her to be spontaneous'],
+      do: ['Suggest trying something new together', 'Back her new ideas and plans', 'Get active together: a hike, a class, a dance', 'Make space for her to be spontaneous'],
       avoid: ['Shooting down ideas', 'Defaulting to the same old routine'],
       gifts: ['A class or workshop for two', 'Fresh flowers', 'A book on something she’s into', 'Tickets to something new'],
-      say: 'There’s a new place I want to take you this week — you pick the night.',
+      say: 'There’s a new place I want to take you this week. You pick the night.',
       date: 'Try a new restaurant, class or day trip',
     },
     friend: {
       do: ['Invite her to try something new', 'Brainstorm plans or projects together', 'Book that thing you keep talking about'],
       plan: 'New café, pottery class or a spontaneous day out',
-      say: 'Ok I’m booking us something new this week — are you in? ✨',
+      say: 'Ok I’m booking us something new this week. Are you in? ✨',
     },
   },
   ovulatory: {
     feel: 'This is often her most confident, social and energetic window. She is likely glowing and up for connection.',
     partner: {
-      do: ['Plan a proper date night', 'Compliment her — she’ll feel it', 'Say yes to social plans', 'Have the important conversations now — communication flows'],
+      do: ['Plan a proper date night', 'Compliment her: she’ll feel it', 'Say yes to social plans', 'Have the important conversations now. Communication flows'],
       avoid: ['Cancelling plans last minute', 'Staying in every night'],
       gifts: ['A dinner reservation', 'Something to wear out', 'Her favourite flowers', 'A surprise night out'],
-      say: 'Dress up — I’m taking you out this weekend.',
+      say: 'Dress up: I’m taking you out this weekend.',
       date: 'Dinner out, dancing or an event',
     },
     friend: {
-      do: ['Get the group together', 'Plan the big night out', 'Take photos — she’ll be glowing'],
+      do: ['Get the group together', 'Plan the big night out', 'Take photos: she’ll be glowing'],
       plan: 'Dinner, drinks or a party',
       say: 'Group dinner this weekend? You’re in charge of the vibe 💃',
     },
@@ -653,13 +653,13 @@ export const SUPPORT = {
       do: ['Be patient and extra gentle', 'Help with chores and logistics', 'Keep her favourite snacks stocked', 'Listen more than you fix', 'Give her space when she asks for it'],
       avoid: ['Saying “is it your period?”', 'Surprise plans or chaos', 'Debating small things'],
       gifts: ['Her favourite comfort snack', 'A massage', 'Rose & orange-peel tea', 'A long bath setup', 'Sweet potato fries 😉'],
-      say: 'Long day? I’ve got dinner sorted — want a massage after?',
+      say: 'Long day? I’ve got dinner sorted. Want a massage after?',
       date: 'Home-cooked comfort food and an early night',
     },
     friend: {
       do: ['Keep plans small and close', 'Validate, don’t lecture', 'Send something that makes her laugh'],
       plan: 'Walk and talk, or a quiet night in',
-      say: 'No pressure to reply — just sending love and a meme 🫶',
+      say: 'No pressure to reply. Just sending love and a meme 🫶',
     },
   },
 };
@@ -671,7 +671,7 @@ export const NUTRITION = {
   menstrual: {
     focus: 'Replace what you lose, calm cramps, stay warm.',
     why: 'You lose roughly 15–20 mg of iron each period, and low iron is one of the most common causes of fatigue in women. Anti-inflammatory fats and magnesium may ease cramps.',
-    energy: 'Appetite is usually normal. Eat regularly — skipping meals makes fatigue and cramps worse.',
+    energy: 'Appetite is usually normal. Eat regularly: skipping meals makes fatigue and cramps worse.',
     plate: [['Cooked veg & greens', 40], ['Iron-rich protein', 30], ['Roots & stewed fruit', 20], ['Nuts, seeds & fats', 10]],
     needs: [
       { n: 'Iron', target: '18 mg / day', why: 'Rebuilds what bleeding takes. Heme iron (red meat, fish) absorbs best; pair plant iron with vitamin C.', foods: ['Red meat', 'Liver', 'Lentils', 'Sardines', 'Pumpkin seeds', 'Blackstrap molasses'], ev: 'strong' },
@@ -694,7 +694,7 @@ export const NUTRITION = {
     ],
   },
   follicular: {
-    focus: 'Build — protein, fibre and fresh, colourful food.',
+    focus: 'Build: protein, fibre and fresh, colourful food.',
     why: 'Rising estrogen supports energy, insulin sensitivity and muscle building. A great time for lighter, fresher meals and plenty of protein.',
     energy: 'Appetite tends to be lower and steadier. Focus on quality and protein at every meal.',
     plate: [['Raw veg & salad', 45], ['Protein', 30], ['Fruit', 15], ['Fermented & seeds', 10]],
@@ -720,7 +720,7 @@ export const NUTRITION = {
   ovulatory: {
     focus: 'Light, fibre-rich and antioxidant-packed.',
     why: 'Estrogen peaks. Fibre and cruciferous vegetables help your liver and gut process hormones, and antioxidants support the egg and your skin.',
-    energy: 'Appetite is often at its lowest around ovulation — lighter meals feel good.',
+    energy: 'Appetite is often at its lowest around ovulation. Lighter meals feel good.',
     plate: [['Raw & cruciferous veg', 45], ['Protein', 25], ['Fruit & berries', 20], ['Seeds & fats', 10]],
     needs: [
       { n: 'Fibre', target: '25–30 g / day', why: 'Helps clear used estrogen through the gut.', foods: ['Raspberries', 'Lentils', 'Chia', 'Pears', 'Artichoke'], ev: 'some' },
@@ -728,7 +728,7 @@ export const NUTRITION = {
       { n: 'Antioxidants', target: '5+ colours / day', why: 'Protect cells, skin and eggs from oxidative stress.', foods: ['Berries', 'Tomatoes', 'Green tea', 'Peppers', 'Pomegranate'], ev: 'some' },
       { n: 'Zinc', target: '8 mg / day', why: 'Involved in ovulation and skin health.', foods: ['Pumpkin seeds', 'Shellfish', 'Chickpeas', 'Beef', 'Cashews'], ev: 'some' },
       { n: 'Hydration', target: '2+ litres', why: 'Supports cervical fluid and energy.', foods: ['Water', 'Cucumber', 'Watermelon', 'Herbal tea'], ev: 'emerging' },
-      { n: 'Gentle cooling', target: 'Balance', why: 'TCM: Yang is rising — balance heat with lighter, fresh foods.', foods: ['Cucumber', 'Mung beans', 'Leafy greens', 'Lotus seeds'], ev: 'tcm' },
+      { n: 'Gentle cooling', target: 'Balance', why: 'TCM: Yang is rising. Balance heat with lighter, fresh foods.', foods: ['Cucumber', 'Mung beans', 'Leafy greens', 'Lotus seeds'], ev: 'tcm' },
     ],
     day: [
       { meal: 'Breakfast', what: 'Raw Berry Chia Bowl', recipe: 'berry-quinoa-bowl' },
@@ -745,7 +745,7 @@ export const NUTRITION = {
   luteal: {
     focus: 'Steady blood sugar, calm mood, beat bloating.',
     why: 'Progesterone raises body temperature and metabolism slightly (studies estimate ~3–10%), so hunger is real. Complex carbs, protein and calcium help keep cravings and PMS in check.',
-    energy: 'You may genuinely need a little more — an extra balanced snack is reasonable. Don’t fight hunger with willpower; plan for it.',
+    energy: 'You may genuinely need a little more. An extra balanced snack is reasonable. Don’t fight hunger with willpower; plan for it.',
     plate: [['Roots & squash', 30], ['Veg', 30], ['Protein', 25], ['Nuts, seeds & fats', 15]],
     needs: [
       { n: 'Calcium', target: '1,000–1,200 mg / day', why: 'The best-studied nutrient for easing PMS symptoms.', foods: ['Raw milk', 'Kefir', 'Yoghurt', 'Almonds', 'Sardines', 'Tahini'], ev: 'strong' },
@@ -778,8 +778,8 @@ export const SYMPTOM_FOODS = {
   Fatigue: { foods: ['Lentils + lemon', 'Red meat', 'Liver', 'Eggs'], tip: 'Think iron + vitamin C. If tiredness lasts, ask for a ferritin test.', ev: 'strong' },
   Acne: { foods: ['Pumpkin seeds', 'Salmon', 'Berries', 'Green tea'], tip: 'Lower-sugar, lower-dairy days and zinc-rich foods may help hormonal breakouts.', ev: 'emerging' },
   Headache: { foods: ['Water', 'Pumpkin seeds', 'Almonds', 'Banana'], tip: 'Hydrate first; magnesium-rich foods may help hormone-related headaches.', ev: 'some' },
-  Insomnia: { foods: ['Kiwi', 'Tart cherries', 'Warm raw milk & honey', 'Pumpkin seeds'], tip: 'A light, naturally sweet snack before bed — banana or a few dates — can help.', ev: 'emerging' },
-  Constipation: { foods: ['Prunes', 'Kiwi', 'Chia pudding', 'Warm water'], tip: 'Progesterone slows digestion — fibre plus plenty of fluid.', ev: 'strong' },
+  Insomnia: { foods: ['Kiwi', 'Tart cherries', 'Warm raw milk & honey', 'Pumpkin seeds'], tip: 'A light, naturally sweet snack before bed, like a banana or a few dates, can help.', ev: 'emerging' },
+  Constipation: { foods: ['Prunes', 'Kiwi', 'Chia pudding', 'Warm water'], tip: 'Progesterone slows digestion: fibre plus plenty of fluid.', ev: 'strong' },
   'Tender breasts': { foods: ['Flax seeds', 'Leafy greens', 'Herbal tea'], tip: 'Going easy on salt and wearing a supportive bra are the most common advice.', ev: 'emerging' },
   Nausea: { foods: ['Ginger', 'Banana', 'Peppermint tea'], tip: 'Small, frequent, plain meals.', ev: 'some' },
   'Back pain': { foods: ['Turmeric milk', 'Salmon', 'Ginger'], tip: 'Anti-inflammatory foods plus heat on the lower back.', ev: 'emerging' },
@@ -813,7 +813,7 @@ export const RELIEF = {
     why: 'A one-sided twinge, cramp or dull ache low in your belly as the follicle stretches and releases the egg (“mittelschmerz”). A little fluid released with the egg can irritate the belly lining. It usually lasts minutes to 1–2 days and can switch sides from month to month.',
     steps: [
       { t: 'Heat on the sore side', d: 'A hot water bottle or heat pad for 15–20 minutes relaxes the muscles around the ovary.', ev: 'some' },
-      { t: 'Pain relief with food', d: 'Ibuprofen or naproxen calm the prostaglandins behind the twinge — take with food, if they are safe for you.', ev: 'some' },
+      { t: 'Pain relief with food', d: 'Ibuprofen or naproxen calm the prostaglandins behind the twinge. Take with food, if they are safe for you.', ev: 'some' },
       { t: 'Warm bath with magnesium salts', d: '15 minutes in warm water with Epsom or magnesium flakes to soften the cramp.', ev: 'emerging' },
       { t: 'Gentle movement', d: 'A slow walk, child’s pose or lying on your side with knees pulled in often eases it fast.', ev: 'emerging' },
       { t: 'Ginger or chamomile tea', d: 'Warm, anti-inflammatory and calming for the lower belly.', ev: 'emerging' },
@@ -828,23 +828,23 @@ export const RELIEF = {
     steps: [
       { t: 'Heat on your lower belly or back', d: 'A heat pad or hot water bottle for 20+ minutes. Reviews of many trials find heat eases period pain about as well as ibuprofen.', ev: 'strong' },
       { t: 'Anti-inflammatory pain relief early', d: 'Ibuprofen or naproxen work best taken at the first sign of pain, with food (if they are safe for you).', ev: 'strong' },
-      { t: 'Gentle movement', d: 'Walking, stretching or yoga can ease pain — even 10 minutes.', ev: 'some' },
+      { t: 'Gentle movement', d: 'Walking, stretching or yoga can ease pain. Even 10 minutes.', ev: 'some' },
       { t: 'Ginger tea', d: '1–2 g of ginger a day; small trials compare it to common painkillers.', ev: 'some' },
       { t: 'Press SP6', d: 'Four finger-widths above the inner ankle bone, 1–3 minutes each side. Small, low-quality trials.', ev: 'tcm', to: 'point/menstrual' },
     ],
     tcm: 'Cramps are seen as stuck Qi and Blood, often with Cold. Keep warm, avoid raw and cold food and drinks, try a ginger foot soak.',
-    doctor: 'Pain that stops normal life, gets worse over the years, or comes with pain during sex or bowel movements — endometriosis is common and under-diagnosed.',
+    doctor: 'Pain that stops normal life, gets worse over the years, or comes with pain during sex or bowel movements. Endometriosis is common and under-diagnosed.',
   },
   'PMS mood': {
     why: 'The late-luteal drop in estrogen and progesterone affects serotonin, which can bring irritability, low mood and anxiety.',
     steps: [
       { t: 'Move most days', d: 'Regular aerobic exercise is one of the most recommended lifestyle steps for PMS.', ev: 'some' },
-      { t: 'Calcium-rich foods', d: '1,000–1,200 mg/day — the best-studied nutrient for PMS.', ev: 'strong' },
+      { t: 'Calcium-rich foods', d: '1,000–1,200 mg/day: the best-studied nutrient for PMS.', ev: 'strong' },
       { t: 'Protect sleep', d: 'Poor sleep amplifies irritability. Same bedtime, cool room.', ev: 'some' },
       { t: 'Go easy on alcohol late luteal', d: 'It can worsen anxiety, low mood and sleep.', ev: 'emerging' },
       { t: 'Name it', d: 'Writing "this is day 26 talking" helps many women separate hormones from real problems.', ev: 'emerging' },
     ],
-    tcm: 'Liver Qi stagnation — move it with walking, side stretches, rose tea and letting feelings out.',
+    tcm: 'Liver Qi stagnation: move it with walking, side stretches, rose tea and letting feelings out.',
     doctor: 'If mood symptoms are severe, affect relationships or work, or include hopelessness, ask about PMDD. It is common and treatable.',
   },
   Bloating: {
@@ -855,7 +855,7 @@ export const RELIEF = {
       { t: 'Walk after meals', d: '10 minutes helps move gas and digestion.', ev: 'some' },
       { t: 'Smaller, warm meals', d: 'Cooked food with ginger, fennel or cinnamon is easier to digest than large cold meals.', ev: 'tcm' },
     ],
-    tcm: 'Spleen Qi needs warmth to transform fluids — choose cooked food, ginger and fennel, and fewer raw salads and cold drinks.',
+    tcm: 'Spleen Qi needs warmth to transform fluids. Choose cooked food, ginger and fennel, and fewer raw salads and cold drinks.',
     doctor: 'Bloating that lasts all month, gets steadily worse, or comes with weight loss or early fullness.',
   },
   Insomnia: {
@@ -877,7 +877,7 @@ export const RELIEF = {
       { t: 'Zinc-rich foods', d: 'Pumpkin seeds, chickpeas, shellfish.', ev: 'some' },
       { t: 'Hands off', d: 'Picking spreads inflammation and causes marks.', ev: 'strong' },
     ],
-    tcm: 'Seen as Heat in the Blood or Stomach — fewer fried, spicy and sugary foods; mung beans and green tea cool.',
+    tcm: 'Seen as Heat in the Blood or Stomach. Fewer fried, spicy and sugary foods; mung beans and green tea cool.',
     doctor: 'Painful cystic acne, scarring, or acne with irregular periods and extra hair growth (ask about PCOS).',
   },
   Headache: {
@@ -888,7 +888,7 @@ export const RELIEF = {
       { t: 'Magnesium-rich foods', d: 'May help prevent menstrual migraines.', ev: 'some' },
       { t: 'Dark, quiet rest', d: 'With a cool cloth on the forehead or neck.', ev: 'emerging' },
     ],
-    tcm: 'Often Liver Yang rising — press LV3 on the foot, avoid skipping meals and late nights.',
+    tcm: 'Often Liver Yang rising. Press LV3 on the foot, avoid skipping meals and late nights.',
     doctor: 'A sudden "worst ever" headache, headaches with vision or speech changes, or migraine with aura if you take the combined pill.',
   },
   Fatigue: {
@@ -901,8 +901,8 @@ export const RELIEF = {
       { t: 'A 10–20 minute nap', d: 'Before 3 pm. Short naps lifted alertness for hours in trials; longer ones leave you groggy.', ev: 'some' },
       { t: 'Check ferritin and thyroid', d: 'If you’re tired all month, not just around your period, these two blood tests explain most cases.', ev: 'strong', to: 'nutrients/iron' },
     ],
-    tcm: 'Qi and Blood deficiency — red dates, goji, bone broth, stewed fruit and early nights.',
-    doctor: 'Ongoing exhaustion, breathlessness or very heavy periods — ask for a ferritin (iron stores) test.',
+    tcm: 'Qi and Blood deficiency. Red dates, goji, bone broth, stewed fruit and early nights.',
+    doctor: 'Ongoing exhaustion, breathlessness or very heavy periods. Ask for a ferritin (iron stores) test.',
   },
   'Tender breasts': {
     why: 'Estrogen and progesterone stimulate breast tissue in the luteal phase.',
@@ -914,7 +914,7 @@ export const RELIEF = {
       { t: 'Flax seeds daily', d: '25 g ground flax a day eased cyclical breast pain in a small trial.', ev: 'emerging' },
       { t: 'Rose tea and side stretches', d: 'Rose moves stuck Liver qi in Chinese medicine; side stretches open the Liver channel along your ribs.', ev: 'tcm', to: 'tea/pms-1' },
     ],
-    tcm: 'The Liver channel runs through the breasts — tenderness points to Liver Qi stagnation. Rose tea and side stretches.',
+    tcm: 'The Liver channel runs through the breasts. Tenderness points to Liver Qi stagnation. Rose tea and side stretches.',
     doctor: 'A new lump, pain in one spot that doesn’t change with your cycle, or nipple discharge.',
   },
 };
@@ -922,16 +922,16 @@ export const RELIEF = {
 // "Gottes Nahrung": food as it was created — the base of every Nourish plan.
 export const GOTTES = {
   title: 'Natural food',
-  sub: 'Food as it was created — whole, natural, alive.',
+  sub: 'Food as it was created. Whole, natural, alive.',
   principles: [
     { t: 'Unprocessed & natural', d: 'Whole foods in their original form. No additives, artificial sweeteners, preservatives or refined oils.' },
-    { t: 'Raw & living — outside your period', d: 'Fresh fruit, vegetables, herbs, nuts and seeds. During your period, switch to warm and cooked.' },
+    { t: 'Raw & living: outside your period', d: 'Fresh fruit, vegetables, herbs, nuts and seeds. During your period, switch to warm and cooked.' },
     { t: 'Few grains', d: 'Roots, squash, fruit and legumes carry the carbs instead.' },
     { t: 'Raw & fermented', d: 'Raw honey, raw sauerkraut and kimchi for natural enzymes and probiotics.' },
     { t: 'Clean animal foods', d: 'Raw milk, kefir, pasture eggs, wild fish, grass-fed meat.' },
     { t: 'Organic & seasonal', d: 'Local, in season, as close to the earth as possible.' },
   ],
-  tcm: 'Chinese medicine: during your period (and the few days before), avoid raw and cold food. Eat warm and cooked — still natural and unprocessed.',
+  tcm: 'Chinese medicine: during your period (and the few days before), avoid raw and cold food. Eat warm and cooked. Still natural and unprocessed.',
 };
 
 // Remedies (Hausmittel) — each tied to a TCM organ/element so it connects to the cycle.
@@ -972,29 +972,29 @@ export const REMEDIES = [
 // Research note: abilities don't reliably change across the cycle (2025 meta-analysis, 102 studies);
 // energy, mood, symptoms and social drive do — so this plans around energy, not capability.
 export const DAY_GUIDE = {
-  'flow-start': { title: 'Rest & reflect', energy: 'Lowest', tackle: ['Clear one small, easy task — then stop', 'Review last month: what worked, what didn’t', 'Cancel or move one non-essential plan'],
+  'flow-start': { title: 'Rest & reflect', energy: 'Lowest', tackle: ['Clear one small, easy task. Then stop', 'Review last month: what worked, what didn’t', 'Cancel or move one non-essential plan'],
     best: ['Reflection', 'Journaling', 'Solo time', 'Gentle walks'], ease: 'Big launches, intense training and packed social plans',
     why: 'Hormones are at their lowest and cramps and fatigue peak on days 1–2. Rest is productive now.' },
-  'flow-end': { title: 'Ease back in', energy: 'Returning', tackle: ['Plan the month ahead — goals and priorities', 'Sort your inbox and to-do list', 'Light movement: a walk or stretch'],
+  'flow-end': { title: 'Ease back in', energy: 'Returning', tackle: ['Plan the month ahead. Goals and priorities', 'Sort your inbox and to-do list', 'Light movement: a walk or stretch'],
     best: ['Planning', 'Admin', 'Setting intentions'], ease: 'Overloading your calendar too fast',
-    why: 'Bleeding eases and estrogen starts to rise — energy comes back gradually.' },
-  'rising': { title: 'Start & learn', energy: 'Rising', tackle: ['Start the project you’ve been putting off', 'Learn something new — a course, a skill, a book', 'Brainstorm ideas and write them all down'],
-    best: ['New projects', 'Learning', 'Creativity', 'Strength training'], ease: 'Detail-heavy finishing work — save it for your luteal phase',
+    why: 'Bleeding eases and estrogen starts to rise. Energy comes back gradually.' },
+  'rising': { title: 'Start & learn', energy: 'Rising', tackle: ['Start the project you’ve been putting off', 'Learn something new: a course, a skill, a book', 'Brainstorm ideas and write them all down'],
+    best: ['New projects', 'Learning', 'Creativity', 'Strength training'], ease: 'Detail-heavy finishing work: save it for your luteal phase',
     why: 'Rising estrogen tends to lift mood, motivation and openness to new things.' },
   'building': { title: 'Build momentum', energy: 'High', tackle: ['Push your hardest work forward', 'Have the meeting or call you need', 'Try for a personal best in training'],
     best: ['Deep work', 'Collaboration', 'Challenging workouts'], ease: 'Saying yes to everything just because you feel great',
     why: 'Estrogen climbs toward its peak; many women feel their most energetic and resilient.' },
-  'peak': { title: 'Connect & speak up', energy: 'Peak', tackle: ['Pitch, present, negotiate or ask for what you want', 'Network — reach out to 3 people', 'Have the important conversation'],
+  'peak': { title: 'Connect & speak up', energy: 'Peak', tackle: ['Pitch, present, negotiate or ask for what you want', 'Network: reach out to 3 people', 'Have the important conversation'],
     best: ['Communication', 'Dates', 'Content & photos', 'Socialising'], ease: 'Over-committing your next two weeks',
     why: 'Estrogen and testosterone peak around ovulation, often bringing more confidence, libido and social drive.' },
   'settle': { title: 'Steady focus', energy: 'Steady', tackle: ['Work through your most important project step by step', 'Tidy up loose ends from your busy week', 'Steady, moderate training'],
     best: ['Focused work', 'Routines', 'Cooking at home'], ease: 'Starting too many new things at once',
-    why: 'Progesterone rises and has a calming effect — a good window for steady, grounded work.' },
+    why: 'Progesterone rises and has a calming effect. A good window for steady, grounded work.' },
   'focus': { title: 'Finish & organise', energy: 'Moderate', tackle: ['Finish and ship what you started', 'Admin, editing, numbers and details', 'Declutter one space at home'],
     best: ['Completing tasks', 'Detail work', 'Organising', 'Nesting'], ease: 'Late nights and high-stress plans',
     why: 'Body temperature and appetite rise slightly; many women prefer structured, familiar tasks now.' },
   'premenstrual': { title: 'Simplify & protect', energy: 'Lower', tackle: ['Do only your top 1–2 priorities', 'Add buffer time between plans', 'Prepare for your period: warm food, supplies, an easy calendar'],
-    best: ['Boundaries', 'Self-care', 'Quiet wins', 'Early nights'], ease: 'Big decisions when you feel irritable — sleep on them',
+    best: ['Boundaries', 'Self-care', 'Quiet wins', 'Early nights'], ease: 'Big decisions when you feel irritable. Sleep on them',
     why: 'Estrogen and progesterone fall; PMS, sensitivity and poorer sleep are most common in these last days.' },
 };
 
@@ -1002,19 +1002,19 @@ export const DAY_GUIDE = {
 // s: one-line overview · range: typical adult female amounts · ev: evidence for the "support it" line
 export const HORMONE_LIBRARY = [
   { n: 'Oestrogen', g: 'Ovaries', s: 'Energy, mood, skin & bones', range: 'Estradiol about 30 pg/mL on your period, 200–400 at its peak before ovulation, 100–200 in the second half', ev: 'some', role: 'Your main female hormone. It rebuilds the womb lining each month and also acts on your brain, mood, skin, hair, bones, heart, blood vessels, breasts, urinary tract and fertility.', cycle: 'Rises through the follicular phase and peaks 1–2 days before ovulation. It dips after the egg is released, then has a second, smaller rise in the second half of your cycle before falling before your period.', support: 'Fibre and cruciferous veg (broccoli, cabbage, rocket) help your gut clear used estrogen; a daily raw carrot is a popular extra.' },
-  { n: 'Progesterone', g: 'Ovaries (yellow body)', s: 'Calm, sleep & warmth', range: 'Under 1 ng/mL before ovulation, about 5–20 ng/mL a week after it', ev: 'some', role: 'Made by the “yellow body” (corpus luteum) left behind after the egg is released. It prepares and holds the womb lining for a possible pregnancy, calms the nervous system and raises your body temperature by about 0.3–0.5 °C.', cycle: 'Only rises after ovulation. It peaks about 7 days later, then falls before your period — that drop starts the bleed.', support: 'Ovulating regularly is what makes it. Enough food, eggs, vitamin C, zinc, magnesium and low stress support that.' },
-  { n: 'FSH', g: 'Pituitary gland', s: 'Wakes up your eggs', range: 'About 3–10 IU/L on your period, a short spike to 10–20 at ovulation', ev: 'some', role: 'Follicle-stimulating hormone — the “wake-up call” for your ovaries. Your brain sends FSH to tell a small group of follicles (tiny sacs that each hold an egg) to start growing. The strongest one becomes the egg you release, and as it grows it makes estrogen.', cycle: 'Rises at the very end of one cycle and the start of the next, during your period, to start a new egg growing. A small spike follows at ovulation.', support: 'Steady sleep, enough calories and protein, and less stress — your brain sends strong signals when it feels safe and fed.' },
-  { n: 'LH', g: 'Pituitary gland', s: 'Releases the egg', range: 'About 2–10 IU/L most of the month, a surge to 20–80 IU/L before ovulation', ev: 'some', role: 'Luteinising hormone — the “release” signal. A sudden LH surge tells the ripe follicle to burst open and release its egg. Ovulation tests measure this surge.', cycle: 'Surges about 24–36 hours before ovulation, then drops back.', support: 'Manage stress and eat enough — high stress and under-eating can blunt or delay the surge.' },
-  { n: 'Testosterone', g: 'Ovaries & adrenal glands', s: 'Drive, libido & muscle', range: 'About 15–70 ng/dL, slightly higher around ovulation', ev: 'some', role: 'Women make it in small amounts. It supports sex drive, motivation, muscle and bone strength, and helps make red blood cells.', cycle: 'Rises a little around ovulation — that’s part of why libido and confidence peak then.', support: 'Strength training, zinc (oysters, red meat, pumpkin seeds) and healthy fats.' },
+  { n: 'Progesterone', g: 'Ovaries (yellow body)', s: 'Calm, sleep & warmth', range: 'Under 1 ng/mL before ovulation, about 5–20 ng/mL a week after it', ev: 'some', role: 'Made by the “yellow body” (corpus luteum) left behind after the egg is released. It prepares and holds the womb lining for a possible pregnancy, calms the nervous system and raises your body temperature by about 0.3–0.5 °C.', cycle: 'Only rises after ovulation. It peaks about 7 days later, then falls before your period. That drop starts the bleed.', support: 'Ovulating regularly is what makes it. Enough food, eggs, vitamin C, zinc, magnesium and low stress support that.' },
+  { n: 'FSH', g: 'Pituitary gland', s: 'Wakes up your eggs', range: 'About 3–10 IU/L on your period, a short spike to 10–20 at ovulation', ev: 'some', role: 'Follicle-stimulating hormone: the “wake-up call” for your ovaries. Your brain sends FSH to tell a small group of follicles (tiny sacs that each hold an egg) to start growing. The strongest one becomes the egg you release, and as it grows it makes estrogen.', cycle: 'Rises at the very end of one cycle and the start of the next, during your period, to start a new egg growing. A small spike follows at ovulation.', support: 'Steady sleep, enough calories and protein, and less stress. Your brain sends strong signals when it feels safe and fed.' },
+  { n: 'LH', g: 'Pituitary gland', s: 'Releases the egg', range: 'About 2–10 IU/L most of the month, a surge to 20–80 IU/L before ovulation', ev: 'some', role: 'Luteinising hormone: the “release” signal. A sudden LH surge tells the ripe follicle to burst open and release its egg. Ovulation tests measure this surge.', cycle: 'Surges about 24–36 hours before ovulation, then drops back.', support: 'Manage stress and eat enough. High stress and under-eating can blunt or delay the surge.' },
+  { n: 'Testosterone', g: 'Ovaries & adrenal glands', s: 'Drive, libido & muscle', range: 'About 15–70 ng/dL, slightly higher around ovulation', ev: 'some', role: 'Women make it in small amounts. It supports sex drive, motivation, muscle and bone strength, and helps make red blood cells.', cycle: 'Rises a little around ovulation. That’s part of why libido and confidence peak then.', support: 'Strength training, zinc (oysters, red meat, pumpkin seeds) and healthy fats.' },
   { n: 'Prolactin', g: 'Pituitary gland', s: 'Milk, rest & recovery', range: 'About 5–25 ng/mL; higher at night and after stress', ev: 'emerging', role: 'Best known for making breast milk after birth. Outside pregnancy, too much of it can quietly switch off ovulation.', cycle: 'Slightly higher in the second half of your cycle. Stress, poor sleep and some medicines raise it and can disturb ovulation.', support: 'Rest, deep sleep, B6-rich foods (eggs, fish, banana) and gentle evenings.' },
   { n: 'SHBG', g: 'Liver', s: 'Carries your hormones', range: 'About 20–130 nmol/L', ev: 'some', role: 'A protein that carries estrogen and testosterone in the blood. Only the unbound part can act, so SHBG decides how strongly you feel your hormones.', cycle: 'Stays fairly steady across the month. High insulin lowers it, which leaves more free testosterone (think acne).', support: 'Stable blood sugar, enough protein and a healthy liver.' },
   { n: 'Insulin', g: 'Pancreas', s: 'Your blood-sugar key', range: 'Fasting about 2–10 µIU/mL in healthy women', ev: 'strong', role: 'Moves sugar from your blood into your cells for energy and stores the rest.', cycle: 'Your cells are a little less insulin-sensitive in the second half of your cycle, so cravings and dips are more common then.', support: 'Protein with every meal, strength training and a short walk after meals.' },
-  { n: 'Cortisol', g: 'Adrenal glands', s: 'Stress & morning energy', range: 'About 10–20 µg/dL in the morning, under 5 at night', ev: 'some', role: 'Your daily stress and energy hormone. It peaks about 30 minutes after waking to get you going, keeps blood sugar up and calms inflammation — then should fall low by night so you can sleep.', cycle: 'You’re more sensitive to stress in the days before your period. Long-term stress can delay ovulation and worsen PMS.', support: 'Morning daylight, nature, slow breathing, yoga, enough sleep and magnesium.' },
+  { n: 'Cortisol', g: 'Adrenal glands', s: 'Stress & morning energy', range: 'About 10–20 µg/dL in the morning, under 5 at night', ev: 'some', role: 'Your daily stress and energy hormone. It peaks about 30 minutes after waking to get you going, keeps blood sugar up and calms inflammation. Then should fall low by night so you can sleep.', cycle: 'You’re more sensitive to stress in the days before your period. Long-term stress can delay ovulation and worsen PMS.', support: 'Morning daylight, nature, slow breathing, yoga, enough sleep and magnesium.' },
   { n: 'Adrenaline', g: 'Adrenal glands', s: 'Fight or flight', range: 'Very low at rest; spikes within seconds when you’re startled or stressed', ev: 'some', role: 'The fast “fight or flight” signal: heart and breathing speed up and sugar is released for quick energy.', cycle: 'Constant alerts, rushing and scrolling keep it switched on, which wears you out.', support: 'Phone-free time, slow breathing with long exhales, time outside.' },
-  { n: 'Thyroid hormones', g: 'Thyroid gland', s: 'Your body’s thermostat', range: 'TSH about 0.5–4 mIU/L; free T4 about 0.8–1.8 ng/dL', ev: 'some', role: 'Set your metabolism — how fast you use energy, make heat and burn fuel.', cycle: 'Stay steady across the month. A low thyroid can cause irregular or heavy periods, tiredness and cold hands and feet.', support: 'Enough carbs and calories, selenium (Brazil nuts), iodine (fish, seaweed) and iron.' },
+  { n: 'Thyroid hormones', g: 'Thyroid gland', s: 'Your body’s thermostat', range: 'TSH about 0.5–4 mIU/L; free T4 about 0.8–1.8 ng/dL', ev: 'some', role: 'Set your metabolism: how fast you use energy, make heat and burn fuel.', cycle: 'Stay steady across the month. A low thyroid can cause irregular or heavy periods, tiredness and cold hands and feet.', support: 'Enough carbs and calories, selenium (Brazil nuts), iodine (fish, seaweed) and iron.' },
   { n: 'Melatonin', g: 'Pineal gland', s: 'Darkness & deep sleep', range: 'Under 10 pg/mL by day, rising to about 50–150 pg/mL at night', ev: 'some', role: 'The darkness signal. It rises after sunset, makes you sleepy and lowers body temperature. It’s also an antioxidant found in the fluid around your eggs.', cycle: 'Sleep often gets lighter in the days before your period, so darkness matters even more then.', support: 'Darkness at night, warm low light after sunset, morning daylight to time it right.' },
-  { n: 'Serotonin', g: 'Brain & gut', s: 'Mood & calm', range: 'Not measured in a normal blood test', ev: 'some', role: 'A messenger for mood, calm and digestion — and the building block for melatonin. Most of it is made in the gut, but the serotonin that shapes mood is made in the brain.', cycle: 'Estrogen supports it, so it can dip as estrogen falls before your period — part of PMS low mood.', support: 'Daylight, movement, protein (tryptophan) with slow carbs, and a healthy gut.' },
-  { n: 'Active vitamin D', g: 'Skin, then liver & kidneys', s: 'Sunshine hormone', range: 'Blood test (25-OH-D): about 30–60 ng/mL (75–150 nmol/L) is a good level', ev: 'some', role: 'Your skin makes vitamin D from sunlight; the liver and kidneys turn it into the active hormone (calcitriol). It controls calcium for strong bones and supports immunity and mood.', cycle: 'Low levels are linked to irregular cycles, worse PMS and lower fertility.', support: 'Midday sun on your skin in spring and summer, oily fish, egg yolks, butter — and a test in late winter.' },
+  { n: 'Serotonin', g: 'Brain & gut', s: 'Mood & calm', range: 'Not measured in a normal blood test', ev: 'some', role: 'A messenger for mood, calm and digestion. And the building block for melatonin. Most of it is made in the gut, but the serotonin that shapes mood is made in the brain.', cycle: 'Estrogen supports it, so it can dip as estrogen falls before your period. Part of PMS low mood.', support: 'Daylight, movement, protein (tryptophan) with slow carbs, and a healthy gut.' },
+  { n: 'Active vitamin D', g: 'Skin, then liver & kidneys', s: 'Sunshine hormone', range: 'Blood test (25-OH-D): about 30–60 ng/mL (75–150 nmol/L) is a good level', ev: 'some', role: 'Your skin makes vitamin D from sunlight; the liver and kidneys turn it into the active hormone (calcitriol). It controls calcium for strong bones and supports immunity and mood.', cycle: 'Low levels are linked to irregular cycles, worse PMS and lower fertility.', support: 'Midday sun on your skin in spring and summer, oily fish, egg yolks, butter. And a test in late winter.' },
 ];
 
 // Daily hormone habits — the positive side of what harms women's health, plus fertility fundamentals.
@@ -1037,11 +1037,11 @@ export const HABITS = [
   { id: 'phone-away', a: 'body', ev: 'emerging', g: 'fertile', t: 'Phone & laptop away from your belly', why: 'Keep devices off your lap and out of your front pockets.' },
   { id: 'dance', a: 'body', ev: 'some', g: 'fertile', t: 'Dance', why: 'Joyful movement lowers cortisol.' },
   { id: 'snuggle', a: 'mind', ev: 'some', g: 'fertile', t: 'Snuggles & touch', why: 'Oxytocin calms stress and supports connection.' },
-  { id: 'beauty', a: 'mind', ev: 'emerging', g: 'fertile', t: 'Surround yourself with beauty', why: 'Flowers, music, art — pleasure is regulating.' },
+  { id: 'beauty', a: 'mind', ev: 'emerging', g: 'fertile', t: 'Surround yourself with beauty', why: 'Flowers, music, art: pleasure is regulating.' },
   { id: 'lemon', a: 'food', ev: 'emerging', g: 'fertile', t: 'Whole lemon drink', why: 'Hydration and vitamin C to start the day.' },
   { id: 'intuition', a: 'mind', ev: 'emerging', g: 'fertile', t: 'Listen to your intuition', why: 'Notice what your body is asking for today.' },
   { id: 'pray', a: 'mind', ev: 'emerging', g: 'fertile', t: 'Prayer or intention', why: 'A quiet moment for your body, your future and your future children.' },
-  { id: 'slow', a: 'body', ev: 'tcm', g: 'fertile', t: 'Slow down — especially on your period', why: 'Rest during bleeding is part of a healthy cycle.' },
+  { id: 'slow', a: 'body', ev: 'tcm', g: 'fertile', t: 'Slow down: especially on your period', why: 'Rest during bleeding is part of a healthy cycle.' },
   { id: 'track', a: 'mind', ev: 'some', g: 'fertile', t: 'Track your cycle', why: 'Knowing your rhythm is the foundation of everything else.' },
 ];
 
@@ -1053,7 +1053,7 @@ export const FERTILITY_FOODS = [
   { f: 'Raw honey', why: 'Gentle natural sugars for steady energy.' },
   { f: 'High-fat raw dairy', why: 'Full-fat dairy is linked with fewer anovulatory cycles. Once pregnant, choose pasteurised (listeria risk).' },
   { f: 'Red meat', why: 'Bioavailable heme iron and L-carnitine for egg quality.' },
-  { f: 'Liver', why: 'Nature’s prenatal multivitamin — vitamin A, folate, B12, iron. Small portion about once a week: too much vitamin A is risky in pregnancy.' },
+  { f: 'Liver', why: 'Nature’s prenatal multivitamin: vitamin A, folate, B12, iron. Small portion about once a week: too much vitamin A is risky in pregnancy.' },
   { f: 'Butter', why: 'Fat-soluble vitamins A, D, E and K2.' },
   { f: 'Oysters', why: 'The richest source of zinc.' },
   { f: 'Sardines', why: 'Omega-3s to calm pelvic inflammation.' },
@@ -1074,14 +1074,14 @@ export const MOVES = [
   { k: 'walk', n: 'Walks & rest', d: 'Nature walks, sauna, early nights' },
 ];
 export const MOVE_GUIDE = {
-  'flow-start': { title: 'Rest & restore', r: { lift: 0, hiit: 0, sport: 1, pilates: 1, yoga: 2, meditate: 3, walk: 3 }, tip: 'Hormones are at their lowest and your body is shedding. Walks, yin yoga and meditation — a natural time to turn inward.' },
+  'flow-start': { title: 'Rest & restore', r: { lift: 0, hiit: 0, sport: 1, pilates: 1, yoga: 2, meditate: 3, walk: 3 }, tip: 'Hormones are at their lowest and your body is shedding. Walks, yin yoga and meditation. A natural time to turn inward.' },
   'flow-end': { title: 'Ease back in', r: { lift: 1, hiit: 1, sport: 2, pilates: 2, yoga: 3, meditate: 2, walk: 3 }, tip: 'As bleeding eases, start moving more: flowing yoga, pilates, light strength. Iron-rich food helps your energy come back.' },
   'rising': { title: 'Build strength', r: { lift: 2, hiit: 2, sport: 3, pilates: 2, yoga: 2, meditate: 1, walk: 2 }, tip: 'Rising estrogen improves recovery. A great window to try a new class and ramp up your training volume.' },
-  'building': { title: 'Lift heavy', r: { lift: 3, hiit: 3, sport: 3, pilates: 2, yoga: 1, meditate: 1, walk: 2 }, tip: 'A good window for heavy lifting if you feel strong — some small studies that put more strength training into the follicular phase saw bigger gains.' },
-  'peak': { title: 'Peak power', r: { lift: 3, hiit: 3, sport: 3, pilates: 2, yoga: 1, meditate: 1, walk: 2 }, tip: 'Estrogen and testosterone peak: energy and confidence are often high. Warm up well — ligaments are a little looser around ovulation.' },
+  'building': { title: 'Lift heavy', r: { lift: 3, hiit: 3, sport: 3, pilates: 2, yoga: 1, meditate: 1, walk: 2 }, tip: 'A good window for heavy lifting if you feel strong. Some small studies that put more strength training into the follicular phase saw bigger gains.' },
+  'peak': { title: 'Peak power', r: { lift: 3, hiit: 3, sport: 3, pilates: 2, yoga: 1, meditate: 1, walk: 2 }, tip: 'Estrogen and testosterone peak: energy and confidence are often high. Warm up well: ligaments are a little looser around ovulation.' },
   'settle': { title: 'Steady strength', r: { lift: 2, hiit: 2, sport: 2, pilates: 3, yoga: 2, meditate: 2, walk: 2 }, tip: 'Progesterone rises and your body temperature climbs. Keep lifting at moderate weights, take longer rests, drink more water.' },
   'focus': { title: 'Endurance & flow', r: { lift: 2, hiit: 1, sport: 2, pilates: 3, yoga: 2, meditate: 2, walk: 3 }, tip: 'Steady efforts beat all-out ones: pilates, hiking, swimming, steady cardio. Your body burns more fat for fuel now.' },
-  'premenstrual': { title: 'Slow down', r: { lift: 1, hiit: 0, sport: 1, pilates: 2, yoga: 3, meditate: 3, walk: 3 }, tip: 'Energy drops before your period. Yin yoga, stretching, walks and meditation calm cramps and moods — rest is training too.' },
+  'premenstrual': { title: 'Slow down', r: { lift: 1, hiit: 0, sport: 1, pilates: 2, yoga: 3, meditate: 3, walk: 3 }, tip: 'Energy drops before your period. Yin yoga, stretching, walks and meditation calm cramps and moods. Rest is training too.' },
 };
 
 // How much to move in each stretch of the cycle (intensity in talk-test words).
@@ -1185,32 +1185,32 @@ export const TIPS = {
   pms: {
     menstrual: 'Heat on your belly and magnesium-rich food (dark chocolate, pumpkin seeds) take the edge off cramps.',
     follicular: 'Build next month’s buffer now: protein and iron at every meal make PMS softer later.',
-    ovulatory: 'Plenty of fibre and water help clear extra estrogen — less bloating and tender breasts later.',
-    luteal: 'Steady meals with protein, magnesium and B6 (salmon, bananas, seeds) at night — calm blood sugar means calmer PMS.',
+    ovulatory: 'Plenty of fibre and water help clear extra estrogen. Less bloating and tender breasts later.',
+    luteal: 'Steady meals with protein, magnesium and B6 (salmon, bananas, seeds) at night. Calm blood sugar means calmer PMS.',
   },
   skin: {
-    menstrual: 'Skin is drier and more sensitive — rich moisturiser, no harsh scrubs or new products.',
-    follicular: 'Rising estrogen gives your best skin — great days for a facial or trying something new.',
-    ovulatory: 'Peak glow, but oil starts rising — cleanse gently at night and eat zinc (oysters, pumpkin seeds).',
-    luteal: 'Progesterone makes skin oilier — cleanse twice, keep sugar low, treat spots early.',
+    menstrual: 'Skin is drier and more sensitive. Rich moisturiser, no harsh scrubs or new products.',
+    follicular: 'Rising estrogen gives your best skin. Great days for a facial or trying something new.',
+    ovulatory: 'Peak glow, but oil starts rising. Cleanse gently at night and eat zinc (oysters, pumpkin seeds).',
+    luteal: 'Progesterone makes skin oilier. Cleanse twice, keep sugar low, treat spots early.',
   },
   sleep: {
-    menstrual: 'You may need more sleep — go to bed earlier with a warm drink and a hot water bottle.',
-    follicular: 'Sleep comes easiest now — keep a steady bedtime to bank energy for the weeks ahead.',
-    ovulatory: 'Your body temperature starts to rise — keep the bedroom cool and dark.',
-    luteal: 'Progesterone warms you up — cooler room, a magnesium bath and no screens the last hour.',
+    menstrual: 'You may need more sleep. Go to bed earlier with a warm drink and a hot water bottle.',
+    follicular: 'Sleep comes easiest now. Keep a steady bedtime to bank energy for the weeks ahead.',
+    ovulatory: 'Your body temperature starts to rise. Keep the bedroom cool and dark.',
+    luteal: 'Progesterone warms you up. Cooler room, a magnesium bath and no screens the last hour.',
   },
   mood: {
     menstrual: 'Feeling inward is normal. Journal, rest and cancel what you can.',
-    follicular: 'Optimism is rising — plan, start, say yes to new things.',
-    ovulatory: 'Confidence peaks — have the important conversation now.',
-    luteal: 'Mood can dip as hormones fall — daylight walks, protein and extra kindness to yourself.',
+    follicular: 'Optimism is rising: plan, start, say yes to new things.',
+    ovulatory: 'Confidence peaks: have the important conversation now.',
+    luteal: 'Mood can dip as hormones fall. Daylight walks, protein and extra kindness to yourself.',
   },
   energy: {
-    menstrual: 'Low energy is normal — gentle walks, iron-rich food and early nights.',
-    follicular: 'Energy is climbing — your best time to start training harder.',
-    ovulatory: 'Peak energy — lift heavy, sprint, be social.',
-    luteal: 'Steady efforts beat sprints. Eat a little more — your body burns more energy now.',
+    menstrual: 'Low energy is normal. Gentle walks, iron-rich food and early nights.',
+    follicular: 'Energy is climbing: your best time to start training harder.',
+    ovulatory: 'Peak energy: lift heavy, sprint, be social.',
+    luteal: 'Steady efforts beat sprints. Eat a little more. Your body burns more energy now.',
   },
   eat: {
     menstrual: 'Warm, iron-rich meals: soups, red meat, red dates and bone broth.',
@@ -1225,17 +1225,17 @@ export const TIPS = {
     luteal: 'Keep energy moving: daily walks, stretching and warming spices.',
   },
   hormones: {
-    menstrual: 'Estrogen and progesterone are at their lowest — a reset. Notice how you feel each day.',
-    follicular: 'Estrogen is rising — watch your mood, energy and confidence lift.',
-    ovulatory: 'LH surges and estrogen peaks — you may notice clear, stretchy discharge and more energy.',
-    luteal: 'Progesterone takes over — calmer, warmer and hungrier. All normal.',
+    menstrual: 'Estrogen and progesterone are at their lowest. A reset. Notice how you feel each day.',
+    follicular: 'Estrogen is rising: watch your mood, energy and confidence lift.',
+    ovulatory: 'LH surges and estrogen peaks. You may notice clear, stretchy discharge and more energy.',
+    luteal: 'Progesterone takes over: calmer, warmer and hungrier. All normal.',
   },
 };
 // Only shown to people trying to conceive.
 export const TTC_TIPS = {
-  menstrual: 'Get ready for this cycle: folate, iron and omega-3 — start a prenatal if you haven’t yet.',
-  follicular: 'Your fertile window opens about 5 days before ovulation — eggs, oily fish and leafy greens support egg quality.',
-  ovulatory: 'Your most fertile days — sex today and tomorrow gives the best chance.',
+  menstrual: 'Get ready for this cycle: folate, iron and omega-3. Start a prenatal if you haven’t yet.',
+  follicular: 'Your fertile window opens about 5 days before ovulation. Eggs, oily fish and leafy greens support egg quality.',
+  ovulatory: 'Your most fertile days. Sex today and tomorrow gives the best chance.',
   luteal: 'The two-week wait: stay warm, nourished and gentle. Test if your period is late.',
 };
 
@@ -1360,14 +1360,14 @@ export const PLATE_MEAL = {
 // Blood-sugar tricks — from the user's book "Krankheitslügen entlarvt" (pp. 165–168).
 // eff = how much each trick flattens the typical after-meal glucose rise in the app's illustration.
 export const SUGAR_TRICKS = [
-  { k: 'fibre', ic: 'leaf', w: 'before', t: 'Veg, sauerkraut or kimchi first, carbs last', g: '🫐', n: 'Fibre first', eff: .4, d: 'Start with veg, fermented veg or protein and eat starchy carbs last. In small studies this food order lowered the after-meal sugar rise by about a third or more — fewer cravings, less insulin. A fibre starter like psyllium 10–15 minutes before also helps.' },
-  { k: 'move', ic: 'bolt', w: 'before', t: '10 squats or a 5-min walk', g: '🚶‍♀️', n: 'Move before you eat', eff: .25, d: 'A walk round the block, squats, push-ups, yoga — moving switches on GLUT4, which moves sugar into your muscles even without insulin. A 10–15 minute walk right after the meal works best.' },
-  { k: 'acv', ic: 'drop', w: 'before', t: '1 tbsp in a glass of warm water', g: '🍎', n: 'Apple cider vinegar', eff: .2, d: 'A glass of lukewarm water with about 1 tablespoon of apple cider vinegar before the meal can soften the blood-sugar rise. Always diluted — it is hard on teeth.' },
+  { k: 'fibre', ic: 'leaf', w: 'before', t: 'Veg, sauerkraut or kimchi first, carbs last', g: '🫐', n: 'Fibre first', eff: .4, d: 'Start with veg, fermented veg or protein and eat starchy carbs last. In small studies this food order lowered the after-meal sugar rise by about a third or more. Fewer cravings, less insulin. A fibre starter like psyllium 10–15 minutes before also helps.' },
+  { k: 'move', ic: 'bolt', w: 'before', t: '10 squats or a 5-min walk', g: '🚶‍♀️', n: 'Move before you eat', eff: .25, d: 'A walk round the block, squats, push-ups, yoga. Moving switches on GLUT4, which moves sugar into your muscles even without insulin. A 10–15 minute walk right after the meal works best.' },
+  { k: 'acv', ic: 'drop', w: 'before', t: '1 tbsp in a glass of warm water', g: '🍎', n: 'Apple cider vinegar', eff: .2, d: 'A glass of lukewarm water with about 1 tablespoon of apple cider vinegar before the meal can soften the blood-sugar rise. Always diluted: it is hard on teeth.' },
   { k: 'tea', ic: 'cup', w: 'with', t: 'Green tea, matcha or hibiscus with the meal', g: '🍵', n: 'The right teas', eff: .1, d: 'Water, green tea, matcha or hibiscus. Green tea and matcha are rich in polyphenols that may help insulin work; hibiscus may lower blood pressure and blood fats.' },
   { k: 'berberine', ic: 'flask', w: 'before', t: 'Only if it suits you · not in pregnancy · ask your doctor if on meds', g: '🌿', n: 'Berberine', eff: .25, d: 'A plant compound used for centuries in Chinese medicine. Start small to see how you feel; if it suits you, about 500 mg with a meal, at most twice a day, for up to 3 months and then a break. Not when pregnant, breastfeeding or trying to conceive. On metformin or other medication? Talk to your doctor first.' },
-  { k: 'd3mg', ic: 'sun', w: 'daily', t: 'D3 in the morning, magnesium at night', g: '☀️', n: 'Vitamin D3 + magnesium', eff: .1, d: 'Magnesium is the key mineral, together with vitamin D3 — both are linked to better insulin sensitivity, especially if you are low. Keep supplement magnesium to about 250 mg a day.' },
+  { k: 'd3mg', ic: 'sun', w: 'daily', t: 'D3 in the morning, magnesium at night', g: '☀️', n: 'Vitamin D3 + magnesium', eff: .1, d: 'Magnesium is the key mineral, together with vitamin D3. Both are linked to better insulin sensitivity, especially if you are low. Keep supplement magnesium to about 250 mg a day.' },
   { k: 'minerals', ic: 'shell', w: 'daily', t: 'Oysters, fish, pumpkin seeds', g: '⚪', n: 'Chromium, omega-3, zinc', eff: .1, d: 'Chromium helps insulin work at the cell, omega-3 calms inflammation and blood fats, zinc helps your body make and release insulin.' },
-  { k: 'spices', ic: 'spark', w: 'with', t: 'Cinnamon, ginger or turmeric on your food', g: '🫚', n: 'Spices', eff: .1, d: 'Cinnamon, ginger, turmeric, black seed (nigella) and a pinch of cayenne — warming, anti-inflammatory and may gently lower blood sugar.' },
+  { k: 'spices', ic: 'spark', w: 'with', t: 'Cinnamon, ginger or turmeric on your food', g: '🫚', n: 'Spices', eff: .1, d: 'Cinnamon, ginger, turmeric, black seed (nigella) and a pinch of cayenne. Warming, anti-inflammatory and may gently lower blood sugar.' },
 ];
 
 // What the research says about each blood-sugar trick: evidence label, study (author + year), caution.

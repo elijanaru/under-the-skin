@@ -115,8 +115,8 @@ function textTexture() {
       g.font = '600 18px Outfit, sans-serif'; g.fillText(b.split('').join(String.fromCharCode(8202)), 512, cy + 60);
       g.font = '500 13px Outfit, sans-serif'; g.globalAlpha = .5;
       g.fillText('ESTROGEN · PROGESTERONE · LH · FSH', 512, cy + 330);
-      g.fillText('MENSTRUAL — FOLLICULAR — OVULATORY — LUTEAL', 512, cy + 560);
-      g.fillText('XX — 2026 · 01 / 28', 512, cy - 260);
+      g.fillText('MENSTRUAL · FOLLICULAR · OVULATORY · LUTEAL', 512, cy + 560);
+      g.fillText('XX · 2026 · 01 / 28', 512, cy - 260);
       g.globalAlpha = 1;
     });
   };

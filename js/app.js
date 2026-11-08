@@ -87,7 +87,7 @@ A.onUser((u, ev) => {
   if (ev === 'PASSWORD_RECOVERY') { ui.acRecover = true; go('account'); }
   // signed in but no cycle set up yet (new account): skip the welcome and go straight to setting it up
   if (u && !(state && state.onboarded)) { ui.onbStep = Math.max(ui.onbStep, 1); ui.onbGateDone = true; cloudSync().then(() => { if (!(state && state.onboarded) && route().name === 'account' && !ui.acRecover) go('today'); }); return; }
-  if (u) { if (ev === 'SIGNED_IN' && route().name === 'account' && !ui.acToastDone) { ui.acToastDone = true; toast('Signed in — your data is saved'); } cloudSync(); } else render(); });
+  if (u) { if (ev === 'SIGNED_IN' && route().name === 'account' && !ui.acToastDone) { ui.acToastDone = true; toast('Signed in: your data is saved'); } cloudSync(); } else render(); });
 A.boot();
 
 
@@ -490,7 +490,7 @@ function conceiveCard(info) {
     <h3>${inWin ? (info.cd >= info.ov - 2 ? 'Your best days are now' : 'Your fertile window is open') : d2 > 0 ? `Opens in ${plural(d2, 'day')}` : 'Next window next cycle'}</h3>
     <p>${fmt(start, { month: 'short', day: 'numeric' })} – ${fmt(ovd, { month: 'short', day: 'numeric' })} · best: ${fmt(peak1, { month: 'short', day: 'numeric' })} – ${fmt(ovd, { month: 'short', day: 'numeric' })}</p>
     <div class="cv-bar">${Array.from({ length: 6 }, (_, i) => { const d = info.ov - 5 + i; return `<i class="${d >= info.ov - 2 ? 'peak' : ''} ${d === info.cd ? 'now' : ''}"></i>`; }).join('')}</div>
-    <small>Sex every 1–2 days in this window gives the best chance. Estimates — an ovulation test confirms your real day.</small></div></section>`;
+    <small>Sex every 1–2 days in this window gives the best chance. Estimates: an ovulation test confirms your real day.</small></div></section>`;
 }
 
 // ---------- flowing cycle hero (dark, liquid rings, glowing phase arc, today orb) ----------
@@ -529,9 +529,9 @@ function flowRing(info, id = 'fr', showOv = true) {
   </svg>`;
 }
 const PHASE_WELCOME = {
-  menstrual: { feel: 'Quieter and more inward — rest is productive now.', soak: 'warm soups, red meat & red dates, ginger tea, heat on your belly.' },
-  follicular: { feel: 'Lighter, curious and motivated as estrogen rises.', soak: 'fresh greens, eggs, citrus — and new ideas.' },
-  ovulatory: { feel: 'Confident, social and glowing — your peak energy.', soak: 'raw salads, berries, oysters, sunshine and good company.' },
+  menstrual: { feel: 'Quieter and more inward. Rest is productive now.', soak: 'warm soups, red meat & red dates, ginger tea, heat on your belly.' },
+  follicular: { feel: 'Lighter, curious and motivated as estrogen rises.', soak: 'fresh greens, eggs, citrus. And new ideas.' },
+  ovulatory: { feel: 'Confident, social and glowing. Your peak energy.', soak: 'raw salads, berries, oysters, sunshine and good company.' },
   luteal: { feel: 'Grounded at first, then more sensitive before your period.', soak: 'sweet potato, roots, magnesium, dark chocolate, early nights.' },
 };
 function flowHero(info, { eyebrow, title, season, stats = [], badge = '', id = 'fr', showOv = true, center, action = '', pills = [] } = {}) {
@@ -1167,7 +1167,7 @@ function viewOnboarding() {
         <p class="muted">First day of one period to the first day of the next.</p>
         <div class="big-stepper ${o.unsure ? 'dim' : ''}">${stepper('cycleLength', o.cycleLength, 'onb', true)}<span>days</span></div>
         <button class="chip unsure ${o.unsure ? 'on' : ''}" data-action="onbUnsure">${o.unsure ? icon('check', 14, 2.4) : ''} I’m not sure</button>
-        ${o.unsure ? '<p class="muted sm">No problem — we’ll start with 28 days and learn your real cycle automatically as soon as you log your next period.</p>' : ''}`,
+        ${o.unsure ? '<p class="muted sm">No problem: we’ll start with 28 days and learn your real cycle automatically as soon as you log your next period.</p>' : ''}`,
     6: `<h2 class="onb-title">Are you on <span>birth control?</span></h2>
         <div class="bc-list">${BIRTH_CONTROL.map(b => `<button class="bc-opt has-pic ${o.bc === b.k ? 'on' : ''}" data-action="onbBc" data-v="${b.k}"><span class="bc-pic">${BC_PIC[b.k] || ''}</span><span class="bc-tx"><b>${b.t}</b><small>${b.s}</small></span><i>${icon('check', 14, 2.6)}</i></button>`).join('')}</div>
         <div class="bc-slot">${bcQHTML(o)}</div>`,
@@ -1245,7 +1245,7 @@ function viewToday() {
     ${conceiveCard(info)}
     ${(() => { // at most two notices, most important first
       const n = [...alerts];
-      if (info.cd >= info.ov - 2 && info.cd <= info.ov + 1) n.push(`<button class="al-row" data-action="nav" data-to="relief/${encodeURIComponent('Ovulation pain')}"><span class="al-ic">${icon('spark', 15)}</span><span class="al-t"><b>Twinge on one side?</b><small>That may be ovulation — 7 ways to ease it</small></span>${icon('chevR', 14)}</button>`);
+      if (info.cd >= info.ov - 2 && info.cd <= info.ov + 1) n.push(`<button class="al-row" data-action="nav" data-to="relief/${encodeURIComponent('Ovulation pain')}"><span class="al-ic">${icon('spark', 15)}</span><span class="al-t"><b>Twinge on one side?</b><small>That may be ovulation. 7 ways to ease it</small></span>${icon('chevR', 14)}</button>`);
       return n.length ? `<section class="card glass alerts">${n.slice(0, 2).join('')}</section>` : '';
     })()}
     ${cycleFlag()}
@@ -1836,27 +1836,27 @@ function viewBrain(id) {
 const PLAIN = {
   menstrual: {
     eat: 'Your body is shedding and losing iron. Warm, cooked, iron-rich food refills you and eases cramps.',
-    tcm: 'Chinese medicine sees your period as a time to stay warm, so blood can flow freely — cold food and drinks slow it down.', focus: 'Stay warm & rest',
+    tcm: 'Chinese medicine sees your period as a time to stay warm, so blood can flow freely. Cold food and drinks slow it down.', focus: 'Stay warm & rest',
     do: 'Keep your feet and lower back warm, sip something hot, and try a ginger foot soak before bed.',
-    mind: 'Hormones are at their lowest. Your mind turns inward — great for reflecting, journaling and saying no to extra plans.',
+    mind: 'Hormones are at their lowest. Your mind turns inward. Great for reflecting, journaling and saying no to extra plans.',
   },
   follicular: {
     eat: 'Estrogen is rising and your body is rebuilding. Fresh, light food and plenty of protein fit perfectly now.',
-    tcm: 'After your period your body is refilling — like spring after winter. Nourishing food and good sleep help it rebuild.', focus: 'Rebuild & sleep well',
-    do: 'Go to bed before 11pm — deep sleep is when your body rebuilds best this week.',
+    tcm: 'After your period your body is refilling. Like spring after winter. Nourishing food and good sleep help it rebuild.', focus: 'Rebuild & sleep well',
+    do: 'Go to bed before 11pm. Deep sleep is when your body rebuilds best this week.',
     mind: 'Rising estrogen often lifts mood and energy. A lovely time to start new things.',
   },
   ovulatory: {
     eat: 'You’re at your peak. Light, raw, colourful food, zinc and fibre support you and help clear extra estrogen.',
     tcm: 'Around ovulation your body is at its warmest and most active. Keep things flowing and don’t overheat.', focus: 'Stay in flow',
-    do: 'Move, laugh, get outside — and cool down with fresh fruit and lots of water.',
+    do: 'Move, laugh, get outside. And cool down with fresh fruit and lots of water.',
     mind: 'Many women feel most social and outgoing now. A lovely time to connect, speak up and see people.',
   },
   luteal: {
     eat: 'Progesterone rises and your body burns more energy. Grounding, cooked food with complex carbs and magnesium keeps you steady.',
-    tcm: 'Before your period energy can feel “stuck” — tension, bloating, moodiness. Gentle movement and warmth keep it moving.', focus: 'Keep energy moving',
-    do: 'Walk, stretch and breathe deeply every day — it can ease tension, bloating and mood swings.',
-    mind: 'Energy turns calmer and steadier. Finish projects, organise, tidy — and give yourself softer evenings.',
+    tcm: 'Before your period energy can feel “stuck”. Tension, bloating, moodiness. Gentle movement and warmth keep it moving.', focus: 'Keep energy moving',
+    do: 'Walk, stretch and breathe deeply every day. It can ease tension, bloating and mood swings.',
+    mind: 'Energy turns calmer and steadier. Finish projects, organise, tidy. And give yourself softer evenings.',
   },
 };
 // Rituals tab: three small things for her focus, shown as icon tiles
@@ -3016,7 +3016,7 @@ function dueReminders() {
   if (!M || !M.info) return [];
   const r = rem(), info = M.info, today = todayISO(), out = [];
   if (r.period) {
-    if (info.late) out.push({ id: 'late', icon: 'drop', title: `Period ${plural(info.late, 'day')} late`, body: `Stress, travel and sleep can shift your cycle. Log your period when it arrives${ttc() ? ' — and take a test if you might be pregnant' : ''}.` });
+    if (info.late) out.push({ id: 'late', icon: 'drop', title: `Period ${plural(info.late, 'day')} late`, body: `Stress, travel and sleep can shift your cycle. Log your period when it arrives${ttc() ? ', and take a test if you might be pregnant' : ''}.` });
     else if (info.dueToday) out.push({ id: 'due', icon: 'drop', title: 'Period expected today', body: 'Keep warm, have supplies ready and plan a softer day.' });
     else if (!info.isPeriod && info.daysToPeriod <= r.periodDays) out.push({ id: 'period', icon: 'drop', title: `Period in ${plural(info.daysToPeriod, 'day')}`, body: 'Pack supplies, stock up on iron-rich food and ginger tea, and keep your calendar light.' });
   }
@@ -3027,10 +3027,10 @@ function dueReminders() {
   if (r.rhythm) {
     const t = sunToday(), now = new Date(), done = doneToday(), h = 36e5;
     const win = (a, b) => a && b && now >= a && now <= b;
-    if (t.rise && win(t.rise, new Date(t.rise.getTime() + 2.5 * h)) && !done.includes('light')) out.push({ id: 'rh-light', icon: 'sun', title: 'Good morning — go see the light', body: '10 minutes of daylight now sets your inner clock for better sleep tonight.', to: 'rhythm' });
+    if (t.rise && win(t.rise, new Date(t.rise.getTime() + 2.5 * h)) && !done.includes('light')) out.push({ id: 'rh-light', icon: 'sun', title: 'Good morning: go see the light', body: '10 minutes of daylight now sets your inner clock for better sleep tonight.', to: 'rhythm' });
     if (win(new Date(t.noon.getTime() - h), new Date(t.noon.getTime() + 1.5 * h)) && !done.includes('sun')) out.push({ id: 'rh-sun', icon: 'sun', title: 'The sun is high', body: 'A few minutes of sun on your skin for vitamin D and a brighter mood.', to: 'rhythm' });
-    if (t.set && win(new Date(t.set.getTime() - .5 * h), new Date(t.set.getTime() + 1.5 * h)) && !done.includes('dusk')) out.push({ id: 'rh-dusk', icon: 'moon', title: 'The sun is setting', body: 'Time to slow down — dim the lights and put screens away.', to: 'rhythm' });
-    if (t.set && now >= new Date(t.set.getTime() + 3.5 * h) && now.getHours() >= 20 && !done.includes('sleep')) out.push({ id: 'rh-sleep', icon: 'moon', title: 'Your body is getting sleepy', body: 'Go to bed when you feel tired — tomorrow, wake without an alarm.', to: 'rhythm' });
+    if (t.set && win(new Date(t.set.getTime() - .5 * h), new Date(t.set.getTime() + 1.5 * h)) && !done.includes('dusk')) out.push({ id: 'rh-dusk', icon: 'moon', title: 'The sun is setting', body: 'Time to slow down. Dim the lights and put screens away.', to: 'rhythm' });
+    if (t.set && now >= new Date(t.set.getTime() + 3.5 * h) && now.getHours() >= 20 && !done.includes('sleep')) out.push({ id: 'rh-sleep', icon: 'moon', title: 'Your body is getting sleepy', body: 'Go to bed when you feel tired. Tomorrow, wake without an alarm.', to: 'rhythm' });
   }
   if (r.cycle) { // small nudges timed to the cycle
     const tm = C.dayInfo(C.addDays(new Date(), 1), M.stats), w = dayWindow(info), hNow = new Date().getHours();
@@ -3085,7 +3085,7 @@ function remindersSection() {
       ${tg('checkin', 'Daily check-in', 'If you haven’t logged yet')}
       ${r.checkin ? `<div class="stepper-row sub"><span>From</span><div class="stepper"><button data-action="remHour" data-d="-1">−</button><span class="num">${hr(r.checkinHour)}</span><button data-action="remHour" data-d="1">+</button></div></div>` : ''}
       ${perm === 'granted' ? `<p class="fine" style="margin:8px 0 0">${icon('check', 13)} Phone notifications on</p>`
-        : perm === 'denied' ? '<p class="fine" style="margin:8px 0 0">Notifications are blocked in your browser settings — reminders show inside the app.</p>'
+        : perm === 'denied' ? '<p class="fine" style="margin:8px 0 0">Notifications are blocked in your browser settings. Reminders show inside the app.</p>'
         : perm === 'unsupported' ? '<p class="fine" style="margin:8px 0 0">Reminders show inside the app. Add Underskin to your home screen for notifications.</p>'
         : `<button class="btn btn-light btn-block" data-action="remPermission">${icon('spark', 16)} Turn on notifications</button>`}
     </section>`;
@@ -3378,7 +3378,7 @@ function viewRemedy(id) {
     const ls = lemonState();
     if (!ls || ls.over) {
       tracker = `<section class="card card-light"><div class="eyebrow dark">28-day ritual</div><h3 class="dark-h">${ls?.over ? 'Ready for another round?' : 'Start your 28 days'}</h3>
-        <p class="dp-text">${info && info.cd === 1 ? 'Today is day 1 of your cycle, the perfect day to begin.' : info ? `Best started on day 1 of your cycle — your next one is in ${plural(info.daysToPeriod, 'day')}. You can also start today.` : ''}</p>
+        <p class="dp-text">${info && info.cd === 1 ? 'Today is day 1 of your cycle, the perfect day to begin.' : info ? `Best started on day 1 of your cycle. Your next one is in ${plural(info.daysToPeriod, 'day')}. You can also start today.` : ''}</p>
         <button class="btn btn-dark btn-block" data-action="lemonStart">${icon('play', 16)} Start today</button></section>`;
     } else {
       const wk = r.weeks[Math.min(ls.week, 4) - 1];
@@ -3582,7 +3582,7 @@ function alignmentCard(info) {
   const hs = HORMONES.filter(x => x.key !== 'fsh').map(x => ({ ...x, v: h[x.key], tr: C.hormoneTrend(Math.min(info.cd, info.L), info.L, info.P, x.key) })).sort((a, b) => b.v - a.v).slice(0, 2);
   const hLine = hs.map(x => `${x.name} ${C.hormoneLevel(x.v).toLowerCase()}${x.tr === 'rising' ? ' ↗' : x.tr === 'falling' ? ' ↘' : ''}`).join(' · ');
   const waxing = moon.age < 14.77, building = info.phase === 'follicular' || info.phase === 'ovulatory';
-  const moonSync = waxing === building ? (waxing ? 'In sync — moon and hormones are both building.' : 'In sync — moon and body are both turning inward.') : (waxing ? 'The moon is building while your body turns inward — honour your body first.' : 'The moon is releasing while your energy rises — use both: let go and begin.');
+  const moonSync = waxing === building ? (waxing ? 'In sync: moon and hormones are both building.' : 'In sync: moon and body are both turning inward.') : (waxing ? 'The moon is building while your body turns inward. Honour your body first.' : 'The moon is releasing while your energy rises. Use both: let go and begin.');
   const rem = remediesFor(info)[dayNum(new Date()) % Math.max(1, remediesFor(info).length)] || REMEDIES[0];
   const top = hs[0];
   const tile = (g, t, to, han) => `<button class="cx" data-action="nav" data-to="${to}"><span class="cx-g ${han ? 'han' : ''}">${g}</span><span class="cx-t">${t}</span></button>`;
@@ -3663,7 +3663,7 @@ const FOOD_NEEDS = {
   'flow-end': ['Rebuild iron & protein', [
     ['🩸 Iron + vitamin C', 'Vitamin C helps you absorb iron up to several times better.', 'Beef or lamb with peppers, kiwi or citrus', 'strong'],
     ['🥚 Protein & B12', 'Rebuilds blood and the new womb lining.', 'Eggs, chicken, fish, cheese melted into warm dishes', 'some'],
-    ['🍲 Still warm', 'Your belly is still recovering — cooked food is easiest.', 'Soups, roasted veg, cooked fruit', 'tcm']]],
+    ['🍲 Still warm', 'Your belly is still recovering. Cooked food is easiest.', 'Soups, roasted veg, cooked fruit', 'tcm']]],
   rising: ['Fresh food for rising estrogen', [
     ['🥬 Fibre & greens', 'Your gut clears used estrogen. Fibre keeps it moving.', 'Raw carrot, leafy greens, cucumber, seasonal veg', 'some'],
     ['🍶 Fermented foods', 'A healthy gut balances your hormones.', 'Raw kefir, raw yoghurt, sauerkraut, kimchi', 'emerging'],
@@ -3815,7 +3815,7 @@ function todayTiles(info, only) {
   const tipBody = k => {
     if (k === 'tea') return `<div class="hub-tip-in"><span class="ht-g">${icon('cup', 22)}</span><div><b>${td[1]}</b><p>${td[2]}</p><p class="ht-how">${icon('clock', 13)} ${td[3]}</p>${evBadge(td[4])}
       <button class="link fn-more" data-action="nav" data-to="tea">Full tea guide · every problem ${icon('chevR', 12)}</button></div></div>`;
-    if (k === 'eat') return `<div class="hub-tip-in stack"><div class="ht-head"><span class="ht-g">${icon('bowl', 22)}</span><div><b>${fn[0]}</b><p>${warm ? `${icon('thermo', 13)} Today: warm & cooked only — no raw or cold food.` : `${icon('leaf', 13)} Today: raw and fresh food is welcome, with some warm meals.`}</p></div></div><div>
+    if (k === 'eat') return `<div class="hub-tip-in stack"><div class="ht-head"><span class="ht-g">${icon('bowl', 22)}</span><div><b>${fn[0]}</b><p>${warm ? `${icon('thermo', 13)} Today: warm & cooked only. No raw or cold food.` : `${icon('leaf', 13)} Today: raw and fresh food is welcome, with some warm meals.`}</p></div></div><div>
       <div class="fcol"><span class="fcol-dots">${colDots(fm.col[0])}</span><div><small>Colour of the day</small><b>${fm.col[1]} foods</b><p>${fm.col[2]}</p><span>${fm.col[3]}</span></div></div>
       ${w === 'flow-start' || w === 'flow-end' ? phaseFoodPic('menstrual') : ''}<small class="fk">Meal ideas</small>
       <div class="fmeals">${[[icon('bowl', 18), 'Broth & soup', fm.broth], warm || !fm.raw ? [icon('thermo', 18), 'Warm instead of raw', fm.warmAlt] : [icon('leaf', 18), 'Raw', fm.raw], [icon('fish', 18), 'Meat & fish', fm.meat]].map(([g_, k_, [t, d]]) => `<div class="fmeal"><span>${g_}</span><div><small>${k_}</small><b>${t}</b><p>${d}</p></div></div>`).join('')}</div>
@@ -4286,7 +4286,7 @@ function viewSugar() {
   return `${topbar('Blood sugar', { back: true })}
   <div class="pad">
     <h1 class="page-h">Balance your <span>blood sugar</span></h1>
-    ${whatsGoingOn(`Every meal makes your blood sugar rise. Big spikes bring cravings, energy crashes and make your body release lots of insulin — over time that speeds up ageing. Small tricks keep the curve gentle.${luteal ? ' <b>Right now, in your luteal phase, your body is a little less insulin-sensitive — these tricks help most this week.</b>' : ''}`)}
+    ${whatsGoingOn(`Every meal makes your blood sugar rise. Big spikes bring cravings, energy crashes and make your body release lots of insulin. Over time that speeds up ageing. Small tricks keep the curve gentle.${luteal ? ' <b>Right now, in your luteal phase, your body is a little less insulin-sensitive. These tricks help most this week.</b>' : ''}`)}
     <section class="card glass sugar"><div class="eyebrow">Your meal today · tap what you did</div><div id="sg-chart">${sugarCurve(on)}</div>
       <div class="sg-chips">${SUGAR_TRICKS.map(t => `<button class="${on.includes(t.k) ? 'on' : ''}" data-action="sugarTrick" data-v="${t.k}">${icon(t.ic, 14)} ${t.n}</button>`).join('')}</div></section>
     <p class="sg-score">${icon('spark', 14)} Each trick adds a point to <button class="link" data-action="nav" data-to="rhythm">your rhythm today</button></p>
@@ -4307,7 +4307,7 @@ function myGeo() {
   return state.profile.country || Math.abs(c[1] - tz) < 30 ? c : [c[0], tz];
 }
 function sunToday(d = new Date()) { const [la, ln] = myGeo(); return sunTimes(d, la, ln); }
-const hm = d => d ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—';
+const hm = d => d ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '·';
 // The day in moments, placed on today's real sun times — what to do at each point of the day.
 function dayMoments(info) {
   const t = sunToday(), ph = info ? info.phase : 'follicular', H = 36e5, base = C.startOfDay(new Date()).getTime();
@@ -4681,7 +4681,7 @@ function viewHormones() {
     <div class="hx-grid">${cyc.map(([x, i]) => tile(x, i)).join('')}</div>
     ${sectionTitle('Your body’s other messengers')}
     <div class="hx-grid">${rest.map(([x, i]) => tile(x, i)).join('')}</div>
-    <p class="fine center">Amounts are typical values for day ${Math.min(info.cd, info.L)} of your ${info.L}-day cycle, based on standard lab ranges — a guide, not your blood test. Labs differ slightly.</p>
+    <p class="fine center">Amounts are typical values for day ${Math.min(info.cd, info.L)} of your ${info.L}-day cycle, based on standard lab ranges. A guide, not your blood test. Labs differ slightly.</p>
   </div>`;
 }
 // The hormone itself: its skeletal formula (small molecules) or its size (protein hormones).
@@ -5106,12 +5106,12 @@ function viewHabits() {
     ${focus.length ? `<section class="card card-light hb-focus"><small>${PHASES[ph].name} phase · start here</small><p>${focus.map(id => HABITS.find(h => h.id === id).t).join(' · ')}</p></section>` : ''}
     ${group('protect', 'Protect your hormones', 'The opposite of what harms women’s health most.')}
     ${ttc() ? group('fertile', 'Fertility & feminine flow', 'Fundamentals for a warm womb and a calm nervous system.') : ''}
-    <p class="fine center">You’re not the problem — the modern world is designed against your rhythm. One habit at a time.</p>
+    <p class="fine center">You’re not the problem. The modern world is designed against your rhythm. One habit at a time.</p>
   </div>`;
 }
 function hormoneLibrary() {
   return `${sectionTitle('Your hormones, explained')}
-    <div class="fig-wrap lib"><canvas class="figure" data-focus="head"></canvas><span class="lib-cap">Glands from head to womb — tap a hormone below</span></div>
+    <div class="fig-wrap lib"><canvas class="figure" data-focus="head"></canvas><span class="lib-cap">Glands from head to womb. Tap a hormone below</span></div>
     <section class="card glass hlib">${HORMONE_LIBRARY.map(h => `<details class="hl"><summary><span class="hl-n">${h.n}</span><span class="hl-g">${h.g}</span>${icon('chevD', 14)}</summary>
       <p>${h.role}</p><p><b class="lime">In your cycle · </b>${h.cycle}</p><p><b class="lime">Support it · </b>${h.support}</p></details>`).join('')}</section>`;
 }
@@ -5122,14 +5122,14 @@ function fertilityFoods() {
 
 // ---------- couples: partners who also use the app ----------
 const SYNC = {
-  'menstrual|menstrual': 'You’re both on your period — cancel plans, share the hot water bottle, rest together.',
-  'luteal|luteal': 'You’re both in your luteal phase — extra gentle, fewer plans, lots of patience with each other.',
-  'luteal|menstrual': 'One of you is bleeding, one is premenstrual — a cosy, low-key few days for you both.',
-  'follicular|follicular': 'You’re both rising — perfect for trying something new together.',
-  'ovulatory|ovulatory': 'You’re both at your peak — plan the date night.',
-  'follicular|ovulatory': 'Both of you have high energy — go out, be social, make plans.',
+  'menstrual|menstrual': 'You’re both on your period. Cancel plans, share the hot water bottle, rest together.',
+  'luteal|luteal': 'You’re both in your luteal phase. Extra gentle, fewer plans, lots of patience with each other.',
+  'luteal|menstrual': 'One of you is bleeding, one is premenstrual. A cosy, low-key few days for you both.',
+  'follicular|follicular': 'You’re both rising: perfect for trying something new together.',
+  'ovulatory|ovulatory': 'You’re both at your peak. Plan the date night.',
+  'follicular|ovulatory': 'Both of you have high energy. Go out, be social, make plans.',
 };
-function syncNote(a, b) { return SYNC[[a, b].sort().join('|')] || SYNC[[b, a].join('|')] || SYNC[[a, b].join('|')] || 'Different tides this week — whoever has more energy carries a little more, and you switch next week.'; }
+function syncNote(a, b) { return SYNC[[a, b].sort().join('|')] || SYNC[[b, a].join('|')] || SYNC[[a, b].join('|')] || 'Different tides this week. Whoever has more energy carries a little more, and you switch next week.'; }
 function ptAvatar(p, cls = '') { return `<span class="pt-av ${cls}">${p.t ? `<img src="${esc(p.t)}" alt="">` : esc((p.n || '?')[0])}${cls.includes('sm') ? '' : `<i style="background:${PHASE_COLOR.dark[snapInfo(p, new Date()).phase]}"></i>`}</span>`; }
 // The cute "send love" button: a smiling envelope with a heart seal, little hearts floating up.
 function loveBtnArt() { return `<svg class="lb2-env" viewBox="0 0 64 56" aria-hidden="true"><rect x="6" y="14" width="52" height="36" rx="8" fill="#fff" stroke="#304023" stroke-width="2"/><path d="M8 18l24 18 24-18" fill="none" stroke="#304023" stroke-width="2" stroke-linejoin="round"/>
@@ -5178,12 +5178,12 @@ function partnerRead(pi, p) {
   const h = C.hormonesRel(pi.cd, pi.L, pi.P), lv = k => C.hormoneLevel(h[k]).toLowerCase(), en = C.energyAt(pi.cd, pi.L, pi.P);
   const out = [];
   out.push(`Estrogen is ${lv('estrogen')}, progesterone ${lv('progesterone')}, testosterone ${lv('testosterone')}.`);
-  if (pi.isPeriod) out.push(pi.cd <= 2 ? 'The first days of bleeding are the heaviest — warmth, rest and fewer plans help most.' : 'Bleeding is easing and her energy is slowly coming back.');
-  else if (pi.cd > pi.L - 4) out.push('Hormones are dropping before her period — she may feel tired, sensitive or bloated. Extra patience goes a long way.');
-  else if (pi.phase === 'ovulatory') out.push('Her energy is often at its peak — many women feel most social and chatty now. Great time for a date.');
-  else if (pi.phase === 'follicular') out.push('Energy is rising — she’s likely up for new plans and adventures.');
-  else out.push('She’s turning inward — cosy plans and calm evenings suit her best.');
-  out.push(en > .75 ? 'Energy: high.' : en > .5 ? 'Energy: steady.' : 'Energy: low — help her rest.');
+  if (pi.isPeriod) out.push(pi.cd <= 2 ? 'The first days of bleeding are the heaviest. Warmth, rest and fewer plans help most.' : 'Bleeding is easing and her energy is slowly coming back.');
+  else if (pi.cd > pi.L - 4) out.push('Hormones are dropping before her period. She may feel tired, sensitive or bloated. Extra patience goes a long way.');
+  else if (pi.phase === 'ovulatory') out.push('Her energy is often at its peak. Many women feel most social and chatty now. Great time for a date.');
+  else if (pi.phase === 'follicular') out.push('Energy is rising: she’s likely up for new plans and adventures.');
+  else out.push('She’s turning inward: cosy plans and calm evenings suit her best.');
+  out.push(en > .75 ? 'Energy: high.' : en > .5 ? 'Energy: steady.' : 'Energy: low: help her rest.');
   return out.join(' ');
 }
 const HEART = c => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.6-4.7-9.7-9.3C.8 8.3 3 4.4 6.8 4.4c2.1 0 3.6 1.1 4.3 2.5h1.8c.7-1.4 2.2-2.5 4.3-2.5 3.8 0 6 3.9 4.5 7.3C19.6 16.3 12 21 12 21z" fill="${c}"/></svg>`;
@@ -5403,7 +5403,7 @@ function viewPartner(p) {
     ${(() => {
       const late = pi.cd > pi.L - 4, moods = { menstrual: ['Tired', 'Inward', 'Tender', 'Reflective'], follicular: ['Curious', 'Optimistic', 'Light', 'Playful'], ovulatory: ['Confident', 'Social', 'Flirty', 'Radiant'], luteal: late ? ['Sensitive', 'Bloated', 'Irritable', 'Needs comfort'] : ['Calm', 'Focused', 'Nesting', 'Cosy'] }[pi.phase];
       const moon = Z.moonPhase(new Date()), waxing = moon.age < 14.77, building = pi.phase === 'follicular' || pi.phase === 'ovulatory';
-      const sync = /full/i.test(moon.name) ? 'Full moon — a bright night. Extra tenderness always goes a long way.' : /new/i.test(moon.name) ? 'New moon — a quiet reset. Perfect for a cosy night in together.' : waxing === building ? (waxing ? 'In sync — the moon is growing and so is her energy.' : 'In sync — the moon is waning and she’s turning inward too.') : (waxing ? 'The moon is growing while she turns inward — let her rest.' : 'The moon is releasing while her energy rises — great for fresh starts together.');
+      const sync = /full/i.test(moon.name) ? 'Full moon: a bright night. Extra tenderness always goes a long way.' : /new/i.test(moon.name) ? 'New moon: a quiet reset. Perfect for a cosy night in together.' : waxing === building ? (waxing ? 'In sync: the moon is growing and so is her energy.' : 'In sync: the moon is waning and she’s turning inward too.') : (waxing ? 'The moon is growing while she turns inward. Let her rest.' : 'The moon is releasing while her energy rises. Great for fresh starts together.');
       const zs = p.z ? Z.sunSign(+p.z.slice(0, 2), +p.z.slice(3)) : null;
       const real = p.md === todayISO() && p.m?.length;
       return `<section class="card glass feel-card"><div class="eyebrow">${real ? `${esc(p.n)} logged today` : 'How she’s feeling'}</div>
@@ -5943,7 +5943,7 @@ function viewProfile() {
     <section class="card glass">
       <button class="list-btn" data-action="export">${icon('download', 18)} Export my data (JSON)</button>
       ${A.currentUser() ? '' : `<button class="list-btn" data-action="demo">${icon('spark', 18)} Load sample cycles</button>`}
-      <button class="list-btn" data-action="nav" data-to="privacy">${icon('heart', 18)} Privacy — how your data is kept</button>
+      <button class="list-btn" data-action="nav" data-to="privacy">${icon('heart', 18)} Privacy: how your data is kept</button>
       <button class="list-btn danger" data-action="reset">${icon('trash', 18)} Delete all data</button>
     </section>
     <p class="fine">${A.currentUser() ? 'Stored on this device and privately in your account.' : 'Everything is stored privately on this device.'} Underskin gives wellbeing estimates based on your logs and on Traditional Chinese Medicine concepts; it is not medical advice and must not be used as contraception.</p>`;
@@ -6044,7 +6044,7 @@ function viewShare() {
   return `${topbar('Partner mode', { back: true })}
   <div class="pad">
     <h1 class="page-h">Share your <span>rhythm</span></h1>
-    <p class="muted">Send a private link. They'll see your phase, how you might feel and how to show up for you — and it updates every day on its own. If your partner uses Underskin too, they can add you with one tap and you'll both see each other's cycle.</p>
+    <p class="muted">Send a private link. They'll see your phase, how you might feel and how to show up for you. And it updates every day on its own. If your partner uses Underskin too, they can add you with one tap and you'll both see each other's cycle.</p>
     <div class="seg">${[['partner', 'Partner'], ['friend', 'Friends']].map(([k, l]) => `<button class="${aud === k ? 'on' : ''}" data-action="shareAud" data-v="${k}">${l}</button>`).join('')}</div>
     <section class="card card-light">
       <div class="eyebrow dark">They will see today</div>
@@ -6060,7 +6060,7 @@ function viewShare() {
     </section>
     <button class="btn btn-light btn-block" data-action="shareSend">${icon('heart', 18)} Share link with ${aud === 'partner' ? 'my partner' : 'friends'}</button>
     <button class="btn btn-ghost btn-block" data-action="sharePreview">Preview what they'll see</button>
-    <p class="fine center">The link holds your name and cycle estimates, plus your photo and star sign if you added them. Today's mood if you log one, never symptoms or notes. Anyone with the link can view it — share it with people you trust.</p>
+    <p class="fine center">The link holds your name and cycle estimates, plus your photo and star sign if you added them. Today's mood if you log one, never symptoms or notes. Anyone with the link can view it. Share it with people you trust.</p>
   </div>`;
 }
 // Little drawings for gift ideas, picked by what the gift is.
@@ -6152,7 +6152,7 @@ function viewWith(q) {
   const him = snap.w === 'm'; // a man only views her rhythm, he never tracks
   if (!(state && state.onboarded)) { try { localStorage.setItem(him ? 'uts.viewOnly' : 'uts.pendingPartner', q.get('d')); } catch {} }
   return `<header class="topbar">${state && state.onboarded ? `<button class="icon-btn dark" data-action="nav" data-to="partners" aria-label="Back">${icon('chevL', 22)}</button>` : '<span class="tb-spacer"></span>'}<div class="topbar-title">${name}’s rhythm</div><span style="width:40px"></span></header>
-  ${mine ? `<div class="preview-bar">Preview — this is what she’ll see <button data-action="nav" data-to="partners">Done</button></div>` : ''}
+  ${mine ? `<div class="preview-bar">Preview: this is what she’ll see <button data-action="nav" data-to="partners">Done</button></div>` : ''}
   <div class="pad">
     ${him ? `<div class="seg his-seg">${[['her', `${name}'s rhythm`], ['his', 'My day']].map(([k, l]) => `<button class="${(ui.hisTab || 'her') === k ? 'on' : ''}" data-action="hisTab" data-v="${k}">${l}</button>`).join('')}</div>` : ''}
     ${him && ui.hisTab === 'his' ? `<h1 class="hello" style="margin:6px 0 16px">Your <b>24-hour rhythm</b></h1>${hisDay(info, name)}</div>` : `
@@ -6164,7 +6164,7 @@ function viewWith(q) {
       <div class="pv-top"><div><div class="eyebrow">Her day · ${g.energy.toLowerCase()} energy</div><h3>${g.title}</h3></div><span class="pv-e">${g.energy}</span></div>
       <p class="body sm">Today is best for ${g.best.slice(0, 3).join(', ').toLowerCase()}.</p>
     </section>
-    <details class="card glass pv-cook"><summary>${photoUrl(rec.id) ? `<img class="pv-cook-img" src="${photoUrl(rec.id)}" alt="" loading="lazy">` : `<span class="art-ic">${icon('bowl', 20)}</span>`}<span class="art-t">Cook for her: ${rec.name}<small>${rec.warm ? 'Warm & cooked — just right for this phase' : rec.raw ? 'Fresh & raw — perfect for her phase' : 'Made for her phase'} · ${rec.time} min</small></span>${icon('chevD', 18)}</summary>
+    <details class="card glass pv-cook"><summary>${photoUrl(rec.id) ? `<img class="pv-cook-img" src="${photoUrl(rec.id)}" alt="" loading="lazy">` : `<span class="art-ic">${icon('bowl', 20)}</span>`}<span class="art-t">Cook for her: ${rec.name}<small>${rec.warm ? 'Warm & cooked: just right for this phase' : rec.raw ? 'Fresh & raw: perfect for her phase' : 'Made for her phase'} · ${rec.time} min</small></span>${icon('chevD', 18)}</summary>
       <div class="pv-rec"><div class="eyebrow">Ingredients</div>${rec.ingredients.map(g => `<div class="ing">${icon('leaf', 14)}<span>${g}</span></div>`).join('')}
       <div class="eyebrow mt">Method</div>${rec.steps.map((x, i) => `<div class="step"><span class="step-n">${i + 1}</span><p>${x}</p></div>`).join('')}</div></details>`; })()}
     ${partnerCare(info, name)}
@@ -6183,12 +6183,12 @@ function viewWith(q) {
     <section class="card glass chart-card">${cycleChart(info, { id: 'with', compact: true, who: 'Her' })}</section>
     ${sectionTitle('Her next two weeks')}
     ${ptCalendar(snap, !!snap.f)}
-    <p class="fine center">Estimates based on her cycle — every body is different, so ask her too.</p>
+    <p class="fine center">Estimates based on her cycle. Every body is different, so ask her too.</p>
     ${mine ? '' : state && state.onboarded
       ? ((state.partners || []).some(x => x.n === snap.n && x.s === snap.s)
         ? `<a class="btn btn-ghost btn-block" href="#/today">${icon('check', 16)} ${name} is on your dashboard</a>`
         : `<button class="btn btn-light btn-block" data-action="addPartner" data-d="${esc(q.get('d'))}">${icon('heart', 16)} Add ${name} to my app</button>
-           <p class="fine center">You both use Underskin — add her and you’ll see each other’s cycle side by side.</p>`)
+           <p class="fine center">You both use Underskin. Add her and you’ll see each other’s cycle side by side.</p>`)
       : him ? `<section class="card glass pv-save"><b>Keep ${name} close</b><p class="body sm">Nothing to set up and nothing to track. Save this page to your home screen and it shows where she is every day.</p></section>
          <button class="link center-link" data-action="trackMine">I want to track my own cycle</button>`
       : `<a class="btn btn-light btn-block" href="#/today">Start tracking my cycle</a>
@@ -6274,7 +6274,7 @@ function viewAccount() {
       ${create ? '' : '<button class="link ac-forgot" data-action="acForgot">Forgot password?</button>'}
       <p class="ac-msg" id="ac-msg" role="status">${A.configured() ? '' : 'Accounts open very soon. Until then everything stays safely on this phone.'}</p>
     </section>
-    <p class="fine">${create ? '' : 'By signing in you agree that your logs are kept in your private account. '}No account needed to use the app — without one, everything stays only on this phone.</p></div>`;
+    <p class="fine">${create ? '' : 'By signing in you agree that your logs are kept in your private account. '}No account needed to use the app. Without one, everything stays only on this phone.</p></div>`;
 }
 function termsSheet() {
   return `<div class="tm-wrap" role="dialog" aria-modal="true" aria-labelledby="tm-h"><section class="tm-sheet">
@@ -6297,7 +6297,7 @@ function viewPrivacy() {
     <p><b>Birth chart.</b> Your birth time and birth place are optional and stay with the rest of your data. Your chart is calculated on your phone. When you tap Find, only the city name you typed is sent to the Open-Meteo place search to get its coordinates and time zone.</p>
     <p><b>Partner links.</b> When you share your cycle, the link contains your first name, cycle estimates (last period start, average cycle and period length, fertile days only if you turn them on) and a private code so love signals reach you. If you added them, it also holds your profile photo and the day and month of your birthday, for your star sign, and today's mood if you log one and leave mood sharing on. Symptoms and notes are never included. Anyone with the link can view it, so share it only with people you trust.</p>
     <p><b>Images and fonts.</b> Food photos load from Unsplash and Pexels, fonts from Google Fonts, and the sign-in library from jsDelivr. These services receive standard web requests (like your IP address) but none of your health data.</p>
-    <p><b>Delete anytime.</b> Profile → “Delete all data” erases everything from this device. Deleting the app or clearing your browser data does the same — so export a backup first if you want to keep it.</p>
+    <p><b>Delete anytime.</b> Profile → “Delete all data” erases everything from this device. Deleting the app or clearing your browser data does the same. So export a backup first if you want to keep it.</p>
     <p><b>Not medical advice.</b> Predictions are estimates based on your logs and traditional knowledge. Underskin is not a contraceptive and does not diagnose or treat any condition.</p>
     <p><b>Allergies and medicines are yours to check.</b> Teas, herbs, spices, foods, supplements, acupressure and movement ideas in the app are general wellness information. Before you try any of them, check every ingredient for allergies and intolerances, and for clashes with medicines you take. If you are pregnant, breastfeeding, on medication or have a health condition, ask your doctor or pharmacist first. You decide what to try, and you do so at your own responsibility.</p>
     <p><b>Your own responsibility.</b> Everything in the app is general information: food, drinks, teas, herbs, supplements, remedies, acupressure, training, breathing, grounding, manifesting, cycle and fertile-day predictions and every other idea. You decide what to try and how, and you do it at your own risk and your own responsibility. Listen to your body and stop if something feels wrong.</p>
@@ -6420,8 +6420,8 @@ const actions = {
     if (pw.length < 8) return acMsg('At least 8 characters.', true);
     try { await A.setPassword(pw); ui.acRecover = false; toast('New password saved'); render(); } catch (e) { acMsg(e.message, true); }
   },
-  acSync: async () => { await cloudSync(); toast(sync.err ? 'Could not sync — try again' : 'Synced'); },
-  acSignOut: async () => { if (!confirm('Sign out? Your data stays on this phone.')) return; try { await A.signOut(); toast('Signed out'); } catch { toast('Couldn’t sign out — check your connection'); } render(); },
+  acSync: async () => { await cloudSync(); toast(sync.err ? 'Could not sync: try again' : 'Synced'); },
+  acSignOut: async () => { if (!confirm('Sign out? Your data stays on this phone.')) return; try { await A.signOut(); toast('Signed out'); } catch { toast('Couldn’t sign out: check your connection'); } render(); },
   acDelete: async () => {
     if (!confirm('Delete your account and the copy of your data in the cloud? This cannot be undone. The data on this phone stays.')) return;
     try { await A.deleteAccount(); if (state) { delete state.account; save(true); } toast('Account deleted'); render(); } catch (e) { toast(e.message); }
@@ -6538,11 +6538,11 @@ const actions = {
     const snap = { f: state.profile.name || 'Someone', k: l.k }; if (state.profile.thumb) snap.t = state.profile.thumb;
     const url = `${appBase()}#/love?d=${b64e(snap)}`, text = `${l.g} ${state.profile.name || 'I'} ${l.s}`;
     (state.loveSent = state.loveSent || []).push({ to: p.id, k: l.k, at: Date.now() }); state.loveSent = state.loveSent.slice(-200); save();
-    if (p.i) { const ok = await sendSignal(p, l.k); setTimeout(() => { ui.loveFor = null; render(); toast(ok ? `${l.g} Sent to ${p.n}` : 'Couldn’t send — check your connection'); }, 600); return; }
+    if (p.i) { const ok = await sendSignal(p, l.k); setTimeout(() => { ui.loveFor = null; render(); toast(ok ? `${l.g} Sent to ${p.n}` : 'Couldn’t send: check your connection'); }, 600); return; }
     setTimeout(async () => {
       ui.loveFor = null; render();
       if (await shareOut({ text, url })) { toast(`Love sent to ${p.n} ❤️`); return; }
-      try { await navigator.clipboard.writeText(`${text} ${url}`); toast('Copied — paste it in your chat ❤️'); } catch { prompt('Copy and send', `${text} ${url}`); }
+      try { await navigator.clipboard.writeText(`${text} ${url}`); toast('Copied: paste it in your chat ❤️'); } catch { prompt('Copy and send', `${text} ${url}`); }
     }, 700);
   },
   hubTip: d => {
@@ -6556,7 +6556,7 @@ const actions = {
     const done = doneToday(), i = done.indexOf(d.k); i < 0 ? done.push(d.k) : done.splice(i, 1); save();
     document.querySelectorAll(`[data-action="rhTick"][data-k="${d.k}"]`).forEach(b => b.classList.toggle('on', i < 0));
     document.querySelectorAll('.rh-ring').forEach(svg => { svg.outerHTML = rhythmRing(done.length, RH_GOAL); });
-    if (i < 0) { plusOne(el); if (done.length === RH_GOAL) toast('🌕 Full rhythm today — beautiful'); }
+    if (i < 0) { plusOne(el); if (done.length === RH_GOAL) toast('🌕 Full rhythm today. Beautiful'); }
   },
   useGeo: () => { if (!navigator.geolocation) return toast('Location isn’t available'); navigator.geolocation.getCurrentPosition(p => { state.profile.geo = { lat: +p.coords.latitude.toFixed(2), lng: +p.coords.longitude.toFixed(2) }; save(); toast('Sun times set for where you are'); render(); }, () => toast('Location not allowed, using your country')); },
   teaK: d => { ui.teaK = d.v || null; render(); if (d.v) setTimeout(() => document.getElementById('tg-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60); },
@@ -6797,7 +6797,7 @@ document.addEventListener('input', e => {
     if (key === 'name') { const g = document.querySelector('.onb-greet'); if (g) { g.classList.toggle('on', !!v.trim()); g.querySelector('b').textContent = v.trim(); } }
     if (key === 'birthday' && v && !isDate) render();
     if (key === 'last') { ui.onb.ago = null; document.querySelectorAll('[data-action="onbAgo"]').forEach(b => b.classList.remove('on')); } }
-  else if (scope === 'profile') { state.profile[key] = v; save(); if (key === 'country') render(); if (key === 'birthday' && v && !isDate && (state.partners || []).length) { toast('Saved — send your link again so your people see your sign'); render(); } }
+  else if (scope === 'profile') { state.profile[key] = v; save(); if (key === 'country') render(); if (key === 'birthday' && v && !isDate && (state.partners || []).length) { toast('Saved: send your link again so your people see your sign'); render(); } }
   else if (scope === 'log' && SLIDER_WORDS[key]) {
     const n = +v; setLog(ui.logDate || todayISO(), { [key]: n });
     const w = e.target.closest('.lg-slide'); if (w) { w.classList.add('set'); w.style.setProperty('--v', (n - 1) / 4); }
@@ -6904,7 +6904,7 @@ function playArrival(view) {
   el.className = 'arrive';
   el.innerHTML = `<div class="ar-ring">${flowRing(info, 'ar')}</div>
     <div class="ar-text"><p class="ar-1">Welcome${name ? `, ${name}` : ''}</p>
-    <p class="ar-2">You’re on day ${Math.min(info.cd, info.L)} — your <em>${ph.name.toLowerCase()} phase</em></p>
+    <p class="ar-2">You’re on day ${Math.min(info.cd, info.L)}. Your <em>${ph.name.toLowerCase()} phase</em></p>
     <p class="ar-3">${ph.season}. Your rhythm is ready.</p></div>`;
   $app.appendChild(el);
   view.classList.add('arrive-in');
