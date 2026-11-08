@@ -9206,3 +9206,10 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .home .dpt-g, .home .rc-photo, .home .mr-art, .home .stage-light { animation: none !important; }
 .home .hub .stage-scene::before { top: calc(-1 * var(--sat)) !important; height: calc(100% + var(--sat)) !important; }
 .hub .dpt.ph-sun .dsun { flex: 0 0 auto !important; display: block; }
+
+/* Sun tile: the sunrise video shows through (bright and warm, only a light shade at the top for the title), the arc sits low over the hills */
+.hub .dpt.ph-sun { background: #2a1408 !important; }
+.hub .dpt.ph-sun .dpt-vid { filter: saturate(1.35) brightness(1.35) contrast(1.05); }
+.hub .dpt.ph-full.ph-fr.ph-vid.ph-sun .dpt-g i { background: linear-gradient(180deg, rgba(20,8,2,.42) 0%, rgba(20,8,2,0) 30%, rgba(20,8,2,0) 58%, rgba(20,8,2,.5) 100%) !important; }
+.hub .dpt.ph-sun .dsun { margin: auto 0 0 !important; }
+.hub .dpt.ph-sun .dsun-l, .hub .dpt.ph-sun .dsun-t { fill: #fff !important; }

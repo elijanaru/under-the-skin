@@ -3903,7 +3903,7 @@ function sunTileArt(D, h, cur) {
     <path d="${d}" fill="none" stroke="#ffd36b" stroke-width="2.8" stroke-linecap="round" clip-path="url(#dsun-up)"/>
     <circle cx="${X(D.rise).toFixed(1)}" cy="${hy.toFixed(1)}" r="2.6" fill="#ffd36b"/><circle cx="${X(D.set).toFixed(1)}" cy="${hy.toFixed(1)}" r="2.6" fill="#ffd36b"/>
     ${day ? `<g transform="translate(${nx.toFixed(1)} ${ny.toFixed(1)})"><circle r="15" fill="rgba(255,211,107,.2)"/><g stroke="#ffd36b" stroke-width="1.6" stroke-linecap="round">${[0, 45, 90, 135, 180, 225, 270, 315].map(a => `<line x1="0" y1="-10.5" x2="0" y2="-13.5" transform="rotate(${a})"/>`).join('')}</g><circle r="7.5" fill="#ffd36b" stroke="#fff" stroke-width="1.6"/></g>`
-      : `<circle cx="${nx.toFixed(1)}" cy="${ny.toFixed(1)}" r="6.5" fill="#efeadf" stroke="#2a1a10" stroke-width="2"/><circle cx="${(nx + 2.6).toFixed(1)}" cy="${(ny - 2.2).toFixed(1)}" r="5" fill="#2a1a10"/>`}
+      : `<circle cx="${nx.toFixed(1)}" cy="${ny.toFixed(1)}" r="6.5" fill="#efeadf" stroke="#3a1c0c" stroke-width="2"/><circle cx="${(nx + 2.6).toFixed(1)}" cy="${(ny - 2.2).toFixed(1)}" r="5" fill="#3a1c0c"/>`}
     ${lab(D.rise, hLabel(D.rise), 'rise')}${lab(D.set, hLabel(D.set), 'set')}
   </svg></span>`;
 }
