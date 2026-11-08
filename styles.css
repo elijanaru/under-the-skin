@@ -8498,3 +8498,15 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .rit-you { padding: 3px 9px; border-radius: 99px; background: hsl(calc(var(--hb) + 330 * var(--hk)) calc(55% * var(--hs)) 92%); color: #20301a; font-size: 10.5px; font-weight: 500; letter-spacing: .03em; }
 .rit-g .rcard:not(.has-photo) .rit-foot .rc-t { color: #20301a; }
 .rit-you.not { background: rgba(255,255,255,.88); color: #4a4a40; }
+
+/* "We hate subscriptions" (onboarding step 10): an older .op rule (176×196px) leaked onto this page, squeezing the card and
+   clipping everything below it so the page could not scroll. Full width, natural height, lighter motion, sticky start button. */
+.op.op2 { width: auto; height: auto; margin: 0; }
+.onb.step-10 { overflow: visible; }
+.onb.step-10 .onb-body { flex: 0 0 auto; padding-bottom: 8px; }
+.op2 > * { animation-fill-mode: backwards; }
+.op2 .op-st { animation: none !important; filter: none !important; }
+.op-pet-sp, .op-pet-sh { animation: none !important; }
+.op-pet-body { will-change: transform; }
+.onb.step-10 .onb-foot { position: sticky; bottom: 0; z-index: 3; margin: 0 -22px -30px; padding: 26px 22px 22px; background: linear-gradient(to bottom, rgba(246,238,240,0), rgba(246,238,240,.94) 38%); animation-fill-mode: backwards; }
+.onb.step-10 .onb-foot .fine { color: #4b5741 !important; text-shadow: none; }
