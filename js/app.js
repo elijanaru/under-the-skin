@@ -5911,6 +5911,26 @@ function seasonRituals(sn) {
       <p>${what}</p><div class="sr-how">${icon('cup', 14)} ${how}</div>${warn ? `<div class="sr-warn">${icon('spark', 13)} ${warn}</div>` : ''}${evBadge(ev)}</details>`).join('')}</section>`;
   return sn === 'Winter' ? herbs + rit : rit + herbs;
 }
+// The season at a glance: what to eat and sip as small photos, one plain line to feel, the full story behind a tap.
+const SEASON_CHIPS = {
+  Spring: { eat: [['Wild garlic', 'Wild garlic'], ['Asparagus', 'Asparagus'], ['Radishes', 'Radishes'], ['Sauerkraut', 'Sauerkraut']], sip: [['tea:Nettle leaf', 'Nettle'], ['tea:Spearmint', 'Fresh mint'], ['tea:Green tea', 'Green tea']], feel: 'Move, stretch, start something new' },
+  Summer: { eat: [['Strawberries', 'Berries'], ['Cucumber', 'Cucumber'], ['Tomatoes', 'Tomatoes'], ['Watermelon', 'Melon']], sip: [['tea:Peppermint', 'Peppermint'], ['tea:Hibiscus', 'Hibiscus'], ['tea:Green tea', 'Green tea']], feel: 'See people, laugh, stay out late' },
+  'Late summer': { eat: [['Sweetcorn', 'Corn'], ['Pumpkin & squash', 'Squash'], ['Peaches & nectarines', 'Peaches'], ['Plums', 'Plums']], sip: [['tea:Chamomile', 'Chamomile'], ['tea:Fennel', 'Fennel'], ['tea:Ginger', 'Ginger']], feel: 'Slow down, eat at regular times' },
+  Autumn: { eat: [['Root vegetables', 'Roots'], ['Pumpkin', 'Pumpkin'], ['Apples', 'Stewed apples'], ['Pears', 'Pears']], sip: [['tea:Ginger', 'Ginger & honey'], ['tea:Cinnamon', 'Cinnamon'], ['tea:Vanilla chai', 'Chai']], feel: 'Breathe deeply, let go, tidy up' },
+  Winter: { eat: [['tea:Healing broth', 'Broth'], ['Root vegetables', 'Roots'], ['Cabbage', 'Cabbage'], ['Chestnuts', 'Chestnuts']], sip: [['tea:Ginger', 'Ginger'], ['tea:Cinnamon', 'Cinnamon'], ['tea:Warm milk with cinnamon', 'Warm milk']], feel: 'Rest, sleep longer, refill' },
+};
+function seasonChips(sn) {
+  const S = SEASON_CHIPS[sn] || SEASON_CHIPS.Autumn, PL = SEASON_PLAIN[sn] || SEASON_PLAIN.Autumn, ST = SEASON_STORY[sn] || SEASON_STORY.Autumn;
+  const src = k => k.startsWith('tea:') ? teaPhoto(k.slice(4), 200, 200) : foodPhoto(k, 200);
+  const chips = L => L.map(([k, l]) => `<span class="szx-c"><img src="${src(k)}" alt="" loading="lazy"><small>${l}</small></span>`).join('');
+  return `<div class="szx">
+      <div class="szx-row"><span class="szx-k">${icon('bowl', 14)} Eat</span><div class="szx-chips">${chips(S.eat)}</div></div>
+      <div class="szx-row"><span class="szx-k">${icon('cup', 14)} Sip</span><div class="szx-chips three">${chips(S.sip)}</div></div>
+      <div class="szx-feel"><span>${icon('leaf', 15)}</span><b>${S.feel}</b></div>
+      <details class="szx-more"><summary>Why this season ${icon('chevD', 14)}</summary>
+        <p><b>Eat</b>${PL.eat}</p><p><b>Sip</b>${PL.tea}</p><p><b>Feel</b>${ST.feel} In Chinese medicine each season belongs to an element and an organ that needs a little extra care.</p></details>
+    </div>`;
+}
 function viewSeason(jump) {
   if (jump) {
     Object.assign(ui, { seasonView: jump === 'cook' ? 'cook' : 'month', seasonKind: null });
@@ -5956,11 +5976,7 @@ function viewSeason(jump) {
       ${seasonArt(sn)}
       <h2>${(SEASON_STORY[sn] || SEASON_STORY.Autumn).t}</h2>
       <p class="sz-tale">${(SEASON_STORY[sn] || SEASON_STORY.Autumn).p}</p>
-      <div class="sz-rits">
-        <div class="sz-rit"><span>${icon('bowl', 18)}</span><div><small>Eat</small><b>${PL.eat}</b></div></div>
-        <div class="sz-rit"><span>${icon('cup', 18)}</span><div><small>Sip</small><b>${PL.tea}</b></div></div>
-        <div class="sz-rit"><span>${icon('yinyang', 18)}</span><div><small>Feel</small><b>${(SEASON_STORY[sn] || SEASON_STORY.Autumn).feel}</b></div></div>
-      </div>
+      ${seasonChips(sn)}
       <div class="sz-nat"><small>In Chinese medicine every food warms, cools or balances you</small>
         <div>${[['warm', 'Warming', 'heats you up'], ['neutral', 'Neutral', 'balances'], ['cool', 'Cooling', 'cools you']].map(([k, n, d]) => `<span><i class="nat ${k}"></i><b>${n}</b>${d}</span>`).join('')}</div>
         <p>Around your period, choose warming food and cook the cooling ones.</p></div>
