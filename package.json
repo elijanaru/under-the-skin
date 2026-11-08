@@ -20,6 +20,7 @@
     "build": "node scripts/build-www.mjs",
     "ios": "node scripts/build-www.mjs && npx cap sync ios && npx cap open ios",
     "android": "node scripts/build-www.mjs && npx cap sync android && npx cap open android",
-    "sync": "node scripts/build-www.mjs && npx cap sync"
+    "sync": "node scripts/build-www.mjs && npx cap sync",
+    "testflight": "zsh scripts/ios-release.sh"
   }
 }
