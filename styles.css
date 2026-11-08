@@ -9217,9 +9217,12 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 /* No rubber-band past the top or bottom of a page (web and PWA; the iOS app turns bounce off natively) */
 html, body { overscroll-behavior-y: none; }
 
-/* Sun tile: full row height beside the recipe card (video + title only) */
-.hub .dpt-grid > .dpt.ph-sun { align-self: stretch; }
-.hub .dpt.ph-sun > small { display: none !important; }
+/* Sun tile: full row height beside the recipe card; label + clear action title + sun times at the bottom, like the other video tiles */
+.hub .dpt-grid > .dpt.ph-sun { align-self: stretch; justify-content: flex-end !important; }
+.hub .dpt.ph-sun > .dpt-k { position: absolute; top: 14px; left: 14px; right: 14px; z-index: 2; margin: 0 !important; }
+.hub .dpt.ph-sun > b { display: block !important; margin-top: 0 !important; font-size: 22px !important; line-height: 1.1 !important; color: #fff !important; position: relative; z-index: 2; }
+.hub .dpt.ph-sun > small { display: block !important; flex: none !important; margin-top: 6px; font-size: 12.5px !important; color: rgba(255,240,215,.92) !important; position: relative; z-index: 2; }
+
 
 /* Phone sign-in (text code), then Apple and Google. Two steps swap in place. */
 .ph-auth { display: grid; gap: 10px; color: #20301a; }
