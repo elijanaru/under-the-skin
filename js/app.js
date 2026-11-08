@@ -1158,12 +1158,14 @@ function viewOnboarding() {
   if (s === 1 && !ui.onbGateDone && !A.currentUser() && A.configured()) return viewGate(); // no sign-up screen until accounts are switched on
   const bd = o.birthday ? (() => { const [y, m, d] = o.birthday.split('-').map(Number); const sign = Z.sunSign(m, d), moon = Z.moonPhase(new Date(y, m - 1, d, 12)), cz = Z.chineseZodiac(y, m, d); return { sign, moon, cz }; })() : null;
   const body = {
-    1: `<div class="onb-avatar">${o.photo ? `<img src="${o.photo}" alt="">` : AVATAR_SVG}</div><h2 class="onb-title">What should we <span>call you?</span></h2>
+    1: ui.onbWhere ? `<div class="onb-avatar where">${icon('sun', 46, 1.6)}</div><h2 class="onb-title">Where do <span>you live?</span></h2>
+        <select id="onb-country" class="field big-in" data-input="onb.country" aria-label="Country">${SZ.COUNTRIES.map(([code, nm]) => `<option value="${code}" ${code === (o.country || myCountry()) ? 'selected' : ''}>${nm}</option>`).join('')}</select>
+        <div class="onb-why"><b>Why we ask</b>
+          <p>${icon('leaf', 14)} What’s in season to eat where you are</p>
+          <p>${icon('sun', 14)} Your sunrise, sunset and daylight</p>
+          <p>${icon('spark', 14)} The UV for your vitamin D</p></div>` : `<div class="onb-avatar">${o.photo ? `<img src="${o.photo}" alt="">` : AVATAR_SVG}</div><h2 class="onb-title">What should we <span>call you?</span></h2>
         <input class="field big-in" data-input="onb.name" placeholder="Your first name" value="${esc(o.name)}" autocomplete="given-name" maxlength="24">
-        <p class="onb-greet ${o.name.trim() ? 'on' : ''}">Nice to meet you, <b>${esc(o.name.trim())}</b> ✦</p>
-        <div class="onb-where"><label for="onb-country">And where do you live?</label>
-          <select id="onb-country" class="field" data-input="onb.country">${SZ.COUNTRIES.map(([code, nm]) => `<option value="${code}" ${code === (o.country || myCountry()) ? 'selected' : ''}>${nm}</option>`).join('')}</select>
-          <p>${icon('sun', 13)} Your country sets what’s in season to eat, your sunrise and sunset, and the UV for vitamin D.</p></div>`,
+        <p class="onb-greet ${o.name.trim() ? 'on' : ''}">Nice to meet you, <b>${esc(o.name.trim())}</b> ✦</p>`,
     2: `<h2 class="onb-title">Add a <span>profile picture</span></h2>
         <p class="muted">So you and your partner, if you share, recognise your rhythm at a glance.</p>
         <label class="photo-pick"><span class="pp-frame">${o.photo ? `<img src="${o.photo}" alt="">` : AVATAR_SVG}</span><span class="pp-add">${icon(o.photo ? 'check' : 'plus', 18, 2.4)}</span>
@@ -1198,12 +1200,12 @@ function viewOnboarding() {
 
   const flash = ui.flashOut ? '<div class="flash-out"></div>' : ''; ui.flashOut = false;
   const anim = ui.onbAnim || ''; ui.onbAnim = '';
-  const still = (ui.onbStill || (!anim && ui.onbLast === s)) ? 'still' : ''; ui.onbStill = false; ui.onbLast = s;
-  return `<div class="onb no-fig step-${s} ${anim} ${still}">${flash}
+  const sk = s + (ui.onbWhere ? 'w' : ''), still = (ui.onbStill || (!anim && ui.onbLast === sk)) ? 'still' : ''; ui.onbStill = false; ui.onbLast = sk;
+  return `<div class="onb no-fig step-${s} ${s === 1 && ui.onbWhere ? 'where' : ''} ${anim} ${still}">${flash}
     <div class="onb-top"><button class="icon-btn dark" data-action="onbBack">${icon('chevL', 22)}</button>${dots}${sndBtn()}</div>
     <div class="onb-body">${body}</div>
     <div class="onb-foot">
-      <button class="pearl-btn wide" data-action="onbNext" ${s === 1 && !o.name.trim() ? 'disabled' : ''}><span>${s === 10 ? 'Start my 3 free days' : s === 8 ? 'See my plan' : 'Continue'}</span></button>
+      <button class="pearl-btn wide" data-action="onbNext" ${s === 1 && !ui.onbWhere && !o.name.trim() ? 'disabled' : ''}><span>${s === 10 ? 'Start my 3 free days' : s === 8 ? 'See my plan' : 'Continue'}</span></button>
       ${s === 10 ? '<p class="fine rm2-note">Underskin is a wellness app, not medical advice.</p>' : ''}
     </div>
   </div>`;
@@ -6877,6 +6879,8 @@ const actions = {
     document.querySelectorAll('.snd-btn').forEach(b => { b.innerHTML = sndIcon(off); b.setAttribute('aria-pressed', off); b.setAttribute('aria-label', off ? 'Sound on' : 'Sound off'); });
   },
   onbNext: () => {
+    if (ui.onbStep === 1 && !ui.onbWhere) { ui.onbWhere = true; ui.onbAnim = 'fwd'; render(); window.scrollTo(0, 0); return; } // name → where she lives
+    if (ui.onbStep === 1) { ui.onb.country = ui.onb.country || myCountry(); ui.onbWhere = false; }
     if (ui.onbStep === 6 && !ui.onb.bc) { toast('Pick one, so we can tailor your plan'); return; }
     if (ui.onbStep < 10) { ui.onbStep += ui.onbStep === 4 && ui.onb.noPeriod ? 2 : 1; ui.onbAnim = 'fwd'; render(); window.scrollTo(0, 0); return; }
     if (!o_ok()) { toast('Pick the day your last period started'); ui.onbStep = 4; render(); return; }
@@ -6903,7 +6907,9 @@ const actions = {
     g.querySelector('.gate-form')?.setAttribute('aria-hidden', 'false'); [em, pw].forEach(x => x?.removeAttribute('tabindex'));
     acMsg(''); setTimeout(() => { em?.focus({ preventScroll: true }); g.querySelector('.gate-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 260);
   },
-  onbBack: () => { if (ui.onbStep === 1 && ui.onbGateDone && !A.currentUser() && A.configured()) { ui.onbGateDone = false; ui.onbAnim = 'back'; render(); return; } ui.onbStep = Math.max(0, ui.onbStep - (ui.onbStep === 6 && ui.onb.noPeriod ? 2 : 1)); ui.onbAnim = 'back'; render(); },
+  onbBack: () => { if (ui.onbStep === 1 && ui.onbWhere) { ui.onbWhere = false; ui.onbAnim = 'back'; render(); return; }
+    if (ui.onbStep === 2) { ui.onbStep = 1; ui.onbWhere = true; ui.onbAnim = 'back'; render(); return; }
+    if (ui.onbStep === 1 && ui.onbGateDone && !A.currentUser() && A.configured()) { ui.onbGateDone = false; ui.onbAnim = 'back'; render(); return; } ui.onbStep = Math.max(0, ui.onbStep - (ui.onbStep === 6 && ui.onb.noPeriod ? 2 : 1)); ui.onbAnim = 'back'; render(); },
   onbDiet: d => { ui.onb.diet = d.v; document.querySelectorAll('.dt-c').forEach(b => { b.classList.toggle('on', b.dataset.v === d.v); b.setAttribute('aria-pressed', b.dataset.v === d.v); }); const pk = document.querySelector('.dt-peek'); if (pk) pk.innerHTML = dvPeek(d.v); },
   setDiet: d => { state.profile.diet = d.v; save(); toast(`${DIETS.find(x => x.k === d.v).t}: your recipes and food guide changed`); render(); },
   onbAgo: d => { const o = ui.onb, was = !!o.noPeriod; if (d.v === 'none') { o.noPeriod = !o.noPeriod; o.ago = null; } else { o.noPeriod = false; o.ago = +d.v; o.last = C.iso(C.addDays(new Date(), -d.v)); }
@@ -7254,7 +7260,7 @@ document.addEventListener('input', e => {
   if (f === 'moonj.today') { const j = state.moonJournal = state.moonJournal || {}; if (e.target.value.trim()) j[todayISO()] = e.target.value; else delete j[todayISO()]; save(); return; }
   const [scope, key] = f.split('.'), v = e.target.value, isDate = e.target.type === 'date';
   if (isDate && v && +v.slice(0, 4) < 1900) return; // still typing the year (0001, 0019, 0199…): wait for all four digits
-  if (scope === 'onb') { ui.onb[key] = v; const b = document.querySelector('[data-action="onbNext"]'); if (b && ui.onbStep === 1) b.disabled = !v.trim();
+  if (scope === 'onb') { ui.onb[key] = v; const b = document.querySelector('[data-action="onbNext"]'); if (b && ui.onbStep === 1 && key === 'name') b.disabled = !v.trim();
     if (key === 'name') { const g = document.querySelector('.onb-greet'); if (g) { g.classList.toggle('on', !!v.trim()); g.querySelector('b').textContent = v.trim(); } }
     if (key === 'birthday' && v && !isDate) render();
     if (key === 'last') { ui.onb.ago = null; document.querySelectorAll('[data-action="onbAgo"]').forEach(b => b.classList.remove('on')); } }
