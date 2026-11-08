@@ -9110,3 +9110,41 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .onb.gate .gate-head .onb-title, .onb.gate .gate-head .onb-title span { color: #fff !important; text-shadow: 0 1px 10px rgba(50,20,34,.35) !important; margin: 0 !important; }
 .onb.no-fig .gate-head .gate-lead, .gate-head .gate-lead { color: rgba(255,255,255,.95) !important; text-shadow: 0 1px 6px rgba(50,20,34,.35) !important; margin: 6px auto 0 !important; }
 .gate .ac-apple, .gate .ac-google { height: 48px !important; }
+/* Home: phase name gets clear air under the greeting (they ran together on iPhone) */
+.stage-phase { top: calc(14.2% + 24px) !important; }
+/* Fertile window card in colour (was washed white): full photo, warm rose shade, white type, golden best days */
+.conceive { background: #6e2f3c !important; border: 0 !important; box-shadow: 0 20px 40px -22px rgba(110,47,60,.7) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+.conceive > img { opacity: 1 !important; filter: saturate(1.05) !important; }
+.conceive .cv-shade { background: linear-gradient(180deg, rgba(110,47,60,.05) 0%, rgba(110,47,60,.55) 40%, rgba(96,36,48,.9) 100%) !important; }
+.conceive .cv-in, .conceive .cv-in h3 { color: #fff !important; }
+.conceive .eyebrow { color: #ffd9a0 !important; }
+.conceive .cv-in p { color: rgba(255,255,255,.92) !important; }
+.conceive .cv-in small { color: rgba(255,255,255,.82) !important; }
+.conceive .cv-bar i { background: rgba(255,255,255,.32) !important; box-shadow: none !important; }
+.conceive .cv-bar i.peak { background: #ffc94d !important; box-shadow: 0 0 12px rgba(255,201,77,.6) !important; }
+.conceive .cv-bar i.now { outline: 2px solid #fff !important; }
+/* Name step: where she lives (sets seasonal food, sun times, UV) */
+.onb-where { display: grid; gap: 8px; margin-top: 10px; text-align: center; }
+.onb-where label { font-family: var(--it, 'Outfit'), sans-serif; font-weight: 600; font-size: 16px; color: #fff; letter-spacing: -.01em; }
+.onb.no-fig .onb-where select.field { text-align: center; text-align-last: center; font-size: 16px; padding: 13px 18px; color: #fff; -webkit-appearance: none; appearance: none; }
+.onb-where select option { color: #20301a; }
+.onb-where p { margin: 0 auto; max-width: 32ch; font-size: 12.5px; line-height: 1.45; color: #20301a; background: rgba(255,255,255,.82); border-radius: 14px; padding: 8px 12px; display: flex; gap: 7px; align-items: flex-start; text-align: left; }
+.onb-where p .ic { flex: none; margin-top: 2px; color: #c9821f; }
+/* Sun tile v3: gold sun badge + "Follow the sun", what to do now in big type, one why line, the day arc below */
+.dsun-badge { display: inline-grid; place-items: center; width: 24px; height: 24px; margin-right: 7px; vertical-align: -7px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff1c4, #ffd36b 55%, #f0a92e); color: #6b3d0a; box-shadow: 0 0 14px rgba(255,201,77,.55); }
+.dsun-badge.nt { background: radial-gradient(circle at 35% 30%, #fff, #e9e4f5 60%, #b9b2cf); color: #2a2440; box-shadow: 0 0 14px rgba(233,228,245,.4); }
+.dsun-badge .ic, .dsun-badge svg { width: 14px; height: 14px; }
+.hub .dpt.ph-sun .dpt-k { display: flex; align-items: center; font-weight: 600; letter-spacing: .01em; color: #ffe3a3 !important; text-transform: none; font-size: 13px; }
+.hub .dpt.ph-sun > b { font-size: 21px !important; line-height: 1.1 !important; margin-top: 10px; color: #fff !important; }
+.dsun-why { display: block; margin-top: 6px; font-size: 12.5px; line-height: 1.35; color: rgba(255,255,255,.88); }
+.dsun-why em { display: block; font-style: normal; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,227,163,.85); margin-bottom: 2px; }
+.hub .dpt.ph-sun .dsun { margin-top: auto; padding-top: 6px; }
+.hub .dpt.ph-sun .dsun svg { margin-top: 4px !important; }
+.hub .dpt.ph-sun > small { display: flex; flex-direction: column; flex: 1; }
+.hub .dpt.ph-sun .dsun-badge { width: 24px !important; height: 24px !important; flex: none; }
+.hub .dpt.ph-sun .dsun-badge svg { width: 14px !important; height: 14px !important; padding: 0 !important; background: none !important; }
+/* "Fertile" chip on Today (trying to conceive): warm gold, not a faded white pill */
+.hchip.hl, .home .hchip.hl { background: linear-gradient(180deg, #ffd56b, #f3b23a) !important; color: #3b2a06 !important; border: 0 !important; opacity: 1 !important; font-weight: 600; box-shadow: 0 6px 16px -8px rgba(201,130,31,.7) !important; }
+.hchip.hl svg { color: #3b2a06 !important; }
+.stage-after .fh-badge { background: linear-gradient(180deg, #ffd56b, #f3b23a) !important; color: #3b2a06 !important; border: 0 !important; font-weight: 600; opacity: 1 !important; box-shadow: 0 6px 16px -8px rgba(201,130,31,.7) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+.stage-after .fh-badge svg { color: #3b2a06 !important; }

@@ -40,25 +40,24 @@
   <link rel="modulepreload" href="js/sun.js">
   <link rel="modulepreload" href="js/account.js">
   <style>
-    /* Opening animation: a pink lotus rises on its pad, opens petal by petal around a golden centre, then the name */
+    /* Opening animation: a pink lotus rises on its pad, opens petal by petal on a soft dusk sky (mauve to peach), then the name in white */
     #splash { position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center; background:
-      radial-gradient(60% 34% at 18% 100%, rgba(255, 214, 190, .55), transparent 70%),
-      radial-gradient(55% 30% at 82% 100%, rgba(208, 226, 160, .55), transparent 70%),
-      radial-gradient(70% 40% at 50% 0%, rgba(239, 212, 221, .7), transparent 70%), #f6eef0;
+      radial-gradient(46% 26% at 50% 42%, rgba(255, 240, 244, .42), transparent 72%),
+      radial-gradient(90% 40% at 50% 100%, rgba(255, 214, 190, .55), transparent 70%),
+      linear-gradient(180deg, #8c6a86 0%, #b4889a 48%, #dcaa9f 100%);
       transition: opacity .55s ease, visibility .55s; }
     #splash.out { opacity: 0; visibility: hidden; }
     #splash .sp { display: grid; justify-items: center; gap: 16px; transform: translateY(-4vh); transition: transform .55s cubic-bezier(.2,.8,.2,1); }
     #splash.out .sp { transform: translateY(-4vh) scale(1.05); }
     #splash svg { width: 210px; height: 178px; overflow: visible; }
-    #splash .rip { fill: none; stroke: rgba(108,130,62,.35); stroke-width: 1; transform-origin: 100px 132px; transform: scale(.4); opacity: 0; animation: lpRip 2.4s ease-out forwards; }
+    #splash .rip { fill: none; stroke: rgba(255,255,255,.22); stroke-width: 1; transform-origin: 100px 132px; transform: scale(.4); opacity: 0; animation: lpRip 2.4s ease-out forwards; }
     #splash .rip.r2 { animation-delay: .5s; } #splash .rip.r3 { animation-delay: 1s; }
     #splash .pad { transform-origin: 100px 132px; transform: scale(.6); opacity: 0; animation: lpPad .7s .05s cubic-bezier(.2,.9,.3,1) forwards; }
     #splash .fl { transform-origin: 100px 126px; transform: translateY(14px) scale(.7); opacity: 0; animation: lpRise .6s .2s cubic-bezier(.2,.9,.3,1) forwards, lpBob 3.6s 1.8s ease-in-out infinite; }
     #splash .pt { transform-origin: 0 0; transform: rotate(calc(var(--r) * .1)) scaleY(.92); animation: lpOpen 1s var(--d) cubic-bezier(.35,.85,.3,1) forwards; }
-    #splash .pod { transform-origin: 0 -34px; transform: scale(0); animation: lpPod .5s 1.05s cubic-bezier(.3,1.5,.5,1) forwards; }
-    #splash .wm { font-family: 'Yellowtail', 'Brush Script MT', cursive; font-weight: 400; font-size: 46px; line-height: 1; letter-spacing: .01em; color: #20301a; margin-top: -4px; opacity: 0; animation: spWord .7s 1.2s ease forwards; }
-    #splash .bar { width: 64px; height: 2px; border-radius: 2px; background: rgba(48,64,35,.12); overflow: hidden; opacity: 0; animation: spWord .4s 1.45s ease forwards; }
-    #splash .bar i { display: block; width: 40%; height: 100%; border-radius: 2px; background: #6c823e; animation: spBar 1.2s 1.45s ease-in-out infinite; }
+        #splash .wm { font-family: 'Yellowtail', 'Brush Script MT', cursive; font-weight: 400; font-size: 46px; line-height: 1; letter-spacing: .01em; color: #fff; text-shadow: 0 2px 16px rgba(90,50,80,.35); margin-top: -4px; opacity: 0; animation: spWord .7s 1.2s ease forwards; }
+    #splash .bar { width: 64px; height: 2px; border-radius: 2px; background: rgba(255,255,255,.14); overflow: hidden; opacity: 0; animation: spWord .4s 1.45s ease forwards; }
+    #splash .bar i { display: block; width: 40%; height: 100%; border-radius: 2px; background: #efd4dd; animation: spBar 1.2s 1.45s ease-in-out infinite; }
     @keyframes lpRip { 0% { opacity: 0; transform: scale(.4); } 25% { opacity: 1; } 100% { opacity: 0; transform: scale(1.25); } }
     @keyframes lpPad { to { opacity: 1; transform: none; } }
     @keyframes lpRise { to { opacity: 1; transform: none; } }
@@ -102,11 +101,8 @@
       </g>
       <g class="fl"><g transform="translate(100 128)">
         <use href="#lp-b" class="pt" style="--r:-80deg;--d:0.45s"/><use href="#lp-b" class="pt" style="--r:80deg;--d:0.50s"/><use href="#lp-b" class="pt" style="--r:-58deg;--d:0.55s"/><use href="#lp-b" class="pt" style="--r:58deg;--d:0.60s"/><use href="#lp-b" class="pt" style="--r:-34deg;--d:0.65s"/><use href="#lp-b" class="pt" style="--r:34deg;--d:0.70s"/><use href="#lp-b" class="pt" style="--r:-12deg;--d:0.75s"/><use href="#lp-b" class="pt" style="--r:12deg;--d:0.80s"/>
-        <use href="#lp-f" class="pt" style="--r:-16deg;--d:0.86s"/><use href="#lp-f" class="pt" style="--r:16deg;--d:0.92s"/><g transform="translate(0 -9)"><g class="pod"><path d="M-14 -34 C -14 -44 14 -44 14 -34 C 14 -28 -14 -28 -14 -34 Z" fill="url(#lp-pod)"/>
-          <ellipse cx="0" cy="-38" rx="12" ry="4.5" fill="#d6ad3f"/>
-          <g fill="#9c7a22"><circle cx="-6" cy="-38.5" r="1.1"/><circle cx="0" cy="-39.5" r="1.1"/><circle cx="6" cy="-38.5" r="1.1"/><circle cx="-3" cy="-36.6" r="1"/><circle cx="3" cy="-36.6" r="1"/></g>
-          <path d="M-16 -32 C -18 -38 -17 -42 -15 -45 M-11 -30 C -12 -37 -10 -43 -8 -46 M11 -30 C 12 -37 10 -43 8 -46 M16 -32 C 18 -38 17 -42 15 -45" stroke="#e9b949" stroke-width="1.1" fill="none" stroke-linecap="round"/></g></g>
-        <use href="#lp-f" class="pt" style="--r:-62deg;--d:0.62s"/><use href="#lp-f" class="pt" style="--r:62deg;--d:0.68s"/><use href="#lp-f" class="pt" style="--r:-38deg;--d:0.74s"/><use href="#lp-f" class="pt" style="--r:38deg;--d:0.80s"/>
+        <use href="#lp-f" class="pt" style="--r:-16deg;--d:0.86s"/><use href="#lp-f" class="pt" style="--r:16deg;--d:0.92s"/>
+        <use href="#lp-f" class="pt" style="--r:-62deg;--d:0.62s"/><use href="#lp-f" class="pt" style="--r:62deg;--d:0.68s"/><use href="#lp-f" class="pt" style="--r:-38deg;--d:0.74s"/><use href="#lp-f" class="pt" style="--r:38deg;--d:0.80s"/><use href="#lp-f" class="pt" style="--r:0deg;--d:0.98s"/>
       </g></g>
     </svg>
     <div class="wm">underskin</div>

@@ -500,12 +500,13 @@ let hiddenAt = 0;
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') hiddenAt = Date.now(); else if (hiddenAt && Date.now() - hiddenAt > 10 * 60 * 1000) { opensNow++; if (route().name === 'today') render(); } });
 function conceiveCard(info) {
   if (!ttc()) return '';
-  const today = C.startOfDay(new Date()), start = C.addDays(info.cycleStart, info.ov - 6), peak1 = C.addDays(info.cycleStart, info.ov - 3), ovd = C.addDays(info.cycleStart, info.ov - 1);
-  const inWin = info.cd >= info.ov - 5 && info.cd <= info.ov, d2 = C.diffDays(start, today);
+  const today = C.startOfDay(new Date()), past = info.cd > info.ov && !info.fertile, base = past ? C.addDays(info.cycleStart, info.L) : info.cycleStart; // once this window is over, show the next one
+  const start = C.addDays(base, info.ov - 6), peak1 = C.addDays(base, info.ov - 3), ovd = C.addDays(base, info.ov - 1);
+  const inWin = !past && (info.fertile || (info.cd >= info.ov - 5 && info.cd <= info.ov)), d2 = C.diffDays(start, today);
   const u = hormonePhoto('Prolactin', 800);
   return `<section class="conceive">${u ? `<img src="${u}" alt="">` : ''}<span class="cv-shade"></span><div class="cv-in">
     <div class="eyebrow">Fertile window</div>
-    <h3>${inWin ? (info.cd >= info.ov - 2 ? 'Your best days are now' : 'Your fertile window is open') : d2 > 0 ? `Opens in ${plural(d2, 'day')}` : 'Next window next cycle'}</h3>
+    <h3>${inWin ? (info.cd >= info.ov - 2 ? 'Your best days are now' : 'Your fertile window is open') : d2 > 0 ? `${past ? 'Next window opens' : 'Opens'} in ${plural(d2, 'day')}` : 'Next window next cycle'}</h3>
     <p>${fmt(start, { month: 'short', day: 'numeric' })} – ${fmt(ovd, { month: 'short', day: 'numeric' })} · best: ${fmt(peak1, { month: 'short', day: 'numeric' })} – ${fmt(ovd, { month: 'short', day: 'numeric' })}</p>
     <div class="cv-bar">${Array.from({ length: 6 }, (_, i) => { const d = info.ov - 5 + i; return `<i class="${d >= info.ov - 2 ? 'peak' : ''} ${d === info.cd ? 'now' : ''}"></i>`; }).join('')}</div>
     <small>Sex every 1–2 days in this window gives the best chance. Estimates: an ovulation test confirms your real day.</small></div></section>`;
@@ -1159,7 +1160,10 @@ function viewOnboarding() {
   const body = {
     1: `<div class="onb-avatar">${o.photo ? `<img src="${o.photo}" alt="">` : AVATAR_SVG}</div><h2 class="onb-title">What should we <span>call you?</span></h2>
         <input class="field big-in" data-input="onb.name" placeholder="Your first name" value="${esc(o.name)}" autocomplete="given-name" maxlength="24">
-        <p class="onb-greet ${o.name.trim() ? 'on' : ''}">Nice to meet you, <b>${esc(o.name.trim())}</b> ✦</p>`,
+        <p class="onb-greet ${o.name.trim() ? 'on' : ''}">Nice to meet you, <b>${esc(o.name.trim())}</b> ✦</p>
+        <div class="onb-where"><label for="onb-country">And where do you live?</label>
+          <select id="onb-country" class="field" data-input="onb.country">${SZ.COUNTRIES.map(([code, nm]) => `<option value="${code}" ${code === (o.country || myCountry()) ? 'selected' : ''}>${nm}</option>`).join('')}</select>
+          <p>${icon('sun', 13)} Your country sets what’s in season to eat, your sunrise and sunset, and the UV for vitamin D.</p></div>`,
     2: `<h2 class="onb-title">Add a <span>profile picture</span></h2>
         <p class="muted">So you and your partner, if you share, recognise your rhythm at a glance.</p>
         <label class="photo-pick"><span class="pp-frame">${o.photo ? `<img src="${o.photo}" alt="">` : AVATAR_SVG}</span><span class="pp-add">${icon(o.photo ? 'check' : 'plus', 18, 2.4)}</span>
@@ -3896,11 +3900,14 @@ function sunTileArt(D, h, cur) {
     <path d="${d} L${W} ${hy} L0 ${hy}Z" fill="rgba(255,211,107,.16)" clip-path="url(#dsun-up)"/>
     <path d="${d}" fill="none" stroke="#ffd36b" stroke-width="2.8" stroke-linecap="round" clip-path="url(#dsun-up)"/>
     <circle cx="${X(D.rise).toFixed(1)}" cy="${hy.toFixed(1)}" r="2.6" fill="#ffd36b"/><circle cx="${X(D.set).toFixed(1)}" cy="${hy.toFixed(1)}" r="2.6" fill="#ffd36b"/>
-    ${day ? `<circle cx="${nx.toFixed(1)}" cy="${ny.toFixed(1)}" r="11" fill="rgba(255,211,107,.22)"/><circle cx="${nx.toFixed(1)}" cy="${ny.toFixed(1)}" r="6.5" fill="#ffd36b" stroke="#fff" stroke-width="2"/>`
+    ${day ? `<g transform="translate(${nx.toFixed(1)} ${ny.toFixed(1)})"><circle r="15" fill="rgba(255,211,107,.2)"/><g stroke="#ffd36b" stroke-width="1.6" stroke-linecap="round">${[0, 45, 90, 135, 180, 225, 270, 315].map(a => `<line x1="0" y1="-10.5" x2="0" y2="-13.5" transform="rotate(${a})"/>`).join('')}</g><circle r="7.5" fill="#ffd36b" stroke="#fff" stroke-width="1.6"/></g>`
       : `<circle cx="${nx.toFixed(1)}" cy="${ny.toFixed(1)}" r="6.5" fill="#efeadf" stroke="#2a1a10" stroke-width="2"/><circle cx="${(nx + 2.6).toFixed(1)}" cy="${(ny - 2.2).toFixed(1)}" r="5" fill="#2a1a10"/>`}
     ${lab(D.rise, hLabel(D.rise), 'rise')}${lab(D.set, hLabel(D.set), 'set')}
-  </svg><span class="dsun-now">${icon(!day || cur.id === 'evening' ? 'moon' : 'sun', 13, 2.2)}<span><small>Now</small>${cur.n}</span></span></span>`;
+  </svg></span>`;
 }
+// What the light asks of her right now, in a few words (home Sun tile)
+const SUN_DO = { morning: ['Get outside', 'Morning light sets tonight’s sleep'], midday: ['Step into the sun', 'Midday UV makes your vitamin D'], afternoon: ['Take a light walk', 'Daylight keeps energy steady'],
+  sunset: ['Watch the sunset', 'Warm light helps you slow down'], evening: ['Dim the lights', 'Low light lets melatonin rise'], night: ['Lights off, sleep', 'Dark nights mean deeper sleep'] };
 function todayTiles(info, only) {
   const w = dayWindow(info), g = MOVE_GUIDE[w], [lvl] = CALM[w], ph = info.phase, warm = warmWindow(info);
   const best = MOVES.filter(m => g.r[m.k] === 3);
@@ -3932,7 +3939,7 @@ function todayTiles(info, only) {
   return `<div class="dpt-grid">
       ${tile('wide hero-move ph-vid', { to: 'move' }, `<video class="dpt-vid" src="images/move-stardust.mp4" poster="images/move-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Sport', g.title, best.map(m => m.n).slice(0, 3).join(' · '))}
       ${rec ? tile(`t-tea t-cup t-dish${recD && recD.hero ? ' t-big' : ''}`, { to: `recipe/${rec.id}` }, recD ? `<span class="cup3d-w"><img class="dpt-cup" src="${recD.img}" alt="" loading="lazy"><canvas class="teacup3d" data-model="${recD.model}" data-elev="${recD.elev || 0.9}" data-fit="${recD.tileFit || recD.fit}"${recD.steam === 0 ? ' data-steam="0"' : ''} aria-label="${esc(rec.name)}, turning slowly"></canvas></span>` : `<span class="dish-ph"><img src="${photoUrl(rec.id, 400)}" alt="" loading="lazy"></span>`, 'Eat today', rec.name, `<span class="dpt-why">${recWhy(rec)}</span><span class="dpt-rule">${icon('clock', 12)} ${rec.time >= 60 ? `${Math.floor(rec.time / 60)} h${rec.time % 60 ? ` ${rec.time % 60}` : ''}` : `${rec.time} min`} · Cook it ${icon('chevR', 12)}</span>`) : tile('t-tea t-cup t-dish', { to: 'do/eat' }, `<span class="cup3d-w"><img class="dpt-cup" src="${D.img}" alt="" loading="lazy"><canvas class="teacup3d" data-model="${D.model}" data-elev="0.9" data-fit="${D.fit}" aria-label="${dish.t}, turning slowly"></canvas></span>`, 'Eat today', dish.t, `<span class="dpt-why">${dish.why}</span><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
-      ${(() => { const D = dayMoments(info), h = nowH(), cur = momentAt(D, h); return tile('t-deep ph-full keep ph-fr ph-vid ph-sun', { to: 'rhythm' }, `<video class="dpt-vid" src="images/sun-moon.mp4" poster="images/sun-moon-poster.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Sun & moon', 'Follow the light', sunTileArt(D, h, cur)); })()}
+      ${(() => { const D = dayMoments(info), h = nowH(), cur = momentAt(D, h); return tile('t-deep ph-full keep ph-fr ph-vid ph-sun', { to: 'rhythm' }, `<video class="dpt-vid" src="images/sun-moon.mp4" poster="images/sun-moon-poster.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, `<span class="dsun-badge">${icon('sun', 14, 2.2)}</span>Follow the sun`, (SUN_DO[cur.id] || SUN_DO.midday)[0], `<span class="dsun-why"><em>Now · ${cur.n}</em>${(SUN_DO[cur.id] || SUN_DO.midday)[1]}</span>${sunTileArt(D, h, cur)}`); })()}
       ${tile('t-sage ph-full ph-vid', { to: 'relief' }, `<video class="dpt-vid" src="images/relief-stardust.mp4" poster="images/relief-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Relief', rp.st.t, `${rp.mine ? 'You logged' : 'Common now:'} ${rp.k.toLowerCase()}`)}
       ${tile(`calm lv${lvl} t-cort t-mol`, { to: 'breathe/stress' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/cortisol-mol.webp" alt="" loading="lazy"><canvas class="teacup3d" data-model="models/cortisol.glb" data-elev="0.3" data-fit="1.9" data-steam="0" data-shadow="0" aria-label="The cortisol molecule, turning slowly"></canvas></span>`, 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}<span class="cv-lv" aria-hidden="true">${[1, 2, 3].map(i => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</span>`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
       ${tile('t-tea t-cup', { to: 'do/tea' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/${/ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i.test(td[1]) ? 'cup-chai' : 'cup-glass'}.webp" alt="" loading="lazy"><canvas class="teacup3d" aria-label="${td[1]}, turning slowly"></canvas></span>`, 'Tea for today', td[1], td[2])}
@@ -6877,7 +6884,7 @@ const actions = {
     if (!o.noPeriod) for (let i = 0; i < o.periodLength; i++) { const d = C.addDays(s, i); if (d <= new Date()) logs[C.iso(d)] = { flow: i === 0 || i === 1 ? 'medium' : 'light' }; }
     ui.arrive = true;
     let pend = null; try { pend = b64d(localStorage.getItem('uts.pendingPartner') || ''); localStorage.removeItem('uts.pendingPartner'); } catch {}
-    state = { onboarded: true, profile: { name: o.name.trim(), diet: o.diet || 'all', cycleLength: o.unsure || o.noPeriod ? 28 : o.cycleLength, cycleUnsure: !!(o.unsure || o.noPeriod), noPeriod: !!o.noPeriod || undefined, bc: o.bc || 'none', bcPlan: hormonalBC(o.bc) ? o.bcPlan || 'think' : undefined, bcStop: o.bcPlan === 'stop' ? todayISO() : undefined, planStart: todayISO(), periodLength: o.periodLength, goals: o.goals, purpose: o.purpose || 'know', focus: (o.focus && o.focus.length) ? o.focus : ['hormones', 'energy', 'eat'], birthday: o.birthday || undefined, birthTime: o.birthday && o.birthTime || undefined, birthPlace: o.birthday && o.birthPlace || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
+    state = { onboarded: true, profile: { name: o.name.trim(), country: o.country || myCountry(), diet: o.diet || 'all', cycleLength: o.unsure || o.noPeriod ? 28 : o.cycleLength, cycleUnsure: !!(o.unsure || o.noPeriod), noPeriod: !!o.noPeriod || undefined, bc: o.bc || 'none', bcPlan: hormonalBC(o.bc) ? o.bcPlan || 'think' : undefined, bcStop: o.bcPlan === 'stop' ? todayISO() : undefined, planStart: todayISO(), periodLength: o.periodLength, goals: o.goals, purpose: o.purpose || 'know', focus: (o.focus && o.focus.length) ? o.focus : ['hormones', 'energy', 'eat'], birthday: o.birthday || undefined, birthTime: o.birthday && o.birthTime || undefined, birthPlace: o.birthday && o.birthPlace || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
     if (pend && pend.s && pend.c) state.partners = [{ ...pend, id: Date.now().toString(36), added: Date.now() }];
     ui.scrollMem = {}; ui.navStack = []; save(); go('today'); render(); toTop(); requestAnimationFrame(toTop); setTimeout(toTop, 400); // she lands at the very top of Today
     if (state.partners?.length) { M = model(); syncTo(state.partners[0]); startSignals(); }
