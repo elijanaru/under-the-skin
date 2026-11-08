@@ -1155,7 +1155,7 @@ function viewOnboarding() {
       <div class="bw-flash"></div>
     </div>`;
   }
-  if (s === 1 && !ui.onbGateDone && !A.currentUser() && A.configured() && socialOK()) return viewGate(); // no sign-up screen until accounts are switched on
+  if (s === 1 && !ui.onbGateDone && !A.currentUser() && A.configured()) return viewGate(); // no sign-up screen until accounts are switched on
   const bd = o.birthday ? (() => { const [y, m, d] = o.birthday.split('-').map(Number); const sign = Z.sunSign(m, d), moon = Z.moonPhase(new Date(y, m - 1, d, 12)), cz = Z.chineseZodiac(y, m, d); return { sign, moon, cz }; })() : null;
   const body = {
     1: ui.onbWhere ? `<div class="onb-avatar where"><span class="where-emo" aria-hidden="true">🌍</span></div><h2 class="onb-title">Where do <span>you live?</span></h2>
@@ -6701,17 +6701,28 @@ function viewAccount() {
     <section class="card glass ac-form ac-phone">${socialAuth()}</section>
     <p class="fine">No account needed to use the app. Without one, everything stays only on this phone.</p></div>`;
 }
-// Sign in with Apple or Google only (free, no passwords). The ticks sit right above the buttons.
+// Sign in with Apple, Google or a 6-digit code by email (all free, no passwords). The ticks sit right above the buttons.
 const socialOK = () => A.oauthOK('apple') || A.oauthOK('google');
 function socialAuth() {
-  if (!socialOK()) return `<div class="ph-auth"><p class="ph-sent">Sign in with Apple or Google in the Underskin app on your phone.</p></div>`;
-  return `<div class="ph-auth">
-    <div class="gate-checks">
-      <label class="ac-consent"><input type="checkbox" id="ac-consent"><span>Keep my logs in my private account. I can delete them anytime. <a href="#/privacy">Privacy</a></span></label>
-      <label class="ac-consent ac-terms"><input type="checkbox" id="ac-terms" ${termsOK() ? 'checked' : ''}><span>Underskin is wellness information, not medical advice. What I try is my own choice and responsibility, and I ask a doctor when unsure. <a href="#/privacy">Terms</a></span></label>
+  return `<div class="ph-auth" data-step="${ui.acStep === 'code' ? 'code' : 'phone'}">
+    <div class="ph-s1">
+      <div class="gate-checks">
+        <label class="ac-consent"><input type="checkbox" id="ac-consent"><span>Keep my logs in my private account. I can delete them anytime. <a href="#/privacy">Privacy</a></span></label>
+        <label class="ac-consent ac-terms"><input type="checkbox" id="ac-terms" ${termsOK() ? 'checked' : ''}><span>Underskin is wellness information, not medical advice. What I try is my own choice and responsibility, and I ask a doctor when unsure. <a href="#/privacy">Terms</a></span></label>
+      </div>
+      ${A.oauthOK('apple') ? `<button class="ac-btn ac-apple" data-action="acProvider" data-p="apple">${APPLE_SVG}<span>Continue with Apple</span></button>` : ''}
+      ${A.oauthOK('google') ? `<button class="ac-btn ac-google" data-action="acProvider" data-p="google">${GOOGLE_SVG}<span>Continue with Google</span></button>` : ''}
+      ${socialOK() ? '<div class="ph-or"><span>or by email</span></div>' : ''}
+      <div class="ph-row"><input class="field" id="ac-mail" type="email" inputmode="email" autocomplete="email" placeholder="Your email" value="${esc(ui.acMail || '')}" aria-label="Email"></div>
+      <button type="button" class="ac-btn ac-code-go" data-action="acMailCode">${icon('mail', 18)}<span>Email me a code</span></button>
     </div>
-    ${A.oauthOK('apple') ? `<button class="ac-btn ac-apple" data-action="acProvider" data-p="apple">${APPLE_SVG}<span>Continue with Apple</span></button>` : ''}
-    ${A.oauthOK('google') ? `<button class="ac-btn ac-google" data-action="acProvider" data-p="google">${GOOGLE_SVG}<span>Continue with Google</span></button>` : ''}
+    <div class="ph-s2">
+      <p class="ph-sent">We emailed a 6-digit code to <b class="ph-num">${esc(ui.acMailSent || '')}</b></p>
+      <input class="field ph-code" id="ac-code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*" maxlength="6" placeholder="······" aria-label="6-digit code">
+      <button type="button" class="ac-btn ac-go" data-action="acCode"><span>Verify and continue</span></button>
+      <div class="ph-links"><button type="button" class="link" data-action="acMailBack">Change email</button><button type="button" class="link" data-action="acMailCode" data-again="1">Send a new code</button></div>
+      <p class="ph-tip">No email? Check spam, or wait a minute and send a new code.</p>
+    </div>
     <p class="ac-msg" id="ac-msg" role="status">${A.configured() ? '' : 'Accounts open very soon. Until then everything stays safely on this phone.'}</p>
   </div>`;
 }
@@ -6842,6 +6853,29 @@ const actions = {
     acMsg(''); el.classList.add('busy');
     try { await A.withProvider(d.p); el.classList.remove('busy'); } catch (e) { el.classList.remove('busy'); acMsg(e.message, true); }
   },
+  acMailCode: async (d, el) => {
+    const raw = (document.getElementById('ac-mail')?.value || ui.acMail || '').trim(), email = d.again ? ui.acMailSent : raw;
+    ui.acMail = raw;
+    if (!/^\S+@\S+\.\S+$/.test(email || '')) return acMsg('Enter your email address.', true);
+    if (!d.again && !acReady()) return;
+    const box = el.closest('.ph-auth');
+    el.classList.add('busy'); acMsg('');
+    try {
+      await A.sendEmailCode(email); ui.acMailSent = email; ui.acStep = 'code';
+      box.dataset.step = 'code'; box.querySelector('.ph-num').textContent = email;
+      const ci = box.querySelector('#ac-code'); ci.value = ''; setTimeout(() => ci.focus({ preventScroll: true }), 120);
+      acMsg(d.again ? 'New code sent.' : '');
+    } catch (e) { acMsg(e.message, true); }
+    el.classList.remove('busy');
+  },
+  acCode: async (d, el) => {
+    const code = (document.getElementById('ac-code')?.value || '').replace(/\D/g, '');
+    if (code.length < 6) return acMsg('Enter the 6-digit code from the email.', true);
+    el.classList.add('busy'); acMsg('');
+    try { await A.verifyEmailCode(ui.acMailSent, code); ui.acStep = null; } catch (e) { acMsg(e.message, true); }
+    el.classList.remove('busy');
+  },
+  acMailBack: (d, el) => { ui.acStep = null; const box = el.closest('.ph-auth'); box.dataset.step = 'phone'; acMsg(''); box.querySelector('#ac-mail')?.focus({ preventScroll: true }); },
   acNewPw: async () => {
     const pw = document.getElementById('ac-pw')?.value || '';
     if (pw.length < 8) return acMsg('At least 8 characters.', true);
@@ -7212,6 +7246,7 @@ document.addEventListener('click', e => {
   const fn = actions[el.dataset.action];
   if (fn) { e.preventDefault(); fn(el.dataset, el); }
 });
+document.addEventListener('keydown', e => { if (e.key !== 'Enter' || (e.target.id !== 'ac-mail' && e.target.id !== 'ac-code')) return; e.preventDefault(); e.target.closest('.ph-auth')?.querySelector(e.target.id === 'ac-code' ? '[data-action="acCode"]' : '.ph-s1 [data-action="acMailCode"]')?.click(); });
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && e.target.matches?.('[data-cpq]')) { e.preventDefault(); const r = [...e.target.closest('.cpick').querySelectorAll('.cp-row:not(.cp-cur)')].find(x => !x.hidden); if (r) r.click(); else e.target.blur(); return; }
   const f = e.target.dataset?.input; if (e.key !== 'Enter' || !/placeQ$/.test(f || '')) return;

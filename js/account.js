@@ -1,4 +1,4 @@
-// Accounts and cloud sync: Sign in with Apple or Google (Supabase).
+// Accounts and cloud sync: Sign in with Apple, Google or a 6-digit code by email (Supabase). No passwords.
 // Local-first: the app works fully without an account; signing in only adds a private copy in the cloud.
 import { SUPABASE_URL, SUPABASE_ANON_KEY, GOOGLE_WEB_CLIENT_ID, GOOGLE_IOS_CLIENT_ID, WEB_OAUTH } from './config.js';
 
@@ -57,6 +57,8 @@ function nice(m = '') {
   if (/password.*(6|characters)/i.test(m)) return 'Choose a password with at least 8 characters.';
   if (/email not confirmed/i.test(m)) return 'Please confirm your email first. Check your inbox.';
   if (/rate limit/i.test(m)) return 'Too many tries. Wait a minute and try again.';
+  if (/token.*(expired|invalid)|otp.*(expired|invalid)/i.test(m)) return 'That code is not right or has expired. Send a new one.';
+  if (/signups not allowed|email.*(disabled|not enabled)/i.test(m)) return 'Email sign-in opens very soon. Use Apple or Google for now.';
   return m || 'Something went wrong. Try again.';
 }
 
@@ -87,6 +89,18 @@ export async function withProvider(provider) {
   const c = await client();
   const { error } = await c.auth.signInWithOAuth({ provider, options: { redirectTo: redirect() } });
   fail(error); // the page now leaves for Apple/Google and comes back signed in
+}
+// Email code: one flow for new and returning women. A 6-digit code arrives by email; entering it signs in
+// (and creates the account the first time). The email can also carry a link that does the same.
+export async function sendEmailCode(email) {
+  const c = await client();
+  const { error } = await c.auth.signInWithOtp({ email, options: { shouldCreateUser: true, emailRedirectTo: redirect() } });
+  fail(error);
+}
+export async function verifyEmailCode(email, token) {
+  const c = await client();
+  const { error } = await c.auth.verifyOtp({ email, token, type: 'email' });
+  fail(error);
 }
 export async function signUp(email, password) {
   const c = await client();

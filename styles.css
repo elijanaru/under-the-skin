@@ -9255,3 +9255,7 @@ html, body { overscroll-behavior-y: none; }
 .onb.gate .ph-auth .ph-links .link, .ph-auth .ph-links .link { color: #304023 !important; text-shadow: none !important; text-decoration: underline; text-underline-offset: 3px; }
 .onb.gate .ph-auth .ac-msg, .ph-auth .ac-msg { color: #3c3a33 !important; text-shadow: none !important; }
 .onb.gate .ph-auth .ac-msg.bad, .ph-auth .ac-msg.bad { color: #a8364f !important; }
+.ph-auth .ac-code-go { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; height: 50px; border-radius: 999px; background: #eef1e6 !important; color: #20301a !important; border: 1px solid rgba(48,64,35,.2) !important; font: 500 16px Outfit, sans-serif; margin: 0; box-shadow: none; }
+.ph-auth .ac-code-go.busy { opacity: .6; pointer-events: none; }
+.ph-auth .ph-tip { margin: 0; text-align: center; font-size: 12px; color: #6b6a62; }
+.onb.gate .ph-auth .ph-tip { color: #6b6a62 !important; text-shadow: none !important; }
