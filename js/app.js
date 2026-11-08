@@ -1194,7 +1194,8 @@ function viewOnboarding() {
 
   const flash = ui.flashOut ? '<div class="flash-out"></div>' : ''; ui.flashOut = false;
   const anim = ui.onbAnim || ''; ui.onbAnim = '';
-  return `<div class="onb no-fig step-${s} ${anim}">${flash}
+  const still = (ui.onbStill || (!anim && ui.onbLast === s)) ? 'still' : ''; ui.onbStill = false; ui.onbLast = s;
+  return `<div class="onb no-fig step-${s} ${anim} ${still}">${flash}
     <div class="onb-top"><button class="icon-btn dark" data-action="onbBack">${icon('chevL', 22)}</button>${dots}${sndBtn()}</div>
     <div class="onb-body">${body}</div>
     <div class="onb-foot">
@@ -6625,10 +6626,13 @@ function viewGate() {
   return `<div class="onb no-fig gate ${anim} ${f ? 'form-on' : ''} ${si ? 'mode-signin' : ''}">${flash}
     <div class="onb-top"><button class="icon-btn dark" data-action="onbBack" aria-label="Back">${icon('chevL', 22)}</button><button class="link gate-signin" data-action="gateSignIn">Already have an account? <u>Sign in</u></button>${sndBtn()}</div>
     <div class="gate-photo" aria-hidden="true"><img src="images/gate-rose.webp" alt="" decoding="async"></div>
-    <h2 class="onb-title">Keep your cycle <span>safe with you</span></h2>
-    <p class="gate-lead">A free account saves every period, symptom and note, and brings them back on any new phone.</p>
-    <label class="ac-consent"><input type="checkbox" id="ac-consent"><span>I agree that my cycle and health logs are kept in my private account. I can delete them anytime. <a href="#/privacy">Privacy</a></span></label>
-    <label class="ac-consent ac-terms"><input type="checkbox" id="ac-terms" ${termsOK() ? 'checked' : ''}><span>I understand Underskin is general wellness information, not medical advice. Everything I try from it (food, tea, herbs, supplements, remedies, training, breathing, grounding and every other idea) is my own choice, at my own risk and my own responsibility. I check allergies, medicines and my health myself, and I ask a doctor when unsure. <a href="#/privacy">Terms</a></span></label>
+    <div class="gate-head"><h2 class="onb-title">Keep your cycle <span>safe with you</span></h2>
+    <p class="gate-lead">A free account saves every period, symptom and note, and brings them back on any new phone.</p></div>
+    <div class="gate-card">
+    <div class="gate-checks">
+    <label class="ac-consent"><input type="checkbox" id="ac-consent"><span>Keep my logs in my private account. I can delete them anytime. <a href="#/privacy">Privacy</a></span></label>
+    <label class="ac-consent ac-terms"><input type="checkbox" id="ac-terms" ${termsOK() ? 'checked' : ''}><span>Underskin is wellness information, not medical advice. What I try is my own choice and responsibility, and I ask a doctor when unsure. <a href="#/privacy">Terms</a></span></label>
+    </div>
     <button class="ac-btn ac-mail" data-action="gateEmail">${icon('user', 18)}<span>Continue with email</span></button>
     <form class="gate-form" onsubmit="return false" aria-hidden="${!f}">
       <div class="gf-seg" role="tablist"><button type="button" class="gf-c" data-action="gateMode" data-v="create" role="tab">Create account</button><button type="button" class="gf-s" data-action="gateMode" data-v="signin" role="tab">Sign in</button></div>
@@ -6637,12 +6641,13 @@ function viewGate() {
       <button type="button" class="ac-btn ac-go" data-action="acEmail"><span class="gf-c">Create my account</span><span class="gf-s">Sign in</span></button>
       <button type="button" class="link ac-forgot gf-s" data-action="acForgot">Forgot password?</button>
     </form>
+    </div>
     ${A.oauthOK('apple') ? `<button class="ac-btn ac-apple" data-action="acProvider" data-p="apple">${APPLE_SVG}<span>Continue with Apple</span></button>` : ''}
     ${A.oauthOK('google') ? `<button class="ac-btn ac-google" data-action="acProvider" data-p="google">${GOOGLE_SVG}<span>Continue with Google</span></button>` : ''}
     <p class="ac-msg" id="ac-msg" role="status"></p>
     <div class="gate-later">
       <button class="gate-skip" data-action="gateSkip">Use without an account</button>
-      <p class="gate-warn"><b>Your data won’t be saved anywhere else.</b> It lives only on this phone: if you delete the app, ${NATIVE ? 'clear its data' : 'clear your browser'} or change phones, it’s gone for good. You can create an account later in Profile.</p>
+      <p class="gate-warn">Without an account your data lives only on this phone and is lost if you ${NATIVE ? 'delete the app' : 'clear your browser'} or switch phones. You can add one later in Profile.</p>
     </div>
   </div>`;
 }
@@ -6894,7 +6899,10 @@ const actions = {
   onbBack: () => { if (ui.onbStep === 1 && ui.onbGateDone && !A.currentUser() && A.configured()) { ui.onbGateDone = false; ui.onbAnim = 'back'; render(); return; } ui.onbStep = Math.max(0, ui.onbStep - (ui.onbStep === 6 && ui.onb.noPeriod ? 2 : 1)); ui.onbAnim = 'back'; render(); },
   onbDiet: d => { ui.onb.diet = d.v; document.querySelectorAll('.dt-c').forEach(b => { b.classList.toggle('on', b.dataset.v === d.v); b.setAttribute('aria-pressed', b.dataset.v === d.v); }); const pk = document.querySelector('.dt-peek'); if (pk) pk.innerHTML = dvPeek(d.v); },
   setDiet: d => { state.profile.diet = d.v; save(); toast(`${DIETS.find(x => x.k === d.v).t}: your recipes and food guide changed`); render(); },
-  onbAgo: d => { const o = ui.onb; if (d.v === 'none') { o.noPeriod = !o.noPeriod; o.ago = null; } else { o.noPeriod = false; o.ago = +d.v; o.last = C.iso(C.addDays(new Date(), -d.v)); } render(); },
+  onbAgo: d => { const o = ui.onb, was = !!o.noPeriod; if (d.v === 'none') { o.noPeriod = !o.noPeriod; o.ago = null; } else { o.noPeriod = false; o.ago = +d.v; o.last = C.iso(C.addDays(new Date(), -d.v)); }
+    // same layout: just move the tick and the date, so the picture above doesn't replay its entrance
+    if (was === !!o.noPeriod && d.v !== 'none') { document.querySelectorAll('[data-action="onbAgo"]').forEach(b => b.classList.toggle('on', b.dataset.v === String(d.v))); const di = document.querySelector('[data-input="onb.last"]'); if (di) di.value = o.last; return; }
+    ui.onbStill = true; render(); },
   // birth control taps update in place, so the screen and its background never redraw
   onbBc: d => { const o = ui.onb, had = hormonalBC(o.bc); o.bc = d.v; if (!hormonalBC(d.v)) o.bcPlan = null;
     const list = document.querySelector('.bc-list'), slot = document.querySelector('.bc-slot'); if (!list || !slot) return render();
