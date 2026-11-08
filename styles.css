@@ -8403,3 +8403,59 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .crm-h > b { font-size: 17px; color: #20301a; min-width: 42px; text-align: center; }
 .crm-h em { font-style: normal; font-size: 11px; font-weight: 500; padding: 4px 9px; border-radius: 99px; background: hsl(calc(var(--hb) + 0 * var(--hk)) calc(55% * var(--hs)) 93%); color: hsl(calc(var(--hb) + 0 * var(--hk)) calc(45% * var(--hs)) 38%); }
 .crm .toggle { align-self: start; }
+
+/* Plan › Rituals: one focus card; her element sign in a phase-tinted circle, the focus as a big title, three icon steps, and the why behind a tap */
+.rfx { margin: 0 0 14px; padding: 20px 18px 8px; border-radius: 30px; background: rgba(255,255,255,.9); border: 1px solid rgba(48,64,35,.08); box-shadow: 0 16px 34px -18px rgba(32,48,26,.32); }
+.rfx-top { display: flex; align-items: center; gap: 16px; }
+.rfx-g { flex: none; width: 74px; height: 74px; border-radius: 50%; display: grid; place-content: center; text-align: center;
+  background: radial-gradient(circle at 35% 30%, #fff, hsl(calc(var(--hb) + 0 * var(--hk)) calc(50% * var(--hs)) 90%)); box-shadow: inset 0 0 0 1.5px hsl(calc(var(--hb) + 0 * var(--hk)) calc(45% * var(--hs)) 70% / .55), 0 10px 20px -10px hsl(calc(var(--hb) + 0 * var(--hk)) calc(45% * var(--hs)) 40% / .5); }
+.rfx-g b { font-family: var(--han); font-size: 34px; line-height: 1; font-weight: 400; color: hsl(calc(var(--hb) + 0 * var(--hk)) calc(40% * var(--hs)) 34%); }
+.rfx-g small { margin-top: 3px; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: hsl(calc(var(--hb) + 0 * var(--hk)) calc(30% * var(--hs)) 40%); }
+.rfx-top small { font-size: 12.5px; color: #5a684e; }
+.rfx-top h3 { margin: 2px 0 0; font-size: 25px; line-height: 1.12; font-weight: 500; color: #20301a; letter-spacing: -.01em; }
+.rfx-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 18px 0 6px; }
+.rfx-steps span { display: grid; justify-items: center; gap: 8px; padding: 14px 6px 12px; border-radius: 20px; text-align: center; background: #f6f3f1; border: 1px solid rgba(48,64,35,.06); }
+.rfx-steps i { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: #304023; box-shadow: 0 6px 12px -6px rgba(32,48,26,.6); }
+.rfx-steps b { font-size: 12.5px; line-height: 1.25; font-weight: 500; color: #20301a; }
+.rfx-why { border-top: 1px solid rgba(48,64,35,.1); margin-top: 10px; }
+.rfx-why summary { list-style: none; display: flex; align-items: center; justify-content: space-between; padding: 12px 2px; font-size: 13.5px; font-weight: 500; color: #304023; cursor: pointer; }
+.rfx-why summary::-webkit-details-marker { display: none; }
+.rfx-why[open] summary .ic { transform: rotate(180deg); }
+.rfx-why p { margin: 0 2px 12px; font-size: 14px; line-height: 1.5; color: #4b5a40; }
+
+/* Contrast pass (8 Nov 2026, the user's call): every box that sat see-through on the page gets a solid pearl-white body, a crisp hairline and a soft lift, so it stands out from the misty background */
+.hub .dpt.t-cup, .hub .dpt.calm, .readout, .tf, .ci2, .cal-editbtn, .eat-goal-top, .sugar-big, .sb-chart, .card.wgo, .sd-all, .hxt, .st2-lvl {
+  background-color: rgba(255,255,255,.9) !important; border-color: rgba(48,64,35,.13) !important; box-shadow: 0 12px 28px -18px rgba(32,48,26,.38) !important; }
+.card.wgo { border: 1px solid rgba(48,64,35,.13) !important; }
+.card.wgo .eyebrow { color: #4b6a2a; font-weight: 500; }
+.card.wgo p { color: #20301a; }
+.seg { background: rgba(32,48,26,.07) !important; border-color: rgba(48,64,35,.16) !important; }
+.seg button { color: #4b5a40; }
+.seg button.on { background: #fff; color: #20301a; font-weight: 500; box-shadow: 0 4px 12px -4px rgba(32,48,26,.3); }
+
+/* Plan › Mind: the superpower card with her phase flower as a round photo and a little cat friend sitting in front of it; the why behind a tap */
+.spx { margin: 0 0 14px; padding: 18px 18px 6px; border-radius: 30px; background: rgba(255,255,255,.92); border: 1px solid rgba(48,64,35,.08); box-shadow: 0 16px 34px -18px rgba(32,48,26,.32); display: grid; grid-template-columns: 1fr 112px; column-gap: 12px; }
+.spx-art { grid-column: 2; grid-row: 1; position: relative; width: 112px; height: 112px; }
+.spx-art img { width: 100px; height: 100px; margin: 0 0 0 12px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 4px #fff, 0 12px 22px -10px rgba(32,48,26,.5); }
+.spx-art .pet-cat { position: absolute; left: -14px; bottom: -10px; width: 64px; filter: drop-shadow(0 6px 8px rgba(32,48,26,.18)); }
+.spx-t { grid-column: 1; grid-row: 1; align-self: center; }
+.spx-t small { font-size: 12.5px; color: #5a684e; }
+.spx-t h3 { margin: 2px 0 6px; font-size: 26px; line-height: 1.1; font-weight: 500; color: #20301a; }
+.spx-t p { margin: 0; font-size: 13.5px; line-height: 1.45; color: #4b5a40; }
+.spx .rfx-why { grid-column: 1 / -1; margin-top: 14px; }
+.pet-cat .pet-b { transform-origin: 60px 86px; animation: petBreathe 4.5s ease-in-out infinite; }
+.pet-cat .pet-z { animation: petZ 3.5s ease-in-out infinite; }
+@keyframes petBreathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.035, .975); } }
+@keyframes petZ { 0%, 100% { opacity: .3; transform: translateY(2px); } 50% { opacity: 1; transform: translateY(-2px); } }
+@media (prefers-reduced-motion: reduce) { .pet-cat .pet-b, .pet-cat .pet-z { animation: none; } }
+/* Mind tiles: white cards, the icon in a dark ink circle, a tinted label */
+.mg2 { gap: 10px; }
+.mg2 .mg { grid-template-columns: 44px 1fr; column-gap: 14px; padding: 16px; border-radius: 24px; background: rgba(255,255,255,.92); border: 1px solid rgba(48,64,35,.1); box-shadow: 0 12px 26px -18px rgba(32,48,26,.35); }
+.mg2 .mg-ic { grid-row: span 3; align-self: start; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: #304023; box-shadow: 0 6px 12px -6px rgba(32,48,26,.6); }
+.mg2 .mg small { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: hsl(calc(var(--hb) + 0 * var(--hk)) calc(40% * var(--hs)) 42%); font-weight: 500; }
+.mg2 .mg b { font-size: 16.5px; color: #20301a; margin: 1px 0 3px; }
+.mg2 .mg p { margin: 0; font-size: 13.5px; line-height: 1.4; color: #4b5a40; }
+/* Plate rules row: emoji instead of line icons, a bit larger so they read at a glance */
+.plr .plr-ic { font-size: 23px; line-height: 1; font-style: normal; }
+/* Rhythm is a dark page: its glass boxes stay dark, just a touch firmer so they separate from the page */
+.view:has(> .rh3) :is(.glass, .card.glass) { background: linear-gradient(160deg, rgba(255,240,225,.17), rgba(255,240,225,.09)) !important; }

@@ -1859,6 +1859,27 @@ const PLAIN = {
     mind: 'Energy turns calmer and steadier. Finish projects, organise, tidy — and give yourself softer evenings.',
   },
 };
+// Rituals tab: three small things for her focus, shown as icon tiles
+const RIT_STEPS = {
+  menstrual: [['thermo', 'Feet and lower back warm'], ['cup', 'Sip something hot'], ['drop', 'Ginger foot soak at night']],
+  follicular: [['moon', 'In bed before 11pm'], ['bowl', 'Protein at every meal'], ['sun', 'Morning daylight']],
+  ovulatory: [['leaf', 'Move and get outside'], ['heart', 'Laugh with people'], ['drop', 'Fresh fruit and water']],
+  luteal: [['leaf', 'Walk every day'], ['hand', 'Stretch in the evening'], ['mind', 'Breathe deeply']],
+};
+// A little cat friend for calm widgets: asleep on period days, bright-eyed otherwise, happy at ovulation
+function petCat(mood = 'awake') {
+  const eyes = mood === 'sleep' ? '<path d="M44 60 q6 5 12 0 M64 60 q6 5 12 0" fill="none" stroke="#304023" stroke-width="2.4" stroke-linecap="round"/>'
+    : mood === 'joy' ? '<path d="M44 62 q6 -7 12 0 M64 62 q6 -7 12 0" fill="none" stroke="#304023" stroke-width="2.4" stroke-linecap="round"/>'
+    : '<circle cx="50" cy="59" r="4.2" fill="#304023"/><circle cx="70" cy="59" r="4.2" fill="#304023"/><circle cx="51.5" cy="57.4" r="1.4" fill="#fff"/><circle cx="71.5" cy="57.4" r="1.4" fill="#fff"/>';
+  return `<svg class="pet-cat ${mood}" viewBox="0 0 120 100" aria-hidden="true"><g class="pet-b">
+    <path d="M22 86 C14 60 26 34 60 34 C94 34 106 60 98 86 Z" fill="#fff" stroke="#304023" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M34 42 L30 22 L48 34 M86 42 L90 22 L72 34" fill="#fff" stroke="#304023" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M35 33 L33 27 L40 31 M85 33 L87 27 L80 31" fill="#f4a9bf"/>${eyes}
+    <path d="M57 68 q3 3 6 0" fill="none" stroke="#304023" stroke-width="2" stroke-linecap="round"/>
+    <ellipse cx="38" cy="69" rx="6" ry="3.6" fill="#f4a9bf"/><ellipse cx="82" cy="69" rx="6" ry="3.6" fill="#f4a9bf"/>
+    <path d="M98 80 q16 -2 12 -18" fill="none" stroke="#304023" stroke-width="2.4" stroke-linecap="round"/></g>
+    ${mood === 'sleep' ? '<path class="pet-z" d="M100 14 h8 l-8 8 h8" fill="none" stroke="#8c9768" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' : mood === 'joy' ? '<path class="pet-z" d="M104 12 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill="#e6b1c4"/>' : ''}</svg>`;
+}
 function whatsGoingOn(text) { return `<section class="card wgo"><div class="eyebrow">What’s going on</div><p>${text}</p></section>`; }
 function viewPlan() {
   const info = M.info, phase = info ? info.phase : 'follicular', ph = PHASES[phase], tcm = TCM[phase], P = PLAIN[phase];
@@ -1868,8 +1889,10 @@ function viewPlan() {
     body = nourishBody(phase);
   } else if (ui.planTab === 'rituals') {
     const rits = RITUALS.slice().sort((a, b) => b.phases.includes(phase) - a.phases.includes(phase));
-    body = `${whatsGoingOn(P.tcm)}
-      <section class="card focus-card"><span class="fc-glyph">${tcm.elementGlyph}</span><div><div class="eyebrow">Your focus now</div><h3>${P.focus}</h3><p class="body sm">${P.do}</p></div></section>
+    body = `<section class="rfx"><div class="rfx-top"><span class="rfx-g"><b>${tcm.elementGlyph}</b><small>${tcm.element}</small></span>
+        <div><small>Your focus now</small><h3>${P.focus}</h3></div></div>
+      <div class="rfx-steps">${RIT_STEPS[phase].map(([ic, t], i) => `<span style="--i:${i}"><i>${icon(ic, 18)}</i><b>${t}</b></span>`).join('')}</div>
+      <details class="rfx-why"><summary>Why, in Chinese medicine ${icon('chevD', 13)}</summary><p>${P.tcm}</p><p>${P.do}</p></details></section>
       <div class="two-tiles">
         <button class="card glass tile" data-action="nav" data-to="point/${phase}"><div class="pt-dot sm"><span></span></div><small>Press this point</small><b>${tcm.point.name}</b><span class="muted sm">${tcm.point.secs} seconds</span></button>
         <div class="card glass tile"><span class="tile-ic">${icon('leaf', 22)}</span><small>Tea for today</small><b>${tcm.tea.name}</b></div>
@@ -1889,10 +1912,11 @@ function viewPlan() {
       const v = MG[k], R = 27, Cc = 2 * Math.PI * R, pct = [12, 38, 70, 100][v];
       return `<div class="mv2-b r${k === 'rest' ? Math.min(3, v) : v}" style="--i:${i}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * pct / 100).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-g">${g}</span><b>${n}</b><small>${k === 'rest' ? ['Low', 'Some', 'Usual', 'More'][v] : words[v]}</small></div>`;
     }).join('') : '';
-    body = `${whatsGoingOn(P.mind)}
+    body = `<section class="spx"><div class="spx-art"><img src="images/flower-${phase}.webp" alt="" loading="lazy">${petCat(phase === 'menstrual' ? 'sleep' : phase === 'ovulatory' ? 'joy' : 'awake')}</div>
+        <div class="spx-t"><small>Your superpower now</small><h3>${ph.superpower.title}</h3><p>${ph.superpower.text}</p></div>
+        <details class="rfx-why"><summary>What’s going on ${icon('chevD', 13)}</summary><p>${P.mind}</p></details></section>
       ${MG ? `<section class="mind-today"><div class="mvd-k">Your mind today · typical</div><div class="mind-rings">${rings}</div><p class="mvd-f">Your abilities stay the same all month. Energy and mood shift, and every woman’s pattern is her own.</p></section>` : ''}
-      <section class="card card-light sp-card"><div class="eyebrow dark">Your superpower now</div><h3 class="dark-h">${ph.superpower.title}</h3><p class="dp-text">${ph.superpower.text}</p></section>
-      <div class="mind-grid">${rows.map(([ic, o, k]) => `<div class="card glass mg"><span class="tile-ic">${icon(ic, 22)}</span><small>${k}</small><b>${o.title}</b><p>${o.text}</p></div>`).join('')}</div>
+      <div class="mind-grid mg2">${rows.map(([ic, o, k], i) => `<div class="mg" style="--i:${i}"><span class="mg-ic">${icon(ic, 20)}</span><small>${k}</small><b>${o.title}</b><p>${o.text}</p></div>`).join('')}</div>
       ${sectionTitle('Your month')}
       <div class="month-strip">${PHASE_ORDER.map(p => `<div class="ms ${p === phase ? 'on' : ''}"><i style="background:${PHASE_COLOR.dark[p]}"></i><b>${PHASES[p].name}</b><span>${PHASES[p].superpower.title}</span></div>`).join('')}</div>
       ${sectionTitle('What studies found')}
@@ -2131,9 +2155,9 @@ function plateSection(current) {
       <div class="pld-foods">${foods.map(x => `<div>${x.photo ? `<img src="${x.photo}" alt="" loading="lazy">` : `<span>${x.g || '•'}</span>`}<small>${x.n}</small></div>`).join('')}</div>
     </div>
     ${plRules([
-      ['cook', `<i class="plr-ic">${icon(warm ? 'thermo' : 'leaf', 18)}</i>`, 'Cook', warm ? 'Warm & cooked' : phase === 'luteal' ? 'Lean warmer' : PLATE_COOK_SHORT[season] || 'Fresh & cooked', 'How to cook today', cook],
+      ['cook', `<i class="plr-ic">${warm ? '🍲' : phase === 'luteal' ? '🥘' : '🥗'}</i>`, 'Cook', warm ? 'Warm & cooked' : phase === 'luteal' ? 'Lean warmer' : PLATE_COOK_SHORT[season] || 'Fresh & cooked', 'How to cook today', cook],
       ['taste', `<i class="plr-ic">${{ Spring: '🌱', Summer: '🍒', 'Late summer': '🌽', Autumn: '🧄', Winter: '🫚' }[season] || '🌿'}</i>`, 'Taste', PSn.taste[0], `Taste of ${season.toLowerCase()} <em class="pl-han">${T.han}</em>`, PSn.taste[1]],
-      ['tcm', `<i class="plr-ic han">${tcm.elementGlyph}</i>`, 'Element', `${tcm.element} time`, 'Your cycle in Chinese medicine', PLATE_TCM_PLAIN[phase]],
+      ['tcm', `<i class="plr-ic">${{ Water: '💧', Wood: '🌳', Fire: '🔥', Earth: '⛰️' }[tcm.element] || '🌿'}</i>`, 'Element', `${tcm.element} time`, 'Your cycle in Chinese medicine', PLATE_TCM_PLAIN[phase]],
     ])}
     ${plTea()}
     ${plTonight(phase, warm)}
