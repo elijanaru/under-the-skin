@@ -3601,11 +3601,20 @@ function suppFoodRow(id, [f, tip], i) {
     <div class="ff-bar ${over ? 'over' : ''}" role="img" aria-label="About ${pc}% of your day"><span><i style="width:${Math.min(100, Math.max(3, pc))}%"></i></span><em>${over ? `${+(v / A.need[0]).toFixed(v / A.need[0] < 2 ? 1 : 0)}× your day` : `${pc}%`}</em></div>
     <small>${serv} · ${tip}</small></div>`;
 }
+// Supplement heroes: a real photo of the food that carries the most of it, with the capsule beside it.
+const SUPP_HERO = {
+  magnesium: ['Pumpkin seeds', 'pumpkin seeds'], iron: ['Red meat', 'red meat'], 'omega-3': ['Wild salmon', 'wild salmon'], 'vitamin-c': ['Peppers', 'peppers'],
+  ginger: ['tea:Ginger root', 'fresh ginger'], creatine: ['Matjes herring', 'herring'], 'vitamin-d': ['Sardines', 'oily fish'], 'b-complex': ['Pasture eggs', 'eggs'],
+  probiotic: ['Sauerkraut', 'raw sauerkraut'], zinc: ['Oysters', 'oysters'], 'vitamin-e': ['Sunflower seeds', 'sunflower seeds'], ashwagandha: ['tea:Warm milk with cinnamon', 'warm spiced milk'],
+  b6: ['Salmon', 'salmon'], calcium: ['Grass-fed raw milk & butter', 'raw milk'], prenatal: ['Avocado', 'avocado'], coq10: ['Mackerel', 'mackerel'],
+};
+const suppPhoto = id => { const h = SUPP_HERO[id]; if (!h) return ''; return h[0].startsWith('tea:') ? teaPhoto(h[0].slice(4), 800, 900) : foodPhoto(h[0], 800); };
 function viewSupp(id) {
   const x = SUPP_LIB.find(s => s.id === id); if (!x) return viewMissing();
   const ph = suppPhases(x), now = M.info && M.info.phase;
   return `<div class="pad sp2">
-    ${specHero({ glyph: x.sym, han: x.han, eyebrow: 'Supplement', sym: !x.han, name: x.name, label: 'How to take it',
+    ${specHero({ photo: suppPhoto(x.id), glyph: x.sym, han: x.han, eyebrow: 'Supplement', sym: !x.han, name: x.name, label: 'How to take it',
+      extra: SUPP_HERO[x.id] ? `<span class="sp-capchip"><span class="sd-cap ${x.han ? 'han' : ''}">${x.sym}</span><small>Richest in<b>${SUPP_HERO[x.id][1]}</b></small></span>` : '',
       rows: [['Dose', x.dose], ['Form', x.form], ['When', x.when]], desc: x.desc })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit(ph, now)}${ph.length === 4 ? '<small class="tf-all">Useful every day of your cycle</small>' : now && !ph.includes(now) ? `<small class="tf-all">Not a focus in your ${PHASES[now].name.toLowerCase()} phase</small>` : ''}</section>
     ${suppSafe(x.id)}
