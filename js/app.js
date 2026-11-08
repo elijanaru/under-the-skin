@@ -4804,15 +4804,15 @@ function breathMonth(phase, k) {
 function breathWeek() {
   const L = state.breathLog || {}, t = todayISO();
   const days = Array.from({ length: 7 }, (_, i) => C.addDays(new Date(), i - 6)), n = days.filter(d => L[C.iso(d)]).length;
-  return `<div class="bzw" aria-label="You breathed on ${n} of the last 7 days"><div class="bzw-h"><small>Breathed this week</small><b><span class="dotnum">${n}</span> of 7 days</b></div>
-    <div class="bzw-d">${days.map(d => { const k = C.iso(d), v = L[k] || 0; return `<span class="${k === t ? 'now' : ''} ${v ? 'on' : ''}"><i>${v > 1 ? `<em class="dotnum">${Math.min(v, 9)}</em>` : ''}</i><small>${fmt(d, { weekday: 'narrow' })}</small></span>`; }).join('')}</div></div>`;
+  return `<div class="bwk" aria-label="You breathed on ${n} of the last 7 days"><div class="bwk-h"><small>Breathed this week</small><b><span class="dotnum">${n}</span> of 7 days</b></div>
+    <div class="bwk-d">${days.map(d => { const k = C.iso(d), v = L[k] || 0; return `<span class="${k === t ? 'now' : ''} ${v ? 'on' : ''}"><i>${v > 1 ? `<em class="dotnum">${Math.min(v, 9)}</em>` : ''}</i><small>${fmt(d, { weekday: 'narrow' })}</small></span>`; }).join('')}</div></div>`;
 }
 function breathDone() {
   const L = state.breathLog = state.breathLog || {}, t = todayISO(); L[t] = (L[t] || 0) + 1;
   // keep only the last 60 days
   const cut = C.iso(C.addDays(new Date(), -60)); Object.keys(L).forEach(k => { if (k < cut) delete L[k]; });
   save();
-  const w = document.querySelector('.bzw'); if (w) w.outerHTML = breathWeek();
+  const w = document.querySelector('.bwk'); if (w) w.outerHTML = breathWeek();
 }
 function viewBreathe(from) {
   const phase = M.info && M.info.phase, rec = BREATH_FOR[phase] || 'sigh', k = BREATHS[ui.bzK] ? ui.bzK : rec, B = BREATHS[k];
