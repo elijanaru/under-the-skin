@@ -8819,3 +8819,18 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .onb .diet-opt .bc-tx { display: grid !important; gap: 2px; text-align: left !important; justify-items: start; flex: 1; }
 .onb .diet-opt .bc-tx b { font-size: 17px; font-weight: 500; } .onb .diet-opt .bc-tx small { font-size: 13px; }
 .onb .diet-opt .diet-g { width: 48px; height: 48px; font-size: 26px; border-radius: 16px; }
+/* How do you eat: four full photo cards, the chosen one lifts with a white ring and a check */
+.onb .dt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px; }
+.onb .dt-c { position: relative; aspect-ratio: 3 / 4; border-radius: 28px; overflow: hidden; padding: 0; border: 0; background: #2a3322; color: #fff; text-align: left; cursor: pointer; box-shadow: 0 14px 30px -18px rgba(20,28,14,.6); transition: transform .5s cubic-bezier(.2,.8,.2,1), box-shadow .5s; animation: dtRise .7s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i) * 80ms); }
+.onb .dt-c img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.04); transition: transform 1.2s cubic-bezier(.2,.8,.2,1), filter .5s; filter: saturate(.92); }
+.onb .dt-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,28,14,0) 38%, rgba(20,28,14,.78) 100%); }
+.onb .dt-tx { position: absolute; left: 14px; right: 12px; bottom: 14px; display: grid; gap: 3px; }
+.onb .dt-tx b { font: 500 18px/1.1 Outfit, sans-serif; letter-spacing: -.01em; }
+.onb .dt-tx small { font: 300 12px/1.35 Outfit, sans-serif; color: rgba(255,255,255,.86); }
+.onb .dt-ok { position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.28); border: 1px solid rgba(255,255,255,.6); color: transparent; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: .35s; }
+.onb .dt-c.on { transform: translateY(-3px); box-shadow: 0 0 0 2.5px #fff, 0 22px 40px -18px rgba(20,28,14,.7); }
+.onb .dt-c.on img { transform: scale(1.1); filter: saturate(1.05); }
+.onb .dt-c.on .dt-ok { background: #fff; color: #20301a; border-color: #fff; }
+.onb .dt-grid:has(.dt-c.on) .dt-c:not(.on) img { filter: saturate(.7) brightness(.82); }
+@keyframes dtRise { from { opacity: 0; transform: translateY(14px); } }
+@media (prefers-reduced-motion: reduce) { .onb .dt-c, .onb .dt-c img { animation: none; transition: none; } }

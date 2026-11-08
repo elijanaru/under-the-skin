@@ -1167,7 +1167,7 @@ function viewOnboarding() {
         ${o.photo ? '' : '<button class="link" data-action="onbNext" style="align-self:center">Skip for now</button>'}`,
     3: `<h2 class="onb-title">How do <span>you eat?</span></h2>
         <p class="muted">Your recipes, food guide and supplements follow this. You can change it any time in your profile.</p>
-        <div class="bc-list diet-list">${DIETS.map(x => `<button class="bc-opt diet-opt ${(o.diet || 'all') === x.k ? 'on' : ''}" data-action="onbDiet" data-v="${x.k}"><span class="diet-g">${x.g}</span><span class="bc-tx"><b>${x.t}</b><small>${x.s}</small></span></button>`).join('')}</div>`,
+        <div class="dt-grid">${DIETS.map((x, i) => `<button class="dt-c ${(o.diet || 'all') === x.k ? 'on' : ''}" data-action="onbDiet" data-v="${x.k}" style="--i:${i}" aria-pressed="${(o.diet || 'all') === x.k}"><img src="${DIET_PIC[x.k]()}" alt="" loading="eager"><span class="dt-shade"></span><span class="dt-ok">${icon('check', 14, 2.6)}</span><span class="dt-tx"><b>${x.t}</b><small>${x.s}</small></span></button>`).join('')}</div>`,
     4: `<div class="onb-cut"><img src="images/period.png" alt=""></div><h2 class="onb-title">When did your last <span>period start?</span></h2>
         <div class="ago">${[[7, 'About 1 week ago'], [14, '2 weeks ago'], [21, '3 weeks ago'], [30, 'About 1 month ago'], ['none', 'I don’t have a period right now']].map(([v, t]) =>
           `<button class="chip ${(v === 'none' ? o.noPeriod : !o.noPeriod && o.ago === v) ? 'on' : ''} ${v === 'none' ? 'ago-none' : ''}" data-action="onbAgo" data-v="${v}">${t}</button>`).join('')}</div>
@@ -5857,6 +5857,8 @@ function viewInsights() {
 }
 
 // What a woman needs in a day (EU reference values for women 18 to 50), for the micronutrient bars on a recipe
+// one calm food photo per way of eating, for the onboarding picker
+const DIET_PIC = { all: () => photoUrl('citrus-salmon-salad', 520), animal: () => 'images/period-food.webp', veg: () => photoUrl('egg-kraut-plate', 520), vegan: () => photoUrl('living-green-salad', 520) };
 // ---------- The diet guide: what her way of eating needs to watch for her hormones ----------
 const dietFocus = (G, phase) => { const f = G.items.filter(x => x.ph.includes(phase)); return (f.length ? f : G.items).slice(0, 2); };
 function dietGuideCard(phase, compact) {
@@ -6693,7 +6695,7 @@ const actions = {
     acMsg(''); setTimeout(() => { em?.focus({ preventScroll: true }); g.querySelector('.gate-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 260);
   },
   onbBack: () => { if (ui.onbStep === 1 && ui.onbGateDone && !A.currentUser() && A.configured()) { ui.onbGateDone = false; ui.onbAnim = 'back'; render(); return; } ui.onbStep = Math.max(0, ui.onbStep - (ui.onbStep === 6 && ui.onb.noPeriod ? 2 : 1)); ui.onbAnim = 'back'; render(); },
-  onbDiet: d => { ui.onb.diet = d.v; document.querySelectorAll('.diet-opt').forEach(b => b.classList.toggle('on', b.dataset.v === d.v)); },
+  onbDiet: d => { ui.onb.diet = d.v; document.querySelectorAll('.dt-c').forEach(b => { b.classList.toggle('on', b.dataset.v === d.v); b.setAttribute('aria-pressed', b.dataset.v === d.v); }); },
   setDiet: d => { state.profile.diet = d.v; save(); toast(`${DIETS.find(x => x.k === d.v).t}: your recipes and food guide changed`); render(); },
   onbAgo: d => { const o = ui.onb; if (d.v === 'none') { o.noPeriod = !o.noPeriod; o.ago = null; } else { o.noPeriod = false; o.ago = +d.v; o.last = C.iso(C.addDays(new Date(), -d.v)); } render(); },
   // birth control taps update in place, so the screen and its background never redraw
