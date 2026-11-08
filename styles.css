@@ -8527,3 +8527,23 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .lg-star-b { padding: 0 14px 12px 44px; }
 .lg-star-b p { margin: 0 0 6px; font-size: 12.5px; line-height: 1.45; color: #3f4c33; }
 @media (prefers-reduced-motion: reduce) { .lg .bcl-o, .lg .lg-star summary svg { transition: none; } }
+
+/* Breathe › Why it changes: progesterone and the breath across the month */
+.bdr { padding: 16px 16px 12px; border-radius: 28px; background: rgba(255,255,255,.94) !important; backdrop-filter: none !important; border: 1px solid rgba(48,64,35,.1); box-shadow: 0 12px 28px rgba(31,43,22,.08); margin-bottom: 12px; }
+.bdr-h { display: flex; align-items: center; gap: 10px; }
+.bdr-ic { width: 34px; height: 34px; flex: none; display: grid; place-items: center; border-radius: 50%; background: #20301a; color: #e9f0d8; }
+.bdr-h small { display: block; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #6c823e; font-weight: 500; }
+.bdr-h h3 { margin: 1px 0 0; font-size: 17px; font-weight: 500; color: #20301a; letter-spacing: -.01em; }
+.bdr-svg { display: block; width: 100%; height: auto; margin: 12px 0 6px; }
+.bdr-ax { font: 500 9.5px Outfit, sans-serif; fill: #4b5741; }
+.bdr-two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.bdr-two span { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; padding: 8px 10px; border-radius: 14px; background: #f5f3ee; font-size: 12px; color: #4b5741; }
+.bdr-two b { font-weight: 600; color: #20301a; font-size: 12.5px; }
+.bdr-two i { width: 8px; height: 8px; border-radius: 50%; } .bdr-two i.lo { background: #6c823e; } .bdr-two i.hi { background: #9b87c4; }
+.bdr-two span:has(i.hi) { flex-basis: auto; }
+.bdr-now { margin: 10px 2px 2px; font-size: 13.5px; font-weight: 500; color: #20301a; }
+.bdr-more { margin-top: 8px; border-top: 1px solid rgba(48,64,35,.1); }
+.bdr-more summary { list-style: none; display: flex; justify-content: space-between; align-items: center; padding: 10px 2px 4px; font-size: 13px; font-weight: 500; color: #304023; cursor: pointer; }
+.bdr-more summary::-webkit-details-marker { display: none; }
+.bdr-more[open] summary svg { transform: rotate(180deg); }
+.bdr-more > p { margin: 8px 2px 4px; font-size: 13px; line-height: 1.45; color: #3f4c33; }

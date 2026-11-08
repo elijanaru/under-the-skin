@@ -4894,9 +4894,37 @@ function breathFx(k) {
 // Calm sigh: a deep breath in to almost full, one more short sip on top, then a long slow breath out.
 // A breath for every phase: the four practices as tiles in their phase colour, the rhythm in seconds and a
 // little bar of one breath (in, hold, out) so she sees its shape. Tapping one loads it on the pond card above.
+// Why the breath changes across the month: progesterone drives breathing, so after ovulation she breathes a little
+// faster and shallower (blood CO2 runs lower). A small curve over the four phases with today on it; the study behind a tap.
+function breathDrive() {
+  const info = M.info, L = (info && info.L) || (M.stats && M.stats.avgCycle) || 28, P = M.stats ? M.stats.avgPeriod : 5, ov = C.ovulationDay(L, P);
+  const W = 300, H = 92, X = d => 10 + (d - 1) / (L - 1) * (W - 20);
+  const drive = d => { const t = d - ov; return t <= 0 ? .18 : .18 + .62 * Math.sin(Math.PI * Math.min(1, t / (L - ov + 1))) ** 1.3; };
+  const Y = v => H - 18 - v * (H - 34);
+  const pts = Array.from({ length: L }, (_, i) => [X(i + 1), Y(drive(i + 1))]);
+  const path = pts.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join('');
+  const ranges = C.phaseRanges(L, P), cd = info ? Math.min(info.cd, L) : null, ph = info && info.phase;
+  const now = ph === 'luteal' ? 'You’re in it now: lengthen every out-breath.' : ph === 'menstrual' ? 'Back to calm now: slow belly breaths feel easy.' : 'Your breath is at its calmest now. Use it to train focus.';
+  return `<section class="card bdr">
+    <div class="bdr-h"><span class="bdr-ic" aria-hidden="true">${icon('leaf', 16)}</span><div><small>Why it changes</small><h3>Progesterone speeds up your breath</h3></div></div>
+    <svg viewBox="0 0 ${W} ${H}" class="bdr-svg" role="img" aria-label="Breathing drive across your cycle: low before ovulation, higher after it">
+      ${ranges.map(r => `<rect x="${X(r.from) - 3}" y="6" width="${X(r.to) - X(r.from) + 6}" height="${H - 22}" rx="7" fill="${PH_HEX[r.key]}" opacity=".16"/>`).join('')}
+      <line x1="${X(ov)}" x2="${X(ov)}" y1="6" y2="${H - 16}" stroke="#304023" stroke-opacity=".35" stroke-dasharray="3 3"/>
+      <path d="${path}" fill="none" stroke="#20301a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      ${cd ? `<circle cx="${X(cd).toFixed(1)}" cy="${Y(drive(cd)).toFixed(1)}" r="5.5" fill="#fff" stroke="${PH_HEX[ph]}" stroke-width="3"/>` : ''}
+      <text x="${X(ov)}" y="${H - 3}" text-anchor="middle" class="bdr-ax">egg release</text>
+      <text x="10" y="${H - 3}" class="bdr-ax">Day 1</text><text x="${W - 10}" y="${H - 3}" text-anchor="end" class="bdr-ax">Day ${L}</text></svg>
+    <div class="bdr-two"><span><i class="lo"></i><b>Before</b>Slower, deeper</span><span><i class="hi"></i><b>After</b>Faster, shallower</span></div>
+    <p class="bdr-now">${now}</p>
+    <details class="bdr-more"><summary>What studies found ${icon('chevD', 13)}</summary>
+      ${studyCards('Healthy women breathed more and had lower carbon dioxide in their blood in the luteal phase, when progesterone peaks. Progesterone acts on the breathing centre in the brain, the same reason pregnancy can feel breathless.', 'Slatkovska 2006 (Respir Physiol Neurobiol)')}
+      <p>That is why the long out-breaths, like 4-7-8, sit in your luteal phase: a slow exhale gently counters the faster breath.</p></details>
+  </section>`;
+}
 function breathMonth(phase, k) {
   const seg = { in: 'i', top: 'i', hold: 'h', out: 'o', rest: 'h' };
   return `${sectionTitle('A breath for every phase')}
+    ${breathDrive()}
     <div class="bzm">${PHASE_ORDER.map(p => { const id = BREATH_FOR[p], B = BREATHS[id], tot = B.steps.reduce((a, x) => a + x[3], 0);
       const nums = B.steps.filter(x => x[0] !== 'top').map(x => +(x[3] / 1000).toFixed(1)).join('·');
       return `<button class="bzm-t ${p === phase ? 'now' : ''} ${id === k ? 'on' : ''}" style="--c:${PH_HEX[p]}" data-action="bzPhase" data-v="${id}">
