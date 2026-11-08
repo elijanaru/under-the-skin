@@ -218,7 +218,7 @@ export const RECIPES = [
   {
     id: 'brazilian-lemonade', name: 'Brazilian Lemonade', phases: ['ovulatory', 'follicular'], time: 10, kcal: 230, serves: 2, protein: 2, meal: 'Drink', raw: true, source: 'Heart & Soil', url: 'https://heartandsoil.co/blog/category/animal-based-diet/animal-based-recipes/',
     nutrients: ['Vitamin C', 'Electrolytes', 'Calcium'],
-    ingredients: ["2 unwaxed limes, washed, ends cut off, quartered", "500 ml water", "3 tbsp raw honey (or maple syrup)", "3 tbsp sweetened condensed milk (or 4 tbsp raw cream)", "1 pinch sea salt"],
+    ingredients: ["2 unwaxed limes, washed, ends cut off, quartered", "500 ml water", "3 tbsp raw honey (or maple syrup)", "3 tbsp sweetened condensed milk (or 3 tbsp coconut condensed milk)", "1 pinch sea salt"],
     steps: [["Quick blend", "Blend the limes with the water for only 10 to 15 seconds. Longer turns it bitter."], ["Strain", "Pour through a fine sieve and press out the juice."], ["Froth", "Blend the juice again with honey, condensed milk and salt until frothy."], ["When", "Drink on your raw-first days. Skip it during your period and the days before."]],
     micro: [["Vitamin C", 20, "mg"], ["Calcium", 80, "mg"], ["Potassium", 180, "mg"], ["Sodium", 150, "mg"]],
   },
@@ -270,6 +270,62 @@ export const RECIPES = [
     ingredients: ["10 Medjool dates", "10 slices bacon", "80 g raw cheese (a soft goat cheese melts out less)", "Optional: 10 toothpicks"],
     steps: [["Heat", "Heat the oven to 200°C."], ["Pit", "Slit each date along one side, just enough to pull out the stone."], ["Stuff", "Cut the cheese into small sticks and stuff each date as full as you can: some melts out as it bakes."], ["Wrap", "Wrap each date in a whole slice of bacon and pin it with a toothpick if you like. Space them 1 cm apart on a tray."], ["Bake", "Bake for 20 minutes, flip each one, then bake 15 to 20 minutes more until the bacon is as crisp as you like. Cool for 10 minutes: the cheese is very hot."]],
     micro: [["Potassium", 560, "mg"], ["Calcium", 155, "mg"], ["Magnesium", 42, "mg"], ["Copper", 0.3, "mg"], ["Selenium", 10, "µg"], ["Fibre", 5, "g"]],
+  },
+  {
+    id: 'red-lentil-dal', name: "Red Lentil & Spinach Dal", phases: ["menstrual", "luteal"], time: 30, kcal: 600, serves: 2, protein: 25, meal: 'Dinner', warm: true,
+    nutrients: ["Iron", "Folate", "Magnesium"],
+    ingredients: ["160 g red lentils, rinsed", "1 tbsp coconut oil or olive oil", "1 onion, finely chopped", "2 garlic cloves, grated", "1 thumb fresh ginger, grated", "1 tsp ground cumin", "1 tsp ground turmeric", "½ tsp sea salt", "200 ml coconut milk", "500 ml water or vegetable broth", "2 big handfuls spinach (60 g)", "Juice of ½ lemon", "1 small handful coriander, chopped", "2 tbsp pumpkin seeds"],
+    steps: [["Soften", "Cook the onion in the oil over medium heat for 5 minutes. Add garlic, ginger, cumin and turmeric and stir for 1 minute."], ["Simmer", "Add the lentils, coconut milk and water. Simmer for 20 minutes, stirring now and then, until soft and creamy."], ["Greens", "Stir in the spinach and salt and cook 1 minute until it wilts."], ["Finish", "Squeeze over the lemon and top with coriander and pumpkin seeds. The lemon’s vitamin C helps you absorb the lentils’ iron."]],
+    micro: [["Iron", 9, "mg"], ["Folate", 450, "µg"], ["Magnesium", 200, "mg"], ["Zinc", 4, "mg"], ["Potassium", 1100, "mg"], ["Vitamin K", 150, "µg"]],
+  },
+  {
+    id: 'black-bean-chili', name: "Black Bean & Sweet Potato Chili", phases: ["luteal", "menstrual"], time: 45, kcal: 480, serves: 3, protein: 17, meal: 'Dinner', warm: true,
+    nutrients: ["Magnesium", "Fibre", "Vitamin B6"],
+    ingredients: ["1 tbsp olive oil", "1 onion, diced", "2 garlic cloves, chopped", "1 red pepper, diced", "1 sweet potato (300 g), in 1.5 cm cubes", "2 cans black beans (480 g drained), rinsed", "400 g chopped tomatoes", "250 ml water", "2 tsp ground cumin", "1 tsp smoked paprika", "½ tsp cinnamon", "¾ tsp sea salt", "1 tbsp raw cacao powder", "To serve: 1 avocado, sliced", "To serve: 1 small handful coriander", "To serve: 1 lime, in wedges"],
+    steps: [["Soften", "Cook the onion and pepper in the oil over medium heat for 6 minutes. Add the garlic and spices and stir for 1 minute."], ["Simmer", "Add sweet potato, beans, tomatoes, water, salt and cacao. Cover and simmer for 25 minutes until the sweet potato is tender."], ["Thicken", "Take the lid off for 5 minutes and mash a few beans against the side of the pot."], ["Serve", "Top with avocado and coriander, with lime on the side."]],
+    micro: [["Magnesium", 150, "mg"], ["Potassium", 1500, "mg"], ["Iron", 5, "mg"], ["Folate", 300, "µg"], ["Vitamin A", 720, "µg"], ["Fibre", 22, "g"]],
+  },
+  {
+    id: 'chia-berry-pudding', name: "Chia Berry Pudding with Hemp", phases: ["follicular", "ovulatory"], time: 10, kcal: 520, serves: 1, protein: 18, meal: 'Breakfast', raw: true,
+    nutrients: ["Magnesium", "Plant omega-3", "Calcium"],
+    ingredients: ["3 tbsp chia seeds (30 g)", "200 ml unsweetened almond or coconut milk, with added calcium", "1 tsp maple syrup", "½ tsp vanilla extract", "150 g mixed berries", "2 tbsp hemp seeds (20 g)", "1 tbsp almond butter"],
+    steps: [["Stir", "Stir the chia, milk, maple syrup and vanilla together. Stir again after 5 minutes so it doesn’t clump."], ["Set", "Leave it in the fridge for 2 hours or overnight."], ["Top", "Top with berries, hemp seeds and almond butter. Around your period, let it come to room temperature or warm it gently."]],
+    micro: [["Plant omega-3", 6.4, "g"], ["Magnesium", 290, "mg"], ["Calcium", 470, "mg"], ["Vitamin E", 7.5, "mg"], ["Zinc", 3.7, "mg"], ["Iron", 4.5, "mg"]],
+  },
+  {
+    id: 'chickpea-tray-bake', name: "Chickpea, Broccoli & Tahini Tray Bake", phases: ["follicular", "ovulatory"], time: 35, kcal: 520, serves: 2, protein: 20, meal: 'Dinner',
+    nutrients: ["Vitamin C", "Folate", "Iron"],
+    ingredients: ["1 can chickpeas (240 g drained), patted dry", "250 g broccoli, in florets", "1 red onion, in wedges", "1 red pepper, in strips", "2 tbsp olive oil", "1 tsp smoked paprika", "½ tsp ground cumin", "½ tsp sea salt", "Dressing: 2 tbsp tahini", "Dressing: juice of ½ lemon", "Dressing: 1 small garlic clove, grated", "Dressing: 2 to 3 tbsp water", "To serve: 1 small handful parsley, chopped", "To serve: 1 tbsp pumpkin seeds"],
+    steps: [["Heat", "Heat the oven to 220°C."], ["Roast", "Toss the chickpeas, onion and pepper with the oil, spices and salt and roast for 15 minutes. Add the broccoli and roast 12 minutes more, until the edges crisp."], ["Dressing", "Whisk the tahini, lemon, garlic and water until smooth and pourable."], ["Serve", "Drizzle over the tray and scatter parsley and pumpkin seeds."]],
+    micro: [["Vitamin C", 170, "mg"], ["Vitamin K", 280, "µg"], ["Folate", 320, "µg"], ["Iron", 6, "mg"], ["Zinc", 3.2, "mg"], ["Copper", 0.8, "mg"]],
+  },
+  {
+    id: 'lentil-tahini-salad', name: "Lentil Salad with Lemon Tahini", phases: ["follicular", "ovulatory"], time: 25, kcal: 560, serves: 2, protein: 26, meal: 'Lunch',
+    nutrients: ["Iron", "Folate", "Zinc"],
+    ingredients: ["150 g green or puy lentils, rinsed", "½ cucumber, diced", "12 cherry tomatoes, halved", "1 small red onion, finely chopped", "1 big handful parsley and mint, chopped", "2 tbsp pumpkin seeds", "1 tbsp hemp seeds", "Dressing: 2 tbsp tahini", "Dressing: 2 tbsp olive oil", "Dressing: juice of 1 lemon", "Dressing: ½ tsp sea salt", "Dressing: 2 tbsp water"],
+    steps: [["Cook", "Simmer the lentils in plenty of water for about 20 minutes until just tender. Drain and cool for 5 minutes."], ["Chop", "Chop the cucumber, tomatoes, onion and herbs."], ["Dressing", "Whisk the tahini, oil, lemon, salt and water."], ["Toss", "Toss everything together and finish with the seeds. Keeps 2 days in the fridge."]],
+    micro: [["Iron", 8, "mg"], ["Folate", 400, "µg"], ["Zinc", 4.5, "mg"], ["Magnesium", 200, "mg"], ["Copper", 1, "mg"], ["Vitamin K", 200, "µg"]],
+  },
+  {
+    id: 'warm-quinoa-porridge', name: "Warm Cinnamon Quinoa Porridge", phases: ["menstrual", "luteal"], time: 25, kcal: 470, serves: 2, protein: 13, meal: 'Breakfast', warm: true,
+    nutrients: ["Magnesium", "Plant omega-3", "Iron"],
+    ingredients: ["100 g quinoa, rinsed well", "300 ml almond milk, with added calcium", "150 ml water", "1 tsp cinnamon", "1 pinch sea salt", "1 apple, diced", "2 tbsp maple syrup", "2 tbsp ground flaxseed", "2 tbsp walnuts, chopped", "1 tbsp almond butter"],
+    steps: [["Simmer", "Simmer the quinoa with the milk, water, cinnamon and salt, lid on, for 15 minutes, stirring now and then, until soft and creamy."], ["Apple", "Stir in the apple and maple syrup and cook 5 minutes more."], ["Serve", "Top with flaxseed, walnuts and almond butter and eat it warm."]],
+    micro: [["Magnesium", 170, "mg"], ["Plant omega-3", 3, "g"], ["Calcium", 230, "mg"], ["Iron", 3.5, "mg"], ["Zinc", 2.4, "mg"], ["Vitamin E", 5, "mg"]],
+  },
+  {
+    id: 'pesto-white-beans', name: "White Beans & Courgette with Green Pesto", phases: ["ovulatory", "follicular"], time: 20, kcal: 520, serves: 2, protein: 19, meal: 'Dinner',
+    nutrients: ["Magnesium", "Potassium", "Iron"],
+    ingredients: ["1 can white beans (240 g drained), rinsed", "2 courgettes (400 g), in half moons", "1 tbsp olive oil", "12 cherry tomatoes, halved", "¼ tsp sea salt", "Pesto: 1 big handful basil (30 g)", "Pesto: 3 tbsp pumpkin seeds", "Pesto: 1 tbsp nutritional yeast", "Pesto: 1 small garlic clove", "Pesto: 3 tbsp olive oil", "Pesto: juice of ½ lemon", "Pesto: 2 tbsp water", "Pesto: 1 pinch sea salt"],
+    steps: [["Pesto", "Blend all the pesto ingredients until almost smooth."], ["Courgette", "Fry the courgette in the oil over medium-high heat for 5 minutes until golden."], ["Beans", "Add the beans and tomatoes and warm through for 3 minutes. Salt."], ["Toss", "Off the heat, stir in the pesto. Nutritional yeast with added B12 gives you a little of it too."]],
+    micro: [["Magnesium", 190, "mg"], ["Potassium", 1300, "mg"], ["Iron", 5.5, "mg"], ["Folate", 170, "µg"], ["Vitamin C", 50, "mg"], ["Vitamin B12", 1.2, "µg"]],
+  },
+  {
+    id: 'spinach-shakshuka', name: "Spinach & Feta Shakshuka", phases: ["menstrual", "luteal"], time: 25, kcal: 480, serves: 2, protein: 25, meal: 'Breakfast', warm: true,
+    nutrients: ["Choline", "Vitamin C", "Protein"],
+    ingredients: ["1 tbsp olive oil", "1 onion, sliced", "1 red pepper, sliced", "2 garlic cloves, sliced", "1 tsp ground cumin", "1 tsp smoked paprika", "400 g chopped tomatoes", "½ tsp sea salt", "2 big handfuls spinach (60 g)", "4 pasture eggs", "60 g feta, crumbled", "To serve: 1 small handful parsley", "To serve: 2 slices toasted sourdough"],
+    steps: [["Soften", "Cook the onion and pepper in the oil over medium heat for 7 minutes. Add garlic and spices for 1 minute."], ["Sauce", "Add the tomatoes and salt and simmer 8 minutes until thick. Stir in the spinach."], ["Eggs", "Make 4 wells, crack in the eggs, cover and cook on low heat for 6 to 8 minutes until the whites are set."], ["Serve", "Scatter feta and parsley over and serve with toast."]],
+    micro: [["Choline", 300, "mg"], ["Vitamin C", 120, "mg"], ["Vitamin K", 150, "µg"], ["Selenium", 35, "µg"], ["Vitamin B12", 1.6, "µg"], ["Iron", 4, "mg"]],
   },
 ];
 
@@ -1349,6 +1405,62 @@ export const EAT_GUIDE = {
     drinks: ['Keep your coffee and pair it with food to steady blood sugar. A warm matcha latte with raw milk is a calm alternative.', F('☕ Coffee with food | 🍵 Matcha latte with raw milk | 🍫 Raw cacao | 🌼 Chamomile | 🫚 Ginger tea')],
     supps: ['Calm PMS, stress and sleep.', F('🌙 Magnesium glycinate | 🌿 Ashwagandha (skip if trying to conceive) | 🧬 Vitamin B6 | 🥛 Calcium | 💪 Creatine 3–5 g | 🐟 Omega-3')],
   } },
+};
+
+// How she eats, picked in onboarding and in Profile. Recipes, superfoods, supplements and the food guide follow it.
+export const DIETS = [
+  { k: 'all', t: 'Everything', g: '🍽️', s: 'Meat, fish, eggs, dairy and plants' },
+  { k: 'animal', t: 'Animal-based', g: '🥩', s: 'Meat, organs, eggs, raw dairy, fruit and honey' },
+  { k: 'veg', t: 'Vegetarian', g: '🥚', s: 'No meat or fish. Eggs and dairy, yes' },
+  { k: 'vegan', t: 'Vegan', g: '🌱', s: 'Only plants' },
+];
+// What each way of eating needs to watch for her hormones: tag 'take' (supplement it), 'watch' (plan your food).
+// Doses stay at the low, safe end (EFSA and NIH upper limits). ph = the phases where it matters most.
+export const DIET_GUIDE = {
+  vegan: { title: 'Your vegan guide', lead: 'Plants can fully support your cycle when you cover the few nutrients they give little or none of. These touch your hormones most.',
+    items: [
+      { n: 'Vitamin B12', g: '💧', tag: 'take', why: 'Plants have none. Low B12 brings tiredness, low mood and tingling, and over time anaemia and irregular cycles.', do: 'Take it every day: 25 to 100 µg, or 1,000 µg twice a week. Fortified plant milk and nutritional yeast add a little.', foods: 'Fortified plant milk, nutritional yeast', ph: ['menstrual', 'luteal'] },
+      { n: 'Iron', g: '🩸', tag: 'watch', why: 'Your period takes iron every month and plant iron is absorbed about half as well, so you need almost twice as much. Low iron: tiredness, hair shedding, cold hands.', do: 'Pair lentils, beans, seeds and dark greens with vitamin C (lemon, peppers, berries). Enjoy coffee and tea an hour away from those meals. Test your ferritin before taking iron.', foods: 'Lentils, chickpeas, pumpkin seeds, tahini, blackstrap molasses, cooked spinach', ph: ['menstrual'] },
+      { n: 'Omega-3', g: '🌊', tag: 'take', why: 'Plants give ALA, and your body turns only a little of it into the DHA and EPA that ease cramps and support mood and skin.', do: 'Algae oil with 250 to 500 mg DHA and EPA a day, plus 1 tbsp ground flax or chia.', foods: 'Ground flax, chia, hemp seeds, walnuts', ph: ['menstrual', 'luteal'] },
+      { n: 'Iodine', g: '🧂', tag: 'watch', why: 'Your thyroid needs it to set the pace of your cycle and metabolism. Plant diets are often low without iodised salt.', do: 'Cook with iodised salt, or take 150 µg a day. Skip kelp tablets: their dose swings far too high.', foods: 'Iodised salt, a little nori', ph: ['luteal', 'follicular'] },
+      { n: 'Vitamin D', g: '☀️', tag: 'take', why: 'Almost no plant food has it. Low vitamin D goes with irregular cycles, PMS and low mood.', do: 'Vegan D3 (from lichen), 10 to 20 µg (400 to 800 IU) a day from October to March, plus daylight.', foods: 'UV-grown mushrooms, fortified plant milk', ph: ['luteal'] },
+      { n: 'Zinc', g: '🎃', tag: 'watch', why: 'Phytates in beans and grains block some zinc. Zinc supports ovulation, clear skin and calmer PMS.', do: 'Soak or sprout beans and seeds, and eat pumpkin seeds, cashews, tahini or lentils every day.', foods: 'Pumpkin seeds, cashews, tahini, lentils, hemp seeds', ph: ['follicular', 'ovulatory'] },
+      { n: 'Calcium', g: '🦴', tag: 'watch', why: 'Without dairy you need other sources. Calcium eases PMS and protects your bones.', do: 'Three servings a day: plant milk with added calcium, tahini, almonds, kale, broccoli, figs.', foods: 'Calcium-fortified plant milk, tahini, almonds, kale, figs', ph: ['luteal'] },
+      { n: 'Protein', g: '🫘', tag: 'watch', why: 'Enough protein keeps blood sugar steady and builds hormones, skin and muscle. Plant protein is easy to under-eat.', do: 'A palm-sized portion at every meal, about 1.2 g per kg of body weight a day: lentils, beans, chickpeas, hemp seeds, quinoa.', foods: 'Lentils, beans, chickpeas, hemp seeds, quinoa, peas', ph: ['follicular', 'ovulatory'] },
+      { n: 'Choline', g: '🧠', tag: 'watch', why: 'Your liver needs it, and so does a baby\'s brain if you plan a pregnancy. Without eggs it\'s hard to reach.', do: 'Beans, quinoa, broccoli and Brussels sprouts most days. Planning a pregnancy? Ask about a prenatal with choline.', foods: 'Beans, quinoa, broccoli, Brussels sprouts, peanuts', ph: ['follicular'] },
+      { n: 'Selenium', g: '🌰', tag: 'watch', why: 'For your thyroid and egg quality. Plant levels depend on the soil.', do: 'One Brazil nut a day is enough. More than 2 to 3 a day can go over the safe limit.', foods: 'Brazil nuts', ph: ['ovulatory'] },
+    ],
+    warn: [
+      ['Eat enough', 'Too few calories or too little fat can stop ovulation and your period. A missing period is a sign to eat more, not less.'],
+      ['Test once a year', 'B12, ferritin (your iron stores), vitamin D and, if you feel tired or cold, your thyroid.'],
+      ['Planning a pregnancy?', 'Start a prenatal with folate, B12, iodine, choline and algae DHA three months before.'],
+    ] },
+  veg: { title: 'Your vegetarian guide', lead: 'Eggs and dairy cover a lot. A few nutrients still run low without meat and fish, and they matter for your cycle.',
+    items: [
+      { n: 'Iron', g: '🩸', tag: 'watch', why: 'Your period takes iron every month and plant iron is absorbed less well, so you need almost twice as much as meat eaters.', do: 'Pair lentils, beans, eggs and greens with vitamin C. Enjoy coffee and tea an hour away from those meals. Test ferritin before taking iron.', foods: 'Lentils, eggs, pumpkin seeds, tahini, cooked spinach', ph: ['menstrual'] },
+      { n: 'Vitamin B12', g: '💧', tag: 'watch', why: 'Eggs and dairy give some, but many vegetarians still run low, which drains energy and mood.', do: 'If you eat eggs or dairy less than daily, take 25 to 50 µg a day.', foods: 'Eggs, milk, yoghurt, cheese', ph: ['menstrual', 'luteal'] },
+      { n: 'Omega-3', g: '🌊', tag: 'take', why: 'Without fish you get almost no DHA and EPA, which ease cramps and support mood and skin.', do: 'Algae oil with 250 to 500 mg DHA and EPA a day, plus ground flax or chia.', foods: 'Ground flax, chia, walnuts, omega-3 eggs', ph: ['menstrual', 'luteal'] },
+      { n: 'Zinc', g: '🎃', tag: 'watch', why: 'Meat is the easiest zinc. Zinc supports ovulation, skin and calmer PMS.', do: 'Eggs, cheese, pumpkin seeds, cashews and lentils every day. Soak or sprout beans.', foods: 'Pumpkin seeds, cheese, eggs, cashews, lentils', ph: ['follicular', 'ovulatory'] },
+      { n: 'Iodine', g: '🧂', tag: 'watch', why: 'Your thyroid sets the pace of your cycle. Without fish, dairy, eggs and iodised salt carry it.', do: 'Use iodised salt and have dairy or eggs daily.', foods: 'Iodised salt, milk, yoghurt, eggs', ph: ['luteal'] },
+      { n: 'Vitamin D', g: '☀️', tag: 'take', why: 'Few foods have it, and low levels go with PMS and low mood.', do: '10 to 20 µg (400 to 800 IU) of D3 a day from October to March, plus daylight.', foods: 'Egg yolks, UV-grown mushrooms', ph: ['luteal'] },
+      { n: 'Protein', g: '🥚', tag: 'watch', why: 'Steady blood sugar and strong hormones need protein at every meal.', do: 'Eggs, Greek yoghurt, cheese, lentils and beans: a palm-sized portion each meal.', foods: 'Eggs, Greek yoghurt, cottage cheese, lentils, beans', ph: ['follicular', 'ovulatory'] },
+    ],
+    warn: [
+      ['Eat enough', 'Too few calories or too little fat can stop ovulation. A missing period means eat more.'],
+      ['Test once a year', 'Ferritin, B12 and vitamin D.'],
+    ] },
+  animal: { title: 'Your animal-based guide', lead: 'Meat, organs, eggs and raw dairy cover most nutrients well. Keep an eye on these so your hormones stay balanced.',
+    items: [
+      { n: 'Vitamin C and fibre', g: '🍊', tag: 'watch', why: 'Meat has little of either. Fibre carries used estrogen out of your body, and vitamin C builds collagen.', do: 'Fruit every day (berries, citrus, kiwi) and some easy veg like cucumber, squash or sprouts.', foods: 'Berries, oranges, kiwi, squash, broccoli sprouts', ph: ['follicular', 'ovulatory'] },
+      { n: 'Magnesium', g: '🍫', tag: 'watch', why: 'Low in meat and dairy, and you need more of it before your period for cramps, sleep and cravings.', do: 'Raw cacao, pumpkin seeds, avocado and mineral water. Magnesium glycinate 200 to 300 mg in the evening if you need it.', foods: 'Raw cacao, pumpkin seeds, avocado, mineral water', ph: ['luteal', 'menstrual'] },
+      { n: 'Vitamin A from liver', g: '🫀', tag: 'watch', why: 'Liver is a superfood, but very rich in vitamin A, which builds up.', do: 'About 100 g of liver a week is plenty. Skip liver if you are pregnant or trying to conceive.', foods: 'Beef liver, liver pancakes', ph: ['menstrual'] },
+      { n: 'Folate', g: '🥬', tag: 'watch', why: 'For your cells, mood and any future pregnancy.', do: 'Liver once a week, eggs daily, plus avocado or some greens.', foods: 'Liver, eggs, avocado, asparagus', ph: ['follicular'] },
+      { n: 'Salt and water', g: '💧', tag: 'watch', why: 'Low-carb days pull water and salt out of your body, which can bring headaches and tiredness.', do: 'Salt your food to taste and drink mineral water, more in your hot, active weeks.', foods: 'Sea salt, mineral water, coconut water', ph: ['ovulatory'] },
+      { n: 'Raw milk safety', g: '🥛', tag: 'watch', why: 'Raw milk is only as safe as the farm it comes from.', do: 'Buy from a tested, trusted farm and keep it cold. Choose pasteurised milk if you are pregnant.', foods: 'Raw milk, kefir, raw cheese', ph: [] },
+    ],
+    warn: [
+      ['Check your blood fats', 'A lipid test once a year, as with any diet high in animal fat.'],
+    ] },
 };
 
 // The best spices and superfoods for each phase: [emoji, name, why, how much, photo ['tea'|'food', name] or null, not vegan].
