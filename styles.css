@@ -9217,8 +9217,38 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 /* No rubber-band past the top or bottom of a page (web and PWA; the iOS app turns bounce off natively) */
 html, body { overscroll-behavior-y: none; }
 
-/* Home tiles as a calm mosaic: the tall recipe card spans two rows, Sun and Relief sit stacked beside it as near-squares; Ground runs wide */
-.hub .dpt-grid > .dpt.t-dish { grid-row: span 2; }
-.hub .dpt-grid > .dpt.ph-sun, .hub .dpt-grid > .dpt.t-sage { min-height: 168px !important; height: auto; }
-.hub .dpt-grid > .dpt.wide.t-glow { min-height: 112px !important; }
+/* Sun tile: full row height beside the recipe card (video + title only) */
+.hub .dpt-grid > .dpt.ph-sun { align-self: stretch; }
 .hub .dpt.ph-sun > small { display: none !important; }
+
+/* Phone sign-in (text code), then Apple and Google. Two steps swap in place. */
+.ph-auth { display: grid; gap: 10px; color: #20301a; }
+.ph-auth .ph-s1, .ph-auth .ph-s2 { display: grid; gap: 10px; }
+.ph-auth[data-step="phone"] .ph-s2, .ph-auth[data-step="code"] .ph-s1 { display: none; }
+.ph-row { display: flex; gap: 8px; }
+.ph-cc { position: relative; flex: none; display: grid; place-items: center; min-width: 92px; height: 50px; padding: 0 12px; border-radius: 16px; background: #f7f3ef; border: 1px solid rgba(48,64,35,.12); font: 500 16px Outfit, sans-serif; color: #20301a; cursor: pointer; }
+.ph-cc select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 16px; }
+.ph-cc-v { white-space: nowrap; pointer-events: none; }
+.ph-cc-v::after { content: ''; display: inline-block; width: 6px; height: 6px; margin: 0 0 3px 7px; border-right: 1.6px solid #6c823e; border-bottom: 1.6px solid #6c823e; transform: rotate(45deg); }
+.ph-auth .field { margin: 0; height: 50px; min-width: 0; flex: 1; background: #f7f3ef !important; border: 1px solid rgba(48,64,35,.12) !important; color: #20301a !important; padding: 0 16px !important; border-radius: 16px !important; font-size: 17px !important; box-shadow: none !important; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.ph-auth .field::placeholder { color: #8a877d !important; }
+.ph-auth .ph-code { text-align: center; letter-spacing: .5em; font-family: 'Doto', monospace !important; font-weight: 800; font-size: 26px !important; height: 58px; }
+.ph-auth .ac-go { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; height: 50px; border: 0; border-radius: 999px; background: #20301a !important; color: #fff !important; font: 500 16px Outfit, sans-serif; box-shadow: 0 12px 26px -14px rgba(20,30,15,.6); }
+.ph-auth .ac-go.busy { opacity: .6; pointer-events: none; }
+.ph-auth .ac-apple, .ph-auth .ac-google { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; height: 50px; border-radius: 999px; font: 500 16px Outfit, sans-serif; margin: 0; }
+.ph-auth .ac-apple { background: #000 !important; color: #fff !important; border: 0 !important; }
+.ph-auth .ac-google { background: #fff !important; color: #20301a !important; border: 1px solid rgba(48,64,35,.18) !important; }
+.ph-or { display: flex; align-items: center; gap: 10px; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #8a9479; }
+.ph-or::before, .ph-or::after { content: ''; flex: 1; height: 1px; background: rgba(48,64,35,.14); }
+.ph-sent { margin: 2px 0 0; text-align: center; font-size: 14px; color: #3c3a33; }
+.ph-sent b { color: #20301a; font-weight: 600; white-space: nowrap; }
+.ph-links { display: flex; justify-content: space-between; }
+.ph-links .link { font-size: 13.5px; color: #304023 !important; font-weight: 500; padding: 4px 2px; }
+.ph-auth .ac-msg { margin: 0; text-align: center; font-size: 13px; color: #3c3a33; min-height: 0; }
+.ph-auth .ac-msg:empty { display: none; }
+.ph-auth .ac-msg.bad { color: #a8364f; }
+.ac-phone .ac-consent { background: none !important; border: 0 !important; padding: 7px 2px; font-size: 12.5px; line-height: 1.4; color: #3c3a33; margin: 0; }
+.ac-phone .ac-consent + .ac-consent { border-top: 1px solid rgba(48,64,35,.12) !important; }
+.onb.gate .ph-auth .ph-links .link, .ph-auth .ph-links .link { color: #304023 !important; text-shadow: none !important; text-decoration: underline; text-underline-offset: 3px; }
+.onb.gate .ph-auth .ac-msg, .ph-auth .ac-msg { color: #3c3a33 !important; text-shadow: none !important; }
+.onb.gate .ph-auth .ac-msg.bad, .ph-auth .ac-msg.bad { color: #a8364f !important; }
