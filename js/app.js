@@ -1167,7 +1167,8 @@ function viewOnboarding() {
         ${o.photo ? '' : '<button class="link" data-action="onbNext" style="align-self:center">Skip for now</button>'}`,
     3: `<h2 class="onb-title">How do <span>you eat?</span></h2>
         <p class="muted">Your recipes, food guide and supplements follow this. You can change it any time in your profile.</p>
-        <div class="dt-grid">${DIETS.map((x, i) => `<button class="dt-c ${(o.diet || 'all') === x.k ? 'on' : ''}" data-action="onbDiet" data-v="${x.k}" style="--i:${i}" aria-pressed="${(o.diet || 'all') === x.k}"><img src="${DIET_PIC[x.k]()}" alt="" loading="eager"><span class="dt-shade"></span><span class="dt-ok">${icon('check', 14, 2.6)}</span><span class="dt-tx"><b>${x.t}</b><small>${x.s}</small></span></button>`).join('')}</div>`,
+        <div class="dt-grid">${DIETS.map((x, i) => `<button class="dt-c ${(o.diet || 'all') === x.k ? 'on' : ''}" data-action="onbDiet" data-v="${x.k}" style="--i:${i}" aria-pressed="${(o.diet || 'all') === x.k}"><img src="${DIET_PIC[x.k]()}" alt="" loading="eager"><span class="dt-shade"></span><span class="dt-ok">${icon('check', 14, 2.6)}</span><span class="dt-tx"><b>${x.t}</b><small>${x.s}</small></span></button>`).join('')}</div>
+        <div class="dt-peek" aria-live="polite">${dvPeek(o.diet || 'all')}</div>`,
     4: `<div class="onb-cut"><img src="images/period.png" alt=""></div><h2 class="onb-title">When did your last <span>period start?</span></h2>
         <div class="ago">${[[7, 'About 1 week ago'], [14, '2 weeks ago'], [21, '3 weeks ago'], [30, 'About 1 month ago'], ['none', 'I don’t have a period right now']].map(([v, t]) =>
           `<button class="chip ${(v === 'none' ? o.noPeriod : !o.noPeriod && o.ago === v) ? 'on' : ''} ${v === 'none' ? 'ago-none' : ''}" data-action="onbAgo" data-v="${v}">${t}</button>`).join('')}</div>
@@ -5868,20 +5869,65 @@ function dietGuideCard(phase, compact) {
     ${compact ? '' : `<span class="dg-rows">${F.map(x => `<span class="dg-r"><i>${x.g}</i><span><b>${x.n}</b><small>${x.do.split('. ')[0].replace(/\.$/, '')}.</small></span></span>`).join('')}</span>
     ${G.items.some(x => x.tag === 'take') ? `<span class="dg-take"><small>To take</small>${G.items.filter(x => x.tag === 'take').map(x => `<em>${x.g} ${x.n}</em>`).join('')}</span>` : ''}`}</button>`;
 }
+// best foods for a nutrient as photos: match the guide's food words to the app's food photos
+const DV_ALIAS = { 'ground flax': 'Ground flaxseed', 'chia': 'Chia seeds', 'oranges': 'Oranges & mandarins', 'kiwi': 'Kiwifruit', 'squash': 'Pumpkin & squash', 'tahini': 'Sesame seeds', 'nori': 'Seaweed (gim & miyeok)', 'a little nori': 'Seaweed (gim & miyeok)', 'uv-grown mushrooms': 'Mushrooms', 'egg yolks': 'Eggs', 'omega-3 eggs': 'Eggs', 'pasture eggs': 'Eggs', 'cooked spinach': 'Spinach', 'cooked greens': 'Spinach', 'raw milk': 'Grass-fed raw milk & butter', 'milk': 'Grass-fed raw milk & butter', 'beef liver': 'Red meat', 'liver': 'Red meat', 'yoghurt': 'Greek yoghurt', 'kefir': 'Kefir', 'raw cacao': 'Raw cacao', 'berries': 'Berries', 'broccoli': 'Broccoli', 'brussels sprouts': 'Brussels sprouts', 'peas': 'Peas', 'hemp seeds': 'Sunflower seeds', 'cashews': 'Almonds' };
+function dvFoods(str) {
+  const seen = new Set(), pics = [], words = [];
+  for (const raw of String(str).split(/,\s*|\s+and\s+/)) {
+    const w = raw.trim(); if (!w) continue; const lw = w.toLowerCase();
+    const key = DV_ALIAS[lw] || Object.keys(FOOD_PHOTOS).find(k => k.toLowerCase() === lw);
+    if (key && FOOD_PHOTOS[key] && !seen.has(key) && pics.length < 4) { seen.add(key); pics.push([w[0].toUpperCase() + w.slice(1), foodPhoto(key, 200)]); } else words.push(w[0].toUpperCase() + w.slice(1));
+  }
+  return { pics, words };
+}
+const DV_COV = [['Almost none', '#c9798f'], ['A little', '#c9a24a'], ['Enough with a plan', '#6c823e']];
+const dvMeter = (c, d) => c == null ? '' : `<span class="dv-m" style="--m:${DV_COV[c][1]}" aria-label="${d === 'vegan' ? 'From plants' : 'From your food'}: ${DV_COV[c][0]}"><span>${[0, 1, 2].map(i => `<i class="${i <= c ? 'on' : ''}"></i>`).join('')}</span><small>${DV_COV[c][0]}</small></span>`;
+const dvTint = x => PH_HEX[x.ph[0]] || '#6c823e';
+function dvSheet(i) {
+  const d = myDiet(), G = DIET_GUIDE[d], x = G && G.items[i]; if (!x) return '';
+  const F = dvFoods(x.foods), steps = x.do.split(/(?<=\.)\s+/).filter(Boolean).slice(0, 3);
+  return `<div class="dvs" style="--c:${dvTint(x)}"><button class="cfs-x" data-action="dvOpen" data-i="${i}" aria-label="Close">${icon('close', 14, 2.2)}</button>
+    <div class="dvs-h"><span class="dv-g">${x.g}</span><span><small>${x.tag === 'take' ? 'Take it' : 'Plan it into meals'}</small><b>${x.n}</b></span></div>
+    <p class="dvs-why">${x.why}</p>
+    <ol class="dvs-do">${steps.map((t, k) => `<li><i>${k + 1}</i><span>${t}</span></li>`).join('')}</ol>
+    ${F.pics.length ? `<div class="cfs-f dvs-f">${F.pics.map(([n, u]) => `<span><img src="${u}" alt="" loading="lazy"><em>${n}</em></span>`).join('')}</div>` : ''}
+    ${F.words.length ? `<div class="cf-chips cfs-c">${F.words.map(w => `<em>${w}</em>`).join('')}</div>` : ''}
+    ${x.ph.length ? `<div class="dvs-ph"><small>Matters most in</small>${PHASE_ORDER.map(k => `<span class="${x.ph.includes(k) ? 'on' : ''}" style="--c:${PH_HEX[k]}">${PHASES[k].name}</span>`).join('')}</div>` : ''}</div>`;
+}
+// a small picture of the guide inside onboarding, so she sees what she is signing up for
+function dvPeek(d) {
+  const G = DIET_GUIDE[d]; if (!G) return `<p class="dt-none">${icon('check', 13, 2.4)} Every recipe and food in the app fits you.</p>`;
+  const take = G.items.filter(x => x.tag === 'take');
+  return `<div class="dt-pk"><span class="dt-pg">${G.items.slice(0, 4).map((x, i) => `<i style="--c:${dvTint(x)};--i:${i}">${x.g}</i>`).join('')}${G.items.length > 4 ? `<i class="more">+${G.items.length - 4}</i>` : ''}</span>
+    <span class="dt-pt"><b>Your ${d === 'animal' ? 'animal-based' : d === 'veg' ? 'vegetarian' : 'vegan'} guide</b><small>${take.length ? `${take.length} to take daily · ` : ''}${G.items.length - take.length} to plan into meals</small></span></div>`;
+}
 function viewDiet() {
   const d = myDiet(), G = DIET_GUIDE[d], info = M.info; if (!G) return viewMissing();
   const D = DIETS.find(x => x.k === d), phase = info ? info.phase : 'follicular', F = dietFocus(G, phase), take = G.items.filter(x => x.tag === 'take');
-  return `${topbar(G.title, { back: true })}
-  <div class="pad dg">
-    <section class="card dg-hero"><span class="dg-g big">${D.g}</span><small>${D.t}${info ? ` · Day ${Math.min(info.cd, info.L)} · ${PHASES[phase].name}` : ''}</small><h1>${G.title}</h1><p>${G.lead}</p></section>
-    ${sectionTitle(`Right now: ${PHASES[phase].name.toLowerCase()} phase`)}
-    <div class="dg-now">${F.map(x => `<section class="card dg-n"><span class="dg-ng">${x.g}</span><b>${x.n}</b><p>${x.why}</p><div class="dg-do">${icon('check', 13, 2.4)}<span>${x.do}</span></div></section>`).join('')}</div>
-    ${take.length ? `${sectionTitle('Take every day')}<section class="card dg-tk">${take.map(x => `<div class="dg-tr"><span class="dg-ng sm">${x.g}</span><span><b>${x.n}</b><small>${x.do}</small></span></div>`).join('')}<p class="fine">Ask your doctor or pharmacist if you take medication, are pregnant or breastfeeding.</p></section>` : ''}
-    ${sectionTitle('Everything to watch')}
-    <section class="card dg-all">${G.items.map(x => `<details class="dg-d"><summary><span class="dg-ng sm">${x.g}</span><span class="dg-st"><b>${x.n}</b><small>${x.why.split('. ')[0]}.</small></span><em class="dg-tag ${x.tag}">${x.tag === 'take' ? 'Take' : 'Plan'}</em>${icon('chevD', 14)}</summary>
-      <div class="dg-body"><p>${x.why}</p><p class="dg-do">${icon('check', 13, 2.4)}<span>${x.do}</span></p><p class="dg-f"><b>Best foods</b> ${x.foods}</p>${x.ph.length ? `<p class="dg-ph">${x.ph.map(k => `<span style="--c:${PH_HEX[k]}"><i></i>${PHASES[k].name}</span>`).join('')}</p>` : ''}</div></details>`).join('')}</section>
+  const order = G.items.map((x, i) => ({ x, i, now: F.includes(x) })).sort((a, b) => b.now - a.now);
+  const ring = x => `<span class="dv-rb" style="--c:${dvTint(x)}"><i>${x.g}</i><small>${x.n.replace('Vitamin ', 'Vit. ')}</small></span>`;
+  return `${topbar('How you eat', { back: true })}
+  <div class="pad dv">
+    <section class="dv-hero"><img src="${DIET_PIC[d]()}" alt=""><span class="dv-shade"></span>
+      <div class="dv-ht"><small>${D.t}${info ? ` · Day ${Math.min(info.cd, info.L)} · ${PHASES[phase].name}` : ''}</small><h1>${G.title}</h1></div>
+      <div class="dv-glass"><div class="dv-num"><b>${G.items.length}</b><span>nutrients<br>to look after</span></div>
+        <div class="dv-rings">${(take.length ? take : G.items.slice(0, 3)).map(ring).join('')}</div>
+        <p>${G.lead}</p></div></section>
+
+    ${take.length ? `${sectionTitle('Your daily take')}
+    <div class="dv-caps">${take.map(x => `<section class="dv-cap" style="--c:${dvTint(x)}"><span class="dv-pill" aria-hidden="true"><i></i><i></i></span>
+      <b class="dv-dose">${x.dose ? x.dose[0] : ''}</b><small class="dv-unit">${x.dose ? x.dose[1] : ''}</small>
+      <span class="dv-cn">${x.g} ${x.n}</span><em class="dv-when">${icon('clock', 11)} ${x.dose ? x.dose[2] : 'every day'}</em></section>`).join('')}</div>
+    <p class="fine dv-fine">Ask your doctor or pharmacist first if you take medication, are pregnant or breastfeeding.</p>` : ''}
+
+    ${sectionTitle('What to look after')}
+    <div class="dv-legend">${d === 'animal' ? '' : `<span>${d === 'vegan' ? 'From plants' : 'From your food'}:</span>${DV_COV.map(([t, c], k) => `<span style="--m:${c}"><i></i>${t}</span>`).join('')}`}</div>
+    <div class="dv-grid">${order.map(({ x, i, now }) => `<button class="dv-t ${now ? 'now' : ''}" data-action="dvOpen" data-i="${i}" style="--c:${dvTint(x)}" aria-expanded="false">
+      ${now ? `<span class="dv-now" style="background:${PH_HEX[phase]}">${PHASES[phase].name} now</span>` : x.tag === 'take' ? '<span class="dv-tk">Take</span>' : ''}
+      <span class="dv-g">${x.g}</span><b>${x.n}</b>${dvMeter(x.cov, d)}<span class="dv-more">${icon('chevD', 13)}</span></button>`).join('')}</div>
+
     ${sectionTitle('Good to know')}
-    <section class="card dg-warn">${G.warn.map(([t, x]) => `<div class="dg-w">${icon('spark', 14)}<span><b>${t}</b><small>${x}</small></span></div>`).join('')}</section>
+    <div class="dv-know">${G.warn.map(([t, g, x]) => `<section class="dv-k"><span class="dv-kg">${g}</span><b>${t}</b><p>${x}</p></section>`).join('')}</div>
     <button class="sup-all" data-action="nav" data-to="plan">Recipes that fit how you eat ${icon('chevR', 14)}</button>
   </div>`;
 }
@@ -6695,7 +6741,7 @@ const actions = {
     acMsg(''); setTimeout(() => { em?.focus({ preventScroll: true }); g.querySelector('.gate-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 260);
   },
   onbBack: () => { if (ui.onbStep === 1 && ui.onbGateDone && !A.currentUser() && A.configured()) { ui.onbGateDone = false; ui.onbAnim = 'back'; render(); return; } ui.onbStep = Math.max(0, ui.onbStep - (ui.onbStep === 6 && ui.onb.noPeriod ? 2 : 1)); ui.onbAnim = 'back'; render(); },
-  onbDiet: d => { ui.onb.diet = d.v; document.querySelectorAll('.dt-c').forEach(b => { b.classList.toggle('on', b.dataset.v === d.v); b.setAttribute('aria-pressed', b.dataset.v === d.v); }); },
+  onbDiet: d => { ui.onb.diet = d.v; document.querySelectorAll('.dt-c').forEach(b => { b.classList.toggle('on', b.dataset.v === d.v); b.setAttribute('aria-pressed', b.dataset.v === d.v); }); const pk = document.querySelector('.dt-peek'); if (pk) pk.innerHTML = dvPeek(d.v); },
   setDiet: d => { state.profile.diet = d.v; save(); toast(`${DIETS.find(x => x.k === d.v).t}: your recipes and food guide changed`); render(); },
   onbAgo: d => { const o = ui.onb; if (d.v === 'none') { o.noPeriod = !o.noPeriod; o.ago = null; } else { o.noPeriod = false; o.ago = +d.v; o.last = C.iso(C.addDays(new Date(), -d.v)); } render(); },
   // birth control taps update in place, so the screen and its background never redraw
@@ -6825,6 +6871,17 @@ const actions = {
     el.classList.toggle('on', i < 0); if (i < 0) plusOne(el);
     const c = document.getElementById('sg-chart'); if (c) c.innerHTML = sugarCurve(sugarDone());
     const sc = document.getElementById('sg-score'); if (sc) { sc.innerHTML = sugarScore(sugarDone()); sc.classList.remove('pop'); void sc.offsetWidth; sc.classList.add('pop'); }
+  },
+  dvOpen: (d, el) => {
+    const grid = document.querySelector('.dv-grid'); if (!grid) return;
+    const open = grid.querySelector('.dvs-w'), same = open && open.dataset.i === d.i;
+    if (open) open.remove();
+    grid.querySelectorAll('.dv-t').forEach(t => { t.classList.toggle('open', !same && t.dataset.i === d.i); t.setAttribute('aria-expanded', !same && t.dataset.i === d.i); });
+    if (same) return;
+    const tiles = [...grid.querySelectorAll('.dv-t')], k = tiles.findIndex(t => t.dataset.i === d.i); if (k < 0) return;
+    const after = tiles[Math.min(k + (k % 2 ? 0 : 1), tiles.length - 1)], box = document.createElement('div');
+    box.className = 'dvs-w'; box.dataset.i = d.i; box.innerHTML = dvSheet(+d.i); after.after(box);
+    setTimeout(() => box.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 60);
   },
   cfOpen: (d, el) => {
     const sh = document.querySelector('.cf-sheet'); if (!sh) return;
