@@ -9316,3 +9316,38 @@ html, body { overscroll-behavior-y: none; }
 .onb.step-9 .onb-body { padding-bottom: 16px; }
 /* the free-trial step: the button bar fades in sooner so the card text below doesn't show through the small print */
 .onb.step-10 .onb-foot { background: linear-gradient(rgba(246,238,240,0), rgba(246,238,240,.98) 24%) !important; }
+
+/* Patterns: unlock card (peek of the map, three steps with check-in dots) */
+.pu2 { padding: 18px 16px 16px; border-radius: 30px; background: rgba(255,255,255,.86); border: 1px solid rgba(48,64,35,.08); box-shadow: 0 10px 30px rgba(32,48,26,.08); }
+.pu2-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin: 0 2px; }
+.pu2-top small { display: block; font-size: 12.5px; color: rgba(48,64,35,.7); }
+.pu2-top > div > b { display: block; margin-top: 2px; font-size: 21px; font-weight: 500; line-height: 1.15; color: #20301a; }
+.pu2-n { display: flex; align-items: baseline; gap: 4px; padding: 6px 12px 6px 14px; border-radius: 99px; background: #20301a; color: #fff; }
+.pu2-n b { font-size: 24px; line-height: 1; }
+.pu2-n small { font-size: 11.5px; color: rgba(255,255,255,.75); }
+.pu2-peek { position: relative; margin: 14px 0 4px; padding: 10px 8px 4px; border-radius: 20px; background: rgba(246,238,240,.7); border: 1px dashed rgba(48,64,35,.16); }
+.pu2-peek svg { display: block; width: 100%; height: auto; }
+.pu2-lock { position: absolute; left: 50%; top: 32%; transform: translate(-50%, -50%); display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 99px; background: #fff; box-shadow: 0 4px 14px rgba(32,48,26,.12); font-size: 12.5px; font-weight: 500; color: #20301a; white-space: nowrap; }
+.pu2-steps { display: grid; gap: 8px; margin-top: 12px; }
+.pu2-step { display: grid; grid-template-columns: 38px 1fr auto; align-items: center; gap: 12px; width: 100%; padding: 10px 12px 10px 10px; border: 1px solid rgba(48,64,35,.08); border-radius: 20px; background: #fff; font: inherit; text-align: left; color: #20301a; cursor: pointer; }
+.pu2-ic { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 13px; color: #fff; }
+.pu2-e .pu2-ic { background: #b7862c; }
+.pu2-s .pu2-ic { background: #b8455a; }
+.pu2-c .pu2-ic { background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(40% * var(--hs)) 34%); }
+.pu2-step.ok .pu2-ic { background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(45% * var(--hs)) 32%); }
+.pu2-t b { display: block; font-size: 15px; font-weight: 500; line-height: 1.2; }
+.pu2-t small { display: block; margin-top: 2px; font-size: 12.5px; color: rgba(48,64,35,.72); }
+.pu2-step.ok .pu2-t small { color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(45% * var(--hs)) 32%); font-weight: 500; }
+.pu2-dots { display: flex; gap: 4px; }
+.pu2-dots i { width: 9px; height: 9px; border-radius: 50%; background: rgba(48,64,35,.12); }
+.pu2-e .pu2-dots i.on { background: #b7862c; }
+.pu2-s .pu2-dots i.on { background: #b8455a; }
+.pu2-c .pu2-dots i.on, .pu2-step.ok .pu2-dots i.on { background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(45% * var(--hs)) 32%); }
+.pu2-more { margin: 12px 4px 0; }
+.pu2-more summary { display: inline-flex; align-items: center; gap: 4px; list-style: none; font-size: 13.5px; font-weight: 500; color: #304023; cursor: pointer; }
+.pu2-more summary::-webkit-details-marker { display: none; }
+.pu2-more[open] summary svg { transform: rotate(180deg); }
+.pu2-more p { margin: 8px 0 0; font-size: 13.5px; line-height: 1.45; color: rgba(48,64,35,.82); }
+.pu2 .pu2-go { margin: 14px 0 0; width: 100%; justify-content: center; padding: 13px 16px; background: #20301a; color: #fff; font-weight: 500; }
+.pu2-peek { padding-bottom: 10px; text-align: center; }
+.pu2-lock { position: static; transform: none; margin-top: 6px; padding: 5px 11px; box-shadow: 0 2px 8px rgba(32,48,26,.1); font-size: 12px; }

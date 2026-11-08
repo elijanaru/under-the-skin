@@ -3395,14 +3395,34 @@ function headsUpCard() {
       <span class="hu-when">${x.inDays === 0 ? 'Today' : x.inDays === 1 ? 'Tomorrow' : `In ${x.inDays} days`}</span>
       <span class="hu-t"><b>${x.name}</b> usually shows up on ${x.from === x.to ? `day ${x.from}` : `days ${x.from}–${x.to}`}<small>Seen in ${x.cyclesN} of your cycles</small>${QUICK_FIX[x.name] ? `<em class="al-fix">${icon('spark', 12)} ${QUICK_FIX[x.name]}</em>` : ''}</span>${rk ? icon('chevR', 16) : ''}</${rk ? 'button' : 'div'}>`; }).join('')}</section>`;
 }
-// Before patterns exist: rings for exactly what unlocks them (6 energy days, a symptom 3 times, 2 cycles).
+// Before patterns exist: a peek of the map she will get, three steps with one dot per check-in, the why behind a tap.
 function patternUnlock(P) {
-  const eDays = P.eAvg.filter(v => v != null).length, symN = Object.values(state.logs).reduce((n, l) => n + (l.symptoms || []).length, 0), R = 27, Cc = 2 * Math.PI * R;
-  const items = [['⚡', 'Energy', eDays, 6, 'days'], ['🌀', 'Symptoms', symN, 3, 'logged'], ['🌙', 'Cycles', P.cycles, 2, 'with check-ins']];
-  return `<section class="card glass pat-unlock"><small>Unlock your patterns</small>
-    <div class="mind-rings pu-rings">${items.map(([g, n, v, goal, u], i) => `<div class="mv2-b r${v >= goal ? 3 : v ? 2 : 0}" style="--i:${i}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * Math.max(.04, Math.min(1, v / goal))).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-g">${v >= goal ? '✓' : g}</span><b>${n}</b><small>${Math.min(v, goal)} of ${goal} ${u}</small></div>`).join('')}</div>
-    <p>Check in on your energy and symptoms, and Underskin shows you <b>your</b> patterns: which days cramps, bloating or low moods tend to arrive, and how your energy really moves.</p>
-    <button class="pill-cta" data-action="nav" data-to="log">${icon('plus', 14)} Check in today</button></section>`;
+  const eDays = P.eAvg.filter(v => v != null).length, symN = Object.values(state.logs).reduce((n, l) => n + (l.symptoms || []).length, 0);
+  const steps = [
+    ['e', 'bolt', 'Rate your energy', eDays, 6, 'days', 'log'],
+    ['s', 'thermo', 'Log a symptom', symN, 3, 'times', 'log'],
+    ['c', 'calendar', 'Full cycles logged', P.cycles, 2, 'cycles', 'calendar'],
+  ];
+  const done = steps.filter(x => x[3] >= x[4]).length;
+  // the peek: her cycle strip with a dashed energy line, pins still empty, a lock in the middle
+  const L = P.L || 28, Pd = M.stats.avgPeriod || 5, W = 320, X = d => 12 + (d - 1) / (L - 1) * (W - 24);
+  let line = ''; for (let d = 1; d <= L; d++) line += `${d === 1 ? 'M' : 'L'}${X(d).toFixed(1)} ${(44 - 34 * C.energyAt(d, L, Pd)).toFixed(1)}`;
+  const peek = `<div class="pu2-peek"><svg viewBox="0 0 ${W} 86" aria-hidden="true">
+      ${C.phaseRanges(L, Pd).map(r => `<rect x="${X(r.from) - 4}" y="56" width="${X(r.to) - X(r.from) + 8}" height="12" rx="6" fill="${PH_HEX[r.key]}" opacity="${r.key === 'menstrual' ? .9 : .35}"/>`).join('')}
+      <path d="${line}" fill="none" stroke="#20301a" stroke-opacity=".35" stroke-width="2" stroke-dasharray="4 5" stroke-linecap="round"/>
+      ${[.3, .55, .85].map(f => `<circle cx="${(12 + f * (W - 24)).toFixed(1)}" cy="78" r="5" fill="#fff" stroke="#20301a" stroke-opacity=".25" stroke-dasharray="2 2"/>`).join('')}
+    </svg><span class="pu2-lock">${icon('chart', 13)} Your own map appears here</span></div>`;
+  const row = ([k, ic, name, v, goal, u, to]) => { const ok = v >= goal, n = Math.min(v, goal);
+    return `<button class="pu2-step ${ok ? 'ok' : ''} pu2-${k}" data-action="nav" data-to="${to}">
+      <span class="pu2-ic">${icon(ok ? 'check' : ic, 17)}</span>
+      <span class="pu2-t"><b>${name}</b><small>${ok ? 'Done' : `${n} of ${goal} ${u}`}</small></span>
+      <span class="pu2-dots" aria-hidden="true">${Array.from({ length: goal }, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</span></button>`; };
+  return `<section class="card pu2">
+    <div class="pu2-top"><div><small>3 small steps</small><b>Unlock your body map</b></div><span class="pu2-n"><b class="dotnum">${done}</b><small>of 3</small></span></div>
+    ${peek}
+    <div class="pu2-steps">${steps.map(row).join('')}</div>
+    <details class="pu2-more"><summary>What you will see ${icon('chevD', 14)}</summary><p>Which days cramps, bloating or low moods tend to arrive, how your energy really moves across the month, and a heads-up the day before they come back.</p></details>
+    <button class="pill-cta pu2-go" data-action="nav" data-to="log">${icon('plus', 14)} Check in today</button></section>`;
 }
 function patternsSection() {
   const P = patterns(), L = P.L, info = M.info;
