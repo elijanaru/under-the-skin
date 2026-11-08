@@ -4146,8 +4146,8 @@ function fullCycleGuide(info) {
       text: 'One egg grows inside its follicle and makes more and more estrogen, which rebuilds the lining and lifts your energy.' },
     { k: 'o', name: 'Egg release', days: [ov - 1, ov + 1], art: ov, lining: ov, lead: [['Estrogen', '#e0457b', 'peak'], ['LH', '#b18cff', 'surge'], ['Testosterone', '#e8590c', 'small lift']],
       text: `Peak estrogen triggers the LH surge and the egg is released around day ${ov}. ${ttc() ? `Fertile window: about days ${ov - 5}–${ov + 1}.` : ''}` },
-    { k: 'l', name: 'After ovulation', days: [ov + 2, L], art: ov + 6, lining: ov + 7, lead: [['Progesterone', '#5d8a3a', 'high']],
-      text: `The empty follicle becomes the “yellow body” and makes progesterone. The lining thickens. ${ttc() ? 'If there’s no pregnancy, both hormones drop and your period starts.' : 'Then both hormones drop and your period starts.'}` },
+    { k: 'l', name: 'After ovulation', days: [ov + 2, L], art: ov + 6, lining: ov + 7, lead: [['Progesterone', '#5d8a3a', 'high'], ['Estrogen', '#e0457b', 'second rise']],
+      text: `The empty follicle becomes the “yellow body” and makes progesterone, plus a second, smaller wave of estrogen. The lining thickens. ${ttc() ? 'If there’s no pregnancy, both hormones drop and your period starts.' : 'Then both hormones drop and your period starts.'}` },
   ];
   // picture: ovaries across the month, the uterine lining, and the days
   const W = 360, x0 = 6, x1 = W - 6, X = t => x0 + (t - 1) / L * (x1 - x0), cw = (x1 - x0) / L;
@@ -4618,7 +4618,7 @@ function viewRhythm() {
 }
 // Cycle guide phase cards: one line each, and a tiny picture of the whole month's estrogen and progesterone
 // with this stage's days lit up, so she sees where it sits before reading anything.
-const STAGE_SHORT = { m: 'Both hormones are low and the lining sheds.', f: 'Estrogen climbs and your energy rises.', o: 'Estrogen peaks and the egg is released.', l: 'Progesterone rises, then both drop.' };
+const STAGE_SHORT = { m: 'Both hormones are low and the lining sheds.', f: 'Estrogen climbs and your energy rises.', o: 'Estrogen peaks and the egg is released.', l: 'Progesterone rises with a second estrogen wave, then both drop.' };
 function stageSpark([a, b], L, P, col) {
   const W = 112, H = 46, X = d => ((d - 1) / L * W), Y = v => (H - 4 - v / 1 * (H - 10));
   const line = k => { let d = ''; for (let t = 1; t <= L + 1; t += .5) d += `${d ? 'L' : 'M'}${X(t).toFixed(1)} ${Y(C.hormonesAt(t, L, P)[k]).toFixed(1)}`; return d; };

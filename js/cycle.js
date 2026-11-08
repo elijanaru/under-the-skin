@@ -131,7 +131,8 @@ export function dayInfo(date, stats) {
 
 // ---- Hormone model ----
 // One shared scale, shaped on the standard textbook curves (28-day reference charts, scaled to her cycle):
-// LH surge is the tallest spike, estrogen peaks ~1–2 days before ovulation, dips, then a smaller luteal hump;
+// LH surge is the tallest spike, estrogen peaks ~1–2 days before ovulation, dips but stays above period levels, then a
+// second luteal hump about half the height of the first (estradiol ~40 pg/mL early, ~250 at the peak, ~140 mid-luteal);
 // progesterone rises after ovulation and peaks ~7 days later; FSH has an early-follicular hump and a small
 // mid-cycle spike; testosterone stays low with only a gentle rise around ovulation.
 const g = (x, mu, s) => Math.exp(-((x - mu) ** 2) / (2 * s * s));
@@ -139,7 +140,7 @@ const ga = (x, mu, sl, sr) => g(x, mu, x < mu ? sl : sr); // asymmetric bell
 function raw(cd, L, P) {
   const ov = ovulationDay(L, P), f = (ov - 1) / 13; // stretch follicular shapes to her follicular length
   return {
-    estrogen: 0.12 + 0.83 * ga(cd, ov - 1.6, 3.4 * f, 1.25) + 0.3 * ga(cd, ov + 7.5, 2.8, 2.5),
+    estrogen: 0.12 + 0.83 * ga(cd, ov - 1.6, 3.4 * f, 1.6) + 0.42 * ga(cd, ov + 7, 3.6, 2.6),
     progesterone: 0.07 + 0.78 * ga(cd, ov + 7.5, 3.4, 2.7),
     lh: 0.1 + 0.04 * g(cd, 3, 3 * f) + 1.15 * ga(cd, ov - 0.8, 0.7, 1.15) + 0.03 * g(cd, ov + 5, 4),
     fsh: 0.08 + 0.17 * g(cd, 4 * f + 1, 3.3 * f) + 0.27 * ga(cd, ov - 0.7, 0.8, 1.3) + 0.12 * g(cd, L + 1.5, 1.8),
