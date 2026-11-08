@@ -9185,3 +9185,24 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .card .cpick { max-width: none; box-shadow: none; }
 @media (prefers-reduced-motion: reduce) { .cp-row, .cp-ok { transition: none; } }
 .cpick .cp-q > svg, .cpick .cp-q .ic { color: #6c823e !important; stroke: #6c823e !important; opacity: 1 !important; filter: none !important; }
+
+/* Sun tile, simple: gold sun + "Follow the sun", then only the day arc with rise and set */
+.hub .dpt.ph-sun > b { display: none !important; }
+.hub .dpt.ph-sun > small { display: flex !important; flex-direction: column; justify-content: center; flex: 1; }
+.hub .dpt.ph-sun .dsun { margin: auto 0 !important; padding: 0 !important; }
+.hub .dpt.ph-sun .dsun svg { width: 100%; height: auto; margin: 0 !important; }
+
+/* iPhone: the hero stage starts below the status bar, so the greeting and the phase name never overlap; the photo still runs to the top edge */
+.home .hub .stage-scene { margin-top: var(--sat) !important; }
+.home .hub .stage-scene > .stage-bg, .home .hub .stage-scene > .stage-tint, .home .hub .stage-scene > .stage-vig { top: calc(-1 * var(--sat)) !important; height: calc(100% + var(--sat)) !important; }
+
+/* Smooth Today: no live blur under scrolling content (the tab bar and the orb keep their glass), decorative loops rest */
+.home .card.glass, .home .mr-c, .home .lt-b, .home .lt-tag, .home .em-l, .home .cap-pill, .home .dpt-fr, .home button.link { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+.home .card.glass { background: linear-gradient(170deg, rgba(255,255,255,.9), rgba(255,255,255,.76)) !important; }
+.home .mr-c { background: linear-gradient(170deg, rgba(255,255,255,.94), rgba(255,255,255,.8)) !important; }
+.home .cap-pill { background: linear-gradient(170deg, rgba(255,255,255,.86), rgba(255,255,255,.66)) !important; }
+.home .dpt-fr { background: rgba(255,255,255,.22) !important; }
+.home .hub-life { display: none !important; }
+.home .dpt-g, .home .rc-photo, .home .mr-art, .home .stage-light { animation: none !important; }
+.home .hub .stage-scene::before { top: calc(-1 * var(--sat)) !important; height: calc(100% + var(--sat)) !important; }
+.hub .dpt.ph-sun .dsun { flex: 0 0 auto !important; display: block; }
