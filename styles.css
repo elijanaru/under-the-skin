@@ -8486,3 +8486,15 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .month-strip .ms { background: rgba(255,255,255,.92) !important; border-color: rgba(48,64,35,.13) !important; box-shadow: 0 10px 22px -16px rgba(32,48,26,.4); }
 .month-strip .ms.on { border-color: hsl(calc(var(--hb) + 0 * var(--hk)) calc(45% * var(--hs)) 55%) !important; }
 .month-strip .ms b { color: #20301a; } .month-strip .ms span { color: #4b5a40; }
+
+/* Plan › Rituals photo cards: time pill and a small ink seal on top, For you + title at the foot on a soft shade (glyph no longer over the title) */
+.rit-g .rcard.tall { display: flex; flex-direction: column; justify-content: space-between; }
+.rit-g .rcard.has-photo::after { content: ''; position: absolute; inset: 45% 0 0; background: linear-gradient(to bottom, rgba(20,24,16,0), rgba(20,24,16,.62)); pointer-events: none; z-index: 0; }
+.rit-g .rc-top { z-index: 1; }
+.rit-min { display: inline-flex; align-items: center; gap: 4px; padding: 4px 9px; border-radius: 99px; background: rgba(255,255,255,.92); color: #20301a; font-size: 11px; font-weight: 500; box-shadow: 0 2px 8px rgba(20,24,16,.12); }
+.rit-seal { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: rgba(255,255,255,.92); color: hsl(calc(var(--hb) + 110 * var(--hk)) calc(43% * var(--hs2)) 22%); font-family: var(--han); font-size: 16px; line-height: 1; box-shadow: 0 2px 8px rgba(20,24,16,.12); }
+.rit-foot { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-top: auto; }
+.rit-foot .rc-t { margin-top: 0; font-weight: 500; }
+.rit-you { padding: 3px 9px; border-radius: 99px; background: hsl(calc(var(--hb) + 330 * var(--hk)) calc(55% * var(--hs)) 92%); color: #20301a; font-size: 10.5px; font-weight: 500; letter-spacing: .03em; }
+.rit-g .rcard:not(.has-photo) .rit-foot .rc-t { color: #20301a; }
+.rit-you.not { background: rgba(255,255,255,.88); color: #4a4a40; }

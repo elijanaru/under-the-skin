@@ -1898,12 +1898,11 @@ function viewPlan() {
         <div class="card glass tile"><span class="tile-ic">${icon('leaf', 22)}</span><small>Tea for today</small><b>${tcm.tea.name}</b></div>
       </div>
       ${sectionTitle('Rituals for you')}
-      <div class="grid2">${rits.map((r, i) => `<button class="rcard tall ${carePhoto(r.id) ? 'has-photo' : ''}" data-action="nav" data-to="ritual/${r.id}">${careArt(r.id, ['crown', 'drop', 'hill', 'wave', 'orb', 'peak'][i % 6], 40 + i)}
-        <span class="rc-glyph">${r.glyph}</span>
-        <div class="rc-top"><span class="rc-k">${r.mins} min</span>${r.phases.includes(phase) ? `<span class="rc-badge">For you</span>` : ''}</div>
-        <div class="rc-t">${r.name}</div></button>`).join('')}</div>
+      <div class="grid2 rit-g">${rits.map((r, i) => `<button class="rcard tall ${carePhoto(r.id) ? 'has-photo' : ''}" data-action="nav" data-to="ritual/${r.id}">${careArt(r.id, ['crown', 'drop', 'hill', 'wave', 'orb', 'peak'][i % 6], 40 + i)}
+        <div class="rc-top"><span class="rit-min">${icon('clock', 11)} ${r.mins} min</span><span class="rit-seal" aria-hidden="true">${r.glyph}</span></div>
+        <div class="rit-foot">${r.phases.includes(phase) ? `<span class="rit-you">For you</span>` : ''}<div class="rc-t">${r.name}</div></div></button>`).join('')}</div>
       ${sectionTitle('Home remedies')}
-      <div class="grid2">${M.info ? remedyCards(M.info) : ''}</div>
+      <div class="grid2 rit-g">${M.info ? remedyCards(M.info) : ''}</div>
       <button class="card gro-cta" data-action="nav" data-to="relief"><span class="art-ic">${icon('heart', 20)}</span><span class="art-t">Relief guide<small>Cramps, PMS, sleep, skin</small></span>${icon('chevR', 18)}</button>`;
   } else {
     const rows = [['mind', ph.mind, 'Work'], ['users', ph.social, 'Social'], ['heart', ph.selfcare, 'Self-care']];
@@ -3557,7 +3556,7 @@ function remedyCards(info) {
   return REMEDIES.slice().sort((a, b) => remediesFor(info).includes(b) - remediesFor(info).includes(a)).map((r, i) => {
     const ok = remediesFor(info).includes(r);
     return `<button class="rcard tall ${ok ? '' : 'dim'} ${carePhoto(r.id) ? 'has-photo' : ''}" data-action="nav" data-to="remedy/${r.id}">${careArt(r.id, ['orb', 'drop', 'wave', 'crown', 'hill'][i % 5], 80 + i)}
-      <span class="rc-glyph">${r.glyph}</span><div class="rc-top"><span class="rc-k">${r.organ} · ${r.element}</span>${ok ? '' : '<span class="rc-badge">Not now</span>'}</div><div class="rc-t">${r.name}</div></button>`;
+      <div class="rc-top"><span class="rit-min">${r.organ} · ${r.element}</span><span class="rit-seal" aria-hidden="true">${r.glyph}</span></div><div class="rit-foot">${ok ? '' : '<span class="rit-you not">Not now</span>'}<div class="rc-t">${r.name}</div></div></button>`;
   }).join('');
 }
 
