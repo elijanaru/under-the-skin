@@ -307,18 +307,41 @@ function viewTopic(k) {
   </div>`;
 }
 // Stress opens Breathe with this on top: her cortisol through the day, her stress level today, and why breath brings it down.
+const CT_V = x => x < 7.6 ? .12 + .88 * Math.exp(-(((x - 7.6) / 1.1) ** 2)) : .1 + .9 * Math.exp(-(x - 7.6) / 5);
+const CT_TIP = [[5, 'Lowest', 'Deep sleep and repair. Your body rests its alarm.'], [7, 'Rising', 'Your body gets you ready to wake.'], [9.5, 'Morning peak', 'A healthy peak. Get daylight and protein, no need to calm it.'], [14, 'Easing', 'Your best hours for focus and hard tasks.'], [18, 'Afternoon', 'A 3 min breath break stops stress pushing it back up.'], [22, 'Evening', 'Long out-breaths help it fall so you can sleep.'], [24.1, 'Low', 'Screens off. Melatonin takes over now.']];
+const ctX = x => 34 + x / 24 * 276, ctY = v => 96 - v * 80;
+const ctTime = x => { const h = Math.floor(x) % 24, m = Math.round((x % 1) * 60); return `${h % 12 || 12}${m ? `:${String(m).padStart(2, '0')}` : ''} ${h < 12 ? 'am' : 'pm'}`; };
+function ctRead(x) { const v = CT_V(x), [, word, tip] = CT_TIP.find(t => x < t[0]); return { v, word, tip, lvl: v > .7 ? 'High' : v > .35 ? 'Medium' : 'Low' }; }
+// drag or tap along the curve: the marker, the time, the level and what helps at that hour follow her finger
+function ctScrub(inp) {
+  const box = inp.closest('.ct'), x = +inp.value, r = ctRead(x), cx = ctX(x).toFixed(1), cy = ctY(r.v).toFixed(1);
+  const m = box.querySelector('.ct-m'), ln = box.querySelector('.ct-ln'); m.setAttribute('cx', cx); m.setAttribute('cy', cy); ln.setAttribute('x1', cx); ln.setAttribute('x2', cx);
+  box.querySelector('.ct-rt').textContent = ctTime(x); box.querySelector('.ct-rw').textContent = r.word; box.querySelector('.ct-rl').textContent = r.lvl;
+  box.querySelector('.ct-rl').className = `ct-rl l${r.lvl[0]}`; box.querySelector('.ct-rp').textContent = r.tip;
+  inp.setAttribute('aria-valuetext', `${ctTime(x)}: ${r.word}, ${r.lvl.toLowerCase()} cortisol`);
+}
+document.addEventListener('input', e => { if (e.target.matches && e.target.matches('.ct-range')) ctScrub(e.target); });
+// Stress opens Breathe with this on top: her cortisol through the day (drag to explore), her stress level today, and why breath brings it down.
 function cortisolSec(info) {
   const w = dayWindow(info), [lvl, txt] = CALM[w], h = nowH(), pts = [];
-  for (let x = 0; x <= 24; x += .5) { const v = x < 6 ? .25 + x * .02 : x < 7 ? .37 + (x - 6) * .6 : .97 * Math.exp(-(x - 7) / 6.5) + .08; pts.push([x, Math.min(1, v)]); }
-  const X = x => 10 + x / 24 * 300, Y = v => 92 - v * 78, d = pts.map(([x, v], i) => `${i ? 'L' : 'M'}${X(x).toFixed(1)} ${Y(v).toFixed(1)}`).join(' ');
-  const nv = pts.reduce((a, b) => Math.abs(b[0] - h) < Math.abs(a[0] - h) ? b : a)[1];
-  return `<section class="card ct">
-    <div class="ct-h"><span><small>Your stress hormone</small><b>Cortisol today</b></span><span class="ct-lv lv${lvl}"><i class="dc-bar"><b style="width:${lvl * 33.3}%"></b></i>${['', 'Low', 'Medium', 'High'][lvl]}</span></div>
-    <svg class="ct-g" viewBox="0 0 320 110" aria-label="Cortisol is highest after waking and lowest at night">
-      <path d="${d} L310 96 L10 96 Z" fill="rgba(214,164,67,.16)"/><path d="${d}" fill="none" stroke="#c48a2c" stroke-width="2.4" stroke-linecap="round"/>
-      <line x1="${X(h).toFixed(1)}" x2="${X(h).toFixed(1)}" y1="10" y2="96" stroke="#20301a" stroke-dasharray="3 4" stroke-width="1.2"/>
-      <circle cx="${X(h).toFixed(1)}" cy="${Y(nv).toFixed(1)}" r="5.5" fill="#fff" stroke="#20301a" stroke-width="2.4"/>
-      ${[[7, 'Wake'], [13, 'Midday'], [22, 'Night']].map(([x, t]) => `<text x="${X(x)}" y="108" text-anchor="middle">${t}</text>`).join('')}</svg>
+  for (let x = 0; x <= 24; x += .25) pts.push([x, CT_V(x)]);
+  const d = pts.map(([x, v], i) => `${i ? 'L' : 'M'}${ctX(x).toFixed(1)} ${ctY(v).toFixed(1)}`).join(' ');
+  const r = ctRead(h), nx = ctX(h).toFixed(1), ny = ctY(r.v).toFixed(1);
+  return `<section class="card ct ct2">
+    <div class="ct-h"><span><small>Your stress hormone</small><b>Cortisol today</b></span><span class="ct-lv lv${lvl}"><i class="dc-bar"><b style="width:${lvl * 33.3}%"></b></i>${['', 'Low', 'Medium', 'High'][lvl]} stress</span></div>
+    <div class="ct-read" aria-live="polite"><b class="ct-rt dotnum">${ctTime(h)}</b><span><em class="ct-rw">${r.word}</em><i class="ct-rl l${r.lvl[0]}">${r.lvl}</i></span><p class="ct-rp">${r.tip}</p></div>
+    <div class="ct-wrap">
+      <svg class="ct-g" viewBox="0 0 320 124" aria-hidden="true">
+        <defs><linearGradient id="ctF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6a443" stop-opacity=".34"/><stop offset="1" stop-color="#d6a443" stop-opacity=".04"/></linearGradient></defs>
+        ${[[.85, 'High'], [.5, 'Mid'], [.15, 'Low']].map(([v, t]) => `<line x1="34" x2="310" y1="${ctY(v)}" y2="${ctY(v)}" class="ct-grid"/><text x="28" y="${ctY(v) + 3}" text-anchor="end" class="ct-ax">${t}</text>`).join('')}
+        <rect x="${ctX(0)}" y="12" width="${ctX(6) - ctX(0)}" height="84" class="ct-night"/><rect x="${ctX(21)}" y="12" width="${ctX(24) - ctX(21)}" height="84" class="ct-night"/>
+        <path d="${d} L${ctX(24)} 96 L${ctX(0)} 96 Z" fill="url(#ctF)"/><path d="${d}" fill="none" stroke="#b07a22" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <g class="ct-now"><circle cx="${nx}" cy="${ny}" r="3.5" fill="#20301a"/><text x="${nx}" y="${Math.max(10, +ny - 9)}" text-anchor="middle" class="ct-nowt">now</text></g>
+        <line class="ct-ln" x1="${nx}" x2="${nx}" y1="12" y2="96" stroke="#20301a" stroke-dasharray="3 4" stroke-width="1.2"/>
+        <circle class="ct-m" cx="${nx}" cy="${ny}" r="7.5" fill="#fff" stroke="#20301a" stroke-width="2.6"/>
+        ${[[0, '12am', 'start'], [6, '6am', 'middle'], [12, '12pm', 'middle'], [18, '6pm', 'middle'], [24, '12am', 'end']].map(([x, t, a]) => `<text x="${ctX(x)}" y="114" text-anchor="${a}" class="ct-ax">${t}</text>`).join('')}</svg>
+      <input class="ct-range" type="range" min="0" max="24" step="0.25" value="${(Math.round(h * 4) / 4).toFixed(2)}" aria-label="Move through the day to see your cortisol"></div>
+    <p class="ct-hint">${icon('chevL', 12)} Drag along the curve ${icon('chevR', 12)}</p>
     <p class="ct-p">${txt}</p>
     <div class="ct-how">${[['wind', 'Breathe out longer', 'than you breathe in'], ['heart', 'Your heart slows', 'via the vagus nerve'], ['mind', 'Cortisol settles', 'within minutes']].map(([g, a, b], i) => `<span><i>${i + 1}</i><b>${a}</b><small>${b}</small></span>`).join('<u></u>')}</div>
     <details class="gr-why"><summary>What studies found ${icon('chevD', 13)}</summary><p><b>Ma et al. 2017</b> (Frontiers in Psychology): 8 weeks of slow belly breathing lowered saliva cortisol and improved focus in 40 adults.</p><p><b>Balban et al. 2023</b> (Cell Reports Medicine): 5 minutes a day of breathing with long out-breaths lifted mood and lowered breathing rate more than meditation.</p><p>Cortisol peaks about 30 to 45 minutes after you wake and falls toward night. In the days before your period stress tends to hit harder, so slow breathing matters most then.</p></details>
@@ -3262,20 +3285,37 @@ function learnedScore(n) {
 }
 function learnedCard() {
   const { stats, info } = M; if (!info) return '';
-  const n = stats.lengths.length, P = patterns(), facts = [];
-  const pm = Math.max(1, Math.round(stats.variation / 2));
-  facts.push(n ? ['Your cycle', `${stats.avgCycle} days${stats.variation ? ` (±${pm})` : ''}`, `Learned from ${n} ${n === 1 ? 'cycle' : 'cycles'}`] : ['Your cycle', `${stats.avgCycle} days for now`, 'Log your next period to learn your real rhythm']);
-  facts.push(['Your period', `About ${stats.avgPeriod} days`, stats.periods.length ? `From ${stats.periods.length} logged ${stats.periods.length === 1 ? 'period' : 'periods'}` : 'Default until you log']);
-  const np = info.nextStart, lo = C.addDays(np, -pm), hi = C.addDays(np, pm);
-  facts.push(['Next period', fmt(np, { month: 'short', day: 'numeric' }), n ? `Most likely ${fmt(lo, { month: 'short', day: 'numeric' })} – ${fmt(hi, { month: 'short', day: 'numeric' })}` : 'Gets sharper with every period you log']);
-  const os = stats.ovSeen;
-  if (os.cd || os.luteal) facts.push(['Your egg release', `Around day ${info.ov}`, os.cd ? 'From your egg-white sign this cycle' : `Learned from ${plural(os.cycles, 'cycle')} of discharge check-ins`]);
-  const ev = P.eAvg.map((v, d) => [v, d]).filter(([v]) => v != null);
-  if (ev.length >= 5) { const [, d] = ev.reduce((a, b) => b[0] > a[0] ? b : a); facts.push(['Your energy peak', `Around day ${d}`, 'From your energy check-ins']); }
-  P.list.filter(x => !MOODS.includes(x.name)).slice(0, 2).forEach(x => facts.push([x.name, x.from === x.to ? `Day ${x.from}` : `Days ${x.from}–${x.to}`, `Seen in ${x.cyclesN} of your cycles`]));
+  const n = stats.lengths.length, P = patterns(), L = stats.avgCycle, Pd = stats.avgPeriod;
+  const pm = Math.max(1, Math.round(stats.variation / 2)), np = info.nextStart, lo = C.addDays(np, -pm), hi = C.addDays(np, pm), ov = info.ov, os = stats.ovSeen;
+  const ev = P.eAvg.map((v, d) => [v, d]).filter(([v]) => v != null), peak = ev.length >= 5 ? ev.reduce((a, b) => b[0] > a[0] ? b : a)[1] : null;
+  const pats = P.list.filter(x => !MOODS.includes(x.name)).slice(0, 3), md = d => fmt(d, { month: 'short', day: 'numeric' });
+  // the map: her cycle as one strip, phases tinted, period solid, egg release, energy peak above, her symptoms pinned below
+  const W = 320, X = d => 14 + (Math.min(d, L) - 1) / (L - 1) * (W - 28), y0 = 44, sh = 20, pinY = y0 + sh + 34;
+  // symptom pins: start at their real day, then nudge apart so they never overlap
+  const pins = pats.map(x => { const d = Math.round((x.from + x.to) / 2); return { x, d, at: X(d), px: X(d) }; }).sort((a, b) => a.at - b.at);
+  pins.forEach((q, i) => { if (i && q.px - pins[i - 1].px < 34) q.px = pins[i - 1].px + 34; });
+  const over = pins.length ? Math.max(0, pins[pins.length - 1].px - (W - 16)) : 0; pins.forEach(q => { q.px -= over; });
+  const map = `<svg class="lm-svg" viewBox="0 0 ${W} ${pins.length ? pinY + 34 : y0 + sh + 18}" role="img" aria-label="Your cycle map: ${L} days, period ${Pd} days, egg release around day ${ov}">
+      ${C.phaseRanges(L, Pd).map(r => `<rect x="${X(r.from) - 5}" y="${y0}" width="${X(r.to) - X(r.from) + 10}" height="${sh}" rx="${sh / 2}" fill="${PH_HEX[r.key]}" opacity="${r.key === 'menstrual' ? .95 : .32}"/>`).join('')}
+      ${pm ? `<rect x="${X(L - pm) - 4}" y="${y0 - 4}" width="${X(L) - X(L - pm) + 9}" height="${sh + 8}" rx="${(sh + 8) / 2}" fill="none" stroke="#304023" stroke-opacity=".55" stroke-dasharray="3 3"/>` : ''}
+      <circle cx="${X(ov)}" cy="${y0 + sh / 2}" r="10" fill="#fff" stroke="#d6a443" stroke-width="3"/><circle cx="${X(ov)}" cy="${y0 + sh / 2}" r="4" fill="#d6a443"/>
+      ${peak ? `<g><line x1="${X(peak)}" x2="${X(peak)}" y1="${y0 - 14}" y2="${y0 - 1}" stroke="#20301a" stroke-width="1.4"/><circle cx="${X(peak)}" cy="${y0 - 22}" r="10" fill="#20301a"/><text x="${X(peak)}" y="${y0 - 18}" text-anchor="middle" class="lm-e">⚡</text><text x="${Math.min(W - 40, Math.max(40, X(peak)))}" y="${y0 - 36}" text-anchor="middle" class="lm-lab">energy peak · day ${peak}</text></g>` : ''}
+      <rect x="${X(info.cd) - 2}" y="${y0 - 5}" width="4" height="${sh + 10}" rx="2" fill="#20301a"/>
+      ${pins.map(q => `<path d="M${q.at} ${y0 + sh + 2} L${q.at} ${y0 + sh + 10} L${q.px} ${pinY - 20}" fill="none" stroke="#20301a" stroke-opacity=".3" stroke-width="1.2"/><circle cx="${q.px}" cy="${pinY - 4}" r="15" fill="#fff" stroke="rgba(48,64,35,.2)"/><text x="${q.px}" y="${pinY + 1.5}" text-anchor="middle" class="lm-pe">${LOG_EMOJI[q.x.name] || '•'}</text><text x="${q.px}" y="${pinY + 24}" text-anchor="middle" class="lm-ax b">day ${q.d}</text>`).join('')}
+      <text x="14" y="${y0 - 9}" class="lm-ax">Day 1</text><text x="${W - 14}" y="${y0 - 9}" text-anchor="end" class="lm-ax">Day ${L}</text></svg>`;
+  const tile = (cls, ic, k, v, u, sub) => `<div class="lm-t ${cls}"><span class="lm-ic">${ic}</span><small>${k}</small><b><em class="dotnum">${v}</em>${u ? ` ${u}` : ''}</b><p>${sub}</p></div>`;
   return `${sectionTitle('What I’ve learned about you')}
-    <section class="card glass learned">${learnedScore(n)}${facts.map(([k, v, s]) => `<div class="lr"><span>${k}</span><b>${v}</b><small>${s}</small></div>`).join('')}
-    <p class="fine" style="margin:10px 0 0">The more you log (periods, energy, symptoms), the more personal every prediction gets.</p></section>`;
+    <section class="card learned lm2">${learnedScore(n)}
+      <div class="lm-map"><div class="lm-mh"><b>Your cycle, mapped</b><span><i class="t"></i>today</span></div>${map}
+        <div class="lm-key"><span><i style="background:${PH_HEX.menstrual}"></i>Period</span><span><i class="ov"></i>Egg release</span>${pm ? '<span><i class="pm"></i>Next period range</span>' : ''}</div></div>
+      <div class="lm-grid">
+        ${tile('c', '🔁', 'Your cycle', L, `days${stats.variation ? ` ±${pm}` : ''}`, n ? `From ${plural(n, 'cycle')}` : 'Log your next period')}
+        ${tile('p', '🩸', 'Your period', Pd, 'days', stats.periods.length ? `From ${plural(stats.periods.length, 'period')}` : 'Default until you log')}
+        ${tile('n', '📅', 'Next period', md(np), '', n ? `Likely ${md(lo)} to ${md(hi)}` : 'Sharper with every period')}
+        ${tile('o', '🥚', 'Egg release', `Day ${ov}`, '', os.cd ? 'From your egg-white sign' : os.luteal ? 'From your check-ins' : 'Estimated from your cycle')}
+      </div>
+      ${pats.length ? `<div class="lm-pats"><small>Your body’s habits</small>${pats.map(x => `<span class="lm-pat"><i>${LOG_EMOJI[x.name] || '•'}</i><b>${x.name}</b><em>${x.from === x.to ? `Day ${x.from}` : `Days ${x.from} to ${x.to}`}</em><small>${x.cyclesN} of your cycles</small></span>`).join('')}</div>` : ''}
+      <p class="lm-foot">${icon('spark', 12)} The more you log, the more personal every prediction gets.</p></section>`;
 }
 function headsUpCard() {
   const P = patterns(), up = upcomingPatterns(P);
@@ -4921,6 +4961,18 @@ function breathDrive() {
       <p>That is why the long out-breaths, like 4-7-8, sit in your luteal phase: a slow exhale gently counters the faster breath.</p></details>
   </section>`;
 }
+// One breath drawn as its shape: the line rises while she breathes in, stays flat while she holds, falls as she breathes out.
+// Box breathing literally draws a box. Each part is labelled underneath with its word and seconds.
+function breathShape(B, col) {
+  const hasHold = B.steps.some(x => x[0] === 'hold'), st = [];
+  B.steps.forEach(([k, , , ms]) => { if (k === 'top' && st.length) st[st.length - 1][1] += ms; else st.push([k === 'rest' && hasHold ? 'hold' : k, ms]); });
+  const tot = st.reduce((n, x) => n + x[1], 0), W = 140, Hh = 34, top = 5, bot = Hh - 3;
+  let x = 2, y = bot, segs = '';
+  st.forEach(([k, ms], i) => { const w = (W - 4) * ms / tot, y2 = k === 'in' ? top : k === 'out' ? bot : y;
+    segs += `<path d="M${x.toFixed(1)} ${y} L${(x + w).toFixed(1)} ${y2}" class="bs-${k}" ${k === 'in' ? `style="stroke:${col}"` : ''}/>`; x += w; y = y2; });
+  return `<span class="bsh" aria-hidden="true"><svg viewBox="0 0 ${W} ${Hh}" preserveAspectRatio="none">${segs}</svg>
+    <span class="bsh-l">${st.map(([k, ms]) => `<i style="flex:${ms}"><b>${{ in: 'In', out: 'Out', hold: 'Hold', rest: 'Rest' }[k]}</b> ${+(ms / 1000).toFixed(1)}</i>`).join('')}</span></span>`;
+}
 function breathMonth(phase, k) {
   const seg = { in: 'i', top: 'i', hold: 'h', out: 'o', rest: 'h' };
   return `${sectionTitle('A breath for every phase')}
@@ -4930,9 +4982,9 @@ function breathMonth(phase, k) {
       return `<button class="bzm-t ${p === phase ? 'now' : ''} ${id === k ? 'on' : ''}" style="--c:${PH_HEX[p]}" data-action="bzPhase" data-v="${id}">
         <span class="bzm-p"><i></i>${PHASES[p].name}${p === phase ? '<em>Now</em>' : ''}</span>
         <b class="dotnum">${nums}</b><small>${B.name}</small>
-        <span class="bzm-bar" aria-hidden="true">${B.steps.map(x => `<i class="${seg[x[0]]}" style="flex:${x[3]}"></i>`).join('')}</span>
+        ${breathShape(B, PH_HEX[p])}
         <span class="bzm-for">${B.for}</span></button>`; }).join('')}</div>
-    <div class="bzm-key"><span><i class="i"></i>In</span><span><i class="h"></i>Hold</span><span><i class="o"></i>Out</span><span class="bzm-s">seconds</span></div>`;
+`;
 }
 // her breath this week: one dot for each day she finished a full session (breathing or the still sit)
 function breathWeek() {

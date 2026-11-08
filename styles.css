@@ -8547,3 +8547,66 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .bdr-more summary::-webkit-details-marker { display: none; }
 .bdr-more[open] summary svg { transform: rotate(180deg); }
 .bdr-more > p { margin: 8px 2px 4px; font-size: 13px; line-height: 1.45; color: #3f4c33; }
+
+/* Breathe › cortisol through your day: time readout, scale, drag along the curve */
+.ct2 .ct-read { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 2px 12px; margin: 12px 0 4px; padding: 12px 14px; border-radius: 18px; background: #20301a; color: #f3f0e6; }
+.ct2 .ct-rt { grid-row: span 2; font-size: 26px; line-height: 1; color: #f3d48a; letter-spacing: .02em; }
+.ct2 .ct-read > span { display: flex; align-items: center; gap: 8px; }
+.ct2 .ct-rw { font-style: normal; font-weight: 600; font-size: 15px; }
+.ct2 .ct-rl { font-style: normal; font-size: 10.5px; font-weight: 600; padding: 2px 8px; border-radius: 99px; letter-spacing: .03em; }
+.ct2 .ct-rl.lH { background: #f3d48a; color: #3a2a08; } .ct2 .ct-rl.lM { background: #e9dcc0; color: #3a2a08; } .ct2 .ct-rl.lL { background: #cfe0b5; color: #20301a; }
+.ct2 .ct-rp { margin: 0; font-size: 12.5px; line-height: 1.35; color: rgba(243,240,230,.85); }
+.ct2 .ct-wrap { position: relative; touch-action: pan-y; }
+.ct2 .ct-g { display: block; width: 100%; height: auto; }
+.ct2 .ct-grid { stroke: rgba(48,64,35,.1); stroke-width: 1; }
+.ct2 .ct-ax { font: 500 9.5px Outfit, sans-serif; fill: #4b5741; }
+.ct2 .ct-night { fill: rgba(155,135,196,.1); }
+.ct2 .ct-nowt { font: 600 9px Outfit, sans-serif; fill: #20301a; letter-spacing: .04em; }
+.ct2 .ct-m { filter: drop-shadow(0 2px 4px rgba(31,43,22,.25)); }
+.ct2 .ct-range { position: absolute; inset: 0 0 14px 34px; width: calc(100% - 34px); height: auto; margin: 0; opacity: 0; cursor: ew-resize; -webkit-appearance: none; appearance: none; }
+.ct2 .ct-hint { display: flex; align-items: center; justify-content: center; gap: 4px; margin: 2px 0 6px; font-size: 11.5px; font-weight: 500; color: #6c823e; }
+.ct2 .ct-wrap:has(.ct-range:focus-visible) { outline: 2px solid #6c823e; outline-offset: 4px; border-radius: 12px; }
+
+/* Breathe › phase tiles: one breath drawn as its shape, labelled underneath */
+.bsh { display: block; margin: 8px 0 6px; }
+.bsh svg { display: block; width: 100%; height: 34px; overflow: visible; }
+.bsh path { fill: none; stroke-width: 3; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.bsh .bs-hold, .bsh .bs-rest { stroke: #b9b6ad; stroke-dasharray: 1 5; }
+.bsh .bs-out { stroke: #20301a; }
+.bsh-l { display: flex; margin-top: 4px; }
+.bsh-l i { font-style: normal; font-size: 10px; color: #4b5741; text-align: center; white-space: nowrap; min-width: 0; }
+.bsh-l i b { font-weight: 600; color: #20301a; }
+
+/* Insights › What I've learned: cycle map, number tiles, body habits */
+.lm2 { background: rgba(255,255,255,.94) !important; backdrop-filter: none !important; border: 1px solid rgba(48,64,35,.1) !important; }
+.lm-map { margin: 14px 0 12px; padding: 12px 12px 10px; border-radius: 22px; background: #f6f4ef; }
+.lm-mh { display: flex; justify-content: space-between; align-items: center; }
+.lm-mh b { font-size: 14px; font-weight: 600; color: #20301a; }
+.lm-mh span { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #4b5741; } .lm-mh i.t { width: 3px; height: 12px; border-radius: 2px; background: #20301a; }
+.lm-svg { display: block; width: 100%; height: auto; margin-top: 2px; }
+.lm-ax { font: 500 9.5px Outfit, sans-serif; fill: #4b5741; } .lm-lab { font: 600 9px Outfit, sans-serif; fill: #20301a; letter-spacing: .03em; }
+.lm-e { font-size: 12px; }
+.lm-key { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11px; color: #4b5741; }
+.lm-key span { display: flex; align-items: center; gap: 5px; } .lm-key i { width: 10px; height: 10px; border-radius: 50%; }
+.lm-key i.ov { background: #fff; box-shadow: inset 0 0 0 2.5px #d6a443; } .lm-key i.pm { border-radius: 3px; box-shadow: inset 0 0 0 1px rgba(48,64,35,.4); }
+.lm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.lm-t { position: relative; padding: 12px 12px 10px; border-radius: 20px; background: #fff; border: 1px solid rgba(48,64,35,.1); box-shadow: 0 6px 14px rgba(31,43,22,.05); }
+.lm-t .lm-ic { position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; font-size: 14px; }
+.lm-t.c .lm-ic { background: #e7eedd; } .lm-t.p .lm-ic { background: #f8dfe8; } .lm-t.n .lm-ic { background: #ebe2f6; } .lm-t.o .lm-ic { background: #f6ead0; }
+.lm-t small { font-size: 11.5px; font-weight: 500; color: #4b5741; }
+.lm-t b { display: block; margin: 4px 0 2px; font-size: 13px; font-weight: 500; color: #20301a; }
+.lm-t b em { font-style: normal; font-size: 24px; line-height: 1; color: #20301a; }
+.lm-t p { margin: 0; font-size: 11.5px; line-height: 1.3; color: #4b5741; }
+.lm-pats { margin-top: 12px; display: grid; gap: 6px; }
+.lm-pats > small { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #6c823e; font-weight: 500; }
+.lm-pat { display: grid; grid-template-columns: 34px 1fr auto; grid-template-rows: auto auto; align-items: center; column-gap: 10px; padding: 8px 12px 8px 8px; border-radius: 18px; background: #fff; border: 1px solid rgba(48,64,35,.1); }
+.lm-pat i { grid-row: span 2; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: #f6f4ef; font-style: normal; font-size: 17px; }
+.lm-pat b { font-size: 14px; font-weight: 600; color: #20301a; }
+.lm-pat em { grid-row: span 2; font-style: normal; font-size: 12.5px; font-weight: 600; color: #20301a; padding: 4px 10px; border-radius: 99px; background: #f6f4ef; }
+.lm-pat small { font-size: 11.5px; color: #4b5741; }
+.lm-foot { display: flex; align-items: center; gap: 6px; margin: 12px 2px 0; font-size: 12px; color: #4b5741; }
+.bzm-t .bsh-l b { margin: 0; font: 600 10px Outfit, sans-serif; letter-spacing: 0; }
+.lm-key i { display: inline-block; flex: none; width: 10px !important; height: 10px !important; padding: 0 !important; margin: 0 !important; background: none; }
+.lm-key i.pm { width: 14px !important; border-radius: 6px; box-shadow: none; border: 1.5px dashed rgba(48,64,35,.6); }
+.lm-pe { font-size: 15px; } .lm-ax.b { font-weight: 600; fill: #20301a; }
+.lm-map { padding-bottom: 12px; } .lm-svg { margin: 4px 0 6px; }
