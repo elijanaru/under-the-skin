@@ -5204,6 +5204,8 @@ function breathGuide(phase, k) {
 // Her month as one strip with a breath for each phase: the bar shows where she is today, each tile opens that breath in the player.
 const BZ_PH_WHY = { menstrual: 'Hormones at their lowest. Warm hands, slow belly, cramps soften.', follicular: 'Energy climbs. Even counts keep a fresh, busy mind clear.',
   ovulatory: 'Your brightest days. Slow waves keep you calm and open.', luteal: 'Progesterone peaks, then falls. Long breaths out bring sleep.' };
+// what the breath does for her in that phase, as one short tag
+const BZ_PH_TAG = { menstrual: ['drop', 'Softer cramps'], follicular: ['spark', 'Clear focus'], ovulatory: ['heart', 'Calm and open'], luteal: ['moon', 'Better sleep'] };
 const BZ_PH_NAME = { menstrual: 'Period', follicular: 'Follicular', ovulatory: 'Ovulation', luteal: 'Luteal' };
 function breathCycle(k) {
   const info = M.info; if (!info) return '';
@@ -5216,7 +5218,8 @@ function breathCycle(k) {
       return `<button class="bzc-t ${now ? 'now' : ''} ${id === k ? 'sel' : ''}" style="--c:${PH_HEX[r.key]}" data-action="bzPhase" data-v="${id}" aria-label="${BZ_PH_NAME[r.key]}, days ${r.from} to ${r.to}: ${B.name}. ${BZ_PH_WHY[r.key]}">
         <span class="bzc-ph"><i></i>${BZ_PH_NAME[r.key]}<small>${r.from === r.to ? `day ${r.from}` : `days ${r.from}–${r.to}`}</small>${now ? '<em>Now</em>' : ''}</span>
         <b>${B.name}</b>${breathShape(B, PH_HEX[r.key])}
-        <small class="bzc-why">${BZ_PH_WHY[r.key]}</small></button>`; }).join('')}</div>
+        <span class="bzc-tag">${icon(BZ_PH_TAG[r.key][0], 12)} ${BZ_PH_TAG[r.key][1]}</span></button>`; }).join('')}</div>
+    <details class="bzc-more"><summary>Why these breaths ${icon('chevD', 13)}</summary>${R.map(r => `<p><b>${BZ_PH_NAME[r.key]} · ${BREATHS[BREATH_FOR[r.key]].name}</b>${BZ_PH_WHY[r.key]}</p>`).join('')}</details>
   </section>`;
 }
 // her breath this week: one dot for each day she finished a full session (breathing or the still sit)
@@ -5239,7 +5242,7 @@ function calmRemCard() {
         <button data-action="remCalmHour" data-d="-1" aria-label="One hour earlier">−</button>
         <span class="crm2-clock"><b class="dotnum">${hh}:00</b><em>${ap}</em><small>every day</small></span>
         <button data-action="remCalmHour" data-d="1" aria-label="One hour later">+</button></div>
-      <p class="crm2-also"><span>⚡</span>And right away when you log stress${st ? `<em>${st === 2 ? 'Stressed today' : 'High-stress day'}</em>` : ''}</p>`
+      <p class="crm2-also"><span>${icon('bolt', 13)}</span>And right away when you log stress${st ? `<em>${st === 2 ? 'Stressed today' : 'High-stress day'}</em>` : ''}</p>`
     : `<p class="crm2-off">A gentle nudge every evening to breathe for a few minutes, and sooner on stressed days.</p>`}
   </section>`;
 }

@@ -9402,3 +9402,16 @@ html, body { overscroll-behavior-y: none; }
 .szx-more[open] summary svg { transform: rotate(180deg); }
 .szx-more p { margin: 10px 0 0; font-size: 13.5px; line-height: 1.5; color: rgba(48,64,35,.85); }
 .szx-more p b { display: block; font-size: 12px; font-weight: 500; color: #20301a; }
+
+/* Breathe, one practice per phase: a short tag instead of a paragraph, the why behind a tap */
+.bzc-tag { display: inline-flex; align-self: flex-start; align-items: center; gap: 5px; margin-top: 4px; padding: 4px 9px; border-radius: 99px; background: #fff; border: 1px solid color-mix(in srgb, var(--c) 30%, transparent); font-size: 12px; font-weight: 500; color: #20301a; }
+.bzc-tag svg { color: color-mix(in srgb, var(--c) 70%, #20301a); }
+.bzc-t.now .bzc-tag { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.25); color: #fff; }
+.bzc-t.now .bzc-tag svg { color: #cfe0a6; }
+.bzc-more { margin: 12px 4px 0; }
+.bzc-more summary { display: inline-flex; align-items: center; gap: 4px; list-style: none; font-size: 13.5px; font-weight: 500; color: #304023; cursor: pointer; }
+.bzc-more summary::-webkit-details-marker { display: none; }
+.bzc-more[open] summary svg { transform: rotate(180deg); }
+.bzc-more p { margin: 10px 0 0; font-size: 13.5px; line-height: 1.45; color: rgba(48,64,35,.85); }
+.bzc-more p b { display: block; font-size: 12.5px; font-weight: 500; color: #20301a; }
+.crm2-also > span { display: inline-grid; place-items: center; color: #b7862c; }
