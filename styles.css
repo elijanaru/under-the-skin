@@ -8721,3 +8721,8 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .msb-why p { margin: 0; font-size: 13px; line-height: 1.4; color: #4b5741; }
 .msb-why b { display: block; font-size: 13.5px; font-weight: 600; color: #20301a; }
 @media (prefers-reduced-motion: reduce) { .msb-loop svg { animation: none; } .msb-f, .msb-f::after { transition: none; } }
+
+/* Calendar › Your last cycles: the current row stays solid up to today, the days still ahead sit under a soft veil */
+.cyb-r.now .cyb-e, .cyb-r.now .cyb-l, .cyb-r.now .cyb-f { opacity: 1; }
+.cyb-bar { position: relative; }
+.cyb-fut { position: absolute; top: -1px; bottom: -1px; border-radius: 0 6px 6px 0; background: repeating-linear-gradient(135deg, rgba(255,255,255,.72) 0 3px, rgba(255,255,255,.5) 3px 6px); pointer-events: none; }

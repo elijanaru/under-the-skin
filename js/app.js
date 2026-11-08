@@ -1413,7 +1413,8 @@ function viewCalendar() {
     const cls = ['cal-d'];
     if (di) {
       cls.push(`ph-${di.phase}`);
-      const ongoing = M.info && M.info.isPeriod && d >= C.startOfDay(today) && d < C.addDays(M.info.cycleStart, M.info.P);
+      // her period is running: every day from its first day to its expected end is red, unless she logged that day as dry
+      const ongoing = M.info && M.info.isPeriod && d >= C.startOfDay(M.info.cycleStart) && d < C.addDays(M.info.cycleStart, M.info.P) && !(lg && lg.flow === 'none');
       if (di.periodActual || ongoing) cls.push('period');
       else if (di.periodPredicted) cls.push('period-pred');
       else if (di.isOvulation && di.cd <= di.L) cls.push('ovu');
@@ -1468,7 +1469,7 @@ function cycleBars() {
   const sd = d => fmt(d, { month: 'short', day: 'numeric' }), pct = n => (n / max * 100).toFixed(1);
   const row = (r, i) => { const ov = Math.max(r.P + 1, r.L - 14), end = C.addDays(r.s, r.L - 1);
     return `<details class="cyb-r ${r.now ? 'now' : ''}" style="--i:${i}"><summary><span class="cyb-d">${r.now ? 'Now' : sd(r.s)}</span>
-      <span class="cyb-bar"><i class="cyb-p" style="width:${pct(r.P)}%"></i><i class="cyb-e" style="width:${pct(Math.max(0, ov - 6 - r.P))}%"></i><i class="cyb-f" style="width:${pct(Math.max(0, Math.min(5, ov - 1 - r.P)))}%"></i><i class="cyb-o" style="width:${pct(1)}%"></i><i class="cyb-l" style="width:${pct(r.L - ov)}%"></i>${r.now ? `<b class="cyb-you" style="left:${pct(r.now - .5)}%"></b>` : ''}</span>
+      <span class="cyb-bar"><i class="cyb-p" style="width:${pct(r.P)}%"></i><i class="cyb-e" style="width:${pct(Math.max(0, ov - 6 - r.P))}%"></i><i class="cyb-f" style="width:${pct(Math.max(0, Math.min(5, ov - 1 - r.P)))}%"></i><i class="cyb-o" style="width:${pct(1)}%"></i><i class="cyb-l" style="width:${pct(r.L - ov)}%"></i>${r.now ? `<i class="cyb-fut" style="left:${pct(r.now)}%;width:${pct(Math.max(0, r.L - r.now))}%"></i><b class="cyb-you" style="left:${pct(r.now - .5)}%"></b>` : ''}</span>
       <span class="cyb-n">${r.now ? r.now : r.L}</span></summary>
       <p>${r.now ? `Started ${sd(r.s)} · day ${r.now} of about ${r.L} · next period around ${sd(info.nextStart)}` : `${sd(r.s)} to ${sd(end)} · period ${plural(r.P, 'day')} · egg release around day ${ov}`}</p></details>`; };
   const diff = rows.length > 1 ? M.stats.variation : 0;
@@ -1477,7 +1478,7 @@ function cycleBars() {
       <div class="cyb-top2"><span class="cyb-big"><b class="dotnum">${avg}</b><small>day cycle</small></span>
         <span class="cyb-chips"><em class="${diff <= 4 ? 'ok' : diff <= 7 ? 'mid' : 'hi'}">${diff <= 4 ? 'Steady' : diff <= 7 ? 'A bit changeable' : 'Varies a lot'} ±${pm}</em><em>${icon('drop', 12)} Period ${M.stats.avgPeriod} days</em></span></div>
       <div class="cyb-rows">${all.map(row).join('')}</div>
-      <div class="cyb-leg"><span><i class="cyb-p"></i>Period</span><span><i class="cyb-f"></i>Fertile</span><span><i class="cyb-o"></i>Egg</span><small>Tap a row for dates</small></div>
+      <div class="cyb-leg"><span><i class="cyb-p"></i>Period</span><span><i class="cyb-f"></i>Fertile</span><span><i class="cyb-o"></i>Egg release</span><small>Tap a row</small></div>
     </section>`;
 }
 
