@@ -9042,3 +9042,6 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .hub .dpt.ph-sun .dsun svg { margin-top: 18px; }
 .dsun-t { font-size: 10.5px; }
 .hub .dpt.ph-full.ph-fr.ph-vid.ph-sun .dpt-g i { background: linear-gradient(180deg, rgba(24,10,4,.55) 0%, rgba(24,10,4,.78) 45%, rgba(24,10,4,.82) 100%) !important; }
+/* iPhone: keep the onboarding and every page's top bar clear of the status bar and Dynamic Island */
+.onb:not(.onb-welcome) { padding-top: calc(16px + env(safe-area-inset-top, 0px)) !important; padding-bottom: calc(30px + env(safe-area-inset-bottom, 0px)); }
+.topbar { margin-top: calc(8px + env(safe-area-inset-top, 0px)); }
