@@ -20,6 +20,14 @@ export function sunTimes(date, lat, lng) {
   return { rise: fromJ(Jnoon - (Jset - Jnoon)), set: fromJ(Jset), noon: fromJ(Jnoon) };
 }
 
+// Height of the sun above the horizon (radians) at a moment, for the UV estimate.
+export function sunAltitude(date, lat, lng) {
+  const lw = rad * -lng, phi = rad * lat, d = toJ(date) - J2000;
+  const L = eclLong(meanAnomaly(d)), dec = decl(L, 0), ra = Math.atan2(Math.sin(L) * Math.cos(e), Math.cos(L));
+  const H = rad * (280.16 + 360.9856235 * d) - lw - ra;
+  return Math.asin(Math.sin(phi) * Math.sin(dec) + Math.cos(phi) * Math.cos(dec) * Math.cos(H));
+}
+
 // Capital-city coordinates, used until someone shares their exact location.
 export const COUNTRY_GEO = {
   DE: [52.52, 13.4], AT: [48.21, 16.37], CH: [46.95, 7.45], NL: [52.37, 4.9], BE: [50.85, 4.35], DK: [55.68, 12.57], PL: [52.23, 21.01],

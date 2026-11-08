@@ -15,7 +15,7 @@ import { TRAIN_SAFE, TRAIN_SAFE_CREDIT, TRAIN_WHEN, TRAIN_NUM } from './athlete.
 import { BODY_MAP, BODY_PIN } from './bodymap.js';
 import { GROUND_NOW, GROUND_WHERE, GROUND_PHASE, GROUND_MOON, GROUND_ROOTS, GROUND_STUDIES, GROUND_CAUTION } from './ground.js';
 import { MOLECULES, MOL_BALL } from './molecules.js';
-import { sunTimes, COUNTRY_GEO } from './sun.js';
+import { sunTimes, sunAltitude, COUNTRY_GEO } from './sun.js';
 import * as A from './account.js';
 
 const KEY = 'rhythm.v1';
@@ -4563,6 +4563,115 @@ function sunArc(D, h, moon) {
     <text x="${x1}" y="${hy + 22}" text-anchor="middle" class="rnow-t">Sunset</text><text x="${x1}" y="${hy + 36}" text-anchor="middle" class="rnow-v">${hLabel(D.set)}</text>
   </svg></div>`;
 }
+// ---------- UV index & vitamin D ----------
+// Live UV for her area (Open-Meteo, rounded to about 10 km, cached for the hour). Offline it falls back to a
+// clear-sky estimate from the height of the sun. Burn time and vitamin D follow her skin type.
+const UV_LV = [[3, 'Low', '#7fb35a'], [6, 'Moderate', '#eec04a'], [8, 'High', '#f0954a'], [11, 'Very high', '#e2604e'], [1e9, 'Extreme', '#a476d2']];
+const uvLevel = u => UV_LV.find(l => u < l[0]);
+// Fitzpatrick skin types: the UV dose (J/m²) that just reddens the skin.
+const SKIN = [[200, '#f7dfcc', 'Very fair', 'always burns, never tans'], [250, '#eec8a8', 'Fair', 'burns easily, tans a little'], [350, '#d9a77f', 'Medium', 'sometimes burns, tans well'],
+  [450, '#b57c53', 'Olive', 'rarely burns, tans easily'], [600, '#80533a', 'Brown', 'very rarely burns'], [1000, '#4a2f21', 'Deep brown', 'almost never burns']];
+const mySkin = () => Math.max(1, Math.min(6, +state.profile.skin || 3));
+const burnMin = u => (u < .5 ? Infinity : SKIN[mySkin() - 1][0] / (u * 1.5)); // 1 UV index = 0.025 W/m², so 1.5 J/m² a minute
+// Arms and legs bare (about a quarter of the skin): roughly 1000 IU in a quarter of the time it takes to redden.
+// A low sun gives very little UVB, so below UV 3 it fades to nothing.
+const dRate = u => (u < 1 ? 0 : 4000 / burnMin(u) * Math.min(1, (u - 1) / 2));
+const D_GOAL = 1000;
+function uvModel(la, ln) {
+  return Array.from({ length: 24 }, (_, h) => { const d = new Date(); d.setHours(h, 0, 0, 0); const a = sunAltitude(d, la, ln); return a <= 0 ? 0 : +(12.5 * Math.pow(Math.sin(a), 2.42)).toFixed(1); });
+}
+function uvData() {
+  const [la, ln] = myGeo(), key = `${(+la).toFixed(1)},${(+ln).toFixed(1)},${todayISO()}`;
+  let c = null; try { c = JSON.parse(localStorage.getItem('uts.uv')); } catch { /* none yet */ }
+  const live = c && c.key === key && Array.isArray(c.hours) ? c : null;
+  if (!live || Date.now() - live.at > 36e5) uvFetch(key, la, ln);
+  return { hours: live ? live.hours : uvModel(la, ln), live: !!live };
+}
+function uvFetch(key, la, ln) {
+  if (ui.uvBusy || (ui.uvTry && Date.now() - ui.uvTry < 6e5) || !navigator.onLine) return;
+  ui.uvBusy = true; ui.uvTry = Date.now();
+  fetch(`https://api.open-meteo.com/v1/forecast?latitude=${(+la).toFixed(1)}&longitude=${(+ln).toFixed(1)}&hourly=uv_index&timezone=auto&forecast_days=1`)
+    .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
+    .then(j => {
+      const hours = Array(24).fill(0);
+      j.hourly.time.forEach((t, i) => { hours[+t.slice(11, 13)] = Math.max(0, +(j.hourly.uv_index[i] || 0)); });
+      try { localStorage.setItem('uts.uv', JSON.stringify({ key, at: Date.now(), hours })); } catch { /* storage full */ }
+      uvRefresh();
+    }).catch(() => {}).finally(() => { ui.uvBusy = false; });
+}
+const uvAt = (hours, t) => { const x = t.getHours() + t.getMinutes() / 60, a = Math.floor(x), f = x - a; return hours[a] * (1 - f) + (hours[Math.min(23, a + 1)] ?? 0) * f; };
+function sunDay() { const L = state.sunlog = state.sunlog || {}; return L[todayISO()] = L[todayISO()] || { m: 0, iu: 0 }; }
+// Minutes and IU from a running sun session, a minute at a time with the UV of that minute.
+function sunRun(hours) {
+  if (!state.sunOn) return { m: 0, iu: 0 };
+  const t0 = state.sunOn, t1 = Math.min(Date.now(), t0 + 3 * 36e5); let iu = 0;
+  for (let t = t0; t < t1; t += 6e4) iu += dRate(uvAt(hours, new Date(t))) * Math.min(1, (t1 - t) / 6e4);
+  return { m: (t1 - t0) / 6e4, iu };
+}
+function uvGauge(u) {
+  const R = 54, cx = 70, cy = 68, a0 = 135, span = 270, max = 12, ang = v => (a0 + Math.min(v, max) / max * span) * Math.PI / 180;
+  const pt = v => [cx + R * Math.cos(ang(v)), cy + R * Math.sin(ang(v))].map(n => n.toFixed(1));
+  const arc = (v0, v1) => { const [x0, y0] = pt(v0), [x1, y1] = pt(v1); return `M${x0} ${y0} A${R} ${R} 0 ${(v1 - v0) / max * span > 180 ? 1 : 0} 1 ${x1} ${y1}`; };
+  const segs = [[0, 3], [3, 6], [6, 8], [8, 11], [11, 12]].map(([v0, v1], i) => `<path d="${arc(v0 + (i ? .14 : 0), v1 - (i < 4 ? .14 : 0))}" stroke="${UV_LV[i][2]}" opacity="${u >= v0 ? 1 : .28}"/>`).join('');
+  const [kx, ky] = pt(u), lv = uvLevel(u);
+  return `<svg class="uvw-g" viewBox="0 0 140 128" role="img" aria-label="UV index ${u.toFixed(1)}, ${lv[1]}">
+    <g fill="none" stroke-width="9" stroke-linecap="round">${segs}</g>
+    <circle cx="${kx}" cy="${ky}" r="8.5" fill="#fff" stroke="${lv[2]}" stroke-width="3.5"/>
+    <text x="${cx}" y="${cy + 6}" text-anchor="middle" class="uvw-n">${u.toFixed(1)}</text>
+    <text x="${cx}" y="${cy + 26}" text-anchor="middle" class="uvw-lv" fill="${lv[2]}">${lv[1].toUpperCase()}</text>
+  </svg>`;
+}
+function uvBars(hours, D) {
+  const h0 = Math.max(0, Math.floor(D.rise) - 1), h1 = Math.min(23, Math.ceil(D.set)), n = h1 - h0 + 1, W = 300, H = 74, gap = 3, bw = (W - gap * (n - 1)) / n;
+  const peak = Math.max(...hours.slice(h0, h1 + 1)), top = Math.max(peak * 1.12, 3.5), now = new Date().getHours(), pi = hours.indexOf(peak);
+  const bars = Array.from({ length: n }, (_, i) => {
+    const h = h0 + i, u = hours[h] || 0, bh = Math.max(3, u / top * (H - 16)), x = i * (bw + gap);
+    return `<rect x="${x.toFixed(1)}" y="${(H - bh).toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" rx="${Math.min(4, bw / 2).toFixed(1)}" fill="${uvLevel(u)[2]}" opacity="${h < now ? .38 : 1}" ${h === now ? 'class="now"' : ''}/>`
+      + ((h - h0) % 3 === 0 || h === h1 ? `<text x="${(x + bw / 2).toFixed(1)}" y="${H + 14}" text-anchor="middle" class="uvw-bt">${String(h).padStart(2, '0')}</text>` : '');
+  }).join('');
+  const nx = now >= h0 && now <= h1 ? (now - h0) * (bw + gap) + bw / 2 : null, px = (pi - h0) * (bw + gap) + bw / 2;
+  return `<svg class="uvw-bars" viewBox="0 -14 ${W} ${H + 32}" width="100%" role="img" aria-label="UV through the day, highest ${peak.toFixed(1)} at ${String(pi).padStart(2, '0')}:00">
+    ${peak >= .5 && pi >= h0 && pi <= h1 ? `<text x="${Math.max(18, Math.min(W - 18, px)).toFixed(1)}" y="${(H - Math.max(3, peak / top * (H - 16)) - 5).toFixed(1)}" text-anchor="middle" class="uvw-pk">${peak.toFixed(1)}</text>` : ''}
+    ${bars}${nx !== null ? `<line x1="${nx.toFixed(1)}" x2="${nx.toFixed(1)}" y1="-12" y2="${H + 3}" class="uvw-nowl"/><text x="${nx.toFixed(1)}" y="-4" text-anchor="middle" class="uvw-nowt">now</text>` : ''}</svg>`;
+}
+// The hours that make the most vitamin D (UV 3 and up), joined into one window.
+function dWindow(hours) { const hs = hours.map((u, h) => (u >= 3 ? h : -1)).filter(h => h >= 0); return hs.length ? [hs[0], hs[hs.length - 1] + 1] : null; }
+function uvWidget() {
+  const { hours, live } = uvData(), D = dayMoments(M.info), now = new Date(), u = uvAt(hours, now), lv = uvLevel(u);
+  const day = sunDay(), run = sunRun(hours), on = !!state.sunOn, iu = Math.round(day.iu + run.iu), mins = Math.round(day.m + run.m);
+  const burn = burnMin(u), left = burn - run.m, dMin = dRate(u) > 0 ? Math.max(1, Math.round(Math.max(0, D_GOAL - iu) / dRate(u))) : null, win = dWindow(hours), sk = SKIN[mySkin() - 1];
+  const pct = Math.min(100, iu / D_GOAL * 100), fmt = n => n.toLocaleString('en-US').replace(/,/g, ' ');
+  const burnTxt = burn === Infinity ? ['No burn risk', 'right now'] : on ? (left <= 0 ? ['Get in the shade', 'your skin has had enough'] : [`${Math.max(1, Math.round(left))}`, 'min until you burn']) : [`${Math.round(Math.min(burn, 600))}`, 'min until you burn'];
+  const dTxt = iu >= D_GOAL ? ['Done', 'for today'] : dMin ? [`${dMin}`, `min for ${fmt(D_GOAL - iu)} IU`] : ['Too low', 'for vitamin D now'];
+  const winTxt = win ? `Best for vitamin D <b>${String(win[0]).padStart(2, '0')}:00–${String(win[1]).padStart(2, '0')}:00</b>, arms and legs bare, before you go pink.`
+    : `The sun is too low for vitamin D today. From ${myGeo()[0] < 0 ? 'April to September' : 'October to March'}, 10–20 µg D3 a day keeps you topped up.`;
+  return `<section class="card uvw ${on ? 'on' : ''}" aria-live="polite">
+    <div class="uvw-top"><small>UV index · Vitamin D</small><em class="${live ? 'live' : ''}">${live ? 'Live' : 'Clear-sky estimate'}</em></div>
+    <div class="uvw-main">
+      ${uvGauge(u)}
+      <div class="uvw-side">
+        <div class="uvw-st ${on && left <= 5 && burn !== Infinity ? 'warn' : ''}"><span class="uvw-ic" style="--c:${lv[2]}">${icon('thermo', 15)}</span><div><b class="${/\d/.test(burnTxt[0]) ? '' : 'w'}">${burnTxt[0]}</b><small>${burnTxt[1]}</small></div></div>
+        <div class="uvw-st"><span class="uvw-ic" style="--c:#e9ae3a">${icon('sun', 15)}</span><div><b class="${/\d/.test(dTxt[0]) ? '' : 'w'}">${dTxt[0]}</b><small>${dTxt[1]}</small></div></div>
+      </div>
+    </div>
+    ${uvBars(hours, D)}
+    <p class="uvw-win">${winTxt}</p>
+    <div class="uvw-d">
+      <div class="uvw-dh"><span>Vitamin D today</span><b>${fmt(iu)}<i> / ${fmt(D_GOAL)} IU</i></b></div>
+      <div class="uvw-prog" role="progressbar" aria-valuemin="0" aria-valuemax="${D_GOAL}" aria-valuenow="${Math.min(iu, D_GOAL)}" aria-label="Vitamin D made today"><i style="width:${pct.toFixed(1)}%"></i></div>
+      <div class="uvw-dm"><span>${icon('clock', 13)} ${mins} min in the sun${on ? ' · timing now' : ''}</span>${iu >= D_GOAL ? `<span class="uvw-ok">${icon('check', 13)} Goal reached</span>` : ''}</div>
+      <button class="uvw-btn ${on ? 'on' : ''}" data-action="uvSun">${on ? `<span class="uvw-dot"></span>I’m back in the shade` : `${icon('sun', 17)} I’m in the sun`}</button>
+    </div>
+    <div class="uvw-skin"><div class="uvw-sk-h"><small>Your skin</small><span><b>${sk[2]}</b> · ${sk[3]}</span></div>
+      <div class="uvw-sw" role="radiogroup" aria-label="Your skin type">${SKIN.map((x, i) => `<button role="radio" aria-checked="${i + 1 === mySkin()}" aria-label="${x[2]}, ${x[3]}" class="${i + 1 === mySkin() ? 'on' : ''}" style="--s:${x[1]}" data-action="uvSkin" data-v="${i + 1}"></button>`).join('')}</div></div>
+    <details class="uvw-more"><summary>How this works ${icon('chevD', 14)}</summary>
+      <p>Your skin makes vitamin D from UVB light, which only gets through when the sun is high, roughly UV 3 and above. With arms and legs bare, about a quarter of the time it takes your skin to turn pink gives around 1 000 IU. Longer does not make more, it only adds sun damage, so cover up or move into the shade once the burn timer runs out.</p>
+      <p>Burn times are for your skin type with no sunscreen. Snow, water and sand reflect extra UV, and some medicines make skin more sensitive. ${live ? 'UV comes from a live forecast for your area and includes clouds.' : 'Offline, this is a clear-sky estimate from the height of the sun, so clouds will lower it.'}</p>
+    </details>
+  </section>`;
+}
+function uvRefresh() { const el = document.querySelector('.uvw'); if (el && state?.onboarded) { const open = el.querySelector('.uvw-more')?.open; el.outerHTML = uvWidget(); if (open) document.querySelector('.uvw-more').open = true; } }
+setInterval(() => { if (document.querySelector('.uvw.on')) uvRefresh(); }, 20000);
 function viewRhythm() {
   const info = M.info, done = doneToday(), lv = rhythmLevel(), streak = rhythmStreak(), r = rem(), D = dayMoments(info), h = nowH(), cur = momentAt(D, h), moon = Z.moonPhase(new Date());
   const week = Array.from({ length: 7 }, (_, i) => { const d = C.addDays(new Date(), i - 6), c = ((state.rhythm || {})[C.iso(d)] || []).length; return `<div class="rw"><i style="height:${Math.max(6, c / RH_GOAL * 100)}%" class="${c >= 4 ? 'ok' : ''}"></i><span>${fmt(d, { weekday: 'narrow' })}</span></div>`; }).join('');
@@ -4587,6 +4696,7 @@ function viewRhythm() {
         : `<div class="rnow-do"><h3>Do this now</h3><p class="rnow-rest">${icon('moon', 16)} Sleep. Nothing to do until the morning light.</p></div>`}
       <div class="rnow-next"><span class="rnow-ni">${emi(nx.g, 18)}</span><div><small>${hLabel(nx.from)}</small><b>${nx.n}</b>${nx.acts[0] ? `<span>${nx.acts[0].t}</span>` : ''}</div></div>
     </section>
+    ${uvWidget()}
     <div class="rh-stats"><div>${rhythmRing(done.length, RH_GOAL)}<small>${done.length} of ${RH_GOAL} today</small></div>
       <div><span>${emi('🔥', 18)}</span><b>${streak} ${streak === 1 ? 'day' : 'days'}</b><small>streak (4+ a day)</small></div>
       <div><span>${emi(lv.cur[1], 18)}</span><b>${lv.cur[2]}</b><small>${lv.next ? `${lv.next[0] - lv.total} to ${lv.next[2]}` : 'Highest level'}</small></div></div>
@@ -6960,6 +7070,16 @@ const actions = {
   timerToggle: () => { ui.timer.running = !ui.timer.running; renderOverlay(); },
   timerClose: () => { ui.timer = null; clearInterval(tick); renderOverlay(); },
   dismissRem: d => { rem().dismissed[d.id] = todayISO(); save(); render(); },
+  uvSun: () => {
+    if (state.sunOn) {
+      const { hours } = uvData(), r = sunRun(hours), day = sunDay();
+      day.m = Math.round((day.m + r.m) * 10) / 10; day.iu = Math.round(day.iu + r.iu); state.sunOn = null;
+      if (r.m >= 5) { const dn = doneToday(); if (!dn.includes('sun')) dn.push('sun'); }
+      save(); toast(r.iu >= 1 ? `+${Math.round(r.iu)} IU vitamin D` : 'Sun time saved');
+    } else { state.sunOn = Date.now(); save(); }
+    uvRefresh();
+  },
+  uvSkin: d => { state.profile.skin = +d.v; save(); uvRefresh(); },
   remToggle: d => { const r = rem(); r[d.k] = !r[d.k]; save(); render(); },
   remHour: d => { const r = rem(); r.checkinHour = (r.checkinHour + +d.d + 24) % 24; save(); render(); },
   remCalmHour: d => { const r = rem(); r.calmHour = (r.calmHour + +d.d + 24) % 24; save(); render(); },
