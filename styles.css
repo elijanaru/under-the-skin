@@ -8734,3 +8734,44 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .rx-more b { display: block; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; font-weight: 600; color: #6c823e; }
 .rx-more.now { background: hsl(calc(var(--hb, 345) + 0 * var(--hk, 1)) calc(55% * var(--hs, 1)) 95%); border-color: hsl(calc(var(--hb, 345) + 0 * var(--hk, 1)) calc(45% * var(--hs, 1)) 80%); }
 .rx-more.now > span { background: #b8323f; color: #fff; } .rx-more.now b { color: #9b2a35; }
+
+/* Recipe page: readable title on the photo, micronutrient bars, grouped ingredients with bold amounts, titled steps */
+.rcp .spec-media:has(> img) .spec-shade { background: linear-gradient(180deg, transparent 30%, rgba(246,238,240,.55) 58%, rgba(246,238,240,.92) 78%, var(--page)) !important; }
+.rcp .spec-name h1 { font-weight: 500; color: #20301a; text-shadow: 0 1px 14px rgba(246,238,240,.9); }
+.rcp .spec-name .eyebrow { color: #304023; font-weight: 500; }
+.rcm { padding: 16px 16px 12px; background: rgba(255,255,255,.95) !important; border: 1px solid rgba(48,64,35,.1) !important; }
+.rcm-h small { display: block; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #6c823e; font-weight: 500; }
+.rcm-h b { display: block; margin: 2px 0 10px; font-size: 16px; font-weight: 600; color: #20301a; }
+.rcm-r { display: grid; grid-template-columns: 112px 1fr 54px; align-items: center; gap: 10px; padding: 7px 0; border-top: 1px solid rgba(48,64,35,.07); }
+.rcm-n b { display: block; font-size: 13.5px; font-weight: 600; color: #20301a; line-height: 1.2; }
+.rcm-n small { font-size: 11.5px; color: #6b7660; }
+.rcm-bar { height: 10px; border-radius: 99px; background: #eef0e8; overflow: hidden; }
+.rcm-bar i { display: block; height: 100%; border-radius: 99px; background: #8c9768; }
+.rcm-r.full .rcm-bar i { background: #304023; }
+.rcm-p { text-align: right; font-size: 17px; color: #20301a; } .rcm-p em { font: 500 11px Outfit, sans-serif; font-style: normal; margin-left: 1px; color: #4b5741; }
+.rcm-f { margin: 8px 0 0; font-size: 11.5px; color: #7a8570; }
+.rci-c { padding: 14px 14px 8px; background: rgba(255,255,255,.95) !important; border: 1px solid rgba(48,64,35,.1) !important; }
+.rci-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 0 2px 8px; }
+.rci-top b { font-size: 15px; font-weight: 600; color: #20301a; } .rci-top .dotnum { font-size: 18px; margin-right: 3px; }
+.rci-top small { font-size: 11.5px; color: #6b7660; text-align: right; }
+.rci-h { margin: 10px 2px 2px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #6c823e; font-weight: 600; }
+.check-row.rci { display: grid; grid-template-columns: 24px 74px 1fr; align-items: center; gap: 8px; text-align: left; }
+.rci-q { font-size: 13px; font-weight: 600; color: #20301a; }
+.rci-n { font-size: 14px; color: #304023; line-height: 1.3; }
+.check-row.rci.on .rci-q, .check-row.rci.on .rci-n { text-decoration: line-through; opacity: .5; }
+.rcs { padding: 6px 16px; background: rgba(255,255,255,.95) !important; border: 1px solid rgba(48,64,35,.1) !important; }
+.rcs-s { display: flex; gap: 12px; padding: 12px 0; border-top: 1px solid rgba(48,64,35,.07); } .rcs-s:first-child { border-top: 0; }
+.rcs-n { flex: none; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: #20301a; color: #f3f0e6; font-size: 15px; }
+.rcs-s b { display: block; font-size: 14.5px; font-weight: 600; color: #20301a; margin-bottom: 2px; }
+.rcs-s p { margin: 0; font-size: 14px; line-height: 1.45; color: #4b5741; }
+/* Recipe hero with a turning 3D dish (the taco) on soft pearl light instead of a photo */
+.spec-media.m3d { background: radial-gradient(70% 46% at 50% 30%, #fff 0%, rgba(255,255,255,.6) 45%, transparent 75%), radial-gradient(60% 40% at 30% 60%, hsl(calc(var(--hb, 340) + 0 * var(--hk, 1)) calc(40% * var(--hs, 1)) 90% / .7), transparent 70%), var(--page); }
+.spec-media.m3d .spec-shade { display: none; }
+.spec-media.m3d { height: 560px; }
+.rcp-3d { position: absolute !important; left: -4%; right: -4%; top: 0; height: 360px !important; width: auto !important; }
+.rcp-3d img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; animation: none !important; filter: drop-shadow(0 14px 16px rgba(32,48,26,.2)); }
+.rcp-3d canvas.teacup3d { pointer-events: auto !important; touch-action: pan-y; cursor: grab; }
+/* the dish of the day with its own model (the taco) fills its Today tile */
+.hub .dpt.t-dish.t-big .dpt-g { width: calc(100% + 24px); height: 150px; margin: -16px -12px 0; }
+/* Superfood card under Eat today when there is no photo: one big glyph on soft light */
+.rcard.sf-card .sf-e { position: absolute; left: 50%; top: 44%; transform: translate(-50%, -50%); font-size: 64px; line-height: 1; filter: drop-shadow(0 10px 14px rgba(32,48,26,.2)); }

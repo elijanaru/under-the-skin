@@ -101,11 +101,6 @@ export const RECIPE_PHOTOS = {
   "by": "James Kern",
   "page": "https://unsplash.com/photos/grilled-meat-on-stainless-steel-tray-2BR2hPpq0yA"
  },
- "caldereta": {
-  "src": "https://images.unsplash.com/photo-1551889579-8acb3f14a917",
-  "by": "Michael Uebler",
-  "page": "https://unsplash.com/photos/stew-in-white-and-blue-ceramic-bowl-LERjH8KPTco"
- },
  "animal-tacos": {
   "src": "https://images.unsplash.com/photo-1599974579688-8dbdd335c77f",
   "by": "Jeswin Thomas",
@@ -121,15 +116,35 @@ export const RECIPE_PHOTOS = {
   "by": "Dovile Ramoskaite",
   "page": "https://unsplash.com/photos/bowl-of-ice-cream-iT4qcNMhYTQ"
  },
- "sweet-potato-brownies": {
-  "src": "https://images.unsplash.com/photo-1515037893149-de7f840978e2",
-  "by": "Michelle Tsang",
-  "page": "https://unsplash.com/photos/baked-brownies-1rqk6XVnw44"
- },
  "magnesium-bites": {
   "src": "https://images.unsplash.com/photo-1787788629722-02cf905bb188",
   "by": "Rafael Rodrigues",
   "page": "https://unsplash.com/photos/chocolate-truffles-with-nuts-and-coconut-9wkPa2VVkdM"
+ },
+ "oxtail-soup": {
+  "src": "https://images.unsplash.com/photo-1664741662725-bd131742b7b7",
+  "by": "Laura Ohlman",
+  "page": "https://unsplash.com/photos/a-bowl-of-food-y_7KLDoPlAc"
+ },
+ "bacon-dates": {
+  "src": "https://images.unsplash.com/photo-1769255484408-3ffada29d567",
+  "by": "Naveena V",
+  "page": "https://unsplash.com/photos/Hw-SDXYhMQ0"
+ },
+ "burger-bowl": {
+  "src": "https://images.unsplash.com/photo-1607532941433-304659e8198a",
+  "by": "Tania Melnyczuk",
+  "page": "https://unsplash.com/photos/xeTv9N2FjXA"
+ },
+ "organ-scramble": {
+  "src": "https://images.unsplash.com/photo-1779094543933-1531a4a286f8",
+  "by": "Tommaso Ubezio",
+  "page": "https://unsplash.com/photos/scrambled-eggs-and-bacon-on-a-white-plate-mu0Uxa42WUc"
+ },
+ "gyro-bowl": {
+  "src": "https://images.unsplash.com/photo-1655312116386-b0003a27974e",
+  "by": "Or Hakim",
+  "page": "https://unsplash.com/photos/a-plate-of-food-1yEHEeR_x-w"
  }
 };
 export function photoUrl(id, w = 600) {
