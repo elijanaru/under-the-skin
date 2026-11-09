@@ -33,7 +33,8 @@ export function cycleStats(state) {
   const lengths = [];
   for (let i = 1; i < periods.length; i++) {
     const l = diffDays(periods[i].start, periods[i - 1].start);
-    if (l >= 15 && l <= 60) lengths.push(l);
+    // under 21 days is usually spotting or a one-off, not a cycle: keep it out of the average so one early bleed doesn't halve every prediction
+    if (l >= 21 && l <= 60) lengths.push(l);
   }
   const recent = lengths.slice(-6);
   const avgCycle = recent.length ? Math.round(mean(recent)) : state.profile.cycleLength;
