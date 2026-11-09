@@ -4423,12 +4423,13 @@ function viewAura() {
 }
 // One flower per phase, matched to its inner season and what the flower stands for (photos: Pexels).
 const FLOWER = {
-  menstrual: { n: 'Snowdrop', m: 'flowers through winter, hope and rest' },
-  follicular: { n: 'Cherry blossom', m: 'spring, fresh starts' },
-  ovulatory: { n: 'Dahlia', m: 'summer in full bloom, confidence and grace' },
-  luteal: { n: 'Lotus', m: 'calm, turning inward and renewal' },
+  menstrual: { n: 'Lotus, closed', m: 'a closed bud, resting and renewing' },
+  follicular: { n: 'Lotus, opening', m: 'petals loosening, fresh energy' },
+  ovulatory: { n: 'Lotus, full bloom', m: 'wide open, confidence and glow' },
+  luteal: { n: 'Lotus, softening', m: 'still open, turning gently inward' },
 };
-const flowerImg = phase => `<img src="images/flower-${phase}.webp" alt="" decoding="async">`;
+// The lotus in the bubble: a closed bud on her period, opening through the follicular phase, full bloom at ovulation, softening in the luteal phase.
+const flowerImg = phase => `<img src="images/lotus-${phase}.webp" alt="" decoding="async">`;
 // slow glowing spores drifting up through the home hero
 const SPORES = Array.from({ length: 16 }, (_, i) => `<i style="--x:${(i * 37) % 100}%;--s:${2 + (i * 7) % 5}px;--d:${11 + (i * 5) % 9}s;--dl:-${(i * 13) % 17}s;--w:${((i * 23) % 40) - 20}px"></i>`).join('');
 // Home stage: the cycle ring floats over a stone in a rocky canyon, the key numbers sit below it.
