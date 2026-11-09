@@ -5574,7 +5574,7 @@ function viewMove() {
       <h1 class="mvp-h"><small>Today, do</small>${top.n}</h1>
       ${mvFig(top.k, true)}
       <p class="mvp-works"><i></i>Working now: ${T.works}</p>
-      <div class="mvp-stats"><div><small>How long</small><b class="dotnum">${T.long.replace(/ to /, '–').replace(' min', '')}</b><em>minutes · ${T.freq.toLowerCase()}</em></div><div><small>How hard</small><b>${D.int.split(':')[0]}</b><em>${(D.int.split(':')[1] || '').trim()}</em></div><div><small>Warm up</small><b>${D.warm.split(',')[0]}</b><em>${(D.warm.split(',')[1] || ' easy, then build').trim()}</em></div></div>
+      <div class="mvp-stats"><div><small>How long</small><b>${T.long.replace(/ to /, '–')}</b><em>${T.freq}</em></div><div><small>How hard</small><b>${D.int.split(':')[0]}</b><em>${(D.int.split(':')[1] || '').trim()}</em></div><div><small>Warm up</small><b>${D.warm.split(',')[0]}</b><em>${(D.warm.split(',')[1] || ' easy, then build').trim()}</em></div></div>
       ${mvInfo(top.k, D)}
     </section>
     ${month}
