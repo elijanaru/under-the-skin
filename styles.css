@@ -9580,3 +9580,41 @@ html, body { overscroll-behavior-y: none; }
   background: #fff; color: #20301a; font: inherit; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 8px 20px -8px rgba(32,48,26,.35), inset 0 1px 0 #fff; transition: transform .2s; }
 .cc-pill:active { transform: scale(.98); }
 .cc-pill .ic { color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 34%); }
+/* Move: just two numbers, how long to work out and how many steps */
+.mv-2n { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 16px; }
+.mv-n { display: flex; flex-direction: column; gap: 2px; padding: 16px; border-radius: 26px; background: #fff; border: 1px solid rgba(48,64,35,.1); box-shadow: 0 10px 24px -12px rgba(32,48,26,.3); color: #20301a; }
+.mv-ni { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; margin-bottom: 8px; color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 32%); background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 88%); }
+.mv-n small { font-size: 12.5px; color: rgba(48,64,35,.6); }
+.mv-n b { font-size: 30px; line-height: 1.1; font-weight: 400; letter-spacing: -.01em; }
+.mv-n em { font-style: normal; font-size: 12.5px; color: rgba(48,64,35,.65); }
+/* Train safe: each check as a number card with its phase dots, detail on tap */
+.ts3 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ts3-c { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 14px 14px 15px; border-radius: 26px; text-align: left; font: inherit; color: #20301a; cursor: pointer; overflow: hidden;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--c) 13%, #fff) 0%, #fff 60%); border: 1px solid color-mix(in srgb, var(--c) 22%, rgba(48,64,35,.08)); box-shadow: 0 10px 24px -14px rgba(32,48,26,.35); transition: transform .2s; }
+.ts3-c:active { transform: scale(.97); }
+.ts3-top { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.ts3-ic { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: var(--c); }
+.ts3-ph { display: flex; gap: 4px; }
+.ts3-ph i { width: 8px; height: 8px; border-radius: 50%; background: rgba(48,64,35,.12); }
+.ts3-ph i.on { background: var(--p); }
+.ts3-ph i.now { box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px #20301a; }
+.ts3-n { display: flex; flex-direction: column; margin-top: 6px; }
+.ts3-n b { font-size: 30px; line-height: 1.05; font-weight: 400; color: var(--c); filter: brightness(.8); }
+.ts3-n small { font-size: 11.5px; color: rgba(48,64,35,.6); line-height: 1.25; }
+.ts3-t { font-size: 15.5px; font-weight: 500; line-height: 1.2; margin-top: 2px; }
+.ts3-c.on { background: #20301a; color: #fff; border-color: #20301a; }
+.ts3-c.on .ts3-n b { color: #fff; filter: none; } .ts3-c.on .ts3-n small { color: rgba(255,255,255,.7); }
+.ts3-c.on .ts3-ph i:not(.on) { background: rgba(255,255,255,.2); }
+.ts3-key { font-size: 12px; color: rgba(48,64,35,.6); margin: 8px 4px 0; }
+/* Recipe at a glance: calories as the big number, protein / carbs / fat beside it, and the split as one bar */
+.mac { display: flex; align-items: center; gap: 14px; margin: 8px 0 12px; }
+.mac-k { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 92px; height: 92px; flex: none; border-radius: 50%; background: #20301a; color: #fff; }
+.mac-k b { font-size: 26px; font-weight: 400; line-height: 1; } .mac-k small { font-size: 11.5px; opacity: .75; margin-top: 3px; }
+.mac-g { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.mac-g span { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 10px 8px; border-radius: 18px; background: rgba(48,64,35,.05); }
+.mac-g i { width: 9px; height: 9px; border-radius: 50%; }
+.mac-g b { font-size: 19px; font-weight: 500; color: #20301a; } .mac-g em { font-style: normal; font-size: 12px; font-weight: 400; margin-left: 1px; }
+.mac-g small { font-size: 11.5px; color: rgba(48,64,35,.6); }
+.mac-p i, .mac-bar .mac-p { background: #b5485d; } .mac-c i, .mac-bar .mac-c { background: #d39a35; } .mac-f i, .mac-bar .mac-f { background: #6c823e; }
+.mac-bar { display: flex; gap: 3px; height: 10px; border-radius: 6px; overflow: hidden; }
+.mac-n { font-size: 12px; color: rgba(48,64,35,.6); margin: 8px 0 2px; }

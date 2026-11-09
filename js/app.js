@@ -363,11 +363,18 @@ function tsViz(k) {
   if (k === 'protein') return `<div class="tsv-palm">${['Breakfast', 'Lunch', 'Snack', 'Dinner'].map(m => `<span>${icon('hand', 22)}<b>24 g</b><small>${m}</small></span>`).join('')}<p>At 60 kg: about 96 g a day, one palm per meal</p></div>`;
   return '';
 }
+// An accent colour per Train safe check, so each card reads at a glance.
+const TS_TINT = { fuel: '#c9822e', iron: '#b5485d', bone: '#5f7fa8', knee: '#7f9a4c', heat: '#d2693c', protein: '#8a6fb8' };
 function trainSafe() {
   const open = ui.tsOpen, x = TRAIN_SAFE.find(t => t[0] === open), ph = M.info && M.info.phase;
   const strip = k => `<div class="ts-when"><small>When it matters most</small><div>${PHASE_ORDER.map(p => `<span class="${TRAIN_WHEN[k].includes(p) ? 'on' : ''} ${p === ph ? 'now' : ''}" style="--c:${PH_HEX[p]}"><i></i>${PHASES[p].name}${p === ph ? '<em>now</em>' : ''}</span>`).join('')}</div></div>`;
   return `${sectionTitle('Train safe')}
-    <div class="ts-grid">${TRAIN_SAFE.map(([k, g, t, l]) => `<button class="ts ${k === open ? 'on' : ''}" data-action="tsOpen" data-k="${k}" aria-expanded="${k === open}"><span class="ts-ic">${icon(g, 18)}</span><b>${t}</b><small>${l}</small></button>`).join('')}</div>
+    <div class="ts-grid ts3">${TRAIN_SAFE.map(([k, g, t]) => { const N = TRAIN_NUM[k], C = TS_TINT[k] || '#6c823e';
+      return `<button class="ts3-c ${k === open ? 'on' : ''}" style="--c:${C}" data-action="tsOpen" data-k="${k}" aria-expanded="${k === open}">
+        <span class="ts3-top"><span class="ts3-ic">${icon(g, 17)}</span><span class="ts3-ph" aria-label="Matters most in ${TRAIN_WHEN[k].map(p => PHASES[p].name).join(', ')}">${PHASE_ORDER.map(p => `<i class="${TRAIN_WHEN[k].includes(p) ? 'on' : ''} ${p === ph ? 'now' : ''}" style="--p:${PH_HEX[p]}"></i>`).join('')}</span></span>
+        <span class="ts3-n"><b class="dotnum">${N[0]}</b><small>${N[1]}</small></span>
+        <span class="ts3-t">${t}</span></button>`; }).join('')}</div>
+    <p class="ts3-key">The dots show the phases each one matters most in: period, follicular, ovulation, luteal.</p>
     ${x ? (() => { const N = TRAIN_NUM[x[0]]; return `<section class="card ts-more ts2">
       <div class="ts2-h"><span class="ts-ic">${icon(x[1], 18)}</span><b>${x[2]}</b>${saveBtn(regTip(`train-${x[0]}`, 'Train safe', [x[2], x[4][0], x[4][1], 'This week'], 'move'))}</div>
       <div class="ts2-big"><div class="ts2-n"><b>${N[0]}</b><small>${N[1]}</small></div><p>${N[2]}</p></div>
@@ -3709,12 +3716,12 @@ function ingRow(s) {
 function liquidArt(glyph, han, sym) {
   return `<div class="spec-liquid"><i></i><i></i><i></i></div>${glyph ? `<span class="spec-glyph ${han ? 'han' : ''} ${sym ? 'sym' : ''}">${glyph}</span>` : ''}`;
 }
-function specHero({ photo, glyph, han, sym, eyebrow, name, label = 'Key ingredients', rows = [], lead, desc, extra = '', media = '' }) {
+function specHero({ photo, glyph, han, sym, eyebrow, name, label = 'Key ingredients', rows = [], lead, desc, extra = '', media = '', block = '' }) {
   return `<section class="spec"><div class="spec-media ${media ? 'm3d' : photo ? '' : 'liquid'}">${media || (photo ? `<img src="${photo}" alt="">` : liquidArt(glyph, han, sym))}<span class="spec-shade"></span>
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>${extra}
     <div class="spec-name">${eyebrow ? `<div class="eyebrow">${eyebrow}</div>` : ''}<h1>${name}</h1></div></div>
     <div class="spec-sheet"><span class="spec-handle"></span><div class="spec-k">${label}</div>
-      ${rows.slice(0, 3).map(([t, v]) => `<div class="spec-row"><b>${t}</b>${v ? `<span>${v}</span>` : ''}</div>`).join('')}
+      ${block}${rows.slice(0, 3).map(([t, v]) => `<div class="spec-row"><b>${t}</b>${v ? `<span>${v}</span>` : ''}</div>`).join('')}
       ${lead ? `<p class="spec-lead">${lead}</p>` : ''}${desc ? `<p class="spec-desc">${desc}</p>` : ''}</div></section>`;
 }
 // photo for a ritual/remedy card when we have one, glow art otherwise
@@ -5106,6 +5113,8 @@ function moveLights(ranked, g) {
     return `<div class="ml-b ${c}"><div class="ml-h"><i></i><b>${t}</b><small>${L.length}</small></div><div class="ml-c">${L.map(m => { const on = ui.mvLi === m.k;
       return `<button class="ml-i ${on ? 'on' : ''}" data-action="mvLi" data-k="${m.k}" aria-expanded="${on}"><img src="images/tile-${m.k}.webp" alt="" loading="lazy"><span><b>${m.n}</b>${on ? `<small>${m.d}</small>` : ''}</span>${g.r[m.k] === 3 ? '<em>Best</em>' : ''}</button>`; }).join('')}</div></div>`; }).join('')}</section>`;
 }
+// Daily steps for each part of the cycle: gentler around the period, most when energy peaks.
+const MOVE_STEPS = { 'flow-start': '6,000', 'flow-end': '8,000', rising: '10,000', building: '10,000', peak: '12,000', settle: '10,000', focus: '9,000', premenstrual: '7,000' };
 function viewMove() {
   const { info } = M, L = info.L, P = info.P, key = dayWindow(info), g = MOVE_GUIDE[key], D = MOVE_DOSE[key], tab = ui.mvTab === 'month' ? 'month' : 'today';
   const days = Array.from({ length: L }, (_, i) => windowAt(i + 1, L, P));
@@ -5114,10 +5123,8 @@ function viewMove() {
   const body = tab === 'month'
       ? `<section class="mv2-month">${Object.entries(MOVE_GUIDE).filter(([k]) => days.includes(k)).map(([k, x]) => { const idx = days.map((w, i) => w === k ? i + 1 : 0).filter(Boolean); return `<div class="mv2-w ${k === key ? 'on' : ''}"><span class="mv2-d">${idx[0] === idx[idx.length - 1] ? idx[0] : `${idx[0]}–${idx[idx.length - 1]}`}</span><div><b>${x.title}${k === key ? ' <em>· now</em>' : ''}</b><p>${x.tip}</p></div></div>`; }).join('')}</section>`
       : `<section class="mv2-tip"><span class="eyebrow">Why today</span><p>${g.tip}</p></section>
-        <section class="card glass mv-dose"><div class="mvd-k">Your dose today</div>
-          ${[['How hard', D.int], ['How long', D.len], ['Warm-up', D.warm], ['Recovery', D.rec]].map(([t, v]) => `<div class="mvd-r"><small>${t}</small><b>${v}</b></div>`).join('')}
-          <p class="mvd-f">Feel strong on a rest day? Go for it.</p></section>
-        ${moveLights(ranked, g)}`;
+        <section class="mv-2n"><div class="mv-n"><span class="mv-ni">${icon('clock', 18)}</span><small>Workout</small><b class="dotnum">${D.len.replace(' min', '')}</b><em>minutes</em></div>
+          <div class="mv-n"><span class="mv-ni">${icon('leaf', 18)}</span><small>Steps</small><b class="dotnum">${MOVE_STEPS[key] || '8,000'}</b><em>steps a day</em></div></section>`;
   return `<section class="mv2 mv3">
     <video class="mv2-bg" src="images/move-stardust.mp4" poster="images/move-stardust.webp" muted loop playsinline ${still ? '' : 'autoplay'} preload="auto" aria-hidden="true"></video><span class="mv2-shade"></span>
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
@@ -6380,17 +6387,24 @@ function recMicro(r) {
         return `<div class="rcm-r ${pc >= 100 ? 'full' : ''}"><span class="rcm-n"><b>${n}</b><small>${fmtN(v)} ${u}</small></span><span class="rcm-bar"><i style="width:${Math.min(100, Math.max(4, pc))}%"></i></span><b class="rcm-p dotnum">${pc}<em>%</em></b></div>`; }).join('')}
       <p class="rcm-f">Estimates from standard food tables, against EU reference values for women.</p></section>`;
 }
+// Carbs per serving (estimated from the ingredients); fat is what is left of the calories after protein and carbs.
+const RECIPE_CARBS = { 'iron-lentil-soup': 55, 'cacao-beet-smoothie': 70, 'spring-green-bowl': 30, 'citrus-salmon-salad': 28, 'berry-quinoa-bowl': 40, 'cruciferous-stir-fry': 22, 'sweet-potato-bowl': 70, 'raw-beet-slaw': 50, 'living-green-salad': 22, 'ginger-bone-broth': 20, 'beef-beet-stew': 35, 'green-goddess-smoothie': 45, 'egg-kraut-plate': 25, 'courgette-pesto': 18, 'rainbow-wraps': 18, 'squash-walnut-soup': 25, 'baked-apple': 40, 'chickpea-curry': 65, 'liver-pancakes': 30, 'bone-marrow': 30, 'animal-tacos': 55, 'brazilian-lemonade': 30, 'raw-cream-icecream': 22, 'magnesium-bites': 10, 'oxtail-soup': 20, 'burger-bowl': 40, 'organ-scramble': 15, 'gyro-bowl': 50, 'bacon-dates': 30, 'red-lentil-dal': 70, 'black-bean-chili': 65, 'chia-berry-pudding': 40, 'chickpea-tray-bake': 50, 'lentil-tahini-salad': 55, 'warm-quinoa-porridge': 65, 'pesto-white-beans': 45, 'spinach-shakshuka': 20 };
+function recipeMacros(r) { const p = r.protein || 0, c = RECIPE_CARBS[r.id] ?? Math.round(r.kcal * .4 / 4), f = Math.max(0, Math.round((r.kcal - 4 * p - 4 * c) / 9)); return { kcal: r.kcal, p, c, f }; }
 function viewRecipe(id) {
   const r = RECIPES.find(x => x.id === id); if (!r) return viewMissing();
   const fav = (state.favorites || []).includes(id), serves = r.serves || 1, D3 = dishModel(r);
   // a dish with its own hero model (the taco) turns in 3D at the top of the page; drag to spin it
   const media = D3 && D3.hero ? `<span class="cup3d-w rcp-3d"><img src="${D3.img}" alt=""><canvas class="teacup3d" data-model="${D3.model}" data-elev="${D3.elev || 0.9}" data-fit="${D3.heroFit || D3.fit}" data-steam="0" aria-label="${esc(r.name)} in 3D. Drag to turn it."></canvas></span>` : '';
   return `<div class="pad sp2 rcp">
-    ${specHero({ media, photo: photoUrl(r.id) ? photoUrl(r.id, 1000) : '', glyph: '🥣', eyebrow: `${r.meal} · ${r.kcal} kcal a serving`, name: r.name, label: 'At a glance',
-      rows: [['Serves', serves === 1 ? '1 person' : serves > 6 ? `${serves} pieces` : `${serves} people`], ['Time', `${r.time} min`], ['Protein', `${r.protein || '·'} g a serving`]],
+    ${(() => { const X = recipeMacros(r); return specHero({ media, photo: photoUrl(r.id) ? photoUrl(r.id, 1000) : '', glyph: '🥣', eyebrow: `${r.meal} · ${r.time} min · ${serves === 1 ? 'serves 1' : serves > 6 ? `${serves} pieces` : `serves ${serves}`}`, name: r.name, label: 'At a glance · per serving',
+      block: (() => { const kc = [X.p * 4, X.c * 4, X.f * 9], T = kc.reduce((a, b) => a + b, 0) || 1;
+        return `<div class="mac"><div class="mac-k"><b class="dotnum">${X.kcal}</b><small>kcal</small></div>
+          <div class="mac-g">${[['Protein', X.p, 'p'], ['Carbs', X.c, 'c'], ['Fat', X.f, 'f']].map(([t, v, k]) => `<span class="mac-${k}"><i></i><b>${v}<em>g</em></b><small>${t}</small></span>`).join('')}</div></div>
+          <div class="mac-bar" aria-hidden="true">${kc.map((v, i) => `<i class="mac-${'pcf'[i]}" style="flex:${v}"></i>`).join('')}</div>
+          <p class="mac-n">${Math.round(kc[0] / T * 100)}% of the calories from protein, ${Math.round(kc[1] / T * 100)}% carbs, ${Math.round(kc[2] / T * 100)}% fat</p>`; })(),
       lead: `A ${r.meal.toLowerCase()} for your ${r.phases.map(p => PHASES[p].name).join(' & ')} phase`,
       desc: `${r.warm ? 'Warm and cooked, kind to your body around your period.' : r.raw ? 'Fresh and raw, best outside your period days.' : 'Good warm or at room temperature.'}`,
-      extra: `<button class="spec-btn r fav ${fav ? 'on' : ''}" data-action="fav" data-id="${id}" aria-label="Save">${icon('heart', 20)}</button>` })}
+      extra: `<button class="spec-btn r fav ${fav ? 'on' : ''}" data-action="fav" data-id="${id}" aria-label="Save">${icon('heart', 20)}</button>` }); })()}
     <section class="card glass tea-fit"><div class="tf-k">Made for${r.warm ? ' · warm & cooked' : r.raw ? ' · raw' : ''}</div>${phaseFit(r.phases, M.info && M.info.phase)}
       ${r.raw && warmWindow(M.info) ? `<p class="tea-warn">${icon('yinyang', 14)} Raw and cold: Chinese medicine says save it for after your period.</p>` : ''}</section>
     ${recMicro(r)}
@@ -6399,7 +6413,7 @@ function viewRecipe(id) {
     ${sectionTitle('Ingredients')}
     ${(() => { const d = myDiet(), D = DIETS.find(x => x.k === d); return d === 'all' ? '' : !fitsDiet(r) ? `<p class="rci-diet no">${icon('close', 12, 2.4)} Not ${D.t.toLowerCase()}: this one doesn't fit how you eat.</p>` : dietChanged(r) ? `<p class="rci-diet">${D.g} Made ${D.t.toLowerCase()} for you with simple swaps.</p>` : ''; })()}
     <section class="card rci-c"><div class="rci-top"><b><span class="dotnum">${r.ingredients.map(x => dietLine(x)).filter(Boolean).length}</span> ingredients</b><small>For ${serves === 1 ? '1 serving' : `${serves} ${serves > 6 ? 'pieces' : 'servings'}`} · tap to tick off</small></div>${recIngs(r)}</section>
-    ${sectionTitle('Method')}
+    ${sectionTitle('Recipe')}
     <section class="card rcs">${r.steps.map((s, i) => { const [t, d] = Array.isArray(s) ? s : ['', s]; return `<div class="rcs-s"><span class="rcs-n dotnum">${i + 1}</span><div>${t ? `<b>${t}</b>` : ''}<p>${fitsDiet(r) ? swapText(d, myDiet()) : d}</p></div></div>`; }).join('')}</section>
     <p class="fine center">Check every ingredient for allergies before you cook.</p>
     ${r.source ? `<p class="fine center">Adapted from <a class="src" href="${r.url}" target="_blank" rel="noopener">${r.source}</a></p>` : ''}
