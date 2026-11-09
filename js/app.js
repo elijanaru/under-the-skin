@@ -5763,7 +5763,7 @@ function viewBreathe(from) {
   const phase = M.info && M.info.phase, rec = BREATH_FOR[phase] || 'sigh', k = BREATHS[ui.bzK] ? ui.bzK : rec, B = BREATHS[k];
   return `${topbar('Breathe', { back: true })}
   <div class="pad bz-pad">
-    <h1 class="bz-title"><small>A minute for you</small>Come back to<em>your breath</em></h1>
+    <header class="t4-h bz-h"><small>A minute for you</small><h1>Come back to your breath.</h1><p>Pick a practice. One minute is enough.</p></header>
     <div class="bzp" role="tablist" aria-label="Choose a breathing practice">${[rec, ...BREATH_ORDER.filter(x => x !== rec)].map(x => `<button class="bzp-o ${x === k ? 'on' : ''}" role="tab" aria-selected="${x === k}" data-action="bzPick" data-v="${x}">
       ${x === rec ? `<em>${phase ? 'For your phase' : 'Start here'}</em>` : ''}<span class="bzp-g">${BREATHS[x].g}</span><b>${BREATHS[x].name}</b><small>${BREATHS[x].when}</small></button>`).join('')}</div>
     <section class="bz" data-pat="${k}">
