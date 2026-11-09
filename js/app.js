@@ -4692,8 +4692,7 @@ function teaWheel(info, w, td, steep, near, inPage) {
       <h1 class="tgw-t">${td[1].replace(/ & /, ' <em>&amp;</em> ')}<span>benefits</span></h1>
       <div class="tgw-stage"><span class="tgw-ring" aria-hidden="true"></span>${labels}
         <span class="cup3d-w tgw-cup"><img src="${teaCupImg(td[1])}" alt="" decoding="async"><canvas class="teacup3d"${teaCupAttr(td[1])} data-fit="${/matcha/i.test(td[1]) ? 0.92 : /green tea/i.test(td[1]) ? 1.1 : 1.3}" aria-label="${td[1]}, turning slowly"></canvas></span></div>
-      <ul class="tgw-rs">${(TEA_REASONS[w] || []).map(([ic, t]) => `<li><span>${icon(ic, 15)}</span>${t}</li>`).join('')}</ul>
-      <p class="tgw-brew">${icon('cup', 14)} ${td[3]}</p>
+      <dl class="t4-spec tbr-l tgw-sp">${(TEA_REASONS[w] || []).map(([ic, t, x]) => `<div><dt><span>${icon(ic, 17)}</span></dt><dd><b>${t}</b><small>${x}</small></dd></div>`).join('')}<div><dt><span>${icon('cup', 17)}</span></dt><dd><b>Brew</b><small>${td[3]}</small></dd></div></dl>
       <button class="tgw-cta" data-action="nav" data-to="tea/day-${w}">How to brew it ${icon('chevR', 15)}</button>
     </section>`;
 }
