@@ -448,8 +448,8 @@ function viewGround() {
   const open = ui.grStudy;
   return `${topbar('Grounding', { back: true })}
   <div class="pad gr">
+    <header class="t4-h sp-h gr-h"><small>Earthing</small><h1>Ground yourself.</h1><p>Bare skin on the earth. Your body takes on the ground’s calm, steady charge.</p></header>
     <section class="gr-hero gr-tree"><img class="gr-tree-img" src="images/ground-tree.webp" alt="A hand resting on a giant redwood, light circling up into the sky" decoding="async">
-      <span class="gr-hero-t"><small>Earthing</small><b>Ground yourself</b><em>Bare skin on the earth. Your body takes on the ground’s calm, steady charge.</em></span>
       <span class="gr-hero-n"><b class="dotnum">15</b><small>min a day</small></span></section>
 
     ${groundEnergy()}

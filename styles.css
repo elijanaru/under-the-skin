@@ -10602,3 +10602,7 @@ html .pad > .page-h span, html .page-h span, html .gro-page .page-h span { color
 /* Nutrients: intro as header + one dark pill; doses readable */
 .nu-go { margin: 0 2px 16px; }
 .nu-c .nu-dose { color: #304023 !important; opacity: 1 !important; font: 600 12.5px Outfit, sans-serif !important; letter-spacing: 0 !important; padding: 5px 10px; border-radius: 99px; background: #fff; border: 1px solid rgba(32,48,26,.08); white-space: nowrap; }
+/* Ground: title above the photo, the photo stays clean (no dark gradient for text) */
+.pad .gr-h { display: block !important; margin-top: 4px; width: auto; } .pad .gr-h > * { display: block; } .pad .gr-h small { display: inline-flex; }
+.gr-hero.gr-tree::after { display: none; }
+.gr-hero.gr-tree { aspect-ratio: 4 / 4.2; }
