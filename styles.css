@@ -10613,3 +10613,10 @@ html .pad > .page-h span, html .page-h span, html .gro-page .page-h span { color
 .spec-sheet .spec-row:has(> span) > b { flex: none; font: 500 14.5px Outfit, sans-serif !important; letter-spacing: 0 !important; color: #5d6b4f !important; }
 .spec-sheet .spec-row:has(> span) > span { flex: 1; max-width: none; padding-top: 0; text-align: right; font: 600 15px/1.3 Outfit, sans-serif !important; color: #20301a !important; }
 .spec-sheet .spec-k { font-size: 13px; font-weight: 500; color: #20301a; }
+/* Today Sport tile: white tile, the stardust clip as a rounded picture on the right, ink text beside it (no text over the video) */
+.hub .dpt.wide.hero-move.ph-vid { background: #fff !important; padding-right: 132px !important; min-height: 128px; border: 1px solid rgba(32,48,26,.06); }
+.hub .dpt.wide.hero-move.ph-vid .dpt-g { position: absolute; inset: 12px 12px 12px auto !important; width: 108px !important; height: auto !important; border-radius: 20px; overflow: hidden; box-shadow: 0 8px 18px -10px rgba(23,20,28,.5); }
+.hub .dpt.wide.hero-move.ph-vid .dpt-g i { display: none; }
+.hub .dpt.wide.hero-move.ph-vid .dpt-k { color: #6c823e !important; }
+.hub .dpt.wide.hero-move.ph-vid b { color: #20301a !important; font-weight: 600 !important; }
+.hub .dpt.wide.hero-move.ph-vid small { color: #4a5a3a !important; }
