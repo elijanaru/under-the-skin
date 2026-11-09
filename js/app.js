@@ -287,8 +287,8 @@ const TOPIC_PIC = { eat: 'images/season-veg.webp', friends: 'images/partner-hand
 // Friends tile: how full her social battery typically is today, as a ring (from MIND_GUIDE's social level 0–3).
 function socialBattery(info) {
   const G = info && MIND_GUIDE[dayWindow(info)]; if (!G) return '';
-  const pct = [25, 50, 75, 100][G.social], R = 25, Cc = 2 * Math.PI * R;
-  return `<span class="sbat" role="img" aria-label="Social battery about ${pct}%"><svg viewBox="0 0 60 60"><circle class="t" cx="30" cy="30" r="${R}"/><circle class="p" cx="30" cy="30" r="${R}" stroke-dasharray="${(Cc * pct / 100).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 30 30)"/></svg><b>${pct}<em>%</em></b><small>Social battery</small></span>`;
+  const lv = G.social + 1, pct = lv * 25;
+  return `<span class="bat3" role="img" aria-label="Social battery about ${pct}%"><span class="bat3-body">${[1, 2, 3, 4].map(i => `<span class="bat3-c ${i <= lv ? 'on' : ''}" style="--d:${i * 160}ms"></span>`).join('')}<b class="dotnum">${pct}%</b></span><span class="bat3-tip"></span></span>`;
 }
 function viewTopic(k) {
   const info = M.info; if (!info || !TOPIC_PIC[k]) return viewMissing();
@@ -1177,21 +1177,21 @@ function viewOnboarding() {
   if (s === 1 && !ui.onbGateDone && !A.currentUser() && A.configured()) return viewGate(); // no sign-up screen until accounts are switched on
   const bd = o.birthday ? (() => { const [y, m, d] = o.birthday.split('-').map(Number); const sign = Z.sunSign(m, d), moon = Z.moonPhase(new Date(y, m - 1, d, 12)), cz = Z.chineseZodiac(y, m, d); return { sign, moon, cz }; })() : null;
   const body = {
-    1: ui.onbWhere ? `<div class="onb-avatar where"><span class="where-emo" aria-hidden="true">🌍</span></div><h2 class="onb-title">Where do <span>you live?</span></h2>
-        ${countryPicker('onb', o.country || myCountry(), 'cp-onb')}
-        <div class="onb-why"><b>Why we ask</b>
-          <p>${icon('leaf', 14)} What’s in season to eat where you are</p>
-          <p>${icon('sun', 14)} Your sunrise, sunset and daylight</p>
-          <p>${icon('spark', 14)} The UV for your vitamin D</p></div>` : `<div class="onb-avatar">${o.photo ? `<img src="${o.photo}" alt="">` : AVATAR_SVG}</div><h2 class="onb-title">What should we <span>call you?</span></h2>
+    1: ui.onbWhere ? `<div class="gxw-flag" aria-hidden="true">${flagOf(o.country || myCountry())}</div><h2 class="onb-title">Where do <span>you live?</span></h2>
+        <p class="gx-sub">So your food, daylight and sun fit your place.</p>
+        <div class="gxw-why">${[['leaf', 't2', 'Season foods'], ['sun', 't4', 'Sunrise & sunset'], ['spark', 't1', 'UV for vitamin D']].map(([ic, t, l]) => `<span><i class="gx-fi ${t}">${icon(ic, 18, 1.8)}</i>${l}</span>`).join('')}</div>
+        ${countryPicker('onb', o.country || myCountry(), 'cp-onb')}` : `<div class="onb-avatar">${o.photo ? `<img src="${o.photo}" alt="">` : AVATAR_SVG}</div><h2 class="onb-title">What should we <span>call you?</span></h2>
         <input class="field big-in" data-input="onb.name" placeholder="Your first name" value="${esc(o.name)}" autocomplete="given-name" maxlength="24">
         <p class="onb-greet ${o.name.trim() ? 'on' : ''}">Nice to meet you, <b>${esc(o.name.trim())}</b> ✦</p>`,
     2: `<h2 class="onb-title">Add a <span>profile picture</span></h2>
-        <p class="muted">So you and your partner, if you share, recognise your rhythm at a glance.</p>
-        <label class="photo-pick"><span class="pp-frame">${o.photo ? `<img src="${o.photo}" alt="">` : AVATAR_SVG}</span><span class="pp-add">${icon(o.photo ? 'check' : 'plus', 18, 2.4)}</span>
-          <input type="file" accept="image/*" data-photo="onb" hidden></label>
-        ${o.photo ? '' : '<button class="link" data-action="onbNext" style="align-self:center">Skip for now</button>'}`,
+        <p class="gx-sub">It greets you on your home screen. Optional, and only you see it.</p>
+        <label class="gxp ${o.photo ? 'has' : ''}"><span class="gxp-ring"><span class="gxp-img">${o.photo ? `<img src="${o.photo}" alt="Your photo">` : AVATAR_SVG}</span></span>
+          <span class="gxp-cam">${o.photo ? icon('check', 18, 2.6) : GX_IC.cam}</span><input type="file" accept="image/*" data-photo="onb" hidden></label>
+        <p class="gxp-name">${esc(o.name.trim() || 'You')}</p>
+        <label class="gxp-btn">${o.photo ? 'Choose another photo' : 'Choose a photo'}<input type="file" accept="image/*" data-photo="onb" hidden></label>
+        ${o.photo ? '' : '<button class="gx-skip" data-action="onbNext">Skip for now</button>'}`,
     3: `<h2 class="onb-title">How do <span>you eat?</span></h2>
-        <p class="muted">Your recipes, food guide and supplements follow this. You can change it any time in your profile.</p>
+        <p class="muted">Your recipes, food guide and supplements follow this. Change it anytime in Profile.</p>
         <div class="dt-grid">${DIETS.map((x, i) => `<button class="dt-c ${(o.diet || 'all') === x.k ? 'on' : ''}" data-action="onbDiet" data-v="${x.k}" style="--i:${i}" aria-pressed="${(o.diet || 'all') === x.k}"><img src="${DIET_PIC[x.k]()}" alt="" loading="eager"><span class="dt-shade"></span><span class="dt-ok">${icon('check', 14, 2.6)}</span><span class="dt-tx"><b>${x.t}</b><small>${x.s}</small></span></button>`).join('')}</div>
         <div class="dt-peek" aria-live="polite">${dvPeek(o.diet || 'all')}</div>`,
     4: `<div class="onb-cut"><img src="images/period.png" alt=""></div><h2 class="onb-title">When did your last <span>period start?</span></h2>
@@ -1221,7 +1221,7 @@ function viewOnboarding() {
   const anim = ui.onbAnim || ''; ui.onbAnim = '';
   const sk = s + (ui.onbWhere ? 'w' : ''), still = (ui.onbStill || (!anim && ui.onbLast === sk)) ? 'still' : ''; ui.onbStill = false; ui.onbLast = sk;
   return `<div class="onb no-fig step-${s} ${s === 1 && ui.onbWhere ? 'where' : ''} ${anim} ${still}">${flash}
-    <div class="onb-top"><button class="icon-btn dark" data-action="onbBack">${icon('chevL', 22)}</button>${dots}${sndBtn()}</div>
+    <div class="onb-top"><button class="icon-btn dark" data-action="onbBack" aria-label="Back">${icon('chevL', 22)}</button>${dots}${sndBtn()}</div>
     <div class="onb-body">${body}</div>
     <div class="onb-foot">
       <button class="pearl-btn wide" data-action="onbNext" ${s === 1 && !ui.onbWhere && !o.name.trim() ? 'disabled' : ''}><span>${s === 10 ? 'Start my 3 free days' : s === 8 ? 'See my plan' : 'Continue'}</span></button>
@@ -1327,11 +1327,11 @@ function exploreGrid(info) {
   return `<div class="xp3">${rows.map(r => `<div class="xp3-r">${r.map(x => bub(x, k++)).join('')}</div>`).join('')}</div>`;
 }
 // Home: today's habits as a cute tick list; her phase's habits first, a little sprout that grows leaves as she ticks.
-const HB_SHORT = { 'phone-free': ['mind', 'Phone-free hour'], calm: ['heart', '10 min meditation'], coffee: ['cup', 'Coffee with food'], sleep: ['moon', '7 to 9h sleep'], 'real-food': ['bowl', 'Real food'], 'alcohol-free': ['drop', 'No alcohol'], 'no-blue': ['sun', 'Dim screens at night'], move: ['leaf', 'Move your body'], nature: ['seed', 'Time in nature'], clean: ['spark', 'Clean beauty'], 'warm-feet': ['thermo', 'Warm feet'], 'egg-yolks': ['shell', 'Egg yolks'] };
+const HB_SHORT = { 'morning-sun': ['sun', 'Sun in the morning'], lemon: ['drop', 'Warm lemon water'], calm: ['heart', 'Meditation'], walk: ['leaf', 'Go for a walk'], 'phone-free': ['mind', 'No phone in the morning'] };
 function habitsHome(info) {
   const list = HABITS.filter(h => h.g === 'protect' && HB_SHORT[h.id]), ids = list.map(h => h.id), done = habitsDone(todayISO()).filter(id => ids.includes(id));
   const focus = info ? HABIT_FOCUS[info.phase].filter(id => ids.includes(id)) : [];
-  const pick = [...focus, ...ids.filter(id => !focus.includes(id))].slice(0, 6), n = pick.filter(id => done.includes(id)).length;
+  const pick = ids, n = pick.filter(id => done.includes(id)).length;
   const leaves = pick.map((_, i) => { const y = 52 - i * 7.5, l = i % 2 === 0; return `<path class="${i < n ? 'on' : ''}" d="M30 ${y} q${l ? -13 : 13} -2 ${l ? -15 : 15} -11 q${l ? 11 : -11} 1 ${l ? 15 : -15} 11z"/>`; }).join('');
   return `${sectionTitle('Daily habits', ['All', 'habits'])}
     <section class="card hh">
@@ -4100,7 +4100,7 @@ function todayTiles(info, only) {
       ${tile(`calm lv${lvl} t-cort t-mol`, { to: 'breathe/stress' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/cortisol-mol.webp" alt="" loading="lazy"><canvas class="teacup3d" data-model="models/cortisol.glb" data-elev="0.3" data-fit="1.9" data-steam="0" data-shadow="0" aria-label="The cortisol molecule, turning slowly"></canvas></span>`, 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}<span class="cv-lv" aria-hidden="true">${[1, 2, 3].map(i => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</span>`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
       ${tile('t-tea t-cup', { to: 'do/tea' }, `<span class="cup3d-w"><img class="dpt-cup" src="${teaCupImg(td[1])}" alt="" loading="lazy"><canvas class="teacup3d"${teaCupAttr(td[1])} aria-label="${td[1]}, turning slowly"></canvas></span>`, 'Tea for today', td[1], td[2])}
       ${tile('t-glow ph-full ph-vid', { to: 'ground' }, `<video class="dpt-vid" src="images/ground-cat.mp4" poster="images/ground-cat.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Ground', GROUND_PHASE[ph].t, '')}
-      ${tile('wide t-deep ph-full keep ph-fr ph-vid ph-frw', { to: 'do/friends' }, `<video class="dpt-vid" src="images/friends-sunset.mp4" poster="images/friends-sunset.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>${socialBattery(info)}`, 'Friends', FRIENDS_TILE[ph][0], `<span class="dpt-fr">${icon('check', 12, 2.4)} ${FRIENDS_TILE[ph][1]}</span><span class="dpt-fr no">${icon('close', 12, 2.4)} ${FRIENDS_TILE[ph][2]}</span>`)}
+      <button class="dpt wide t-deep ph-full keep ph-vid ph-frw ph-bat" data-action="nav" data-to="do/friends" aria-label="Friends: ${esc(FRIENDS_TILE[ph][0])}"><span class="dpt-g"><video class="dpt-vid" src="images/friends-sunset.mp4" poster="images/friends-sunset.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>${socialBattery(info)}</span></button>
     </div>
     <div class="hub-tip ${open && (open === 'eat' || open === 'tea' || tips[open]) ? 'on' : ''}" id="hub-tip">${open ? tipBody(open) : ''}</div>`;
 }
@@ -5599,32 +5599,50 @@ function viewStress() {
 
 // ---------- hormone habits ----------
 function habitsDone(k) { return ((state.habits || {})[k] || []); }
+// The hormone guide: today's five habits as photo tick rows, then seven pillars that protect and balance a woman's
+// hormones, each a short line with the full do-list and the why behind a tap.
+const HB_PIC = { 'morning-sun': 'images/rhythm-sun.webp', lemon: 'images/tea-ginger.webp', calm: 'images/tile-meditate.webp', walk: 'images/tile-walk.webp', 'phone-free': 'images/forest-calm.jpg' };
+const HB_HORM = { 'morning-sun': ['Cortisol', 'Melatonin'], lemon: ['Hydration', 'Vitamin C'], calm: ['Cortisol', 'Progesterone'], walk: ['Insulin', 'Cortisol'], 'phone-free': ['Cortisol', 'Dopamine'] };
+const HB_PILLARS = [
+  { ic: 'sun', c: '#d99a1e', t: 'Light & sleep', s: 'Morning light in, evening light down.', do: ['Daylight in your eyes within an hour of waking', 'Warm, low lamps after sunset and dimmed screens', 'Bed at a similar time, 7 to 9 hours', 'Extra rest on your period'], why: 'Light sets the master clock that times melatonin, cortisol and the ovaries’ own rhythm. Regular sleep is linked with steadier cycles and calmer PMS.' },
+  { ic: 'bowl', c: '#5b7f2e', t: 'Steady blood sugar', s: 'Protein and fat first, no long fasting.', do: ['Start the day with protein: eggs, raw milk or kefir', 'Vegetables and protein before the sweet part of a meal', 'Coffee or tea with food, not instead of it', 'A short walk after meals'], why: 'Big sugar swings push insulin and cortisol up. High insulin tells the ovaries to make more testosterone, which can show up as acne, cravings and irregular cycles.' },
+  { ic: 'heart', c: '#c2577a', t: 'A calm nervous system', s: 'Cortisol low, so progesterone can rise.', do: ['Ten minutes of meditation or slow breathing', 'No phone in the first hour of the day', 'Time in nature and with people you love', 'Say no to one thing on low energy days'], why: 'Long stress keeps cortisol high. That can delay ovulation and lower progesterone in the second half of your cycle, which makes PMS louder.' },
+  { ic: 'leaf', c: '#3d7ea6', t: 'Move with your cycle', s: 'Walk daily, strength twice a week.', do: ['A walk every day, even ten minutes', 'Strength training two or three times a week', 'Harder sessions before ovulation, gentler before your period', 'Rest on heavy days'], why: 'Muscle stores most of your blood sugar, so strength work improves insulin sensitivity. Walking lowers cortisol instead of raising it.' },
+  { ic: 'drop', c: '#8a6bb8', t: 'Liver & gut', s: 'Help your body clear used estrogen.', do: ['Bitter greens, carrot and the cabbage family', 'Fibre from vegetables, fruit and seeds every day', 'Plenty of water, warm lemon water in the morning', 'Around your period, eat them warm and cooked'], why: 'Your liver packages used estrogen and your gut carries it out. When this slows, estrogen can circulate again, which is linked with heavier, more painful periods and tender breasts.' },
+  { ic: 'spark', c: '#b0703a', t: 'Fewer hormone disruptors', s: 'Natural skin care, glass not plastic.', do: ['Natural cosmetics and no synthetic perfume', 'Glass or steel for hot food and drinks', 'Real food instead of ultra processed', 'Air out your home every day'], why: 'Some chemicals in fragrances, plastics and packaging act like weak estrogens in the body. You cannot avoid all of them, but small swaps add up.' },
+  { ic: 'shell', c: '#4f7a2a', t: 'Build your hormones', s: 'They are made from fat and protein.', do: ['Egg yolks, butter, raw milk and good fats', 'Protein at every meal', 'Zinc and iron from red meat, liver (small portion) and seeds', 'Warm, cooked meals around your period'], why: 'Progesterone and estrogen are made from cholesterol. Enough fat, protein and minerals gives your body the raw material it needs every cycle.' },
+];
 function viewHabits() {
-  const k = todayISO(), list = HABITS.filter(h => h.g === 'protect' || ttc()), ids = list.map(h => h.id);
-  const done = habitsDone(k).filter(id => ids.includes(id)), total = list.length, n = done.length;
-  const ph = M.info && M.info.phase, focus = ph ? HABIT_FOCUS[ph].filter(id => ids.includes(id)) : [];
-  const bubble = (a, l) => { const L = list.filter(h => h.a === a), c = L.filter(h => done.includes(h.id)).length, r = 20, cc = 2 * Math.PI * r;
-    return `<div class="hb-bub"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="4"/><circle cx="24" cy="24" r="${r}" fill="none" stroke="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" stroke-width="4" stroke-linecap="round" stroke-dasharray="${cc}" stroke-dashoffset="${cc * (1 - (L.length ? c / L.length : 0))}" transform="rotate(-90 24 24)"/></svg><b>${c}<small>/${L.length}</small></b><span>${l}</span></div>`; };
-  const row = h => `<button class="hb ${done.includes(h.id) ? 'on' : ''}" data-action="habitTick" data-id="${h.id}">
-      <span class="cb">${icon('check', 13, 2.4)}</span><span class="hb-t"><b>${h.t}</b><small>${h.why}</small><span class="hb-tags">${evBadge(h.ev)}${focus.includes(h.id) ? '<span class="hb-now">Your phase</span>' : ''}</span></span></button>`;
-  const R = 46, Cc = 2 * Math.PI * R;
+  const k = todayISO(), list = HABITS.filter(h => h.g === 'protect'), ids = list.map(h => h.id), fert = ttc() ? HABITS.filter(h => h.g === 'fertile') : [];
+  const done = habitsDone(k), n = ids.filter(id => done.includes(id)).length, total = ids.length;
+  const ph = M.info && M.info.phase, focus = ph ? HABIT_FOCUS[ph] : [];
   let week = '';
-  for (let i = 6; i >= 0; i--) { const d = C.addDays(new Date(), -i), c = habitsDone(C.iso(d)).filter(id => ids.includes(id)).length; week += `<div class="hb-day"><b style="height:${Math.max(6, Math.min(100, c / total * 100))}%"></b><span>${fmt(d, { weekday: 'narrow' })}</span></div>`; }
-  const group = (g, title, sub) => `${sectionTitle(title)}<p class="muted" style="margin:-6px 4px 10px">${sub}</p>
-    <section class="card glass habits">${list.filter(h => h.g === g).sort((a, b) => focus.includes(b.id) - focus.includes(a.id)).map(row).join('')}</section>`;
+  for (let i = 6; i >= 0; i--) { const d = C.addDays(new Date(), -i), c = habitsDone(C.iso(d)).filter(id => ids.includes(id)).length; week += `<div class="hg-d ${i === 0 ? 'now' : ''}"><b style="height:${Math.max(8, c / total * 100)}%" class="${c ? 'on' : ''}"></b><span>${fmt(d, { weekday: 'narrow' })}</span></div>`; }
+  const seg = ids.map((id, i) => { const a0 = -90 + i * 72 + 4, a1 = a0 + 64, r = 44, p = a => [60 + r * Math.cos(a * Math.PI / 180), 60 + r * Math.sin(a * Math.PI / 180)].map(v => v.toFixed(2)).join(' ');
+    return `<path class="${done.includes(id) ? 'on' : ''}" d="M${p(a0)} A${r} ${r} 0 0 1 ${p(a1)}"/>`; }).join('');
+  const row = (h, i) => { const on = done.includes(h.id);
+    return `<button class="hg-r ${on ? 'on' : ''}" style="--i:${i}" data-action="habitTick" data-id="${h.id}" aria-pressed="${on}">
+      <span class="hg-ph"><img src="${(h.id === 'lemon' && carePhoto('lemon-water', 200)) || HB_PIC[h.id] || 'images/forest-calm.jpg'}" alt="" loading="lazy"></span>
+      <span class="hg-t"><b>${h.t}</b><small>${h.why}</small><span class="hg-tags">${(HB_HORM[h.id] || []).map(x => `<em>${x}</em>`).join('')}${focus.includes(h.id) ? '<em class="ph">Your phase</em>' : ''}</span></span>
+      <span class="hg-cb">${icon('check', 15, 2.6)}</span></button>`; };
+  const pillar = (P, i) => `<details class="hg-p" style="--c:${P.c};--i:${i}"><summary><span class="hg-pi">${icon(P.ic, 19, 1.8)}</span><span class="hg-pt"><b>${P.t}</b><small>${P.s}</small></span><span class="hg-pc">${icon('chevD', 16)}</span></summary>
+      <div class="hg-pin"><ul>${P.do.map(x => `<li>${icon('check', 12, 2.6)}<span>${x}</span></li>`).join('')}</ul><p><b>Why it works</b>${P.why}</p></div></details>`;
+  const lead = n === total ? 'All five done. A calm, steady day for your hormones.' : n ? `${total - n} to go. Each one is a small vote for balance.` : 'Five small things that keep your hormones in balance.';
   return `${topbar('Hormone habits', { back: true })}
-  <div class="pad">
-    <section class="card hb-hero">
-      <svg viewBox="0 0 110 110" width="110" height="110"><circle cx="55" cy="55" r="${R}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="9"/>
-        <circle cx="55" cy="55" r="${R}" fill="none" stroke="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" stroke-width="9" stroke-linecap="round" stroke-dasharray="${Cc}" stroke-dashoffset="${Cc * (1 - n / total)}" transform="rotate(-90 55 55)" style="transition:stroke-dashoffset .5s"/>
-        <text x="55" y="60" text-anchor="middle" class="hb-num">${n}</text></svg>
-      <div><div class="eyebrow">Today</div><h3>${n} of ${total} habits</h3><p class="body sm">Small daily choices that protect your hormones${ttc() ? ' and fertility' : ''}.</p><div class="hb-week">${week}</div></div>
+  <div class="pad hg">
+    <section class="hg-hero">
+      <div class="hg-hl"><small>Today</small><h2>Protect your <span>hormones</span></h2><p>${lead}</p>
+        <div class="hg-week" aria-label="Last 7 days">${week}</div></div>
+      <div class="hg-ring" aria-label="${n} of ${total} done"><svg viewBox="0 0 120 120" aria-hidden="true">${seg}</svg><b class="dotnum">${n}</b><small>of ${total}</small></div>
     </section>
-    <div class="hb-bubs">${bubble('body', 'Body')}${bubble('mind', 'Mind')}${bubble('food', 'Food')}</div>
-    ${focus.length ? `<section class="card card-light hb-focus"><small>${PHASES[ph].name} phase · start here</small><p>${focus.map(id => HABITS.find(h => h.id === id).t).join(' · ')}</p></section>` : ''}
-    ${group('protect', 'Protect your hormones', 'The opposite of what harms women’s health most.')}
-    ${ttc() ? group('fertile', 'Fertility & feminine flow', 'Fundamentals for a warm womb and a calm nervous system.') : ''}
-    <p class="fine center">You’re not the problem. The modern world is designed against your rhythm. One habit at a time.</p>
+    ${sectionTitle('Your daily five')}
+    <div class="hg-list">${list.map(row).join('')}</div>
+    ${ph && focus.length ? `<p class="hg-key"><em class="ph">Your phase</em>Extra good in your ${PHASES[ph].name.toLowerCase()} phase</p>` : ''}
+    ${sectionTitle('The hormone guide')}
+    <p class="hg-sub">Seven pillars that protect and balance a woman’s hormones. Tap one for what to do and why.</p>
+    <section class="hg-pl">${HB_PILLARS.map(pillar).join('')}</section>
+    ${fert.length ? `${sectionTitle('Fertility & feminine flow')}<div class="hg-list">${fert.map(row).join('')}</div>` : ''}
+    <section class="hg-end"><b>You are not the problem.</b><p>The modern world runs against your rhythm. Start with one habit, and let the rest follow.</p></section>
   </div>`;
 }
 function hormoneLibrary() {
@@ -6986,20 +7004,34 @@ function viewWith(q) {
 
 // ---------- account ----------
 // First screen after the welcome: save with an account, or go on without one (and know what that means).
+// Sign-in sheet in the Apple welcome-screen pattern: a small hero, three feature rows, one frosted card with the
+// two consent switches and the sign-in buttons, and a quiet way to go on without an account. Light glass page, no photo behind it.
+const GX_IC = {
+  cloud: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18.5h10.2a4.3 4.3 0 0 0 .6-8.55A6 6 0 0 0 6.3 9.4 4.6 4.6 0 0 0 7 18.5Z"/><path d="M12 15.5v-5m0 0-2.2 2.2M12 10.5l2.2 2.2"/></svg>',
+  lock: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="3"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/><circle cx="12" cy="15.5" r="1.3" fill="currentColor" stroke="none"/></svg>',
+  erase: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h14M10 7V5.5A1.5 1.5 0 0 1 11.5 4h1A1.5 1.5 0 0 1 14 5.5V7"/><path d="M6.5 7l.9 11.2A2 2 0 0 0 9.4 20h5.2a2 2 0 0 0 2-1.8L17.5 7"/><path d="M10.3 11v5M13.7 11v5"/></svg>',
+  info: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r="1" fill="currentColor" stroke="none"/></svg>',
+  cam: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.6l1.4-2h5l1.4 2h1.6A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5Z"/><circle cx="12" cy="12.5" r="3.4"/></svg>',
+  shield: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5 5.5 6v5.2c0 4.1 2.8 7.6 6.5 9.3 3.7-1.7 6.5-5.2 6.5-9.3V6Z"/><path d="m9.2 12 2 2 3.8-4"/></svg>',
+};
 function viewGate() {
   const flash = ui.flashOut ? '<div class="flash-out"></div>' : ''; ui.flashOut = false;
   const anim = ui.onbAnim || ''; ui.onbAnim = '';
-  return `<div class="onb no-fig gate ${anim} form-on">${flash}
-    <div class="onb-top"><button class="icon-btn dark" data-action="onbBack" aria-label="Back">${icon('chevL', 22)}</button>${sndBtn()}</div>
-    <div class="gate-photo" aria-hidden="true"><img src="images/gate-rose.webp" alt="" decoding="async"></div>
-    <div class="gate-head"><h2 class="onb-title">Keep your cycle <span>safe with you</span></h2>
-    <p class="gate-lead">A free account saves every period, symptom and note, and brings them back on any new phone. New or coming back, the steps are the same.</p></div>
-    <div class="gate-card">
-    ${socialAuth()}
-    </div>
-    <div class="gate-later">
-      <button class="gate-skip" data-action="gateSkip">Use without an account</button>
-      <p class="gate-warn">Without an account your data lives only on this phone and is lost if you ${NATIVE ? 'delete the app' : 'clear your browser'} or switch phones. You can add one later in Profile.</p>
+  const feats = [['cloud', 't1', 'Back on any phone', 'Sign in and every log comes back.'],
+    ['lock', 't2', 'Only you can see it', 'Locked to your login, never sold.'],
+    ['erase', 't3', 'Yours to delete', 'Erase your account and logs anytime.']];
+  return `<div class="onb no-fig gx ${anim}">${flash}
+    <div class="gx-nav"><button class="gx-ib" data-action="onbBack" aria-label="Back">${icon('chevL', 20)}</button>${sndBtn()}</div>
+    <header class="gx-hero">
+      <div class="gx-art" aria-hidden="true"><img src="images/gate-rose.webp" alt="" decoding="async"></div>
+      <h1 class="gx-title">Keep your cycle<span>safe with you</span></h1>
+      <p class="gx-lead">A free account keeps your logs safe, on any phone.</p>
+    </header>
+    <ul class="gx-feats">${feats.map(([ic, t, b, sm], i) => `<li style="--i:${i}"><span class="gx-fi ${t}">${GX_IC[ic]}</span><div><b>${b}</b><small>${sm}</small></div></li>`).join('')}</ul>
+    <div class="gx-card">${socialAuth(true)}</div>
+    <div class="gx-later">
+      <button class="gx-skip" data-action="gateSkip">Use without an account</button>
+      <p class="gx-note">${GX_IC.info}<span>Without one, your logs stay on this phone only. Add one anytime in Profile.</span></p>
     </div>
   </div>`;
 }
@@ -7043,16 +7075,19 @@ function viewAccount() {
 }
 // Sign in with Apple, Google or a 6-digit code by email (all free, no passwords). The ticks sit right above the buttons.
 const socialOK = () => A.oauthOK('apple') || A.oauthOK('google');
-function socialAuth() {
-  return `<div class="ph-auth" data-step="${ui.acStep === 'code' ? 'code' : 'phone'}">
+function socialAuth(gx) {
+  return `<div class="ph-auth ${gx ? 'gx-auth' : ''}" data-step="${ui.acStep === 'code' ? 'code' : 'phone'}">
     <div class="ph-s1">
       <div class="gate-checks">
-        <label class="ac-consent"><input type="checkbox" id="ac-consent"><span>Keep my logs in my private account. I can delete them anytime. <a href="#/privacy">Privacy</a></span></label>
-        <label class="ac-consent ac-terms"><input type="checkbox" id="ac-terms" ${termsOK() ? 'checked' : ''}><span>Underskin is wellness information, not medical advice. What I try is my own choice and responsibility, and I ask a doctor when unsure. <a href="#/privacy">Terms</a></span></label>
+        ${gx ? `<div class="gx-k">Before you start</div>
+        <label class="ac-consent gx-sw"><span class="gx-sw-t"><b>Save my logs in a private account</b><small>Only I can see my periods, symptoms and notes. I can delete them anytime. <a href="#/privacy">Privacy</a></small></span><input type="checkbox" id="ac-consent" role="switch"><i class="gx-tr" aria-hidden="true"></i></label>
+        <label class="ac-consent ac-terms gx-sw"><span class="gx-sw-t"><b>Wellness, not medical advice</b><small>I choose what I try and ask a doctor when unsure. <a href="#/privacy">Terms</a></small></span><input type="checkbox" id="ac-terms" role="switch" ${termsOK() ? 'checked' : ''}><i class="gx-tr" aria-hidden="true"></i></label>`
+        : `<label class="ac-consent"><input type="checkbox" id="ac-consent"><span>Save my periods, symptoms and notes in my own private account. Only I can see them, and I can delete them anytime. <a href="#/privacy">Privacy</a></span></label>
+        <label class="ac-consent ac-terms"><input type="checkbox" id="ac-terms" ${termsOK() ? 'checked' : ''}><span>Underskin is wellness information, not medical advice. What I try is my own choice and responsibility, and I ask a doctor when unsure. <a href="#/privacy">Terms</a></span></label>`}
       </div>
       ${A.oauthOK('apple') ? `<button class="ac-btn ac-apple" data-action="acProvider" data-p="apple">${APPLE_SVG}<span>Continue with Apple</span></button>` : ''}
       ${A.oauthOK('google') ? `<button class="ac-btn ac-google" data-action="acProvider" data-p="google">${GOOGLE_SVG}<span>Continue with Google</span></button>` : ''}
-      ${socialOK() ? '<div class="ph-or"><span>or by email</span></div>' : ''}
+      ${socialOK() ? `<div class="ph-or"><span>or ${gx ? 'with' : 'by'} email</span></div>` : ''}
       <div class="ph-row"><input class="field" id="ac-mail" type="email" inputmode="email" autocomplete="email" placeholder="Your email" value="${esc(ui.acMail || '')}" aria-label="Email"></div>
       <button type="button" class="ac-btn ac-code-go" data-action="acMailCode">${icon('mail', 18)}<span>Email me a code</span></button>
     </div>

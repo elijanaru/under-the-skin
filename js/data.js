@@ -293,7 +293,7 @@ export const RECIPES = [
     micro: [["Plant omega-3", 6.4, "g"], ["Magnesium", 290, "mg"], ["Calcium", 470, "mg"], ["Vitamin E", 7.5, "mg"], ["Zinc", 3.7, "mg"], ["Iron", 4.5, "mg"]],
   },
   {
-    id: 'chickpea-tray-bake', name: "Chickpea, Broccoli & Tahini Tray Bake", phases: ["follicular", "ovulatory"], time: 35, kcal: 520, serves: 2, protein: 20, meal: 'Dinner',
+    id: 'chickpea-tray-bake', name: "Chickpea, Broccoli & Tahini Tray Bake", phases: ["follicular"], time: 35, kcal: 520, serves: 2, protein: 20, meal: 'Dinner',
     nutrients: ["Vitamin C", "Folate", "Iron"],
     ingredients: ["1 can chickpeas (240 g drained), patted dry", "250 g broccoli, in florets", "1 red onion, in wedges", "1 red pepper, in strips", "2 tbsp olive oil", "1 tsp smoked paprika", "½ tsp ground cumin", "½ tsp sea salt", "Dressing: 2 tbsp tahini", "Dressing: juice of ½ lemon", "Dressing: 1 small garlic clove, grated", "Dressing: 2 to 3 tbsp water", "To serve: 1 small handful parsley, chopped", "To serve: 1 tbsp pumpkin seeds"],
     steps: [["Heat", "Heat the oven to 220°C."], ["Roast", "Toss the chickpeas, onion and pepper with the oil, spices and salt and roast for 15 minutes. Add the broccoli and roast 12 minutes more, until the edges crisp."], ["Dressing", "Whisk the tahini, lemon, garlic and water until smooth and pourable."], ["Serve", "Drizzle over the tray and scatter parsley and pumpkin seeds."]],
@@ -1138,16 +1138,11 @@ export const HORMONE_LIBRARY = [
 // Daily hormone habits — the positive side of what harms women's health, plus fertility fundamentals.
 // a: area for the ring bubbles (body / mind / food), ev: evidence label.
 export const HABITS = [
-  { id: 'phone-free', a: 'mind', ev: 'emerging', g: 'protect', t: 'Phone-free first & last hour', why: 'Constant scrolling and alerts keep stress hormones switched on.' },
-  { id: 'calm', a: 'mind', ev: 'some', g: 'protect', t: '10 minutes of calm', why: 'Chronic stress raises cortisol, which can delay ovulation and worsen PMS.' },
-  { id: 'coffee', a: 'food', ev: 'some', g: 'protect', t: 'Coffee or tea with food, not instead of it', why: 'Enjoy it, just not on an empty stomach or as a replacement for sleep.' },
-  { id: 'sleep', a: 'body', ev: 'strong', g: 'protect', t: '7–9 hours of sleep', why: 'Sleep sets melatonin, cortisol and every other hormone rhythm.' },
-  { id: 'real-food', a: 'food', ev: 'strong', g: 'protect', t: 'Real food, nothing ultra-processed', why: 'Whole, natural food steadies blood sugar and insulin.' },
-  { id: 'alcohol-free', a: 'food', ev: 'some', g: 'protect', t: 'Alcohol-free day', why: 'Frequent alcohol burdens the liver, which clears used estrogen.' },
-  { id: 'no-blue', a: 'mind', ev: 'some', g: 'protect', t: 'No bright screens after dark', why: 'Blue light at night suppresses melatonin.' },
-  { id: 'move', a: 'body', ev: 'strong', g: 'protect', t: 'Move your body', why: 'Activity, especially strength training, improves insulin sensitivity.' },
-  { id: 'nature', a: 'body', ev: 'some', g: 'protect', t: 'Time in nature', why: 'Daylight and green space lower stress and support serotonin.' },
-  { id: 'clean', a: 'body', ev: 'emerging', g: 'protect', t: 'Natural cosmetics & no synthetic perfume', why: 'Many synthetic fragrances and chemicals can disrupt hormones.' },
+  { id: 'morning-sun', a: 'body', ev: 'strong', g: 'protect', t: 'Sun in the morning', why: 'Ten minutes of daylight after waking sets your inner clock, so energy comes in the morning and sleep comes at night.' },
+  { id: 'lemon', a: 'food', ev: 'emerging', g: 'protect', t: 'Warm lemon water', why: 'Rehydrates you after the night and adds a little vitamin C. Keep it warm, never iced, around your period.' },
+  { id: 'calm', a: 'mind', ev: 'some', g: 'protect', t: 'Meditation', why: 'Ten quiet minutes lower cortisol, the stress hormone that can delay ovulation and make PMS louder.' },
+  { id: 'walk', a: 'body', ev: 'strong', g: 'protect', t: 'Go for a walk', why: 'Ten minutes outside counts. A walk after a meal also softens the blood sugar rise.' },
+  { id: 'phone-free', a: 'mind', ev: 'emerging', g: 'protect', t: 'No phone in the morning', why: 'The first hour without scrolling keeps stress hormones calm and the morning yours.' },
   { id: 'warm-feet', a: 'body', ev: 'tcm', g: 'fertile', t: 'Warm feet, warm womb', why: 'Socks and warmth: classic Chinese-medicine care for the womb.' },
   { id: 'egg-yolks', a: 'food', ev: 'emerging', g: 'fertile', t: 'Egg yolks or liver today', why: 'Cholesterol is the building block of progesterone; yolks add choline. Keep liver to a small portion about once a week.' },
   { id: 'warm-soup', a: 'food', ev: 'tcm', g: 'fertile', t: 'A warm soup or broth', why: 'Nourishing and easy to digest. TCM builds Blood with warmth.' },
@@ -1156,7 +1151,6 @@ export const HABITS = [
   { id: 'dance', a: 'body', ev: 'some', g: 'fertile', t: 'Dance', why: 'Joyful movement lowers cortisol.' },
   { id: 'snuggle', a: 'mind', ev: 'some', g: 'fertile', t: 'Snuggles & touch', why: 'Oxytocin calms stress and supports connection.' },
   { id: 'beauty', a: 'mind', ev: 'emerging', g: 'fertile', t: 'Surround yourself with beauty', why: 'Flowers, music, art: pleasure is regulating.' },
-  { id: 'lemon', a: 'food', ev: 'emerging', g: 'fertile', t: 'Whole lemon drink', why: 'Hydration and vitamin C to start the day.' },
   { id: 'intuition', a: 'mind', ev: 'emerging', g: 'fertile', t: 'Listen to your intuition', why: 'Notice what your body is asking for today.' },
   { id: 'pray', a: 'mind', ev: 'emerging', g: 'fertile', t: 'Prayer or intention', why: 'A quiet moment for your body, your future and your future children.' },
   { id: 'slow', a: 'body', ev: 'tcm', g: 'fertile', t: 'Slow down: especially on your period', why: 'Rest during bleeding is part of a healthy cycle.' },
@@ -1996,10 +1990,10 @@ export const RELIEF_LINKS = {
 
 // Habits that matter most in each phase (shown first, tagged "your phase").
 export const HABIT_FOCUS = {
-  menstrual: ['slow', 'warm-feet', 'warm-soup', 'sleep', 'calm'],
-  follicular: ['move', 'nature', 'real-food', 'dance'],
-  ovulatory: ['move', 'snuggle', 'beauty', 'nature'],
-  luteal: ['sleep', 'magnesium-bath', 'calm', 'no-blue'],
+  menstrual: ['calm', 'lemon', 'slow', 'warm-feet', 'warm-soup'],
+  follicular: ['walk', 'morning-sun', 'dance'],
+  ovulatory: ['walk', 'morning-sun', 'snuggle', 'beauty'],
+  luteal: ['calm', 'phone-free', 'magnesium-bath'],
 };
 
 // What research says about each way to calm stress. Tap to open on the stress page.
