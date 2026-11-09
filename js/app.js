@@ -4795,7 +4795,9 @@ function uvGauge(u) {
   </svg>`;
 }
 function uvBars(hours, D) {
-  const h0 = Math.max(0, Math.floor(D.rise) - 1), h1 = Math.min(23, Math.ceil(D.set)), n = h1 - h0 + 1, W = 300, H = 74, gap = 3, bw = (W - gap * (n - 1)) / n;
+  const lit = hours.map((u, h) => (u > .05 ? h : -1)).filter(h => h >= 0);
+  if (!lit.length) return '';
+  const h0 = Math.max(0, lit[0] - 1), h1 = Math.min(23, lit[lit.length - 1] + 1), n = h1 - h0 + 1, W = 300, H = 74, gap = 3, bw = (W - gap * (n - 1)) / n;
   const peak = Math.max(...hours.slice(h0, h1 + 1)), top = Math.max(peak * 1.12, 3.5), now = new Date().getHours(), pi = hours.indexOf(peak);
   const bars = Array.from({ length: n }, (_, i) => {
     const h = h0 + i, u = hours[h] || 0, bh = Math.max(3, u / top * (H - 16)), x = i * (bw + gap);
@@ -4824,17 +4826,10 @@ function uvWidget() {
       ${uvGauge(u)}
       <div class="uvw-side">
         <div class="uvw-st ${on && left <= 5 && burn !== Infinity ? 'warn' : ''}"><span class="uvw-ic" style="--c:${lv[2]}">${icon('thermo', 15)}</span><div><b class="${/\d/.test(burnTxt[0]) ? '' : 'w'}">${burnTxt[0]}</b><small>${burnTxt[1]}</small></div></div>
-        <div class="uvw-st"><span class="uvw-ic" style="--c:#e9ae3a">${icon('sun', 15)}</span><div><b class="${/\d/.test(dTxt[0]) ? '' : 'w'}">${dTxt[0]}</b><small>${dTxt[1]}</small></div></div>
       </div>
     </div>
     ${uvBars(hours, D)}
     <p class="uvw-win">${winTxt}</p>
-    <div class="uvw-d">
-      <div class="uvw-dh"><span>Vitamin D today</span><b>${fmt(iu)}<i> / ${fmt(D_GOAL)} IU</i></b></div>
-      <div class="uvw-prog" role="progressbar" aria-valuemin="0" aria-valuemax="${D_GOAL}" aria-valuenow="${Math.min(iu, D_GOAL)}" aria-label="Vitamin D made today"><i style="width:${pct.toFixed(1)}%"></i></div>
-      <div class="uvw-dm"><span>${icon('clock', 13)} ${mins} min in the sun${on ? ' · timing now' : ''}</span>${iu >= D_GOAL ? `<span class="uvw-ok">${icon('check', 13)} Goal reached</span>` : ''}</div>
-      <button class="uvw-btn ${on ? 'on' : ''}" data-action="uvSun">${on ? `<span class="uvw-dot"></span>I’m back in the shade` : `${icon('sun', 17)} I’m in the sun`}</button>
-    </div>
     <div class="uvw-skin"><div class="uvw-sk-h"><small>Your skin</small><span><b>${sk[2]}</b> · ${sk[3]}</span></div>
       <div class="uvw-sw" role="radiogroup" aria-label="Your skin type">${SKIN.map((x, i) => `<button role="radio" aria-checked="${i + 1 === mySkin()}" aria-label="${x[2]}, ${x[3]}" class="${i + 1 === mySkin() ? 'on' : ''}" style="--s:${x[1]}" data-action="uvSkin" data-v="${i + 1}"></button>`).join('')}</div></div>
     <details class="uvw-more"><summary>How this works ${icon('chevD', 14)}</summary>
@@ -4845,6 +4840,50 @@ function uvWidget() {
 }
 function uvRefresh() { const el = document.querySelector('.uvw'); if (el && state?.onboarded) { const open = el.querySelector('.uvw-more')?.open; el.outerHTML = uvWidget(); if (open) document.querySelector('.uvw-more').open = true; } }
 setInterval(() => { if (document.querySelector('.uvw.on')) uvRefresh(); }, 20000);
+// Right now, as a calm sky: the time in dot numbers, the sun (or moon) on its arc, sunrise and sunset, then two small tiles.
+// Works even when sunrise falls "after" sunset on the clock (location in another time zone).
+function sunNow(D, h, cur, nx) {
+  const len = ((D.set - D.rise) % 24 + 24) % 24 || 12, since = ((h - D.rise) % 24 + 24) % 24, day = since <= len, night = 24 - len;
+  const W = 320, cx = 160, hy = 92, R = 96, A = 64, x0 = cx - R, x1 = cx + R;
+  const up = q => [cx - R * Math.cos(q * Math.PI), hy - A * Math.sin(q * Math.PI)];
+  // night: from sunset out to the right edge and down, then back in from the left edge up to sunrise
+  const nq = day ? 0 : (since - len) / night, dn = q => q < .5 ? [x1 + (W - 12 - x1) * (q * 2), hy + 34 * Math.sin(q * Math.PI)] : [12 + (x0 - 12) * ((q - .5) * 2), hy + 34 * Math.sin(q * Math.PI)];
+  const [mx, my] = day ? up(since / len) : dn(nq);
+  const arc = Array.from({ length: 49 }, (_, k) => up(k / 48).map(v => v.toFixed(1)).join(',')).join(' L');
+  const dots = side => Array.from({ length: 9 }, (_, k) => { const q = side ? .5 + k / 16 : k / 16, [x, y] = dn(q); return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1.4"/>`; }).join('');
+  const { hours } = uvData(), u = day ? uvAt(hours, new Date()) : 0;
+  const mood = !day ? ['moon', 'Night'] : u < 1 ? ['sun', 'Soft light'] : u < 3 ? ['sun', 'Gentle sun'] : u < 6 ? ['sun', 'Good sun'] : ['sun', 'Strong sun'];
+  const left = day ? len - since : 0, ticks = Array.from({ length: 24 }, (_, k) => { const lit = ((k - D.rise) % 24 + 24) % 24 <= len, nowk = k === Math.floor(h); return `<i class="${lit ? 'l' : ''} ${nowk ? 'n' : ''}"></i>`; }).join('');
+  const hm = x => { const m = Math.round(x * 60); return `${Math.floor(m / 60)}h ${String(m % 60).padStart(2, '0')}`; };
+  return `<div class="rn2-h"><b>Right now</b><span>${cur.n}</span></div>
+    <div class="rn2-clock dotnum">${hLabel(h)}</div>
+    <div class="rn2-sub">${mood[1]}<small>${hLabel(cur.from)}–${hLabel(cur.to)}</small></div>
+    <svg class="rn2-sky" viewBox="0 0 ${W} 138" width="100%" aria-label="${day ? `The sun is up, ${hm(left)} hours of daylight left` : `Night. The sun rises at ${hLabel(D.rise)}`}">
+      <line x1="0" x2="${W}" y1="${hy}" y2="${hy}" class="rn2-hz"/>
+      <path d="M${arc}" class="rn2-arc"/>
+      <g class="rn2-dots">${dots(0)}${dots(1)}</g>
+      <circle cx="${x0}" cy="${hy}" r="3.5" class="rn2-pt"/><circle cx="${x1}" cy="${hy}" r="3.5" class="rn2-pt"/>
+      ${day ? `<line x1="${mx.toFixed(1)}" x2="${mx.toFixed(1)}" y1="${my.toFixed(1)}" y2="${hy}" class="rn2-drop"/><circle cx="${mx.toFixed(1)}" cy="${hy}" r="3.5" class="rn2-pt"/>` : ''}
+      <circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="15" class="rn2-mk ${day ? 'sun' : 'moon'}"/>
+      <g transform="translate(${(mx - 9).toFixed(1)} ${(my - 9).toFixed(1)})" class="rn2-mi">${icon(day ? 'sun' : 'moon', 18)}</g>
+    </svg>
+    <div class="rn2-row"><span><b class="dotnum">${hLabel(D.rise)}</b><small>Sunrise</small></span><span class="c">${icon(mood[0], 20)}<small>${mood[1]}</small></span><span class="r"><b class="dotnum">${hLabel(D.set)}</b><small>Sunset</small></span></div>
+    <div class="rn2-tiles">
+      <div class="rn2-t"><b>Daylight</b><small>${day ? 'left today' : 'tomorrow'}</small><em class="dotnum">${hm(day ? left : len)}</em><span class="rn2-tk" aria-hidden="true">${ticks}</span><small class="f">${hm(len)} of sun today</small></div>
+      <div class="rn2-t"><b>Next</b><small>${nx.n}</small><em class="dotnum">${hLabel(nx.from)}</em><span class="rn2-nx">${emi(nx.g, 22)}</span><small class="f">${nx.acts[0] ? nx.acts[0].t : nx.brief.split('. ')[0]}</small></div>
+    </div>`;
+}
+// When to get out of the sun: the hours her skin burns fastest today, and how long she has right now.
+function shadeCard() {
+  const { hours } = uvData(), now = new Date(), u = uvAt(hours, now), burn = burnMin(u);
+  const hot = hours.map((x, k) => (burnMin(x) <= 40 ? k : -1)).filter(k => k >= 0), peak = Math.max(...hours), pk = hours.indexOf(peak);
+  const win = hot.length ? [hot[0], hot[hot.length - 1] + 1] : null;
+  const big = win ? `${String(win[0]).padStart(2, '0')}–${String(win[1]).padStart(2, '0')}` : peak >= .5 ? `${String(pk).padStart(2, '0')}:00` : '·';
+  return `<section class="card shade2"><span class="sh2-ic">${icon('thermo', 20)}</span>
+    <div class="sh2-b"><small>${win ? 'Get in the shade' : peak >= .5 ? 'Sun is strongest at' : 'Today'}</small><b class="dotnum">${big}</b>
+      <p>${win ? 'Your skin burns in under 40 minutes in these hours. Cover up or find shade.' : peak >= .5 ? 'The sun stays gentle today. Head into the shade once your skin turns pink.' : 'No strong sun today, nothing to watch out for.'}</p>
+      ${burn !== Infinity ? `<span class="sh2-now">${icon('clock', 13)} Out now? Shade in <b>${Math.round(Math.min(burn, 600))} min</b></span>` : ''}</div></section>`;
+}
 function viewRhythm() {
   const info = M.info, done = doneToday(), lv = rhythmLevel(), streak = rhythmStreak(), r = rem(), D = dayMoments(info), h = nowH(), cur = momentAt(D, h), moon = Z.moonPhase(new Date());
   const week = Array.from({ length: 7 }, (_, i) => { const d = C.addDays(new Date(), i - 6), c = ((state.rhythm || {})[C.iso(d)] || []).length; return `<div class="rw"><i style="height:${Math.max(6, c / RH_GOAL * 100)}%" class="${c >= 4 ? 'ok' : ''}"></i><span>${fmt(d, { weekday: 'narrow' })}</span></div>`; }).join('');
@@ -4861,9 +4900,8 @@ function viewRhythm() {
     </div>
   </section>
   <div class="pad">
-    <section class="card rnow">
-      <div class="rnow-top"><small>Right now · ${hLabel(h)}</small><b>${cur.n}</b><em>${span(cur)}</em></div>
-      ${sunArc(D, h, moon)}
+    <section class="card rnow rnow2">
+      ${sunNow(D, h, cur, nx)}
       <p class="rnow-brief">${cur.brief}</p>
       ${cur.acts.length ? `<div class="rnow-do"><h3>Do this now</h3><div class="rh-list">${cur.acts.map(x => rhAct(x, done)).join('')}</div><small class="rnow-tip">Tap each one when it’s done</small></div>`
         : `<div class="rnow-do"><h3>Do this now</h3><p class="rnow-rest">${icon('moon', 16)} Sleep. Nothing to do until the morning light.</p></div>`}
@@ -4874,11 +4912,8 @@ function viewRhythm() {
       <div><span>${emi('🔥', 18)}</span><b>${streak} ${streak === 1 ? 'day' : 'days'}</b><small>streak (4+ a day)</small></div>
       <div><span>${emi(lv.cur[1], 18)}</span><b>${lv.cur[2]}</b><small>${lv.next ? `${lv.next[0] - lv.total} to ${lv.next[2]}` : 'Highest level'}</small></div></div>
     ${info ? `<p class="rh-phase">${PHASE_RHYTHM[info.phase]}</p>` : ''}
-    ${sectionTitle('Your day')}
-    <div class="dmoments">${D.list.map(m => `<section class="dm ${m.id === cur.id ? 'on' : ''} ${m.to <= h && m.id !== 'night' ? 'past' : ''}" data-m="${m.id}">
-      <div class="dm-rail"><span>${emi(m.g, 16)}</span></div>
-      <div class="dm-body"><div class="dm-h"><b>${m.n}</b><small>${span(m)}</small></div>
-        ${m.acts.length ? `<div class="rh-list">${m.acts.map(x => rhAct(x, done)).join('')}</div>` : `<p class="dm-p">${m.brief}</p>`}</div></section>`).join('')}</div>
+    ${sectionTitle('Out of the sun')}
+    ${shadeCard()}
     ${sectionTitle('Your week')}<section class="card glass"><div class="rh-week">${week}</div></section>
     ${sectionTitle('Gentle reminders')}
     <section class="card glass"><div class="stepper-row"><span>Follow the sun<small>Morning light, midday sun, sunset wind-down, bedtime</small></span><button class="toggle ${r.rhythm ? 'on' : ''}" data-action="remToggle" data-k="rhythm" role="switch" aria-checked="${!!r.rhythm}" aria-label="Follow the sun"><i></i></button></div>
