@@ -10297,3 +10297,9 @@ section.ct .ct-c .ct-t { order: 0; } section.ct .ct-c .ct-p { order: 1; margin-b
 section.ct .ct-c.q2 .ct-m, section.ct .ct-c.q3 .ct-m { order: 0; margin-bottom: 4px; } section.ct .ct-c.q2 .ct-t, section.ct .ct-c.q3 .ct-t { order: 1; } section.ct .ct-c.q2 .ct-p, section.ct .ct-c.q3 .ct-p { order: 2; margin: 0; }
 section.ct .ct-g { gap: 14px 8px; }
 section.ct .ct-tx { text-align: center; padding: 0 20%; }
+/* Friends battery: compact tile, battery centred with equal space all round */
+.hub .dpt.ph-bat { min-height: 0 !important; height: 120px; }
+.hub .dpt.ph-bat .bat3 { inset: 0 !important; height: auto !important; padding: 0 22px !important; align-items: center !important; }
+.hub .dpt.ph-bat .bat3-body { height: 76px !important; }
+.hub .dpt.ph-bat .dpt-vid { object-position: 50% 68% !important; }
+.hub .dpt.ph-bat .dpt-g > i { background: rgba(8,10,6,.28) !important; }
