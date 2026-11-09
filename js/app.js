@@ -6209,7 +6209,8 @@ function viewInsights() {
   let body = '';
   if (tab === 'cycle') body = `
     <section class="card glass big-chart">${cycleChart(info, { id: 'ins' })}
-      <div class="cc-links one"><button data-action="insHx">${icon('chart', 15)} Explore your hormones ${icon('chevR', 14)}</button></div></section>
+      <button class="cc-pill" data-action="insHx">${icon('chart', 16)} Explore your hormones ${icon('chevR', 15)}</button></section>
+    ${sectionTitle('Your hormones today', ['All', 'hormones'])}
     ${moleculeRow(info)}
     <button class="card gro-cta" data-action="nav" data-to="guide"><span class="art-ic cyc"><svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true"><g fill="none" stroke-width="5" stroke-linecap="round" transform="rotate(-90 20 20)"><circle cx="20" cy="20" r="13" stroke="#e58b9f" stroke-dasharray="13 69"/><circle cx="20" cy="20" r="13" stroke="#9cc27a" stroke-dasharray="19 63" stroke-dashoffset="-16"/><circle cx="20" cy="20" r="13" stroke="#f1c96a" stroke-dasharray="8 74" stroke-dashoffset="-38"/><circle cx="20" cy="20" r="13" stroke="#b9a2e8" stroke-dasharray="33 49" stroke-dashoffset="-49"/></g><circle cx="20" cy="20" r="4.5" fill="#fff" stroke="#f1c96a" stroke-width="1.5"/></svg></span><span class="art-t">How your cycle works<small>Slide through every day: ovary, lining, hormones</small></span>${icon('chevR', 18)}</button>
 `;
