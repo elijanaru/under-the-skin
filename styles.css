@@ -10534,3 +10534,38 @@ section.ct .ct-tx { text-align: center; padding: 0 20%; }
 @media (prefers-reduced-motion: reduce) { .el5-card { animation: none; } .el5-row span { transition: none; } }
 .el5-ph { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; overflow: visible; }
 .el5-ph button { justify-content: center; gap: 5px; padding: 7px 4px; font-size: 11.5px; }
+
+/* ---------- The ultimate tea guide: four teas, Apple-style tiles and a spec sheet ---------- */
+.t4 { margin-top: 34px; }
+.t4-h { padding: 0 4px; }
+.t4-h small { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #20301a; }
+.t4-h small::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+.t4-h h2 { margin: 6px 0 0; font-size: 30px; line-height: 1.08; font-weight: 600; letter-spacing: -.035em; color: #20301a; }
+.t4-h p { margin: 8px 0 0; font-size: 15px; line-height: 1.4; color: #4a5a3a; }
+.t4-g { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+.t4-t { position: relative; display: grid; justify-items: start; gap: 2px; padding: 14px 14px 13px; border-radius: 24px; border: 1px solid rgba(32,48,26,.06); background: #fff; box-shadow: 0 1px 2px rgba(32,48,26,.04), 0 10px 24px -18px rgba(32,48,26,.35); color: #20301a; text-align: left; font-family: var(--font); cursor: pointer; transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s; }
+.t4-t:active { transform: scale(.97); }
+.t4-t img { justify-self: center; width: 104px; height: 104px; margin: 2px 0 12px; border-radius: 50%; box-shadow: 0 10px 18px -10px rgba(40,30,20,.45); transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+.t4-t small { font-size: 12px; font-weight: 600; color: color-mix(in srgb, var(--c) 70%, #20301a); }
+.t4-t b { font-size: 15.5px; line-height: 1.2; font-weight: 600; letter-spacing: -.01em; }
+.t4-t span { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; font-size: 12px; color: #4a5a3a; }
+.t4-t.on { border-color: #20301a; box-shadow: 0 0 0 1px #20301a, 0 14px 28px -18px rgba(32,48,26,.5); }
+.t4-t.on img { transform: rotate(-8deg) scale(1.04); }
+.t4-d { margin-top: 10px; padding: 18px; border-radius: 26px; background: #fff; border: 1px solid rgba(32,48,26,.06); box-shadow: 0 10px 24px -18px rgba(32,48,26,.35); animation: hgIn .45s cubic-bezier(.2,.8,.2,1) both; }
+.t4-dh { display: flex; align-items: center; gap: 14px; }
+.t4-dh img { width: 64px; height: 64px; border-radius: 50%; flex: none; }
+.t4-dh small { font-size: 12.5px; font-weight: 600; color: color-mix(in srgb, var(--c) 70%, #20301a); }
+.t4-dh b { display: block; margin-top: 1px; font-size: 21px; font-weight: 600; letter-spacing: -.02em; color: #20301a; }
+.t4-why { margin: 14px 0 0; font-size: 15px; line-height: 1.45; color: #20301a; }
+.t4-spec { margin: 14px 0 0; border-radius: 16px; background: #f6f5f1; overflow: hidden; }
+.t4-spec div { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; padding: 11px 14px; }
+.t4-spec div + div { border-top: 1px solid rgba(32,48,26,.07); }
+.t4-spec dt { flex: none; display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; color: #4a5a3a; }
+.t4-spec dt svg { color: #6c823e; position: relative; top: 2px; }
+.t4-spec dd { margin: 0; font-size: 14px; font-weight: 500; text-align: right; color: #20301a; }
+.t4-warn { display: flex; gap: 7px; margin: 12px 0 0; font-size: 12.5px; line-height: 1.4; color: #8b3f5a; }
+.t4-warn svg { flex: none; margin-top: 2px; }
+@media (prefers-reduced-motion: reduce) { .t4-d { animation: none; } .t4-t, .t4-t img { transition: none; } }
+.t4-t { align-content: start; }
+.t4-t small, .t4-dh small { color: color-mix(in srgb, var(--c) 55%, #20301a); }
+.t4-t b { min-height: 2.4em; display: flex; align-items: flex-start; }

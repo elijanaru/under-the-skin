@@ -4633,12 +4633,40 @@ const PHASE_TEAS = {
     ['Rooibos & vanilla', 'Cravings', ['rooibos', 'vanilla', 'orange peel'], '1 tbsp, 5 to 7 min. No caffeine, any time.'],
     ['Ginger & fennel', 'Bloating', ['fresh ginger', 'fennel seeds'], '3 slices and ½ tsp seeds, 10 min, after meals.']],
 };
+// Spec for each of the four phase teas: [why, amount, water, steep, when, caution].
+const PHASE_TEA_SPEC = {
+  menstrual: [['Warms your belly. In small trials ginger eased period pain about as well as ibuprofen.', '4 slices fresh ginger, 1 cinnamon stick, orange peel', 'Simmer gently', '10 min', '2 to 3 cups a day', ''],
+    ['A classic Chinese tea to build blood, gently sweet and warming.', '5 red dates, 1 tbsp goji, 2 slices ginger', 'Simmer gently', '15 min', 'Afternoon', ''],
+    ['Used for generations to tone and support the womb muscle.', '1 tbsp dried leaf, a little honey', 'Just boiled, covered', '10 min', '1 to 2 cups a day', 'Not in pregnancy without your midwife.'],
+    ['Relaxes your gut and womb and softens bloating.', '1 tbsp chamomile, ½ tsp fennel seeds', 'Just boiled, covered', '10 min', 'After meals', 'Skip chamomile if you react to daisies.']],
+  follicular: [['Nettle is rich in iron and minerals, and lemon helps you absorb the iron.', '2 tsp dried nettle, a slice of lemon', 'Just boiled', '10 min', 'Between meals', ''],
+    ['Calm focus: L-theanine smooths out the caffeine.', '1 tsp green tea with jasmine', '80 °C', '2 to 3 min', 'Before noon', ''],
+    ['A bitter root that supports your liver and digestion as estrogen rises.', '1 tbsp roasted root, 2 slices ginger', 'Simmer gently', '10 min', 'Morning', 'Ask first if you take water tablets.'],
+    ['Fresh and awake without extra caffeine.', 'A handful of fresh mint, a slice of lemon', 'Just boiled', '5 min', 'Any time, hot or cool', '']],
+  ovulatory: [['Full of vitamin C and antioxidants, and cooling when you run hot.', '1 tbsp hibiscus, a few rose petals', 'Just boiled', '5 min', 'Warm or cool', 'Ask first if you take blood pressure pills.'],
+    ['Whole-leaf caffeine with L-theanine for steady, calm energy.', '1 tsp matcha', '80 °C, whisked', '1 min', 'Before noon', ''],
+    ['Spearmint can lower excess androgens, linked with fewer breakouts.', '1 tbsp spearmint, 3 slices cucumber', 'Just boiled', '5 to 7 min', 'Twice a day', ''],
+    ['Light, citrusy and easy on your digestion.', '2 bruised lemongrass stalks, a slice of lime', 'Just boiled', '10 min', 'After meals', '']],
+  luteal: [['Chamomile and lavender help you wind down for deeper sleep.', '1 tbsp chamomile, ½ tsp lavender', 'Just boiled, covered', '10 min', 'Evening', 'Skip chamomile if you react to daisies.'],
+    ['Lemon balm calms a restless mind and lifts your mood.', '1 tbsp leaves, a little honey', 'Just boiled, covered', '10 min', 'Afternoon', ''],
+    ['Naturally sweet and caffeine free, for sugar cravings.', '1 tbsp rooibos, ½ vanilla pod, orange peel', 'Just boiled', '5 to 7 min', 'Any time', ''],
+    ['Warms digestion and eases gas and bloating.', '3 slices ginger, ½ tsp fennel seeds', 'Just boiled', '10 min', 'After meals', '']],
+};
+function t4Detail(ph, i) {
+  const [n, f] = PHASE_TEAS[ph][i], [why, amt, water, steep, when, warn] = PHASE_TEA_SPEC[ph][i];
+  return `<div class="t4-dh"><img src="images/tea4/${ph}-${i}.webp" alt=""><div><small>For ${f.toLowerCase()}</small><b>${n}</b></div></div>
+    <p class="t4-why">${why}</p>
+    <dl class="t4-spec">${[['bowl', 'You need', amt], ['thermo', 'Water', water], ['clock', 'Steep', steep], ['sun', 'When', when]].map(([ic, k, v]) => `<div><dt>${icon(ic, 15)}${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+    ${warn ? `<p class="t4-warn">${icon('heart', 13)} ${warn}</p>` : ''}`;
+}
 function cycleTeas(info) {
-  const ph = (info && info.phase) || 'follicular', T = PHASE_TEAS[ph];
-  return `<section class="ct ct4" style="--c:${PH_HEX[ph]}"><div class="ct-h"><small>${PHASES[ph].name} phase</small><b>Your four teas now</b></div>
-    <div class="ct-pic" style="background-image:url(images/tea4-${ph}.webp)">${T.map(([n, f, ing], i) => `<button class="ct-q q${i}" data-action="ctPick" data-i="${i}" aria-expanded="false">
-      <span class="ct-n">${n}</span><span class="ct-on"><em>for</em><b>${f}</b><small>${ing.join(' · ')}</small></span></button>`).join('')}</div>
-    <p class="ct-brew" aria-live="polite">Tap a cup for how to brew it.</p></section>`;
+  const ph = (info && info.phase) || 'follicular', T = PHASE_TEAS[ph], sel = 0;
+  return `<section class="t4" data-ph="${ph}" style="--c:${PH_HEX[ph]}">
+    <header class="t4-h"><small>The ultimate tea guide</small><h2>Four teas for your ${PHASES[ph].name.toLowerCase()} phase.</h2><p>Chosen for what your body needs right now. Tap one to brew it.</p></header>
+    <div class="t4-g">${T.map(([n, f, ing], i) => `<button class="t4-t ${i === sel ? 'on' : ''}" data-action="ctPick" data-i="${i}" aria-pressed="${i === sel}">
+      <img src="images/tea4/${ph}-${i}.webp" alt="" loading="lazy" decoding="async"><small>${f}</small><b>${n}</b><span>${icon('clock', 12)} ${PHASE_TEA_SPEC[ph][i][3]}</span></button>`).join('')}</div>
+    <div class="t4-d" aria-live="polite">${t4Detail(ph, sel)}</div>
+  </section>`;
 }
 // Today's tea as a benefit wheel: the turning 3D cup in the middle, what it does for her all around it.
 const TEA_WHEEL = {
@@ -4675,7 +4703,6 @@ function viewTea() {
   return `<div class="pad tg">
     ${teaWheel(info, w, td, steep, near)}
 
-    <div class="tg-title"><h2>The ultimate <em>tea guide</em></h2></div>
     ${cycleTeas(info)}
 
     <div class="tg-sub"><b>How do you feel?</b><small>A tea for every mood</small></div>
@@ -7872,7 +7899,7 @@ const actions = {
       <p>${sel.nature === 'cool' && warm ? 'A cooling food. Your period is close, so cook it and add ginger or cinnamon.' : NATURE[sel.nature][1]}</p></div><button class="sfc-x" data-action="szClose" aria-label="Close">${icon('close', 14)}</button>`;
     det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
   },
-  ctPick: (d, el) => { const box = el.closest('.ct4'), ph = (M.info && M.info.phase) || 'follicular', t = PHASE_TEAS[ph][+d.i]; box.querySelectorAll('.ct-q').forEach(b => { b.classList.toggle('on', b === el); b.setAttribute('aria-expanded', b === el); }); box.querySelector('.ct-brew').innerHTML = `<b>${t[0]}</b> · ${t[3]}`; },
+  ctPick: (d, el) => { const box = el.closest('.t4'), ph = box.dataset.ph, det = box.querySelector('.t4-d'); box.querySelectorAll('.t4-t').forEach(b => { b.classList.toggle('on', b === el); b.setAttribute('aria-pressed', b === el); }); det.innerHTML = t4Detail(ph, +d.i); det.style.animation = 'none'; void det.offsetWidth; det.style.animation = ''; },
   szClose: (d, el) => { const box = el.closest('.szp'); box.querySelector('.szp-det').hidden = true; box.querySelectorAll('.szp-i.on').forEach(b => b.classList.remove('on')); },
   seasonFood: d => { ui.seasonFood = ui.seasonFood === d.f ? null : d.f; render(); if (ui.seasonFood) document.querySelector('.sf-detail')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); },
   seasonFilter: d => { ui.seasonFilter = d.v; render(); },
