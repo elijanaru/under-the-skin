@@ -3739,7 +3739,7 @@ function patternsSection() {
       <div class="pat2-strip">${x.days.slice(1, L + 1).map((v, i) => { const d = i + 1, pc = PH_HEX[C.phaseFor(d, L, M.stats.avgPeriod)];
         return `<i class="${v ? 'on' : ''} ${d === cdNow ? 'now' : ''}" style="--p:${pc};${v ? `opacity:${(.45 + .55 * v / x.max).toFixed(2)}` : ''}"></i>`; }).join('')}</div>
     </div>`; }).join('');
-  return `${sectionTitle('Your patterns')}
+  return `
     ${P.list.length || energyCard ? `${energyCard}
       ${rows ? `<section class="card pat2"><div class="pat2-top"><div><small>When your symptoms show up</small><b>Your body’s habits</b></div><span class="pat2-k"><i></i>today</span></div>
         ${band}${rows}
@@ -6685,7 +6685,7 @@ function viewInsights() {
       ${list.map(a => `<button class="card glass article-row" data-action="nav" data-to="article/${a.id}"><span class="art-ic ${read[a.id] ? 'done' : ''}">${icon(read[a.id] ? 'check' : 'book', 20)}</span><span class="art-t">${a.title}<small>${read[a.id] ? 'Read · ' : ''}${a.mins} min</small></span>${icon('chevR', 18)}</button>`).join('')}` : ''; }).join('')}`;
   return `${topbar('Insights')}
   <div class="pad">
-    <h1 class="page-h">Your <span>hormone cycle</span></h1>
+    <h1 class="page-h">${tab === 'patterns' ? 'Your <span>patterns</span>' : tab === 'learn' ? 'Learn your <span>hormones</span>' : 'Your <span>hormone cycle</span>'}</h1>
     <div class="seg">${tabs.map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="insTab" data-v="${k}">${l}</button>`).join('')}</div>
     ${body}
   </div>`;
