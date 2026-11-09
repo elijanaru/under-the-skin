@@ -3742,7 +3742,14 @@ function studyCards(study, cite) {
   const ss = study.split(/(?<=\.)\s+(?=[A-Z])/), cs = cite.split(' · ');
   const pairs = ss.length === cs.length ? ss.map((t, i) => [t, cs[i]]) : [[study, cite]];
   return `<div class="stc ${pairs.length === 1 ? 'one' : ''}">${pairs.map(([t, c], i) => { const y = (c.match(/\b(1[89]\d\d|20\d\d)\b/) || [])[1] || '', tag = (c.match(/\(([^)]+)\)/) || [])[1] || '', who = c.replace(/\([^)]*\)/g, '').replace(y, '').trim();
-    return `<article class="stc-c" style="--i:${i}"><div class="stc-h"><b class="dotnum">${y}</b><span>${who}${tag ? `<em>${tag}</em>` : ''}</span></div><p>${t}</p></article>`; }).join('')}</div>`;
+    return `<article class="stc-c" style="--i:${i}"><div class="stc-h"><b class="dotnum">${y}</b><span>${who}${tag ? `<em>${tag}</em>` : ''}</span></div>${stcKey(t)}<p>${t}</p></article>`; }).join('')}</div>`;
+}
+// The study's key number as a graphic: two bars when it compares with placebo, one bar otherwise.
+function stcKey(t) {
+  const n = [...t.matchAll(/(\d+(?:\.\d+)?)\s?%/g)].map(m => +m[1]).filter(v => v > 0 && v <= 100).slice(0, 2);
+  if (!n.length) return '';
+  const bars = n.length === 2 && /placebo|control|without/i.test(t) ? [[n[0], 'With it', 'a'], [n[1], /placebo/i.test(t) ? 'Placebo' : 'Without', 'b']] : [[n[0], /lower|fewer|less|reduc|cut|drop|prevent/i.test(t) ? 'Lower' : /more|higher|rais|improv|increase/i.test(t) ? 'Better' : 'Result', 'a']];
+  return `<div class="stc-k">${bars.map(([v, l, k]) => `<div class="stc-b ${k}"><small>${l}</small><span class="stc-tr"><i style="width:${v}%"></i></span><b class="dotnum">${l === 'Lower' ? '−' : ''}${v}%</b></div>`).join('')}</div>`;
 }
 function suppPairs(id) {
   const P = SUPP_PAIR[id]; if (!P) return '';
@@ -3771,7 +3778,7 @@ function liquidArt(glyph, han, sym) {
   return `<div class="spec-liquid"><i></i><i></i><i></i></div>${glyph ? `<span class="spec-glyph ${han ? 'han' : ''} ${sym ? 'sym' : ''}">${glyph}</span>` : ''}`;
 }
 function specHero({ photo, glyph, han, sym, eyebrow, name, label = 'Key ingredients', rows = [], lead, desc, extra = '', media = '', block = '' }) {
-  return `<section class="spec"><div class="spec-media ${media ? 'm3d' : photo ? '' : 'liquid'}">${media || (photo ? `<img src="${photo}" alt="">` : liquidArt(glyph, han, sym))}<span class="spec-shade"></span>
+  return `<section class="spec"><div class="spec-media ${media ? 'm3d' : photo ? '' : 'liquid'}">${media || (photo ? `<img src="${photo}" alt="" onload="this.classList.add('in')" onerror="this.closest('.spec-media').classList.add('noimg')">` : liquidArt(glyph, han, sym))}<span class="spec-shade"></span>
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>${extra}
     <div class="spec-name">${eyebrow ? `<div class="eyebrow">${eyebrow}</div>` : ''}<h1>${name}</h1></div></div>
     <div class="spec-sheet"><span class="spec-handle"></span><div class="spec-k">${label}</div>
