@@ -10607,9 +10607,15 @@ html .pad > .page-h span, html .page-h span, html .gro-page .page-h span { color
 .gr-hero.gr-tree::after { display: none; }
 .gr-hero.gr-tree { aspect-ratio: 4 / 4.2; }
 /* Today: close the empty gap under the body figure */
-.hub .stage-after .en.en2 { padding-bottom: 20px; margin-bottom: 8px; }
+.hub .stage-after .en.en2 { padding-top: 8px !important; padding-bottom: 4px !important; margin-top: 0 !important; margin-bottom: 0 !important; }
+.hub .stage-after .en.en2 .em-head { margin-top: 0 !important; }
 /* Spec sheets: Apple hierarchy, small grey label left, bold value right */
 .spec-sheet .spec-row:has(> span) { align-items: center; gap: 16px; padding: 13px 0; border-bottom-color: rgba(48,64,35,.14); }
 .spec-sheet .spec-row:has(> span) > b { flex: none; font: 500 14.5px Outfit, sans-serif !important; letter-spacing: 0 !important; color: #5d6b4f !important; }
 .spec-sheet .spec-row:has(> span) > span { flex: 1; max-width: none; padding-top: 0; text-align: right; font: 600 15px/1.3 Outfit, sans-serif !important; color: #20301a !important; }
 .spec-sheet .spec-k { font-size: 13px; font-weight: 500; color: #20301a; }
+/* Food plate: every slice label readable (was 62% opacity); the chosen one is bolder */
+.plate3 .pll:not(.on) { opacity: 1 !important; }
+.plate3 .pll .pll-n { fill: #4a5a3a !important; font-weight: 600 !important; }
+.plate3 .pll .pll-v { fill: #304023 !important; }
+.plate3 .pll.on .pll-n, .plate3 .pll.on .pll-v { fill: #20301a !important; font-weight: 700 !important; }

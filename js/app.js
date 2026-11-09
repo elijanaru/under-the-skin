@@ -4377,7 +4377,7 @@ function energyCard(info, energy) {
       <ol class="em-steps">${open.steps.map((t, i) => `<li><i>${i + 1}</i>${t}</li>`).join('')}</ol>
       <div class="en-r no">${icon('close', 12, 2.4)}<span><em>Skip today</em>${open.avoid}</span></div>
       <button class="em-go" data-action="nav" data-to="${open.to}">${open.link} ${icon('chevR', 14)}</button></div>`
-    : '<p class="em-hint">Tap a part of your body to see what it needs</p>'}
+    : ''}
   </section>`;
 }
 function compassSec(info) {
