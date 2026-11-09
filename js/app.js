@@ -1815,7 +1815,7 @@ function planRecs(c, warm) {
   const out = [breathe ? { k: 'Breathe', t: 'Calm sigh, 1 min', e: '🫧', to: 'breathe' }
     : { k: 'Do this', t: cap, e: (FIX_EMOJI.find(([r]) => r.test(fix)) || [, '🌿'])[1], to: c.rk ? `relief/${encodeURIComponent(c.rk)}` : 'relief' }];
   const v = SYMPTOM_TEA[c.s], tea = v && (Array.isArray(v) ? v[warm ? 1 : 0] : v), ref = tea && teaRef(tea, c.s);
-  if (ref) out.push({ k: 'Sip', t: `${tea} tea`.replace(/ tea tea$/i, ' tea'), cup: /ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i.test(tea) ? 'images/cup-chai.webp' : 'images/cup-glass.webp', to: ref.to });
+  if (ref) out.push({ k: 'Sip', t: `${tea} tea`.replace(/ tea tea$/i, ' tea'), cup: teaCupImg(tea), to: ref.to });
   else if (c.rk && !breathe) out.push({ k: 'More ways', t: 'Full relief guide', e: '✨', to: `relief/${encodeURIComponent(c.rk)}` });
   return out.slice(0, 2);
 }
@@ -2212,10 +2212,14 @@ function plateSection(current) {
     ${plTonight(phase, warm)}
   </section>`;
 }
+// The floating cup for a tea: matcha has its own 3D bowl, the warm spice teas a chai cup, the rest a glass cup.
+const CHAI_RE = /ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i;
+const teaCupImg = n => `images/${/matcha/i.test(n) ? 'cup-matcha' : CHAI_RE.test(n) ? 'cup-chai' : 'cup-glass'}.webp`;
+const teaCupAttr = n => /matcha/i.test(n) ? ' data-model="models/matcha.glb"' : '';
 // Tea for today as a full recommendation: the floating cup, the tea and why.
 function plTea() {
-  const td = TEA_DAY[M.info ? dayWindow(M.info) : 'rising'], chai = /ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i.test(td[1]);
-  return `<button class="card pl-teac" data-action="nav" data-to="do/tea"><span class="plt-cup cup3d-w"><img src="images/${chai ? 'cup-chai' : 'cup-glass'}.webp" alt="" loading="lazy"><canvas class="teacup3d" aria-label="${td[1]}, turning slowly"></canvas></span>
+  const td = TEA_DAY[M.info ? dayWindow(M.info) : 'rising'];
+  return `<button class="card pl-teac" data-action="nav" data-to="do/tea"><span class="plt-cup cup3d-w"><img src="${teaCupImg(td[1])}" alt="" loading="lazy"><canvas class="teacup3d"${teaCupAttr(td[1])} aria-label="${td[1]}, turning slowly"></canvas></span>
     <span class="plt-t"><small>Tea for today</small><b>${td[1]}</b><em>${td[2]}</em></span>${icon('chevR', 16)}</button>`;
 }
 // Tonight's plate: one real recipe for her phase, with its photo, a new one every day.
@@ -4018,7 +4022,7 @@ function todayTiles(info, only) {
       ${(() => { const D = dayMoments(info), h = nowH(), cur = momentAt(D, h); return tile('t-deep ph-full keep ph-fr ph-vid ph-sun', { to: 'rhythm' }, `<video class="dpt-vid" src="images/sun-moon.mp4" poster="images/sun-moon-poster.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, `<span class="dsun-badge">${icon('sun', 14, 2.2)}</span>Follow the sun`, (SUN_DO[cur.id] || SUN_DO.midday)[0], `Rise ${hLabel(D.rise)} · Set ${hLabel(D.set)}`); })()}
       ${tile('t-sage ph-full ph-vid', { to: 'relief' }, `<video class="dpt-vid" src="images/relief-stardust.mp4" poster="images/relief-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Relief', rp.st.t, `${rp.mine ? 'You logged' : 'Common now:'} ${rp.k.toLowerCase()}`)}
       ${tile(`calm lv${lvl} t-cort t-mol`, { to: 'breathe/stress' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/cortisol-mol.webp" alt="" loading="lazy"><canvas class="teacup3d" data-model="models/cortisol.glb" data-elev="0.3" data-fit="1.9" data-steam="0" data-shadow="0" aria-label="The cortisol molecule, turning slowly"></canvas></span>`, 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}<span class="cv-lv" aria-hidden="true">${[1, 2, 3].map(i => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</span>`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
-      ${tile('t-tea t-cup', { to: 'do/tea' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/${/ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i.test(td[1]) ? 'cup-chai' : 'cup-glass'}.webp" alt="" loading="lazy"><canvas class="teacup3d" aria-label="${td[1]}, turning slowly"></canvas></span>`, 'Tea for today', td[1], td[2])}
+      ${tile('t-tea t-cup', { to: 'do/tea' }, `<span class="cup3d-w"><img class="dpt-cup" src="${teaCupImg(td[1])}" alt="" loading="lazy"><canvas class="teacup3d"${teaCupAttr(td[1])} aria-label="${td[1]}, turning slowly"></canvas></span>`, 'Tea for today', td[1], td[2])}
       ${tile('t-glow ph-full ph-vid', { to: 'ground' }, `<video class="dpt-vid" src="images/ground-cat.mp4" poster="images/ground-cat.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Ground', GROUND_PHASE[ph].t, '')}
       ${tile('wide t-deep ph-full keep ph-fr ph-vid ph-frw', { to: 'do/friends' }, `<video class="dpt-vid" src="images/friends-sunset.mp4" poster="images/friends-sunset.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Friends', FRIENDS_TILE[ph][0], `<span class="dpt-fr">${icon('check', 12, 2.4)} ${FRIENDS_TILE[ph][1]}</span><span class="dpt-fr no">${icon('close', 12, 2.4)} ${FRIENDS_TILE[ph][2]}</span>`)}
     </div>
@@ -4344,7 +4348,7 @@ function viewTea() {
   const info = M.info, w = info ? dayWindow(info) : 'rising', td = TEA_DAY[w], k = ui.teaK, G = k && TEA_GUIDE.find(x => x.k === k);
   const steep = (td[3].match(/\d+(?:–\d+)?\s*min/) || [''])[0], near = w === 'flow-start' || w === 'flow-end' || w === 'premenstrual';
   return `<div class="pad tg">
-    <section class="tg-hero tg-3d"><img src="${teaPhoto(td[1], 900, 1100)}" alt="" decoding="async"><span class="tg-shade"></span><span class="tg-studio" aria-hidden="true"></span><canvas class="teacup3d" aria-label="${td[1]}, turning slowly. Drag to turn it, or up and down to look inside."></canvas>
+    <section class="tg-hero tg-3d"><img src="${teaPhoto(td[1], 900, 1100)}" alt="" decoding="async"><span class="tg-shade"></span><span class="tg-studio" aria-hidden="true"></span><canvas class="teacup3d"${teaCupAttr(td[1])} aria-label="${td[1]}, turning slowly. Drag to turn it, or up and down to look inside."></canvas>
       <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
       <div class="tg-copy"><small>${info ? `Day ${info.cd} · ${PHASES[info.phase].name} · ` : ''}Your tea today</small><h1>${td[1]}</h1><p>${td[2]}</p>
         <span class="tg-chips">${steep ? `<span>${icon('clock', 13)} ${steep}</span>` : ''}<span>${icon('thermo', 13)} ${near ? 'Hot' : 'Warm'}</span></span>
