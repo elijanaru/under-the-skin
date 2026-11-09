@@ -10595,3 +10595,7 @@ section.ct .ct-tx { text-align: center; padding: 0 20%; }
 /* Supplements: Apple-style header, no caption over the hand photo */
 .sp-h { --c: var(--accent, #6c823e); margin: 6px 2px 16px; }
 .sp-h h1 { margin: 6px 0 0; font: 600 30px/1.08 Outfit, sans-serif; letter-spacing: -.025em; color: #20301a; }
+/* Consistency: every page headline in the Apple style (bold ink, one colour, tight) */
+.page-h { font: 600 30px/1.08 Outfit, sans-serif !important; letter-spacing: -.025em !important; color: #20301a !important; margin: 6px 2px 10px; }
+html .pad > .page-h span, html .page-h span, html .gro-page .page-h span { color: inherit !important; -webkit-text-fill-color: currentColor !important; background: none !important; font-weight: inherit !important; }
+.page-h + .body, .page-h + p { color: #4a5a3a; }
