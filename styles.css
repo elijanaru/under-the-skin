@@ -10599,3 +10599,6 @@ section.ct .ct-tx { text-align: center; padding: 0 20%; }
 .page-h { font: 600 30px/1.08 Outfit, sans-serif !important; letter-spacing: -.025em !important; color: #20301a !important; margin: 6px 2px 10px; }
 html .pad > .page-h span, html .page-h span, html .gro-page .page-h span { color: inherit !important; -webkit-text-fill-color: currentColor !important; background: none !important; font-weight: inherit !important; }
 .page-h + .body, .page-h + p { color: #4a5a3a; }
+/* Nutrients: intro as header + one dark pill; doses readable */
+.nu-go { margin: 0 2px 16px; }
+.nu-c .nu-dose { color: #304023 !important; opacity: 1 !important; font: 600 12.5px Outfit, sans-serif !important; letter-spacing: 0 !important; padding: 5px 10px; border-radius: 99px; background: #fff; border: 1px solid rgba(32,48,26,.08); white-space: nowrap; }

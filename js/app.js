@@ -4788,8 +4788,8 @@ function viewNutrients() {
     <div class="nu-t"><b>${x.n}</b><small>${x.for}</small></div><div class="nu-r"><span class="nu-dose">${x.d[0][0]}</span>${evBadge(x.ev)}</div></button>`;
   return `${topbar('Nutrients', { back: true })}
   <div class="pad">
-    <h1 class="page-h">Food first, <span>then a boost</span></h1>
-    <section class="card card-light nu-intro"><small>How to use this</small><p>Real food covers most of what your cycle needs. A supplement makes sense when you have the signs, a test shows you’re low, or a study dose clearly helps.</p><button class="sup-all" data-action="nav" data-to="supp">Supplement guide: doses and studies ${icon('chevR', 14)}</button></section>
+    <header class="t4-h sp-h"><small>Nutrients</small><h1>Food first, then a boost.</h1><p>Food covers most of what your cycle needs. Add a supplement when you have the signs, a test shows you’re low, or a study dose clearly helps.</p></header>
+    <button class="tmo-go nu-go" data-action="nav" data-to="supp">Supplement guide: doses and studies ${icon('chevR', 14)}</button>
     ${suppWeek()}
     ${now.length ? `${sectionTitle(`For your ${PHASES[ph].name.toLowerCase()} phase`)}<div class="nu-list">${now.map(card).join('')}</div>` : ''}
     ${sectionTitle(now.length ? 'All nutrients' : 'Nutrients')}
