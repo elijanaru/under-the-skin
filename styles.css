@@ -9456,3 +9456,6 @@ html, body { overscroll-behavior-y: none; }
 .pat2-foot { display: flex; align-items: center; gap: 6px; margin: 10px 2px 0; font-size: 12px; color: rgba(48,64,35,.7); }
 .pat2-band i { font-style: normal; }
 .pat2-band span { font-style: normal; line-height: 20px; }
+/* nutrient spec sheets: the icon in the capsule chip */
+.sp-capchip .nu-cap { display: grid; place-items: center; color: #20301a; }
+.sp-capchip .nu-cap svg { width: 18px; height: 18px; }

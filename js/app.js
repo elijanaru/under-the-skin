@@ -4457,11 +4457,18 @@ function nuFood(x) {
   });
   return `${N ? `<div class="ff-h"><span>One serving gives</span><span>You need <b class="dotnum">${N[0]}</b> ${N[1]}${N[2] ? ` ${N[2]}` : ''} a day</span></div>` : ''}${rows.join('')}`;
 }
+// Nutrient spec sheets open on a real photo of the food richest in it (same as the supplement sheets); chip label, then food.
+const NU_HERO = { inositol: ['Oranges & mandarins', 'citrus fruit'], vitex: ['tea:Overnight herbal infusion', 'herbal extract', 'Taken as'] };
+function nuHero(x) {
+  const h = NU_HERO[x.id] || SUPP_HERO[x.id]; if (!h) return {};
+  return { photo: h[0].startsWith('tea:') ? teaPhoto(h[0].slice(4), 800, 900) : foodPhoto(h[0], 800),
+    extra: `<span class="sp-capchip"><span class="sd-cap nu-cap">${nuIc(x.id, 18)}</span><small>${h[2] || 'Richest in'}<b>${h[1]}</b></small></span>` };
+}
 function viewNutrient(id) {
   const x = NUTRIENTS.find(n => n.id === id); if (!x) return viewNutrients();
   const ph = M.info && M.info.phase, i = NUTRIENTS.indexOf(x);
   return `<div class="pad sp2">
-    ${specHero({ glyph: nuIc(x.id, 64), eyebrow: `For ${/^[A-Z]{2}/.test(x.for) ? x.for : x.for.charAt(0).toLowerCase() + x.for.slice(1)}`, name: x.n, label: 'Key facts', rows: x.d, lead: x.n, desc: x.why })}
+    ${specHero({ ...nuHero(x), glyph: nuIc(x.id, 64), eyebrow: `For ${/^[A-Z]{2}/.test(x.for) ? x.for : x.for.charAt(0).toLowerCase() + x.for.slice(1)}`, name: x.n, label: 'Key facts', rows: x.d, lead: 'Why it helps', desc: x.why })}
     <section class="card glass tea-fit"><div class="tf-k">When it helps most</div>${phaseFit(x.p, ph)}</section>
     ${suppSafe(x.id)}
     ${sectionTitle('Food first')}
