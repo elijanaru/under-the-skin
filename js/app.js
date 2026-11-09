@@ -3210,6 +3210,10 @@ const RELIEF_WINDOW = { 'flow-start': ['Cramps', 'Fatigue', 'Headache'], 'flow-e
 const RELIEF_IC = { 'Face fascia': 'hand', 'Ovulation pain': 'seed', Cramps: 'thermo', 'PMS mood': 'sun', Bloating: 'cup', Insomnia: 'moon', Acne: 'spark', Headache: 'mind', Fatigue: 'bolt', 'Tender breasts': 'heart' };
 const reliefIc = (k, size = 20) => icon(RELIEF_IC[k] || 'leaf', size);
 const RELIEF_EMOJI = { 'Face fascia': '💆‍♀️', 'Ovulation pain': '🥚', Cramps: '🌀', 'PMS mood': '🌧️', Bloating: '🎈', Insomnia: '🌙', Acne: '🫧', Headache: '🤕', Fatigue: '🪫', 'Tender breasts': '💗' };
+// A calm real photo for each relief topic (no faces): the tea or food that helps most.
+const RELIEF_PIC = { 'Face fascia': 'tea:Rose', 'Ovulation pain': 'tea:cover-ovulation', Cramps: 'tea:Ginger & cinnamon', 'PMS mood': 'tea:Lemon balm', Bloating: 'tea:Fennel',
+  Insomnia: 'tea:Lavender', Acne: 'tea:Spearmint', Headache: 'tea:Peppermint', Fatigue: 'tea:Nettle leaf', 'Tender breasts': 'Ground flaxseed' };
+const reliefPhoto = (k, w) => { const p = RELIEF_PIC[k] || 'tea:Chamomile'; return p.startsWith('tea:') ? teaPhoto(p.slice(4), w, Math.round(w * 1.15)) : foodPhoto(p, w); };
 function viewReliefIndex() {
   const recent = new Set();
   for (let i = 0; i < 4; i++) { const l = getLog(C.iso(C.addDays(new Date(), -i))); [...(l.symptoms || []), ...(l.moods || [])].forEach(s => { const k = reliefKey(s); if (k) recent.add(k); }); }
@@ -3218,18 +3222,21 @@ function viewReliefIndex() {
   const likely = [...new Set([...recent, ...(w ? RELIEF_WINDOW[w] : [])])].filter(k => RELIEF[k]).slice(0, 3);
   const row = k => { const st = RELIEF[k].steps[0], L = RELIEF_LINKS[k] || {};
     return `<button class="rl-row" data-action="nav" data-to="relief/${encodeURIComponent(k)}"><span class="rl-rg">${reliefIc(k, 18)}</span><span class="rl-rt"><b>${k}${recent.has(k) ? ' <i>logged</i>' : ''}</b><small>Start with: ${st.t.charAt(0).toLowerCase() + st.t.slice(1)}</small></span>${evBadge(st.ev)}${icon('chevR', 15)}</button>`; };
-  const today = info ? `<section class="card card-light rl-today"><small>${recent.size ? 'For what you logged' : 'Common around now'} · day ${info.cd}</small>
-      ${likely.length ? `<div class="rl-rows">${likely.map(row).join('')}</div>` : `<p class="rl-calm">These are usually your easiest days. If something bothers you, pick it below.</p>`}
-      <button class="pill-cta rl-cta" data-action="nav" data-to="log">${icon('plus', 14)} Log how you feel</button></section>` : '';
-  return `${topbar('Relief', { back: true })}
-  <div class="pad">
-    <h1 class="page-h rx-h">Feel better, <span>gently</span></h1>
-    <p class="muted rx-sub">What helps: body, food and Chinese medicine.</p>
-    ${today}
-    <button class="bz-cta" data-action="nav" data-to="breathe"><i class="bz-mini"></i><span><b>Breathe with me</b><small>${((info && BREATHS[BREATH_FOR[info.phase]]) || BREATHS.sigh).name}${info ? " · for your phase" : ""}</small></span>${icon('chevR', 16)}</button>${groundCta()}${habitsCta()}
+  const chip = k => `<button class="rx2-chip" data-action="nav" data-to="relief/${encodeURIComponent(k)}"><img src="${reliefPhoto(k, 120)}" alt="">${k}${recent.has(k) ? '<i>logged</i>' : ''}</button>`;
+  const bub = (to, img, t) => `<button class="rx2-b" data-action="nav" data-to="${to}"><span><img src="${img}" alt="" loading="lazy"></span><b>${t}</b></button>`;
+  return `<div class="pad rx2">
+    <section class="rx2-hero"><img src="images/relief-stardust.webp" alt=""><video src="images/relief-stardust.mp4" poster="images/relief-stardust.webp" autoplay muted loop playsinline aria-hidden="true"></video><span class="rx2-shade"></span>
+      <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
+      <div class="rx2-t"><small>Relief${info ? ` · day ${info.cd}` : ''}</small><h1>Feel better, gently</h1></div>
+      <div class="rx2-glass"><small>${recent.size ? 'For what you logged' : 'Common around now'}</small>
+        ${likely.length ? `<div class="rx2-chips">${likely.map(chip).join('')}</div>` : '<p>Usually your easiest days. Pick anything below.</p>'}
+        <button class="rx2-cta" data-action="nav" data-to="log">${icon('plus', 15)} Log how you feel</button></div>
+    </section>
+    <div class="rx2-bubs">${bub('breathe', 'images/tile-meditate.webp', 'Breathe')}${bub('ground', 'images/tile-ground.webp', 'Ground')}${bub('habits', carePhoto('lemon-water', 300) || 'images/tea-ginger.webp', 'Habits')}</div>
     ${sectionTitle('Everything that helps')}
-    <div class="rx-grid">${keys.map(k => { const h = (state.reliefHelp || {})[k] || [];
-      return `<button class="rx-t ${recent.has(k) ? 'on' : ''}" data-action="nav" data-to="relief/${encodeURIComponent(k)}"><span class="rx-e">${RELIEF_EMOJI[k] || '🌿'}</span><b>${k}</b><small>${h.length ? `${icon('heart', 11)} ${h.length} work${h.length > 1 ? '' : 's'} for you` : `${RELIEF[k].steps.length} ways`}</small>${recent.has(k) ? '<i>Logged</i>' : ''}</button>`; }).join('')}</div>
+    <div class="rx2-grid">${keys.map(k => { const h = (state.reliefHelp || {})[k] || [];
+      return `<button class="rx2-tile ${recent.has(k) ? 'on' : ''}" data-action="nav" data-to="relief/${encodeURIComponent(k)}"><img src="${reliefPhoto(k, 500)}" alt="" loading="lazy"><span class="rx2-ts"></span>
+        ${recent.has(k) ? '<em>logged</em>' : ''}<b>${k}</b><small>${h.length ? `${icon('heart', 11)} ${h.length} work${h.length > 1 ? '' : 's'} for you` : `${RELIEF[k].steps.length} ways`}</small></button>`; }).join('')}</div>
   </div>`;
 }
 function viewRelief(id) {
