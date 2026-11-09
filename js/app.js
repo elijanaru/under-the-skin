@@ -133,7 +133,7 @@ function route() {
   const [path, q] = h.split('?');
   const [name, id] = path.split('/');
   // In season lives inside the food section now: old links open Plan on its In season tab.
-  if (name === 'season') { ui.planTab = 'season'; if (id) ui.seasonJump = id; history.replaceState(null, '', '#/plan'); return { name: 'plan', id: undefined, q: new URLSearchParams(), key: 'plan' }; }
+  if (name === 'season') { if (id) ui.seasonJump = id; history.replaceState(null, '', '#/plan/season'); return { name: 'plan', id: 'season', q: new URLSearchParams(), key: 'plan/season' }; }
   return { name, id, q: new URLSearchParams(q || ''), key: h };
 }
 function go(h) { location.hash = '#/' + h; }
@@ -1916,17 +1916,46 @@ function petCat(mood = 'awake') {
     ${mood === 'sleep' ? '<path class="pet-z" d="M100 14 h8 l-8 8 h8" fill="none" stroke="#8c9768" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' : mood === 'joy' ? '<path class="pet-z" d="M104 12 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill="#e6b1c4"/>' : ''}</svg>`;
 }
 function whatsGoingOn(text) { return `<section class="card wgo"><div class="eyebrow">What’s going on</div><p>${text}</p></section>`; }
+// The food tab: one calm home (plate + option cards); each option opens its own simple page at #/plan/<key>.
+function planOpts(phase) {
+  const recs = myRecipes().filter(r => r.phases.includes(phase)), m = new Date().getMonth() + 1, sz = SZ.seasonal(myCountry(), m), sn = SZ.seasonName(myCountry(), m);
+  const fits = M.info ? sz.filter(i => i.ph.includes(phase)).length : 0, cf = cycFoods(phase), tea = TCM[phase].tea.name;
+  const recPic = recs.map(r => photoUrl(r.id)).find(Boolean);
+  return [
+    ['recipes', `${recs.length} for you`, 'Recipes', recPic ? photoUrl(recs.find(r => photoUrl(r.id)).id, 400) : '', 'bowl'],
+    ['season', `${fits || sz.length} ${fits ? 'for you' : 'fresh now'}`, `${sn} foods`, `images/season-${{ Spring: 'spring', Summer: 'summer', 'Late summer': 'summer', Autumn: 'autumn', Winter: 'winter' }[sn]}.jpg`, 'leaf'],
+    ['foods', PHASES[phase].name, 'Phase foods', FOOD_PHOTOS[cf[3][0]] ? foodPhoto(cf[3][0], 400) : '', 'heart'],
+    ['drinks', tea, 'Drinks & tea', teaPhoto(tea, 400, 400), 'cup'],
+    ['super', 'Spices & seeds', 'Superfoods', foodPhoto('Blueberries', 400), 'spark'],
+    ['supps', 'What helps now', 'Supplements', foodPhoto('Pumpkin seeds', 400), 'drop'],
+    ['sugar', 'Fewer spikes', 'Blood sugar', foodPhoto('Apples', 400), 'chart'],
+    ['rituals', `${RITUALS.filter(r => r.phases.includes(phase)).length} for you`, 'Rituals', carePhoto(RITUALS[0].id, 400) || 'images/tile-meditate.webp', 'yinyang'],
+  ];
+}
+const PLAN_TITLE = { recipes: 'Recipes', foods: 'Phase foods', drinks: 'Drinks & tea', super: 'Superfoods', supps: 'Supplements', sugar: 'Blood sugar', rituals: 'Rituals', mind: 'Your mind' };
 function viewPlan() {
   const info = M.info, phase = info ? info.phase : 'follicular', ph = PHASES[phase], tcm = TCM[phase], P = PLAIN[phase];
-  const tabs = [['nourish', 'Nourish'], ['season', 'In season'], ['rituals', 'Rituals'], ['mind', 'Mind']];
-  const seg = `<div class="seg plan-seg">${tabs.map(([k, l]) => `<button class="${ui.planTab === k ? 'on' : ''}" data-action="planTab" data-v="${k}">${l}</button>`).join('')}</div>`;
-  if (ui.planTab === 'season') { const j = ui.seasonJump; ui.seasonJump = null; return viewSeason(j, seg); }
-  let body = '';
-  if (ui.planTab === 'nourish') {
-    body = nourishBody(phase);
-  } else if (ui.planTab === 'rituals') {
+  const sub = route().id;
+  if (sub === 'season') { const j = ui.seasonJump; ui.seasonJump = null; return viewSeason(j); }
+  if (sub && PLAN_TITLE[sub]) {
+    let body = '';
+    if (sub === 'recipes') {
+      const warm = warmWindow(info), recs = myRecipes().filter(r => r.phases.includes(phase)).sort((a, b) => warm ? (!!b.warm - !!a.warm) : (!!b.raw - !!a.raw));
+      body = `${plTonight(phase, warm)}${sectionTitle('All recipes for you')}<p class="pv-lead">${warm ? 'Your period is close: warm, cooked dishes first.' : `Made for your ${ph.name.toLowerCase()} phase.`}</p>
+        <div class="grid2 pv-rec">${recs.map((r, i) => `<button class="rcard tall ${photoUrl(r.id) ? 'has-photo' : ''}" data-action="nav" data-to="recipe/${r.id}">${recipeArt(r, ['wave', 'orb', 'drop', 'hill'][i % 4], 20 + i)}
+          <div class="rc-top"><span class="rc-k">${r.raw ? 'Raw' : r.warm ? 'Warm' : r.meal}</span></div><div class="rc-t">${r.name}</div><div class="rc-m">${r.time} min · ${r.kcal} kcal</div></button>`).join('')}</div>`;
+    } else if (sub === 'foods') {
+      const recent = recentSymptoms().filter(s => SYMPTOM_FOODS[s]).slice(0, 2);
+      body = `${dietGuideCard(phase)}${cycleFoods(phase)}
+        ${recent.length ? `${sectionTitle('For how you feel')}${recent.map(s => { const f = SYMPTOM_FOODS[s]; return `<section class="card glass fix"><div class="fix-h"><span class="fix-s">${s}</span></div><div class="foods">${f.foods.slice(0, 5).map(x => `<span class="food">${x}</span>`).join('')}</div></section>`; }).join('')}` : ''}`;
+    } else if (sub === 'drinks' || sub === 'super' || sub === 'supps') {
+      body = `${sub === 'drinks' ? plTea() : ''}<section class="card eat-cat eb" data-phase="${phase}">${eatCatInner(phase, sub)}</section>
+        ${sub === 'drinks' ? `<button class="card gro-cta" data-action="nav" data-to="tea"><span class="art-ic">${icon('cup', 20)}</span><span class="art-t">Tea guide<small>A tea for every need</small></span>${icon('chevR', 18)}</button>` : ''}`;
+    } else if (sub === 'sugar') {
+      body = sugarSection(phase);
+    } else if (sub === 'rituals') {
     const rits = RITUALS.slice().sort((a, b) => b.phases.includes(phase) - a.phases.includes(phase));
-    body = `<section class="rfx"><div class="rfx-top"><span class="rfx-g"><b>${tcm.elementGlyph}</b><small>${tcm.element}</small></span>
+      body = `<section class="rfx"><div class="rfx-top"><span class="rfx-g"><b>${tcm.elementGlyph}</b><small>${tcm.element}</small></span>
         <div><small>Your focus now</small><h3>${P.focus}</h3></div></div>
       <div class="rfx-steps">${RIT_STEPS[phase].map(([ic, t], i) => `<span style="--i:${i}"><i>${icon(ic, 18)}</i><b>${t}</b></span>`).join('')}</div>
       <details class="rfx-why"><summary>Why, in Chinese medicine ${icon('chevD', 13)}</summary><p>${P.tcm}</p><p>${P.do}</p></details></section>
@@ -1941,7 +1970,7 @@ function viewPlan() {
       ${sectionTitle('Home remedies')}
       <div class="grid2 rit-g">${M.info ? remedyCards(M.info) : ''}</div>
       <button class="card gro-cta" data-action="nav" data-to="relief"><span class="art-ic">${icon('heart', 20)}</span><span class="art-t">Relief guide<small>Cramps, PMS, sleep, skin</small></span>${icon('chevR', 18)}</button>`;
-  } else {
+    } else {
     const rows = [['mind', ph.mind, 'Work'], ['users', ph.social, 'Social'], ['heart', ph.selfcare, 'Self-care']];
     const MG = M.info ? MIND_GUIDE[dayWindow(M.info)] : null, words = ['Low', 'Lower', 'Steady', 'High'];
     const rings = MG ? [['energy', '⚡', 'Energy'], ['mood', '☀️', 'Mood lift'], ['social', '💬', 'Social'], ['rest', '🌙', 'Rest need']].map(([k, g, n], i) => {
@@ -1959,12 +1988,20 @@ function viewPlan() {
       ${sectionTitle('What studies found')}
       <section class="card glass mv-sci">${MIND_SCIENCE.map(x => `<details class="mvs"><summary><b>${x.t}</b>${evBadge(x.ev)}</summary><p>${x.s}</p><cite>${x.c}</cite></details>`).join('')}</section>
       <p class="fine center">Low mood that stays, or PMS that takes over your life, is worth a doctor’s visit.</p>`;
+    }
+    return `${topbar(PLAN_TITLE[sub], { back: true })}<div class="pad pv-sub">${body}</div>`;
   }
-  return `${phaseFoodPic(phase, true)}
-  <div class="pad">
-    ${ui.planTab === 'nourish' ? eatGoal(phase) : ''}
-    ${seg}
-    ${body}
+  const warm = warmWindow(info);
+  return `${topbar('Food')}
+  <div class="pad pv">
+    <div class="pv-h"><span class="pv-day">${info ? `Day ${info.cd} · ` : ''}${ph.name}</span><span class="eg-rule ${warm ? 'warm' : 'raw'}">${icon(warm ? 'sun' : 'leaf', 14)} Today: ${warm ? 'warm & cooked' : 'raw & fresh'}</span></div>
+    ${plateSection(phase, true)}
+    ${sectionTitle('Explore your food')}
+    <div class="pv-g">${planOpts(phase).map(([k, e, t, pic, ic], i) => `<button class="pv-t" style="--i:${i}" data-action="nav" data-to="plan/${k}">
+      <span class="pv-top">${pic ? `<img src="${pic}" alt="" loading="lazy">` : `<span class="pv-ic">${icon(ic, 20)}</span>`}<span class="pv-go">${icon('chevR', 16)}</span></span>
+      <small>${esc(e)}</small><b>${t}</b></button>`).join('')}</div>
+    <button class="pv-row" data-action="nav" data-to="plan/mind"><span class="pv-num dotnum">${PHASE_ORDER.indexOf(phase) + 1}</span><span><b>Your mind this phase</b><small>${ph.superpower.title}</small></span><span class="pv-go">${icon('chevR', 16)}</span></button>
+    <button class="pv-row" data-action="nav" data-to="grocery"><span class="pv-num">${icon('check', 18)}</span><span><b>My grocery list</b><small>For the next 7 days</small></span><span class="pv-go">${icon('chevR', 16)}</span></button>
   </div>`;
 }
 
@@ -2190,7 +2227,7 @@ function plRules(R) {
   return `<div class="plr">${R.map(([k, ic, kick, v]) => `<button class="plr-t ${open && open[0] === k ? 'on' : ''}" data-action="plRule" data-v="${k}" aria-expanded="${!!open && open[0] === k}">${ic}<small>${kick}</small><b>${v}</b></button>`).join('')}</div>
     ${open ? `<div class="plr-d"><b>${open[4]}</b><p>${open[5]}</p></div>` : '<p class="plr-hint">Tap one to see why</p>'}`;
 }
-function plateSection(current) {
+function plateSection(current, lite) {
   ui.plNow = current;
   const phase = current, m = new Date().getMonth() + 1, nowSeason = SZ.seasonName(myCountry(), m);
   const season = nowSeason, sel = ui.plPetal || 'veg', warm = plateWarm(phase);
@@ -2206,13 +2243,12 @@ function plateSection(current) {
       <p>${plateWhy(sel, phase)}${live ? ` <em>In season in ${country} now.</em>` : ''}</p>
       <div class="pld-foods">${foods.map(x => `<div>${x.photo ? `<img src="${x.photo}" alt="" loading="lazy">` : `<span>${x.g || '•'}</span>`}<small>${x.n}</small></div>`).join('')}</div>
     </div>
-    ${plRules([
+    ${lite ? '' : plRules([
       ['cook', `<i class="plr-ic">${warm ? '🍲' : phase === 'luteal' ? '🥘' : '🥗'}</i>`, 'Cook', warm ? 'Warm & cooked' : phase === 'luteal' ? 'Lean warmer' : PLATE_COOK_SHORT[season] || 'Fresh & cooked', 'How to cook today', cook],
       ['taste', `<i class="plr-ic">${{ Spring: '🌱', Summer: '🍒', 'Late summer': '🌽', Autumn: '🧄', Winter: '🫚' }[season] || '🌿'}</i>`, 'Taste', PSn.taste[0], `Taste of ${season.toLowerCase()} <em class="pl-han">${T.han}</em>`, PSn.taste[1]],
       ['tcm', `<i class="plr-ic">${{ Water: '💧', Wood: '🌳', Fire: '🔥', Earth: '⛰️' }[tcm.element] || '🌿'}</i>`, 'Element', `${tcm.element} time`, 'Your cycle in Chinese medicine', PLATE_TCM_PLAIN[phase]],
     ])}
-    ${plTea()}
-    ${plTonight(phase, warm)}
+    ${lite ? '' : `${plTea()}${plTonight(phase, warm)}`}
   </section>`;
 }
 // The floating cup for a tea: matcha and green tea have their own 3D matcha bowl, the warm spice teas a chai cup, the rest a glass cup.
@@ -6048,7 +6084,7 @@ function seasonChips(sn) {
         <p>Around your period, choose warming food and cook the cooling ones.</p></details>
     </div>`;
 }
-function viewSeason(jump, seg = '') {
+function viewSeason(jump) {
   if (jump) {
     Object.assign(ui, { seasonView: jump === 'cook' ? 'cook' : 'month', seasonKind: null });
     setTimeout(() => document.getElementById('sz-tabs')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
@@ -6088,11 +6124,10 @@ function viewSeason(jump, seg = '') {
   const forYou = all.filter(i => fits(i) && foodPhoto(i.f));
   return `<div class="pad sz2">
   <section class="szh"><img src="images/season-${{ Spring: 'spring', Summer: 'summer', 'Late summer': 'summer', Autumn: 'autumn', Winter: 'winter' }[sn]}.jpg" alt=""><span class="szh-shade"></span>
-      ${seg ? '' : `<button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>`}
+      <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
       <div class="szh-t"><small>${country} · ${MONTHS[m - 1]}</small><h1>${sn} is here</h1></div>
       <div class="szh-bub"><span><b class="dotnum">${all.length}</b><small>fresh now</small></span><span class="me"><b class="dotnum">${all.filter(fits).length}</b><small>for you</small></span></div>
       ${seasonArt(sn)}</section>
-    ${seg}
     <section class="card sz-story sz-story2">
       <h2>${(SEASON_STORY[sn] || SEASON_STORY.Autumn).t}</h2>
       ${seasonChips(sn)}
@@ -7293,7 +7328,7 @@ const actions = {
     box.querySelectorAll('.eb-i.on').forEach(x => x.classList.remove('on')); el.classList.add('on');
     const p = box.querySelector('.ebp-in'); p.innerHTML = el.querySelector('template').innerHTML; p.classList.remove('pop'); void p.offsetWidth; p.classList.add('pop');
   },
-  superGo: () => { ui.eatCat = 'super'; ui.planTab = 'nourish'; go('plan'); setTimeout(() => document.querySelector('.eb-tabs')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 700); },
+  superGo: () => go('plan/super'),
   eatCat: (d, el) => {
     ui.eatCat = d.v; const card = document.querySelector('.eat-cat'); if (!card) return render();
     document.querySelectorAll('[data-action="eatCat"]').forEach(b => b.classList.toggle('on', b === el));
@@ -7340,7 +7375,7 @@ const actions = {
     const k = ui.logDate || todayISO(), cur = getLog(k).sleep ?? 7.5;
     setLog(k, { sleep: Math.max(0, Math.min(14, (getLog(k).sleep == null ? 7.5 : cur + +d.d))) }); render();
   },
-  planTab: d => { ui.planTab = d.v; if (route().name !== 'plan') go('plan'); else render(); },
+  planTab: d => go(d.v && d.v !== 'nourish' ? `plan/${d.v}` : 'plan'),
   toggleHormone: d => { ui.hidden[d.h] = !ui.hidden[d.h]; render(); },
   enWhy: () => { ui.enWhy = !ui.enWhy; render(); },
   mvLi: d => { ui.mvLi = ui.mvLi === d.k ? null : d.k; render(); },
@@ -7419,7 +7454,7 @@ const actions = {
   },
   saveBirthday: () => { if (state.profile.birthday) render(); else toast('Pick your birthday first'); },
   plPetal: d => { ui.plPetal = d.v; render(); },
-  plRecipes: () => document.getElementById('pl-recipes')?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+  plRecipes: () => go('plan/recipes'),
   nourishPhase: d => { ui.nourishPhase = d.v; ui.openNeed = 0; render(); },
   openNeed: d => { ui.openNeed = ui.openNeed === +d.i ? -1 : +d.i; render(); },
   shareAud: d => { ui.shareAudience = d.v; render(); },
