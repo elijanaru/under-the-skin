@@ -1286,10 +1286,7 @@ function viewToday() {
     ${partnersCard(info)}
 
     ${logged ? `${sectionTitle('Today’s log', ['Edit', 'log'])}<section class="card glass"><div class="chips">${logChips(tlog)}</div><button class="br-cta" data-action="nav" data-to="brain">${icon('spark', 15)} What your body is saying ${icon('chevR', 15)}</button></section>`
-    : `<button class="ci2" data-action="nav" data-to="log">
-      <span class="ci2-top"><span class="ci2-k">${icon('heart', 14)} Check-in · day ${info.cd}</span><span class="ci2-chip">${icon('clock', 12)} 30 sec</span></span>
-      <span class="ci2-mid"><span><b>How do you feel today?</b><small>Mood, energy, sleep and body. Each check-in sharpens your predictions.</small></span></span>
-      <span class="ci2-cta">Log today ${icon('chevR', 14)}</span></button>`}
+    : ''}
 
     ${tipsCard(info)}
 
