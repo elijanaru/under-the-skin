@@ -132,6 +132,8 @@ function route() {
   const h = location.hash.replace(/^#\/?/, '') || 'today';
   const [path, q] = h.split('?');
   const [name, id] = path.split('/');
+  // In season lives inside the food section now: old links open Plan on its In season tab.
+  if (name === 'season') { ui.planTab = 'season'; if (id) ui.seasonJump = id; history.replaceState(null, '', '#/plan'); return { name: 'plan', id: undefined, q: new URLSearchParams(), key: 'plan' }; }
   return { name, id, q: new URLSearchParams(q || ''), key: h };
 }
 function go(h) { location.hash = '#/' + h; }
@@ -1917,7 +1919,9 @@ function petCat(mood = 'awake') {
 function whatsGoingOn(text) { return `<section class="card wgo"><div class="eyebrow">What’s going on</div><p>${text}</p></section>`; }
 function viewPlan() {
   const info = M.info, phase = info ? info.phase : 'follicular', ph = PHASES[phase], tcm = TCM[phase], P = PLAIN[phase];
-  const tabs = [['nourish', 'Nourish'], ['rituals', 'Rituals'], ['mind', 'Mind']];
+  const tabs = [['nourish', 'Nourish'], ['season', 'In season'], ['rituals', 'Rituals'], ['mind', 'Mind']];
+  const seg = `<div class="seg plan-seg">${tabs.map(([k, l]) => `<button class="${ui.planTab === k ? 'on' : ''}" data-action="planTab" data-v="${k}">${l}</button>`).join('')}</div>`;
+  if (ui.planTab === 'season') { const j = ui.seasonJump; ui.seasonJump = null; return viewSeason(j, seg); }
   let body = '';
   if (ui.planTab === 'nourish') {
     body = nourishBody(phase);
@@ -1960,7 +1964,7 @@ function viewPlan() {
   return `${phaseFoodPic(phase, true)}
   <div class="pad">
     ${ui.planTab === 'nourish' ? eatGoal(phase) : ''}
-    <div class="seg">${tabs.map(([k, l]) => `<button class="${ui.planTab === k ? 'on' : ''}" data-action="planTab" data-v="${k}">${l}</button>`).join('')}</div>
+    ${seg}
     ${body}
   </div>`;
 }
@@ -6041,10 +6045,10 @@ function seasonChips(sn) {
         <p>Around your period, choose warming food and cook the cooling ones.</p></details>
     </div>`;
 }
-function viewSeason(jump) {
+function viewSeason(jump, seg = '') {
   if (jump) {
     Object.assign(ui, { seasonView: jump === 'cook' ? 'cook' : 'month', seasonKind: null });
-    setTimeout(() => { document.getElementById('sz-tabs')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); history.replaceState(null, '', '#/season'); }, 80);
+    setTimeout(() => document.getElementById('sz-tabs')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
   }
   // Always today: the page follows the calendar, so foods and recipes change by themselves as the season turns.
   const c = myCountry(), m = new Date().getMonth() + 1, kind = ui.seasonKind || null, view = ui.seasonView === 'cook' ? 'cook' : 'month';
@@ -6081,10 +6085,11 @@ function viewSeason(jump) {
   const forYou = all.filter(i => fits(i) && foodPhoto(i.f));
   return `<div class="pad sz2">
   <section class="szh"><img src="images/season-${{ Spring: 'spring', Summer: 'summer', 'Late summer': 'summer', Autumn: 'autumn', Winter: 'winter' }[sn]}.jpg" alt=""><span class="szh-shade"></span>
-      <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
+      ${seg ? '' : `<button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>`}
       <div class="szh-t"><small>${country} · ${MONTHS[m - 1]}</small><h1>${sn} is here</h1></div>
       <div class="szh-bub"><span><b class="dotnum">${all.length}</b><small>fresh now</small></span><span class="me"><b class="dotnum">${all.filter(fits).length}</b><small>for you</small></span></div>
       ${seasonArt(sn)}</section>
+    ${seg}
     <section class="card sz-story sz-story2">
       <h2>${(SEASON_STORY[sn] || SEASON_STORY.Autumn).t}</h2>
       ${seasonChips(sn)}

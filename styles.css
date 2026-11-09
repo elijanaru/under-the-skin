@@ -9572,3 +9572,6 @@ html, body { overscroll-behavior-y: none; }
 .tgn.on small { color: rgba(255,255,255,.75); }
 .tgn.on .tgn-ic { background: color-mix(in srgb, var(--c) 30%, #20301a); color: #fff; box-shadow: none; }
 .tgn.on .tgn-teas img { border-color: #20301a; }
+/* Food section: Nourish · In season · Rituals · Mind */
+.plan-seg button { font-size: 13.5px; white-space: nowrap; padding: 0 4px; }
+.sz2 .plan-seg { margin-top: 16px; }
