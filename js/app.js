@@ -1473,7 +1473,7 @@ function calTop(inf, fStart, nextOv, short) {
   </section>`;
 }
 // Her mind this phase (the cat superpower card, today's rings, work/social/self-care, the month, studies): top of the Calendar.
-function mindSection(phase) {
+function mindSection(phase, noFine) {
   const ph = PHASES[phase], P = PLAIN[phase];
     const rows = [['mind', ph.mind, 'Work'], ['users', ph.social, 'Social'], ['heart', ph.selfcare, 'Self-care']];
     return `<section class="spx"><div class="spx-art">${petCat(phase === 'menstrual' ? 'sleep' : phase === 'ovulatory' ? 'joy' : 'awake')}</div>
@@ -1481,7 +1481,7 @@ function mindSection(phase) {
         <details class="rfx-why"><summary>What’s going on ${icon('chevD', 13)}</summary><p>${P.mind}</p></details></section>
       <div class="mg3" role="list">${rows.map(([ic, o, k], i) => `<div class="mg3-c t${i}" role="listitem" style="--i:${i}"><span class="mg3-e" aria-hidden="true">${['📝', '🫶', '🛁'][i]}</span><em>${k}</em><b>${o.title}</b><p>${o.text}</p>
         <svg class="mg3-paw" viewBox="0 0 40 40" aria-hidden="true"><ellipse cx="20" cy="26" rx="8" ry="6.5"/><circle cx="10" cy="16" r="3.4"/><circle cx="16.5" cy="10.5" r="3.4"/><circle cx="23.5" cy="10.5" r="3.4"/><circle cx="30" cy="16" r="3.4"/></svg></div>`).join('')}</div>
-      <p class="fine center">Low mood that stays, or PMS that takes over your life, is worth a doctor’s visit.</p>`;
+      ${noFine ? '' : '<p class="fine center">Low mood that stays, or PMS that takes over your life, is worth a doctor’s visit.</p>'}`;
 }
 function viewCalendar() {
   const { stats, today } = M;
@@ -1524,8 +1524,8 @@ function viewCalendar() {
   const mph = M.info ? M.info.phase : 'follicular';
   return `${topbar('Calendar')}
   <div class="pad">
-    <div class="cal-mind">${mindSection(mph)}</div>
     ${answer}
+    <div class="cal-mind">${mindSection(mph, true)}</div>
     <div class="cal-head"><button class="icon-btn" data-action="calMove" data-d="-1" aria-label="Previous month">${icon('chevL', 20)}</button>
       <h2><button class="cal-title" data-action="calPick">${fmt(m, { month: 'long' })} <span>${m.getFullYear()}</span>${icon('chevD', 16)}</button>${thisMonth ? '' : '<button class="cal-today" data-action="calToday">Today</button>'}</h2>
       <button class="icon-btn" data-action="calMove" data-d="1" aria-label="Next month">${icon('chevR', 20)}</button></div>
@@ -1543,6 +1543,7 @@ function viewCalendar() {
     ${events().some(e => e.date >= todayISO()) ? upcomingEvents() : ''}
     <details class="cal-sci"><summary><span class="cal-sci-ic">${icon('book', 16)}</span><span><b>What studies found</b><small>Your mind across the month, if you want the science</small></span>${icon('chevD', 16)}</summary>
       <div class="cal-sci-in">${MIND_SCIENCE.map(x => `<div class="mvs2"><b>${x.t}</b><p>${x.s}</p><cite>${x.c}</cite></div>`).join('')}</div></details>
+    <p class="fine center">Low mood that stays, or PMS that takes over your life, is worth a doctor’s visit.</p>
   </div>
 `;
 }
