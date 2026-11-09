@@ -3481,14 +3481,22 @@ function patternsSection() {
         <p>Use it to plan: put the demanding things on your best days and keep the low days lighter. Your abilities stay the same all month, only how it feels to use them changes.</p></details>
     </section>`;
   }
-  const rows = P.list.slice(0, 6).map(x => `<div class="pat-row">
-      <div class="pat-h"><b>${x.name}</b><span>${x.from === x.to ? `day ${x.from}` : `days ${x.from}–${x.to}`} · ${PHASES[x.phase].name}</span></div>
-      <div class="pat-strip">${x.days.slice(1).map((v, i) => `<i style="opacity:${v ? .25 + .75 * v / x.max : 1};background:${v ? PH_HEX[C.phaseFor(i + 1, L, M.stats.avgPeriod)] : 'rgba(32,48,26,.07)'}"></i>`).join('')}</div>
-    </div>`).join('');
+  // each symptom: its emoji on a phase-tinted chip, when it comes, how often, and a strip of her month with the days it shows up
+  const cdNow = info ? Math.min(info.cd, L) : 0, ovD = C.ovulationDay(L, M.stats.avgPeriod);
+  const band = `<div class="pat2-band">${ranges.map(r => `<i style="flex:${r.to - r.from + 1};--c:${PH_HEX[r.key]}"><span>${{ menstrual: 'Period', follicular: 'Follicular', ovulatory: 'Egg', luteal: 'Luteal' }[r.key]}</span></i>`).join('')}</div>`;
+  const rows = P.list.slice(0, 6).map(x => { const c = PH_HEX[x.phase];
+    return `<div class="pat2-r" style="--c:${c}">
+      <div class="pat2-h"><span class="pat2-ic">${LOG_EMOJI[x.name] || '•'}</span><span class="pat2-t"><b>${x.name}</b><small>${x.from === x.to ? `Day ${x.from}` : `Days ${x.from} to ${x.to}`} · ${PHASES[x.phase].name}</small></span>
+        <span class="pat2-n"><b class="dotnum">${x.cyclesN}</b><small>cycles</small></span></div>
+      <div class="pat2-strip">${x.days.slice(1, L + 1).map((v, i) => { const d = i + 1, pc = PH_HEX[C.phaseFor(d, L, M.stats.avgPeriod)];
+        return `<i class="${v ? 'on' : ''} ${d === cdNow ? 'now' : ''}" style="--p:${pc};${v ? `opacity:${(.45 + .55 * v / x.max).toFixed(2)}` : ''}"></i>`; }).join('')}</div>
+    </div>`; }).join('');
   return `${sectionTitle('Your patterns')}
     ${P.list.length || energyCard ? `${energyCard}
-      ${rows ? `<section class="card glass"><div class="eyebrow" style="margin-bottom:6px">When your symptoms show up</div>${rows}
-        <div class="pat-days"><span>Day 1</span><span>Ovulation ~${C.ovulationDay(L, M.stats.avgPeriod)}</span><span>Day ${L}</span></div></section>` : ''}`
+      ${rows ? `<section class="card pat2"><div class="pat2-top"><div><small>When your symptoms show up</small><b>Your body’s habits</b></div><span class="pat2-k"><i></i>today</span></div>
+        ${band}${rows}
+        <div class="pat2-days"><span>Day 1</span><span>Egg release ~ day ${ovD}</span><span>Day ${L}</span></div>
+        <p class="pat2-foot">${icon('spark', 12)} The number shows in how many of your cycles it came back</p></section>` : ''}`
       : patternUnlock(P)}`;
 }
 

@@ -9427,3 +9427,32 @@ html, body { overscroll-behavior-y: none; }
 .msb-steps li > span { display: grid; place-items: center; width: 32px; height: 32px; margin-bottom: 2px; border-radius: 50%; background: #20301a; color: #e6efcf; }
 .msb-steps b { font-size: 13px; font-weight: 500; color: #20301a; }
 .msb-steps small { font-size: 11.5px; line-height: 1.25; color: rgba(48,64,35,.72); }
+
+/* Patterns: when symptoms show up, as phase-tinted month strips with a today line */
+.pat2 { padding: 18px 16px 14px; border-radius: 30px; background: rgba(255,255,255,.9); border: 1px solid rgba(48,64,35,.08); box-shadow: 0 10px 30px rgba(32,48,26,.08); }
+.pat2-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin: 0 2px 12px; }
+.pat2-top small { display: block; font-size: 12.5px; color: rgba(48,64,35,.7); }
+.pat2-top b { display: block; margin-top: 2px; font-size: 20px; font-weight: 500; color: #20301a; }
+.pat2-k { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: rgba(48,64,35,.75); white-space: nowrap; }
+.pat2-k i { width: 3px; height: 14px; border-radius: 2px; background: #20301a; }
+.pat2-band { display: flex; gap: 3px; margin-bottom: 6px; }
+.pat2-band i { height: 20px; border-radius: 10px; background: color-mix(in srgb, var(--c) 28%, #fff); display: grid; place-items: center; min-width: 0; }
+.pat2-band span { font-size: 10.5px; font-weight: 500; color: #20301a; overflow: hidden; white-space: nowrap; text-overflow: clip; }
+.pat2-r { padding: 10px 0 12px; border-top: 1px solid rgba(48,64,35,.08); }
+.pat2-h { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+.pat2-ic { display: grid; place-items: center; width: 36px; height: 36px; flex: none; border-radius: 12px; background: color-mix(in srgb, var(--c) 22%, #fff); font-size: 18px; line-height: 1; }
+.pat2-t { flex: 1; min-width: 0; }
+.pat2-t b { display: block; font-size: 15px; font-weight: 500; color: #20301a; }
+.pat2-t small { display: block; margin-top: 1px; font-size: 12.5px; color: rgba(48,64,35,.72); }
+.pat2-n { display: flex; align-items: baseline; gap: 4px; padding: 4px 10px; border-radius: 99px; background: #20301a; color: #fff; }
+.pat2-n b { font-size: 17px; line-height: 1; }
+.pat2-n small { font-size: 11px; color: rgba(255,255,255,.72); }
+.pat2-strip { position: relative; display: flex; gap: 2px; height: 16px; align-items: center; }
+.pat2-strip i { flex: 1; height: 8px; border-radius: 3px; background: color-mix(in srgb, var(--p) 22%, #fff); }
+.pat2-strip i.on { height: 16px; border-radius: 4px; background: var(--c); }
+.pat2-strip i.now { position: relative; }
+.pat2-strip i.now::after { content: ''; position: absolute; left: 50%; top: -5px; bottom: -5px; width: 3px; margin-left: -1.5px; border-radius: 2px; background: #20301a; }
+.pat2-days { display: flex; justify-content: space-between; margin-top: 4px; font-size: 11.5px; color: rgba(48,64,35,.72); }
+.pat2-foot { display: flex; align-items: center; gap: 6px; margin: 10px 2px 0; font-size: 12px; color: rgba(48,64,35,.7); }
+.pat2-band i { font-style: normal; }
+.pat2-band span { font-style: normal; line-height: 20px; }
