@@ -10606,3 +10606,5 @@ html .pad > .page-h span, html .page-h span, html .gro-page .page-h span { color
 .pad .gr-h { display: block !important; margin-top: 4px; width: auto; } .pad .gr-h > * { display: block; } .pad .gr-h small { display: inline-flex; }
 .gr-hero.gr-tree::after { display: none; }
 .gr-hero.gr-tree { aspect-ratio: 4 / 4.2; }
+/* Today: close the empty gap under the body figure */
+.hub .stage-after .en.en2 { padding-bottom: 20px; margin-bottom: 8px; }
