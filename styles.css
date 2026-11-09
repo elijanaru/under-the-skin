@@ -10624,3 +10624,6 @@ html .pad > .page-h span, html .page-h span, html .gro-page .page-h span { color
 .bubble.menstrual img { width: 66% !important; height: 66% !important; }
 /* Card headlines: bold ink like the rest of the Apple-style headers */
 .card .dark-h { font: 600 22px/1.15 Outfit, sans-serif !important; letter-spacing: -.02em !important; color: #20301a !important; }
+/* Consistency: section titles in bold ink like the page headers (were thin 300-400) */
+html .section-title h3 { font: 600 22px/1.15 Outfit, sans-serif !important; letter-spacing: -.02em !important; color: #20301a !important; }
+html .home .hub-k > span:first-child { font: 600 20px/1.2 Outfit, sans-serif !important; letter-spacing: -.02em !important; color: #20301a !important; }
