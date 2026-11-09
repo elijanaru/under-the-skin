@@ -10630,3 +10630,8 @@ html .home .hub-k > span:first-child { font: 600 20px/1.2 Outfit, sans-serif !im
 /* Grocery: nutrient ring counts readable (small Doto was too faint) */
 .gro-nuts .gn b { font: 600 13px Outfit, sans-serif !important; letter-spacing: 0 !important; color: #20301a !important; }
 .gro-nuts .gn small, .gro-nuts .gn span:not(:empty) { color: #304023; }
+
+/* Feel better poster: ritual names in crisp bold ink, sublines readable (were 500 weight and 66% grey) */
+.fbp .fbp-i b { font-weight: 600; font-size: 13.5px; color: #20301a; }
+.fbp .fbp-i small { font-size: 11px; color: rgba(32,48,26,.76); }
+.fbp .fbp-i.on b { color: #4f6a2a; }
