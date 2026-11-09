@@ -10446,3 +10446,32 @@ section.ct .ct-tx { text-align: center; padding: 0 20%; }
 .mvc-b .mvp-ben { margin-top: 2px; font-size: 13.5px; }
 @media (prefers-reduced-motion: reduce) { .mvp-fig.big, .mvc-b { animation: none; } }
 .mvc-h .mvp-fig { background: #fff; border-radius: 18px; padding: 4px; box-sizing: border-box; }
+/* Move: one glass card for the month (wave, phase band, why today, steps, every part behind a tap) */
+.mvm { margin-top: 16px; padding: 16px 16px 14px; border-radius: 28px; background: rgba(255,255,255,.9); border: .5px solid rgba(48,64,35,.12); box-shadow: 0 14px 32px -22px rgba(32,48,26,.45); }
+.mvm-h { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; }
+.mvm-h small { display: block; font-size: 12px; color: #4a5a3a; }
+.mvm-h b { display: block; margin-top: 2px; font-size: 21px; font-weight: 500; letter-spacing: -.02em; color: #20301a; }
+.mvm-st { text-align: right; }
+.mvm-st b.dotnum { font-size: 22px; color: #20301a; }
+.mvm-st small { display: block; font-size: 11px; color: #4a5a3a; }
+.mvm .mv3-wave { margin: 12px 0 0; padding-bottom: 22px; }
+.mvm .mvw-l { stroke: #20301a; stroke-width: 2; }
+.mvm .mvw-s1 { stop-color: #6c823e; stop-opacity: .22; }
+.mvm .mvw-s2 { stop-color: #6c823e; stop-opacity: 0; }
+.mvm .mvw-lab { bottom: 0; }
+.mvm .mvw-lab span { font-size: 11px; font-weight: 500; color: #304023; }
+.mvm .mvw-k { display: none; }
+.mvm-band { display: flex; gap: 2px; height: 8px; margin-top: 8px; }
+.mvm-band i { border-radius: 4px; background: var(--c); }
+.mvm-key { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 8px; }
+.mvm-key span { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: #4a5a3a; }
+.mvm-key span.on { color: #20301a; font-weight: 500; }
+.mvm-key i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+.mvm-why { margin: 12px 0 0; padding: 11px 13px; border-radius: 16px; background: #f4f6ee; font-size: 13.5px; line-height: 1.45; color: #20301a; }
+.mvm-why b { display: block; margin-bottom: 2px; font-size: 11.5px; font-weight: 500; color: #4f6a2a; }
+.mvm-more { margin-top: 10px; }
+.mvm-more summary { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; border-radius: 99px; background: #20301a; color: #fff; font-size: 13.5px; font-weight: 500; list-style: none; cursor: pointer; }
+.mvm-more summary::-webkit-details-marker { display: none; }
+.mvm-more[open] summary svg { transform: rotate(180deg); }
+.mvm-more .mv2-month { margin: 10px 0 0; padding: 0 2px; background: none; border: 0; }
+.mvm-more .mv2-w b { color: #20301a; } .mvm-more .mv2-w p { color: #4a5a3a; }

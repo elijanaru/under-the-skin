@@ -5392,7 +5392,7 @@ function moveBubble(m, r, i) {
 function moveWave(days, info, L, P) {
   const W = 320, H = 92, x = i => 6 + i / Math.max(1, L - 1) * (W - 12);
   const raw = days.map(w => { const r = MOVE_GUIDE[w].r; return (r.lift + r.hiit + r.sport) / 9; });
-  const v = raw.map((_, i) => { let a = 0, n = 0; for (let j = i - 2; j <= i + 2; j++) if (raw[j] != null) { a += raw[j]; n++; } return a / n; }); // smoothed
+  const sm = r => r.map((_, i) => { let a = 0, n = 0; for (let j = i - 3; j <= i + 3; j++) if (r[j] != null) { a += r[j]; n++; } return a / n; }), v = sm(sm(raw)); // smoothed twice so the line reads as one soft curve
   const pts = v.map((y, i) => [x(i), 78 - y * 58]);
   let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
   for (let i = 1; i < pts.length; i++) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], mx = (x0 + x1) / 2; d += ` C${mx.toFixed(1)} ${y0.toFixed(1)} ${mx.toFixed(1)} ${y1.toFixed(1)} ${x1.toFixed(1)} ${y1.toFixed(1)}`; }
@@ -5450,11 +5450,17 @@ function viewMove() {
   const days = Array.from({ length: L }, (_, i) => windowAt(i + 1, L, P));
   const ranked = [...MOVES].sort((a, b) => g.r[b.k] - g.r[a.k]);
   const top = ranked[0], T = MV_PLATE[top.k], also = ranked.slice(1).filter(m => g.r[m.k] >= 2), later = ranked.filter(m => g.r[m.k] < 2);
-  const body = tab === 'month'
-      ? `<section class="mv2-month">${Object.entries(MOVE_GUIDE).filter(([k]) => days.includes(k)).map(([k, x]) => { const idx = days.map((w, i) => w === k ? i + 1 : 0).filter(Boolean); return `<div class="mv2-w ${k === key ? 'on' : ''}"><span class="mv2-d">${idx[0] === idx[idx.length - 1] ? idx[0] : `${idx[0]}–${idx[idx.length - 1]}`}</span><div><b>${x.title}${k === key ? ' <em>· now</em>' : ''}</b><p>${x.tip}</p></div></div>`; }).join('')}</section>`
-      : `<section class="mv2-tip"><span class="eyebrow">Why today</span><p>${g.tip}</p></section>
-        <section class="mv-2n"><div class="mv-n"><span class="mv-ni">${icon('clock', 18)}</span><small>Workout</small><b class="dotnum">${D.len.replace(' min', '')}</b><em>minutes</em></div>
-          <div class="mv-n"><span class="mv-ni">${icon('leaf', 18)}</span><small>Steps</small><b class="dotnum">${MOVE_STEPS[key] || '8,000'}</b><em>steps a day</em></div></section>`;
+  const W2P = { 'flow-start': 'menstrual', 'flow-end': 'menstrual', rising: 'follicular', building: 'follicular', peak: 'ovulatory', settle: 'luteal', focus: 'luteal', premenstrual: 'luteal' };
+  const segs = []; days.forEach((w, i) => { const ph = W2P[w], l = segs[segs.length - 1]; l && l.ph === ph ? l.n++ : segs.push({ ph, n: 1 }); });
+  const month = `<section class="mvm">
+      <div class="mvm-h"><div><small>Your training month</small><b>${g.title}</b></div><div class="mvm-st"><b class="dotnum">${MOVE_STEPS[key] || '8,000'}</b><small>steps today</small></div></div>
+      ${moveWave(days, info, L, P)}
+      <div class="mvm-band" aria-hidden="true">${segs.map(x => `<i style="flex:${x.n};--c:${PH_HEX[x.ph]}"></i>`).join('')}</div>
+      <div class="mvm-key">${PHASE_ORDER.map(p => `<span class="${p === info.phase ? 'on' : ''}"><i style="--c:${PH_HEX[p]}"></i>${PHASES[p].name}</span>`).join('')}</div>
+      <p class="mvm-why"><b>Why today</b>${g.tip}</p>
+      <details class="mvm-more"${tab === 'month' ? ' open' : ''}><summary>Every part of your month ${icon('chevD', 14)}</summary>
+        <div class="mv2-month">${Object.entries(MOVE_GUIDE).filter(([k]) => days.includes(k)).map(([k, x]) => { const idx = days.map((w, i) => w === k ? i + 1 : 0).filter(Boolean); return `<div class="mv2-w ${k === key ? 'on' : ''}"><span class="mv2-d">${idx[0] === idx[idx.length - 1] ? idx[0] : `${idx[0]}–${idx[idx.length - 1]}`}</span><div><b>${x.title}${k === key ? ' <em>· now</em>' : ''}</b><p>${x.tip}</p></div></div>`; }).join('')}</div></details>
+    </section>`;
   const card = m => { const X = MV_PLATE[m.k], on = ui.mvOpen === m.k;
     return `<article class="mvc ${on ? 'on' : ''}"><button class="mvc-h" data-action="mvOpen" data-k="${m.k}" aria-expanded="${on}">${mvFig(m.k)}
       <span class="mvc-t"><em class="r${g.r[m.k]}">${MV_WORD[g.r[m.k]]}</em><b>${m.n}</b><small>${X.works}</small><span class="mvc-n">${icon('clock', 12)} ${X.long} · ${X.freq}</span></span>${icon(on ? 'chevD' : 'chevR', 15)}</button>
@@ -5469,11 +5475,9 @@ function viewMove() {
       <div class="mvp-stats"><div><small>How long</small><b class="dotnum">${T.long.replace(/ to /, '–').replace(' min', '')}</b><em>minutes · ${T.freq.toLowerCase()}</em></div><div><small>How hard</small><b>${D.int.split(':')[0]}</b><em>${(D.int.split(':')[1] || '').trim()}</em></div><div><small>Warm up</small><b>${D.warm.split(',')[0]}</b><em>${(D.warm.split(',')[1] || ' easy, then build').trim()}</em></div></div>
       ${mvInfo(top.k, D)}
     </section>
-    ${moveWave(days, info, L, P)}
+    ${month}
     ${also.length ? `${sectionTitle("Also good now")}<div class="mvc-l">${also.map(card).join('')}</div>` : ''}
     ${later.length ? `${sectionTitle('Go lighter or rest')}<div class="mvc-l soft">${later.map(card).join('')}</div>` : ''}
-    <div class="seg mt">${[['today', 'Today'], ['month', 'Your month']].map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="mvTab" data-v="${k}">${l}</button>`).join('')}</div>
-    ${body}
     ${trainSafe()}
   </div>`;
 }
