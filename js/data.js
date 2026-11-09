@@ -1460,7 +1460,13 @@ export const DIET_GUIDE = {
 // The best spices and superfoods for each phase: [emoji, name, why, how much, photo ['tea'|'food', name] or null, not vegan].
 // Small, food-sized amounts only. Raw ones sit in the follicular and ovulatory weeks, never around the period.
 export const SUPERFOODS = {
-  menstrual: { lead: 'Warming spices move blood and ease cramps; mineral-rich superfoods refill the iron you lose.', list: [
+  menstrual: { lead: 'Warming spices move blood and ease cramps; mineral-rich superfoods refill the iron you lose.',
+    gems: [
+      ['⚫', 'Black sesame', 'Chinese medicine', 'Nourishes the blood in Chinese medicine, with iron, calcium and lignans.', '1 tbsp toasted and ground, in warm congee or warm milk'],
+      ['🔴', 'Red dates', 'Chinese medicine', 'Jujube builds blood and calms the spirit in Chinese medicine, gently sweet.', '3 to 5 dates simmered in tea or congee'],
+      ['🌳', 'Baobab', 'West Africa', 'Very rich in vitamin C, which helps you absorb iron from plant food, plus soluble fibre.', '1 to 2 tsp in warm water or room-temperature yoghurt'],
+      ['🌿', 'Moringa', 'Africa & India', 'A leaf powder with iron, calcium and vitamin A.', '1 tsp stirred into soup or warm water. Not in pregnancy; ask first if you take thyroid or blood sugar medicine'],
+    ], list: [
     ['🫚', 'Ginger', 'Eases period cramps: in small trials about as well as ibuprofen.', '1 thumb fresh, in tea or soup, 2 to 3 times a day', ['tea', 'Ginger']],
     ['🔴', 'Goji berries', 'Iron and vitamin C together, a classic blood builder in Chinese medicine.', '1 tbsp, soaked in warm tea', ['tea', 'Goji berries']],
     ['🍯', 'Blackstrap molasses', 'One spoon brings iron, magnesium and calcium.', '1 tsp in warm water or milk', ['tea', 'Blackstrap molasses']],
@@ -1468,7 +1474,13 @@ export const SUPERFOODS = {
     ['🟤', 'Cinnamon', 'Warms you and steadies blood sugar on low-energy days.', '½ tsp a day, ideally Ceylon', ['tea', 'Cinnamon bark']],
     ['🌿', 'Nettle', 'Iron, calcium and magnesium, gentle and earthy.', '1 to 2 cups of tea a day', ['tea', 'Nettle leaf']],
   ] },
-  follicular: { lead: 'Seeds, sprouts and fresh herbs help your liver clear used estrogen and fuel your rising energy.', list: [
+  follicular: { lead: 'Seeds, sprouts and fresh herbs help your liver clear used estrogen and fuel your rising energy.',
+    gems: [
+      ['🫙', 'Black seed oil', 'Mediterranean', 'Nigella seed oil: thymoquinone calms inflammation, and small trials link it with steadier blood sugar and cycles.', '1 tsp (5 ml) a day with food. Skip in pregnancy; ask first if you take blood thinners or blood sugar medicine'],
+      ['🌼', 'Dandelion greens', 'Mediterranean', 'Bitter wild greens that wake up bile and help your liver clear used estrogen.', '1 handful, raw with olive oil and lemon, or lightly wilted. Ask first if you take water tablets'],
+      ['🍄', 'Sun-dried shiitake', 'Chinese medicine', 'Vitamin D when dried in the sun, plus beta-glucans for your immune system.', '3 to 4 caps, soaked and always cooked'],
+      ['🍎', 'Pomegranate', 'Mediterranean', 'Polyphenols that look after your blood vessels and skin as estrogen climbs.', 'The seeds of half a fruit'],
+    ], list: [
     ['🌱', 'Broccoli sprouts', 'Sulforaphane helps your liver clear used estrogen.', '1 small handful, raw, on salads or eggs', ['food', 'Broccoli sprouts']],
     ['🌰', 'Ground flaxseed', 'Lignans and plant omega-3 for a healthy estrogen balance.', '1 tbsp, freshly ground, with plenty of water', ['food', 'Ground flaxseed']],
     ['🎃', 'Pumpkin seeds', 'Zinc for the follicle that becomes your egg.', '1 tbsp a day', ['food', 'Pumpkin seeds']],
@@ -1476,7 +1488,13 @@ export const SUPERFOODS = {
     ['🌿', 'Parsley', 'Vitamin C, vitamin K and folate in one handful.', '1 small handful, chopped over food', ['food', 'Parsley']],
     ['🍯', 'Raw honey', 'Gentle energy, enzymes and a soothing throat.', '1 tsp, stirred into warm (not hot) drinks', ['food', 'Raw honey'], true],
   ] },
-  ovulatory: { lead: 'Light, cooling herbs and antioxidant superfoods for your peak, plus fibre to carry out the extra estrogen.', list: [
+  ovulatory: { lead: 'Light, cooling herbs and antioxidant superfoods for your peak, plus fibre to carry out the extra estrogen.',
+    gems: [
+      ['🌺', 'Bissap (hibiscus)', 'West Africa', 'The tart red drink of West Africa: cooling, full of antioxidants and kind to blood pressure.', '1 cup, warm or cool. Ask first if you take blood pressure pills'],
+      ['🫒', 'Extra virgin olive oil', 'Mediterranean', 'Its polyphenols calm inflammation; the base of the Mediterranean plate.', '2 tbsp a day, raw over food'],
+      ['🌊', 'Dulse seaweed', 'North Atlantic & Japan', 'Iodine for your thyroid when it works hardest.', 'A small pinch of flakes a few times a week. More is not better for the thyroid'],
+      ['🥜', 'Tiger nuts', 'West Africa & Spain', 'Resistant starch and fibre feed the gut that carries out extra estrogen, plus magnesium.', 'A small handful, soaked overnight'],
+    ], list: [
     ['🫐', 'Wild blueberries', 'Antioxidants that protect your egg and your skin.', '1 handful a day, fresh or frozen', ['food', 'Blueberries']],
     ['🥣', 'Chia seeds', 'Fibre that carries out extra estrogen, plus plant omega-3.', '1 tbsp, soaked in water or milk for 10 minutes', ['food', 'Chia seeds']],
     ['🌱', 'Broccoli sprouts', 'Sulforaphane helps your liver clear the estrogen peak.', '1 small handful, raw', ['food', 'Broccoli sprouts']],
@@ -1484,7 +1502,13 @@ export const SUPERFOODS = {
     ['🌿', 'Fresh mint', 'Cooling and easy on digestion on hot, busy days.', '1 small handful in water, tea or salads', ['food', 'Mint']],
     ['🌿', 'Coriander', 'A fresh herb that supports digestion and brings vitamin K.', '1 small handful, chopped', ['food', 'Parsley & coriander']],
   ] },
-  luteal: { lead: 'Warming spices and magnesium-rich superfoods calm cravings, bloating and PMS.', list: [
+  luteal: { lead: 'Warming spices and magnesium-rich superfoods calm cravings, bloating and PMS.',
+    gems: [
+      ['🟤', 'Carob', 'Mediterranean', 'Naturally sweet, with calcium and fibre and no caffeine: a calm evening treat for cravings.', '1 tbsp powder in warm milk'],
+      ['🍵', 'Rooibos', 'South Africa', 'Red bush tea with antioxidants and no caffeine, good for calm evenings.', '1 to 2 cups a day'],
+      ['🟠', 'Dried longan', 'Chinese medicine', 'Calms the heart and helps sleep in Chinese medicine.', '5 to 6 dried fruits in warm tea'],
+      ['🌴', 'Medjool dates', 'Middle East', 'Magnesium, potassium and fibre for sweet cravings without a sharp spike.', '2 dates with a few nuts'],
+    ], list: [
     ['🍫', 'Raw cacao', 'Magnesium for cravings, cramps and calm.', '1 to 2 tbsp a day in a warm drink', ['food', 'Raw cacao']],
     ['🟤', 'Cinnamon', 'Steadies blood sugar so cravings stay quieter.', '½ tsp a day, ideally Ceylon', ['tea', 'Cinnamon bark']],
     ['🥄', 'Sesame seeds and tahini', 'Zinc, calcium and lignans for your progesterone days.', '1 tbsp seeds or tahini a day', ['food', 'Sesame seeds']],

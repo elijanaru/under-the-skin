@@ -1354,7 +1354,7 @@ function viewToday() {
 // Explore: every button a full photo with a frosted label.
 function exploreGrid(info) {
   const tiles = [['super', 'leaf', 'Superfoods', 'Spices & superfoods for your phase', foodPhoto('Blueberries', 500)], ['hormones', 'book', 'Hormones', 'What each one does', hormonePhoto('Oestrogen', 500)], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/forest-path.jpg'],
-    ['relief', 'heart', 'Relief', 'Cramps, PMS, sleep', 'images/relief-stardust.webp', 'images/relief-stardust.mp4'],
+    ['relief', 'heart', 'Feel better', 'Rituals, relief & habits', 'images/relief-stardust.webp', 'images/relief-stardust.mp4'],
     ['season', 'bowl', 'In season', 'Local foods', 'images/season-fruit.webp'], ['tea', 'cup', 'Tea guide', 'For every need', 'images/tea-ginger.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/tile-meditate.webp']];
   // round photo bubbles in a 2-3-2 honeycomb, each with its own coloured rim and the name on the photo
   const rim = ['#a98bd0', '#d4708f', '#7f9a4c', '#e08aa5', '#d9a441', '#c98a52', '#6fa49a'];
@@ -1987,14 +1987,14 @@ function planOpts(phase) {
   return [
     ['recipes', `${recs.length} for you`, 'Recipes', recPic ? photoUrl(recs.find(r => photoUrl(r.id)).id, 400) : '', 'bowl'],
     ['season', `${fits || sz.length} ${fits ? 'for you' : 'fresh now'}`, `${sn} foods`, `images/season-${{ Spring: 'spring', Summer: 'summer', 'Late summer': 'summer', Autumn: 'autumn', Winter: 'winter' }[sn]}.jpg`, 'leaf'],
-    ['foods', PHASES[phase].name, 'Phase foods', FOOD_PHOTOS[cf[3][0]] ? foodPhoto(cf[3][0], 400) : '', 'heart'],
+    ['foods', PHASES[phase].name, 'Superfoods', FOOD_PHOTOS[cf[3][0]] ? foodPhoto(cf[3][0], 400) : '', 'heart'],
     ['drinks', tea, 'Drinks & tea', teaPhoto(tea, 400, 400), 'cup'],
     ['supps', 'What helps now', 'Supplements', foodPhoto('Pumpkin seeds', 400), 'drop'],
     ['sugar', 'Fewer spikes', 'Blood sugar', foodPhoto('Apples', 400), 'chart'],
     ['rituals', `${RITUALS.filter(r => r.phases.includes(phase)).length} for you`, 'Rituals', carePhoto(RITUALS[0].id, 400) || 'images/tile-meditate.webp', 'yinyang'],
   ];
 }
-const PLAN_TITLE = { recipes: 'Recipes', foods: 'Phase foods', drinks: 'Drinks & tea', super: 'Superfoods', supps: 'Supplements', sugar: 'Blood sugar', rituals: 'Rituals', mind: 'Your mind' };
+const PLAN_TITLE = { recipes: 'Recipes', foods: 'Superfoods', drinks: 'Drinks & tea', super: 'Superfoods', supps: 'Supplements', sugar: 'Blood sugar', rituals: 'Rituals', mind: 'Your mind' };
 function viewPlan() {
   const info = M.info, phase = info ? info.phase : 'follicular', ph = PHASES[phase], tcm = TCM[phase], P = PLAIN[phase];
   const sub = route().id;
@@ -2008,7 +2008,7 @@ function viewPlan() {
           <div class="rc-top"><span class="rc-k">${r.raw ? 'Raw' : r.warm ? 'Warm' : r.meal}</span></div><div class="rc-t">${r.name}</div><div class="rc-m">${r.time} min · ${r.kcal} kcal</div></button>`).join('')}</div>`;
     } else if (sub === 'foods') {
       const recent = recentSymptoms().filter(s => SYMPTOM_FOODS[s]).slice(0, 2);
-      body = `${dietGuideCard(phase)}${sectionTitle('Superfoods')}<div class="eat-cat eb eb-free" data-phase="${phase}">${superInner(phase)}</div>
+      body = `<div class="eat-cat eb eb-free sf-top" data-phase="${phase}">${superInner(phase)}</div>${dietGuideCard(phase)}
         ${recent.length ? `${sectionTitle('For how you feel')}${recent.map(s => { const f = SYMPTOM_FOODS[s]; return `<section class="card glass fix"><div class="fix-h"><span class="fix-s">${s}</span></div><div class="foods">${f.foods.slice(0, 5).map(x => `<span class="food">${x}</span>`).join('')}</div></section>`; }).join('')}` : ''}`;
     } else if (sub === 'super') { location.replace('#/plan/foods'); return '';
     } else if (sub === 'drinks' || sub === 'supps') {
@@ -2104,17 +2104,21 @@ const sfPic = f => f[4] ? (f[4][0] === 'tea' ? teaPhoto(f[4][1], 240, 240) : foo
 const SF_CUT = { Ginger: ['ginger', 'Fresh root'], 'Goji berries': ['goji', 'Iron + vitamin C'], 'Blackstrap molasses': ['molasses', 'Iron & minerals'], 'Turmeric with black pepper': ['turmeric', 'With a pinch of pepper'], Cinnamon: ['cinnamon', 'Ceylon bark'], Nettle: ['nettle', 'Mineral-rich leaf'],
   'Broccoli sprouts': ['broccoli-sprouts', 'Raw, sulforaphane'], 'Ground flaxseed': ['flaxseed', 'Freshly ground'], 'Pumpkin seeds': ['pumpkin-seeds', 'Zinc'], Sauerkraut: ['sauerkraut', 'Raw & fermented'], Parsley: ['parsley', 'Fresh herb'], 'Raw honey': ['raw-honey', 'Unheated'],
   'Wild blueberries': ['blueberries', 'Antioxidants'], 'Chia seeds': ['chia', 'Soaked'], 'Brazil nuts': ['brazil-nuts', 'Selenium'], 'Fresh mint': ['mint', 'Cooling herb'], Coriander: ['coriander', 'Fresh herb'],
-  'Raw cacao': ['cacao', 'Magnesium'], 'Sesame seeds and tahini': ['tahini', 'Zinc & calcium'], 'Sunflower seeds': ['sunflower-seeds', 'Vitamin E & B6'], 'Fennel seeds': ['fennel-seeds', 'For bloating'] };
+  'Raw cacao': ['cacao', 'Magnesium'], 'Sesame seeds and tahini': ['tahini', 'Zinc & calcium'], 'Sunflower seeds': ['sunflower-seeds', 'Vitamin E & B6'], 'Fennel seeds': ['fennel-seeds', 'For bloating'],
+  'Black sesame': ['black-sesame'], 'Red dates': ['red-dates'], Baobab: ['baobab'], Moringa: ['moringa'], 'Black seed oil': ['black-seed-oil'], 'Dandelion greens': ['dandelion'],
+  'Sun-dried shiitake': ['shiitake'], Pomegranate: ['pomegranate'], 'Bissap (hibiscus)': ['hibiscus'], 'Extra virgin olive oil': ['olive-oil'], 'Dulse seaweed': ['dulse'], 'Tiger nuts': ['tiger-nuts'],
+  Carob: ['carob'], Rooibos: ['rooibos'], 'Dried longan': ['longan'], 'Medjool dates': ['medjool'] };
 const SF_TITLE = { menstrual: 'Warm & rebuild', follicular: 'Fresh & clear', ovulatory: 'Light & bright', luteal: 'Calm & steady' };
 function superInner(phase) {
-  const S = SUPERFOODS[phase], now = M.info && M.info.phase, warm = warmWindow(M.info) && phase === now;
+  const S = SUPERFOODS[phase], warm = warmWindow(M.info);
   const list = S.list.filter(f => !(f[5] && myDiet() === 'vegan'));
-  const item = (f, i) => { const [file, tag] = SF_CUT[f[1]] || [];
-    return `<button class="sfc-i" style="--i:${i}" data-action="sfPick" data-i="${i}" aria-expanded="false">${file ? `<img src="images/sf/${file}.webp" alt="" loading="lazy" decoding="async">` : `<em>${f[0]}</em>`}<b>${f[1]}</b>${tag ? `<small>${tag}</small>` : ''}</button>`; };
+  const pic = (f, e) => { const [file] = SF_CUT[f] || []; return file ? `<img src="images/sf/${file}.webp" alt="" loading="lazy" decoding="async">` : `<em>${e}</em>`; };
+  const item = (f, i) => `<button class="sfc-i" style="--i:${i}" data-action="sfPick" data-i="${i}" aria-expanded="false">${pic(f[1], f[0])}<b>${f[1]}</b>${(SF_CUT[f[1]] || [])[1] ? `<small>${SF_CUT[f[1]][1]}</small>` : ''}</button>`;
+  const gem = (g, i) => `<button class="sfc-i gem" style="--i:${i + list.length}" data-action="sfPick" data-g="${i}" aria-expanded="false">${pic(g[1], g[0])}<b>${g[1]}</b><small class="sfc-o">${g[2]}</small></button>`;
   return `<section class="sfc" data-phase="${phase}">
-      <div class="sfc-tabs" role="tablist">${PHASE_ORDER.map(p => `<button role="tab" aria-selected="${p === phase}" class="${p === phase ? 'on' : ''}" data-action="sfPhase" data-v="${p}" style="--c:${PH_HEX[p]}">${PHASES[p].name}${p === now ? '<i></i>' : ''}</button>`).join('')}</div>
-      <header class="sfc-h"><small>Real superfoods</small><h3>${SF_TITLE[phase]}</h3><p>${S.lead}</p></header>
+      <header class="sfc-h"><small><i style="background:${PH_HEX[phase]}"></i>${PHASES[phase].name} phase</small><h3>${SF_TITLE[phase]}</h3><p>${S.lead}</p></header>
       <div class="sfc-grid">${list.map(item).join('')}</div>
+      ${S.gems ? `<div class="sfc-gh"><b>Hidden gems</b><small>Underrated, from Chinese medicine, Africa and the Mediterranean</small></div><div class="sfc-grid sfc-gems">${S.gems.map(gem).join('')}</div>` : ''}
       <div class="sfc-det" aria-live="polite" hidden></div>
       ${warm ? `<p class="sfc-warm">${icon('sun', 13)} These days: spices in warm food and drinks, nothing raw or iced.</p>` : ''}
       <footer class="sfc-f"><span>Food-sized amounts</span><span>Ask your doctor if pregnant or on medication</span></footer>
@@ -2312,7 +2316,7 @@ function plateSection(current, lite) {
 const CHAI_RE = /ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i;
 const MATCHA_RE = /matcha|green tea/i;
 const teaCupImg = n => `images/${MATCHA_RE.test(n) ? 'cup-matcha' : CHAI_RE.test(n) ? 'cup-chai' : 'cup-glass'}.webp`;
-const teaCupAttr = n => MATCHA_RE.test(n) ? ' data-model="models/matcha.glb"' : '';
+const teaCupAttr = n => /matcha/i.test(n) ? ' data-model="models/matcha.glb"' : /green tea/i.test(n) ? ' data-model="models/greentea.glb"' : '';
 // Tea for today as a full recommendation: the floating cup, the tea and why.
 function plTea() {
   const td = TEA_DAY[M.info ? dayWindow(M.info) : 'rising'];
@@ -3319,29 +3323,96 @@ const RELIEF_EMOJI = { 'Face fascia': '💆‍♀️', 'Ovulation pain': '🥚',
 const RELIEF_PIC = { 'Face fascia': 'tea:Rose', 'Ovulation pain': 'tea:cover-ovulation', Cramps: 'tea:Ginger & cinnamon', 'PMS mood': 'tea:Lemon balm', Bloating: 'tea:Fennel',
   Insomnia: 'tea:Lavender', Acne: 'tea:Spearmint', Headache: 'tea:Peppermint', Fatigue: 'tea:Nettle leaf', 'Tender breasts': 'Ground flaxseed' };
 const reliefPhoto = (k, w) => { const p = RELIEF_PIC[k] || 'tea:Chamomile'; return p.startsWith('tea:') ? teaPhoto(p.slice(4), w, Math.round(w * 1.15)) : foodPhoto(p, w); };
+// "Feel better, gently": one collage poster of small rituals that support her hormones (tap any for what to do, why and
+// a safe amount), merged with the old hormone habits page: her daily five, help for what she feels, and the seven pillars.
+const FB = [
+  { id: 'sun', t: 'Morning sun', s: '10 minutes of daylight before 10 am.', why: 'Light in your eyes after waking sets your inner clock. Cortisol rises in the morning, melatonin comes on time at night, and your cycle follows that rhythm.', do: ['Step outside within an hour of waking', 'No sunglasses for these 10 minutes', 'Cloudy days count, just stay a little longer'], safe: 'Never look straight into the sun.', hb: 'morning-sun' },
+  { id: 'lemon', t: 'Warm lemon water', s: 'A big glass before anything else.', why: 'Rehydrates you after the night and wakes up digestion with a little vitamin C.', do: ['Half a lemon in a big glass of warm water', 'Drink it before coffee or tea, then enjoy those too', 'Rinse your mouth with plain water after'], safe: 'Keep it warm, never iced, around your period.', hb: 'lemon' },
+  { id: 'tongue', t: 'Tongue scraping', s: 'A copper scraper every morning.', why: 'An old Ayurvedic habit that clears the coating on your tongue and supports a healthy mouth microbiome.', do: ['Before you drink anything', '5 to 7 gentle strokes from back to front', 'Rinse the scraper and your mouth'], safe: 'Gentle pressure only, it should never hurt.' },
+  { id: 'carrot', t: 'Raw carrot salad', s: 'Helps carry out used estrogen.', why: 'The fibre in raw carrot binds used estrogen in the gut so it leaves your body instead of circulating again.', do: ['1 medium carrot, grated or in ribbons', 'A drop of olive oil and apple cider vinegar, a pinch of salt', 'Eat it on its own, between meals'], safe: 'In the 3 days before and during your period, have it at room temperature or swap for lightly steamed carrot.' },
+  { id: 'castor', t: 'Castor oil pack', s: 'Warm, over the liver.', why: 'A slow, warm ritual over the liver area (right side, under the ribs). It relaxes you and supports your liver, which clears used hormones.', do: ['Soak a flannel cloth in a little castor oil', 'Lay it on your right side under the ribs, a hot water bottle on top', '20 to 30 minutes, 3 evenings a week'], safe: 'Skip it during your period, if pregnant or trying to conceive after ovulation, and on broken skin.' },
+  { id: 'phone', t: 'No phone first hour', s: 'Coffee with breakfast, not a screen.', why: 'The first hour sets your stress level for the day. Starting slow keeps cortisol calm, and coffee after food is gentler on blood sugar.', do: ['Keep your phone in another room overnight', 'Coffee or tea with or after breakfast', 'Light, water and food come first'], safe: 'Enjoy your coffee, just not on an empty stomach.', hb: 'phone-free' },
+  { id: 'breathe', t: 'Breathe', s: 'A long out-breath calms you.', why: 'Slow breathing with a longer out-breath switches on your calming nervous system and lowers cortisol within minutes.', do: ['In for 4, out for 6 to 8', 'Five minutes, or ten quiet minutes of meditation', 'Guided practices are in Breathe'], safe: 'If you feel dizzy, breathe normally for a moment.', to: ['breathe', 'Open Breathe'], hb: 'calm' },
+  { id: 'ground', t: 'Ground', s: 'Barefoot on grass or earth.', why: 'Time barefoot in nature calms the nervous system and pulls you out of your head and into your body.', do: ['10 minutes barefoot on grass, sand or soil', 'Lean on a tree and breathe slowly', 'More practices are in Ground'], safe: 'Check the ground for glass and stay warm around your period.', to: ['ground', 'Open Ground'] },
+  { id: 'walk', t: 'A walk after meals', s: '10 minutes flattens sugar spikes.', why: 'Your muscles take up sugar while you walk, so the rise after a meal is softer. Fewer spikes mean steadier energy, mood and skin.', do: ['10 to 15 minutes after your biggest meal', 'An easy pace, you can still talk', 'Outside if you can'], safe: 'On heavy period days a slow stroll is enough.', hb: 'walk' },
+  { id: 'golden', t: 'Golden milk', s: 'Turmeric, warm milk and pepper.', why: 'Turmeric calms inflammation and black pepper helps your body absorb it. Warm milk makes it a soothing evening ritual.', do: ['A cup of raw milk, warmed gently (never boiled)', '½ tsp turmeric, a pinch of black pepper and cinnamon', 'A little honey once it is warm, not hot'], safe: 'Ask your doctor first if you take blood thinners or have gallstones.' },
+  { id: 'heat', t: 'Heat on your belly', s: 'Eases cramps as well as a painkiller.', why: 'Warmth relaxes the womb muscle and improves blood flow. In studies heat eased period pain about as well as ibuprofen.', do: ['A hot water bottle or heat pad on your lower belly', '20 minutes at a time, as often as you like', 'Warm socks and warm drinks too'], safe: 'Warm, not hot. Wrap it in a cloth to protect your skin.', to: ['relief/Cramps', 'All cramp relief'] },
+  { id: 'fascia', t: 'Face fascia', s: 'A gua sha stone, upward and out.', why: 'Gentle strokes release tight facial fascia, move lymph and soften puffiness, especially in the days before your period.', do: ['A drop of oil on clean skin', 'Stroke from the centre outwards and up, 5 times each', 'Finish down the neck to drain'], safe: 'Light pressure. Skip active spots and broken skin.', to: ['relief/Face%20fascia', 'The full face routine'] },
+  { id: 'magnesium', t: 'Magnesium glycinate', s: 'Before bed for calm and cramps.', why: 'Magnesium relaxes muscles and nerves. It is linked with fewer cramps, calmer PMS and deeper sleep.', do: ['200 to 300 mg in the evening', 'Food first: pumpkin seeds, cacao, leafy greens', 'Most helpful in the week before your period'], safe: 'Not above 350 mg a day from supplements. Ask a doctor if you have kidney problems or take medication.', to: ['supp/magnesium', 'Doses and studies'] },
+  { id: 'seeds', t: 'Seed cycling', s: 'Pumpkin, flax, sesame, sunflower.', why: 'A gentle ritual of seeds rich in zinc, omega 3, lignans and vitamin E that support your hormones through the month.', do: ['Day 1 to 14: 1 tbsp ground flax and 1 tbsp pumpkin seeds', 'Day 15 to 28: 1 tbsp sesame and 1 tbsp sunflower seeds', 'Grind them fresh, stir into food'], safe: 'Research is still early. Enjoy it as good food, not a cure.', to: ['article/seed-cycling', 'What the research says'] },
+  { id: 'cherry', t: 'Tart cherry juice', s: 'Natural melatonin before sleep.', why: 'Tart cherries contain melatonin and tryptophan, which can help you fall asleep and sleep longer.', do: ['30 ml concentrate in a glass of water', '1 to 2 hours before bed', 'At room temperature or slightly warmed'], safe: 'Pure juice with no added sugar. It is acidic, so rinse your mouth after.' },
+  { id: 'chamomile', t: 'Chamomile tea', s: 'Softens anxiety and cramps.', why: 'Chamomile gently relaxes the nervous system and the womb. A warm cup is also a signal to wind down.', do: ['1 to 2 tsp dried flowers per cup', 'Steep covered for 5 to 10 minutes', 'Up to 3 cups a day'], safe: 'Avoid it if you are allergic to ragweed or daisies.', to: ['tea', 'Open the tea guide'] },
+  { id: 'brush', t: 'Dry brushing', s: 'Upward strokes toward the heart.', why: 'Brushing the skin before a shower wakes up circulation and supports lymph flow. It also feels wonderfully awake.', do: ['On dry skin, before your shower', 'Long strokes from feet and hands toward the heart', '3 to 5 minutes, then shower and oil'], safe: 'Soft pressure. Skip broken skin, spots and the face.' },
+  { id: 'salt', t: 'Epsom salt bath', s: 'Relaxes tight fascia and muscles.', why: 'Warm water and magnesium salt relax tight muscles and fascia and are a lovely way to switch off before sleep.', do: ['2 cups of Epsom salt in a warm bath', 'Soak for 15 to 20 minutes', 'Drink a glass of water after'], safe: 'Warm, not hot. Skip it if pregnant, with very low blood pressure or diabetes unless your doctor agrees.' },
+];
+const FB_TILT = [-4, 3, -2, 5, -3, 2, -5, 3, -2, 4, -3, 2, -4, 3, -2, 5, -3, 2];
+function fbItem(x, i, done) {
+  const on = x.hb && done.includes(x.hb);
+  return `<button class="fbp-i ${on ? 'ok' : ''} ${i % 3 === 1 ? 'mid' : ''}" style="--r:${FB_TILT[i]}deg;--i:${i}" data-action="fbPick" data-i="${i}" aria-expanded="false"><span class="fbp-ph"><img src="images/fb/${x.id}.webp" alt="" loading="lazy" decoding="async"></span><b>${x.t}</b><small>${x.s}</small>${x.hb ? `<i class="fbp-ok" aria-label="${on ? 'Done today' : 'Daily habit'}">${icon('check', 10, 3)}</i>` : ''}</button>`;
+}
+function fbDetail(i) {
+  const x = FB[i], on = x.hb && habitsDone(todayISO()).includes(x.hb);
+  return `<img src="images/fb/${x.id}.webp" alt=""><div class="fbd-b"><b>${x.t}</b><p>${x.why}</p>
+    <ul>${x.do.map(d => `<li>${icon('check', 11, 2.6)}<span>${d}</span></li>`).join('')}</ul>
+    <span class="fbd-safe">${icon('heart', 12)} ${x.safe}</span>
+    <div class="fbd-acts">${x.hb ? `<button class="fbd-hb ${on ? 'on' : ''}" data-action="fbHabit" data-id="${x.hb}" data-i="${i}" aria-pressed="${!!on}">${icon('check', 13, 2.6)} ${on ? 'Done today' : 'Add to my daily five'}</button>` : ''}${x.to ? `<button class="fbd-go" data-action="nav" data-to="${x.to[0]}">${x.to[1]} ${icon('chevR', 13)}</button>` : ''}</div></div>
+    <button class="fbd-x" data-action="fbClose" aria-label="Close">${icon('close', 14)}</button>`;
+}
+function habitsBlock() {
+  const k = todayISO(), list = HABITS.filter(h => h.g === 'protect'), ids = list.map(h => h.id), fert = ttc() ? HABITS.filter(h => h.g === 'fertile') : [];
+  const done = habitsDone(k), n = ids.filter(id => done.includes(id)).length, total = ids.length;
+  const ph = M.info && M.info.phase, focus = ph ? HABIT_FOCUS[ph] : [];
+  let week = '';
+  for (let i = 6; i >= 0; i--) { const d = C.addDays(new Date(), -i), c = habitsDone(C.iso(d)).filter(id => ids.includes(id)).length; week += `<div class="hg-d ${i === 0 ? 'now' : ''}"><b style="height:${Math.max(8, c / total * 100)}%" class="${c ? 'on' : ''}"></b><span>${fmt(d, { weekday: 'narrow' })}</span></div>`; }
+  const seg = ids.map((id, i) => { const a0 = -90 + i * 72 + 4, a1 = a0 + 64, r = 44, p = a => [60 + r * Math.cos(a * Math.PI / 180), 60 + r * Math.sin(a * Math.PI / 180)].map(v => v.toFixed(2)).join(' ');
+    return `<path class="${done.includes(id) ? 'on' : ''}" d="M${p(a0)} A${r} ${r} 0 0 1 ${p(a1)}"/>`; }).join('');
+  const row = (h, i) => { const on = done.includes(h.id);
+    return `<button class="hg-r ${on ? 'on' : ''}" style="--i:${i}" data-action="habitTick" data-id="${h.id}" aria-pressed="${on}">
+      <span class="hg-ph"><img src="${(h.id === 'lemon' && carePhoto('lemon-water', 200)) || HB_PIC[h.id] || 'images/forest-calm.jpg'}" alt="" loading="lazy"></span>
+      <span class="hg-t"><b>${h.t}</b><small>${h.why}</small><span class="hg-tags">${(HB_HORM[h.id] || []).map(x => `<em>${x}</em>`).join('')}${focus.includes(h.id) ? '<em class="ph">Your phase</em>' : ''}</span></span>
+      <span class="hg-cb">${icon('check', 15, 2.6)}</span></button>`; };
+  const lead = n === total ? 'All five done. A calm, steady day for your hormones.' : n ? `${total - n} to go. Each one is a small vote for balance.` : 'Five small things that keep your hormones in balance.';
+  return { n, total, fert, row, list, focus, ph,
+    hero: `<section class="hg-hero" id="daily-five">
+      <div class="hg-hl"><small>Today</small><h2>Your daily <span>five</span></h2><p>${lead}</p>
+        <div class="hg-week" aria-label="Last 7 days">${week}</div></div>
+      <div class="hg-ring" aria-label="${n} of ${total} done"><svg viewBox="0 0 120 120" aria-hidden="true">${seg}</svg><b class="dotnum">${n}</b><small>of ${total}</small></div>
+    </section>` };
+}
 function viewReliefIndex() {
   const recent = new Set();
   for (let i = 0; i < 4; i++) { const l = getLog(C.iso(C.addDays(new Date(), -i))); [...(l.symptoms || []), ...(l.moods || [])].forEach(s => { const k = reliefKey(s); if (k) recent.add(k); }); }
   const keys = Object.keys(RELIEF).sort((a, b) => recent.has(b) - recent.has(a));
   const info = M.info, w = info && dayWindow(info);
   const likely = [...new Set([...recent, ...(w ? RELIEF_WINDOW[w] : [])])].filter(k => RELIEF[k]).slice(0, 3);
-  const row = k => { const st = RELIEF[k].steps[0], L = RELIEF_LINKS[k] || {};
-    return `<button class="rl-row" data-action="nav" data-to="relief/${encodeURIComponent(k)}"><span class="rl-rg">${reliefIc(k, 18)}</span><span class="rl-rt"><b>${k}${recent.has(k) ? ' <i>logged</i>' : ''}</b><small>Start with: ${st.t.charAt(0).toLowerCase() + st.t.slice(1)}</small></span>${evBadge(st.ev)}${icon('chevR', 15)}</button>`; };
   const chip = k => `<button class="rx2-chip" data-action="nav" data-to="relief/${encodeURIComponent(k)}"><img src="${reliefPhoto(k, 120)}" alt="">${k}${recent.has(k) ? '<i>logged</i>' : ''}</button>`;
-  const bub = (to, img, t) => `<button class="rx2-b" data-action="nav" data-to="${to}"><span><img src="${img}" alt="" loading="lazy"></span><b>${t}</b></button>`;
-  return `<div class="pad rx2">
-    <section class="rx2-hero"><img src="images/relief-stardust.webp" alt=""><video src="images/relief-stardust.mp4" poster="images/relief-stardust.webp" autoplay muted loop playsinline aria-hidden="true"></video><span class="rx2-shade"></span>
-      <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
-      <div class="rx2-t"><small>Relief${info ? ` · day ${info.cd}` : ''}</small><h1>Feel better, gently</h1></div>
-      <div class="rx2-glass"><small>${recent.size ? 'For what you logged' : 'Common around now'}</small>
-        ${likely.length ? `<div class="rx2-chips">${likely.map(chip).join('')}</div>` : '<p>Usually your easiest days. Pick anything below.</p>'}
-        <button class="rx2-cta" data-action="nav" data-to="log">${icon('plus', 15)} Log how you feel</button></div>
+  const done = habitsDone(todayISO()), H = habitsBlock();
+  const pillar = (P, i) => `<details class="hg-p" style="--c:${P.c};--i:${i}"><summary><span class="hg-pi">${icon(P.ic, 19, 1.8)}</span><span class="hg-pt"><b>${P.t}</b><small>${P.s}</small></span><span class="hg-pc">${icon('chevD', 16)}</span></summary>
+      <div class="hg-pin"><ul>${P.do.map(x => `<li>${icon('check', 12, 2.6)}<span>${x}</span></li>`).join('')}</ul><p><b>Why it works</b>${P.why}</p></div></details>`;
+  return `${topbar('Feel better', { back: true })}
+  <div class="pad hg fb">
+    <section class="fbp" aria-label="Small rituals that support your hormones">
+      <div class="fbp-g">${FB.slice(0, 6).map((x, i) => fbItem(x, i, done)).join('')}</div>
+      <div class="fbp-title"><small>${info ? `Day ${info.cd} · ` : ''}Balance your hormones</small><h1>Feel better, <span>gently</span></h1><p>Small rituals your hormones love. Tap any one for how and why.</p></div>
+      <div class="fbp-g">${FB.slice(6).map((x, i) => fbItem(x, i + 6, done)).join('')}</div>
+      <div class="fbp-det" hidden></div>
     </section>
-    <div class="rx2-bubs">${bub('breathe', 'images/tile-meditate.webp', 'Breathe')}${bub('ground', 'images/tile-ground.webp', 'Ground')}${bub('habits', carePhoto('lemon-water', 300) || 'images/tea-ginger.webp', 'Habits')}</div>
-    ${sectionTitle('Everything that helps')}
+    <section class="card glass fb-now"><small>${recent.size ? 'For what you logged' : 'Common around now'}</small>
+      ${likely.length ? `<div class="rx2-chips">${likely.map(chip).join('')}</div>` : '<p>Usually your easiest days. Pick anything below.</p>'}
+      <button class="rx2-cta" data-action="nav" data-to="log">${icon('plus', 15)} Log how you feel</button></section>
+    ${H.hero}
+    <div class="hg-list">${H.list.map(H.row).join('')}</div>
+    ${H.ph && H.focus.length ? `<p class="hg-key"><em class="ph">Your phase</em>Extra good in your ${PHASES[H.ph].name.toLowerCase()} phase</p>` : ''}
+    ${H.fert.length ? `${sectionTitle('Fertility & feminine flow')}<div class="hg-list">${H.fert.map(H.row).join('')}</div>` : ''}
+    ${sectionTitle('For what you feel')}
     <div class="rx2-grid">${keys.map(k => { const h = (state.reliefHelp || {})[k] || [];
       return `<button class="rx2-tile ${recent.has(k) ? 'on' : ''}" data-action="nav" data-to="relief/${encodeURIComponent(k)}"><img src="${reliefPhoto(k, 500)}" alt="" loading="lazy"><span class="rx2-ts"></span>
         ${recent.has(k) ? '<em>logged</em>' : ''}<b>${k}</b><small>${h.length ? `${icon('heart', 11)} ${h.length} work${h.length > 1 ? '' : 's'} for you` : `${RELIEF[k].steps.length} ways`}</small></button>`; }).join('')}</div>
+    ${sectionTitle('Seven pillars of balance')}
+    <p class="hg-sub">What protects and balances a woman’s hormones. Tap one for what to do and why.</p>
+    <section class="hg-pl">${HB_PILLARS.map(pillar).join('')}</section>
+    <section class="hg-end"><b>You are not the problem.</b><p>The modern world runs against your rhythm. Start with one ritual, and let the rest follow.</p></section>
+    <p class="fine center">General information, not medical advice. Check with a doctor or pharmacist before starting supplements.</p>
   </div>`;
 }
 function viewRelief(id) {
@@ -4162,7 +4233,7 @@ function todayTiles(info, only) {
       ${tile('t-sage ph-full ph-vid', { to: 'relief' }, `<video class="dpt-vid" src="images/relief-stardust.mp4" poster="images/relief-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Relief', rp.st.t, `${rp.mine ? 'You logged' : 'Common now:'} ${rp.k.toLowerCase()}`)}
       ${tile(`calm lv${lvl} t-cort t-mol`, { to: 'breathe/stress' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/cortisol-mol.webp" alt="" loading="lazy"><canvas class="teacup3d" data-model="models/cortisol.glb" data-elev="0.3" data-fit="1.9" data-steam="0" data-shadow="0" aria-label="The cortisol molecule, turning slowly"></canvas></span>`, 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}<span class="cv-lv" aria-hidden="true">${[1, 2, 3].map(i => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</span>`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
       ${tile('t-tea t-cup', { to: 'do/tea' }, `<span class="cup3d-w"><img class="dpt-cup" src="${teaCupImg(td[1])}" alt="" loading="lazy"><canvas class="teacup3d"${teaCupAttr(td[1])} aria-label="${td[1]}, turning slowly"></canvas></span>`, 'Tea for today', td[1], td[2])}
-      ${tile('t-glow ph-full ph-vid', { to: 'ground' }, `<video class="dpt-vid" src="images/ground-cat.mp4" poster="images/ground-cat.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Ground', GROUND_PHASE[ph].t, '')}
+      ${tile('t-glow ph-full ph-vid ph-tree', { to: 'ground' }, `<img class="dpt-vid" src="images/ground-tree.webp" alt="" loading="lazy" decoding="async"><i></i>`, 'Ground', GROUND_PHASE[ph].t, '')}
       <button class="dpt wide t-deep ph-full keep ph-vid ph-frw ph-bat" data-action="nav" data-to="do/friends" aria-label="Friends: ${esc(FRIENDS_TILE[ph][0])}"><span class="dpt-g"><video class="dpt-vid" src="images/friends-sunset.mp4" poster="images/friends-sunset.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>${socialBattery(info)}</span></button>
     </div>
     <div class="hub-tip ${open && (open === 'eat' || open === 'tea' || tips[open]) ? 'on' : ''}" id="hub-tip">${open ? tipBody(open) : ''}</div>`;
@@ -4484,18 +4555,31 @@ const TEA_REASONS = {
 };
 const TEA_WIN = [['flow-start', 'Period · first days'], ['flow-end', 'End of period'], ['rising', 'Early rise'], ['building', 'Strong days'], ['peak', 'Ovulation'], ['settle', 'After ovulation'], ['focus', 'Second half'], ['premenstrual', 'Before your period']];
 // Four cycle teas as one overhead photo of glass mugs; the recipe is written on top of each tea.
-const CYCLE_TEAS = [
-  ['menstrual', 'Warm & Ease', 'cramps-0', ['fresh ginger', 'orange', 'cinnamon'], 'Simmer 10 min · eases cramps'],
-  ['follicular', 'Fresh Start', 'heavy-0', ['nettle leaf', 'fresh mint', 'lemon'], 'Steep 10 min · refills minerals'],
-  ['ovulatory', 'Glow', 'feel-11', ['hibiscus', 'rose petals', 'lemon'], 'Steep 5 min · antioxidants'],
-  ['luteal', 'Calm Before', 'sleep-0', ['chamomile', 'lavender', 'vanilla'], 'Covered 10 min · calms PMS']];
+// The four best teas for the phase she is in, as one overhead photo of four glass cups, what each is for written on the tea.
+const PHASE_TEAS = {
+  menstrual: [['Ginger & cinnamon', 'Cramps', ['fresh ginger', 'cinnamon', 'orange'], 'Simmer 10 min. 2 to 3 cups a day.'],
+    ['Red dates & goji', 'Low iron', ['red dates', 'goji berries', 'ginger'], 'Simmer 5 dates and 1 tbsp goji for 15 min.'],
+    ['Raspberry leaf', 'Womb care', ['raspberry leaf', 'a little honey'], '1 tbsp, covered, 10 min. 1 to 2 cups. Not in pregnancy without your midwife.'],
+    ['Chamomile & fennel', 'Bloating', ['chamomile', 'fennel seeds'], '1 tbsp chamomile and ½ tsp fennel, covered, 10 min.']],
+  follicular: [['Nettle & lemon', 'Iron refill', ['nettle leaf', 'lemon'], '2 tsp dried leaf, 10 min, between meals.'],
+    ['Green tea & jasmine', 'Focus', ['green tea', 'jasmine'], '80 °C water, 2 to 3 min, before noon.'],
+    ['Dandelion root', 'Liver & skin', ['roasted root', 'fresh ginger'], 'Simmer 1 tbsp for 10 min. Ask first if you take water tablets.'],
+    ['Mint & lemon', 'Fresh energy', ['fresh mint', 'lemon'], 'A handful of leaves, 5 min. Hot or cool.']],
+  ovulatory: [['Hibiscus & rose', 'Heat & glow', ['hibiscus', 'rose petals'], '1 tbsp, 5 min. Warm or cool. Ask first if you take blood pressure pills.'],
+    ['Matcha', 'Steady energy', ['matcha', 'warm milk or water'], '1 tsp whisked at 80 °C, before noon.'],
+    ['Spearmint & cucumber', 'Clear skin', ['spearmint', 'cucumber'], '1 tbsp leaves, 5 to 7 min, twice a day.'],
+    ['Lemongrass & lime', 'Light belly', ['lemongrass', 'lime'], '2 bruised stalks, 10 min.']],
+  luteal: [['Chamomile & lavender', 'Sleep', ['chamomile', 'lavender'], '1 tbsp and ½ tsp lavender, covered, 10 min, in the evening.'],
+    ['Lemon balm', 'Anxiety', ['lemon balm', 'a little honey'], '1 tbsp, covered, 10 min, in the afternoon.'],
+    ['Rooibos & vanilla', 'Cravings', ['rooibos', 'vanilla', 'orange peel'], '1 tbsp, 5 to 7 min. No caffeine, any time.'],
+    ['Ginger & fennel', 'Bloating', ['fresh ginger', 'fennel seeds'], '3 slices and ½ tsp seeds, 10 min, after meals.']],
+};
 function cycleTeas(info) {
-  const now = info && info.phase;
-  return `<section class="ct"><div class="ct-h"><small>Your four cycle teas</small><b>One for every phase</b></div>
-    <div class="ct-g">${CYCLE_TEAS.map(([ph, t, to, ing, how], i) => `<button class="ct-c q${i} ${ph === now ? 'now' : ''}" data-action="nav" data-to="tea/${to}" style="--c:${PH_HEX[ph]}">
-      <span class="ct-t">${t}${ph === now ? '<i>now</i>' : ''}</span>
-      <span class="ct-m"><span class="ct-ph" aria-hidden="true"></span><span class="ct-tx"><ul>${ing.map(x => `<li>${x}</li>`).join('')}</ul><em>${how}</em></span></span>
-      <span class="ct-p">${PHASES[ph].name}</span></button>`).join('')}</div></section>`;
+  const ph = (info && info.phase) || 'follicular', T = PHASE_TEAS[ph];
+  return `<section class="ct ct4" style="--c:${PH_HEX[ph]}"><div class="ct-h"><small>${PHASES[ph].name} phase</small><b>Your four teas now</b></div>
+    <div class="ct-pic" style="background-image:url(images/tea4-${ph}.webp)">${T.map(([n, f, ing], i) => `<button class="ct-q q${i}" data-action="ctPick" data-i="${i}" aria-expanded="false">
+      <span class="ct-n">${n}</span><span class="ct-on"><em>for</em><b>${f}</b><small>${ing.join(' · ')}</small></span></button>`).join('')}</div>
+    <p class="ct-brew" aria-live="polite">Tap a cup for how to brew it.</p></section>`;
 }
 // Today's tea as a benefit wheel: the turning 3D cup in the middle, what it does for her all around it.
 const TEA_WHEEL = {
@@ -4520,9 +4604,9 @@ function teaWheel(info, w, td, steep, near, inPage) {
       <small class="tgw-k">${info ? `Day ${info.cd} · ${PHASES[info.phase].name}` : 'Your tea today'}</small>
       <h1 class="tgw-t">${td[1].replace(/ & /, ' <em>&amp;</em> ')}<span>benefits</span></h1>
       <div class="tgw-stage"><span class="tgw-ring" aria-hidden="true"></span>${labels}
-        <span class="cup3d-w tgw-cup"><img src="${teaCupImg(td[1])}" alt="" decoding="async"><canvas class="teacup3d"${teaCupAttr(td[1])} aria-label="${td[1]}, turning slowly"></canvas></span></div>
-      <p class="tgw-why">${td[2]}</p>
-      <span class="tgw-chips">${steep ? `<span>${icon('clock', 13)} ${steep}</span>` : ''}<span>${icon('thermo', 13)} ${near ? 'Hot' : 'Warm'}</span></span>
+        <span class="cup3d-w tgw-cup"><img src="${teaCupImg(td[1])}" alt="" decoding="async"><canvas class="teacup3d"${teaCupAttr(td[1])} data-fit="${/matcha/i.test(td[1]) ? 0.92 : /green tea/i.test(td[1]) ? 1.1 : 1.3}" aria-label="${td[1]}, turning slowly"></canvas></span></div>
+      <ul class="tgw-rs">${(TEA_REASONS[w] || []).map(([ic, t]) => `<li><span>${icon(ic, 15)}</span>${t}</li>`).join('')}</ul>
+      <p class="tgw-brew">${icon('cup', 14)} ${td[3]}</p>
       <button class="tgw-cta" data-action="nav" data-to="tea/day-${w}">How to brew it ${icon('chevR', 15)}</button>
     </section>`;
 }
@@ -4532,23 +4616,11 @@ function viewTea() {
   return `<div class="pad tg">
     ${teaWheel(info, w, td, steep, near)}
 
-    <section class="card tg-why"><div class="tg-k"><b>Why this tea today</b>${evBadge(td[4])}</div>
-      ${TEA_REASONS[w].map(([ic, t, x], i) => `<div class="tg-r"><span class="tg-ri" style="--i:${i}">${icon(ic, 18)}</span><div><b>${t}</b><p>${x}</p></div></div>`).join('')}
-      <div class="tg-brew">${icon('cup', 16)} <span>${td[3]}</span></div></section>
-
-    <div class="tg-title"><small>Everything in one place</small><h2>The ultimate <em>tea guide</em></h2></div>
+    <div class="tg-title"><h2>The ultimate <em>tea guide</em></h2></div>
     ${cycleTeas(info)}
 
     <div class="tg-sub"><b>How do you feel?</b><small>A tea for every mood</small></div>
     <div class="tg-feel">${TEA_GUIDE.find(g => g.k === 'feel').teas.map(([, n, why, , ev, , q], i) => `<button class="tg-f" data-action="nav" data-to="tea/feel-${i}"><img src="${teaPhoto(n, 200, 200)}" alt="" loading="lazy"><b>${q}</b><span class="tg-fp">${n}</span><small>${why}</small></button>`).join('')}</div>
-
-    <div class="tg-sub"><b>For what you need</b><small>Tap one to see its teas</small></div>
-    <div class="tg-needs2">${TEA_GUIDE.filter(g => g.k !== 'feel').map(g => { const [ic, c] = TEA_NEED_IC[g.k] || ['leaf', '#7f9a4c'];
-      return `<button class="tgn ${g.k === k ? 'on' : ''}" style="--c:${c}" data-action="teaK" data-v="${g.k === k ? '' : g.k}" aria-expanded="${g.k === k}">
-        <span class="tgn-h"><span class="tgn-ic">${icon(ic, 19)}</span><span class="tgn-teas">${g.teas.slice(0, 3).map(t => `<img src="${teaPhoto(t[1], 90, 90)}" alt="" loading="lazy">`).join('')}</span></span>
-        <b>${g.n}</b><small>${g.teas.slice(0, 3).map(t => t[1].split(/ & | \(|,/)[0]).join(' · ')}</small></button>`; }).join('')}</div>
-    ${G ? `<section class="card tg-list" id="tg-list"><div class="tg-k"><b>Teas for ${G.n.toLowerCase()}</b><button class="tg-x" data-action="teaK" data-v="" aria-label="Close">${icon('close', 16)}</button></div>
-      ${G.teas.map(([g, n, why], i) => `<button class="tg-li" data-action="nav" data-to="tea/${G.k}-${i}"><img src="${teaPhoto(n, 160, 160)}" alt="" loading="lazy"><span><b>${n}</b><small>${why}</small></span>${icon('chevR', 16)}</button>`).join('')}</section>` : ''}
 
     <div class="tg-sub"><b>Brew it right</b><small>Four small things that make it work</small></div>
     <div class="tg-tips">${[['thermo', 'Water heat', 'Green tea and matcha at 80 °C. Herbs, roots and spices at a full boil.'], ['cup', 'Cover the cup', 'A saucer on top keeps the healing oils in your tea, not in the air.'], ['clock', 'Steep long enough', 'Herbs need 5 to 10 minutes. Roots like ginger like 10 to 15.'], ['drop', 'Warm around your period', 'Hot, never iced, from a few days before until bleeding ends.']].map(([ic, t, x]) => `<div class="tg-t"><span>${icon(ic, 18)}</span><b>${t}</b><p>${x}</p></div>`).join('')}</div>
@@ -5343,29 +5415,64 @@ function moveLights(ranked, g) {
 }
 // Daily steps for each part of the cycle: gentler around the period, most when energy peaks.
 const MOVE_STEPS = { 'flow-start': '6,000', 'flow-end': '8,000', rising: '10,000', building: '10,000', peak: '12,000', settle: '10,000', focus: '9,000', premenstrual: '7,000' };
+// Each move as an anatomy plate: a drawn woman with the working muscles in rose, labels with leader lines,
+// then what it does for her, how long, how to do it and how to stay safe. Labels: [name, x%, y%, side].
+const MV_PLATE = {
+  lift: { ex: 'Deadlift', works: 'Thighs, glutes, back, core', ben: 'Builds strong glutes, back and bones. Muscle soaks up blood sugar, so lifting keeps insulin and energy steady.', long: '45 to 60 min', freq: '2 to 3 times a week',
+    how: ['Feet hip-width, the bar over the middle of your feet', 'Hips back, flat back, bar close to your legs', 'Push the floor away to stand tall, lower slowly'], safe: ['10 min warm-up and 2 light sets first', 'Stop 1 to 2 reps before you cannot do another', 'Around ovulation, brace well and move with control'], L: [['Obliques', 40, 30, 'l'], ['Quadriceps', 57, 52, 'r'], ['Inner thigh', 48, 61, 'l'], ['Calves', 34, 75, 'l'], ['Shins', 56, 78, 'r']] },
+  hiit: { ex: 'Sprints', works: 'Glutes, hamstrings, thighs, calves', ben: 'Short bursts build fitness in little time and sharpen insulin sensitivity. They feel easiest while estrogen is high.', long: '15 to 25 min', freq: 'Once or twice a week',
+    how: ['5 min easy jog to warm up', '6 to 8 sprints of 20 seconds', '90 seconds of slow walking in between'], safe: ['Skip them on heavy days and the week before your period if you feel tired', 'Soft ground and good shoes', 'Not after a bad night'], L: [] },
+  sport: { ex: 'Running', works: 'Calves, thighs, glutes, heart', ben: 'Steady cardio strengthens your heart and lungs and lifts your mood with endorphins.', long: '30 to 60 min', freq: '2 to 4 times a week',
+    how: ['Start slow enough to talk', 'Short, light steps, shoulders soft', 'Walk the last 5 minutes'], safe: ['Drink more in the second half of your cycle', 'Add no more than about 10 percent distance a week', 'Iron-rich food after heavy periods'], L: [['Heart & lungs', 64, 23, 'r'], ['Glutes', 43, 47, 'l'], ['Quadriceps', 65, 51, 'r'], ['Calves', 29, 68, 'l'], ['Shins', 65, 77, 'r']] },
+  pilates: { ex: 'Lunges', works: 'Glutes, thighs, deep core', ben: 'Controlled strength builds a strong core and pelvic floor and protects your joints without spiking stress hormones.', long: '30 to 45 min', freq: '2 to 3 times a week',
+    how: ['A long step forward, both knees bend to about 90 degrees', 'Front knee stays over your ankle', '3 sets of 10 each side, slow on the way down'], safe: ['Light to moderate weights', 'Breathe out as you rise', 'Longer rests when you run warmer after ovulation'], L: [['Deep core', 50, 33, 'l'], ['Obliques', 61, 40, 'r'], ['Quadriceps', 30, 57, 'l'], ['Glutes & hamstrings', 60, 69, 'r']] },
+  yoga: { ex: 'Tree pose', works: 'Hips, side waist, shoulders, spine', ben: 'Balance, flexibility and a calmer nervous system. Gentle poses ease cramps, tension and low back pain.', long: '20 to 45 min', freq: 'Most days',
+    how: ['Root through one foot, the other on your inner calf or thigh, never on the knee', 'Palms together, grow tall through your spine', 'Hold 5 slow breaths, then switch'], safe: ['On your period choose gentle, restorative poses', 'Never force a stretch', 'Use a wall for balance'], L: [['Shoulders', 34, 29, 'l'], ['Spine muscles', 50, 36, 'r'], ['Side waist', 38, 47, 'l'], ['Outer hip', 60, 58, 'r']] },
+  meditate: { ex: 'Meditation', works: 'Diaphragm, vagus nerve, heart', ben: 'Slow breathing lowers cortisol and calms your heart, which gives progesterone room to rise. Ten minutes a day is enough to feel it.', long: '10 to 20 min', freq: 'Daily',
+    how: ['Sit tall on a cushion, shoulders soft, eyes closed', 'Breathe into your belly, out longer than in', 'When thoughts come, return to the breath'], safe: ['If you feel dizzy, breathe normally for a moment', 'Knees lower than your hips so your back can relax', 'Guided practices are in Breathe'], to: 'breathe', L: [['Calmer mind', 50, 9, 'r'], ['Vagus nerve', 46, 30, 'l'], ['Heart slows', 49, 43, 'r'], ['Diaphragm', 40, 54, 'l'], ['Belly softens', 46, 67, 'r']] },
+  walk: { ex: 'Walking', works: 'Calves, glutes, heart', ben: 'The most underrated hormone habit: it lowers cortisol, softens blood sugar after meals and moves lymph.', long: '30 to 60 min', freq: 'Every day',
+    how: ['10 minutes after your biggest meal', 'Outside in daylight if you can', 'An easy pace, you can still talk'], safe: ['Good, cushioned shoes', 'On heavy days a slow stroll is enough', 'Warm layers around your period'], L: [] },
+};
+function mvFig(k, big) {
+  const P = MV_PLATE[k];
+  return `<div class="mvp-fig ${big ? 'big' : ''}"><img src="images/mv/${k}.webp" alt="Drawing of a woman doing ${P.ex.toLowerCase()}" loading="${big ? 'eager' : 'lazy'}" decoding="async">
+    ${big ? P.L.map(([n, x, y, sd]) => `<span class="mvp-l ${sd}" style="--x:${x}%;--y:${y}%"><em>${n}</em></span>`).join('') : ''}</div>`;
+}
+function mvInfo(k, D) {
+  const P = MV_PLATE[k];
+  return `<p class="mvp-ben">${P.ben}</p>
+    <div class="mvp-how"><small>How to do it</small><ol>${P.how.map((t, i) => `<li><i>${i + 1}</i>${t}</li>`).join('')}</ol></div>
+    <div class="mvp-safe"><small>${icon('heart', 12)} Train safe</small><ul>${P.safe.map(t => `<li>${t}</li>`).join('')}</ul></div>
+    ${P.to ? `<button class="mvp-go" data-action="nav" data-to="${P.to}">Open Breathe ${icon('chevR', 13)}</button>` : ''}`;
+}
 function viewMove() {
   const { info } = M, L = info.L, P = info.P, key = dayWindow(info), g = MOVE_GUIDE[key], D = MOVE_DOSE[key], tab = ui.mvTab === 'month' ? 'month' : 'today';
   const days = Array.from({ length: L }, (_, i) => windowAt(i + 1, L, P));
   const ranked = [...MOVES].sort((a, b) => g.r[b.k] - g.r[a.k]);
-  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const top = ranked[0], T = MV_PLATE[top.k], also = ranked.slice(1).filter(m => g.r[m.k] >= 2), later = ranked.filter(m => g.r[m.k] < 2);
   const body = tab === 'month'
       ? `<section class="mv2-month">${Object.entries(MOVE_GUIDE).filter(([k]) => days.includes(k)).map(([k, x]) => { const idx = days.map((w, i) => w === k ? i + 1 : 0).filter(Boolean); return `<div class="mv2-w ${k === key ? 'on' : ''}"><span class="mv2-d">${idx[0] === idx[idx.length - 1] ? idx[0] : `${idx[0]}–${idx[idx.length - 1]}`}</span><div><b>${x.title}${k === key ? ' <em>· now</em>' : ''}</b><p>${x.tip}</p></div></div>`; }).join('')}</section>`
       : `<section class="mv2-tip"><span class="eyebrow">Why today</span><p>${g.tip}</p></section>
         <section class="mv-2n"><div class="mv-n"><span class="mv-ni">${icon('clock', 18)}</span><small>Workout</small><b class="dotnum">${D.len.replace(' min', '')}</b><em>minutes</em></div>
           <div class="mv-n"><span class="mv-ni">${icon('leaf', 18)}</span><small>Steps</small><b class="dotnum">${MOVE_STEPS[key] || '8,000'}</b><em>steps a day</em></div></section>`;
-  return `<section class="mv2 mv3">
-    <video class="mv2-bg" src="images/move-stardust.mp4" poster="images/move-stardust.webp" muted loop playsinline ${still ? '' : 'autoplay'} preload="auto" aria-hidden="true"></video><span class="mv2-shade"></span>
-    <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
-    <div class="mv3-sheet">
-      <div class="mv3-top"><span class="mv3-day"><small>Day</small><b>${info.cd}</b></span><span class="mv3-ph">${PHASES[info.phase].name}</span></div>
-      <h1 class="mv3-h"><span>Today, do</span><em>${ranked[0].n}</em></h1>
-      <p class="mv3-now"><span>${icon('bolt', 15)}</span><b>${D.len}</b> · ${D.int.split(':')[0]}${ranked[1] && g.r[ranked[1].k] >= g.r[ranked[0].k] ? ` · or ${ranked[1].n.toLowerCase()}` : ''}</p>
-      ${moveWave(days, info, L, P)}
-      <div class="mv2-bubbles">${ranked.map((m, i) => moveBubble(m, g.r[m.k], i)).join('')}</div>
-    </div>
-  </section>
-  <div class="pad mv2-body">
-    <div class="seg">${[['today', 'Today'], ['month', 'Your month']].map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="mvTab" data-v="${k}">${l}</button>`).join('')}</div>
+  const card = m => { const X = MV_PLATE[m.k], on = ui.mvOpen === m.k;
+    return `<article class="mvc ${on ? 'on' : ''}"><button class="mvc-h" data-action="mvOpen" data-k="${m.k}" aria-expanded="${on}">${mvFig(m.k)}
+      <span class="mvc-t"><em class="r${g.r[m.k]}">${MV_WORD[g.r[m.k]]}</em><b>${m.n}</b><small>${X.works}</small><span class="mvc-n">${icon('clock', 12)} ${X.long} · ${X.freq}</span></span>${icon(on ? 'chevD' : 'chevR', 15)}</button>
+      ${on ? `<div class="mvc-b">${mvInfo(m.k, D)}</div>` : ''}</article>`; };
+  return `${topbar('Move', { back: true })}
+  <div class="pad mvp-page">
+    <section class="mvp">
+      <div class="mvp-top"><span class="mvp-pill">Day <b class="dotnum">${info.cd}</b> · ${PHASES[info.phase].name}</span><span class="mvp-tag">${g.title}</span></div>
+      <h1 class="mvp-h"><small>Today, do</small>${top.n}</h1>
+      ${mvFig(top.k, true)}
+      <p class="mvp-works"><i></i>Working now: ${T.works}</p>
+      <div class="mvp-stats"><div><small>How long</small><b class="dotnum">${T.long.replace(/ to /, '–').replace(' min', '')}</b><em>minutes · ${T.freq.toLowerCase()}</em></div><div><small>How hard</small><b>${D.int.split(':')[0]}</b><em>${(D.int.split(':')[1] || '').trim()}</em></div><div><small>Warm up</small><b>${D.warm.split(',')[0]}</b><em>${(D.warm.split(',')[1] || ' easy, then build').trim()}</em></div></div>
+      ${mvInfo(top.k, D)}
+    </section>
+    ${moveWave(days, info, L, P)}
+    ${also.length ? `${sectionTitle("Also good now")}<div class="mvc-l">${also.map(card).join('')}</div>` : ''}
+    ${later.length ? `${sectionTitle('Go lighter or rest')}<div class="mvc-l soft">${later.map(card).join('')}</div>` : ''}
+    <div class="seg mt">${[['today', 'Today'], ['month', 'Your month']].map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="mvTab" data-v="${k}">${l}</button>`).join('')}</div>
     ${body}
     ${trainSafe()}
   </div>`;
@@ -5458,7 +5565,7 @@ function breathShape(B, col, anim) {
     <span class="bsh-l">${st.map(([k, ms]) => `<i style="flex:${ms}"><b>${{ in: 'In', out: 'Out', hold: 'Hold', rest: 'Rest' }[k]}</b> ${+(ms / 1000).toFixed(1)}</i>`).join('')}</span></span>`;
 }
 // What each breath does: one card per practice, her phase's breath first
-const BZ_DOES = { still: 'Trains your mind to notice a thought and let it go. Calmer days and deeper sleep.', sigh: 'The fastest way to calm down. One or two sighs slow your heart within seconds.', belly: 'Relaxes your belly and womb, so cramps and tension soften.', box: 'Gives a busy mind a steady rhythm, so you stay clear under pressure.', even: 'Brings your heart and breath into step. You feel calm and open.', 478: 'The long breath out tells your body it is safe to fall asleep.' };
+const BZ_DOES = { still: 'Notice a thought, let it go.', sigh: 'Calms you within seconds.', belly: 'Softens cramps and tension.', box: 'Steady and clear under pressure.', even: 'Heart and breath in step.', 478: 'Helps you fall asleep.' };
 const BZ_COL = { still: '#6c823e', sigh: '#5f93a8', belly: '#d9768f', box: '#6c823e', even: '#c99327', 478: '#8f79bd' };
 function breathGuide(phase, k) {
   const mine = BREATH_FOR[phase], order = [mine, ...BREATH_ORDER.filter(x => x !== mine)];
@@ -5467,13 +5574,11 @@ function breathGuide(phase, k) {
     <p class="bwx-hint">${order.length} practices · swipe ${icon('chevR', 12)}</p>
     <div class="bwx">${order.map(id => { const B = BREATHS[id], col = BZ_COL[id] || '#6c823e', fx = BZ_FX[id] || [];
       return `<article class="bwx-c ${id === k ? 'on' : ''}" style="--c:${col}">
-        <div class="bwx-h"><span class="bwx-g">${B.g}</span><div><b>${B.name}</b><small>${B.for}</small></div>${id === mine ? '<em>For you now</em>' : ''}</div>
+        <div class="bwx-h"><span class="bwx-g">${B.g}</span><div><b>${B.name}</b></div>${id === mine ? '<em>For you now</em>' : ''}</div>
         <div class="bwx-art">${breathShape(B, col, true)}</div>
         <p class="bwx-does">${BZ_DOES[id] || B.for}</p>
-        <div class="bwx-tags">${FX.filter((_, i) => fx[i] === 3).map(([t, ic]) => `<span>${icon(ic, 12)} ${t}</span>`).join('')}<span class="w">${icon('clock', 12)} ${BZ_WHEN[id] || B.when}</span></div>
-        <div class="bwx-f"><details class="bwx-more"><summary>How to do it ${icon('chevD', 13)}</summary>
-            ${B.how.map(([t, p], i) => `<div class="bz-step"><span>${i + 1}</span><div><b>${t}</b><p>${p}</p></div></div>`).join('')}
-            ${BZ_STUDY[id] ? `<div class="bz-study">${studyCards(...BZ_STUDY[id])}</div>` : ''}</details>
+        <div class="bwx-tags">${FX.filter((_, i) => fx[i] === 3).map(([t, ic]) => `<span>${icon(ic, 12)} ${t}</span>`).join('')}</div>
+        <div class="bwx-f">
           <button class="bwx-go" data-action="bzPhase" data-v="${id}">${id === k ? 'In the player' : `${icon('play', 12)} Try it`}</button></div>
       </article>`; }).join('')}</div>`;
 }
@@ -5518,7 +5623,7 @@ function calmRemCard() {
         <button data-action="remCalmHour" data-d="-1" aria-label="One hour earlier">−</button>
         <span class="crm2-clock"><b class="dotnum">${hh}:00</b><em>${ap}</em><small>every day</small></span>
         <button data-action="remCalmHour" data-d="1" aria-label="One hour later">+</button></div>
-      <p class="crm2-also"><span>${icon('bolt', 13)}</span>And right away when you log stress${st ? `<em>${st === 2 ? 'Stressed today' : 'High-stress day'}</em>` : ''}</p>`
+      `
     : `<p class="crm2-off">A gentle nudge every evening to breathe for a few minutes, and sooner on stressed days.</p>`}
   </section>`;
 }
@@ -5714,39 +5819,6 @@ const HB_PILLARS = [
   { ic: 'spark', c: '#b0703a', t: 'Fewer hormone disruptors', s: 'Natural skin care, glass not plastic.', do: ['Natural cosmetics and no synthetic perfume', 'Glass or steel for hot food and drinks', 'Real food instead of ultra processed', 'Air out your home every day'], why: 'Some chemicals in fragrances, plastics and packaging act like weak estrogens in the body. You cannot avoid all of them, but small swaps add up.' },
   { ic: 'shell', c: '#4f7a2a', t: 'Build your hormones', s: 'They are made from fat and protein.', do: ['Egg yolks, butter, raw milk and good fats', 'Protein at every meal', 'Zinc and iron from red meat, liver (small portion) and seeds', 'Warm, cooked meals around your period'], why: 'Progesterone and estrogen are made from cholesterol. Enough fat, protein and minerals gives your body the raw material it needs every cycle.' },
 ];
-function viewHabits() {
-  const k = todayISO(), list = HABITS.filter(h => h.g === 'protect'), ids = list.map(h => h.id), fert = ttc() ? HABITS.filter(h => h.g === 'fertile') : [];
-  const done = habitsDone(k), n = ids.filter(id => done.includes(id)).length, total = ids.length;
-  const ph = M.info && M.info.phase, focus = ph ? HABIT_FOCUS[ph] : [];
-  let week = '';
-  for (let i = 6; i >= 0; i--) { const d = C.addDays(new Date(), -i), c = habitsDone(C.iso(d)).filter(id => ids.includes(id)).length; week += `<div class="hg-d ${i === 0 ? 'now' : ''}"><b style="height:${Math.max(8, c / total * 100)}%" class="${c ? 'on' : ''}"></b><span>${fmt(d, { weekday: 'narrow' })}</span></div>`; }
-  const seg = ids.map((id, i) => { const a0 = -90 + i * 72 + 4, a1 = a0 + 64, r = 44, p = a => [60 + r * Math.cos(a * Math.PI / 180), 60 + r * Math.sin(a * Math.PI / 180)].map(v => v.toFixed(2)).join(' ');
-    return `<path class="${done.includes(id) ? 'on' : ''}" d="M${p(a0)} A${r} ${r} 0 0 1 ${p(a1)}"/>`; }).join('');
-  const row = (h, i) => { const on = done.includes(h.id);
-    return `<button class="hg-r ${on ? 'on' : ''}" style="--i:${i}" data-action="habitTick" data-id="${h.id}" aria-pressed="${on}">
-      <span class="hg-ph"><img src="${(h.id === 'lemon' && carePhoto('lemon-water', 200)) || HB_PIC[h.id] || 'images/forest-calm.jpg'}" alt="" loading="lazy"></span>
-      <span class="hg-t"><b>${h.t}</b><small>${h.why}</small><span class="hg-tags">${(HB_HORM[h.id] || []).map(x => `<em>${x}</em>`).join('')}${focus.includes(h.id) ? '<em class="ph">Your phase</em>' : ''}</span></span>
-      <span class="hg-cb">${icon('check', 15, 2.6)}</span></button>`; };
-  const pillar = (P, i) => `<details class="hg-p" style="--c:${P.c};--i:${i}"><summary><span class="hg-pi">${icon(P.ic, 19, 1.8)}</span><span class="hg-pt"><b>${P.t}</b><small>${P.s}</small></span><span class="hg-pc">${icon('chevD', 16)}</span></summary>
-      <div class="hg-pin"><ul>${P.do.map(x => `<li>${icon('check', 12, 2.6)}<span>${x}</span></li>`).join('')}</ul><p><b>Why it works</b>${P.why}</p></div></details>`;
-  const lead = n === total ? 'All five done. A calm, steady day for your hormones.' : n ? `${total - n} to go. Each one is a small vote for balance.` : 'Five small things that keep your hormones in balance.';
-  return `${topbar('Hormone habits', { back: true })}
-  <div class="pad hg">
-    <section class="hg-hero">
-      <div class="hg-hl"><small>Today</small><h2>Protect your <span>hormones</span></h2><p>${lead}</p>
-        <div class="hg-week" aria-label="Last 7 days">${week}</div></div>
-      <div class="hg-ring" aria-label="${n} of ${total} done"><svg viewBox="0 0 120 120" aria-hidden="true">${seg}</svg><b class="dotnum">${n}</b><small>of ${total}</small></div>
-    </section>
-    ${sectionTitle('Your daily five')}
-    <div class="hg-list">${list.map(row).join('')}</div>
-    ${ph && focus.length ? `<p class="hg-key"><em class="ph">Your phase</em>Extra good in your ${PHASES[ph].name.toLowerCase()} phase</p>` : ''}
-    ${sectionTitle('The hormone guide')}
-    <p class="hg-sub">Seven pillars that protect and balance a woman’s hormones. Tap one for what to do and why.</p>
-    <section class="hg-pl">${HB_PILLARS.map(pillar).join('')}</section>
-    ${fert.length ? `${sectionTitle('Fertility & feminine flow')}<div class="hg-list">${fert.map(row).join('')}</div>` : ''}
-    <section class="hg-end"><b>You are not the problem.</b><p>The modern world runs against your rhythm. Start with one habit, and let the rest follow.</p></section>
-  </div>`;
-}
 function hormoneLibrary() {
   return `${sectionTitle('Your hormones, explained')}
     <div class="fig-wrap lib"><canvas class="figure" data-focus="head"></canvas><span class="lib-cap">Glands from head to womb. Tap a hormone below</span></div>
@@ -6501,7 +6573,7 @@ function viewInsights() {
   else body = `
     <span id="ins-hx"></span>${hormoneGrids(info)}
     ${sectionTitle('Guides')}
-    <div class="lg-grid">${[['relief', 'heart', 'Relief guide', 'Cramps, PMS, sleep, skin'], ['habits', 'check', 'Hormone habits', 'A daily checklist'], ['tea', 'cup', 'Tea guide', 'For every need'], ['move', 'leaf', 'Move with your cycle', 'Lift, sprint or rest']].map(([to, g, t, sub], i) => `<button class="card glass lg-t" style="--i:${i}" data-action="nav" data-to="${to}"><span class="lg-g">${icon(g, 18)}</span><b>${t}</b><small>${sub}</small>${icon('chevR', 14)}</button>`).join('')}</div>
+    <div class="lg-grid">${[['relief', 'heart', 'Feel better', 'Rituals, relief & daily habits'], ['breathe', 'leaf', 'Breathe', 'Calm in minutes'], ['tea', 'cup', 'Tea guide', 'For every need'], ['move', 'leaf', 'Move with your cycle', 'Lift, sprint or rest']].map(([to, g, t, sub], i) => `<button class="card glass lg-t" style="--i:${i}" data-action="nav" data-to="${to}"><span class="lg-g">${icon(g, 18)}</span><b>${t}</b><small>${sub}</small>${icon('chevR', 14)}</button>`).join('')}</div>
     ${[info.phase].map(p => { const list = ARTICLES.filter(a => a.phase === p); return list.length ? `${sectionTitle(`Read now · ${PHASES[p].name}`)}
       ${list.map(a => `<button class="card glass article-row" data-action="nav" data-to="article/${a.id}"><span class="art-ic ${read[a.id] ? 'done' : ''}">${icon(read[a.id] ? 'check' : 'book', 20)}</span><span class="art-t">${a.title}<small>${read[a.id] ? 'Read · ' : ''}${a.mins} min</small></span>${icon('chevR', 18)}</button>`).join('')}` : ''; }).join('')}`;
   return `${topbar('Insights')}
@@ -7526,6 +7598,7 @@ const actions = {
   },
   rhView: d => { ui.rhView = d.v; render(); },
   mvTab: d => { ui.mvTab = d.v; render(); },
+  mvOpen: d => { ui.mvOpen = ui.mvOpen === d.k ? null : d.k; render(); },
   supTab: d => { ui.supTab = d.v; render(); },
   stTab: d => { ui.stTab = d.v; render(); },
   pfTab: d => { ui.pfTab = d.v; render(); },
@@ -7577,15 +7650,29 @@ const actions = {
     sh.dataset.p = d.p; sh.innerHTML = cfSheet(d.p); sh.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   },
   sfPick: (d, el) => {
-    const box = el.closest('.sfc'), ph = box.dataset.phase, f = SUPERFOODS[ph].list.filter(x => !(x[5] && myDiet() === 'vegan'))[+d.i], det = box.querySelector('.sfc-det');
+    const box = el.closest('.sfc'), ph = box.dataset.phase, g = d.g != null ? SUPERFOODS[ph].gems[+d.g] : null, f = g ? [g[0], g[1], g[3], `${g[4]}`, null, false, g[2]] : SUPERFOODS[ph].list.filter(x => !(x[5] && myDiet() === 'vegan'))[+d.i], det = box.querySelector('.sfc-det');
     const was = el.classList.contains('on'); box.querySelectorAll('.sfc-i').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); });
     if (was) { det.hidden = true; return; }
-    el.classList.add('on'); el.setAttribute('aria-expanded', 'true');
+    el.classList.add('on'); el.setAttribute('aria-expanded', 'true'); el.parentElement.after(det);
     const [file] = SF_CUT[f[1]] || [];
-    det.innerHTML = `${file ? `<img src="images/sf/${file}.webp" alt="">` : `<em>${f[0]}</em>`}<div><b>${f[1]}</b><p>${f[2]}</p><span class="sfc-dose">${icon('drop', 12)} ${f[3]}</span></div><button class="sfc-x" data-action="sfClose" aria-label="Close">${icon('close', 14)}</button>`;
+    det.innerHTML = `${file ? `<img src="images/sf/${file}.webp" alt="">` : `<em>${f[0]}</em>`}<div>${f[6] ? `<small class="sfc-o">${f[6]}</small>` : ''}<b>${f[1]}</b><p>${f[2]}</p><span class="sfc-dose">${icon('drop', 12)} ${f[3]}</span></div><button class="sfc-x" data-action="sfClose" aria-label="Close">${icon('close', 14)}</button>`;
     det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
     const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
   },
+  fbPick: (d, el) => {
+    const box = el.closest('.fbp'), det = box.querySelector('.fbp-det'), was = el.classList.contains('on');
+    box.querySelectorAll('.fbp-i').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); });
+    if (was) { det.hidden = true; return; }
+    const items = [...el.parentElement.querySelectorAll('.fbp-i')], idx = items.indexOf(el);
+    el.classList.add('on'); el.setAttribute('aria-expanded', 'true');
+    items[Math.min(items.length - 1, Math.floor(idx / 3) * 3 + 2)].after(det);
+    det.innerHTML = fbDetail(+d.i); det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
+    const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
+  },
+  fbClose: (d, el) => { const box = el.closest('.fbp'); box.querySelector('.fbp-det').hidden = true; box.querySelectorAll('.fbp-i.on').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); }); },
+  fbHabit: d => { const k = todayISO(), H = state.habits = state.habits || {}; const a = H[k] = H[k] || []; a.includes(d.id) ? a.splice(a.indexOf(d.id), 1) : a.push(d.id); save();
+    const v = document.getElementById('view'), y = v ? v.scrollTop : 0; render();
+    requestAnimationFrame(() => { if (v) v.scrollTop = y; const b = document.querySelector(`.fbp-i[data-i="${d.i}"]`); b && actions.fbPick({ i: d.i }, b); }); },
   sfClose: (d, el) => { const box = el.closest('.sfc'); box.querySelector('.sfc-det').hidden = true; box.querySelectorAll('.sfc-i.on').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); }); },
   sfPhase: (d, el) => { const box = el.closest('.sfc'); const t = document.createElement('div'); t.innerHTML = superInner(d.v); box.replaceWith(t.firstElementChild); },
   suPick: (d, el) => {
@@ -7721,6 +7808,7 @@ const actions = {
       <p>${sel.nature === 'cool' && warm ? 'A cooling food. Your period is close, so cook it and add ginger or cinnamon.' : NATURE[sel.nature][1]}</p></div><button class="sfc-x" data-action="szClose" aria-label="Close">${icon('close', 14)}</button>`;
     det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
   },
+  ctPick: (d, el) => { const box = el.closest('.ct4'), ph = (M.info && M.info.phase) || 'follicular', t = PHASE_TEAS[ph][+d.i]; box.querySelectorAll('.ct-q').forEach(b => { b.classList.toggle('on', b === el); b.setAttribute('aria-expanded', b === el); }); box.querySelector('.ct-brew').innerHTML = `<b>${t[0]}</b> · ${t[3]}`; },
   szClose: (d, el) => { const box = el.closest('.szp'); box.querySelector('.szp-det').hidden = true; box.querySelectorAll('.szp-i.on').forEach(b => b.classList.remove('on')); },
   enTap: (d, el) => { const S = ui.energy = ui.energy || {}; S[d.k] = !S[d.k]; el.classList.toggle('on', !!S[d.k]); el.setAttribute('aria-pressed', !!S[d.k]);
     const box = el.closest('.en'), g = box.querySelectorAll('.en-g .on').length, t = box.querySelectorAll('.en-t .on').length; box.querySelector('.en-sum').innerHTML = enSum(g, t); },
@@ -7998,7 +8086,7 @@ function render() {
   const ph = (ui.phasePreview || M.info?.phase) || ''; // the whole app takes the colour of her phase
   if (document.documentElement.dataset.phase !== ph) document.documentElement.dataset.phase = ph;
   const views = {
-    today: viewToday, saved: viewSaved, ground: viewGround, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: () => viewBreathe(r.id), do: () => viewTopic(r.id), plan: viewPlan, diet: viewDiet, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: viewCalendar, manifest: viewManifest, moon: viewCalendar, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewHabits, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), apothecary: viewApothecary, world: () => viewWorld(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
+    today: viewToday, saved: viewSaved, ground: viewGround, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: () => viewBreathe(r.id), do: () => viewTopic(r.id), plan: viewPlan, diet: viewDiet, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: viewCalendar, manifest: viewManifest, moon: viewCalendar, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewReliefIndex, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), apothecary: viewApothecary, world: () => viewWorld(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
     recipe: () => viewRecipe(r.id), ritual: () => viewRitual(r.id), point: () => viewPoint(r.id), article: () => viewArticle(r.id), learn: viewLearn,
   };
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];
