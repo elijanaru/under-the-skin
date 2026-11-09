@@ -424,13 +424,11 @@ const habitsCta = () => `<button class="gr-cta" data-action="nav" data-to="habit
 // Energy takers and givers on a paper card, laid over a collage of spirals found in nature. Tap what drained you and what you gave yourself today.
 const EN_TAKE = ['Focusing on the past', 'Inconsistent sleep', 'Mess and clutter', 'Sitting all day', 'Social media', 'Overworking', 'Dehydration', 'Screen time', 'Resentment', 'Negativity', 'Junk food', 'The news', 'Alcohol', 'Stress', 'Fear'];
 const EN_GIVE = ['Nature', 'Resting', 'Sunlight', 'Courage', 'Kind thoughts', 'Gratitude', 'Hydration', 'Meditation', 'Movement', 'Breathwork', 'Community', 'Decluttering', 'Consistent sleep', 'Whole food', 'Learning new things'];
-const enSum = (g, t) => !g && !t ? 'Tap what drained you and what you gave yourself today' : `<b class="dotnum">${g}</b> given · <b class="dotnum">${t}</b> taken${g > t ? ' · your cup is filling' : t > g ? ' · add one giver' : ''}`;
 function groundEnergy() {
-  const S = ui.energy || {}, col = (L, k) => L.map(x => `<button class="${S[k + x] ? 'on' : ''}" data-action="enTap" data-k="${esc(k + x)}" aria-pressed="${!!S[k + x]}">${x}</button>`).join('');
+  const col = L => `<ul>${L.map(x => `<li>${x}</li>`).join('')}</ul>`;
   const ring = w => `<svg class="en-ring" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true"><path d="M8 34 C 10 10, 190 6, 192 28 C 194 50, 30 56, 14 40 C 6 30, 40 14, 70 12"/></svg>`;
   return `<section class="en">${[0, 1, 2, 3, 4, 5].map(i => `<span class="en-sp s${i}" aria-hidden="true"></span>`).join('')}
-    <div class="en-paper"><div class="en-cols"><div class="en-t"><h3>Energy takers${ring()}</h3>${col(EN_TAKE, 't:')}</div><div class="en-g"><h3>Energy givers${ring()}</h3>${col(EN_GIVE, 'g:')}</div></div>
-      <p class="en-sum">${enSum(Object.keys(S).filter(k => S[k] && k.startsWith('g:')).length, Object.keys(S).filter(k => S[k] && k.startsWith('t:')).length)}</p></div></section>`;
+    <div class="en-paper"><div class="en-cols"><div class="en-t"><h3>Energy takers${ring()}</h3>${col(EN_TAKE)}</div><div class="en-g"><h3>Energy givers${ring()}</h3>${col(EN_GIVE)}</div></div></div></section>`;
 }
 // Ground with a tree: four quiet ink panels, one practice each.
 const TREE_STEPS = [
@@ -457,11 +455,6 @@ function viewGround() {
     ${groundEnergy()}
     ${groundTree()}
 
-        ${sectionTitle('Try it now')}
-    <section class="card gr-card">
-      <div class="gr-flow">${[['Shoes off', 'Skin touches earth'], ['Stay 15 min', 'Phone away'], ['Breathe down', 'Feel your soles']].map(([a, b], i) => `<span><i>${i + 1}</i><b>${a}</b><small>${b}</small></span>`).join('<u></u>')}</div>
-      ${card('ground-now', 'Grounding', GROUND_NOW)}
-    </section>
 
     ${P ? `${sectionTitle(`For your ${PHASES[ph].name.toLowerCase()} phase`)}
     <section class="card gr-card gr-ph" style="--c:${PH_HEX[ph]}">
@@ -473,12 +466,38 @@ function viewGround() {
     ${sectionTitle('Where to stand')}
     <section class="card gr-card"><div class="gr-where">${GROUND_WHERE.map(([n, v, t], i) => `<div class="${v ? '' : 'no'}"><span class="gr-art">${GROUND_ART[i] || ''}</span><span class="gr-m" aria-label="${v ? `Connects ${v} of 3` : 'Blocks it'}">${[1, 2, 3].map(i => `<i class="${i <= v ? 'on' : ''}"></i>`).join('')}</span><b>${n}</b><small>${t}</small></div>`).join('')}</div></section>
 
-    ${sectionTitle('Golden roots')}
-    <section class="card gr-card gr-roots">
-      <div class="gr-rart" aria-hidden="true"><svg viewBox="0 0 320 120" preserveAspectRatio="xMidYMid slice"><rect width="320" height="34" fill="#e9e2d2"/><rect y="34" width="320" height="86" fill="#3a2e22"/><path d="M0 34h320" stroke="#6c823e" stroke-width="3"/><g fill="#6c823e"><path d="M118 34c-2-8 1-14 3-16 0 6 1 11-1 16z"/><path d="M268 34c2-9-1-15-3-17 0 7-1 12 1 17z"/><path d="M220 34c-1-6 1-10 3-12 0 5 0 9-1 12z"/></g><circle cx="160" cy="22" r="9" fill="#304023"/><path d="M146 34c0-8 6-12 14-12s14 4 14 12z" fill="#304023"/><g class="gr-rl" fill="none" stroke="#e6b65a" stroke-linecap="round"><path stroke-width="3" d="M160 36c0 20-2 40 0 78"/><path stroke-width="2.4" d="M160 52c-14 8-30 14-52 34"/><path stroke-width="2.4" d="M160 56c16 8 32 16 50 36"/><path stroke-width="1.8" d="M128 70c-14 4-30 4-50 14"/><path stroke-width="1.8" d="M190 74c16 2 34 4 54 16"/><path stroke-width="1.4" d="M108 86c-8 8-14 16-16 26"/><path stroke-width="1.4" d="M210 92c6 8 10 14 12 22"/><path stroke-width="1.4" d="M160 84c-8 10-12 18-14 30"/></g></svg><span>Roots down</span></div>
-      <ol class="gr-steps">${GROUND_ROOTS.steps.map(([a, b], i) => `<li><i>${i + 1}</i><span><b>${a}</b><small>${b}</small></span></li>`).join('')}</ol>
-      <div class="gr-rt-f"><span class="dos-w">${icon('clock', 12)} ${GROUND_ROOTS.mins} min</span><span class="gr-rt-s">${saveBtn(regTip('ground-roots', 'Grounding · roots', GROUND_ROOTS.d, 'ground'))}</span></div>
-      <p class="gr-fine">An old visualisation used in many traditions. Treat it as a calming practice.</p>
+    <section class="grr">
+      <div class="grr-h"><small>${icon('clock', 12)} ${GROUND_ROOTS.mins} minute practice</small><b>Golden roots</b><p>Sit on the earth and feel held. An old visualisation from many traditions.</p></div>
+      <div class="grr-art" aria-hidden="true"><svg viewBox="0 0 320 176">
+        <defs><pattern id="grr-dots" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r=".9" fill="#7a6a55" opacity=".35"/><circle cx="5.5" cy="5.5" r=".6" fill="#7a6a55" opacity=".25"/></pattern>
+          <linearGradient id="grr-soil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9e1d1"/><stop offset="1" stop-color="#d9cdb6"/></linearGradient></defs>
+        <rect width="320" height="106" fill="#f7f4ec"/><rect y="106" width="320" height="70" fill="url(#grr-soil)"/><rect y="106" width="320" height="70" fill="url(#grr-dots)"/>
+        <g fill="none" stroke="#5c6e3a" stroke-width="1.2" stroke-linecap="round">${Array.from({ length: 40 }, (_, i) => { const x = 4 + i * 8 + (i % 3) * 1.5, h = 4 + (i * 7) % 6; return `<path d="M${x} 106c${i % 2 ? 1 : -1}-${h / 2} ${i % 2 ? 0 : 1}-${h} ${i % 2 ? 2 : -2}-${h}"/>`; }).join('')}</g>
+        <path d="M0 106h320" stroke="#2a2620" stroke-width="1.2"/>
+        <g class="grr-rt" fill="none" stroke="#d9a441" stroke-linecap="round">
+          <path pathLength="1" stroke-width="2.6" d="M160 104c0 18 1 36-1 66"/>
+          <path pathLength="1" stroke-width="2" d="M160 116c-12 6-26 10-46 26c-10 8-16 16-20 26"/><path pathLength="1" stroke-width="2" d="M160 118c14 6 28 12 44 28c8 8 12 14 16 22"/>
+          <path pathLength="1" stroke-width="1.5" d="M130 132c-16 2-34 2-56 12"/><path pathLength="1" stroke-width="1.5" d="M192 138c18 0 36 2 58 12"/>
+          <path pathLength="1" stroke-width="1.2" d="M114 142c-6 10-8 18-8 28"/><path pathLength="1" stroke-width="1.2" d="M206 148c4 8 6 14 6 22"/><path pathLength="1" stroke-width="1.2" d="M159 140c-8 10-12 18-12 30"/><path pathLength="1" stroke-width="1.2" d="M160 150c6 6 10 12 10 20"/>
+        </g>
+        <g class="grr-up" fill="#d9a441">${[0, 1, 2, 3].map(i => `<circle cx="160" cy="${100 - i * 9}" r="1.6" style="--d:${i * .4}s"/>`).join('')}</g>
+        <g fill="#f7f4ec" stroke="#2a2620" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M118 104c4-10 18-14 42-14s38 4 42 14c-14 3-28 4-42 4s-28-1-42-4z"/>
+          <path d="M146 52c-6 2-9 8-10 16l-6 22M174 52c6 2 9 8 10 16l6 22" fill="none"/>
+          <path d="M146 51c4-3 24-3 28 0c3 12 2 26-2 40h-24c-4-14-5-28-2-40z"/>
+          <path d="M130 90c-2 3-1 6 3 6M190 90c2 3 1 6-3 6" fill="none"/>
+          <path d="M156 44v7M164 44v7" fill="none"/>
+          <ellipse cx="160" cy="33" rx="9.5" ry="11"/>
+          <path d="M150.6 31c0-9 4.4-13.6 9.4-13.6s9.4 4.6 9.4 13.6c-3-5-6-7-9.4-7s-6.4 2-9.4 7z" fill="#2a2620"/><circle cx="160" cy="16" r="5" fill="#2a2620"/>
+        </g>
+      </svg></div>
+      <ol class="grr-s">
+        <li><i>1</i><b>Sit</b><small>Cross-legged on the ground, spine tall</small></li>
+        <li><i>2</i><b>Feel the base</b><small>Notice where you touch the earth</small></li>
+        <li class="out"><i>${icon('chevD', 13, 2.4)}</i><b>Breathe out</b><small>Golden roots grow down from your spine</small></li>
+        <li class="in"><i>${icon('chevD', 13, 2.4)}</i><b>Breathe in</b><small>Warmth rises back up into your belly</small></li>
+      </ol>
+      <div class="grr-f"><span>Repeat for ${GROUND_ROOTS.mins} minutes</span>${saveBtn(regTip('ground-roots', 'Grounding · roots', GROUND_ROOTS.d, 'ground'))}</div>
     </section>
 
     ${sectionTitle('What studies found')}
@@ -3355,7 +3374,7 @@ function fbDetail(i) {
   return `<img src="images/fb/${x.id}.webp" alt=""><div class="fbd-b"><b>${x.t}</b><p>${x.why}</p>
     <ul>${x.do.map(d => `<li>${icon('check', 11, 2.6)}<span>${d}</span></li>`).join('')}</ul>
     <span class="fbd-safe">${icon('heart', 12)} ${x.safe}</span>
-    <div class="fbd-acts">${x.hb ? `<button class="fbd-hb ${on ? 'on' : ''}" data-action="fbHabit" data-id="${x.hb}" data-i="${i}" aria-pressed="${!!on}">${icon('check', 13, 2.6)} ${on ? 'Done today' : 'Add to my daily five'}</button>` : ''}${x.to ? `<button class="fbd-go" data-action="nav" data-to="${x.to[0]}">${x.to[1]} ${icon('chevR', 13)}</button>` : ''}</div></div>
+    <div class="fbd-acts">${x.hb ? `<button class="fbd-hb ${on ? 'on' : ''}" data-action="fbHabit" data-id="${x.hb}" data-i="${i}" aria-pressed="${!!on}">${icon('check', 13, 2.6)} ${on ? 'Done today' : 'Add to my daily habits'}</button>` : ''}${x.to ? `<button class="fbd-go" data-action="nav" data-to="${x.to[0]}">${x.to[1]} ${icon('chevR', 13)}</button>` : ''}</div></div>
     <button class="fbd-x" data-action="fbClose" aria-label="Close">${icon('close', 14)}</button>`;
 }
 function habitsBlock() {
@@ -3379,6 +3398,53 @@ function habitsBlock() {
       <div class="hg-ring" aria-label="${n} of ${total} done"><svg viewBox="0 0 120 120" aria-hidden="true">${seg}</svg><b class="dotnum">${n}</b><small>of ${total}</small></div>
     </section>` };
 }
+// The five elements of balance (earth, water, fire, air, space): an old way of seeing balance, each with three
+// simple things to do in every phase to ground her and support her hormones.
+const EL5 = [
+  { k: 'earth', n: 'Earth', c: '#9a7444', s: 'Ground and nourish', why: 'Earth is stability. A steady rhythm, real food and contact with the ground keep cortisol and blood sugar calm, the base every hormone is built on.',
+    p: { menstrual: ['Warm, slow-cooked meals: bone broth, stews, root vegetables', '10 minutes sitting or lying on the ground', 'Rest more and cancel what can wait'],
+      follicular: ['Eggs, sprouts and fresh seeds to rebuild', 'A barefoot walk on grass or sand', 'Start one new routine you can keep'],
+      ovulatory: ['Colourful salads with eggs and good fats', 'Feet in the grass after busy social days', 'Regular meals, even when you feel unstoppable'],
+      luteal: ['Sweet roots: sweet potato, pumpkin, carrots', 'Sit with your back against a tree', 'Protein and fat at every meal to calm cravings'] } },
+  { k: 'water', n: 'Water', c: '#4f87a8', s: 'Flow and minerals', why: 'Water is flow. Hydration, minerals and warm baths keep blood, lymph and the calming side of your nervous system moving.',
+    p: { menstrual: ['Warm water and herbal tea through the day, never iced', 'A warm bath or a hot water bottle', 'Iron and minerals: red meat, beetroot, a pinch of sea salt'],
+      follicular: ['A big glass of warm lemon water in the morning', 'A swim or a long shower to wake up', 'Juicy fruit, cucumber and berries'],
+      ovulatory: ['Extra water and coconut water on hot days', 'Time by the sea, a lake or a river', 'Hydrating fruit: watermelon, melon, citrus'],
+      luteal: ['A pinch of salt in your water as you run warmer', 'An Epsom salt bath before bed', 'Leafy greens and a warm cacao drink for magnesium'] } },
+  { k: 'fire', n: 'Fire', c: '#d0683c', s: 'Warmth and drive', why: 'Fire is energy and digestion. Sunlight, movement and warming spices set your body clock and help you use sugar well.',
+    p: { menstrual: ['Ginger and cinnamon tea', 'Gentle sun on your skin, no hard training', 'Keep your feet and belly warm'],
+      follicular: ['Morning sun within an hour of waking', 'Strength training and new classes', 'Turmeric, black pepper and ginger in your food'],
+      ovulatory: ['Your strongest workouts: sprints and heavy lifts', 'Mint or hibiscus tea if you run hot', 'Say the bold thing, pitch the idea'],
+      luteal: ['Steady, moderate training with longer rests', 'Warming spices: cinnamon, cardamom, fennel', 'Sun breaks to lift your mood'] } },
+  { k: 'air', n: 'Air', c: '#6f9a86', s: 'Breath and mind', why: 'Air is breath. Slow breathing and fresh air switch on your calming nervous system, lower cortisol and give progesterone room.',
+    p: { menstrual: ['Warm belly breathing, hands below your navel', 'Open a window, sleep in fresh air', 'Journal what you want to let go'],
+      follicular: ['Box breathing before focus work', 'A brisk walk outside', 'Plan, learn and brainstorm'],
+      ovulatory: ['Even breathing: in for 5, out for 5', 'Time outdoors with friends', 'Talk it out and connect'],
+      luteal: ['Long out-breaths: in for 4, out for 8', 'Lavender or chamomile before bed', 'Less news, fewer screens'] } },
+  { k: 'space', n: 'Space', c: '#7c6aae', s: 'Stillness and sleep', why: 'Space is stillness. Sleep, silence and boundaries give your glands time to repair and reset every night.',
+    p: { menstrual: ['Bed early, 8 to 9 hours', 'Say no to extra plans', 'Ten minutes of silence or meditation'],
+      follicular: ['A clear, tidy space for new projects', 'A morning without your phone', 'The same bedtime every night'],
+      ovulatory: ['Protect one quiet evening', 'Meditate even when you feel great', 'Screens off an hour before bed'],
+      luteal: ['Declutter one small corner', 'Phone away in the evening', 'A slow stretch or yin yoga before sleep'] } },
+];
+const EL5_ART = {
+  earth: '<path d="M6 30l9-12 6 7 5-9 12 14z" fill="currentColor" opacity=".9"/><path d="M4 33h36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+  water: '<path d="M22 6c-6 9-10 14-10 19a10 10 0 0 0 20 0c0-5-4-10-10-19z" fill="currentColor" opacity=".9"/><path d="M17 26a5 5 0 0 0 5 5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/>',
+  fire: '<path d="M22 5c2 7 10 11 10 20a10 10 0 0 1-20 0c0-5 3-8 5-10 0 4 2 6 4 6-2-6-1-11 1-16z" fill="currentColor" opacity=".9"/>',
+  air: '<g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 16h20a5 5 0 1 0-5-5"/><path d="M6 23h28a5 5 0 1 1-5 5"/><path d="M6 30h12"/></g>',
+  space: '<circle cx="22" cy="22" r="8" fill="currentColor" opacity=".9"/><g fill="currentColor"><circle cx="8" cy="10" r="1.6"/><circle cx="36" cy="9" r="1.2"/><circle cx="35" cy="34" r="1.6"/><circle cx="9" cy="34" r="1.1"/></g><circle cx="22" cy="22" r="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 3"/>',
+};
+function el5(ph, k) {
+  ph = ph || (M.info && M.info.phase) || 'follicular'; const E = EL5.find(x => x.k === k) || EL5[0];
+  return `<section class="el5" data-ph="${ph}" data-k="${E.k}">
+    <div class="el5-h"><small>Balance your hormones</small><b>The five elements</b><p>An old way of seeing balance. Tap an element for what to do in each phase.</p></div>
+    <div class="el5-ph">${PHASE_ORDER.map(p => `<button class="${p === ph ? 'on' : ''}" style="--c:${PH_HEX[p]}" data-action="el5" data-ph="${p}" data-k="${E.k}" aria-pressed="${p === ph}"><i></i>${PHASES[p].name}</button>`).join('')}</div>
+    <div class="el5-row">${EL5.map(x => `<button class="${x.k === E.k ? 'on' : ''}" style="--c:${x.c}" data-action="el5" data-ph="${ph}" data-k="${x.k}" aria-pressed="${x.k === E.k}"><span><svg viewBox="0 0 44 44" aria-hidden="true">${EL5_ART[x.k]}</svg></span><b>${x.n}</b></button>`).join('')}</div>
+    <div class="el5-card" style="--c:${E.c}"><div class="el5-ct"><span><svg viewBox="0 0 44 44" aria-hidden="true">${EL5_ART[E.k]}</svg></span><div><b>${E.n}</b><small>${E.s} · ${PHASES[ph].name} phase</small></div></div>
+      <ol>${E.p[ph].map((t, i) => `<li><i>${i + 1}</i>${t}</li>`).join('')}</ol>
+      <p>${E.why}</p></div>
+  </section>`;
+}
 function viewReliefIndex() {
   const recent = new Set();
   for (let i = 0; i < 4; i++) { const l = getLog(C.iso(C.addDays(new Date(), -i))); [...(l.symptoms || []), ...(l.moods || [])].forEach(s => { const k = reliefKey(s); if (k) recent.add(k); }); }
@@ -3392,22 +3458,15 @@ function viewReliefIndex() {
   return `${topbar('Feel better', { back: true })}
   <div class="pad hg fb">
     <section class="fbp" aria-label="Small rituals that support your hormones">
-      <div class="fbp-g">${FB.slice(0, 6).map((x, i) => fbItem(x, i, done)).join('')}</div>
       <div class="fbp-title"><small>${info ? `Day ${info.cd} · ` : ''}Balance your hormones</small><h1>Feel better, <span>gently</span></h1><p>Small rituals your hormones love. Tap any one for how and why.</p></div>
-      <div class="fbp-g">${FB.slice(6).map((x, i) => fbItem(x, i + 6, done)).join('')}</div>
+      <div class="fbp-g">${FB.map((x, i) => fbItem(x, i, done)).join('')}</div>
       <div class="fbp-det" hidden></div>
     </section>
     <section class="card glass fb-now"><small>${recent.size ? 'For what you logged' : 'Common around now'}</small>
       ${likely.length ? `<div class="rx2-chips">${likely.map(chip).join('')}</div>` : '<p>Usually your easiest days. Pick anything below.</p>'}
       <button class="rx2-cta" data-action="nav" data-to="log">${icon('plus', 15)} Log how you feel</button></section>
-    ${H.hero}
-    <div class="hg-list">${H.list.map(H.row).join('')}</div>
-    ${H.ph && H.focus.length ? `<p class="hg-key"><em class="ph">Your phase</em>Extra good in your ${PHASES[H.ph].name.toLowerCase()} phase</p>` : ''}
+    ${el5()}
     ${H.fert.length ? `${sectionTitle('Fertility & feminine flow')}<div class="hg-list">${H.fert.map(H.row).join('')}</div>` : ''}
-    ${sectionTitle('For what you feel')}
-    <div class="rx2-grid">${keys.map(k => { const h = (state.reliefHelp || {})[k] || [];
-      return `<button class="rx2-tile ${recent.has(k) ? 'on' : ''}" data-action="nav" data-to="relief/${encodeURIComponent(k)}"><img src="${reliefPhoto(k, 500)}" alt="" loading="lazy"><span class="rx2-ts"></span>
-        ${recent.has(k) ? '<em>logged</em>' : ''}<b>${k}</b><small>${h.length ? `${icon('heart', 11)} ${h.length} work${h.length > 1 ? '' : 's'} for you` : `${RELIEF[k].steps.length} ways`}</small></button>`; }).join('')}</div>
     ${sectionTitle('Seven pillars of balance')}
     <p class="hg-sub">What protects and balances a woman’s hormones. Tap one for what to do and why.</p>
     <section class="hg-pl">${HB_PILLARS.map(pillar).join('')}</section>
@@ -7673,6 +7732,7 @@ const actions = {
     det.innerHTML = fbDetail(+d.i); det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
     const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
   },
+  el5: (d, el) => { const b = el.closest('.el5'), t = document.createElement('div'); t.innerHTML = el5(d.ph, d.k); b.replaceWith(t.firstElementChild); },
   fbClose: (d, el) => { const box = el.closest('.fbp'); box.querySelector('.fbp-det').hidden = true; box.querySelectorAll('.fbp-i.on').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); }); },
   fbHabit: d => { const k = todayISO(), H = state.habits = state.habits || {}; const a = H[k] = H[k] || []; a.includes(d.id) ? a.splice(a.indexOf(d.id), 1) : a.push(d.id); save();
     const v = document.getElementById('view'), y = v ? v.scrollTop : 0; render();
@@ -7814,8 +7874,6 @@ const actions = {
   },
   ctPick: (d, el) => { const box = el.closest('.ct4'), ph = (M.info && M.info.phase) || 'follicular', t = PHASE_TEAS[ph][+d.i]; box.querySelectorAll('.ct-q').forEach(b => { b.classList.toggle('on', b === el); b.setAttribute('aria-expanded', b === el); }); box.querySelector('.ct-brew').innerHTML = `<b>${t[0]}</b> · ${t[3]}`; },
   szClose: (d, el) => { const box = el.closest('.szp'); box.querySelector('.szp-det').hidden = true; box.querySelectorAll('.szp-i.on').forEach(b => b.classList.remove('on')); },
-  enTap: (d, el) => { const S = ui.energy = ui.energy || {}; S[d.k] = !S[d.k]; el.classList.toggle('on', !!S[d.k]); el.setAttribute('aria-pressed', !!S[d.k]);
-    const box = el.closest('.en'), g = box.querySelectorAll('.en-g .on').length, t = box.querySelectorAll('.en-t .on').length; box.querySelector('.en-sum').innerHTML = enSum(g, t); },
   seasonFood: d => { ui.seasonFood = ui.seasonFood === d.f ? null : d.f; render(); if (ui.seasonFood) document.querySelector('.sf-detail')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); },
   seasonFilter: d => { ui.seasonFilter = d.v; render(); },
   baDel: d => { if (!confirm('Delete this photo from your phone?')) return; const ba = baGet(); delete ba[d.v]; baSet(ba); render(); },

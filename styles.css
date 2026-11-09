@@ -10475,3 +10475,62 @@ section.ct .ct-tx { text-align: center; padding: 0 20%; }
 .mvm-more[open] summary svg { transform: rotate(180deg); }
 .mvm-more .mv2-month { margin: 10px 0 0; padding: 0 2px; background: none; border: 0; }
 .mvm-more .mv2-w b { color: #20301a; } .mvm-more .mv2-w p { color: #4a5a3a; }
+/* Energy takers & givers: a plain list to read, not to tap */
+.en-cols ul { list-style: none; margin: 0; padding: 0; }
+.en-cols li { padding: 4px 6px; font: 400 14px var(--font, Outfit), sans-serif; color: #2a2620; }
+/* Ground: Golden roots as an ink panel with golden roots that grow, and a 4-step breath grid */
+.grr { margin-top: 22px; padding: 16px; border-radius: 30px; background: #fff; border: 1px solid rgba(48,64,35,.1); box-shadow: 0 14px 32px -22px rgba(32,48,26,.45); }
+.grr-h small { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 99px; background: #fbf1dc; color: #7a5410; font-size: 11.5px; font-weight: 500; }
+.grr-h b { display: block; margin-top: 8px; font-size: 24px; font-weight: 500; letter-spacing: -.02em; color: #20301a; }
+.grr-h p { margin: 4px 0 0; font-size: 13.5px; line-height: 1.4; color: #4a5a3a; }
+.grr-art { margin: 14px -4px 0; border-radius: 22px; overflow: hidden; border: 1px solid rgba(42,38,32,.12); }
+.grr-art svg { display: block; width: 100%; height: auto; }
+.grr-rt path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: grrGrow 3.2s cubic-bezier(.3,.6,.2,1) .3s forwards; }
+.grr-rt path:nth-child(n+2) { animation-delay: 1s; } .grr-rt path:nth-child(n+4) { animation-delay: 1.8s; } .grr-rt path:nth-child(n+6) { animation-delay: 2.4s; }
+@keyframes grrGrow { to { stroke-dashoffset: 0; } }
+.grr-up circle { opacity: 0; animation: grrUp 4s ease-in-out infinite; animation-delay: calc(3.5s + var(--d)); }
+@keyframes grrUp { 0%, 100% { opacity: 0; } 40%, 60% { opacity: .9; } }
+.grr-s { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.grr-s li { display: grid; gap: 3px; padding: 12px; border-radius: 18px; background: #f6f3ec; }
+.grr-s i { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; background: #20301a; color: #fff; font-style: normal; font-size: 12.5px; font-weight: 600; }
+.grr-s li.out, .grr-s li.in { background: #fbf1dc; }
+.grr-s li.out i, .grr-s li.in i { background: #d9a441; color: #fff; }
+.grr-s li.in i svg { transform: rotate(180deg); }
+.grr-s b { margin-top: 4px; font-size: 14.5px; font-weight: 500; color: #20301a; }
+.grr-s small { font-size: 12px; line-height: 1.35; color: #4a5a3a; }
+.grr-f { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; font-size: 13px; font-weight: 500; color: #304023; }
+@media (prefers-reduced-motion: reduce) { .grr-rt path { animation: none; stroke-dashoffset: 0; } .grr-up circle { animation: none; opacity: .8; } }
+/* Feel better: title on top, then the pictures */
+.fbp::before { top: -6%; height: 30%; }
+.fbp-title { margin: 6px 0 26px; }
+/* Feel better: the five elements of balance, with things to do in each phase */
+.el5 { margin-top: 18px; padding: 16px; border-radius: 30px; background: #fff; border: 1px solid rgba(48,64,35,.1); box-shadow: 0 14px 32px -22px rgba(32,48,26,.45); }
+.el5-h small { font-size: 12px; font-weight: 500; color: #6c823e; }
+.el5-h b { display: block; margin-top: 2px; font-size: 24px; font-weight: 500; letter-spacing: -.02em; color: #20301a; }
+.el5-h p { margin: 4px 0 0; font-size: 13.5px; line-height: 1.4; color: #4a5a3a; }
+.el5-ph { display: flex; gap: 6px; margin-top: 12px; overflow-x: auto; scrollbar-width: none; }
+.el5-ph::-webkit-scrollbar { display: none; }
+.el5-ph button { flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 7px 11px; border-radius: 99px; border: 1px solid rgba(48,64,35,.14); background: #fff; color: #304023; font: 500 12.5px var(--font); cursor: pointer; }
+.el5-ph button i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+.el5-ph button em { font-style: normal; font-size: 10px; padding: 1px 6px; border-radius: 99px; background: rgba(32,48,26,.08); }
+.el5-ph button.on { background: #20301a; border-color: #20301a; color: #fff; }
+.el5-ph button.on em { background: rgba(255,255,255,.2); }
+.el5-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-top: 14px; }
+.el5-row button { display: grid; justify-items: center; gap: 5px; padding: 0; border: 0; background: none; color: #304023; font: 500 12px var(--font); cursor: pointer; }
+.el5-row span { width: 54px; height: 54px; display: grid; place-items: center; border-radius: 50%; background: color-mix(in srgb, var(--c) 14%, #fff); color: var(--c); transition: transform .35s cubic-bezier(.34,1.56,.64,1), background .3s; }
+.el5-row svg { width: 30px; height: 30px; }
+.el5-row button.on span { background: var(--c); color: #fff; transform: scale(1.06); box-shadow: 0 8px 18px -8px var(--c); }
+.el5-row button.on b { color: #20301a; }
+.el5-card { margin-top: 14px; padding: 14px; border-radius: 22px; background: color-mix(in srgb, var(--c) 9%, #fff); border: 1px solid color-mix(in srgb, var(--c) 22%, transparent); animation: hgIn .45s cubic-bezier(.2,.8,.2,1) both; }
+.el5-ct { display: flex; align-items: center; gap: 10px; }
+.el5-ct span { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 50%; background: var(--c); color: #fff; }
+.el5-ct svg { width: 24px; height: 24px; }
+.el5-ct b { display: block; font-size: 17px; font-weight: 500; color: #20301a; }
+.el5-ct small { font-size: 12px; color: #4a5a3a; }
+.el5-card ol { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; }
+.el5-card li { display: flex; gap: 9px; font-size: 13.5px; line-height: 1.4; color: #20301a; }
+.el5-card li i { flex: none; width: 20px; height: 20px; display: grid; place-items: center; border-radius: 50%; background: #fff; border: 1.5px solid var(--c); color: var(--c); font-style: normal; font-size: 11px; font-weight: 600; }
+.el5-card p { margin: 12px 0 0; padding-top: 10px; border-top: 1px dashed color-mix(in srgb, var(--c) 30%, transparent); font-size: 12.5px; line-height: 1.45; color: #4a5a3a; }
+@media (prefers-reduced-motion: reduce) { .el5-card { animation: none; } .el5-row span { transition: none; } }
+.el5-ph { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; overflow: visible; }
+.el5-ph button { justify-content: center; gap: 5px; padding: 7px 4px; font-size: 11.5px; }
