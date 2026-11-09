@@ -4697,6 +4697,23 @@ function teaWheel(info, w, td, steep, near, inPage) {
       <button class="tgw-cta" data-action="nav" data-to="tea/day-${w}">How to brew it ${icon('chevR', 15)}</button>
     </section>`;
 }
+// "How do you feel?": one pill per feeling, the chosen tea as a spec card (Apple style, like the four teas).
+function teaMoodCard(i) {
+  const [, n, why, brew, , warn, q] = TEA_GUIDE.find(g => g.k === 'feel').teas[i];
+  return `<div class="t4-dh"><img src="${teaPhoto(n, 200, 200)}" alt=""><div><small>${q.replace(/\?$/, '')}</small><b>${n}</b></div></div>
+    <p class="t4-why">${why}</p>
+    <dl class="t4-spec"><div><dt>${icon('cup', 15)}Brew</dt><dd>${brew}</dd></div></dl>
+    ${warn ? `<p class="t4-warn">${icon('heart', 13)} ${warn}</p>` : ''}
+    <button class="tmo-go" data-action="nav" data-to="tea/feel-${i}">The full guide ${icon('chevR', 14)}</button>`;
+}
+function teaMoods(sel) {
+  const T = TEA_GUIDE.find(g => g.k === 'feel').teas;
+  return `<section class="t4 tmo">
+    <header class="t4-h"><small>How do you feel?</small><h2>A tea for every mood.</h2><p>Pick how you feel right now.</p></header>
+    <div class="tmo-p">${T.map(([, n, , , , , q], i) => `<button class="${i === sel ? 'on' : ''}" data-action="teaMood" data-i="${i}" aria-pressed="${i === sel}"><img src="${teaPhoto(n, 80, 80)}" alt="" loading="lazy">${q.replace(/\?$/, '')}</button>`).join('')}</div>
+    <div class="t4-d tmo-d" aria-live="polite">${teaMoodCard(sel)}</div>
+  </section>`;
+}
 function viewTea() {
   const info = M.info, w = info ? dayWindow(info) : 'rising', td = TEA_DAY[w], k = ui.teaK, G = k && TEA_GUIDE.find(x => x.k === k);
   const steep = (td[3].match(/\d+(?:–\d+)?\s*min/) || [''])[0], near = w === 'flow-start' || w === 'flow-end' || w === 'premenstrual';
@@ -4705,11 +4722,12 @@ function viewTea() {
 
     ${cycleTeas(info)}
 
-    <div class="tg-sub"><b>How do you feel?</b><small>A tea for every mood</small></div>
-    <div class="tg-feel">${TEA_GUIDE.find(g => g.k === 'feel').teas.map(([, n, why, , ev, , q], i) => `<button class="tg-f" data-action="nav" data-to="tea/feel-${i}"><img src="${teaPhoto(n, 200, 200)}" alt="" loading="lazy"><b>${q}</b><span class="tg-fp">${n}</span><small>${why}</small></button>`).join('')}</div>
+    ${teaMoods(0)}
 
-    <div class="tg-sub"><b>Brew it right</b><small>Four small things that make it work</small></div>
-    <div class="tg-tips">${[['thermo', 'Water heat', 'Green tea and matcha at 80 °C. Herbs, roots and spices at a full boil.'], ['cup', 'Cover the cup', 'A saucer on top keeps the healing oils in your tea, not in the air.'], ['clock', 'Steep long enough', 'Herbs need 5 to 10 minutes. Roots like ginger like 10 to 15.'], ['drop', 'Warm around your period', 'Hot, never iced, from a few days before until bleeding ends.']].map(([ic, t, x]) => `<div class="tg-t"><span>${icon(ic, 18)}</span><b>${t}</b><p>${x}</p></div>`).join('')}</div>
+    <section class="t4 tbr">
+      <header class="t4-h"><small>Brew it right</small><h2>Four small things that make it work.</h2></header>
+      <dl class="t4-spec tbr-l">${[['thermo', 'Water heat', 'Green tea and matcha at 80 °C. Herbs, roots and spices at a full boil.'], ['cup', 'Cover the cup', 'A saucer on top keeps the healing oils in your tea, not in the air.'], ['clock', 'Steep long enough', 'Herbs 5 to 10 minutes, roots like ginger 10 to 15.'], ['drop', 'Warm around your period', 'Hot, never iced, from a few days before until bleeding ends.']].map(([ic, t, x]) => `<div><dt><span>${icon(ic, 17)}</span></dt><dd><b>${t}</b><small>${x}</small></dd></div>`).join('')}</dl>
+    </section>
     <p class="fine center">Herbal teas are gentle support, not medicine. Pregnant, on medication or unsure? Ask your doctor or midwife first.</p>
   </div>`;
 }
@@ -7899,6 +7917,7 @@ const actions = {
       <p>${sel.nature === 'cool' && warm ? 'A cooling food. Your period is close, so cook it and add ginger or cinnamon.' : NATURE[sel.nature][1]}</p></div><button class="sfc-x" data-action="szClose" aria-label="Close">${icon('close', 14)}</button>`;
     det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
   },
+  teaMood: (d, el) => { const box = el.closest('.tmo'), det = box.querySelector('.tmo-d'); box.querySelectorAll('.tmo-p button').forEach(b => { b.classList.toggle('on', b === el); b.setAttribute('aria-pressed', b === el); }); det.innerHTML = teaMoodCard(+d.i); det.style.animation = 'none'; void det.offsetWidth; det.style.animation = ''; },
   ctPick: (d, el) => { const box = el.closest('.t4'), ph = box.dataset.ph, det = box.querySelector('.t4-d'); box.querySelectorAll('.t4-t').forEach(b => { b.classList.toggle('on', b === el); b.setAttribute('aria-pressed', b === el); }); det.innerHTML = t4Detail(ph, +d.i); det.style.animation = 'none'; void det.offsetWidth; det.style.animation = ''; },
   szClose: (d, el) => { const box = el.closest('.szp'); box.querySelector('.szp-det').hidden = true; box.querySelectorAll('.szp-i.on').forEach(b => b.classList.remove('on')); },
   seasonFood: d => { ui.seasonFood = ui.seasonFood === d.f ? null : d.f; render(); if (ui.seasonFood) document.querySelector('.sf-detail')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); },

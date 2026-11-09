@@ -10569,3 +10569,19 @@ section.ct .ct-tx { text-align: center; padding: 0 20%; }
 .t4-t { align-content: start; }
 .t4-t small, .t4-dh small { color: color-mix(in srgb, var(--c) 55%, #20301a); }
 .t4-t b { min-height: 2.4em; display: flex; align-items: flex-start; }
+/* Tea page: mood pills + one spec card; Brew it right as a clean list */
+.tmo { --c: #6c823e; }
+.tmo-p { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.tmo-p button { display: inline-flex; align-items: center; gap: 7px; padding: 4px 13px 4px 4px; border-radius: 99px; border: 1px solid rgba(32,48,26,.08); background: #fff; color: #20301a; font: 500 13.5px var(--font); box-shadow: 0 6px 14px -12px rgba(32,48,26,.4); cursor: pointer; transition: background .25s, color .25s; }
+.tmo-p img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+.tmo-p button.on { background: #20301a; border-color: #20301a; color: #fff; }
+.tmo-d .t4-dh img { object-fit: cover; }
+.tmo-go { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; padding: 11px 18px; border-radius: 99px; border: 0; background: #20301a; color: #fff; font: 500 14px var(--font); cursor: pointer; }
+.tbr { --c: #6c823e; }
+.tbr-l { margin-top: 16px; background: #fff; border: 1px solid rgba(32,48,26,.06); border-radius: 22px; box-shadow: 0 10px 24px -18px rgba(32,48,26,.35); }
+.tbr-l div { align-items: center; justify-content: flex-start; gap: 14px; padding: 14px 16px; }
+.tbr-l dt span { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 12px; background: #eef1e6; color: #4f6a2a; }
+.tbr-l dt svg { top: 0; }
+.tbr-l dd { text-align: left; display: grid; gap: 2px; }
+.tbr-l dd b { font-size: 15px; font-weight: 600; color: #20301a; }
+.tbr-l dd small { font-size: 13px; font-weight: 400; line-height: 1.4; color: #4a5a3a; }
