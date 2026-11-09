@@ -2212,10 +2212,11 @@ function plateSection(current) {
     ${plTonight(phase, warm)}
   </section>`;
 }
-// The floating cup for a tea: matcha has its own 3D bowl, the warm spice teas a chai cup, the rest a glass cup.
+// The floating cup for a tea: matcha and green tea have their own 3D matcha bowl, the warm spice teas a chai cup, the rest a glass cup.
 const CHAI_RE = /ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i;
-const teaCupImg = n => `images/${/matcha/i.test(n) ? 'cup-matcha' : CHAI_RE.test(n) ? 'cup-chai' : 'cup-glass'}.webp`;
-const teaCupAttr = n => /matcha/i.test(n) ? ' data-model="models/matcha.glb"' : '';
+const MATCHA_RE = /matcha|green tea/i;
+const teaCupImg = n => `images/${MATCHA_RE.test(n) ? 'cup-matcha' : CHAI_RE.test(n) ? 'cup-chai' : 'cup-glass'}.webp`;
+const teaCupAttr = n => MATCHA_RE.test(n) ? ' data-model="models/matcha.glb"' : '';
 // Tea for today as a full recommendation: the floating cup, the tea and why.
 function plTea() {
   const td = TEA_DAY[M.info ? dayWindow(M.info) : 'rising'];
@@ -3942,16 +3943,20 @@ const DISH_3D = {
   miso: { model: 'models/miso.glb', img: 'images/dish-miso.webp', fit: 1.2 },
   stew: { model: 'models/stew.glb', img: 'images/dish-stew.webp', fit: 1.75 },
   veg: { model: 'models/veg-plate.glb', img: 'images/dish-veg.webp', fit: 1.45, steam: 0 },
+  salmonSalad: { model: 'models/salad-a.glb', img: 'images/dish-salad-a.webp', fit: 1.45, steam: 0 },
+  greenSalad: { model: 'models/salad-b.glb', img: 'images/dish-salad-b.webp', fit: 1.45, steam: 0 },
   taco: { model: 'models/taco.glb', img: 'images/dish-taco.webp', fit: 1.2, tileFit: 1.4, heroFit: 1.55, elev: 0.5, steam: 0, hero: true },
 };
 // Which 3D model looks most like today's recipe; no close match keeps the recipe's own photo.
 const DISH_MATCH = [
   [/taco/i, 'taco'],
-  [/oxtail|stew|curry|lentil soup|squash.*soup|goulash|chili/i, 'stew'],
-  [/stir-fry|pesto noodles|rainbow|wraps|salmon salad|fajita/i, 'veg'],
-  [/miso/i, 'miso'], [/ramen/i, 'ramen'], [/pho|bone broth/i, 'pho'],
+  [/salmon-salad|salmon salad/i, 'salmonSalad'], [/living-green-salad|green salad|crunch club/i, 'greenSalad'],
+  [/oxtail|stew|curry|iron-lentil-soup|lentil soup|squash.*soup|goulash|chili/i, 'stew'],
+  [/stir-fry|courgette-pesto|pesto noodles|rainbow|wraps|fajita/i, 'veg'],
+  [/miso/i, 'miso'], [/ramen/i, 'ramen'], [/pho|bone-broth|bone broth/i, 'pho'],
 ];
-const dishModel = r => { const m = DISH_MATCH.find(([re]) => re.test(r.name)); return m ? DISH_3D[m[1]] : null; };
+// matched on the recipe id as well as its name, so a dish keeps its model when it gets a new name
+const dishModel = r => { const k = `${r.id || ''} ${r.name}`, m = DISH_MATCH.find(([re]) => re.test(k)); return m ? DISH_3D[m[1]] : null; };
 const DISH_DAY = {
   'flow-start': { m: 'pho', t: 'Beef pho with ginger', why: 'Bone broth and beef bring back the iron you lose.' },
   'flow-end': { m: 'ramen', t: 'Bone broth ramen with egg', why: 'Broth, egg and noodles to rebuild your energy.' },
