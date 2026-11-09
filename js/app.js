@@ -285,10 +285,22 @@ const FRIENDS = {
 const FRIENDS_TILE = { menstrual: ['Film night at home', 'A slow walk', 'Big parties'], follicular: ['A new class together', 'Meet someone new', 'Cancelling plans'], ovulatory: ['Dinner or dancing', 'The big talk', 'Hiding at home'], luteal: ['Tea with one friend', 'Cook together', 'Late arguments'] };
 const TOPIC_PIC = { eat: 'images/season-veg.webp', friends: 'images/partner-hands.jpg', stretch: 'images/move-walk.webp', meditate: 'images/move-meditate.webp', tea: 'images/tea-ginger.webp' };
 // Friends tile: how full her social battery typically is today, as a ring (from MIND_GUIDE's social level 0–3).
+// Social battery by cycle day: a smoothed average of how sociable women tend to feel (Pierson 2021 Clue data, Hromatko 2023,
+// Romans 2012 review). Low while bleeding, rising with estrogen, highest near ovulation, a steady second half, a dip before the period.
+// The 28-day curve is stretched to her cycle: period days stay as they are, the rest of the first half scales to her ovulation day,
+// the second half scales to her luteal length.
+const SOCIAL_28 = [28, 33, 42, 51, 58, 64, 69, 74, 78, 82, 86, 89, 92, 93, 89, 83, 79, 79, 80, 80, 79, 76, 72, 66, 58, 49, 40, 33];
+function socialPct(info) {
+  const { cd, L, ov } = info, at = x => { const i = Math.max(1, Math.min(28, x)), a = Math.floor(i), b = Math.min(28, a + 1); return SOCIAL_28[a - 1] + (SOCIAL_28[b - 1] - SOCIAL_28[a - 1]) * (i - a); };
+  if (cd > L) return 30;
+  if (cd <= 3) return at(cd);
+  if (cd <= ov) return Math.round(at(3 + (cd - 3) * 11 / Math.max(1, ov - 3)));
+  return Math.round(at(14 + (cd - ov) * 14 / Math.max(1, L - ov)));
+}
 function socialBattery(info) {
-  const G = info && MIND_GUIDE[dayWindow(info)]; if (!G) return '';
-  const lv = G.social + 1, pct = lv * 25;
-  return `<span class="bat3" role="img" aria-label="Social battery about ${pct}%"><span class="bat3-body">${[1, 2, 3, 4].map(i => `<span class="bat3-c ${i <= lv ? 'on' : ''}" style="--d:${i * 160}ms"></span>`).join('')}<b class="dotnum">${pct}%</b></span><span class="bat3-tip"></span></span>`;
+  if (!info) return '';
+  const pct = socialPct(info), cells = 5, on = pct / (100 / cells);
+  return `<span class="bat3" role="img" aria-label="Social battery about ${pct}%"><span class="bat3-body">${Array.from({ length: cells }, (_, i) => { const f = Math.max(0, Math.min(1, on - i)); return `<span class="bat3-c ${f > 0 ? 'on' : ''}" style="--d:${(i + 1) * 140}ms;--f:${f.toFixed(2)}"></span>`; }).join('')}<b class="dotnum">${pct}%</b></span><span class="bat3-tip"></span></span>`;
 }
 function viewTopic(k) {
   const info = M.info; if (!info || !TOPIC_PIC[k]) return viewMissing();
@@ -310,7 +322,7 @@ function viewTopic(k) {
   else body = `<section class="card tp-card tp-wrap">${todayTiles(info, k)}</section>`;
   return `${topbar(head[0], { back: true })}
   <div class="pad tp">
-    <section class="tp-hero"><img src="${TOPIC_PIC[k]}" alt=""><span class="tp-hero-t"><small>Day ${Math.min(info.cd, info.L)} · ${P.name}</small><b>${head[1]}</b></span></section>
+    ${k === 'tea' ? (() => { const td = TEA_DAY[w], st = (td[3].match(/\d+(?:–\d+)?\s*min/) || [''])[0]; return teaWheel(info, w, td, st, w === 'flow-start' || w === 'flow-end' || w === 'premenstrual', true); })() : `<section class="tp-hero"><img src="${TOPIC_PIC[k]}" alt=""><span class="tp-hero-t"><small>Day ${Math.min(info.cd, info.L)} · ${P.name}</small><b>${head[1]}</b></span></section>`}
     ${body}
   </div>`;
 }
@@ -409,6 +421,28 @@ const GROUND_ART = [
 ];
 const groundCta = () => `<button class="gr-cta" data-action="nav" data-to="ground"><img src="images/ground-roots.jpg" alt="" loading="lazy"><span><b>Ground yourself</b><small>Bare feet on the earth · 15 min</small></span>${icon('chevR', 16)}</button>`;
 const habitsCta = () => `<button class="gr-cta" data-action="nav" data-to="habits"><img src="${carePhoto('lemon-water', 300) || 'images/tea-ginger.webp'}" alt="" loading="lazy"><span><b>Daily habits that help</b><small>Your checklist · small things, every day</small></span>${icon('chevR', 16)}</button>`;
+// Energy takers and givers on a paper card, laid over a collage of spirals found in nature. Tap what drained you and what you gave yourself today.
+const EN_TAKE = ['Focusing on the past', 'Inconsistent sleep', 'Mess and clutter', 'Sitting all day', 'Social media', 'Overworking', 'Dehydration', 'Screen time', 'Resentment', 'Negativity', 'Junk food', 'The news', 'Alcohol', 'Stress', 'Fear'];
+const EN_GIVE = ['Nature', 'Resting', 'Sunlight', 'Courage', 'Kind thoughts', 'Gratitude', 'Hydration', 'Meditation', 'Movement', 'Breathwork', 'Community', 'Decluttering', 'Consistent sleep', 'Whole food', 'Learning new things'];
+const enSum = (g, t) => !g && !t ? 'Tap what drained you and what you gave yourself today' : `<b class="dotnum">${g}</b> given · <b class="dotnum">${t}</b> taken${g > t ? ' · your cup is filling' : t > g ? ' · add one giver' : ''}`;
+function groundEnergy() {
+  const S = ui.energy || {}, col = (L, k) => L.map(x => `<button class="${S[k + x] ? 'on' : ''}" data-action="enTap" data-k="${esc(k + x)}" aria-pressed="${!!S[k + x]}">${x}</button>`).join('');
+  const ring = w => `<svg class="en-ring" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true"><path d="M8 34 C 10 10, 190 6, 192 28 C 194 50, 30 56, 14 40 C 6 30, 40 14, 70 12"/></svg>`;
+  return `<section class="en">${[0, 1, 2, 3, 4, 5].map(i => `<span class="en-sp s${i}" aria-hidden="true"></span>`).join('')}
+    <div class="en-paper"><div class="en-cols"><div class="en-t"><h3>Energy takers${ring()}</h3>${col(EN_TAKE, 't:')}</div><div class="en-g"><h3>Energy givers${ring()}</h3>${col(EN_GIVE, 'g:')}</div></div>
+      <p class="en-sum">${enSum(Object.keys(S).filter(k => S[k] && k.startsWith('g:')).length, Object.keys(S).filter(k => S[k] && k.startsWith('t:')).length)}</p></div></section>`;
+}
+// Ground with a tree: four quiet ink panels, one practice each.
+const TREE_STEPS = [
+  ['Meet the tree', 'Rest both palms on the trunk. Breathe slowly and feel the bark, cool or warm, under your hands.'],
+  ['Share one light', 'Picture a soft white glow around your body, then let it widen until it holds the tree as well.'],
+  ['Close the loop', 'Breathe in light through your crown, send it up over the treetop, down through the roots and back into your feet.'],
+  ['Sit and settle', 'Sit with your back to the trunk, eyes closed, for ten minutes. Let the tree hold you upright.'],
+];
+function groundTree() {
+  return `<section class="gtr"><div class="gtr-h"><small>A tree practice</small><b>Ground with a tree</b><p>Find a big, old tree you like. Ten quiet minutes, four steps.</p></div>
+    <ol class="gtr-g">${TREE_STEPS.map(([t, x], i) => `<li class="gtr-c" style="--i:${i}"><img src="images/tree-ink-${i}.webp" alt="" loading="lazy" decoding="async"><span><b><span class="dotnum">${i + 1}</span> ${t}</b><small>${x}</small></span></li>`).join('')}</ol></section>`;
+}
 function viewGround() {
   const info = M.info, ph = info && info.phase, P = ph && GROUND_PHASE[ph];
   const late = info && info.daysToPeriod <= 3 && !info.isPeriod, phd = P && (late && ph === 'luteal' ? P.d : P.d);
@@ -416,11 +450,14 @@ function viewGround() {
   const open = ui.grStudy;
   return `${topbar('Grounding', { back: true })}
   <div class="pad gr">
-    <section class="gr-hero"><video class="dpt-vid" src="images/ground-cat.mp4" poster="images/ground-cat.webp" muted loop playsinline preload="none" aria-label="A ginger cat rolling happily in the warm dust"></video>
+    <section class="gr-hero gr-tree"><img class="gr-tree-img" src="images/ground-tree.webp" alt="A hand resting on a giant redwood, light circling up into the sky" decoding="async">
       <span class="gr-hero-t"><small>Earthing</small><b>Ground yourself</b><em>Bare skin on the earth. Your body takes on the ground’s calm, steady charge.</em></span>
       <span class="gr-hero-n"><b class="dotnum">15</b><small>min a day</small></span></section>
 
-    ${sectionTitle('Try it now')}
+    ${groundEnergy()}
+    ${groundTree()}
+
+        ${sectionTitle('Try it now')}
     <section class="card gr-card">
       <div class="gr-flow">${[['Shoes off', 'Skin touches earth'], ['Stay 15 min', 'Phone away'], ['Breathe down', 'Feel your soles']].map(([a, b], i) => `<span><i>${i + 1}</i><b>${a}</b><small>${b}</small></span>`).join('<u></u>')}</div>
       ${card('ground-now', 'Grounding', GROUND_NOW)}
@@ -2063,14 +2100,25 @@ const EB_PIC = [[/kefir/i, () => foodPhoto('Kefir', 240)], [/yoghurt/i, () => fo
   [/red date/i, () => teaPhoto('Ginger & red dates', 240, 240)], [/ginger/i, () => teaPhoto('Ginger', 240, 240)], [/chamomile/i, () => teaPhoto('Chamomile', 240, 240)], [/nettle/i, () => teaPhoto('Nettle leaf', 240, 240)]];
 const EB_TINT = { dairy: ['#fbf3e6', '#f3e2c4'], drinks: ['#f0f4e6', '#dce7c8'], supps: ['#f3edf8', '#e2d6f0'] };
 const sfPic = f => f[4] ? (f[4][0] === 'tea' ? teaPhoto(f[4][1], 240, 240) : foodPhoto(f[4][1], 240)) : null;
+// Superfoods as a white poster of real cut-out photos, one set per phase. Tap a food for what it does and how much.
+const SF_CUT = { Ginger: ['ginger', 'Fresh root'], 'Goji berries': ['goji', 'Iron + vitamin C'], 'Blackstrap molasses': ['molasses', 'Iron & minerals'], 'Turmeric with black pepper': ['turmeric', 'With a pinch of pepper'], Cinnamon: ['cinnamon', 'Ceylon bark'], Nettle: ['nettle', 'Mineral-rich leaf'],
+  'Broccoli sprouts': ['broccoli-sprouts', 'Raw, sulforaphane'], 'Ground flaxseed': ['flaxseed', 'Freshly ground'], 'Pumpkin seeds': ['pumpkin-seeds', 'Zinc'], Sauerkraut: ['sauerkraut', 'Raw & fermented'], Parsley: ['parsley', 'Fresh herb'], 'Raw honey': ['raw-honey', 'Unheated'],
+  'Wild blueberries': ['blueberries', 'Antioxidants'], 'Chia seeds': ['chia', 'Soaked'], 'Brazil nuts': ['brazil-nuts', 'Selenium'], 'Fresh mint': ['mint', 'Cooling herb'], Coriander: ['coriander', 'Fresh herb'],
+  'Raw cacao': ['cacao', 'Magnesium'], 'Sesame seeds and tahini': ['tahini', 'Zinc & calcium'], 'Sunflower seeds': ['sunflower-seeds', 'Vitamin E & B6'], 'Fennel seeds': ['fennel-seeds', 'For bloating'] };
+const SF_TITLE = { menstrual: 'Warm & rebuild', follicular: 'Fresh & clear', ovulatory: 'Light & bright', luteal: 'Calm & steady' };
 function superInner(phase) {
-  const S = SUPERFOODS[phase], warm = warmWindow(M.info) && phase === (M.info && M.info.phase);
-  const items = S.list.filter(f => !(f[5] && myDiet() === 'vegan')).map(f => { const pic = sfPic(f), face = pic ? `<img src="${pic}" alt="" loading="lazy"><i>${f[0]}</i>` : `<em>${f[0]}</em>`;
-    return { n: f[1], face, panel: `<span class="ebp-f">${face}</span><span class="ebp-t"><b>${f[1]}</b><small>${f[2]}</small><span class="ebp-d"><span>${icon('drop', 12)} ${f[3]}</span></span></span>` }; });
-  return `<p class="eb-lead">${S.lead}</p>
-      <div class="eb-grid" style="--t1:#fbf1e4;--t2:#f2dcc0">${items.map((x, i) => `<button class="eb-i ${i ? '' : 'on'}" data-action="ebPick" style="--i:${i}"><span class="eb-b">${x.face}</span><small>${x.n}</small><template>${x.panel}</template></button>`).join('')}</div>
-      <div class="eb-panel"><div class="ebp-in" aria-live="polite">${items[0].panel}</div>${warm ? `<p class="eb-warm">${icon('sun', 13)} These days: spices in warm food and drinks, nothing raw or iced.</p>` : ''}</div>
-      <p class="eg-note">Food-sized amounts. Ask your doctor or pharmacist if you are pregnant or take medication.</p>`;
+  const S = SUPERFOODS[phase], now = M.info && M.info.phase, warm = warmWindow(M.info) && phase === now;
+  const list = S.list.filter(f => !(f[5] && myDiet() === 'vegan'));
+  const item = (f, i) => { const [file, tag] = SF_CUT[f[1]] || [];
+    return `<button class="sfc-i" style="--i:${i}" data-action="sfPick" data-i="${i}" aria-expanded="false">${file ? `<img src="images/sf/${file}.webp" alt="" loading="lazy" decoding="async">` : `<em>${f[0]}</em>`}<b>${f[1]}</b>${tag ? `<small>${tag}</small>` : ''}</button>`; };
+  return `<section class="sfc" data-phase="${phase}">
+      <div class="sfc-tabs" role="tablist">${PHASE_ORDER.map(p => `<button role="tab" aria-selected="${p === phase}" class="${p === phase ? 'on' : ''}" data-action="sfPhase" data-v="${p}" style="--c:${PH_HEX[p]}">${PHASES[p].name}${p === now ? '<i></i>' : ''}</button>`).join('')}</div>
+      <header class="sfc-h"><small>Real superfoods</small><h3>${SF_TITLE[phase]}</h3><p>${S.lead}</p></header>
+      <div class="sfc-grid">${list.map(item).join('')}</div>
+      <div class="sfc-det" aria-live="polite" hidden></div>
+      ${warm ? `<p class="sfc-warm">${icon('sun', 13)} These days: spices in warm food and drinks, nothing raw or iced.</p>` : ''}
+      <footer class="sfc-f"><span>Food-sized amounts</span><span>Ask your doctor if pregnant or on medication</span></footer>
+    </section>`;
 }
 function eatCatInner(phase, cat) {
   if (cat === 'super') return superInner(phase);
@@ -3724,6 +3772,20 @@ function suppStack(on, now) {
     ${apart ? `<p class="sd-note">${icon('clock', 12)} Iron in the morning, calcium later: keep them 2 hours apart</p>` : `<p class="sd-note">${icon('check', 12)} Tap a capsule for the dose, the timing and the study</p>`}
   </section>`;
 }
+// A real hand holding the most useful supplements; each pill is labelled and tappable.
+const SU_HAND = [['b-complex', 'B-complex', 42.5, 15.0], ['ginger', 'Ginger', 44.1, 26.0], ['iron', 'Iron', 44.1, 33.4], ['zinc', 'Zinc', 44.1, 39.6], ['vitamin-d', 'Vitamin D3 + K2', 44.8, 47.1], ['omega-3', 'Omega-3', 46.1, 55.0], ['magnesium', 'Magnesium', 47.8, 62.9], ['probiotic', 'Probiotic', 48.0, 69.6]];
+function suppHand(now) {
+  const L = SU_HAND.filter(([id]) => SUPP_LIB.some(x => x.id === id));
+  return `<section class="suh">
+    <div class="suh-ph"><img src="images/supp-hand.webp" alt="An open hand holding eight supplements" decoding="async">
+      <p class="suh-cap">the gaps food can’t always fill<small>tap one to see what it does</small></p>
+      ${L.map(([id, n, x, y], i) => { const on = now && suppPhases(SUPP_LIB.find(s => s.id === id)).includes(now);
+        return `<button class="suh-p" style="--x:${x}%;--y:${y}%;--i:${i}" data-action="suPick" data-id="${id}" aria-label="${n}"><i class="suh-dot"></i><span class="suh-l">${n}${on ? '<em></em>' : ''}</span></button>`; }).join('')}
+    </div>
+    <div class="suh-det" aria-live="polite" hidden></div>
+    ${now ? `<p class="suh-key"><em></em>Helps most in your ${PHASES[now].name.toLowerCase()} phase</p>` : ''}
+  </section>`;
+}
 function viewSupps() {
   const now = M.info && M.info.phase, tab = ui.supTab || (now ? 'now' : 'all');
   const L = SUPP_LIB.filter(x => ttc() || !/prenatal|coq10/.test(x.id)), on = L.filter(x => now && suppPhases(x).includes(now));
@@ -3731,7 +3793,8 @@ function viewSupps() {
   const row = x => `<button class="sup-row" data-action="nav" data-to="supp/${x.id}"><span class="sup-sym ${x.han ? 'han' : ''}">${x.sym}</span><span class="sup-t"><b>${x.name}</b><small>${x.dose} · ${x.when.toLowerCase()}</small><span class="sup-meta">${evBadge(x.ev)}${dots(x)}</span></span>${icon('chevR', 16)}</button>`;
   return `${topbar('Supplements', { back: true })}<div class="pad sp2">
     <h1 class="page-h">Fill the <span>gaps</span></h1>
-    <p class="body sm">Food comes first. These cover what food alone often can’t, timed to your cycle, with the dose and the study behind each one.</p>
+    <p class="body sm">Food comes first. These cover what food alone often can’t, timed to your cycle.</p>
+    ${suppHand(now)}
     ${now && on.length ? suppStack(on, now) : ''}
     <div class="seg">${(now ? [['now', 'For now'], ['all', 'All']] : [['all', 'All']]).map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="supTab" data-v="${k}">${l}</button>`).join('')}</div>
     <section class="card glass sup-list">${(tab === 'now' && on.length ? on : L).map(row).join('')}</section>
@@ -4420,21 +4483,61 @@ const TEA_REASONS = {
   premenstrual: [['heart', 'Softens PMS', 'Chamomile calms your nerves and lifts a low mood.'], ['drop', 'Gets ahead of cramps', 'Ginger works best when you start a day or two before.'], ['thermo', 'Warm only', 'Chinese medicine keeps everything warm before your period.']],
 };
 const TEA_WIN = [['flow-start', 'Period · first days'], ['flow-end', 'End of period'], ['rising', 'Early rise'], ['building', 'Strong days'], ['peak', 'Ovulation'], ['settle', 'After ovulation'], ['focus', 'Second half'], ['premenstrual', 'Before your period']];
+// Four cycle teas as one overhead photo of glass mugs; the recipe is written on top of each tea.
+const CYCLE_TEAS = [
+  ['menstrual', 'Warm & Ease', 'cramps-0', ['fresh ginger', 'orange', 'cinnamon'], 'Simmer 10 min · eases cramps'],
+  ['follicular', 'Fresh Start', 'heavy-0', ['nettle leaf', 'fresh mint', 'lemon'], 'Steep 10 min · refills minerals'],
+  ['ovulatory', 'Glow', 'feel-11', ['hibiscus', 'rose petals', 'lemon'], 'Steep 5 min · antioxidants'],
+  ['luteal', 'Calm Before', 'sleep-0', ['chamomile', 'lavender', 'vanilla'], 'Covered 10 min · calms PMS']];
+function cycleTeas(info) {
+  const now = info && info.phase;
+  return `<section class="ct"><div class="ct-h"><small>Your four cycle teas</small><b>One for every phase</b></div>
+    <div class="ct-g">${CYCLE_TEAS.map(([ph, t, to, ing, how], i) => `<button class="ct-c q${i} ${ph === now ? 'now' : ''}" data-action="nav" data-to="tea/${to}" style="--c:${PH_HEX[ph]}">
+      <span class="ct-t">${t}${ph === now ? '<i>now</i>' : ''}</span>
+      <span class="ct-m"><span class="ct-ph" aria-hidden="true"></span><span class="ct-tx"><ul>${ing.map(x => `<li>${x}</li>`).join('')}</ul><em>${how}</em></span></span>
+      <span class="ct-p">${PHASES[ph].name}</span></button>`).join('')}</div></section>`;
+}
+// Today's tea as a benefit wheel: the turning 3D cup in the middle, what it does for her all around it.
+const TEA_WHEEL = {
+  'flow-start': ['Eases cramps', 'Warms your belly', 'Settles nausea', 'Steadies blood sugar', 'Calms inflammation', 'Better circulation'],
+  'flow-end': ['Refills iron', 'Calcium & magnesium', 'Energy comes back', 'Strong hair & nails', 'Gentle every day', 'Caffeine free'],
+  rising: ['Calm focus', 'Antioxidants', 'Steady blood sugar', 'Kind to your heart', 'Supports metabolism', 'Gut friendly'],
+  building: ['Steady energy', 'Calm focus', 'Whole leaf antioxidants', 'Steady blood sugar', 'Supports metabolism', 'Clear, calm skin'],
+  peak: ['Cools you down', 'Vitamin C', 'Kind to your heart', 'Healthy blood pressure', 'Antioxidants', 'For glow days'],
+  settle: ['Calms restlessness', 'Better sleep', 'Lifts your mood', 'Eases tension', 'Easy digestion', 'Caffeine free'],
+  focus: ['Clearer skin', 'Balances androgens', 'Eases bloating', 'Easy digestion', 'Fresh and light', 'Caffeine free'],
+  premenstrual: ['Softens PMS', 'Ahead of cramps', 'Calms your nerves', 'Deeper sleep', 'Settles digestion', 'Warming'],
+};
+function teaWheel(info, w, td, steep, near, inPage) {
+  const R = 86, A = [0, 60, 120, 180, 240, 300];
+  const labels = (TEA_WHEEL[w] || []).map((t, i) => {
+    const a = A[i] * Math.PI / 180, x = Math.round(R * Math.sin(a)), y = Math.round(-R * Math.cos(a)), side = Math.abs(x) < 4 ? (y < 0 ? 't' : 'b') : x > 0 ? 'r' : 'l';
+    const pos = side === 't' || side === 'b' ? `left:50%;top:calc(50% + ${y + (side === 't' ? -12 : 12)}px)` : side === 'r' ? `left:calc(50% + ${x + 10}px);top:calc(50% + ${y}px)` : `right:calc(50% + ${-x + 10}px);top:calc(50% + ${y}px)`;
+    return `<i class="tgw-dot" style="left:calc(50% + ${x}px);top:calc(50% + ${y}px)"></i><span class="tgw-l ${side}" style="${pos};--i:${i}">${t}</span>`;
+  }).join('');
+  return `<section class="tgw${inPage ? ' in-page' : ''}">
+      ${inPage ? '' : `<button class="tgw-back" data-action="back" aria-label="Back">${icon('chevL', 20)}</button>`}
+      <small class="tgw-k">${info ? `Day ${info.cd} · ${PHASES[info.phase].name}` : 'Your tea today'}</small>
+      <h1 class="tgw-t">${td[1].replace(/ & /, ' <em>&amp;</em> ')}<span>benefits</span></h1>
+      <div class="tgw-stage"><span class="tgw-ring" aria-hidden="true"></span>${labels}
+        <span class="cup3d-w tgw-cup"><img src="${teaCupImg(td[1])}" alt="" decoding="async"><canvas class="teacup3d"${teaCupAttr(td[1])} aria-label="${td[1]}, turning slowly"></canvas></span></div>
+      <p class="tgw-why">${td[2]}</p>
+      <span class="tgw-chips">${steep ? `<span>${icon('clock', 13)} ${steep}</span>` : ''}<span>${icon('thermo', 13)} ${near ? 'Hot' : 'Warm'}</span></span>
+      <button class="tgw-cta" data-action="nav" data-to="tea/day-${w}">How to brew it ${icon('chevR', 15)}</button>
+    </section>`;
+}
 function viewTea() {
   const info = M.info, w = info ? dayWindow(info) : 'rising', td = TEA_DAY[w], k = ui.teaK, G = k && TEA_GUIDE.find(x => x.k === k);
   const steep = (td[3].match(/\d+(?:–\d+)?\s*min/) || [''])[0], near = w === 'flow-start' || w === 'flow-end' || w === 'premenstrual';
   return `<div class="pad tg">
-    <section class="tg-hero tg-3d"><img src="${teaPhoto(td[1], 900, 1100)}" alt="" decoding="async"><span class="tg-shade"></span><span class="tg-studio" aria-hidden="true"></span><canvas class="teacup3d"${teaCupAttr(td[1])} aria-label="${td[1]}, turning slowly. Drag to turn it, or up and down to look inside."></canvas>
-      <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
-      <div class="tg-copy"><small>${info ? `Day ${info.cd} · ${PHASES[info.phase].name} · ` : ''}Your tea today</small><h1>${td[1]}</h1><p>${td[2]}</p>
-        <span class="tg-chips">${steep ? `<span>${icon('clock', 13)} ${steep}</span>` : ''}<span>${icon('thermo', 13)} ${near ? 'Hot' : 'Warm'}</span></span>
-        <button class="tg-cta" data-action="nav" data-to="tea/day-${w}">How to brew it ${icon('chevR', 15)}</button></div></section>
+    ${teaWheel(info, w, td, steep, near)}
 
     <section class="card tg-why"><div class="tg-k"><b>Why this tea today</b>${evBadge(td[4])}</div>
       ${TEA_REASONS[w].map(([ic, t, x], i) => `<div class="tg-r"><span class="tg-ri" style="--i:${i}">${icon(ic, 18)}</span><div><b>${t}</b><p>${x}</p></div></div>`).join('')}
       <div class="tg-brew">${icon('cup', 16)} <span>${td[3]}</span></div></section>
 
     <div class="tg-title"><small>Everything in one place</small><h2>The ultimate <em>tea guide</em></h2></div>
+    ${cycleTeas(info)}
 
     <div class="tg-sub"><b>How do you feel?</b><small>A tea for every mood</small></div>
     <div class="tg-feel">${TEA_GUIDE.find(g => g.k === 'feel').teas.map(([, n, why, , ev, , q], i) => `<button class="tg-f" data-action="nav" data-to="tea/feel-${i}"><img src="${teaPhoto(n, 200, 200)}" alt="" loading="lazy"><b>${q}</b><span class="tg-fp">${n}</span><small>${why}</small></button>`).join('')}</div>
@@ -4852,8 +4955,7 @@ function uvCurve(hours) {
   // one emoji per stretch of the day with the same advice, sitting inside the mountain at that stretch's middle
   const runs = []; for (let h = Math.max(A, lit[0]); h <= Math.min(B, lit[lit.length - 1]); h++) { const z = uvZone(hours[h]); if (runs.length && runs[runs.length - 1].z === z) runs[runs.length - 1].b = h; else runs.push({ z, a: h, b: h }); }
   const used = [...new Set(runs.map(r => r.z))].sort();
-  const emo = runs.map(r => { const m = (r.a + r.b) / 2, u = Math.max(hours[Math.floor(m)], hours[Math.ceil(m)]), hgt = Y1 - y(u);
-    return hgt < 30 ? '' : `<text x="${f(x(m))}" y="${f(Y1 - Math.min(hgt * .42, hgt - 24) + 7)}" text-anchor="middle" class="uvc-e">${UV_ZONES[r.z][1]}</text>`; });
+  const emo = []; // no emojis inside the mountain, the colours and the key say it
   const now = new Date(), nh = now.getHours() + now.getMinutes() / 60, nu = uvAt(hours, now);
   return `<svg class="uvc" viewBox="0 0 ${W} 196" width="100%" role="img" aria-label="UV through the day, highest ${peak.toFixed(1)} at ${String(pk).padStart(2, '0')}:00">
     <defs><linearGradient id="uvc-g" gradientUnits="userSpaceOnUse" x1="0" y1="${Y1}" x2="0" y2="${f(y(peak))}">${stops}</linearGradient>
@@ -4870,7 +4972,7 @@ function uvCurve(hours) {
     ${[6, 9, 12, 15, 18].filter(h => h > A && h < B).map(h => `<text x="${f(x(h))}" y="${Y1 + 14}" text-anchor="middle" class="uvc-h">${String(h).padStart(2, '0')}:00</text>`).join('')}
     ${Array.from({ length: Math.floor(top / 2) + 1 }, (_, i) => i * 2).map(u => `<text x="${W - 4}" y="${f(y(u) + 4)}" text-anchor="end" class="uvc-r">${u}</text>`).join('')}
   </svg>
-  <div class="uvc-key">${used.map(z => `<span class="z${z}">${UV_ZONES[z][1]} ${UV_ZONES[z][2]}</span>`).join('')}</div>`;
+  <div class="uvc-key">${used.map(z => `<span class="z${z}"><i></i>${UV_ZONES[z][2]}</span>`).join('')}</div>`;
 }
 // The hours that make the most vitamin D (UV 3 and up), joined into one window.
 function dWindow(hours) { const hs = hours.map((u, h) => (u >= 3 ? h : -1)).filter(h => h >= 0); return hs.length ? [hs[0], hs[hs.length - 1] + 1] : null; }
@@ -6196,6 +6298,28 @@ function seasonChips(sn) {
         <p>Around your period, choose warming food and cook the cooling ones.</p></details>
     </div>`;
 }
+// Season foods as an editorial poster: real cut-out photos where we have them, round photo stickers for the rest.
+const SZ_CUT = [[/pineapple/i, 'pineapple'], [/custard apple/i, ''], [/mushroom|shiitake|enoki|maitake|chanterelle|porcini|morel|matsutake|songi|neutari|paengi|slippery|milk caps/i, 'mushrooms'], [/carrot/i, 'carrots'], [/root vegetables/i, 'parsnips'], [/leek/i, 'leeks'],
+  [/pumpkin|squash|kabocha|danhobak/i, 'pumpkin'], [/beet/i, 'beetroot'], [/spinach|silverbeet|sigeumchi|palak/i, 'spinach'], [/eggs/i, 'eggs'], [/mussel/i, 'mussels'], [/aubergine|eggplant/i, 'aubergine'], [/avocado/i, 'avocado'],
+  [/fennel/i, 'fennel'], [/broccoli/i, 'broccoli'], [/rosemary|oregano|thyme|sage/i, 'rosemary'], [/cauliflower/i, 'cauliflower'], [/apple/i, 'apples'], [/tomato/i, 'tomatoes'], [/oyster/i, 'oysters'], [/cucumber/i, 'cucumber'],
+  [/sweet potato|goguma|shakarkandi/i, 'sweet-potato'], [/basil/i, 'basil'], [/banana/i, 'bananas'], [/papaya/i, 'papaya'], [/strawberr/i, 'strawberries'], [/courgette|zucchini|aehobak/i, 'courgette'], [/kale|collard/i, 'kale'],
+  [/pear/i, 'pears'], [/cabbage/i, 'cabbage'], [/celeriac/i, 'celeriac'], [/parsnip/i, 'parsnips'], [/brussels/i, 'brussels'], [/chard/i, 'chard'], [/jerusalem/i, ''], [/artichoke/i, 'artichokes'], [/^peppers|bell pepper|gochu/i, 'peppers'],
+  [/green beans|long beans/i, 'green-beans'], [/asparagus/i, 'asparagus'], [/lemon(?!grass)/i, 'lemons'], [/lime/i, 'limes'], [/coconut/i, 'coconut'], [/okra|bhindi/i, 'okra'], [/mango/i, 'mango'], [/plantain/i, 'plantains'],
+  [/walnut|pecan/i, 'walnuts'], [/chestnut/i, 'chestnuts'], [/quince/i, 'quince'], [/pomegranate/i, 'pomegranate'], [/persimmon/i, 'persimmon'], [/orange|mandarin|citrus|kinnow|gamgyul|hallabong|yuzu/i, 'oranges'],
+  [/nettle/i, 'sf/nettle'], [/parsley/i, 'sf/parsley'], [/coriander|cilantro/i, 'sf/coriander'], [/mint/i, 'sf/mint'], [/ginger/i, 'sf/ginger'], [/honey/i, 'sf/raw-honey'], [/blueberr|bilberr/i, 'sf/blueberries'], [/broccoli sprouts/i, 'sf/broccoli-sprouts']];
+const szCut = f => { const hit = SZ_CUT.find(([r]) => r.test(f)); return hit && hit[1] ? `images/${hit[1].includes('/') ? hit[1] : 'sz/' + hit[1]}.webp` : null; };
+const SZ_POSTER = { Winter: ['Winter, deeply nourished', 'Build blood, warm digestion, mineralise deeply'], Spring: ['Spring, fresh and green', 'Wake up the liver, lighten up, add a little sour'], Summer: ['Summer, light and juicy', 'Hydrate, cool down, eat the rainbow raw'],
+  'Late summer': ['Late summer harvest', 'Sweet, golden and grounding, at regular times'], Autumn: ['Autumn, slow and warm', 'Cook more, moisten, warm the belly'] };
+function szPoster(items, sn, country, phase, warm) {
+  const [h, sub] = SZ_POSTER[sn] || SZ_POSTER.Autumn;
+  const it = (i, n) => { const cut = szCut(i.f), ph = cut ? '' : foodPhoto(i.f, 300), big = n % 5 === 0, fit = phase && i.ph.includes(phase);
+    return `<button class="szp-i ${big ? 'big' : ''} ${n % 10 === 5 ? 'flip' : ''} ${cut ? 'cut' : 'stk'}" style="--i:${n % 12}" data-action="szPick" data-f="${esc(i.f)}">
+      <span class="szp-img">${cut ? `<img src="${cut}" alt="" loading="lazy" decoding="async">` : ph ? `<img src="${ph}" alt="" loading="lazy" decoding="async">` : `<em>${(KINDS.find(k => k[0] === i.kind) || [0, 0, '🌿'])[2]}</em>`}</span>
+      <span class="szp-l">${i.f.toLowerCase()}${fit ? '<i></i>' : ''}</span></button>`; };
+  return `<section class="szp"><header class="szp-h"><h2>${h}</h2><b>${sub}</b><p>${(SEASON_PLAIN[sn] || SEASON_PLAIN.Autumn).eat}</p><small>${country ? `${country} · ` : ''}${MONTHS[new Date().getMonth()]}${phase ? ' · <i></i> good for your phase' : ''}</small></header>
+    <div class="szp-g">${items.map(it).join('')}</div><div class="szp-det" aria-live="polite" hidden></div>
+    ${warm ? `<p class="szp-warm">${icon('sun', 13)} Your period is close: cook the cooling ones with ginger.</p>` : ''}</section>`;
+}
 function viewSeason(jump) {
   if (jump) {
     Object.assign(ui, { seasonView: jump === 'cook' ? 'cook' : 'month', seasonKind: null });
@@ -6231,7 +6355,7 @@ function viewSeason(jump) {
         ${DISH_PHOTOS[d.name] ? `<p class="fine" style="margin:6px 0 0">Photo: <a class="src" href="${DISH_PHOTOS[d.name].page}?utm_source=under_the_skin&utm_medium=referral" target="_blank" rel="noopener">${esc(DISH_PHOTOS[d.name].by)}</a> on Unsplash</p>` : ''}</details>`; }).join('') || '<p class="muted center">No dishes for this month yet.</p>'}`;
   } else {
     body = `<div class="chips sz-kinds"><button class="chip ${!kind ? 'on' : ''}" data-action="seasonKind" data-v="${kind || ''}">All ${all.length}</button>${counts.map(([k, n, t]) => `<button class="chip ${kind === k ? 'on' : ''}" data-action="seasonKind" data-v="${k}">${n} ${t}</button>`).join('')}</div>
-      ${detail}<div class="szg">${items.map(tile).join('')}</div>`;
+      ${szPoster(items, sn, country, phase, warm)}`;
   }
   const forYou = all.filter(i => fits(i) && foodPhoto(i.f));
   return `<div class="pad sz2">
@@ -7452,6 +7576,26 @@ const actions = {
     if (same) { sh.innerHTML = ''; sh.dataset.p = ''; return; }
     sh.dataset.p = d.p; sh.innerHTML = cfSheet(d.p); sh.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   },
+  sfPick: (d, el) => {
+    const box = el.closest('.sfc'), ph = box.dataset.phase, f = SUPERFOODS[ph].list.filter(x => !(x[5] && myDiet() === 'vegan'))[+d.i], det = box.querySelector('.sfc-det');
+    const was = el.classList.contains('on'); box.querySelectorAll('.sfc-i').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); });
+    if (was) { det.hidden = true; return; }
+    el.classList.add('on'); el.setAttribute('aria-expanded', 'true');
+    const [file] = SF_CUT[f[1]] || [];
+    det.innerHTML = `${file ? `<img src="images/sf/${file}.webp" alt="">` : `<em>${f[0]}</em>`}<div><b>${f[1]}</b><p>${f[2]}</p><span class="sfc-dose">${icon('drop', 12)} ${f[3]}</span></div><button class="sfc-x" data-action="sfClose" aria-label="Close">${icon('close', 14)}</button>`;
+    det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
+    const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
+  },
+  sfClose: (d, el) => { const box = el.closest('.sfc'); box.querySelector('.sfc-det').hidden = true; box.querySelectorAll('.sfc-i.on').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); }); },
+  sfPhase: (d, el) => { const box = el.closest('.sfc'); const t = document.createElement('div'); t.innerHTML = superInner(d.v); box.replaceWith(t.firstElementChild); },
+  suPick: (d, el) => {
+    const box = el.closest('.suh'), x = SUPP_LIB.find(s => s.id === d.id); if (!x) return;
+    const was = el.classList.contains('on'); box.querySelectorAll('.suh-p').forEach(b => b.classList.remove('on'));
+    const det = box.querySelector('.suh-det'); if (was) { det.hidden = true; return; }
+    box.querySelectorAll(`.suh-p[data-id="${d.id}"]`).forEach(b => b.classList.add('on'));
+    det.innerHTML = `<div class="suh-dh"><span class="sup-sym ${x.han ? 'han' : ''}">${x.sym}</span><div><b>${x.name}</b><small>${x.dose} · ${x.when.toLowerCase()}</small></div></div><p>${x.desc.split('. ').slice(0, 2).join('. ').replace(/\.?$/, '.')}</p><button class="suh-go" data-action="nav" data-to="supp/${x.id}">Dose, timing & studies ${icon('chevR', 14)}</button>`;
+    det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
+  },
   ebPick: (d, el) => {
     const box = el.closest('.eat-cat'); if (!box) return;
     box.querySelectorAll('.eb-i.on').forEach(x => x.classList.remove('on')); el.classList.add('on');
@@ -7566,6 +7710,20 @@ const actions = {
   ritSel: d => { const v = +d.v; ui.ritSel = ui.ritSel === v ? null : v; render(); if (ui.ritSel != null) document.getElementById('sr-d')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); },
   apoTab: d => { ui.apoTab = d.v; ui.apoSel = null; render(); },
   apoSel: d => { ui.apoSel = ui.apoSel === d.v ? null : d.v; render(); if (ui.apoSel) document.getElementById('apo-d')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
+  szPick: (d, el) => {
+    const box = el.closest('.szp'), det = box.querySelector('.szp-det'), c = myCountry(), m = new Date().getMonth() + 1, sel = SZ.seasonal(c, m).find(i => i.f === d.f); if (!sel) return;
+    const was = el.classList.contains('on'); box.querySelectorAll('.szp-i.on').forEach(b => b.classList.remove('on'));
+    if (was) { det.hidden = true; return; }
+    el.classList.add('on'); el.after(det);
+    const phase = M.info && M.info.phase, warm = M.info && warmWindow(M.info), img = szCut(sel.f) || foodPhoto(sel.f, 300);
+    det.innerHTML = `${img ? `<img src="${img}" alt="" class="${szCut(sel.f) ? 'cut' : ''}">` : ''}<div><small>${NATURE[sel.nature][0]} food</small><b>${sel.f}</b>
+      ${sel.nut.length ? `<p class="szp-r"><span>Rich in</span>${sel.nut.join(' · ')}</p>` : ''}${sel.ph.length ? `<p class="szp-r"><span>Best for</span>${sel.ph.map(p => PHASES[p].name).join(' & ')}${phase && sel.ph.includes(phase) ? ' · yours now' : ''}</p>` : ''}
+      <p>${sel.nature === 'cool' && warm ? 'A cooling food. Your period is close, so cook it and add ginger or cinnamon.' : NATURE[sel.nature][1]}</p></div><button class="sfc-x" data-action="szClose" aria-label="Close">${icon('close', 14)}</button>`;
+    det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
+  },
+  szClose: (d, el) => { const box = el.closest('.szp'); box.querySelector('.szp-det').hidden = true; box.querySelectorAll('.szp-i.on').forEach(b => b.classList.remove('on')); },
+  enTap: (d, el) => { const S = ui.energy = ui.energy || {}; S[d.k] = !S[d.k]; el.classList.toggle('on', !!S[d.k]); el.setAttribute('aria-pressed', !!S[d.k]);
+    const box = el.closest('.en'), g = box.querySelectorAll('.en-g .on').length, t = box.querySelectorAll('.en-t .on').length; box.querySelector('.en-sum').innerHTML = enSum(g, t); },
   seasonFood: d => { ui.seasonFood = ui.seasonFood === d.f ? null : d.f; render(); if (ui.seasonFood) document.querySelector('.sf-detail')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); },
   seasonFilter: d => { ui.seasonFilter = d.v; render(); },
   baDel: d => { if (!confirm('Delete this photo from your phone?')) return; const ba = baGet(); delete ba[d.v]; baSet(ba); render(); },
