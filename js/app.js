@@ -3862,7 +3862,7 @@ function suppFoodRow(id, [f, tip], i) {
 // Supplement heroes: a real photo of the food that carries the most of it, with the capsule beside it.
 const SUPP_HERO = {
   magnesium: ['Pumpkin seeds', 'pumpkin seeds'], iron: ['Red meat', 'red meat'], 'omega-3': ['Wild salmon', 'wild salmon'], 'vitamin-c': ['Peppers', 'peppers'],
-  ginger: ['tea:Ginger root', 'fresh ginger'], creatine: ['Matjes herring', 'herring'], 'vitamin-d': ['Sardines', 'oily fish'], 'b-complex': ['Pasture eggs', 'eggs'],
+  ginger: ['tea:Ginger root', 'fresh ginger'], creatine: ['Spring lamb', 'meat and fish'], 'vitamin-d': ['Sardines', 'oily fish'], 'b-complex': ['Pasture eggs', 'eggs'],
   probiotic: ['Sauerkraut', 'raw sauerkraut'], zinc: ['Oysters', 'oysters'], 'vitamin-e': ['Sunflower seeds', 'sunflower seeds'], ashwagandha: ['tea:Warm milk with cinnamon', 'warm spiced milk'],
   b6: ['Salmon', 'salmon'], calcium: ['Grass-fed raw milk & butter', 'raw milk'], prenatal: ['Avocado', 'avocado'], coq10: ['Mackerel', 'mackerel'],
 };
