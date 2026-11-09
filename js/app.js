@@ -5334,7 +5334,6 @@ function viewBreathe(from) {
         <p class="bz-say">Stay in the present.</p>
       </div>
     </section>
-    ${breathCycle(k)}
     ${breathWeek()}
     ${calmRemCard()}
     ${from === 'stress' && M.info ? cortisolSec(M.info) : ''}
@@ -5928,15 +5927,84 @@ function seasonArt(sn) {
     <path d="M50 92h120l-10 36c-1 4-4 6-8 6H68c-4 0-7-2-8-6z" fill="#f3e2d2"/><path d="M50 92h120" stroke="#e2c9b2" stroke-width="5" stroke-linecap="round"/>
     <path d="M62 106h96M66 118h88" stroke="#e8d3bf" stroke-width="2" stroke-linecap="round"/></svg>`;
 }
-// Season page: autumn rituals and winter herbs, shown through the cold half of the year.
+// Season page: autumn and winter rituals through the cold half of the year (the herbs live in the apothecary).
 function seasonRituals(sn) {
   if (!['Autumn', 'Winter'].includes(sn)) return '';
-  const rit = `${sectionTitle(`${sn === 'Winter' ? 'Winter' : 'Autumn'} rituals`)}<p class="sr-sub">Warm, replenish and protect your immunity as the season turns.</p>
-    <div class="sr-grid">${AUTUMN_RITUALS.map(([n, how, why, ev]) => `<details class="sr-c"><summary><img src="${teaPhoto(n, 320, 240)}" alt="" loading="lazy"><b>${n}</b><small>${why}</small></summary><p>${how}</p>${evBadge(ev)}</details>`).join('')}</div>`;
-  const herbs = `${sectionTitle('Winter herbs')}<p class="sr-sub">For immunity and warmth through the cold months. Tap one to see how to use it.</p>
-    <section class="card sr-herbs">${WINTER_HERBS.map(([n, cn, nat, what, how, warn, ev]) => `<details class="sr-h"><summary><img src="${teaPhoto(n, 160, 160)}" alt="" loading="lazy"><span><b>${n}</b><small>${cn}</small></span><em class="sr-nat ${nat}">${nat === 'warm' ? 'Warming' : 'Neutral'}</em></summary>
-      <p>${what}</p><div class="sr-how">${icon('cup', 14)} ${how}</div>${warn ? `<div class="sr-warn">${icon('spark', 13)} ${warn}</div>` : ''}${evBadge(ev)}</details>`).join('')}</section>`;
-  return sn === 'Winter' ? herbs + rit : rit + herbs;
+  const sel = AUTUMN_RITUALS[ui.ritSel], k = ui.ritSel;
+  return `${sectionTitle(`${sn === 'Winter' ? 'Winter' : 'Autumn'} rituals`)}
+    <div class="hscroll sr-x">${AUTUMN_RITUALS.map(([n], i) => `<button class="rcard has-photo sr-xc ${i === k ? 'on' : ''}" data-action="ritSel" data-v="${i}" aria-expanded="${i === k}"><img class="rc-photo" src="${teaPhoto(n, 400, 520)}" alt="" loading="lazy"><span class="rc-shade"></span><div class="rc-t">${n}</div></button>`).join('')}</div>
+    ${sel ? `<section class="card apo-d sr-d" id="sr-d"><img src="${teaPhoto(sel[0], 800, 520)}" alt=""><button class="bn-x" data-action="ritSel" data-v="${k}" aria-label="Close">${icon('close', 16)}</button>
+      <div class="apo-d-b"><small>${sn} ritual</small><h3>${sel[0]}</h3><p>${sel[2]}</p><div class="apo-d-r">${icon('cup', 16)}<span><small>How</small>${sel[1]}</span></div></div></section>` : ''}`;
+}
+// The season's apothecary: superfoods for every season (and herbs in the cold half), its own page behind one widget.
+// [photo, name, what it brings, why, how, careful]
+const SEASON_SUPER = {
+  Winter: [['Sea buckthorn', 'Sea buckthorn', 'Vitamin C', 'Tiny orange berries with more vitamin C than lemons.', 'A spoon of the juice in warm water with honey.', 'Very sour. Start with a teaspoon.'],
+    ['Rosehips', 'Rosehips', 'Vitamin C', 'Winter’s own vitamin C, for colds and skin.', 'Steep 1 tbsp dried hips in hot water for 10 min.', ''],
+    ['Elderberries', 'Elderberries', 'Immunity', 'Dark berries used for colds and flu for centuries.', 'Only cooked: as a syrup or a simmered tea.', 'Never raw: raw berries upset the stomach.'],
+    ['Sauerkraut', 'Raw sauerkraut', 'Gut', 'Live cultures and vitamin C for the dark months.', '2 tbsp next to a warm meal, stirred in after cooking.', ''],
+    ['Walnuts', 'Walnuts', 'Omega-3', 'Plant omega-3 for your mood when the light is low.', 'A small handful a day.', ''],
+    ['Raw honey', 'Raw honey', 'Soothing', 'Coats a sore throat and calms a cough.', 'Stir into tea once it is drinkable, not boiling.', 'Never for babies under one.']],
+  Autumn: [['Elderberries', 'Elderberries', 'Immunity', 'Dark berries used for colds and flu for centuries.', 'Only cooked: as a syrup or a simmered tea.', 'Never raw: raw berries upset the stomach.'],
+    ['Pomegranate', 'Pomegranate', 'Antioxidants', 'Ruby seeds full of polyphenols for skin and heart.', 'Sprinkle over salads, yoghurt or warm stews.', ''],
+    ['Walnuts', 'Walnuts', 'Omega-3', 'Plant omega-3 for your mood as the days get shorter.', 'A small handful a day.', ''],
+    ['Pumpkin seeds', 'Pumpkin seeds', 'Zinc & magnesium', 'For calm nerves, clear skin and softer PMS.', 'A toasted handful on soups or salads.', ''],
+    ['Turmeric', 'Turmeric', 'Soothing', 'The golden root for achy joints and cramps.', '½ tsp in warm milk with a pinch of black pepper.', 'Ask first if you take blood thinners.'],
+    ['Raw honey', 'Raw honey', 'Soothing', 'Coats a sore throat and calms a cough.', 'Stir into tea once it is drinkable, not boiling.', 'Never for babies under one.']],
+  Spring: [['Nettle', 'Young nettle', 'Iron & minerals', 'Fresh leaves full of iron, calcium and magnesium.', 'Steep as tea, or wilt into soup like spinach.', 'Wear gloves to pick it.'],
+    ['Wild garlic', 'Wild garlic', 'Fresh greens', 'Garlicky leaves that wake up spring cooking.', 'Blend into pesto or stir into eggs.', 'Easy to mix up with lily of the valley. Buy it if unsure.'],
+    ['Dandelion greens', 'Dandelion greens', 'Bitter greens', 'Bitter leaves that get bile and digestion going.', 'A few leaves in a salad with lemon.', ''],
+    ['Broccoli sprouts', 'Broccoli sprouts', 'Sulforaphane', 'Help your liver clear used estrogen.', 'A small handful on salads or bowls.', ''],
+    ['Watercress', 'Watercress', 'Vitamin K', 'Peppery greens packed with vitamins.', 'In salads, on eggs or stirred into soup.', ''],
+    ['Sauerkraut', 'Raw sauerkraut', 'Gut', 'Live cultures and a little sour, just right for spring.', '2 tbsp next to a meal.', '']],
+  Summer: [['Blueberries', 'Blueberries', 'Antioxidants', 'Small berries for skin, brain and blood vessels.', 'A handful fresh, with yoghurt or kefir.', ''],
+    ['Raspberries', 'Raspberries', 'Fibre', 'Sweet fibre that helps carry out used estrogen.', 'Fresh, or blended into a smoothie.', ''],
+    ['Cherries', 'Cherries', 'Sleep', 'Natural melatonin for short, warm nights.', 'A bowl in the evening.', ''],
+    ['Tomatoes', 'Ripe tomatoes', 'Lycopene', 'A red antioxidant that helps skin in the sun.', 'With olive oil, which helps you take it up.', ''],
+    ['Chia seeds', 'Chia seeds', 'Omega-3 & fibre', 'Tiny seeds that keep you full and steady.', '1 tbsp soaked in milk or water for 10 min.', 'Drink enough water with them.'],
+    ['Watermelon', 'Watermelon', 'Hydration', 'Juicy water and minerals for hot days.', 'Fresh slices, best before a meal.', '']],
+  'Late summer': [['Blackberries', 'Blackberries', 'Antioxidants', 'Dark late-summer berries rich in fibre.', 'Fresh, or stewed warm with cinnamon.', ''],
+    ['Figs', 'Figs', 'Calcium & fibre', 'Soft, sweet and kind to digestion.', 'Fresh with raw cheese or yoghurt.', ''],
+    ['Sesame seeds', 'Sesame seeds', 'Calcium', 'Tiny seeds full of calcium and lignans.', '1 tbsp on bowls, or as tahini.', ''],
+    ['Ground flaxseed', 'Ground flaxseed', 'Lignans', 'Help keep estrogen in balance across your cycle.', '1 tbsp stirred into yoghurt or a smoothie.', 'Use it ground: whole seeds pass straight through.'],
+    ['Pumpkin seeds', 'Pumpkin seeds', 'Zinc & magnesium', 'For calm nerves, clear skin and softer PMS.', 'A toasted handful on soups or salads.', ''],
+    ['Pumpkin & squash', 'Squash', 'Beta-carotene', 'Golden flesh for skin and easy digestion.', 'Roasted with olive oil and cinnamon.', '']],
+};
+const apoHerbs = sn => (['Autumn', 'Winter'].includes(sn) ? WINTER_HERBS : []);
+const apoSeason = () => SZ.seasonName(myCountry(), new Date().getMonth() + 1);
+// The widget on the season page: three round photos, the name and a dark pill that opens the page.
+function apoWidget(sn) {
+  const sup = SEASON_SUPER[sn] || SEASON_SUPER.Autumn, herbs = apoHerbs(sn);
+  const pics = [herbs[4] ? teaPhoto(herbs[4][0], 200, 200) : foodPhoto(sup[2][0], 200), foodPhoto(sup[0][0], 200), herbs[1] ? teaPhoto(herbs[1][0], 200, 200) : foodPhoto(sup[1][0], 200)];
+  return `<button class="card apo-w" data-action="nav" data-to="apothecary">
+    <span class="apo-w-pics">${pics.map((u, i) => `<img src="${u}" alt="" loading="lazy" style="--i:${i}">`).join('')}</span>
+    <span class="apo-w-t"><small>${sn} apothecary</small><b>${herbs.length ? 'Herbs & superfoods' : 'Superfoods'}</b>
+      <span class="apo-w-n"><b class="dotnum">${sup.length}</b> superfoods${herbs.length ? ` · <b class="dotnum">${herbs.length}</b> herbs` : ''}</span></span>
+    <span class="apo-w-go">Open ${icon('chevR', 14)}</span></button>`;
+}
+function viewApothecary() {
+  const sn = apoSeason(), sup = SEASON_SUPER[sn] || SEASON_SUPER.Autumn, herbs = apoHerbs(sn);
+  const tab = herbs.length && ui.apoTab === 'herbs' ? 'herbs' : 'super';
+  const list = tab === 'herbs' ? herbs.map(([n, cn, nat, what, how, warn]) => ({ n, sub: cn, tag: nat === 'warm' ? 'Warming' : 'Neutral', warm: nat === 'warm', pic: teaPhoto(n, 400, 400), big: teaPhoto(n, 800, 560), why: what, how, warn }))
+    : sup.map(([k, n, tag, why, how, warn]) => ({ n, sub: tag, tag, pic: foodPhoto(k, 400), big: foodPhoto(k, 800), why, how, warn }));
+  const sel = list.find(x => x.n === ui.apoSel);
+  const tile = x => `<button class="apo-t ${sel === x ? 'on' : ''}" data-action="apoSel" data-v="${esc(x.n)}" aria-expanded="${sel === x}">
+      <span class="apo-img"><img src="${x.pic}" alt="" loading="lazy">${tab === 'herbs' ? `<em class="apo-nat ${x.warm ? 'w' : 'n'}">${x.tag}</em>` : ''}</span>
+      <b>${x.n}</b><small>${x.sub}</small></button>`;
+  const detail = sel ? `<section class="card apo-d" id="apo-d"><img src="${sel.big}" alt="">
+      <button class="bn-x" data-action="apoSel" data-v="${esc(sel.n)}" aria-label="Close">${icon('close', 16)}</button>
+      <div class="apo-d-b"><small>${sel.sub}</small><h3>${sel.n}</h3><p>${sel.why}</p>
+        <div class="apo-d-r">${icon('cup', 16)}<span><small>How</small>${sel.how}</span></div>
+        ${sel.warn ? `<div class="apo-d-r care">${icon('spark', 16)}<span><small>Careful</small>${sel.warn}</span></div>` : ''}</div></section>` : '';
+  return `<div class="pad sp2 apo">
+    ${specHero({ photo: herbs.length ? teaPhoto(herbs[4][0], 900, 1000) : foodPhoto(sup[0][0], 900), glyph: 'leaf', eyebrow: `${sn} · ${MONTHS[new Date().getMonth()]}`, name: `${sn} apothecary`, label: 'In the jar',
+      rows: [[`${sup.length} superfoods`, 'to eat this season'], ...(herbs.length ? [[`${herbs.length} herbs`, 'warming and calming']] : [])],
+      desc: herbs.length ? 'For immunity and warmth through the cold months. Tap one to see how to use it.' : 'What nature makes best right now. Tap one to see how to use it.' })}
+    ${herbs.length ? `<div class="seg apo-tabs">${[['super', 'Superfoods'], ['herbs', 'Herbs']].map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="apoTab" data-v="${k}">${l}</button>`).join('')}</div>` : ''}
+    ${detail}
+    <div class="apo-grid">${list.map(tile).join('')}</div>
+    <p class="fine center">Pregnant, breastfeeding or on medication? Ask your doctor before new herbs.</p>
+  </div>`;
 }
 // The season at a glance: what to eat and sip as small photos, one plain line to feel, the full story behind a tap.
 const SEASON_CHIPS = {
@@ -5955,7 +6023,9 @@ function seasonChips(sn) {
       <div class="szx-row"><span class="szx-k">${icon('cup', 14)} Sip</span><div class="szx-chips three">${chips(S.sip)}</div></div>
       <div class="szx-feel"><span>${icon('leaf', 15)}</span><b>${S.feel}</b></div>
       <details class="szx-more"><summary>Why this season ${icon('chevD', 14)}</summary>
-        <p><b>Eat</b>${PL.eat}</p><p><b>Sip</b>${PL.tea}</p><p><b>Feel</b>${ST.feel} In Chinese medicine each season belongs to an element and an organ that needs a little extra care.</p></details>
+        <p>${ST.p}</p><p><b>Eat</b>${PL.eat}</p><p><b>Sip</b>${PL.tea}</p><p><b>Feel</b>${ST.feel} In Chinese medicine each season belongs to an element and an organ that needs a little extra care.</p>
+        <div class="szx-nat">${[['warm', 'Warming', 'heats you up'], ['neutral', 'Neutral', 'balances'], ['cool', 'Cooling', 'cools you']].map(([k, n, d]) => `<span><i class="nat ${k}"></i><b>${n}</b>${d}</span>`).join('')}</div>
+        <p>Around your period, choose warming food and cook the cooling ones.</p></details>
     </div>`;
 }
 function viewSeason(jump) {
@@ -5997,26 +6067,25 @@ function viewSeason(jump) {
   }
   const forYou = all.filter(i => fits(i) && foodPhoto(i.f));
   return `<div class="pad sz2">
-  ${specHero({ photo: `images/season-${{ Spring: 'spring', Summer: 'summer', 'Late summer': 'summer', Autumn: 'autumn', Winter: 'winter' }[sn]}.jpg`, glyph: 'leaf', eyebrow: `${country} · ${MONTHS[m - 1]}`, name: `${sn} is here`, label: `What’s growing near you`,
-      rows: [[`${all.length} foods`, 'fresh this month'], [`${all.filter(fits).length} for you`, phase ? `kind to your ${PHASES[phase].name.toLowerCase()} phase` : 'for your phase']], desc: 'The list changes by itself as the season turns, so there’s always something new to try.' })}
-    <section class="card sz-story">
-      ${seasonArt(sn)}
+  <section class="szh"><img src="images/season-${{ Spring: 'spring', Summer: 'summer', 'Late summer': 'summer', Autumn: 'autumn', Winter: 'winter' }[sn]}.jpg" alt=""><span class="szh-shade"></span>
+      <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
+      <div class="szh-t"><small>${country} · ${MONTHS[m - 1]}</small><h1>${sn} is here</h1></div>
+      <div class="szh-bub"><span><b class="dotnum">${all.length}</b><small>fresh now</small></span><span class="me"><b class="dotnum">${all.filter(fits).length}</b><small>for you</small></span></div>
+      ${seasonArt(sn)}</section>
+    <section class="card sz-story sz-story2">
       <h2>${(SEASON_STORY[sn] || SEASON_STORY.Autumn).t}</h2>
-      <p class="sz-tale">${(SEASON_STORY[sn] || SEASON_STORY.Autumn).p}</p>
       ${seasonChips(sn)}
-      <div class="sz-nat"><small>In Chinese medicine every food warms, cools or balances you</small>
-        <div>${[['warm', 'Warming', 'heats you up'], ['neutral', 'Neutral', 'balances'], ['cool', 'Cooling', 'cools you']].map(([k, n, d]) => `<span><i class="nat ${k}"></i><b>${n}</b>${d}</span>`).join('')}</div>
-        <p>Around your period, choose warming food and cook the cooling ones.</p></div>
     </section>
     ${forYou.length ? `${sectionTitle(`For your ${PHASES[phase].name.toLowerCase()} phase`)}
       <div class="hscroll">${forYou.map(i => `<button class="rcard has-photo" data-action="seasonFood" data-f="${esc(i.f)}"><img class="rc-photo" src="${pic(i, 500)}" alt="" loading="lazy"><span class="rc-shade"></span>
         <div class="rc-top"><span class="rc-k">${NATURE[i.nature][0]}${warm && i.nature === 'cool' ? ' · cook it' : ''}</span></div><div class="rc-t">${i.f}</div><div class="rc-m">${i.nut.slice(0, 2).join(' · ')}</div></button>`).join('')}</div>` : ''}
+    ${apoWidget(sn)}
     ${seasonRituals(sn)}
     <div class="sz-anchor" id="sz-tabs"></div>
     <div class="seg sz-tabs">${[['month', 'Foods'], ['cook', 'Recipes']].map(([k, l]) => `<button class="${view === k ? 'on' : ''}" data-action="seasonView" data-v="${k}">${l}</button>`).join('')}</div>
     ${body}
     <div class="season-ctl"><span class="fine">Your country</span>${countryPicker('profile', c)}</div>
-    <p class="fine center">Typical local growing seasons; they shift a little with weather and area. Forage only what you can identify with certainty.</p>
+    <p class="fine center">Forage only what you know for sure.</p>
   </div>`;
 }
 
@@ -7295,6 +7364,9 @@ const actions = {
   worldReg: d => { ui.worldReg = d.k; render(); wkCenter(); },
   worldPhase: d => { ui.worldPhase = d.v; render(); },
   seasonGo: d => { Object.assign(ui, { seasonFood: d.f, seasonView: 'month', seasonFilter: 'all', seasonMonth: null }); go('season'); setTimeout(() => document.querySelector('.sf-detail')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150); },
+  ritSel: d => { const v = +d.v; ui.ritSel = ui.ritSel === v ? null : v; render(); if (ui.ritSel != null) document.getElementById('sr-d')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); },
+  apoTab: d => { ui.apoTab = d.v; ui.apoSel = null; render(); },
+  apoSel: d => { ui.apoSel = ui.apoSel === d.v ? null : d.v; render(); if (ui.apoSel) document.getElementById('apo-d')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
   seasonFood: d => { ui.seasonFood = ui.seasonFood === d.f ? null : d.f; render(); if (ui.seasonFood) document.querySelector('.sf-detail')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); },
   seasonFilter: d => { ui.seasonFilter = d.v; render(); },
   baDel: d => { if (!confirm('Delete this photo from your phone?')) return; const ba = baGet(); delete ba[d.v]; baSet(ba); render(); },
@@ -7562,7 +7634,7 @@ function render() {
   const ph = (ui.phasePreview || M.info?.phase) || ''; // the whole app takes the colour of her phase
   if (document.documentElement.dataset.phase !== ph) document.documentElement.dataset.phase = ph;
   const views = {
-    today: viewToday, saved: viewSaved, ground: viewGround, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: () => viewBreathe(r.id), do: () => viewTopic(r.id), plan: viewPlan, diet: viewDiet, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: viewCalendar, manifest: viewManifest, moon: viewCalendar, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewHabits, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), world: () => viewWorld(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
+    today: viewToday, saved: viewSaved, ground: viewGround, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: () => viewBreathe(r.id), do: () => viewTopic(r.id), plan: viewPlan, diet: viewDiet, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: viewCalendar, manifest: viewManifest, moon: viewCalendar, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewHabits, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), apothecary: viewApothecary, world: () => viewWorld(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
     recipe: () => viewRecipe(r.id), ritual: () => viewRitual(r.id), point: () => viewPoint(r.id), article: () => viewArticle(r.id), learn: viewLearn,
   };
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];

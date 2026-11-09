@@ -9459,3 +9459,66 @@ html, body { overscroll-behavior-y: none; }
 /* nutrient spec sheets: the icon in the capsule chip */
 .sp-capchip .nu-cap { display: grid; place-items: center; color: #20301a; }
 .sp-capchip .nu-cap svg { width: 18px; height: 18px; }
+/* ---------- Season apothecary: widget on the season page + its own page ---------- */
+.apo-w { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px; width: 100%; margin: 18px 0; padding: 14px 16px 14px 14px; border-radius: 30px; text-align: left;
+  background: #fff; border: 1px solid rgba(48,64,35,.1); box-shadow: 0 14px 34px rgba(48,64,35,.12); font: inherit; color: #20301a; cursor: pointer; }
+.apo-w-pics { position: relative; width: 104px; height: 64px; }
+.apo-w-pics img { position: absolute; top: 0; left: calc(var(--i) * 20px); width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 6px 14px rgba(32,48,26,.2); }
+.apo-w-pics img:nth-child(2) { z-index: 2; transform: translateY(-4px) scale(1.06); }
+.apo-w-t { display: grid; gap: 2px; min-width: 0; }
+.apo-w-t > small { font-size: 12px; color: #6c823e; font-weight: 500; letter-spacing: .02em; }
+.apo-w-t > b { font-size: 18px; font-weight: 500; line-height: 1.15; }
+.apo-w-n { font-size: 12.5px; color: rgba(48,64,35,.7); }
+.apo-w-n .dotnum { font-size: 14px; color: #20301a; }
+.apo-w-go { display: inline-flex; align-items: center; gap: 4px; padding: 9px 12px 9px 14px; border-radius: 99px; background: #20301a; color: #fff; font-size: 13px; font-weight: 500; }
+.apo-tabs { margin: 18px 0 14px; }
+.apo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+.apo-t { display: grid; gap: 2px; padding: 8px 8px 12px; border-radius: 26px; background: #fff; border: 1px solid rgba(48,64,35,.08); box-shadow: 0 10px 24px rgba(48,64,35,.09); text-align: left; font: inherit; color: #20301a; cursor: pointer; transition: transform .25s, box-shadow .25s; }
+.apo-t:active { transform: scale(.97); }
+.apo-t.on { box-shadow: 0 0 0 2px #20301a, 0 12px 26px rgba(48,64,35,.16); }
+.apo-img { position: relative; display: block; aspect-ratio: 1; border-radius: 20px; overflow: hidden; margin-bottom: 8px; background: #eef0e4; }
+.apo-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.apo-nat { position: absolute; left: 8px; bottom: 8px; padding: 4px 9px; border-radius: 99px; font: 500 11px var(--font); font-style: normal; background: rgba(255,255,255,.92); color: #20301a; }
+.apo-nat::before { content: ''; display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; background: #e08a4c; vertical-align: 1px; }
+.apo-nat.n::before { background: #8fa86a; }
+.apo-t b { font-size: 15.5px; font-weight: 500; padding: 0 4px; line-height: 1.2; }
+.apo-t small { font-size: 12px; color: rgba(48,64,35,.62); padding: 0 4px; }
+.apo-d { position: relative; padding: 0; overflow: hidden; border-radius: 30px; background: #fff; margin-bottom: 14px; box-shadow: 0 16px 36px rgba(48,64,35,.14); scroll-margin-top: 80px; }
+.apo-d > img { width: 100%; height: 170px; object-fit: cover; display: block; }
+.apo-d .bn-x { position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,.92); }
+.apo-d-b { padding: 16px 18px 18px; }
+.apo-d-b > small { font-size: 12px; color: #6c823e; font-weight: 500; }
+.apo-d-b h3 { margin: 2px 0 6px; font-size: 24px; font-weight: 500; color: #20301a; }
+.apo-d-b > p { margin: 0 0 12px; font-size: 15px; line-height: 1.5; color: #304023; }
+.apo-d-r { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 16px; background: #f1f4e8; color: #304023; font-size: 14px; line-height: 1.4; margin-top: 8px; }
+.apo-d-r small { display: block; font-size: 11.5px; font-weight: 500; color: #6c823e; }
+.apo-d-r.care { background: #fbeef1; }
+.apo-d-r.care small { color: #b55d78; }
+.apo-d-r > svg { flex: none; margin-top: 2px; }
+/* ---------- In season, redesigned: photo hero with two bubbles and the drawn basket, story card without paragraphs ---------- */
+.szh { position: relative; margin: 0 -18px 0; height: 470px; overflow: hidden; border-radius: 0 0 38px 38px; background: #e9e2d8; }
+.szh > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; animation: kenBurns 26s ease-in-out infinite alternate; }
+.szh-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,24,14,.28) 0%, rgba(20,24,14,0) 26%, rgba(20,24,14,0) 42%, rgba(20,24,14,.55) 78%, rgba(20,24,14,.7) 100%); }
+.szh-t { position: absolute; left: 22px; right: 22px; top: calc(max(16px, env(safe-area-inset-top)) + 64px); color: #fff; }
+.szh-t small { display: inline-block; padding: 5px 12px; border-radius: 99px; background: rgba(255,255,255,.9); color: #20301a; font-size: 12px; font-weight: 500; }
+.szh-t h1 { margin: 10px 0 0; font-size: 44px; line-height: 1; font-weight: 400; letter-spacing: -.02em; color: #fff; text-shadow: 0 2px 18px rgba(0,0,0,.3); }
+.szh-bub { position: absolute; left: 20px; bottom: 26px; display: flex; gap: 10px; z-index: 2; }
+.szh-bub span { width: 82px; height: 82px; border-radius: 50%; display: grid; place-content: center; text-align: center; background: rgba(255,255,255,.92); color: #20301a;
+  box-shadow: 0 10px 24px rgba(0,0,0,.22), inset 0 0 0 4px hsl(calc(var(--hb) + 79 * var(--hk)) calc(55% * var(--hs)) 80%); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.szh-bub span.me { background: #20301a; color: #fff; box-shadow: 0 10px 24px rgba(0,0,0,.25), inset 0 0 0 4px hsl(calc(var(--hb) + 79 * var(--hk)) calc(55% * var(--hs)) 62%); }
+.szh-bub b { font-size: 26px; line-height: 1; font-weight: 400; }
+.szh-bub small { font-size: 11px; margin-top: 4px; opacity: .8; }
+.szh .sz-art { position: absolute; right: -6px; bottom: 6px; width: 190px; max-width: none; margin: 0; z-index: 1; filter: drop-shadow(0 10px 18px rgba(0,0,0,.25)); }
+.szh .sz-art > ellipse:first-child { display: none; }
+.sz-story2 { margin-top: 16px; }
+.sz-story2 h2 { margin: 2px 0 14px; font-size: 26px; font-weight: 400; color: #20301a; }
+.szx-nat { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 8px; }
+.szx-nat span { display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px; border-radius: 99px; background: #fff; border: 1px solid rgba(48,64,35,.1); font-size: 12.5px; color: rgba(48,64,35,.75); }
+.szx-nat b { font-weight: 500; color: #20301a; }
+/* rituals as a swipe of tall photo cards, names only */
+.sr-x .sr-xc { flex: 0 0 148px; height: 196px; scroll-snap-align: start; }
+.sr-x .sr-xc .rc-t { font-size: 16px; line-height: 1.2; }
+.sr-x .sr-xc.on { box-shadow: 0 0 0 3px #20301a; }
+.sr-d { margin-top: 14px; }
+.apo-w-pics img { left: calc(var(--i) * 20px); }
+@media (prefers-reduced-motion: reduce) { .szh > img { animation: none; } }
