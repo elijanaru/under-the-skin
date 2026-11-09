@@ -1283,11 +1283,6 @@ function viewToday() {
     ${dietGuideCard(info.phase, true)}
     ${habitsHome(info)}
 
-    ${sectionTitle('Your hormones', ['Explore', 'hormones'])}
-    <section class="card glass chart-card">${cycleChart(info, { id: 'today', compact: true })}
-      <div class="cc-links one"><button data-action="nav" data-to="hormones">${icon('chart', 15)} Explore your hormones ${icon('chevR', 14)}</button></div></section>
-    ${moleculeRow(info)}
-
     ${partnersCard(info)}
 
     ${logged ? `${sectionTitle('Today’s log', ['Edit', 'log'])}<section class="card glass"><div class="chips">${logChips(tlog)}</div><button class="br-cta" data-action="nav" data-to="brain">${icon('spark', 15)} What your body is saying ${icon('chevR', 15)}</button></section>`
@@ -4992,25 +4987,29 @@ const STUDY_ART = [
 function studyArt(t) { const a = (STUDY_ART.find(([r]) => r.test(t)) || [0, '<circle cx="24" cy="24" r="15" fill="#efd4dd"/><circle cx="22" cy="22" r="7" fill="#fff" stroke="#304023" stroke-width="1.8"/><path d="M27 27l7 7" stroke="#304023" stroke-width="2.2" stroke-linecap="round"/>'])[1];
   return `<svg class="ts-art" viewBox="6 6 36 36" aria-hidden="true">${a}</svg>`; }
 function decorateStudies(v) { v.querySelectorAll('.tea-study .ts-i:not(.has-art)').forEach(el => { el.classList.add('has-art'); el.insertAdjacentHTML('afterbegin', studyArt(el.textContent)); }); }
-function viewHormones() {
-  const { info } = M; if (!info) return viewToday();
-  const r = route(); if (r.id != null && HORMONE_LIBRARY[+r.id]) return viewHormone(+r.id);
-  const ph = PHASES[info.phase];
+// Every hormone as a tile: the cycle hormones first, then the body's other messengers. Used on the Hormones page and in Insights > Learn.
+function hormoneGrids(info) {
   const tile = (x, i) => { const n = hxNow(x, info); return `<button class="hxt ${n.r > .66 ? 'hi' : n.r < .2 ? 'lo' : ''}" data-action="nav" data-to="hormones/${i}">
       <span class="hxt-g">${x.g}</span><b>${x.n === 'Oestrogen' ? 'Estrogen' : x.n}</b><small class="hxt-s">${x.s}</small>
       ${MOL_BALL[x.n] || PROT_BALL[x.n] ? `<span class="hxt-mol" aria-hidden="true">${MOL_BALL[x.n] || protBall(x.n)}</span>` : hxRing(n.r, i)}
       <span class="hxt-now"><em>${n.word}${hxArrow(n.tr)}</em><span>${n.amt}</span></span></button>`; };
   const cyc = HORMONE_LIBRARY.map((x, i) => [x, i]).filter(([x]) => HX_KEY[x.n]), rest = HORMONE_LIBRARY.map((x, i) => [x, i]).filter(([x]) => !HX_KEY[x.n]);
+  return `${sectionTitle('Your cycle hormones today')}
+    <div class="hx-grid">${cyc.map(([x, i]) => tile(x, i)).join('')}</div>
+    ${sectionTitle('Your body’s other messengers')}
+    <div class="hx-grid">${rest.map(([x, i]) => tile(x, i)).join('')}</div>
+    <p class="fine center">Amounts are typical values for day ${Math.min(info.cd, info.L)} of your ${info.L}-day cycle, based on standard lab ranges. A guide, not your blood test. Labs differ slightly.</p>`;
+}
+function viewHormones() {
+  const { info } = M; if (!info) return viewToday();
+  const r = route(); if (r.id != null && HORMONE_LIBRARY[+r.id]) return viewHormone(+r.id);
+  const ph = PHASES[info.phase];
   return `${topbar('Hormones', { back: true })}
   <div class="pad">
     <h1 class="page-h">The role of <span>your hormones</span></h1>
     <section class="card glass chart-card">${cycleChart(info, { id: 'hx', compact: true })}
       <p class="body sm">Day ${info.cd} · ${ph.name} phase. ${ph.hormones}</p></section>
-    ${sectionTitle('Your cycle hormones today')}
-    <div class="hx-grid">${cyc.map(([x, i]) => tile(x, i)).join('')}</div>
-    ${sectionTitle('Your body’s other messengers')}
-    <div class="hx-grid">${rest.map(([x, i]) => tile(x, i)).join('')}</div>
-    <p class="fine center">Amounts are typical values for day ${Math.min(info.cd, info.L)} of your ${info.L}-day cycle, based on standard lab ranges. A guide, not your blood test. Labs differ slightly.</p>
+    ${hormoneGrids(info)}
   </div>`;
 }
 // The hormone itself: its skeletal formula (small molecules) or its size (protein hormones).
@@ -6212,7 +6211,9 @@ function viewInsights() {
   const tabs = [['cycle', 'Cycle'], ['patterns', 'Patterns'], ['learn', 'Learn']];
   let body = '';
   if (tab === 'cycle') body = `
-    <section class="card glass big-chart">${cycleChart(info, { id: 'ins' })}</section>
+    <section class="card glass big-chart">${cycleChart(info, { id: 'ins' })}
+      <div class="cc-links one"><button data-action="insHx">${icon('chart', 15)} Explore your hormones ${icon('chevR', 14)}</button></div></section>
+    ${moleculeRow(info)}
     <button class="card gro-cta" data-action="nav" data-to="guide"><span class="art-ic cyc"><svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true"><g fill="none" stroke-width="5" stroke-linecap="round" transform="rotate(-90 20 20)"><circle cx="20" cy="20" r="13" stroke="#e58b9f" stroke-dasharray="13 69"/><circle cx="20" cy="20" r="13" stroke="#9cc27a" stroke-dasharray="19 63" stroke-dashoffset="-16"/><circle cx="20" cy="20" r="13" stroke="#f1c96a" stroke-dasharray="8 74" stroke-dashoffset="-38"/><circle cx="20" cy="20" r="13" stroke="#b9a2e8" stroke-dasharray="33 49" stroke-dashoffset="-49"/></g><circle cx="20" cy="20" r="4.5" fill="#fff" stroke="#f1c96a" stroke-width="1.5"/></svg></span><span class="art-t">How your cycle works<small>Slide through every day: ovary, lining, hormones</small></span>${icon('chevR', 18)}</button>
 `;
   else if (tab === 'patterns') body = `
@@ -6222,8 +6223,10 @@ function viewInsights() {
     <section class="bph-g">${phaseTiles}</section>
     <p class="bph-k">From your check-ins: average energy, the mood and the symptom you logged most in each phase.</p>`;
   else body = `
-    <div class="lg-grid">${[['relief', 'heart', 'Relief guide', 'Cramps, PMS, sleep, skin'], ['habits', 'check', 'Hormone habits', 'A daily checklist'], ['hormones', 'chart', 'Your hormones', 'All 14, explained'], ['move', 'leaf', 'Move with your cycle', 'Lift, sprint or rest']].map(([to, g, t, sub], i) => `<button class="card glass lg-t" style="--i:${i}" data-action="nav" data-to="${to}"><span class="lg-g">${icon(g, 18)}</span><b>${t}</b><small>${sub}</small>${icon('chevR', 14)}</button>`).join('')}</div>
-    ${[info.phase, ...PHASE_ORDER.filter(p => p !== info.phase), null].map(p => { const list = ARTICLES.filter(a => a.phase === p); return list.length ? `${sectionTitle(p ? PHASES[p].name + (p === info.phase ? ' · now' : '') : 'Foundations')}
+    <span id="ins-hx"></span>${hormoneGrids(info)}
+    ${sectionTitle('Guides')}
+    <div class="lg-grid">${[['relief', 'heart', 'Relief guide', 'Cramps, PMS, sleep, skin'], ['habits', 'check', 'Hormone habits', 'A daily checklist'], ['tea', 'cup', 'Tea guide', 'For every need'], ['move', 'leaf', 'Move with your cycle', 'Lift, sprint or rest']].map(([to, g, t, sub], i) => `<button class="card glass lg-t" style="--i:${i}" data-action="nav" data-to="${to}"><span class="lg-g">${icon(g, 18)}</span><b>${t}</b><small>${sub}</small>${icon('chevR', 14)}</button>`).join('')}</div>
+    ${[info.phase].map(p => { const list = ARTICLES.filter(a => a.phase === p); return list.length ? `${sectionTitle(`Read now · ${PHASES[p].name}`)}
       ${list.map(a => `<button class="card glass article-row" data-action="nav" data-to="article/${a.id}"><span class="art-ic ${read[a.id] ? 'done' : ''}">${icon(read[a.id] ? 'check' : 'book', 20)}</span><span class="art-t">${a.title}<small>${read[a.id] ? 'Read · ' : ''}${a.mins} min</small></span>${icon('chevR', 18)}</button>`).join('')}` : ''; }).join('')}`;
   return `${topbar('Insights')}
   <div class="pad">
@@ -7392,6 +7395,7 @@ const actions = {
   seasonJump: d => { const now = new Date().getMonth() + 1; for (let k = 0; k < 12; k++) { const mm = ((now - 1 + k) % 12) + 1; if (SZ.seasonName(myCountry(), mm) === d.v) { ui.seasonMonth = mm === now ? null : mm; break; } } ui.seasonFood = null; render(); },
   seasonMonth: d => { const m = (ui.seasonMonth || new Date().getMonth() + 1) + +d.d; ui.seasonMonth = ((m - 1 + 12) % 12) + 1; render(); },
   insTab: d => { ui.insTab = d.v; render(); },
+  insHx: () => { ui.insTab = 'learn'; render(); const v = document.getElementById('view'), a = document.getElementById('ins-hx'); if (v && a) v.scrollTo({ top: v.scrollTop + a.getBoundingClientRect().top - 70, behavior: 'smooth' }); },
   hxJump: d => { document.getElementById('hx-' + d.i)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
   groToggle: d => { const g = state.grocery = state.grocery || {}; g[d.k] ? delete g[d.k] : (g[d.k] = 1); save(); render(); },
   groClear: () => { state.grocery = {}; save(); render(); },
