@@ -10622,3 +10622,5 @@ html .pad > .page-h span, html .page-h span, html .gro-page .page-h span { color
 /* Today bubble: one lotus that opens through the cycle (all four sit the same way) */
 .hub .bubble img, .bubble.menstrual img { position: absolute; left: 0; right: 0; top: 50% !important; bottom: auto !important; margin: 0 auto; width: 78% !important; height: 78% !important; max-width: none; object-fit: contain; transform: translateY(-50%) !important; }
 .bubble.menstrual img { width: 66% !important; height: 66% !important; }
+/* Card headlines: bold ink like the rest of the Apple-style headers */
+.card .dark-h { font: 600 22px/1.15 Outfit, sans-serif !important; letter-spacing: -.02em !important; color: #20301a !important; }
