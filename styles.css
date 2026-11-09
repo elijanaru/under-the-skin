@@ -10592,3 +10592,6 @@ section.ct .ct-tx { text-align: center; padding: 0 20%; }
 /* Breathe: Apple-style header like the tea guide (no gradient word) */
 .bz-h { --c: #6c823e; margin: 6px 2px 16px; }
 .bz-h h1 { margin: 6px 0 0; font: 600 30px/1.08 Outfit, sans-serif; letter-spacing: -.025em; color: #20301a; }
+/* Supplements: Apple-style header, no caption over the hand photo */
+.sp-h { --c: var(--accent, #6c823e); margin: 6px 2px 16px; }
+.sp-h h1 { margin: 6px 0 0; font: 600 30px/1.08 Outfit, sans-serif; letter-spacing: -.025em; color: #20301a; }

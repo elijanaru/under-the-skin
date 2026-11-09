@@ -3909,7 +3909,6 @@ function suppHand(now) {
   const L = SU_HAND.filter(([id]) => SUPP_LIB.some(x => x.id === id));
   return `<section class="suh">
     <div class="suh-ph"><img src="images/supp-hand.webp" alt="An open hand holding eight supplements" decoding="async">
-      <p class="suh-cap">the gaps food can’t always fill<small>tap one to see what it does</small></p>
       ${L.map(([id, n, x, y], i) => { const on = now && suppPhases(SUPP_LIB.find(s => s.id === id)).includes(now);
         return `<button class="suh-p" style="--x:${x}%;--y:${y}%;--i:${i}" data-action="suPick" data-id="${id}" aria-label="${n}"><i class="suh-dot"></i><span class="suh-l">${n}${on ? '<em></em>' : ''}</span></button>`; }).join('')}
     </div>
@@ -3923,8 +3922,7 @@ function viewSupps() {
   const dots = x => { const ph = suppPhases(x); return `<span class="sup-ph" aria-label="Best in ${ph.map(p => PHASES[p].name).join(', ')}">${PHASE_ORDER.map(p => `<i class="${ph.includes(p) ? 'on' : ''}" style="--c:${PHASE_COLOR.light[p]}"></i>`).join('')}</span>`; };
   const row = x => `<button class="sup-row" data-action="nav" data-to="supp/${x.id}"><span class="sup-sym ${x.han ? 'han' : ''}">${x.sym}</span><span class="sup-t"><b>${x.name}</b><small>${x.dose} · ${x.when.toLowerCase()}</small><span class="sup-meta">${evBadge(x.ev)}${dots(x)}</span></span>${icon('chevR', 16)}</button>`;
   return `${topbar('Supplements', { back: true })}<div class="pad sp2">
-    <h1 class="page-h">Fill the <span>gaps</span></h1>
-    <p class="body sm">Food comes first. These cover what food alone often can’t, timed to your cycle.</p>
+    <header class="t4-h sp-h"><small>Supplements</small><h1>Fill the gaps food can’t.</h1><p>Food comes first. Tap a pill to see what it does and when in your cycle it helps.</p></header>
     ${suppHand(now)}
     ${now && on.length ? suppStack(on, now) : ''}
     <div class="seg">${(now ? [['now', 'For now'], ['all', 'All']] : [['all', 'All']]).map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="supTab" data-v="${k}">${l}</button>`).join('')}</div>
