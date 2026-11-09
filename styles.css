@@ -10627,3 +10627,6 @@ html .pad > .page-h span, html .page-h span, html .gro-page .page-h span { color
 /* Consistency: section titles in bold ink like the page headers (were thin 300-400) */
 html .section-title h3 { font: 600 22px/1.15 Outfit, sans-serif !important; letter-spacing: -.02em !important; color: #20301a !important; }
 html .home .hub-k > span:first-child { font: 600 20px/1.2 Outfit, sans-serif !important; letter-spacing: -.02em !important; color: #20301a !important; }
+/* Grocery: nutrient ring counts readable (small Doto was too faint) */
+.gro-nuts .gn b { font: 600 13px Outfit, sans-serif !important; letter-spacing: 0 !important; color: #20301a !important; }
+.gro-nuts .gn small, .gro-nuts .gn span:not(:empty) { color: #304023; }

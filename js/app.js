@@ -4426,7 +4426,7 @@ const FLOWER = {
   menstrual: { n: 'Lotus, closed', m: 'a closed bud, resting and renewing' },
   follicular: { n: 'Lotus, opening', m: 'petals loosening, fresh energy' },
   ovulatory: { n: 'Lotus, full bloom', m: 'wide open, confidence and glow' },
-  luteal: { n: 'Lotus, softening', m: 'still open, turning gently inward' },
+  luteal: { n: 'Lotus, softening', m: 'petals folding back in, turning inward' },
 };
 // The lotus in the bubble: a closed bud on her period, opening through the follicular phase, full bloom at ovulation, softening in the luteal phase.
 const flowerImg = phase => `<img src="images/lotus-${phase}.webp" alt="" decoding="async">`;
