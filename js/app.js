@@ -284,6 +284,12 @@ const FRIENDS = {
 // the Today tile in a few words: [title, do, skip]
 const FRIENDS_TILE = { menstrual: ['Film night at home', 'A slow walk', 'Big parties'], follicular: ['A new class together', 'Meet someone new', 'Cancelling plans'], ovulatory: ['Dinner or dancing', 'The big talk', 'Hiding at home'], luteal: ['Tea with one friend', 'Cook together', 'Late arguments'] };
 const TOPIC_PIC = { eat: 'images/season-veg.webp', friends: 'images/partner-hands.jpg', stretch: 'images/move-walk.webp', meditate: 'images/move-meditate.webp', tea: 'images/tea-ginger.webp' };
+// Friends tile: how full her social battery typically is today, as a ring (from MIND_GUIDE's social level 0–3).
+function socialBattery(info) {
+  const G = info && MIND_GUIDE[dayWindow(info)]; if (!G) return '';
+  const pct = [25, 50, 75, 100][G.social], R = 25, Cc = 2 * Math.PI * R;
+  return `<span class="sbat" role="img" aria-label="Social battery about ${pct}%"><svg viewBox="0 0 60 60"><circle class="t" cx="30" cy="30" r="${R}"/><circle class="p" cx="30" cy="30" r="${R}" stroke-dasharray="${(Cc * pct / 100).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 30 30)"/></svg><b>${pct}<em>%</em></b><small>Social battery</small></span>`;
+}
 function viewTopic(k) {
   const info = M.info; if (!info || !TOPIC_PIC[k]) return viewMissing();
   const w = dayWindow(info), ph = info.phase, P = PHASES[ph];
@@ -364,27 +370,31 @@ function tsViz(k) {
   return '';
 }
 // An accent colour per Train safe check, so each card reads at a glance.
+// A real photo for each Train safe check, so each row reads at a glance.
+const TS_PIC = { fuel: () => photoUrl('sweet-potato-bowl', 300), iron: () => foodPhoto('Red meat', 300), bone: () => foodPhoto('Sardines', 300), knee: () => 'images/tile-sport.webp', heat: () => teaPhoto('Peppermint', 300, 300), protein: () => foodPhoto('Pasture eggs', 300) };
 const TS_TINT = { fuel: '#c9822e', iron: '#b5485d', bone: '#5f7fa8', knee: '#7f9a4c', heat: '#d2693c', protein: '#8a6fb8' };
 function trainSafe() {
   const open = ui.tsOpen, x = TRAIN_SAFE.find(t => t[0] === open), ph = M.info && M.info.phase;
   const strip = k => `<div class="ts-when"><small>When it matters most</small><div>${PHASE_ORDER.map(p => `<span class="${TRAIN_WHEN[k].includes(p) ? 'on' : ''} ${p === ph ? 'now' : ''}" style="--c:${PH_HEX[p]}"><i></i>${PHASES[p].name}${p === ph ? '<em>now</em>' : ''}</span>`).join('')}</div></div>`;
-  return `${sectionTitle('Train safe')}
-    <div class="ts-grid ts3">${TRAIN_SAFE.map(([k, g, t]) => { const N = TRAIN_NUM[k], C = TS_TINT[k] || '#6c823e';
-      return `<button class="ts3-c ${k === open ? 'on' : ''}" style="--c:${C}" data-action="tsOpen" data-k="${k}" aria-expanded="${k === open}">
-        <span class="ts3-top"><span class="ts3-ic">${icon(g, 17)}</span><span class="ts3-ph" aria-label="Matters most in ${TRAIN_WHEN[k].map(p => PHASES[p].name).join(', ')}">${PHASE_ORDER.map(p => `<i class="${TRAIN_WHEN[k].includes(p) ? 'on' : ''} ${p === ph ? 'now' : ''}" style="--p:${PH_HEX[p]}"></i>`).join('')}</span></span>
-        <span class="ts3-n"><b class="dotnum">${N[0]}</b><small>${N[1]}</small></span>
-        <span class="ts3-t">${t}</span></button>`; }).join('')}</div>
-    <p class="ts3-key">The dots show the phases each one matters most in: period, follicular, ovulation, luteal.</p>
-    ${x ? (() => { const N = TRAIN_NUM[x[0]]; return `<section class="card ts-more ts2">
-      <div class="ts2-h"><span class="ts-ic">${icon(x[1], 18)}</span><b>${x[2]}</b>${saveBtn(regTip(`train-${x[0]}`, 'Train safe', [x[2], x[4][0], x[4][1], 'This week'], 'move'))}</div>
+  const more = x => { const N = TRAIN_NUM[x[0]]; return `<section class="card ts-more ts2 ts4-d">
       <div class="ts2-big"><div class="ts2-n"><b>${N[0]}</b><small>${N[1]}</small></div><p>${N[2]}</p></div>
       ${tsViz(x[0])}
       <div class="ts2-do"><small>${icon('check', 12)} Do this</small><ol>${x[4].map((t, i) => `<li><i>${i + 1}</i>${t}</li>`).join('')}</ol></div>
       ${strip(x[0])}
       <p class="ts-ph">${icon('moon', 13)} ${x[7]}</p>
+      <div class="ts4-save">${saveBtn(regTip(`train-${x[0]}`, 'Train safe', [x[2], x[4][0], x[4][1], 'This week'], 'move'))}</div>
       <details class="gr-why ts2-more"><summary>Why, and the study ${icon('chevD', 13)}</summary><p class="ts-why">${x[5]}</p>
         <div class="ts-study"><span class="gr-y">${x[6][0].match(/\d{4}/)[0]}</span><span><b>${x[6][0].replace(/ \d{4}$/, '')}</b><small>${x[6][1]}</small></span></div></details>
-    </section>`; })() : ''}
+    </section>`; };
+  const focus = k => ph && TRAIN_WHEN[k].includes(ph) && TRAIN_WHEN[k].length < 4, always = k => TRAIN_WHEN[k].length === 4;
+  const list = [...TRAIN_SAFE].sort((a, b) => focus(b[0]) - focus(a[0]));
+  return `${sectionTitle('Train safe')}
+    <p class="ts4-sub">Six things every woman who trains should know. Tap one for the why.</p>
+    <div class="ts4">${list.map(t => { const [k, g, ti, , dos] = t, C = TS_TINT[k] || '#6c823e', pic = TS_PIC[k] ? TS_PIC[k]() : '';
+      return `<button class="ts4-r ${k === open ? 'on' : ''}" style="--c:${C}" data-action="tsOpen" data-k="${k}" aria-expanded="${k === open}">
+        <span class="ts4-pic">${pic ? `<img src="${pic}" alt="" loading="lazy">` : ''}<i>${icon(g, 13)}</i></span>
+        <span class="ts4-t"><b>${ti}</b><small>${dos[0]}</small>${focus(k) ? `<em class="now">${icon('spark', 11)} Matters now</em>` : always(k) ? '<em>Every phase</em>' : `<em class="later">${TRAIN_WHEN[k].map(p => PHASES[p].name).join(' & ')}</em>`}</span>
+        <span class="ts4-go">${icon(k === open ? 'chevD' : 'chevR', 15)}</span></button>${k === open ? more(t) : ''}`; }).join('')}</div>
     <p class="ts-credit">${TRAIN_SAFE_CREDIT}</p>`;
 }
 // ---------- grounding: bare skin on the earth ----------
@@ -1406,6 +1416,17 @@ function calTop(inf, fStart, nextOv, short) {
       <div class="cdial-w">${calDial(inf)}</div></div>
   </section>`;
 }
+// Her mind this phase (the cat superpower card, today's rings, work/social/self-care, the month, studies): top of the Calendar.
+function mindSection(phase) {
+  const ph = PHASES[phase], P = PLAIN[phase];
+    const rows = [['mind', ph.mind, 'Work'], ['users', ph.social, 'Social'], ['heart', ph.selfcare, 'Self-care']];
+    return `<section class="spx"><div class="spx-art">${petCat(phase === 'menstrual' ? 'sleep' : phase === 'ovulatory' ? 'joy' : 'awake')}</div>
+        <div class="spx-t"><small>Your superpower now</small><h3>${ph.superpower.title}</h3><p>${ph.superpower.text}</p></div>
+        <details class="rfx-why"><summary>What’s going on ${icon('chevD', 13)}</summary><p>${P.mind}</p></details></section>
+      <div class="mg3" role="list">${rows.map(([ic, o, k], i) => `<div class="mg3-c t${i}" role="listitem" style="--i:${i}"><span class="mg3-e" aria-hidden="true">${['📝', '🫶', '🛁'][i]}</span><em>${k}</em><b>${o.title}</b><p>${o.text}</p>
+        <svg class="mg3-paw" viewBox="0 0 40 40" aria-hidden="true"><ellipse cx="20" cy="26" rx="8" ry="6.5"/><circle cx="10" cy="16" r="3.4"/><circle cx="16.5" cy="10.5" r="3.4"/><circle cx="23.5" cy="10.5" r="3.4"/><circle cx="30" cy="16" r="3.4"/></svg></div>`).join('')}</div>
+      <p class="fine center">Low mood that stays, or PMS that takes over your life, is worth a doctor’s visit.</p>`;
+}
 function viewCalendar() {
   const { stats, today } = M;
   const m = ui.calMonth ? C.parseISO(ui.calMonth) : new Date(today.getFullYear(), today.getMonth(), 1);
@@ -1427,6 +1448,7 @@ function viewCalendar() {
       else if (di.fertile && di.cd <= di.L) cls.push('fertile');
     }
     if (k === todayISO()) cls.push('today');
+    if (ui.calEdit && k === ui.calFix) cls.push('fixme');
     if (k === ui.calSelected && !ui.calEdit) cls.push('sel');
     if (ui.calEdit && d > today) cls.push('locked');
     cells += `<button class="${cls.join(' ')}" data-action="calSelect" data-date="${k}"><span>${n}</span>${lg && (lg.symptoms || lg.moods || lg.notes) ? '<i class="logdot"></i>' : ''}${events().some(e => e.date === k) ? '<i class="evdot"></i>' : ''}</button>`;
@@ -1443,8 +1465,10 @@ function viewCalendar() {
   const short = d => fmt(d, { month: 'short', day: 'numeric' });
   const answer = inf ? calTop(inf, fStart, nextOv, short) : '';
   const selLine = si ? (si.periodActual ? `Period · day ${si.cd}` : si.periodPredicted ? 'Period expected' : si.isOvulation ? 'Egg release (estimate)' : si.fertile ? `Fertile · ${PHASES[si.phase].name}` : `${PHASES[si.phase].name} · day ${si.cd}`) : '';
+  const mph = M.info ? M.info.phase : 'follicular';
   return `${topbar('Calendar')}
   <div class="pad">
+    <div class="cal-mind">${mindSection(mph)}</div>
     ${answer}
     <div class="cal-head"><button class="icon-btn" data-action="calMove" data-d="-1" aria-label="Previous month">${icon('chevL', 20)}</button>
       <h2><button class="cal-title" data-action="calPick">${fmt(m, { month: 'long' })} <span>${m.getFullYear()}</span>${icon('chevD', 16)}</button>${thisMonth ? '' : '<button class="cal-today" data-action="calToday">Today</button>'}</h2>
@@ -1454,13 +1478,15 @@ function viewCalendar() {
       ${ui.calPick ? `<div class="cal-pick"><div class="cp-y"><button class="icon-btn" data-action="calYear" data-d="-1" aria-label="Previous year">${icon('chevL', 18)}</button><b>${ui.calPick}</b><button class="icon-btn" data-action="calYear" data-d="1" aria-label="Next year">${icon('chevR', 18)}</button></div>
         <div class="cp-m">${Array.from({ length: 12 }, (_, i) => `<button class="${ui.calPick === m.getFullYear() && i === m.getMonth() ? 'on' : ''} ${ui.calPick === today.getFullYear() && i === today.getMonth() ? 'now' : ''}" data-action="calSetMonth" data-m="${i}">${fmt(new Date(2000, i, 1), { month: 'short' })}</button>`).join('')}</div></div>`
       : `<div class="cal-grid ${slide}">${cells}</div>`}
-      ${ui.calEdit ? `<div class="cal-editbar"><span>Tap each day you bled</span><button class="btn btn-light cal-done" data-action="calEdit">Done</button></div>`
+      ${ui.calEdit ? `<div class="cal-editbar"><span>${ui.calFix ? `Tap a day to add or remove bleeding. The ringed day is ${fmt(C.parseISO(ui.calFix), { month: 'short', day: 'numeric' })}.` : 'Tap each day you bled'}</span><button class="btn btn-light cal-done" data-action="calEdit">Done</button></div>`
         : `<div class="cal2-legend"><span><i class="lg-p"></i>Period</span><span><i class="lg-f"></i>Fertile</span><span><i class="lg-o"></i>Egg release</span></div>
       ${calDayLine(sd, si, slog, selLine, isFuture)}
       <button class="cal-editbtn" data-action="calEdit">${icon('drop', 15)} Edit period days</button>`}
     </section>
     ${cycleBars()}
     ${events().some(e => e.date >= todayISO()) ? upcomingEvents() : ''}
+    <details class="cal-sci"><summary><span class="cal-sci-ic">${icon('book', 16)}</span><span><b>What studies found</b><small>Your mind across the month, if you want the science</small></span>${icon('chevD', 16)}</summary>
+      <div class="cal-sci-in">${MIND_SCIENCE.map(x => `<div class="mvs2"><b>${x.t}</b><p>${x.s}</p><cite>${x.c}</cite></div>`).join('')}</div></details>
   </div>
 `;
 }
@@ -1926,7 +1952,6 @@ function planOpts(phase) {
     ['season', `${fits || sz.length} ${fits ? 'for you' : 'fresh now'}`, `${sn} foods`, `images/season-${{ Spring: 'spring', Summer: 'summer', 'Late summer': 'summer', Autumn: 'autumn', Winter: 'winter' }[sn]}.jpg`, 'leaf'],
     ['foods', PHASES[phase].name, 'Phase foods', FOOD_PHOTOS[cf[3][0]] ? foodPhoto(cf[3][0], 400) : '', 'heart'],
     ['drinks', tea, 'Drinks & tea', teaPhoto(tea, 400, 400), 'cup'],
-    ['super', 'Spices & seeds', 'Superfoods', foodPhoto('Blueberries', 400), 'spark'],
     ['supps', 'What helps now', 'Supplements', foodPhoto('Pumpkin seeds', 400), 'drop'],
     ['sugar', 'Fewer spikes', 'Blood sugar', foodPhoto('Apples', 400), 'chart'],
     ['rituals', `${RITUALS.filter(r => r.phases.includes(phase)).length} for you`, 'Rituals', carePhoto(RITUALS[0].id, 400) || 'images/tile-meditate.webp', 'yinyang'],
@@ -1946,9 +1971,10 @@ function viewPlan() {
           <div class="rc-top"><span class="rc-k">${r.raw ? 'Raw' : r.warm ? 'Warm' : r.meal}</span></div><div class="rc-t">${r.name}</div><div class="rc-m">${r.time} min · ${r.kcal} kcal</div></button>`).join('')}</div>`;
     } else if (sub === 'foods') {
       const recent = recentSymptoms().filter(s => SYMPTOM_FOODS[s]).slice(0, 2);
-      body = `${dietGuideCard(phase)}${cycleFoods(phase)}
+      body = `${dietGuideCard(phase)}${sectionTitle('Superfoods')}<div class="eat-cat eb eb-free" data-phase="${phase}">${superInner(phase)}</div>
         ${recent.length ? `${sectionTitle('For how you feel')}${recent.map(s => { const f = SYMPTOM_FOODS[s]; return `<section class="card glass fix"><div class="fix-h"><span class="fix-s">${s}</span></div><div class="foods">${f.foods.slice(0, 5).map(x => `<span class="food">${x}</span>`).join('')}</div></section>`; }).join('')}` : ''}`;
-    } else if (sub === 'drinks' || sub === 'super' || sub === 'supps') {
+    } else if (sub === 'super') { location.replace('#/plan/foods'); return '';
+    } else if (sub === 'drinks' || sub === 'supps') {
       body = `${sub === 'drinks' ? plTea() : ''}<section class="card eat-cat eb" data-phase="${phase}">${eatCatInner(phase, sub)}</section>
         ${sub === 'drinks' ? `<button class="card gro-cta" data-action="nav" data-to="tea"><span class="art-ic">${icon('cup', 20)}</span><span class="art-t">Tea guide<small>A tea for every need</small></span>${icon('chevR', 18)}</button>` : ''}`;
     } else if (sub === 'sugar') {
@@ -1971,23 +1997,7 @@ function viewPlan() {
       <div class="grid2 rit-g">${M.info ? remedyCards(M.info) : ''}</div>
       <button class="card gro-cta" data-action="nav" data-to="relief"><span class="art-ic">${icon('heart', 20)}</span><span class="art-t">Relief guide<small>Cramps, PMS, sleep, skin</small></span>${icon('chevR', 18)}</button>`;
     } else {
-    const rows = [['mind', ph.mind, 'Work'], ['users', ph.social, 'Social'], ['heart', ph.selfcare, 'Self-care']];
-    const MG = M.info ? MIND_GUIDE[dayWindow(M.info)] : null, words = ['Low', 'Lower', 'Steady', 'High'];
-    const rings = MG ? [['energy', '⚡', 'Energy'], ['mood', '☀️', 'Mood lift'], ['social', '💬', 'Social'], ['rest', '🌙', 'Rest need']].map(([k, g, n], i) => {
-      const v = MG[k], R = 27, Cc = 2 * Math.PI * R, pct = [12, 38, 70, 100][v];
-      return `<div class="mv2-b r${k === 'rest' ? Math.min(3, v) : v}" style="--i:${i}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * pct / 100).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-g">${g}</span><b>${n}</b><small>${k === 'rest' ? ['Low', 'Some', 'Usual', 'More'][v] : words[v]}</small></div>`;
-    }).join('') : '';
-    body = `<section class="spx"><div class="spx-art">${petCat(phase === 'menstrual' ? 'sleep' : phase === 'ovulatory' ? 'joy' : 'awake')}</div>
-        <div class="spx-t"><small>Your superpower now</small><h3>${ph.superpower.title}</h3><p>${ph.superpower.text}</p></div>
-        <details class="rfx-why"><summary>What’s going on ${icon('chevD', 13)}</summary><p>${P.mind}</p></details></section>
-      ${MG ? `<section class="mind-today"><div class="mvd-k">Your mind today · typical</div><div class="mind-rings">${rings}</div><p class="mvd-f">Your abilities stay the same all month. Energy and mood shift, and every woman’s pattern is her own.</p></section>` : ''}
-      <div class="mg3" role="list">${rows.map(([ic, o, k], i) => `<div class="mg3-c t${i}" role="listitem" style="--i:${i}"><span class="mg3-e" aria-hidden="true">${['📝', '🫶', '🛁'][i]}</span><em>${k}</em><b>${o.title}</b><p>${o.text}</p>
-        <svg class="mg3-paw" viewBox="0 0 40 40" aria-hidden="true"><ellipse cx="20" cy="26" rx="8" ry="6.5"/><circle cx="10" cy="16" r="3.4"/><circle cx="16.5" cy="10.5" r="3.4"/><circle cx="23.5" cy="10.5" r="3.4"/><circle cx="30" cy="16" r="3.4"/></svg></div>`).join('')}</div>
-      ${sectionTitle('Your month')}
-      <div class="month-strip">${PHASE_ORDER.map(p => `<div class="ms ${p === phase ? 'on' : ''}"><i style="background:${PHASE_COLOR.dark[p]}"></i><b>${PHASES[p].name}</b><span>${PHASES[p].superpower.title}</span></div>`).join('')}</div>
-      ${sectionTitle('What studies found')}
-      <section class="card glass mv-sci">${MIND_SCIENCE.map(x => `<details class="mvs"><summary><b>${x.t}</b>${evBadge(x.ev)}</summary><p>${x.s}</p><cite>${x.c}</cite></details>`).join('')}</section>
-      <p class="fine center">Low mood that stays, or PMS that takes over your life, is worth a doctor’s visit.</p>`;
+      body = mindSection(phase);
     }
     return `${topbar(PLAN_TITLE[sub], { back: true })}<div class="pad pv-sub">${body}</div>`;
   }
@@ -2000,7 +2010,6 @@ function viewPlan() {
     <div class="pv-g">${planOpts(phase).map(([k, e, t, pic, ic], i) => `<button class="pv-t" style="--i:${i}" data-action="nav" data-to="plan/${k}">
       <span class="pv-top">${pic ? `<img src="${pic}" alt="" loading="lazy">` : `<span class="pv-ic">${icon(ic, 20)}</span>`}<span class="pv-go">${icon('chevR', 16)}</span></span>
       <small>${esc(e)}</small><b>${t}</b></button>`).join('')}</div>
-    <button class="pv-row" data-action="nav" data-to="plan/mind"><span class="pv-num dotnum">${PHASE_ORDER.indexOf(phase) + 1}</span><span><b>Your mind this phase</b><small>${ph.superpower.title}</small></span><span class="pv-go">${icon('chevR', 16)}</span></button>
     <button class="pv-row" data-action="nav" data-to="grocery"><span class="pv-num">${icon('check', 18)}</span><span><b>My grocery list</b><small>For the next 7 days</small></span><span class="pv-go">${icon('chevR', 16)}</span></button>
   </div>`;
 }
@@ -2315,7 +2324,7 @@ function nourishBody(current) {
   const recs = myRecipes().filter(r => r.phases.includes(phase)).sort((a, b) => warm ? (!!b.warm - !!a.warm) : (!!b.raw - !!a.raw));
   const recent = recentSymptoms().filter(s => SYMPTOM_FOODS[s]).slice(0, 2);
   const EXTRA = EAT_CATS.filter(c => !PLATE_PETALS.some(p => p.k === c.k)), cat = EXTRA.some(c => c.k === ui.eatCat) ? ui.eatCat : EXTRA[0].k;
-  return `${dietGuideCard(phase)}${plateSection(phase)}${cycleFoods(phase)}${sectionTitle('Drinks, supplements & superfoods')}
+  return `${dietGuideCard(phase)}${plateSection(phase)}${sectionTitle('Drinks, supplements & superfoods')}
     <div class="eat-tabs eb-tabs">${EXTRA.map(c => `<button class="${c.k === cat ? 'on' : ''}" data-action="eatCat" data-v="${c.k}"><span class="ebt-e">${{ drinks: '🍵', supps: '💊', super: '🫚' }[c.k] || ''}</span>${{ drinks: 'Drinks', super: 'Superfoods' }[c.k] || c.t}</button>`).join('')}</div>
     <section class="card eat-cat eb" data-phase="${phase}">${eatCatInner(phase, cat)}</section>
 
@@ -2338,13 +2347,15 @@ const SB_PIC = { fibre: () => foodPhoto('Aged kimchi (mugeunji)', 360), move: ()
 function sugarSection(phase) {
   const on = sugarDone(), pat = M.info ? patterns().list.filter(x => SUGAR_SYMPTOMS.includes(x.name)) : [];
   const luteal = phase === 'luteal';
-  return `${sectionTitle('Blood sugar tricks', ['How they work', 'sugar'])}
-    <section class="card sugar-big">
+  return `<div class="sb-free">
       <div class="sb-top"><div><small>Your next meal</small><b>Tap what you do,<br>watch the spike shrink</b></div>
         <div class="sb-score" id="sg-score">${sugarScore(on)}</div></div>
+      <div id="sg-chart" class="sb-chart">${sugarCurve(on)}</div>
       ${luteal ? `<p class="sb-note">${icon('spark', 13)} Second half of your cycle: you’re a little less insulin-sensitive, so these help most now.</p>` : ''}
       ${pat.length ? `<div class="sm-pat">${pat.slice(0, 2).map(x => `<div>${icon('chart', 14)}<span><b>Your pattern:</b> ${x.name.toLowerCase()} on ${x.from === x.to ? `day ${x.from}` : `days ${x.from}–${x.to}`} · use these tricks then</span></div>`).join('')}</div>` : ''}
-      <div id="sg-chart" class="sb-chart">${sugarCurve(on)}</div>
+    </div>
+    ${sectionTitle('Blood sugar tricks', ['How they work', 'sugar'])}
+    <section class="card sugar-big">
       ${[['before', '1', 'Before you eat'], ['with', '2', 'With your meal'], ['daily', '3', 'Every day']].map(([w, n, t]) => `<div class="sb-step"><div class="sb-sh"><span>${n}</span>${t}</div>
         <div class="sb-grid">${SUGAR_TRICKS.filter(x => x.w === w).map(x => `<button class="sb-t sb-pic ${on.includes(x.k) ? 'on' : ''}" data-action="sugarTrick" data-v="${x.k}"><span class="sb-ph">${SB_PIC[x.k] ? `<img src="${SB_PIC[x.k]()}" alt="" loading="lazy">` : ''}<em>${x.g}</em></span><b>${x.n}</b><small>${x.t}</small><i class="sb-ck">${icon('check', 14, 2.6)}</i></button>`).join('')}</div></div>`).join('')}
     </section>`;
@@ -3103,6 +3114,12 @@ function groceryItems() {
     .slice(0, 10).map(i => ({ name: i.f, phases: i.ph.filter(p => ph.includes(p)), why: `In season · ${{ warm: 'warming', cool: 'cooling', neutral: 'neutral' }[i.nature]}` }));
   return [['In season now', season], ...groups, other].filter(([, l]) => l.length);
 }
+// A grocery item without a photo gets a calm emoji tile so every row lines up.
+const GRO_EMO = [[/potato/i, '🍠'], [/pumpkin|squash/i, '🎃'], [/spinach|collard|kale|chard|greens|lettuce|rocket/i, '🥬'], [/cabbage|brussels|broccoli|cauli/i, '🥦'], [/leek|onion|garlic|shallot/i, '🧅'], [/turnip|rutabaga|beet|radish|root/i, '🫚'], [/carrot/i, '🥕'],
+  [/cranberr|berr|cherr/i, '🍒'], [/pecan|walnut|almond|nut|hazel/i, '🌰'], [/seed|sesame|flax|chia/i, '🌻'], [/apple|pear|quince/i, '🍐'], [/citrus|orange|lemon|grapefruit|mandarin/i, '🍊'], [/fish|salmon|sardine|mackerel/i, '🐟'], [/oyster|mussel|clam|shell/i, '🦪'],
+  [/egg/i, '🥚'], [/beef|lamb|meat|liver|organ/i, '🥩'], [/chicken|duck|turkey/i, '🍗'], [/milk|kefir|yog|cheese|butter|ghee/i, '🥛'], [/lentil|bean|pea|chickpea/i, '🫘'], [/mushroom|shiitake/i, '🍄'], [/avocado/i, '🥑'], [/tomato/i, '🍅'], [/pepper/i, '🫑'],
+  [/melon/i, '🍉'], [/fig|date|prune/i, '🫐'], [/ginger|turmeric/i, '🫚'], [/herb|mint|parsley|basil|cilantro|dill/i, '🌿'], [/seaweed|kelp|nori|gim|miyeok/i, '🌊'], [/millet|rice|buckwheat|quinoa|grain/i, '🌾'], [/honey|molasses/i, '🍯'], [/cinnamon|spice|clove/i, '✨'], [/kimchi|sauerkraut|ferment/i, '🫙']];
+const groEmoji = n => (GRO_EMO.find(([r]) => r.test(n)) || [0, '🌱'])[1];
 function viewGrocery() {
   // meat and organs come right after what's in season
   const AISLE_FIRST = ['In season now', 'Protein'], rank = a => { const i = AISLE_FIRST.indexOf(a); return i < 0 ? 9 : i; };
@@ -3116,9 +3133,10 @@ function viewGrocery() {
   const warm = M.info && warmWindow(M.info) || phases.includes('menstrual');
   const aisle = groups.some(([a]) => a === ui.groAisle) ? ui.groAisle : (groups[0] || [''])[0];
   return `${topbar('Grocery list', { back: true })}
-  <div class="pad">
+  <div class="pad gro-page">
     <h1 class="page-h">This week’s <span>basket</span></h1>
-    <p class="muted">Built from what your next 7 days need: ${phases.map(p => `<b class="phase-inline" style="--c:${PHASE_COLOR.dark[p]}">${PHASES[p].name}</b>`).join(' then ')}.</p>
+    <p class="gro-lead">Built from what your next 7 days need</p>
+    <div class="gro-phs">${phases.map((p, i) => `${i ? `<span class="gro-arr">${icon('chevR', 12, 2)}</span>` : ''}<span class="gro-pc" style="--c:${PH_HEX[p]}"><i></i>${PHASES[p].name}</span>`).join('')}</div>
     <section class="card glass gro-score">
       <div class="gs-ring"><svg viewBox="0 0 124 124">${ring(total ? done / total : 0, 54, 8)}</svg><div><b>${done}</b><small>of ${total}</small></div></div>
       <div class="gs-t"><div class="eyebrow">In the basket</div><p>${done === total && total ? 'All done. Your week is stocked.' : done ? `${total - done} to go. Tick them off as you shop.` : 'Tick foods off as you shop. Each nutrient ring fills up.'}</p>
@@ -3130,8 +3148,8 @@ function viewGrocery() {
     <div class="tea-tabs gro-tabs">${groups.map(([a, l]) => { const d = l.filter(i => got[i.name.toLowerCase()]).length; return `<button class="${a === aisle ? 'on' : ''} ${d === l.length ? 'full' : ''}" data-action="groAisle" data-v="${esc(a)}">${a} <i>${d}/${l.length}</i></button>`; }).join('')}</div>
     ${groups.filter(([a]) => a === aisle).map(([, list]) => `
       <section class="card glass">${list.map(it => { const k = it.name.toLowerCase(), ph = foodPhoto(it.name, 120); return `<button class="check-row gro ${got[k] ? 'on' : ''}" data-action="groToggle" data-k="${esc(k)}">
-        <span class="cb">${icon('check', 14, 2.2)}</span>${ph ? `<img class="gro-img" src="${ph}" alt="" loading="lazy">` : ''}<span class="gro-n">${esc(it.name)}<small>${it.why}</small></span>
-        <span class="gro-ph">${it.phases.map(p => `<i style="background:${PHASE_COLOR.dark[p]}" title="${PHASES[p].name}"></i>`).join('')}</span></button>`; }).join('')}</section>`).join('')}
+        <span class="cb">${icon('check', 14, 2.2)}</span>${ph ? `<img class="gro-img" src="${ph}" alt="" loading="lazy">` : `<span class="gro-img gro-emo" aria-hidden="true">${groEmoji(it.name)}</span>`}<span class="gro-n">${esc(it.name)}<small>${it.why}</small></span>
+        <span class="gro-ph">${it.phases.map(p => `<i style="background:${PH_HEX[p]}" title="${PHASES[p].name}"></i>`).join('')}</span></button>`; }).join('')}</section>`).join('')}
     ${swaps.length ? `${sectionTitle('Swapped for the season')}<section class="card glass gro-swap">${swaps.map(x => `<div><s>${x.out}</s>${icon('chevR', 12)}<b>${x.alt || 'skip this week'}</b><small>${x.why}</small></div>`).join('')}
       <p class="fine" style="margin:8px 0 0">Not in season where you live this month, so swapped for a local food with the same nutrient.</p></section>` : ''}
     <section class="card glass gro-share"><div><b>Shopping with someone?</b><small>Send the list as text</small></div><button class="pill-cta" data-action="groShare">${icon('download', 15)} Share list</button></section>
@@ -4075,7 +4093,7 @@ function todayTiles(info, only) {
       ${tile(`calm lv${lvl} t-cort t-mol`, { to: 'breathe/stress' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/cortisol-mol.webp" alt="" loading="lazy"><canvas class="teacup3d" data-model="models/cortisol.glb" data-elev="0.3" data-fit="1.9" data-steam="0" data-shadow="0" aria-label="The cortisol molecule, turning slowly"></canvas></span>`, 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}<span class="cv-lv" aria-hidden="true">${[1, 2, 3].map(i => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</span>`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
       ${tile('t-tea t-cup', { to: 'do/tea' }, `<span class="cup3d-w"><img class="dpt-cup" src="${teaCupImg(td[1])}" alt="" loading="lazy"><canvas class="teacup3d"${teaCupAttr(td[1])} aria-label="${td[1]}, turning slowly"></canvas></span>`, 'Tea for today', td[1], td[2])}
       ${tile('t-glow ph-full ph-vid', { to: 'ground' }, `<video class="dpt-vid" src="images/ground-cat.mp4" poster="images/ground-cat.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Ground', GROUND_PHASE[ph].t, '')}
-      ${tile('wide t-deep ph-full keep ph-fr ph-vid ph-frw', { to: 'do/friends' }, `<video class="dpt-vid" src="images/friends-sunset.mp4" poster="images/friends-sunset.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Friends', FRIENDS_TILE[ph][0], `<span class="dpt-fr">${icon('check', 12, 2.4)} ${FRIENDS_TILE[ph][1]}</span><span class="dpt-fr no">${icon('close', 12, 2.4)} ${FRIENDS_TILE[ph][2]}</span>`)}
+      ${tile('wide t-deep ph-full keep ph-fr ph-vid ph-frw', { to: 'do/friends' }, `<video class="dpt-vid" src="images/friends-sunset.mp4" poster="images/friends-sunset.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>${socialBattery(info)}`, 'Friends', FRIENDS_TILE[ph][0], `<span class="dpt-fr">${icon('check', 12, 2.4)} ${FRIENDS_TILE[ph][1]}</span><span class="dpt-fr no">${icon('close', 12, 2.4)} ${FRIENDS_TILE[ph][2]}</span>`)}
     </div>
     <div class="hub-tip ${open && (open === 'eat' || open === 'tea' || tips[open]) ? 'on' : ''}" id="hub-tip">${open ? tipBody(open) : ''}</div>`;
 }
@@ -4375,9 +4393,9 @@ function sugarCurve(on) {
   const grid = [10, 20, 30, 40, 50, 60].map(v => `<line x1="${x0}" x2="${x1}" y1="${Y(v)}" y2="${Y(v)}" stroke="rgba(255,255,255,.06)"/><text x="${x0 - 6}" y="${Y(v) + 3}" text-anchor="end" class="sg-ax">+${v}</text>`).join('');
   const ticks = [0, 30, 60, 90, 120].map(m => `<text x="${X(m)}" y="${H - 8}" text-anchor="middle" class="sg-ax">${m ? `+${m}′` : 'Meal'}</text>`).join('');
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" class="sg-svg">${grid}${ticks}
-    <path d="${path(30)}" fill="none" stroke="#f4f5f0" stroke-opacity=".45" stroke-width="2" stroke-dasharray="4 4"/>
-    <path d="${path(peak, true)}" fill="url(#sgfill)" stroke="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" stroke-width="2.5"/>
-    <defs><linearGradient id="sgfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" stop-opacity=".45"/><stop offset="1" stop-color="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" stop-opacity="0"/></linearGradient></defs>
+    <path d="${path(30)}" fill="none" class="sg-without" stroke-width="2" stroke-dasharray="4 4"/>
+    <path d="${path(peak, true)}" fill="url(#sgfill)" class="sg-with" stroke-width="3" stroke-linejoin="round"/>
+    <defs><linearGradient id="sgfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fbf4a" stop-opacity=".55"/><stop offset="1" stop-color="#8fbf4a" stop-opacity=".05"/></linearGradient></defs>
     <text x="${X(32)}" y="${Y(30) - 6}" text-anchor="middle" class="sg-lbl red">+30 mg/dL</text>
     ${keep < 1 ? `<text x="${X(34 * width)}" y="${Y(peak) - 6}" text-anchor="middle" class="sg-lbl">+${Math.round(peak)} mg/dL</text>` : ''}</svg>
     <div class="sg-leg"><span><i class="red"></i>Without tricks</span><span><i></i>With your tricks · ${Math.round((1 - keep) * 100)}% smaller spike</span></div>`;
@@ -4809,6 +4827,44 @@ function uvBars(hours, D) {
     ${peak >= .5 && pi >= h0 && pi <= h1 ? `<text x="${Math.max(18, Math.min(W - 18, px)).toFixed(1)}" y="${(H - Math.max(3, peak / top * (H - 16)) - 5).toFixed(1)}" text-anchor="middle" class="uvw-pk">${peak.toFixed(1)}</text>` : ''}
     ${bars}${nx !== null ? `<line x1="${nx.toFixed(1)}" x2="${nx.toFixed(1)}" y1="-12" y2="${H + 3}" class="uvw-nowl"/><text x="${nx.toFixed(1)}" y="-4" text-anchor="middle" class="uvw-nowt">now</text>` : ''}</svg>`;
 }
+// UV through the day as a bright mountain (green, yellow, orange, red like a weather app). Each emoji means what to do in that stretch of the day, explained in the key below.
+const UV_ZONES = [[0, '🌿', 'Out freely'], [3, '🧴', 'Sunscreen on'], [6, '🧢', 'Hat & shades'], [8, '⛱️', 'Stay in the shade']];
+const uvZone = u => UV_ZONES.reduce((z, x, i) => (u >= x[0] ? i : z), 0);
+function uvCurve(hours) {
+  const peak = Math.max(...hours); if (!(peak > .05)) return '';
+  const lit = hours.map((u, h) => (u > .05 ? h : -1)).filter(h => h >= 0), A = Math.max(0, lit[0] - 2), B = Math.min(23, lit[lit.length - 1] + 2);
+  const pk = hours.indexOf(peak), top = Math.max(4, Math.ceil(peak * 1.18)), W = 300, X0 = 4, X1 = 270, Y0 = 18, Y1 = 168;
+  const x = h => X0 + (h - A) / (B - A) * (X1 - X0), y = u => Y1 - Math.min(u, top) / top * (Y1 - Y0), f = n => n.toFixed(1);
+  const P = hours.slice(A, B + 1).map((u, i) => [x(A + i), y(u)]);
+  let d = `M${f(P[0][0])},${f(P[0][1])}`;
+  for (let i = 0; i < P.length - 1; i++) { const p0 = P[i - 1] || P[i], p1 = P[i], p2 = P[i + 1], p3 = P[i + 2] || p2;
+    d += ` C${f(p1[0] + (p2[0] - p0[0]) / 6)},${f(Math.min(Y1, p1[1] + (p2[1] - p0[1]) / 6))} ${f(p2[0] - (p3[0] - p1[0]) / 6)},${f(Math.min(Y1, p2[1] - (p3[1] - p1[1]) / 6))} ${f(p2[0])},${f(p2[1])}`; }
+  // weather-app look: green at the foot of the mountain, yellow and orange up the sides, red at the very top
+  const stops = [[0, '#2fbf5b'], [.3, '#8fd13f'], [.52, '#ffd21f'], [.74, '#ff9a1f'], [1, '#ff3b30']].map(([o, c]) => `<stop offset="${o * 100}%" stop-color="${c}"/>`).join('');
+  const lv = [[3, 'Moderate'], [6, 'High'], [8, 'Very high'], [11, 'Extreme']].filter(([u]) => u < top);
+  // one emoji per stretch of the day with the same advice, sitting inside the mountain at that stretch's middle
+  const runs = []; for (let h = Math.max(A, lit[0]); h <= Math.min(B, lit[lit.length - 1]); h++) { const z = uvZone(hours[h]); if (runs.length && runs[runs.length - 1].z === z) runs[runs.length - 1].b = h; else runs.push({ z, a: h, b: h }); }
+  const used = [...new Set(runs.map(r => r.z))].sort();
+  const emo = runs.map(r => { const m = (r.a + r.b) / 2, u = Math.max(hours[Math.floor(m)], hours[Math.ceil(m)]), hgt = Y1 - y(u);
+    return hgt < 30 ? '' : `<text x="${f(x(m))}" y="${f(Y1 - Math.min(hgt * .42, hgt - 24) + 7)}" text-anchor="middle" class="uvc-e">${UV_ZONES[r.z][1]}</text>`; });
+  const now = new Date(), nh = now.getHours() + now.getMinutes() / 60, nu = uvAt(hours, now);
+  return `<svg class="uvc" viewBox="0 0 ${W} 196" width="100%" role="img" aria-label="UV through the day, highest ${peak.toFixed(1)} at ${String(pk).padStart(2, '0')}:00">
+    <defs><linearGradient id="uvc-g" gradientUnits="userSpaceOnUse" x1="0" y1="${Y1}" x2="0" y2="${f(y(peak))}">${stops}</linearGradient>
+      <linearGradient id="uvc-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".12"/></linearGradient></defs>
+    ${lv.map(([u, t]) => `<line x1="${X0}" x2="${X1}" y1="${f(y(u))}" y2="${f(y(u))}" class="uvc-grid"/><text x="${X0 + 2}" y="${f(y(u) - 4)}" class="uvc-lv">${t}</text>`).join('')}
+    <path d="${d} L${X1},${Y1} L${X0},${Y1}Z" fill="url(#uvc-g)" opacity=".92"/>
+    <path d="${d} L${X1},${Y1} L${X0},${Y1}Z" fill="url(#uvc-f)"/>
+    <path d="${d}" fill="none" stroke="url(#uvc-g)" stroke-width="3" stroke-linecap="round"/>
+    <path d="${d}" fill="none" stroke="rgba(43,27,18,.35)" stroke-width="1"/>
+    ${emo.join('')}
+    <circle cx="${f(x(pk))}" cy="${f(y(peak))}" r="5" class="uvc-pk"/><text x="${f(x(pk))}" y="${f(y(peak) - 11)}" text-anchor="middle" class="uvc-pkt">${peak.toFixed(0)} · highest</text>
+    ${nh > A && nh < B ? `<line x1="${f(x(nh))}" x2="${f(x(nh))}" y1="${Y0}" y2="${Y1}" class="uvc-now"/><circle cx="${f(x(nh))}" cy="${f(y(nu))}" r="4.5" class="uvc-nd"/><text x="${f(x(nh))}" y="${Y1 + 26}" text-anchor="middle" class="uvc-nowt">now</text>` : ''}
+    <line x1="${X0}" x2="${X1}" y1="${Y1}" y2="${Y1}" class="uvc-base"/>
+    ${[6, 9, 12, 15, 18].filter(h => h > A && h < B).map(h => `<text x="${f(x(h))}" y="${Y1 + 14}" text-anchor="middle" class="uvc-h">${String(h).padStart(2, '0')}:00</text>`).join('')}
+    ${Array.from({ length: Math.floor(top / 2) + 1 }, (_, i) => i * 2).map(u => `<text x="${W - 4}" y="${f(y(u) + 4)}" text-anchor="end" class="uvc-r">${u}</text>`).join('')}
+  </svg>
+  <div class="uvc-key">${used.map(z => `<span class="z${z}">${UV_ZONES[z][1]} ${UV_ZONES[z][2]}</span>`).join('')}</div>`;
+}
 // The hours that make the most vitamin D (UV 3 and up), joined into one window.
 function dWindow(hours) { const hs = hours.map((u, h) => (u >= 3 ? h : -1)).filter(h => h >= 0); return hs.length ? [hs[0], hs[hs.length - 1] + 1] : null; }
 function uvWidget() {
@@ -4828,7 +4884,7 @@ function uvWidget() {
         <div class="uvw-st ${on && left <= 5 && burn !== Infinity ? 'warn' : ''}"><span class="uvw-ic" style="--c:${lv[2]}">${icon('thermo', 15)}</span><div><b class="${/\d/.test(burnTxt[0]) ? '' : 'w'}">${burnTxt[0]}</b><small>${burnTxt[1]}</small></div></div>
       </div>
     </div>
-    ${uvBars(hours, D)}
+    ${uvCurve(hours)}
     <p class="uvw-win">${winTxt}</p>
     <div class="uvw-skin"><div class="uvw-sk-h"><small>Your skin</small><span><b>${sk[2]}</b> · ${sk[3]}</span></div>
       <div class="uvw-sw" role="radiogroup" aria-label="Your skin type">${SKIN.map((x, i) => `<button role="radio" aria-checked="${i + 1 === mySkin()}" aria-label="${x[2]}, ${x[3]}" class="${i + 1 === mySkin() ? 'on' : ''}" style="--s:${x[1]}" data-action="uvSkin" data-v="${i + 1}"></button>`).join('')}</div></div>
@@ -4870,7 +4926,7 @@ function sunNow(D, h, cur, nx) {
     <div class="rn2-row"><span><b class="dotnum">${hLabel(D.rise)}</b><small>Sunrise</small></span><span class="c">${icon(mood[0], 20)}<small>${mood[1]}</small></span><span class="r"><b class="dotnum">${hLabel(D.set)}</b><small>Sunset</small></span></div>
     <div class="rn2-tiles">
       <div class="rn2-t"><b>Daylight</b><small>${day ? 'left today' : 'tomorrow'}</small><em class="dotnum">${hm(day ? left : len)}</em><span class="rn2-tk" aria-hidden="true">${ticks}</span><small class="f">${hm(len)} of sun today</small></div>
-      <div class="rn2-t"><b>Next</b><small>${nx.n}</small><em class="dotnum">${hLabel(nx.from)}</em><span class="rn2-nx">${emi(nx.g, 22)}</span><small class="f">${nx.acts[0] ? nx.acts[0].t : nx.brief.split('. ')[0]}</small></div>
+      <div class="rn2-t"><b>Sun at its highest</b><small>${((h - D.rise + 24) % 24) < ((D.noon - D.rise + 24) % 24) ? 'today' : 'tomorrow'}</small><em class="dotnum">${hLabel(D.noon)}</em><span class="rn2-nx">${emi('☀️', 22)}</span><small class="f">Strongest light of the day</small></div>
     </div>`;
 }
 // When to get out of the sun: the hours her skin burns fastest today, and how long she has right now.
@@ -4902,16 +4958,8 @@ function viewRhythm() {
   <div class="pad">
     <section class="card rnow rnow2">
       ${sunNow(D, h, cur, nx)}
-      <p class="rnow-brief">${cur.brief}</p>
-      ${cur.acts.length ? `<div class="rnow-do"><h3>Do this now</h3><div class="rh-list">${cur.acts.map(x => rhAct(x, done)).join('')}</div><small class="rnow-tip">Tap each one when it’s done</small></div>`
-        : `<div class="rnow-do"><h3>Do this now</h3><p class="rnow-rest">${icon('moon', 16)} Sleep. Nothing to do until the morning light.</p></div>`}
-      <div class="rnow-next"><span class="rnow-ni">${emi(nx.g, 18)}</span><div><small>${hLabel(nx.from)}</small><b>${nx.n}</b>${nx.acts[0] ? `<span>${nx.acts[0].t}</span>` : ''}</div></div>
     </section>
     ${uvWidget()}
-    <div class="rh-stats"><div>${rhythmRing(done.length, RH_GOAL)}<small>${done.length} of ${RH_GOAL} today</small></div>
-      <div><span>${emi('🔥', 18)}</span><b>${streak} ${streak === 1 ? 'day' : 'days'}</b><small>streak (4+ a day)</small></div>
-      <div><span>${emi(lv.cur[1], 18)}</span><b>${lv.cur[2]}</b><small>${lv.next ? `${lv.next[0] - lv.total} to ${lv.next[2]}` : 'Highest level'}</small></div></div>
-    ${info ? `<p class="rh-phase">${PHASE_RHYTHM[info.phase]}</p>` : ''}
     ${sectionTitle('Out of the sun')}
     ${shadeCard()}
     ${sectionTitle('Your week')}<section class="card glass"><div class="rh-week">${week}</div></section>
@@ -7265,7 +7313,7 @@ const actions = {
     ui.calSelected = d.date; ui.planOpen = null;
     nextFrame(() => calRefresh(['.day-panel']));
   },
-  calEdit: () => { ui.calEdit = !ui.calEdit; if (!ui.calEdit) toast('Saved · predictions updated'); calRefresh(null, true); },
+  calEdit: () => { ui.calEdit = !ui.calEdit; if (!ui.calEdit) ui.calFix = null; if (!ui.calEdit) toast('Saved · predictions updated'); calRefresh(null, true); },
   pinPartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (!p) return; p.pin = !p.pin; save(); toast(p.pin ? `${p.n} pinned to your home screen` : 'Unpinned'); render(); },
   openLove: d => { document.querySelector('.sig-pop')?.remove(); ui.loveFor = d.id; render(); if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().catch(() => {}); },
   sigClose: () => document.querySelector('.sig-pop')?.remove(),
@@ -7363,7 +7411,7 @@ const actions = {
     box.querySelectorAll('.eb-i.on').forEach(x => x.classList.remove('on')); el.classList.add('on');
     const p = box.querySelector('.ebp-in'); p.innerHTML = el.querySelector('template').innerHTML; p.classList.remove('pop'); void p.offsetWidth; p.classList.add('pop');
   },
-  superGo: () => go('plan/super'),
+  superGo: () => go('plan/foods'),
   eatCat: (d, el) => {
     ui.eatCat = d.v; const card = document.querySelector('.eat-cat'); if (!card) return render();
     document.querySelectorAll('[data-action="eatCat"]').forEach(b => b.classList.toggle('on', b === el));
@@ -7444,7 +7492,9 @@ const actions = {
   calmRem: async () => { const r = rem(); r.calm = !r.calm; save(); if (r.calm && 'Notification' in window && Notification.permission === 'default') { try { await Notification.requestPermission(); } catch { /* unsupported */ } } render(); fireNotifications(); },
   remPermission: async () => { try { await Notification.requestPermission(); } catch { /* unsupported */ } render(); fireNotifications(); },
   flagDismiss: d => { state.flagDismissed = d.k; save(); render(); },
-  flagEdit: d => { ui.calSelected = d.date; const x = C.parseISO(d.date); ui.calMonth = C.iso(new Date(x.getFullYear(), x.getMonth(), 1)); go('calendar'); },
+  // straight into the calendar, already in "edit period days" mode, scrolled to the grid
+  flagEdit: d => { ui.calSelected = d.date; const x = C.parseISO(d.date); ui.calMonth = C.iso(new Date(x.getFullYear(), x.getMonth(), 1)); ui.calEdit = true; ui.calFix = d.date; go('calendar');
+    setTimeout(() => { const c = document.querySelector('.cal2'); if (c) c.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' }); }, 120); },
   lemonStart: () => { state.lemon = { start: todayISO(), done: {} }; save(); toast('Your 28 days begin'); render(); },
   lemonTick: () => { const L = state.lemon; if (!L) return; L.done = L.done || {}; const k = todayISO(); L.done[k] ? delete L.done[k] : (L.done[k] = 1); save(); render(); },
   focusTick: d => { const k = todayISO(), f = state.focusDone = state.focusDone || {}; const a = f[k] = f[k] || []; const i = +d.i; a.includes(i) ? a.splice(a.indexOf(i), 1) : a.push(i); for (const x in f) if (x !== k) delete f[x]; save(); render(); },
@@ -7488,7 +7538,13 @@ const actions = {
     try { await navigator.clipboard.writeText(text); toast('List copied'); } catch { toast('Couldn’t copy'); }
   },
   saveBirthday: () => { if (state.profile.birthday) render(); else toast('Pick your birthday first'); },
-  plPetal: d => { ui.plPetal = d.v; render(); },
+  plPetal: d => {
+    ui.plPetal = d.v; const el = document.querySelector('.pl'); if (!el) return render();
+    // only the chosen slice lights up and the food list below swaps: no re-render, no jump
+    el.querySelectorAll('[data-action="plPetal"]').forEach(g => g.classList.toggle('on', g.dataset.v === d.v));
+    const t = document.createElement('div'); t.innerHTML = plateSection(ui.plNow, true);
+    const nd = t.querySelector('.pl-det'), od = el.querySelector('.pl-det'); if (nd && od) od.replaceWith(nd);
+  },
   plRecipes: () => go('plan/recipes'),
   nourishPhase: d => { ui.nourishPhase = d.v; ui.openNeed = 0; render(); },
   openNeed: d => { ui.openNeed = ui.openNeed === +d.i ? -1 : +d.i; render(); },

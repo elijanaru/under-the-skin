@@ -9688,3 +9688,177 @@ html, body { overscroll-behavior-y: none; }
 .sh2-b p { font-size: 13.5px; line-height: 1.45; color: rgba(255,236,215,.82); margin: 2px 0 0; }
 .sh2-now { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; align-self: flex-start; padding: 7px 12px; border-radius: 99px; background: rgba(255,236,215,.1); font-size: 12.5px; color: #fff4e6; }
 .sh2-now b { font-size: 12.5px; font-weight: 500; }
+/* Train safe as a clear list: photo, the check, the one thing to do, and when it matters */
+.ts4-sub { font-size: 13.5px; color: rgba(48,64,35,.65); margin: -4px 2px 12px; }
+.ts4 { display: flex; flex-direction: column; gap: 10px; }
+.ts4-r { display: flex; align-items: center; gap: 14px; width: 100%; padding: 12px 14px 12px 12px; border-radius: 26px; text-align: left; font: inherit; color: #20301a; cursor: pointer;
+  background: rgba(255,255,255,.92); border: 1px solid rgba(48,64,35,.08); box-shadow: 0 12px 26px -16px rgba(32,48,26,.35); transition: transform .2s; }
+.ts4-r:active { transform: scale(.98); }
+.ts4-r.on { border-color: var(--c); box-shadow: 0 0 0 1.5px var(--c), 0 12px 26px -16px rgba(32,48,26,.35); }
+.ts4-pic { position: relative; flex: none; width: 64px; height: 64px; }
+.ts4-pic img { width: 64px; height: 64px; border-radius: 20px; object-fit: cover; display: block; }
+.ts4-pic i { position: absolute; right: -5px; bottom: -5px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--c); color: #fff; border: 2.5px solid #fff; font-style: normal; }
+.ts4-t { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ts4-t b { font-size: 16px; font-weight: 500; line-height: 1.2; }
+.ts4-t small { font-size: 13px; line-height: 1.35; color: rgba(48,64,35,.72); }
+.ts4-t em { align-self: flex-start; margin-top: 5px; display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 99px; font-style: normal; font-size: 11.5px; font-weight: 500;
+  background: rgba(48,64,35,.06); color: rgba(48,64,35,.7); }
+.ts4-t em.now { background: var(--c); color: #fff; }
+.ts4-go { width: 30px; height: 30px; flex: none; border-radius: 50%; display: grid; place-items: center; border: 1px solid rgba(48,64,35,.12); }
+.ts4 .ts4-d { margin: -2px 0 4px; }
+.ts4-save { display: flex; justify-content: flex-end; margin-top: 6px; }
+/* UV through the day: a soft coloured mountain with emojis inside */
+.uvc { display: block; margin: 14px 0 4px; overflow: visible; }
+.uvc text { font-family: 'Outfit', sans-serif; }
+.uvc-top { font-size: 10.5px; font-weight: 500; fill: #2b1b12; }
+.uvc-grid { stroke: rgba(43,27,18,.1); stroke-width: 1; }
+.uvc-v { stroke: rgba(43,27,18,.14); stroke-width: 1; stroke-dasharray: 2 4; }
+.uvc-lv { font-size: 9.5px; fill: rgba(43,27,18,.55); }
+.uvc-r { font-size: 9.5px; fill: rgba(43,27,18,.5); }
+.uvc-h { font-size: 10px; fill: rgba(43,27,18,.6); }
+.uvc-e { font-size: 17px; }
+.uvc-pk { fill: #2b1b12; stroke: #fff; stroke-width: 2; }
+.uvc-pkt { font-size: 12px; font-weight: 600; fill: #2b1b12; }
+.uvc-now { stroke: #2b1b12; stroke-width: 1.2; stroke-dasharray: 3 3; opacity: .5; }
+.uvc-nd { fill: #fff; stroke: #2b1b12; stroke-width: 2; }
+
+/* Blood sugar: the graph sits free on the page, the tricks stay in their card */
+.sb-free { margin: 4px 2px 18px; }
+.sb-free .sb-top { padding: 0 4px; }
+.sb-free .sb-chart { margin: 14px 0 8px; padding: 0; background: none; border: 0; box-shadow: none; border-radius: 0; }
+.sb-free .sb-note { margin: 6px 4px 0; }
+/* Calendar: her mind this phase sits on top */
+.cal-mind { margin-bottom: 18px; }
+.cal-mind .fine.center { margin-bottom: 4px; }
+
+/* Grocery list, contrast pass (9 Nov 2026): dark ink everywhere, phase as chips, solid rings, emoji tiles for foods without a photo */
+.gro-page .page-h { color: #20301a; }
+.gro-page .page-h span { color: #3f5a24; }
+.gro-lead { margin: 4px 0 8px; font-size: 14px; color: #3d4a31; }
+.gro-phs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.gro-pc { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px 6px 9px; border-radius: 999px; background: #fff; border: 1px solid rgba(32,48,26,0.12); font-size: 13px; font-weight: 400; color: #20301a; box-shadow: 0 4px 12px rgba(80,60,70,0.06); }
+.gro-pc i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 22%, transparent); }
+.gro-arr { color: rgba(32,48,26,0.55); display: inline-flex; }
+.gro-page .gro-score { background: #fff; border: 1px solid rgba(32,48,26,0.08); box-shadow: 0 14px 34px rgba(80,60,70,0.08); }
+.gro-page .gr-bg { stroke: rgba(32,48,26,0.12); }
+.gro-page .gr-fg { stroke: #6c823e; filter: none; }
+.gro-page .gs-ring b { color: #20301a; font-size: 38px; }
+.gro-page .gs-ring small { color: #3d4a31; font-size: 12px; }
+.gro-page .gs-t .eyebrow { color: #20301a; font-weight: 500; letter-spacing: .08em; }
+.gro-page .gs-t p { color: #3d4a31; }
+.gro-page .gro-nuts { padding: 16px 10px 12px; margin: 14px 0 4px; border-radius: 26px; background: rgba(255,255,255,0.9); border: 1px solid rgba(32,48,26,0.08); }
+.gro-page .gn b { color: #20301a; font-size: 14px; font-weight: 700; }
+.gro-page .gn small { color: #20301a; font-size: 11px; font-weight: 400; }
+.gro-page .gn.full svg .gr-bg { fill: rgba(108,130,62,0.14); }
+.gro-page .gro-tabs button { color: #20301a; background: #fff; border-color: rgba(32,48,26,0.14); }
+.gro-page .gro-tabs button.on { background: #20301a; color: #fff; border-color: #20301a; }
+.gro-page .gro-tabs i { opacity: 1; }
+.gro-page section.card.glass:not(.gro-score):not(.gro-share):not(.gro-swap) { background: #fff; border-color: rgba(32,48,26,0.08); }
+.gro-page .check-row.gro { color: #20301a; }
+.gro-page .gro-n { font-size: 15px; font-weight: 400; color: #20301a; }
+.gro-page .gro-n small { color: #4a5a3c; font-size: 12px; }
+.gro-page .check-row .cb { border: 1.6px solid rgba(32,48,26,0.45); background: #fff; }
+.gro-page .check-row.on .cb { background: #20301a; border-color: #20301a; color: #fff; }
+.gro-page .check-row.on .gro-n { color: rgba(32,48,26,0.55); }
+.gro-emo { display: grid; place-items: center; font-size: 20px; background: linear-gradient(160deg, #f4f1e6, #e9eedd); border: 1px solid rgba(32,48,26,0.06); }
+.gro-page .gro-ph { gap: 5px; }
+.gro-page .gro-ph i { width: 10px; height: 10px; box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(32,48,26,0.12); }
+.gro-page .gro-swap, .gro-page .gro-share { background: #fff; border-color: rgba(32,48,26,0.08); }
+.gro-page .gro-swap s { color: #5d6a50; }
+.gro-page .gro-swap b { color: #3f5a24; font-weight: 500; }
+.gro-page .gro-swap small, .gro-page .gro-swap .fine { color: #4a5a3c; }
+.gro-page .gro-share b { color: #20301a; font-weight: 500; }
+.gro-page .gro-share small { color: #4a5a3c; }
+.gro-page .gro-share .pill-cta { background: #20301a; color: #fff; }
+.gro-page > .fine.center { color: #4a5a3c; }
+.gro-page .gro-warm { color: #3d4a31; }
+
+/* Superfoods live free on the Phase foods page (no card around them) */
+.eat-cat.eb.eb-free { background: none; border: 0; box-shadow: none; padding: 0; margin: 0 0 8px; }
+.eat-cat.eb.eb-free::before, .eat-cat.eb.eb-free::after { display: none; }
+.view .gro-page section.card.glass { background: #fff; background-image: none; border-color: rgba(32,48,26,0.08); box-shadow: 0 14px 34px rgba(80,60,70,0.08); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.view .gro-page .gs-ring b { font-weight: 700; font-size: 40px; }
+.view .gro-page .gr-bg { stroke: rgba(32,48,26,0.14); }
+
+/* Friends tile: social battery ring, top right over the video */
+.hub .dpt.ph-frw .sbat { position: absolute; top: 14px; right: 14px; z-index: 3; width: 74px; display: grid; justify-items: center; gap: 4px; pointer-events: none; }
+.sbat svg { width: 60px; height: 60px; display: block; }
+.sbat .t { fill: rgba(20,24,16,0.34); stroke: rgba(255,255,255,0.28); stroke-width: 5; }
+.sbat .p { fill: none; stroke: #fff; stroke-width: 5; stroke-linecap: round; transition: stroke-dasharray .9s cubic-bezier(.2,.8,.2,1); }
+.sbat b { position: absolute; top: 0; height: 60px; display: grid; place-items: center; font: 700 17px var(--dot); color: #fff; }
+.sbat b i { font-style: normal; font-size: 10px; margin-left: 1px; }
+.sbat small { font-size: 10px; font-weight: 500; letter-spacing: .04em; color: #fff; text-shadow: 0 1px 6px rgba(0,0,0,0.45); white-space: nowrap; }
+
+/* Sun page: one line under the sky, when the sun is at its highest */
+.rnow-peak { display: flex; align-items: center; gap: 12px; margin-top: 14px; padding: 12px 14px; border-radius: 20px; background: rgba(255,200,110,.12); border: 1px solid rgba(255,200,110,.28); }
+.rnow-pk-ic { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,214,140,.16); flex: none; }
+.rnow-peak small { display: block; font-size: 12px; letter-spacing: .04em; color: rgba(255,236,215,.8); }
+.rnow-peak b { font: 700 24px var(--dot); color: #fff4e6; line-height: 1.1; }
+
+/* Calendar: the science as an optional drawer at the very bottom */
+.cal-sci { margin: 22px 0 8px; border-radius: 26px; background: #fff; border: 1px solid rgba(32,48,26,0.08); box-shadow: 0 10px 28px rgba(80,60,70,0.06); overflow: hidden; }
+.cal-sci > summary { list-style: none; display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; color: #20301a; }
+.cal-sci > summary::-webkit-details-marker { display: none; }
+.cal-sci > summary > span:nth-child(2) { flex: 1; }
+.cal-sci > summary b { display: block; font-size: 15px; font-weight: 500; }
+.cal-sci > summary small { display: block; font-size: 12px; color: #4a5a3c; }
+.cal-sci > summary > svg { transition: transform .3s ease; }
+.cal-sci[open] > summary > svg { transform: rotate(180deg); }
+.cal-sci-ic { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: #eef2e4; color: #3f5a24; flex: none; }
+.cal-sci-in { padding: 0 16px 14px; }
+.mvs2 { padding: 12px 0; border-top: 1px solid rgba(32,48,26,0.08); }
+.mvs2 b { display: block; font-size: 14px; font-weight: 500; color: #20301a; }
+.mvs2 p { margin: 4px 0 4px; font-size: 13.5px; line-height: 1.45; color: #3d4a31; }
+.mvs2 cite { font-size: 11.5px; font-style: normal; color: #5d6a50; }
+
+/* UV mountain v2: bright weather-app colours, dark labels, emoji key */
+.uvc { margin: 16px 0 2px; }
+.uvc-grid { stroke: rgba(43,27,18,.16); stroke-dasharray: 3 4; }
+.uvc-lv { font-size: 10px; font-weight: 500; fill: rgba(43,27,18,.72); }
+.uvc-r { font-size: 10px; fill: rgba(43,27,18,.7); }
+.uvc-h { font-size: 10.5px; font-weight: 500; fill: rgba(43,27,18,.78); }
+.uvc-base { stroke: rgba(43,27,18,.28); stroke-width: 1; }
+.uvc-e { font-size: 20px; }
+.uvc-pk { fill: #2b1b12; stroke: #fff; stroke-width: 2.5; }
+.uvc-pkt { font-size: 11.5px; font-weight: 600; fill: #2b1b12; }
+.uvc-now { stroke: #2b1b12; stroke-width: 1.4; stroke-dasharray: 3 3; opacity: .7; }
+.uvc-nd { fill: #fff; stroke: #2b1b12; stroke-width: 2.4; }
+.uvc-nowt { font-size: 10px; font-weight: 600; fill: #2b1b12; letter-spacing: .04em; }
+.uvc-key { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 12px; }
+.uvc-key span { display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px; border-radius: 999px; font-size: 12.5px; font-weight: 500; color: #2b1b12; background: rgba(255,255,255,.7); border: 1px solid rgba(43,27,18,.1); }
+.uvc-key .z0 { background: #e3f6e3; border-color: #9fd9a6; }
+.uvc-key .z1 { background: #fff4c4; border-color: #f1d36a; }
+.uvc-key .z2 { background: #ffe2c2; border-color: #f7b06a; }
+.uvc-key .z3 { background: #ffd6d0; border-color: #f2897c; }
+/* Calendar fix mode: the flagged day gets a dark ring */
+.cal-d.fixme { box-shadow: 0 0 0 2px #20301a inset; border-radius: 50%; }
+/* social battery ring v2: the tile grows a little so the ring sits clear above the do / skip chips */
+.hub .dpt.ph-frw { min-height: 156px; }
+.hub .dpt.ph-frw .dpt-g .sbat { top: 12px; right: 12px; left: auto; bottom: auto; width: 76px; height: auto; inset: 12px 12px auto auto; transform: none; }
+.hub .dpt.ph-frw .dpt-g .sbat svg { position: static; width: 58px; height: 58px; }
+.hub .dpt.ph-frw .dpt-g .sbat b { position: absolute; top: 0; left: 0; right: 0; height: 58px; display: grid; place-items: center; margin: 0; font: 700 16px var(--dot); color: #fff; }
+.hub .dpt.ph-frw .dpt-g .sbat small { position: static; display: block; font-size: 10px; color: #fff; opacity: 1; }
+.hub .dpt.ph-frw { justify-content: flex-end; }
+.hub .dpt.ph-frw .dpt-g .sbat b em { font-style: normal; font-size: 10px; margin-left: 1px; }
+.hub .dpt.ph-frw .dpt-g .sbat .t { fill: rgba(20,24,16,0.38); }
+.hub .dpt.ph-full.ph-fr.ph-vid.ph-frw { justify-content: flex-end; }
+.hub .dpt.ph-frw .dpt-g .sbat b { display: flex; align-items: center; justify-content: center; white-space: nowrap; line-height: 1; font-size: 15px; letter-spacing: 0; }
+.hub .dpt.ph-frw .dpt-g .sbat .t { fill: rgba(255,255,255,0.14); stroke: rgba(255,255,255,0.3); }
+.hub .dpt.ph-frw .dpt-g .sbat .t { fill: rgba(16,20,12,0.42); stroke: rgba(255,255,255,0.3); }
+.hub .dpt.ph-frw .dpt-g .sbat b { font-size: 16px; font-weight: 800; text-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+.cal2 .cal-d.fixme { outline: 2px solid #20301a; outline-offset: 2px; }
+/* Blood sugar graph, free on the page: no box, dark readable axes, moss curve vs dashed ink "without" line */
+.view .sb-free .sb-chart, .view .sb-free .sb-chart.sb-chart { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; border-radius: 0 !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+.sb-free .sg-svg { display: block; margin-top: 4px; overflow: visible; }
+.sb-free .sg-svg line { stroke: rgba(32,48,26,0.08); }
+.sb-free .sg-ax { fill: rgba(32,48,26,0.7); font-size: 9px; }
+.sg-without { stroke: rgba(32,48,26,0.55); }
+.sg-with { stroke: #4f7a2a; }
+.sb-free .sg-lbl { fill: #3f5a24; }
+.sb-free .sg-lbl.red { fill: #20301a; fill-opacity: .8; }
+.sb-free .sg-leg { color: #20301a; font-size: 12.5px; }
+.sb-free .sg-leg i { background: #4f7a2a; height: 3px; }
+.sb-free .sg-leg i.red { background: repeating-linear-gradient(90deg, rgba(32,48,26,.6) 0 4px, transparent 4px 7px); }
+.sb-free .sb-top small { color: #3f5a24; font-weight: 500; }
+.sb-free .sb-top b { color: #20301a; }
+.view .gro-page section.card.glass, .view .gro-page .gro-nuts { background: #fff !important; }
