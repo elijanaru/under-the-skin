@@ -9556,3 +9556,19 @@ html, body { overscroll-behavior-y: none; }
 .rx2-tile em { position: absolute; top: 12px; left: 12px; font-style: normal; font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 99px; background: #fff; color: #20301a; }
 .rx2-tile.on { box-shadow: 0 0 0 3px #20301a, 0 12px 26px rgba(48,64,35,.16); }
 @media (prefers-reduced-motion: reduce) { .rx2-hero > video { display: none; } }
+/* Tea guide, For what you need: glassy white tiles, a coloured icon for the need, its teas as small photos */
+.tg-needs2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tgn { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 14px 14px 13px; border-radius: 26px; text-align: left; font: inherit; color: #20301a; cursor: pointer;
+  background: rgba(255,255,255,.82); border: 1px solid rgba(255,255,255,.95); box-shadow: 0 10px 26px rgba(48,64,35,.1), inset 0 1px 0 #fff;
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); transition: transform .25s, background .25s; }
+.tgn:active { transform: scale(.97); }
+.tgn-h { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 6px; }
+.tgn-ic { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: var(--c); background: color-mix(in srgb, var(--c) 16%, #fff); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--c) 35%, transparent); }
+.tgn-teas { display: flex; }
+.tgn-teas img { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; margin-left: -8px; box-shadow: 0 2px 6px rgba(32,48,26,.15); }
+.tgn b { font-size: 15px; font-weight: 500; line-height: 1.2; }
+.tgn small { font-size: 11.5px; line-height: 1.35; color: rgba(48,64,35,.6); }
+.tgn.on { background: #20301a; color: #fff; border-color: #20301a; }
+.tgn.on small { color: rgba(255,255,255,.75); }
+.tgn.on .tgn-ic { background: color-mix(in srgb, var(--c) 30%, #20301a); color: #fff; box-shadow: none; }
+.tgn.on .tgn-teas img { border-color: #20301a; }

@@ -4376,7 +4376,10 @@ function viewTea() {
     <div class="tg-feel">${TEA_GUIDE.find(g => g.k === 'feel').teas.map(([, n, why, , ev, , q], i) => `<button class="tg-f" data-action="nav" data-to="tea/feel-${i}"><img src="${teaPhoto(n, 200, 200)}" alt="" loading="lazy"><b>${q}</b><span class="tg-fp">${n}</span><small>${why}</small></button>`).join('')}</div>
 
     <div class="tg-sub"><b>For what you need</b><small>Tap one to see its teas</small></div>
-    <div class="tg-needs">${(() => { const used = new Set(); return TEA_GUIDE.filter(g => g.k !== 'feel').map(g => { const t = ['nausea', 'ovulation'].includes(g.k) ? `cover-${g.k}` : (g.teas.find(x => !used.has(teaPhoto(x[1]))) || g.teas[0])[1]; used.add(teaPhoto(t)); return [g, t]; }); })().map(([g, t]) => `<button class="tg-n ${g.k === k ? 'on' : ''}" data-action="teaK" data-v="${g.k === k ? '' : g.k}"><img src="${teaPhoto(t, 300, 220)}" alt="" loading="lazy"><span><b>${g.n}</b><small>${plural(g.teas.length, 'tea')}</small></span></button>`).join('')}</div>
+    <div class="tg-needs2">${TEA_GUIDE.filter(g => g.k !== 'feel').map(g => { const [ic, c] = TEA_NEED_IC[g.k] || ['leaf', '#7f9a4c'];
+      return `<button class="tgn ${g.k === k ? 'on' : ''}" style="--c:${c}" data-action="teaK" data-v="${g.k === k ? '' : g.k}" aria-expanded="${g.k === k}">
+        <span class="tgn-h"><span class="tgn-ic">${icon(ic, 19)}</span><span class="tgn-teas">${g.teas.slice(0, 3).map(t => `<img src="${teaPhoto(t[1], 90, 90)}" alt="" loading="lazy">`).join('')}</span></span>
+        <b>${g.n}</b><small>${g.teas.slice(0, 3).map(t => t[1].split(/ & | \(|,/)[0]).join(' · ')}</small></button>`; }).join('')}</div>
     ${G ? `<section class="card tg-list" id="tg-list"><div class="tg-k"><b>Teas for ${G.n.toLowerCase()}</b><button class="tg-x" data-action="teaK" data-v="" aria-label="Close">${icon('close', 16)}</button></div>
       ${G.teas.map(([g, n, why], i) => `<button class="tg-li" data-action="nav" data-to="tea/${G.k}-${i}"><img src="${teaPhoto(n, 160, 160)}" alt="" loading="lazy"><span><b>${n}</b><small>${why}</small></span>${icon('chevR', 16)}</button>`).join('')}</section>` : ''}
 
@@ -4385,6 +4388,9 @@ function viewTea() {
     <p class="fine center">Herbal teas are gentle support, not medicine. Pregnant, on medication or unsure? Ask your doctor or midwife first.</p>
   </div>`;
 }
+// A clear drawn icon and its own accent colour for each need in the tea guide.
+const TEA_NEED_IC = { cramps: ['thermo', '#d9768f'], heavy: ['drop', '#b5485d'], bloating: ['bowl', '#4f9a90'], pms: ['heart', '#9b87c4'], sleep: ['moon', '#6f74b8'], stress: ['yinyang', '#7f9a4c'],
+  energy: ['bolt', '#c9952f'], skin: ['star', '#d9805e'], headache: ['mind', '#5f93be'], nausea: ['leaf', '#5fa57d'], ovulation: ['spark', '#c99a2e'], fertility: ['seed', '#d8799a'] };
 // Herb profiles in a tea's name ("Ginger & red dates" → ginger + red dates).
 const TEA_ALIAS = { 'holy basil': 'tulsi', 'raspberry leaf': 'raspberry' };
 function teaProfiles(name) {
