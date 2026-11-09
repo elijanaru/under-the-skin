@@ -5341,14 +5341,18 @@ function breathFx(k) {
 }
 // Calm sigh: a deep breath in to almost full, one more short sip on top, then a long slow breath out.
 // one breath drawn as its shape: rises on the breath in, flat on a hold, falls on the breath out
-function breathShape(B, col) {
+function breathShape(B, col, anim) {
   const hasHold = B.steps.some(x => x[0] === 'hold'), st = [];
   B.steps.forEach(([k, , , ms]) => { if (k === 'top' && st.length) st[st.length - 1][1] += ms; else st.push([k === 'rest' && hasHold ? 'hold' : k, ms]); });
   const tot = st.reduce((n, x) => n + x[1], 0), W = 140, Hh = 34, top = 5, bot = Hh - 3;
-  let x = 2, y = bot, segs = '';
+  let x = 2, y = bot, segs = '', t = 0; const pts = [[x, y, 0]];
   st.forEach(([k, ms]) => { const w = (W - 4) * ms / tot, y2 = k === 'in' ? top : k === 'out' ? bot : y;
-    segs += `<path d="M${x.toFixed(1)} ${y} L${(x + w).toFixed(1)} ${y2}" class="bs-${k}" ${k === 'in' ? `style="stroke:${col}"` : ''}/>`; x += w; y = y2; });
-  return `<span class="bsh" aria-hidden="true"><svg viewBox="0 0 ${W} ${Hh}" preserveAspectRatio="none">${segs}</svg>
+    segs += `<path d="M${x.toFixed(1)} ${y} L${(x + w).toFixed(1)} ${y2}" class="bs-${k}" ${k === 'in' ? `style="stroke:${col}"` : ''}/>`; x += w; y = y2; t += ms; pts.push([x, y, t]); });
+  // the big practice cards: a soft fill under the breath and a dot that travels it in real time
+  const id = anim ? `bshd${Math.random().toString(36).slice(2, 8)}` : '';
+  const area = anim ? `<path d="M${pts.map(([a, b]) => `${a.toFixed(1)} ${b}`).join(' L')} L${pts[pts.length - 1][0].toFixed(1)} ${Hh} L2 ${Hh}Z" class="bs-area" style="fill:${col}"/>` : '';
+  const dot = anim ? `<style>@keyframes ${id}{${pts.map(([a, b, tt]) => `${(tt / tot * 100).toFixed(2)}%{left:${(a / W * 100).toFixed(2)}%;top:${(b / Hh * 100).toFixed(2)}%}`).join('')}}</style><i class="bsh-dot" style="--c:${col};animation:${id} ${(tot / 1000).toFixed(1)}s linear infinite"></i>` : '';
+  return `<span class="bsh ${anim ? 'live' : ''}" aria-hidden="true"><span class="bsh-g"><svg viewBox="0 0 ${W} ${Hh}" preserveAspectRatio="none">${area}${segs}</svg>${dot}</span>
     <span class="bsh-l">${st.map(([k, ms]) => `<i style="flex:${ms}"><b>${{ in: 'In', out: 'Out', hold: 'Hold', rest: 'Rest' }[k]}</b> ${+(ms / 1000).toFixed(1)}</i>`).join('')}</span></span>`;
 }
 // What each breath does: one card per practice, her phase's breath first
@@ -5362,7 +5366,7 @@ function breathGuide(phase, k) {
     <div class="bwx">${order.map(id => { const B = BREATHS[id], col = BZ_COL[id] || '#6c823e', fx = BZ_FX[id] || [];
       return `<article class="bwx-c ${id === k ? 'on' : ''}" style="--c:${col}">
         <div class="bwx-h"><span class="bwx-g">${B.g}</span><div><b>${B.name}</b><small>${B.for}</small></div>${id === mine ? '<em>For you now</em>' : ''}</div>
-        <div class="bwx-art">${breathShape(B, col)}</div>
+        <div class="bwx-art">${breathShape(B, col, true)}</div>
         <p class="bwx-does">${BZ_DOES[id] || B.for}</p>
         <div class="bwx-tags">${FX.filter((_, i) => fx[i] === 3).map(([t, ic]) => `<span>${icon(ic, 12)} ${t}</span>`).join('')}<span class="w">${icon('clock', 12)} ${BZ_WHEN[id] || B.when}</span></div>
         <div class="bwx-f"><details class="bwx-more"><summary>How to do it ${icon('chevD', 13)}</summary>

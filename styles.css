@@ -9882,3 +9882,11 @@ html, body { overscroll-behavior-y: none; }
 @keyframes stcGrow { from { transform: scaleX(0); } }
 @media (prefers-reduced-motion: reduce) { .stc-tr i { animation: none; } }
 .stc-b > b { font-size: 21px; font-weight: 900; }
+
+/* Breath cards: the breath drawn with a soft fill and a dot that travels it in real time */
+.bsh-g { position: relative; display: block; }
+.bsh .bs-area { stroke: none !important; opacity: .16; }
+.bsh-dot { position: absolute; left: 0; top: 100%; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 3px #fff, 0 3px 10px rgba(32,48,26,.28); pointer-events: none; }
+.bwx-art { background: color-mix(in srgb, var(--c) 10%, #fff); border: 1px solid color-mix(in srgb, var(--c) 22%, transparent); }
+.bwx-art .bsh .bs-hold, .bwx-art .bsh .bs-rest { stroke: #8d8a80; }
+@media (prefers-reduced-motion: reduce) { .bsh-dot { animation: none !important; left: 0; top: 100%; } }
