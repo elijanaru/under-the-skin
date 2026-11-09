@@ -720,7 +720,7 @@ function cycleChart(info, { id = 'cc', compact = false, who = 'You' } = {}) {
     <div class="readout" id="${id}-read">${readout(info.cd, L, P, info.cd === cd ? true : false)}</div>
   </div>`;
 }
-// One drawn arrow per level: up for high and peak, flat for moderate, down for low.
+// One drawn arrow per hormone: where it is heading tomorrow (up, flat or down).
 const trArrow = tr => `<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform:rotate(${tr === 'rising' ? -40 : tr === 'falling' ? 40 : 0}deg)"><path d="M2.5 8h11M9 3.5 13.5 8 9 12.5"/></svg>`;
 function readout(cdRaw, L, P, isYou) {
   const cd = Math.min(cdRaw, L);
@@ -730,7 +730,7 @@ function readout(cdRaw, L, P, isYou) {
   const rows = HORMONES.map(x => {
     return `<div class="ro-row"><span class="ro-name"><svg width="16" height="8"><line x1="1" y1="4" x2="15" y2="4" stroke="${x.color}" stroke-width="2.2" stroke-linecap="round" ${x.dash ? `stroke-dasharray="${x.dash}"` : ''}/></svg>${x.name}</span>
       <span class="ro-bar"><b style="width:${Math.max(6, Math.round(h[x.key] * 100))}%;background:${x.color}"></b></span>
-      <span class="ro-lvl">${(() => { const lv = C.hormoneLevel(h[x.key]), d = /High|Peak/.test(lv) ? 'rising' : lv === 'Low' ? 'falling' : 'steady'; return `${lv} <em class="tr ${d}" aria-hidden="true">${trArrow(d)}</em>`; })()}</span></div>`;
+      <span class="ro-lvl">${(() => { const lv = C.hormoneLevel(h[x.key]), dv = nx[x.key] - h[x.key], d = dv > .03 ? 'rising' : dv < -.03 ? 'falling' : 'steady'; return `${lv} <em class="tr ${d}" aria-hidden="true">${trArrow(d)}</em>`; })()}</span></div>`;
   }).join('');
   return `<div class="ro-head"><div class="ro-phase">Day ${cdRaw} · ${PHASES[ph].name}</div></div>
     <div class="ro-rows">${rows}</div>
