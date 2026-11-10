@@ -3497,20 +3497,30 @@ function viewReliefIndex() {
     <p class="fine center">General information, not medical advice. Check with a doctor or pharmacist before starting supplements.</p>
   </div>`;
 }
+// Split copy into sentences: the first one is the action she sees, the rest sits behind a tap.
+function splitSentences(t) { return String(t || '').split(/(?<=[.!?])\s+(?=[A-Z0-9“"])/).filter(Boolean); }
+// A small line icon for each relief step, picked from what the step is about.
+function reliefIcon(t) {
+  const x = t.toLowerCase();
+  return /heat|warm|hot|bath|soak|castor/.test(x) ? 'thermo' : /tea|drink|water|broth|juice/.test(x) ? 'cup' : /breath|calm|meditat/.test(x) ? 'leaf'
+    : /press|massage|point|gua sha|thumb|zyg|jaw|drain|rub|fascia/.test(x) ? 'hand' : /sleep|nap|bed|rest|dark/.test(x) ? 'moon'
+    : /walk|move|movement|yoga|stretch|exercise|lift|train|dance/.test(x) ? 'user' : /magnesium|vitamin|calcium|zinc|iron|omega|b6|supplement|evening primrose|chasteberry|vitex|flax/.test(x) ? 'flask'
+    : /pain relief|ibuprofen|doctor|pill/.test(x) ? 'plus' : /eat|food|salt|sugar|protein|fibre|fiber|meal|snack|carb/.test(x) ? 'bowl'
+    : /sun|light|outside/.test(x) ? 'sun' : /journal|talk|write|mind|friend/.test(x) ? 'mind' : 'spark';
+}
 function viewRelief(id) {
   const k = decodeURIComponent(id || ''), R = RELIEF[k]; if (!R) return viewMissing();
   const food = SYMPTOM_FOODS[k] || (k === 'PMS mood' ? SYMPTOM_FOODS.Cravings : null), L = RELIEF_LINKS[k] || {};
   const help = (state.reliefHelp || {})[k] || [], order = R.steps.map((_, i) => i).sort((a, b) => help.includes(b) - help.includes(a));
   return `${topbar('Relief', { back: true })}
   <div class="pad">
-    <h1 class="page-h">${k}</h1>
-    <section class="card card-light mt"><div class="eyebrow dark">Why it happens</div><p class="dp-text">${R.why}</p></section>
+    ${(() => { const [w0, ...wr] = splitSentences(R.why); return `<h1 class="page-h">${k}</h1><p class="rl-sub">${w0}</p>${wr.length ? `<details class="rl-why"><summary>Why it happens ${icon('chevR', 12)}</summary><p>${wr.join(' ')}</p></details>` : ''}`; })()}
     ${sectionTitle('What helps')}
     <p class="rl-hint">${help.length ? `${icon('heart', 12)} ${help.length} of ${R.steps.length} work for you, so they’re at the top.` : `Tap ${icon('heart', 12)} on what helps you. Next time it moves to the top.`}</p>
-    <section class="card glass relief-steps">${order.map(i => { const x = R.steps[i]; return `<div class="rs ${help.includes(i) ? 'helped' : ''}">
-      <span class="step-n">${i + 1}</span><div class="rs-b"><div class="rs-h"><b>${x.t}</b>${evBadge(x.ev)}</div><p class="body sm">${x.d}</p>${x.to ? `<button class="link rs-go" data-action="nav" data-to="${x.to}">Open ${icon('chevR', 12)}</button>` : ''}</div>
-      <button class="rs-heart ${help.includes(i) ? 'on' : ''}" data-action="reliefHelp" data-k="${k}" data-i="${i}" aria-label="This helps me">${icon('heart', 18)}</button>
-    </div>`; }).join('')}</section>
+    <section class="card rs2-list">${order.map(i => { const x = R.steps[i], [d0, ...dr] = splitSentences(x.d), go = x.to ? `<button class="link rs-go" data-action="nav" data-to="${x.to}">Open ${icon('chevR', 12)}</button>` : '';
+      return `<div class="rs2 ${help.includes(i) ? 'helped' : ''}"><span class="rs2-ic">${icon(reliefIcon(x.t), 18)}</span>
+      <div class="rs2-b"><b>${x.t}</b><p>${d0}</p>${dr.length ? `<details class="rs2-more"><summary>More ${icon('chevR', 11)}</summary><p>${dr.join(' ')}</p>${go}</details>` : go}</div>
+      <button class="rs-heart ${help.includes(i) ? 'on' : ''}" data-action="reliefHelp" data-k="${k}" data-i="${i}" aria-label="This helps me">${icon('heart', 18)}</button></div>`; }).join('')}</section>
     ${L.tea || L.nu ? `${sectionTitle('Teas & nutrients for this')}<div class="tea-more">${L.tea ? (TEA_GUIDE.find(t => t.k === L.tea) || { teas: [] }).teas.map((t, i) => `<button data-action="nav" data-to="tea/${L.tea}-${i}"><span>${icon('cup', 14)}</span>${t[1]}</button>`).join('') : ''}${(L.nu || []).map(id => { const n = NUTRIENTS.find(x => x.id === id); return n ? `<button data-action="nav" data-to="nutrients/${id}"><span>${nuIc(id, 16)}</span>${n.n}</button>` : ''; }).join('')}</div>` : ''}
     ${food ? `${sectionTitle('Eat')}<section class="card glass"><p class="body sm" style="margin:0 0 10px">${food.tip}</p><div class="foods">${food.foods.map(f => `<span class="food">${f}</span>`).join('')}</div></section>` : ''}
     <section class="card tcm-card"><div class="tcm-glyph">${icon('yinyang', 30)}</div><div class="tcm-main"><div class="eyebrow">Chinese medicine view</div><p class="body" style="margin-top:6px">${R.tcm}</p></div></section>

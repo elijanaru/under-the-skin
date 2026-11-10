@@ -884,7 +884,7 @@ export const NUTRITION = {
 
 // Food fixes for logged symptoms.
 export const SYMPTOM_FOODS = {
-  Cramps: { foods: ['Ginger tea', 'Salmon', 'Dark chocolate', 'Pumpkin seeds'], tip: 'Ginger, omega-3 and magnesium have the best small-trial support. Keep your belly warm.', ev: 'some' },
+  Cramps: { foods: ['Ginger tea', 'Salmon', 'Dark chocolate', 'Pumpkin seeds'], tip: 'Ginger, omega-3 and magnesium ease cramps best in studies. Keep your belly warm.', ev: 'some' },
   Bloating: { foods: ['Peppermint tea', 'Bananas', 'Cucumber', 'Fennel'], tip: 'Cut back on salt and fizzy drinks; potassium-rich foods help balance water.', ev: 'emerging' },
   Cravings: { foods: ['Greek yoghurt', 'Dates + almonds', 'Apple + nut butter', 'Dark chocolate'], tip: 'Pair carbs with protein so blood sugar stays steady. Hunger in the luteal phase is real.', ev: 'some' },
   Fatigue: { foods: ['Lentils + lemon', 'Red meat', 'Liver', 'Eggs'], tip: 'Think iron + vitamin C. If tiredness lasts, ask for a ferritin test.', ev: 'strong' },
@@ -941,8 +941,8 @@ export const RELIEF = {
       { t: 'Heat on your lower belly or back', d: 'A heat pad or hot water bottle for 20+ minutes. Reviews of many trials find heat eases period pain about as well as ibuprofen.', ev: 'strong' },
       { t: 'Anti-inflammatory pain relief early', d: 'Ibuprofen or naproxen work best taken at the first sign of pain, with food (if they are safe for you).', ev: 'strong' },
       { t: 'Gentle movement', d: 'Walking, stretching or yoga can ease pain. Even 10 minutes.', ev: 'some' },
-      { t: 'Ginger tea', d: '1–2 g of ginger a day; small trials compare it to common painkillers.', ev: 'some' },
-      { t: 'Press SP6', d: 'Four finger-widths above the inner ankle bone, 1–3 minutes each side. Small, low-quality trials.', ev: 'tcm', to: 'point/menstrual' },
+      { t: 'Ginger tea', d: '1–2 g of fresh ginger a day as tea, in the first 3 days of your period. In trials it eased pain about as well as common painkillers.', ev: 'some' },
+      { t: 'Press SP6', d: 'Four finger-widths above the inner ankle bone, 1–3 minutes each side. Skip this point in pregnancy.', ev: 'tcm', to: 'point/menstrual' },
     ],
     tcm: 'Cramps are seen as stuck Qi and Blood, often with Cold. Keep warm, avoid raw and cold food and drinks, try a ginger foot soak.',
     doctor: 'Pain that stops normal life, gets worse over the years, or comes with pain during sex or bowel movements. Endometriosis is common and under-diagnosed.',
