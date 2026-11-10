@@ -4789,7 +4789,7 @@ function viewTeaItem(id) {
   const cold = ['cold', 'cool'].includes(temp), nearBleed = ph === 'menstrual' || (info && dayWindow(info) === 'premenstrual');
   const cautions = [warn, ...P.map(p => p.caution)].filter((x, i, a) => x && a.indexOf(x) === i);
   return `<div class="pad">
-    ${specHero({ photo: teaPhoto(n, 800, 900), eyebrow: G ? `Tea for ${G.n.toLowerCase()}` : 'Tea', name: /tea|milk|coffee/i.test(n) ? n : `${n} tea`, label: 'Key ingredients',
+    ${specHero({ stack: true, photo: teaPhoto(n, 800, 900), eyebrow: G ? `Tea for ${G.n.toLowerCase()}` : 'Tea', name: /tea|milk|coffee/i.test(n) ? n : `${n} tea`, label: 'Key ingredients',
       rows, lead: n, desc: why })}
     ${P.length ? `<section class="card glass tea-fit">
       <div class="tf-k">Best in your cycle</div>
@@ -4858,7 +4858,7 @@ function viewNutrient(id) {
   const x = NUTRIENTS.find(n => n.id === id); if (!x) return viewNutrients();
   const ph = M.info && M.info.phase, i = NUTRIENTS.indexOf(x);
   return `<div class="pad sp2">
-    ${specHero({ ...nuHero(x), glyph: nuIc(x.id, 64), eyebrow: `For ${/^[A-Z]{2}/.test(x.for) ? x.for : x.for.charAt(0).toLowerCase() + x.for.slice(1)}`, name: x.n, label: 'Key facts', rows: x.d, lead: 'Why it helps', desc: x.why })}
+    ${specHero({ stack: true, ...nuHero(x), glyph: nuIc(x.id, 64), eyebrow: `For ${/^[A-Z]{2}/.test(x.for) ? x.for : x.for.charAt(0).toLowerCase() + x.for.slice(1)}`, name: x.n, label: 'Key facts', rows: x.d, lead: 'Why it helps', desc: x.why })}
     <section class="card glass tea-fit"><div class="tf-k">When it helps most</div>${phaseFit(x.p, ph)}</section>
     ${suppSafe(x.id)}
     ${sectionTitle('Food first')}
@@ -6501,7 +6501,7 @@ function viewApothecary() {
         <div class="apo-d-r">${icon('cup', 16)}<span><small>How</small>${sel.how}</span></div>
         ${sel.warn ? `<div class="apo-d-r care">${icon('spark', 16)}<span><small>Careful</small>${sel.warn}</span></div>` : ''}</div></section>` : '';
   return `<div class="pad sp2 apo">
-    ${specHero({ photo: herbs.length ? teaPhoto(herbs[4][0], 900, 1000) : foodPhoto(sup[0][0], 900), glyph: 'leaf', eyebrow: `${sn} · ${MONTHS[new Date().getMonth()]}`, name: `${sn} apothecary`, label: 'In the jar',
+    ${specHero({ stack: true, photo: herbs.length ? teaPhoto(herbs[4][0], 900, 1000) : foodPhoto(sup[0][0], 900), glyph: 'leaf', eyebrow: `${sn} · ${MONTHS[new Date().getMonth()]}`, name: `${sn} apothecary`, label: 'In the jar',
       rows: [[`${sup.length} superfoods`, 'to eat this season'], ...(herbs.length ? [[`${herbs.length} herbs`, 'warming and calming']] : [])],
       desc: herbs.length ? 'For immunity and warmth through the cold months. Tap one to see how to use it.' : 'What nature makes best right now. Tap one to see how to use it.' })}
     ${herbs.length ? `<div class="seg apo-tabs">${[['super', 'Superfoods'], ['herbs', 'Herbs']].map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="apoTab" data-v="${k}">${l}</button>`).join('')}</div>` : ''}
@@ -6905,7 +6905,7 @@ function viewRecipe(id) {
   // a dish with its own hero model (the taco) turns in 3D at the top of the page; drag to spin it
   const media = D3 && D3.hero ? `<span class="cup3d-w rcp-3d"><img src="${D3.img}" alt=""><canvas class="teacup3d" data-model="${D3.model}" data-elev="${D3.elev || 0.9}" data-fit="${D3.heroFit || D3.fit}" data-steam="0" aria-label="${esc(r.name)} in 3D. Drag to turn it."></canvas></span>` : '';
   return `<div class="pad sp2 rcp">
-    ${(() => { const X = recipeMacros(r); return specHero({ media, photo: photoUrl(r.id) ? photoUrl(r.id, 1000) : '', glyph: '🥣', eyebrow: `${r.meal} · ${r.time} min · ${serves === 1 ? 'serves 1' : serves > 6 ? `${serves} pieces` : `serves ${serves}`}`, name: r.name, label: 'At a glance · per serving',
+    ${(() => { const X = recipeMacros(r); return specHero({ stack: !media, media, photo: photoUrl(r.id) ? photoUrl(r.id, 1000) : '', glyph: '🥣', eyebrow: `${r.meal} · ${r.time} min · ${serves === 1 ? 'serves 1' : serves > 6 ? `${serves} pieces` : `serves ${serves}`}`, name: r.name, label: 'At a glance · per serving',
       block: (() => { const kc = [X.p * 4, X.c * 4, X.f * 9], T = kc.reduce((a, b) => a + b, 0) || 1;
         return `<div class="mac"><div class="mac-k"><b class="dotnum">${X.kcal}</b><small>kcal</small></div>
           <div class="mac-g">${[['Protein', X.p, 'p'], ['Carbs', X.c, 'c'], ['Fat', X.f, 'f']].map(([t, v, k]) => `<span class="mac-${k}"><i></i><b>${v}<em>g</em></b><small>${t}</small></span>`).join('')}</div></div>
