@@ -2128,6 +2128,19 @@ const SF_CUT = { Ginger: ['ginger', 'Fresh root'], 'Goji berries': ['goji', 'Iro
   'Black sesame': ['black-sesame'], 'Red dates': ['red-dates'], Baobab: ['baobab'], Moringa: ['moringa'], 'Black seed oil': ['black-seed-oil'], 'Dandelion greens': ['dandelion'],
   'Sun-dried shiitake': ['shiitake'], Pomegranate: ['pomegranate'], 'Bissap (hibiscus)': ['hibiscus'], 'Extra virgin olive oil': ['olive-oil'], 'Dulse seaweed': ['dulse'], 'Tiger nuts': ['tiger-nuts'],
   Carob: ['carob'], Rooibos: ['rooibos'], 'Dried longan': ['longan'], 'Medjool dates': ['medjool'] };
+// What studies found, for the superfoods with solid human trials: [author, year, finding in plain words].
+const SF_STUDY = {
+  Ginger: ['Ozgoli et al.', 2009, '250 mg ginger four times a day eased period pain as well as ibuprofen and mefenamic acid.'],
+  'Turmeric with black pepper': ['Khayat et al.', 2015, 'Curcumin for 10 days around the period made PMS symptoms milder than placebo.'],
+  Cinnamon: ['Jaafarpour et al.', 2015, 'Cinnamon capsules in the first 3 days of the period eased pain and bleeding compared with placebo.'],
+  'Fennel seeds': ['Omidvar et al.', 2012, 'Fennel taken from the start of the period lowered period pain against placebo.'],
+  'Ground flaxseed': ['Phipps et al.', 1993, '25 g flaxseed a day gave more cycles with an egg release and a longer second half of the cycle.'],
+  'Broccoli sprouts': ['Fahey et al.', 1997, 'Three-day-old sprouts hold 20 to 50 times more sulforaphane precursor than grown broccoli.'],
+  'Brazil nuts': ['Thomson et al.', 2008, 'Two Brazil nuts a day raised selenium as well as a 100 mcg supplement.'],
+  'Sunflower seeds': ['Wyatt et al.', 1999, 'A review of 9 trials found vitamin B6 likely eases PMS, including low mood.'],
+  'Bissap (hibiscus)': ['McKay et al.', 2010, 'Three cups of hibiscus tea a day for 6 weeks lowered blood pressure in adults.'],
+  'Extra virgin olive oil': ['Estruch et al.', 2018, 'A Mediterranean diet rich in extra virgin olive oil cut heart attacks and strokes by about 30%.'],
+};
 const SF_TITLE = { menstrual: 'Warm & rebuild', follicular: 'Fresh & clear', ovulatory: 'Light & bright', luteal: 'Calm & steady' };
 function superInner(phase) {
   const S = SUPERFOODS[phase], warm = warmWindow(M.info);
@@ -7760,9 +7773,11 @@ const actions = {
     const box = el.closest('.sfc'), ph = box.dataset.phase, g = d.g != null ? SUPERFOODS[ph].gems[+d.g] : null, f = g ? [g[0], g[1], g[3], `${g[4]}`, null, false, g[2]] : SUPERFOODS[ph].list.filter(x => !(x[5] && myDiet() === 'vegan'))[+d.i], det = box.querySelector('.sfc-det');
     const was = el.classList.contains('on'); box.querySelectorAll('.sfc-i').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); });
     if (was) { det.hidden = true; return; }
-    el.classList.add('on'); el.setAttribute('aria-expanded', 'true'); el.parentElement.after(det);
+    el.classList.add('on'); el.setAttribute('aria-expanded', 'true');
+    // open under the row she tapped (two per row), not below the whole grid
+    { const items = [...el.parentElement.querySelectorAll('.sfc-i')], i = items.indexOf(el); items[Math.min(items.length - 1, Math.floor(i / 2) * 2 + 1)].after(det); }
     const [file] = SF_CUT[f[1]] || [];
-    det.innerHTML = `${file ? `<img src="images/sf/${file}.webp" alt="">` : `<em>${f[0]}</em>`}<div>${f[6] ? `<small class="sfc-o">${f[6]}</small>` : ''}<b>${f[1]}</b><p>${f[2]}</p><span class="sfc-dose">${icon('drop', 12)} ${f[3]}</span></div><button class="sfc-x" data-action="sfClose" aria-label="Close">${icon('close', 14)}</button>`;
+    det.innerHTML = `${file ? `<img src="images/sf/${file}.webp" alt="">` : `<em>${f[0]}</em>`}<div>${f[6] ? `<small class="sfc-o">${f[6]}</small>` : ''}<b>${f[1]}</b><p>${f[2]}</p><span class="sfc-dose">${icon('drop', 12)} ${f[3]}</span>${SF_STUDY[f[1]] ? `<span class="sfc-st"><b class="dotnum">${SF_STUDY[f[1]][1]}</b><span><em>${SF_STUDY[f[1]][0]}</em>${SF_STUDY[f[1]][2]}</span></span>` : ''}</div><button class="sfc-x" data-action="sfClose" aria-label="Close">${icon('close', 14)}</button>`;
     det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
     const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
   },

@@ -10666,3 +10666,11 @@ html .sp-capchip .sd-cap { width: 34px; height: 34px; border-radius: 50%; displa
   background: radial-gradient(circle at 35% 30%, #fff, #e8dad9 70%) !important; box-shadow: 0 3px 10px rgba(48,64,35,.14); font: 600 12.5px var(--font); color: #304023; }
 html .sp-capchip .sd-cap.han { font-family: 'Noto Serif SC', serif; }
 html .sp-capchip { padding: 5px 14px 5px 5px; }
+
+/* Superfoods: the detail opens under the tapped row and spans the grid; a study line (year + author) under the amount */
+.sfc-grid > .sfc-det { grid-column: 1 / -1; margin: 2px 0 6px; }
+.sfc-st { display: flex; gap: 10px; align-items: flex-start; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(48,64,35,.1); }
+.sfc-st > b.dotnum { flex: none; font: 800 15px/18px var(--dot); letter-spacing: .02em; line-height: 18px; color: #20301a; display: inline; }
+.sfc-st > span { font: 400 12.5px/17px Outfit, sans-serif; color: rgba(32,48,26,.78); }
+.sfc-st em { display: block; font-size: 12.5px; font-style: normal; font-weight: 600; color: #20301a; }
+.sfc-grid > .sfc-det .sfc-dose { display: flex; }
