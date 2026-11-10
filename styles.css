@@ -10644,7 +10644,7 @@ html .home .hub-k > span:first-child { font: 600 20px/1.2 Outfit, sans-serif !im
 /* Consistency: every big page and card heading in one bold weight (were thin 300-400, some half thin half bold) */
 html .sci-h, html .tgw-t, html .rh2-h, html .st2-h, html .sy-h, html .rh3-h, html .br2-h,
 html .cal-head h2, html .pl-head h2, html .log-date h2, html .spec-name h1, html .rh-article > h2,
-html .szh-t h1, html .sz-story h2, html .hxd-in h1 { font-weight: 600 !important; letter-spacing: -.02em; }
+html .szh-t h1, html .sz-story h2, html .hxd-in h1, html .pld-h b { font-weight: 600 !important; letter-spacing: -.02em; }
 html .sci-h span, html .br2-h span, html .br2-h em, html .rh3-h span, html .sy-h span, html .tgw-t span { font-weight: inherit !important; }
 
 /* Food tab: an odd last tile spans the row instead of leaving a hole; superfood cut-outs sit whole on white */
@@ -10653,3 +10653,6 @@ html .sci-h span, html .br2-h span, html .br2-h em, html .rh3-h span, html .sy-h
 .pv-g > .pv-t:last-child:nth-child(odd) { position: relative; min-height: 86px; justify-content: center; padding: 14px 60px 14px 88px; }
 .pv-g > .pv-t:last-child:nth-child(odd) .pv-top { position: absolute; inset: 0; padding: 0 14px; align-items: center; margin: 0; }
 .pv-g > .pv-t:last-child:nth-child(odd) small { margin-top: 0; }
+
+/* Plate detail: the share next to the food name in readable moss (was faint lime on mist) */
+html .pld-h span.pld-p { color: #4a6324; font-size: 21px; font-weight: 800; }
