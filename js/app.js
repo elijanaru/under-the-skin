@@ -2005,7 +2005,7 @@ function planOpts(phase) {
   return [
     ['recipes', `${recs.length} for you`, 'Recipes', recPic ? photoUrl(recs.find(r => photoUrl(r.id)).id, 400) : '', 'bowl'],
     ['season', `${fits || sz.length} ${fits ? 'for you' : 'fresh now'}`, `${sn} foods`, `images/season-${{ Spring: 'spring', Summer: 'summer', 'Late summer': 'summer', Autumn: 'autumn', Winter: 'winter' }[sn]}.jpg`, 'leaf'],
-    ['foods', PHASES[phase].name, 'Superfoods', FOOD_PHOTOS[cf[3][0]] ? foodPhoto(cf[3][0], 400) : '', 'heart'],
+    ['foods', PHASES[phase].name, 'Superfoods', (f => f ? `images/sf/${SF_CUT[f][0]}.webp` : '')(cf[3].find(f => SF_CUT[f])) || (f => f ? foodPhoto(f, 400) : '')(cf[3].find(f => FOOD_PHOTOS[f])), 'heart'],
     ['drinks', tea, 'Drinks & tea', teaPhoto(tea, 400, 400), 'cup'],
     ['supps', 'What helps now', 'Supplements', foodPhoto('Pumpkin seeds', 400), 'drop'],
     ['sugar', 'Fewer spikes', 'Blood sugar', foodPhoto('Apples', 400), 'chart'],
