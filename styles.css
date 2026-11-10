@@ -10674,3 +10674,12 @@ html .sp-capchip { padding: 5px 14px 5px 5px; }
 .sfc-st > span { font: 400 12.5px/17px Outfit, sans-serif; color: rgba(32,48,26,.78); }
 .sfc-st em { display: block; font-size: 12.5px; font-style: normal; font-weight: 600; color: #20301a; }
 .sfc-grid > .sfc-det .sfc-dose { display: flex; }
+
+/* Daily calm reminder: − and + sit in the middle of their round buttons (a global text-align: start pushed them to the edge) */
+html .crm2-time button, html .stepper button { display: grid; place-items: center; padding: 0; text-align: center; }
+
+/* Feel better poster: a lone last tile (16 rituals in the warm window) sits in the middle column */
+.fbp-g > .fbp-i:last-of-type:nth-of-type(3n+1) { grid-column: 2; }
+/* photos get a real box: max-height 100% did not resolve in the grid, so tall cut-outs (hot water bottle) ran into their title */
+html .fbp-ph { height: 92px; }
+html .fbp-ph img { max-height: 92px; max-width: 100px; }

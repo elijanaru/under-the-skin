@@ -3379,9 +3379,18 @@ const FB = [
   { id: 'salt', t: 'Epsom salt bath', s: 'Relaxes tight fascia and muscles.', why: 'Warm water and magnesium salt relax tight muscles and fascia and are a lovely way to switch off before sleep.', do: ['2 cups of Epsom salt in a warm bath', 'Soak for 15 to 20 minutes', 'Drink a glass of water after'], safe: 'Warm, not hot. Skip it if pregnant, with very low blood pressure or diabetes unless your doctor agrees.' },
 ];
 const FB_TILT = [-4, 3, -2, 5, -3, 2, -5, 3, -2, 4, -3, 2, -4, 3, -2, 5, -3, 2];
-function fbItem(x, i, done) {
+// Around her period (the warm window) the raw carrot salad and the castor oil pack (skip during the period) step aside;
+// heat on the belly and golden milk take their places, so the poster never suggests raw food or castor oil on those days.
+const FB_WARM_SWAP = { carrot: 'heat', castor: 'golden' };
+function fbOrder(info) {
+  const all = FB.map((x, i) => [x, i]);
+  if (!warmWindow(info)) return all;
+  const byId = Object.fromEntries(all.map(e => [e[0].id, e])), moved = new Set(Object.values(FB_WARM_SWAP));
+  return all.filter(([x]) => !moved.has(x.id)).map(e => FB_WARM_SWAP[e[0].id] ? byId[FB_WARM_SWAP[e[0].id]] : e);
+}
+function fbItem(x, i, done, pos = i) {
   const on = x.hb && done.includes(x.hb);
-  return `<button class="fbp-i ${on ? 'ok' : ''} ${i % 3 === 1 ? 'mid' : ''}" style="--r:${FB_TILT[i]}deg;--i:${i}" data-action="fbPick" data-i="${i}" aria-expanded="false"><span class="fbp-ph"><img src="images/fb/${x.id}.webp" alt="" loading="lazy" decoding="async"></span><b>${x.t}</b><small>${x.s}</small>${x.hb ? `<i class="fbp-ok" aria-label="${on ? 'Done today' : 'Daily habit'}">${icon('check', 10, 3)}</i>` : ''}</button>`;
+  return `<button class="fbp-i ${on ? 'ok' : ''} ${pos % 3 === 1 ? 'mid' : ''}" style="--r:${FB_TILT[pos]}deg;--i:${pos}" data-action="fbPick" data-i="${i}" aria-expanded="false"><span class="fbp-ph"><img src="images/fb/${x.id}.webp" alt="" loading="lazy" decoding="async"></span><b>${x.t}</b><small>${x.s}</small>${x.hb ? `<i class="fbp-ok" aria-label="${on ? 'Done today' : 'Daily habit'}">${icon('check', 10, 3)}</i>` : ''}</button>`;
 }
 function fbDetail(i) {
   const x = FB[i], on = x.hb && habitsDone(todayISO()).includes(x.hb);
@@ -3473,7 +3482,7 @@ function viewReliefIndex() {
   <div class="pad hg fb">
     <section class="fbp" aria-label="Small rituals that support your hormones">
       <div class="fbp-title"><small>${info ? `Day ${info.cd} · ` : ''}Balance your hormones</small><h1>Feel better, <span>gently</span></h1><p>Small rituals your hormones love. Tap any one for how and why.</p></div>
-      <div class="fbp-g">${FB.map((x, i) => fbItem(x, i, done)).join('')}</div>
+      <div class="fbp-g">${fbOrder(info).map(([x, i], pos) => fbItem(x, i, done, pos)).join('')}</div>
       <div class="fbp-det" hidden></div>
     </section>
     <section class="card glass fb-now"><small>${recent.size ? 'For what you logged' : 'Common around now'}</small>
