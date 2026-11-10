@@ -10635,3 +10635,8 @@ html .home .hub-k > span:first-child { font: 600 20px/1.2 Outfit, sans-serif !im
 .fbp .fbp-i b { font-weight: 600; font-size: 13.5px; color: #20301a; }
 .fbp .fbp-i small { font-size: 11px; color: rgba(32,48,26,.76); }
 .fbp .fbp-i.on b { color: #4f6a2a; }
+
+/* Breathe: In / Hold / Out rings readable on the dark card (Doto at 14px was faint grey dots) */
+.bz-rings .bzr b { font: 600 16px Outfit, system-ui, sans-serif; color: #fff; }
+.bz-rings .bzr small { font-size: 12px; font-weight: 500; color: rgba(255,255,255,.88); }
+.bz-rings .bzr circle { stroke: rgba(255,255,255,.3); fill: rgba(255,255,255,.08); }
