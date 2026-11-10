@@ -680,7 +680,7 @@ function cycleChart(info, { id = 'cc', compact = false, who = 'You' } = {}) {
       const v = C.hormonesAt(t - 0.5, L, P)[h.key];
       d += `${d ? 'L' : 'M'}${X(t).toFixed(1)} ${Y(v).toFixed(1)}`;
     }
-    return `<path class="curve ${ui.hidden[h.key] ? 'off' : ''}" data-h="${h.key}" d="${d}" pathLength="1" stroke="${h.color}" stroke-width="${h.w}" fill="none" stroke-linecap="round" ${h.dash ? `stroke-dasharray="${h.dash}"` : ''} filter="${h.key === 'estrogen' ? `url(#${id}-glow)` : ''}"/>`;
+    return `<path class="curve ${ui.hidden[h.key] ? 'off' : ''}" data-h="${h.key}" d="${d}" pathLength="1" stroke="${h.color}" stroke-width="${h.w}" fill="none" stroke-linecap="round" ${h.dash ? `stroke-dasharray="${h.dash}"` : ''}/>`;
   }).join('');
   // estrogen area wash
   let area = `M${X(1)} ${bot}`;
@@ -3645,7 +3645,7 @@ function learnedCard() {
       <rect x="${X(info.cd) - 2}" y="${y0 - 5}" width="4" height="${sh + 10}" rx="2" fill="#20301a"/>
       ${pins.map(q => `<path d="M${q.at} ${y0 + sh + 2} L${q.at} ${y0 + sh + 10} L${q.px} ${pinY - 20}" fill="none" stroke="#20301a" stroke-opacity=".3" stroke-width="1.2"/><circle cx="${q.px}" cy="${pinY - 4}" r="15" fill="#fff" stroke="rgba(48,64,35,.2)"/><text x="${q.px}" y="${pinY + 1.5}" text-anchor="middle" class="lm-pe">${LOG_EMOJI[q.x.name] || '•'}</text><text x="${q.px}" y="${pinY + 24}" text-anchor="middle" class="lm-ax b">day ${q.d}</text>`).join('')}
       <text x="14" y="${y0 - 9}" class="lm-ax">Day 1</text><text x="${W - 14}" y="${y0 - 9}" text-anchor="end" class="lm-ax">Day ${L}</text></svg>`;
-  const tile = (cls, ic, k, v, u, sub) => `<div class="lm-t ${cls}"><span class="lm-ic">${ic}</span><small>${k}</small><b><em class="dotnum">${v}</em>${u ? ` ${u}` : ''}</b><p>${sub}</p></div>`;
+  const tile = (cls, ic, k, v, u, sub, pre = '') => `<div class="lm-t ${cls}"><span class="lm-ic">${ic}</span><small>${k}</small><b>${pre ? `<span class="lm-pre">${pre}</span> ` : ''}<em class="dotnum">${v}</em>${u ? ` ${u}` : ''}</b><p>${sub}</p></div>`;
   return `${sectionTitle('What I’ve learned about you')}
     <section class="card learned lm2">${learnedScore(n)}
       <div class="lm-map"><div class="lm-mh"><b>Your cycle, mapped</b><span><i class="t"></i>today</span></div>${map}
@@ -3653,8 +3653,8 @@ function learnedCard() {
       <div class="lm-grid">
         ${tile('c', '🔁', 'Your cycle', L, `days${stats.variation ? ` ±${pm}` : ''}`, n ? `From ${plural(n, 'cycle')}` : 'Log your next period')}
         ${tile('p', '🩸', 'Your period', Pd, 'days', stats.periods.length ? `From ${plural(stats.periods.length, 'period')}` : 'Default until you log')}
-        ${tile('n', '📅', 'Next period', md(np), '', n ? `Likely ${md(lo)} to ${md(hi)}` : 'Sharper with every period')}
-        ${tile('o', '🥚', 'Egg release', `Day ${ov}`, '', os.cd ? 'From your egg-white sign' : os.luteal ? 'From your check-ins' : 'Estimated from your cycle')}
+        ${tile('n', '📅', 'Next period', np.getDate(), '', n ? `Likely ${md(lo)} to ${md(hi)}` : 'Sharper with every period', fmt(np, { month: 'short' }))}
+        ${tile('o', '🥚', 'Egg release', ov, '', os.cd ? 'From your egg-white sign' : os.luteal ? 'From your check-ins' : 'Estimated from your cycle', 'Day')}
       </div>
       ${pats.length ? `<div class="lm-pats"><small>Your body’s habits</small>${pats.map(x => `<span class="lm-pat"><i>${LOG_EMOJI[x.name] || '•'}</i><b>${x.name}</b><em>${x.from === x.to ? `Day ${x.from}` : `Days ${x.from} to ${x.to}`}</em><small>${x.cyclesN} of your cycles</small></span>`).join('')}</div>` : ''}
       <p class="lm-foot">${icon('spark', 12)} The more you log, the more personal every prediction gets.</p></section>`;
@@ -3673,7 +3673,7 @@ function patternUnlock(P) {
   const steps = [
     ['e', 'bolt', 'Rate your energy', eDays, 6, 'days', 'log'],
     ['s', 'thermo', 'Log a symptom', symN, 3, 'times', 'log'],
-    ['c', 'calendar', 'Full cycles logged', P.cycles, 2, 'cycles', 'calendar'],
+    ['c', 'calendar', 'Cycles with check-ins', P.cycles, 2, 'cycles', 'calendar'],
   ];
   const done = steps.filter(x => x[3] >= x[4]).length;
   // the peek: her cycle strip with a dashed energy line, pins still empty, a lock in the middle
@@ -6701,6 +6701,7 @@ function viewInsights() {
     const e = energyBy[p], avg = e ? e.reduce((a, b) => a + b, 0) / e.length : 0;
     const md = moodBy[p] ? Object.entries(moodBy[p]).sort((a, b) => b[1] - a[1])[0] : null;
     const sy = Object.entries(counts).map(([n, v]) => [n, v.by[p] || 0]).filter(x => x[1]).sort((a, b) => b[1] - a[1])[0];
+    if (!e && !md && !sy) return `<div class="bph bph-0 ${p === info.phase ? 'now' : ''}" style="--c:${PH_HEX[p]}"><span class="bph-h"><i></i>${PHASES[p].name}${p === info.phase ? '<em>Now</em>' : ''}</span><small class="bph-none">Nothing logged in this phase yet</small></div>`;
     return `<div class="bph ${p === info.phase ? 'now' : ''}" style="--c:${PH_HEX[p]}">
       <span class="bph-h"><i></i>${PHASES[p].name}${p === info.phase ? '<em>Now</em>' : ''}</span>
       <span class="bph-e">${e ? `<b class="dotnum">${avg.toFixed(1)}</b><small>/5 energy</small>` : '<small class="bph-none">No energy logs yet</small>'}</span>
@@ -6723,8 +6724,11 @@ function viewInsights() {
     ${patternsSection()}
     ${learnedCard()}
     ${sectionTitle('By phase')}
-    <section class="bph-g">${phaseTiles}</section>
-    <p class="bph-k">From your check-ins: average energy, the mood and the symptom you logged most in each phase.</p>`;
+    ${(phaseTiles.match(/class="bph bph-0/g) || []).length < 4 ? `<section class="bph-g">${phaseTiles}</section>
+    <p class="bph-k">From your check-ins: average energy, the mood and the symptom you logged most in each phase.</p>` : `<section class="card bph-empty">
+      <div class="bph-strip">${PHASE_ORDER.map(p => `<span class="${p === info.phase ? 'now' : ''}" style="--c:${PH_HEX[p]}"><i></i>${PHASES[p].name}</span>`).join('')}</div>
+      <p>Rate your energy and mood on a few days in each phase. Each one then shows your average energy, top mood and top symptom.</p>
+      <button class="pill-cta" data-action="nav" data-to="log">${icon('plus', 14)} Check in today</button></section>`}`;
   else body = `
     <span id="ins-hx"></span>${hormoneGrids(info)}
     ${sectionTitle('Guides')}
