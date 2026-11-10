@@ -8234,4 +8234,5 @@ setInterval(() => { if (state?.onboarded) { M = model(); fireNotifications(); } 
 window.addEventListener('hashchange', () => { if (route().name !== 'log') ui.logDate = null; if (route().name !== 'calendar') ui.calEdit = false; render(); });
 setInterval(() => { const sb = document.querySelector('.statusbar span'); if (sb) sb.textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(/\s?[AP]M/, ''); }, 30000);
 render();
-requestAnimationFrame(() => window.__appReady && window.__appReady());
+// first screen is drawn: lift the splash (rAF never fires in a background or prewarmed webview, so a timer backs it up instead of the 7 s cut-off)
+{ const ready = () => window.__appReady && window.__appReady(); requestAnimationFrame(ready); setTimeout(ready, 120); }
