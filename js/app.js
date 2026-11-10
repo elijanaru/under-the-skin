@@ -3790,6 +3790,12 @@ function remedyMake(r) {
     <div class="rm-is">${tiles}</div>
     <ol class="rm-st">${r.steps.map(x => `<li><p>${x}</p></li>`).join('')}</ol></section>`;
 }
+// A caution with several warnings reads as a short list, one per row, instead of one bold paragraph.
+function cautionHTML(t) {
+  if (!t) return '';
+  const parts = t.split(/(?<=[.!])\s+(?=[A-Z])/).filter(Boolean);
+  return parts.length > 1 ? `<ul class="ck-l">${parts.map(x => `<li>${x}</li>`).join('')}</ul>` : `<b>${t}</b>`;
+}
 function viewRemedy(id) {
   const r = REMEDIES.find(x => x.id === id); if (!r) return viewMissing();
   const info = M.info, warm = warmWindow(info), organPhase = PHASE_ORDER.find(p => TCM[p].organ.includes(r.organ));
@@ -3979,7 +3985,7 @@ function remedyScience(r, lib = REMEDY_SCIENCE, check = true) {
     ${lib === REMEDY_SCIENCE || lib === RITUAL_SCIENCE ? '' : suppPairs(r.id)}
     ${sectionTitle('What studies found')}
     ${studyCards(x.study, x.cite)}
-    ${x.caution || check ? `<section class="ck-first"><span class="ck-i">!</span><div><small>Before you try it</small>${x.caution ? `<b>${x.caution}</b>` : ''}${check ? '<p>Check every ingredient for allergies and for clashes with medicines you take.</p>' : ''}</div></section>` : ''}`;
+    ${x.caution || check ? `<section class="ck-first"><span class="ck-i">!</span><div><small>Before you try it</small>${cautionHTML(x.caution)}${check ? '<p>Check every ingredient for allergies and for clashes with medicines you take.</p>' : ''}</div></section>` : ''}`;
 }
 // Detail page: full photo on top, a frosted sheet slides over it with the 3 key items and a short description.
 const QTY = /^((?:juice of |pinch of |a |an )?[\d½¼¾⅓⅔.\/–-]+\s*(?:g|kg|ml|l|cups?|tbsp|tsp|handfuls?|cloves?|slices?|sticks?|pinch)?\b|pinch of|a handful of|handful of)\s*/i;
@@ -4854,7 +4860,7 @@ function viewNutrient(id) {
     <section class="card glass nu-low"><div class="nl-i"><span>${icon('search', 18)}</span><div><small>Signs</small><p>${x.low}</p></div></div><div class="nl-i"><span>${icon('flask', 18)}</span><div><small>Test to ask for</small><p>${x.test}</p></div></div></section>
     ${sectionTitle('What studies found')}
     ${studyCards(x.study, x.cite)}
-    <section class="ck-first"><span class="ck-i">!</span><div><small>Before you try it</small>${x.caution ? `<b>${x.caution}</b>` : ''}<p>Check foods and supplements for allergies and for clashes with medicines you take.</p></div></section>
+    <section class="ck-first"><span class="ck-i">!</span><div><small>Before you try it</small>${cautionHTML(x.caution)}<p>Check foods and supplements for allergies and for clashes with medicines you take.</p></div></section>
     <button class="card glass nu-next" data-action="nav" data-to="nutrients/${NUTRIENTS[(i + 1) % NUTRIENTS.length].id}"><small>Next</small><b>${NUTRIENTS[(i + 1) % NUTRIENTS.length].n}</b>${icon('chevR', 16)}</button>
     <p class="fine center">General information, not medical advice. Pregnant, on medication or unsure? Ask your doctor or pharmacist first.</p>
   </div>`;
