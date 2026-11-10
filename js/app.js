@@ -1030,7 +1030,8 @@ function hormonePanelHTML() {
 function viewRoadmap() {
   const p = state.profile;
   if (!p.planStart) { p.planStart = todayISO(); save(true); }
-  const day = Math.max(1, Math.min(90, planDay())), m = Math.min(2, Math.floor((day - 1) / 30));
+  const day = Math.max(1, Math.min(90, planDay())), m = Math.min(2, Math.floor((day - 1) / 30)), rt = ui.rmTab || 'plan';
+  // one long scroll became three sub-tabs: her plan, the science behind it, and the stories
   return `${topbar('Your plan', { back: true })}<div class="pad">
     <section class="ph">
       <div class="ph-ring" role="img" aria-label="Day ${day} of 90"><svg viewBox="0 0 120 120"><circle class="t" cx="60" cy="60" r="52"/><circle class="p" cx="60" cy="60" r="52" pathLength="100" stroke-dasharray="${Math.max(1.5, day / 90 * 100).toFixed(1)} 100"/></svg>
@@ -1039,11 +1040,8 @@ function viewRoadmap() {
       <p class="ph-p">Month ${m + 1} · ${PLAN_METHOD[m].k}. Check in every day and follow today’s plan: your check-ins show what changed.</p>
       <div class="ph-cta"><button class="ph-b w" data-action="nav" data-to="log">${icon('check', 15)} Check in</button><button class="ph-b" data-action="nav" data-to="today">Today’s plan ${icon('chevR', 14)}</button></div>
     </section>
-    ${baCompare()}
-    ${scienceHTML()}
-    ${hormonePanelHTML()}
-    ${promiseHTML(day)}
-    ${sectionTitle('Your 90 days')}${roadmapHTML(planKeys(p), '', day)}
+    <div class="seg rm-seg">${[['plan', 'Plan'], ['science', 'Science'], ['stories', 'Stories']].map(([k, l]) => `<button class="${rt === k ? 'on' : ''}" data-action="rmTab" data-v="${k}">${l}</button>`).join('')}</div>
+    ${rt === 'science' ? `${scienceHTML()}${hormonePanelHTML()}` : rt === 'stories' ? promiseHTML(day) : `${baCompare()}${roadmapHTML(planKeys(p), '', day)}`}
     <p class="center"><button class="link" data-action="nav" data-to="profile">Change goals or birth control in Profile</button></p>
     <p class="fine center">Underskin is a wellness app, not medical advice.</p></div>`;
 }
@@ -7926,6 +7924,7 @@ const actions = {
   seasonJump: d => { const now = new Date().getMonth() + 1; for (let k = 0; k < 12; k++) { const mm = ((now - 1 + k) % 12) + 1; if (SZ.seasonName(myCountry(), mm) === d.v) { ui.seasonMonth = mm === now ? null : mm; break; } } ui.seasonFood = null; render(); },
   seasonMonth: d => { const m = (ui.seasonMonth || new Date().getMonth() + 1) + +d.d; ui.seasonMonth = ((m - 1 + 12) % 12) + 1; render(); },
   insTab: d => { ui.insTab = d.v; render(); },
+  rmTab: d => { ui.rmTab = d.v; render(); },
   insHx: () => { ui.insTab = 'learn'; render(); const v = document.getElementById('view'), a = document.getElementById('ins-hx'); if (v && a) v.scrollTo({ top: v.scrollTop + a.getBoundingClientRect().top - 70, behavior: 'smooth' }); },
   hxJump: d => { document.getElementById('hx-' + d.i)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
   groToggle: d => { const g = state.grocery = state.grocery || {}; g[d.k] ? delete g[d.k] : (g[d.k] = 1); save(); render(); },
