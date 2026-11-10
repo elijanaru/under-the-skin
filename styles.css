@@ -10656,3 +10656,13 @@ html .sci-h span, html .br2-h span, html .br2-h em, html .rh3-h span, html .sy-h
 
 /* Plate detail: the share next to the food name in readable moss (was faint lime on mist) */
 html .pld-h span.pld-p { color: #4a6324; font-size: 21px; font-weight: 800; }
+
+/* Doto numbers in one crisp weight: rules that asked for 400 fell back to the thin 600 cut (only 600/800 load), so spec-sheet numbers looked faint */
+html .sf-n b, html .ff-h b, html .ff-v .dotnum, html .fl3-n .dotnum, html .hxd-pct b, html .gs-ring b,
+html .cd-n, html .szb-n, html .gn b, html .pfood3 .pf-day { font-weight: 800 !important; }
+
+/* Spec sheet chip: the symbol sits in the same round pearl badge as the supplement list (the two-tone capsule read as an on/off switch) */
+html .sp-capchip .sd-cap { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+  background: radial-gradient(circle at 35% 30%, #fff, #e8dad9 70%) !important; box-shadow: 0 3px 10px rgba(48,64,35,.14); font: 600 12.5px var(--font); color: #304023; }
+html .sp-capchip .sd-cap.han { font-family: 'Noto Serif SC', serif; }
+html .sp-capchip { padding: 5px 14px 5px 5px; }
