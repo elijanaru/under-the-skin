@@ -772,7 +772,7 @@ export function hormonePhoto(n, w = 700) {
 
 // Real Unsplash photos for rituals and home remedies (filled in below).
 export const CARE_PHOTOS = {
-  "foot-soak": { src: "https://images.unsplash.com/photo-1577117633143-a2437fb9bdda", by: "Toranong Mahachai", page: "https://unsplash.com/photos/person-sitting-with-both-feet-in-brown-bowl-xugoOgRPngU" },
+  "foot-soak": { src: "https://images.unsplash.com/photo-1577117633143-a2437fb9bdda", rect: "0,1050,3024,2982", by: "Toranong Mahachai", page: "https://unsplash.com/photos/person-sitting-with-both-feet-in-brown-bowl-xugoOgRPngU" },
   "belly-massage": { src: "https://images.unsplash.com/photo-1549445069-d1125f7a129c", by: "Jannes Jacobs", page: "https://unsplash.com/photos/pMQgDg_8z88" },
   "liver-stretch": { src: "https://images.unsplash.com/photo-1767611124095-0180597f3a2b", by: "Margaret Young", page: "https://unsplash.com/photos/woman-stretching-on-a-yoga-mat-uuRTeOsTg5k" },
   "early-sleep": { src: "https://images.unsplash.com/photo-1552858725-a19e7fcd3ac4", by: "Jp Valery", page: "https://unsplash.com/photos/F2SrBdv9swk" },
@@ -787,7 +787,7 @@ export const CARE_PHOTOS = {
 };
 export function carePhoto(id, w = 600) {
   const p = CARE_PHOTOS[id];
-  return p ? (p.src.includes('pexels') ? `${p.src}?auto=compress&cs=tinysrgb&w=${w}` : `${p.src}?w=${w}&q=70&auto=format&fit=crop`) : null;
+  return p ? (p.src.includes('pexels') ? `${p.src}?auto=compress&cs=tinysrgb&w=${w}` : `${p.src}?${p.rect ? `rect=${p.rect}&` : ''}w=${w}&q=70&auto=format&fit=crop`) : null;
 }
 
 // Real Unsplash photos for the "Your stars" tiles (filled in below).

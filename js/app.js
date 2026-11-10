@@ -6922,7 +6922,7 @@ function viewRitual(id) {
   const r = RITUALS.find(x => x.id === id); if (!r) return viewMissing();
   return `<div class="pad sp2">
     ${specHero({ photo: carePhoto(r.id, 1000), glyph: r.glyph, han: true, eyebrow: 'TCM ritual', name: r.name, label: 'At a glance',
-      rows: [[`${r.mins} min`, 'Time'], [!M.info ? `${r.phases.length} phases` : r.phases.includes(M.info.phase) ? 'Good today' : `From ${PHASES[r.phases.find(p => PHASE_ORDER.indexOf(p) > PHASE_ORDER.indexOf(M.info.phase)) || r.phases[0]].name.toLowerCase()}`, 'Your cycle'], [`${r.steps.length} steps`, 'Simple']],
+      rows: [['Time', `${r.mins} min`], ['Your cycle', !M.info ? `${r.phases.length} phases` : r.phases.includes(M.info.phase) ? 'Good today' : `From ${PHASES[r.phases.find(p => PHASE_ORDER.indexOf(p) > PHASE_ORDER.indexOf(M.info.phase)) || r.phases[0]].name.toLowerCase()}`], ['Steps', `${r.steps.length}`]],
       lead: 'Why it helps', desc: r.why })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit(r.phases, M.info && M.info.phase)}</section>
     ${sectionTitle('Steps')}
@@ -6958,7 +6958,7 @@ function viewPoint(phase) {
   const foot = `<svg viewBox="0 0 200 150" class="foot pt-art" role="img" aria-label="Where to press ${p.code}">${art[phase]}</svg>`;
   return `<div class="pad sp2">
     ${specHero({ glyph: '穴', han: true, eyebrow: `Acupressure · ${t.stage}`, name: `${p.code} · ${p.name}`, label: 'Key facts',
-      rows: [[`${p.secs} s`, 'Press time'], [phase === 'ovulatory' ? 'One point' : 'Both sides', 'Where'], [t.organ, 'Organ']], lead: `${p.name} · what it does`, desc: p.does })}
+      rows: [['Press time', `${p.secs} s`], ['Where', phase === 'ovulatory' ? 'One point' : 'Both sides'], ['Organ', t.organ]], lead: `${p.name} · what it does`, desc: p.does })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit([phase], M.info && M.info.phase)}</section>
     ${sectionTitle('Where to press')}
     <section class="card card-light pt-where"><div class="pt-foot">${foot}</div><p class="dp-text">${p.where}</p></section>
