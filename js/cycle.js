@@ -109,18 +109,23 @@ export function dayInfo(date, stats) {
     predicted = true;
   }
   const cd = diffDays(d, start) + 1;
-  const ov = ovulationDay(L, P);
-  const phase = cd > L ? 'luteal' : phaseFor(cd, L, P);
+  // a finished cycle is placed by when her next period really came, not by the average: egg release sits a luteal
+  // length before that bleed. Under 21 days was most likely spotting or an early bleed, so no fertile days are drawn.
+  const nextP = predicted ? null : periods[periods.indexOf(startP) + 1];
+  const Lc = nextP ? diffDays(nextP.start, startP.start) : 0;
+  const Lx = Lc >= 21 && Lc <= 60 ? Lc : L, tooShort = Lc > 0 && Lc < 21;
+  const ov = ovulationDay(Lx, P);
+  const phase = cd > Lx ? 'luteal' : tooShort && cd > P ? 'follicular' : phaseFor(cd, Lx, P);
   const log = logs[iso(d)] || {};
   const periodActual = PERIOD_FLOWS.includes(log.flow);
   // today counts too: on day 2 of her period before she has logged today, she is still on her period
   const periodPredicted = !periodActual && d >= today && cd <= P;
-  const nextStart = (startP === last && !predicted) ? anchor : addDays(start, L);
+  const nextStart = (startP === last && !predicted) ? anchor : nextP ? nextP.start : addDays(start, L);
   const isToday = d.getTime() === today.getTime();
   return {
-    date: d, cd, L, P, ov, phase, predicted,
-    fertile: cd >= ov - 5 && cd <= ov + 1,
-    isOvulation: cd === ov,
+    date: d, cd, L: Lx, P, ov, phase, predicted,
+    fertile: !tooShort && cd >= ov - 5 && cd <= ov + 1,
+    isOvulation: !tooShort && cd === ov,
     isPeriod: periodActual || periodPredicted, periodActual, periodPredicted,
     late: isToday && startP === last && lateBy > 0 ? lateBy : 0,
     dueToday: isToday && startP === last && lateBy === 0,

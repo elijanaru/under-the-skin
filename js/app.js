@@ -1461,7 +1461,9 @@ function calDial(inf, size = 132) {
 }
 function calTop(inf, fStart, nextOv, short) {
   const fertileNow = inf.fertile && !inf.isPeriod, dOv = inf.daysToOv, ph = PHASES[inf.phase];
-  const big = inf.isPeriod ? [`${inf.cd}`, 'day of your period'] : inf.late ? [`${inf.late}`, inf.late === 1 ? 'day late' : 'days late'] : [`${inf.daysToPeriod}`, inf.daysToPeriod === 1 ? 'day to your period' : 'days to your period'];
+  // on her period the dial already shows the cycle day, so the big number says how many period days are likely left (from her usual length)
+  const left = inf.isPeriod ? (inf.P || 5) - inf.cd : 0;
+  const big = inf.isPeriod ? (left > 0 ? [`${left}`, left === 1 ? 'period day to go' : 'period days to go'] : [`${inf.cd}`, left === 0 ? 'usually your last day' : 'day of your period']) : inf.late ? [`${inf.late}`, inf.late === 1 ? 'day late' : 'days late'] : [`${inf.daysToPeriod}`, inf.daysToPeriod === 1 ? 'day to your period' : 'days to your period'];
   const sub = inf.isPeriod ? `Next one ${fmt(C.addDays(inf.cycleStart, inf.L), { weekday: 'short', month: 'short', day: 'numeric' })}` : inf.late ? 'A late period is common. Stress and travel can shift it.' : `Expected ${fmt(inf.nextStart, { weekday: 'short', month: 'short', day: 'numeric' })}`;
   const bub = (c, k, v, s) => `<div class="cb3" style="--c:${c}"><i></i><small>${k}</small><b>${v}</b><span>${s}</span></div>`;
   return `<section class="cal3">
