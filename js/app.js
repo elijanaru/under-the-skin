@@ -4879,11 +4879,17 @@ function viewSugar() {
   </div>`;
 }
 // ---------- live your rhythm: sun, moon, body — one daily score ----------
+// Countries that span several time zones: the capital's longitude would shift sunrise by hours (New York for a
+// woman in Los Angeles), so the phone's own time zone decides how far east or west she is.
+const MULTI_TZ = new Set(['US', 'CA', 'AU', 'RU', 'BR', 'MX', 'ID', 'KZ']);
 function myGeo() {
   const g = state.profile.geo; if (g) return [g.lat, g.lng];
-  const c = COUNTRY_GEO[myCountry()] || COUNTRY_GEO.DE, tz = -new Date().getTimezoneOffset() / 4;
-  // A guessed country far from the phone's time zone (e.g. English language in Berlin) would put sunrise at noon.
-  return state.profile.country || Math.abs(c[1] - tz) < 30 ? c : [c[0], tz];
+  // the phone's standard (winter) time zone as a longitude: 15° per hour, summer time left out
+  const y = new Date().getFullYear(), tz = -Math.max(new Date(y, 0, 1).getTimezoneOffset(), new Date(y, 6, 1).getTimezoneOffset()) / 4;
+  const k = myCountry(), c = COUNTRY_GEO[k] || COUNTRY_GEO.DE;
+  if (MULTI_TZ.has(k)) return [c[0], tz];
+  // a capital far from the phone's time zone (travelling, or a guessed country) would put sunrise at noon
+  return Math.abs(c[1] - tz) < 30 ? c : [c[0], tz];
 }
 function sunToday(d = new Date()) { const [la, ln] = myGeo(); return sunTimes(d, la, ln); }
 const hm = d => d ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '·';
