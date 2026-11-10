@@ -4865,6 +4865,21 @@ function viewNutrient(id) {
     <p class="fine center">General information, not medical advice. Pregnant, on medication or unsure? Ask your doctor or pharmacist first.</p>
   </div>`;
 }
+// How much of each trick, shown on the right like a spec sheet (numbers in Doto, words in Outfit).
+const SG_DOSE = { fibre: [0, 'Veg first'], move: ['5', 'min'], acv: ['1', 'tbsp'], tea: ['1', 'cup'], berberine: ['500', 'mg'], d3mg: [0, 'Test first'], minerals: [0, 'Food first'], spices: ['½', 'tsp'] };
+const SG_WHEN = [['before', 'Before the meal'], ['with', 'With the meal'], ['daily', 'Every day']];
+function sugarTrickList(on) {
+  const row = t => {
+    const x = SUGAR_SCIENCE[t.k], d = SG_DOSE[t.k] || [0, ''], pic = SB_PIC[t.k] ? SB_PIC[t.k]() : '';
+    const yr = x ? (x.c.match(/(19|20)\d{2}/) || [''])[0] : '', who = x && yr ? x.c.slice(0, x.c.indexOf(yr)).replace(/[\s,]+$/, '') : '';
+    return `<details class="sgt ${on.includes(t.k) ? 'on' : ''}"><summary><span class="sgt-ph">${pic ? `<img src="${pic}" alt="" loading="lazy">` : ''}<i>${icon('check', 11, 3)}</i></span>
+      <span class="sgt-t"><b>${t.n}</b><small>${t.t}</small></span><span class="sgt-v">${d[0] ? `<b class="dotnum">${d[0]}</b> ` : ''}${d[1]}</span>${icon('chevR', 14)}</summary>
+      <div class="sgt-d"><p>${t.d}</p>
+      ${x ? `<div class="sgt-st">${yr ? `<b class="dotnum">${yr}</b>` : ''}<span><em>${who}</em>${x.s}<small>${yr ? x.c.slice(x.c.indexOf(yr) + 4).replace(/^[\s,]+/, '') : x.c}</small></span></div>` : ''}
+      ${x && x.care ? `<div class="ck-first sgt-ck"><span class="ck-i">!</span><div><small>Before you try it</small>${cautionHTML(x.care)}</div></div>` : ''}</div></details>`;
+  };
+  return `<section class="card sg-list"><p class="sgl-sub">Tap one for how, what studies found and when to skip it.</p>${SG_WHEN.map(([w, h]) => { const l = SUGAR_TRICKS.filter(t => t.w === w); return l.length ? `<div class="sgl-g"><h4>${h}</h4>${l.map(row).join('')}</div>` : ''; }).join('')}</section>`;
+}
 function viewSugar() {
   const on = sugarDone();
   const luteal = M.info && M.info.phase === 'luteal';
@@ -4876,8 +4891,7 @@ function viewSugar() {
       <div class="sg-chips">${SUGAR_TRICKS.map(t => `<button class="${on.includes(t.k) ? 'on' : ''}" data-action="sugarTrick" data-v="${t.k}">${icon(t.ic, 14)} ${t.n}</button>`).join('')}</div></section>
     <p class="sg-score">${icon('spark', 14)} Each trick adds a point to <button class="link" data-action="nav" data-to="rhythm">your rhythm today</button></p>
     ${sectionTitle('8 tricks')}
-    <div class="tricks">${SUGAR_TRICKS.map((t, i) => { const x = SUGAR_SCIENCE[t.k]; return `<section class="card glass trick"><span class="tr-n">${i + 1}</span><div><div class="tr-h"><b>${t.n}</b>${x ? evBadge(x.ev) : ''}</div><p>${t.d}</p>
-      ${x ? `<details class="tr-sci"><summary>What studies found ${icon('chevR', 12)}</summary><p>${x.s}</p><small>${x.c}</small>${x.care ? `<p class="tr-care">${icon('spark', 12)} ${x.care}</p>` : ''}</details>` : ''}</div></section>`; }).join('')}</div>
+    ${sugarTrickList(on)}
     ${sectionTitle('Your cycle and sugar')}
     <section class="card glass sg-cyc">${PHASE_ORDER.map(p => { const x = SUGAR_CYCLE[p], me = M.info && M.info.phase === p; return `<div class="sgc ${me ? 'me' : ''}" style="--pc:${PHASE_COLOR.dark[p]}"><i></i><div><b>${PHASES[p].name}${me ? ' <em>you</em>' : ''}</b><small>${x.t}</small><p>${x.d}</p></div></div>`; }).join('')}
       <p class="sgc-src">${evBadge('some')} Insulin and insulin resistance were higher in the luteal phase in 257 women (Yeung et al. 2010, JCEM, BioCycle study). Resting burn rises a little after ovulation (Benton et al. 2020, PLoS One).</p></section>
