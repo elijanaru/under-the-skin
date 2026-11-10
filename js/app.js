@@ -3817,7 +3817,7 @@ function viewRemedy(id) {
     }
   }
   return `<div class="pad sp2">
-    ${specHero({ photo: carePhoto(r.id, 1000), glyph: r.glyph, han: true, eyebrow: `${r.nature} · ${r.element} · ${r.organ}`, name: r.name,
+    ${specHero({ stack: true, photo: carePhoto(r.id, 1000), glyph: r.glyph, han: true, eyebrow: `${r.nature} · ${r.element} · ${r.organ}`, name: r.name,
       label: r.take ? 'How to take it' : 'Key ingredients', rows: r.take ? [['Dose', r.take.dose], ['How often', r.take.often], ['When', r.take.when]] : r.ingredients.map(ingRow), desc: r.why })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle${r.raw ? ' · raw days' : ''}</div>${phaseFit(r.phases, M.info && M.info.phase)}${r.phases.length === 4 ? '<small class="tf-all">Good every day of your cycle</small>' : ''}
       ${r.take && r.take.more ? (() => { const [ic, k, v] = r.take.more, now = k === 'Pause' && r.raw && warm; return `<div class="rx-more ${now ? 'now' : ''}"><span>${icon(ic, 15)}</span><p><b>${now ? 'Paused right now' : k}</b>${v}</p></div>`; })() : ''}
@@ -3899,7 +3899,7 @@ function viewSupp(id) {
   const x = SUPP_LIB.find(s => s.id === id); if (!x) return viewMissing();
   const ph = suppPhases(x), now = M.info && M.info.phase;
   return `<div class="pad sp2">
-    ${specHero({ photo: suppPhoto(x.id), glyph: x.sym, han: x.han, eyebrow: 'Supplement', sym: !x.han, name: x.name, label: 'How to take it',
+    ${specHero({ stack: true, photo: suppPhoto(x.id), glyph: x.sym, han: x.han, eyebrow: 'Supplement', sym: !x.han, name: x.name, label: 'How to take it',
       extra: SUPP_HERO[x.id] ? `<span class="sp-capchip"><span class="sd-cap ${x.han ? 'han' : ''}">${x.sym}</span><small>Richest in<b>${SUPP_HERO[x.id][1]}</b></small></span>` : '',
       rows: [['Dose', x.dose], ['Form', x.form], ['When', x.when]], desc: x.desc })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit(ph, now)}${ph.length === 4 ? '<small class="tf-all">Useful every day of your cycle</small>' : now && !ph.includes(now) ? `<small class="tf-all">Not a focus in your ${PHASES[now].name.toLowerCase()} phase</small>` : ''}</section>
@@ -3997,7 +3997,14 @@ function ingRow(s) {
 function liquidArt(glyph, han, sym) {
   return `<div class="spec-liquid"><i></i><i></i><i></i></div>${glyph ? `<span class="spec-glyph ${han ? 'han' : ''} ${sym ? 'sym' : ''}">${glyph}</span>` : ''}`;
 }
-function specHero({ photo, glyph, han, sym, eyebrow, name, label = 'Key ingredients', rows = [], lead, desc, extra = '', media = '', block = '' }) {
+// stack: photo as its own rounded tile, the name below it in ink, then the sheet (nothing written over the photo)
+function specHero({ photo, glyph, han, sym, eyebrow, name, label = 'Key ingredients', rows = [], lead, desc, extra = '', media = '', block = '', stack = false }) {
+  const nm = `<div class="spec-name">${eyebrow ? `<div class="eyebrow">${eyebrow}</div>` : ''}<h1>${name}</h1></div>`;
+  if (stack) return `<section class="spec stack"><div class="spec-media ${photo ? '' : 'liquid'}">${photo ? `<img src="${photo}" alt="" onload="this.classList.add('in')" onerror="this.closest('.spec-media').classList.add('noimg')">` : liquidArt(glyph, han, sym)}
+    <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>${extra}</div>${nm}
+    <div class="spec-sheet"><div class="spec-k">${label}</div>
+      ${block}${rows.slice(0, 3).map(([t, v]) => `<div class="spec-row"><b>${t}</b>${v ? `<span>${v}</span>` : ''}</div>`).join('')}
+      ${lead ? `<p class="spec-lead">${lead}</p>` : ''}${desc ? `<p class="spec-desc">${desc}</p>` : ''}</div></section>`;
   return `<section class="spec"><div class="spec-media ${media ? 'm3d' : photo ? '' : 'liquid'}">${media || (photo ? `<img src="${photo}" alt="" onload="this.classList.add('in')" onerror="this.closest('.spec-media').classList.add('noimg')">` : liquidArt(glyph, han, sym))}<span class="spec-shade"></span>
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>${extra}
     <div class="spec-name">${eyebrow ? `<div class="eyebrow">${eyebrow}</div>` : ''}<h1>${name}</h1></div></div>
@@ -6925,7 +6932,7 @@ function viewRecipe(id) {
 function viewRitual(id) {
   const r = RITUALS.find(x => x.id === id); if (!r) return viewMissing();
   return `<div class="pad sp2">
-    ${specHero({ photo: carePhoto(r.id, 1000), glyph: r.glyph, han: true, eyebrow: 'TCM ritual', name: r.name, label: 'At a glance',
+    ${specHero({ stack: true, photo: carePhoto(r.id, 1000), glyph: r.glyph, han: true, eyebrow: 'TCM ritual', name: r.name, label: 'At a glance',
       rows: [['Time', `${r.mins} min`], ['Your cycle', !M.info ? `${r.phases.length} phases` : r.phases.includes(M.info.phase) ? 'Good today' : `From ${PHASES[r.phases.find(p => PHASE_ORDER.indexOf(p) > PHASE_ORDER.indexOf(M.info.phase)) || r.phases[0]].name.toLowerCase()}`], ['Steps', `${r.steps.length}`]],
       lead: 'Why it helps', desc: r.why })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit(r.phases, M.info && M.info.phase)}</section>
@@ -6961,7 +6968,7 @@ function viewPoint(phase) {
   };
   const foot = `<svg viewBox="0 0 200 150" class="foot pt-art" role="img" aria-label="Where to press ${p.code}">${art[phase]}</svg>`;
   return `<div class="pad sp2">
-    ${specHero({ glyph: '穴', han: true, eyebrow: `Acupressure · ${t.stage}`, name: `${p.code} · ${p.name}`, label: 'Key facts',
+    ${specHero({ stack: true, glyph: '穴', han: true, eyebrow: `Acupressure · ${t.stage}`, name: `${p.code} · ${p.name}`, label: 'Key facts',
       rows: [['Press time', `${p.secs} s`], ['Where', phase === 'ovulatory' ? 'One point' : 'Both sides'], ['Organ', t.organ]], lead: `${p.name} · what it does`, desc: p.does })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit([phase], M.info && M.info.phase)}</section>
     ${sectionTitle('Where to press')}
