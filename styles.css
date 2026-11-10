@@ -10640,3 +10640,9 @@ html .home .hub-k > span:first-child { font: 600 20px/1.2 Outfit, sans-serif !im
 .bz-rings .bzr b { font: 600 16px Outfit, system-ui, sans-serif; color: #fff; }
 .bz-rings .bzr small { font-size: 12px; font-weight: 500; color: rgba(255,255,255,.88); }
 .bz-rings .bzr circle { stroke: rgba(255,255,255,.3); fill: rgba(255,255,255,.08); }
+
+/* Consistency: every big page and card heading in one bold weight (were thin 300-400, some half thin half bold) */
+html .sci-h, html .tgw-t, html .rh2-h, html .st2-h, html .sy-h, html .rh3-h, html .br2-h,
+html .cal-head h2, html .pl-head h2, html .log-date h2, html .spec-name h1, html .rh-article > h2,
+html .szh-t h1, html .sz-story h2, html .hxd-in h1 { font-weight: 600 !important; letter-spacing: -.02em; }
+html .sci-h span, html .br2-h span, html .br2-h em, html .rh3-h span, html .sy-h span, html .tgw-t span { font-weight: inherit !important; }
