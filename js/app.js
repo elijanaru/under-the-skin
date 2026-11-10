@@ -1520,7 +1520,7 @@ function viewCalendar() {
   const inf = M.info, fStart = nextOv ? C.addDays(nextOv, -5) : null;
   const short = d => fmt(d, { month: 'short', day: 'numeric' });
   const answer = inf ? calTop(inf, fStart, nextOv, short) : '';
-  const selLine = si ? (si.periodActual ? `Period · day ${si.cd}` : si.periodPredicted ? 'Period expected' : si.isOvulation ? 'Egg release (estimate)' : si.fertile ? `Fertile · ${PHASES[si.phase].name}` : `${PHASES[si.phase].name} · day ${si.cd}`) : '';
+  const selLine = si ? (si.periodActual ? `Period · day ${si.cd}` : si.periodPredicted ? (si.predicted ? 'Period expected' : `Period · day ${si.cd}${C.diffDays(si.date, C.startOfDay(new Date())) > 0 ? ' · expected' : ''}`) : si.isOvulation ? 'Egg release (estimate)' : si.fertile ? `Fertile · ${PHASES[si.phase].name}` : `${PHASES[si.phase].name} · day ${si.cd}`) : '';
   const mph = M.info ? M.info.phase : 'follicular';
   return `${topbar('Calendar')}
   <div class="pad">
@@ -1556,16 +1556,18 @@ function cycleBars() {
   const cur = { s: info.cycleStart, P: info.P, L: info.L, now: Math.min(info.cd, info.L) };
   const all = [...rows, cur], max = Math.max(...all.map(r => r.L), 35), avg = M.stats.avgCycle, pm = Math.max(1, Math.round(M.stats.variation / 2));
   const sd = d => fmt(d, { month: 'short', day: 'numeric' }), pct = n => (n / max * 100).toFixed(1);
-  const row = (r, i) => { const ov = Math.max(r.P + 1, r.L - 14), end = C.addDays(r.s, r.L - 1);
+  const row = (r, i) => { const ov = Math.max(r.P + 1, r.L - 14), end = C.addDays(r.s, r.L - 1), short = !r.now && r.L < 21;
     return `<details class="cyb-r ${r.now ? 'now' : ''}" style="--i:${i}"><summary><span class="cyb-d">${r.now ? 'Now' : sd(r.s)}</span>
-      <span class="cyb-bar"><i class="cyb-p" style="width:${pct(r.P)}%"></i><i class="cyb-e" style="width:${pct(Math.max(0, ov - 6 - r.P))}%"></i><i class="cyb-f" style="width:${pct(Math.max(0, Math.min(5, ov - 1 - r.P)))}%"></i><i class="cyb-o" style="width:${pct(1)}%"></i><i class="cyb-l" style="width:${pct(r.L - ov)}%"></i>${r.now ? `<i class="cyb-fut" style="left:${pct(r.now)}%;width:${pct(Math.max(0, r.L - r.now))}%"></i><b class="cyb-you" style="left:${pct(r.now - .5)}%"></b>` : ''}</span>
+      <span class="cyb-bar"><i class="cyb-p" style="width:${pct(r.P)}%"></i>${short ? `<i class="cyb-l" style="width:${pct(Math.max(0, r.L - r.P))}%"></i>` : `<i class="cyb-e" style="width:${pct(Math.max(0, ov - 6 - r.P))}%"></i><i class="cyb-f" style="width:${pct(Math.max(0, Math.min(5, ov - 1 - r.P)))}%"></i><i class="cyb-o" style="width:${pct(1)}%"></i><i class="cyb-l" style="width:${pct(r.L - ov)}%"></i>`}${r.now ? `<i class="cyb-fut" style="left:${pct(r.now)}%;width:${pct(Math.max(0, r.L - r.now))}%"></i><b class="cyb-you" style="left:${pct(r.now - .5)}%"></b>` : ''}</span>
       <span class="cyb-n">${r.now ? r.now : r.L}</span></summary>
-      <p>${r.now ? `Started ${sd(r.s)} · day ${r.now} of about ${r.L} · next period around ${sd(info.nextStart)}` : `${sd(r.s)} to ${sd(end)} · period ${plural(r.P, 'day')} · egg release around day ${ov}`}</p></details>`; };
-  const diff = rows.length > 1 ? M.stats.variation : 0;
+      <p>${r.now ? `Started ${sd(r.s)} · day ${r.now} of about ${r.L} · next period around ${sd(info.nextStart)}` : short ? `${sd(r.s)} to ${sd(end)} · only ${r.L} days, so probably spotting or an early bleed. No egg release is counted for it.` : `${sd(r.s)} to ${sd(end)} · period ${plural(r.P, 'day')} · egg release around day ${ov}`}</p></details>`; };
+  const diff = rows.length > 1 ? M.stats.variation : 0, nOk = M.stats.lengths.length;
+  // fewer than two real cycles (21 to 60 days) to compare: no "steady" verdict yet, and the big number is a starting guess
+  const chip = nOk < 2 ? `<em class="mid">Learning · ${nOk} of 2 cycles</em>` : `<em class="${diff <= 4 ? 'ok' : diff <= 7 ? 'mid' : 'hi'}">${diff <= 4 ? 'Steady' : diff <= 7 ? 'A bit changeable' : 'Varies a lot'} ±${pm}</em>`;
   return `${sectionTitle('Your last cycles')}
     <section class="card cyb">
-      <div class="cyb-top2"><span class="cyb-big"><b class="dotnum">${avg}</b><small>day cycle</small></span>
-        <span class="cyb-chips"><em class="${diff <= 4 ? 'ok' : diff <= 7 ? 'mid' : 'hi'}">${diff <= 4 ? 'Steady' : diff <= 7 ? 'A bit changeable' : 'Varies a lot'} ±${pm}</em><em>${icon('drop', 12)} Period ${M.stats.avgPeriod} days</em></span></div>
+      <div class="cyb-top2"><span class="cyb-big"><b class="dotnum">${avg}</b><small>${nOk ? 'day cycle' : 'days, a first guess'}</small></span>
+        <span class="cyb-chips">${chip}<em>${icon('drop', 12)} Period ${M.stats.avgPeriod} days</em></span></div>
       <div class="cyb-rows">${all.map(row).join('')}</div>
       <div class="cyb-leg"><span><i class="cyb-p"></i>Period</span><span><i class="cyb-f"></i>Fertile</span><span><i class="cyb-o"></i>Egg release</span><small>Tap a row</small></div>
     </section>`;
