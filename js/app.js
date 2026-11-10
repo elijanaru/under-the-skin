@@ -4788,9 +4788,9 @@ function viewTeaItem(id) {
   const temp = P.length ? TEMPS[Math.max(...P.map(p => TEMPS.indexOf(p.t)))] : '', best = [...new Set(P.flatMap(p => p.p))];
   const cold = ['cold', 'cool'].includes(temp), nearBleed = ph === 'menstrual' || (info && dayWindow(info) === 'premenstrual');
   const cautions = [warn, ...P.map(p => p.caution)].filter((x, i, a) => x && a.indexOf(x) === i);
-  return `<div class="pad">
+  return `<div class="pad sp2">
     ${specHero({ stack: true, photo: teaPhoto(n, 800, 900), eyebrow: G ? `Tea for ${G.n.toLowerCase()}` : 'Tea', name: /tea|milk|coffee/i.test(n) ? n : `${n} tea`, label: 'Key ingredients',
-      rows, lead: n, desc: why })}
+      ...(P.length ? { block: teaKeyRows(P) } : { rows }), lead: n, desc: why })}
     ${P.length ? `<section class="card glass tea-fit">
       <div class="tf-k">Best in your cycle</div>
       ${phaseFit(best, ph)}
@@ -4799,9 +4799,16 @@ function viewTeaItem(id) {
     ${sectionTitle('How to make it')}
     <section class="card glass tea-how-c"><div class="th-steps">${[['clock', how], ['cup', 'Cover the cup while it steeps, so the fragrant oils stay in your tea.'], ...(nearBleed ? [['thermo', 'Drink it hot or warm these days, never iced.']] : [])].map(([e, x]) => `<div><span>${icon(e, 18)}</span><p>${x}</p></div>`).join('')}</div></section>
     ${P.length ? `${sectionTitle('What studies found')}
-    <section class="card glass tea-study">${P.map(p => `<div class="ts-i"><div class="ts-h"><b>${p.n}</b></div><p>${p.study}</p><small>${p.cite}</small></div>`).join('')}</section>` : ''}
+    <section class="card tea-study2">${P.map(p => { const yr = (p.cite.match(/(19|20)\d{2}/) || [''])[0], who = yr ? p.cite.slice(0, p.cite.indexOf(yr)).trim() : p.cite, more = yr ? p.cite.slice(p.cite.indexOf(yr) + 4).replace(/^[\s·,]+/, '') : '';
+      return `<div class="sgt-st">${yr ? `<b class="dotnum">${yr}</b>` : ''}<span><em>${p.n}${yr ? ` · ${who}` : ''}</em>${p.study}${more ? `<small>Also ${more}</small>` : ''}</span></div>`; }).join('')}</section>` : ''}
+    ${cautions.length ? `<section class="ck-first"><span class="ck-i">!</span><div><small>Before you try it</small>${cautionHTML(cautions.join(' '))}</div></section>` : ''}
     <p class="fine center">Herbal teas are gentle support, not medicine. Pregnant, on medication or unsure? Ask your doctor or midwife first.</p>
   </div>`;
+}
+// Key ingredients of a tea: the compound and what it does on the left, the herb it comes from on the right.
+function teaKeyRows(P) {
+  const items = P.length > 1 ? P.flatMap(p => p.c.slice(0, 1).map(c => [c, p.n])).concat(P[0].c.slice(1, 2).map(c => [c, P[0].n])) : P[0].c.slice(0, 3).map(c => [c, P[0].n]);
+  return `<div class="tk-rows">${items.map(([[c, d], h]) => `<div class="tk-r"><span><b>${c}</b><small>${d}</small></span><em>${h}</em></div>`).join('')}</div>`;
 }
 // ---------- nutrients: food first, a supplement when there's a reason ----------
 const PH4 = [['menstrual', 'Period'], ['follicular', 'Follicular'], ['ovulatory', 'Ovulation'], ['luteal', 'Luteal']];
