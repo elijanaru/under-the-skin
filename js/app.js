@@ -3650,6 +3650,19 @@ function viewRelief(id) {
   </div>`;
 }
 // Flags cycles outside the usual 21–35 day range (or a too-short gap that is probably a mis-tap).
+// Fix: one row of days, she taps the day her period really started and the period moves there
+function flagPicker(a, b, key) {
+  const today = C.parseISO(todayISO()), from = C.addDays(a.start, 10), n = Math.min(45, C.diffDays(today, from) + 1);
+  const days = Array.from({ length: Math.max(1, n) }, (_, i) => C.addDays(from, i));
+  return `<div class="fl6-pick"><b>When did this period start?</b><small>Tap the first day of bleeding. We set the rest for you.</small>
+    <div class="fl6-days">${days.map(d => { const k = C.iso(d), on = k === key; return `<button class="fl6-day ${on ? 'on' : ''}" data-action="flagSet" data-k="${key}" data-d="${k}" aria-label="${fmt(d, { weekday: 'long', day: 'numeric', month: 'long' })}"><small>${fmt(d, { weekday: 'narrow' })}</small><b>${d.getDate()}</b>${d.getDate() === 1 || on ? `<em>${fmt(d, { month: 'short' })}</em>` : ''}</button>`; }).join('')}</div></div>`;
+}
+function flagRefresh() {
+  const old = document.querySelector('#view .fl6'); if (!old) return render();
+  const t = document.createElement('div'); t.innerHTML = cycleFlag(); const nu = t.firstElementChild;
+  nu ? old.replaceWith(nu) : old.remove();
+  const on = document.querySelector('#view .fl6-day.on'), row = on && on.parentElement; if (row) row.scrollLeft = on.offsetLeft - row.clientWidth / 2 + on.offsetWidth / 2;
+}
 function cycleFlag() {
   const ps = M.stats.periods; if (ps.length < 2) return '';
   const a = ps[ps.length - 2], b = ps[ps.length - 1], gap = C.diffDays(b.start, a.start);
@@ -3663,10 +3676,10 @@ function cycleFlag() {
   // compact heads-up: headline, one grey line, a slim 10 to 45 day line (usual 21 to 35 as a soft band), two small buttons
   const x = d => (Math.min(45, Math.max(10, d)) - 10) / 35 * 100;
   return `<section class="card flag fl6"><div class="fl6-h"><span class="fl6-ic">${icon('spark', 15)}</span><div><b>${head}</b><p>${sub}</p></div></div>
-    <div class="fl6-cmp" role="img" aria-label="This cycle ${gap} days, your usual ${avg} days, the healthy range is 21 to 35 days" >
+    ${ui.flFix === key ? flagPicker(a, b, key) : `<div class="fl6-cmp" role="img" aria-label="This cycle ${gap} days, your usual ${avg} days, the healthy range is 21 to 35 days" >
       ${[['This cycle', gap, 'me'], ['Your usual', avg, '']].map(([t, n, c]) => `<div class="fl6-row ${c}"><span>${t}</span><i class="fl6-bar"><i style="width:${(Math.min(n, 45) / 45 * 100).toFixed(1)}%"></i></i><b>${n}<small> d</small></b></div>`).join('')}
-      <small class="fl6-zl">Healthy range 21 to 35 days</small></div>
-    <div class="fl6-acts">${gap < 21 ? `<button class="fl2-b ${gap < 15 ? 'on' : ''}" data-action="flagEdit" data-date="${key}">${icon('calendar', 13)} Fix</button>` : ''}<button class="fl2-b ${gap < 15 ? '' : 'on'}" data-action="flagDismiss" data-k="${key}">${icon('check', 13)} It’s correct</button></div></section>`;
+      <small class="fl6-zl">Healthy range 21 to 35 days</small></div>`}
+    <div class="fl6-acts">${ui.flFix === key ? `<button class="fl2-b" data-action="flagEdit" data-date="">Cancel</button>` : gap < 21 ? `<button class="fl2-b ${gap < 15 ? 'on' : ''}" data-action="flagEdit" data-date="${key}">${icon('calendar', 13)} Fix</button>` : ''}${ui.flFix === key ? '' : `<button class="fl2-b ${gap < 15 ? '' : 'on'}" data-action="flagDismiss" data-k="${key}">${icon('check', 13)} It’s correct</button>`}</div></section>`;
 }
 
 // ---------- personal patterns (learned from logs) ----------
@@ -4478,10 +4491,9 @@ function todayTiles(info, only) {
   };
   if (only) return tipBody(only);
   return `<div class="dpt-grid">
-      ${tile('wide hero-move ph-vid', { to: 'move' }, `<video class="dpt-vid" src="images/move-stardust.mp4" poster="images/move-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Sport', g.title, best.map(m => m.n).slice(0, 3).join(' · '))}
       ${rec ? tile(`t-tea t-cup t-dish${recD && recD.hero ? ' t-big' : ''}`, { to: `recipe/${rec.id}` }, recD ? `<span class="cup3d-w"><img class="dpt-cup" src="${recD.img}" alt="" loading="lazy"><canvas class="teacup3d" data-model="${recD.model}" data-elev="${recD.elev || 0.9}" data-fit="${recD.tileFit || recD.fit}"${recD.steam === 0 ? ' data-steam="0"' : ''} aria-label="${esc(rec.name)}, turning slowly"></canvas></span>` : `<span class="dish-ph"><img src="${photoUrl(rec.id, 400)}" alt="" loading="lazy"></span>`, 'Eat today', rec.name, `<span class="dpt-why">${recWhy(rec)}</span><span class="dpt-rule">${icon('clock', 12)} ${rec.time >= 60 ? `${Math.floor(rec.time / 60)} h${rec.time % 60 ? ` ${rec.time % 60}` : ''}` : `${rec.time} min`} · Cook it ${icon('chevR', 12)}</span>`) : tile('t-tea t-cup t-dish', { to: 'do/eat' }, `<span class="cup3d-w"><img class="dpt-cup" src="${D.img}" alt="" loading="lazy"><canvas class="teacup3d" data-model="${D.model}" data-elev="0.9" data-fit="${D.fit}" aria-label="${dish.t}, turning slowly"></canvas></span>`, 'Eat today', dish.t, `<span class="dpt-why">${dish.why}</span><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
       ${(() => { const D = dayMoments(info), h = nowH(), cur = momentAt(D, h); return tile('t-deep ph-full keep ph-fr ph-vid ph-sun', { to: 'rhythm' }, `<video class="dpt-vid" src="images/sun-moon.mp4" poster="images/sun-moon-poster.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, `<span class="dsun-badge">${icon('sun', 14, 2.2)}</span>Follow the sun`, (SUN_DO[cur.id] || SUN_DO.midday)[0], `Rise ${hLabel(D.rise)} · Set ${hLabel(D.set)}`); })()}
-      ${tile('t-sage ph-full ph-vid', { to: 'relief' }, `<video class="dpt-vid" src="images/relief-stardust.mp4" poster="images/relief-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Hormones', 'Balance step by step', 'Start with the fundamentals')}
+      ${tile('t-sage ph-full ph-vid', { to: 'relief' }, `<video class="dpt-vid" src="images/move-stardust.mp4" poster="images/move-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Hormones', 'Balance step by step', 'Start with the fundamentals')}
       ${tile(`calm lv${lvl} t-cort t-mol`, { to: 'breathe/stress' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/cortisol-mol.webp" alt="" loading="lazy"><canvas class="teacup3d" data-model="models/cortisol.glb" data-elev="0.3" data-fit="1.9" data-steam="0" data-shadow="0" aria-label="The cortisol molecule, turning slowly"></canvas></span>`, 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}<span class="cv-lv" aria-hidden="true">${[1, 2, 3].map(i => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</span>`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
       ${tile('t-tea t-cup', { to: 'do/tea' }, `<span class="cup3d-w"><img class="dpt-cup" src="${teaCupImg(td[1])}" alt="" loading="lazy"><canvas class="teacup3d"${teaCupAttr(td[1])} aria-label="${td[1]}, turning slowly"></canvas></span>`, 'Tea for today', td[1], td[2])}
       ${tile('t-glow ph-full ph-vid ph-tree', { to: 'ground' }, `<img class="dpt-vid" src="images/ground-tree.webp" alt="" loading="lazy" decoding="async"><i></i>`, 'Ground', GROUND_PHASE[ph].t, '')}
@@ -8176,8 +8188,13 @@ const actions = {
   remPermission: async () => { try { await Notification.requestPermission(); } catch { /* unsupported */ } render(); fireNotifications(); },
   flagDismiss: d => { state.flagDismissed = d.k; save(); render(); },
   // straight into the calendar, already in "edit period days" mode, scrolled to the grid
-  flagEdit: d => { ui.calSelected = d.date; const x = C.parseISO(d.date); ui.calMonth = C.iso(new Date(x.getFullYear(), x.getMonth(), 1)); ui.calEdit = true; ui.calFix = d.date; go('calendar');
-    setTimeout(() => { const c = document.querySelector('.cal2'); if (c) c.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' }); }, 120); },
+  flagEdit: d => { ui.flFix = d.date || null; flagRefresh(); },
+  flagSet: d => {
+    const p = M.stats.periods.find(x => C.iso(x.start) === d.k), P = M.stats.avgPeriod || 5, today = todayISO();
+    if (p) for (let x = new Date(p.start); x <= p.end; x = C.addDays(x, 1)) { const k = C.iso(x); if (PERIOD_FLOWS.includes(getLog(k).flow)) setLog(k, { flow: null }); }
+    for (let i = 0; i < P; i++) { const k = C.iso(C.addDays(C.parseISO(d.d), i)); if (k > today) break; setLog(k, { flow: 'medium' }); }
+    ui.flFix = null; toast(`Period now starts ${fmt(C.parseISO(d.d), { day: 'numeric', month: 'long' })}`); render();
+  },
   lemonStart: () => { state.lemon = { start: todayISO(), done: {} }; save(); toast('Your 28 days begin'); render(); },
   lemonTick: () => { const L = state.lemon; if (!L) return; L.done = L.done || {}; const k = todayISO(); L.done[k] ? delete L.done[k] : (L.done[k] = 1); save(); render(); },
   focusTick: d => { const k = todayISO(), f = state.focusDone = state.focusDone || {}; const a = f[k] = f[k] || []; const i = +d.i; a.includes(i) ? a.splice(a.indexOf(i), 1) : a.push(i); for (const x in f) if (x !== k) delete f[x]; save(); render(); },
