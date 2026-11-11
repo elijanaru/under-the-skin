@@ -11382,3 +11382,27 @@ html .fl6-cmp { display: grid; grid-template-columns: 74px 1fr 46px; column-gap:
 html .hh2-n { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; line-height: 1; }
 html .hh2-n small { margin: 0; font: 500 10.5px/1 var(--font); color: rgba(32,48,26,.6); }
 
+
+/* v908 habit ring: number sits in the exact centre of its own ring box */
+html .hh2-o { position: relative; width: 68px; height: 68px; display: block; }
+html .hh2-o .hh2-ring { display: block; }
+html .hh2-o .hh2-n { inset: 0; width: auto; height: auto; padding-top: 1px; }
+html .hh2-o .hh2-n small { font: 500 10px/1 var(--font); letter-spacing: .02em; }
+html .hub .bubble.follicular img { top: 57% !important; height: 74% !important; width: 74% !important; }
+/* v908 Today tea tile: the photo already sits at the 3D cup's size, so nothing grows when the 3D cup takes over */
+html .hub .dpt.t-cup .dpt-cup { position: absolute; inset: -12%; width: 124%; height: 124%; }
+
+/* v908 In season + apothecary as Superfoods-style grids: round photos where there is no cut-out */
+html .sfc-i img.rd { width: 104px; height: 104px; max-width: 104px; margin: 7px auto; border-radius: 50%; object-fit: cover; filter: none; box-shadow: 0 8px 18px rgba(32,48,26,.14), 0 0 0 3px #fff; }
+html .sfc-i.on img.rd { transform: scale(1.05); }
+html .sfc-det img.rd { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 2px #fff; }
+html .sfc .sfc-gh { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 18px 2px 0; padding-top: 14px; border-top: 1px solid rgba(48,64,35,.08); }
+html .sfc .sfc-gh b { font: 600 16px/20px Outfit, sans-serif; color: #20301a; }
+html .sfc .sfc-gh small { font: 400 12px/16px Outfit, sans-serif; color: rgba(32,48,26,.55); text-align: right; }
+html .sfc-det .bn-x { position: absolute; top: 8px; right: 8px; }
+html .sfc-det .szd-ph { display: block; margin-top: 7px; font: 400 12.5px/17px Outfit, sans-serif; color: #3f4c33; }
+html .sfc-det .szd-ph i { font-style: normal; color: rgba(32,48,26,.55); }
+html .sfc-det .szd-cr { display: block; margin-top: 8px; font: 400 10.5px/14px Outfit, sans-serif; color: rgba(32,48,26,.5); }
+html .sfc-det .szd-cr a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+html .sz3 .season-ctl { margin-top: 16px; }
+html .apo-top { margin-top: 14px; }

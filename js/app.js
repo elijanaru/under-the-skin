@@ -1398,8 +1398,8 @@ function hhCard(info) {
       <div class="hh2-d"><div><p>${why}</p><p class="hh2-how"><b>How</b>${how}</p></div></div></li>`;
   }).join('');
   return `<section class="card hh2" data-ph="${phase}">
-      <div class="hh2-h"><svg class="hh2-ring" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="${R}"/><circle class="on" cx="32" cy="32" r="${R}" stroke-dasharray="${L.toFixed(1)}" stroke-dashoffset="${(L * (1 - n / N)).toFixed(1)}"/></svg>
-        <b class="hh2-n">${n}<small>of ${N}</small></b>
+      <div class="hh2-h"><span class="hh2-o"><svg class="hh2-ring" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="${R}"/><circle class="on" cx="32" cy="32" r="${R}" stroke-dasharray="${L.toFixed(1)}" stroke-dashoffset="${(L * (1 - n / N)).toFixed(1)}"/></svg>
+        <b class="hh2-n">${n}<small>of ${N}</small></b></span>
         <div><span class="hh2-e">${info ? `Your ${PHASES[phase].name.toLowerCase()} phase` : 'This phase'}</span><h3>${F.t}</h3><p>${n === N ? 'All six done. Beautiful.' : F.s}</p></div></div>
       <ul class="hh2-l">${rows}</ul>
     </section>`;
@@ -1637,7 +1637,7 @@ function calDayCard(sd, si, slog, selLine, isFuture, hasFlow) {
 // ---------- your cycle in Apple / Google Calendar (.ics with one all-day event per stretch) ----------
 const CAL_WORD = { // one word per stretch of the cycle, shown as the calendar event title
   'flow-start': ['🩸', 'Period', 'Rest'], 'flow-end': ['🩸', 'Period', 'Plan'],
-  rising: ['🌱', 'Follicular', 'Gym'], building: ['🌱', 'Follicular', 'Model'],
+  rising: ['🌱', 'Follicular', 'Gym'], building: ['🌱', 'Follicular', 'Create'],
   peak: ['✨', 'Ovulation', 'Party'], settle: ['🍂', 'Luteal', 'Focus'],
   focus: ['🍂', 'Luteal', 'Finish'], premenstrual: ['🌙', 'Pre-period', 'Cosy'],
 };
@@ -1699,7 +1699,7 @@ function calSyncCard() {
   const next = calStretches(40).slice(0, 4), added = state.profile.calAdded, stale = added && M.stats.periods.length && +M.stats.periods[M.stats.periods.length - 1].start > added;
   return `${sectionTitle('In your calendar')}
     <section class="card glass cal-sync">
-      <div class="cs-ev">${next.map((x, i) => { const [g, ph, word] = CAL_WORD[x.w]; return `<div class="${i === 0 ? 'now' : ''}"><span class="cs-d">${i === 0 ? 'Now' : fmt(x.from, { month: 'short', day: 'numeric' })}</span><span class="cs-t">${g} ${ph} · <b>${word}</b></span></div>`; }).join('')}</div>
+      <div class="cs-ev">${next.map((x, i) => { const [g, ph, word] = CAL_WORD[x.w]; return `<div class="${i === 0 ? 'now' : ''}"><span class="cs-d">${i === 0 ? 'Now' : fmt(x.from, { month: 'short', day: 'numeric' })}</span><span class="cs-t">${g} ${ph} <b>${word}</b></span></div>`; }).join('')}</div>
       <p class="body sm">Your next 6 months in Apple or Google Calendar: one word for each part of your cycle, plus the plans you add here, so you see it all at a glance.</p>
       ${calPlugin() ? (state.profile.calSync
         ? `<div class="cs-on">${icon('check', 14, 2.4)} Syncing to your “My cycle” calendar. It updates by itself.</div>
@@ -2086,7 +2086,7 @@ function viewPlan() {
           <div class="rc-top"><span class="rc-k">${r.raw ? 'Raw' : r.warm ? 'Warm' : r.meal}</span></div><div class="rc-t">${r.name}</div><div class="rc-m">${r.time} min · ${r.kcal} kcal</div></button>`).join('')}</div>`;
     } else if (sub === 'foods') {
       const recent = recentSymptoms().filter(s => SYMPTOM_FOODS[s]).slice(0, 2);
-      body = `<div class="eat-cat eb eb-free sf-top" data-phase="${phase}">${superInner(phase)}</div>${dietGuideCard(phase)}
+      body = `<div class="eat-cat eb eb-free sf-top" data-phase="${phase}">${superInner(phase)}</div><div class="eat-cat eb eb-free sf-top apo-top">${apoInner()}</div>${dietGuideCard(phase)}
         ${recent.length ? `${sectionTitle('For how you feel')}${recent.map(s => { const f = SYMPTOM_FOODS[s]; return `<section class="card glass fix"><div class="fix-h"><span class="fix-s">${s}</span></div><div class="foods">${f.foods.slice(0, 5).map(x => `<span class="food">${x}</span>`).join('')}</div></section>`; }).join('')}` : ''}`;
     } else if (sub === 'super') { location.replace('#/plan/foods'); return '';
     } else if (sub === 'drinks' || sub === 'supps') {
@@ -2428,7 +2428,7 @@ const teaCupAttr = n => /matcha/i.test(n) ? ' data-model="models/matcha.glb"' : 
 // Tea for today as a full recommendation: the floating cup, the tea and why.
 function plTea() {
   const td = TEA_DAY[M.info ? dayWindow(M.info) : 'rising'];
-  return `<button class="card pl-teac" data-action="nav" data-to="do/tea"><span class="plt-cup cup3d-w"><img src="${teaCupImg(td[1])}" alt="" loading="lazy"><canvas class="teacup3d"${teaCupAttr(td[1])} aria-label="${td[1]}, turning slowly"></canvas></span>
+  return `<button class="card pl-teac" data-action="nav" data-to="do/tea"><span class="plt-cup cup3d-w"><img src="${teaCupImg(td[1])}" alt="" loading="lazy">${teaCupAttr(td[1]) ? `<canvas class="teacup3d"${teaCupAttr(td[1])} aria-label="${td[1]}, turning slowly"></canvas>` : ''}</span>
     <span class="plt-t"><small>Tea for today</small><b>${td[1]}</b><em>${td[2]}</em></span>${icon('chevR', 16)}</button>`;
 }
 // Tonight's plate: one real recipe for her phase, with its photo, a new one every day.
@@ -3598,6 +3598,7 @@ function viewReliefIndex() {
       <div class="fbp-g">${list.map(([x, i], pos) => fbItem(x, i, done, pos, ++n)).join('')}</div>`).join(''); })()}
       <div class="fbp-det" hidden></div>
     </section>
+    ${seasonRituals(apoSeason())}
     ${el5()}
     ${H.fert.length ? `${sectionTitle('Fertility & feminine flow')}<div class="hg-list">${H.fert.map(H.row).join('')}</div>` : ''}
     ${sectionTitle('Seven pillars of balance')}
@@ -4489,7 +4490,7 @@ function todayTiles(info, only) {
       ${(() => { const D = dayMoments(info), h = nowH(), cur = momentAt(D, h); return tile('t-deep ph-full keep ph-fr ph-vid ph-sun', { to: 'rhythm' }, `<video class="dpt-vid" src="images/sun-moon.mp4" poster="images/sun-moon-poster.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, `<span class="dsun-badge">${icon('sun', 14, 2.2)}</span>Follow the sun`, (SUN_DO[cur.id] || SUN_DO.midday)[0], `Rise ${hLabel(D.rise)} · Set ${hLabel(D.set)}`); })()}
       ${tile('t-sage ph-full ph-vid', { to: 'relief' }, `<video class="dpt-vid" src="images/move-stardust.mp4" poster="images/move-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Hormones', 'Balance step by step', 'Start with the fundamentals')}
       ${tile(`calm lv${lvl} t-cort t-mol`, { to: 'breathe/stress' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/cortisol-mol.webp" alt="" loading="lazy"><canvas class="teacup3d" data-model="models/cortisol.glb" data-elev="0.3" data-fit="1.9" data-steam="0" data-shadow="0" aria-label="The cortisol molecule, turning slowly"></canvas></span>`, 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}<span class="cv-lv" aria-hidden="true">${[1, 2, 3].map(i => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</span>`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
-      ${tile('t-tea t-cup', { to: 'do/tea' }, `<span class="cup3d-w"><img class="dpt-cup" src="${teaCupImg(td[1])}" alt="" loading="lazy"><canvas class="teacup3d"${teaCupAttr(td[1])} aria-label="${td[1]}, turning slowly"></canvas></span>`, 'Tea for today', td[1], td[2])}
+      ${tile('t-tea t-cup', { to: 'do/tea' }, `<span class="cup3d-w"><img class="dpt-cup" src="${teaCupImg(td[1])}" alt="" loading="lazy">${teaCupAttr(td[1]) ? `<canvas class="teacup3d"${teaCupAttr(td[1])} aria-label="${td[1]}, turning slowly"></canvas>` : ''}</span>`, 'Tea for today', td[1], td[2])}
       ${tile('t-glow ph-full ph-vid ph-tree', { to: 'ground' }, `<img class="dpt-vid" src="images/ground-tree.webp" alt="" loading="lazy" decoding="async"><i></i>`, 'Ground', GROUND_PHASE[ph].t, '')}
 
     </div>
@@ -4890,7 +4891,7 @@ function teaWheel(info, w, td, steep, near, inPage) {
       <small class="tgw-k">${info ? `Day ${info.cd} · ${PHASES[info.phase].name}` : 'Your tea today'}</small>
       <h1 class="tgw-t">${td[1].replace(/ & /, ' <em>&amp;</em> ')}<span>benefits</span></h1>
       <div class="tgw-stage"><span class="tgw-ring" aria-hidden="true"></span>${labels}
-        <span class="cup3d-w tgw-cup"><img src="${teaCupImg(td[1])}" alt="" decoding="async"><canvas class="teacup3d"${teaCupAttr(td[1])} data-fit="${/matcha/i.test(td[1]) ? 0.92 : /green tea/i.test(td[1]) ? 1.1 : 1.3}" aria-label="${td[1]}, turning slowly"></canvas></span></div>
+        <span class="cup3d-w tgw-cup"><img src="${teaCupImg(td[1])}" alt="" decoding="async">${teaCupAttr(td[1]) ? `<canvas class="teacup3d"${teaCupAttr(td[1])} data-fit="${/matcha/i.test(td[1]) ? 0.92 : /green tea/i.test(td[1]) ? 1.1 : 1.3}" aria-label="${td[1]}, turning slowly"></canvas>` : ''}</span></div>
       <dl class="t4-spec tbr-l tgw-sp">${(TEA_REASONS[w] || []).map(([ic, t, x]) => `<div><dt><span>${icon(ic, 17)}</span></dt><dd><b>${t}</b><small>${x}</small></dd></div>`).join('')}<div><dt><span>${icon('cup', 17)}</span></dt><dd><b>Brew</b><small>${td[3]}</small></dd></div></dl>
       <button class="tgw-cta" data-action="nav" data-to="tea/day-${w}">How to brew it ${icon('chevR', 15)}</button>
     </section>`;
@@ -6422,6 +6423,15 @@ function viewPartners(id) {
     <button class="link center-link" data-action="nav" data-to="share">Sharing settings & preview</button>
   </div>`;
 }
+// Partner page: redraw only the connect steps (no full page refresh, photo and scroll stay put).
+function syRefresh() {
+  if (route().name !== 'partners' || route().id) return false;
+  const v = document.getElementById('view'), old = v && v.querySelector('.sy-flow'); if (!old) return false;
+  const t = document.createElement('div'); t.innerHTML = viewPartners();
+  const nf = t.querySelector('.sy-flow'), nh = t.querySelector('.sy-head'), oh = v.querySelector('.sy-head'); if (!nf) return false;
+  nf.classList.add('sy-soft'); old.replaceWith(nf); if (oh && nh) oh.replaceWith(nh);
+  return true;
+}
 // Typical mood (0–1): follows estrogen up, dips in the late premenstrual days and the first bleeding days.
 function feelAt(cd, L, P) {
   const h = C.hormonesRel(cd, L, P), late = cd > L - 4;
@@ -6652,10 +6662,10 @@ function seasonArt(sn) {
 function seasonRituals(sn) {
   if (!['Autumn', 'Winter'].includes(sn)) return '';
   const sel = AUTUMN_RITUALS[ui.ritSel], k = ui.ritSel;
-  return `${sectionTitle(`${sn === 'Winter' ? 'Winter' : 'Autumn'} rituals`)}
+  return `<div class="sr-wrap">${sectionTitle(`${sn === 'Winter' ? 'Winter' : 'Autumn'} rituals`)}
     <div class="hscroll sr-x">${AUTUMN_RITUALS.map(([n], i) => `<button class="rcard has-photo sr-xc ${i === k ? 'on' : ''}" data-action="ritSel" data-v="${i}" aria-expanded="${i === k}"><img class="rc-photo" src="${teaPhoto(n, 400, 520)}" alt="" loading="lazy"><span class="rc-shade"></span><div class="rc-t">${n}</div></button>`).join('')}</div>
     ${sel ? `<section class="card apo-d sr-d" id="sr-d"><img src="${teaPhoto(sel[0], 800, 520)}" alt=""><button class="bn-x" data-action="ritSel" data-v="${k}" aria-label="Close">${icon('close', 16)}</button>
-      <div class="apo-d-b"><small>${sn} ritual</small><h3>${sel[0]}</h3><p>${sel[2]}</p><div class="apo-d-r">${icon('cup', 16)}<span><small>How</small>${sel[1]}</span></div></div></section>` : ''}`;
+      <div class="apo-d-b"><small>${sn} ritual</small><h3>${sel[0]}</h3><p>${sel[2]}</p><div class="apo-d-r">${icon('cup', 16)}<span><small>How</small>${sel[1]}</span></div></div></section>` : ''}</div>`;
 }
 // The season's apothecary: superfoods for every season (and herbs in the cold half), its own page behind one widget.
 // [photo, name, what it brings, why, how, careful]
@@ -6741,6 +6751,25 @@ function viewApothecary() {
     <p class="fine center">Pregnant, breastfeeding or on medication? Ask your doctor before new herbs.</p>
   </div>`;
 }
+// The season's apothecary inside Superfoods: the same calm grid, superfoods first, warming herbs in the cold half of the year.
+const APO_CUT = { 'Ginger root': 'ginger', 'Cinnamon bark': 'cinnamon', 'Goji berries': 'goji', 'Red dates': 'red-dates', 'Raw honey': 'raw-honey', 'Pumpkin seeds': 'pumpkin-seeds', Pomegranate: 'pomegranate', Turmeric: 'turmeric', 'Ground flaxseed': 'flaxseed', 'Chia seeds': 'chia', Sauerkraut: 'sauerkraut', 'Raw sauerkraut': 'sauerkraut', 'Young nettle': 'nettle', 'Dandelion greens': 'dandelion', 'Broccoli sprouts': 'broccoli-sprouts', Blueberries: 'blueberries', 'Sesame seeds': 'tahini' };
+function apoItems(sn) {
+  const sup = (SEASON_SUPER[sn] || SEASON_SUPER.Autumn).map(([k, n, tag, why, how, warn]) => ({ n, sub: tag, k, why, how, warn, herb: false }));
+  const herbs = apoHerbs(sn).map(([n, cn, nat, what, how, warn]) => ({ n, sub: cn, nat, why: what, how, warn, herb: true }));
+  return { sup, herbs };
+}
+const apoPic = x => APO_CUT[x.n] ? { src: `images/sf/${APO_CUT[x.n]}.webp` } : { src: x.herb ? teaPhoto(x.n, 300, 300) : foodPhoto(x.k, 300), round: true };
+function apoInner() {
+  const sn = apoSeason(), { sup, herbs } = apoItems(sn);
+  const item = (x, i) => { const p = apoPic(x); return `<button class="sfc-i" data-action="apoPick" data-i="${i}" aria-expanded="false"><img class="${p.round ? 'rd' : ''}" src="${p.src}" alt="" loading="lazy" decoding="async"><b>${x.n}</b><small>${x.herb ? (x.nat === 'warm' ? 'Warming' : 'Neutral') : x.sub}</small></button>`; };
+  return `<section class="sfc apo2">
+      <header class="sfc-h"><small><i style="background:#6c823e"></i>${sn} · ${MONTHS[new Date().getMonth()]}</small><h3>${sn} apothecary</h3><p>${herbs.length ? 'Superfoods and warming herbs for immunity and warmth through the cold months.' : 'What nature makes best this season.'}</p></header>
+      <div class="sfc-gh"><b>Season superfoods</b><small>${sup.length} to eat now</small></div><div class="sfc-grid">${sup.map(item).join('')}</div>
+      ${herbs.length ? `<div class="sfc-gh"><b>Herbs</b><small>From Chinese medicine, as teas and broths</small></div><div class="sfc-grid">${herbs.map((x, i) => item(x, i + sup.length)).join('')}</div>` : ''}
+      <div class="sfc-det" aria-live="polite" hidden></div>
+      <footer class="sfc-f"><span>Small, food-sized amounts</span><span>Pregnant, breastfeeding or on medication? Ask your doctor first</span></footer>
+    </section>`;
+}
 // The season at a glance: what to eat and sip as small photos, one plain line to feel, the full story behind a tap.
 const SEASON_CHIPS = {
   Spring: { eat: [['Wild garlic', 'Wild garlic'], ['Asparagus', 'Asparagus'], ['Radishes', 'Radishes'], ['Sauerkraut', 'Sauerkraut']], sip: [['tea:Nettle leaf', 'Nettle'], ['tea:Spearmint', 'Fresh mint'], ['tea:Green tea', 'Green tea']], feel: 'Move, stretch, start something new' },
@@ -6775,74 +6804,28 @@ const SZ_CUT = [[/pineapple/i, 'pineapple'], [/custard apple/i, ''], [/mushroom|
 const szCut = f => { const hit = SZ_CUT.find(([r]) => r.test(f)); return hit && hit[1] ? `images/${hit[1].includes('/') ? hit[1] : 'sz/' + hit[1]}.webp` : null; };
 const SZ_POSTER = { Winter: ['Winter, deeply nourished', 'Build blood, warm digestion, mineralise deeply'], Spring: ['Spring, fresh and green', 'Wake up the liver, lighten up, add a little sour'], Summer: ['Summer, light and juicy', 'Hydrate, cool down, eat the rainbow raw'],
   'Late summer': ['Late summer harvest', 'Sweet, golden and grounding, at regular times'], Autumn: ['Autumn, slow and warm', 'Cook more, moisten, warm the belly'] };
-function szPoster(items, sn, country, phase, warm) {
-  const [h, sub] = SZ_POSTER[sn] || SZ_POSTER.Autumn;
-  const it = (i, n) => { const cut = szCut(i.f), ph = cut ? '' : foodPhoto(i.f, 300), fit = phase && i.ph.includes(phase);
-    return `<button class="szp-i ${fit ? 'fit' : ''} ${cut ? 'cut' : 'stk'}" style="--i:${n % 12}" data-action="szPick" data-f="${esc(i.f)}">
-      <span class="szp-img">${cut ? `<img src="${cut}" alt="" loading="lazy" decoding="async">` : ph ? `<img src="${ph}" alt="" loading="lazy" decoding="async">` : `<em>${(KINDS.find(k => k[0] === i.kind) || [0, 0, '🌿'])[2]}</em>`}</span>
-      <span class="szp-l">${i.f.charAt(0).toUpperCase() + i.f.slice(1)}</span><span class="szp-n"><i class="nat ${i.nature}"></i>${(NATURE[i.nature] || NATURE.neutral)[0]}</span></button>`; };
-  return `<section class="szp" style="--pc:${phase ? PH_HEX[phase] : '#a2445d'}"><header class="szp-h"><h2>${h}</h2><b>${sub}</b><p>${(SEASON_PLAIN[sn] || SEASON_PLAIN.Autumn).eat}</p><small>${country ? `${country} · ` : ''}${MONTHS[new Date().getMonth()]}${phase ? ` · <i></i> good for your phase` : ''}</small></header>
-    <div class="szp-g">${items.map(it).join('')}</div><div class="szp-det" aria-live="polite" hidden></div>
-    ${warm ? `<p class="szp-warm">${icon('sun', 13)} Your period is close: cook the cooling ones with ginger.</p>` : ''}</section>`;
+// In season: one calm page like Superfoods. Every food fresh where she lives right now, grouped and scrollable; tap one for the details.
+const szPic = f => { const fp = SZ.fungiPic(f); if (fp) return { src: `images/fungi/${fp[1]}.webp`, round: true, fp }; const cut = szCut(f); if (cut) return { src: cut }; const ph = foodPhoto(f, 300); return ph ? { src: ph, round: true } : null; };
+function szList() {
+  const c = myCountry(), m = new Date().getMonth() + 1, phase = M.info ? M.info.phase : null;
+  const all = SZ.seasonal(c, m), fits = i => !!phase && i.ph.includes(phase);
+  return KINDS.map(([k, n, e]) => [k, n, e, all.filter(i => i.kind === k).sort((x, y) => fits(y) - fits(x))]).filter(g => g[3].length);
 }
-function viewSeason(jump) {
-  if (jump) {
-    Object.assign(ui, { seasonView: jump === 'cook' ? 'cook' : 'month', seasonKind: null });
-    setTimeout(() => document.getElementById('sz-tabs')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
-  }
-  // Always today: the page follows the calendar, so foods and recipes change by themselves as the season turns.
-  const c = myCountry(), m = new Date().getMonth() + 1, kind = ui.seasonKind || null, view = ui.seasonView === 'cook' ? 'cook' : 'month';
-  const all = SZ.seasonal(c, m), country = SZ.COUNTRIES.find(x => x[0] === c)?.[1] || '';
-  const sn = SZ.seasonName(c, m), PL = SEASON_PLAIN[sn];
-  const phase = M.info ? M.info.phase : null, warm = M.info && warmWindow(M.info);
-  const fits = i => phase && i.ph.includes(phase);
-  const items = all.filter(i => !kind || i.kind === kind), sel = all.find(i => i.f === ui.seasonFood);
-  const pic = (i, w = 300) => foodPhoto(i.f, w);
-  const tile = i => `<button class="szt ${ui.seasonFood === i.f ? 'sel' : ''}" data-action="seasonFood" data-f="${esc(i.f)}">
-      <span class="szt-img">${pic(i) ? `<img src="${pic(i)}" alt="" loading="lazy">` : ''}${fits(i) ? '<em>for you</em>' : ''}</span>
-      <b>${i.f}</b><small><i class="nat ${i.nature}"></i>${NATURE[i.nature][0]}</small></button>`;
-  const detail = sel ? `<section class="card szd sf-detail">${pic(sel, 600) ? `<img class="szd-img" src="${pic(sel, 600)}" alt="">` : ''}
-      <div class="szd-b"><div class="szd-h"><div><div class="eyebrow dark">${NATURE[sel.nature][0]} food</div><h3>${sel.f}</h3></div>
-        <button class="bn-x" data-action="seasonFood" data-f="${esc(sel.f)}" aria-label="Close">${icon('close', 16)}</button></div>
-      ${sel.nut.length ? `<div class="szd-r"><span>Rich in</span><b>${sel.nut.join(' · ')}</b></div>` : ''}
-      ${sel.ph.length ? `<div class="szd-r"><span>Best phase</span><b>${sel.ph.map(p => PHASES[p].name).join(' & ')}${phase && sel.ph.includes(phase) ? ' · yours now' : ''}</b></div>` : ''}
-      <p>${sel.nature === 'cool' && warm ? 'A cooling food. Your period is close, so cook it and add ginger or cinnamon.' : NATURE[sel.nature][1]}</p></div></section>` : '';
-  const counts = KINDS.map(([k, n]) => [k, n, all.filter(i => i.kind === k).length]).filter(x => x[2]);
-  let body;
-  if (view === 'cook') {
-    let ds = SZ.dishesFor(all, SZ.countryRegion(c));
-    ds = warm ? ds.filter(d => d.warm) : [...ds.filter(d => !d.warm), ...ds.filter(d => d.warm)];
-    body = `${warm ? `<p class="sz-warm">${icon('sun', 14)} Your period is close: warm, cooked dishes only.</p>` : ''}
-      ${ds.slice(0, 8).map(d => { const fit = phase && d.used.some(i => i.ph.includes(phase)), ph = dishPhoto(d.name, 700); return `<details class="card glass szc">
-        <summary>${ph ? `<img class="szc-img" src="${ph}" alt="" loading="lazy">` : ''}<span class="szc-t"><span class="szc-tags"><span class="dish-tag ${d.warm ? 'w' : 'r'}">${d.warm ? 'Warm' : 'Raw'}</span>${fit ? `<span class="dish-tag fit">${icon('spark', 10)} Your phase</span>` : ''}</span><b>${d.name}</b><small>${d.used.map(i => i.f).slice(0, 3).join(' · ')}</small></span><span class="szc-cta">How to ${icon('chevD', 14)}</span></summary>
-        <div class="foods" style="margin-top:12px">${d.used.map(i => `<span class="food match">${i.f}</span>`).join('')}${d.extra.map(e => `<span class="food">${e}</span>`).join('')}</div>
-        <p class="body sm">${d.how}</p>
-        ${DISH_PHOTOS[d.name] ? `<p class="fine" style="margin:6px 0 0">Photo: <a class="src" href="${DISH_PHOTOS[d.name].page}?utm_source=under_the_skin&utm_medium=referral" target="_blank" rel="noopener">${esc(DISH_PHOTOS[d.name].by)}</a> on Unsplash</p>` : ''}</details>`; }).join('') || '<p class="muted center">No dishes for this month yet.</p>'}`;
-  } else {
-    body = `<div class="chips sz-kinds"><button class="chip ${!kind ? 'on' : ''}" data-action="seasonKind" data-v="${kind || ''}">All ${all.length}</button>${counts.map(([k, n, t]) => `<button class="chip ${kind === k ? 'on' : ''}" data-action="seasonKind" data-v="${k}">${n} ${t}</button>`).join('')}</div>
-      ${szPoster(items, sn, country, phase, warm)}`;
-  }
-  const forYou = all.filter(i => fits(i) && foodPhoto(i.f));
-  return `<div class="pad sz2">
-  <section class="szh"><img src="images/season-${{ Spring: 'spring', Summer: 'summer', 'Late summer': 'summer', Autumn: 'autumn', Winter: 'winter' }[sn]}.jpg" alt=""><span class="szh-shade"></span>
-      <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
-      <div class="szh-t"><small>${country} · ${MONTHS[m - 1]}</small><h1>${sn} is here</h1></div>
-      <div class="szh-bub"><span><b class="dotnum">${all.length}</b><small>fresh now</small></span><span class="me"><b class="dotnum">${all.filter(fits).length}</b><small>for you</small></span></div>
-      ${seasonArt(sn)}</section>
-    <section class="card sz-story sz-story2">
-      <h2>${(SEASON_STORY[sn] || SEASON_STORY.Autumn).t}</h2>
-      ${seasonChips(sn)}
+function viewSeason() {
+  const c = myCountry(), m = new Date().getMonth() + 1, country = SZ.COUNTRIES.find(x => x[0] === c)?.[1] || '';
+  const sn = SZ.seasonName(c, m), phase = M.info ? M.info.phase : null, warm = M.info && warmWindow(M.info);
+  const groups = szList(), n = groups.reduce((t, g) => t + g[3].length, 0);
+  const item = (i, e) => { const p = szPic(i.f), fit = phase && i.ph.includes(phase);
+    return `<button class="sfc-i szi" data-action="szPick" data-f="${esc(i.f)}" aria-expanded="false">${p ? `<img class="${p.round ? 'rd' : ''}" src="${p.src}" alt="" loading="lazy" decoding="async">` : `<em>${e}</em>`}<b>${i.f}</b><small>${warm && i.nature === 'cool' ? 'Cook it' : fit ? 'Your phase' : NATURE[i.nature][0]}</small></button>`; };
+  return `${topbar('In season', { back: true })}<div class="pad pv-sub sz3">
+    <section class="sfc szc" data-phase="${phase || ''}">
+      <header class="sfc-h"><small><i style="background:${phase ? PH_HEX[phase] : '#6c823e'}"></i>${country ? `${country} · ` : ''}${MONTHS[m - 1]}</small><h3>${sn} foods</h3><p>${n} foods are fresh where you live right now.${phase ? ` Picks for your ${PHASES[phase].name.toLowerCase()} phase come first.` : ''}</p></header>
+      ${groups.map(([k, name, e, list]) => `<div class="sfc-gh"><b>${name}</b><small>${list.length} fresh now</small></div><div class="sfc-grid">${list.map(i => item(i, e)).join('')}</div>`).join('')}
+      <div class="sfc-det" aria-live="polite" hidden></div>
+      ${warm ? `<p class="sfc-warm">${icon('sun', 13)} Your period is close: cook everything, nothing raw or iced.</p>` : ''}
+      <footer class="sfc-f"><span>Changes by itself as the season turns</span><span>Wild mushrooms only from a market or a trained forager</span></footer>
     </section>
-    ${forYou.length ? `${sectionTitle(`For your ${PHASES[phase].name.toLowerCase()} phase`)}
-      <div class="hscroll">${forYou.map(i => `<button class="rcard has-photo" data-action="seasonFood" data-f="${esc(i.f)}"><img class="rc-photo" src="${pic(i, 500)}" alt="" loading="lazy"><span class="rc-shade"></span>
-        <div class="rc-top"><span class="rc-k">${NATURE[i.nature][0]}${warm && i.nature === 'cool' ? ' · cook it' : ''}</span></div><div class="rc-t">${i.f}</div><div class="rc-m">${i.nut.slice(0, 2).join(' · ')}</div></button>`).join('')}</div>` : ''}
-    ${apoWidget(sn)}
-    ${seasonRituals(sn)}
-    <div class="sz-anchor" id="sz-tabs"></div>
-    <div class="seg sz-tabs">${[['month', 'Foods'], ['cook', 'Recipes']].map(([k, l]) => `<button class="${view === k ? 'on' : ''}" data-action="seasonView" data-v="${k}">${l}</button>`).join('')}</div>
-    ${body}
     <div class="season-ctl"><span class="fine">Your country</span>${countryPicker('profile', c)}</div>
-    <p class="fine center">Forage only what you know for sure.</p>
   </div>`;
 }
 
@@ -7362,7 +7345,6 @@ function viewProfile() {
       <p class="pf-learn">${learn}</p>
       ${signedOut && tab !== 'data' ? `<button class="pill-cta pf-cta" data-action="pfTab" data-v="data">${icon('heart', 15)} Save my cycle to an account</button>` : ''}
     </section>
-    <section class="card glass pf-stats ${ui.plAnim ? '' : 'still'}">${profileRings()}</section>
     <div class="seg pf-seg">${PF_TABS.map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="pfTab" data-v="${k}">${l}</button>`).join('')}</div>
     ${body}
   </div>`;
@@ -8051,6 +8033,39 @@ const actions = {
     if (same) { sh.innerHTML = ''; sh.dataset.p = ''; return; }
     sh.dataset.p = d.p; sh.innerHTML = cfSheet(d.p); sh.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   },
+  apoPick: (d, el) => {
+    const box = el.closest('.sfc'), det = box.querySelector('.sfc-det'), { sup, herbs } = apoItems(apoSeason()), x = [...sup, ...herbs][+d.i]; if (!x) return;
+    const off = () => box.querySelectorAll('.sfc-i.on').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); });
+    if (el.closest('.sfc-det') || el.classList.contains('on')) { off(); det.hidden = true; return; }
+    off(); el.classList.add('on'); el.setAttribute('aria-expanded', 'true');
+    { const items = [...el.parentElement.querySelectorAll('.sfc-i')], k = items.indexOf(el); items[Math.min(items.length - 1, Math.floor(k / 2) * 2 + 1)].after(det); }
+    const p = apoPic(x), H = (x.herb && HERB_SPEC[x.n]) || {}, cares = [x.warn, H.care].filter(Boolean), S = H.study;
+    det.innerHTML = `<img class="${p.round ? 'rd' : ''}" src="${p.src}" alt=""><div><small class="sfc-o">${x.herb ? `${x.sub} · ${x.nat === 'warm' ? 'warming' : 'neutral'}` : x.sub}</small><b>${x.n}</b><p>${x.why}</p>
+      <span class="sfc-dose">${icon('drop', 12)} ${H.dose ? `${H.dose}. ` : ''}${x.how}</span>
+      ${S ? `<span class="szd-ph">Study: ${S[0]} <i>${S[1]}</i></span>` : ''}
+      ${cares.length ? `<span class="sfc-care"><small>Before you try</small>${cares.join(' ')}</span>` : ''}</div>
+      <button class="bn-x" data-action="apoPick" data-i="${d.i}" aria-label="Close">${icon('close', 16)}</button>`;
+    det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
+    const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
+  },
+  szPick: (d, el) => {
+    const box = el.closest('.sfc'), det = box.querySelector('.sfc-det'), i = szList().flatMap(g => g[3]).find(x => x.f === d.f); if (!i) return;
+    if (el.closest('.sfc-det')) { box.querySelectorAll('.sfc-i.on').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); }); det.hidden = true; return; }
+    const was = el.classList.contains('on'); box.querySelectorAll('.sfc-i').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); });
+    if (was) { det.hidden = true; return; }
+    el.classList.add('on'); el.setAttribute('aria-expanded', 'true');
+    { const items = [...el.parentElement.querySelectorAll('.sfc-i')], k = items.indexOf(el); items[Math.min(items.length - 1, Math.floor(k / 2) * 2 + 1)].after(det); }
+    const p = szPic(i.f), phase = M.info ? M.info.phase : null, warm = M.info && warmWindow(M.info), fungi = i.kind === 'fungi';
+    const note = i.nature === 'cool' && warm ? 'A cooling food. Your period is close, so cook it and add ginger or cinnamon.' : NATURE[i.nature][1];
+    det.innerHTML = `${p ? `<img class="${p.round ? 'rd' : ''}" src="${p.src}" alt="">` : ''}<div><small class="sfc-o">${NATURE[i.nature][0]} food</small><b>${i.f}</b><p>${fungi ? 'Earthy and grounding. Always cook it, in butter, a stew or a broth.' : note}</p>
+      ${i.nut.length ? `<span class="sfc-dose">${icon('drop', 12)} ${i.nut.join(' · ')}</span>` : ''}
+      ${i.ph.length ? `<span class="szd-ph">Best in your ${i.ph.map(x => PHASES[x].name.toLowerCase()).join(' & ')} phase${phase && i.ph.includes(phase) ? ', which is now' : ''}</span>` : ''}
+      ${fungi && !/oyster|shiitake|button|king|lion|enoki|maitake|straw|saesongi|neutari|paengi/i.test(i.f) ? `<span class="sfc-care"><small>Before you try</small>Wild mushroom: buy it from a market or a trained forager, never pick one you can’t name for sure.</span>` : ''}
+      ${p && p.fp ? `<span class="szd-cr">Photo: <a href="${p.fp[4]}" target="_blank" rel="noopener">${esc(p.fp[2])}</a>, ${p.fp[3]}</span>` : ''}</div>
+      <button class="bn-x" data-action="szPick" data-f="${esc(i.f)}" aria-label="Close">${icon('close', 16)}</button>`;
+    det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
+    const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
+  },
   sfPick: (d, el) => {
     const box = el.closest('.sfc'), ph = box.dataset.phase, g = d.g != null ? SUPERFOODS[ph].gems[+d.g] : null, f = g ? [g[0], g[1], g[3], `${g[4]}`, null, false, g[2]] : SUPERFOODS[ph].list.filter(x => !(x[5] && myDiet() === 'vegan'))[+d.i], det = box.querySelector('.sfc-det');
     const was = el.classList.contains('on'); box.querySelectorAll('.sfc-i').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); });
@@ -8212,21 +8227,14 @@ const actions = {
   worldGo: d => { ui.worldReg = d.k; ui.worldPhase = null; go('world'); setTimeout(wkCenter, 120); },
   worldReg: d => { ui.worldReg = d.k; render(); wkCenter(); },
   worldPhase: d => { ui.worldPhase = d.v; render(); },
-  seasonGo: d => { Object.assign(ui, { seasonFood: d.f, seasonView: 'month', seasonFilter: 'all', seasonMonth: null }); go('season'); setTimeout(() => document.querySelector('.sf-detail')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150); },
-  ritSel: d => { const v = +d.v; ui.ritSel = ui.ritSel === v ? null : v; render(); if (ui.ritSel != null) document.getElementById('sr-d')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); },
+  seasonGo: d => { go('season'); setTimeout(() => { const b = [...document.querySelectorAll('#view .szi')].find(x => x.dataset.f === d.f); if (b) { b.scrollIntoView({ block: 'center' }); b.click(); } }, 160); },
+  ritSel: d => { const v = +d.v; ui.ritSel = ui.ritSel === v ? null : v;
+    const old = document.querySelector('#view .sr-wrap'); if (!old) return render();
+    const x = old.querySelector('.sr-x')?.scrollLeft || 0, t = document.createElement('div'); t.innerHTML = seasonRituals(apoSeason()); const nu = t.firstElementChild;
+    old.replaceWith(nu); const sx = nu.querySelector('.sr-x'); if (sx) sx.scrollLeft = x;
+    if (ui.ritSel != null) document.getElementById('sr-d')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); },
   apoTab: d => { ui.apoTab = d.v; ui.apoSel = null; render(); },
   apoSel: d => { ui.apoSel = ui.apoSel === d.v ? null : d.v; render(); if (ui.apoSel) document.getElementById('apo-d')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
-  szPick: (d, el) => {
-    const box = el.closest('.szp'), det = box.querySelector('.szp-det'), c = myCountry(), m = new Date().getMonth() + 1, sel = SZ.seasonal(c, m).find(i => i.f === d.f); if (!sel) return;
-    const was = el.classList.contains('on'); box.querySelectorAll('.szp-i.on').forEach(b => b.classList.remove('on'));
-    if (was) { det.hidden = true; return; }
-    el.classList.add('on'); { const tiles = [...box.querySelectorAll('.szp-i')], cols = getComputedStyle(box.querySelector('.szp-g')).gridTemplateColumns.split(' ').length || 1, k = tiles.indexOf(el); tiles[Math.min(tiles.length - 1, Math.floor(k / cols) * cols + cols - 1)].after(det); }
-    const phase = M.info && M.info.phase, warm = M.info && warmWindow(M.info), img = szCut(sel.f) || foodPhoto(sel.f, 300);
-    det.innerHTML = `${img ? `<img src="${img}" alt="" class="${szCut(sel.f) ? 'cut' : ''}">` : ''}<div><small>${NATURE[sel.nature][0]} food</small><b>${sel.f}</b>
-      ${sel.nut.length ? `<p class="szp-r"><span>Rich in</span><b>${sel.nut.join(', ')}</b></p>` : ''}${sel.ph.length ? `<p class="szp-r"><span>Best for</span><b>${sel.ph.map(p => PHASES[p].name).join(' & ')}${phase && sel.ph.includes(phase) ? '<em>Your phase now</em>' : ''}</b></p>` : ''}
-      <p>${sel.nature === 'cool' && warm ? 'A cooling food. Your period is close, so cook it and add ginger or cinnamon.' : NATURE[sel.nature][1]}</p></div><button class="sfc-x" data-action="szClose" aria-label="Close">${icon('close', 14)}</button>`;
-    det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
-  },
   teaMood: (d, el) => { const box = el.closest('.tmo'), det = box.querySelector('.tmo-d'); box.querySelectorAll('.tmo-p button').forEach(b => { b.classList.toggle('on', b === el); b.setAttribute('aria-pressed', b === el); }); det.innerHTML = teaMoodCard(+d.i); det.style.animation = 'none'; void det.offsetWidth; det.style.animation = ''; },
   ctPick: (d, el) => { const box = el.closest('.t4'), ph = box.dataset.ph, det = box.querySelector('.t4-d'); box.querySelectorAll('.t4-t').forEach(b => { b.classList.toggle('on', b === el); b.setAttribute('aria-pressed', b === el); }); det.innerHTML = t4Detail(ph, +d.i); det.style.animation = 'none'; void det.offsetWidth; det.style.animation = ''; },
   szClose: (d, el) => { const box = el.closest('.szp'); box.querySelector('.szp-det').hidden = true; box.querySelectorAll('.szp-i.on').forEach(b => b.classList.remove('on')); },
@@ -8265,7 +8273,7 @@ const actions = {
   shareSend: async () => {
     if (!M.stats.periods.length) return toast('Log a period first so there is something to share');
     const url = shareLink(), title = `${state.profile.name || 'My'}’s rhythm`;
-    const sent = () => { if (!state.profile.linkSent) { state.profile.linkSent = Date.now(); save(); startSignals(); if (route().name === 'partners') render(); } publishLive(); }; // ticks step 1 on the partner page
+    const sent = () => { if (!state.profile.linkSent) { state.profile.linkSent = Date.now(); save(); startSignals(); if (route().name === 'partners') syRefresh() || render(); } publishLive(); }; // ticks step 1 on the partner page, only the steps redraw
     if (await shareOut({ title, text: 'Here’s where I am in my cycle 🌿', url })) return sent();
     try { await navigator.clipboard.writeText(url); toast('Link copied'); } catch { prompt('Copy this link', url); }
     sent();
@@ -8273,13 +8281,13 @@ const actions = {
   hisTab: d => { ui.hisTab = d.v; render(); document.getElementById('view').scrollTop = 0; },
   hisWake: d => { try { localStorage.setItem('uts.wake', d.v); } catch {} render(); },
   trackMine: () => { try { localStorage.removeItem('uts.viewOnly'); } catch {} go('today'); },
-  ptWho: d => { state.profile.ptWho = d.v; save(); render(); },
+  ptWho: d => { state.profile.ptWho = d.v; save(); syRefresh() || render(); },
   shareEmail: () => {
     if (!M.stats.periods.length) return toast('Log a period first so there is something to share');
     const me = state.profile.name || 'I', he = state.profile.ptWho === 'm';
     const body = `Hi love,\n\nThis is my rhythm in Underskin. It shows where I am in my cycle and how to be there for me, and it updates every day on its own.\n\n${shareLink({ short: true })}\n\n${he ? 'No app or account needed, just open the link.' : 'Open it on your phone to set up your own Underskin and we will see each other.'}\n\n${me}`;
     location.href = `mailto:?subject=${encodeURIComponent(`${me === 'I' ? 'My' : me + '’s'} rhythm`)}&body=${encodeURIComponent(body)}`;
-    if (!state.profile.linkSent) { state.profile.linkSent = Date.now(); save(); startSignals(); setTimeout(render, 600); } publishLive();
+    if (!state.profile.linkSent) { state.profile.linkSent = Date.now(); save(); startSignals(); setTimeout(() => syRefresh() || render(), 600); } publishLive();
   },
   sharePreview: () => { location.hash = shareLink().split('#')[1]; },
   pastePartner: async () => { try { const t = await navigator.clipboard.readText(); addPartnerFrom(t); } catch { document.getElementById('partnerLink')?.focus(); toast('Paste her link into the box'); } },
@@ -8505,7 +8513,7 @@ function render() {
   const ph = (ui.phasePreview || M.info?.phase) || ''; // the whole app takes the colour of her phase
   if (document.documentElement.dataset.phase !== ph) document.documentElement.dataset.phase = ph;
   const views = {
-    today: viewToday, saved: viewSaved, ground: viewGround, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: () => viewBreathe(r.id), do: () => viewTopic(r.id), plan: viewPlan, diet: viewDiet, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: viewCalendar, manifest: viewManifest, moon: viewCalendar, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewReliefIndex, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), apothecary: viewApothecary, world: () => viewWorld(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
+    today: viewToday, saved: viewSaved, ground: viewGround, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: () => viewBreathe(r.id), do: () => viewTopic(r.id), plan: viewPlan, diet: viewDiet, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: viewCalendar, manifest: viewManifest, moon: viewCalendar, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewReliefIndex, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), apothecary: () => { location.replace('#/plan/foods'); return ''; }, world: () => viewWorld(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
     recipe: () => viewRecipe(r.id), ritual: () => viewRitual(r.id), point: () => viewPoint(r.id), article: () => viewArticle(r.id), learn: viewLearn,
   };
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];

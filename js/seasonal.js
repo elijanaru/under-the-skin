@@ -42,7 +42,7 @@ const CENTRAL = [
   ['Kohlrabi', 'veg', r(5, 10)], ['Peas', 'veg', r(6, 8)], ['Courgette', 'veg', r(6, 9)], ['Cucumber', 'veg', r(6, 9)],
   ['Tomatoes', 'veg', r(7, 10)], ['Peppers', 'veg', r(8, 10)], ['Green beans', 'veg', r(7, 9)], ['Broccoli', 'veg', r(6, 10)],
   ['Cauliflower', 'veg', r(6, 10)], ['Fennel', 'veg', r(7, 10)], ['Sweetcorn', 'veg', r(8, 9)], ['Pumpkin & squash', 'veg', r(8, 11)],
-  ['Baby potatoes', 'veg', r(6, 8)], ['Mushrooms & chanterelles', 'veg', r(7, 10)],
+  ['Baby potatoes', 'veg', r(6, 8)],
   ['Strawberries', 'fruit', r(5, 7)], ['Cherries', 'fruit', r(6, 7)], ['Gooseberries & currants', 'fruit', r(6, 8)], ['Raspberries', 'fruit', r(6, 9)],
   ['Blueberries', 'fruit', r(7, 9)], ['Apricots', 'fruit', [7]], ['Plums', 'fruit', r(8, 9)], ['Blackberries', 'fruit', r(8, 9)],
   ['Elderberries', 'fruit', [8, 9]], ['Grapes', 'fruit', r(9, 10)], ['Apples', 'fruit', r(8, 3)], ['Pears', 'fruit', r(8, 1)],
@@ -60,7 +60,7 @@ const MED = [
   ['Melon & watermelon', 'fruit', r(6, 9)], ['Tomatoes', 'veg', r(6, 10)], ['Peppers', 'veg', r(6, 10)], ['Aubergine', 'veg', r(6, 10)],
   ['Courgette', 'veg', r(5, 9)], ['Cucumber', 'veg', r(5, 9)], ['Green beans', 'veg', r(6, 9)], ['Figs', 'fruit', r(7, 10)],
   ['Grapes', 'fruit', r(8, 10)], ['Pomegranate', 'fruit', r(9, 12)], ['Persimmon', 'fruit', r(10, 12)], ['Quince', 'fruit', r(10, 11)],
-  ['Pumpkin & squash', 'veg', r(9, 12)], ['Mushrooms', 'veg', r(10, 12)], ['Chestnuts', 'other', r(10, 12)], ['Almonds', 'other', r(8, 10)],
+  ['Pumpkin & squash', 'veg', r(9, 12)], ['Chestnuts', 'other', r(10, 12)], ['Almonds', 'other', r(8, 10)],
   ['Olives', 'other', r(10, 1)], ['Wild greens', 'wild', r(1, 4)],
   ['Wild fennel', 'wild', r(2, 5)], ['Prickly pear', 'fruit', r(8, 10)], ['Basil', 'herb', r(5, 9)], ['Rosemary & oregano', 'herb', all],
   ['Mint', 'herb', r(4, 10)], ['Loquat', 'fruit', r(4, 5)], ['Plums', 'fruit', r(6, 8)],
@@ -85,7 +85,7 @@ const AUS = [
   ['Mango', 'fruit', r(11, 3)], ['Cherries', 'fruit', r(11, 1)], ['Stone fruit', 'fruit', r(12, 3)], ['Berries', 'fruit', r(11, 3)],
   ['Watermelon', 'fruit', r(11, 3)], ['Tomatoes', 'veg', r(12, 4)], ['Sweetcorn', 'veg', r(12, 3)], ['Zucchini', 'veg', r(11, 3)],
   ['Apples', 'fruit', r(3, 8)], ['Pears', 'fruit', r(3, 7)], ['Figs', 'fruit', r(2, 4)], ['Pumpkin', 'veg', r(3, 8)],
-  ['Mushrooms', 'veg', r(3, 6)], ['Feijoa', 'fruit', r(3, 6)], ['Citrus', 'fruit', r(5, 10)], ['Kale', 'veg', r(5, 9)],
+  ['Feijoa', 'fruit', r(3, 6)], ['Citrus', 'fruit', r(5, 10)], ['Kale', 'veg', r(5, 9)],
   ['Broccoli & cauliflower', 'veg', r(5, 9)], ['Root vegetables', 'veg', r(5, 9)], ['Rhubarb', 'veg', r(5, 9)], ['Brussels sprouts', 'veg', r(5, 8)],
   ['Asparagus', 'veg', r(9, 11)], ['Peas & broad beans', 'veg', r(9, 11)], ['Strawberries', 'fruit', r(9, 12)], ['Artichokes', 'veg', r(8, 10)],
   ['Avocado', 'fruit', r(9, 2)], ['Macadamias', 'other', r(3, 9)],
@@ -178,21 +178,44 @@ const EASTASIA = [
   ['Watermelon', 'fruit', r(7, 8)], ['Grapes', 'fruit', r(8, 10)], ['Asian pears', 'fruit', r(8, 10)], ['Persimmons', 'fruit', r(10, 12)],
   ['Apples', 'fruit', r(9, 2)], ['Mandarins', 'fruit', r(11, 2)], ['Yuzu', 'fruit', r(11, 12)], ['Ginger', 'herb', all], ['Shiso', 'herb', r(6, 9)],
 ];
-const FARMED = ['Oyster & shiitake mushrooms', 'fungi', all];
+// Mushrooms: farmed ones all year, wild ones in their own short season. Always cooked; wild ones from a market or a trained forager.
+const FARMED = [['Oyster mushrooms', 'fungi', all], ['Shiitake', 'fungi', all], ['Button mushrooms', 'fungi', all], ['King oyster mushrooms', 'fungi', all], ['Lion’s mane', 'fungi', all]];
 const FUNGI = {
-  central: [FARMED, ['Porcini', 'fungi', r(8, 10)], ['Morels', 'fungi', [4, 5]]],
-  north: [FARMED, ['Porcini', 'fungi', r(8, 10)]],
-  med: [FARMED, ['Porcini', 'fungi', r(9, 11)], ['Morels', 'fungi', [3, 4]]],
-  us: [FARMED, ['Chanterelles', 'fungi', r(7, 10)], ['Maitake (hen of the woods)', 'fungi', [9, 10]]],
-  canada: [FARMED, ['Morels', 'fungi', [5, 6]], ['Chanterelles', 'fungi', r(7, 9)]],
-  korea: [['Oyster mushrooms (neutari)', 'fungi', all], ['Enoki (paengi)', 'fungi', all]],
-  aus: [FARMED, ['Pine mushrooms (saffron milk caps)', 'fungi', r(3, 6)], ['Slippery jacks', 'fungi', r(3, 6)]],
-  tropical: [FARMED, ['Straw mushrooms', 'fungi', all]],
-  india: [FARMED, ['Button mushrooms', 'fungi', r(10, 3)]],
-  eastasia: [['Shiitake', 'fungi', all], ['Enoki', 'fungi', all], ['Matsutake', 'fungi', [9, 10]]],
+  central: [...FARMED, ['Porcini', 'fungi', r(8, 10)], ['Chanterelles', 'fungi', r(7, 10)], ['Morels', 'fungi', [4, 5]], ['Hedgehog mushrooms', 'fungi', r(8, 11)], ['Black trumpets', 'fungi', r(8, 11)], ['Wood blewits', 'fungi', r(10, 12)], ['Maitake (hen of the woods)', 'fungi', [9, 10]], ['Enoki', 'fungi', r(11, 3)]],
+  north: [...FARMED, ['Porcini', 'fungi', r(8, 10)], ['Chanterelles', 'fungi', r(7, 10)], ['Hedgehog mushrooms', 'fungi', r(8, 11)], ['Black trumpets', 'fungi', r(8, 11)], ['Wood blewits', 'fungi', r(10, 12)], ['Morels', 'fungi', [5]]],
+  med: [...FARMED, ['Porcini', 'fungi', r(9, 11)], ['Morels', 'fungi', [3, 4]], ['Chanterelles', 'fungi', r(9, 11)], ['Saffron milk caps', 'fungi', r(10, 12)], ['Black trumpets', 'fungi', r(10, 12)], ['Hedgehog mushrooms', 'fungi', r(10, 12)]],
+  us: [...FARMED, ['Chanterelles', 'fungi', r(7, 10)], ['Maitake (hen of the woods)', 'fungi', [9, 10]], ['Morels', 'fungi', [4, 5]], ['Porcini', 'fungi', r(8, 10)], ['Hedgehog mushrooms', 'fungi', r(9, 11)], ['Black trumpets', 'fungi', r(7, 9)], ['Enoki', 'fungi', all]],
+  canada: [...FARMED, ['Morels', 'fungi', [5, 6]], ['Chanterelles', 'fungi', r(7, 9)], ['Porcini', 'fungi', r(8, 9)], ['Hedgehog mushrooms', 'fungi', r(8, 10)], ['Enoki', 'fungi', all]],
+  korea: [['Oyster mushrooms (neutari)', 'fungi', all], ['Enoki (paengi)', 'fungi', all], ['King oyster (saesongi)', 'fungi', all], ['Lion’s mane', 'fungi', all], ['Maitake (hen of the woods)', 'fungi', all]],
+  aus: [...FARMED, ['Enoki', 'fungi', all], ['Saffron milk caps', 'fungi', r(3, 6)], ['Slippery jacks', 'fungi', r(3, 6)], ['Porcini', 'fungi', r(3, 5)]],
+  tropical: [...FARMED, ['Straw mushrooms', 'fungi', all], ['Enoki', 'fungi', all]],
+  india: [...FARMED, ['Straw mushrooms', 'fungi', r(6, 9)], ['Morels', 'fungi', r(3, 5)]],
+  eastasia: [['Shiitake', 'fungi', all], ['Enoki', 'fungi', all], ['Oyster mushrooms', 'fungi', all], ['King oyster mushrooms', 'fungi', all], ['Maitake (hen of the woods)', 'fungi', all], ['Lion’s mane', 'fungi', all], ['Matsutake', 'fungi', [9, 10]]],
 };
+// A real photo per mushroom (Wikimedia Commons): [file in images/fungi, author, licence, source page]
+const WM = 'https://commons.wikimedia.org/wiki/File:';
+export const FUNGI_PIC = [
+  [/oyster mushrooms|neutari/i, 'oyster', 'Jean-Pol Grandmont', 'CC BY 3.0', WM + 'Pleurotus_ostreatus_JPG7.jpg'],
+  [/king oyster/i, 'king-oyster', 'Diego Delso', 'CC BY-SA 3.0', WM + 'Seta_de_cardo_(Pleurotus_eryngii),_2012-10-03,_DD_01.JPG'],
+  [/shiitake/i, 'shiitake', 'frankenstoen', 'CC BY 2.0', WM + 'Shiitakegrowing.jpg'],
+  [/button/i, 'button', 'Chris 73', 'CC BY-SA 3.0', WM + 'ChampignonMushroom.jpg'],
+  [/lion/i, 'lions-mane', 'Alison Northup', 'CC BY 4.0', WM + 'Lion%27s-mane_mushroom_imported_from_iNaturalist_photo_29576097_on_21_March_2024.jpg'],
+  [/porcini/i, 'porcini', 'ReddishClover', 'CC BY-SA 4.0', WM + 'Boletus_edulis_IT.jpg'],
+  [/chanterelle/i, 'chanterelle', 'Wikimedia Commons', 'CC BY-SA 3.0', WM + 'Chanterelle_Cantharellus_cibarius.jpg'],
+  [/morel/i, 'morel', 'Beentree', 'CC BY-SA 4.0', WM + 'Morchella_conica_1_beentree.jpg'],
+  [/maitake/i, 'maitake', 'Lukas from London', 'CC BY-SA 2.0', WM + 'Grifola_frondosa_(29715305790).jpg'],
+  [/enoki/i, 'enoki', 'frankenstoen', 'CC BY-SA 2.0', WM + 'Flammulina_velutipes_(Enokitake,_winter_mushroom).jpg'],
+  [/black trumpet/i, 'black-trumpet', 'Jean-Pol Grandmont', 'CC BY 3.0', WM + 'Craterellus_cornucopioides_JPG1.jpg'],
+  [/hedgehog/i, 'hedgehog', 'D J Kelly', 'Public domain', WM + 'Hedgehog_fungi2.jpg'],
+  [/blewit/i, 'blewit', 'Jimmie Veitch', 'CC BY-SA 3.0', WM + 'Clitocybe_nuda_(Fr.)_H.E._Bigelow_%26_A.H._Sm_267650.jpg'],
+  [/matsutake|songi/i, 'matsutake', 'Tomomarusan', 'CC BY 2.5', WM + 'Matsutake.jpg'],
+  [/milk cap/i, 'milk-cap', 'Wikimedia Commons', 'CC BY-SA 3.0', WM + 'Lactarius_deliciosus.jpg'],
+  [/straw mushroom/i, 'straw', 'Chong Fat', 'Public domain', WM + 'StrawMushroom.jpg'],
+  [/slippery jack/i, 'slippery-jack', 'Walt Sturgeon', 'CC BY-SA 3.0', WM + 'Suillus_luteus_475376.jpg'],
+];
+export const fungiPic = f => FUNGI_PIC.find(([re]) => re.test(f)) || null;
 const DATA = Object.fromEntries(Object.entries({ central: CENTRAL, north: NORTH, med: MED, us: US, canada: CANADA, korea: KOREA, aus: AUS, tropical: TROPICAL, india: INDIA, eastasia: EASTASIA }).map(([k, v]) => [k, [...v, ...FUNGI[k]]]));
-const FUNGUS = /mushroom|chanterelle|shiitake|morel|porcini|songi|enoki|maitake|slippery jack/i;
+const FUNGUS = /mushroom|chanterelle|shiitake|morel|porcini|songi|enoki|maitake|matsutake|slippery jack|lion’s mane|black trumpet|blewit|milk cap|saesongi/i;
 
 // TCM season for the month (southern regions are shifted by 6 months).
 const SEASON_N = { 12: 'Winter', 1: 'Winter', 2: 'Winter', 3: 'Spring', 4: 'Spring', 5: 'Spring', 6: 'Summer', 7: 'Summer', 8: 'Late summer', 9: 'Autumn', 10: 'Autumn', 11: 'Autumn' };
@@ -234,6 +257,12 @@ export function seasonName(code, month) {
 // nature: warm | neutral | cool. Phases: m=menstrual f=follicular o=ovulatory l=luteal.
 const I = (nature, nut, ph) => ({ nature, nut, ph: ph.split('').map(c => ({ m: 'menstrual', f: 'follicular', o: 'ovulatory', l: 'luteal' })[c]) });
 export const FOOD_INFO = {
+  'oyster mushrooms': I('warm', ['B vitamins', 'Beta-glucans', 'Iron'], 'mf'), 'button mushrooms': I('cool', ['Selenium', 'B vitamins', 'Potassium'], 'fo'),
+  'king oyster mushrooms': I('neutral', ['Ergothioneine', 'B vitamins', 'Fibre'], 'fl'), 'king oyster (saesongi)': I('neutral', ['Ergothioneine', 'B vitamins', 'Fibre'], 'fl'),
+  'lion’s mane': I('neutral', ['Beta-glucans', 'B vitamins'], 'l'), 'enoki': I('cool', ['B vitamins', 'Fibre'], 'fo'),
+  'black trumpets': I('neutral', ['Iron', 'Vitamin D', 'B vitamins'], 'm'), 'hedgehog mushrooms': I('neutral', ['Vitamin D', 'Potassium'], 'ml'),
+  'wood blewits': I('neutral', ['B vitamins', 'Potassium'], 'l'), 'matsutake': I('neutral', ['Vitamin D', 'Selenium'], 'f'),
+  'saffron milk caps': I('neutral', ['Vitamin D', 'Fibre'], 'l'), 'straw mushrooms': I('cool', ['Protein', 'Vitamin C'], 'o'),
   'aged kimchi (mugeunji)': I('warm', ['Probiotics', 'Vitamin C'], 'fol'), 'soybean sprouts (kongnamul)': I('cool', ['Vitamin C', 'Folate', 'Fibre'], 'fo'),
   'young chicken (boknal season)': I('warm', ['Protein', 'Collagen', 'B vitamins'], 'ml'), 'abalone (jeonbok)': I('neutral', ['Iron', 'Zinc', 'Protein'], 'm'),
   'new-crop rice (haepssal)': I('neutral', ['Complex carbs', 'B vitamins'], 'l'), 'garaetteok (new year rice cakes)': I('neutral', ['Complex carbs'], 'm'),
