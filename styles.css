@@ -11275,3 +11275,8 @@ html .fx-b b{font:500 16px/1.25 var(--font)}
 html .fx-b small{font-size:13px;color:#5d6853}
 html .fx-all{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin:16px 0 18px;padding:13px;border-radius:99px;border:1px solid rgba(32,48,26,.12);background:#fff;color:#20301a;font:500 14.5px var(--font);cursor:pointer}
 html .fx-cats, html .fx-big{scroll-padding-inline:18px}
+
+/* v901 food picks: only the panel changes when she switches, with a soft fade */
+html .fx-p.fx-in { animation: fxIn .35s ease both; }
+@keyframes fxIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { html .fx-p.fx-in { animation: none; } }

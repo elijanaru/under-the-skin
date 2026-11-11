@@ -1370,9 +1370,9 @@ function viewToday() {
 function exploreGrid(info) {
   const tiles = [['super', 'leaf', 'Superfoods', 'Spices & superfoods for your phase', foodPhoto('Blueberries', 500)], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/forest-path.jpg'],
     ['relief', 'heart', 'Balance hormones', 'Step by step, fundamentals first', 'images/relief-stardust.webp', 'images/relief-stardust.mp4'],
-    ['season', 'bowl', 'In season', 'Local foods', 'images/season-fruit.webp'], ['tea', 'cup', 'Tea guide', 'For every need', 'images/tea-ginger.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/tile-meditate.webp']];
-  // round photo bubbles in a 2-3-2 honeycomb, each with its own coloured rim and the name on the photo
-  const rim = ['#a98bd0', '#7f9a4c', '#e08aa5', '#d9a441', '#c98a52', '#6fa49a'];
+    ['tea', 'cup', 'Tea guide', 'For every need', 'images/tea-ginger.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/tile-meditate.webp']];
+  // round photo bubbles in a 3-2 honeycomb, each with its own coloured rim and the name on the photo
+  const rim = ['#a98bd0', '#7f9a4c', '#e08aa5', '#c98a52', '#6fa49a'];
   const bub = ([to, ic, t, sub, img, vid], i) => `<button class="xb" data-action="${to === 'super' ? 'superGo' : 'nav'}" data-to="${to}" style="--i:${i};--rim:${rim[i]}" aria-label="${t}: ${sub}">${vid ? `<video class="dpt-vid" src="${vid}" poster="${img}" muted loop playsinline preload="none" aria-hidden="true"></video>` : `<img src="${img}" alt="" loading="lazy">`}<span class="xb-t">${t}</span></button>`;
   const rows = [tiles.slice(0, 3), tiles.slice(3)];
   let k = 0;
@@ -2106,7 +2106,7 @@ function viewPlan() {
   const warm = warmWindow(info);
   return `${topbar('Food')}
   <div class="pad pv">
-    <div class="pv-h"><span class="pv-day">${info ? `Day ${info.cd} · ` : ''}${ph.name}</span><span class="eg-rule ${warm ? 'warm' : 'raw'}">${icon(warm ? 'sun' : 'leaf', 14)} Today: ${warm ? 'warm & cooked' : 'raw & fresh'}</span></div>
+    <div class="pv-h"><span class="eg-rule ${warm ? 'warm' : 'raw'}">${icon(warm ? 'sun' : 'leaf', 14)} Today: ${warm ? 'warm & cooked' : 'raw & fresh'}</span></div>
     ${plateSection(phase, true)}
     ${foodExplore(phase, info)}
     <button class="pv-row" data-action="nav" data-to="grocery"><span class="pv-num">${icon('check', 18)}</span><span><b>My grocery list</b><small>For the next 7 days</small></span><span class="pv-go">${icon('chevR', 16)}</span></button>
@@ -2391,7 +2391,7 @@ function plateSection(current, lite) {
   const country = SZ.COUNTRIES.find(x => x[0] === myCountry())?.[1] || '';
   const cook = warm ? `Warm and cooked, even in ${season === 'Summer' || season === 'Late summer' ? 'the heat' : season.toLowerCase()}. No iced drinks during your period and the 2–3 days before it.` : phase === 'luteal' ? `${PSn.cook} Lean warmer as your period gets close.` : PSn.cook;
   return `<section class="pl">
-    <div class="pl-head"><div class="mv2-eyebrow">Your plate today</div><h2>${PHASES[phase].name} × ${season.toLowerCase()}</h2><p>${PSn.aim} · ${T.el} season ${T.han}</p></div>
+    <div class="pl-head"><div class="mv2-eyebrow">Your plate today</div><h2>${PHASES[phase].name} × ${season.toLowerCase()}</h2></div>
     <div class="pl-wheel ${ui.plAnim ? 'pl-anim' : ''}">${plateWheel(phase, season, sel, warm)}</div>
     <div class="pl-det" data-k="${sel}">
       <div class="pld-h"><b>${P.n}</b><span class="pld-p">${PLATE_SHARE[phase][sel]}%</span></div>
@@ -8001,7 +8001,16 @@ const actions = {
     det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
     const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
   },
-  fxCat: d => { ui.fxCat = d.v; render(); },
+  // swap only the picks panel: the plate, the scroll and the tab row stay as they are
+  fxCat: d => {
+    ui.fxCat = d.v;
+    const old = document.querySelector('#view .fx-p');
+    if (!old) return render();
+    const info = M.info, phase = info ? info.phase : 'follicular', tmp = document.createElement('div');
+    tmp.innerHTML = foodExplore(phase, info);
+    document.querySelectorAll('#view .fx-c').forEach(b => { const on = b.dataset.v === d.v; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+    const nu = tmp.querySelector('.fx-p'); nu.classList.add('fx-in'); old.replaceWith(nu);
+  },
   hidePartner: () => { state.hidePartner = true; save(); render(); toast('Hidden. Turn it back on in Profile, Partner mode.'); },
   partnerToday: () => { state.hidePartner = !state.hidePartner; save(); render(); },
   fbPick: (d, el) => {
