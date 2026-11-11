@@ -6658,14 +6658,31 @@ function seasonArt(sn) {
     <path d="M50 92h120l-10 36c-1 4-4 6-8 6H68c-4 0-7-2-8-6z" fill="#f3e2d2"/><path d="M50 92h120" stroke="#e2c9b2" stroke-width="5" stroke-linecap="round"/>
     <path d="M62 106h96M66 118h88" stroke="#e8d3bf" stroke-width="2" stroke-linecap="round"/></svg>`;
 }
-// Season page: autumn and winter rituals through the cold half of the year (the herbs live in the apothecary).
+// Balance page: autumn and winter rituals as a clean picture grid; her phase first, a spec sheet behind one tap.
+// name: [when, takes, best phases (m f o l), study [finding, author year (journal)] or '', caution]
+const RIT_META = {
+  'Jujube & ginger tea': ['Afternoon', '15 min', 'ml', '', 'Ginger: ask first if you take blood thinners. Five dates are plenty, they are sweet.'],
+  'Healing broth': ['With any meal', '3 h, mostly hands-off', 'ml', '', ''],
+  'Overnight herbal infusion': ['Steep overnight', '5 min + one night', 'mf', '', 'Nettle can lower blood pressure. Ask first if you take blood pressure pills or water tablets.'],
+  'Warm feet': ['Before bed', '15 min', 'ml', '', 'Test the water with your hand first. Skip hot soaks if your feet feel numb.'],
+  'Honey bomb': ['When your throat tickles', '5 min', 'mfol', ['A spoon of honey before bed eased night-time coughing in children better than no treatment.', 'Paul 2007 (Archives of Pediatrics)'], 'Never for babies under one.'],
+  'Blackstrap molasses': ['Morning or afternoon', '1 min', 'm', '', 'Very sweet. One spoon a day is enough.'],
+  'Morning lemon & ginger': ['On waking', '3 min', 'f', '', 'Rinse your mouth with water after, lemon softens tooth enamel.'],
+  'Fire cider': ['Morning, with food', '4 weeks to steep, then 1 spoon', 'fo', '', 'Strong and acidic: dilute it and take it with food. Skip it with reflux or a stomach ulcer.'],
+  'Figs, dates & honeycomb': ['Afternoon', '2 min', 'l', '', 'Sweet: add a few nuts to keep your blood sugar steady.'],
+  'Deep sleep': ['After sunset', 'All evening', 'l', ['People who slept under 6 hours were about 4 times more likely to catch a cold after exposure to the virus.', 'Prather 2015 (Sleep)'], ''],
+};
+const ritList = () => { const ph = M.info ? M.info.phase[0] : ''; return AUTUMN_RITUALS.map((r, i) => ({ r, i, m: RIT_META[r[0]] || ['', '', '', '', ''] })).sort((a, b) => (b.m[2].includes(ph) && !!ph) - (a.m[2].includes(ph) && !!ph)); };
 function seasonRituals(sn) {
   if (!['Autumn', 'Winter'].includes(sn)) return '';
-  const sel = AUTUMN_RITUALS[ui.ritSel], k = ui.ritSel;
-  return `<div class="sr-wrap">${sectionTitle(`${sn === 'Winter' ? 'Winter' : 'Autumn'} rituals`)}
-    <div class="hscroll sr-x">${AUTUMN_RITUALS.map(([n], i) => `<button class="rcard has-photo sr-xc ${i === k ? 'on' : ''}" data-action="ritSel" data-v="${i}" aria-expanded="${i === k}"><img class="rc-photo" src="${teaPhoto(n, 400, 520)}" alt="" loading="lazy"><span class="rc-shade"></span><div class="rc-t">${n}</div></button>`).join('')}</div>
-    ${sel ? `<section class="card apo-d sr-d" id="sr-d"><img src="${teaPhoto(sel[0], 800, 520)}" alt=""><button class="bn-x" data-action="ritSel" data-v="${k}" aria-label="Close">${icon('close', 16)}</button>
-      <div class="apo-d-b"><small>${sn} ritual</small><h3>${sel[0]}</h3><p>${sel[2]}</p><div class="apo-d-r">${icon('cup', 16)}<span><small>How</small>${sel[1]}</span></div></div></section>` : ''}</div>`;
+  const phase = M.info ? M.info.phase : null, P = { m: 'menstrual', f: 'follicular', o: 'ovulatory', l: 'luteal' };
+  const item = ({ r, i, m }) => `<button class="sfc-i" data-action="ritPick" data-i="${i}" aria-expanded="false"><img class="rd" src="${teaPhoto(r[0], 300, 300)}" alt="" loading="lazy" decoding="async"><b>${r[0]}</b><small>${phase && m[2].includes(phase[0]) && m[2].length < 4 ? `<i class="sr-dot" style="background:${PH_HEX[phase]}"></i>` : ''}${m[0]}</small></button>`;
+  return `<div class="sr-wrap"><section class="sfc sr2" data-phase="${phase || ''}">
+      <header class="sfc-h"><small><i style="background:${phase ? PH_HEX[phase] : '#6c823e'}"></i>${sn} · ${MONTHS[new Date().getMonth()]}</small><h3>${sn} rituals</h3><p>Small, warm habits for the cold months.${phase ? ` A dot marks the ones for your ${PHASES[phase].name.toLowerCase()} phase.` : ''}</p></header>
+      <div class="sfc-grid">${ritList().map(item).join('')}</div>
+      <div class="sfc-det" aria-live="polite" hidden></div>
+      <footer class="sfc-f"><span>All warm, nothing iced</span><span>Pregnant or on medication? Ask your doctor first</span></footer>
+    </section></div>`;
 }
 // The season's apothecary: superfoods for every season (and herbs in the cold half), its own page behind one widget.
 // [photo, name, what it brings, why, how, careful]
@@ -8048,6 +8065,23 @@ const actions = {
     det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
     const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
   },
+  ritPick: (d, el) => {
+    const box = el.closest('.sfc'), det = box.querySelector('.sfc-det'), it = ritList().find(x => x.i === +d.i); if (!it) return;
+    const off = () => box.querySelectorAll('.sfc-i.on').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); });
+    if (el.closest('.sfc-det') || el.classList.contains('on')) { off(); det.hidden = true; return; }
+    off(); el.classList.add('on'); el.setAttribute('aria-expanded', 'true');
+    { const items = [...el.parentElement.querySelectorAll('.sfc-i')], k = items.indexOf(el); items[Math.min(items.length - 1, Math.floor(k / 2) * 2 + 1)].after(det); }
+    const [n, how, why] = it.r, [when, takes, ph, st, care] = it.m, P = { m: 'Period', f: 'Follicular', o: 'Ovulation', l: 'Luteal' };
+    const yr = st ? (st[1].match(/(19|20)\d{2}/) || [''])[0] : '';
+    det.innerHTML = `<img class="rd" src="${teaPhoto(n, 300, 300)}" alt=""><div><small class="sfc-o">${takes}</small><b>${n}</b><p>${why}</p>
+      <dl class="sr-spec"><div><dt>When</dt><dd>${when}</dd></div>${ph ? `<div><dt>Best in</dt><dd>${ph.length === 4 ? 'Any phase' : ph.split('').map(c => P[c]).join(' & ')}</dd></div>` : ''}</dl>
+      <span class="sfc-dose">${icon('cup', 12)} ${how}</span>
+      ${st ? `<span class="sr-st"><small>What studies found</small>${st[0]} <i>${st[1].replace(/\s*\(.*\)/, '')}${yr && !st[1].includes(yr) ? ` ${yr}` : ''}</i></span>` : ''}
+      ${care ? `<span class="sfc-care"><small>Before you try</small>${care}</span>` : ''}</div>
+      <button class="bn-x" data-action="ritPick" data-i="${d.i}" aria-label="Close">${icon('close', 16)}</button>`;
+    det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
+    const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
+  },
   szPick: (d, el) => {
     const box = el.closest('.sfc'), det = box.querySelector('.sfc-det'), i = szList().flatMap(g => g[3]).find(x => x.f === d.f); if (!i) return;
     if (el.closest('.sfc-det')) { box.querySelectorAll('.sfc-i.on').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); }); det.hidden = true; return; }
@@ -8228,11 +8262,6 @@ const actions = {
   worldReg: d => { ui.worldReg = d.k; render(); wkCenter(); },
   worldPhase: d => { ui.worldPhase = d.v; render(); },
   seasonGo: d => { go('season'); setTimeout(() => { const b = [...document.querySelectorAll('#view .szi')].find(x => x.dataset.f === d.f); if (b) { b.scrollIntoView({ block: 'center' }); b.click(); } }, 160); },
-  ritSel: d => { const v = +d.v; ui.ritSel = ui.ritSel === v ? null : v;
-    const old = document.querySelector('#view .sr-wrap'); if (!old) return render();
-    const x = old.querySelector('.sr-x')?.scrollLeft || 0, t = document.createElement('div'); t.innerHTML = seasonRituals(apoSeason()); const nu = t.firstElementChild;
-    old.replaceWith(nu); const sx = nu.querySelector('.sr-x'); if (sx) sx.scrollLeft = x;
-    if (ui.ritSel != null) document.getElementById('sr-d')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); },
   apoTab: d => { ui.apoTab = d.v; ui.apoSel = null; render(); },
   apoSel: d => { ui.apoSel = ui.apoSel === d.v ? null : d.v; render(); if (ui.apoSel) document.getElementById('apo-d')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
   teaMood: (d, el) => { const box = el.closest('.tmo'), det = box.querySelector('.tmo-d'); box.querySelectorAll('.tmo-p button').forEach(b => { b.classList.toggle('on', b === el); b.setAttribute('aria-pressed', b === el); }); det.innerHTML = teaMoodCard(+d.i); det.style.animation = 'none'; void det.offsetWidth; det.style.animation = ''; },
