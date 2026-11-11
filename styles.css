@@ -10935,3 +10935,7 @@ html .apo-d-r.care{margin-top:12px}
 html .bwx-g, html .bzp-g{display:grid;place-items:center;color:#20301a;font-size:0}
 html .bzp .on .bzp-g, html .bzp button.on .bzp-g{color:#fff}
 html .bwx-g svg, html .bzp-g svg{width:20px;height:20px}
+
+/* v869 Superfood detail: a Before you try it line under the amount */
+html .sfc-care{display:block;margin-top:8px;padding:9px 11px;border-radius:14px;background:#f8ecef;font:400 12.5px/1.4 var(--font);color:#5c2a39}
+html .sfc-care small{display:block;margin-bottom:2px;font:500 11px/1.2 var(--font);color:#9c3d58}

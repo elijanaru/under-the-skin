@@ -2131,6 +2131,22 @@ const SF_CUT = { Ginger: ['ginger', 'Fresh root'], 'Goji berries': ['goji', 'Iro
   'Sun-dried shiitake': ['shiitake'], Pomegranate: ['pomegranate'], 'Bissap (hibiscus)': ['hibiscus'], 'Extra virgin olive oil': ['olive-oil'], 'Dulse seaweed': ['dulse'], 'Tiger nuts': ['tiger-nuts'],
   Carob: ['carob'], Rooibos: ['rooibos'], 'Dried longan': ['longan'], 'Medjool dates': ['medjool'] };
 // What studies found, for the superfoods with solid human trials: [author, year, finding in plain words].
+// Before you try it, for superfoods whose amount line has no caution yet (kept short and conservative).
+const SF_CARE = {
+  'Ginger': 'Ask first if you take blood thinners or have surgery coming up.',
+  'Goji berries': 'Ask first if you take blood thinners such as warfarin.',
+  'Blackstrap molasses': 'Rich in sugar and potassium. Go easy with diabetes or kidney disease.',
+  'Cinnamon': 'Cassia cinnamon is high in coumarin, which strains the liver in large amounts. Choose Ceylon.',
+  'Nettle': 'Ask first if you take blood thinners, blood pressure tablets or water tablets.',
+  'Broccoli sprouts': 'Raw sprouts can carry germs: buy fresh, rinse well, and skip them raw in pregnancy.',
+  'Ground flaxseed': 'Drink a full glass of water with it, and take it 2 hours apart from medicines.',
+  'Sauerkraut': 'Quite salty. Go easy if you watch your blood pressure.',
+  'Raw honey': 'Never give honey to a baby under one year.',
+  'Raw cacao': 'It gently stimulates, like weak coffee. Have it before the afternoon if you sleep lightly.',
+  'Fennel seeds': 'Keep to food amounts in pregnancy and while breastfeeding.',
+  'Sesame seeds and tahini': 'Sesame is a common allergen.',
+  'Black sesame': 'Sesame is a common allergen.',
+};
 const SF_STUDY = {
   Ginger: ['Ozgoli et al.', 2009, '250 mg ginger four times a day eased period pain as well as ibuprofen and mefenamic acid.'],
   'Turmeric with black pepper': ['Khayat et al.', 2015, 'Curcumin for 10 days around the period made PMS symptoms milder than placebo.'],
@@ -7890,7 +7906,7 @@ const actions = {
     // open under the row she tapped (two per row), not below the whole grid
     { const items = [...el.parentElement.querySelectorAll('.sfc-i')], i = items.indexOf(el); items[Math.min(items.length - 1, Math.floor(i / 2) * 2 + 1)].after(det); }
     const [file] = SF_CUT[f[1]] || [];
-    det.innerHTML = `${file ? `<img src="images/sf/${file}.webp" alt="">` : `<em>${f[0]}</em>`}<div>${f[6] ? `<small class="sfc-o">${f[6]}</small>` : ''}<b>${f[1]}</b><p>${f[2]}</p><span class="sfc-dose">${icon('drop', 12)} ${f[3]}</span>${SF_STUDY[f[1]] ? `<span class="sfc-st"><b class="dotnum">${SF_STUDY[f[1]][1]}</b><span><em>${SF_STUDY[f[1]][0]}</em>${SF_STUDY[f[1]][2]}</span></span>` : ''}</div><button class="sfc-x" data-action="sfClose" aria-label="Close">${icon('close', 14)}</button>`;
+    det.innerHTML = `${file ? `<img src="images/sf/${file}.webp" alt="">` : `<em>${f[0]}</em>`}<div>${f[6] ? `<small class="sfc-o">${f[6]}</small>` : ''}<b>${f[1]}</b><p>${f[2]}</p><span class="sfc-dose">${icon('drop', 12)} ${f[3]}</span>${SF_CARE[f[1]] ? `<span class="sfc-care"><small>Before you try it</small>${SF_CARE[f[1]]}</span>` : ''}${SF_STUDY[f[1]] ? `<span class="sfc-st"><b class="dotnum">${SF_STUDY[f[1]][1]}</b><span><em>${SF_STUDY[f[1]][0]}</em>${SF_STUDY[f[1]][2]}</span></span>` : ''}</div><button class="sfc-x" data-action="sfClose" aria-label="Close">${icon('close', 14)}</button>`;
     det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
     const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
   },
