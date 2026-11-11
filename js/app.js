@@ -2119,7 +2119,6 @@ function viewPlan() {
   const warm = warmWindow(info);
   return `${topbar('Food')}
   <div class="pad pv">
-    <div class="pv-h"><span class="eg-rule ${warm ? 'warm' : 'raw'}">${icon(warm ? 'sun' : 'leaf', 14)} Today: ${warm ? 'warm & cooked' : 'raw & fresh'}</span></div>
     ${plateSection(phase, true)}
     ${foodExplore(phase, info)}
     ${groceryCard()}
@@ -2338,7 +2337,7 @@ const PLATE_SET = {
   protein: { menstrual: UNS('1783632665766-2806d10f2a03'), follicular: UNS('1641999161954-f6a92e137b84'), ovulatory: UNS('1706982272171-8ce965c1c996'), luteal: UNS('1603048297172-c92544798d5a') },
   // close, single-food photos so each portion is recognisable at a glance
   spice: { menstrual: UNS('1758657996518-e67bd328854e'), follicular: UNS('1758657996518-e67bd328854e'), ovulatory: UNS('1758657996518-e67bd328854e'), luteal: UNS('1758657996518-e67bd328854e') },
-  fats: { menstrual: PEX(35339669), follicular: PEX(35339669), ovulatory: PEX(35339669), luteal: PEX(35339669) },
+  fats: { menstrual: 'images/plate-fats.webp', follicular: 'images/plate-fats.webp', ovulatory: 'images/plate-fats.webp', luteal: 'images/plate-fats.webp' }, // halved avocado, clear at slice size
   carbs: { menstrual: PEX(36400786), follicular: PEX(36400786), ovulatory: PEX(36400786), luteal: PEX(36400786) },
   veg: () => UNS('1558234608-ae0b60563965'),
   fruit: { Winter: PEX(8639570), Autumn: UNS('1560806887-1e4cd0b6cbd6'), Spring: PEX(18018686), Summer: PEX(18018686), 'Late summer': UNS('1560806887-1e4cd0b6cbd6') },

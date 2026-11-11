@@ -11419,3 +11419,7 @@ html .sfc-det .sr-st i { font-style: normal; color: rgba(32,48,26,.55); white-sp
 html .sr2 .sfc-i img.rd { width: 92px; height: 92px; }
 html .sr2 .sfc-i small { color: rgba(32,48,26,.6); display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
 html .sr2 .sr-dot { width: 6px; height: 6px; border-radius: 50%; flex: none; }
+/* v909 plate picks: every label starts right under its photo */
+html .pld-foods { align-items: flex-start; }
+html .pld-foods > div { align-content: start; }
+html .pld-foods small { font-weight: 500; color: #304023; }
