@@ -3594,22 +3594,17 @@ function cycleFlag() {
   const key = C.iso(b.start);
   if ((state.flagDismissed || '') === key) return '';
   const avg = Math.round(M.stats.avgCycle);
-  const [head, sub, msg] = gap < 15 ? ['Two periods close together', `${gap} days apart. Spotting or a mis-tap?`, 'Fix it so your next dates stay right.']
-    : gap < 21 ? ['A shorter cycle', `${gap} days this time, your usual is ${avg}.`, 'One short cycle is common. If it keeps happening, tell your doctor.']
-    : gap > 35 ? ['A longer cycle', `${gap} days this time, your usual is ${avg}.`, 'Stress, travel or illness can do this. If it repeats, tell your doctor.'] : [];
+  const [head, sub] = gap < 15 ? ['Two periods close together', `${gap} days apart. Spotting or a mis-tap?`]
+    : gap < 21 ? ['A shorter cycle', `${gap} days, your usual is ${avg}. Once is common; if it repeats, tell your doctor.`]
+    : gap > 35 ? ['A longer cycle', `${gap} days, your usual is ${avg}. Stress or travel can do this; if it repeats, tell your doctor.`] : [];
   if (!head) return '';
-  // two stat tiles (this time vs usual) over one number line from 10 to 45 days with the usual 21 to 35 range as a soft band
+  // compact heads-up: headline, one grey line, a slim 10 to 45 day line (usual 21 to 35 as a soft band), two small buttons
   const x = d => (Math.min(45, Math.max(10, d)) - 10) / 35 * 100;
-  return `<section class="card flag fl2 fl5"><div class="fl2-h"><span class="bn-ic">${icon('spark', 18)}</span><div><small>Unusual cycle</small><b>${head}</b><p class="fl5-sub">${sub}</p></div></div>
-    <div class="fl5-pair" role="img" aria-label="This cycle ${gap} days, your usual ${avg} days, the usual range is 21 to 35 days">
-      <div class="me"><small><i></i>This time</small><b><span class="dotnum">${gap}</span>days</b></div>
-      <div><small><i></i>Your usual</small><b><span class="dotnum">${avg}</span>days</b></div></div>
-    <div class="fl4"><div class="fl4-line" aria-hidden="true"><span class="fl4-band" style="left:${x(21)}%;width:${x(35) - x(21)}%"><em>Usual range</em></span>
-        <i class="fl4-d" style="left:${x(avg)}%"></i><i class="fl4-d me" style="left:${x(gap)}%"></i>
-        ${[10, 21, 28, 35, 45].map(d => `<small style="left:${x(d)}%">${d}</small>`).join('')}</div></div>
-    <p class="fl5-msg">${msg}</p>
-    <div class="sgt-st fl5-st"><b class="dotnum">2006</b><span><em>Fehring</em>In 1,060 cycles of healthy women, 95 in 100 lasted 22 to 36 days. Most of the change came from the first half, before the egg.<small>JOGNN</small></span></div>
-    <div class="fl2-acts">${gap < 21 ? `<button class="fl2-b ${gap < 15 ? 'on' : ''}" data-action="flagEdit" data-date="${key}">${icon('calendar', 14)} Fix in calendar</button>` : ''}<button class="fl2-b ${gap < 15 ? '' : 'on'}" data-action="flagDismiss" data-k="${key}">${icon('check', 14)} It’s correct</button></div></section>`;
+  return `<section class="card flag fl6"><div class="fl6-h"><span class="fl6-ic">${icon('spark', 15)}</span><div><b>${head}</b><p>${sub}</p></div></div>
+    <div class="fl6-line" role="img" aria-label="This cycle ${gap} days, your usual ${avg} days, the usual range is 21 to 35 days"><span class="fl6-band" style="left:${x(21)}%;width:${x(35) - x(21)}%"></span>
+      <i class="fl6-d" style="left:${x(avg)}%"></i><i class="fl6-d me" style="left:${x(gap)}%"><b class="dotnum">${gap}</b></i>
+      <small style="left:${x(21)}%">21</small><small style="left:${x(35)}%">35</small></div>
+    <div class="fl6-acts">${gap < 21 ? `<button class="fl2-b ${gap < 15 ? 'on' : ''}" data-action="flagEdit" data-date="${key}">${icon('calendar', 13)} Fix</button>` : ''}<button class="fl2-b ${gap < 15 ? '' : 'on'}" data-action="flagDismiss" data-k="${key}">${icon('check', 13)} It’s correct</button></div></section>`;
 }
 
 // ---------- personal patterns (learned from logs) ----------

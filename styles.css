@@ -11212,19 +11212,18 @@ html .fbp-det .fbd-b > :not(b):not(p) { grid-column: 1 / -1; }
 html .fbp-det .fbd-spec { margin-top: 12px; }
 html .fbp-det .fbd-b ul { margin: 12px 4px 6px; }
 
-/* v891 Today, unusual cycle: headline + grey subline, two stat tiles, line, study */
-html .fl5 .fl2-h{align-items:flex-start}
-html .fl5 .fl2-h b{font-size:19px}
-html .fl5 p.fl5-sub{margin:3px 0 0;font-size:13.5px;line-height:1.4;color:#5d6853}
-html .fl5-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
-html .fl5-pair>div{background:#fff;border:1px solid rgba(32,48,26,.07);border-radius:20px;padding:12px 14px 10px;box-shadow:0 6px 16px -10px rgba(32,48,26,.25)}
-html .fl5-pair small{display:flex;align-items:center;gap:7px;font:400 12.5px/1.2 var(--font);color:#5d6853}
-html .fl5-pair small i{width:9px;height:9px;border-radius:50%;background:#20301a}
-html .fl5-pair .me small i{background:#b04a64}
-html .fl5-pair b{display:flex;align-items:baseline;gap:5px;margin-top:6px;font:500 13.5px/1 var(--font);color:#20301a}
-html .fl5-pair .dotnum{font-family:var(--dot);font-weight:900;font-size:34px;line-height:1;color:#20301a}
-html .fl5-pair .me .dotnum{color:#b04a64}
-html .fl5 .fl4{margin:2px 0 0}
-html .fl5 .fl4-line small{color:#5d6853}
-html .flag.fl2 p.fl5-msg{color:#304023}
-html .fl5-st{margin:2px 0 0}
+/* v891 Today, unusual cycle as a compact heads-up */
+html .card.flag.fl6{display:grid;gap:12px;padding:14px 16px 14px}
+html .fl6-h{display:flex;gap:12px;align-items:flex-start}
+html .fl6-ic{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#b04a64;color:#fff}
+html .fl6-h b{display:block;font:600 16px/1.25 var(--font);color:#20301a}
+html .fl6-h p{margin:2px 0 0;font-size:13px;line-height:1.4;color:#5d6853}
+html .fl6-line{position:relative;height:30px;margin:0 8px}
+html .fl6-line::before{content:'';position:absolute;left:0;right:0;top:9px;height:2px;border-radius:2px;background:rgba(32,48,26,.12)}
+html .fl6-band{position:absolute;top:4px;height:12px;border-radius:99px;background:#e2e9d2}
+html .fl6-d{position:absolute;top:4px;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:#20301a;border:2px solid #fff;box-shadow:0 1px 4px rgba(32,48,26,.3)}
+html .fl6-d.me{background:#b04a64;top:1px;width:18px;height:18px;margin-left:-9px}
+html .fl6-d.me b{position:absolute;left:50%;top:21px;transform:translateX(-50%);font:900 11px/1 var(--dot);color:#b04a64}
+html .fl6-line small{position:absolute;top:20px;transform:translateX(-50%);font:700 10px/1 var(--dot);color:#5d6853}
+html .fl6-acts{display:flex;gap:8px}
+html .fl6-acts .fl2-b{padding:7px 13px;font-size:13px}
