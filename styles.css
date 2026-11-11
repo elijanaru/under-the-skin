@@ -11116,3 +11116,11 @@ html .cp-sep { letter-spacing: 0 !important; text-transform: none !important; fo
 /* Season: the Your country label sat beside the picker; now a small label above it */
 html .season-ctl { flex-direction: column; align-items: stretch !important; gap: 6px !important; }
 html .season-ctl > .fine { margin: 0 0 0 4px; font-size: 13px; font-weight: 500; color: rgba(32,48,26,.65); }
+
+/* v884 Drinks: every drink is a real photo now (no emoji); cut-out photos sit whole on white */
+html .eb-b img.cut, html .ebp-f img.cut { object-fit: contain !important; background: #fff; padding: 8px; box-sizing: border-box; }
+html .ebp-st { margin-top: 10px; background: #fff !important; }
+html .ebp-st > b.dotnum { font-size: 18px !important; color: #20301a !important; font-weight: 900 !important; }
+html .ebp-st em { font-size: 13px; }
+html .ebp-st span { font-size: 13px; }
+html .ebp-in > .ebp-st { grid-column: 1 / -1; margin-top: 0; }
