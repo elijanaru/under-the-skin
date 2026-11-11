@@ -316,9 +316,7 @@ function viewTopic(k) {
       <div class="tp-ideas">${F.ideas.map((t, i) => `<span><i>${i + 1}</i>${t}</span>`).join('')}</div>
       <div class="en-r no tp-skip">${icon('close', 12, 2.4)}<span><em>Skip</em>${F.skip}</span></div>
       <div class="tp-f"><span class="dos-w">${icon('clock', 12)} This week</span>${saveBtn(regTip(`friends-${ph}`, 'Friends', [PEOPLE_PLAN[ph][0], F.ideas[0], F.ideas[1], 'This week'], 'do/friends'))}</div>
-      <details class="gr-why"><summary>Why in this phase ${icon('chevD', 13)}</summary><p>${F.why}</p></details></section>
-    ${sectionTitle('Across your cycle')}
-    <section class="card tp-card"><div class="tp-cyc">${PHASE_ORDER.map(p => `<span class="${p === ph ? 'on' : ''}" style="--c:${PH_HEX[p]}"><i></i><small>${PHASES[p].name}</small><b>${PEOPLE_PLAN[p][0]}</b></span>`).join('')}</div></section>`; }
+      <details class="gr-why"><summary>Why in this phase ${icon('chevD', 13)}</summary><p>${F.why}</p></details></section>`; }
   else body = `<section class="card tp-card tp-wrap">${todayTiles(info, k)}</section>`;
   return `${topbar(head[0], { back: true })}
   <div class="pad tp">
@@ -3079,8 +3077,8 @@ function viewManifest() {
         <ol class="mm-steps">${T.steps.map(x => `<li>${x}</li>`).join('')}</ol>
         <p class="mm-src">After Neville Goddard’s teaching in <i>Feeling is the Secret</i>: live the wish first as a feeling. A spiritual practice for reflection.</p></details></section>
     ${sceneBuilder()}
-    ${sectionTitle('Your month of manifesting')}
-    <div class="mfm">${PHASE_ORDER.map(p => { const t = MG.MANIFEST_CYCLE[p][0], [fit, when] = MANI_FIT[p]; return `<button class="mfm-p ${p === phase ? 'now' : ''} ${t === k ? 'on' : ''}" style="--c:${PH_HEX[p]}" data-action="maniK" data-v="${t}">
+    ${sectionTitle('For this phase')}
+    <div class="mfm one">${[phase].map(p => { const t = MG.MANIFEST_CYCLE[p][0], [fit, when] = MANI_FIT[p]; return `<button class="mfm-p ${p === phase ? 'now' : ''} ${t === k ? 'on' : ''}" style="--c:${PH_HEX[p]}" data-action="maniK" data-v="${t}">
       <span class="mfm-h"><i></i>${PHASES[p].name}${p === phase ? '<em>Now</em>' : ''}</span>
       <span class="mfm-r"><span class="mfm-a">${maniArt(t)}</span><b>${MG.MANIFEST[t].name}</b></span>
       <small>${fit}</small><span class="mfm-w">${icon('clock', 11)}${when}</span></button>`; }).join('')}</div>
@@ -3507,8 +3505,7 @@ const EL5_ART = {
 function el5(ph, k) {
   ph = ph || (M.info && M.info.phase) || 'follicular'; const E = EL5.find(x => x.k === k) || EL5[0];
   return `<section class="el5" data-ph="${ph}" data-k="${E.k}">
-    <div class="el5-h"><small>Balance your hormones</small><b>The five elements</b><p>An old way of seeing balance. Tap an element for what to do in each phase.</p></div>
-    <div class="el5-ph">${PHASE_ORDER.map(p => `<button class="${p === ph ? 'on' : ''}" style="--c:${PH_HEX[p]}" data-action="el5" data-ph="${p}" data-k="${E.k}" aria-pressed="${p === ph}"><i></i>${PHASES[p].name}</button>`).join('')}</div>
+    <div class="el5-h"><small>Balance your hormones</small><b>The five elements</b><p>An old way of seeing balance. Tap an element for what to do in this phase.</p></div>
     <div class="el5-row">${EL5.map(x => `<button class="${x.k === E.k ? 'on' : ''}" style="--c:${x.c}" data-action="el5" data-ph="${ph}" data-k="${x.k}" aria-pressed="${x.k === E.k}"><span><svg viewBox="0 0 44 44" aria-hidden="true">${EL5_ART[x.k]}</svg></span><b>${x.n}</b></button>`).join('')}</div>
     <div class="el5-card" style="--c:${E.c}"><div class="el5-ct"><span><svg viewBox="0 0 44 44" aria-hidden="true">${EL5_ART[E.k]}</svg></span><div><b>${E.n}</b><small>${E.s} · ${PHASES[ph].name} phase</small></div></div>
       <ol>${E.p[ph].map((t, i) => `<li><i>${i + 1}</i>${t}</li>`).join('')}</ol>
@@ -5002,8 +4999,8 @@ function viewSugar() {
     <p class="sg-score">${icon('spark', 14)} Each trick adds a point to <button class="link" data-action="nav" data-to="rhythm">your rhythm today</button></p>
     ${sectionTitle('8 tricks')}
     ${sugarTrickList(on)}
-    ${sectionTitle('Your cycle and sugar')}
-    <section class="card glass sg-cyc">${PHASE_ORDER.map(p => { const x = SUGAR_CYCLE[p], me = M.info && M.info.phase === p; return `<div class="sgc ${me ? 'me' : ''}" style="--pc:${PHASE_COLOR.dark[p]}"><i></i><div><b>${PHASES[p].name}${me ? ' <em>you</em>' : ''}</b><small>${x.t}</small><p>${x.d}</p></div></div>`; }).join('')}
+    ${sectionTitle('Sugar in this phase')}
+    <section class="card glass sg-cyc">${PHASE_ORDER.filter(p => !M.info || M.info.phase === p).map(p => { const x = SUGAR_CYCLE[p], me = M.info && M.info.phase === p; return `<div class="sgc ${me ? 'me' : ''}" style="--pc:${PHASE_COLOR.dark[p]}"><i></i><div><b>${PHASES[p].name}${me ? ' <em>you</em>' : ''}</b><small>${x.t}</small><p>${x.d}</p></div></div>`; }).join('')}
       <p class="sgc-src">${evBadge('some')} Insulin and insulin resistance were higher in the luteal phase in 257 women (Yeung et al. 2010, JCEM, BioCycle study). Resting burn rises a little after ovulation (Benton et al. 2020, PLoS One).</p></section>
     <p class="fine center">From the book “Krankheitslügen entlarvt”. The chart is an illustration of a typical meal, not a measurement.</p>
   </div>`;
@@ -5198,7 +5195,7 @@ function sunArc(D, h, moon) {
   </svg></div>`;
 }
 // ---------- UV index & vitamin D ----------
-// Live UV for her area (Open-Meteo, rounded to about 10 km, cached for the hour). Offline it falls back to a
+// Live UV for her area (Copernicus CAMS via Open-Meteo, weather-model UV as backup, rounded to about 10 km, cached for the hour). Offline it falls back to a
 // clear-sky estimate from the height of the sun. Burn time and vitamin D follow her skin type.
 const UV_LV = [[3, 'Low', '#7fb35a'], [6, 'Moderate', '#eec04a'], [8, 'High', '#f0954a'], [11, 'Very high', '#e2604e'], [1e9, 'Extreme', '#a476d2']];
 const uvLevel = u => UV_LV.find(l => u < l[0]);
@@ -5217,19 +5214,21 @@ function uvModel(la, ln) {
 function uvData() {
   const [la, ln] = myGeo(), key = `${(+la).toFixed(1)},${(+ln).toFixed(1)},${todayISO()}`;
   let c = null; try { c = JSON.parse(localStorage.getItem('uts.uv')); } catch { /* none yet */ }
-  const live = c && c.key === key && Array.isArray(c.hours) ? c : null;
+  const live = c && c.key === key && c.src && Array.isArray(c.hours) ? c : null;
   if (!live || Date.now() - live.at > 36e5) uvFetch(key, la, ln);
   return { hours: live ? live.hours : uvModel(la, ln), live: !!live };
 }
 function uvFetch(key, la, ln) {
   if (ui.uvBusy || (ui.uvTry && Date.now() - ui.uvTry < 6e5) || !navigator.onLine) return;
   ui.uvBusy = true; ui.uvTry = Date.now();
-  fetch(`https://api.open-meteo.com/v1/forecast?latitude=${(+la).toFixed(1)}&longitude=${(+ln).toFixed(1)}&hourly=uv_index&timezone=auto&forecast_days=1`)
-    .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
-    .then(j => {
-      const hours = Array(24).fill(0);
-      j.hourly.time.forEach((t, i) => { hours[+t.slice(11, 13)] = Math.max(0, +(j.hourly.uv_index[i] || 0)); });
-      try { localStorage.setItem('uts.uv', JSON.stringify({ key, at: Date.now(), hours })); } catch { /* storage full */ }
+  const q = `latitude=${(+la).toFixed(1)}&longitude=${(+ln).toFixed(1)}&hourly=uv_index&timezone=auto&forecast_days=1`;
+  const get = u => fetch(u).then(r => (r.ok ? r.json() : Promise.reject(r.status))).then(j => {
+    const v = j && j.hourly && j.hourly.uv_index; if (!v || !v.some(x => x != null)) return Promise.reject('empty');
+    const hours = Array(24).fill(0); j.hourly.time.forEach((t, i) => { hours[+t.slice(11, 13)] = Math.max(0, +(v[i] || 0)); }); return hours; });
+  // Copernicus CAMS (ECMWF): UV with clouds, ozone and aerosols, the same worldwide model national weather services build on
+  get(`https://air-quality-api.open-meteo.com/v1/air-quality?${q}`).then(h => [h, 'cams'], () => get(`https://api.open-meteo.com/v1/forecast?${q}`).then(h => [h, 'wx']))
+    .then(([hours, src]) => {
+      try { localStorage.setItem('uts.uv', JSON.stringify({ key, at: Date.now(), hours, src })); } catch { /* storage full */ }
       uvRefresh();
     }).catch(() => {}).finally(() => { ui.uvBusy = false; });
 }
@@ -5332,7 +5331,7 @@ function uvWidget() {
       <div class="uvw-sw" role="radiogroup" aria-label="Your skin type">${SKIN.map((x, i) => `<button role="radio" aria-checked="${i + 1 === mySkin()}" aria-label="${x[2]}, ${x[3]}" class="${i + 1 === mySkin() ? 'on' : ''}" style="--s:${x[1]}" data-action="uvSkin" data-v="${i + 1}"></button>`).join('')}</div></div>
     <details class="uvw-more"><summary>How this works ${icon('chevD', 14)}</summary>
       <p>Your skin makes vitamin D from UVB light, which only gets through when the sun is high, roughly UV 3 and above. With arms and legs bare, about a quarter of the time it takes your skin to turn pink gives around 1 000 IU. Longer does not make more, it only adds sun damage, so cover up or move into the shade once the burn timer runs out.</p>
-      <p>Burn times are for your skin type with no sunscreen. Snow, water and sand reflect extra UV, and some medicines make skin more sensitive. ${live ? 'UV comes from a live forecast for your area and includes clouds.' : 'Offline, this is a clear-sky estimate from the height of the sun, so clouds will lower it.'}</p>
+      <p>Burn times are for your skin type with no sunscreen. Snow, water and sand reflect extra UV, and some medicines make skin more sensitive. ${live ? 'UV comes from Copernicus, the European atmosphere service, for your area. It includes clouds, ozone and haze and is updated every hour.' : 'Offline, this is a clear-sky estimate from the height of the sun, so clouds will lower it.'}</p>
     </details>
   </section>`;
 }
@@ -5398,13 +5397,9 @@ function viewRhythm() {
     </div>
   </section>
   <div class="pad">
-    <section class="card rnow rnow2">
-      ${sunNow(D, h, cur, nx)}
-    </section>
     ${uvWidget()}
     ${sectionTitle('Out of the sun')}
     ${shadeCard()}
-    ${sectionTitle('Your week')}<section class="card glass"><div class="rh-week">${week}</div></section>
     ${sectionTitle('Gentle reminders')}
     <section class="card glass"><div class="stepper-row"><span>Follow the sun<small>Morning light, midday sun, sunset wind-down, bedtime</small></span><button class="toggle ${r.rhythm ? 'on' : ''}" data-action="remToggle" data-k="rhythm" role="switch" aria-checked="${!!r.rhythm}" aria-label="Follow the sun"><i></i></button></div>
       ${'Notification' in window && Notification.permission === 'default' ? `<button class="btn btn-light btn-block" data-action="remPermission">${icon('spark', 16)} Turn on notifications</button>` : ''}
@@ -5881,15 +5876,13 @@ function breathCycle(k) {
   const info = M.info; if (!info) return '';
   const L = info.L || M.stats.avgCycle, P = M.stats.avgPeriod, R = C.phaseRanges(L, P), cd = Math.min(info.cd, L);
   return `<section class="bzc">
-    <div class="bzc-h"><div><small>Your breath through the month</small><b>One practice for each phase</b></div><span class="bzc-day"><b>${cd}</b><small>day</small></span></div>
-    <div class="bzc-bar" aria-hidden="true">${R.map(r => `<i class="${r.key === info.phase ? 'on' : ''}" style="flex:${r.to - r.from + 1};--c:${PH_HEX[r.key]}"></i>`).join('')}
-      <span class="bzc-now" style="left:${((cd - .5) / L * 100).toFixed(1)}%"></span></div>
-    <div class="bzc-g">${R.map(r => { const id = BREATH_FOR[r.key], B = BREATHS[id], now = r.key === info.phase;
+    <div class="bzc-h"><div><small>Your breath for this phase</small><b>${BREATHS[BREATH_FOR[info.phase]].name}</b></div><span class="bzc-day"><b>${cd}</b><small>day</small></span></div>
+    <div class="bzc-g one">${R.filter(r => r.key === info.phase).map(r => { const id = BREATH_FOR[r.key], B = BREATHS[id], now = r.key === info.phase;
       return `<button class="bzc-t ${now ? 'now' : ''} ${id === k ? 'sel' : ''}" style="--c:${PH_HEX[r.key]}" data-action="bzPhase" data-v="${id}" aria-label="${BZ_PH_NAME[r.key]}, days ${r.from} to ${r.to}: ${B.name}. ${BZ_PH_WHY[r.key]}">
         <span class="bzc-ph"><i></i>${BZ_PH_NAME[r.key]}<small>${r.from === r.to ? `day ${r.from}` : `days ${r.from}–${r.to}`}</small>${now ? '<em>Now</em>' : ''}</span>
         <b>${B.name}</b>${breathShape(B, PH_HEX[r.key])}
         <span class="bzc-tag">${icon(BZ_PH_TAG[r.key][0], 12)} ${BZ_PH_TAG[r.key][1]}</span></button>`; }).join('')}</div>
-    <details class="bzc-more"><summary>Why these breaths ${icon('chevD', 13)}</summary>${R.map(r => `<p><b>${BZ_PH_NAME[r.key]} · ${BREATHS[BREATH_FOR[r.key]].name}</b>${BZ_PH_WHY[r.key]}</p>`).join('')}</details>
+    <details class="bzc-more"><summary>Why this breath ${icon('chevD', 13)}</summary>${R.filter(r => r.key === info.phase).map(r => `<p><b>${BZ_PH_NAME[r.key]} · ${BREATHS[BREATH_FOR[r.key]].name}</b>${BZ_PH_WHY[r.key]}</p>`).join('')}</details>
   </section>`;
 }
 // her breath this week: one dot for each day she finished a full session (breathing or the still sit)
@@ -7121,8 +7114,6 @@ function viewPoint(phase) {
       <div class="step"><span class="step-n">3</span><p>${phase === 'ovulatory' ? 'Keep the pressure gentle and breathe slowly into your belly. It sits on the midline, so there is only one.' : 'Breathe slowly into your belly. Repeat on the other side.'}</p></div></section>
     <button class="btn btn-light btn-block" data-action="timer" data-title="${p.code} · ${p.name}" data-secs="${p.secs}">${icon('play', 16)} Press for ${p.secs} seconds</button>
     ${(() => { const X = POINT_SCIENCE[phase]; if (!X) return ''; return /\b(19|20)\d\d\b/.test(X.cite) ? `${sectionTitle('What studies found')}${studyCards(X.study, X.cite)}` : `${sectionTitle('What tradition says')}<section class="card pt-trad"><span class="pt-trad-i">${icon('leaf', 16)}</span><div><p>${X.study}</p><small>${X.cite}</small></div></section>`; })()}
-    ${sectionTitle('A point for every phase')}
-    <div class="tea-more">${PHASE_ORDER.map(ph => `<button class="${ph === phase ? 'on' : ''}" data-action="nav" data-to="point/${ph}"><span style="color:${PHASE_COLOR.dark[ph]}">●</span>${TCM[ph].point.code} · ${PHASES[ph].name}</button>`).join('')}</div>
     <p class="fine center">Avoid strong pressure on SP6 and CV4 if you might be pregnant.</p>
   </div>`;
 }
