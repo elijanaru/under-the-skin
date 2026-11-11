@@ -3407,15 +3407,19 @@ const FB_TILT = [-4, 3, -2, 5, -3, 2, -5, 3, -2, 4, -3, 2, -4, 3, -2, 5, -3, 2];
 // Around her period (the warm window) the raw carrot salad and the castor oil pack (skip during the period) step aside;
 // heat on the belly and golden milk take their places, so the poster never suggests raw food or castor oil on those days.
 const FB_WARM_SWAP = { carrot: 'heat', castor: 'golden' };
-function fbOrder(info) {
-  const all = FB.map((x, i) => [x, i]);
-  if (!warmWindow(info)) return all;
-  const byId = Object.fromEntries(all.map(e => [e[0].id, e])), moved = new Set(Object.values(FB_WARM_SWAP));
-  return all.filter(([x]) => !moved.has(x.id)).map(e => FB_WARM_SWAP[e[0].id] ? byId[FB_WARM_SWAP[e[0].id]] : e);
+// Step by step, fundamentals first: light, blood sugar and stress, then helping her body clear used hormones, then extras.
+const FB_STEPS = [
+  ['Start with the fundamentals', 'Light, steady blood sugar and calm. Everything else builds on these.', ['sun', 'lemon', 'phone', 'walk', 'breathe', 'ground']],
+  ['Then help your body clear and rebuild', 'Food and rituals that carry out used hormones and feed new ones.', ['carrot', 'seeds', 'golden', 'tongue', 'castor', 'magnesium']],
+  ['Extras when you need them', 'For cramps, sleep, puffiness and slow days.', ['heat', 'chamomile', 'cherry', 'fascia', 'brush', 'salt']],
+];
+function fbSteps(info) {
+  const idx = Object.fromEntries(FB.map((x, i) => [x.id, i])), warm = warmWindow(info), moved = new Set(warm ? Object.values(FB_WARM_SWAP) : []);
+  return FB_STEPS.map(([t, s, ids]) => [t, s, ids.filter(id => !moved.has(id)).map(id => (warm && FB_WARM_SWAP[id]) || id).filter(id => idx[id] != null).map(id => [FB[idx[id]], idx[id]])]);
 }
-function fbItem(x, i, done, pos = i) {
+function fbItem(x, i, done, pos = i, n = 0) {
   const on = x.hb && done.includes(x.hb);
-  return `<button class="fbp-i ${on ? 'ok' : ''} ${pos % 3 === 1 ? 'mid' : ''}" style="--r:${FB_TILT[pos]}deg;--i:${pos}" data-action="fbPick" data-i="${i}" aria-expanded="false"><span class="fbp-ph"><img src="images/fb/${x.id}.webp" alt="" loading="lazy" decoding="async"></span><b>${x.t}</b><small>${x.s}</small>${x.hb ? `<i class="fbp-ok" aria-label="${on ? 'Done today' : 'Daily habit'}">${icon('check', 10, 3)}</i>` : ''}</button>`;
+  return `<button class="fbp-i ${on ? 'ok' : ''} ${pos % 3 === 1 ? 'mid' : ''}" style="--r:${FB_TILT[pos]}deg;--i:${pos}" data-action="fbPick" data-i="${i}" aria-expanded="false">${n ? `<em class="fbp-n">${n}</em>` : ''}<span class="fbp-ph"><img src="images/fb/${x.id}.webp" alt="" loading="lazy" decoding="async"></span><b>${x.t}</b><small>${x.s}</small>${x.hb ? `<i class="fbp-ok" aria-label="${on ? 'Done today' : 'Daily habit'}">${icon('check', 10, 3)}</i>` : ''}</button>`;
 }
 // Each ritual's spec rows (when, how much) and one study where a good human trial exists: [year, author, finding, journal]
 const FB_SPEC = {
@@ -3522,16 +3526,14 @@ function viewReliefIndex() {
   const done = habitsDone(todayISO()), H = habitsBlock();
   const pillar = (P, i) => `<details class="hg-p" style="--c:${P.c};--i:${i}"><summary><span class="hg-pi">${icon(P.ic, 19, 1.8)}</span><span class="hg-pt"><b>${P.t}</b><small>${P.s}</small></span><span class="hg-pc">${icon('chevD', 16)}</span></summary>
       <div class="hg-pin"><ul>${P.do.map(x => `<li>${icon('check', 12, 2.6)}<span>${x}</span></li>`).join('')}</ul><p><b>Why it works</b>${P.why}</p>${P.st ? `<div class="hg-st"><small>What studies found</small><div class="sgt-st"><b class="dotnum">${P.st[2]}</b><span><em>${P.st[1]}</em>${P.st[0]}<small>${P.st[3]}</small></span></div></div>` : ''}</div></details>`;
-  return `${topbar('Feel better', { back: true })}
+  return `${topbar('Balance', { back: true })}
   <div class="pad hg fb">
-    <section class="fbp" aria-label="Small rituals that support your hormones">
-      <div class="fbp-title"><small>${info ? `Day ${info.cd} · ` : ''}Balance your hormones</small><h1>Feel better, <span>gently</span></h1><p>Small rituals your hormones love. Tap any one for how and why.</p></div>
-      <div class="fbp-g">${fbOrder(info).map(([x, i], pos) => fbItem(x, i, done, pos)).join('')}</div>
+    <section class="fbp" aria-label="Balance your hormones, step by step">
+      <div class="fbp-title"><small>${info ? `Day ${info.cd} · ` : ''}Step by step</small><h1>Balance your <span>hormones</span></h1><p>Start with the fundamentals. When they feel easy, add the next step. Tap any one for how and why.</p></div>
+      ${(() => { let n = 0; return fbSteps(info).map(([t, sub, list], k) => `<div class="fbp-step"><span class="dotnum">${k + 1}</span><div><b>${t}</b><small>${sub}</small></div></div>
+      <div class="fbp-g">${list.map(([x, i], pos) => fbItem(x, i, done, pos, ++n)).join('')}</div>`).join(''); })()}
       <div class="fbp-det" hidden></div>
     </section>
-    <section class="card glass fb-now"><small>${recent.size ? 'For what you logged' : 'Common around now'}</small>
-      ${likely.length ? `<div class="rx2-chips">${likely.map(chip).join('')}</div>` : '<p>Usually your easiest days. Pick anything below.</p>'}
-      <button class="rx2-cta" data-action="nav" data-to="log">${icon('plus', 15)} Log how you feel</button></section>
     ${el5()}
     ${H.fert.length ? `${sectionTitle('Fertility & feminine flow')}<div class="hg-list">${H.fert.map(H.row).join('')}</div>` : ''}
     ${sectionTitle('Seven pillars of balance')}
@@ -4416,7 +4418,7 @@ function todayTiles(info, only) {
       ${tile('wide hero-move ph-vid', { to: 'move' }, `<video class="dpt-vid" src="images/move-stardust.mp4" poster="images/move-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Sport', g.title, best.map(m => m.n).slice(0, 3).join(' · '))}
       ${rec ? tile(`t-tea t-cup t-dish${recD && recD.hero ? ' t-big' : ''}`, { to: `recipe/${rec.id}` }, recD ? `<span class="cup3d-w"><img class="dpt-cup" src="${recD.img}" alt="" loading="lazy"><canvas class="teacup3d" data-model="${recD.model}" data-elev="${recD.elev || 0.9}" data-fit="${recD.tileFit || recD.fit}"${recD.steam === 0 ? ' data-steam="0"' : ''} aria-label="${esc(rec.name)}, turning slowly"></canvas></span>` : `<span class="dish-ph"><img src="${photoUrl(rec.id, 400)}" alt="" loading="lazy"></span>`, 'Eat today', rec.name, `<span class="dpt-why">${recWhy(rec)}</span><span class="dpt-rule">${icon('clock', 12)} ${rec.time >= 60 ? `${Math.floor(rec.time / 60)} h${rec.time % 60 ? ` ${rec.time % 60}` : ''}` : `${rec.time} min`} · Cook it ${icon('chevR', 12)}</span>`) : tile('t-tea t-cup t-dish', { to: 'do/eat' }, `<span class="cup3d-w"><img class="dpt-cup" src="${D.img}" alt="" loading="lazy"><canvas class="teacup3d" data-model="${D.model}" data-elev="0.9" data-fit="${D.fit}" aria-label="${dish.t}, turning slowly"></canvas></span>`, 'Eat today', dish.t, `<span class="dpt-why">${dish.why}</span><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
       ${(() => { const D = dayMoments(info), h = nowH(), cur = momentAt(D, h); return tile('t-deep ph-full keep ph-fr ph-vid ph-sun', { to: 'rhythm' }, `<video class="dpt-vid" src="images/sun-moon.mp4" poster="images/sun-moon-poster.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, `<span class="dsun-badge">${icon('sun', 14, 2.2)}</span>Follow the sun`, (SUN_DO[cur.id] || SUN_DO.midday)[0], `Rise ${hLabel(D.rise)} · Set ${hLabel(D.set)}`); })()}
-      ${tile('t-sage ph-full ph-vid', { to: 'relief' }, `<video class="dpt-vid" src="images/relief-stardust.mp4" poster="images/relief-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Relief', rp.st.t, `${rp.mine ? 'You logged' : 'Common now:'} ${rp.k.toLowerCase()}`)}
+      ${tile('t-sage ph-full ph-vid', { to: 'relief' }, `<video class="dpt-vid" src="images/relief-stardust.mp4" poster="images/relief-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Hormones', 'Balance step by step', 'Start with the fundamentals')}
       ${tile(`calm lv${lvl} t-cort t-mol`, { to: 'breathe/stress' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/cortisol-mol.webp" alt="" loading="lazy"><canvas class="teacup3d" data-model="models/cortisol.glb" data-elev="0.3" data-fit="1.9" data-steam="0" data-shadow="0" aria-label="The cortisol molecule, turning slowly"></canvas></span>`, 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}<span class="cv-lv" aria-hidden="true">${[1, 2, 3].map(i => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</span>`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
       ${tile('t-tea t-cup', { to: 'do/tea' }, `<span class="cup3d-w"><img class="dpt-cup" src="${teaCupImg(td[1])}" alt="" loading="lazy"><canvas class="teacup3d"${teaCupAttr(td[1])} aria-label="${td[1]}, turning slowly"></canvas></span>`, 'Tea for today', td[1], td[2])}
       ${tile('t-glow ph-full ph-vid ph-tree', { to: 'ground' }, `<img class="dpt-vid" src="images/ground-tree.webp" alt="" loading="lazy" decoding="async"><i></i>`, 'Ground', GROUND_PHASE[ph].t, '')}
