@@ -2043,7 +2043,7 @@ function foodExplore(phase, info) {
     lead = warm ? 'Your period is close, so warm and cooked dishes come first.' : `Dishes that fit your ${name.toLowerCase()} phase and the season.`;
     body = `<div class="fx-big">${recs.map(r => `<button class="fx-b" data-action="nav" data-to="recipe/${r.id}"><img src="${photoUrl(r.id, 520)}" alt="" loading="lazy" decoding="async"><b>${r.name}</b><small>${r.time} min</small></button>`).join('')}</div>`;
   } else if (k === 'season') {
-    const m = new Date().getMonth() + 1, sz = SZ.seasonal(myCountry(), m), its = sz.filter(x => x.ph.includes(phase) && szCut(x.f)).concat(sz.filter(x => !x.ph.includes(phase) && szCut(x.f))).slice(0, 9);
+    const m = new Date().getMonth() + 1, sz = SZ.seasonal(myCountry(), m), seen = new Set(), its = sz.filter(x => x.ph.includes(phase) && szCut(x.f)).concat(sz.filter(x => !x.ph.includes(phase) && szCut(x.f))).filter(x => { const c = szCut(x.f); if (seen.has(c)) return false; seen.add(c); return true; }).slice(0, 9); // one tile per picture, no repeats
     lead = `${SZ.seasonName(myCountry(), m)} foods where you live, the ones for your phase first.`;
     body = `<div class="fx-g">${its.map(x => tile(szCut(x.f), x.f.charAt(0).toUpperCase() + x.f.slice(1), `data-action="seasonGo" data-f="${esc(x.f)}"`)).join('')}</div>`;
   } else if (k === 'foods') {
