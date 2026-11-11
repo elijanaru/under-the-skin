@@ -11013,3 +11013,6 @@ html .fl4-band em{position:absolute;left:50%;bottom:calc(100% + 3px);transform:t
 html .fl4-d{position:absolute;top:15px;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:#20301a;border:3px solid #fff;box-shadow:0 2px 6px rgba(32,48,26,.3)}
 html .fl4-d.me{background:#b04a64}
 html .fl4-line small{position:absolute;top:40px;transform:translateX(-50%);font:700 11px/1 var(--dot);color:#7d8571}
+
+/* v877 heading dots: the second tone was a pale dusty pink (68% light) that blended in; now a deeper tone of the same phase hue */
+html .section-title.tone-1 h3::before{background:hsl(calc(var(--hb) + 103 * var(--hk)) calc(34% * var(--hs2)) 44%) !important}

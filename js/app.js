@@ -3946,13 +3946,17 @@ const SUPP_HERO = {
   b6: ['Salmon', 'salmon'], calcium: ['Grass-fed raw milk & butter', 'raw milk'], prenatal: ['Avocado', 'avocado'], coq10: ['Mackerel', 'mackerel'],
 };
 const suppPhoto = id => { const h = SUPP_HERO[id]; if (!h) return ''; return h[0].startsWith('tea:') ? teaPhoto(h[0].slice(4), 800, 900) : foodPhoto(h[0], 800); };
+// how long each one takes before she can judge it (conservative, from the trials behind each sheet)
+const SUPP_TIME = { magnesium: '2 to 3 cycles for PMS', iron: '2 to 3 months to refill stores', 'omega-3': '2 to 3 months', 'vitamin-c': 'Works at the same meal', ginger: 'Within hours on period days',
+  creatine: '3 to 4 weeks to fill your muscles', 'vitamin-d': '2 to 3 months', 'b-complex': 'A few weeks', probiotic: 'About 4 weeks', zinc: '1 to 2 cycles', 'vitamin-e': '2 to 3 cycles',
+  ashwagandha: '6 to 8 weeks', b6: '2 to 3 cycles', calcium: '2 to 3 cycles', prenatal: 'Start 3 months before trying', coq10: 'About 3 months, one egg’s growth' };
 function viewSupp(id) {
   const x = SUPP_LIB.find(s => s.id === id); if (!x) return viewMissing();
   const ph = suppPhases(x), now = M.info && M.info.phase;
   return `<div class="pad sp2">
-    ${specHero({ stack: true, photo: suppPhoto(x.id), glyph: x.sym, han: x.han, eyebrow: 'Supplement', sym: !x.han, name: x.name, label: 'How to take it',
+    ${specHero({ stack: true, photo: suppPhoto(x.id), glyph: x.sym, han: x.han, eyebrow: 'Supplement', sym: !x.han, name: x.name, label: 'How to take it', max: 4,
       extra: SUPP_HERO[x.id] ? `<span class="sp-capchip"><span class="sd-cap ${x.han ? 'han' : ''}">${x.sym}</span><small>Richest in<b>${SUPP_HERO[x.id][1]}</b></small></span>` : '',
-      rows: [['Dose', x.dose], ['Form', x.form], ['When', x.when]], desc: x.desc })}
+      rows: [['Dose', x.dose], ['Form', x.form], ['When', x.when], ...(SUPP_TIME[x.id] ? [['Give it', SUPP_TIME[x.id]]] : [])], desc: x.desc })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit(ph, now)}${ph.length === 4 ? '<small class="tf-all">Useful every day of your cycle</small>' : now && !ph.includes(now) ? `<small class="tf-all">Not a focus in your ${PHASES[now].name.toLowerCase()} phase</small>` : ''}</section>
     ${suppSafe(x.id)}
     ${suppDay(x.when)}
@@ -4051,18 +4055,18 @@ function liquidArt(glyph, han, sym) {
   return `<div class="spec-liquid"><i></i><i></i><i></i></div>${glyph ? `<span class="spec-glyph ${han ? 'han' : ''} ${sym ? 'sym' : ''}">${glyph}</span>` : ''}`;
 }
 // stack: photo as its own rounded tile, the name below it in ink, then the sheet (nothing written over the photo)
-function specHero({ photo, glyph, han, sym, eyebrow, name, label = 'Key ingredients', rows = [], lead, desc, extra = '', media = '', block = '', stack = false }) {
+function specHero({ photo, glyph, han, sym, eyebrow, name, label = 'Key ingredients', rows = [], lead, desc, extra = '', media = '', block = '', stack = false, max = 3 }) {
   const nm = `<div class="spec-name">${eyebrow ? `<div class="eyebrow">${eyebrow}</div>` : ''}<h1>${name}</h1></div>`;
   if (stack) return `<section class="spec stack"><div class="spec-media ${photo ? '' : 'liquid'}">${photo ? `<img src="${photo}" alt="" onload="this.classList.add('in')" onerror="this.closest('.spec-media').classList.add('noimg')">` : liquidArt(glyph, han, sym)}
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>${extra}</div>${nm}
     <div class="spec-sheet"><div class="spec-k">${label}</div>
-      ${block}${rows.slice(0, 3).map(([t, v]) => `<div class="spec-row"><b>${t}</b>${v ? `<span>${v}</span>` : ''}</div>`).join('')}
+      ${block}${rows.slice(0, max).map(([t, v]) => `<div class="spec-row"><b>${t}</b>${v ? `<span>${v}</span>` : ''}</div>`).join('')}
       ${lead ? `<p class="spec-lead">${lead}</p>` : ''}${desc ? `<p class="spec-desc">${desc}</p>` : ''}</div></section>`;
   return `<section class="spec"><div class="spec-media ${media ? 'm3d' : photo ? '' : 'liquid'}">${media || (photo ? `<img src="${photo}" alt="" onload="this.classList.add('in')" onerror="this.closest('.spec-media').classList.add('noimg')">` : liquidArt(glyph, han, sym))}<span class="spec-shade"></span>
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>${extra}
     <div class="spec-name">${eyebrow ? `<div class="eyebrow">${eyebrow}</div>` : ''}<h1>${name}</h1></div></div>
     <div class="spec-sheet"><span class="spec-handle"></span><div class="spec-k">${label}</div>
-      ${block}${rows.slice(0, 3).map(([t, v]) => `<div class="spec-row"><b>${t}</b>${v ? `<span>${v}</span>` : ''}</div>`).join('')}
+      ${block}${rows.slice(0, max).map(([t, v]) => `<div class="spec-row"><b>${t}</b>${v ? `<span>${v}</span>` : ''}</div>`).join('')}
       ${lead ? `<p class="spec-lead">${lead}</p>` : ''}${desc ? `<p class="spec-desc">${desc}</p>` : ''}</div></section>`;
 }
 // photo for a ritual/remedy card when we have one, glow art otherwise
