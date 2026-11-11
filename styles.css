@@ -11093,3 +11093,26 @@ html .rl-doc p { margin: 4px 0 0; font-size: 14px; line-height: 1.5; color: rgba
 html .rl-st .sgt-st > b.dotnum { font-size: 22px !important; line-height: 22px !important; }
 html .card.rl-doc { background: #fff !important; background-image: none !important; }
 html .card.rl-doc::before, html .card.rl-doc::after { display: none !important; }
+
+/* v883 consistency sweep: Rituals and Home remedies as white photo tiles (no text over photos) like Recipes */
+html .rit-g .rcard.has-photo { display: flex !important; flex-direction: column; justify-content: flex-start; gap: 0; height: auto !important; min-height: 0 !important; padding: 6px 6px 14px !important; background: #fff !important; border: 0 !important; box-shadow: 0 10px 24px -18px rgba(32,48,26,.45), inset 0 0 0 1px rgba(32,48,26,.07) !important; overflow: hidden; color: #20301a; }
+html .rit-g .rcard.has-photo::after { display: none; }
+html .rit-g .rcard.has-photo .rc-photo { position: static !important; inset: auto; display: block; width: 100%; height: 150px; border-radius: 19px; object-fit: cover; animation: none !important; transform: none !important; flex: none; order: 0; }
+html .rit-g .rcard.has-photo .rc-shade { display: none !important; }
+html .rit-g .rcard.has-photo .rc-top { position: static !important; order: 1; display: flex; align-items: center; justify-content: space-between; padding: 11px 8px 0; margin: 0; }
+html .rit-g .rcard.has-photo .rit-min { background: none !important; border: 0 !important; padding: 0 !important; color: rgba(32,48,26,.6) !important; font: 500 12px/1 var(--font); display: inline-flex; align-items: center; gap: 4px; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; box-shadow: none !important; }
+html .rit-g .rcard.has-photo .rit-seal { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; background: #f3f1ec !important; color: #20301a !important; border: 0 !important; box-shadow: none !important; font-size: 13px; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+html .rit-g .rcard.has-photo .rit-foot { position: static !important; order: 2; padding: 6px 8px 0; margin: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; background: none !important; }
+html .rit-g .rcard.has-photo .rc-t { position: static !important; order: 0; padding: 0; margin: 0; color: #20301a !important; text-shadow: none !important; font: 500 16px/1.22 var(--font); text-align: left; }
+html .rit-g .rcard.has-photo .rit-you { order: 1; position: static !important; padding: 4px 9px; border-radius: 999px; font: 500 11.5px/1 var(--font); color: #20301a !important; background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(40% * var(--hs)) 90%) !important; border: 0 !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; text-shadow: none !important; box-shadow: none !important; }
+html .rit-g .rcard.has-photo .rit-you.not { background: #f1efea !important; color: rgba(32,48,26,.6) !important; }
+html .rit-g .rcard.has-photo.dim { opacity: 1 !important; filter: none !important; }
+html .rit-g .rcard.has-photo.dim .rc-photo { opacity: .75; filter: saturate(.7); }
+/* leftover letter-spaced capitals */
+html .tgw-k { letter-spacing: 0 !important; text-transform: none !important; font-size: 13px !important; font-weight: 500; }
+html .tgw-l { letter-spacing: 0 !important; text-transform: none !important; font-size: 12px !important; font-weight: 500; }
+html .bzq-k { letter-spacing: 0 !important; text-transform: none !important; font-size: 12.5px !important; }
+html .cp-sep { letter-spacing: 0 !important; text-transform: none !important; font-size: 12.5px !important; }
+/* Season: the Your country label sat beside the picker; now a small label above it */
+html .season-ctl { flex-direction: column; align-items: stretch !important; gap: 6px !important; }
+html .season-ctl > .fine { margin: 0 0 0 4px; font-size: 13px; font-weight: 500; color: rgba(32,48,26,.65); }
