@@ -2191,7 +2191,8 @@ function eatCatInner(phase, cat) {
   const warm = warmWindow(M.info) && phase === (M.info && M.info.phase), [t1, t2] = EB_TINT[cat] || EB_TINT.drinks;
   const items = warmChips(C0[1], cat, warm).map(([g, n]) => {
     const x = cat === 'supps' && !/algae|B12/i.test(n) && suppOf(n), why = x ? x.desc.split('. ')[0] + '.' : (EB_WHY.find(([r]) => r.test(n)) || [0, C0[0]])[1], pic = cat === 'supps' ? null : (EB_PIC.find(([r]) => r.test(n)) || [])[1]?.();
-    const face = pic ? `<img class="${pic.startsWith('images/') ? 'cut' : ''}" src="${pic}" alt="" loading="lazy">` : `<em>${g}</em>`;
+    const sym = cat === 'supps' ? (x ? x.sym : /B12/.test(n) ? 'B12' : /omega/i.test(n) ? 'Ω3' : n.slice(0, 2)) : '';
+    const face = pic ? `<img class="${pic.startsWith('images/') ? 'cut' : ''}" src="${pic}" alt="" loading="lazy">` : sym ? `<span class="eb-sym ${x && x.han ? 'han' : ''}">${sym}</span>` : `<em>${g}</em>`;
     return { n, face, panel: `<span class="ebp-f">${face}</span><span class="ebp-t"><b>${n}</b><small>${why}</small>${/raw milk|milk, warmed|warm raw/i.test(n) && cat !== 'supps' ? `<span class="ebp-w">${icon('thermo', 13)} Warm raw milk very gently on low heat, only until it feels warm on your lip. Never boil it, or the good enzymes and bacteria are lost.</span>` : ''}${x ? `<span class="ebp-d"><span>${icon('drop', 12)} ${x.dose}</span><span>${icon('clock', 12)} ${x.when}</span></span><button class="ebp-go" data-action="nav" data-to="supp/${x.id}">Doses and studies ${icon('chevR', 13)}</button>` : ''}</span>${cat === 'drinks' && /coffee/i.test(n) ? `<span class="sgt-st ebp-st"><b class="dotnum">1983</b><span><em>Morck</em>Coffee with a meal cut the iron absorbed from it by about 39%. Drunk an hour before the meal, it made no difference.<small>American Journal of Clinical Nutrition</small></span></span>` : ''}` };
   });
   return `<p class="eb-lead">${C0[0]}</p>
@@ -3903,7 +3904,8 @@ function viewRemedy(id) {
   </div>`;
 }
 // Supplement spec sheet: dose, form and timing on the glass sheet, then the phases it helps, studies and cautions.
-const suppOf = name => SUPP_LIB.find(x => x.m.test(name));
+// the supplement named first wins, so 'Vitamin C with iron' is vitamin C, not iron
+const suppOf = name => (SUPP_LIB.map(x => [x, String(name).search(x.m)]).filter(([, i]) => i >= 0).sort((a, b) => a[1] - b[1])[0] || [])[0];
 const suppPhases = x => { const ph = PHASE_ORDER.filter(p => EAT_GUIDE[p].cats.supps[1].some(([, n]) => x.m.test(n))); return ph.length ? ph : PHASE_ORDER; };
 // Supplement page: when in her day to take it, as a sunrise-to-night line with a pin.
 function suppDay(when) {
@@ -4548,7 +4550,7 @@ const SPORES = Array.from({ length: 16 }, (_, i) => `<i style="--x:${(i * 37) % 
 // o.nav false = a partner's view: the same flower stage, nothing to tap into her own pages
 function stageHero(info, energy, o = {}) {
   const ph = PHASES[info.phase], L = info.L, cd = Math.min(info.cd, L), nav = o.nav !== false;
-  const cap = (ic, v, pct, k, to) => `<${nav ? 'button' : 'div'} class="cap" ${nav ? `data-action="nav" data-to="${to}"` : ''}><span class="cap-pill"><svg class="cap-o" viewBox="0 0 120 52" preserveAspectRatio="none" aria-hidden="true"><rect class="cap-t" x="1.5" y="1.5" width="117" height="49" rx="24.5"/><rect class="cap-p" x="1.5" y="1.5" width="117" height="49" rx="24.5" pathLength="100" stroke-dasharray="${Math.max(2, Math.round(pct))} 100"/></svg>${icon(ic, 15)}<b>${v}</b></span><small>${k}</small></${nav ? 'button' : 'div'}>`;
+  const cap = (ic, v, pct, k, to) => `<${nav ? 'button' : 'div'} class="cap" ${nav ? `data-action="nav" data-to="${to}"` : ''}><span class="cap-pill"><svg class="cap-o" viewBox="0 0 120 52" preserveAspectRatio="none" aria-hidden="true"><rect class="cap-t" x="1.5" y="1.5" width="117" height="49" rx="24.5"/><rect class="cap-p" x="1.5" y="1.5" width="117" height="49" rx="24.5" pathLength="100" stroke-dasharray="${Math.max(2, Math.round(pct))} 100"/></svg>${icon(ic, 15)}<b class="${/\d/.test(v) ? '' : 'word'}">${v}</b></span><small>${k}</small></${nav ? 'button' : 'div'}>`;
   const nextP = Math.max(0, info.daysToPeriod);
   const perCap = cap('drop', nextP === 0 ? 'Today' : `${nextP}d`, nextP === 0 ? 100 : (1 - nextP / L) * 100, 'Next period', 'calendar');
   const fertCap = cap('heart', info.fertile ? 'Yes' : 'No', info.fertile ? 100 : 0, 'Fertile', 'guide');

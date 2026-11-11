@@ -11178,3 +11178,9 @@ html .wk2-st { margin-top: 6px; }
 html .wk2-st > b.dotnum { font-size: 18px !important; color: #20301a !important; font-weight: 900 !important; }
 html .wk2-g { border-radius: 12px; line-height: 1.35; align-items: flex-start; padding: 6px 10px; }
 html .wk2-g svg { margin-top: 2px; flex: none; }
+
+/* v888 sweep: supplement bubbles show the chemical symbol (Fe, Mg, Ω3) like the supplement list, not emoji; words in the Today hero pills use Outfit, Doto stays for numbers */
+html .eb-sym { display: grid; place-items: center; width: 100%; height: 100%; border-radius: 50%; background: #fff; font: 600 22px/1 var(--font); letter-spacing: -.02em; color: #20301a; box-shadow: inset 0 0 0 1px rgba(32,48,26,.08); }
+html .eb-sym.han { font-family: 'Noto Serif SC', serif; font-weight: 600; }
+html .ebp-f .eb-sym { font-size: 24px; }
+html .cap-pill b.word { font-family: var(--font) !important; font-weight: 600 !important; letter-spacing: 0 !important; font-size: 17px !important; }
