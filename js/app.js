@@ -5765,6 +5765,17 @@ function breathShape(B, col, anim) {
   return `<span class="bsh ${anim ? 'live' : ''}" aria-hidden="true"><span class="bsh-g"><svg viewBox="0 0 ${W} ${Hh}" preserveAspectRatio="none">${area}${segs}</svg>${dot}</span>
     <span class="bsh-l">${st.map(([k, ms]) => `<i style="flex:${ms}"><b>${{ in: 'In', out: 'Out', hold: 'Hold', rest: 'Rest' }[k]}</b> ${+(ms / 1000).toFixed(1)}</i>`).join('')}</span></span>`;
 }
+// Drawn line icons for the six practices (the emoji glyphs stay in the data for share text only).
+const bzLine = d => `<svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const BZ_IC = {
+  still: () => icon('mind', 18),
+  sigh: () => bzLine('<path d="M3 14c2.4-3.2 4.6-3.2 7 0s4.6 3.2 7 0c1.2-1.6 2.4-2.4 4-2.4"/><path d="M6 8.5c1.6-2 3.4-2 5 0s3.4 2 5 0"/>'),
+  belly: () => bzLine('<path d="M12 3.5c.6 2.8 4.8 4.6 4.8 9.6a4.8 4.8 0 0 1-9.6 0c0-2.6 1.6-3.8 2.2-5.6.9.9 1.6 2 1.7 3.1 1-1.9 1.3-4.6.9-7.1z"/>'),
+  box: () => bzLine('<rect x="5" y="5" width="14" height="14" rx="2.5"/><circle cx="5" cy="5" r="1.4" fill="currentColor" stroke="none"/>'),
+  even: () => bzLine('<path d="M3 12c2-4.4 4-4.4 6 0s4 4.4 6 0 4-4.4 6 0"/>'),
+  478: () => icon('moon', 18),
+};
+const bzIc = id => (BZ_IC[id] ? BZ_IC[id]() : '');
 // What each breath does: one card per practice, her phase's breath first
 const BZ_DOES = { still: 'Notice a thought, let it go.', sigh: 'Calms you within seconds.', belly: 'Softens cramps and tension.', box: 'Steady and clear under pressure.', even: 'Heart and breath in step.', 478: 'Helps you fall asleep.' };
 const BZ_COL = { still: '#6c823e', sigh: '#5f93a8', belly: '#d9768f', box: '#6c823e', even: '#c99327', 478: '#8f79bd' };
@@ -5775,7 +5786,7 @@ function breathGuide(phase, k) {
     <p class="bwx-hint">${order.length} practices · swipe ${icon('chevR', 12)}</p>
     <div class="bwx">${order.map(id => { const B = BREATHS[id], col = BZ_COL[id] || '#6c823e', fx = BZ_FX[id] || [];
       return `<article class="bwx-c ${id === k ? 'on' : ''}" style="--c:${col}">
-        <div class="bwx-h"><span class="bwx-g">${B.g}</span><div><b>${B.name}</b></div>${id === mine ? '<em>For you now</em>' : ''}</div>
+        <div class="bwx-h"><span class="bwx-g">${bzIc(id) || B.g}</span><div><b>${B.name}</b></div>${id === mine ? '<em>For you now</em>' : ''}</div>
         <div class="bwx-art">${breathShape(B, col, true)}</div>
         <p class="bwx-does">${BZ_DOES[id] || B.for}</p>
         <div class="bwx-tags">${FX.filter((_, i) => fx[i] === 3).map(([t, ic]) => `<span>${icon(ic, 12)} ${t}</span>`).join('')}</div>
@@ -5861,7 +5872,7 @@ function viewBreathe(from) {
   <div class="pad bz-pad">
     <header class="t4-h bz-h"><small>A minute for you</small><h1>Come back to your breath.</h1><p>Pick a practice. One minute is enough.</p></header>
     <div class="bzp" role="tablist" aria-label="Choose a breathing practice">${[rec, ...BREATH_ORDER.filter(x => x !== rec)].map(x => `<button class="bzp-o ${x === k ? 'on' : ''}" role="tab" aria-selected="${x === k}" data-action="bzPick" data-v="${x}">
-      ${x === rec ? `<em>${phase ? 'For your phase' : 'Start here'}</em>` : ''}<span class="bzp-g">${BREATHS[x].g}</span><b>${BREATHS[x].name}</b><small>${BREATHS[x].when}</small></button>`).join('')}</div>
+      ${x === rec ? `<em>${phase ? 'For your phase' : 'Start here'}</em>` : ''}<span class="bzp-g">${bzIc(x) || BREATHS[x].g}</span><b>${BREATHS[x].name}</b><small>${BREATHS[x].when}</small></button>`).join('')}</div>
     <section class="bz" data-pat="${k}">
       <div class="bz-stage"><div class="bz-card-h"><span><small>${k === rec ? (phase ? 'For your phase' : 'Start here') : B.when}</small><b>${B.name}</b></span><span class="bz-n"></span></div>
         <svg class="bz-lotus" viewBox="-110 -120 220 170" aria-hidden="true">
@@ -6521,7 +6532,7 @@ const HERB_SPEC = {
   'Red dates': { dose: '3–5 dates a day', care: 'Naturally sweet and high in sugar. Count them if you watch your blood sugar.' },
   'Ginger root': { dose: 'Up to 4 g fresh a day, about a thumb', care: 'Ask first if you take blood thinners or have surgery coming up.', study: ['Ginger taken in the first days of the period eased period pain more than placebo in a pooled analysis of trials.', 'Daily 2015 (Pain Medicine)'] },
   'Clove': { dose: '2–3 whole cloves in a drink', care: 'Never take clove oil by mouth. Ask first if you take blood thinners.' },
-  'Cinnamon bark': { dose: 'Up to 1 tsp (2 g) Ceylon a day', care: 'Cassia cinnamon is high in coumarin, which strains the liver in large amounts.', study: ['In people with type 2 diabetes, a pooled analysis of 10 trials found cinnamon lowered fasting blood sugar a little.', 'Allen 2013 (Annals of Family Medicine)'] },
+  'Cinnamon bark': { dose: 'Up to 1 tsp (2 g) Ceylon a day', care: 'Cassia cinnamon is high in coumarin, which strains the liver in large amounts.', study: ['In people with type 2 diabetes, a review of 10 trials found cinnamon lowered fasting blood sugar.', 'Allen 2013 (Annals of Family Medicine)'] },
   'Goji berries': { dose: '10–15 g, a small handful a day' },
   'Reishi': { dose: '1–1.5 g powder or a few slices a day' },
   'Chaga': { dose: 'One cup of the tea a day at most' },

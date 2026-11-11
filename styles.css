@@ -10930,3 +10930,8 @@ html .apo-spec b{display:inline-flex;align-items:center;justify-content:flex-end
 html .apo-spec .nat{width:7px;height:7px;box-shadow:none} html .apo-spec .nat.warm{background:#e0746b} html .apo-spec .nat.neutral{background:#b8a98f}
 html .apo-st{margin:12px 0 4px} html .apo-st > small{display:block;margin-bottom:6px;font:500 12px/1 var(--font);color:rgba(32,48,26,.6)}
 html .apo-d-r.care{margin-top:12px}
+
+/* v868 Breathe: drawn line icons instead of emoji for the six practices */
+html .bwx-g, html .bzp-g{display:grid;place-items:center;color:#20301a;font-size:0}
+html .bzp .on .bzp-g, html .bzp button.on .bzp-g{color:#fff}
+html .bwx-g svg, html .bzp-g svg{width:20px;height:20px}
