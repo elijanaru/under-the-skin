@@ -3959,7 +3959,9 @@ function suppHand(now) {
 function viewSupps() {
   const now = M.info && M.info.phase, tab = ui.supTab || (now ? 'now' : 'all');
   const L = SUPP_LIB.filter(x => ttc() || !/prenatal|coq10/.test(x.id)), on = L.filter(x => now && suppPhases(x).includes(now));
-  const dots = x => { const ph = suppPhases(x); return `<span class="sup-ph" aria-label="Best in ${ph.map(p => PHASES[p].name).join(', ')}">${PHASE_ORDER.map(p => `<i class="${ph.includes(p) ? 'on' : ''}" style="--c:${PHASE_COLOR.light[p]}"></i>`).join('')}</span>`; };
+  // when it helps, in words: a coloured dot and the phase name (four unlabelled dots said nothing)
+  const SHORT = { menstrual: 'Period', follicular: 'Follicular', ovulatory: 'Ovulation', luteal: 'Luteal' };
+  const dots = x => { const ph = suppPhases(x); return `<span class="sup-ph2">${ph.length >= 4 ? `<span><i style="--c:#6c823e"></i>All month</span>` : PHASE_ORDER.filter(p => ph.includes(p)).map(p => `<span class="${p === now ? 'me' : ''}"><i style="--c:${PHASE_COLOR.dark[p]}"></i>${SHORT[p]}</span>`).join('')}</span>`; };
   const row = x => `<button class="sup-row" data-action="nav" data-to="supp/${x.id}"><span class="sup-sym ${x.han ? 'han' : ''}">${x.sym}</span><span class="sup-t"><b>${x.name}</b><small>${x.dose} · ${x.when.toLowerCase()}</small><span class="sup-meta">${evBadge(x.ev)}${dots(x)}</span></span>${icon('chevR', 16)}</button>`;
   return `${topbar('Supplements', { back: true })}<div class="pad sp2">
     <header class="t4-h sp-h"><small>Supplements</small><h1>Fill the gaps food can’t.</h1><p>Food comes first. Tap a pill to see what it does and when in your cycle it helps.</p></header>

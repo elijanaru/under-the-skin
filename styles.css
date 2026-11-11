@@ -10791,3 +10791,15 @@ html .rs2-list { background: #fff !important; background-image: none !important;
 .rs2 .rs-heart { margin-top: 0; }
 .rs2 .rs-go { margin-top: 4px; }
 @media (prefers-reduced-motion: reduce) { .rl-why summary svg, .rs2-more summary svg { transition: none; } }
+
+/* Your stack today (v857): the all-day ginger row sits on the dark card, so it stays dark glass with white text.
+   A later sweep had turned it into a 90% white pill with white text (name, dose and 4x unreadable). */
+html .sd .sd-all { background-color: rgba(255,255,255,0.08) !important; border-color: rgba(255,255,255,0.2) !important; box-shadow: none !important; color: #fff; }
+html .sd .sd-all-t b { color: #fff; }
+html .sd .sd-all-t small { color: rgba(255,255,255,0.78); }
+html .sd .sd-all-n b { color: #f3e7c4; font: 800 18px/1 var(--dot); }
+/* Supplement list: when it helps, as dot + phase name (v857) */
+.sup-ph2 { display: flex; flex-wrap: wrap; gap: 10px; }
+.sup-ph2 span { display: inline-flex; align-items: center; gap: 5px; font: 500 12px/1 var(--font); color: rgba(32,48,26,0.72); }
+.sup-ph2 span.me { color: #20301a; font-weight: 600; }
+.sup-ph2 i { width: 7px; height: 7px; border-radius: 50%; background: var(--c); }
