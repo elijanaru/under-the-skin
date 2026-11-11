@@ -3593,21 +3593,23 @@ function cycleFlag() {
   const a = ps[ps.length - 2], b = ps[ps.length - 1], gap = C.diffDays(b.start, a.start);
   const key = C.iso(b.start);
   if ((state.flagDismissed || '') === key) return '';
-  const [head, msg] = gap < 15 ? [`Two periods ${gap} days apart`, 'Spotting or a mis-tap? Fix it so your predictions stay right.']
-    : gap < 21 ? [`A short cycle: ${gap} days`, 'One short cycle is common. If it keeps happening, tell your doctor.']
-    : gap > 35 ? [`A long cycle: ${gap} days`, 'Stress, travel or illness can do this. If it repeats, tell your doctor.'] : [];
+  const avg = Math.round(M.stats.avgCycle);
+  const [head, sub, msg] = gap < 15 ? ['Two periods close together', `${gap} days apart. Spotting or a mis-tap?`, 'Fix it so your next dates stay right.']
+    : gap < 21 ? ['A shorter cycle', `${gap} days this time, your usual is ${avg}.`, 'One short cycle is common. If it keeps happening, tell your doctor.']
+    : gap > 35 ? ['A longer cycle', `${gap} days this time, your usual is ${avg}.`, 'Stress, travel or illness can do this. If it repeats, tell your doctor.'] : [];
   if (!head) return '';
-  // one number line from 10 to 45 days: the usual 21 to 35 range as a soft band, a dot for this cycle and one for her usual
-  const x = d => (Math.min(45, Math.max(10, d)) - 10) / 35 * 100, avg = Math.round(M.stats.avgCycle);
-  return `<section class="card flag fl2"><div class="fl2-h"><span class="bn-ic">${icon('spark', 18)}</span><div><small>Unusual cycle</small><b>${head}</b></div></div>
-    <div class="fl4" role="img" aria-label="This cycle ${gap} days, your usual ${avg} days, the usual range is 21 to 35 days">
-      <p class="fl4-r"><span><i class="me"></i>This time</span><b><span class="dotnum">${gap}</span> days</b></p>
-      <p class="fl4-r"><span><i></i>Your usual</span><b><span class="dotnum">${avg}</span> days</b></p>
-      <div class="fl4-line" aria-hidden="true"><span class="fl4-band" style="left:${x(21)}%;width:${x(35) - x(21)}%"><em>Usual range</em></span>
+  // two stat tiles (this time vs usual) over one number line from 10 to 45 days with the usual 21 to 35 range as a soft band
+  const x = d => (Math.min(45, Math.max(10, d)) - 10) / 35 * 100;
+  return `<section class="card flag fl2 fl5"><div class="fl2-h"><span class="bn-ic">${icon('spark', 18)}</span><div><small>Unusual cycle</small><b>${head}</b><p class="fl5-sub">${sub}</p></div></div>
+    <div class="fl5-pair" role="img" aria-label="This cycle ${gap} days, your usual ${avg} days, the usual range is 21 to 35 days">
+      <div class="me"><small><i></i>This time</small><b><span class="dotnum">${gap}</span>days</b></div>
+      <div><small><i></i>Your usual</small><b><span class="dotnum">${avg}</span>days</b></div></div>
+    <div class="fl4"><div class="fl4-line" aria-hidden="true"><span class="fl4-band" style="left:${x(21)}%;width:${x(35) - x(21)}%"><em>Usual range</em></span>
         <i class="fl4-d" style="left:${x(avg)}%"></i><i class="fl4-d me" style="left:${x(gap)}%"></i>
         ${[10, 21, 28, 35, 45].map(d => `<small style="left:${x(d)}%">${d}</small>`).join('')}</div></div>
-    <p>${msg}</p>
-    <div class="fl2-acts">${gap < 15 ? `<button class="fl2-b on" data-action="flagEdit" data-date="${key}">${icon('calendar', 14)} Fix in calendar</button>` : ''}<button class="fl2-b" data-action="flagDismiss" data-k="${key}">${icon('check', 14)} It’s correct</button></div></section>`;
+    <p class="fl5-msg">${msg}</p>
+    <div class="sgt-st fl5-st"><b class="dotnum">2006</b><span><em>Fehring</em>In 1,060 cycles of healthy women, 95 in 100 lasted 22 to 36 days. Most of the change came from the first half, before the egg.<small>JOGNN</small></span></div>
+    <div class="fl2-acts">${gap < 21 ? `<button class="fl2-b ${gap < 15 ? 'on' : ''}" data-action="flagEdit" data-date="${key}">${icon('calendar', 14)} Fix in calendar</button>` : ''}<button class="fl2-b ${gap < 15 ? '' : 'on'}" data-action="flagDismiss" data-k="${key}">${icon('check', 14)} It’s correct</button></div></section>`;
 }
 
 // ---------- personal patterns (learned from logs) ----------

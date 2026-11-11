@@ -11211,3 +11211,20 @@ html .fbp-det .fbd-b > b { align-self: end; }
 html .fbp-det .fbd-b > :not(b):not(p) { grid-column: 1 / -1; }
 html .fbp-det .fbd-spec { margin-top: 12px; }
 html .fbp-det .fbd-b ul { margin: 12px 4px 6px; }
+
+/* v891 Today, unusual cycle: headline + grey subline, two stat tiles, line, study */
+html .fl5 .fl2-h{align-items:flex-start}
+html .fl5 .fl2-h b{font-size:19px}
+html .fl5 p.fl5-sub{margin:3px 0 0;font-size:13.5px;line-height:1.4;color:#5d6853}
+html .fl5-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+html .fl5-pair>div{background:#fff;border:1px solid rgba(32,48,26,.07);border-radius:20px;padding:12px 14px 10px;box-shadow:0 6px 16px -10px rgba(32,48,26,.25)}
+html .fl5-pair small{display:flex;align-items:center;gap:7px;font:400 12.5px/1.2 var(--font);color:#5d6853}
+html .fl5-pair small i{width:9px;height:9px;border-radius:50%;background:#20301a}
+html .fl5-pair .me small i{background:#b04a64}
+html .fl5-pair b{display:flex;align-items:baseline;gap:5px;margin-top:6px;font:500 13.5px/1 var(--font);color:#20301a}
+html .fl5-pair .dotnum{font-family:var(--dot);font-weight:900;font-size:34px;line-height:1;color:#20301a}
+html .fl5-pair .me .dotnum{color:#b04a64}
+html .fl5 .fl4{margin:2px 0 0}
+html .fl5 .fl4-line small{color:#5d6853}
+html .flag.fl2 p.fl5-msg{color:#304023}
+html .fl5-st{margin:2px 0 0}
