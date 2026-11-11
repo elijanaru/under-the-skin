@@ -6989,7 +6989,7 @@ function viewPoint(phase) {
   };
   const foot = `<svg viewBox="0 0 200 150" class="foot pt-art" role="img" aria-label="Where to press ${p.code}">${art[phase]}</svg>`;
   return `<div class="pad sp2">
-    ${specHero({ stack: true, glyph: '穴', han: true, eyebrow: `Acupressure · ${t.stage}`, name: `${p.code} · ${p.name}`, label: 'Key facts',
+    ${specHero({ stack: true, glyph: '穴', han: true, eyebrow: `Acupressure · ${PHASES[phase].name} phase`, name: `${p.code} · ${p.name}`, label: 'Key facts',
       rows: [['Press time', `${p.secs} s`], ['Where', phase === 'ovulatory' ? 'One point' : 'Both sides'], ['Organ', t.organ]], lead: `${p.name} · what it does`, desc: p.does })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit([phase], M.info && M.info.phase)}</section>
     ${sectionTitle('Where to press')}
@@ -6999,7 +6999,7 @@ function viewPoint(phase) {
       <div class="step"><span class="step-n">2</span><p>${phase === 'ovulatory' ? 'Rest two fingertips on it and make slow small circles.' : 'Press firmly with your thumb, making slow small circles.'}</p></div>
       <div class="step"><span class="step-n">3</span><p>${phase === 'ovulatory' ? 'Keep the pressure gentle and breathe slowly into your belly. It sits on the midline, so there is only one.' : 'Breathe slowly into your belly. Repeat on the other side.'}</p></div></section>
     <button class="btn btn-light btn-block" data-action="timer" data-title="${p.code} · ${p.name}" data-secs="${p.secs}">${icon('play', 16)} Press for ${p.secs} seconds</button>
-    ${POINT_SCIENCE[phase] ? `${sectionTitle('What studies found')}<section class="card glass tea-study"><div class="ts-i"><p>${POINT_SCIENCE[phase].study}</p><small>${POINT_SCIENCE[phase].cite}</small></div></section>` : ''}
+    ${(() => { const X = POINT_SCIENCE[phase]; if (!X) return ''; return /\b(19|20)\d\d\b/.test(X.cite) ? `${sectionTitle('What studies found')}${studyCards(X.study, X.cite)}` : `${sectionTitle('What tradition says')}<section class="card pt-trad"><span class="pt-trad-i">${icon('leaf', 16)}</span><div><p>${X.study}</p><small>${X.cite}</small></div></section>`; })()}
     ${sectionTitle('A point for every phase')}
     <div class="tea-more">${PHASE_ORDER.map(ph => `<button class="${ph === phase ? 'on' : ''}" data-action="nav" data-to="point/${ph}"><span style="color:${PHASE_COLOR.dark[ph]}">●</span>${TCM[ph].point.code} · ${PHASES[ph].name}</button>`).join('')}</div>
     <p class="fine center">Avoid strong pressure on SP6 and CV4 if you might be pregnant.</p>

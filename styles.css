@@ -10870,3 +10870,11 @@ html .pf2-you i{position:static;transform:none;background:none;padding:0;display
 html .pf2-you b{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:6px solid #20301a}
 html .sp2 .pf2-bar span, html .pf2-bar span{border:0 !important;background:none !important;color:rgba(32,48,26,.45) !important;font-weight:400}
 html .sp2 .pf2-bar span.on, html .pf2-bar span.on{background:color-mix(in srgb,var(--pc) 24%,#fff) !important;color:#20301a !important;font-weight:500}
+
+/* v863 point pages: tradition note as a clean white card */
+html .pt-trad{display:flex;gap:12px;align-items:flex-start;padding:16px;background:#fff !important;border:0 !important;box-shadow:0 8px 22px rgba(48,64,35,.08) !important}
+html .pt-trad-i{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#eef1e6;color:#4f6a2a}
+html .pt-trad p{margin:0;font:400 14px/1.5 var(--font);color:#20301a}
+html .pt-trad small{display:block;margin-top:6px;font-size:12px;color:rgba(32,48,26,.6)}
+html .sp2 .tea-more button{background:#fff !important;border:1px solid rgba(32,48,26,.12) !important;color:#20301a !important;box-shadow:0 1px 2px rgba(32,48,26,.06) !important;font-weight:500}
+html .sp2 .tea-more button.on{background:#20301a !important;border-color:#20301a !important;color:#fff !important}
