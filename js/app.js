@@ -464,7 +464,7 @@ function viewGround() {
     </section>` : ''}
 
     ${sectionTitle('Where to stand')}
-    <section class="card gr-card"><div class="gr-where">${GROUND_WHERE.map(([n, v, t], i) => `<div class="${v ? '' : 'no'}"><span class="gr-art">${GROUND_ART[i] || ''}</span><span class="gr-m" aria-label="${v ? `Connects ${v} of 3` : 'Blocks it'}">${[1, 2, 3].map(i => `<i class="${i <= v ? 'on' : ''}"></i>`).join('')}</span><b>${n}</b><small>${t}</small></div>`).join('')}</div></section>
+    <section class="card gr-card"><p class="gr-wh-sub">How well each surface connects you to the earth.</p><div class="gr-where">${GROUND_WHERE.map(([n, v, t], i) => `<div class="${v ? '' : 'no'}"><span class="gr-art">${GROUND_ART[i] || ''}</span><span class="gr-m" aria-label="${v ? `Connects ${v} of 3` : 'Blocks it'}">${v ? [1, 2, 3].map(i => `<i class="${i <= v ? 'on' : ''}"></i>`).join('') : ''}<em>${['Blocks it', 'A little', 'Good', 'Best'][v]}</em></span><b>${n}</b><small>${t}</small></div>`).join('')}</div></section>
 
     <section class="grr">
       <div class="grr-h"><small>${icon('clock', 12)} ${GROUND_ROOTS.mins} minute practice</small><b>Golden roots</b><p>Sit on the earth and feel held. An old visualisation from many traditions.</p></div>

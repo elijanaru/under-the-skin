@@ -10803,3 +10803,9 @@ html .sd .sd-all-n b { color: #f3e7c4; font: 800 18px/1 var(--dot); }
 .sup-ph2 span { display: inline-flex; align-items: center; gap: 5px; font: 500 12px/1 var(--font); color: rgba(32,48,26,0.72); }
 .sup-ph2 span.me { color: #20301a; font-weight: 600; }
 .sup-ph2 i { width: 7px; height: 7px; border-radius: 50%; background: var(--c); }
+
+/* v858 Ground "Where to stand": the rating bars say what they rate */
+html .gr-wh-sub{margin:0 2px 12px;font:400 13.5px/1.4 var(--font);color:rgba(32,48,26,.62)}
+html .gr-m{align-items:center;gap:3px}
+html .gr-m em{font:500 11.5px/1 var(--font);font-style:normal;color:#4f6330;margin-left:5px;letter-spacing:.01em}
+html .gr-where .no .gr-m em{margin-left:0;color:#a2445d}
