@@ -1361,7 +1361,7 @@ const F = s => s.split('|').map(x => x.trim()).map(x => [x.slice(0, x.indexOf(' 
 export const EAT_GUIDE = {
   menstrual: { goal: 'Replenish & warm', why: 'Estrogen and progesterone are at their lowest and you lose iron with every bleed. Warm, cooked, mineral-rich food refills you and eases cramps.', cats: {
     protein: ['Iron and B12 from animal foods replace what you lose.', F('🥩 Grass-fed beef | 🍲 Bone broth | 🐟 Wild salmon | 🦪 Mussels | 🥚 Pasture eggs | 🍗 Chicken thighs | 🐑 Lamb | 🫀 Liver')],
-    veg: ['Cook them: soft, warm, low-oxalate vegetables are easy to digest.', F('🎃 Pumpkin | 🥕 Roasted carrots | 🍄 Mushrooms | 🧅 Leeks & onions | 🥒 Cooked courgette | 🍅 Stewed tomatoes | 🫑 Roasted peppers')],
+    veg: ['Cook them soft and warm. Gentle vegetables like pumpkin, carrots and leeks (not piles of raw spinach) are easy to digest.', F('🎃 Pumpkin | 🥕 Roasted carrots | 🍄 Mushrooms | 🧅 Leeks & onions | 🥒 Cooked courgette | 🍅 Stewed tomatoes | 🫑 Roasted peppers')],
     fats: ['Warming fats calm the inflammation behind cramps.', F('🧈 Butter & ghee | 🥚 Egg yolks | 🐟 Oily fish | 🫒 Olive oil | 🌰 Walnuts | 🥥 Coconut oil')],
     carbs: ['Gentle, cooked carbs keep your energy up without spikes.', F('🍞 Toasted sourdough | 🍠 Sweet potato | 🎃 Squash | 🥔 Potatoes | 🫘 Black beans | 🌰 Chestnuts | 🥕 Parsnips')],
     fruit: ['Stewed, warm fruit is easy on your belly.', F('🍎 Stewed apple | 🍐 Baked pear | 🔴 Red dates | 🍒 Warm cherry compote | 🟤 Dried figs')],
@@ -1371,7 +1371,7 @@ export const EAT_GUIDE = {
   } },
   follicular: { goal: 'Support rising estrogen', why: 'Estrogen climbs steadily toward ovulation, which is why your energy and mood lift now. Fresh produce, quality protein and fermented foods fuel the rise.', cats: {
     protein: ['Protein builds the follicle that becomes your egg.', F('🥚 Eggs | 🐟 Wild fish | 🍗 Chicken | 🥩 Lean beef | 🦐 Prawns | 🐑 Lamb | 🧀 Cottage cheese')],
-    veg: ['Gentle, low-oxalate veggies are easy on your gut and still bring fibre and colour while estrogen rises.', F('🥒 Cucumber | 🥬 Butter lettuce | 🥒 Courgette | 🫑 Bell peppers | 🍅 Tomatoes | 🥕 Raw carrots | 🫒 Olives')],
+    veg: ['Gentle veggies like cucumber, courgette and peppers are easy on your gut and still bring fibre and colour while estrogen rises.', F('🥒 Cucumber | 🥬 Butter lettuce | 🥒 Courgette | 🫑 Bell peppers | 🍅 Tomatoes | 🥕 Raw carrots | 🫒 Olives')],
     fats: ['Healthy fats are the raw material of your hormones.', F('🥑 Avocado | 🫒 Olive oil | 🌰 Flax & pumpkin seeds | 🥥 Coconut | 🥜 Almonds')],
     carbs: ['Light, steady carbs match your rising energy.', F('🍞 Sourdough | 🍠 Sweet potato | 🫘 Lentils | 🥔 Baby potatoes | 🍌 Banana | 🌾 Buckwheat')],
     fruit: ['Fresh, raw fruit: its vitamin C helps you absorb iron.', F('🍊 Citrus | 🥝 Kiwi | 🍓 Berries | 🍋 Lemon | 🍑 Stone fruit | 🍍 Pineapple | 🍏 Green apple')],
@@ -1391,7 +1391,7 @@ export const EAT_GUIDE = {
   } },
   luteal: { goal: 'Steady & ground', why: 'Progesterone rises and your body burns a little more energy. Grounding cooked food, complex carbs and magnesium keep your blood sugar and mood steady.', cats: {
     protein: ['Steady protein keeps cravings calm.', F('🥩 Beef | 🦃 Turkey | 🐟 Wild salmon | 🥚 Eggs | 🐑 Lamb | 🍗 Chicken')],
-    veg: ['Roasted, low-oxalate veg ease bloating and feel grounding.', F('🎃 Squash | 🥕 Roasted carrots | 🍄 Mushrooms | 🧅 Leeks | 🫑 Roasted peppers | 🍆 Aubergine | 🥒 Courgette')],
+    veg: ['Roasted gentle veg like squash, carrots and mushrooms ease bloating and feel grounding.', F('🎃 Squash | 🥕 Roasted carrots | 🍄 Mushrooms | 🧅 Leeks | 🫑 Roasted peppers | 🍆 Aubergine | 🥒 Courgette')],
     fats: ['Magnesium and omega-3 for calmer PMS.', F('🌻 Sunflower & sesame seeds | 🌰 Walnuts | 🧈 Butter | 🫒 Olive oil | 🥑 Avocado')],
     carbs: ['Complex carbs lift serotonin and calm cravings.', F('🍞 Sourdough | 🍠 Sweet potato | 🎃 Squash | 🥔 Potatoes | 🫘 Chickpeas | 🌰 Chestnuts | 🍌 Banana')],
     fruit: ['Sweet but steady.', F('🍐 Pears | 🍎 Apples | 🫐 Berries | 🍌 Bananas | 🟤 Dates | 🍊 Oranges')],

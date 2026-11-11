@@ -11184,3 +11184,12 @@ html .eb-sym { display: grid; place-items: center; width: 100%; height: 100%; bo
 html .eb-sym.han { font-family: 'Noto Serif SC', serif; font-weight: 600; }
 html .ebp-f .eb-sym { font-size: 24px; }
 html .cap-pill b.word { font-family: var(--font) !important; font-weight: 600 !important; letter-spacing: 0 !important; font-size: 17px !important; }
+
+/* v889 Food plate: labels as small white tiles on the rim, sentence case, ink; the chosen one is a solid ink tile */
+html .plate3 .pll-hit { fill: #fff !important; stroke: rgba(32,48,26,.08); stroke-width: 1; filter: drop-shadow(0 3px 6px rgba(32,48,26,.16)); }
+html .plate3 .pll-n { text-transform: none !important; letter-spacing: 0 !important; font: 500 11.5px var(--font) !important; fill: rgba(32,48,26,.72) !important; }
+html .plate3 .pll-v { font: 900 15px var(--dot) !important; fill: #20301a !important; }
+html .plate3 .pll.on .pll-hit { fill: #20301a !important; stroke: none; }
+html .plate3 .pll.on .pll-n { fill: rgba(255,255,255,.8) !important; font-weight: 500 !important; }
+html .plate3 .pll.on .pll-v { fill: #fff !important; }
+html .pld-p { color: #20301a !important; font-weight: 900 !important; opacity: 1 !important; }

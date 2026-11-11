@@ -2321,7 +2321,7 @@ function plateWheel(phase, season, sel, warm) {
       <path d="${d}" class="pls-bg"/>${pic ? `<image href="${pic}" x="${f(ix - sz / 2)}" y="${f(iy - sz / 2)}" width="${f(sz)}" height="${f(sz)}" preserveAspectRatio="xMidYMid slice" clip-path="url(#pls-${k})"/>` : ''}
       <path d="${d}" fill="url(#pl-vol)" class="pls-vol"/><path d="${d}" class="pls-rim" clip-path="url(#pls-${k})"/><path d="${d}" class="pls-veil"/></g></g></g>`;
     const [tx, ty] = at(131, mid);
-    labels += `<g class="pll ${on ? 'on' : ''}" data-action="plPetal" data-v="${k}" style="--d:${(1.3 + i * .08).toFixed(2)}s"><rect x="${f(tx - 30)}" y="${f(ty - 19)}" width="60" height="40" rx="14" class="pll-hit"/><text x="${f(tx)}" y="${f(ty - 2)}" text-anchor="middle" class="pll-n">${P.s}</text><text x="${f(tx)}" y="${f(ty + 12)}" text-anchor="middle" class="pll-v">${sh}%</text></g>`;
+    labels += `<g class="pll ${on ? 'on' : ''}" data-action="plPetal" data-v="${k}" style="--d:${(1.3 + i * .08).toFixed(2)}s"><rect x="${f(tx - 29)}" y="${f(ty - 20)}" width="58" height="40" rx="14" class="pll-hit"/><text x="${f(tx)}" y="${f(ty - 4)}" text-anchor="middle" class="pll-n">${P.s}</text><text x="${f(tx)}" y="${f(ty + 12)}" text-anchor="middle" class="pll-v">${sh}%</text></g>`;
   });
   return `<svg class="plate2 plate3" viewBox="0 0 360 362" role="group" aria-label="Your plate"><defs>${defs}
     <radialGradient id="pl-fade" cx=".5" cy=".5" r=".5"><stop offset=".78" stop-color="#fff"/><stop offset=".97" stop-color="#000"/></radialGradient>
