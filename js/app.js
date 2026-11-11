@@ -5761,6 +5761,8 @@ function breathGuide(phase, k) {
         <div class="bwx-art">${breathShape(B, col, true)}</div>
         <p class="bwx-does">${BZ_DOES[id] || B.for}</p>
         <div class="bwx-tags">${FX.filter((_, i) => fx[i] === 3).map(([t, ic]) => `<span>${icon(ic, 12)} ${t}</span>`).join('')}</div>
+        ${(() => { const S = BZ_STUDY[id]; if (!S) return ''; const yr = (S[1].match(/(19|20)\d{2}/) || [''])[0], who = yr ? S[1].slice(0, S[1].indexOf(yr)).trim() : S[1], src = (S[1].match(/\(([^)]+)\)/) || [])[1] || '';
+          return `<details class="bwx-why"><summary>What studies found ${icon('chevD', 12)}</summary><div class="sgt-st">${yr ? `<b class="dotnum">${yr}</b>` : ''}<span><em>${who}</em>${S[0]}${src ? `<small>${src}</small>` : ''}</span></div></details>`; })()}
         <div class="bwx-f">
           <button class="bwx-go" data-action="bzPhase" data-v="${id}">${id === k ? 'In the player' : `${icon('play', 12)} Try it`}</button></div>
       </article>`; }).join('')}</div>`;
