@@ -2461,14 +2461,16 @@ function sugarSection(phase) {
     ${sectionTitle('Blood sugar tricks', ['How they work', 'sugar'])}
     <section class="card sugar-big">
       ${[['before', '1', 'Before you eat'], ['with', '2', 'With your meal'], ['daily', '3', 'Every day']].map(([w, n, t]) => `<div class="sb-step"><div class="sb-sh"><span>${n}</span>${t}</div>
-        <div class="sb-grid">${SUGAR_TRICKS.filter(x => x.w === w).map(x => `<button class="sb-t sb-pic ${on.includes(x.k) ? 'on' : ''}" data-action="sugarTrick" data-v="${x.k}"><span class="sb-ph">${SB_PIC[x.k] ? `<img src="${SB_PIC[x.k]()}" alt="" loading="lazy">` : ''}<em>${x.g}</em></span><b>${x.n}</b><small>${x.t}</small><i class="sb-ck">${icon('check', 14, 2.6)}</i></button>`).join('')}</div></div>`).join('')}
+        <div class="sb-grid">${SUGAR_TRICKS.filter(x => x.w === w).map(x => `<button class="sb-t sb-pic ${on.includes(x.k) ? 'on' : ''}" data-action="sugarTrick" data-v="${x.k}"><span class="sb-ph">${SB_PIC[x.k] ? `<img src="${SB_PIC[x.k]()}" alt="" loading="lazy">` : ''}<em>${icon(x.ic, 15, 1.9)}</em></span><b>${x.n}</b><small>${x.t}</small><i class="sb-ck">${icon('check', 14, 2.6)}</i></button>`).join('')}</div></div>`).join('')}
     </section>`;
 }
 // Tricks overlap, so they don't simply add up: combined, the illustration caps the spike reduction at 50%.
 function sugarKeep(on) { return Math.max(.5, SUGAR_TRICKS.reduce((k, t) => on.includes(t.k) ? k * (1 - t.eff) : k, 1)); }
 function sugarScore(on) {
   const keep = sugarKeep(on);
-  return keep === 1 ? `<b>0</b><span>tricks yet</span>` : `<b>−${Math.round((1 - keep) * 100)}%</b><span>spike</span>`;
+  const pct = Math.round((1 - keep) * 100);
+  // ring bubble: fills as the spike shrinks (the illustration caps at 50%, which is a full ring)
+  return `<span class="sbr" style="--p:${Math.min(100, pct * 2)}"></span><b>${pct ? `−${pct}%` : '0%'}</b><span>${pct ? 'smaller spike' : 'tap a trick'}</span>`;
 }
 
 // ---------- cosmic rhythm ----------
@@ -4682,7 +4684,7 @@ function sugarCurve(on) {
     <defs><linearGradient id="sgfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fbf4a" stop-opacity=".55"/><stop offset="1" stop-color="#8fbf4a" stop-opacity=".05"/></linearGradient></defs>
     <text x="${X(32)}" y="${Y(30) - 6}" text-anchor="middle" class="sg-lbl red">+30 mg/dL</text>
     ${keep < 1 ? `<text x="${X(34 * width)}" y="${Y(peak) - 6}" text-anchor="middle" class="sg-lbl">+${Math.round(peak)} mg/dL</text>` : ''}</svg>
-    <div class="sg-leg"><span><i class="red"></i>Without tricks</span><span><i></i>With your tricks · ${Math.round((1 - keep) * 100)}% smaller spike</span></div>`;
+    <div class="sg-leg"><span><i class="red"></i>Without tricks</span><span><i></i>${keep === 1 ? 'With your tricks · tap one below' : `With your tricks · ${Math.round((1 - keep) * 100)}% smaller spike`}</span></div>`;
 }
 // ---------- tea guide ----------
 // Why today's tea fits where she is: three short reasons per part of the cycle.

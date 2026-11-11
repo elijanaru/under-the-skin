@@ -10979,3 +10979,14 @@ html .mr-lv i{width:3px;border-radius:2px;background:#d4d6cb}
 html .mr-lv i.on{background:#20301a}
 /* the row link below it (How your cycle works) and the other gro-cta rows: crisp white, not grey glass */
 html .gro-cta{background:#fff !important;border:1px solid rgba(32,48,26,.07) !important;box-shadow:0 14px 28px -22px rgba(32,48,26,.45) !important;-webkit-backdrop-filter:none !important;backdrop-filter:none !important}
+
+/* v874 Blood sugar: ring bubble instead of the glossy pink orb, line icons on the trick photos, no pink glass box */
+html .sb-free .sb-score,html .sb-score{position:relative;width:104px;height:104px;background:#fff !important;border:1px solid rgba(32,48,26,.07);box-shadow:0 16px 30px -22px rgba(32,48,26,.55) !important;gap:2px}
+html .sb-score .sbr{position:absolute;inset:6px;border-radius:50%;background:conic-gradient(#4f7a2a calc(var(--p) * 1%),#ecebe4 0);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));transition:background .6s ease}
+html .sb-score b{position:relative;font-family:var(--dot);font-weight:900;font-size:24px;color:#20301a !important}
+html .sb-score span:not(.sbr){position:relative;font:500 11px/1.1 var(--font);letter-spacing:0;text-transform:none;color:#5d6853 !important}
+html .sb-score small{position:relative;font:400 10.5px/1 var(--font);color:#8a917f}
+html .card.sugar-big{background:none !important;border:0 !important;box-shadow:none !important;padding:0 !important;-webkit-backdrop-filter:none !important;backdrop-filter:none !important}
+html .sb-sh span{background:#20301a !important;box-shadow:none !important;color:#fff}
+html .sb-ph em{color:#20301a;font-size:0;border:1px solid rgba(32,48,26,.08)}
+html .sb-t.sb-pic{background:#fff !important;border:1px solid rgba(32,48,26,.07) !important;box-shadow:0 14px 28px -22px rgba(32,48,26,.5) !important}
