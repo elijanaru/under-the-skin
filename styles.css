@@ -10990,3 +10990,9 @@ html .card.sugar-big{background:none !important;border:0 !important;box-shadow:n
 html .sb-sh span{background:#20301a !important;box-shadow:none !important;color:#fff}
 html .sb-ph em{color:#20301a;font-size:0;border:1px solid rgba(32,48,26,.08)}
 html .sb-t.sb-pic{background:#fff !important;border:1px solid rgba(32,48,26,.07) !important;box-shadow:0 14px 28px -22px rgba(32,48,26,.5) !important}
+
+/* v875 Feel better, Seven pillars: a study for each pillar inside its detail */
+html .hg-st{margin-top:12px}
+html .hg-st > small{display:block;margin:0 0 6px;font:600 12.5px/1.2 var(--font);color:#20301a}
+html .hg-st .sgt-st{background:#f6f3ee}
+html .hg-st .sgt-st > b.dotnum{font-weight:900;font-size:16px;color:#20301a}
