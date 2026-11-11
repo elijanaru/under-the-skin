@@ -1369,7 +1369,7 @@ function viewToday() {
 // Explore: every button a full photo with a frosted label.
 function exploreGrid(info) {
   const tiles = [['super', 'leaf', 'Superfoods', 'Spices & superfoods for your phase', foodPhoto('Blueberries', 500)], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/forest-path.jpg'],
-    ['relief', 'heart', 'Feel better', 'Rituals, relief & habits', 'images/relief-stardust.webp', 'images/relief-stardust.mp4'],
+    ['relief', 'heart', 'Balance hormones', 'Step by step, fundamentals first', 'images/relief-stardust.webp', 'images/relief-stardust.mp4'],
     ['season', 'bowl', 'In season', 'Local foods', 'images/season-fruit.webp'], ['tea', 'cup', 'Tea guide', 'For every need', 'images/tea-ginger.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/tile-meditate.webp']];
   // round photo bubbles in a 2-3-2 honeycomb, each with its own coloured rim and the name on the photo
   const rim = ['#a98bd0', '#7f9a4c', '#e08aa5', '#d9a441', '#c98a52', '#6fa49a'];
@@ -6914,7 +6914,7 @@ function viewInsights() {
   else body = `
     <span id="ins-hx"></span>${hormoneGrids(info)}
     ${sectionTitle('Guides')}
-    <div class="lg-grid">${[['relief', 'heart', 'Feel better', 'Rituals, relief & daily habits'], ['breathe', 'leaf', 'Breathe', 'Calm in minutes'], ['tea', 'cup', 'Tea guide', 'For every need'], ['move', 'leaf', 'Move with your cycle', 'Lift, sprint or rest']].map(([to, g, t, sub], i) => `<button class="card glass lg-t" style="--i:${i}" data-action="nav" data-to="${to}"><span class="lg-g">${icon(g, 18)}</span><b>${t}</b><small>${sub}</small>${icon('chevR', 14)}</button>`).join('')}</div>
+    <div class="lg-grid">${[['relief', 'heart', 'Balance hormones', 'Step by step, fundamentals first'], ['breathe', 'leaf', 'Breathe', 'Calm in minutes'], ['tea', 'cup', 'Tea guide', 'For every need'], ['move', 'leaf', 'Move with your cycle', 'Lift, sprint or rest']].map(([to, g, t, sub], i) => `<button class="card glass lg-t" style="--i:${i}" data-action="nav" data-to="${to}"><span class="lg-g">${icon(g, 18)}</span><b>${t}</b><small>${sub}</small>${icon('chevR', 14)}</button>`).join('')}</div>
     ${[info.phase].map(p => { const list = ARTICLES.filter(a => a.phase === p); return list.length ? `${sectionTitle(`Read now · ${PHASES[p].name}`)}
       ${list.map(a => `<button class="card glass article-row" data-action="nav" data-to="article/${a.id}"><span class="art-ic ${read[a.id] ? 'done' : ''}">${icon(read[a.id] ? 'check' : 'book', 20)}</span><span class="art-t">${a.title}<small>${read[a.id] ? 'Read · ' : ''}${a.mins} min</small></span>${icon('chevR', 18)}</button>`).join('')}` : ''; }).join('')}`;
   return `${topbar('Insights')}
@@ -7276,7 +7276,8 @@ function viewProfile() {
     ${M.info ? calSyncCard() : ''}
     <button class="card glass pf-link" data-action="nav" data-to="saved"><span>${icon('save', 18)}</span><b>Saved tips<small>${(state.savedTips || []).length} saved, ready to use</small></b>${icon('chevR', 16)}</button>
     ${sectionTitle('Partner mode')}
-    <section class="card glass"><button class="list-btn" data-action="nav" data-to="share">${icon('heart', 18)} Share my cycle with partner & friends</button>
+    <section class="card glass"><div class="stepper-row"><span>Show on Today<small>The partner card on your home screen</small></span><button class="toggle ${state.hidePartner ? '' : 'on'}" data-action="partnerToday" role="switch" aria-checked="${!state.hidePartner}" aria-label="Show the partner card on Today"><i></i></button></div>
+      <button class="list-btn" data-action="nav" data-to="share">${icon('heart', 18)} Share my cycle with partner & friends</button>
       <button class="list-btn" data-action="nav" data-to="partners">${icon('chart', 18)} See my partners' dashboard</button>
       ${(state.partners || []).map(x => `<div class="list-btn">${ptAvatar(x, 'sm')}<span style="flex:1">${esc(x.n)}<small class="muted" style="display:block;font-size:12px">On your dashboard</small></span><button class="link muted-l" data-action="removePartner" data-id="${x.id}">Remove</button></div>`).join('')}</section>`;
   else if (tab === 'data') body = `${A.configured() || A.currentUser() ? accountCard() : ''}
@@ -8001,7 +8002,8 @@ const actions = {
     const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
   },
   fxCat: d => { ui.fxCat = d.v; render(); },
-  hidePartner: () => { state.hidePartner = true; save(); render(); toast('Hidden. Partners are still in your profile.'); },
+  hidePartner: () => { state.hidePartner = true; save(); render(); toast('Hidden. Turn it back on in Profile, Partner mode.'); },
+  partnerToday: () => { state.hidePartner = !state.hidePartner; save(); render(); },
   fbPick: (d, el) => {
     const box = el.closest('.fbp'), det = box.querySelector('.fbp-det'), was = el.classList.contains('on');
     box.querySelectorAll('.fbp-i').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); });
