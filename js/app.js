@@ -3654,7 +3654,7 @@ function myEnergy(info) {
 function learnedScore(n) {
   const goal = 6, v = Math.min(n, goal), R = 27, Cc = 2 * Math.PI * R;
   const word = v >= goal ? 'Knows your rhythm' : v >= 3 ? 'Getting precise' : v ? 'Getting to know you' : 'Just starting';
-  return `<div class="ls-head"><div class="mv2-b r${v >= goal ? 3 : v ? 2 : 0}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * Math.max(.04, v / goal)).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-g">${v >= goal ? '✓' : `${v}/${goal}`}</span></div>
+  return `<div class="ls-head"><div class="mv2-b r${v >= goal ? 3 : v ? 2 : 0}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * Math.max(.04, v / goal)).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-g">${v >= goal ? '✓' : `${v}<small>/${goal}</small>`}</span></div>
     <div class="ls-t"><small>Prediction accuracy</small><b>${word}</b><span>${v >= goal ? 'Learned from 6+ cycles. Predictions follow your own rhythm.' : `${plural(goal - v, 'more full cycle')} (period to period) to learn your rhythm. Adding past periods counts too.`}</span>
     ${v < goal ? `<button class="pill-cta" data-action="nav" data-to="calendar">${icon('plus', 14)} Add past periods</button>` : ''}</div></div>`;
 }
@@ -3702,10 +3702,10 @@ function learnedCard() {
       <div class="lm-map"><div class="lm-mh"><b>Your cycle, mapped</b><span><i class="t"></i>today</span></div>${map}
         <div class="lm-key"><span><i style="background:${PH_HEX.menstrual}"></i>Period</span><span><i class="ov"></i>Egg release</span>${pm ? '<span><i class="pm"></i>Next period range</span>' : ''}</div></div>
       <div class="lm-grid">
-        ${tile('c', '🔁', 'Your cycle', L, `days${stats.variation ? ` ±${pm}` : ''}`, n ? `From ${plural(n, 'cycle')}` : 'Log your next period')}
-        ${tile('p', '🩸', 'Your period', Pd, 'days', stats.periods.length ? `From ${plural(stats.periods.length, 'period')}` : 'Default until you log')}
-        ${tile('n', '📅', 'Next period', np.getDate(), '', n ? `Likely ${md(lo)} to ${md(hi)}` : 'Sharper with every period', fmt(np, { month: 'short' }))}
-        ${tile('o', '🥚', 'Egg release', ov, '', os.cd ? 'From your egg-white sign' : os.luteal ? 'From your check-ins' : 'Estimated from your cycle', 'Day')}
+        ${tile('c', icon('calendar', 15, 1.9), 'Your cycle', L, `days${stats.variation ? ` ±${pm}` : ''}`, n ? `From ${plural(n, 'cycle')}` : 'Log your next period')}
+        ${tile('p', icon('drop', 15, 1.9), 'Your period', Pd, 'days', stats.periods.length ? `From ${plural(stats.periods.length, 'period')}` : 'Default until you log')}
+        ${tile('n', icon('bell', 15, 1.9), 'Next period', np.getDate(), '', n ? `Likely ${md(lo)} to ${md(hi)}` : (dn => dn > 1 ? `In ${dn} days` : dn === 1 ? 'Tomorrow' : 'Due now')(C.diffDays(np, M.today)), fmt(np, { month: 'short' }))}
+        ${tile('o', icon('seed', 15, 1.9), 'Egg release', ov, '', `Fertile days ${Math.max(1, ov - 5)} to ${ov}${os.cd ? ', from your egg-white sign' : os.luteal ? ', from your check-ins' : ''}`, 'Day')}
       </div>
       ${pats.length ? `<div class="lm-pats"><small>Your body’s habits</small>${pats.map(x => `<span class="lm-pat"><i>${LOG_EMOJI[x.name] || '•'}</i><b>${x.name}</b><em>${x.from === x.to ? `Day ${x.from}` : `Days ${x.from} to ${x.to}`}</em><small>${x.cyclesN} of your cycles</small></span>`).join('')}</div>` : ''}
       <p class="lm-foot">${icon('spark', 12)} The more you log, the more personal every prediction gets.</p></section>`;

@@ -11048,3 +11048,23 @@ html .card.pl-tonight .plm-cta{grid-column:2;grid-row:1 / span 2;align-self:cent
 html .fbp-title h1 { text-transform: none !important; font-size: 44px; line-height: 1; letter-spacing: -.035em; }
 html .fbp-title h1 span { display: block; }
 html .gtr-h small { text-transform: none !important; letter-spacing: 0 !important; }
+
+/* v881 Insights, What I've learned: line icons in phase tints instead of emoji, ink Doto numbers, a clean accuracy ring */
+html .lm-t .lm-ic { width: 30px; height: 30px; font-size: 0; }
+html .lm-t.c .lm-ic { background: #e7eedd; color: #4f6a2a; }
+html .lm-t.p .lm-ic { background: #f8dfe8; color: #b04a64; }
+html .lm-t.n .lm-ic { background: #ebe2f6; color: #6e549b; }
+html .lm-t.o .lm-ic { background: #f6ead0; color: #9a6d16; }
+html .lm-t b em.dotnum { color: #20301a !important; font-weight: 900; font-size: 30px; letter-spacing: -.02em; opacity: 1 !important; }
+html .lm-t b { color: #20301a; }
+html .lm-t p { color: rgba(32,48,26,.72); }
+html .ls-head .mv2-b { width: 92px; height: 92px; display: grid; place-items: center; border-radius: 50%; background: #fff !important; box-shadow: 0 8px 20px rgba(31,43,22,.08), inset 0 0 0 1px rgba(48,64,35,.08) !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; padding: 0; }
+html .ls-head .mv2-b svg { width: 78px; height: 78px; margin: 0; }
+html .ls-head .mv2-b .t { fill: none; stroke: rgba(48,64,35,.1); stroke-width: 4.5; }
+html .ls-head .mv2-b .p { stroke: hsl(calc(var(--hb) + 79 * var(--hk)) calc(60% * var(--hs)) 38%) !important; stroke-width: 4.5; filter: none !important; }
+html .ls-head .mv2-b .mv2-g { line-height: 1; margin: 0; align-self: center; font-family: 'Doto', monospace; font-weight: 900; font-size: 34px; color: #20301a; opacity: 1 !important; filter: none !important; }
+html .ls-head .mv2-g small { font-size: 17px; font-weight: 900; color: rgba(32,48,26,.45); }
+html .ls-t b { font-weight: 500; color: #20301a; font-size: 19px; }
+html .ls-t span { color: rgba(32,48,26,.72); }
+html .ls-t .pill-cta { align-self: flex-start; margin-top: 10px; padding: 8px 14px; border-radius: 999px; background: #20301a !important; color: #fff !important; font-size: 13.5px; font-weight: 500; border: 0; }
+html .ls-t .pill-cta svg { color: #fff; }
