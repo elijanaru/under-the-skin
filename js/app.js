@@ -5733,7 +5733,7 @@ function breathBar(k) {
 }
 // One breath as a wave: the curve rises as the lungs fill, stays flat on a hold, falls on the long breath out.
 // x is real time, so a longer breath out is a longer slope; a dot rides the curve at the real pace.
-const BZ_WHEN = { still: 'Morning, before you pick up your phone', sigh: 'When stress spikes, 1 to 3 breaths already help', belly: 'Lying down, a warm pad on your belly', box: 'Before a big talk or a new task', even: '5 minutes in the afternoon slump', 478: 'In bed, lights off' };
+const BZ_WHEN = { still: 'Morning, before you pick up your phone', sigh: 'When stress spikes, 1 to 3 breaths already help', belly: 'Lying down, a warm pad on your belly', box: 'Before a big talk or a new task', even: 'In the afternoon slump', 478: 'In bed, lights off' };
 function breathWave(k) {
   const B = BREATHS[k], tot = B.steps.reduce((a, x) => a + x[3], 0), W = 300, LO = 74, HI = 18, sec = ms => `${+(ms / 1000).toFixed(1)}`.replace(/\.0$/, '');
   const hasTop = B.steps.some(x => x[0] === 'top');
@@ -5795,6 +5795,16 @@ const bzIc = id => (BZ_IC[id] ? BZ_IC[id]() : '');
 // What each breath does: one card per practice, her phase's breath first
 const BZ_DOES = { still: 'Notice a thought, let it go.', sigh: 'Calms you within seconds.', belly: 'Softens cramps and tension.', box: 'Steady and clear under pressure.', even: 'Heart and breath in step.', 478: 'Helps you fall asleep.' };
 const BZ_COL = { still: '#6c823e', sigh: '#5f93a8', belly: '#d9768f', box: '#6c823e', even: '#c99327', 478: '#8f79bd' };
+// three spec rows on each breath card: when it helps most, the counts of one breath, and how long a full session takes
+function bwxSpec(id) {
+  const B = BREATHS[id], sec = ms => `${+(ms / 1000).toFixed(1)}`.replace(/\.0$/, ''), hold = B.steps.some(x => x[0] === 'hold');
+  const beat = B.steps.filter(x => x[0] !== 'rest' || hold).map(([t, , , ms]) => `${t === 'rest' ? 'Hold' : BZ_WORD[t]} <b class="dotnum">${sec(ms)}</b>`).join('<i>·</i>');
+  const min = Math.max(1, Math.round(B.rounds * B.steps.reduce((a, x) => a + x[3], 0) / 60000));
+  return `<div class="bwx-spec">
+    <p><span>Best time</span><b>${BZ_WHEN[id] || B.when}</b></p>
+    <p><span>One breath</span><b class="bwx-beat">${beat}</b></p>
+    <p><span>Takes</span><b><b class="dotnum">${min}</b> min · ${id === 'still' ? 'about 6 breaths a minute' : `${B.rounds} rounds`}</b></p></div>`;
+}
 function breathGuide(phase, k) {
   const mine = BREATH_FOR[phase], order = [mine, ...BREATH_ORDER.filter(x => x !== mine)];
   const FX = [['Calm', 'leaf'], ['Focus', 'spark'], ['Sleep', 'moon'], ['Cramps', 'drop']];
@@ -5805,6 +5815,7 @@ function breathGuide(phase, k) {
         <div class="bwx-h"><span class="bwx-g">${bzIc(id) || B.g}</span><div><b>${B.name}</b></div>${id === mine ? '<em>For you now</em>' : ''}</div>
         <div class="bwx-art">${breathShape(B, col, true)}</div>
         <p class="bwx-does">${BZ_DOES[id] || B.for}</p>
+        ${bwxSpec(id)}
         <div class="bwx-tags">${FX.filter((_, i) => fx[i] === 3).map(([t, ic]) => `<span>${icon(ic, 12)} ${t}</span>`).join('')}</div>
         ${(() => { const S = BZ_STUDY[id]; if (!S) return ''; const yr = (S[1].match(/(19|20)\d{2}/) || [''])[0], who = yr ? S[1].slice(0, S[1].indexOf(yr)).trim() : S[1], src = (S[1].match(/\(([^)]+)\)/) || [])[1] || '';
           return `<details class="bwx-why"><summary>What studies found ${icon('chevD', 12)}</summary><div class="sgt-st">${yr ? `<b class="dotnum">${yr}</b>` : ''}<span><em>${who}</em>${S[0]}${src ? `<small>${src}</small>` : ''}</span></div></details>`; })()}

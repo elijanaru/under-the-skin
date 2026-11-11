@@ -10939,3 +10939,12 @@ html .bwx-g svg, html .bzp-g svg{width:20px;height:20px}
 /* v869 Superfood detail: a Before you try it line under the amount */
 html .sfc-care{display:block;margin-top:8px;padding:9px 11px;border-radius:14px;background:#f8ecef;font:400 12.5px/1.4 var(--font);color:#5c2a39}
 html .sfc-care small{display:block;margin-bottom:2px;font:500 11px/1.2 var(--font);color:#9c3d58}
+
+/* v870 Breathe cards: spec rows (Best time, One breath, Takes) */
+html .bwx-spec{margin:2px 0 10px;border-radius:16px;background:#f6f5f1;padding:2px 12px}
+html .bwx-spec p{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0;padding:8px 0;font:400 12.5px/1.3 var(--font);border-top:1px solid rgba(32,48,26,.07)}
+html .bwx-spec p:first-child{border-top:0}
+html .bwx-spec span{color:#6f7866;flex:none}
+html .bwx-spec p>b{font-weight:500;color:#20301a;text-align:right}
+html .bwx-spec .dotnum{font-family:'Doto',monospace;font-weight:900;font-size:15.5px;color:#20301a;margin-left:2px}
+html .bwx-beat i{font-style:normal;color:#b3b8a8;margin:0 5px}
