@@ -4826,7 +4826,7 @@ function teaKeyRows(P) {
 }
 // ---------- nutrients: food first, a supplement when there's a reason ----------
 const PH4 = [['menstrual', 'Period'], ['follicular', 'Follicular'], ['ovulatory', 'Ovulation'], ['luteal', 'Luteal']];
-const phaseFit = (best, ph) => `<div class="tf-phases">${PH4.map(([k, l]) => `<span class="${best.includes(k) ? 'on' : ''} ${k === ph ? 'now' : ''}" style="--pc:${PHASE_COLOR.dark[k]}">${l}${k === ph ? '<i>you</i>' : ''}</span>`).join('')}</div>`;
+const phaseFit = (best, ph) => `<div class="tf-phases pf2"><div class="pf2-bar">${PH4.map(([k, l]) => `<span class="${best.includes(k) ? 'on' : ''} ${k === ph ? 'now' : ''}" style="--pc:${PH_HEX[k]}">${best.includes(k) ? icon('check', 11, 2.6) : ''}${l}</span>`).join('')}</div>${ph ? `<div class="pf2-you">${PH4.map(([k]) => `<i>${k === ph ? `<b></b>You are here` : ''}</i>`).join('')}</div>` : ''}</div>`;
 // Opal-style rings: how many of the last 7 days each logged supplement was taken.
 // Drawn line icon for each nutrient (no emoji).
 const NU_IC = { magnesium: 'seed', b6: 'banana', iron: 'drop', 'vitamin-d': 'sun', 'omega-3': 'fish', zinc: 'shell', calcium: 'milk', inositol: 'grain', vitex: 'berry' };
