@@ -3529,13 +3529,24 @@ function reliefIcon(t) {
     : /pain relief|ibuprofen|doctor|pill/.test(x) ? 'plus' : /eat|food|salt|sugar|protein|fibre|fiber|meal|snack|carb/.test(x) ? 'bowl'
     : /sun|light|outside/.test(x) ? 'sun' : /journal|talk|write|mind|friend/.test(x) ? 'mind' : 'spark';
 }
+// One study per symptom: [year, first author, what it found in plain words, journal]
+const RELIEF_STUDY = {
+  Cramps: ['2001', 'Akin', 'A gentle heat patch on the lower belly eased period pain as well as ibuprofen did.', 'Obstetrics & Gynecology'],
+  Headache: ['1991', 'Facchinetti', 'Magnesium taken from mid-cycle meant fewer headache days and less pain with menstrual migraine.', 'Headache'],
+  'PMS mood': ['1998', 'Thys-Jacobs', '1200 mg calcium a day eased PMS mood swings, cravings and aches by the second and third cycle.', 'American Journal of Obstetrics & Gynecology'],
+  Bloating: ['1998', 'Walker', '200 mg magnesium a day eased bloating, swelling and breast tenderness in the second cycle.', 'Journal of Women’s Health'],
+  Insomnia: ['2019', 'Haghayegh', 'A warm bath or shower 1 to 2 hours before bed helped people fall asleep about 10 minutes faster.', 'Sleep Medicine Reviews'],
+  Acne: ['2012', 'Kwon', 'Ten weeks of meals low in sugar and fast carbs meant fewer spots, both blackheads and red ones.', 'Acta Dermato-Venereologica'],
+  Fatigue: ['2012', 'Vaucher', 'Tired women with low iron stores but no anaemia felt about half as tired on iron (48% less, 29% on placebo).', 'CMAJ'],
+  'Tender breasts': ['2001', 'Schellenberg', 'Chasteberry over three cycles eased breast fullness, irritability and headaches; half the women felt at least 50% better.', 'BMJ'],
+};
 function viewRelief(id) {
   const k = decodeURIComponent(id || ''), R = RELIEF[k]; if (!R) return viewMissing();
   const food = SYMPTOM_FOODS[k] || (k === 'PMS mood' ? SYMPTOM_FOODS.Cravings : null), L = RELIEF_LINKS[k] || {};
   const help = (state.reliefHelp || {})[k] || [], order = R.steps.map((_, i) => i).sort((a, b) => help.includes(b) - help.includes(a));
   return `${topbar('Relief', { back: true })}
   <div class="pad">
-    ${(() => { const [w0, ...wr] = splitSentences(R.why); return `<h1 class="page-h">${k}</h1><p class="rl-sub">${w0}</p>${wr.length ? `<details class="rl-why"><summary>Why it happens ${icon('chevR', 12)}</summary><p>${wr.join(' ')}</p></details>` : ''}`; })()}
+    ${(() => { const [w0, ...wr] = splitSentences(R.why); return `<section class="rl-hero"><img src="${reliefPhoto(k, 640)}" alt="" decoding="async"><div><small>${RELIEF_IC[k] ? icon(RELIEF_IC[k], 13, 2) : ''} Relief</small><h1 class="page-h">${k}</h1><p class="rl-sub">${w0}</p></div></section>${wr.length ? `<details class="rl-why"><summary>Why it happens ${icon('chevR', 12)}</summary><p>${wr.join(' ')}</p></details>` : ''}`; })()}
     ${sectionTitle('What helps')}
     <p class="rl-hint">${help.length ? `${icon('heart', 12)} ${help.length} of ${R.steps.length} work for you, so they’re at the top.` : `Tap ${icon('heart', 12)} on what helps you. Next time it moves to the top.`}</p>
     <section class="card rs2-list">${order.map(i => { const x = R.steps[i], [d0, ...dr] = splitSentences(x.d), go = x.to ? `<button class="link rs-go" data-action="nav" data-to="${x.to}">Open ${icon('chevR', 12)}</button>` : '';
@@ -3544,7 +3555,8 @@ function viewRelief(id) {
       <button class="rs-heart ${help.includes(i) ? 'on' : ''}" data-action="reliefHelp" data-k="${k}" data-i="${i}" aria-label="This helps me">${icon('heart', 18)}</button></div>`; }).join('')}</section>
     ${L.tea || L.nu ? `${sectionTitle('Teas & nutrients for this')}<div class="tea-more">${L.tea ? (TEA_GUIDE.find(t => t.k === L.tea) || { teas: [] }).teas.map((t, i) => `<button data-action="nav" data-to="tea/${L.tea}-${i}"><span>${icon('cup', 14)}</span>${t[1]}</button>`).join('') : ''}${(L.nu || []).map(id => { const n = NUTRIENTS.find(x => x.id === id); return n ? `<button data-action="nav" data-to="nutrients/${id}"><span>${nuIc(id, 16)}</span>${n.n}</button>` : ''; }).join('')}</div>` : ''}
     ${food ? `${sectionTitle('Eat')}<section class="card glass"><p class="body sm" style="margin:0 0 10px">${food.tip}</p><div class="foods">${food.foods.map(f => `<span class="food">${f}</span>`).join('')}</div></section>` : ''}
-    <section class="card tcm-card"><div class="tcm-glyph">${icon('yinyang', 30)}</div><div class="tcm-main"><div class="eyebrow">Chinese medicine view</div><p class="body" style="margin-top:6px">${R.tcm}</p></div></section>
+    ${RELIEF_STUDY[k] ? (([yr, who, t, j]) => `${sectionTitle('What studies found')}<section class="card rl-st"><div class="sgt-st"><b class="dotnum">${yr}</b><span><em>${who}</em>${t}<small>${j}</small></span></div></section>`)(RELIEF_STUDY[k]) : ''}
+    <section class="card tcm-card rl-tcm"><div class="tcm-glyph">${icon('yinyang', 24)}</div><div class="tcm-main"><div class="eyebrow">In Chinese medicine</div><p class="body">${R.tcm}</p></div></section>
     ${R.doctor ? `<section class="card glass rl-doc"><span>${icon('plus', 20)}</span><div><small>See a doctor if</small><p>${R.doctor}</p></div></section>` : ''}
     <p class="fine center">General information, not medical advice. Check with a pharmacist before taking painkillers or supplements.</p>
   </div>`;

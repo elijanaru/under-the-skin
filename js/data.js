@@ -944,7 +944,7 @@ export const RELIEF = {
       { t: 'Ginger tea', d: '1–2 g of fresh ginger a day as tea, in the first 3 days of your period. In trials it eased pain about as well as common painkillers.', ev: 'some' },
       { t: 'Press SP6', d: 'Four finger-widths above the inner ankle bone, 1–3 minutes each side. Skip this point in pregnancy.', ev: 'tcm', to: 'point/menstrual' },
     ],
-    tcm: 'Cramps are seen as stuck Qi and Blood, often with Cold. Keep warm, avoid raw and cold food and drinks, try a ginger foot soak.',
+    tcm: 'Cramps are seen as blood and energy that are stuck, often with cold. Keep warm, avoid raw and cold food and drinks, try a ginger foot soak.',
     doctor: 'Pain that stops normal life, gets worse over the years, or comes with pain during sex or bowel movements. Endometriosis is common and under-diagnosed.',
   },
   'PMS mood': {
@@ -956,7 +956,7 @@ export const RELIEF = {
       { t: 'Go easy on alcohol late luteal', d: 'It can worsen anxiety, low mood and sleep.', ev: 'emerging' },
       { t: 'Name it', d: 'Writing "this is day 26 talking" helps many women separate hormones from real problems.', ev: 'emerging' },
     ],
-    tcm: 'Liver Qi stagnation: move it with walking, side stretches, rose tea and letting feelings out.',
+    tcm: 'Seen as a stuck Liver: energy that can’t flow freely turns into tension and irritability. Move it with walking, side stretches, rose tea and letting feelings out.',
     doctor: 'If mood symptoms are severe, affect relationships or work, or include hopelessness, ask about PMDD. It is common and treatable.',
   },
   Bloating: {
@@ -967,7 +967,7 @@ export const RELIEF = {
       { t: 'Walk after meals', d: '10 minutes helps move gas and digestion.', ev: 'some' },
       { t: 'Smaller, warm meals', d: 'Cooked food with ginger, fennel or cinnamon is easier to digest than large cold meals.', ev: 'tcm' },
     ],
-    tcm: 'Spleen Qi needs warmth to transform fluids. Choose cooked food, ginger and fennel, and fewer raw salads and cold drinks.',
+    tcm: 'Your digestion (the Spleen) needs warmth to move fluids. Choose cooked food, ginger and fennel, and fewer raw salads and cold drinks.',
     doctor: 'Bloating that lasts all month, gets steadily worse, or comes with weight loss or early fullness.',
   },
   Insomnia: {
@@ -978,7 +978,7 @@ export const RELIEF = {
       { t: 'Morning daylight', d: '10 minutes outside early in the day helps set your sleep clock.', ev: 'some' },
       { t: 'Magnesium-rich evening snack', d: 'Pumpkin seeds, banana or a little dark chocolate.', ev: 'emerging' },
     ],
-    tcm: 'Heart and Liver Blood calm the Shen (spirit). Sleep before 11pm, chamomile or jujube (red date) tea.',
+    tcm: 'Well-nourished blood calms the mind so it can settle at night. Sleep before 11pm, chamomile or jujube (red date) tea.',
     doctor: 'Insomnia most nights for 3+ months, or loud snoring and gasping.',
   },
   Acne: {
@@ -989,7 +989,7 @@ export const RELIEF = {
       { t: 'Zinc-rich foods', d: 'Pumpkin seeds, chickpeas, shellfish.', ev: 'some' },
       { t: 'Hands off', d: 'Picking spreads inflammation and causes marks.', ev: 'strong' },
     ],
-    tcm: 'Seen as Heat in the Blood or Stomach. Fewer fried, spicy and sugary foods; mung beans and green tea cool.',
+    tcm: 'Seen as too much heat in the blood or stomach. Fewer fried, spicy and sugary foods; mung beans and green tea cool.',
     doctor: 'Painful cystic acne, scarring, or acne with irregular periods and extra hair growth (ask about PCOS).',
   },
   Headache: {
@@ -1000,7 +1000,7 @@ export const RELIEF = {
       { t: 'Magnesium-rich foods', d: 'May help prevent menstrual migraines.', ev: 'some' },
       { t: 'Dark, quiet rest', d: 'With a cool cloth on the forehead or neck.', ev: 'emerging' },
     ],
-    tcm: 'Often Liver Yang rising. Press LV3 on the foot, avoid skipping meals and late nights.',
+    tcm: 'Seen as too much energy rushing up to the head, often after skipped meals or late nights. Press the soft spot on top of your foot between the big and second toe, eat regularly and go to bed earlier.',
     doctor: 'A sudden "worst ever" headache, headaches with vision or speech changes, or migraine with aura if you take the combined pill.',
   },
   Fatigue: {
