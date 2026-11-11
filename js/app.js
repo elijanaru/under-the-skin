@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HABITS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
+  PHASES, PHASE_ORDER, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -1383,17 +1383,25 @@ const HB_SHORT = { 'morning-sun': ['sun', 'Morning sun'], lemon: ['drop', 'Warm 
 // the fundamentals in the order of the Balance page, step 1
 const HB_ORDER = ['morning-sun', 'lemon', 'phone-free', 'walk', 'calm', 'ground'];
 function habitsHome(info) {
-  const list = HB_ORDER.map(id => HABITS.find(h => h.id === id)).filter(Boolean), ids = list.map(h => h.id), done = habitsDone(todayISO()).filter(id => ids.includes(id));
-  const focus = info ? HABIT_FOCUS[info.phase].filter(id => ids.includes(id)) : [];
-  const pick = ids, n = pick.filter(id => done.includes(id)).length;
-  const leaves = pick.map((_, i) => { const y = 52 - i * 7.5, l = i % 2 === 0; return `<path class="${i < n ? 'on' : ''}" d="M30 ${y} q${l ? -13 : 13} -2 ${l ? -15 : 15} -11 q${l ? 11 : -11} 1 ${l ? 15 : -15} 11z"/>`; }).join('');
-  return `${sectionTitle('Hormone balancing habits', ['Why', 'relief'])}
-    <section class="card hh">
-      <div class="hh-top"><svg class="hh-sprout" viewBox="0 0 60 64" aria-hidden="true"><path class="hh-stem" d="M30 62 V${52 - (pick.length - 1) * 7.5 - 8}"/>${leaves}</svg>
-        <div class="hh-txt"><b class="hh-n">${n}<small>/${pick.length}</small></b><span>${n === pick.length ? 'All done. Your hormones thank you.' : n ? 'Growing nicely, keep going' : 'Tick one to grow a leaf'}</span>
-          <span class="hh-bar" aria-hidden="true">${pick.map((_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</span></div></div>
-      <div class="hh-list">${pick.map(id => { const [ic, t] = HB_SHORT[id], on = done.includes(id); return `<button class="hh-i ${on ? 'on' : ''}" data-action="habitTick" data-id="${id}" aria-pressed="${on}"><span class="hh-cb">${icon(on ? 'check' : ic, 14, on ? 2.6 : 1.8)}</span><span>${t}</span>${focus.includes(id) ? '<i class="hh-ph" title="Good for your phase"></i>' : ''}</button>`; }).join('')}</div>
-      ${focus.length && info ? `<p class="hh-key"><i class="hh-ph"></i>Extra good in your ${PHASES[info.phase].name.toLowerCase()} phase</p>` : ''}
+  return `${sectionTitle('Hormone balancing habits', ['Why', 'relief'])}${hhCard(info)}`;
+}
+// six fundamentals for her exact phase: progress ring, photo rows, tick on the right, tap a row for why + how
+function hhCard(info) {
+  const phase = info ? info.phase : 'follicular', F = PHASE_FUNDAMENTALS[phase], done = habitsDone(todayISO());
+  const n = F.list.filter(x => done.includes(x[0])).length, N = F.list.length, R = 27, L = 2 * Math.PI * R;
+  const rows = F.list.map(([id, img, t, when, does, why, how]) => {
+    const on = done.includes(id), open = ui.hhOpen === id;
+    return `<li class="hh2-r ${on ? 'on' : ''} ${open ? 'open' : ''}">
+      <button class="hh2-m" data-action="hhOpen" data-id="${id}" aria-expanded="${open}"><span class="hh2-p"><img src="images/fb/${img}.webp" alt="" loading="lazy" decoding="async"></span>
+        <span class="hh2-t"><b>${t}</b><small>${when} · ${does}</small></span></button>
+      <button class="hh2-c" data-action="habitTick" data-id="${id}" aria-pressed="${on}" aria-label="${on ? 'Done' : 'Mark done'}: ${t}">${icon('check', 15, 2.6)}</button>
+      <div class="hh2-d"><div><p>${why}</p><p class="hh2-how"><b>How</b>${how}</p></div></div></li>`;
+  }).join('');
+  return `<section class="card hh2" data-ph="${phase}">
+      <div class="hh2-h"><svg class="hh2-ring" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="${R}"/><circle class="on" cx="32" cy="32" r="${R}" stroke-dasharray="${L.toFixed(1)}" stroke-dashoffset="${(L * (1 - n / N)).toFixed(1)}"/></svg>
+        <b class="hh2-n">${n}<small>of ${N}</small></b>
+        <div><span class="hh2-e">${info ? `Your ${PHASES[phase].name.toLowerCase()} phase` : 'This phase'}</span><h3>${F.t}</h3><p>${n === N ? 'All six done. Beautiful.' : F.s}</p></div></div>
+      <ul class="hh2-l">${rows}</ul>
     </section>`;
 }
 function logChips(l) {
@@ -2023,10 +2031,10 @@ function planOpts(phase) {
 const PLAN_TITLE = { recipes: 'Recipes', foods: 'Superfoods', drinks: 'Drinks & tea', super: 'Superfoods', supps: 'Supplements', sugar: 'Blood sugar', rituals: 'Rituals', mind: 'Your mind' };
 // Food page, after the plate: a row of picture options (cut-out photo + title). The chosen one shows a short line and
 // its best picks for this phase underneath, with a pill into the full page.
-const FX_CATS = [['recipes', 'Recipes', 'images/dish-stew.webp'], ['season', 'In season', 'images/sz/pears.webp'], ['foods', 'Superfoods', 'images/sf/goji.webp'],
-  ['drinks', 'Drinks', 'images/cup-chai.webp'], ['supps', 'Supplements', 'images/fb/magnesium.webp'], ['sugar', 'Blood sugar', 'images/sz/apples.webp'], ['rituals', 'Rituals', 'images/fb/castor.webp']];
+// tab pictures are trimmed, square and centred copies (images/fx) so every tile sits the same
+const FX_CATS = [['recipes', 'Recipes'], ['season', 'In season'], ['foods', 'Superfoods'], ['drinks', 'Drinks'], ['supps', 'Supplements'], ['sugar', 'Blood sugar']].map(([k, t]) => [k, t, `images/fx/${k}.webp`]);
 function foodExplore(phase, info) {
-  const k = ui.fxCat || 'recipes', name = PHASES[phase].name, warm = warmWindow(info);
+  const k = FX_CATS.some(c => c[0] === ui.fxCat) ? ui.fxCat : 'recipes', name = PHASES[phase].name, warm = warmWindow(info);
   const tile = (img, t, act, round) => `<button class="fx-t" ${act}><span class="fx-ti ${round ? 'rd' : ''}">${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}</span><b>${t}</b></button>`;
   let lead = '', body = '';
   if (k === 'recipes') {
@@ -2047,13 +2055,17 @@ function foodExplore(phase, info) {
     body = `<div class="fx-g">${L.map(([, n]) => { if (k === 'supps') { const x = suppOf(n), sym = x ? x.sym : /B12/.test(n) ? 'B12' : /omega/i.test(n) ? 'Ω3' : n.slice(0, 2);
       return `<button class="fx-t" data-action="nav" data-to="plan/supps"><span class="fx-ti sym"><span>${sym}</span></span><b>${n}</b></button>`; }
       const pic = (EB_PIC.find(([r]) => r.test(n)) || [])[1]?.(); return tile(pic, n, 'data-action="nav" data-to="plan/drinks"', pic && !pic.startsWith('images/')); }).join('')}</div>`;
-  } else if (k === 'sugar') {
-    lead = 'Steady blood sugar means steadier mood, energy and skin. Eight small tricks, no counting.';
-    body = `<div class="fx-g">${[['images/sz/apples.webp', 'Fibre first'], ['images/sf/olive-oil.webp', 'Add fat'], ['images/fb/walk.webp', 'Walk after']].map(([im, t]) => tile(im, t, 'data-action="nav" data-to="plan/sugar"')).join('')}</div>`;
   } else {
-    const rits = RITUALS.filter(r => r.phases.includes(phase)).slice(0, 6);
-    lead = 'Small warm rituals for this phase, from Chinese medicine.';
-    body = `<div class="fx-g">${rits.map(r => tile(carePhoto(r.id, 300), r.name, `data-action="nav" data-to="ritual/${r.id}"`, true)).join('')}</div>`;
+    // blood sugar: one simple curve graphic and three steps, the full page behind See all
+    lead = { menstrual: 'Cravings are normal now. Three steps keep the curve gentle.', follicular: 'Your body handles carbs well now. Three steps keep the curve gentle.',
+      ovulatory: 'Energy is high now. Three steps keep the curve gentle.', luteal: 'Blood sugar dips more easily now. Three steps keep it steady.' }[phase];
+    body = `<div class="fx-bs"><svg viewBox="0 0 320 120" aria-hidden="true">
+        <line x1="10" y1="104" x2="310" y2="104" class="fx-bs-ax"/>
+        <path d="M10 100 C60 100 70 14 105 14 C140 14 140 112 180 112 C215 112 230 100 310 100" class="fx-bs-spike"/>
+        <path d="M10 100 C80 100 100 60 160 60 C220 60 240 100 310 100" class="fx-bs-calm" style="stroke:${PH_HEX[phase]}"/>
+      </svg>
+      <div class="fx-bs-k"><span><i class="sp"></i>Sweet food alone</span><span><i style="background:${PH_HEX[phase]}"></i>With these three steps</span></div>
+      <ol class="fx-bs-s">${[['leaf', 'Veg first', 'Eat the vegetables before the rest'], ['drop', 'Add protein and fat', 'Eggs, meat, butter or nuts with every carb'], ['walk', 'Walk 10 minutes', 'Right after you eat']].map(([ic, t, d], i) => `<li><b class="fx-bs-n">${i + 1}</b><span><b>${t}</b><small>${d}</small></span></li>`).join('')}</ol></div>`;
   }
   const cat = FX_CATS.find(c => c[0] === k);
   return `<div class="fx-cats" role="tablist">${FX_CATS.map(([id, t, img]) => `<button class="fx-c ${id === k ? 'on' : ''}" role="tab" aria-selected="${id === k}" data-action="fxCat" data-v="${id}"><span><img src="${img}" alt="" loading="lazy" decoding="async"></span><b>${t}</b></button>`).join('')}</div>
@@ -2109,7 +2121,7 @@ function viewPlan() {
     <div class="pv-h"><span class="eg-rule ${warm ? 'warm' : 'raw'}">${icon(warm ? 'sun' : 'leaf', 14)} Today: ${warm ? 'warm & cooked' : 'raw & fresh'}</span></div>
     ${plateSection(phase, true)}
     ${foodExplore(phase, info)}
-    <button class="pv-row" data-action="nav" data-to="grocery"><span class="pv-num">${icon('check', 18)}</span><span><b>My grocery list</b><small>For the next 7 days</small></span><span class="pv-go">${icon('chevR', 16)}</span></button>
+    ${groceryCard()}
   </div>`;
 }
 
@@ -2323,11 +2335,12 @@ const UNS = id => `https://images.unsplash.com/photo-${id}?w=420&h=420&fit=crop&
 const PEX = id => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=420&h=420&fit=crop`;
 const PLATE_SET = {
   protein: { menstrual: UNS('1783632665766-2806d10f2a03'), follicular: UNS('1641999161954-f6a92e137b84'), ovulatory: UNS('1706982272171-8ce965c1c996'), luteal: UNS('1603048297172-c92544798d5a') },
-  spice: { menstrual: UNS('1635843104103-ddd88e1c5141'), follicular: UNS('1726994803809-0e065bd4b25b'), ovulatory: PEX(13632808), luteal: UNS('1702989052359-541ef30e5973') },
+  // close, single-food photos so each portion is recognisable at a glance
+  spice: { menstrual: UNS('1758657996518-e67bd328854e'), follicular: UNS('1758657996518-e67bd328854e'), ovulatory: UNS('1758657996518-e67bd328854e'), luteal: UNS('1758657996518-e67bd328854e') },
   fats: { menstrual: PEX(35339669), follicular: PEX(35339669), ovulatory: PEX(35339669), luteal: PEX(35339669) },
-  carbs: { menstrual: PEX(7456548), follicular: PEX(7456548), ovulatory: PEX(39467457), luteal: PEX(39467457) },
+  carbs: { menstrual: PEX(36400786), follicular: PEX(36400786), ovulatory: PEX(36400786), luteal: PEX(36400786) },
   veg: () => UNS('1558234608-ae0b60563965'),
-  fruit: { Winter: UNS('1788512337872-7390113a5318'), Autumn: UNS('1788512337872-7390113a5318'), Spring: UNS('1594282241894-4da286138f44'), Summer: PEX(6316703), 'Late summer': PEX(6316703) },
+  fruit: { Winter: PEX(8639570), Autumn: UNS('1560806887-1e4cd0b6cbd6'), Spring: PEX(18018686), Summer: PEX(18018686), 'Late summer': UNS('1560806887-1e4cd0b6cbd6') },
 };
 const plateSetPic = (k, phase, season) => k === 'protein' && (myDiet() === 'veg' || myDiet() === 'vegan') ? foodPhoto('Peas & broad beans', 420) : k === 'veg' ? PLATE_SET.veg() : k === 'fruit' ? PLATE_SET.fruit[season] : PLATE_SET[k][phase];
 // A rounded food portion: the wedge between angles a0 and a1, pulled in by h from both cut edges.
@@ -2366,7 +2379,7 @@ function plateWheel(phase, season, sel, warm) {
     <filter id="pl-ds" x="-25%" y="-25%" width="150%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="1.6" flood-color="#000" flood-opacity=".38"/><feDropShadow dx="2" dy="9" stdDeviation="7" flood-color="#1b1f1b" flood-opacity=".42"/></filter></defs>
     <image class="pl-photo" href="images/plate.webp" x="-21.6" y="-18.5" width="405" height="405"/>
     <circle cx="${cx}" cy="${cy}" r="${R + 6}" class="pl-well"/>
-    <g filter="url(#pl-ds)">${segs}</g>${labels}</svg>`;
+    <g filter="url(#pl-ds)">${segs}</g></svg>`;
 }
 // What the Chinese-medicine idea for each phase means, in everyday words.
 const PLATE_TCM_PLAIN = {
@@ -2391,7 +2404,7 @@ function plateSection(current, lite) {
   const country = SZ.COUNTRIES.find(x => x[0] === myCountry())?.[1] || '';
   const cook = warm ? `Warm and cooked, even in ${season === 'Summer' || season === 'Late summer' ? 'the heat' : season.toLowerCase()}. No iced drinks during your period and the 2–3 days before it.` : phase === 'luteal' ? `${PSn.cook} Lean warmer as your period gets close.` : PSn.cook;
   return `<section class="pl">
-    <div class="pl-head"><div class="mv2-eyebrow">Your plate today</div><h2>${PHASES[phase].name} × ${season.toLowerCase()}</h2></div>
+    <div class="pl-head"><h2>${PHASES[phase].name} × ${season.toLowerCase()}</h2></div>
     <div class="pl-wheel ${ui.plAnim ? 'pl-anim' : ''}">${plateWheel(phase, season, sel, warm)}</div>
     <div class="pl-det" data-k="${sel}">
       <div class="pld-h"><b>${P.n}</b><span class="pld-p">${PLATE_SHARE[phase][sel]}%</span></div>
@@ -3268,6 +3281,18 @@ const GRO_EMO = [[/potato/i, '🍠'], [/pumpkin|squash/i, '🎃'], [/spinach|col
   [/egg/i, '🥚'], [/beef|lamb|meat|liver|organ/i, '🥩'], [/chicken|duck|turkey/i, '🍗'], [/milk|kefir|yog|cheese|butter|ghee/i, '🥛'], [/lentil|bean|pea|chickpea/i, '🫘'], [/mushroom|shiitake/i, '🍄'], [/avocado/i, '🥑'], [/tomato/i, '🍅'], [/pepper/i, '🫑'],
   [/melon/i, '🍉'], [/fig|date|prune/i, '🫐'], [/ginger|turmeric/i, '🫚'], [/herb|mint|parsley|basil|cilantro|dill/i, '🌿'], [/seaweed|kelp|nori|gim|miyeok/i, '🌊'], [/millet|rice|buckwheat|quinoa|grain/i, '🌾'], [/honey|molasses/i, '🍯'], [/cinnamon|spice|clove/i, '✨'], [/kimchi|sauerkraut|ferment/i, '🫙']];
 const groEmoji = n => (GRO_EMO.find(([r]) => r.test(n)) || [0, '🌱'])[1];
+// Food page: the grocery list as a little basket of this week's real foods, how many and how many are already in
+function groceryCard() {
+  const flat = groceryItems().flatMap(([, l]) => l), got = state.grocery || {}, total = flat.length, done = flat.filter(i => got[i.name.toLowerCase()]).length;
+  const pics = [...new Set(flat.map(i => szCut(i.name.toLowerCase())).filter(Boolean))].slice(0, 3);
+  ['images/sz/carrots.webp', 'images/sz/eggs.webp', 'images/sz/pears.webp'].forEach(x => { if (pics.length < 3 && !pics.includes(x)) pics.push(x); });
+  return `<button class="gro2" data-action="nav" data-to="grocery">
+      <span class="gro2-pics">${pics.map((x, i) => `<i style="--i:${i}"><img src="${x}" alt="" loading="lazy" decoding="async"></i>`).join('')}</span>
+      <span class="gro2-t"><b>My grocery list</b><small>${done ? `${done} of ${total} in your basket` : `${total} foods · next 7 days`}</small>
+        ${done ? `<span class="gro2-bar" aria-hidden="true"><i style="width:${Math.round(done / total * 100)}%"></i></span>` : ''}</span>
+      <span class="gro2-go">${icon('chevR', 16, 2)}</span>
+    </button>`;
+}
 function viewGrocery() {
   // meat and organs come right after what's in season
   const AISLE_FIRST = ['In season now', 'Protein'], rank = a => { const i = AISLE_FIRST.indexOf(a); return i < 0 ? 9 : i; };
@@ -3638,9 +3663,9 @@ function cycleFlag() {
   // compact heads-up: headline, one grey line, a slim 10 to 45 day line (usual 21 to 35 as a soft band), two small buttons
   const x = d => (Math.min(45, Math.max(10, d)) - 10) / 35 * 100;
   return `<section class="card flag fl6"><div class="fl6-h"><span class="fl6-ic">${icon('spark', 15)}</span><div><b>${head}</b><p>${sub}</p></div></div>
-    <div class="fl6-line" role="img" aria-label="This cycle ${gap} days, your usual ${avg} days, the usual range is 21 to 35 days"><span class="fl6-band" style="left:${x(21)}%;width:${x(35) - x(21)}%"></span>
-      <i class="fl6-d" style="left:${x(avg)}%"></i><i class="fl6-d me" style="left:${x(gap)}%"><b class="dotnum">${gap}</b></i>
-      <small style="left:${x(21)}%">21</small><small style="left:${x(35)}%">35</small></div>
+    <div class="fl6-cmp" role="img" aria-label="This cycle ${gap} days, your usual ${avg} days, the healthy range is 21 to 35 days" >
+      ${[['This cycle', gap, 'me'], ['Your usual', avg, '']].map(([t, n, c]) => `<div class="fl6-row ${c}"><span>${t}</span><i class="fl6-bar"><i style="width:${(Math.min(n, 45) / 45 * 100).toFixed(1)}%"></i></i><b>${n}<small> d</small></b></div>`).join('')}
+      <small class="fl6-zl">Healthy range 21 to 35 days</small></div>
     <div class="fl6-acts">${gap < 21 ? `<button class="fl2-b ${gap < 15 ? 'on' : ''}" data-action="flagEdit" data-date="${key}">${icon('calendar', 13)} Fix</button>` : ''}<button class="fl2-b ${gap < 15 ? '' : 'on'}" data-action="flagDismiss" data-k="${key}">${icon('check', 13)} It’s correct</button></div></section>`;
 }
 
@@ -6125,6 +6150,32 @@ function viewStress() {
 }
 
 // ---------- hormone habits ----------
+// redraw only the Today habits card so the page doesn't jump or replay its animations
+// hand-drawn cat faces for the partner picker: a girl cat with a bow, a boy cat with a bow tie
+function catFace(k) {
+  const g = k === 'w', fur = g ? '#f6dde5' : '#e3ead6', ink = '#20301a';
+  return `<svg class="cat-f" viewBox="0 0 100 90" aria-hidden="true">
+    <path d="M22 40 L18 8 L44 26 Z M78 40 L82 8 L56 26 Z" fill="${fur}" stroke="${ink}" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M24 33 L22 16 L37 26 Z M76 33 L78 16 L63 26 Z" fill="${g ? '#e8a3b8' : '#b9c79a'}"/>
+    <ellipse cx="50" cy="50" rx="34" ry="29" fill="${fur}" stroke="${ink}" stroke-width="2.4"/>
+    ${g ? `<path d="M37 45 q3 -4 6 0 M57 45 q3 -4 6 0" fill="none" stroke="${ink}" stroke-width="2.4" stroke-linecap="round"/><path d="M36 43 l-3 -3 M64 43 l3 -3" stroke="${ink}" stroke-width="1.8" stroke-linecap="round"/>`
+      : `<circle cx="40" cy="45" r="3.4" fill="${ink}"/><circle cx="60" cy="45" r="3.4" fill="${ink}"/>`}
+    <path d="M47 53 h6 l-3 3.5 z" fill="${g ? '#d9768f' : '#8a6a52'}"/>
+    <path d="M50 56.5 q-3 4 -7 2 M50 56.5 q3 4 7 2" fill="none" stroke="${ink}" stroke-width="2" stroke-linecap="round"/>
+    <path d="M30 54 h-14 M30 58 l-13 4 M70 54 h14 M70 58 l13 4" stroke="${ink}" stroke-width="1.6" stroke-linecap="round" opacity=".55"/>
+    ${g ? `<g transform="translate(70 20) rotate(18)"><path d="M0 0 L-11 -7 L-11 7 Z M0 0 L11 -7 L11 7 Z" fill="#d9768f" stroke="${ink}" stroke-width="1.8" stroke-linejoin="round"/><circle r="3.2" fill="#d9768f" stroke="${ink}" stroke-width="1.8"/></g>`
+      : `<g transform="translate(50 82)"><path d="M0 0 L-12 -6 L-12 6 Z M0 0 L12 -6 L12 6 Z" fill="#6c823e" stroke="${ink}" stroke-width="1.8" stroke-linejoin="round"/><circle r="3" fill="#6c823e" stroke="${ink}" stroke-width="1.8"/></g>`}
+  </svg>`;
+}
+function hhRefresh() {
+  const old = document.querySelector('#view .hh2'); if (!old) return false;
+  const t = document.createElement('div'); t.innerHTML = hhCard(M.info); const nu = t.firstElementChild;
+  const was = [...old.querySelectorAll('.hh2-r')].map(r => r.classList.contains('on'));
+  nu.querySelectorAll('.hh2-r').forEach((r, i) => { if (r.classList.contains('on') && !was[i]) r.classList.add('pop'); });
+  const ring = old.querySelector('.hh2-ring .on'), off = ring && ring.getAttribute('stroke-dashoffset');
+  const nr = nu.querySelector('.hh2-ring .on'); if (off && nr) { const to = nr.getAttribute('stroke-dashoffset'); nr.setAttribute('stroke-dashoffset', off); requestAnimationFrame(() => requestAnimationFrame(() => nr.setAttribute('stroke-dashoffset', to))); }
+  old.replaceWith(nu); return true;
+}
 function habitsDone(k) { return ((state.habits || {})[k] || []); }
 // The hormone guide: today's five habits as photo tick rows, then seven pillars that protect and balance a woman's
 // hormones, each a short line with the full do-list and the why behind a tap.
@@ -6348,7 +6399,7 @@ function viewPartners(id) {
     ${ps.length >= 4 ? '<p class="fine center">You’re connected with 4 people, the most Underskin keeps. Remove someone to add a new person.</p>' : ''}
     ${ps.length >= 4 ? '' : (() => { const sent = !!me.linkSent, got = ps.length > 0, who = me.ptWho, done = () => `<span class="sy-n done">${icon('check', 15, 2.4)}</span>`;
       const ask = `<div class="sy-who-q"><b>Who is your partner?</b><small>So we send the right kind of link.</small>
-        <div class="sy-pick">${[['w', 'A woman', 'She tracks her own cycle too and you see each other'], ['m', 'A man', 'He sees your rhythm, plus his own 24-hour day. Nothing to track']].map(([k, t, d]) => `<button class="sy-opt ${who === k ? 'on' : ''}" data-action="ptWho" data-v="${k}" aria-pressed="${who === k}"><b>${t}</b><small>${d}</small></button>`).join('')}</div></div>`;
+        <div class="sy-pick">${[['w', 'A woman'], ['m', 'A man']].map(([k, t]) => `<button class="sy-opt sy-cat ${who === k ? 'on' : ''}" data-action="ptWho" data-v="${k}" aria-pressed="${who === k}">${catFace(k)}<b>${t}</b></button>`).join('')}</div></div>`;
       const send = who ? `<div class="sy-send"><button class="btn btn-dark" data-action="shareSend">${icon('share', 16)} Send link</button><button class="btn btn-light" data-action="shareEmail">${icon('mail', 16)} Email it</button></div>` : '';
       if (who === 'm') return `<div class="sy-head"><span class="hud">CONNECT · 2 STEPS</span><span class="sy-prog">${[sent, sent].map(x => `<i class="${x ? 'on' : ''}"></i>`).join('')}</span></div>
     <ol class="sy-flow">
@@ -8131,7 +8182,8 @@ const actions = {
   lemonTick: () => { const L = state.lemon; if (!L) return; L.done = L.done || {}; const k = todayISO(); L.done[k] ? delete L.done[k] : (L.done[k] = 1); save(); render(); },
   focusTick: d => { const k = todayISO(), f = state.focusDone = state.focusDone || {}; const a = f[k] = f[k] || []; const i = +d.i; a.includes(i) ? a.splice(a.indexOf(i), 1) : a.push(i); for (const x in f) if (x !== k) delete f[x]; save(); render(); },
   habitTick: d => { const k = todayISO(), H = state.habits = state.habits || {}; const a = H[k] = H[k] || []; a.includes(d.id) ? a.splice(a.indexOf(d.id), 1) : a.push(d.id);
-    const cut = C.iso(C.addDays(new Date(), -60)); for (const x in H) if (x < cut) delete H[x]; save(); render(); },
+    const cut = C.iso(C.addDays(new Date(), -60)); for (const x in H) if (x < cut) delete H[x]; save(); hhRefresh() || render(); },
+  hhOpen: d => { ui.hhOpen = ui.hhOpen === d.id ? null : d.id; hhRefresh() || render(); },
   addPartner: d => { const snap = b64d(d.d); if (!snap) return; const ps = state.partners = state.partners || [];
     const old = ps.find(x => x.n === snap.n);
     if (old) { Object.assign(old, snap, { id: old.id, added: Date.now() }); save(); syncTo(old); toast(`${snap.n} updated`); return go('partners/' + old.id); }

@@ -1156,7 +1156,51 @@ export const HABITS = [
   { id: 'pray', a: 'mind', ev: 'emerging', g: 'fertile', t: 'Prayer or intention', why: 'A quiet moment for your body, your future and your future children.' },
   { id: 'slow', a: 'body', ev: 'tcm', g: 'fertile', t: 'Slow down: especially on your period', why: 'Rest during bleeding is part of a healthy cycle.' },
   { id: 'track', a: 'mind', ev: 'some', g: 'fertile', t: 'Track your cycle', why: 'Knowing your rhythm is the foundation of everything else.' },
+  // phase fundamentals on Today (g: 'phase' keeps them out of the protect and fertile lists)
+  { id: 'heat-belly', a: 'body', ev: 'some', g: 'phase', t: 'Warmth on your belly', why: 'Heat relaxes the womb muscle and eases cramps.' },
+  { id: 'golden-milk', a: 'food', ev: 'emerging', g: 'phase', t: 'Golden milk', why: 'Turmeric and ginger in warm milk calm period inflammation.' },
+  { id: 'mag-night', a: 'body', ev: 'some', g: 'phase', t: 'Magnesium at night', why: 'Relaxes muscles and softens cramps and PMS.' },
+  { id: 'seed-cycle', a: 'food', ev: 'emerging', g: 'phase', t: 'Seed cycling', why: 'Two spoons of seeds a day, matched to your phase.' },
+  { id: 'carrot-salad', a: 'food', ev: 'emerging', g: 'phase', t: 'Raw carrot salad', why: 'Its fibre helps carry used oestrogen out.' },
+  { id: 'chamomile-eve', a: 'food', ev: 'some', g: 'phase', t: 'Chamomile tea', why: 'Calms you and helps you sleep before your period.' },
 ];
+
+// Today, Hormone balancing habits: six fundamentals for each phase.
+// [habit id, cut-out photo in images/fb, title, when, what it does, why, how]
+export const PHASE_FUNDAMENTALS = {
+  menstrual: { t: 'Rest, warm, refill', s: 'Your hormones are at their lowest. Warmth and iron come first.', list: [
+    ['heat-belly', 'heat', 'Warmth on your belly', 'Any time', 'Eases cramps', 'Heat relaxes the womb muscle. In small trials a heat wrap eased period pain about as well as ibuprofen.', '20 minutes with a hot water bottle, warm, never burning.'],
+    ['lemon', 'lemon', 'Warm lemon water', 'Morning', 'Helps iron in', 'Vitamin C helps you take up the iron you lose with bleeding.', 'Half a lemon in a big glass of warm water. Warm, never iced, this week.'],
+    ['golden-milk', 'golden', 'Golden milk', 'Evening', 'Calms inflammation', 'Turmeric and ginger calm the inflammation behind period aches and help you wind down.', '1 cup warm milk, ½ tsp turmeric, a slice of ginger, a pinch of pepper.'],
+    ['mag-night', 'magnesium', 'Magnesium at night', 'Before bed', 'Softens cramps', 'Magnesium relaxes muscles and lowers the prostaglandins that cause cramps.', '200 to 300 mg magnesium glycinate. Ask your doctor first if you have kidney problems.'],
+    ['calm', 'breathe', 'Breathe 5 minutes', 'Any time', 'Lowers cortisol', 'Slow breathing calms the stress hormone that makes pain and mood feel louder.', 'Breathe in for 4, out for 6. Five minutes, lying down is fine.'],
+    ['walk', 'walk', 'Slow walk outside', 'Daytime', 'Lifts your mood', 'Gentle movement and daylight ease cramps and lift a low mood. No need to push.', '10 to 20 minutes at an easy pace.'],
+  ] },
+  follicular: { t: 'Build and rise', s: 'Oestrogen is climbing. Morning light and fresh food help it rise smoothly.', list: [
+    ['morning-sun', 'sun', 'Morning sun', 'First hour', 'Sets your body clock', 'Daylight soon after waking sets your cortisol rhythm, so energy comes in the morning and sleep at night.', '10 minutes outside, no sunglasses, even when it is cloudy.'],
+    ['lemon', 'lemon', 'Warm lemon water', 'Morning', 'Wakes digestion', 'Rehydrates you after the night and gently wakes your gut.', 'Half a lemon in a big glass of warm water before breakfast.'],
+    ['seed-cycle', 'seeds', 'Flax and pumpkin seeds', 'Breakfast', 'Supports oestrogen', 'First half of seed cycling. Flax lignans help keep oestrogen in balance and pumpkin seeds add zinc.', '1 tbsp freshly ground flax and 1 tbsp pumpkin seeds a day until ovulation.'],
+    ['walk', 'walk', 'Walk after meals', 'After meals', 'Steadies blood sugar', 'A short walk after eating softens the blood sugar rise, which keeps hormones calmer.', '10 minutes after your biggest meal.'],
+    ['phone-free', 'phone', 'No phone first hour', 'Morning', 'Calms stress hormones', 'Starting the day without scrolling keeps cortisol from spiking early.', 'Phone stays in another room until after breakfast.'],
+    ['ground', 'ground', 'Barefoot on the ground', 'Any time', 'Calms your nerves', 'Time barefoot outside calms your nervous system and gets you out of your head.', '10 minutes on grass, sand or soil.'],
+  ] },
+  ovulatory: { t: 'Shine and clear', s: 'Oestrogen peaks and the egg is released. Help your body clear what it no longer needs.', list: [
+    ['morning-sun', 'sun', 'Morning sun', 'First hour', 'Sets your body clock', 'Daylight soon after waking sets your cortisol rhythm and supports a good night of sleep.', '10 minutes outside, no sunglasses.'],
+    ['carrot-salad', 'carrot', 'Raw carrot salad', 'Lunch', 'Clears extra oestrogen', 'The fibre in raw carrot binds used oestrogen in the gut so it leaves your body.', '1 grated carrot, olive oil, a little vinegar and a pinch of salt.'],
+    ['lemon', 'lemon', 'Big glass of lemon water', 'Morning', 'Keeps you hydrated', 'Fertile fluid and your energy need water, and you sweat more now.', 'Half a lemon in a big glass of water when you wake.'],
+    ['walk', 'walk', 'Walk after meals', 'After meals', 'Steadies blood sugar', 'A short walk after eating softens the blood sugar rise.', '10 minutes after your biggest meal.'],
+    ['calm', 'breathe', 'Breathe 5 minutes', 'Any time', 'Lowers cortisol', 'High energy days still need a pause. Slow breathing keeps cortisol in check.', 'Breathe in for 4, out for 6, for five minutes.'],
+    ['ground', 'ground', 'Barefoot on the ground', 'Any time', 'Calms your nerves', 'Time barefoot outside calms your nervous system.', '10 minutes on grass, sand or soil.'],
+  ] },
+  luteal: { t: 'Calm and steady', s: 'Progesterone rises and blood sugar dips more easily. Steady meals and calm evenings.', list: [
+    ['mag-night', 'magnesium', 'Magnesium at night', 'Before bed', 'Eases PMS', 'In trials magnesium eased PMS mood swings, bloating and cramps.', '200 to 300 mg magnesium glycinate. Ask your doctor first if you have kidney problems.'],
+    ['seed-cycle', 'seeds', 'Sesame and sunflower seeds', 'Breakfast', 'Supports progesterone', 'Second half of seed cycling. Zinc and vitamin E support the body that makes progesterone.', '1 tbsp sesame and 1 tbsp sunflower seeds a day until your period.'],
+    ['walk', 'walk', 'Walk after meals', 'After meals', 'Stops sugar dips', 'Blood sugar swings more now. A short walk after eating keeps cravings down.', '10 minutes after your biggest meal.'],
+    ['calm', 'breathe', 'Breathe 5 minutes', 'Any time', 'Lowers cortisol', 'Stress hormones and progesterone are made from the same building block. Calm keeps more for progesterone.', 'Breathe in for 4, out for 6, for five minutes.'],
+    ['chamomile-eve', 'chamomile', 'Chamomile tea', 'Evening', 'Deeper sleep', 'Sleep often gets lighter before your period. Chamomile calms and helps you drift off.', '1 cup, steep 5 minutes. Skip it if you are allergic to daisies.'],
+    ['phone-free', 'phone', 'No phone first hour', 'Morning', 'Calms stress hormones', 'A calm start keeps cortisol from spiking and PMS quieter.', 'Phone stays in another room until after breakfast.'],
+  ] },
+};
 
 // Fertility foods & lifestyle.
 export const FERTILITY_FOODS = [
