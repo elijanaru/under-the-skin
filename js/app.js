@@ -3894,7 +3894,10 @@ function viewRemedy(id) {
     ${tracker}
     ${remedyMake(r)}
     ${remedyScience(r)}
-    ${r.weeks ? `${sectionTitle('Week by week')}<section class="card glass">${r.weeks.map(w => `<div class="tide on"><span class="tide-g">${w.w}</span><div><div class="tide-n">${w.add}</div><div class="tide-s">${w.gain}</div></div></div>`).join('')}</section>` : ''}
+    ${r.weeks ? (() => { const short = t => t.replace(/^Pinch of (good )?/i, '').replace(/^coconut water or 1 tsp apple cider vinegar$/i, 'coconut or vinegar').replace(/^./, c => c.toUpperCase()); let glass = ['Lemon'];
+      return `${sectionTitle('Week by week')}<p class="wk2-lead">Add one thing each week, so your glass grows with you.</p><section class="card wk2">${r.weeks.map(w => { const keep = /^keep going/i.test(w.add); if (!keep) glass = [...glass, short(w.add)];
+        return `<div class="wk2-r"><span class="wk2-n"><small>Week</small><b class="dotnum">${w.w}</b></span><div class="wk2-b"><b>${keep ? 'Same glass, every day' : `Add ${w.add.replace(/^Pinch/, 'a pinch').replace(/^Coconut/, 'coconut')}`}</b><p>${w.gain.length < 110 ? w.gain : splitSentences(w.gain)[0]}</p><span class="wk2-g">${icon('cup', 12)} ${glass.join(' · ')}</span></div></div>`; }).join('')}
+        <div class="sgt-st wk2-st"><b class="dotnum">2010</b><span><em>Lally</em>A new daily habit took about 66 days on average to feel automatic, and missing a single day made no real difference.<small>European Journal of Social Psychology</small></span></div></section>`; })() : ''}
     ${(() => { const nx = REMEDIES[(REMEDIES.indexOf(r) + 1) % REMEDIES.length]; return `<button class="card glass nu-next" data-action="nav" data-to="remedy/${nx.id}"><small>Next remedy</small><b>${nx.name}</b>${icon('chevR', 16)}</button>`; })()}
     <p class="fine center">Traditional home remedies, not a replacement for medical care.</p>
   </div>`;

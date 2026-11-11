@@ -1056,8 +1056,8 @@ export const REMEDIES = [
     weeks: [
       { w: 1, add: 'Pinch of cayenne', gain: 'Better hydration, gentle digestion boost. Cayenne warms and gets circulation flowing.' },
       { w: 2, add: 'Pinch of good salt', gain: 'More energy, more hydrated skin. Salt supports electrolytes, nerves and muscles.' },
-      { w: 3, add: 'Keep going', gain: 'Antioxidant protection rises.' },
-      { w: 4, add: 'Coconut water or 1 tsp apple cider vinegar', gain: 'Supports detox. Coconut water is a natural electrolyte drink; apple cider vinegar can soften blood-sugar spikes and supports digestion.' },
+      { w: 3, add: 'Keep going', gain: 'No new add-in. This week is about the daily rhythm, so the ritual starts to feel automatic.' },
+      { w: 4, add: 'Coconut water or 1 tsp apple cider vinegar', gain: 'Coconut water adds natural electrolytes; apple cider vinegar can soften blood-sugar spikes after meals.' },
     ] },
   { id: 'lung-elixir', name: 'Honey-Garlic Lung Elixir', glyph: '肺', organ: 'Lung', element: 'Metal', nature: 'Warming', phases: ['menstrual', 'follicular', 'ovulatory', 'luteal'],
     take: { dose: '1 teaspoon', often: '1 to 2 times a day', when: 'With food, at the first scratchy throat', more: ['clock', 'Keeps', '1 week in the fridge, then make a fresh jar'] },
