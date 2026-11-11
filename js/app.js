@@ -6515,6 +6515,18 @@ const SEASON_SUPER = {
     ['Pumpkin seeds', 'Pumpkin seeds', 'Zinc & magnesium', 'For calm nerves, clear skin and softer PMS.', 'A toasted handful on soups or salads.', ''],
     ['Pumpkin & squash', 'Squash', 'Beta-carotene', 'Golden flesh for skin and easy digestion.', 'Roasted with olive oil and cinnamon.', '']],
 };
+// Herb spec sheet extras: a conservative daily amount, an extra caution where the list had none, and a study where there is one.
+const HERB_SPEC = {
+  'Astragalus': { dose: '9–15 g dried root a day' },
+  'Red dates': { dose: '3–5 dates a day', care: 'Naturally sweet and high in sugar. Count them if you watch your blood sugar.' },
+  'Ginger root': { dose: 'Up to 4 g fresh a day, about a thumb', care: 'Ask first if you take blood thinners or have surgery coming up.', study: ['Ginger taken in the first days of the period eased period pain more than placebo in a pooled analysis of trials.', 'Daily 2015 (Pain Medicine)'] },
+  'Clove': { dose: '2–3 whole cloves in a drink', care: 'Never take clove oil by mouth. Ask first if you take blood thinners.' },
+  'Cinnamon bark': { dose: 'Up to 1 tsp (2 g) Ceylon a day', care: 'Cassia cinnamon is high in coumarin, which strains the liver in large amounts.', study: ['In people with type 2 diabetes, a pooled analysis of 10 trials found cinnamon lowered fasting blood sugar a little.', 'Allen 2013 (Annals of Family Medicine)'] },
+  'Goji berries': { dose: '10–15 g, a small handful a day' },
+  'Reishi': { dose: '1–1.5 g powder or a few slices a day' },
+  'Chaga': { dose: 'One cup of the tea a day at most' },
+  'He shou wu': { dose: 'Only as a practitioner prescribes' },
+};
 const apoHerbs = sn => (['Autumn', 'Winter'].includes(sn) ? WINTER_HERBS : []);
 const apoSeason = () => SZ.seasonName(myCountry(), new Date().getMonth() + 1);
 // The widget on the season page: three round photos, the name and a dark pill that opens the page.
@@ -6539,8 +6551,10 @@ function viewApothecary() {
   const detail = sel ? `<section class="card apo-d" id="apo-d"><img src="${sel.big}" alt="">
       <button class="bn-x" data-action="apoSel" data-v="${esc(sel.n)}" aria-label="Close">${icon('close', 16)}</button>
       <div class="apo-d-b"><small>${sel.sub}</small><h3>${sel.n}</h3><p>${sel.why}</p>
-        <div class="apo-d-r">${icon('cup', 16)}<span><small>How</small>${sel.how}</span></div>
-        ${sel.warn ? `<div class="apo-d-r care">${icon('spark', 16)}<span><small>Careful</small>${sel.warn}</span></div>` : ''}</div></section>` : '';
+        ${(() => { const H = (tab === 'herbs' && HERB_SPEC[sel.n]) || {}, cares = [sel.warn, H.care].filter(Boolean), S = H.study, yr = S ? (S[1].match(/(19|20)\d{2}/) || [''])[0] : '';
+          return `<div class="apo-spec">${tab === 'herbs' ? `<div><span>Nature</span><b><i class="nat ${sel.warm ? 'warm' : 'neutral'}"></i>${sel.tag}</b></div>` : ''}${H.dose ? `<div><span>How much</span><b>${H.dose}</b></div>` : ''}<div><span>How</span><b>${sel.how}</b></div></div>
+          ${S ? `<div class="apo-st"><small>What studies found</small><div class="sgt-st">${yr ? `<b class="dotnum">${yr}</b>` : ''}<span><em>${yr ? S[1].slice(0, S[1].indexOf(yr)).trim() : S[1]}</em>${S[0]}<small>${(S[1].match(/\(([^)]+)\)/) || [])[1] || ''}</small></span></div></div>` : ''}
+          ${cares.length ? `<div class="apo-d-r care">${icon('spark', 16)}<span><small>Before you try it</small>${cares.join(' ')}</span></div>` : ''}`; })()}</div></section>` : '';
   return `<div class="pad sp2 apo">
     ${specHero({ stack: true, photo: herbs.length ? teaPhoto(herbs[4][0], 900, 1000) : foodPhoto(sup[0][0], 900), glyph: 'leaf', eyebrow: `${sn} · ${MONTHS[new Date().getMonth()]}`, name: `${sn} apothecary`, label: 'In the jar',
       rows: [[`${sup.length} superfoods`, 'to eat this season'], ...(herbs.length ? [[`${herbs.length} herbs`, 'warming and calming']] : [])],

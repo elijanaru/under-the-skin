@@ -10921,3 +10921,12 @@ html .st2-k{margin:8px 0 0;font-size:11.5px;color:rgba(32,48,26,.55)}
 html .st2-up{display:inline-flex;transform:rotate(180deg)}
 html .st2-c i{background:#b3bb98} html .st2-c.last i{background:#4f6a2a}
 html .st2-c.now i{background:repeating-linear-gradient(135deg,#b3bb98 0 3px,#e2e6d6 3px 6px)}
+
+/* v867 Apothecary herb detail as a spec sheet: Nature, How much, How (label left, value right), a study where there is one, and a caution on every herb */
+html .apo-spec{margin:12px 0 4px;border-top:1px solid rgba(32,48,26,.09)}
+html .apo-spec > div{display:flex;justify-content:space-between;gap:14px;padding:10px 0;border-bottom:1px solid rgba(32,48,26,.09)}
+html .apo-spec span{flex:none;font:400 13px/1.35 var(--font);color:rgba(32,48,26,.6)}
+html .apo-spec b{display:inline-flex;align-items:center;justify-content:flex-end;gap:6px;text-align:right;font:500 13.5px/1.35 var(--font);color:#20301a}
+html .apo-spec .nat{width:7px;height:7px;box-shadow:none} html .apo-spec .nat.warm{background:#e0746b} html .apo-spec .nat.neutral{background:#b8a98f}
+html .apo-st{margin:12px 0 4px} html .apo-st > small{display:block;margin-bottom:6px;font:500 12px/1 var(--font);color:rgba(32,48,26,.6)}
+html .apo-d-r.care{margin-top:12px}
