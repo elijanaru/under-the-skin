@@ -1479,8 +1479,9 @@ function mindSection(phase, noFine) {
     return `<section class="spx"><div class="spx-art">${petCat(phase === 'menstrual' ? 'sleep' : phase === 'ovulatory' ? 'joy' : 'awake')}</div>
         <div class="spx-t"><small>Your superpower now</small><h3>${ph.superpower.title}</h3><p>${ph.superpower.text}</p></div>
         <details class="rfx-why"><summary>What’s going on ${icon('chevD', 13)}</summary><p>${P.mind}</p></details></section>
-      <div class="mg3" role="list">${rows.map(([ic, o, k], i) => `<div class="mg3-c t${i}" role="listitem" style="--i:${i}"><span class="mg3-e" aria-hidden="true">${['📝', '🫶', '🛁'][i]}</span><em>${k}</em><b>${o.title}</b><p>${o.text}</p>
-        <svg class="mg3-paw" viewBox="0 0 40 40" aria-hidden="true"><ellipse cx="20" cy="26" rx="8" ry="6.5"/><circle cx="10" cy="16" r="3.4"/><circle cx="16.5" cy="10.5" r="3.4"/><circle cx="23.5" cy="10.5" r="3.4"/><circle cx="30" cy="16" r="3.4"/></svg></div>`).join('')}</div>
+      <div class="mg3" role="list" style="--pc:${PH_HEX[phase] || '#6c823e'}">${rows.map(([ic, o, k], i) => `<div class="mg3-c" role="listitem" style="--i:${i}">
+        <div class="mg3-top"><span class="mg3-ic" aria-hidden="true">${icon(ic, 19, 1.8)}</span><em>${k}</em><small class="dotnum">${i + 1}/3</small></div>
+        <b>${o.title}</b><p>${o.text}</p></div>`).join('')}</div>
       ${noFine ? '' : '<p class="fine center">Low mood that stays, or PMS that takes over your life, is worth a doctor’s visit.</p>'}`;
 }
 function viewCalendar() {

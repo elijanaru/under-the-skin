@@ -10948,3 +10948,13 @@ html .bwx-spec span{color:#6f7866;flex:none}
 html .bwx-spec p>b{font-weight:500;color:#20301a;text-align:right}
 html .bwx-spec .dotnum{font-family:'Doto',monospace;font-weight:900;font-size:15.5px;color:#20301a;margin-left:2px}
 html .bwx-beat i{font-style:normal;color:#b3b8a8;margin:0 5px}
+
+/* v871 Calendar, Work / Social / Self-care: white tiles with line icons instead of emoji on pastel gradients */
+html .mg3-c{background:#fff !important;border:1px solid rgba(32,48,26,.07);box-shadow:0 14px 30px -22px rgba(32,48,26,.45);padding:16px 18px 20px;border-radius:26px}
+html .mg3-c::before,html .mg3-c::after{display:none !important}
+html .mg3-top{display:flex;align-items:center;gap:10px}
+html .mg3-ic{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;color:#20301a;background:color-mix(in srgb,var(--pc) 22%,#fff);flex:none}
+html .mg3-c em{margin:0;padding:0;background:none;font:500 13px/1 var(--font);letter-spacing:0;text-transform:none;color:#6f7866}
+html .mg3-top small{margin-left:auto;font-family:'Doto',monospace;font-weight:900;font-size:13px;color:#7d8571}
+html .mg3-c b{margin:14px 0 6px;font-size:21px;font-weight:500;color:#20301a}
+html .mg3-c p{color:#4b5741;font-size:14px}
