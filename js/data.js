@@ -1142,6 +1142,7 @@ export const HABITS = [
   { id: 'lemon', a: 'food', ev: 'emerging', g: 'protect', t: 'Warm lemon water', why: 'Rehydrates you after the night and adds a little vitamin C. Keep it warm, never iced, around your period.' },
   { id: 'calm', a: 'mind', ev: 'some', g: 'protect', t: 'Meditation', why: 'Ten quiet minutes lower cortisol, the stress hormone that can delay ovulation and make PMS louder.' },
   { id: 'walk', a: 'body', ev: 'strong', g: 'protect', t: 'Go for a walk', why: 'Ten minutes outside counts. A walk after a meal also softens the blood sugar rise.' },
+  { id: 'ground', a: 'body', ev: 'emerging', g: 'protect', t: 'Barefoot on the ground', why: 'Ten minutes barefoot on grass, sand or soil calms your nervous system and brings you out of your head.' },
   { id: 'phone-free', a: 'mind', ev: 'emerging', g: 'protect', t: 'No phone in the morning', why: 'The first hour without scrolling keeps stress hormones calm and the morning yours.' },
   { id: 'warm-feet', a: 'body', ev: 'tcm', g: 'fertile', t: 'Warm feet, warm womb', why: 'Socks and warmth: classic Chinese-medicine care for the womb.' },
   { id: 'egg-yolks', a: 'food', ev: 'emerging', g: 'fertile', t: 'Egg yolks or liver today', why: 'Cholesterol is the building block of progesterone; yolks add choline. Keep liver to a small portion about once a week.' },

@@ -11247,3 +11247,31 @@ html .fbp-i .fbp-n{position:absolute;top:2px;left:4px;z-index:2;min-width:20px;h
 html .tf-wrap{position:relative}
 html .tf-hide{position:absolute;top:18px;right:18px;z-index:3;width:30px;height:30px;border-radius:50%;border:0;display:grid;place-items:center;background:rgba(255,255,255,.88);color:#20301a;box-shadow:0 2px 8px rgba(32,48,26,.2);cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 html .tf-hide:focus-visible{outline:2px solid #20301a;outline-offset:2px}
+/* v897 Food: a row of picture options after the plate, the chosen one's picks underneath */
+html .fx-cats{display:flex;gap:6px;overflow-x:auto;margin:26px -18px 6px;padding:4px 18px 8px;scroll-snap-type:x mandatory;scrollbar-width:none}
+html .fx-cats::-webkit-scrollbar{display:none}
+html .fx-c{flex:none;scroll-snap-align:start;width:96px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px 10px;border:0;border-radius:22px;background:transparent;color:#20301a;font:500 13.5px/1.2 var(--font);cursor:pointer;transition:background .3s ease}
+html .fx-c span{width:72px;height:66px;display:grid;place-items:center}
+html .fx-c img{max-width:72px;max-height:66px;object-fit:contain;filter:drop-shadow(0 6px 8px rgba(32,48,26,.18))}
+html .fx-c b{font-weight:500;white-space:nowrap}
+html .fx-c.on{background:rgba(255,255,255,.85);box-shadow:0 8px 18px -12px rgba(32,48,26,.45)}
+html .fx-c:not(.on) b{color:#5d6853}
+html .fx-p{margin-top:14px}
+html .fx-p h3{margin:0;font:600 22px/1.2 var(--font);letter-spacing:-.02em;color:#20301a}
+html .fx-p h3 em{font-style:normal}
+html .fx-lead{margin:6px 0 16px;font-size:14px;line-height:1.45;color:#5d6853}
+html .fx-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+html .fx-t{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 6px 12px;border:1px solid rgba(32,48,26,.06);border-radius:22px;background:#fbf8f3;color:#20301a;font:500 13px/1.25 var(--font);text-align:center;cursor:pointer;min-width:0}
+html .fx-ti{width:100%;height:72px;display:grid;place-items:center}
+html .fx-ti img{max-width:86%;max-height:72px;object-fit:contain;filter:drop-shadow(0 6px 8px rgba(32,48,26,.16))}
+html .fx-ti.rd img{width:68px;height:68px;max-width:none;border-radius:50%;object-fit:cover;filter:none;box-shadow:0 6px 14px -8px rgba(32,48,26,.5)}
+html .fx-ti.sym span{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;background:#fff;box-shadow:0 6px 14px -8px rgba(32,48,26,.4);font:600 20px/1 var(--font);color:#20301a}
+html .fx-t b{font-weight:500;overflow-wrap:anywhere}
+html .fx-big{display:flex;gap:12px;overflow-x:auto;margin:0 -18px;padding:0 18px 4px;scroll-snap-type:x mandatory;scrollbar-width:none}
+html .fx-big::-webkit-scrollbar{display:none}
+html .fx-b{flex:none;width:72%;scroll-snap-align:start;display:flex;flex-direction:column;gap:4px;border:0;background:none;padding:0;text-align:left;color:#20301a;cursor:pointer}
+html .fx-b img{width:100%;aspect-ratio:4/4.6;object-fit:cover;border-radius:26px;margin-bottom:8px}
+html .fx-b b{font:500 16px/1.25 var(--font)}
+html .fx-b small{font-size:13px;color:#5d6853}
+html .fx-all{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin:16px 0 18px;padding:13px;border-radius:99px;border:1px solid rgba(32,48,26,.12);background:#fff;color:#20301a;font:500 14.5px var(--font);cursor:pointer}
+html .fx-cats, html .fx-big{scroll-padding-inline:18px}

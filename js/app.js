@@ -1368,24 +1368,26 @@ function viewToday() {
 }
 // Explore: every button a full photo with a frosted label.
 function exploreGrid(info) {
-  const tiles = [['super', 'leaf', 'Superfoods', 'Spices & superfoods for your phase', foodPhoto('Blueberries', 500)], ['hormones', 'book', 'Hormones', 'What each one does', hormonePhoto('Oestrogen', 500)], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/forest-path.jpg'],
+  const tiles = [['super', 'leaf', 'Superfoods', 'Spices & superfoods for your phase', foodPhoto('Blueberries', 500)], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/forest-path.jpg'],
     ['relief', 'heart', 'Feel better', 'Rituals, relief & habits', 'images/relief-stardust.webp', 'images/relief-stardust.mp4'],
     ['season', 'bowl', 'In season', 'Local foods', 'images/season-fruit.webp'], ['tea', 'cup', 'Tea guide', 'For every need', 'images/tea-ginger.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/tile-meditate.webp']];
   // round photo bubbles in a 2-3-2 honeycomb, each with its own coloured rim and the name on the photo
-  const rim = ['#a98bd0', '#d4708f', '#7f9a4c', '#e08aa5', '#d9a441', '#c98a52', '#6fa49a'];
+  const rim = ['#a98bd0', '#7f9a4c', '#e08aa5', '#d9a441', '#c98a52', '#6fa49a'];
   const bub = ([to, ic, t, sub, img, vid], i) => `<button class="xb" data-action="${to === 'super' ? 'superGo' : 'nav'}" data-to="${to}" style="--i:${i};--rim:${rim[i]}" aria-label="${t}: ${sub}">${vid ? `<video class="dpt-vid" src="${vid}" poster="${img}" muted loop playsinline preload="none" aria-hidden="true"></video>` : `<img src="${img}" alt="" loading="lazy">`}<span class="xb-t">${t}</span></button>`;
-  const rows = [tiles.slice(0, 2), tiles.slice(2, 5), tiles.slice(5)];
+  const rows = [tiles.slice(0, 3), tiles.slice(3)];
   let k = 0;
   return `<div class="xp3">${rows.map(r => `<div class="xp3-r">${r.map(x => bub(x, k++)).join('')}</div>`).join('')}</div>`;
 }
 // Home: today's habits as a cute tick list; her phase's habits first, a little sprout that grows leaves as she ticks.
-const HB_SHORT = { 'morning-sun': ['sun', 'Sun in the morning'], lemon: ['drop', 'Warm lemon water'], calm: ['heart', 'Meditation'], walk: ['leaf', 'Go for a walk'], 'phone-free': ['mind', 'No phone in the morning'] };
+const HB_SHORT = { 'morning-sun': ['sun', 'Morning sun'], lemon: ['drop', 'Warm lemon water'], 'phone-free': ['mind', 'No phone first hour'], walk: ['leaf', 'Walk after meals'], calm: ['heart', 'Breathe 5 minutes'], ground: ['seed', 'Barefoot on the ground'] };
+// the fundamentals in the order of the Balance page, step 1
+const HB_ORDER = ['morning-sun', 'lemon', 'phone-free', 'walk', 'calm', 'ground'];
 function habitsHome(info) {
-  const list = HABITS.filter(h => h.g === 'protect' && HB_SHORT[h.id]), ids = list.map(h => h.id), done = habitsDone(todayISO()).filter(id => ids.includes(id));
+  const list = HB_ORDER.map(id => HABITS.find(h => h.id === id)).filter(Boolean), ids = list.map(h => h.id), done = habitsDone(todayISO()).filter(id => ids.includes(id));
   const focus = info ? HABIT_FOCUS[info.phase].filter(id => ids.includes(id)) : [];
   const pick = ids, n = pick.filter(id => done.includes(id)).length;
   const leaves = pick.map((_, i) => { const y = 52 - i * 7.5, l = i % 2 === 0; return `<path class="${i < n ? 'on' : ''}" d="M30 ${y} q${l ? -13 : 13} -2 ${l ? -15 : 15} -11 q${l ? 11 : -11} 1 ${l ? 15 : -15} 11z"/>`; }).join('');
-  return `${sectionTitle('Daily habits', ['All', 'habits'])}
+  return `${sectionTitle('Hormone balancing habits', ['Why', 'relief'])}
     <section class="card hh">
       <div class="hh-top"><svg class="hh-sprout" viewBox="0 0 60 64" aria-hidden="true"><path class="hh-stem" d="M30 62 V${52 - (pick.length - 1) * 7.5 - 8}"/>${leaves}</svg>
         <div class="hh-txt"><b class="hh-n">${n}<small>/${pick.length}</small></b><span>${n === pick.length ? 'All done. Your hormones thank you.' : n ? 'Growing nicely, keep going' : 'Tick one to grow a leaf'}</span>
@@ -2019,6 +2021,45 @@ function planOpts(phase) {
   ];
 }
 const PLAN_TITLE = { recipes: 'Recipes', foods: 'Superfoods', drinks: 'Drinks & tea', super: 'Superfoods', supps: 'Supplements', sugar: 'Blood sugar', rituals: 'Rituals', mind: 'Your mind' };
+// Food page, after the plate: a row of picture options (cut-out photo + title). The chosen one shows a short line and
+// its best picks for this phase underneath, with a pill into the full page.
+const FX_CATS = [['recipes', 'Recipes', 'images/dish-stew.webp'], ['season', 'In season', 'images/sz/pears.webp'], ['foods', 'Superfoods', 'images/sf/goji.webp'],
+  ['drinks', 'Drinks', 'images/cup-chai.webp'], ['supps', 'Supplements', 'images/fb/magnesium.webp'], ['sugar', 'Blood sugar', 'images/sz/apples.webp'], ['rituals', 'Rituals', 'images/fb/castor.webp']];
+function foodExplore(phase, info) {
+  const k = ui.fxCat || 'recipes', name = PHASES[phase].name, warm = warmWindow(info);
+  const tile = (img, t, act, round) => `<button class="fx-t" ${act}><span class="fx-ti ${round ? 'rd' : ''}">${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}</span><b>${t}</b></button>`;
+  let lead = '', body = '';
+  if (k === 'recipes') {
+    const recs = recipesFor(phase, info).filter(r => photoUrl(r.id)).slice(0, 6);
+    lead = warm ? 'Your period is close, so warm and cooked dishes come first.' : `Dishes that fit your ${name.toLowerCase()} phase and the season.`;
+    body = `<div class="fx-big">${recs.map(r => `<button class="fx-b" data-action="nav" data-to="recipe/${r.id}"><img src="${photoUrl(r.id, 520)}" alt="" loading="lazy" decoding="async"><b>${r.name}</b><small>${r.time} min</small></button>`).join('')}</div>`;
+  } else if (k === 'season') {
+    const m = new Date().getMonth() + 1, sz = SZ.seasonal(myCountry(), m), its = sz.filter(x => x.ph.includes(phase) && szCut(x.f)).concat(sz.filter(x => !x.ph.includes(phase) && szCut(x.f))).slice(0, 9);
+    lead = `${SZ.seasonName(myCountry(), m)} foods where you live, the ones for your phase first.`;
+    body = `<div class="fx-g">${its.map(x => tile(szCut(x.f), x.f.charAt(0).toUpperCase() + x.f.slice(1), `data-action="seasonGo" data-f="${esc(x.f)}"`)).join('')}</div>`;
+  } else if (k === 'foods') {
+    const S = SUPERFOODS[phase], L = S.list.filter(f => !(f[5] && myDiet() === 'vegan') && SF_CUT[f[1]]).slice(0, 9);
+    lead = S.lead;
+    body = `<div class="fx-g">${L.map(f => tile(`images/sf/${SF_CUT[f[1]][0]}.webp`, f[1], 'data-action="superGo"')).join('')}</div>`;
+  } else if (k === 'drinks' || k === 'supps') {
+    const C0 = EAT_GUIDE[phase].cats[k], L = warmChips(C0[1], k, warm && phase === (info && info.phase)).slice(0, 9);
+    lead = C0[0].split('. ')[0].replace(/\.?$/, '.');
+    body = `<div class="fx-g">${L.map(([, n]) => { if (k === 'supps') { const x = suppOf(n), sym = x ? x.sym : /B12/.test(n) ? 'B12' : /omega/i.test(n) ? 'Ω3' : n.slice(0, 2);
+      return `<button class="fx-t" data-action="nav" data-to="plan/supps"><span class="fx-ti sym"><span>${sym}</span></span><b>${n}</b></button>`; }
+      const pic = (EB_PIC.find(([r]) => r.test(n)) || [])[1]?.(); return tile(pic, n, 'data-action="nav" data-to="plan/drinks"', pic && !pic.startsWith('images/')); }).join('')}</div>`;
+  } else if (k === 'sugar') {
+    lead = 'Steady blood sugar means steadier mood, energy and skin. Eight small tricks, no counting.';
+    body = `<div class="fx-g">${[['images/sz/apples.webp', 'Fibre first'], ['images/sf/olive-oil.webp', 'Add fat'], ['images/fb/walk.webp', 'Walk after']].map(([im, t]) => tile(im, t, 'data-action="nav" data-to="plan/sugar"')).join('')}</div>`;
+  } else {
+    const rits = RITUALS.filter(r => r.phases.includes(phase)).slice(0, 6);
+    lead = 'Small warm rituals for this phase, from Chinese medicine.';
+    body = `<div class="fx-g">${rits.map(r => tile(carePhoto(r.id, 300), r.name, `data-action="nav" data-to="ritual/${r.id}"`, true)).join('')}</div>`;
+  }
+  const cat = FX_CATS.find(c => c[0] === k);
+  return `<div class="fx-cats" role="tablist">${FX_CATS.map(([id, t, img]) => `<button class="fx-c ${id === k ? 'on' : ''}" role="tab" aria-selected="${id === k}" data-action="fxCat" data-v="${id}"><span><img src="${img}" alt="" loading="lazy" decoding="async"></span><b>${t}</b></button>`).join('')}</div>
+    <section class="fx-p"><h3>${cat[1]} in <em style="color:color-mix(in srgb, ${PH_HEX[phase]} 70%, #20301a)">${name}</em></h3><p class="fx-lead">${lead}</p>${body}
+      <button class="fx-all" data-action="nav" data-to="plan/${k}">See all ${cat[1].toLowerCase()} ${icon('chevR', 14)}</button></section>`;
+}
 function viewPlan() {
   const info = M.info, phase = info ? info.phase : 'follicular', ph = PHASES[phase], tcm = TCM[phase], P = PLAIN[phase];
   const sub = route().id;
@@ -2067,10 +2108,7 @@ function viewPlan() {
   <div class="pad pv">
     <div class="pv-h"><span class="pv-day">${info ? `Day ${info.cd} · ` : ''}${ph.name}</span><span class="eg-rule ${warm ? 'warm' : 'raw'}">${icon(warm ? 'sun' : 'leaf', 14)} Today: ${warm ? 'warm & cooked' : 'raw & fresh'}</span></div>
     ${plateSection(phase, true)}
-    ${sectionTitle('Explore your food')}
-    <div class="pv-g">${planOpts(phase).map(([k, e, t, pic, ic], i) => `<button class="pv-t" style="--i:${i}" data-action="nav" data-to="plan/${k}">
-      <span class="pv-top">${pic ? `<img src="${pic}" alt="" loading="lazy">` : `<span class="pv-ic">${icon(ic, 20)}</span>`}<span class="pv-go">${icon('chevR', 16)}</span></span>
-      <small>${esc(e)}</small><b>${t}</b></button>`).join('')}</div>
+    ${foodExplore(phase, info)}
     <button class="pv-row" data-action="nav" data-to="grocery"><span class="pv-num">${icon('check', 18)}</span><span><b>My grocery list</b><small>For the next 7 days</small></span><span class="pv-go">${icon('chevR', 16)}</span></button>
   </div>`;
 }
@@ -3391,7 +3429,7 @@ const FB = [
   { id: 'castor', t: 'Castor oil pack', s: 'Warm, over the liver.', why: 'A slow, warm ritual over the liver area (right side, under the ribs). It relaxes you and supports your liver, which clears used hormones.', do: ['Soak a flannel cloth in a little castor oil', 'Lay it on your right side under the ribs, a hot water bottle on top', '20 to 30 minutes, 3 evenings a week'], safe: 'Skip it during your period, if pregnant or trying to conceive after ovulation, and on broken skin.' },
   { id: 'phone', t: 'No phone first hour', s: 'Coffee with breakfast, not a screen.', why: 'The first hour sets your stress level for the day. Starting slow keeps cortisol calm, and coffee after food is gentler on blood sugar.', do: ['Keep your phone in another room overnight', 'Coffee or tea with or after breakfast', 'Light, water and food come first'], safe: 'Enjoy your coffee, just not on an empty stomach.', hb: 'phone-free' },
   { id: 'breathe', t: 'Breathe', s: 'A long out-breath calms you.', why: 'Slow breathing with a longer out-breath switches on your calming nervous system and lowers cortisol within minutes.', do: ['In for 4, out for 6 to 8', 'Five minutes, or ten quiet minutes of meditation', 'Guided practices are in Breathe'], safe: 'If you feel dizzy, breathe normally for a moment.', to: ['breathe', 'Open Breathe'], hb: 'calm' },
-  { id: 'ground', t: 'Ground', s: 'Barefoot on grass or earth.', why: 'Time barefoot in nature calms the nervous system and pulls you out of your head and into your body.', do: ['10 minutes barefoot on grass, sand or soil', 'Lean on a tree and breathe slowly', 'More practices are in Ground'], safe: 'Check the ground for glass and stay warm around your period.', to: ['ground', 'Open Ground'] },
+  { id: 'ground', hb: 'ground', t: 'Ground', s: 'Barefoot on grass or earth.', why: 'Time barefoot in nature calms the nervous system and pulls you out of your head and into your body.', do: ['10 minutes barefoot on grass, sand or soil', 'Lean on a tree and breathe slowly', 'More practices are in Ground'], safe: 'Check the ground for glass and stay warm around your period.', to: ['ground', 'Open Ground'] },
   { id: 'walk', t: 'A walk after meals', s: '10 minutes flattens sugar spikes.', why: 'Your muscles take up sugar while you walk, so the rise after a meal is softer. Fewer spikes mean steadier energy, mood and skin.', do: ['10 to 15 minutes after your biggest meal', 'An easy pace, you can still talk', 'Outside if you can'], safe: 'On heavy period days a slow stroll is enough.', hb: 'walk' },
   { id: 'golden', t: 'Golden milk', s: 'Turmeric, warm milk and pepper.', why: 'Turmeric calms inflammation and black pepper helps your body absorb it. Warm milk makes it a soothing evening ritual.', do: ['A cup of raw milk, warmed gently (never boiled)', '½ tsp turmeric, a pinch of black pepper and cinnamon', 'A little honey once it is warm, not hot'], safe: 'Ask your doctor first if you take blood thinners or have gallstones.' },
   { id: 'heat', t: 'Heat on your belly', s: 'Eases cramps as well as a painkiller.', why: 'Warmth relaxes the womb muscle and improves blood flow. In studies heat eased period pain about as well as ibuprofen.', do: ['A hot water bottle or heat pad on your lower belly', '20 minutes at a time, as often as you like', 'Warm socks and warm drinks too'], safe: 'Warm, not hot. Wrap it in a cloth to protect your skin.', to: ['relief/Cramps', 'All cramp relief'] },
@@ -4422,7 +4460,7 @@ function todayTiles(info, only) {
       ${tile(`calm lv${lvl} t-cort t-mol`, { to: 'breathe/stress' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/cortisol-mol.webp" alt="" loading="lazy"><canvas class="teacup3d" data-model="models/cortisol.glb" data-elev="0.3" data-fit="1.9" data-steam="0" data-shadow="0" aria-label="The cortisol molecule, turning slowly"></canvas></span>`, 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}<span class="cv-lv" aria-hidden="true">${[1, 2, 3].map(i => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</span>`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
       ${tile('t-tea t-cup', { to: 'do/tea' }, `<span class="cup3d-w"><img class="dpt-cup" src="${teaCupImg(td[1])}" alt="" loading="lazy"><canvas class="teacup3d"${teaCupAttr(td[1])} aria-label="${td[1]}, turning slowly"></canvas></span>`, 'Tea for today', td[1], td[2])}
       ${tile('t-glow ph-full ph-vid ph-tree', { to: 'ground' }, `<img class="dpt-vid" src="images/ground-tree.webp" alt="" loading="lazy" decoding="async"><i></i>`, 'Ground', GROUND_PHASE[ph].t, '')}
-      <button class="dpt wide t-deep ph-full keep ph-vid ph-frw ph-bat" data-action="nav" data-to="do/friends" aria-label="Friends: ${esc(FRIENDS_TILE[ph][0])}"><span class="dpt-g"><video class="dpt-vid" src="images/friends-sunset.mp4" poster="images/friends-sunset.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>${socialBattery(info)}</span></button>
+
     </div>
     <div class="hub-tip ${open && (open === 'eat' || open === 'tea' || tips[open]) ? 'on' : ''}" id="hub-tip">${open ? tipBody(open) : ''}</div>`;
 }
@@ -4850,8 +4888,6 @@ function viewTea() {
     ${teaWheel(info, w, td, steep, near)}
 
     ${cycleTeas(info)}
-
-    ${teaMoods(0)}
 
     <section class="t4 tbr">
       <header class="t4-h"><small>Brew it right</small><h2>Four small things that make it work.</h2></header>
@@ -7964,6 +8000,7 @@ const actions = {
     det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
     const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
   },
+  fxCat: d => { ui.fxCat = d.v; render(); },
   hidePartner: () => { state.hidePartner = true; save(); render(); toast('Hidden. Partners are still in your profile.'); },
   fbPick: (d, el) => {
     const box = el.closest('.fbp'), det = box.querySelector('.fbp-det'), was = el.classList.contains('on');
