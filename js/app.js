@@ -3419,10 +3419,30 @@ function fbItem(x, i, done, pos = i) {
   const on = x.hb && done.includes(x.hb);
   return `<button class="fbp-i ${on ? 'ok' : ''} ${pos % 3 === 1 ? 'mid' : ''}" style="--r:${FB_TILT[pos]}deg;--i:${pos}" data-action="fbPick" data-i="${i}" aria-expanded="false"><span class="fbp-ph"><img src="images/fb/${x.id}.webp" alt="" loading="lazy" decoding="async"></span><b>${x.t}</b><small>${x.s}</small>${x.hb ? `<i class="fbp-ok" aria-label="${on ? 'Done today' : 'Daily habit'}">${icon('check', 10, 3)}</i>` : ''}</button>`;
 }
+// Each ritual's spec rows (when, how much) and one study where a good human trial exists: [year, author, finding, journal]
+const FB_SPEC = {
+  sun: ['Within an hour of waking', '10 minutes', ['2013', 'Wright', 'A week of camping in natural light moved the inner clock about 2 hours earlier.', 'Current Biology']],
+  lemon: ['First thing, before coffee', '½ lemon, a big glass', ['2007', 'Penniston', 'Lemon juice raised citrate in urine, which helps prevent kidney stones.', 'Journal of Endourology']],
+  tongue: ['Morning, before you drink', '5 to 7 strokes', ['2004', 'Pedrazzi', 'A tongue scraper cut bad-breath compounds by about 75%, a toothbrush by about 45%.', 'Journal of Periodontology']],
+  carrot: ['Any day except your period and the 3 days before', '1 medium carrot'],
+  castor: ['Evening, 3 times a week', '20 to 30 minutes'],
+  phone: ['The first hour after waking', '1 hour'],
+  breathe: ['Any time you feel tense', '5 minutes', ['2023', 'Balban', 'Five minutes a day of breathing with long out-breaths lifted mood more than mindfulness meditation over a month.', 'Cell Reports Medicine']],
+  ground: ['Morning or evening', '10 minutes', ['2004', 'Ghaly', 'Sleeping grounded for 8 weeks evened out night-time cortisol and improved sleep in a small group.', 'J Alternative & Complementary Medicine']],
+  walk: ['Right after your biggest meal', '10 to 15 minutes', ['2022', 'Buffey', 'Even 2 to 5 minutes of easy walking after a meal softened the blood-sugar rise.', 'Sports Medicine']],
+  golden: ['Evening', '1 cup', ['2015', 'Khayat', 'Curcumin from turmeric over three cycles eased PMS mood, body and behaviour symptoms.', 'Complementary Therapies in Medicine']],
+  heat: ['Period days, at the first cramp', '20 minutes at a time', ['2001', 'Akin', 'A gentle heat patch on the lower belly eased period pain as well as ibuprofen did.', 'Obstetrics & Gynecology']],
+  fascia: ['The days before your period', '3 to 5 minutes'],
+  magnesium: ['Evening, the week before your period', '200 to 300 mg', ['1998', 'Walker', '200 mg magnesium a day eased bloating, swelling and breast tenderness in the second cycle.', 'Journal of Women’s Health']],
+  seeds: ['Every day, two halves of your cycle', '2 tbsp seeds'],
+};
 function fbDetail(i) {
   const x = FB[i], on = x.hb && habitsDone(todayISO()).includes(x.hb);
+  const [when, takes, st] = FB_SPEC[x.id] || [];
   return `<img src="images/fb/${x.id}.webp" alt=""><div class="fbd-b"><b>${x.t}</b><p>${x.why}</p>
+    ${when ? `<div class="fbd-spec"><p><span>${icon('clock', 13)} When</span><b>${when}</b></p><p><span>${icon('drop', 13)} Takes</span><b>${takes}</b></p></div>` : ''}
     <ul>${x.do.map(d => `<li>${icon('check', 11, 2.6)}<span>${d}</span></li>`).join('')}</ul>
+    ${st ? `<div class="sgt-st fbd-st"><b class="dotnum">${st[0]}</b><span><em>${st[1]}</em>${st[2]}<small>${st[3]}</small></span></div>` : ''}
     <span class="fbd-safe">${icon('heart', 12)} ${x.safe}</span>
     <div class="fbd-acts">${x.hb ? `<button class="fbd-hb ${on ? 'on' : ''}" data-action="fbHabit" data-id="${x.hb}" data-i="${i}" aria-pressed="${!!on}">${icon('check', 13, 2.6)} ${on ? 'Done today' : 'Add to my daily habits'}</button>` : ''}${x.to ? `<button class="fbd-go" data-action="nav" data-to="${x.to[0]}">${x.to[1]} ${icon('chevR', 13)}</button>` : ''}</div></div>
     <button class="fbd-x" data-action="fbClose" aria-label="Close">${icon('close', 14)}</button>`;

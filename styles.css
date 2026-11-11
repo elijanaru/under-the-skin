@@ -11193,3 +11193,21 @@ html .plate3 .pll.on .pll-hit { fill: #20301a !important; stroke: none; }
 html .plate3 .pll.on .pll-n { fill: rgba(255,255,255,.8) !important; font-weight: 500 !important; }
 html .plate3 .pll.on .pll-v { fill: #fff !important; }
 html .pld-p { color: #20301a !important; font-weight: 900 !important; opacity: 1 !important; }
+
+/* v890 Feel better ritual sheet: When and Takes as spec rows, one study per ritual */
+html .fbd-spec { margin: 10px 0 4px; padding: 2px 12px; border-radius: 16px; background: #f6f3ee; }
+html .fbd-spec p { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin: 0; padding: 9px 0; border-bottom: 1px solid rgba(32,48,26,.08); font-size: 13px; }
+html .fbd-spec p:last-child { border: 0; }
+html .fbd-spec span { display: inline-flex; align-items: center; gap: 6px; flex: none; color: rgba(32,48,26,.62); }
+html .fbd-spec b { font-weight: 600; color: #20301a; text-align: right; font-size: 13px; }
+html .fbd-st { margin: 4px 0 10px; }
+html .fbd-st > b.dotnum { font-size: 16px !important; color: #20301a !important; font-weight: 900 !important; }
+html .fbd-st span { font-size: 12.5px; }
+html .fbp-det { row-gap: 4px; padding: 16px !important; }
+html .fbp-det > img { grid-row: 1 / span 2; align-self: start; }
+html .fbp-det .fbd-b { display: contents; }
+html .fbp-det .fbd-b > b, html .fbp-det .fbd-b > p { grid-column: 2; }
+html .fbp-det .fbd-b > b { align-self: end; }
+html .fbp-det .fbd-b > :not(b):not(p) { grid-column: 1 / -1; }
+html .fbp-det .fbd-spec { margin-top: 12px; }
+html .fbp-det .fbd-b ul { margin: 12px 4px 6px; }
