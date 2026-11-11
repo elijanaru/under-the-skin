@@ -5537,7 +5537,7 @@ function moleculeRow(info) {
   const list = HORMONE_LIBRARY.map((x, i) => [x, i]).filter(([x]) => MOL_BALL[x.n]);
   return `<div class="mr-row" role="list">${list.map(([x, i]) => { const n = hxNow(x, info);
     return `<button class="mr-c" role="listitem" data-action="nav" data-to="hormones/${i}"><span class="mr-art" aria-hidden="true">${MOL_BALL[x.n]}</span>
-      <b>${x.n === 'Oestrogen' ? 'Estrogen' : x.n}</b><small>${x.s}</small><em>${n.word}</em></button>`; }).join('')}</div>`;
+      <b>${x.n === 'Oestrogen' ? 'Estrogen' : x.n}</b><small>${x.s}</small><em>${typeof n.r === 'number' ? `<span class="mr-lv" aria-hidden="true">${[1, 2, 3, 4].map(j => `<i class="${Math.max(1, Math.ceil(n.r * 4)) >= j ? 'on' : ''}" style="height:${3 + j * 2}px"></i>`).join('')}</span>` : ''}${n.word}</em></button>`; }).join('')}</div>`;
 }
 function moleculeCard(n) {
   const m = MOLECULES[n];

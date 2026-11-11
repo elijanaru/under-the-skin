@@ -10968,3 +10968,14 @@ html .ck-first .ck-l li::before{background:#9c3d58;width:5px;height:5px}
 html .ck-first p{color:#6b5a60}
 /* section heading dots: the third tone was a white dot that vanished on the pearl page; now ink with the same white ring */
 html .section-title.tone-2 h3::before{background:#20301a !important}
+
+/* v873 Insights + Today, Your hormones today: white tiles with depth and a small level meter, instead of see-through pink glass */
+html .mr-c,html .home .mr-c{background:#fff !important;border:1px solid rgba(32,48,26,.07) !important;box-shadow:0 14px 28px -22px rgba(32,48,26,.5) !important;-webkit-backdrop-filter:none !important;backdrop-filter:none !important}
+html .mr-c b{color:#20301a !important}
+html .mr-c small{color:#5d6853 !important}
+html .mr-c em{display:inline-flex;align-items:center;gap:7px;justify-self:start;margin-top:6px;padding:4px 10px 4px 8px;border-radius:99px;background:#f3f1ec;color:#20301a !important;font-size:12px}
+html .mr-lv{display:inline-flex;align-items:flex-end;gap:2px;height:11px}
+html .mr-lv i{width:3px;border-radius:2px;background:#d4d6cb}
+html .mr-lv i.on{background:#20301a}
+/* the row link below it (How your cycle works) and the other gro-cta rows: crisp white, not grey glass */
+html .gro-cta{background:#fff !important;border:1px solid rgba(32,48,26,.07) !important;box-shadow:0 14px 28px -22px rgba(32,48,26,.45) !important;-webkit-backdrop-filter:none !important;backdrop-filter:none !important}
