@@ -11382,14 +11382,3 @@ html .fl6-cmp { display: grid; grid-template-columns: 74px 1fr 46px; column-gap:
 html .hh2-n { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; line-height: 1; }
 html .hh2-n small { margin: 0; font: 500 10.5px/1 var(--font); color: rgba(32,48,26,.6); }
 
-/* v905 unusual cycle card, Fix: one scrolling row of days, tap the real first day */
-.fl6-pick b { display: block; font-size: 15px; font-weight: 600; color: #20301a; }
-.fl6-pick > small { display: block; margin-top: 2px; font-size: 12.5px; color: #5d6853; }
-.fl6-days { display: flex; gap: 6px; overflow-x: auto; margin: 10px -16px 0; padding: 4px 16px 6px; scrollbar-width: none; scroll-snap-type: x proximity; }
-.fl6-days::-webkit-scrollbar { display: none; }
-.fl6-day { flex: none; width: 44px; padding: 8px 0 7px; border-radius: 16px; border: 1px solid rgba(48,64,35,.12); background: #fff; display: grid; justify-items: center; gap: 3px; font: inherit; color: #20301a; cursor: pointer; scroll-snap-align: center; position: relative; }
-.fl6-day small { font-size: 11px; color: #5d6853; }
-.fl6-day b { font: 700 16px/1 var(--dot); }
-.fl6-day em { position: absolute; top: -7px; left: 50%; transform: translateX(-50%); font: 600 9.5px/1 var(--font); font-style: normal; color: #b04a64; background: #fff; padding: 1px 4px; border-radius: 6px; }
-.fl6-day.on { background: #b04a64; border-color: #b04a64; color: #fff; }
-.fl6-day.on small { color: rgba(255,255,255,.85); }
