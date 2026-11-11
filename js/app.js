@@ -6140,11 +6140,13 @@ function loveBtn(p, big) {
 }
 function partnersCard(info) {
   const ps = state.partners || [];
+  if (state.hidePartner) return '';
   if (!ps.length) return `${sectionTitle('Your partner')}
+    <div class="tf-wrap"><button class="tf-hide" data-action="hidePartner" aria-label="Hide this from Today">${icon('close', 12, 2.2)}</button>
     <button class="tf" data-action="nav" data-to="partners">
       <span class="tf-media"><img src="images/partner-hands.jpg" alt="" loading="lazy"><span class="tf-tag">${icon('users', 13)} Two phones</span><b class="tf-q">See where your partner is</b></span>
       <span class="tf-p">Swap links and you’ll both see each other’s cycle and energy here.</span>
-      <span class="tf-cta">Connect with your partner ${icon('chevR', 14)}</span></button>`;
+      <span class="tf-cta">Connect with your partner ${icon('chevR', 14)}</span></button></div>`;
   if (ps.length > 1) return `${sectionTitle('Your people', ['All', 'partners'])}
     <div class="pt-split n${Math.min(4, ps.length)}">${ps.slice(0, 4).map(p => { const pi = snapInfo(p, new Date()), ph = PHASES[pi.phase], en = Math.round(C.energyAt(pi.cd, pi.L, pi.P) * 100);
       return `<button class="card glass pt-tile" data-action="nav" data-to="partners/${p.id}">${ptAvatar(p)}<b>${esc(p.n)}</b><small>${ph.name} · day ${pi.cd}</small>
@@ -7962,6 +7964,7 @@ const actions = {
     det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
     const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
   },
+  hidePartner: () => { state.hidePartner = true; save(); render(); toast('Hidden. Partners are still in your profile.'); },
   fbPick: (d, el) => {
     const box = el.closest('.fbp'), det = box.querySelector('.fbp-det'), was = el.classList.contains('on');
     box.querySelectorAll('.fbp-i').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); });
