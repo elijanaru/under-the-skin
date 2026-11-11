@@ -1564,13 +1564,16 @@ function cycleBars() {
       <p>${r.now ? `Started ${sd(r.s)} · day ${r.now} of about ${r.L} · next period around ${sd(info.nextStart)}` : short ? `${sd(r.s)} to ${sd(end)} · only ${r.L} days, so probably spotting or an early bleed. No egg release is counted for it.` : `${sd(r.s)} to ${sd(end)} · period ${plural(r.P, 'day')} · egg release around day ${ov}`}</p></details>`; };
   const diff = rows.length > 1 ? M.stats.variation : 0, nOk = M.stats.lengths.length;
   // fewer than two real cycles (21 to 60 days) to compare: no "steady" verdict yet, and the big number is a starting guess
-  const chip = nOk < 2 ? `<em class="mid">Learning · ${nOk} of 2 cycles</em>` : `<em class="${diff <= 4 ? 'ok' : diff <= 7 ? 'mid' : 'hi'}">${diff <= 4 ? 'Steady' : diff <= 7 ? 'A bit changeable' : 'Varies a lot'} ±${pm}</em>`;
+  const chip = nOk < 2 ? `<em class="mid">Learning</em>` : `<em class="${diff <= 4 ? 'ok' : diff <= 7 ? 'mid' : 'hi'}">${diff <= 4 ? 'Steady' : diff <= 7 ? 'A bit changeable' : 'Varies a lot'} ±${pm}</em>`;
   return `${sectionTitle('Your last cycles')}
     <section class="card cyb">
-      <div class="cyb-top2"><span class="cyb-big"><b class="dotnum">${avg}</b><small>${nOk ? 'day cycle' : 'days, a first guess'}</small></span>
-        <span class="cyb-chips">${chip}<em>${icon('drop', 12)} Period ${M.stats.avgPeriod} days</em></span></div>
+      <div class="cyb-hd"><span class="cyb-big2"><small>${nOk ? 'Your average cycle' : 'Your cycle, a first guess'}</small><b><span class="dotnum">${avg}</span> days</b></span><span class="cyb-chips">${chip}</span></div>
+      <div class="cyb-spec"><p><span><i class="p"></i>Period</span><b><span class="dotnum">${M.stats.avgPeriod}</span> days</b></p>
+        <p><span><i></i>${nOk < 2 ? 'Cycles logged' : 'Varies by'}</span><b>${nOk < 2 ? `<span class="dotnum">${nOk}</span> of 2` : `±<span class="dotnum">${pm}</span> days`}</b></p>
+        <p><span><i class="n"></i>Next period</span><b>${sd(info.nextStart)}</b></p></div>
       <div class="cyb-rows">${all.map(row).join('')}</div>
       <div class="cyb-leg"><span><i class="cyb-p"></i>Period</span><span><i class="cyb-f"></i>Fertile</span><span><i class="cyb-o"></i>Egg release</span><small>Tap a row</small></div>
+      <div class="sgt-st cyb-st"><b class="dotnum">2019</b><span><em>Bull</em>Across more than 600,000 cycles the average was 29 days, and only about 1 in 8 lasted exactly 28.<small>npj Digital Medicine</small></span></div>
     </section>`;
 }
 

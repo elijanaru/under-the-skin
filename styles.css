@@ -11144,3 +11144,21 @@ html .bwk-d .now small { color: #20301a; font-weight: 600; }
 html .bz-card-h small { text-transform: none !important; letter-spacing: 0 !important; font-size: 13px !important; }
 html .bwk-h b { align-items: flex-end; margin-top: 4px; }
 html .bwk-h b em { padding-bottom: 3px; }
+
+/* v886 Calendar, Your last cycles: big average on top, BIORG spec rows, solid bars (no hatching), one study */
+html .cyb-hd { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+html .cyb-big2 { display: grid; gap: 4px; }
+html .cyb-big2 small { font-size: 13px; font-weight: 500; color: rgba(32,48,26,.6); }
+html .cyb-big2 b { display: flex; align-items: baseline; gap: 6px; font-size: 16px; font-weight: 500; color: rgba(32,48,26,.6); }
+html .cyb-big2 .dotnum { font-size: 44px; line-height: 1; font-weight: 900; color: #20301a; }
+html .cyb-spec { margin: 14px 0 16px; padding: 4px 14px; border-radius: 18px; background: #f6f3ee; }
+html .cyb-spec p { display: flex; align-items: center; justify-content: space-between; margin: 0; padding: 10px 0; border-bottom: 1px solid rgba(32,48,26,.08); font-size: 14px; }
+html .cyb-spec p:last-child { border: 0; }
+html .cyb-spec p > span { display: inline-flex; align-items: center; gap: 8px; color: rgba(32,48,26,.7); }
+html .cyb-spec i { width: 8px; height: 8px; border-radius: 50%; background: #20301a; }
+html .cyb-spec i.p { background: #b8323f; } html .cyb-spec i.n { background: #fff; border: 1.5px solid #b8323f; }
+html .cyb-spec b { font-weight: 600; color: #20301a; display: inline-flex; align-items: baseline; gap: 4px; }
+html .cyb-spec b .dotnum { font-size: 18px; font-weight: 900; }
+html .cyb-fut { background: rgba(255,255,255,.62) !important; }
+html .cyb-st { margin-top: 14px; }
+html .cyb-st > b.dotnum { font-size: 18px !important; color: #20301a !important; font-weight: 900 !important; }
