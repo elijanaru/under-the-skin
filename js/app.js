@@ -6385,7 +6385,7 @@ function seasonBento(info) {
   const top = [...items].sort((a, b) => rank(b) - rank(a)).slice(0, 8);
   const NAT = { warm: 'Warming', neutral: 'Neutral', cool: 'Cooling' };
   return `${sectionTitle(`In season · ${MONTHS[m - 1]}`, ['All', 'season'])}
-    <div class="sz-row">${top.map((i, n) => `<button class="sz-food" style="--i:${n}" data-action="seasonGo" data-f="${esc(i.f)}">
+    <div class="sz-row" style="--pc:${info ? PH_HEX[info.phase] : '#a2445d'}">${top.map((i, n) => `<button class="sz-food" style="--i:${n}" data-action="seasonGo" data-f="${esc(i.f)}">
       <img src="${foodPhoto(i.f, 320)}" alt="" loading="lazy"><span class="sz-shade"></span>
       ${info && i.ph.includes(info.phase) ? `<span class="sz-fit">${icon('spark', 11)} Your phase</span>` : ''}
       <span class="sz-b"><b>${i.f.replace(/\s*\(.*\)/, '')}</b><small><i class="nat ${i.nature}"></i>${NAT[i.nature]}</small></span></button>`).join('')}</div>
