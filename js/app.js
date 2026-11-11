@@ -5655,8 +5655,8 @@ function viewMove() {
       ${mvInfo(top.k, D)}
     </section>
     ${month}
-    ${also.length ? `${sectionTitle("Also good now")}<div class="mvc-l">${also.map(card).join('')}</div>` : ''}
-    ${later.length ? `${sectionTitle('Go lighter or rest')}<div class="mvc-l soft">${later.map(card).join('')}</div>` : ''}
+    ${also.length ? `${sectionTitle("Also good now")}<p class="mvc-sub">These suit your body today too.</p><div class="mvc-l">${also.map(card).join('')}</div>` : ''}
+    ${later.length ? `${sectionTitle('Go lighter or rest')}<p class="mvc-sub">Not banned, just harder on your body today. Tap one for the gentle way or what to do instead.</p><div class="mvc-l soft">${later.map(card).join('')}</div>` : ''}
     ${trainSafe()}
   </div>`;
 }
