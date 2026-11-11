@@ -3637,6 +3637,24 @@ function learnedScore(n) {
     <div class="ls-t"><small>Prediction accuracy</small><b>${word}</b><span>${v >= goal ? 'Learned from 6+ cycles. Predictions follow your own rhythm.' : `${plural(goal - v, 'more full cycle')} (period to period) to learn your rhythm. Adding past periods counts too.`}</span>
     ${v < goal ? `<button class="pill-cta" data-action="nav" data-to="calendar">${icon('plus', 14)} Add past periods</button>` : ''}</div></div>`;
 }
+// Cycle by cycle: how many days she logged each symptom in her last cycles, and whether the last full cycle was better than the one before.
+function symptomTrend() {
+  const ps = M.stats.periods; if (!ps || ps.length < 2) return '';
+  const cyc = ps.slice(-4).map((p, i, a) => { const end = a[i + 1] ? a[i + 1].start : C.addDays(C.startOfDay(new Date()), 1), now = !a[i + 1], days = [];
+    for (let d = new Date(p.start); d < end; d = C.addDays(d, 1)) days.push(getLog(C.iso(d)));
+    return { start: p.start, now, days, logged: days.some(l => (l.moods || []).length || (l.symptoms || []).length) }; });
+  if (cyc.filter(c => c.logged).length < 2) return '';
+  const rows = BA_METRICS.map(([n, f]) => [({ 'PMS mood days': 'PMS moods', 'Cramp days': 'Cramps', 'Breakout days': 'Breakouts', 'Bloated days': 'Bloating', 'Tired days': 'Tiredness' })[n] || n, cyc.map(c => c.days.filter(f).length)]).filter(([, v]) => v.some(Boolean));
+  if (!rows.length) return '';
+  const full = cyc.map((c, i) => i).filter(i => !cyc[i].now), max = Math.max(4, ...rows.flatMap(([, v]) => v));
+  const trend = v => { if (full.length < 2) return '<span class="st2-tr">·</span>'; const d = v[full[full.length - 1]] - v[full[full.length - 2]];
+    return d < 0 ? `<span class="st2-tr down">${icon('chevD', 11, 2.6)}${-d} fewer</span>` : d > 0 ? `<span class="st2-tr up"><span class="st2-up">${icon('chevD', 11, 2.6)}</span>${d} more</span>` : '<span class="st2-tr">Same</span>'; };
+  return `${sectionTitle('Cycle by cycle')}
+    <section class="card st2"><p class="st2-sub">Days you logged each one, per cycle. Fewer is better.</p>
+      <div class="st2-r st2-h"><span></span>${cyc.map(c => `<small>${c.now ? 'Now' : MONTHS[c.start.getMonth()].slice(0, 3)}</small>`).join('')}<span></span></div>
+      ${rows.map(([n, v]) => `<div class="st2-r"><b>${n}</b>${v.map((x, i) => `<span class="st2-c ${cyc[i].now ? 'now' : ''} ${i === full[full.length - 1] ? 'last' : ''}"><i style="height:${Math.max(x ? 12 : 0, x / max * 100)}%"></i><em class="dotnum">${x}</em></span>`).join('')}${trend(v)}</div>`).join('')}
+      <p class="st2-k">Compares your last full cycle with the one before.</p></section>`;
+}
 function learnedCard() {
   const { stats, info } = M; if (!info) return '';
   const n = stats.lengths.length, P = patterns(), L = stats.avgCycle, Pd = stats.avgPeriod;
@@ -6753,6 +6771,7 @@ function viewInsights() {
   else if (tab === 'patterns') body = `
     ${patternsSection()}
     ${learnedCard()}
+    ${symptomTrend()}
     ${sectionTitle('By phase')}
     ${(phaseTiles.match(/class="bph bph-0/g) || []).length < 4 ? `<section class="bph-g">${phaseTiles}</section>
     <p class="bph-k">From your check-ins: average energy, the mood and the symptom you logged most in each phase.</p>` : `<section class="card bph-empty">
