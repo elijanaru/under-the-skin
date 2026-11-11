@@ -11043,3 +11043,8 @@ html .card.pl-tonight .plto-t{position:static !important;display:grid;grid-templ
 html .card.pl-tonight .plto-t small{grid-column:1;color:#6f7866 !important;text-shadow:none !important;font:500 12.5px/1.2 var(--font);letter-spacing:0;text-transform:none}
 html .card.pl-tonight .plto-t b{grid-column:1;color:#20301a !important;text-shadow:none !important;font:600 20px/1.2 var(--font)}
 html .card.pl-tonight .plm-cta{grid-column:2;grid-row:1 / span 2;align-self:center;background:#20301a !important;color:#fff !important;border:0 !important;padding:9px 14px !important;border-radius:99px;font:500 13px/1 var(--font);display:inline-flex;align-items:center;gap:4px;box-shadow:none !important}
+
+/* v880 Feel better hero in sentence case like every other page title; Ground tree eyebrow too */
+html .fbp-title h1 { text-transform: none !important; font-size: 44px; line-height: 1; letter-spacing: -.035em; }
+html .fbp-title h1 span { display: block; }
+html .gtr-h small { text-transform: none !important; letter-spacing: 0 !important; }
