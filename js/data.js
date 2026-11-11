@@ -2089,7 +2089,7 @@ export const POINT_SCIENCE = {
   menstrual: { study: 'Pressing SP6 for 20 minutes during the period eased pain and anxiety in a trial with young women. A review of acupressure for period pain found it eased pain across the studies.', cite: 'Chen & Chen 2004 · Abaraogu 2015 (review)' },
   follicular: { study: 'KI3 is the source point of the Kidney, the organ Chinese medicine links to your eggs and your deepest energy reserve. It has been pressed for this for centuries; modern studies on it alone are still missing.', cite: 'Classic acupuncture texts' },
   ovulatory: { study: 'CV4 sits over the womb and has been warmed and pressed for fertility and period pain for centuries. Modern studies use it together with SP6.', cite: 'Classic acupuncture texts' },
-  luteal: { study: 'LV3 is usually pressed together with LI4 on the hand, a pair called the four gates. A review of acupuncture trials for PMS, which often use LV3, found symptoms eased more than with the comparison treatments.', cite: 'Jang 2014 (review)' },
+  luteal: { study: 'LV3 is usually pressed together with LI4 on the hand, a pair called the four gates. A Cochrane review of acupuncture and acupressure for PMS, which often use LV3, found they may ease both body and mood symptoms.', cite: 'Armour 2018 (Cochrane review)' },
 };
 
 // Supplement spec sheets: dose, form, timing, what it does, what studies found (author + year), cautions.

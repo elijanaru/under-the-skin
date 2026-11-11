@@ -1344,7 +1344,7 @@ function viewToday() {
 
     ${seasonBento(info)}
     ${sectionTitle('Eat today', ['Nourish', 'plan'])}
-    <div class="hscroll">
+    <div class="hscroll eat-row">
       <button class="rcard ${photoUrl(recipe.id) ? 'has-photo' : ''}" data-action="nav" data-to="recipe/${recipe.id}">${recipeArt(recipe, 'wave', 1)}<div class="rc-top"><span class="rc-k">Recipe${recipe.warm ? ' · Warm' : recipe.raw ? ' · Raw' : ''}</span><span class="rc-go">${icon('chevR', 16)}</span></div><div class="rc-t">${recipe.name}</div><div class="rc-m">${recipe.time} min · ${recipe.meal}</div></button>
       ${(() => { const ls = lemonState(); return `<button class="rcard ${carePhoto('lemon-water') ? 'has-photo' : ''}" data-action="nav" data-to="remedy/lemon-water">${careArt('lemon-water', 'orb', 4)}<div class="rc-top"><span class="rc-k">Morning ritual</span><span class="rc-go">${ls && !ls.over && ls.doneToday ? icon('check', 16) : icon('chevR', 16)}</span></div><div class="rc-t">Lemon water</div><div class="rc-m">${ls && !ls.over ? `Day ${ls.day} of 28` : 'Start your 28 days'}</div></button>`; })()}
       ${(() => { const S = SUPERFOODS[info.phase], L0 = S.list.filter(f => !(f[5] && myDiet() === 'vegan')), f = L0[dayNum(today) % L0.length], pic = f[4] ? (f[4][0] === 'tea' ? teaPhoto(f[4][1], 500, 650) : foodPhoto(f[4][1], 500)) : null;
