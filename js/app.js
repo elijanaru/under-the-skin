@@ -1329,7 +1329,7 @@ function viewToday() {
   const article = ARTICLES.find(a => a.phase === info.phase) || ARTICLES[0];
   const summary = ph.hormones.split('. ')[0] + '.';
 
-  const head = `<div class="home-top"><div><div class="eyebrow">${fmt(today, { weekday: 'long', month: 'long', day: 'numeric' })}</div><h1 class="hello sm">${greeting()}, <b>${name}</b></h1></div>
+  const head = `<div class="home-top"><div><h1 class="hello sm">${greeting()}, <b>${name}</b></h1></div>
       <button class="avatar ${state.profile.photo ? 'has-photo' : ''}" data-action="nav" data-to="profile" aria-label="Your profile">${avatarInner(state.profile)}</button></div>`;
   return `<div class="pad home">
     ${todayHub(info, energy, head)}

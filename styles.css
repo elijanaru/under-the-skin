@@ -11227,3 +11227,8 @@ html .fl6-d.me b{position:absolute;left:50%;top:21px;transform:translateX(-50%);
 html .fl6-line small{position:absolute;top:20px;transform:translateX(-50%);font:700 10px/1 var(--dot);color:#5d6853}
 html .fl6-acts{display:flex;gap:8px}
 html .fl6-acts .fl2-b{padding:7px 13px;font-size:13px}
+/* v893 Today hero: the small "Day" beside the big number, bigger and crisper on the photo */
+html .stage-day small{font-size:29px;font-weight:400;opacity:1;letter-spacing:0;margin-right:6px;text-shadow:0 1px 3px rgba(40,22,32,.55),0 2px 18px rgba(40,22,32,.45)!important}
+/* v893 Today: date line removed, greeting sits a little higher */
+html .home .hub > .home-top{padding-top:max(10px,calc(var(--sat) + 4px))!important}
+html .home .hub > .home-top .hello{margin-top:0}
