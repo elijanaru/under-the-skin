@@ -11124,3 +11124,23 @@ html .ebp-st > b.dotnum { font-size: 18px !important; color: #20301a !important;
 html .ebp-st em { font-size: 13px; }
 html .ebp-st span { font-size: 13px; }
 html .ebp-in > .ebp-st { grid-column: 1 / -1; margin-top: 0; }
+
+/* v885 Breathe, week tracker: headline and big ink number on top, seven clear day circles below with a check when done */
+html .bwk { display: block; padding: 18px 18px 16px; border-radius: 28px; }
+html .bwk-h { display: grid; grid-template-columns: 1fr; gap: 2px; }
+html .bwk-h small { font-size: 13px; font-weight: 500; letter-spacing: 0; color: rgba(32,48,26,.6); }
+html .bwk-h b { display: flex; align-items: baseline; gap: 4px; }
+html .bwk-h .dotnum { font-size: 40px; line-height: 1; font-weight: 900; color: #20301a; margin: 0; vertical-align: 0; }
+html .bwk-h b em { font-style: normal; font-size: 15px; font-weight: 500; color: rgba(32,48,26,.55); }
+html .bwk-h p { margin: 2px 0 0; font-size: 13.5px; color: rgba(32,48,26,.7); white-space: normal; }
+html .bwk-d { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(32,48,26,.08); }
+html .bwk-d span { width: auto; gap: 6px; }
+html .bwk-d i { width: 32px; height: 32px; border: 1.5px solid rgba(32,48,26,.2); color: #fff; }
+html .bwk-d .on i { background: #20301a; border-color: #20301a; }
+html .bwk-d .now i { border: 2px solid hsl(calc(var(--hb) + 0 * var(--hk)) calc(50% * var(--hs)) 45%); box-shadow: 0 0 0 3px hsl(calc(var(--hb) + 0 * var(--hk)) calc(50% * var(--hs)) 88%); }
+html .bwk-d .now.on i { background: #20301a; }
+html .bwk-d small { font-size: 12px; font-weight: 500; color: rgba(32,48,26,.6); }
+html .bwk-d .now small { color: #20301a; font-weight: 600; }
+html .bz-card-h small { text-transform: none !important; letter-spacing: 0 !important; font-size: 13px !important; }
+html .bwk-h b { align-items: flex-end; margin-top: 4px; }
+html .bwk-h b em { padding-bottom: 3px; }

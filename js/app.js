@@ -5871,8 +5871,8 @@ function breathCycle(k) {
 function breathWeek() {
   const L = state.breathLog || {}, t = todayISO();
   const days = Array.from({ length: 7 }, (_, i) => C.addDays(new Date(), i - 6)), n = days.filter(d => L[C.iso(d)]).length;
-  return `<div class="bwk" aria-label="You breathed on ${n} of the last 7 days"><div class="bwk-h"><small>Breathed this week</small><b><span class="dotnum">${n}</span> of 7 days</b></div>
-    <div class="bwk-d">${days.map(d => { const k = C.iso(d), v = L[k] || 0; return `<span class="${k === t ? 'now' : ''} ${v ? 'on' : ''}"><i>${v > 1 ? `<em class="dotnum">${Math.min(v, 9)}</em>` : ''}</i><small>${fmt(d, { weekday: 'narrow' })}</small></span>`; }).join('')}</div></div>`;
+  return `<div class="bwk" aria-label="You breathed on ${n} of the last 7 days"><div class="bwk-h"><small>Breathed this week</small><b><span class="dotnum">${n}</span><em>/7 days</em></b><p>${n === 0 ? 'One minute today starts your week.' : n >= 5 ? 'A steady rhythm. Your body feels it.' : `${7 - n} more days to make it a habit.`}</p></div>
+    <div class="bwk-d">${days.map(d => { const k = C.iso(d), v = L[k] || 0; return `<span class="${k === t ? 'now' : ''} ${v ? 'on' : ''}"><i>${v ? icon('check', 13, 2.6) : ''}</i><small>${fmt(d, { weekday: 'narrow' })}</small></span>`; }).join('')}</div></div>`;
 }
 // Breathe page: the daily calm reminder, a bell with her time and a switch; stressed days get an extra nudge
 function calmRemCard() {
