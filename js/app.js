@@ -3559,13 +3559,15 @@ function cycleFlag() {
     : gap < 21 ? [`A short cycle: ${gap} days`, 'One short cycle is common. If it keeps happening, tell your doctor.']
     : gap > 35 ? [`A long cycle: ${gap} days`, 'Stress, travel or illness can do this. If it repeats, tell your doctor.'] : [];
   if (!head) return '';
-  // two bars on one 0 to 50 day scale: this cycle against her usual, with the usual 21 to 35 range as a band behind
-  const p = d => Math.min(50, Math.max(1, d)) / 50, avg = Math.round(M.stats.avgCycle);
+  // one number line from 10 to 45 days: the usual 21 to 35 range as a soft band, a dot for this cycle and one for her usual
+  const x = d => (Math.min(45, Math.max(10, d)) - 10) / 35 * 100, avg = Math.round(M.stats.avgCycle);
   return `<section class="card flag fl2"><div class="fl2-h"><span class="bn-ic">${icon('spark', 18)}</span><div><small>Unusual cycle</small><b>${head}</b></div></div>
-    <div class="fl3" role="img" aria-label="This cycle ${gap} days, your usual ${avg} days, the usual range is 21 to 35 days" style="--a:${p(21)};--b:${p(35)}">
-      <span class="fl3-l">This time</span><b class="fl3-n me"><span class="dotnum">${gap}</span> days</b><span class="fl3-t"><i class="me" style="--p:${p(gap)}"></i></span>
-      <span class="fl3-l">Your usual</span><b class="fl3-n"><span class="dotnum">${avg}</span> days</b><span class="fl3-t"><i style="--p:${p(avg)}"></i></span>
-      <span></span><span></span><small class="fl3-k"><i></i>usual range, 21 to 35 days</small></div>
+    <div class="fl4" role="img" aria-label="This cycle ${gap} days, your usual ${avg} days, the usual range is 21 to 35 days">
+      <p class="fl4-r"><span><i class="me"></i>This time</span><b><span class="dotnum">${gap}</span> days</b></p>
+      <p class="fl4-r"><span><i></i>Your usual</span><b><span class="dotnum">${avg}</span> days</b></p>
+      <div class="fl4-line" aria-hidden="true"><span class="fl4-band" style="left:${x(21)}%;width:${x(35) - x(21)}%"><em>Usual range</em></span>
+        <i class="fl4-d" style="left:${x(avg)}%"></i><i class="fl4-d me" style="left:${x(gap)}%"></i>
+        ${[10, 21, 28, 35, 45].map(d => `<small style="left:${x(d)}%">${d}</small>`).join('')}</div></div>
     <p>${msg}</p>
     <div class="fl2-acts">${gap < 15 ? `<button class="fl2-b on" data-action="flagEdit" data-date="${key}">${icon('calendar', 14)} Fix in calendar</button>` : ''}<button class="fl2-b" data-action="flagDismiss" data-k="${key}">${icon('check', 14)} It’s correct</button></div></section>`;
 }

@@ -10996,3 +10996,20 @@ html .hg-st{margin-top:12px}
 html .hg-st > small{display:block;margin:0 0 6px;font:600 12.5px/1.2 var(--font);color:#20301a}
 html .hg-st .sgt-st{background:#f6f3ee}
 html .hg-st .sgt-st > b.dotnum{font-weight:900;font-size:16px;color:#20301a}
+
+/* v876 Today, Unusual cycle: spec rows + one number line (usual 21 to 35 band, a dot for this cycle, a dot for her usual) */
+html .fl4{margin:14px 0 6px}
+html .fl4-r{display:flex;align-items:baseline;justify-content:space-between;margin:0;padding:9px 0;border-top:1px solid rgba(32,48,26,.08);font:400 14px/1.2 var(--font)}
+html .fl4-r:first-child{border-top:0;padding-top:2px}
+html .fl4-r span{display:inline-flex;align-items:center;gap:8px;color:#5d6853}
+html .fl4-r span i{width:10px;height:10px;border-radius:50%;background:#20301a}
+html .fl4-r span i.me{background:#b04a64}
+html .fl4-r b{font-weight:500;color:#20301a}
+html .fl4-r .dotnum{font-family:var(--dot);font-weight:900;font-size:19px;margin-right:2px}
+html .fl4-line{position:relative;height:58px;margin:12px 6px 4px;border-bottom:0}
+html .fl4-line::before{content:'';position:absolute;left:0;right:0;top:22px;height:2px;border-radius:2px;background:rgba(32,48,26,.12)}
+html .fl4-band{position:absolute;top:12px;height:22px;border-radius:99px;background:#e6ecd8}
+html .fl4-band em{position:absolute;left:50%;bottom:calc(100% + 3px);transform:translateX(-50%);white-space:nowrap;font:500 11px/1 var(--font);font-style:normal;color:#4f6a2a}
+html .fl4-d{position:absolute;top:15px;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:#20301a;border:3px solid #fff;box-shadow:0 2px 6px rgba(32,48,26,.3)}
+html .fl4-d.me{background:#b04a64}
+html .fl4-line small{position:absolute;top:40px;transform:translateX(-50%);font:700 11px/1 var(--dot);color:#7d8571}
