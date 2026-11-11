@@ -6567,11 +6567,11 @@ const SZ_POSTER = { Winter: ['Winter, deeply nourished', 'Build blood, warm dige
   'Late summer': ['Late summer harvest', 'Sweet, golden and grounding, at regular times'], Autumn: ['Autumn, slow and warm', 'Cook more, moisten, warm the belly'] };
 function szPoster(items, sn, country, phase, warm) {
   const [h, sub] = SZ_POSTER[sn] || SZ_POSTER.Autumn;
-  const it = (i, n) => { const cut = szCut(i.f), ph = cut ? '' : foodPhoto(i.f, 300), big = n % 5 === 0, fit = phase && i.ph.includes(phase);
-    return `<button class="szp-i ${big ? 'big' : ''} ${n % 10 === 5 ? 'flip' : ''} ${cut ? 'cut' : 'stk'}" style="--i:${n % 12}" data-action="szPick" data-f="${esc(i.f)}">
+  const it = (i, n) => { const cut = szCut(i.f), ph = cut ? '' : foodPhoto(i.f, 300), fit = phase && i.ph.includes(phase);
+    return `<button class="szp-i ${fit ? 'fit' : ''} ${cut ? 'cut' : 'stk'}" style="--i:${n % 12}" data-action="szPick" data-f="${esc(i.f)}">
       <span class="szp-img">${cut ? `<img src="${cut}" alt="" loading="lazy" decoding="async">` : ph ? `<img src="${ph}" alt="" loading="lazy" decoding="async">` : `<em>${(KINDS.find(k => k[0] === i.kind) || [0, 0, '🌿'])[2]}</em>`}</span>
-      <span class="szp-l">${i.f.toLowerCase()}${fit ? '<i></i>' : ''}</span></button>`; };
-  return `<section class="szp"><header class="szp-h"><h2>${h}</h2><b>${sub}</b><p>${(SEASON_PLAIN[sn] || SEASON_PLAIN.Autumn).eat}</p><small>${country ? `${country} · ` : ''}${MONTHS[new Date().getMonth()]}${phase ? ' · <i></i> good for your phase' : ''}</small></header>
+      <span class="szp-l">${i.f.charAt(0).toUpperCase() + i.f.slice(1)}</span><span class="szp-n"><i class="nat ${i.nature}"></i>${(NATURE[i.nature] || NATURE.neutral)[0]}</span></button>`; };
+  return `<section class="szp" style="--pc:${phase ? PH_HEX[phase] : '#a2445d'}"><header class="szp-h"><h2>${h}</h2><b>${sub}</b><p>${(SEASON_PLAIN[sn] || SEASON_PLAIN.Autumn).eat}</p><small>${country ? `${country} · ` : ''}${MONTHS[new Date().getMonth()]}${phase ? ` · <i></i> good for your phase` : ''}</small></header>
     <div class="szp-g">${items.map(it).join('')}</div><div class="szp-det" aria-live="polite" hidden></div>
     ${warm ? `<p class="szp-warm">${icon('sun', 13)} Your period is close: cook the cooling ones with ginger.</p>` : ''}</section>`;
 }
@@ -7991,10 +7991,10 @@ const actions = {
     const box = el.closest('.szp'), det = box.querySelector('.szp-det'), c = myCountry(), m = new Date().getMonth() + 1, sel = SZ.seasonal(c, m).find(i => i.f === d.f); if (!sel) return;
     const was = el.classList.contains('on'); box.querySelectorAll('.szp-i.on').forEach(b => b.classList.remove('on'));
     if (was) { det.hidden = true; return; }
-    el.classList.add('on'); el.after(det);
+    el.classList.add('on'); { const tiles = [...box.querySelectorAll('.szp-i')], cols = getComputedStyle(box.querySelector('.szp-g')).gridTemplateColumns.split(' ').length || 1, k = tiles.indexOf(el); tiles[Math.min(tiles.length - 1, Math.floor(k / cols) * cols + cols - 1)].after(det); }
     const phase = M.info && M.info.phase, warm = M.info && warmWindow(M.info), img = szCut(sel.f) || foodPhoto(sel.f, 300);
     det.innerHTML = `${img ? `<img src="${img}" alt="" class="${szCut(sel.f) ? 'cut' : ''}">` : ''}<div><small>${NATURE[sel.nature][0]} food</small><b>${sel.f}</b>
-      ${sel.nut.length ? `<p class="szp-r"><span>Rich in</span>${sel.nut.join(' · ')}</p>` : ''}${sel.ph.length ? `<p class="szp-r"><span>Best for</span>${sel.ph.map(p => PHASES[p].name).join(' & ')}${phase && sel.ph.includes(phase) ? ' · yours now' : ''}</p>` : ''}
+      ${sel.nut.length ? `<p class="szp-r"><span>Rich in</span><b>${sel.nut.join(', ')}</b></p>` : ''}${sel.ph.length ? `<p class="szp-r"><span>Best for</span><b>${sel.ph.map(p => PHASES[p].name).join(' & ')}${phase && sel.ph.includes(phase) ? '<em>Your phase now</em>' : ''}</b></p>` : ''}
       <p>${sel.nature === 'cool' && warm ? 'A cooling food. Your period is close, so cook it and add ginger or cinnamon.' : NATURE[sel.nature][1]}</p></div><button class="sfc-x" data-action="szClose" aria-label="Close">${icon('close', 14)}</button>`;
     det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
   },
