@@ -6800,13 +6800,20 @@ const RIT_META = {
   'Figs, dates & honeycomb': ['Afternoon', '2 min', 'l', '', 'Sweet: add a few nuts to keep your blood sugar steady.'],
   'Deep sleep': ['After sunset', 'All evening', 'l', ['People who slept under 6 hours were about 4 times more likely to catch a cold after exposure to the virus.', 'Prather 2015 (Sleep)'], ''],
 };
-const ritList = () => { const ph = M.info ? M.info.phase[0] : ''; return AUTUMN_RITUALS.map((r, i) => ({ r, i, m: RIT_META[r[0]] || ['', '', '', '', ''] })).sort((a, b) => (b.m[2].includes(ph) && !!ph) - (a.m[2].includes(ph) && !!ph)); };
+// Only the best ones for her phase: the rituals made for it (most specific first), topped up with an all-cycle one to fill the row, four at most.
+const ritList = () => {
+  const ph = M.info ? M.info.phase[0] : '', all = AUTUMN_RITUALS.map((r, i) => ({ r, i, m: RIT_META[r[0]] || ['', '', 'mfol', '', ''] }));
+  if (!ph) return all;
+  const mine = all.filter(x => x.m[2].includes(ph) && x.m[2].length < 4).sort((a, b) => a.m[2].length - b.m[2].length), any = all.filter(x => x.m[2].length >= 4);
+  const out = mine.slice(0, 4); while ((out.length < 2 || out.length % 2) && any.length) out.push(any.shift());
+  return out;
+};
 function seasonRituals(sn) {
   if (!['Autumn', 'Winter'].includes(sn)) return '';
   const phase = M.info ? M.info.phase : null, P = { m: 'menstrual', f: 'follicular', o: 'ovulatory', l: 'luteal' };
-  const item = ({ r, i, m }) => `<button class="sfc-i" data-action="ritPick" data-i="${i}" aria-expanded="false"><img class="rd" src="${teaPhoto(r[0], 300, 300)}" alt="" loading="lazy" decoding="async"><b>${r[0]}</b><small>${phase && m[2].includes(phase[0]) && m[2].length < 4 ? `<i class="sr-dot" style="background:${PH_HEX[phase]}"></i>` : ''}${m[0]}</small></button>`;
+  const item = ({ r, i, m }) => `<button class="sfc-i" data-action="ritPick" data-i="${i}" aria-expanded="false"><img class="rd" src="${teaPhoto(r[0], 300, 300)}" alt="" loading="lazy" decoding="async"><b>${r[0]}</b><small>${m[0]}</small></button>`;
   return `<div class="sr-wrap"><section class="sfc sr2" data-phase="${phase || ''}">
-      <header class="sfc-h"><small><i style="background:${phase ? PH_HEX[phase] : '#6c823e'}"></i>${sn} · ${MONTHS[new Date().getMonth()]}</small><h3>${sn} rituals</h3><p>Small, warm habits for the cold months.${phase ? ` A dot marks the ones for your ${PHASES[phase].name.toLowerCase()} phase.` : ''}</p></header>
+      <header class="sfc-h"><small><i style="background:${phase ? PH_HEX[phase] : '#6c823e'}"></i>${sn} · ${MONTHS[new Date().getMonth()]}</small><h3>${sn} rituals</h3><p>${phase ? `The best warm habits for your ${PHASES[phase].name.toLowerCase()} phase this ${sn.toLowerCase()}.` : 'Small, warm habits for the cold months.'}</p></header>
       <div class="sfc-grid">${ritList().map(item).join('')}</div>
       <div class="sfc-det" aria-live="polite" hidden></div>
       <footer class="sfc-f"><span>All warm, nothing iced</span><span>Pregnant or on medication? Ask your doctor first</span></footer>

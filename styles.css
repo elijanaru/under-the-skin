@@ -11734,3 +11734,11 @@ html #view > .pad .pfc .chip:not(.static):not(.on):not(.warm) { background: #f3f
 .srm-r { border-top-color: rgba(43,27,18,.10); }
 .srm .toggle:not(.on) { background: rgba(43,27,18,.16); }
 .srm .srm-cta { background: #2b1b12 !important; color: #fff4e6 !important; }
+
+/* v933 Balance: the poster is no longer a cream box. It sits straight on the page, so the soft drifting glow runs behind it from the top bar to the bottom; the cut-outs breathe gently, each on its own beat */
+html .pad.fb > .fbp { background: transparent !important; border: 0 !important; box-shadow: none !important; overflow: visible; }
+html .pad.fb > .fbp::before { opacity: .55; }
+@keyframes fbpFloat { 0%, 100% { transform: translateY(0) rotate(var(--r)); } 50% { transform: translateY(-4px) rotate(var(--r)); } }
+html .fbp-i:hover .fbp-ph img, html .fbp-i.on .fbp-ph img { animation: none; }
+html .fbp-ph img { animation: fbpFloat 6.5s ease-in-out infinite; animation-delay: calc(var(--i, 0) * -1.1s); }
+@media (prefers-reduced-motion: reduce) { html .fbp-ph img { animation: none; } }
