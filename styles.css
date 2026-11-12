@@ -11742,3 +11742,12 @@ html .pad.fb > .fbp::before { opacity: .55; }
 html .fbp-i:hover .fbp-ph img, html .fbp-i.on .fbp-ph img { animation: none; }
 html .fbp-ph img { animation: fbpFloat 6.5s ease-in-out infinite; animation-delay: calc(var(--i, 0) * -1.1s); }
 @media (prefers-reduced-motion: reduce) { html .fbp-ph img { animation: none; } }
+
+/* v934 Breathe, What each breath does: specs as flat hairline rows on the card (no beige box); One breath reads as its length and breaths a minute, since the wave above already shows the counts */
+html .bwx-spec { margin: 4px 0 10px; padding: 0; background: none; border-radius: 0; }
+html .bwx-spec p { padding: 10px 0; font-size: 13.5px; border-top: 1px solid rgba(32,48,26,.09); }
+html .bwx-spec p:first-child { border-top: 1px solid rgba(32,48,26,.09); }
+html .bwx-spec p:last-child { border-bottom: 1px solid rgba(32,48,26,.09); }
+html .bwx-spec span { color: rgba(32,48,26,.6); }
+html .bwx-spec p > b { font-weight: 500; color: #20301a; text-align: right; }
+html .bwx-spec .dotnum { font-size: 17px; }

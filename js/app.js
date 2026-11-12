@@ -6041,7 +6041,8 @@ const BZ_COL = { still: '#6c823e', sigh: '#5f93a8', belly: '#d9768f', box: '#6c8
 // three spec rows on each breath card: when it helps most, the counts of one breath, and how long a full session takes
 function bwxSpec(id) {
   const B = BREATHS[id], sec = ms => `${+(ms / 1000).toFixed(1)}`.replace(/\.0$/, ''), hold = B.steps.some(x => x[0] === 'hold');
-  const beat = B.steps.filter(x => x[0] !== 'rest' || hold).map(([t, , , ms]) => `${t === 'rest' ? 'Hold' : BZ_WORD[t]} <b class="dotnum">${sec(ms)}</b>`).join('<i>·</i>');
+  const one = B.steps.filter(x => x[0] !== 'rest' || hold).reduce((a, x) => a + x[3], 0) / 1000, perMin = Math.round(60 / one * 2) / 2;
+  const beat = `<b class="dotnum">${sec(one * 1000)}</b> s · about ${`${perMin}`.replace(".5", "½")} a minute`;
   const min = Math.max(1, Math.round(B.rounds * B.steps.reduce((a, x) => a + x[3], 0) / 60000));
   return `<div class="bwx-spec">
     <p><span>Best time</span><b>${BZ_WHEN[id] || B.when}</b></p>
