@@ -11751,3 +11751,18 @@ html .bwx-spec p:last-child { border-bottom: 1px solid rgba(32,48,26,.09); }
 html .bwx-spec span { color: rgba(32,48,26,.6); }
 html .bwx-spec p > b { font-weight: 500; color: #20301a; text-align: right; }
 html .bwx-spec .dotnum { font-size: 17px; }
+
+/* v935 Balance: more contrast on the glowing page. Each habit is a clean white tile (photo on white, dark title, grey line), the staggered offset goes so the tiles line up, and the headings and sublines get darker ink */
+html .pad.fb .fbp-g { gap: 10px 8px; align-items: stretch; }
+html .pad.fb .fbp-i { justify-content: flex-start; padding: 12px 6px 14px; border-radius: 22px; background: rgba(255,255,255,.96); border: 1px solid rgba(48,64,35,.08); box-shadow: 0 10px 24px rgba(60,40,30,.10), 0 1px 2px rgba(60,40,30,.06); }
+html .pad.fb .fbp-i.mid { margin-top: 0; }
+html .pad.fb .fbp-i.on { box-shadow: 0 0 0 2px #20301a, 0 10px 24px rgba(60,40,30,.12); }
+html .pad.fb .fbp-i .fbp-n { top: 8px; left: 8px; background: #f3f1ec; box-shadow: none; }
+html .pad.fb .fbp-i .fbp-ok { top: 8px; right: 8px; background: #f3f1ec; border-color: transparent; }
+html .pad.fb .fbp-i.ok .fbp-ok { background: #6c823e; color: #fff; }
+html .pad.fb .fbp-ph { height: 80px; margin-top: 6px; }
+html .pad.fb .fbp-i b { color: #20301a; }
+html .pad.fb .fbp-i small { color: rgba(32,48,26,.72); }
+html .pad.fb .fbp-title p { color: #3d4a33; }
+html .pad.fb .fbp-step b { color: #20301a; }
+html .pad.fb .fbp-step small { color: #3d4a33; }
