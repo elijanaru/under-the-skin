@@ -6650,8 +6650,7 @@ function seasonBento(info) {
   return `${sectionTitle(`In season · ${MONTHS[m - 1]}`, ['All', 'season'])}
     <div class="sz-row" style="--pc:${info ? PH_HEX[info.phase] : '#a2445d'}">${top.map((i, n) => `<button class="sz-food" style="--i:${n}" data-action="seasonGo" data-f="${esc(i.f)}">
       <img src="${foodPhoto(i.f, 320)}" alt="" loading="lazy"><span class="sz-shade"></span>
-      ${info && i.ph.includes(info.phase) ? `<span class="sz-fit">${icon('spark', 11)} Your phase</span>` : ''}
-      <span class="sz-b"><b>${i.f.replace(/\s*\(.*\)/, '')}</b><small><i class="nat ${i.nature}"></i>${NAT[i.nature]}</small></span></button>`).join('')}</div>
+      <span class="sz-b"><b>${i.f.replace(/\s*\(.*\)/, '')}</b><small><i class="nat ${i.nature}"></i>${NAT[i.nature]}</small>${info && i.ph.includes(info.phase) ? `<em class="sz-fit2"><i></i>Fits your phase</em>` : ''}</span></button>`).join('')}</div>
     <button class="sz-more2" data-action="nav" data-to="season"><span class="szm-pics">${top.slice(0, 3).map(i => `<img src="${foodPhoto(i.f, 120)}" alt="" loading="lazy">`).join('')}</span>
       <span class="szm-t"><b>See all ${items.length} foods</b><small>and what to cook with them</small></span><span class="szm-go">${icon('chevR', 18)}</span></button>`;
 }
