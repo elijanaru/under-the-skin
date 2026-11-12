@@ -2091,7 +2091,7 @@ function viewPlan() {
         ${recent.length ? `${sectionTitle('For how you feel')}${recent.map(s => { const f = SYMPTOM_FOODS[s]; return `<section class="card glass fix"><div class="fix-h"><span class="fix-s">${s}</span></div><div class="foods">${f.foods.slice(0, 5).map(x => `<span class="food">${x}</span>`).join('')}</div></section>`; }).join('')}` : ''}`;
     } else if (sub === 'super') { location.replace('#/plan/foods'); return '';
     } else if (sub === 'drinks' || sub === 'supps') {
-      body = `${sub === 'drinks' ? plTea() : ''}<section class="card eat-cat eb" data-phase="${phase}">${eatCatInner(phase, sub)}</section>
+      body = `${sub === 'drinks' ? `${plTea()}<div class="eat-cat eb eb-free sf-top" data-phase="${phase}">${drinksInner(phase)}</div>` : `<section class="card eat-cat eb" data-phase="${phase}">${eatCatInner(phase, sub)}</section>`}
         ${sub === 'drinks' ? `<button class="card gro-cta" data-action="nav" data-to="tea"><span class="art-ic">${icon('cup', 20)}</span><span class="art-t">Tea guide<small>A tea for every need</small></span>${icon('chevR', 18)}</button>` : ''}`;
     } else if (sub === 'sugar') {
       body = sugarSection(phase);
@@ -2228,6 +2228,39 @@ function superInner(phase) {
       <div class="sfc-det" aria-live="polite" hidden></div>
       ${warm ? `<p class="sfc-warm">${icon('sun', 13)} These days: spices in warm food and drinks, nothing raw or iced.</p>` : ''}
       <footer class="sfc-f"><span>Food-sized amounts</span><span>Ask your doctor if pregnant or on medication</span></footer>
+    </section>`;
+}
+// Drinks as a white card of round photo tiles; a tap opens a spec sheet right under the row (when, how much, caffeine, serve),
+// the study with author and year where there is a good one, and a short safe caution.
+// [match, tag, when, how much, caffeine, study [author, year, finding] | null, caution]
+const DRINK_SPEC = [
+  [/matcha/i, 'Calm focus', 'Morning, away from iron-rich meals', '1 to 2 cups, 1 tsp powder each', 'About 60 mg a cup', ['Haskell et al.', 2008, 'L-theanine with caffeine, as in matcha, sharpened attention more than caffeine alone.'], 'Like coffee, it slows iron uptake from a meal. Keep it an hour apart from iron-rich food.'],
+  [/coffee/i, 'Keep it', 'After breakfast, before 2 pm', '1 to 3 cups a day', 'About 95 mg a cup', ['Morck et al.', 1983, 'Coffee with a meal cut the iron absorbed from it by about 39%. An hour before the meal it made no difference.'], 'Pregnant or trying: keep to 200 mg caffeine a day, about 2 cups.'],
+  [/cacao/i, 'Magnesium', 'Afternoon, before 4 pm', '1 to 2 tbsp raw cacao in warm milk', 'A little, mostly gentle theobromine', null, 'It lifts you gently, like weak coffee. Have it earlier if you sleep lightly.'],
+  [/red date/i, 'Builds blood', 'Your period and the week after', '5 to 6 dates simmered in 2 cups of water', 'None', null, 'Naturally sweet. Go easy with diabetes.'],
+  [/ginger/i, 'Warming', 'Day 1 to 3 of your period', '2 to 3 cups, a thumb of fresh root each', 'None', ['Ozgoli et al.', 2009, '250 mg ginger four times a day eased period pain as well as ibuprofen.'], 'Ask first if you take blood thinners or have surgery coming up.'],
+  [/raspberry leaf/i, 'Womb tonic', 'Period and the second half of the cycle', '1 to 2 cups a day', 'None', null, 'Pregnant: only in the last weeks, and only with your midwife’s OK.'],
+  [/broth/i, 'Minerals', 'Your period days', '1 to 2 mugs a day', 'None', null, 'Quite salty. Go easy if you watch your blood pressure.'],
+  [/lemon/i, 'Vitamin C', 'On waking', '1 glass, juice of half a lemon', 'None', null, 'The acid is hard on teeth. Rinse with water after.'],
+  [/nettle/i, 'Iron', 'After your period, while you rebuild', '1 to 3 cups a day', 'None', null, 'Ask first if you take blood thinners, blood pressure pills or water tablets.'],
+  [/green juice/i, 'Greens', 'Morning', '1 small glass', 'None', null, 'Rich in vitamin K. On blood thinners keep the amount steady.'],
+  [/coconut water/i, 'Potassium', 'Hot or active days', '1 glass', 'None', null, 'Very rich in potassium. Ask first with kidney disease.'],
+  [/mineral water/i, 'Magnesium', 'All day', 'About 1.5 to 2 litres of fluid a day', 'None', null, ''],
+  [/hibiscus/i, 'Antioxidants', 'Afternoon', '1 to 3 cups a day', 'None', ['McKay et al.', 2010, 'Three cups of hibiscus tea a day for 6 weeks lowered blood pressure in adults.'], 'It lowers blood pressure: ask first if you take blood pressure pills. Skip it in pregnancy.'],
+  [/chamomile/i, 'Sleep', 'Evening, an hour before bed', '1 to 2 cups', 'None', ['Chang & Chen', 2016, 'Women who drank chamomile tea for 2 weeks slept better than those who did not.'], 'Skip it if you react to ragweed or daisies.']];
+const DR_SUB = { menstrual: 'Hot drinks move blood and ease cramps. Keep your coffee, just away from iron-rich meals.', follicular: 'Energy is rising. Coffee or matcha both fit, with fresh greens and lemon.',
+  ovulatory: 'Your peak days. Drink plenty, and a cool matcha or coconut water is perfect.', luteal: 'Steady blood sugar and calm evenings. Coffee with food, cacao and chamomile.' };
+const DR_TITLE = { menstrual: 'Warm cups', follicular: 'Fresh & light', ovulatory: 'Cool & hydrating', luteal: 'Calm & steady' };
+const drinkList = phase => warmChips(EAT_GUIDE[phase].cats.drinks[1], 'drinks', warmWindow(M.info) && phase === (M.info && M.info.phase)).map(([, n]) => n);
+function drinksInner(phase) {
+  const C0 = EAT_GUIDE[phase].cats.drinks, warm = warmWindow(M.info) && phase === (M.info && M.info.phase);
+  return `<section class="sfc drc" data-phase="${phase}">
+      <header class="sfc-h"><small><i style="background:${PH_HEX[phase]}"></i>${PHASES[phase].name} phase</small><h3>${DR_TITLE[phase]}</h3><p>${DR_SUB[phase]}</p></header>
+      <div class="sfc-grid">${drinkList(phase).map((n, i) => { const sp = DRINK_SPEC.find(([r]) => r.test(n)), pic = (EB_PIC.find(([r]) => r.test(n)) || [])[1]?.();
+        return `<button class="sfc-i" style="--i:${i}" data-action="drPick" data-i="${i}" aria-expanded="false">${pic ? `<img class="${pic.startsWith('images/') ? '' : 'rd'}" src="${pic}" alt="" loading="lazy" decoding="async">` : ''}<b>${n}</b>${sp ? `<small>${sp[1]}</small>` : ''}</button>`; }).join('')}</div>
+      <div class="sfc-det" aria-live="polite" hidden></div>
+      ${warm ? `<p class="sfc-warm">${icon('sun', 13)} These days: everything warm or at room temperature, nothing iced.</p>` : ''}
+      <footer class="sfc-f"><span>Tap a drink for when and how much</span><span>Ask your doctor if pregnant or on medication</span></footer>
     </section>`;
 }
 // Supplements as a spec sheet: label left, value right, the study with author and year, the caution, the full sheet behind one tap.
@@ -8087,6 +8120,25 @@ const actions = {
       ${st ? `<span class="sr-st"><small>What studies found</small>${st[0]} <i>${st[1].replace(/\s*\(.*\)/, '')}${yr && !st[1].includes(yr) ? ` ${yr}` : ''}</i></span>` : ''}
       ${care ? `<span class="sfc-care"><small>Before you try</small>${care}</span>` : ''}</div>
       <button class="bn-x" data-action="ritPick" data-i="${d.i}" aria-label="Close">${icon('close', 16)}</button>`;
+    det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
+    const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
+  },
+  drPick: (d, el) => {
+    const box = el.closest('.sfc'), det = box.querySelector('.sfc-det'), phase = box.dataset.phase, n = drinkList(phase)[+d.i]; if (!n) return;
+    if (el.closest('.sfc-det')) { box.querySelectorAll('.sfc-i.on').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); }); det.hidden = true; return; }
+    const was = el.classList.contains('on'); box.querySelectorAll('.sfc-i').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); });
+    if (was) { det.hidden = true; return; }
+    el.classList.add('on'); el.setAttribute('aria-expanded', 'true');
+    { const items = [...el.parentElement.querySelectorAll('.sfc-i')], k = items.indexOf(el); items[Math.min(items.length - 1, Math.floor(k / 2) * 2 + 1)].after(det); }
+    const sp = DRINK_SPEC.find(([r]) => r.test(n)) || [], why = (EB_WHY.find(([r]) => r.test(n)) || [0, ''])[1], img = el.querySelector('img');
+    const serve = /iced/i.test(n) ? 'Iced' : /water|juice/i.test(n) ? 'Room temperature' : /warm|tea|broth|cacao|coffee|latte|matcha/i.test(n) ? 'Hot or warm' : 'Room temperature';
+    const rows = [['When', sp[2]], ['How much', sp[3]], ['Caffeine', sp[4]], ['Serve', serve]].filter(r => r[1]);
+    det.innerHTML = `${img ? `<img class="${img.className}" src="${img.src}" alt="">` : ''}<div><small class="sfc-o">${sp[1] || 'Drink'}</small><b>${n}</b>${why ? `<p>${why}</p>` : ''}</div>
+      <div class="dr-full"><dl class="sr-spec">${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+      ${sp[5] ? `<span class="sr-st"><small>What studies found</small>${sp[5][2]} <i>${sp[5][0]} ${sp[5][1]}</i></span>` : ''}
+      ${/raw milk/i.test(n) ? `<span class="ebp-w">${icon('thermo', 13)} Warm raw milk gently, only until it feels warm on your lip. Never boil it.</span>` : ''}
+      ${sp[6] ? `<span class="sfc-care"><small>Before you try</small>${sp[6]}</span>` : ''}</div>
+      <button class="bn-x" data-action="drPick" data-i="${d.i}" aria-label="Close">${icon('close', 16)}</button>`;
     det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
     const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
   },

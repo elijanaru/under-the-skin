@@ -11471,3 +11471,11 @@ html .sup-full .sup-spec dd { max-width: 70%; }
 .lt2-go { justify-self: start; display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; padding: 9px 14px 9px 15px; border-radius: 99px; background: #20301a; color: #fff; font-size: 13px; }
 .lt2-go em { font-style: normal; }
 .lt2-go svg { opacity: .8; }
+
+/* v915 Drinks card: spec sheet across the full width of the open panel */
+.drc .sfc-det { flex-wrap: wrap; }
+.drc .sfc-det > div:not(.dr-full) { flex: 1; min-width: 0; }
+.drc .dr-full { flex: 1 0 100%; margin-right: -28px; display: grid; gap: 10px; }
+.drc .dr-full .sr-spec { margin: 2px 0 0; }
+.drc .dr-full .sr-spec dd { text-align: right; }
+.drc .dr-full .sr-spec dt { flex: none; }
