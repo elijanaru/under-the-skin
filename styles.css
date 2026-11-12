@@ -11522,3 +11522,21 @@ html .sup-full .sup-spec dd { max-width: 70%; }
 .st3-body .st2-card { background: rgba(255,255,255,0.95); border-color: rgba(48,64,35,0.10); }
 .st3-body .st2-card .st2-steps { padding: 0; border: 0; box-shadow: none; background: none; }
 .st3-body .st2-h { color: #20301a; font-weight: 500; }
+
+/* v917 Your tip today: photo framed on top with no words over it; eyebrow, action headline, grey line, two numbered steps, dark pill */
+.tf2 { display: flex; flex-direction: column; width: 100%; padding: 0; border: 1px solid rgba(48,64,35,0.10); border-radius: 30px; overflow: hidden; background: rgba(255,255,255,0.95); color: #20301a; text-align: left; font-family: var(--font); box-shadow: 0 18px 40px rgba(120,70,90,0.10); cursor: pointer; }
+.tf2-ph { display: block; position: relative; height: 176px; margin: 8px 8px 0; border-radius: 23px; overflow: hidden; background: #efe6e9; }
+.tf2-ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s cubic-bezier(.2,.8,.2,1); }
+.tf2:active .tf2-ph img { transform: scale(1.03); }
+.tf2-b { display: grid; gap: 6px; padding: 16px 18px 18px; }
+.tf2-e { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; letter-spacing: .07em; text-transform: uppercase; color: rgba(32,48,26,0.55); }
+.tf2-e svg { color: hsl(calc(var(--hb) + 0 * var(--hk)) calc(45% * var(--hs)) 42%); }
+.tf2-t { font-size: 22px; font-weight: 500; letter-spacing: -.02em; line-height: 1.15; }
+.tf2-s { font-size: 14px; line-height: 1.4; color: rgba(32,48,26,0.6); }
+.tf2-ol { list-style: none; margin: 8px 0 0; padding: 0; display: grid; }
+.tf2-ol li { display: flex; align-items: center; gap: 12px; padding: 10px 0; font-size: 14.5px; line-height: 1.35; color: #20301a; border-top: 1px solid rgba(48,64,35,0.09); }
+.tf2-ol li:last-child { border-bottom: 1px solid rgba(48,64,35,0.09); }
+.tf2-ol i { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 13px; background: hsl(calc(var(--hb) + 0 * var(--hk)) calc(42% * var(--hs)) 90%); color: #20301a; }
+.tf2-go { justify-self: start; display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 10px 15px; border-radius: 99px; background: #20301a; color: #fff; font-size: 13.5px; }
+.tf2-go svg { opacity: .85; }
+.tf2-w .sv-btn.float { top: 18px; right: 18px; }

@@ -267,11 +267,13 @@ function tipsCard(info) {
   if (lead.d) regTip(lead.id, lead.t, lead.d, to(lead));
   const n = (state.savedTips || []).length;
   return `${sectionTitle('Your tip today', n ? [`${icon('save', 12)} Saved · ${n}`, 'saved'] : ['Edit', 'profile'])}
-    <div class="tf-w">
-    <button class="tf" data-action="nav" data-to="${to(lead)}">
-      <span class="tf-media">${lu ? `<img src="${lu}" alt="" loading="lazy">` : ''}<span class="tf-tag">${icon(lic, 13)} ${lead.t}</span><b class="tf-q">${lq}</b></span>
-      ${lead.d ? doSteps(lead.d) : `<span class="tf-p">${lead.tip}</span>`}
-      <span class="tf-cta">${lcta} ${icon('chevR', 14)}</span></button>
+    <div class="tf-w tf2-w">
+    <button class="tf2" data-action="nav" data-to="${to(lead)}">
+      <span class="tf2-ph">${lu ? `<img src="${lu}" alt="" loading="lazy" decoding="async">` : ''}</span>
+      <span class="tf2-b"><small class="tf2-e">${icon(lic, 13)} ${lead.t}${lead.d ? ` · ${lead.d[3]}` : ''}</small>
+        <b class="tf2-t">${lead.d ? lead.d[0] : lq}</b><span class="tf2-s">${lead.d ? lq : lead.tip}</span>
+        ${lead.d ? `<ol class="tf2-ol"><li><i class="dotnum">1</i>${lead.d[1]}</li><li><i class="dotnum">2</i>${lead.d[2]}</li></ol>` : ''}
+        <span class="tf2-go">${lcta} ${icon('chevR', 14)}</span></span></button>
       ${lead.d ? saveBtn(lead.id, 'float') : ''}</div>`;
 }
 // ---------- one page per "Best things to do today" tile ----------
