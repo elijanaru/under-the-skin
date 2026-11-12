@@ -11701,3 +11701,13 @@ html .ck-first .ck-l li, html .ck-first > div > b { font-weight: 400 !important;
 .pfc .chips { gap: 8px; }
 html #view > .pad .pfc .chip:not(.static):not(.on):not(.warm) { background: #f3f1ec !important; border-color: transparent !important; box-shadow: none !important; color: #20301a !important; }
 .pfc .chip.on { box-shadow: 0 6px 14px rgba(32,48,26,.18); }
+
+/* v931 Tea, How to make it: a spec sheet (Amount, Steep, When, Serve, Nature) with the cover tip as a grey footnote */
+.tsp { background: rgba(255,255,255,.95) !important; backdrop-filter: none !important; border: 1px solid rgba(48,64,35,.10) !important; box-shadow: 0 14px 32px rgba(120,70,90,.08) !important; padding: 4px 20px 14px !important; }
+.tsp dl { margin: 0; }
+.tsp dl div { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 13px 0; border-bottom: 1px solid rgba(48,64,35,.09); }
+.tsp dt { flex: none; font-size: 14px; color: rgba(32,48,26,.6); }
+.tsp dd { margin: 0; font-size: 15px; font-weight: 500; color: #20301a; text-align: right; }
+.tsp-n { display: flex; gap: 8px; align-items: flex-start; margin: 12px 0 0; font-size: 12.5px; line-height: 1.4; color: rgba(32,48,26,.58); }
+.tsp-n svg { flex: none; margin-top: 1px; color: #6c823e; }
+.tea-study2 .sgt-st { background: none !important; padding: 2px 0 !important; }

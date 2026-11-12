@@ -4026,7 +4026,7 @@ function remedyMake(r) {
 // A caution with several warnings reads as a short list, one per row, instead of one bold paragraph.
 function cautionHTML(t) {
   if (!t) return '';
-  const parts = t.split(/(?<=[.!])\s+(?=[A-Z])/).filter(Boolean);
+  const parts = [...new Set(t.split(/(?<=[.!])\s+(?=[A-Z])/).map(x => x.trim()).filter(Boolean))];
   return parts.length > 1 ? `<ul class="ck-l">${parts.map(x => `<li>${x}</li>`).join('')}</ul>` : `<b>${t}</b>`;
 }
 function viewRemedy(id) {
@@ -5037,13 +5037,32 @@ function viewTeaItem(id) {
       ${cold && nearBleed ? `<p class="tea-warn">${icon('spark', 12)} Cooling in Chinese medicine. Around your period drink it hot and add a slice of ginger.</p>` : ''}
     </section>` : ''}
     ${sectionTitle('How to make it')}
-    <section class="card glass tea-how-c"><div class="th-steps">${[['clock', how], ['cup', 'Cover the cup while it steeps, so the fragrant oils stay in your tea.'], ...(nearBleed ? [['thermo', 'Drink it hot or warm these days, never iced.']] : [])].map(([e, x]) => `<div><span>${icon(e, 18)}</span><p>${x}</p></div>`).join('')}</div></section>
+    ${(spec => spec.length >= 2 ? `<section class="card tsp">
+      <dl>${spec.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+      <p class="tsp-n">${icon('cup', 14)} Cover the cup while it steeps, so the fragrant oils stay in your tea.</p></section>` : `<section class="card glass tea-how-c"><div class="th-steps">${[['clock', how], ['cup', 'Cover the cup while it steeps, so the fragrant oils stay in your tea.'], ...(nearBleed ? [['thermo', 'Drink it hot or warm these days, never iced.']] : [])].map(([e, x]) => `<div><span>${icon(e, 18)}</span><p>${x}</p></div>`).join('')}</div></section>`)(teaSpec(how, temp, nearBleed))}
     ${P.length ? `${sectionTitle('What studies found')}
     <section class="card tea-study2">${P.map(p => { const yr = (p.cite.match(/(19|20)\d{2}/) || [''])[0], who = yr ? p.cite.slice(0, p.cite.indexOf(yr)).trim() : p.cite, more = yr ? p.cite.slice(p.cite.indexOf(yr) + 4).replace(/^[\s·,]+/, '') : '';
       return `<div class="sgt-st">${yr ? `<b class="dotnum">${yr}</b>` : ''}<span><em>${p.n}${yr ? ` · ${who}` : ''}</em>${p.study}${more ? `<small>Also ${more}</small>` : ''}</span></div>`; }).join('')}</section>` : ''}
     ${cautions.length ? `<section class="ck-first"><span class="ck-i">!</span><div><small>Before you try it</small>${cautionHTML(cautions.join(' '))}</div></section>` : ''}
     <p class="fine center">Herbal teas are gentle support, not medicine. Pregnant, on medication or unsure? Ask your doctor or midwife first.</p>
   </div>`;
+}
+// How to make it as spec rows: amount, water, steep, when, serve, nature. Falls back to the plain steps when the line doesn't parse.
+function teaSpec(how, temp, nearBleed) {
+  const cap = x => x.charAt(0).toUpperCase() + x.slice(1);
+  const seg = how.split(/[,.]\s*/).map(x => x.trim()).filter(Boolean);
+  let amount = '', water = '', steep = '', covered = false; const when = [];
+  seg.forEach((x, i) => {
+    if (/^covered$/i.test(x)) covered = true;
+    else if (/°C/.test(x)) water = x.replace(/\s*water$/, '');
+    else if (/\bmin\b/.test(x) && !/before|after/.test(x)) steep = x;
+    else if (/before|after|evening|morning|noon|bed|period|meals|day|afternoon/i.test(x)) when.push(x);
+    else if (!i) amount = x;
+  });
+  if (!(amount || water) || !steep) return [];
+  const nature = { cold: 'Cooling', cool: 'Cooling', neutral: 'Neutral', warm: 'Warming', hot: 'Warming' }[temp];
+  return [...(amount ? [['Amount', cap(amount)]] : []), ...(water ? [['Water', water]] : []), ['Steep', cap(`${covered ? 'covered, ' : ''}${steep}`)],
+    ...(when.length ? [['When', cap(when.join(', '))]] : []), ['Serve', nearBleed ? 'Hot, never iced' : 'Warm'], ...(nature ? [['Nature', nature]] : [])];
 }
 // Key ingredients of a tea: the compound and what it does on the left, the herb it comes from on the right.
 function teaKeyRows(P) {
