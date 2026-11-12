@@ -11423,3 +11423,22 @@ html .sr2 .sr-dot { width: 6px; height: 6px; border-radius: 50%; flex: none; }
 html .pld-foods { align-items: flex-start; }
 html .pld-foods > div { align-content: start; }
 html .pld-foods small { font-weight: 500; color: #304023; }
+
+/* v912 Your last cycles: one shared day scale, the healthy 21 to 35 band, her usual length as a dashed line, a day axis, the study as one big fact */
+html .cyb-rows { padding-bottom: 22px; }
+html .cyb-band, html .cyb-avg { position: absolute; top: 0; bottom: 22px; pointer-events: none; }
+html .cyb-band { left: calc(52px + (100% - 92px) * var(--b0) / 100); width: calc((100% - 92px) * (var(--b1) - var(--b0)) / 100); background: rgba(108,130,62,.09); border-radius: 8px; }
+html .cyb-avg { left: calc(52px + (100% - 92px) * var(--avg) / 100); width: 0; border-left: 1.5px dashed rgba(32,48,26,.55); }
+html .cyb-avg em { position: absolute; bottom: -20px; left: -16px; font: 500 10px/1 Outfit, sans-serif; font-style: normal; color: #20301a; white-space: nowrap; }
+html .cyb-r { position: relative; z-index: 1; }
+html .cyb-ax { position: absolute; left: 52px; right: 40px; bottom: 0; height: 14px; }
+html .cyb-ax span { position: absolute; transform: translateX(-50%); font: 700 10px/14px Doto, monospace; color: rgba(32,48,26,.55); }
+html .cyb-hb { width: 14px; height: 8px; border-radius: 3px; background: rgba(108,130,62,.18); }
+html .cyb-fact { display: flex; align-items: center; gap: 14px; margin-top: 14px; padding: 14px 16px; border-radius: 22px; background: #f6f3ee; }
+html .cyb-fact > b { flex: none; font: 700 34px/1 Doto, monospace; color: #20301a; }
+html .cyb-fact span { font: 400 12.5px/17px Outfit, sans-serif; color: #304023; }
+html .cyb-fact strong { display: block; font: 600 14.5px/19px Outfit, sans-serif; color: #20301a; }
+html .cyb-fact small { display: block; margin-top: 3px; font-size: 11px; color: rgba(32,48,26,.55); }
+html .cyb-avg em { left: 50%; transform: translateX(-50%); bottom: -19px; }
+html .cyb-avg em b { font: 700 10px/1 Doto, monospace; }
+html .cyb-band { background: rgba(108,130,62,.07); }
