@@ -11596,3 +11596,14 @@ html .sz-more2 .szm-go { background: #20301a; color: #fff; }
 .mvp-fold[open] > summary > svg { transform: rotate(180deg); }
 .mvp-fold[open] > .mvp-how { margin-top: 12px; animation: hgIn .4s cubic-bezier(.2,.8,.2,1) both; }
 .mvp-fold .mvp-how > small { display: none; }
+
+/* v922 Your last cycles: phase colours in every bar, a labelled healthy band, Day 1 on the axis */
+html .cyb .cyb-e { background: hsl(84 32% 84%) !important; }
+html .cyb .cyb-l { background: hsl(268 30% 88%) !important; }
+html .cyb .cyb-f { background: hsl(42 70% 84%); }
+html .cyb .cyb-r.now .cyb-e, html .cyb .cyb-r.now .cyb-l, html .cyb .cyb-r.now .cyb-f { opacity: 1; }
+html .cyb-band { background: rgba(108,130,62,.08); border-left: 1px dashed rgba(108,130,62,.45); border-right: 1px dashed rgba(108,130,62,.45); border-radius: 0; top: -18px; }
+html .cyb-band em { position: absolute; top: 2px; left: 0; right: 0; text-align: center; font: 500 10px/1 Outfit, sans-serif; font-style: normal; letter-spacing: .04em; color: #5f7a32; }
+html .cyb-rows { padding-top: 18px; }
+html .cyb-avg { top: 14px; }
+html .cyb-ax span.d1 { transform: none; font: 500 10px/14px Outfit, sans-serif; }

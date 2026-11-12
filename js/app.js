@@ -1580,11 +1580,11 @@ function cycleBars() {
     <section class="card cyb">
       <div class="cyb-hd"><span class="cyb-big2"><small>${nOk ? 'Your average cycle' : 'Your cycle, a first guess'}</small><b><span class="dotnum">${avg}</span> days</b></span><span class="cyb-chips">${chip}</span></div>
       <div class="cyb-spec"><p><span><i class="p"></i>Period</span><b><span class="dotnum">${M.stats.avgPeriod}</span> days</b></p>
-        <p><span><i></i>${nOk < 2 ? 'Full cycles so far' : 'Varies by'}</span><b>${nOk < 2 ? `<span class="dotnum">${nOk}</span> of 2` : `±<span class="dotnum">${pm}</span> days`}</b></p>
+        <p><span><i></i>${nOk < 2 ? 'Full cycles so far' : 'Varies by'}</span><b>${nOk < 2 ? `<span class="dotnum">${nOk}</span> of <span class="dotnum">2</span> needed` : `±<span class="dotnum">${pm}</span> days`}</b></p>
         <p><span><i class="n"></i>Next period</span><b>${sd(info.nextStart)}</b></p></div>
-      <div class="cyb-rows" style="--avg:${pct(avg)};--b0:${pct(21)};--b1:${pct(Math.min(35, max))}"><span class="cyb-band" aria-hidden="true"></span><span class="cyb-avg" aria-hidden="true"><em>usual <b>${avg}</b></em></span>${all.map(row).join('')}
-        <div class="cyb-ax" aria-hidden="true">${[0, 14, 21, 28, 35].filter(n => n <= max && Math.abs(n - avg) > 3).map(n => `<span style="left:${pct(n)}%">${n}</span>`).join('')}</div></div>
-      <div class="cyb-leg"><span><i class="cyb-p"></i>Period</span><span><i class="cyb-f"></i>Fertile</span><span><i class="cyb-o"></i>Egg release</span><span><i class="cyb-hb"></i>Healthy 21 to 35</span></div>
+      <div class="cyb-rows" style="--avg:${pct(avg)};--b0:${pct(21)};--b1:${pct(Math.min(35, max))}"><span class="cyb-band" aria-hidden="true"><em>Healthy</em></span><span class="cyb-avg" aria-hidden="true"><em>usual <b>${avg}</b></em></span>${all.map(row).join('')}
+        <div class="cyb-ax" aria-hidden="true">${[[0, 'Day 1'], [14, 14], [21, 21], [28, 28], [35, 35]].filter(([n]) => n <= max && Math.abs(n - avg) > 3).map(([n, t]) => `<span class="${n ? '' : 'd1'}" style="left:${pct(n)}%">${t}</span>`).join('')}</div></div>
+      <div class="cyb-leg"><span><i class="cyb-p"></i>Period</span><span><i class="cyb-e"></i>Follicular</span><span><i class="cyb-f"></i>Fertile</span><span><i class="cyb-o"></i>Egg release</span><span><i class="cyb-l"></i>Luteal</span></div>
       <div class="cyb-fact"><b class="dotnum">1/8</b><span><strong>cycles last exactly 28 days</strong>The average was 29, and anything from 21 to 35 is normal.<small>Bull 2019 · 600,000 cycles</small></span></div>
     </section>`;
 }
