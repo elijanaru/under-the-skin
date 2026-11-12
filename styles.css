@@ -11711,3 +11711,26 @@ html #view > .pad .pfc .chip:not(.static):not(.on):not(.warm) { background: #f3f
 .tsp-n { display: flex; gap: 8px; align-items: flex-start; margin: 12px 0 0; font-size: 12.5px; line-height: 1.4; color: rgba(32,48,26,.58); }
 .tsp-n svg { flex: none; margin-top: 1px; color: #6c823e; }
 .tea-study2 .sgt-st { background: none !important; padding: 2px 0 !important; }
+
+/* v932 Live with the sun: UV widget says where the UV is for, two tiles (burn time, vitamin D); Gentle reminders = Morning light + Sunset rows with their times */
+.uvw-where { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 6px 0 4px; font-size: 12.5px; color: rgba(43,27,18,.62); }
+.uvw-where svg { flex: none; }
+.uvw-where button { margin-left: auto; padding: 5px 11px; border: 0; border-radius: 99px; background: #20301a; color: #fff; font: 500 12px/1 var(--font); cursor: pointer; }
+.uvw-side { align-content: center; }
+.uvw-side .uvw-st { padding: 9px 12px; }
+.srm { padding: 14px 18px 10px !important; }
+.srm-sub { display: flex; align-items: center; gap: 6px; margin: 0 0 4px; font-size: 13px; opacity: .7; }
+.srm-r { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid rgba(255,244,230,.12); }
+.srm-r:first-of-type { border-top: 0; }
+.srm-ic { flex: none; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; background: #f6d98a; color: #5a3a12; }
+.srm-r.sunPm .srm-ic { background: #f2b48e; color: #5a2a14; }
+.srm-t { flex: 1; min-width: 0; font-size: 15.5px; font-weight: 500; line-height: 1.2; }
+.srm-t small { display: block; margin-top: 3px; font-size: 12.5px; font-weight: 400; opacity: .68; }
+.srm-r > b { flex: none; font-size: 17px; }
+.srm-cta { margin: 8px 0 4px; }
+.srm { background: linear-gradient(180deg, #f6e9d8 0%, #ecd7bd 100%) !important; border: 1px solid rgba(255,248,238,.9) !important; box-shadow: 0 20px 44px rgba(8,3,1,.5), inset 0 1px 0 #fffaf3 !important; color: #2b1b12 !important; backdrop-filter: none !important; }
+.srm .srm-t, .srm .srm-r > b { color: #2b1b12; }
+.srm .srm-t small, .srm .srm-sub { color: rgba(43,27,18,.66); opacity: 1; }
+.srm-r { border-top-color: rgba(43,27,18,.10); }
+.srm .toggle:not(.on) { background: rgba(43,27,18,.16); }
+.srm .srm-cta { background: #2b1b12 !important; color: #fff4e6 !important; }

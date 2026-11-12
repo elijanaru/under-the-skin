@@ -3404,7 +3404,7 @@ function eatTodayCard(info) {
 }
 
 // ---------- reminders ----------
-const REM_DEFAULT = { period: true, periodDays: 2, phase: true, cycle: true, rhythm: true, checkin: true, checkinHour: 20, calm: true, calmHour: 18, dismissed: {}, fired: {} };
+const REM_DEFAULT = { period: true, periodDays: 2, phase: true, cycle: true, rhythm: true, sunAm: true, sunPm: true, checkin: true, checkinHour: 20, calm: true, calmHour: 18, dismissed: {}, fired: {} };
 const hr12 = h => `${((h + 11) % 12) + 1}${h < 12 ? 'am' : 'pm'}`;
 // How stressed she is today: 2 = she logged stress, 1 = a high-stress part of her cycle, 0 = calm
 const STRESS_MOODS = ['Stressed', 'Anxious', 'Irritable', 'Angry', 'Overwhelmed'];
@@ -3413,7 +3413,30 @@ function stressToday(info) {
   if ((l.moods || []).some(m => STRESS_MOODS.includes(m)) || (l.disrupt || []).some(x => ['Big stress', 'Shock or loss'].includes(x))) return 2;
   return info && CALM[dayWindow(info)][0] === 3 ? 1 : 0;
 }
-function rem() { return state.reminders = { ...REM_DEFAULT, dismissed: {}, fired: {}, ...(state.reminders || {}) }; }
+const SUN_REM = {
+  am: ['Morning light in your eyes', 'Step outside for 10 minutes now, no sunglasses. Morning light sets your inner clock for energy today and sleep tonight. Never look straight at the sun.'],
+  pm: ['The sun is setting', 'Step out and watch the evening light for a few minutes. Then dim the lights at home so your body can make melatonin.'],
+};
+// In the store apps: real phone notifications for the next 7 mornings and sunsets (20 min after sunrise, 30 min before sunset).
+async function scheduleSunNative(ask) {
+  const LN = NATIVE && CAP?.Plugins?.LocalNotifications; if (!LN || !state?.onboarded) return;
+  try {
+    const r = rem(), ids = Array.from({ length: 14 }, (_, i) => ({ id: 7100 + i }));
+    await LN.cancel({ notifications: ids });
+    if (!r.sunAm && !r.sunPm) return;
+    let p = await LN.checkPermissions();
+    if (p.display !== 'granted' && ask) p = await LN.requestPermissions();
+    if (p.display !== 'granted') return;
+    const [la, ln] = myGeo(), now = Date.now(), list = [];
+    for (let i = 0; i < 7; i++) {
+      const d = C.addDays(new Date(), i), t = sunTimes(d, la, ln);
+      if (r.sunAm && t.rise) { const at = new Date(t.rise.getTime() + 20 * 6e4); if (at > now) list.push({ id: 7100 + i * 2, title: SUN_REM.am[0], body: SUN_REM.am[1], schedule: { at } }); }
+      if (r.sunPm && t.set) { const at = new Date(t.set.getTime() - 30 * 6e4); if (at > now) list.push({ id: 7101 + i * 2, title: SUN_REM.pm[0], body: SUN_REM.pm[1], schedule: { at } }); }
+    }
+    if (list.length) await LN.schedule({ notifications: list });
+  } catch { /* notifications not available */ }
+}
+function rem() { const o = state.reminders || {}, off = o.rhythm === false && !('sunAm' in o) ? { sunAm: false, sunPm: false } : {}; return state.reminders = { ...REM_DEFAULT, dismissed: {}, fired: {}, ...off, ...o }; }
 function dueReminders() {
   if (!M || !M.info) return [];
   const r = rem(), info = M.info, today = todayISO(), out = [];
@@ -3426,13 +3449,12 @@ function dueReminders() {
     const y = C.dayInfo(C.addDays(new Date(), -1), M.stats);
     if (y && y.phase !== info.phase) out.push({ id: 'phase-' + info.phase, icon: 'spark', title: `Welcome to your ${PHASES[info.phase].name} phase`, body: `${PHASES[info.phase].tagline} Focus: ${NUTRITION[info.phase].focus}` });
   }
-  if (r.rhythm) {
+  // Follow the sun: morning light in her eyes after sunrise, and the sunset
+  if (r.sunAm || r.sunPm) {
     const t = sunToday(), now = new Date(), done = doneToday(), h = 36e5;
     const win = (a, b) => a && b && now >= a && now <= b;
-    if (t.rise && win(t.rise, new Date(t.rise.getTime() + 2.5 * h)) && !done.includes('light')) out.push({ id: 'rh-light', icon: 'sun', title: 'Good morning: go see the light', body: '10 minutes of daylight now sets your inner clock for better sleep tonight.', to: 'rhythm' });
-    if (win(new Date(t.noon.getTime() - h), new Date(t.noon.getTime() + 1.5 * h)) && !done.includes('sun')) out.push({ id: 'rh-sun', icon: 'sun', title: 'The sun is high', body: 'A few minutes of sun on your skin for vitamin D and a brighter mood.', to: 'rhythm' });
-    if (t.set && win(new Date(t.set.getTime() - .5 * h), new Date(t.set.getTime() + 1.5 * h)) && !done.includes('dusk')) out.push({ id: 'rh-dusk', icon: 'moon', title: 'The sun is setting', body: 'Time to slow down. Dim the lights and put screens away.', to: 'rhythm' });
-    if (t.set && now >= new Date(t.set.getTime() + 3.5 * h) && now.getHours() >= 20 && !done.includes('sleep')) out.push({ id: 'rh-sleep', icon: 'moon', title: 'Your body is getting sleepy', body: 'Go to bed when you feel tired. Tomorrow, wake without an alarm.', to: 'rhythm' });
+    if (r.sunAm && t.rise && win(t.rise, new Date(t.rise.getTime() + 2 * h)) && !done.includes('light')) out.push({ id: 'rh-light', icon: 'sun', title: SUN_REM.am[0], body: SUN_REM.am[1], to: 'rhythm' });
+    if (r.sunPm && t.set && win(new Date(t.set.getTime() - .75 * h), new Date(t.set.getTime() + .5 * h)) && !done.includes('dusk')) out.push({ id: 'rh-dusk', icon: 'moon', title: SUN_REM.pm[0], body: SUN_REM.pm[1], to: 'rhythm' });
   }
   if (r.cycle) { // small nudges timed to the cycle
     const tm = C.dayInfo(C.addDays(new Date(), 1), M.stats), w = dayWindow(info), hNow = new Date().getHours();
@@ -3482,6 +3504,8 @@ function remindersSection() {
       ${r.period ? `<div class="stepper-row sub"><span>Days before</span>${stepper('periodDays', r.periodDays, 'rem')}</div>` : ''}
       ${tg('phase', 'New phase', 'When your hormones shift')}
       ${tg('cycle', 'Cycle tips', 'Magnesium before your period, warm food, early nights, plans coming up')}
+      ${tg('sunAm', 'Morning light', 'Sunlight in your eyes, 20 min after sunrise')}
+      ${tg('sunPm', 'Sunset', 'Watch the evening light, 30 min before sunset')}
       ${tg('calm', 'Daily calm', 'Meditation every day, right away when you log stress')}
       ${r.calm ? `<div class="stepper-row sub"><span>Every day at</span><div class="stepper"><button data-action="remCalmHour" data-d="-1">−</button><span class="num">${hr(r.calmHour)}</span><button data-action="remCalmHour" data-d="1">+</button></div></div>` : ''}
       ${tg('checkin', 'Daily check-in', 'If you haven’t logged yet')}
@@ -3654,7 +3678,7 @@ function viewReliefIndex() {
   return `${topbar('Balance', { back: true })}
   <div class="pad hg fb">
     <section class="fbp" aria-label="Balance your hormones, step by step">
-      <div class="fbp-title"><small>${info ? `Day ${info.cd} · ` : ''}Step by step</small><h1>Balance your <span>hormones</span></h1><p>Start with the fundamentals. When they feel easy, add the next step. Tap any one for how and why.</p></div>
+      <div class="fbp-title"><h1>Balance your <span>hormones</span></h1><p>Start with the fundamentals. When they feel easy, add the next step. Tap any one for how and why.</p></div>
       ${(() => { let n = 0; return fbSteps(info).map(([t, sub, list], k) => `<div class="fbp-step"><span class="dotnum">${k + 1}</span><div><b>${t}</b><small>${sub}</small></div></div>
       <div class="fbp-g">${list.map(([x, i], pos) => fbItem(x, i, done, pos, ++n)).join('')}</div>`).join(''); })()}
       <div class="fbp-det" hidden></div>
@@ -5387,7 +5411,7 @@ function uvData() {
 function uvFetch(key, la, ln) {
   if (ui.uvBusy || (ui.uvTry && Date.now() - ui.uvTry < 6e5) || !navigator.onLine) return;
   ui.uvBusy = true; ui.uvTry = Date.now();
-  const q = `latitude=${(+la).toFixed(1)}&longitude=${(+ln).toFixed(1)}&hourly=uv_index&timezone=auto&forecast_days=1`;
+  const q = `latitude=${(+la).toFixed(1)}&longitude=${(+ln).toFixed(1)}&hourly=uv_index&timezone=${encodeURIComponent((Intl.DateTimeFormat().resolvedOptions().timeZone) || 'auto')}&forecast_days=1`;
   const get = u => fetch(u).then(r => (r.ok ? r.json() : Promise.reject(r.status))).then(j => {
     const v = j && j.hourly && j.hourly.uv_index; if (!v || !v.some(x => x != null)) return Promise.reject('empty');
     const hours = Array(24).fill(0); j.hourly.time.forEach((t, i) => { hours[+t.slice(11, 13)] = Math.max(0, +(v[i] || 0)); }); return hours; });
@@ -5464,7 +5488,7 @@ function uvCurve(hours) {
     <path d="${d}" fill="none" stroke="url(#uvc-g)" stroke-width="3" stroke-linecap="round"/>
     <path d="${d}" fill="none" stroke="rgba(43,27,18,.35)" stroke-width="1"/>
     ${emo.join('')}
-    <circle cx="${f(x(pk))}" cy="${f(y(peak))}" r="5" class="uvc-pk"/><text x="${f(x(pk))}" y="${f(y(peak) - 11)}" text-anchor="middle" class="uvc-pkt">${peak.toFixed(0)} · highest</text>
+    <circle cx="${f(x(pk))}" cy="${f(y(peak))}" r="5" class="uvc-pk"/><text x="${f(x(pk))}" y="${f(y(peak) - 11)}" text-anchor="middle" class="uvc-pkt">${peak.toFixed(1)} · highest</text>
     ${nh > A && nh < B ? `<line x1="${f(x(nh))}" x2="${f(x(nh))}" y1="${Y0}" y2="${Y1}" class="uvc-now"/><circle cx="${f(x(nh))}" cy="${f(y(nu))}" r="4.5" class="uvc-nd"/><text x="${f(x(nh))}" y="${Y1 + 26}" text-anchor="middle" class="uvc-nowt">now</text>` : ''}
     <line x1="${X0}" x2="${X1}" y1="${Y1}" y2="${Y1}" class="uvc-base"/>
     ${[6, 9, 12, 15, 18].filter(h => h > A && h < B).map(h => `<text x="${f(x(h))}" y="${Y1 + 14}" text-anchor="middle" class="uvc-h">${String(h).padStart(2, '0')}:00</text>`).join('')}
@@ -5481,14 +5505,19 @@ function uvWidget() {
   const pct = Math.min(100, iu / D_GOAL * 100), fmt = n => n.toLocaleString('en-US').replace(/,/g, ' ');
   const burnTxt = burn === Infinity ? ['No burn risk', 'right now'] : on ? (left <= 0 ? ['Get in the shade', 'your skin has had enough'] : [`${Math.max(1, Math.round(left))}`, 'min until you burn']) : [`${Math.round(Math.min(burn, 600))}`, 'min until you burn'];
   const dTxt = iu >= D_GOAL ? ['Done', 'for today'] : dMin ? [`${dMin}`, `min for ${fmt(D_GOAL - iu)} IU`] : ['Too low', 'for vitamin D now'];
+  const [la, ln] = myGeo(), clearPk = Math.max(...uvModel(la, ln)), lowSeason = Math.abs(la) >= 30 ? ` From ${la < 0 ? 'April to September' : 'October to March'}, 10–20 µg D3 a day keeps you topped up.` : '';
   const winTxt = win ? `Best for vitamin D <b>${String(win[0]).padStart(2, '0')}:00–${String(win[1]).padStart(2, '0')}:00</b>, arms and legs bare, before you go pink.`
-    : `The sun is too low for vitamin D today. From ${myGeo()[0] < 0 ? 'April to September' : 'October to March'}, 10–20 µg D3 a day keeps you topped up.`;
+    : live && clearPk >= 3 ? 'Clouds keep the UV under 3 today, too weak for vitamin D. A clearer day will do it.'
+    : `The sun stays too low for vitamin D today.${lowSeason}`;
+  const where = state.profile.geo ? `${icon('pin', 13)} For your location` : `${icon('pin', 13)} Rough guess for ${(() => { try { return new Intl.DisplayNames(['en'], { type: 'region' }).of(myCountry()); } catch (e) { return 'your country'; } })()}<button data-action="useGeo">Use my location</button>`;
   return `<section class="card uvw ${on ? 'on' : ''}" aria-live="polite">
     <div class="uvw-top"><small>UV index · Vitamin D</small><em class="${live ? 'live' : ''}">${live ? 'Live' : 'Clear-sky estimate'}</em></div>
+    <p class="uvw-where">${where}</p>
     <div class="uvw-main">
       ${uvGauge(u)}
       <div class="uvw-side">
         <div class="uvw-st ${on && left <= 5 && burn !== Infinity ? 'warn' : ''}"><span class="uvw-ic" style="--c:${lv[2]}">${icon('thermo', 15)}</span><div><b class="${/\d/.test(burnTxt[0]) ? '' : 'w'}">${burnTxt[0]}</b><small>${burnTxt[1]}</small></div></div>
+        <div class="uvw-st d"><span class="uvw-ic" style="--c:#e3a93a">${icon('sun', 15)}</span><div><b class="${/\d/.test(dTxt[0]) ? '' : 'w'}">${dTxt[0]}</b><small>${dTxt[1]}</small></div></div>
       </div>
     </div>
     ${uvCurve(hours)}
@@ -5564,12 +5593,12 @@ function viewRhythm() {
   </section>
   <div class="pad">
     ${uvWidget()}
-    ${sectionTitle('Out of the sun')}
-    ${shadeCard()}
     ${sectionTitle('Gentle reminders')}
-    <section class="card glass"><div class="stepper-row"><span>Follow the sun<small>Morning light, midday sun, sunset wind-down, bedtime</small></span><button class="toggle ${r.rhythm ? 'on' : ''}" data-action="remToggle" data-k="rhythm" role="switch" aria-checked="${!!r.rhythm}" aria-label="Follow the sun"><i></i></button></div>
-      ${'Notification' in window && Notification.permission === 'default' ? `<button class="btn btn-light btn-block" data-action="remPermission">${icon('spark', 16)} Turn on notifications</button>` : ''}
-      <button class="list-btn" data-action="useGeo">${icon('sun', 18)} ${state.profile.geo ? 'Location set · update' : 'Use my exact location for sun times'}</button></section>
+    <section class="card srm">
+      <p class="srm-sub">${icon('bell', 13)} Two nudges a day, timed to your sun</p>
+      ${[['sunAm', 'sun', 'Morning light', 'Sunlight in your eyes, 20 min after sunrise', D.rise + 1 / 3], ['sunPm', 'moon', 'Sunset', 'Watch the evening light, 30 min before sunset', D.set - .5]].map(([k, ic, t, sub, at]) => `<div class="srm-r ${k}"><span class="srm-ic">${icon(ic, 17)}</span><span class="srm-t">${t}<small>${sub}</small></span><b class="dotnum">${hLabel(((at % 24) + 24) % 24)}</b><button class="toggle ${r[k] ? 'on' : ''}" data-action="remToggle" data-k="${k}" role="switch" aria-checked="${!!r[k]}" aria-label="${t} reminder"><i></i></button></div>`).join('')}
+      ${!NATIVE && 'Notification' in window && Notification.permission === 'default' ? `<button class="pill-cta srm-cta" data-action="remPermission">${icon('bell', 14)} Turn on notifications</button>` : ''}
+    </section>
     <article class="rh-article">
       <div class="rh-scene" aria-hidden="true"><svg viewBox="0 0 320 150" width="100%"><defs><radialGradient id="rs-sun"><stop offset="0" stop-color="#ffe3a3"/><stop offset=".45" stop-color="#ffc46b" stop-opacity=".55"/><stop offset="1" stop-color="#ff9f5a" stop-opacity="0"/></radialGradient></defs>
         <circle cx="160" cy="92" r="70" fill="url(#rs-sun)"/><circle cx="160" cy="92" r="17" fill="#ffd98a"/>
@@ -8088,7 +8117,7 @@ const actions = {
     document.querySelectorAll('.rh-ring').forEach(svg => { svg.outerHTML = rhythmRing(done.length, RH_GOAL); });
     if (i < 0) { plusOne(el); if (done.length === RH_GOAL) toast('🌕 Full rhythm today. Beautiful'); }
   },
-  useGeo: () => { if (!navigator.geolocation) return toast('Location isn’t available'); navigator.geolocation.getCurrentPosition(p => { state.profile.geo = { lat: +p.coords.latitude.toFixed(2), lng: +p.coords.longitude.toFixed(2) }; save(); toast('Sun times set for where you are'); render(); }, () => toast('Location not allowed, using your country')); },
+  useGeo: () => { if (!navigator.geolocation) return toast('Location isn’t available'); navigator.geolocation.getCurrentPosition(p => { state.profile.geo = { lat: +p.coords.latitude.toFixed(2), lng: +p.coords.longitude.toFixed(2) }; save(); toast('Sun times set for where you are'); render(); scheduleSunNative(); }, () => toast('Location not allowed, using your country')); },
   teaK: d => { ui.teaK = d.v || null; render(); if (d.v) setTimeout(() => document.getElementById('tg-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60); },
   shade: d => { const v = document.querySelector('.view'), y = v ? v.scrollTop : 0; ui.shade = ui.shade === +d.i ? -1 : +d.i; render(); const w = document.querySelector('.view'); if (w) w.scrollTop = y; },
   reliefHelp: (d, el) => {
@@ -8354,7 +8383,7 @@ const actions = {
     uvRefresh();
   },
   uvSkin: d => { state.profile.skin = +d.v; save(); uvRefresh(); },
-  remToggle: d => { const r = rem(); r[d.k] = !r[d.k]; save(); render(); },
+  remToggle: d => { const r = rem(); r[d.k] = !r[d.k]; save(); render(); if (d.k === 'sunAm' || d.k === 'sunPm') scheduleSunNative(r[d.k]); },
   remHour: d => { const r = rem(); r.checkinHour = (r.checkinHour + +d.d + 24) % 24; save(); render(); },
   remCalmHour: d => { const r = rem(); r.calmHour = (r.calmHour + +d.d + 24) % 24; save(); render(); },
   calmRem: async () => { const r = rem(); r.calm = !r.calm; save(); if (r.calm && 'Notification' in window && Notification.permission === 'default') { try { await Notification.requestPermission(); } catch { /* unsupported */ } } render(); fireNotifications(); },
@@ -8691,7 +8720,7 @@ function render() {
   if (wk) { const on = wk.querySelector('.on'); if (on) wk.scrollLeft = on.offsetLeft - wk.clientWidth / 2 + on.clientWidth / 2; }
 }
 
-setTimeout(() => startSignals(), 800);
+setTimeout(() => { startSignals(); scheduleSunNative(); }, 800);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { startSignals(); calSoon(); } });
 if ('serviceWorker' in navigator) {
   // pick up new versions right away: check on open and whenever the app comes back to the foreground,
