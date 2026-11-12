@@ -3878,12 +3878,12 @@ function learnedCard() {
       <rect x="${X(info.cd) - 2}" y="${y0 - 5}" width="4" height="${sh + 10}" rx="2" fill="#20301a"/>
       ${pins.map(q => `<path d="M${q.at} ${y0 + sh + 2} L${q.at} ${y0 + sh + 10} L${q.px} ${pinY - 20}" fill="none" stroke="#20301a" stroke-opacity=".3" stroke-width="1.2"/><circle cx="${q.px}" cy="${pinY - 4}" r="15" fill="#fff" stroke="rgba(48,64,35,.2)"/><text x="${q.px}" y="${pinY + 1.5}" text-anchor="middle" class="lm-pe">${LOG_EMOJI[q.x.name] || '•'}</text><text x="${q.px}" y="${pinY + 24}" text-anchor="middle" class="lm-ax b">day ${q.d}</text>`).join('')}
       <text x="14" y="${y0 - 9}" class="lm-ax">Day 1</text><text x="${W - 14}" y="${y0 - 9}" text-anchor="end" class="lm-ax">Day ${L}</text></svg>`;
-  const tile = (cls, ic, k, v, u, sub, pre = '') => `<div class="lm-t ${cls}"><span class="lm-ic">${ic}</span><small>${k}</small><b>${pre ? `<span class="lm-pre">${pre}</span> ` : ''}<em class="dotnum">${v}</em>${u ? ` ${u}` : ''}</b><p>${sub}</p></div>`;
+  const tile = (cls, ic, k, v, u, sub, pre = '') => `<div class="lm-r ${cls}"><span class="lm-ic">${ic}</span><span class="lm-k">${k}<small>${sub}</small></span><b>${pre ? `<span class="lm-pre">${pre}</span> ` : ''}<em class="dotnum">${v}</em>${u ? `<i>${u}</i>` : ''}</b></div>`;
   return `${sectionTitle('What I’ve learned about you')}
     <section class="card learned lm2">${learnedScore(n)}
       <div class="lm-map"><div class="lm-mh"><b>Your cycle, mapped</b><span><i class="t"></i>today</span></div>${map}
         <div class="lm-key"><span><i style="background:${PH_HEX.menstrual}"></i>Period</span><span><i class="ov"></i>Egg release</span>${pm ? '<span><i class="pm"></i>Next period range</span>' : ''}</div></div>
-      <div class="lm-grid">
+      <div class="lm-spec">
         ${tile('c', icon('calendar', 15, 1.9), 'Your cycle', L, `days${stats.variation ? ` ±${pm}` : ''}`, n ? `From ${plural(n, 'cycle')}` : 'Log your next period')}
         ${tile('p', icon('drop', 15, 1.9), 'Your period', Pd, 'days', stats.periods.length ? `From ${plural(stats.periods.length, 'period')}` : 'Default until you log')}
         ${tile('n', icon('bell', 15, 1.9), 'Next period', np.getDate(), '', n ? `Likely ${md(lo)} to ${md(hi)}` : (dn => dn > 1 ? `In ${dn} days` : dn === 1 ? 'Tomorrow' : 'Due now')(C.diffDays(np, M.today)), fmt(np, { month: 'short' }))}

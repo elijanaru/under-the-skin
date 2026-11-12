@@ -11661,3 +11661,19 @@ html body .purp:not(.full) .pc-soon { position: static !important; flex: none; p
 .grp-why > summary svg { opacity: .55; transition: transform .3s ease; }
 .grp-why[open] > summary svg { transform: rotate(180deg); }
 .grp-why p { margin: 4px 0 6px; font-size: 14px; line-height: 1.5; color: rgba(32,48,26,0.72); }
+
+/* v928 Insights, What I've learned: the map sits straight on the card (no beige box) and the four facts become spec rows: tinted icon, label with a grey line, the value on the right in Doto */
+.lm2 .lm-map { margin: 6px 0 4px; padding: 10px 0 10px; border-radius: 0; background: none; }
+.lm2 .lm-mh b { font-size: 15px; font-weight: 500; color: #20301a; }
+.lm-spec { margin: 0; }
+.lm-r { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid rgba(48,64,35,.09); }
+.lm-r .lm-ic { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; }
+.lm-r.c .lm-ic { background: #e7eedd; color: #4f6a2a; } .lm-r.p .lm-ic { background: #f8dfe8; color: #b04a64; }
+.lm-r.n .lm-ic { background: #ebe2f6; color: #6e549b; } .lm-r.o .lm-ic { background: #f6ead0; color: #9a6d16; }
+.lm-k { flex: 1; min-width: 0; font-size: 15px; font-weight: 500; color: #20301a; line-height: 1.2; }
+.lm-k small { display: block; margin-top: 3px; font-size: 12.5px; font-weight: 400; color: rgba(32,48,26,.6); }
+.lm-r > b { flex: none; display: flex; align-items: baseline; gap: 4px; font-weight: 500; color: #20301a; }
+.lm-r > b em { font-style: normal; font-size: 26px; line-height: 1; color: #20301a; }
+.lm-r > b i { font-style: normal; font-size: 13px; color: rgba(32,48,26,.65); }
+.lm-r > b .lm-pre { font: 500 15px/1 var(--font); color: #20301a; margin: 0; }
+.lm2 .lm-foot { padding-top: 12px; border-top: 1px solid rgba(48,64,35,.09); }
