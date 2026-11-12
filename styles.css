@@ -11582,3 +11582,17 @@ html .sz-more2 .szm-go { background: #20301a; color: #fff; }
 .sb2 .sb-st { margin: 8px 0 0; padding: 12px 14px; border-radius: 18px; background: #f6f3ee; font-size: 13.5px; line-height: 1.45; color: #20301a; }
 .sb2 .sb-st small { display: block; margin-bottom: 3px; font-size: 12px; font-weight: 500; color: #5f7a32; }
 .sb2 .sb-st i { font-style: normal; color: rgba(32,48,26,0.5); }
+
+/* v921 Move hero: how-to steps and train safe folded behind one tap */
+.mvp-fold { margin-top: 12px; border-top: 1px solid rgba(48,64,35,0.09); }
+.mvp-fold > summary { list-style: none; display: flex; align-items: center; gap: 12px; padding: 12px 2px 2px; cursor: pointer; color: #20301a; }
+.mvp-fold > summary::-webkit-details-marker { display: none; }
+.mvf-ic { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: hsl(calc(var(--hb) + 0 * var(--hk)) calc(40% * var(--hs)) 93%); }
+.mvf-t { flex: 1; display: grid; gap: 1px; }
+.mvf-t b { font-size: 15px; font-weight: 500; }
+.mvf-t small { font-size: 12.5px; color: rgba(32,48,26,0.58); }
+.mvf-t .dotnum { font-size: 13px; }
+.mvp-fold > summary > svg { opacity: .55; transition: transform .3s ease; }
+.mvp-fold[open] > summary > svg { transform: rotate(180deg); }
+.mvp-fold[open] > .mvp-how { margin-top: 12px; animation: hgIn .4s cubic-bezier(.2,.8,.2,1) both; }
+.mvp-fold .mvp-how > small { display: none; }

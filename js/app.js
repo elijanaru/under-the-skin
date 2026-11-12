@@ -5832,8 +5832,13 @@ function mvFig(k, big) {
   return `<div class="mvp-fig ${big ? 'big' : ''}"><img src="images/mv/${k}.webp" alt="Drawing of a woman doing ${P.ex.toLowerCase()}" loading="${big ? 'eager' : 'lazy'}" decoding="async">
     ${big ? P.L.map(([n, x, y, sd]) => `<span class="mvp-l ${sd}" style="--x:${x}%;--y:${y}%"><em>${n}</em></span>`).join('') : ''}</div>`;
 }
-function mvInfo(k, D) {
+function mvInfo(k, D, fold) {
   const P = MV_PLATE[k];
+  if (fold) return `<p class="mvp-ben">${P.ben}</p>
+    <details class="mvp-fold"><summary><span class="mvf-ic">${icon('book', 15)}</span><span class="mvf-t"><b>How to do it</b><small><span class="dotnum">${P.how.length}</span> steps · train safe</small></span>${icon('chevD', 15)}</summary>
+    <div class="mvp-how"><small>How to do it</small><ol>${P.how.map((t, i) => `<li><i>${i + 1}</i>${t}</li>`).join('')}</ol></div>
+    <div class="mvp-safe"><small>${icon('heart', 12)} Train safe</small><ul>${P.safe.map(t => `<li>${t}</li>`).join('')}</ul></div></details>
+    ${P.to ? `<button class="mvp-go" data-action="nav" data-to="${P.to}">Open Breathe ${icon('chevR', 13)}</button>` : ''}`;
   return `<p class="mvp-ben">${P.ben}</p>
     <div class="mvp-how"><small>How to do it</small><ol>${P.how.map((t, i) => `<li><i>${i + 1}</i>${t}</li>`).join('')}</ol></div>
     <div class="mvp-safe"><small>${icon('heart', 12)} Train safe</small><ul>${P.safe.map(t => `<li>${t}</li>`).join('')}</ul></div>
@@ -5847,7 +5852,7 @@ function viewMove() {
   const W2P = { 'flow-start': 'menstrual', 'flow-end': 'menstrual', rising: 'follicular', building: 'follicular', peak: 'ovulatory', settle: 'luteal', focus: 'luteal', premenstrual: 'luteal' };
   const segs = []; days.forEach((w, i) => { const ph = W2P[w], l = segs[segs.length - 1]; l && l.ph === ph ? l.n++ : segs.push({ ph, n: 1 }); });
   const month = `<section class="mvm">
-      <div class="mvm-h"><div><small>Your training month</small><b>${g.title}</b></div><div class="mvm-st"><b class="dotnum">${MOVE_STEPS[key] || '8,000'}</b><small>steps today</small></div></div>
+      <div class="mvm-h"><div><small>Your training month</small><b>${g.title}</b></div><div class="mvm-st"><b class="dotnum">${MOVE_STEPS[key] || '8,000'}</b><small>step goal today</small></div></div>
       ${moveWave(days, info, L, P)}
       <div class="mvm-band" aria-hidden="true">${segs.map(x => `<i style="flex:${x.n};--c:${PH_HEX[x.ph]}"></i>`).join('')}</div>
       <div class="mvm-key">${PHASE_ORDER.map(p => `<span class="${p === info.phase ? 'on' : ''}"><i style="--c:${PH_HEX[p]}"></i>${PHASES[p].name}</span>`).join('')}</div>
@@ -5867,7 +5872,7 @@ function viewMove() {
       ${mvFig(top.k, true)}
       <p class="mvp-works"><i></i>Working now: ${T.works}</p>
       <div class="mvp-stats"><div><small>How long</small><b>${T.long.replace(/ to /, '–')}</b><em>${T.freq}</em></div><div><small>How hard</small><b>${D.int.split(':')[0]}</b><em>${(D.int.split(':')[1] || '').trim()}</em></div><div><small>Warm up</small><b>${D.warm.split(',')[0]}</b><em>${(D.warm.split(',')[1] || ' easy, then build').trim()}</em></div></div>
-      ${mvInfo(top.k, D)}
+      ${mvInfo(top.k, D, true)}
     </section>
     ${month}
     ${also.length ? `${sectionTitle("Also good now")}<p class="mvc-sub">These suit your body today too.</p><div class="mvc-l">${also.map(card).join('')}</div>` : ''}
