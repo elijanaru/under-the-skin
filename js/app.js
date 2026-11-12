@@ -4078,8 +4078,8 @@ function viewRemedy(id) {
     ${specHero({ stack: true, photo: carePhoto(r.id, 1000), glyph: r.glyph, han: true, eyebrow: `${r.nature} · ${r.element} · ${r.organ}`, name: r.name,
       label: r.take ? 'How to take it' : 'Key ingredients', rows: r.take ? [['Dose', r.take.dose], ['How often', r.take.often], ['When', r.take.when]] : r.ingredients.map(ingRow), desc: r.why })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle${r.raw ? ' · raw days' : ''}</div>${phaseFit(r.phases, M.info && M.info.phase)}${r.phases.length === 4 ? '<small class="tf-all">Good every day of your cycle</small>' : ''}
-      ${r.take && r.take.more ? (() => { const [ic, k, v] = r.take.more, now = k === 'Pause' && r.raw && warm; return `<div class="rx-more ${now ? 'now' : ''}"><span>${icon(ic, 15)}</span><p><b>${now ? 'Paused right now' : k}</b>${v}</p></div>`; })() : ''}
-      ${organPhase ? `<div class="rm-tcm"><span class="rm-han">${Z.FIVE[r.element].han}</span><p><b>${r.organ}</b> is the organ of your <b>${PHASES[organPhase].name.toLowerCase()}</b> phase in Chinese medicine (${TCM[organPhase].element}).</p></div>` : ''}</section>
+      ${r.take && r.take.more ? (() => { const [ic, k, v] = r.take.more, now = k === 'Pause' && r.raw && warm; return `<div class="rx-row ${now ? 'now' : ''}"><span>${icon(ic, 14)} ${now ? 'Paused right now' : k}</span><b>${v}</b></div>`; })() : ''}
+      ${organPhase ? `<div class="rx-row"><span><i class="rx-han">${Z.FIVE[r.element].han}</i> Organ in Chinese medicine</span><b>${r.organ}, ${PHASES[organPhase].name.toLowerCase()}</b></div>` : ''}</section>
     ${r.raw && warm ? `<section class="card flag"><span class="bn-ic">${icon('yinyang', 18)}</span><div class="bn-t"><b>Not today</b><p>You’re in your warm window. Chinese medicine keeps raw and cold food away during your period and the days before. Save this for your follicular phase.</p></div></section>` : ''}
     ${tracker}
     ${remedyMake(r)}
@@ -5096,7 +5096,8 @@ function teaKeyRows(P) {
 }
 // ---------- nutrients: food first, a supplement when there's a reason ----------
 const PH4 = [['menstrual', 'Period'], ['follicular', 'Follicular'], ['ovulatory', 'Ovulation'], ['luteal', 'Luteal']];
-const phaseFit = (best, ph) => `<div class="tf-phases pf2"><div class="pf2-bar">${PH4.map(([k, l]) => `<span class="${best.includes(k) ? 'on' : ''} ${k === ph ? 'now' : ''}" style="--pc:${PH_HEX[k]}">${best.includes(k) ? icon('check', 11, 2.6) : ''}${l}</span>`).join('')}</div>${ph ? `<div class="pf2-you">${PH4.map(([k]) => `<i>${k === ph ? `<b></b>You are here` : ''}</i>`).join('')}</div>` : ''}</div>`;
+// The cycle as four equal segments: solid where it helps, faint where it doesn't, a Now tag under her phase.
+const phaseFit = (best, ph) => `<div class="tf-phases pf3">${PH4.map(([k, l]) => `<span class="${best.includes(k) ? 'on' : ''} ${k === ph ? 'now' : ''}" style="--pc:${PH_HEX[k]}"><i></i><b>${best.includes(k) ? icon('check', 11, 2.6) : ''}${l}</b>${k === ph ? '<em>Now</em>' : ''}</span>`).join('')}</div>`;
 // Opal-style rings: how many of the last 7 days each logged supplement was taken.
 // Drawn line icon for each nutrient (no emoji).
 const NU_IC = { magnesium: 'seed', b6: 'banana', iron: 'drop', 'vitamin-d': 'sun', 'omega-3': 'fish', zinc: 'shell', calcium: 'milk', inositol: 'grain', vitex: 'berry' };

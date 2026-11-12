@@ -11793,3 +11793,31 @@ html .stc-k { grid-column: 2; margin: 10px 0 4px; }
 html .stc-c p { grid-column: 2; margin-top: 6px; font-size: 14px; line-height: 1.45; color: rgba(32,48,26,.75); }
 html .bz-study .stc { box-shadow: none; padding: 0 2px; background: none; border: 0; }
 @media (prefers-reduced-motion: reduce) { html .stc-c { animation: none; } }
+
+/* v938 Best in your cycle (remedies, supplements, teas, recipes): a white card, the cycle as four equal segments (solid where it helps, faint where not, a Now tag under her phase), extra facts as spec rows */
+html .tea-fit { background: rgba(255,255,255,.95) !important; backdrop-filter: none !important; border: 1px solid rgba(48,64,35,.10) !important; box-shadow: 0 14px 32px rgba(120,70,90,.08) !important; padding: 16px 18px 12px !important; }
+html .tea-fit .tf-k { font-size: 16px; font-weight: 500; color: #20301a; letter-spacing: -.01em; margin-bottom: 14px; }
+.pf3 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+.pf3 span { display: flex; flex-direction: column; align-items: center; gap: 7px; min-width: 0; }
+.pf3 span i { width: 100%; height: 10px; border-radius: 99px; background: color-mix(in srgb, var(--pc) 22%, #f1efea); }
+.pf3 span.on i { background: var(--pc); }
+.pf3 span.now i { box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px #20301a; }
+.pf3 b { display: inline-flex; align-items: center; gap: 3px; font-size: 12.5px; font-weight: 500; color: rgba(32,48,26,.45); white-space: nowrap; }
+.pf3 span.on b { color: #20301a; }
+.pf3 b svg { flex: none; color: color-mix(in srgb, var(--pc) 70%, #20301a); }
+.pf3 em { margin-top: -3px; padding: 2px 8px; border-radius: 99px; background: #20301a; color: #fff; font: 500 10.5px/1.3 var(--font); font-style: normal; }
+html .tea-fit .tf-all { display: block; margin-top: 12px; font-size: 13px; color: rgba(32,48,26,.6); }
+.rx-row { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; margin-top: 12px; padding: 12px 0 2px; border-top: 1px solid rgba(48,64,35,.09); }
+.rx-row + .rx-row { margin-top: 0; }
+.rx-row > span { flex: none; display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; color: rgba(32,48,26,.6); }
+.rx-row > b { font-size: 14px; font-weight: 500; color: #20301a; text-align: right; }
+.rx-row.now > span { color: #b0443c; }
+.rx-han { font: 400 13px/1 'Noto Serif SC', serif; font-style: normal; width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; background: #20301a; color: #fff; }
+html .tf-phases.pf3 span, html .sp2 .tf-phases.pf3 span { padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: inherit !important; font-size: inherit; }
+html .tf-phases.pf3 span::after { display: none !important; }
+html .tf-phases.pf3 { margin-bottom: 0; }
+html .tf-phases.pf3 span { display: flex !important; flex-direction: column; align-items: center; gap: 0; }
+html .tf-phases.pf3 span i { margin: 4px 0 10px; }
+html .tf-phases.pf3 span em { margin-top: 6px; }
+html .tea-fit .tf-all { margin-top: 14px; }
+html .tf-phases.pf3 span i { position: static !important; transform: none !important; padding: 0 !important; border: 0 !important; font-size: 0 !important; display: block; }
