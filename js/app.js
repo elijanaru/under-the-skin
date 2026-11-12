@@ -7269,6 +7269,30 @@ function recMicro(r) {
 // Carbs per serving (estimated from the ingredients); fat is what is left of the calories after protein and carbs.
 const RECIPE_CARBS = { 'iron-lentil-soup': 55, 'cacao-beet-smoothie': 70, 'spring-green-bowl': 30, 'citrus-salmon-salad': 28, 'berry-quinoa-bowl': 40, 'cruciferous-stir-fry': 22, 'sweet-potato-bowl': 70, 'raw-beet-slaw': 50, 'living-green-salad': 22, 'ginger-bone-broth': 20, 'beef-beet-stew': 35, 'green-goddess-smoothie': 45, 'egg-kraut-plate': 25, 'courgette-pesto': 18, 'rainbow-wraps': 18, 'squash-walnut-soup': 25, 'baked-apple': 40, 'chickpea-curry': 65, 'liver-pancakes': 30, 'bone-marrow': 30, 'animal-tacos': 55, 'brazilian-lemonade': 30, 'raw-cream-icecream': 22, 'magnesium-bites': 10, 'oxtail-soup': 20, 'burger-bowl': 40, 'organ-scramble': 15, 'gyro-bowl': 50, 'bacon-dates': 30, 'red-lentil-dal': 70, 'black-bean-chili': 65, 'chia-berry-pudding': 40, 'chickpea-tray-bake': 50, 'lentil-tahini-salad': 55, 'warm-quinoa-porridge': 65, 'pesto-white-beans': 45, 'spinach-shakshuka': 20 };
 function recipeMacros(r) { const p = r.protein || 0, c = RECIPE_CARBS[r.id] ?? Math.round(r.kcal * .4 / 4), f = Math.max(0, Math.round((r.kcal - 4 * p - 4 * c) / 9)); return { kcal: r.kcal, p, c, f }; }
+// Which ingredient in the dish brings each nutrient, and a photo of it.
+const NU_SRC = {
+  Protein: /egg|beef|lamb|meat|chicken|turkey|salmon|sardine|mackerel|cod|fish|prawn|liver|yog|kefir|cheese|lentil|bean/, Probiotics: /kimchi|sauerkraut|kefir|yog|miso/,
+  'B vitamins': /egg|beef|lamb|liver|salmon|chicken|mushroom|spinach/, Iron: /beef|lamb|liver|meat|lentil|spinach|beet|sardine|mussel|oyster/, 'Heme iron': /beef|lamb|liver|meat|sardine|mussel|oyster/,
+  Fibre: /broccoli|bean|lentil|flax|chia|kale|carrot|beet|cabbage|apple|pear|berr|sweet potato/, 'Vitamin C': /lemon|orange|kiwi|pepper|broccoli|berr|kale|citrus|cabbage|tomato/,
+  Magnesium: /pumpkin seed|cacao|chocolate|spinach|almond|sesame|tahini|cashew|bean|avocado/, Potassium: /avocado|sweet potato|potato|spinach|beet|coconut|banana/,
+  B12: /egg|beef|lamb|liver|salmon|sardine|mussel|oyster|milk/, 'Omega-3': /salmon|sardine|mackerel|anchov|flax|chia|walnut/, Antioxidants: /berr|cacao|beet|pomegranate|kale|tomato|turmeric/,
+  Sulforaphane: /broccoli|cabbage|kale|sprout|radish|cauliflower/, Zinc: /pumpkin seed|oyster|beef|lamb|sesame|tahini|egg/, 'Complex carbs': /sweet potato|potato|rice|bean|lentil|pumpkin|squash|buckwheat/,
+  'Slow carbs': /sweet potato|potato|rice|bean|lentil|pumpkin|squash|buckwheat/, 'Vitamin B6': /salmon|chicken|potato|banana|sunflower|pistachio|chickpea/, Folate: /broccoli|spinach|avocado|lentil|bean|asparagus|egg/,
+  Collagen: /broth|bone/, 'Healthy fats': /avocado|olive|butter|tahini|walnut|almond|seed|ghee|coconut/, Choline: /egg|liver|salmon/, Calcium: /sesame|tahini|yog|kefir|cheese|milk|sardine|kale|almond/,
+  'Vitamin A': /carrot|sweet potato|liver|pumpkin|egg|spinach|kale/, 'Fat-soluble vitamins': /butter|egg|liver|ghee|cream/,
+};
+const ING_PH = [[/egg/, 'Pasture eggs'], [/broccoli/, 'Broccoli'], [/kimchi/, 'Aged kimchi (mugeunji)'], [/sauerkraut/, 'Sauerkraut'], [/flax/, 'Ground flaxseed'], [/chia/, 'Chia seeds'], [/avocado/, 'Avocado'],
+  [/radish/, 'Radishes'], [/salmon/, 'Salmon'], [/sardine/, 'Sardines'], [/mackerel/, 'Mackerel'], [/spinach/, 'Spinach'], [/beet/, 'Beetroot'], [/pumpkin seed/, 'Pumpkin seeds'], [/sesame|tahini/, 'Sesame seeds'],
+  [/sunflower/, 'Sunflower seeds'], [/lemon/, 'Lemons'], [/kefir/, 'Kefir'], [/yog/, 'Greek yoghurt'], [/cacao|chocolate/, 'Raw cacao'], [/beef|lamb|steak|liver|meat/, 'Red meat'], [/chicken/, 'Chicken'],
+  [/sweet potato/, 'Sweet potatoes'], [/potato/, 'Potatoes'], [/carrot/, 'Carrots'], [/kale/, 'Kale'], [/walnut/, 'Walnuts'], [/almond/, 'Almonds'], [/berr/, 'Berries'], [/orange|mandarin/, 'Oranges & mandarins'],
+  [/kiwi/, 'Kiwifruit'], [/pepper/, 'Peppers'], [/mushroom/, 'Mushrooms'], [/oyster/, 'Oysters'], [/mussel/, 'Mussels'], [/milk|butter/, 'Grass-fed raw milk & butter'], [/pumpkin|squash/, 'Pumpkin'],
+  [/cabbage/, 'Cabbage'], [/tomato/, 'Tomatoes'], [/cucumber/, 'Cucumber'], [/broad bean|fava/, 'Broad beans'], [/green bean/, 'Green beans'], [/turmeric/, 'Turmeric'], [/honey/, 'Raw honey'], [/cod/, 'Cod'], [/prawn/, 'Prawns']];
+function nuSource(n, r) {
+  const re = NU_SRC[n]; if (!re) return null;
+  const ing = r.ingredients.map(x => String(x).replace(/^[A-Za-z ]+:\s*/, '')).find(x => re.test(x.toLowerCase())); if (!ing) return null;
+  const low = ing.toLowerCase(), ph = (ING_PH.find(([q]) => q.test(low)) || [])[1];
+  return { name: ingRow(ing)[0].replace(/,.*$/, '').replace(/\s+florets?$/i, ''), ph: ph && foodPhoto(ph, 160) ? ph : '' };
+}
 function viewRecipe(id) {
   const r = RECIPES.find(x => x.id === id); if (!r) return viewMissing();
   const fav = (state.favorites || []).includes(id), serves = r.serves || 1, D3 = dishModel(r);
@@ -7288,7 +7312,8 @@ function viewRecipe(id) {
       ${r.raw && warmWindow(M.info) ? `<p class="tea-warn">${icon('yinyang', 14)} Raw and cold: Chinese medicine says save it for after your period.</p>` : ''}</section>
     ${recMicro(r)}
     ${sectionTitle('Why it’s good for you')}
-    <section class="card glass rn-list">${r.nutrients.map(n => { const [line, to] = NUTRIENT_ROLE[n] || ['']; return `<${to ? `button data-action="nav" data-to="nutrients/${to}"` : 'div'} class="rn"><b>${n}</b><p>${line}</p>${to ? icon('chevR', 15) : ''}</${to ? 'button' : 'div'}>`; }).join('')}</section>
+    <section class="card rn-list rn2">${r.nutrients.map(n => { const [line, to] = NUTRIENT_ROLE[n] || [''], src = nuSource(n, r);
+      return `<${to ? `button data-action="nav" data-to="nutrients/${to}"` : 'div'} class="rn">${src && src.ph ? `<img class="rn-ph" src="${foodPhoto(src.ph, 160)}" alt="" loading="lazy" decoding="async">` : `<span class="rn-ic">${icon('leaf', 17)}</span>`}<span class="rn-t"><b>${n}</b><p>${line}</p>${src ? `<small>From the ${src.name.toLowerCase()}</small>` : ''}</span>${to ? icon('chevR', 15) : ''}</${to ? 'button' : 'div'}>`; }).join('')}</section>
     ${sectionTitle('Ingredients')}
     ${(() => { const d = myDiet(), D = DIETS.find(x => x.k === d); return d === 'all' ? '' : !fitsDiet(r) ? `<p class="rci-diet no">${icon('close', 12, 2.4)} Not ${D.t.toLowerCase()}: this one doesn't fit how you eat.</p>` : dietChanged(r) ? `<p class="rci-diet">${D.g} Made ${D.t.toLowerCase()} for you with simple swaps.</p>` : ''; })()}
     <section class="card rci-c"><div class="rci-top"><b><span class="dotnum">${r.ingredients.map(x => dietLine(x)).filter(Boolean).length}</span> ingredients</b><small>For ${serves === 1 ? '1 serving' : `${serves} ${serves > 6 ? 'pieces' : 'servings'}`} · tap to tick off</small></div>${recIngs(r)}</section>

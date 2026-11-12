@@ -11821,3 +11821,16 @@ html .tf-phases.pf3 span i { margin: 4px 0 10px; }
 html .tf-phases.pf3 span em { margin-top: 6px; }
 html .tea-fit .tf-all { margin-top: 14px; }
 html .tf-phases.pf3 span i { position: static !important; transform: none !important; padding: 0 !important; border: 0 !important; font-size: 0 !important; display: block; }
+
+/* v939 Recipe, Why it's good for you: each nutrient shows the ingredient in this dish that brings it (round photo, "From the eggs"), on a white card */
+.rn2 { background: rgba(255,255,255,.95) !important; backdrop-filter: none !important; border: 1px solid rgba(48,64,35,.10) !important; box-shadow: 0 14px 32px rgba(120,70,90,.08) !important; }
+.rn2 .rn { grid-template-columns: 46px 1fr auto; column-gap: 14px; border-bottom-color: rgba(48,64,35,.09); }
+.rn2 .rn-ph, .rn2 .rn-ic { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 10px rgba(32,48,26,.14); }
+.rn2 .rn-ic { display: grid; place-items: center; background: #eef1e6; color: #6c823e; box-shadow: none; }
+.rn2 .rn-t { min-width: 0; }
+.rn2 .rn b { color: #20301a; font-size: 15.5px; }
+.rn2 .rn p { color: rgba(32,48,26,.64); font-size: 13.5px; line-height: 1.4; }
+.rn2 .rn small { display: inline-block; margin-top: 6px; padding: 3px 9px; border-radius: 99px; background: #f3f1ec; font-size: 12px; font-weight: 500; color: #20301a; }
+.rn2 .rn > svg { color: rgba(32,48,26,.4); }
+.rn2 .rn > svg { grid-column: 3; grid-row: 1; align-self: center; }
+.rn2 .rn-ic svg { grid-column: auto; grid-row: auto; color: #6c823e; }
