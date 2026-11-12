@@ -11607,3 +11607,10 @@ html .cyb-band em { position: absolute; top: 2px; left: 0; right: 0; text-align:
 html .cyb-rows { padding-top: 18px; }
 html .cyb-avg { top: 14px; }
 html .cyb-ax span.d1 { transform: none; font: 500 10px/14px Outfit, sans-serif; }
+
+/* v923 Home remedies: when on top, dose and how often under the name */
+html .rit-g .rcard.has-photo .rit-dose { order: 0; display: block; margin-top: 3px; font: 400 12px/1.3 var(--font); color: rgba(32,48,26,.62); text-align: left; }
+html .rit-g .rcard.has-photo .rit-dose b { font-weight: 500; color: #20301a; }
+html .rit-g .rcard.has-photo .rit-dose b { display: block; margin-bottom: 1px; }
+.cutf { overflow: hidden; }
+.cutf img { width: 82%; height: 82%; object-fit: contain; display: block; margin: auto; }

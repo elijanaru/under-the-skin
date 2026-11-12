@@ -4132,7 +4132,7 @@ function viewSupp(id) {
   const ph = suppPhases(x), now = M.info && M.info.phase;
   return `<div class="pad sp2">
     ${specHero({ stack: true, photo: suppPhoto(x.id), glyph: x.sym, han: x.han, eyebrow: 'Supplement', sym: !x.han, name: x.name, label: 'How to take it', max: 4,
-      extra: SUPP_HERO[x.id] ? `<span class="sp-capchip"><span class="sd-cap ${x.han ? 'han' : ''}">${x.sym}</span><small>Richest in<b>${SUPP_HERO[x.id][1]}</b></small></span>` : '',
+      extra: SUPP_HERO[x.id] ? `<span class="sp-capchip"><span class="sd-cap ${x.han ? 'han cutf' : ''}">${x.han ? '<img src="images/sf/ginger.webp" alt="">' : x.sym}</span><small>Richest in<b>${SUPP_HERO[x.id][1]}</b></small></span>` : '',
       rows: [['Dose', x.dose], ['Form', x.form], ['When', x.when], ...(SUPP_TIME[x.id] ? [['Give it', SUPP_TIME[x.id]]] : [])], desc: x.desc })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit(ph, now)}${ph.length === 4 ? '<small class="tf-all">Useful every day of your cycle</small>' : now && !ph.includes(now) ? `<small class="tf-all">Not a focus in your ${PHASES[now].name.toLowerCase()} phase</small>` : ''}</section>
     ${suppSafe(x.id)}
@@ -4156,9 +4156,9 @@ function suppStack(on, now) {
     <div class="sd-h"><div><small>${PHASES[now].name} phase</small><b>Your stack today</b></div><span class="sd-n"><b>${on.length}</b><small>picks</small></span></div>
     <div class="sd-line"><i></i></div>
     <div class="sd-cols">${cols.map(({ sl: [ic, t, m], L }) => `<div class="sd-c ${L.length ? '' : 'empty'}"><span class="sd-ic">${icon(ic, 16)}</span><b>${t}</b><small>${m}</small>
-      <div class="sd-caps">${L.map(x => `<button class="sd-capw" data-action="nav" data-to="supp/${x.id}" aria-label="${x.name}, ${x.dose}"><span class="sd-cap ${x.han ? 'han' : ''}">${x.sym}</span><small>${suppShort(x)}</small></button>`).join('') || '<span class="sd-none">·</span>'}</div></div>`).join('')}</div>
+      <div class="sd-caps">${L.map(x => `<button class="sd-capw" data-action="nav" data-to="supp/${x.id}" aria-label="${x.name}, ${x.dose}"><span class="sd-cap ${x.han ? 'han cutf' : ''}">${x.han ? '<img src="images/sf/ginger.webp" alt="">' : x.sym}</span><small>${suppShort(x)}</small></button>`).join('') || '<span class="sd-none">·</span>'}</div></div>`).join('')}</div>
     ${daily.map(x => { const n = (x.dose.match(/(\d+) times a day/) || [])[1] || '4'; return `<button class="sd-all" data-action="nav" data-to="supp/${x.id}" aria-label="${x.name}, ${x.dose}">
-      <span class="sd-cap ${x.han ? 'han' : ''}">${x.sym}</span><span class="sd-all-t"><b>${suppShort(x)}, all day</b><small>${x.dose.replace(/,? ?\d+ times a day/, '')} at each time, morning to bedtime</small></span>
+      <span class="sd-cap ${x.han ? 'han cutf' : ''}">${x.han ? '<img src="images/sf/ginger.webp" alt="">' : x.sym}</span><span class="sd-all-t"><b>${suppShort(x)}, all day</b><small>${x.dose.replace(/,? ?\d+ times a day/, '')} at each time, morning to bedtime</small></span>
       <span class="sd-all-n" aria-hidden="true">${Array.from({ length: 4 }, () => '<i></i>').join('')}<b class="dotnum">${n}×</b></span></button>`; }).join('')}
     ${apart ? `<p class="sd-note">${icon('clock', 12)} Iron in the morning, calcium later: keep them 2 hours apart</p>` : `<p class="sd-note">${icon('check', 12)} Tap a capsule for the dose, the timing and the study</p>`}
   </section>`;
@@ -4182,7 +4182,7 @@ function viewSupps() {
   // when it helps, in words: a coloured dot and the phase name (four unlabelled dots said nothing)
   const SHORT = { menstrual: 'Period', follicular: 'Follicular', ovulatory: 'Ovulation', luteal: 'Luteal' };
   const dots = x => { const ph = suppPhases(x); return `<span class="sup-ph2">${ph.length >= 4 ? `<span><i style="--c:#6c823e"></i>All month</span>` : PHASE_ORDER.filter(p => ph.includes(p)).map(p => `<span class="${p === now ? 'me' : ''}"><i style="--c:${PHASE_COLOR.dark[p]}"></i>${SHORT[p]}</span>`).join('')}</span>`; };
-  const row = x => `<button class="sup-row" data-action="nav" data-to="supp/${x.id}"><span class="sup-sym ${x.han ? 'han' : ''}">${x.sym}</span><span class="sup-t"><b>${x.name}</b><small>${x.dose} · ${x.when.toLowerCase()}</small><span class="sup-meta">${evBadge(x.ev)}${dots(x)}</span></span>${icon('chevR', 16)}</button>`;
+  const row = x => `<button class="sup-row" data-action="nav" data-to="supp/${x.id}"><span class="sup-sym ${x.han ? 'han cutf' : ''}">${x.han ? '<img src="images/sf/ginger.webp" alt="">' : x.sym}</span><span class="sup-t"><b>${x.name}</b><small>${x.dose} · ${x.when.toLowerCase()}</small><span class="sup-meta">${evBadge(x.ev)}${dots(x)}</span></span>${icon('chevR', 16)}</button>`;
   return `${topbar('Supplements', { back: true })}<div class="pad sp2">
     <header class="t4-h sp-h"><small>Supplements</small><h1>Fill the gaps food can’t.</h1><p>Food comes first. Tap a pill to see what it does and when in your cycle it helps.</p></header>
     ${suppHand(now)}
@@ -4253,7 +4253,7 @@ function remedyCards(info) {
   return REMEDIES.slice().sort((a, b) => remediesFor(info).includes(b) - remediesFor(info).includes(a)).map((r, i) => {
     const ok = remediesFor(info).includes(r);
     return `<button class="rcard tall ${ok ? '' : 'dim'} ${carePhoto(r.id) ? 'has-photo' : ''}" data-action="nav" data-to="remedy/${r.id}">${careArt(r.id, ['orb', 'drop', 'wave', 'crown', 'hill'][i % 5], 80 + i)}
-      <div class="rc-top"><span class="rit-min">${r.organ} · ${r.element}</span><span class="rit-seal" aria-hidden="true">${r.glyph}</span></div><div class="rit-foot">${ok ? '' : '<span class="rit-you not">Not now</span>'}<div class="rc-t">${r.name}</div></div></button>`;
+      <div class="rc-top"><span class="rit-min">${icon('clock', 11)} ${r.take ? r.take.when.split(',')[0].replace('Spread over your meals', 'With meals') : r.organ}</span><span class="rit-seal" aria-hidden="true">${r.glyph}</span></div><div class="rit-foot">${ok ? '' : '<span class="rit-you not">Not now</span>'}<div class="rc-t">${r.name}</div>${r.take ? `<small class="rit-dose"><b>${r.take.dose}</b>${r.take.often}</small>` : ''}</div></button>`;
   }).join('');
 }
 
@@ -8236,7 +8236,7 @@ const actions = {
     const was = el.classList.contains('on'); box.querySelectorAll('.suh-p').forEach(b => b.classList.remove('on'));
     const det = box.querySelector('.suh-det'); if (was) { det.hidden = true; return; }
     box.querySelectorAll(`.suh-p[data-id="${d.id}"]`).forEach(b => b.classList.add('on'));
-    det.innerHTML = `<div class="suh-dh"><span class="sup-sym ${x.han ? 'han' : ''}">${x.sym}</span><div><b>${x.name}</b><small>${x.dose} · ${x.when.toLowerCase()}</small></div></div><p>${x.desc.split('. ').slice(0, 2).join('. ').replace(/\.?$/, '.')}</p><button class="suh-go" data-action="nav" data-to="supp/${x.id}">Dose, timing & studies ${icon('chevR', 14)}</button>`;
+    det.innerHTML = `<div class="suh-dh"><span class="sup-sym ${x.han ? 'han cutf' : ''}">${x.han ? '<img src="images/sf/ginger.webp" alt="">' : x.sym}</span><div><b>${x.name}</b><small>${x.dose} · ${x.when.toLowerCase()}</small></div></div><p>${x.desc.split('. ').slice(0, 2).join('. ').replace(/\.?$/, '.')}</p><button class="suh-go" data-action="nav" data-to="supp/${x.id}">Dose, timing & studies ${icon('chevR', 14)}</button>`;
     det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
   },
   ebPick: (d, el) => {
