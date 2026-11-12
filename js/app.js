@@ -6176,21 +6176,19 @@ function viewStress() {
     : tab === 'stretch'
       ? `<section class="st2-card"><span class="eyebrow">Stretch today</span><h3>${st[0]}</h3><p class="st2-sub">${st[1]}</p>${steps(st[2])}${evBadge('some')}</section>`
       : `<button class="bz-cta" data-action="nav" data-to="breathe"><i class="bz-mini"></i><span><b>Breathe with me</b><small>${((info && BREATHS[BREATH_FOR[info.phase]]) || BREATHS.sigh).name}${info ? " · for your phase" : ""}</small></span>${icon('chevR', 16)}</button>${groundCta()}
-        <section class="st2-why"><span class="eyebrow">Why today</span><p>${sp[0]}</p><p class="st2-calm">${calm}</p></section>
-        <section class="st2-breathe"><video src="images/stress-breathe.mp4" poster="images/stress-breathe.webp" muted loop playsinline ${auto} preload="metadata" aria-hidden="true"></video><span class="st2-bshade"></span>
-          <div class="st2-bin"><span class="eyebrow">Fastest calm · 5 min</span><div class="st2-orb" aria-hidden="true"><i></i><b class="in">Breathe in</b><b class="out">Breathe out</b></div>
-          <p>In through your nose for 4, out slowly for 6. A longer exhale calms your nervous system.</p>${evBadge('some')}</div></section>
+        <section class="st2-why"><span class="eyebrow">Why today</span><p>${sp[0]}</p></section>
+        <button class="st3-fast" data-action="nav" data-to="breathe"><span class="st3-orb" aria-hidden="true"><i></i><b class="in">In</b><b class="out">Out</b></span>
+          <span class="st3-ft"><small>Fastest calm</small><b>Breathe out longer than in</b>
+          <span class="st3-nums"><span><em class="dotnum">4</em>in</span><span><em class="dotnum">6</em>out</span><span><em class="dotnum">5</em>min</span></span></span>${icon('chevR', 16)}</button>
         <h3 class="st2-h">Best ways to lower it</h3>${steps(sp[1])}
         <h3 class="st2-h">The science of calm</h3>
         <section class="card glass cs-list">${CALM_SCIENCE.map(x => `<details class="cs"><summary><span class="cs-g">${x.g}</span><span class="cs-t"><b>${x.t}</b><small>${x.c.replace(/\s*\(.*?\)/g, '')}</small></span>${evBadge(x.ev)}${icon('chevD', 14)}</summary><p>${x.s}</p></details>`).join('')}</section>`;
-  return `<section class="mv2 st2">
-    <video class="mv2-bg" src="images/stress-meditate.mp4" poster="images/stress-meditate.webp" muted loop playsinline ${auto} preload="auto" aria-hidden="true"></video><span class="mv2-shade"></span>
-    <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
-    <div class="mv2-eyebrow">Day ${info.cd} · ${PHASES[info.phase].name}</div>
-    <h1 class="rh2-h">Calm your <em>stress</em></h1>
-    <div class="st2-lvl lv${lvl}"><span>Stress today</span><b>${['', 'Low', 'Medium', 'High'][lvl]}</b><i><em style="width:${lvl * 33.3}%"></em></i></div>
-  </section>
-  <div class="pad mv2-body">
+  return `${topbar('Stress', { back: true })}<div class="pad st3-pad"><section class="st3-hero" data-lv="${lvl}">
+    <span class="st3-media"><video src="images/stress-meditate.mp4" poster="images/stress-meditate.webp" muted loop playsinline ${auto} preload="auto" aria-hidden="true"></video></span>
+    <div class="st3-b"><small><i></i>Day <span class="dotnum">${info.cd}</span> · ${PHASES[info.phase].name} phase</small><h1>Calm your stress</h1><p>${calm}</p>
+      <div class="st3-m"><span>Stress today</span><span class="st3-bars" aria-hidden="true">${[1, 2, 3].map(k => `<i class="${k <= lvl ? 'on' : ''}"></i>`).join('')}</span><b>${['', 'Low', 'Medium', 'High'][lvl]}</b></div></div>
+  </section></div>
+  <div class="pad mv2-body st3-body">
     <div class="seg">${[['calm', 'Calm now'], ['meditate', 'Meditate'], ['stretch', 'Stretch']].map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="stTab" data-v="${k}">${l}</button>`).join('')}</div>
     ${body}
     <p class="fine center">Stress and cortisol respond to your cycle, sleep and food. If stress feels unmanageable, talk to someone you trust or a professional.</p>
