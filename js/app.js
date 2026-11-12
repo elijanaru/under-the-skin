@@ -2547,13 +2547,22 @@ const SUGAR_SYMPTOMS = ['Cravings', 'Fatigue', 'Dizziness'];
 // A real photo for each blood-sugar trick, with its emoji as a little badge.
 const SB_PIC = { fibre: () => foodPhoto('Aged kimchi (mugeunji)', 360), move: () => 'images/tile-walk.webp', acv: () => foodPhoto('Apples', 360), tea: () => teaPhoto('Tea', 360, 240),
   berberine: () => teaPhoto('Dandelion leaf', 360, 240), d3mg: () => 'images/rhythm-sun.webp', minerals: () => foodPhoto('Oysters', 360), spices: () => teaPhoto('Cinnamon', 360, 240) };
+// Blood sugar card: three label-left value-right rows that follow her taps.
+function sugarSpec(on) {
+  const keep = sugarKeep(on), n = SUGAR_TRICKS.filter(t => on.includes(t.k)).length, next = SUGAR_TRICKS.filter(t => !on.includes(t.k) && t.k !== 'berberine').sort((a, b) => b.eff - a.eff)[0];
+  return `<div><dt>Peak rise</dt><dd><span class="dotnum">+${Math.round(30 * keep)}</span> mg/dL${keep < 1 ? ' <s>+30</s>' : ''}</dd></div>
+    <div><dt>Tricks you use</dt><dd><span class="dotnum">${n}</span> of <span class="dotnum">${SUGAR_TRICKS.length}</span></dd></div>
+    ${next ? `<div><dt>Biggest next step</dt><dd>${next.n}</dd></div>` : ''}`;
+}
 function sugarSection(phase) {
   const on = sugarDone(), pat = M.info ? patterns().list.filter(x => SUGAR_SYMPTOMS.includes(x.name)) : [];
   const luteal = phase === 'luteal';
-  return `<div class="sb-free">
-      <div class="sb-top"><div><small>Your next meal</small><b>Tap what you do,<br>watch the spike shrink</b></div>
+  return `<div class="sb-free sb2">
+      <div class="sb-top"><div><small><i></i>Your next meal</small><b>Watch the spike shrink</b><p>Tap the tricks you use below. The curve redraws for your meal.</p></div>
         <div class="sb-score" id="sg-score">${sugarScore(on)}</div></div>
       <div id="sg-chart" class="sb-chart">${sugarCurve(on)}</div>
+      <dl class="sb-spec" id="sg-spec">${sugarSpec(on)}</dl>
+      <p class="sb-st"><small>What studies found</small>Eating vegetables and protein before the carbs made the sugar rise after a meal about a third smaller. <i>Shukla et al. 2015</i></p>
       ${luteal ? `<p class="sb-note">${icon('spark', 13)} Second half of your cycle: you’re a little less insulin-sensitive, so these help most now.</p>` : ''}
       ${pat.length ? `<div class="sm-pat">${pat.slice(0, 2).map(x => `<div>${icon('chart', 14)}<span><b>Your pattern:</b> ${x.name.toLowerCase()} on ${x.from === x.to ? `day ${x.from}` : `days ${x.from}–${x.to}`} · use these tricks then</span></div>`).join('')}</div>` : ''}
     </div>
@@ -2569,7 +2578,7 @@ function sugarScore(on) {
   const keep = sugarKeep(on);
   const pct = Math.round((1 - keep) * 100);
   // ring bubble: fills as the spike shrinks (the illustration caps at 50%, which is a full ring)
-  return `<span class="sbr" style="--p:${Math.min(100, pct * 2)}"></span><b>${pct ? `−${pct}%` : '0%'}</b><span>${pct ? 'smaller spike' : 'tap a trick'}</span>`;
+  return `<span class="sbr" style="--p:${Math.min(100, pct * 2)}"></span><b>${pct}%</b><span>${pct ? 'smaller spike' : 'tap a trick'}</span>`;
 }
 
 // ---------- cosmic rhythm ----------
@@ -8086,6 +8095,7 @@ const actions = {
     const on = doneToday(), key = 'sg-' + d.v, i = on.indexOf(key); i < 0 ? on.push(key) : on.splice(i, 1); save();
     el.classList.toggle('on', i < 0); if (i < 0) plusOne(el);
     const c = document.getElementById('sg-chart'); if (c) c.innerHTML = sugarCurve(sugarDone());
+    const sp = document.getElementById('sg-spec'); if (sp) sp.innerHTML = sugarSpec(sugarDone());
     const sc = document.getElementById('sg-score'); if (sc) { sc.innerHTML = sugarScore(sugarDone()); sc.classList.remove('pop'); void sc.offsetWidth; sc.classList.add('pop'); }
   },
   dvOpen: (d, el) => {
