@@ -7429,10 +7429,9 @@ function viewProfile() {
   else body = `${sectionTitle('Why you’re here')}
     ${purposePicker(purpose(), 'setPurpose')}
     ${sectionTitle('Your goals')}
-    <section class="card glass">${focusPicker(focusKeys(), 'setFocus')}<p class="fine" style="margin:10px 0 0">Your daily tips follow these.</p></section>
+    <section class="card pfc"><p class="pfc-sub">${icon('spark', 13)} Your daily tips follow these<span><b class="dotnum">${focusKeys().length}</b> chosen</span></p>${focusPicker(focusKeys(), 'setFocus')}</section>
     ${sectionTitle('Home')}
-    <section class="card glass">${countryPicker('profile', myCountry())}
-      <p class="fine" style="margin:8px 0 0">Your country sets what's in season.</p></section>`;
+    <section class="card pfc"><p class="pfc-sub">${icon('leaf', 13)} Your country sets what's in season</p>${countryPicker('profile', myCountry())}</section>`;
   const signedOut = A.configured() && !A.currentUser();
   return `${topbar('Profile', { back: true })}
   <div class="pad">
@@ -8000,7 +7999,9 @@ const actions = {
   setPurpose: d => { state.profile.purpose = d.v; save(); toast(d.v === 'conceive' ? 'Fertility guidance on' : 'Saved'); render(); },
   setBc: d => { const p = state.profile; p.bc = d.v; if (!hormonalBC(d.v)) delete p.bcPlan; else p.bcPlan = p.bcPlan || 'think'; save(); render(); },
   setBcPlan: d => { const p = state.profile; p.bcPlan = d.v; if (d.v === 'stop' && !p.bcStop) p.bcStop = todayISO(); save(); render(); },
-  setFocus: d => { const f = state.profile.focus = focusKeys().slice(); const i = f.indexOf(d.v); i < 0 ? f.push(d.v) : f.splice(i, 1); save(); render(); },
+  setFocus: (d, el) => { const f = state.profile.focus = focusKeys().slice(); const i = f.indexOf(d.v); i < 0 ? f.push(d.v) : f.splice(i, 1); save();
+    const card = el && el.closest('.pfc'); if (!card) return render();
+    el.classList.toggle('on', i < 0); const n = card.querySelector('.pfc-sub b'); if (n) n.textContent = f.length; },
   onbGoal: d => { const g = ui.onb.goals; const i = g.indexOf(d.v); i < 0 ? g.push(d.v) : g.splice(i, 1); render(); },
   onbDemo: () => { state = demoState(ui.onb.name.trim()); save(); go('today'); render(); },
   step: d => {

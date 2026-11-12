@@ -11691,3 +11691,13 @@ html .ck-first > div > b { margin: 10px 0 0; padding: 11px 0; border-top: 1px so
 html .ck-first > div > p { margin: 0; padding: 10px 0 2px; border-top: 1px solid rgba(48,64,35,.09); font: 400 12.5px/1.4 var(--font); color: rgba(32,48,26,.58); }
 html .sgt-ck { padding: 12px 14px 8px; }
 html .ck-first .ck-l li, html .ck-first > div > b { font-weight: 400 !important; }
+
+/* v930 Profile, Your goals and Home: white cards like the rest of Profile, the grey why-line moves to the top with a count, unpicked chips get a soft fill so they read on white */
+.pfc { background: rgba(255,255,255,.95) !important; backdrop-filter: none !important; border: 1px solid rgba(48,64,35,.10) !important; box-shadow: 0 14px 32px rgba(120,70,90,.08) !important; padding: 16px 16px 18px !important; }
+.pfc-sub { display: flex; align-items: center; gap: 6px; margin: 0 2px 14px; font-size: 13.5px; color: rgba(32,48,26,.62); }
+.pfc-sub svg { color: #6c823e; flex: none; }
+.pfc-sub span { margin-left: auto; display: inline-flex; align-items: baseline; gap: 4px; color: rgba(32,48,26,.62); }
+.pfc-sub span b { font-size: 17px; color: #20301a; }
+.pfc .chips { gap: 8px; }
+html #view > .pad .pfc .chip:not(.static):not(.on):not(.warm) { background: #f3f1ec !important; border-color: transparent !important; box-shadow: none !important; color: #20301a !important; }
+.pfc .chip.on { box-shadow: 0 6px 14px rgba(32,48,26,.18); }
