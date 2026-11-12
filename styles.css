@@ -11780,3 +11780,16 @@ html .pad.fb .fbp-step small { color: #3d4a33; }
 @media (prefers-reduced-motion: reduce) { .mg4-r { animation: none; } }
 .mg4 { padding: 14px 18px 4px; } .mg4-r { padding: 10px 0; } .mg4-h + .mg4-r { margin-top: 10px; }
 .mg4-ic { width: 34px; height: 34px; } .mg4-r b { font-size: 15.5px; } .mg4-r p { font-size: 13px; margin-top: 2px; }
+
+/* v937 What studies found: one white card with a row per study (year in Doto on the left, author and journal, the key-number bars, the finding) instead of a sideways row of cut-off cards */
+html .stc { display: block; overflow: visible; margin: 0 0 14px; padding: 2px 18px; border-radius: 28px; background: rgba(255,255,255,.95); border: 1px solid rgba(48,64,35,.10); box-shadow: 0 14px 32px rgba(120,70,90,.08); scroll-snap-type: none; }
+html .stc-c { display: grid; grid-template-columns: 58px 1fr; column-gap: 12px; align-items: start; padding: 15px 0; border-radius: 0; background: none !important; border: 0; border-top: 1px solid rgba(48,64,35,.09); box-shadow: none !important; animation: rise .6s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i) * 80ms); }
+html .stc-c:first-child { border-top: 0; }
+html .stc-h { display: contents; }
+html .stc-h b { grid-column: 1; grid-row: 1 / span 3; font-size: 22px; line-height: 1.1; padding-top: 1px; }
+html .stc-h span { grid-column: 2; font-size: 14.5px; font-weight: 500; color: #20301a; }
+html .stc-h em { margin-top: 1px; font-size: 12px; color: rgba(32,48,26,.55); }
+html .stc-k { grid-column: 2; margin: 10px 0 4px; }
+html .stc-c p { grid-column: 2; margin-top: 6px; font-size: 14px; line-height: 1.45; color: rgba(32,48,26,.75); }
+html .bz-study .stc { box-shadow: none; padding: 0 2px; background: none; border: 0; }
+@media (prefers-reduced-motion: reduce) { html .stc-c { animation: none; } }
