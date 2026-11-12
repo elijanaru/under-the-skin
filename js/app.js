@@ -3673,6 +3673,23 @@ const RELIEF_STUDY = {
   Fatigue: ['2012', 'Vaucher', 'Tired women with low iron stores but no anaemia felt about half as tired on iron (48% less, 29% on placebo).', 'CMAJ'],
   'Tender breasts': ['2001', 'Schellenberg', 'Chasteberry over three cycles eased breast fullness, irritability and headaches; half the women felt at least 50% better.', 'BMJ'],
 };
+// Relief page: teas, nutrients and foods for this symptom as one white card of round photo tiles (teas and nutrients open their page).
+const RLF_CUT = [[/chocolate|cacao/i, 'images/sf/cacao.webp'], [/banana/i, 'images/sz/bananas.webp'], [/dates/i, 'images/sf/medjool.webp'], [/^apple/i, 'images/sz/apples.webp'], [/kiwi/i, foodPhoto('Kiwifruit', 220)],   [/cherr/i, 'images/fb/cherry.webp'], [/honey/i, 'images/sf/raw-honey.webp'], [/chia/i, 'images/sf/chia.webp'], [/flax/i, 'images/sf/flaxseed.webp'], [/leafy greens/i, 'images/sz/kale.webp'], [/^ginger$/i, 'images/sf/ginger.webp'], [/turmeric/i, 'images/sf/turmeric.webp']];
+function reliefFood(k, L, food) {
+  const teas = L.tea ? (TEA_GUIDE.find(t => t.k === L.tea) || { teas: [] }).teas.map((t, i) => ({ n: t[1], pic: teaPhoto(t[1], 220, 220), to: `tea/${L.tea}-${i}` })) : [];
+  const nus = (L.nu || []).map(id => NUTRIENTS.find(x => x.id === id)).filter(Boolean).map(n => ({ n: n.n, pic: nuHero(n).photo ? nuHero(n).photo.replace('w=800', 'w=220').replace(/h=\d+/, 'h=220') : '', ic: nuIc(n.id, 26), to: `nutrients/${n.id}`, s: n.d && n.d[0] ? n.d[0][0].replace(/\s*[–-]\s*/, ' to ') : '' }));
+  const tn = teas.map(t => t.n.toLowerCase());
+  const foods = food ? food.foods.filter(f => !tn.includes(f.toLowerCase().replace(/ tea$/, ''))).map(f => { const c = RLF_CUT.find(([r]) => r.test(f)), tp = /tea$/i.test(f) ? teaPhoto(f.replace(/ tea$/i, '').replace('Herbal', 'Tea').replace('Peppermint', 'Peppermint').replace(/^Green$/, 'Green tea'), 220, 220) : '';
+    return { n: f, pic: foodPhoto(f, 220) || tp || (c ? c[1] : ''), cut: !foodPhoto(f, 220) && !tp && !!c && c[1].startsWith('images/sf'), ic: /water/i.test(f) ? icon('drop', 24) : '' }; }) : [];
+  if (!teas.length && !nus.length && !foods.length) return '';
+  const tile = x => `<${x.to ? `button data-action="nav" data-to="${x.to}"` : 'span'} class="rlf-t">${x.pic ? `<img class="${x.cut ? 'cut' : ''}" src="${x.pic}" alt="" loading="lazy" decoding="async">` : `<i>${x.ic || icon('leaf', 22)}</i>`}<b>${x.n}</b>${x.s ? `<small>${x.s}</small>` : ''}</${x.to ? 'button' : 'span'}>`;
+  const group = (t, l) => l.length ? `<div class="sfc-gh"><b>${t}</b></div><div class="rlf-g">${l.map(tile).join('')}</div>` : '';
+  return `${sectionTitle('Eat & drink for this')}<section class="sfc rlf">
+    <header class="sfc-h"><small><i></i>${k}</small><h3>What to reach for</h3>${food ? `<p>${food.tip}</p>` : ''}</header>
+    ${group('Foods', foods)}${group('Teas', teas)}${group('Nutrients', nus)}
+    ${warmWindow(M.info) ? `<p class="sfc-warm">${icon('sun', 13)} These days: warm and cooked, nothing raw or iced.</p>` : ''}
+  </section>`;
+}
 function viewRelief(id) {
   const k = decodeURIComponent(id || ''), R = RELIEF[k]; if (!R) return viewMissing();
   const food = SYMPTOM_FOODS[k] || (k === 'PMS mood' ? SYMPTOM_FOODS.Cravings : null), L = RELIEF_LINKS[k] || {};
@@ -3686,8 +3703,7 @@ function viewRelief(id) {
       return `<div class="rs2 ${help.includes(i) ? 'helped' : ''}"><span class="rs2-ic">${icon(reliefIcon(x.t), 18)}</span>
       <div class="rs2-b"><b>${x.t}</b><p>${d0}</p>${dr.length ? `<details class="rs2-more"><summary>More ${icon('chevR', 11)}</summary><p>${dr.join(' ')}</p>${go}</details>` : go}</div>
       <button class="rs-heart ${help.includes(i) ? 'on' : ''}" data-action="reliefHelp" data-k="${k}" data-i="${i}" aria-label="This helps me">${icon('heart', 18)}</button></div>`; }).join('')}</section>
-    ${L.tea || L.nu ? `${sectionTitle('Teas & nutrients for this')}<div class="tea-more">${L.tea ? (TEA_GUIDE.find(t => t.k === L.tea) || { teas: [] }).teas.map((t, i) => `<button data-action="nav" data-to="tea/${L.tea}-${i}"><span>${icon('cup', 14)}</span>${t[1]}</button>`).join('') : ''}${(L.nu || []).map(id => { const n = NUTRIENTS.find(x => x.id === id); return n ? `<button data-action="nav" data-to="nutrients/${id}"><span>${nuIc(id, 16)}</span>${n.n}</button>` : ''; }).join('')}</div>` : ''}
-    ${food ? `${sectionTitle('Eat')}<section class="card glass"><p class="body sm" style="margin:0 0 10px">${food.tip}</p><div class="foods">${food.foods.map(f => `<span class="food">${f}</span>`).join('')}</div></section>` : ''}
+    ${reliefFood(k, L, food)}
     ${RELIEF_STUDY[k] ? (([yr, who, t, j]) => `${sectionTitle('What studies found')}<section class="card rl-st"><div class="sgt-st"><b class="dotnum">${yr}</b><span><em>${who}</em>${t}<small>${j}</small></span></div></section>`)(RELIEF_STUDY[k]) : ''}
     <section class="card tcm-card rl-tcm"><div class="tcm-glyph">${icon('yinyang', 24)}</div><div class="tcm-main"><div class="eyebrow">In Chinese medicine</div><p class="body">${R.tcm}</p></div></section>
     ${R.doctor ? `<section class="card glass rl-doc"><span>${icon('plus', 20)}</span><div><small>See a doctor if</small><p>${R.doctor}</p></div></section>` : ''}
