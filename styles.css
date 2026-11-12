@@ -11766,3 +11766,17 @@ html .pad.fb .fbp-i small { color: rgba(32,48,26,.72); }
 html .pad.fb .fbp-title p { color: #3d4a33; }
 html .pad.fb .fbp-step b { color: #20301a; }
 html .pad.fb .fbp-step small { color: #3d4a33; }
+
+/* v936 Calendar, your days right now: Work, Social and Self-care as three rows in one white card (phase-tinted icon, small label, title, grey line) instead of a swipe row with a 1/3 counter */
+.mg4 { margin: 14px 0 6px; padding: 16px 18px 6px; border-radius: 30px; background: rgba(255,255,255,.95); border: 1px solid rgba(48,64,35,.10); box-shadow: 0 14px 32px rgba(120,70,90,.08); color: #20301a; }
+.mg4-h b { display: block; font-size: 18px; font-weight: 500; letter-spacing: -.01em; }
+.mg4-h small { display: block; margin-top: 3px; font-size: 13px; color: rgba(32,48,26,.6); }
+.mg4-r { display: flex; gap: 12px; align-items: flex-start; padding: 13px 0; border-top: 1px solid rgba(48,64,35,.09); animation: rise .6s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i) * 70ms); }
+.mg4-h + .mg4-r { margin-top: 12px; }
+.mg4-ic { flex: none; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: color-mix(in srgb, var(--pc) 20%, #fff); color: color-mix(in srgb, var(--pc) 75%, #20301a); }
+.mg4-r em { display: block; font-style: normal; font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: color-mix(in srgb, var(--pc) 70%, #20301a); }
+.mg4-r b { display: block; margin-top: 2px; font-size: 16px; font-weight: 500; line-height: 1.25; }
+.mg4-r p { margin: 3px 0 0; font-size: 13.5px; line-height: 1.4; color: rgba(32,48,26,.64); }
+@media (prefers-reduced-motion: reduce) { .mg4-r { animation: none; } }
+.mg4 { padding: 14px 18px 4px; } .mg4-r { padding: 10px 0; } .mg4-h + .mg4-r { margin-top: 10px; }
+.mg4-ic { width: 34px; height: 34px; } .mg4-r b { font-size: 15.5px; } .mg4-r p { font-size: 13px; margin-top: 2px; }
