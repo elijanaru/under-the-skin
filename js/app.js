@@ -2076,6 +2076,13 @@ function foodExplore(phase, info) {
     <section class="fx-p"><h3>${cat[1]} in <em style="color:color-mix(in srgb, ${PH_HEX[phase]} 70%, #20301a)">${name}</em></h3><p class="fx-lead">${lead}</p>${body}
       <button class="fx-all" data-action="nav" data-to="plan/${k}">See all ${cat[1].toLowerCase()} ${icon('chevR', 14)}</button></section>`;
 }
+// Recipes page: her phase's dishes (no raw ones in the warm window), filtered by meal in place.
+const REC_MEALS = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Drink'];
+function recList(phase, warm) { return myRecipes().filter(r => r.phases.includes(phase) && !(warm && r.raw)).sort((a, b) => warm ? (!!b.warm - !!a.warm) : (!!b.raw - !!a.raw)); }
+function recGrid(recs, meal) {
+  return recs.filter(r => meal === 'All' || r.meal === meal).map((r, i) => `<button class="rcard tall ${photoUrl(r.id) ? 'has-photo' : ''}" data-action="nav" data-to="recipe/${r.id}">${recipeArt(r, ['wave', 'orb', 'drop', 'hill'][i % 4], 20 + i)}
+          <div class="rc-top"><span class="rc-k">${r.raw ? 'Raw' : r.warm ? `Warm · ${r.meal}` : r.meal}</span></div><div class="rc-t">${r.name}</div><div class="rc-m">${r.time} min · ${r.kcal} kcal</div></button>`).join('');
+}
 function viewPlan() {
   const info = M.info, phase = info ? info.phase : 'follicular', ph = PHASES[phase], tcm = TCM[phase], P = PLAIN[phase];
   const sub = route().id;
@@ -2083,10 +2090,10 @@ function viewPlan() {
   if (sub && PLAN_TITLE[sub]) {
     let body = '';
     if (sub === 'recipes') {
-      const warm = warmWindow(info), recs = myRecipes().filter(r => r.phases.includes(phase)).sort((a, b) => warm ? (!!b.warm - !!a.warm) : (!!b.raw - !!a.raw));
-      body = `${plTonight(phase, warm)}${sectionTitle('All recipes for you')}<p class="pv-lead">${warm ? 'Your period is close: warm, cooked dishes first.' : `Made for your ${ph.name.toLowerCase()} phase.`}</p>
-        <div class="grid2 pv-rec">${recs.map((r, i) => `<button class="rcard tall ${photoUrl(r.id) ? 'has-photo' : ''}" data-action="nav" data-to="recipe/${r.id}">${recipeArt(r, ['wave', 'orb', 'drop', 'hill'][i % 4], 20 + i)}
-          <div class="rc-top"><span class="rc-k">${r.raw ? 'Raw' : r.warm ? 'Warm' : r.meal}</span></div><div class="rc-t">${r.name}</div><div class="rc-m">${r.time} min · ${r.kcal} kcal</div></button>`).join('')}</div>`;
+      const warm = warmWindow(info), recs = recList(phase, warm), meals = REC_MEALS.filter(m => recs.some(r => r.meal === m)), cur = meals.includes(ui.recMeal) ? ui.recMeal : 'All';
+      body = `${plTonight(phase, warm)}${sectionTitle('All recipes for you')}<p class="pv-lead">${warm ? 'Your period is close: only warm, cooked dishes.' : `Made for your ${ph.name.toLowerCase()} phase.`}</p>
+        <div class="rcf" role="tablist">${['All', ...meals].map(m => `<button class="${m === cur ? 'on' : ''}" data-action="recMeal" data-v="${m}" role="tab" aria-selected="${m === cur}">${m}<em class="dotnum">${m === 'All' ? recs.length : recs.filter(r => r.meal === m).length}</em></button>`).join('')}</div>
+        <div class="grid2 pv-rec">${recGrid(recs, cur)}</div>`;
     } else if (sub === 'foods') {
       const recent = recentSymptoms().filter(s => SYMPTOM_FOODS[s]).slice(0, 2);
       body = `<div class="eat-cat eb eb-free sf-top" data-phase="${phase}">${superInner(phase)}</div><div class="eat-cat eb eb-free sf-top apo-top">${apoInner()}</div>${dietGuideCard(phase)}
@@ -8097,6 +8104,11 @@ const actions = {
   planKind: d => { const name = document.getElementById('ev-name')?.value; ui.planKind = d.v; calRefresh(['.day-panel']); const i = document.getElementById('ev-name'); if (i && name) i.value = name; },
   planSave: d => { const t = (document.getElementById('ev-name')?.value || '').trim().slice(0, 40); events().push({ id: Date.now().toString(36), date: d.date, kind: ui.planKind || 'date', t }); ui.planOpen = null; save(); render(); toast('Planned ✓'); },
   evDel: d => { state.events = events().filter(e => e.id !== d.id); save(); render(); },
+  recMeal: (d, el) => {
+    ui.recMeal = d.v; const info = M.info, phase = info ? info.phase : 'follicular', g = document.querySelector('.pv-rec'); if (!g) return;
+    el.parentElement.querySelectorAll('button').forEach(b => { const on = b === el; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+    g.innerHTML = recGrid(recList(phase, warmWindow(info)), d.v); g.classList.remove('rcf-in'); void g.offsetWidth; g.classList.add('rcf-in');
+  },
   sugarTrick: (d, el) => {
     const on = doneToday(), key = 'sg-' + d.v, i = on.indexOf(key); i < 0 ? on.push(key) : on.splice(i, 1); save();
     el.classList.toggle('on', i < 0); if (i < 0) plusOne(el);

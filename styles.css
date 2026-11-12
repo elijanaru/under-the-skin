@@ -11629,3 +11629,13 @@ html body .purp:not(.full) .purp-c.on .pc-check { background: #20301a !important
 html body .purp:not(.full) .purp-c.soon { opacity: .6; }
 html body .purp:not(.full) .purp-c.soon img { filter: grayscale(1) !important; }
 html body .purp:not(.full) .pc-soon { position: static !important; flex: none; padding: 4px 9px; font-size: 10px; letter-spacing: .06em; background: #f1efea !important; color: rgba(32,48,26,.65) !important; border: 0 !important; }
+
+/* v926 Recipes: filter by meal, redrawn in place */
+.rcf { display: flex; gap: 8px; overflow-x: auto; margin: 4px -18px 14px; padding: 2px 18px 4px; scrollbar-width: none; scroll-padding: 0 18px; }
+.rcf::-webkit-scrollbar { display: none; }
+.rcf button { flex: none; display: inline-flex; align-items: center; gap: 7px; padding: 9px 14px; border-radius: 99px; border: 1px solid rgba(48,64,35,0.12); background: rgba(255,255,255,0.92); color: #20301a; font: 500 13.5px/1 var(--font); cursor: pointer; transition: background .25s ease, color .25s ease; }
+.rcf button em { font-style: normal; font-size: 12px; color: rgba(32,48,26,0.5); }
+.rcf button.on { background: #20301a; border-color: #20301a; color: #fff; }
+.rcf button.on em { color: rgba(255,255,255,0.7); }
+.pv-rec.rcf-in > * { animation: hgIn .45s cubic-bezier(.2,.8,.2,1) both; }
+@media (prefers-reduced-motion: reduce) { .pv-rec.rcf-in > * { animation: none; } }
