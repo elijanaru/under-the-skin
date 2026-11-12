@@ -457,10 +457,12 @@ function viewGround() {
 
 
     ${P ? `${sectionTitle(`For your ${PHASES[ph].name.toLowerCase()} phase`)}
-    <section class="card gr-card gr-ph" style="--c:${PH_HEX[ph]}">
-      <div class="gr-ph-h"><span class="gr-ph-dot"></span><b>${P.t}</b>${ph === 'menstrual' || late ? `<span class="gr-warm">${icon('thermo', 12)} Keep warm</span>` : ''}</div>
-      ${card(`ground-${ph}`, `Grounding · ${PHASES[ph].name}`, phd)}
-      <details class="gr-why"><summary>Why in this phase ${icon('chevD', 13)}</summary><p>${P.why}</p></details>
+    <section class="grp" style="--c:${PH_HEX[ph]}">
+      <div class="grp-top"><small><i></i>${PHASES[ph].name} phase${ph === 'menstrual' || late ? ` · ${icon('thermo', 12)} Keep warm` : ''}</small>${saveBtn(regTip(`ground-${ph}`, `Grounding · ${PHASES[ph].name}`, phd, 'ground'))}</div>
+      <h3>${P.t}</h3><p class="grp-sub">${phd[0]}</p>
+      <dl class="grp-spec"><div><dt>When</dt><dd>${phd[3]}</dd></div></dl>
+      <ol class="tf2-ol grp-ol"><li><i class="dotnum">1</i>${phd[1]}</li><li><i class="dotnum">2</i>${phd[2]}</li></ol>
+      <details class="grp-why"><summary>Why in this phase ${icon('chevD', 13)}</summary><p>${P.why}</p></details>
     </section>` : ''}
 
     ${sectionTitle('Where to stand')}
