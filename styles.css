@@ -11677,3 +11677,17 @@ html body .purp:not(.full) .pc-soon { position: static !important; flex: none; p
 .lm-r > b i { font-style: normal; font-size: 13px; color: rgba(32,48,26,.65); }
 .lm-r > b .lm-pre { font: 500 15px/1 var(--font); color: #20301a; margin: 0; }
 .lm2 .lm-foot { padding-top: 12px; border-top: 1px solid rgba(48,64,35,.09); }
+
+/* v929 Before you try it: a white spec card instead of the pink box. Icon and title on one line, each caution its own hairline row, the general check as a grey footnote */
+html .ck-first { display: grid; grid-template-columns: 30px 1fr; align-items: center; column-gap: 10px; row-gap: 0; padding: 16px 18px 12px; background: rgba(255,255,255,.95); border: 1px solid rgba(48,64,35,.10); border-radius: 26px; box-shadow: 0 14px 32px rgba(120,70,90,.08); }
+html .ck-first > div { display: contents; }
+html .ck-first .ck-i { grid-column: 1; grid-row: 1; width: 30px; height: 30px; border: 0; background: #fbe6e1; color: #b0443c; font: 600 15px/1 var(--font); }
+html .ck-first small { grid-column: 2; grid-row: 1; font: 500 16px/1.2 var(--font); letter-spacing: -.01em; color: #20301a; }
+html .ck-first .ck-l, html .ck-first > div > b, html .ck-first > div > p { grid-column: 1 / -1; }
+html .ck-first .ck-l { margin: 10px 0 0; gap: 0; }
+html .ck-first .ck-l li { padding: 11px 0 11px 18px; border-top: 1px solid rgba(48,64,35,.09); font: 450 14.5px/1.4 var(--font); color: #20301a; }
+html .ck-first .ck-l li::before { top: 1.12em; left: 2px; width: 6px; height: 6px; background: #c4574d; }
+html .ck-first > div > b { margin: 10px 0 0; padding: 11px 0; border-top: 1px solid rgba(48,64,35,.09); font: 450 14.5px/1.45 var(--font); }
+html .ck-first > div > p { margin: 0; padding: 10px 0 2px; border-top: 1px solid rgba(48,64,35,.09); font: 400 12.5px/1.4 var(--font); color: rgba(32,48,26,.58); }
+html .sgt-ck { padding: 12px 14px 8px; }
+html .ck-first .ck-l li, html .ck-first > div > b { font-weight: 400 !important; }
