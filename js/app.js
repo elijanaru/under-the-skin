@@ -2230,6 +2230,14 @@ function superInner(phase) {
       <footer class="sfc-f"><span>Food-sized amounts</span><span>Ask your doctor if pregnant or on medication</span></footer>
     </section>`;
 }
+// Supplements as a spec sheet: label left, value right, the study with author and year, the caution, the full sheet behind one tap.
+function suppSpec(x) {
+  const rows = [['Dose', x.dose], ['Form', x.form], ['When', x.when], ['Feel it', SUPP_TIME[x.id]], ['Food first', SUPP_HERO[x.id] && SUPP_HERO[x.id][1]]].filter(r => r[1]);
+  return `<dl class="sup-spec">${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v.charAt(0).toUpperCase() + v.slice(1)}</dd></div>`).join('')}</dl>
+    ${x.study ? `<span class="sr-st sup-st"><small>What studies found</small>${x.study.split('. ')[0].replace(/\.$/, '')}. <i>${x.cite}</i></span>` : ''}
+    ${x.caution ? `<span class="sfc-care sup-care"><small>Before you try</small>${x.caution}</span>` : ''}
+    <button class="ebp-go" data-action="nav" data-to="supp/${x.id}">Full sheet ${icon('chevR', 13)}</button>`;
+}
 function eatCatInner(phase, cat) {
   if (cat === 'super') return superInner(phase);
   const ct = EAT_CATS.find(c => c.k === cat); let C0 = EAT_GUIDE[phase].cats[cat];
@@ -2241,10 +2249,10 @@ function eatCatInner(phase, cat) {
   const items = warmChips(C0[1], cat, warm).map(([g, n]) => {
     const x = cat === 'supps' && !/algae|B12/i.test(n) && suppOf(n), why = x ? x.desc.split('. ')[0] + '.' : (EB_WHY.find(([r]) => r.test(n)) || [0, C0[0]])[1], pic = cat === 'supps' ? null : (EB_PIC.find(([r]) => r.test(n)) || [])[1]?.();
     const sym = cat === 'supps' ? (x ? x.sym : /B12/.test(n) ? 'B12' : /omega/i.test(n) ? 'Ω3' : n.slice(0, 2)) : '';
-    const face = pic ? `<img class="${pic.startsWith('images/') ? 'cut' : ''}" src="${pic}" alt="" loading="lazy">` : sym ? `<span class="eb-sym ${x && x.han ? 'han' : ''}">${sym}</span>` : `<em>${g}</em>`;
-    return { n, face, panel: `<span class="ebp-f">${face}</span><span class="ebp-t"><b>${n}</b><small>${why}</small>${/raw milk|milk, warmed|warm raw/i.test(n) && cat !== 'supps' ? `<span class="ebp-w">${icon('thermo', 13)} Warm raw milk very gently on low heat, only until it feels warm on your lip. Never boil it, or the good enzymes and bacteria are lost.</span>` : ''}${x ? `<span class="ebp-d"><span>${icon('drop', 12)} ${x.dose}</span><span>${icon('clock', 12)} ${x.when}</span></span><button class="ebp-go" data-action="nav" data-to="supp/${x.id}">Doses and studies ${icon('chevR', 13)}</button>` : ''}</span>${cat === 'drinks' && /coffee/i.test(n) ? `<span class="sgt-st ebp-st"><b class="dotnum">1983</b><span><em>Morck</em>Coffee with a meal cut the iron absorbed from it by about 39%. Drunk an hour before the meal, it made no difference.<small>American Journal of Clinical Nutrition</small></span></span>` : ''}` };
+    const face = x && x.han ? `<img class="cut" src="images/sf/ginger.webp" alt="" loading="lazy">` : pic ? `<img class="${pic.startsWith('images/') ? 'cut' : ''}" src="${pic}" alt="" loading="lazy">` : sym ? `<span class="eb-sym ${x && x.han ? 'han' : ''}">${sym}</span>` : `<em>${g}</em>`;
+    return { n, face, panel: `<span class="ebp-f">${face}</span><span class="ebp-t"><b>${n}</b><small>${why}</small>${/raw milk|milk, warmed|warm raw/i.test(n) && cat !== 'supps' ? `<span class="ebp-w">${icon('thermo', 13)} Warm raw milk very gently on low heat, only until it feels warm on your lip. Never boil it, or the good enzymes and bacteria are lost.</span>` : ''}</span>${x ? `<div class="sup-full">${suppSpec(x)}</div>` : ''}${cat === 'drinks' && /coffee/i.test(n) ? `<span class="sgt-st ebp-st"><b class="dotnum">1983</b><span><em>Morck</em>Coffee with a meal cut the iron absorbed from it by about 39%. Drunk an hour before the meal, it made no difference.<small>American Journal of Clinical Nutrition</small></span></span>` : ''}` };
   });
-  return `<p class="eb-lead">${C0[0]}</p>
+  return `${cat === 'supps' ? `<header class="sfc-h sup-h"><small><i style="background:${PH_HEX[phase]}"></i>${PHASES[phase].name} phase</small><h3>${(PHASE_FUNDAMENTALS[phase] || {}).t || 'For your phase'}</h3><p>${C0[0]}</p></header>` : `<p class="eb-lead">${C0[0]}</p>`}
       <div class="eb-grid" style="--t1:${t1};--t2:${t2}">${items.map((x, i) => `<button class="eb-i ${i ? '' : 'on'}" data-action="ebPick" style="--i:${i}"><span class="eb-b">${x.face}</span><small>${x.n.replace(/\s*\(.*\)$/, '')}</small><template>${x.panel}</template></button>`).join('')}</div>
       <div class="eb-panel"><div class="ebp-in" aria-live="polite">${items[0]?.panel || ''}</div>${warm && (cat === 'dairy' || cat === 'drinks') ? `<p class="eb-warm">${icon('sun', 13)} These days: everything warm or at room temperature, nothing iced.</p>` : ''}</div>
       ${cat === 'supps' ? `<p class="eg-note">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}.</p><button class="sup-all" data-action="nav" data-to="supp">All supplements: doses and studies ${icon('chevR', 14)}</button>` : ''}`;
