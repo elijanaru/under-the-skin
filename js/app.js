@@ -537,7 +537,7 @@ const READ_PHOTO = { 'letter-01': '1581714161666-dade083654ae', 'letter-02': '15
   'letter-12': '1640331703778-9aac4d988e26', 'four-phases': '1787822976738-d44fa2a85e4f', estrogen: '1544507888-56d73eb6046e', 'progesterone-pms': '1614088685112-0a760b71a3c8',
   'yin-yang': '1745864709009-457569a2aed1', iron: '1588168333986-5078d3ae3976', 'seed-cycling': '1651241587503-a874db54a1a7', brain: '1491975474562-1f4e30bc9468',
   sleep: '1522587750645-7e0e798b2b59', 'ovulation-signs': '1594790628624-9e563bea851d' };
-const READ_LOCAL = { 'four-phases': 'images/read-seasons.webp', 'letter-09': 'images/read-lilies.webp', 'eat-cycle': 'images/season-veg.webp', 'train-cycle': 'images/move-lift.webp', bloating: 'images/tea-ginger.webp' }; // our own photos: lilies opening, bud to bloom, like a cycle
+const READ_LOCAL = { 'letter-11': 'images/welcome-forest.jpg', 'four-phases': 'images/read-seasons.webp', 'letter-09': 'images/read-lilies.webp', 'eat-cycle': 'images/season-veg.webp', 'train-cycle': 'images/move-lift.webp', bloating: 'images/tea-ginger.webp' }; // our own photos: lilies opening, bud to bloom, like a cycle
 function readPic(x, w = 900) {
   if (READ_LOCAL[x.id]) return READ_LOCAL[x.id];
   const u = READ_PHOTO[x.id]; if (u) return `https://images.unsplash.com/photo-${u}?w=${w}&h=${Math.round(w * 1.3)}&fit=crop&auto=format&q=70`;
@@ -558,10 +558,10 @@ function readsCard(info) {
   const list = (letter && !read[letter.id] ? [letter, ...rest] : [...rest.slice(0, 1), ...(letter ? [letter] : []), ...rest.slice(1)]).slice(0, 8);
   const tag = x => x.month ? `Letter · ${MONTHS[x.month - 1]}` : x.phase ? `${PHASES[x.phase].name} phase` : 'Basics';
   return `${sectionTitle('Read', ['All reads', 'learn'])}
-    <div class="lt-track deck" data-dots="lt-dots">${list.map(x => { const u = readPic(x); return `<button class="lt" data-action="nav" data-to="article/${x.id}">
-      ${u ? `<img src="${u}" alt="" loading="lazy">` : glowArt('wave', 3)}<span class="lt-shade"></span>
-      <span class="lt-tag">${tag(x)}${!read[x.id] ? '<i>new</i>' : ''}</span>
-      <span class="lt-b"><b>${x.title}</b>${x.lead ? `<small>${x.lead}</small>` : ''}<span class="lt-cta">${icon('book', 14)} Read · ${x.mins} min</span></span></button>`; }).join('')}</div>
+    <div class="lt-track deck lt2-track" data-dots="lt-dots">${list.map(x => { const u = readPic(x, 700); return `<button class="lt2" data-action="nav" data-to="article/${x.id}">
+      <span class="lt2-ph">${u ? `<img src="${u}" alt="" loading="lazy" decoding="async">` : glowArt('wave', 3)}</span>
+      <span class="lt2-b"><span class="lt2-tag">${!read[x.id] ? '<i></i>' : ''}${tag(x)}${!read[x.id] ? ' · New' : ''}</span><b>${x.title}</b>${x.lead ? `<small>${x.lead}</small>` : ''}
+        <span class="lt2-go">${icon('book', 14)} Read · <em class="dotnum">${x.mins}</em> min ${icon('chevR', 14)}</span></span></button>`; }).join('')}</div>
     <div class="lt-dots" id="lt-dots">${list.map((_, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div>`;
 }
 document.addEventListener('scroll', e => { const t = e.target; if (t.classList?.contains('deck')) deckFx(t); }, true);
