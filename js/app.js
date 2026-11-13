@@ -2683,7 +2683,7 @@ function nourishBody(current) {
 // Blood-sugar tricks inside Nourish. Her own pattern shows only when her logs reveal one.
 const SUGAR_SYMPTOMS = ['Cravings', 'Fatigue', 'Dizziness'];
 // A real photo for each blood-sugar trick, with its emoji as a little badge.
-const SB_PIC = { fibre: () => foodPhoto('Aged kimchi (mugeunji)', 360), move: () => 'images/tile-walk.webp', acv: () => foodPhoto('Apples', 360), tea: () => teaPhoto('Green tea', 360, 240),
+const SB_PIC = { fibre: () => foodPhoto('Aged kimchi (mugeunji)', 360), move: () => 'images/fb/walk.webp', acv: () => foodPhoto('Apples', 360), tea: () => teaPhoto('Green tea', 360, 240),
   berberine: () => 'images/fb/magnesium.webp', d3mg: () => 'images/rhythm-sun.webp', minerals: () => foodPhoto('Oysters', 360), spices: () => teaPhoto('Cinnamon', 360, 240) };
 // Blood sugar card: three label-left value-right rows that follow her taps.
 function sugarSpec(on) {
