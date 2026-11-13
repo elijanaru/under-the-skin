@@ -5902,7 +5902,7 @@ function decorateStudies(v) { v.querySelectorAll('.tea-study .ts-i:not(.has-art)
 // Every hormone as a tile: the cycle hormones first, then the body's other messengers. Used on the Hormones page and in Insights > Learn.
 function hormoneGrids(info) {
   const tile = (x, i) => { const n = hxNow(x, info); return `<button class="hxt ${n.r > .66 ? 'hi' : n.r < .2 ? 'lo' : ''}" data-action="nav" data-to="hormones/${i}">
-      <span class="hxt-g">${x.g}</span><b>${x.n === 'Oestrogen' ? 'Estrogen' : x.n}</b><small class="hxt-s">${x.s}</small>
+      <span class="hxt-g">${x.g.replace(/\s*\(.*?\)/g, '').replace(/ glands?$/i, '')}</span><b>${x.n === 'Oestrogen' ? 'Estrogen' : x.n}</b><small class="hxt-s">${x.s}</small>
       ${MOL_BALL[x.n] || PROT_BALL[x.n] ? `<span class="hxt-mol" aria-hidden="true">${MOL_BALL[x.n] || protBall(x.n)}</span>` : hxRing(n.r, i)}
       <span class="hxt-now"><em>${n.word}${hxArrow(n.tr)}</em><span>${n.amt}</span></span></button>`; };
   const cyc = HORMONE_LIBRARY.map((x, i) => [x, i]).filter(([x]) => HX_KEY[x.n]), rest = HORMONE_LIBRARY.map((x, i) => [x, i]).filter(([x]) => !HX_KEY[x.n]);
@@ -7269,6 +7269,7 @@ function viewWorld(id) {
   </div>`;
 }
 
+const RD2_PIC = { 'seed-cycling': ['images/sf/pumpkin-seeds.webp'] };
 function viewInsights() {
   const { stats } = M, info = M.info;
   if (!info) return `${topbar('Insights')}<div class="pad"><p class="muted">Log a period to unlock insights.</p></div>`;
@@ -7336,9 +7337,10 @@ function viewInsights() {
   else body = `
     <span id="ins-hx"></span>${hormoneGrids(info)}
     ${sectionTitle('Guides')}
-    <div class="lg-grid">${[['relief', 'heart', 'Balance hormones', 'Step by step, fundamentals first'], ['breathe', 'leaf', 'Breathe', 'Calm in minutes'], ['tea', 'cup', 'Tea guide', 'For every need'], ['move', 'leaf', 'Move with your cycle', 'Lift, sprint or rest']].map(([to, g, t, sub], i) => `<button class="card glass lg-t" style="--i:${i}" data-action="nav" data-to="${to}"><span class="lg-g">${icon(g, 18)}</span><b>${t}</b><small>${sub}</small>${icon('chevR', 14)}</button>`).join('')}</div>
+    <div class="lg-grid lg2">${[['relief', 'images/forest-calm.jpg', 'Balance hormones', 'Step by step, fundamentals first'], ['breathe', 'images/tile-meditate.webp', 'Breathe', 'Calm in minutes'], ['tea', 'images/tea-ginger.webp', 'Tea guide', 'For every need'], ['move', 'images/tile-lift.webp', 'Move with your cycle', 'Lift, sprint or rest']].map(([to, img, t, sub], i) => `<button class="lg2-t" style="--i:${i}" data-action="nav" data-to="${to}"><img src="${img}" alt="" loading="lazy" decoding="async"><span><b>${t}</b><small>${sub}</small></span></button>`).join('')}</div>
     ${[info.phase].map(p => { const list = ARTICLES.filter(a => a.phase === p); return list.length ? `${sectionTitle(`Read now · ${PHASES[p].name}`)}
-      ${list.map(a => `<button class="card glass article-row" data-action="nav" data-to="article/${a.id}"><span class="art-ic ${read[a.id] ? 'done' : ''}">${icon(read[a.id] ? 'check' : 'book', 20)}</span><span class="art-t">${a.title}<small>${read[a.id] ? 'Read · ' : ''}${a.mins} min</small></span>${icon('chevR', 18)}</button>`).join('')}` : ''; }).join('')}`;
+      <section class="rd2" style="--pc:${PH_HEX[p]}">${list.map(a => `<button class="rd2-r" data-action="nav" data-to="article/${a.id}"><span class="rd2-p"><img src="${(ARTICLE_PIC[a.id] || RD2_PIC[a.id] || ['images/read-seasons.webp'])[0]}" alt="" loading="lazy" decoding="async">${read[a.id] ? `<i>${icon('check', 11, 2.4)}</i>` : ''}</span>
+        <span class="rd2-t"><b>${a.title}</b><small>${a.lead}</small><em>${icon('clock', 11)} ${a.mins} min read${read[a.id] ? ' · read' : ''}</em></span>${icon('chevR', 16)}</button>`).join('')}</section>` : ''; }).join('')}`;
   return `${topbar('Insights')}
   <div class="pad">
     <h1 class="page-h">${tab === 'patterns' ? 'Your <span>patterns</span>' : tab === 'learn' ? 'Learn your <span>hormones</span>' : 'Your <span>hormone cycle</span>'}</h1>
