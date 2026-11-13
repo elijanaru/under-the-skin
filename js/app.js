@@ -2264,20 +2264,29 @@ const SF_STUDY = {
   'Bissap (hibiscus)': ['McKay et al.', 2010, 'Three cups of hibiscus tea a day for 6 weeks lowered blood pressure in adults.'],
   'Extra virgin olive oil': ['Estruch et al.', 2018, 'A Mediterranean diet rich in extra virgin olive oil cut heart attacks and strokes by about 30%.'],
 };
+// the daily amount, short: "1 thumb fresh, in tea or soup…" → [1, thumb]; the full line stays in the sheet behind the tap
+function sfAmt(t) {
+  const s = String(t).split(/,|\. | in | into | on | with | stirred| soaked| simmered| chewed/)[0].replace(/\s*\(.*?\)/g, '').trim();
+  if (/half a fruit/i.test(s)) return ['½', 'fruit'];
+  const m = s.match(/^([\d½¼¾]+(?: to \d+)?)\s+(.+)$/), STOP = /^(small|fresh|toasted|and|ground|a|of|tea|day|or|tahini|dried|powder|few|times|week)$/i;
+  if (!m) return ['', (s.match(/pinch|handful/i) || [s])[0].toLowerCase()];
+  return [m[1].replace(' to ', '–'), m[2].split(' ').find(w => !STOP.test(w)) || ''];
+}
+const sfAmtHTML = t => { const [n, u] = sfAmt(t); return `<span class="sfc-am">${n ? `<b class="dotnum">${n}</b>` : ''}${u}</span>`; };
 const SF_TITLE = { menstrual: 'Warm & rebuild', follicular: 'Fresh & clear', ovulatory: 'Light & bright', luteal: 'Calm & steady' };
 function superInner(phase) {
   const S = SUPERFOODS[phase], warm = warmWindow(M.info);
   const list = S.list.filter(f => !(f[5] && myDiet() === 'vegan'));
   const pic = (f, e) => { const [file] = SF_CUT[f] || []; return file ? `<img src="images/sf/${file}.webp" alt="" loading="lazy" decoding="async">` : `<em>${e}</em>`; };
-  const item = (f, i) => `<button class="sfc-i" style="--i:${i}" data-action="sfPick" data-i="${i}" aria-expanded="false">${pic(f[1], f[0])}<b>${f[1]}</b>${(SF_CUT[f[1]] || [])[1] ? `<small>${SF_CUT[f[1]][1]}</small>` : ''}</button>`;
-  const gem = (g, i) => `<button class="sfc-i gem" style="--i:${i + list.length}" data-action="sfPick" data-g="${i}" aria-expanded="false">${pic(g[1], g[0])}<b>${g[1]}</b><small class="sfc-o">${g[2]}</small></button>`;
+  const item = (f, i) => `<button class="sfc-i" style="--i:${i}" data-action="sfPick" data-i="${i}" aria-expanded="false">${pic(f[1], f[0])}<b>${f[1]}</b>${(SF_CUT[f[1]] || [])[1] ? `<small>${SF_CUT[f[1]][1]}</small>` : ''}${sfAmtHTML(f[3])}</button>`;
+  const gem = (g, i) => `<button class="sfc-i gem" style="--i:${i + list.length}" data-action="sfPick" data-g="${i}" aria-expanded="false">${pic(g[1], g[0])}<b>${g[1]}</b><small>${g[2]}</small>${sfAmtHTML(g[4])}</button>`;
   return `<section class="sfc" data-phase="${phase}">
       <header class="sfc-h"><small><i style="background:${PH_HEX[phase]}"></i>${PHASES[phase].name} phase</small><h3>${SF_TITLE[phase]}</h3><p>${S.lead}</p></header>
       <div class="sfc-grid">${list.map(item).join('')}</div>
       ${S.gems ? `<div class="sfc-gh"><b>Hidden gems</b><small>Underrated, from Chinese medicine, Africa and the Mediterranean</small></div><div class="sfc-grid sfc-gems">${S.gems.map(gem).join('')}</div>` : ''}
       <div class="sfc-det" aria-live="polite" hidden></div>
       ${warm ? `<p class="sfc-warm">${icon('sun', 13)} These days: spices in warm food and drinks, nothing raw or iced.</p>` : ''}
-      <footer class="sfc-f"><span>Food-sized amounts</span><span>Ask your doctor if pregnant or on medication</span></footer>
+      <footer class="sfc-f"><span>Amounts are per day, food-sized</span><span>Ask your doctor if pregnant or on medication</span></footer>
     </section>`;
 }
 // Drinks as a white card of round photo tiles; a tap opens a spec sheet right under the row (when, how much, caffeine, serve),
@@ -7079,8 +7088,8 @@ const SEASON_SUPER = {
     ['Pomegranate', 'Pomegranate', 'Antioxidants', 'Ruby seeds full of polyphenols for skin and heart.', 'Sprinkle over salads, yoghurt or warm stews.', ''],
     ['Walnuts', 'Walnuts', 'Omega-3', 'Plant omega-3 for your mood as the days get shorter.', 'A small handful a day.', ''],
     ['Pumpkin seeds', 'Pumpkin seeds', 'Zinc & magnesium', 'For calm nerves, clear skin and softer PMS.', 'A toasted handful on soups or salads.', ''],
-    ['Turmeric', 'Turmeric', 'Soothing', 'The golden root for achy joints and cramps.', '½ tsp in warm milk with a pinch of black pepper.', 'Ask first if you take blood thinners.'],
-    ['Raw honey', 'Raw honey', 'Soothing', 'Coats a sore throat and calms a cough.', 'Stir into tea once it is drinkable, not boiling.', 'Never for babies under one.']],
+    ['Turmeric', 'Turmeric', 'Calms inflammation', 'The golden root for achy joints and cramps.', '½ tsp in warm milk with a pinch of black pepper.', 'Ask first if you take blood thinners.'],
+    ['Raw honey', 'Raw honey', 'Sore throats', 'Coats a sore throat and calms a cough.', 'Stir into tea once it is drinkable, not boiling.', 'Never for babies under one.']],
   Spring: [['Nettle', 'Young nettle', 'Iron & minerals', 'Fresh leaves full of iron, calcium and magnesium.', 'Steep as tea, or wilt into soup like spinach.', 'Wear gloves to pick it.'],
     ['Wild garlic', 'Wild garlic', 'Fresh greens', 'Garlicky leaves that wake up spring cooking.', 'Blend into pesto or stir into eggs.', 'Easy to mix up with lily of the valley. Buy it if unsure.'],
     ['Dandelion greens', 'Dandelion greens', 'Bitter greens', 'Bitter leaves that get bile and digestion going.', 'A few leaves in a salad with lemon.', ''],

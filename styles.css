@@ -12268,3 +12268,9 @@ html .sup2-r > .nu2-d { max-width: 104px; }
 .pf2 .pf-cta { background: #20301a; color: #fff; }
 .pf2 .pf-cta .ic { color: #fff; }
 .view .pf2 .card.glass .btn-light { background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(40% * var(--hs)) 93%) !important; color: #20301a !important; border: 0 !important; box-shadow: none !important; font-weight: 500; }
+
+/* Superfoods: the daily amount under each food, number in Doto, a soft phase-tint chip */
+.sfc-am { display: inline-flex; align-items: baseline; gap: 4px; margin-top: 7px; padding: 3px 10px 4px; border-radius: 999px; font-size: 12px; font-weight: 500; color: #20301a;
+  background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(40% * var(--hs)) 93%); }
+.sfc-am b.dotnum { font-size: 14px; font-weight: 400; letter-spacing: 0; text-transform: none; margin: 0; }
+html .sfc-i .sfc-am b.dotnum { font: 400 14px/1 'Doto', monospace !important; margin: 0 !important; }
