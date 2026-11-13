@@ -2279,12 +2279,18 @@ const DR_SUB = { menstrual: 'Hot drinks move blood and ease cramps. Keep your co
   ovulatory: 'Your peak days. Drink plenty, and a cool matcha or coconut water is perfect.', luteal: 'Steady blood sugar and calm evenings. Coffee with food, cacao and chamomile.' };
 const DR_TITLE = { menstrual: 'Warm cups', follicular: 'Fresh & light', ovulatory: 'Cool & hydrating', luteal: 'Calm & steady' };
 const drinkList = phase => warmChips(EAT_GUIDE[phase].cats.drinks[1], 'drinks', warmWindow(M.info) && phase === (M.info && M.info.phase)).map(([, n]) => n);
+// Every drink drawn in its own cup, glass or bowl (one hand-drawn set, same style as the food emoji).
+const DRINK_ART = [[/iced matcha/i, 'iced-matcha'], [/matcha latte/i, 'matcha-latte'], [/matcha/i, 'matcha'], [/coffee/i, 'coffee'], [/cacao/i, 'cacao'],
+  [/red date/i, 'red-date-tea'], [/raspberry leaf/i, 'raspberry-leaf-tea'], [/ginger/i, 'ginger-tea'], [/broth/i, 'broth'], [/lemon water/i, 'lemon-water'],
+  [/nettle/i, 'nettle-tea'], [/green juice/i, 'green-juice'], [/coconut water/i, 'coconut-water'], [/mineral water/i, 'mineral-water'], [/hibiscus/i, 'hibiscus-tea'], [/chamomile/i, 'chamomile-tea']];
+const drinkArt = n => { const m = DRINK_ART.find(([r]) => r.test(n)); return m ? `images/drinks/${m[1]}.svg` : ''; };
 function drinksInner(phase) {
   const C0 = EAT_GUIDE[phase].cats.drinks, warm = warmWindow(M.info) && phase === (M.info && M.info.phase);
   return `<section class="sfc drc" data-phase="${phase}">
       <header class="sfc-h"><small><i style="background:${PH_HEX[phase]}"></i>${PHASES[phase].name} phase</small><h3>${DR_TITLE[phase]}</h3><p>${DR_SUB[phase]}</p></header>
       <div class="sfc-grid">${drinkList(phase).map((n, i) => { const sp = DRINK_SPEC.find(([r]) => r.test(n)), pic = (EB_PIC.find(([r]) => r.test(n)) || [])[1]?.();
-        return `<button class="sfc-i" style="--i:${i}" data-action="drPick" data-i="${i}" aria-expanded="false">${pic ? `<img class="${pic.startsWith('images/') ? '' : 'rd'}" src="${pic}" alt="" loading="lazy" decoding="async">` : ''}<b>${n}</b>${sp ? `<small>${sp[1]}</small>` : ''}</button>`; }).join('')}</div>
+        const art = drinkArt(n), img = art || pic;
+        return `<button class="sfc-i" style="--i:${i}" data-action="drPick" data-i="${i}" aria-expanded="false">${img ? `<img class="${art ? 'drw' : img.startsWith('images/') ? '' : 'rd'}" src="${img}" alt="" loading="lazy" decoding="async">` : ''}<b>${n}</b>${sp ? `<small>${sp[1]}</small>` : ''}</button>`; }).join('')}</div>
       <div class="sfc-det" aria-live="polite" hidden></div>
       ${warm ? `<p class="sfc-warm">${icon('sun', 13)} These days: everything warm or at room temperature, nothing iced.</p>` : ''}
       <footer class="sfc-f"><span>Tap a drink for when and how much</span><span>Ask your doctor if pregnant or on medication</span></footer>
