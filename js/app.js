@@ -1825,16 +1825,16 @@ function viewLog() {
       <div class="bcl">${BLOOD_COL.map(([v, c]) => lgPick(l.bcol === v, 'bcol', v, false, 'bcl-o', `<i style="--c:${c}"></i><small>${v}</small>`)).join('')}</div>
       ${l.bcol ? `<p class="bcl-say">${BLOOD_COL.find(b => b[0] === l.bcol)?.[2] || ''}</p>` : ''}`
       : `<div class="lg-k">Discharge</div><p class="lg-why">${icon('spark', 12)}<span>Egg white marks your fertile days.</span></p>
-      <div class="tx">${DISCHARGE.filter(([v]) => v !== 'Clumpy').map(([v, e]) => lgPick(l.fluid === v, 'fluid', v, false, `tx-o${v === 'Egg white' ? ' fert' : ''}`, `<span>${e}</span><small>${v}</small>`)).join('')}</div>`}
+      <div class="tx">${DISCHARGE.filter(([v]) => v !== 'Clumpy').map(([v, e]) => lgPick(l.fluid === v, 'fluid', v, false, `tx-o${v === 'Egg white' ? ' fert' : ''}`, `<span>${logEmo(v, e)}</span><small>${v}</small>`)).join('')}</div>`}
       <div class="lg-k">Anything else</div><p class="lg-why">${icon('spark', 12)}<span>Flags what’s worth a doctor’s check.</span></p>
-      <div class="fl">${lgPick(l.fluid === 'Clumpy', 'fluid', 'Clumpy', false, 'fl-o', '<span>☁️</span>Clumpy', 'Clumpy')}${DOWN_EXTRA.map(([v, e]) => lgPick((l.down || []).includes(v), 'down', v, true, 'fl-o', `<span>${e}</span>${v}`)).join('')}</div>
+      <div class="fl">${lgPick(l.fluid === 'Clumpy', 'fluid', 'Clumpy', false, 'fl-o', '<span>☁️</span>Clumpy', 'Clumpy')}${DOWN_EXTRA.map(([v, e]) => lgPick((l.down || []).includes(v), 'down', v, true, 'fl-o', `<span>${logEmo(v, e)}</span>${v}`)).join('')}</div>
       <details class="lg-star"><summary><span class="lg-star-i" aria-hidden="true">✦</span>What counts as an unusual colour? ${icon('chevD', 13)}</summary>
         <div class="lg-star-b"><p><b>Discharge:</b> healthy is clear, white or cream. Green, yellow-green or grey, especially with a smell or itch, is unusual.</p>
         <p><b>Period:</b> bright red, dark red, brown and pink are all normal. Grey, or orange with a smell, is unusual.</p>
         <p>One odd day is rarely a worry. If it lasts more than a few days, see a doctor or pharmacist.</p></div></details>`,
     body: (() => { const lk = likelyToday(di), lkN = lk.map(([v]) => v), sym = l.symptoms || [];
-      return `${lk.length ? `<div class="lg-k">Likely today</div><div class="lk">${lk.map(([v, e]) => lgPick(sym.includes(v), 'symptoms', v, true, 'lk-o', `<span>${e}</span><small>${v}</small>`)).join('')}</div>` : ''}
-      ${BODY_GROUPS.map(([g, list]) => { const rest = list.filter(([v]) => !lkN.includes(v)); return rest.length ? `<div class="lg-k">${g}</div><div class="pl">${rest.map(([v, e]) => lgPick(sym.includes(v), 'symptoms', v, true, 'pl-o', `<span>${e}</span>${v}`)).join('')}</div>` : ''; }).join('')}`; })(),
+      return `${lk.length ? `<div class="lg-k">Likely today</div><div class="lk">${lk.map(([v, e]) => lgPick(sym.includes(v), 'symptoms', v, true, 'lk-o', `<span>${logEmo(v, e)}</span><small>${v}</small>`)).join('')}</div>` : ''}
+      ${BODY_GROUPS.map(([g, list]) => { const rest = list.filter(([v]) => !lkN.includes(v)); return rest.length ? `<div class="lg-k">${g}</div><div class="pl">${rest.map(([v, e]) => lgPick(sym.includes(v), 'symptoms', v, true, 'pl-o', `<span>${logEmo(v, e)}</span>${v}`)).join('')}</div>` : ''; }).join('')}`; })(),
     mind: ['Light', 'Heavy'].map(side => `<div class="lg-k">${side === 'Light' ? 'Feeling light' : 'Feeling heavy'}</div><div class="mb ${side === 'Light' ? 'up' : 'down'}">${MOOD_LIST.filter(([m]) => GOOD_FEELINGS.includes(m) === (side === 'Light')).map(([v, e], i) => {
       const on = (l.moods || []).includes(v); return `<button class="mb-b ${on ? 'on' : ''}" style="--i:${i}" data-action="logSet" data-field="moods" data-v="${esc(v)}" data-multi="1" aria-pressed="${on}"><span>${e}</span><small>${v}</small></button>`; }).join('')}</div>`).join(''),
     rest: `<div class="bt"><div class="bt-body">${[1, 2, 3, 4, 5].map(n => `<button class="bt-c ${l.energy >= n ? 'on' : ''}" data-action="logSet" data-field="energy" data-v="${n}" aria-label="Energy ${n} of 5" aria-pressed="${l.energy === n}"></button>`).join('')}</div><i class="bt-cap"></i></div>
@@ -1847,7 +1847,7 @@ function viewLog() {
       <div class="sx">${INTIMACY.filter(([n]) => n.startsWith('Sex,')).map(([v, e]) => { const on = (l.intim || []).includes(v); return `<button class="sx-c ${on ? 'on' : ''}" data-action="logSet" data-field="intim" data-v="${esc(v)}" data-multi="1" aria-pressed="${on}"><span>${e}</span><small>${v.endsWith('unprotected') ? 'Unprotected' : 'Protected'}</small></button>`; }).join('')}</div>
       <p class="lg-fine">Only you see this.</p>`,
     fuel: `<div class="lg-k">Food</div>${chips('intake', INTAKE.filter(([n]) => n === 'Raw & cold food'))}<div class="lg-k">Supplements & medicine <button class="link lg-more" data-action="nav" data-to="nutrients">Doses & food first ${icon('chevR', 11)}</button></div>${chips('supp', SUPPS)}`,
-    disrupt: `<p class="lg-fine top">These can shift your cycle.</p><div class="rt">${DISRUPTORS.filter(([n]) => ['Alcohol', 'Illness', 'Travel', 'Big stress', 'Shock or loss'].includes(n)).map(([v, e]) => lgPick((l.disrupt || []).includes(v), 'disrupt', v, true, 'rt-o', `<span>${e}</span><small>${v}</small>`)).join('')}</div>`,
+    disrupt: `<p class="lg-fine top">These can shift your cycle.</p><div class="rt">${DISRUPTORS.filter(([n]) => ['Alcohol', 'Illness', 'Travel', 'Big stress', 'Shock or loss'].includes(n)).map(([v, e]) => lgPick((l.disrupt || []).includes(v), 'disrupt', v, true, 'rt-o', `<span>${logEmo(v, e)}</span><small>${v}</small>`)).join('')}</div>`,
     note: `<textarea class="lg-note" rows="3" placeholder="Anything you want to remember about today…" data-input="log.notes">${esc(l.notes || '')}</textarea>`,
   };
   const total = Object.values(count).reduce((a, b) => a + b, 0);
@@ -1860,7 +1860,7 @@ function viewLog() {
     ${LOG_SECS.map(([id, e, t], i) => `<section class="lg-sec ${open[id] ? 'open' : ''}" style="animation-delay:${i * 40}ms">
       <button class="lg-head" data-action="logSec" data-s="${id}" aria-expanded="${!!open[id]}"><span class="lg-ic">${icon(e, 18)}</span><b>${t}</b>${count[id] ? `<small>${count[id]}</small>` : ''}<span class="lg-chev">${icon('chevR', 16)}</span></button>
       ${open[id] ? `<div class="lg-in">${inner[id]}</div>` : ''}</section>`).join('')}
-    <div class="lg-go"><button class="btn btn-light btn-block" data-action="nav" data-to="brain${isToday ? '' : '/' + k}" ${total ? '' : 'disabled'}>${total ? `Continue ${icon('chevR', 18)}` : 'Tap what fits today'}</button></div>
+    <div class="lg-go">${total ? `<button class="btn btn-light btn-block" data-action="nav" data-to="brain${isToday ? '' : '/' + k}">Continue ${icon('chevR', 18)}</button>` : `<p class="lg-hint"><span>${icon('hand', 16)}</span>Tap what fits today, then continue</p>`}</div>
   </div>`;
 }
 
@@ -2190,6 +2190,9 @@ function recipesFor(phase, info) {
 
 // ---------- nourish (structured, evidence-graded) ----------
 function evBadge() { return ''; } // evidence labels are hidden everywhere (the user's call); data keeps them
+// Check-in symptoms whose emoji was crude or unclear (a red dot for acne, bricks for constipation) get drawn icons in the same glossy style.
+const LOG_DRAWN = { Cramps: 'cramps', 'Pelvic pain': 'pelvic-pain', 'Joint pain': 'joint-pain', Constipation: 'constipation', Acne: 'acne', 'Brain fog': 'brain-fog', 'Unusual colour': 'unusual-colour' };
+const logEmo = (n, e) => LOG_DRAWN[n] ? `<img class="lg-emo" src="images/emoji/log-${LOG_DRAWN[n]}.svg" alt="">` : (e || LOG_EMOJI[n] || '•');
 function recentSymptoms() {
   const out = {};
   for (let i = 0; i < 4; i++) (getLog(C.iso(C.addDays(new Date(), -i))).symptoms || []).forEach(s => { out[s] = 1; });
@@ -4024,7 +4027,7 @@ function learnedCard() {
         ${tile('n', icon('bell', 15, 1.9), 'Next period', np.getDate(), '', n ? `Likely ${md(lo)} to ${md(hi)}` : (dn => dn > 1 ? `In ${dn} days` : dn === 1 ? 'Tomorrow' : 'Due now')(C.diffDays(np, M.today)), fmt(np, { month: 'short' }))}
         ${tile('o', icon('seed', 15, 1.9), 'Egg release', ov, '', `Fertile days ${Math.max(1, ov - 5)} to ${ov}${os.cd ? ', from your egg-white sign' : os.luteal ? ', from your check-ins' : ''}`, 'Day')}
       </div>
-      ${pats.length ? `<div class="lm-pats"><small>Your body’s habits</small>${pats.map(x => `<span class="lm-pat"><i>${LOG_EMOJI[x.name] || '•'}</i><b>${x.name}</b><em>${x.from === x.to ? `Day ${x.from}` : `Days ${x.from} to ${x.to}`}</em><small>${x.cyclesN} of your cycles</small></span>`).join('')}</div>` : ''}
+      ${pats.length ? `<div class="lm-pats"><small>Your body’s habits</small>${pats.map(x => `<span class="lm-pat"><i>${logEmo(x.name)}</i><b>${x.name}</b><em>${x.from === x.to ? `Day ${x.from}` : `Days ${x.from} to ${x.to}`}</em><small>${x.cyclesN} of your cycles</small></span>`).join('')}</div>` : ''}
       <p class="lm-foot">${icon('spark', 12)} The more you log, the more personal every prediction gets.</p></section>`;
 }
 function headsUpCard() {
@@ -4124,7 +4127,7 @@ function patternsSection() {
   const band = `<div class="pat2-band">${ranges.map(r => `<i style="flex:${r.to - r.from + 1};--c:${PH_HEX[r.key]}"><span>${{ menstrual: 'Period', follicular: 'Follicular', ovulatory: 'Egg', luteal: 'Luteal' }[r.key]}</span></i>`).join('')}</div>`;
   const rows = P.list.slice(0, 6).map(x => { const c = PH_HEX[x.phase];
     return `<div class="pat2-r" style="--c:${c}">
-      <div class="pat2-h"><span class="pat2-ic">${LOG_EMOJI[x.name] || '•'}</span><span class="pat2-t"><b>${x.name}</b><small>${x.from === x.to ? `Day ${x.from}` : `Days ${x.from} to ${x.to}`} · ${PHASES[x.phase].name}</small></span>
+      <div class="pat2-h"><span class="pat2-ic">${logEmo(x.name)}</span><span class="pat2-t"><b>${x.name}</b><small>${x.from === x.to ? `Day ${x.from}` : `Days ${x.from} to ${x.to}`} · ${PHASES[x.phase].name}</small></span>
         <span class="pat2-n"><b class="dotnum">${x.cyclesN}</b><small>cycles</small></span></div>
       <div class="pat2-strip">${x.days.slice(1, L + 1).map((v, i) => { const d = i + 1, pc = PH_HEX[C.phaseFor(d, L, M.stats.avgPeriod)];
         return `<i class="${v ? 'on' : ''} ${d === cdNow ? 'now' : ''}" style="--p:${pc};${v ? `opacity:${(.45 + .55 * v / x.max).toFixed(2)}` : ''}"></i>`; }).join('')}</div>
