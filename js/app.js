@@ -2476,8 +2476,13 @@ function plateSection(current, lite) {
 // The floating cup for a tea: matcha and green tea have their own 3D matcha bowl, the warm spice teas a chai cup, the rest a glass cup.
 const CHAI_RE = /ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i;
 const MATCHA_RE = /matcha|green tea/i;
-const teaCupImg = n => `images/${MATCHA_RE.test(n) ? 'cup-matcha' : CHAI_RE.test(n) ? 'cup-chai' : 'cup-glass'}.webp`;
-const teaCupAttr = n => /matcha/i.test(n) ? ' data-model="models/matcha.glb"' : /green tea/i.test(n) ? ' data-model="models/greentea.glb"' : '';
+// Every tea turns as the 3D cup that looks most like it: matcha, green tea, a mint cup for the green leafy teas,
+// the floral chamomile cup for the golden and red infusions. Milky drinks (chai, cacao, turmeric milk) keep their photo.
+const TEA_CUP = [[/matcha/i, 'matcha', 'cup-matcha'], [/green tea/i, 'greentea', 'cup-matcha'], [/chai|cacao|turmeric/i, '', 'cup-chai'],
+  [/mint|lemon balm|nettle|lemongrass|jasmine|tulsi|moringa/i, 'mint-tea', 'cup-mint'], [/./, 'chamomile', 'cup-chamomile']];
+const teaCup = n => TEA_CUP.find(([re]) => re.test(n || ''));
+const teaCupImg = n => `images/${teaCup(n)[2]}.webp`;
+const teaCupAttr = n => teaCup(n)[1] ? ` data-model="models/${teaCup(n)[1]}.glb"` : '';
 // Tea for today as a full recommendation: the floating cup, the tea and why.
 function plTea() {
   const td = TEA_DAY[M.info ? dayWindow(M.info) : 'rising'];
@@ -4530,22 +4535,29 @@ function reliefPick(w) {
 }
 // Today's dish on the Eat tile, one warm bowl for each part of her cycle, shown as a turning 3D model.
 const DISH_3D = {
-  pho: { model: 'models/pho.glb', img: 'images/dish-pho.webp', fit: 1.45 },
-  ramen: { model: 'models/soup.glb', img: 'images/dish-soup.webp', fit: 1.45 },
+  pho: { model: 'models/pho.glb', img: 'images/dish-pho.webp', fit: 1.45, heroFit: 1.25 },
+  ramen: { model: 'models/soup.glb', img: 'images/dish-soup.webp', fit: 1.45, heroFit: 1.25 },
   miso: { model: 'models/miso.glb', img: 'images/dish-miso.webp', fit: 1.2 },
-  stew: { model: 'models/stew.glb', img: 'images/dish-stew.webp', fit: 1.75 },
-  veg: { model: 'models/veg-plate.glb', img: 'images/dish-veg.webp', fit: 1.45, steam: 0 },
-  salmonSalad: { model: 'models/salad-a.glb', img: 'images/dish-salad-a.webp', fit: 1.45, steam: 0 },
-  greenSalad: { model: 'models/salad-b.glb', img: 'images/dish-salad-b.webp', fit: 1.45, steam: 0 },
+  stew: { model: 'models/stew.glb', img: 'images/dish-stew.webp', fit: 1.75, heroFit: 1.35 },
+  veg: { model: 'models/veg-plate.glb', img: 'images/dish-veg.webp', fit: 1.45, heroFit: 1.3, steam: 0 },
+  salmonSalad: { model: 'models/salad-a.glb', img: 'images/dish-salad-a.webp', fit: 1.45, heroFit: 1.3, steam: 0 },
+  greenSalad: { model: 'models/salad-b.glb', img: 'images/dish-salad-b.webp', fit: 1.45, heroFit: 1.3, steam: 0 },
   taco: { model: 'models/taco.glb', img: 'images/dish-taco.webp', fit: 1.2, tileFit: 1.4, heroFit: 1.55, elev: 0.5, steam: 0, hero: true },
   gyro: { model: 'models/gyro.glb', img: 'images/dish-gyro.webp', fit: 1.35, heroFit: 1.4, elev: 0.7, steam: 0, hero: true },
+  marrow: { model: 'models/marrow.glb', img: 'images/dish-marrow.webp', fit: 1.4, heroFit: 1.2, elev: 0.7, steam: 0, hero: true },
+  curry: { model: 'models/curry.glb', img: 'images/dish-curry.webp', fit: 1.4, heroFit: 1.3, elev: 0.9, hero: true },
+  steak: { model: 'models/steak.glb', img: 'images/dish-steak.webp', fit: 1.4, heroFit: 1.35, elev: 0.8, steam: 0, hero: true },
+  sweetPotato: { model: 'models/sweet-potato.glb', img: 'images/dish-sweet-potato.webp', fit: 1.4, heroFit: 1.3, elev: 0.85, steam: 0, hero: true },
 };
+// every dish model also turns at the top of its recipe page
+for (const k in DISH_3D) DISH_3D[k].hero = true;
 // Which 3D model looks most like today's recipe; no close match keeps the recipe's own photo.
 const DISH_MATCH = [
-  [/taco/i, 'taco'], [/gyro/i, 'gyro'],
-  [/salmon-salad|salmon salad/i, 'salmonSalad'], [/living-green-salad|green salad|crunch club/i, 'greenSalad'],
-  [/oxtail|stew|curry|iron-lentil-soup|lentil soup|squash.*soup|goulash|chili/i, 'stew'],
-  [/stir-fry|courgette-pesto|pesto noodles|rainbow|wraps|fajita/i, 'veg'],
+  [/taco/i, 'taco'], [/gyro/i, 'gyro'], [/marrow/i, 'marrow'], [/burger|steak/i, 'steak'],
+  [/\bdal\b|curry|chili/i, 'curry'], [/sweet-potato-bowl|tray-bake|tray bake|wedges/i, 'sweetPotato'],
+  [/salmon-salad|salmon salad/i, 'salmonSalad'], [/living-green-salad|green salad|crunch club|spring-green|lentil-tahini|lentil salad/i, 'greenSalad'],
+  [/oxtail|stew|iron-lentil-soup|lentil soup|squash.*soup|goulash/i, 'stew'],
+  [/stir-fry|courgette-pesto|pesto noodles|white-beans|rainbow|wraps|fajita/i, 'veg'],
   [/miso/i, 'miso'], [/ramen/i, 'ramen'], [/pho|bone-broth|bone broth/i, 'pho'],
 ];
 // matched on the recipe id as well as its name, so a dish keeps its model when it gets a new name
