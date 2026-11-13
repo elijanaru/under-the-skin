@@ -12371,3 +12371,18 @@ html .check-row.rci { grid-template-columns: 24px 28px 54px 1fr; gap: 8px; }
 .rci-e { width: 26px; height: 26px; display: grid; place-items: center; }
 .rci-e .emo { width: 24px; height: 24px; margin: 0 !important; position: static !important; font-size: 20px; line-height: 1; display: grid; place-items: center; object-fit: contain; transform: none; }
 .check-row.rci.on .rci-e { opacity: .45; }
+
+/* Five elements: one clean white card, hairline rows with solid ink step numbers, the why behind a tap */
+html .el5-card { padding: 4px 2px 0; border: 0; border-top: 1px solid rgba(32,48,26,.08); border-radius: 0; background: none; }
+html .el5-ct { padding: 12px 2px 4px; }
+html .el5-card ol { gap: 0; margin-top: 4px; }
+html .el5-card li { align-items: center; gap: 12px; padding: 11px 2px; border-top: 1px solid rgba(32,48,26,.07); font-size: 14.5px; }
+html .el5-card li:first-child { border-top: 0; }
+html .el5-card li i { width: 26px; height: 26px; border: 0; background: #20301a; color: #fff; font-family: var(--dot); font-weight: 900; font-size: 13px; box-shadow: 0 4px 10px -4px rgba(32,48,26,.5); }
+.el5-why { border-top: 1px solid rgba(32,48,26,.08); }
+.el5-why summary { list-style: none; display: flex; align-items: center; justify-content: space-between; padding: 13px 2px 2px; font-size: 14px; font-weight: 500; color: #20301a; cursor: pointer; }
+.el5-why summary::-webkit-details-marker { display: none; }
+.el5-why summary svg { color: rgba(32,48,26,.45); transition: transform .3s; }
+.el5-why[open] summary svg { transform: rotate(180deg); }
+html .el5-why p { margin: 8px 0 2px; padding: 10px 12px; border: 0; border-radius: 14px; background: color-mix(in srgb, var(--c) 8%, #fafaf8); font-size: 13px; line-height: 1.5; color: rgba(32,48,26,.8); animation: rise .45s ease both; }
+@media (prefers-reduced-motion: reduce) { .el5-why p { animation: none; } }

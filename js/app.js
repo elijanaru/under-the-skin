@@ -3801,7 +3801,7 @@ function el5(ph, k) {
     <div class="el5-row">${EL5.map(x => `<button class="${x.k === E.k ? 'on' : ''}" style="--c:${x.c}" data-action="el5" data-ph="${ph}" data-k="${x.k}" aria-pressed="${x.k === E.k}"><span><svg viewBox="0 0 44 44" aria-hidden="true">${EL5_ART[x.k]}</svg></span><b>${x.n}</b></button>`).join('')}</div>
     <div class="el5-card" style="--c:${E.c}"><div class="el5-ct"><span><svg viewBox="0 0 44 44" aria-hidden="true">${EL5_ART[E.k]}</svg></span><div><b>${E.n}</b><small>${E.s} · ${PHASES[ph].name} phase</small></div></div>
       <ol>${E.p[ph].map((t, i) => `<li><i>${i + 1}</i>${t}</li>`).join('')}</ol>
-      <p>${E.why}</p></div>
+      <details class="el5-why"><summary>Why ${E.n.toLowerCase()} helps ${icon('chevD', 13)}</summary><p>${E.why}</p></details></div>
   </section>`;
 }
 function viewReliefIndex() {
