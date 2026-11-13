@@ -12336,3 +12336,5 @@ html .rm-i { display: flex; align-items: center; gap: 10px; padding: 10px 12px 1
 .bph2-p small { font-size: 11px; color: rgba(32,48,26,.6); }
 .bph2-p b.dotnum { font-size: 13px; color: #20301a; }
 .bph2-e b { font-size: 24px; font-weight: 300; line-height: 1; color: rgba(32,48,26,.3); }
+.rm-make .rt-go { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 14px; background: #20301a; color: #fff; }
+.rm-make .rt-go .ic, .rm-make .rt-go svg { color: #fff; }

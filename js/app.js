@@ -7637,6 +7637,21 @@ function viewRecipe(id) {
     ${!media && RECIPE_PHOTOS[r.id]?.by ? `<p class="fine center">Photo: <a class="src" href="${RECIPE_PHOTOS[r.id].page}?utm_source=under_the_skin&utm_medium=referral" target="_blank" rel="noopener">${esc(RECIPE_PHOTOS[r.id].by)}</a> on <a class="src" href="https://unsplash.com/?utm_source=under_the_skin&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></p>` : ''}
   </div>`;
 }
+// what to have ready for each ritual: [amount, thing, emoji] (no list for the ones that need only you)
+const RIT_NEED = {
+  'foot-soak': [['5 slices', 'Fresh ginger', '🫚'], ['1 litre', 'Water', 'd:water'], ['1', 'Basin', '🪣'], ['1 pair', 'Warm socks', '🧦']],
+  'early-sleep': [['1 cup', 'Warm herbal tea', '🍵'], ['', 'A dim lamp', '🕯️']],
+  congee: [['1', 'Apple or pear', '🍐'], ['3 to 4', 'Red dates', 'e:red-dates'], ['1 tbsp', 'Goji berries', 'e:goji'], ['Pinch', 'Cinnamon', 'e:cinnamon'], ['1 slice', 'Ginger', '🫚'], ['1 tsp', 'Raw honey', '🍯'], ['A few', 'Walnuts', 'e:walnuts']],
+};
+const emoRaw = e => e.startsWith('e:') ? `<img class="emo" src="images/emoji/${e.slice(2)}.webp" alt="">` : e.startsWith('d:') ? `<img class="emo" src="images/emoji/${e.slice(2)}.svg" alt="">` : `<span class="emo">${e}</span>`;
+function ritualDo(r) {
+  const need = RIT_NEED[r.id] || [];
+  return `<section class="card glass rm-make">
+    <div class="rm-h"><h3>${need.length ? 'You need' : 'Do it'}</h3><span>${need.length ? `<b class="dotnum">${need.length}</b> things ` : ''}<b class="dotnum">${r.steps.length}</b> steps</span></div>
+    ${need.length ? `<div class="rm-is">${need.map(([q, n, e]) => `<div class="rm-i"><span class="rm-e">${emoRaw(e)}</span><span class="rm-it">${q ? `<b>${q}</b>` : ''}<span>${n}</span></span></div>`).join('')}</div>` : ''}
+    <ol class="rm-st">${r.steps.map(x => `<li><p>${x}</p></li>`).join('')}</ol>
+    <button class="pill-cta rt-go" data-action="timer" data-title="${esc(r.name)}" data-secs="${r.mins * 60}">${icon('play', 15)} Start the ${r.mins}-minute timer</button></section>`;
+}
 function viewRitual(id) {
   const r = RITUALS.find(x => x.id === id); if (!r) return viewMissing();
   return `<div class="pad sp2">
@@ -7644,9 +7659,7 @@ function viewRitual(id) {
       rows: [['Time', `${r.mins} min`], ['Your cycle', !M.info ? `${r.phases.length} phases` : r.phases.includes(M.info.phase) ? 'Good today' : `From ${PHASES[r.phases.find(p => PHASE_ORDER.indexOf(p) > PHASE_ORDER.indexOf(M.info.phase)) || r.phases[0]].name.toLowerCase()}`], ['Steps', `${r.steps.length}`]],
       lead: 'Why it helps', desc: r.why })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit(r.phases, M.info && M.info.phase)}</section>
-    ${sectionTitle('Steps')}
-    <section class="card glass">${r.steps.map((s, i) => `<div class="step"><span class="step-n">${i + 1}</span><p>${s}</p></div>`).join('')}</section>
-    <button class="btn btn-light btn-block" data-action="timer" data-title="${esc(r.name)}" data-secs="${r.mins * 60}">${icon('play', 16)} Start ${r.mins}-minute timer</button>
+    ${ritualDo(r)}
     ${remedyScience(r, RITUAL_SCIENCE, false)}
     ${(() => { const nx = RITUALS[(RITUALS.indexOf(r) + 1) % RITUALS.length]; return `<button class="card glass nu-next" data-action="nav" data-to="ritual/${nx.id}"><small>Next ritual</small><b>${nx.name}</b>${icon('chevR', 16)}</button>`; })()}
   </div>`;
