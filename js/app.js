@@ -2303,7 +2303,7 @@ function superInner(phase) {
 // [match, tag, when, how much, caffeine, study [author, year, finding] | null, caution]
 const DRINK_SPEC = [
   [/matcha/i, 'Calm focus', 'Morning, away from iron-rich meals', '1 to 2 cups, 1 tsp powder each', 'About 60 mg a cup', ['Haskell et al.', 2008, 'L-theanine with caffeine, as in matcha, sharpened attention more than caffeine alone.'], 'Like coffee, it slows iron uptake from a meal. Keep it an hour apart from iron-rich food.'],
-  [/coffee/i, 'Keep it', 'After breakfast, before 2 pm', '1 to 3 cups a day', 'About 95 mg a cup', ['Morck et al.', 1983, 'Coffee with a meal cut the iron absorbed from it by about 39%. An hour before the meal it made no difference.'], 'Pregnant or trying: keep to 200 mg caffeine a day, about 2 cups.'],
+  [/coffee/i, 'Focus', 'After breakfast, before 2 pm', '1 to 3 cups a day', 'About 95 mg a cup', ['Morck et al.', 1983, 'Coffee with a meal cut the iron absorbed from it by about 39%. An hour before the meal it made no difference.'], 'Pregnant or trying: keep to 200 mg caffeine a day, about 2 cups.'],
   [/cacao/i, 'Magnesium', 'Afternoon, before 4 pm', '1 to 2 tbsp raw cacao in warm milk', 'A little, mostly gentle theobromine', null, 'It lifts you gently, like weak coffee. Have it earlier if you sleep lightly.'],
   [/red date/i, 'Builds blood', 'Your period and the week after', '5 to 6 dates simmered in 2 cups of water', 'None', null, 'Naturally sweet. Go easy with diabetes.'],
   [/ginger/i, 'Warming', 'Day 1 to 3 of your period', '2 to 3 cups, a thumb of fresh root each', 'None', ['Ozgoli et al.', 2009, '250 mg ginger four times a day eased period pain as well as ibuprofen.'], 'Ask first if you take blood thinners or have surgery coming up.'],
@@ -2324,6 +2324,11 @@ const drinkList = phase => warmChips(EAT_GUIDE[phase].cats.drinks[1], 'drinks', 
 const DRINK_ART = [[/iced matcha/i, 'iced-matcha'], [/matcha latte/i, 'matcha-latte'], [/matcha/i, 'matcha'], [/coffee/i, 'coffee'], [/cacao/i, 'cacao'],
   [/red date/i, 'red-date-tea'], [/raspberry leaf/i, 'raspberry-leaf-tea'], [/ginger/i, 'ginger-tea'], [/broth/i, 'broth'], [/lemon water/i, 'lemon-water'],
   [/nettle/i, 'nettle-tea'], [/green juice/i, 'green-juice'], [/coconut water/i, 'coconut-water'], [/mineral water/i, 'mineral-water'], [/hibiscus/i, 'hibiscus-tea'], [/chamomile/i, 'chamomile-tea']];
+// when to drink it, short, with a small time icon (the full when / how much sits in the sheet behind the tap)
+const DR_WHEN = [[/matcha/i, 'sun', 'Morning'], [/coffee/i, 'clock', 'Before 2 pm'], [/cacao/i, 'clock', 'Before 4 pm'], [/red date/i, 'drop', 'Period week'], [/ginger/i, 'drop', 'Period days 1 to 3'],
+  [/raspberry leaf/i, 'drop', 'Period & luteal'], [/broth/i, 'drop', 'Period days'], [/lemon/i, 'sun', 'On waking'], [/nettle/i, 'leaf', 'After your period'], [/green juice/i, 'sun', 'Morning'],
+  [/coconut water/i, 'sun', 'Hot or active days'], [/mineral water/i, 'clock', 'All day'], [/hibiscus/i, 'clock', 'Afternoon'], [/chamomile/i, 'moon', 'Evening']];
+const drWhen = n => { const w = DR_WHEN.find(([r]) => r.test(n)); return w ? `<span class="sfc-am dr-w">${icon(w[1], 12)}${w[2]}</span>` : ''; };
 const drinkArt = n => { const m = DRINK_ART.find(([r]) => r.test(n)); return m ? `images/drinks/${m[1]}.svg` : ''; };
 function drinksInner(phase) {
   const C0 = EAT_GUIDE[phase].cats.drinks, warm = warmWindow(M.info) && phase === (M.info && M.info.phase);
@@ -2331,7 +2336,7 @@ function drinksInner(phase) {
       <header class="sfc-h"><small><i style="background:${PH_HEX[phase]}"></i>${PHASES[phase].name} phase</small><h3>${DR_TITLE[phase]}</h3><p>${DR_SUB[phase]}</p></header>
       <div class="sfc-grid">${drinkList(phase).map((n, i) => { const sp = DRINK_SPEC.find(([r]) => r.test(n)), pic = (EB_PIC.find(([r]) => r.test(n)) || [])[1]?.();
         const art = drinkArt(n), img = art || pic;
-        return `<button class="sfc-i" style="--i:${i}" data-action="drPick" data-i="${i}" aria-expanded="false">${img ? `<img class="${art ? 'drw' : img.startsWith('images/') ? '' : 'rd'}" src="${img}" alt="" loading="lazy" decoding="async">` : ''}<b>${n}</b>${sp ? `<small>${sp[1]}</small>` : ''}</button>`; }).join('')}</div>
+        return `<button class="sfc-i" style="--i:${i}" data-action="drPick" data-i="${i}" aria-expanded="false">${img ? `<img class="${art ? 'drw' : img.startsWith('images/') ? '' : 'rd'}" src="${img}" alt="" loading="lazy" decoding="async">` : ''}<b>${n}</b>${sp ? `<small>${sp[1]}</small>` : ''}${drWhen(n)}</button>`; }).join('')}</div>
       <div class="sfc-det" aria-live="polite" hidden></div>
       ${warm ? `<p class="sfc-warm">${icon('sun', 13)} These days: everything warm or at room temperature, nothing iced.</p>` : ''}
       <footer class="sfc-f"><span>Tap a drink for when and how much</span><span>Ask your doctor if pregnant or on medication</span></footer>

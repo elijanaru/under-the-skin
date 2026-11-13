@@ -12305,3 +12305,5 @@ html .rm-i { display: flex; align-items: center; gap: 10px; padding: 10px 12px 1
 .view .card .stepper:not(.big) { background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(30% * var(--hs)) 95%); }
 .view .card .stepper:not(.big) button { background: #fff; color: #20301a; box-shadow: 0 1px 3px rgba(32,48,26,.14); font-weight: 400; }
 .view .card .stepper:not(.big) .num { color: #20301a; }
+.dr-w { align-items: center; gap: 5px; }
+.dr-w .ic, .dr-w svg { flex: none; color: color-mix(in srgb, hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 34%) 80%, #20301a); }
