@@ -4398,7 +4398,7 @@ function studyCards(study, cite) {
   const ss = study.split(/(?<=\.)\s+(?=[A-Z])/), cs = cite.split(' · ');
   const pairs = ss.length === cs.length ? ss.map((t, i) => [t, cs[i]]) : [[study, cite]];
   return `<div class="stc ${pairs.length === 1 ? 'one' : ''}">${pairs.map(([t, c], i) => { const y = (c.match(/\b(1[89]\d\d|20\d\d)\b/) || [])[1] || '', tag = (c.match(/\(([^)]+)\)/) || [])[1] || '', who = c.replace(/\([^)]*\)/g, '').replace(y, '').trim();
-    return `<article class="stc-c" style="--i:${i}"><div class="stc-h"><b class="dotnum">${y}</b><span>${who}${tag ? `<em>${tag}</em>` : ''}</span></div>${stcKey(t)}<p>${t}</p></article>`; }).join('')}</div>`;
+    return `<article class="stc-c" style="--i:${i}"><div class="stc-h"><b class="dotnum">${y}</b><span>${who}${tag ? `<em>${tag.charAt(0).toUpperCase() + tag.slice(1)}</em>` : ''}</span></div>${stcKey(t)}<p>${t}</p></article>`; }).join('')}</div>`;
 }
 // The study's key number as a graphic: two bars when it compares with placebo, one bar otherwise.
 function stcKey(t) {
