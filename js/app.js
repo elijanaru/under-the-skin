@@ -3586,14 +3586,27 @@ const FB_SPEC = {
   heat: ['Period days, at the first cramp', '20 minutes at a time', ['2001', 'Akin', 'A gentle heat patch on the lower belly eased period pain as well as ibuprofen did.', 'Obstetrics & Gynecology']],
   fascia: ['The days before your period', '3 to 5 minutes'],
   magnesium: ['Evening, the week before your period', '200 to 300 mg', ['1998', 'Walker', '200 mg magnesium a day eased bloating, swelling and breast tenderness in the second cycle.', 'Journal of Women’s Health']],
-  seeds: ['Every day, two halves of your cycle', '2 tbsp seeds'],
+  seeds: ['Every day, the seeds switch on day 15', '2 tbsp a day'],
 };
+// Seed cycling, made plain: the cycle as two halves, which seeds in each, and where she is today.
+function seedHalves() {
+  const info = M.info, L = info ? info.L : 28, h = Math.round(L / 2), cd = info ? Math.min(info.cd, L) : 0, first = !info || cd <= h;
+  const half = (on, from, to, phs, seeds) => `<div class="sdh-h ${on ? 'on' : ''}">
+      <div class="sdh-bar">${phs.map(p => `<i style="background:${PH_HEX[p]}"></i>`).join('')}</div>
+      <small>Day <b class="dotnum">${from}</b> to <b class="dotnum">${to}</b></small>
+      <em>${phs.map(p => PHASES[p].name).join(' & ')}</em>
+      <div class="sdh-s">${seeds.map(([k, n]) => `<span>${foodPhoto(k, 120) ? `<img src="${foodPhoto(k, 120)}" alt="" loading="lazy">` : ''}<b>1 tbsp</b>${n}</span>`).join('')}</div>
+      ${on && info ? `<strong>You, day <span class="dotnum">${cd}</span></strong>` : ''}</div>`;
+  return `<div class="sdh">${half(first, 1, h, ['menstrual', 'follicular'], [['Ground flaxseed', 'Flax, ground'], ['Pumpkin seeds', 'Pumpkin']])}${half(!first, h + 1, L, ['ovulatory', 'luteal'], [['Sesame seeds', 'Sesame'], ['Sunflower seeds', 'Sunflower']])}</div>`;
+}
 function fbDetail(i) {
   const x = FB[i], on = x.hb && habitsDone(todayISO()).includes(x.hb);
-  const [when, takes, st] = FB_SPEC[x.id] || [];
+  let [when, takes, st] = FB_SPEC[x.id] || [];
+  if (x.id === 'seeds') when = `Every day, switch on day ${Math.round((M.info ? M.info.L : 28) / 2) + 1}`;
   return `<img src="images/fb/${x.id}.webp" alt=""><div class="fbd-b"><b>${x.t}</b><p>${x.why}</p>
     ${when ? `<div class="fbd-spec"><p><span>${icon('clock', 13)} When</span><b>${when}</b></p><p><span>${icon('drop', 13)} Takes</span><b>${takes}</b></p></div>` : ''}
-    <ul>${x.do.map(d => `<li>${icon('check', 11, 2.6)}<span>${d}</span></li>`).join('')}</ul>
+    ${x.id === 'seeds' ? seedHalves() : ''}
+    <ul>${(x.id === 'seeds' ? x.do.slice(2) : x.do).map(d => `<li>${icon('check', 11, 2.6)}<span>${d}</span></li>`).join('')}</ul>
     ${st ? `<div class="sgt-st fbd-st"><b class="dotnum">${st[0]}</b><span><em>${st[1]}</em>${st[2]}<small>${st[3]}</small></span></div>` : ''}
     <span class="fbd-safe">${icon('heart', 12)} ${x.safe}</span>
     <div class="fbd-acts">${x.hb ? `<button class="fbd-hb ${on ? 'on' : ''}" data-action="fbHabit" data-id="${x.hb}" data-i="${i}" aria-pressed="${!!on}">${icon('check', 13, 2.6)} ${on ? 'Done today' : 'Add to my daily habits'}</button>` : ''}${x.to ? `<button class="fbd-go" data-action="nav" data-to="${x.to[0]}">${x.to[1]} ${icon('chevR', 13)}</button>` : ''}</div></div>

@@ -11917,3 +11917,18 @@ html .card.wk3 { background: #fff !important; padding: 16px 14px 14px !important
 .wk3-st > b { flex: none; font: 900 18px/1 Doto, monospace; color: #20301a; min-width: 44px; }
 .wk3-st i { display: block; margin-top: 4px; font-style: normal; font-size: 11.5px; color: rgba(32,48,26,.5); }
 @media (prefers-reduced-motion: reduce) { .wk3-w { transition: none; } }
+/* v949: seed cycling, the two halves of the cycle as a picture */
+.sdh { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0 6px; }
+.sdh-h { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 12px 10px 12px; border-radius: 18px; background: #f7f5f0; border: 1px solid transparent; }
+.sdh-h.on { background: #fff; border-color: #20301a; box-shadow: 0 6px 16px rgba(32,48,26,.10); }
+.sdh-bar { display: flex; gap: 3px; margin-bottom: 4px; }
+.sdh-bar i { flex: 1; height: 6px; border-radius: 99px; }
+.sdh-h small { font-size: 12px; color: rgba(32,48,26,.62); }
+.sdh-h small b { font: 900 13px/1 Doto, monospace; color: #20301a; }
+.sdh-h > em { font-style: normal; font-size: 12.5px; font-weight: 500; color: #20301a; line-height: 1.25; }
+.sdh-s { display: grid; gap: 6px; margin-top: 6px; }
+.sdh-s span { display: grid; grid-template-columns: 30px 1fr; grid-template-rows: auto auto; column-gap: 8px; align-items: center; font-size: 12px; color: rgba(32,48,26,.7); line-height: 1.15; }
+.sdh-s img { grid-row: 1 / span 2; width: 30px; height: 30px; border-radius: 50%; object-fit: cover; background: #eef1e6; }
+.sdh-s b { font-size: 12.5px; font-weight: 600; color: #20301a; }
+.sdh-h > strong { position: absolute; top: -9px; right: 10px; padding: 2px 8px; border-radius: 99px; background: #20301a; color: #fff; font-size: 10.5px; font-weight: 500; }
+.sdh-h > strong .dotnum { font: 900 10.5px/1 Doto, monospace; }
