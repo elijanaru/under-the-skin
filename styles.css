@@ -12365,3 +12365,9 @@ html .mg4-r p { color: rgba(32,48,26,.64); }
 /* Consistency: every numbered step badge is a solid ink circle with a white number (like How it works, the relief steps and the sugar steps) */
 html .tf2-ol i, html .st2-step span, html .st3-body .st2-step span { background: #20301a; color: #fff; font-family: var(--dot); font-weight: 900; font-size: 13px; box-shadow: 0 4px 10px -4px rgba(32,48,26,.5); }
 html .tf2-ol i .dotnum { color: #fff; font-weight: 900; }
+
+/* Recipe ingredients: the food's emoji between the amount and the name */
+html .check-row.rci { grid-template-columns: 24px 28px 54px 1fr; gap: 8px; }
+.rci-e { width: 26px; height: 26px; display: grid; place-items: center; }
+.rci-e .emo { width: 24px; height: 24px; margin: 0 !important; position: static !important; font-size: 20px; line-height: 1; display: grid; place-items: center; object-fit: contain; transform: none; }
+.check-row.rci.on .rci-e { opacity: .45; }

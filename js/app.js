@@ -7567,6 +7567,12 @@ function cycFoods(p) {
 const dietChanged = r => { const d = myDiet(); return d !== 'all' && (r.ingredients || []).some(x => dietLine(x, d) !== x); };
 const DAY_NEED = { Iron: [16, 'mg'], Zinc: [10, 'mg'], Magnesium: [300, 'mg'], Calcium: [950, 'mg'], Potassium: [3500, 'mg'], 'Vitamin C': [95, 'mg'], 'Vitamin A': [650, 'µg'], Folate: [330, 'µg'], 'Vitamin B12': [4, 'µg'], 'Vitamin B6': [1.6, 'mg'], Selenium: [70, 'µg'], Iodine: [150, 'µg'], 'Vitamin E': [11, 'mg'], 'Vitamin K': [70, 'µg'], 'Vitamin D': [15, 'µg'], Choline: [400, 'mg'], Copper: [1.3, 'mg'], 'Omega-3': [0.25, 'g'], 'Plant omega-3': [1.1, 'g'], Fibre: [25, 'g'], Riboflavin: [1.6, 'mg'], Sodium: [2000, 'mg'] };
 const ING_Q = /^((?:juice of\s+)?(?:\d+(?:[.,]\d+)?|[½¼¾⅓⅔])(?:\s*(?:to|-)\s*\d+)?\s*(?:[½¼¾])?\s*(?:(?:small |big )?handfuls?|g|kg|ml|l|cups?|tbsp|tsp|cloves?|slices?|pinch|thumb)?\b|(?:1\s+)?(?:small |big )?handful|1 pinch|a pinch)\s*/i;
+// Ingredient emoji: checked before FOOD_EMO so words inside other words never pick the wrong food (butter lettuce, yellow onion slivers, rosemary); '' = no emoji rather than a look-alike.
+const ING_EMO = [[/goji/i, 'e:goji'], [/ground beef/i, '🥩'], [/red dates|jujube/i, 'e:red-dates'], [/strawberr/i, '🍓'], [/(red|yellow|green|bell) pepper/i, '🫑'], [/cardamom/i, 'e:cardamom'], [/spring onion/i, 'd:spring-onion'], [/\bonions?\b|shallot/i, '🧅'], [/\bsalt\b/i, '🧂'],
+  [/rosemary|thyme|oregano|bay lea/i, '🌿'], [/prawn|shrimp/i, '🦐'], [/parmesan|cheddar|feta|cheese/i, '🧀'], [/squash|pumpkin(?! seed)/i, '🎃'],
+  [/lettuce|rocket|mixed leaves|bok choy/i, '🥬'], [/kimchi|sauerkraut/i, '🥬'], [/berries/i, '🫐'], [/bacon/i, '🥓'], [/hummus/i, '🫘'], [/\bcream\b/i, '🥛'],
+  [/mayonnaise|black pepper|cumin|paprika|curry|nutmeg|vanilla|nutritional yeast|tamari|mustard|toothpick|pickle|maple|dates/i, '']];
+const ingEmo = n => { const nm = String(n).replace(/\s*\(.*?\)/g, '').split(',')[0], pre = ING_EMO.find(([re]) => re.test(nm)); return pre ? pre[1] : ((FOOD_EMO.find(([re]) => re.test(nm)) || [, ''])[1]); };
 function recIngs(r) {
   const groups = [];
   r.ingredients.map(x => dietLine(x)).forEach((g, i) => { if (g === '' || g == null) return; const m = String(g).match(/^(Dressing|Salsa|Tortillas|Pesto|Salad|Drizzle|Glaze|Guacamole|Tzatziki|To serve|Optional):\s*(.*)$/i), head = m ? m[1] : '', t = m ? m[2] : String(g);
@@ -7574,7 +7580,7 @@ function recIngs(r) {
     const q = t.match(ING_Q), qty = q ? q[1].trim() : '', rest = q ? t.slice(q[0].length) : t;
     G.items.push({ i, qty: qty.charAt(0).toUpperCase() + qty.slice(1), name: qty ? rest : rest.charAt(0).toUpperCase() + rest.slice(1) }); });
   return groups.map(G => `${G.head ? `<div class="rci-h">${/^(Optional|To serve)$/i.test(G.head) ? G.head : `For the ${G.head.toLowerCase()}`}</div>` : ''}${G.items.map(x => { const k = r.id + x.i;
-    return `<button class="check-row rci ${ui.checked[k] ? 'on' : ''}" data-action="check" data-k="${k}"><span class="cb">${icon('check', 14, 2.2)}</span><b class="rci-q">${x.qty}</b><span class="rci-n">${x.name}</span></button>`; }).join('')}`).join('');
+    return `<button class="check-row rci ${ui.checked[k] ? 'on' : ''}" data-action="check" data-k="${k}"><span class="cb">${icon('check', 14, 2.2)}</span><span class="rci-e">${(e => e ? emoRaw(e) : '')(ingEmo(x.name))}</span><b class="rci-q">${x.qty}</b><span class="rci-n">${x.name}</span></button>`; }).join('')}`).join('');
 }
 function recMicro(r) {
   if (!r.micro) return '';
