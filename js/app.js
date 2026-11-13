@@ -1499,6 +1499,24 @@ function calTop(inf, fStart, nextOv, short) {
       <div class="cdial-w">${calDial(inf)}</div></div>
   </section>`;
 }
+// Outward energy over the cycle as one calm wave: low on the period, rising, peak at ovulation, turning inward. A dot marks today.
+const MIND_WAVE = { menstrual: 'Resting inward', follicular: 'Rising outward', ovulatory: 'At its most outward', luteal: 'Turning inward' };
+function mindWave(phase) {
+  const inf = M.info || {}, L = inf.L || 28, ov = (L - 14) / L, P = (inf.P || 5) / L;
+  const mid = { menstrual: P / 2, follicular: (P + ov - 0.06) / 2, ovulatory: ov, luteal: (ov + 1.06) / 2 }[phase];
+  const W = 300, Ht = 58, e = x => 0.5 - 0.5 * Math.cos(2 * Math.PI * (x - ov + 0.5)), y = x => 8 + (1 - e(x)) * (Ht - 16);
+  const pts = Array.from({ length: 61 }, (_, i) => i / 60), line = pts.map((x, i) => `${i ? 'L' : 'M'}${(x * W).toFixed(1)} ${y(x).toFixed(1)}`).join(' ');
+  const seg = [['Period', 0, P], ['Rising', P, ov - 0.06], ['Peak', ov - 0.06, ov + 0.06], ['Inward', ov + 0.06, 1]];
+  const cur = { menstrual: 0, follicular: 1, ovulatory: 2, luteal: 3 }[phase], t0 = inf.cd ? (inf.cd - 0.5) / L : -1;
+  const t = t0 >= seg[cur][1] && t0 <= seg[cur][2] ? t0 : mid;
+  return `<figure class="mg4-w" aria-label="Energy ${MIND_WAVE[phase].toLowerCase()}">
+    <figcaption><small>Your energy</small><b>${MIND_WAVE[phase]}</b></figcaption>
+    <div class="mg4-wv"><svg viewBox="0 0 ${W} ${Ht}" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="mg4g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--pc)" stop-opacity=".28"/><stop offset="1" stop-color="var(--pc)" stop-opacity="0"/></linearGradient></defs>
+      ${seg.slice(1).map(([, a]) => `<line x1="${a * W}" x2="${a * W}" y1="4" y2="${Ht}" class="mg4-sep"/>`).join('')}
+      <path d="${line} L${W} ${Ht} L0 ${Ht}Z" fill="url(#mg4g)"/><path d="${line}" class="mg4-ln" vector-effect="non-scaling-stroke"/></svg>
+    <i class="mg4-dot" style="left:${(t * 100).toFixed(1)}%;top:${(y(t) / Ht * 100).toFixed(1)}%"></i></div>
+    <div class="mg4-seg">${seg.map(([n, a, b], i) => `<span class="${i === cur ? 'on' : ''}" style="width:${((b - a) * 100).toFixed(1)}%">${n}</span>`).join('')}</div></figure>`;
+}
 // Her mind this phase (the cat superpower card, today's rings, work/social/self-care, the month, studies): top of the Calendar.
 function mindSection(phase, noFine) {
   const ph = PHASES[phase], P = PLAIN[phase];
@@ -1508,8 +1526,9 @@ function mindSection(phase, noFine) {
         <details class="rfx-why"><summary>What’s going on ${icon('chevD', 13)}</summary><p>${P.mind}</p></details></section>
       <section class="mg4" role="list" style="--pc:${PH_HEX[phase] || '#6c823e'}">
         <header class="mg4-h"><b>Your days right now</b><small>Work, people and you, in your ${ph.name.toLowerCase()} phase</small></header>
-        ${rows.map(([ic, o, k], i) => `<div class="mg4-r" role="listitem" style="--i:${i}"><span class="mg4-ic" aria-hidden="true">${icon(ic, 18, 1.8)}</span>
-          <div><em>${k}</em><b>${o.title}</b><p>${o.text}</p></div></div>`).join('')}</section>
+        ${mindWave(phase)}
+        <div class="mg4-l">${rows.map(([ic, o, k], i) => `<div class="mg4-r" role="listitem" style="--i:${i}"><span class="mg4-ic" aria-hidden="true">${icon(ic, 19, 1.9)}</span>
+          <div><em>${k}</em><b>${o.title}</b><p>${o.text}</p></div></div>`).join('')}</div></section>
       ${noFine ? '' : '<p class="fine center">Low mood that stays, or PMS that takes over your life, is worth a doctor’s visit.</p>'}`;
 }
 function viewCalendar() {

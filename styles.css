@@ -12007,3 +12007,29 @@ html .pld-foods .pld-emo img.emo { width: 42px; height: 42px; object-fit: contai
 html .drc .sfc-i img.drw { width: 104px; height: 104px; max-width: 104px; margin: 7px auto; padding: 14px; border-radius: 50%; object-fit: contain; background: #fff; filter: none; box-shadow: 0 8px 18px rgba(32,48,26,.12), 0 0 0 1px rgba(48,64,35,.06); box-sizing: border-box; }
 html .drc .sfc-grid > .sfc-i:last-child:nth-child(odd) { grid-column: 1 / -1; justify-self: center; width: 50%; }
 html .drc .sfc-det img.drw { width: 76px; height: 76px; padding: 10px; border-radius: 50%; object-fit: contain; background: #fff; box-sizing: border-box; filter: none; box-shadow: 0 6px 14px rgba(32,48,26,.12); }
+/* Your days right now (13 Nov 2026): energy wave + soft tinted tiles with solid phase icons */
+html .mg4 { padding: 18px 16px 16px; border-radius: 30px; background: rgba(255,255,255,.97); border: 1px solid rgba(48,64,35,.08); box-shadow: 0 1px 0 #fff inset, 0 18px 40px -14px color-mix(in srgb, var(--pc) 40%, transparent); }
+html .mg4-h { padding: 0 4px; }
+html .mg4-h b { font-size: 20px; font-weight: 500; letter-spacing: -.015em; color: #20301a; }
+html .mg4-h small { font-size: 13.5px; color: rgba(32,48,26,.56); }
+.mg4-w { position: relative; margin: 14px 0 12px; padding: 12px 14px 10px; border-radius: 22px; background: linear-gradient(180deg, color-mix(in srgb, var(--pc) 9%, #fff), #fff); border: 1px solid color-mix(in srgb, var(--pc) 16%, transparent); }
+.mg4-w figcaption { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+.mg4-w figcaption small { font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: rgba(32,48,26,.5); }
+.mg4-w figcaption b { font-size: 14.5px; font-weight: 500; color: color-mix(in srgb, var(--pc) 62%, #20301a); }
+.mg4-wv { position: relative; }
+.mg4-w svg { display: block; width: 100%; height: 58px; overflow: visible; }
+.mg4-w .mg4-ln { fill: none; stroke: color-mix(in srgb, var(--pc) 80%, #20301a); stroke-width: 2.2; stroke-linecap: round; }
+.mg4-w .mg4-sep { stroke: rgba(32,48,26,.12); stroke-width: 1; stroke-dasharray: 2 3; vector-effect: non-scaling-stroke; }
+.mg4-dot { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--pc); border: 3px solid #fff; box-shadow: 0 0 0 1px color-mix(in srgb, var(--pc) 40%, transparent), 0 4px 10px color-mix(in srgb, var(--pc) 45%, transparent); animation: mg4pulse 3.2s ease-in-out infinite; }
+@keyframes mg4pulse { 0%,100% { box-shadow: 0 0 0 1px color-mix(in srgb, var(--pc) 40%, transparent), 0 4px 10px color-mix(in srgb, var(--pc) 45%, transparent); } 50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--pc) 14%, transparent), 0 4px 10px color-mix(in srgb, var(--pc) 45%, transparent); } }
+.mg4-seg { display: flex; margin-top: 6px; }
+.mg4-seg span { display: flex; justify-content: center; font-size: 10.5px; color: rgba(32,48,26,.42); white-space: nowrap; }
+.mg4-seg span:first-child { justify-content: flex-start; }
+.mg4-seg span.on { color: #20301a; font-weight: 500; }
+.mg4-l { display: grid; gap: 8px; }
+html .mg4-r { gap: 13px; align-items: center; padding: 12px 14px 12px 12px; margin: 0 !important; border: 0; border-radius: 20px; background: color-mix(in srgb, var(--pc) 6%, #fafaf8); }
+html .mg4-ic { width: 42px; height: 42px; border-radius: 14px; background: linear-gradient(150deg, color-mix(in srgb, var(--pc) 78%, #fff), color-mix(in srgb, var(--pc) 92%, #20301a)); color: #fff; box-shadow: 0 6px 14px -6px color-mix(in srgb, var(--pc) 70%, transparent), 0 1px 0 rgba(255,255,255,.4) inset; }
+html .mg4-r em { font-size: 11px; letter-spacing: .07em; color: color-mix(in srgb, var(--pc) 66%, #20301a); }
+html .mg4-r b { font-size: 16px; font-weight: 500; margin-top: 1px; color: #20301a; }
+html .mg4-r p { font-size: 13px; line-height: 1.38; margin-top: 2px; color: rgba(32,48,26,.6); }
+@media (prefers-reduced-motion: reduce) { .mg4-dot { animation: none; } }
