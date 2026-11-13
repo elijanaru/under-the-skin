@@ -12194,3 +12194,16 @@ img.lg-emo { display: block; width: 22px; height: 22px; object-fit: contain; }
 .pat2-ic img.lg-emo, .lm-pat i img.lg-emo { width: 22px; height: 22px; margin: auto; }
 .lg-hint { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0; padding: 14px 18px; border-radius: 999px; background: rgba(255,255,255,.92); border: 1px dashed rgba(48,64,35,.22); font-size: 14px; color: rgba(32,48,26,.72); }
 .lg-hint span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #20301a; color: #fff; flex: none; }
+/* Tea, Brew it right (13 Nov 2026): four small gauges instead of four text rows */
+.bg4 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.bg4-t { display: flex; flex-direction: column; padding: 14px 14px 13px; border-radius: 24px; background: rgba(255,255,255,.97); border: 1px solid rgba(48,64,35,.08); box-shadow: 0 12px 28px -18px rgba(48,64,35,.45); color: #20301a; animation: rise .55s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i) * 60ms); }
+.bg4-k { font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: rgba(32,48,26,.5); }
+.bg4-v { display: flex; align-items: baseline; gap: 2px; min-height: 30px; margin: 4px 0 8px; }
+.bg4-v b.dotnum { font-size: 24px; font-weight: 400; }
+.bg4-v small { font-size: 12px; color: rgba(32,48,26,.55); }
+.bg4-v .bg-w { font-size: 17px; font-weight: 500; line-height: 1.2; align-self: center; }
+.bg4-t svg { display: block; width: 100%; height: auto; overflow: visible; }
+.bg4-t .bg-lb { font: 400 9.5px var(--font, Outfit), sans-serif; fill: rgba(32,48,26,.6); }
+.bg4-t p { margin: 9px 0 0; font-size: 12px; line-height: 1.38; color: rgba(32,48,26,.62); }
+@media (prefers-reduced-motion: reduce) { .bg4-t { animation: none; } }
+.tbr .bg4 { margin-top: 16px; }

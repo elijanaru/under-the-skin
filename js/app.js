@@ -5166,6 +5166,30 @@ function teaMoods(sel) {
     <div class="t4-d tmo-d" aria-live="polite">${teaMoodCard(sel)}</div>
   </section>`;
 }
+// Brew it right as four small gauges: the water heat on a 60 to 100 °C scale, the covered cup, the steep times on a 15 minute line, the warm days around her period.
+function brewGrid(info) {
+  const pc = (info && PH_HEX[info.phase]) || '#6c823e', ink = '#20301a', mute = 'rgba(32,48,26,.18)';
+  const heat = `<svg viewBox="0 0 150 46" aria-hidden="true"><rect x="6" y="20" width="138" height="6" rx="3" fill="${mute}"/><rect x="6" y="20" width="138" height="6" rx="3" fill="url(#bgh)"/>
+    <defs><linearGradient id="bgh"><stop offset="0" stop-color="#9cc0d6"/><stop offset=".55" stop-color="#e9b45a"/><stop offset="1" stop-color="#d9603f"/></linearGradient></defs>
+    ${[[75.5, 'Green'], [144, 'Herbs']].map(([x, l]) => `<circle cx="${x - (x > 140 ? 3 : 0)}" cy="23" r="7" fill="#fff" stroke="${ink}" stroke-width="2"/><text x="${x - (x > 140 ? 3 : 0)}" y="44" text-anchor="${x > 140 ? 'end' : 'middle'}" class="bg-lb">${l}</text>`).join('')}
+    <text x="6" y="11" class="bg-lb">60°</text><text x="144" y="11" text-anchor="end" class="bg-lb">100°</text></svg>`;
+  const cover = `<svg viewBox="0 0 150 46" aria-hidden="true"><ellipse cx="75" cy="12" rx="34" ry="5" fill="${ink}"/><path d="M47 16h56l-5 22a6 6 0 0 1-6 5H58a6 6 0 0 1-6-5z" fill="#fff" stroke="${ink}" stroke-width="2"/>
+    <path d="M103 22h5a6 6 0 0 1 0 12h-6" fill="none" stroke="${ink}" stroke-width="2"/><path d="M62 33c0-6 6-6 6-12M75 33c0-6 6-6 6-12" fill="none" stroke="${pc}" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M85 19l-4 2 4 2" fill="none" stroke="${pc}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const x = m => 6 + m / 15 * 138;
+  const steep = `<svg viewBox="0 0 150 46" aria-hidden="true"><line x1="6" y1="30" x2="144" y2="30" stroke="${mute}" stroke-width="2"/>${[0, 5, 10, 15].map(m => `<line x1="${x(m)}" y1="27" x2="${x(m)}" y2="33" stroke="rgba(32,48,26,.35)" stroke-width="1.5"/><text x="${x(m)}" y="44" text-anchor="${m ? m === 15 ? 'end' : 'middle' : 'start'}" class="bg-lb">${m}</text>`).join('')}
+    <rect x="${x(5)}" y="8" width="${x(10) - x(5)}" height="9" rx="4.5" fill="${pc}"/><rect x="${x(10)}" y="19" width="${x(15) - x(10)}" height="9" rx="4.5" fill="#c98a4a"/>
+    <text x="${x(5) - 4}" y="16" text-anchor="end" class="bg-lb">Herbs</text><text x="${x(10) - 4}" y="27" text-anchor="end" class="bg-lb">Roots</text></svg>`;
+  const days = Array.from({ length: 9 }, (_, i) => i), dx = i => 10 + i * 16.2;
+  const warm = `<svg viewBox="0 0 150 46" aria-hidden="true"><rect x="${dx(1) - 7}" y="12" width="${dx(7) - dx(1) + 14}" height="16" rx="8" fill="#f6d9b8"/>
+    ${days.map(i => `<circle cx="${dx(i)}" cy="20" r="${i >= 4 && i <= 7 ? 5.5 : 3}" fill="${i >= 4 && i <= 7 ? '#c81e34' : i >= 1 && i <= 3 ? '#d9853f' : 'rgba(32,48,26,.25)'}"/>`).join('')}
+    <text x="${dx(1) - 6}" y="42" class="bg-lb">3 days before</text><text x="${dx(7) + 6}" y="42" text-anchor="end" class="bg-lb">period</text></svg>`;
+  const T = [['Water heat', '<b class="dotnum">80</b><small>° / </small><b class="dotnum">100</b><small>°C</small>', heat, 'Green tea and matcha at 80 °C, herbs, roots and spices at a full boil.'],
+    ['Cover the cup', '<b class="bg-w">Saucer on</b>', cover, 'A saucer on top keeps the healing oils in your tea, not in the air.'],
+    ['Steep long enough', '<b class="dotnum">5</b><small>–</small><b class="dotnum">15</b><small>min</small>', steep, 'Herbs 5 to 10 minutes, roots like ginger 10 to 15.'],
+    ['Around your period', '<b class="bg-w">Hot, never iced</b>', warm, 'From 3 days before your period until bleeding ends.']];
+  return `<div class="bg4" style="--pc:${pc}">${T.map(([t, v, g, d], i) => `<div class="bg4-t" style="--i:${i}"><small class="bg4-k">${t}</small><span class="bg4-v">${v}</span>${g}<p>${d}</p></div>`).join('')}</div>`;
+}
 function viewTea() {
   const info = M.info, w = info ? dayWindow(info) : 'rising', td = TEA_DAY[w], k = ui.teaK, G = k && TEA_GUIDE.find(x => x.k === k);
   const steep = (td[3].match(/\d+(?:–\d+)?\s*min/) || [''])[0], near = w === 'flow-start' || w === 'flow-end' || w === 'premenstrual';
@@ -5176,7 +5200,7 @@ function viewTea() {
 
     <section class="t4 tbr">
       <header class="t4-h"><small>Brew it right</small><h2>Four small things that make it work.</h2></header>
-      <dl class="t4-spec tbr-l">${[['thermo', 'Water heat', 'Green tea and matcha at 80 °C. Herbs, roots and spices at a full boil.'], ['cup', 'Cover the cup', 'A saucer on top keeps the healing oils in your tea, not in the air.'], ['clock', 'Steep long enough', 'Herbs 5 to 10 minutes, roots like ginger 10 to 15.'], ['drop', 'Warm around your period', 'Hot, never iced, from a few days before until bleeding ends.']].map(([ic, t, x]) => `<div><dt><span>${icon(ic, 17)}</span></dt><dd><b>${t}</b><small>${x}</small></dd></div>`).join('')}</dl>
+      ${brewGrid(info)}
     </section>
     <p class="fine center">Herbal teas are gentle support, not medicine. Pregnant, on medication or unsure? Ask your doctor or midwife first.</p>
   </div>`;
