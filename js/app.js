@@ -3679,7 +3679,7 @@ function viewReliefIndex() {
   return `${topbar('Balance', { back: true })}
   <div class="pad hg fb">
     <section class="fbp" aria-label="Balance your hormones, step by step">
-      <div class="fbp-title"><h1>Balance your <span>hormones</span></h1><p>Start with the fundamentals. When they feel easy, add the next step. Tap any one for how and why.</p></div>
+      <div class="fbp-title"><h1>Balance your <span>hormones</span></h1><p>Start with the fundamentals. When they feel easy, add the next step.</p></div>
       ${(() => { let n = 0; return fbSteps(info).map(([t, sub, list], k) => `<div class="fbp-step"><span class="dotnum">${k + 1}</span><div><b>${t}</b><small>${sub}</small></div></div>
       <div class="fbp-g">${list.map(([x, i], pos) => fbItem(x, i, done, pos, ++n)).join('')}</div>`).join(''); })()}
       <div class="fbp-det" hidden></div>
@@ -4512,10 +4512,11 @@ const DISH_3D = {
   salmonSalad: { model: 'models/salad-a.glb', img: 'images/dish-salad-a.webp', fit: 1.45, steam: 0 },
   greenSalad: { model: 'models/salad-b.glb', img: 'images/dish-salad-b.webp', fit: 1.45, steam: 0 },
   taco: { model: 'models/taco.glb', img: 'images/dish-taco.webp', fit: 1.2, tileFit: 1.4, heroFit: 1.55, elev: 0.5, steam: 0, hero: true },
+  gyro: { model: 'models/gyro.glb', img: 'images/dish-gyro.webp', fit: 1.35, heroFit: 1.4, elev: 0.7, steam: 0, hero: true },
 };
 // Which 3D model looks most like today's recipe; no close match keeps the recipe's own photo.
 const DISH_MATCH = [
-  [/taco/i, 'taco'],
+  [/taco/i, 'taco'], [/gyro/i, 'gyro'],
   [/salmon-salad|salmon salad/i, 'salmonSalad'], [/living-green-salad|green salad|crunch club/i, 'greenSalad'],
   [/oxtail|stew|curry|iron-lentil-soup|lentil soup|squash.*soup|goulash|chili/i, 'stew'],
   [/stir-fry|courgette-pesto|pesto noodles|rainbow|wraps|fajita/i, 'veg'],
