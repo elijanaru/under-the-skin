@@ -12338,3 +12338,8 @@ html .rm-i { display: flex; align-items: center; gap: 10px; padding: 10px 12px 1
 .bph2-e b { font-size: 24px; font-weight: 300; line-height: 1; color: rgba(32,48,26,.3); }
 .rm-make .rt-go { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 14px; background: #20301a; color: #fff; }
 .rm-make .rt-go .ic, .rm-make .rt-go svg { color: #fff; }
+
+/* Blood sugar tricks: dose chip like the superfood amounts */
+.sb-t.sb-pic .sb-am { margin: 6px 0 0 6px; background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(40% * var(--hs)) 93%); }
+.sb-t.sb-pic small { flex: 1; }
+html .sb2 .sb-score b, html .sb2 .sb-spec .dotnum { font-family: var(--dot); font-weight: 900 !important; color: #20301a; }

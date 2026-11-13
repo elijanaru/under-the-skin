@@ -2683,8 +2683,8 @@ function nourishBody(current) {
 // Blood-sugar tricks inside Nourish. Her own pattern shows only when her logs reveal one.
 const SUGAR_SYMPTOMS = ['Cravings', 'Fatigue', 'Dizziness'];
 // A real photo for each blood-sugar trick, with its emoji as a little badge.
-const SB_PIC = { fibre: () => foodPhoto('Aged kimchi (mugeunji)', 360), move: () => 'images/tile-walk.webp', acv: () => foodPhoto('Apples', 360), tea: () => teaPhoto('Tea', 360, 240),
-  berberine: () => teaPhoto('Dandelion leaf', 360, 240), d3mg: () => 'images/rhythm-sun.webp', minerals: () => foodPhoto('Oysters', 360), spices: () => teaPhoto('Cinnamon', 360, 240) };
+const SB_PIC = { fibre: () => foodPhoto('Aged kimchi (mugeunji)', 360), move: () => 'images/tile-walk.webp', acv: () => foodPhoto('Apples', 360), tea: () => teaPhoto('Green tea', 360, 240),
+  berberine: () => 'images/fb/magnesium.webp', d3mg: () => 'images/rhythm-sun.webp', minerals: () => foodPhoto('Oysters', 360), spices: () => teaPhoto('Cinnamon', 360, 240) };
 // Blood sugar card: three label-left value-right rows that follow her taps.
 function sugarSpec(on) {
   const keep = sugarKeep(on), n = SUGAR_TRICKS.filter(t => on.includes(t.k)).length, next = SUGAR_TRICKS.filter(t => !on.includes(t.k) && t.k !== 'berberine').sort((a, b) => b.eff - a.eff)[0];
@@ -2707,7 +2707,7 @@ function sugarSection(phase) {
     ${sectionTitle('Blood sugar tricks', ['How they work', 'sugar'])}
     <section class="card sugar-big">
       ${[['before', '1', 'Before you eat'], ['with', '2', 'With your meal'], ['daily', '3', 'Every day']].map(([w, n, t]) => `<div class="sb-step"><div class="sb-sh"><span>${n}</span>${t}</div>
-        <div class="sb-grid">${SUGAR_TRICKS.filter(x => x.w === w).map(x => `<button class="sb-t sb-pic ${on.includes(x.k) ? 'on' : ''}" data-action="sugarTrick" data-v="${x.k}"><span class="sb-ph">${SB_PIC[x.k] ? `<img src="${SB_PIC[x.k]()}" alt="" loading="lazy">` : ''}<em>${icon(x.ic, 15, 1.9)}</em></span><b>${x.n}</b><small>${x.t}</small><i class="sb-ck">${icon('check', 14, 2.6)}</i></button>`).join('')}</div></div>`).join('')}
+        <div class="sb-grid">${SUGAR_TRICKS.filter(x => x.w === w).map(x => `<button class="sb-t sb-pic ${on.includes(x.k) ? 'on' : ''}" data-action="sugarTrick" data-v="${x.k}"><span class="sb-ph">${SB_PIC[x.k] ? `<img src="${SB_PIC[x.k]()}" alt="" loading="lazy">` : ''}<em>${icon(x.ic, 15, 1.9)}</em></span><b>${x.n}</b><small>${x.k === 'berberine' ? 'A capsule with a meal, ask your doctor first' : x.t}</small>${(([n, u]) => `<span class="sfc-am sb-am">${n ? `<b class="dotnum">${n}</b>` : ''}${u}</span>`)(SG_DOSE[x.k] || [0, ''])}<i class="sb-ck">${icon('check', 14, 2.6)}</i></button>`).join('')}</div></div>`).join('')}
     </section>`;
 }
 // Tricks overlap, so they don't simply add up: combined, the illustration caps the spike reduction at 50%.
