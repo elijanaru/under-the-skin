@@ -12361,3 +12361,7 @@ html .mg4-ic { width: 44px; height: 44px; border-radius: 50%; background: color-
 html .mg4-r em { color: rgba(32,48,26,.5); font-weight: 500; }
 html .mg4-r b { font-size: 16.5px; }
 html .mg4-r p { color: rgba(32,48,26,.64); }
+
+/* Consistency: every numbered step badge is a solid ink circle with a white number (like How it works, the relief steps and the sugar steps) */
+html .tf2-ol i, html .st2-step span, html .st3-body .st2-step span { background: #20301a; color: #fff; font-family: var(--dot); font-weight: 900; font-size: 13px; box-shadow: 0 4px 10px -4px rgba(32,48,26,.5); }
+html .tf2-ol i .dotnum { color: #fff; font-weight: 900; }
