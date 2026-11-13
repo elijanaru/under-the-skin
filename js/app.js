@@ -383,7 +383,7 @@ function tsViz(k) {
 }
 // An accent colour per Train safe check, so each card reads at a glance.
 // A real photo for each Train safe check, so each row reads at a glance.
-const TS_PIC = { fuel: () => photoUrl('sweet-potato-bowl', 300), iron: () => foodPhoto('Red meat', 300), bone: () => foodPhoto('Sardines', 300), knee: () => 'images/tile-sport.webp', heat: () => teaPhoto('Peppermint', 300, 300), protein: () => foodPhoto('Pasture eggs', 300) };
+const TS_PIC = { fuel: () => photoUrl('sweet-potato-bowl', 300), iron: () => foodPhoto('Red meat', 300), bone: () => foodPhoto('Sardines', 300), knee: () => 'images/mv/squat.webp', heat: () => teaPhoto('Peppermint', 300, 300), protein: () => foodPhoto('Pasture eggs', 300) };
 const TS_TINT = { fuel: '#c9822e', iron: '#b5485d', bone: '#5f7fa8', knee: '#7f9a4c', heat: '#d2693c', protein: '#8a6fb8' };
 function trainSafe() {
   const open = ui.tsOpen, x = TRAIN_SAFE.find(t => t[0] === open), ph = M.info && M.info.phase;
@@ -404,7 +404,7 @@ function trainSafe() {
     <p class="ts4-sub">Six things every woman who trains should know. Tap one for the why.</p>
     <div class="ts4">${list.map(t => { const [k, g, ti, , dos] = t, C = TS_TINT[k] || '#6c823e', pic = TS_PIC[k] ? TS_PIC[k]() : '';
       return `<button class="ts4-r ${k === open ? 'on' : ''}" style="--c:${C}" data-action="tsOpen" data-k="${k}" aria-expanded="${k === open}">
-        <span class="ts4-pic">${pic ? `<img src="${pic}" alt="" loading="lazy">` : ''}<i>${icon(g, 13)}</i></span>
+        <span class="ts4-pic">${pic ? `<img${pic.includes('/mv/') ? ' class="art"' : ''} src="${pic}" alt="" loading="lazy">` : ''}<i>${icon(g, 13)}</i></span>
         <span class="ts4-t"><b>${ti}</b><small>${dos[0]}</small>${focus(k) ? `<em class="now">${icon('spark', 11)} Matters now</em>` : always(k) ? '<em>Every phase</em>' : `<em class="later">${TRAIN_WHEN[k].map(p => PHASES[p].name).join(' & ')}</em>`}</span>
         <span class="ts4-go">${icon(k === open ? 'chevD' : 'chevR', 15)}</span></button>${k === open ? more(t) : ''}`; }).join('')}</div>
     <p class="ts-credit">${TRAIN_SAFE_CREDIT}</p>`;
@@ -8519,6 +8519,8 @@ const actions = {
   reset: () => { if (confirm('Delete all your Rhythm data from this device?')) { localStorage.removeItem(KEY); try { localStorage.removeItem(KEY + '.backup'); localStorage.removeItem('uts.pendingPartner'); } catch {} state = null; ui.onbStep = 0; go('today'); render(); } },
 };
 
+// A web photo that fails (offline, blocked host) gets a flag so its slot can show a tinted tile instead of a blank hole.
+document.addEventListener('error', e => { const t = e.target; if (t && t.tagName === 'IMG') t.classList.add('img-off'); }, true);
 document.addEventListener('click', e => {
   const el = e.target.closest('[data-action]');
   if (!el || el.disabled) return;
