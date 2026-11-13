@@ -1554,7 +1554,6 @@ function viewCalendar() {
       ${calDayLine(sd, si, slog, selLine, isFuture)}
       <button class="cal-editbtn" data-action="calEdit">${icon('drop', 15)} Edit period days</button>`}
     </section>
-    ${cycleBars()}
     ${events().some(e => e.date >= todayISO()) ? upcomingEvents() : ''}
     <details class="cal-sci"><summary><span class="cal-sci-ic">${icon('book', 16)}</span><span><b>What studies found</b><small>Your mind across the month, if you want the science</small></span>${icon('chevD', 16)}</summary>
       <div class="cal-sci-in">${MIND_SCIENCE.map(x => `<div class="mvs2"><b>${x.t}</b><p>${x.s}</p><cite>${x.c}</cite></div>`).join('')}</div></details>
