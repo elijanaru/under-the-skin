@@ -1585,10 +1585,11 @@ function cycleBars() {
       <div class="cyb-spec"><p><span><i class="p"></i>Period</span><b><span class="dotnum">${M.stats.avgPeriod}</span> days</b></p>
         <p><span><i></i>${nOk < 2 ? 'Full cycles so far' : 'Varies by'}</span><b>${nOk < 2 ? `<span class="dotnum">${nOk}</span> of <span class="dotnum">2</span> needed` : `±<span class="dotnum">${pm}</span> days`}</b></p>
         <p><span><i class="n"></i>Next period</span><b>${sd(info.nextStart)}</b></p></div>
-      <div class="cyb-rows" style="--avg:${pct(avg)};--b0:${pct(21)};--b1:${pct(Math.min(35, max))}"><span class="cyb-band" aria-hidden="true"><em>Healthy</em></span><span class="cyb-avg" aria-hidden="true"><em>usual <b>${avg}</b></em></span>${all.map(row).join('')}
-        <div class="cyb-ax" aria-hidden="true">${[[0, 'Day 1'], [14, 14], [21, 21], [28, 28], [35, 35]].filter(([n]) => n <= max && Math.abs(n - avg) > 3).map(([n, t]) => `<span class="${n ? '' : 'd1'}" style="left:${pct(n)}%">${t}</span>`).join('')}</div></div>
+      <div class="cyb-key" aria-hidden="true"><span><i class="hb"></i>Healthy range, 21 to 35 days</span><span><i class="av"></i>Your average</span></div>
+      <div class="cyb-rows cyb2" style="--avg:${pct(avg)};--b0:${pct(21)};--b1:${pct(Math.min(35, max))}"><span class="cyb-band" aria-hidden="true"></span><span class="cyb-avg" aria-hidden="true"></span>${all.map(row).join('')}
+        <div class="cyb-ax" aria-hidden="true">${[[0, 'Day 1'], [14, 14], [21, 21], [35, 35]].filter(([n]) => n <= max && Math.abs(n - avg) > 3).concat([[avg, avg, 'avg']]).map(([n, t, c]) => `<span class="${c || (n ? '' : 'd1')}" style="left:${pct(n)}%">${t}</span>`).join('')}</div></div>
       <div class="cyb-leg"><span><i class="cyb-p"></i>Period</span><span><i class="cyb-e"></i>Follicular</span><span><i class="cyb-f"></i>Fertile</span><span><i class="cyb-o"></i>Egg release</span><span><i class="cyb-l"></i>Luteal</span></div>
-      <div class="cyb-fact"><b class="dotnum">1/8</b><span><strong>cycles last exactly 28 days</strong>The average was 29, and anything from 21 to 35 is normal.<small>Bull 2019 · 600,000 cycles</small></span></div>
+      <div class="cyb-fact cyf2"><b class="dotnum">1/8</b><span><strong>cycles last exactly 28 days</strong>The average was 29, and anything from 21 to 35 is normal.<small>Bull 2019 · 600,000 cycles</small></span></div>
     </section>`;
 }
 

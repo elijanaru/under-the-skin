@@ -11840,3 +11840,19 @@ img.img-off { opacity: 0 !important; }
 .ts4-pic:has(img.img-off) i, .ts4-pic:not(:has(img)) i { inset: 0; margin: auto; width: 34px; height: 34px; right: auto; bottom: auto; border: 0; }
 .rn2 .rn-ph { background: #eef1e6; }
 .ts4-pic img.art { object-fit: cover; object-position: 40% 42%; background: #fff; box-shadow: 0 0 0 1px rgba(48,64,35,.10); }
+/* v941: Your last cycles, Apple-clean. Spec as hairline rows, labels out of the chart into a key, the average as a bold axis tick, the fact as a plain row */
+html .cyb-spec { background: none; padding: 0; margin: 12px 0 18px; border-top: 1px solid rgba(32,48,26,.09); border-bottom: 1px solid rgba(32,48,26,.09); border-radius: 0; }
+html .cyb-spec p { padding: 12px 0; }
+html .cyb-key { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0 0 12px; font: 400 12px/1.2 Outfit, sans-serif; color: rgba(32,48,26,.66); }
+html .cyb-key span { display: inline-flex; align-items: center; gap: 7px; }
+html .cyb-key i.hb { width: 14px; height: 10px; border-radius: 3px; background: rgba(108,130,62,.16); border: 1px dashed rgba(108,130,62,.55); }
+html .cyb-key i.av { width: 0; height: 12px; border-left: 1.5px dashed rgba(32,48,26,.6); }
+html .cyb2.cyb-rows { padding-top: 6px; padding-bottom: 24px; gap: 6px; }
+html .cyb2 .cyb-band { top: 0; bottom: 22px; }
+html .cyb2 .cyb-avg { top: 0; bottom: 18px; }
+html .cyb2 .cyb-ax span.avg { font: 900 11px/14px Doto, monospace; color: #20301a; background: #fff; padding: 0 3px; border-radius: 4px; }
+html .cyb-fact.cyf2 { background: none; border-radius: 0; padding: 14px 0 2px; margin-top: 16px; border-top: 1px solid rgba(32,48,26,.09); }
+html .cyb-fact.cyf2 > b { font-size: 30px; min-width: 64px; }
+html .cyb-key i.hb, html .cyb-key i.av { padding: 0 !important; margin: 0 !important; flex: none; align-self: center; position: static; display: block; box-sizing: border-box; }
+html .cyb-key i.hb { width: 16px !important; height: 10px !important; }
+html .cyb-key i.av { width: 0 !important; height: 12px !important; }
