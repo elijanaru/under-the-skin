@@ -507,17 +507,32 @@ function viewGround() {
       <p class="gr-caution">${icon('spark', 13)} ${GROUND_CAUTION}</p></section>
   </div>`;
 }
+// Ideas she can save straight from this page: today's tip for each of her focus areas first, then the rest.
+function savedIdeas() {
+  const info = M.info; if (!info) return [];
+  const ph = info.phase, to = k => (k === 'hormones' ? `article/${HORMONE_READ[ph]}` : TIP_TO[k]) || 'article/four-phases';
+  const keys = [...new Set([...focusKeys(), ...FOCUS.map(f => f.k)])];
+  return keys.map(k => { const f = FOCUS.find(x => x.k === k), d = f && TIP_DO[k] && TIP_DO[k][ph];
+    return d ? { id: regTip(`${k}-${ph}`, f.t, d, to(k)), t: f.t, a: d[0], w: d[3], photo: f.photo, to: to(k) } : null; })
+    .filter(x => x && !isSaved(x.id)).slice(0, 4);
+}
 function viewSaved() {
-  const L = state.savedTips || [];
+  const L = state.savedTips || [], ideas = savedIdeas(), ph = M.info ? M.info.phase : null;
+  const idea = x => `<div class="sv-iw"><button class="card sv-i" data-action="nav" data-to="${x.to}">
+      <span class="sv-ip">${hormonePhoto(x.photo, 240) ? `<img src="${hormonePhoto(x.photo, 240)}" alt="" loading="lazy">` : ''}</span>
+      <span class="sv-ib"><small>${x.t}</small><b>${x.a}</b><em><i>${icon('clock', 11)} ${x.w}</i>How and why ${icon('chevR', 12)}</em></span></button>${saveBtn(x.id, 'sv-ibtn')}</div>`;
   return `${topbar('Saved tips', { back: true })}
   <div class="pad sv">
-    <p class="sv-lead">${L.length ? `${L.length} ${L.length === 1 ? 'tip' : 'tips'} you can use any day. Tap the bookmark to remove one.` : 'Tap the bookmark on any tip and it lands here, ready to use.'}</p>
-    ${L.length ? L.slice().reverse().map(x => `<section class="card sv-c">
+    ${L.length ? `<p class="sv-lead">${L.length} ${L.length === 1 ? 'tip' : 'tips'} you can use any day. Tap the bookmark to remove one.</p>` + L.slice().reverse().map(x => `<section class="card sv-c">
       <div class="sv-h"><span class="sv-t">${x.t}</span>${saveBtn(x.id)}</div>
       <b class="sv-a">${x.a}</b>
       <ol class="sv-s">${x.s.map((st, i) => `<li><span>${i + 1}</span>${st}</li>`).join('')}</ol>
       <div class="sv-f"><span class="dos-w">${icon('clock', 12)} ${x.w}</span>${x.to ? `<button class="link" data-action="nav" data-to="${x.to}">Why it helps ${icon('chevR', 12)}</button>` : ''}</div>
-    </section>`).join('') : `<div class="sv-empty">${icon('save', 30, 1.4)}<b>Nothing saved yet</b><small>Tips on Today and across the app each have a bookmark.</small><button class="btn btn-dark" data-action="nav" data-to="today">See today’s tips</button></div>`}
+    </section>`).join('') : `<section class="sv-hero">
+      <span class="sv-mark" aria-hidden="true"><i></i><i></i><i>${icon('save', 26, 1.6)}</i></span>
+      <h2>Keep what works for you</h2>
+      <p>Tap the bookmark on a tip. It stays here, with its two steps, ready any day.</p></section>`}
+    ${ideas.length ? `${sectionTitle(L.length ? 'More for today' : `Ideas for your ${ph ? PHASES[ph].name.toLowerCase() : ''} days`)}<div class="sv-is">${ideas.map(idea).join('')}</div>` : ''}
   </div>`;
 }
 // Articles to read around today's tips: this phase first, then what she wants help with.

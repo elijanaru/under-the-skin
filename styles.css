@@ -11978,3 +11978,27 @@ html .pl-head .pl-han { font-family: 'Noto Serif SC', serif; }
 html .pld-foods .pld-emo { font-size: 34px; line-height: 1; background: rgba(255,255,255,.62); }
 html .pld-foods .pld-emo .emo { width: auto; height: auto; border: 0; box-shadow: none; background: none; border-radius: 0; display: block; font-size: inherit; }
 html .pld-foods .pld-emo img.emo { width: 42px; height: 42px; object-fit: contain; }
+
+/* Saved tips: a clear empty state (stacked bookmarks, headline, grey line) and ideas she can save in one tap */
+.sv-hero { text-align: center; padding: 22px 12px 8px; }
+.sv-mark { position: relative; display: block; width: 92px; height: 92px; margin: 0 auto 16px; }
+.sv-mark i { position: absolute; inset: 0; border-radius: 26px; display: grid; place-items: center; }
+.sv-mark i:nth-child(1) { transform: rotate(-13deg) translate(-16px, 5px); background: hsl(calc(var(--hb) + 20 * var(--hk)) calc(42% * var(--hs)) 78%); box-shadow: 0 8px 18px rgba(32,48,26,.12); }
+.sv-mark i:nth-child(2) { transform: rotate(10deg) translate(16px, 3px); background: #fff; border: 1px solid rgba(48,64,35,.12); box-shadow: 0 8px 18px rgba(32,48,26,.12); }
+.sv-mark i:nth-child(3) { background: #20301a; color: #fff; box-shadow: 0 14px 28px rgba(32,48,26,.22); }
+.sv-mark i:nth-child(3) svg path { fill: currentColor; }
+.sv-hero h2 { margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -.02em; color: #20301a; }
+.sv-hero p { margin: 8px auto 0; max-width: 290px; font-size: 15px; line-height: 1.45; color: rgba(48,64,35,.72); }
+.sv-is { display: grid; gap: 10px; }
+.sv-iw { position: relative; }
+.sv-i { width: 100%; display: grid; grid-template-columns: 64px 1fr; gap: 14px; align-items: center; padding: 12px 58px 12px 12px; text-align: left; background: rgba(255,255,255,.92); border: 1px solid rgba(48,64,35,.08); color: #20301a; font: inherit; }
+.sv-ip { width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: hsl(calc(var(--hb) + 10 * var(--hk)) calc(30% * var(--hs)) 88%); }
+.sv-ip img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sv-ib { display: grid; gap: 3px; min-width: 0; }
+.sv-ib small { font-size: 12px; color: rgba(48,64,35,.66); }
+.sv-ib b { font-size: 15.5px; font-weight: 600; line-height: 1.3; }
+.sv-ib em { font-style: normal; font-size: 12.5px; font-weight: 500; color: #4f6630; display: inline-flex; align-items: center; gap: 2px; }
+.sv-iw .sv-ibtn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); }
+.sv-iw .sv-ibtn:active { transform: translateY(-50%) scale(.9); }
+.sv-ib small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sv-ib em i { font-style: normal; display: inline-flex; align-items: center; gap: 3px; color: rgba(48,64,35,.62); font-weight: 400; margin-right: 8px; }
