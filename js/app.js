@@ -7409,9 +7409,14 @@ function viewInsights() {
     ${symptomTrend()}
     ${sectionTitle('By phase')}
     ${(phaseTiles.match(/class="bph bph-0/g) || []).length < 4 ? `<section class="bph-g">${phaseTiles}</section>
-    <p class="bph-k">From your check-ins: average energy, the mood and the symptom you logged most in each phase.</p>` : `<section class="card bph-empty">
-      <div class="bph-strip">${PHASE_ORDER.map(p => `<span class="${p === info.phase ? 'now' : ''}" style="--c:${PH_HEX[p]}"><i></i>${PHASES[p].name}</span>`).join('')}</div>
-      <p>Rate your energy and mood on a few days in each phase. Each one then shows your average energy, top mood and top symptom.</p>
+    <p class="bph-k">From your check-ins: average energy, the mood and the symptom you logged most in each phase.</p>` : `<section class="card bph-empty bph2">
+      <p class="bph2-l">A few check-ins in each phase fill these in: your average energy, top mood and top symptom.</p>
+      <div class="bph2-g">${PHASE_ORDER.map(p => { const n = (energyBy[p] || []).length, need = 3;
+        return `<div class="bph2-t ${p === info.phase ? 'now' : ''}" style="--c:${PH_HEX[p]}"><span class="bph-h"><i></i>${PHASES[p].name}${p === info.phase ? '<em>Now</em>' : ''}</span>
+          <span class="bph2-e"><b>–</b><small>/5 energy</small></span>
+          <span class="bph2-m">${[1, 2, 3, 4, 5].map(() => '<i></i>').join('')}</span>
+          <span class="bph2-c"><span>Mood</span><span>Symptom</span></span>
+          <span class="bph2-p"><span class="bph2-b"><i style="width:${Math.min(100, n / need * 100)}%"></i></span><small><b class="dotnum">${Math.min(n, need)}</b>/${need} check-ins</small></span></div>`; }).join('')}</div>
       <button class="pill-cta" data-action="nav" data-to="log">${icon('plus', 14)} Check in today</button></section>`}`;
   else body = `
     <span id="ins-hx"></span>${hormoneGrids(info)}
