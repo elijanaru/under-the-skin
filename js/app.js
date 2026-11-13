@@ -721,11 +721,11 @@ function cycleChart(info, { id = 'cc', compact = false, who = 'You' } = {}) {
         <line class="egg-line" x1="${ex.toFixed(1)}" y1="${top + 4}" x2="${ex.toFixed(1)}" y2="${ey - 8}"/>
         <g transform="translate(${ex.toFixed(1)} ${ey})"><circle class="egg-halo" r="10"/><ellipse class="egg-shell" rx="5" ry="6.4" cy="-.4"/><circle class="egg-yolk" r="2.3" cy=".6"/></g></g>`; })()}
       <g class="here">
-        <line x1="${mx}" x2="${mx}" y1="${top + 4}" y2="${bot - 4}" stroke="#fff" stroke-opacity=".55" stroke-dasharray="2 4"/>
-        <circle cx="${mx}" cy="${my}" r="12" fill="#fff" opacity=".18" class="pulse"/>
-        <circle cx="${mx}" cy="${my}" r="5.5" fill="#fff"/>
+        <line x1="${mx}" x2="${mx}" y1="${top + 24}" y2="${bot - 4}" stroke="#20301a" stroke-opacity=".35" stroke-width="1.2" stroke-dasharray="2 3"/>
+        <circle cx="${mx}" cy="${my}" r="11" fill="#20301a" opacity=".08" class="pulse"/>
+        <circle cx="${mx}" cy="${my}" r="5.5" fill="#fff" stroke="#20301a" stroke-width="2.2"/>
         <g transform="translate(${Math.min(Math.max(mx, 34), W - 34)} ${top + 16})">
-          <rect x="-30" y="-11" width="60" height="22" rx="11" fill="#fff"/>
+          <rect x="-30" y="-11" width="60" height="22" rx="11" fill="#20301a"/>
           <text y="4" text-anchor="middle" class="here-label">${who.toUpperCase()} · ${cd}</text>
         </g>
       </g>
@@ -741,6 +741,13 @@ function cycleChart(info, { id = 'cc', compact = false, who = 'You' } = {}) {
 }
 // One drawn arrow per hormone: where it is heading tomorrow (up, flat or down).
 const trArrow = tr => `<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform:rotate(${tr === 'rising' ? -40 : tr === 'falling' ? 40 : 0}deg)"><path d="M2.5 8h11M9 3.5 13.5 8 9 12.5"/></svg>`;
+// a tiny curve of one hormone across her whole cycle, today as a dot on it: where it is and where it goes next
+function roSpark(x, cd, L, P) {
+  const W = 120, H = 24, pts = [];
+  for (let d = 1; d <= L; d++) pts.push([(d - 1) / (L - 1) * W, H - 3 - C.hormonesRel(d, L, P)[x.key] * (H - 6)]);
+  const [tx, ty] = pts[Math.min(cd, L) - 1], line = pts.map(([px, py], i) => `${i ? 'L' : 'M'}${px.toFixed(1)} ${py.toFixed(1)}`).join('');
+  return `<svg viewBox="-4 0 ${W + 8} ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${line}L${W} ${H}L0 ${H}Z" fill="${x.color}" opacity=".1"/><path d="${line}" fill="none" stroke="${x.color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" opacity=".85" ${x.dash ? `stroke-dasharray="${x.dash}"` : ''}/></svg><i style="left:${((tx + 4) / (W + 8) * 100).toFixed(1)}%;top:${(ty / H * 100).toFixed(1)}%;background:${x.color}"></i>`;
+}
 function readout(cdRaw, L, P, isYou) {
   const cd = Math.min(cdRaw, L);
   const ph = C.phaseFor(cd, L, P), h = C.hormonesRel(cd, L, P), tcm = TCM[ph];
@@ -748,7 +755,7 @@ function readout(cdRaw, L, P, isYou) {
   const nx = C.hormonesRel(cd >= L ? 1 : cd + 1, L, P);
   const rows = HORMONES.map(x => {
     return `<div class="ro-row"><span class="ro-name"><svg width="16" height="8"><line x1="1" y1="4" x2="15" y2="4" stroke="${x.color}" stroke-width="2.2" stroke-linecap="round" ${x.dash ? `stroke-dasharray="${x.dash}"` : ''}/></svg>${x.name}</span>
-      <span class="ro-bar"><b style="width:${Math.max(6, Math.round(h[x.key] * 100))}%;background:${x.color}"></b></span>
+      <span class="ro-bar ro-sp">${roSpark(x, cd, L, P)}</span>
       <span class="ro-lvl">${(() => { const lv = C.hormoneLevel(h[x.key]), dv = nx[x.key] - h[x.key], d = dv > .03 ? 'rising' : dv < -.03 ? 'falling' : 'steady'; return `${lv} <em class="tr ${d}" aria-hidden="true">${trArrow(d)}</em>`; })()}</span></div>`;
   }).join('');
   return `<div class="ro-head"><div class="ro-phase">Day ${cdRaw} · ${PHASES[ph].name}</div></div>
