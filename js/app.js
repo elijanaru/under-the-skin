@@ -4559,6 +4559,17 @@ function sunTileArt(D, h, cur) {
 // What the light asks of her right now, in a few words (home Sun tile)
 const SUN_DO = { morning: ['Get outside', 'Morning light sets tonight’s sleep'], midday: ['Step into the sun', 'Midday UV makes your vitamin D'], afternoon: ['Take a light walk', 'Daylight keeps energy steady'],
   sunset: ['Watch the sunset', 'Warm light helps you slow down'], evening: ['Dim the lights', 'Low light lets melatonin rise'], night: ['Lights off, sleep', 'Dark nights mean deeper sleep'] };
+// Today's tea, the two things she needs: how long the leaves steep and when to drink it.
+const TEA_STEEP = {
+  'flow-start': ['10 min, simmered', 'Morning and afternoon'],
+  'flow-end': ['10 min', 'Between meals'],
+  rising: ['2 to 3 min at 80 °C', 'Before noon'],
+  building: ['No steeping, whisk at 80 °C', 'Before noon'],
+  peak: ['5 min', 'Afternoon, warm or cool'],
+  settle: ['10 min, covered', 'Afternoon or evening'],
+  focus: ['5 to 7 min', 'Morning and evening'],
+  premenstrual: ['10 min, covered', 'Evening, warm'],
+};
 function todayTiles(info, only) {
   const w = dayWindow(info), g = MOVE_GUIDE[w], [lvl] = CALM[w], ph = info.phase, warm = warmWindow(info);
   const best = MOVES.filter(m => g.r[m.k] === 3);
@@ -4573,8 +4584,9 @@ function todayTiles(info, only) {
     meditate: [icon('spark', 22), md[0], md[1], md[2], 'some'],
   };
   const tipBody = k => {
-    if (k === 'tea') return `<div class="hub-tip-in"><span class="ht-g">${icon('cup', 22)}</span><div><b>${td[1]}</b><p>${td[2]}</p><p class="ht-how">${icon('clock', 13)} ${td[3]}</p>${evBadge(td[4])}
-      <button class="link fn-more" data-action="nav" data-to="tea">Full tea guide · every problem ${icon('chevR', 12)}</button></div></div>`;
+    if (k === 'tea') { const [stp, when] = TEA_STEEP[w] || ['', ''];
+      return `<dl class="tst"><div><dt>${icon('clock', 16)} Steep</dt><dd>${stp}</dd></div><div><dt>${icon('sun', 16)} When</dt><dd>${when}</dd></div></dl>
+      <button class="tst-go" data-action="nav" data-to="tea">Full tea guide ${icon('chevR', 14)}</button>`; }
     if (k === 'eat') return `<div class="hub-tip-in stack"><div class="ht-head"><span class="ht-g">${icon('bowl', 22)}</span><div><b>${fn[0]}</b><p>${warm ? `${icon('thermo', 13)} Today: warm & cooked only. No raw or cold food.` : `${icon('leaf', 13)} Today: raw and fresh food is welcome, with some warm meals.`}</p></div></div><div>
       <div class="fcol"><span class="fcol-dots">${colDots(fm.col[0])}</span><div><small>Colour of the day</small><b>${fm.col[1]} foods</b><p>${fm.col[2]}</p><span>${fm.col[3]}</span></div></div>
       ${w === 'flow-start' || w === 'flow-end' ? phaseFoodPic('menstrual') : ''}<small class="fk">Meal ideas</small>
@@ -4972,14 +4984,15 @@ function cycleTeas(info) {
 }
 // Today's tea as a benefit wheel: the turning 3D cup in the middle, what it does for her all around it.
 const TEA_WHEEL = {
-  'flow-start': ['Eases cramps', 'Warms your belly', 'Settles nausea', 'Steadies blood sugar', 'Calms inflammation', 'Better circulation'],
-  'flow-end': ['Refills iron', 'Calcium & magnesium', 'Energy comes back', 'Strong hair & nails', 'Gentle every day', 'Caffeine free'],
-  rising: ['Calm focus', 'Antioxidants', 'Steady blood sugar', 'Kind to your heart', 'Supports metabolism', 'Gut friendly'],
-  building: ['Steady energy', 'Calm focus', 'Whole leaf antioxidants', 'Steady blood sugar', 'Supports metabolism', 'Clear, calm skin'],
-  peak: ['Cools you down', 'Vitamin C', 'Kind to your heart', 'Healthy blood pressure', 'Antioxidants', 'For glow days'],
-  settle: ['Calms restlessness', 'Better sleep', 'Lifts your mood', 'Eases tension', 'Easy digestion', 'Caffeine free'],
-  focus: ['Clearer skin', 'Balances androgens', 'Eases bloating', 'Easy digestion', 'Fresh and light', 'Caffeine free'],
-  premenstrual: ['Softens PMS', 'Ahead of cramps', 'Calms your nerves', 'Deeper sleep', 'Settles digestion', 'Warming'],
+  // each tea's own core benefits; no label repeats across teas
+  'flow-start': ['Eases cramps', 'Warms your belly', 'Settles nausea', 'Gets blood moving', 'Lighter heavy days', 'Calms sugar cravings'],
+  'flow-end': ['Refills iron', 'Calcium for bones', 'Strong hair & nails', 'Rich in vitamin K', 'Mild water flush', 'Energy comes back'],
+  rising: ['Calm alertness', 'Rich in antioxidants', 'Kind to your heart', 'Gentle caffeine', 'Fresh breath & gums', 'Skin sun defence'],
+  building: ['Long, smooth energy', 'Rich in L-theanine', 'The whole leaf', 'Fuels your workout', 'Sharper attention', 'No coffee crash'],
+  peak: ['Cools you down', 'Healthy blood pressure', 'Vitamin C glow', 'Deep red antioxidants', 'Quenches thirst', 'Caffeine free'],
+  settle: ['Calms restlessness', 'Better sleep', 'Lifts your mood', 'Clear head under stress', 'Soothes a nervous tummy', 'Eases a racing heart'],
+  focus: ['Clearer skin', 'Lowers androgens', 'Less unwanted hair', 'Eases bloating', 'Fresh breath', 'Light and minty'],
+  premenstrual: ['Softens PMS', 'Ahead of cramps', 'Eases anxiety', 'Deeper sleep', 'Relaxes a tight belly', 'Warm, never cold'],
 };
 function teaWheel(info, w, td, steep, near, inPage) {
   const R = 86, A = [0, 60, 120, 180, 240, 300];
