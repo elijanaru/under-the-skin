@@ -12307,3 +12307,13 @@ html .rm-i { display: flex; align-items: center; gap: 10px; padding: 10px 12px 1
 .view .card .stepper:not(.big) .num { color: #20301a; }
 .dr-w { align-items: center; gap: 5px; }
 .dr-w .ic, .dr-w svg { flex: none; color: color-mix(in srgb, hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 34%) 80%, #20301a); }
+
+/* Seven pillars: a round photo and the study's key number on each row */
+.hg-ph { flex: none; width: 48px; height: 48px; border-radius: 50%; overflow: hidden; background: #f3efe7; box-shadow: 0 0 0 1px rgba(48,64,35,.06); }
+.hg-ph img { width: 100%; height: 100%; object-fit: cover; }
+.hg-p .hg-pt { flex: 1; min-width: 0; }
+.hg-k { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 1px; text-align: right; }
+.hg-k b.dotnum { font-size: 17px; font-weight: 400; line-height: 1; color: color-mix(in srgb, var(--c) 75%, #20301a); white-space: nowrap; }
+.hg-k small { font-size: 10.5px; color: rgba(32,48,26,.5); white-space: nowrap; }
+.hg-p summary { gap: 12px; }
+.hg-k b.dotnum { color: color-mix(in srgb, var(--c) 50%, #20301a) !important; }

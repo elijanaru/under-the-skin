@@ -3812,7 +3812,7 @@ function viewReliefIndex() {
   const likely = [...new Set([...recent, ...(w ? RELIEF_WINDOW[w] : [])])].filter(k => RELIEF[k]).slice(0, 3);
   const chip = k => `<button class="rx2-chip" data-action="nav" data-to="relief/${encodeURIComponent(k)}"><img src="${reliefPhoto(k, 120)}" alt="">${k}${recent.has(k) ? '<i>logged</i>' : ''}</button>`;
   const done = habitsDone(todayISO()), H = habitsBlock();
-  const pillar = (P, i) => `<details class="hg-p" style="--c:${P.c};--i:${i}"><summary><span class="hg-pi">${icon(P.ic, 19, 1.8)}</span><span class="hg-pt"><b>${P.t}</b><small>${P.s}</small></span><span class="hg-pc">${icon('chevD', 16)}</span></summary>
+  const pillar = (P, i) => `<details class="hg-p" style="--c:${P.c};--i:${i}"><summary>${(() => { const X = HB_PIL_X[P.t] || [], src = typeof X[0] === 'function' ? X[0]() : X[0]; return src ? `<span class="hg-ph"><img src="${src}" alt="" loading="lazy" decoding="async"></span>` : `<span class="hg-pi">${icon(P.ic, 19, 1.8)}</span>`; })()}<span class="hg-pt"><b>${P.t}</b><small>${P.s}</small></span>${(HB_PIL_X[P.t] || [])[1] ? `<span class="hg-k"><b class="dotnum">${HB_PIL_X[P.t][1]}</b><small>${HB_PIL_X[P.t][2]}</small></span>` : ''}<span class="hg-pc">${icon('chevD', 16)}</span></summary>
       <div class="hg-pin"><ul>${P.do.map(x => `<li>${icon('check', 12, 2.6)}<span>${x}</span></li>`).join('')}</ul><p><b>Why it works</b>${P.why}</p>${P.st ? `<div class="hg-st"><small>What studies found</small><div class="sgt-st"><b class="dotnum">${P.st[2]}</b><span><em>${P.st[1]}</em>${P.st[0]}<small>${P.st[3]}</small></span></div></div>` : ''}</div></details>`;
   return `${topbar('Balance', { back: true })}
   <div class="pad hg fb">
@@ -6583,6 +6583,10 @@ const HB_PILLARS = [
   { ic: 'spark', c: '#b0703a', t: 'Fewer hormone disruptors', st: ['Teen girls who switched to make-up, shampoo and lotion free of phthalates and parabens had 27% to 45% less of them in their urine after only 3 days.', 'Harley', '2016', 'Environmental Health Perspectives'], s: 'Natural skin care, glass not plastic.', do: ['Natural cosmetics and no synthetic perfume', 'Glass or steel for hot food and drinks', 'Real food instead of ultra processed', 'Air out your home every day'], why: 'Some chemicals in fragrances, plastics and packaging act like weak estrogens in the body. You cannot avoid all of them, but small swaps add up.' },
   { ic: 'shell', c: '#4f7a2a', t: 'Build your hormones', st: ['In 259 healthy women followed over two cycles, more of one omega-3 fat (DPA) went with less than half the risk of a cycle without ovulation.', 'Mumford', '2016', 'American Journal of Clinical Nutrition'], s: 'They are made from fat and protein.', do: ['Egg yolks, butter, raw milk and good fats', 'Protein at every meal', 'Zinc and iron from red meat, liver (small portion) and seeds', 'Warm, cooked meals around your period'], why: 'Progesterone and estrogen are made from cholesterol. Enough fat, protein and minerals gives your body the raw material it needs every cycle.' },
 ];
+// a real photo and the study's key number for each pillar, so the list reads at a glance
+const HB_PIL_X = { 'Light & sleep': ['images/fb/sun.webp', '2 h', 'earlier clock'], 'Steady blood sugar': [() => foodPhoto('Eggs', 200), '−37%', 'sugar rise'],
+  'A calm nervous system': ['images/fb/breathe.webp', '45', 'trials'], 'Walks and strength': ['images/fb/walk.webp', '2–5', 'min walk'], 'Liver & gut': ['images/fb/carrot.webp', '250', 'women'],
+  'Fewer hormone disruptors': ['images/fb/fascia.webp', '−45%', 'in 3 days'], 'Build your hormones': ['images/fb/seeds.webp', '259', 'women'] };
 function hormoneLibrary() {
   return `${sectionTitle('Your hormones, explained')}
     <div class="fig-wrap lib"><canvas class="figure" data-focus="head"></canvas><span class="lib-cap">Glands from head to womb. Tap a hormone below</span></div>
