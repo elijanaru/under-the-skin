@@ -1589,8 +1589,9 @@ function viewCalendar() {
       <button class="cal-editbtn" data-action="calEdit">${icon('drop', 15)} Edit period days</button>`}
     </section>
     ${events().some(e => e.date >= todayISO()) ? upcomingEvents() : ''}
-    <details class="cal-sci"><summary><span class="cal-sci-ic">${icon('book', 16)}</span><span><b>What studies found</b><small>Your mind across the month, if you want the science</small></span>${icon('chevD', 16)}</summary>
-      <div class="cal-sci-in">${MIND_SCIENCE.map(x => `<div class="mvs2"><b>${x.t}</b><p>${x.s}</p><cite>${x.c}</cite></div>`).join('')}</div></details>
+    <section class="msd" style="--pc:${PH_HEX[(M.info || {}).phase] || '#6c823e'}"><header class="msd-h"><small>What studies found</small><h3>Your mind across the month</h3><p>Your abilities stay the same; energy and mood can shift. Swipe the studies.</p></header>
+      <div class="msd-deck" role="list">${MIND_SCIENCE.map((x, i) => { const yr = (x.c.match(/(19|20)\d{2}/) || [''])[0], who = x.c.slice(0, x.c.indexOf(yr)).trim(), jr = x.c.slice(x.c.indexOf(yr) + 4).replace(/^[\s,]+/, '');
+        return `<article class="msd-c" role="listitem"><div class="msd-top"><b class="dotnum">${yr}</b><span><small>${jr}</small><em>${i + 1} of ${MIND_SCIENCE.length}</em></span></div><h4>${x.t}</h4><p>${x.s}</p><cite>${who}</cite></article>`; }).join('')}</div></section>
     <p class="fine center">Low mood that stays, or PMS that takes over your life, is worth a doctor’s visit.</p>
   </div>
 `;
