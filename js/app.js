@@ -6824,6 +6824,19 @@ const RIT_META = {
   'Figs, dates & honeycomb': ['Afternoon', '2 min', 'l', '', 'Sweet: add a few nuts to keep your blood sugar steady.'],
   'Deep sleep': ['After sunset', 'All evening', 'l', ['People who slept under 6 hours were about 4 times more likely to catch a cold after exposure to the virus.', 'Prather 2015 (Sleep)'], ''],
 };
+// How to do each ritual as 2 to 4 short steps with an icon, and why as 2 or 3 short chips.
+const RIT_HOW = {
+  'Jujube & ginger tea': [[['bowl', '5 red dates, 3 slices of ginger'], ['drop', 'Cover with 2 cups of water'], ['thermo', 'Simmer 15 min, sip it warm']], ['Warms you', 'Builds Blood', 'Calms the evening']],
+  'Healing broth': [[['bowl', 'Bones or mushrooms and vegetables'], ['clock', 'Simmer gently for about 3 hours'], ['cup', 'Sip one warm mug a day']], ['Minerals', 'Easy to digest', 'Warming']],
+  'Overnight herbal infusion': [[['leaf', 'A handful of nettle and rosehips in a jar'], ['drop', 'Fill with hot water, close the lid'], ['moon', 'Steep overnight, strain, warm it up']], ['More minerals', 'Vitamin C', 'Ready by morning']],
+  'Warm feet': [[['thermo', 'A bowl of warm water with ginger slices'], ['clock', 'Soak your feet for 15 min'], ['moon', 'Wool socks on, straight to bed']], ['Warms you through', 'Fall asleep faster']],
+  'Honey bomb': [[['spark', 'Grate ginger and a little lemon zest'], ['bowl', 'Stir into raw honey with a pinch of cinnamon'], ['cup', 'A spoon in warm water, not boiling']], ['Soothes your throat', 'Calms a cough']],
+  'Blackstrap molasses': [[['cup', 'One spoon in warm milk or tea'], ['check', 'Once a day is enough']], ['Iron', 'Calcium', 'Magnesium']],
+  'Morning lemon & ginger': [[['sun', 'On waking, a mug of warm water'], ['spark', 'Half a lemon and a few slices of ginger'], ['drop', 'Rinse your mouth with water after']], ['Wakes digestion', 'A warm start']],
+  'Fire cider': [[['bowl', 'Chop garlic, onion, ginger, horseradish, chili, citrus'], ['drop', 'Cover with raw apple cider vinegar'], ['calendar', 'Steep 4 weeks, then stir in raw honey'], ['cup', 'One spoon a day, diluted, with food']], ['Warming', 'An old cold-season tonic']],
+  'Figs, dates & honeycomb': [[['bowl', '2 figs, 2 dates, a piece of honeycomb'], ['seed', 'Add a few nuts'], ['clock', 'In the afternoon']], ['Fibre', 'Iron', 'Steady energy']],
+  'Deep sleep': [[['sun', 'Dim the lights after sunset'], ['moon', 'Screens away an hour before bed'], ['clock', 'In bed before 11']], ['Fewer colds', 'Better mood']],
+};
 // Only the best ones for her phase: the rituals made for it (most specific first), topped up with an all-cycle one to fill the row, four at most.
 const ritList = () => {
   const ph = M.info ? M.info.phase[0] : '', all = AUTUMN_RITUALS.map((r, i) => ({ r, i, m: RIT_META[r[0]] || ['', '', 'mfol', '', ''] }));
@@ -8264,11 +8277,15 @@ const actions = {
     { const items = [...el.parentElement.querySelectorAll('.sfc-i')], k = items.indexOf(el); items[Math.min(items.length - 1, Math.floor(k / 2) * 2 + 1)].after(det); }
     const [n, how, why] = it.r, [when, takes, ph, st, care] = it.m, P = { m: 'Period', f: 'Follicular', o: 'Ovulation', l: 'Luteal' };
     const yr = st ? (st[1].match(/(19|20)\d{2}/) || [''])[0] : '';
-    det.innerHTML = `<img class="rd" src="${teaPhoto(n, 300, 300)}" alt=""><div><small class="sfc-o">${takes}</small><b>${n}</b><p>${why}</p>
-      <dl class="sr-spec"><div><dt>When</dt><dd>${when}</dd></div>${ph ? `<div><dt>Best in</dt><dd>${ph.length === 4 ? 'Any phase' : ph.split('').map(c => P[c]).join(' & ')}</dd></div>` : ''}</dl>
-      <span class="sfc-dose">${icon('cup', 12)} ${how}</span>
-      ${st ? `<span class="sr-st"><small>What studies found</small>${st[0]} <i>${st[1].replace(/\s*\(.*\)/, '')}${yr && !st[1].includes(yr) ? ` ${yr}` : ''}</i></span>` : ''}
-      ${care ? `<span class="sfc-care"><small>Before you try</small>${care}</span>` : ''}</div>
+    const H = RIT_HOW[n], PK = { m: 'menstrual', f: 'follicular', o: 'ovulatory', l: 'luteal' };
+    det.innerHTML = `<div class="rtd">
+      <div class="rtd-h"><img class="rd" src="${teaPhoto(n, 300, 300)}" alt=""><span><b>${n}</b><small>${icon('clock', 12)} ${takes} · ${when}</small></span></div>
+      ${H ? `<div class="rtd-why">${H[1].map(t => `<span>${icon('check', 11, 2.6)} ${t}</span>`).join('')}</div>` : `<p class="rtd-p">${why}</p>`}
+      <small class="rtd-k">How to do it</small>
+      ${H ? `<ol class="rtd-st">${H[0].map(([g, t], k) => `<li><i>${icon(g, 15)}</i><em class="dotnum">${k + 1}</em><span>${t}</span></li>`).join('')}</ol>` : `<p class="rtd-p">${how}</p>`}
+      ${ph ? `<small class="rtd-k">Best in your cycle</small>${phaseFit(ph.split('').map(c => PK[c]), M.info && M.info.phase)}` : ''}
+      ${st ? `<div class="rtd-study"><b class="dotnum">${yr}</b><span><small>What a study found</small>${st[0]}<i>${st[1].replace(/\s*(19|20)\d{2}/, '').replace(/\s*\((.*)\)/, ' · $1')}</i></span></div>` : ''}
+      ${care ? `<p class="rtd-care">${icon('bell', 13)} ${care}</p>` : ''}</div>
       <button class="bn-x" data-action="ritPick" data-i="${d.i}" aria-label="Close">${icon('close', 16)}</button>`;
     det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
     const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });

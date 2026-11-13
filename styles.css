@@ -11868,3 +11868,35 @@ html .cyb-key i.av { width: 0 !important; height: 12px !important; }
 html .uvw-win { font-size: 15px; line-height: 1.5; color: #3a2a20; }
 html .uvw-win b { font-weight: 600; color: #20301a; }
 html .uvw-win { margin: 14px 2px 10px; padding: 12px 14px; border-radius: 18px; background: rgba(255,255,255,.62); }
+/* v946: Balance tiles, every photo sits in the same box above the title and never overlaps the writing */
+html .pad.fb .fbp-ph { width: 100%; height: 92px; margin: 8px 0 6px; overflow: visible; }
+html .pad.fb .fbp-ph img { width: 96px; height: 84px; max-width: none; max-height: none; object-fit: contain; object-position: 50% 50%; }
+html .pad.fb .fbp-i:hover .fbp-ph img, html .pad.fb .fbp-i.on .fbp-ph img { transform: rotate(0deg) scale(1.04); }
+html .pad.fb .fbp-i b { margin-top: 4px; position: relative; z-index: 1; }
+/* v946: Autumn ritual detail, graphic first: what it does as chips, how as numbered steps with icons, the cycle strip, the study last */
+html .sfc-det:has(.rtd) { display: block; padding: 16px 16px 14px; background: #fff; border: 1px solid rgba(48,64,35,.09); box-shadow: 0 12px 28px rgba(60,40,30,.08); }
+.rtd-h { display: flex; align-items: center; gap: 12px; padding-right: 30px; }
+.rtd-h img.rd { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; flex: none; box-shadow: 0 4px 10px rgba(32,48,26,.14); }
+.rtd-h b { display: block; font: 600 18px/1.2 Outfit, sans-serif; color: #20301a; }
+.rtd-h small { display: inline-flex; align-items: center; gap: 5px; margin-top: 4px; font-size: 12.5px; color: rgba(32,48,26,.62); }
+.rtd-why { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 4px; }
+.rtd-why span { display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; border-radius: 99px; background: #eef1e6; color: #304023; font-size: 13px; font-weight: 500; }
+.rtd-why svg { color: #6c823e; }
+.rtd-k { display: block; margin: 16px 0 8px; font-size: 12px; font-weight: 500; letter-spacing: .02em; color: rgba(32,48,26,.55); }
+.rtd-st { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.rtd-st li { display: grid; grid-template-columns: 36px 1fr; grid-template-rows: auto; align-items: center; column-gap: 12px; position: relative; padding: 10px 12px; border-radius: 16px; background: #f7f5f0; font-size: 14px; line-height: 1.35; color: #20301a; }
+.rtd-st li i { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: #6c823e; box-shadow: 0 2px 6px rgba(32,48,26,.08); font-style: normal; }
+.rtd-st li em { position: absolute; left: 36px; top: 6px; width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center; background: #20301a; color: #fff; font: 900 9px/1 Doto, monospace; font-style: normal; }
+.rtd-p { margin: 14px 0 0; font-size: 13.5px; line-height: 1.45; color: rgba(32,48,26,.72); }
+.rtd-study { display: flex; gap: 12px; align-items: flex-start; margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(32,48,26,.09); }
+.rtd-study > b { flex: none; font: 900 20px/1 Doto, monospace; color: #20301a; min-width: 48px; }
+.rtd-study span { font-size: 13.5px; line-height: 1.42; color: #304023; }
+.rtd-study small { display: block; margin-bottom: 3px; font-size: 11.5px; font-weight: 500; color: #6c823e; }
+.rtd-study i { display: block; margin-top: 4px; font-style: normal; font-size: 12px; color: rgba(32,48,26,.5); }
+.rtd-care { display: flex; gap: 7px; align-items: flex-start; margin: 12px 0 0; padding: 10px 12px; border-radius: 14px; background: #f9eef0; color: #7a3445; font-size: 13px; line-height: 1.4; }
+.rtd-care svg { flex: none; margin-top: 2px; }
+html .rtd .rtd-why span { display: inline-flex !important; width: auto !important; margin: 0 !important; }
+html .rtd .rtd-h small { display: inline-flex !important; margin: 4px 0 0 !important; padding: 0 !important; background: none !important; }
+html .rtd .rtd-why { display: flex !important; flex-wrap: wrap; flex-direction: row; }
+html .rtd .rtd-why { gap: 6px 5px; }
+html .rtd .rtd-why span { padding: 5px 10px 5px 8px; font-size: 12.5px; gap: 4px; }
