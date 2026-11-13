@@ -3810,6 +3810,16 @@ function viewReliefIndex() {
 // Split copy into sentences: the first one is the action she sees, the rest sits behind a tap.
 function splitSentences(t) { return String(t || '').split(/(?<=[.!?])\s+(?=[A-Z0-9“"])/).filter(Boolean); }
 // A small line icon for each relief step, picked from what the step is about.
+// Each remedy shows a real photo of exactly what to do (the heat pad, the tea, the walk, the food); medical steps keep their icon.
+const RS_PIC = [[/bath|magnesium salts/i, 'f:salt'], [/heat|warm up the tissue|compress|warm shower/i, 'f:heat'], [/ginger/i, 't:Ginger'], [/peppermint|fennel/i, 't:Peppermint'], [/rose tea/i, 't:Rose'],
+  [/walk|move|movement/i, 'f:walk'], [/daylight/i, 'f:sun'], [/name it|lower the bar/i, 'f:breathe'], [/gua sha|zyg|thumb|jaw|drain|tongue up/i, 'f:fascia'], [/magnesium/i, 'f:magnesium'],
+  [/flax|seeds/i, 'f:seeds'], [/calcium/i, 'p:Grass-fed raw milk & butter'], [/zinc/i, 'p:Oysters'], [/iron/i, 'p:Red meat'], [/protein/i, 'p:Pasture eggs'], [/meals/i, 'i:images/period-food.webp'],
+  [/sleep|rest|nap|bedroom/i, 'i:images/move-meditate.webp'], [/salt|potassium/i, 'p:Avocado'], [/hydrate/i, 'f:lemon'], [/sugar/i, 'p:Blueberries'], [/skincare|hands off/i, 'i:images/season-fruit.webp']];
+function reliefStepPic(t) {
+  const m = RS_PIC.find(([r]) => r.test(t)); if (!m) return '';
+  const [k, v] = [m[1].slice(0, 1), m[1].slice(2)];
+  return k === 'f' ? `images/fb/${v}.webp` : k === 't' ? teaPhoto(v, 160, 160) : k === 'p' ? foodPhoto(v, 160) : v;
+}
 function reliefIcon(t) {
   const x = t.toLowerCase();
   return /heat|warm|hot|bath|soak|castor/.test(x) ? 'thermo' : /tea|drink|water|broth|juice/.test(x) ? 'cup' : /breath|calm|meditat/.test(x) ? 'leaf'
@@ -3856,7 +3866,7 @@ function viewRelief(id) {
     ${sectionTitle('What helps')}
     <p class="rl-hint">${help.length ? `${icon('heart', 12)} ${help.length} of ${R.steps.length} work for you, so they’re at the top.` : `Tap ${icon('heart', 12)} on what helps you. Next time it moves to the top.`}</p>
     <section class="card rs2-list">${order.map(i => { const x = R.steps[i], [d0, ...dr] = splitSentences(x.d), go = x.to ? `<button class="link rs-go" data-action="nav" data-to="${x.to}">Open ${icon('chevR', 12)}</button>` : '';
-      return `<div class="rs2 ${help.includes(i) ? 'helped' : ''}"><span class="rs2-ic">${icon(reliefIcon(x.t), 18)}</span>
+      return `<div class="rs2 ${help.includes(i) ? 'helped' : ''}">${(ph => ph ? `<span class="rs2-ph"><img src="${ph}" alt="" loading="lazy" decoding="async"></span>` : `<span class="rs2-ic">${icon(reliefIcon(x.t), 18)}</span>`)(reliefStepPic(x.t))}
       <div class="rs2-b"><b>${x.t}</b><p>${d0}</p>${dr.length ? `<details class="rs2-more"><summary>More ${icon('chevR', 11)}</summary><p>${dr.join(' ')}</p>${go}</details>` : go}</div>
       <button class="rs-heart ${help.includes(i) ? 'on' : ''}" data-action="reliefHelp" data-k="${k}" data-i="${i}" aria-label="This helps me">${icon('heart', 18)}</button></div>`; }).join('')}</section>
     ${reliefFood(k, L, food)}
