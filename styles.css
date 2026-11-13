@@ -12291,3 +12291,10 @@ html .sfc-i .sfc-am b.dotnum { font: 400 14px/1 'Doto', monospace !important; ma
 .ro-sp i { position: absolute; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; box-shadow: 0 0 0 2.5px #fff, 0 1px 4px rgba(32,48,26,.3); transition: left .35s cubic-bezier(.2,.8,.2,1), top .35s cubic-bezier(.2,.8,.2,1); }
 @media (prefers-reduced-motion: reduce) { .ro-sp i { transition: none; } }
 .cchart .here .here-label { fill: #fff !important; }
+
+/* Remedy ingredients: each one with its food emoji, the amount above the name */
+html .rm-i { display: flex; align-items: center; gap: 10px; padding: 10px 12px 10px 10px; }
+.rm-e { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #f6f3ec; }
+.rm-e .emo { width: 26px; height: 26px; font-size: 22px; line-height: 26px; text-align: center; object-fit: contain; }
+.rm-it { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.rm-i.opt .rm-e { background: transparent; border: 1px dashed rgba(32,48,26,.2); }

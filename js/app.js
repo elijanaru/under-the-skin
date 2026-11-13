@@ -2483,7 +2483,7 @@ const FOOD_EMO = [
   [/peach|nectarine|apricot|stone fruit|plum|damson|ume|maesil/i, '🍑'], [/cherr/i, '🍒'], [/strawberr/i, '🍓'], [/grape/i, '🍇'],
   [/watermelon/i, '🍉'], [/melon|chamoe/i, '🍈'], [/banana|plantain/i, '🍌'], [/mango/i, '🥭'], [/pineapple/i, '🍍'], [/kiwi|feijoa/i, '🥝'],
   [/blueberr|bilberr|blackberr|elderberr|haskap|saskatoon|currant|jamun|^berries|wild berr|cranberr|lingonberr|raspberr|cloudberr|gooseberr|rosehip|sea buckthorn|amla/i, '🫐'],
-  ];
+  [/black seed/i, 'd:black-seed-oil'], [/cacao/i, 'd:cacao'], [/cayenne/i, '🌶️'], [/sea salt|\bsalt\b/i, '🧂'], [/\bwater\b/i, 'd:water']];
 const foodEmo = n => (FOOD_EMO.find(([re]) => re.test(n || '')) || [, '🥗'])[1];
 const emoHtml = (n, cls = '') => { const e = foodEmo(n), f = e.startsWith('e:') ? `${e.slice(2)}.webp` : e.startsWith('d:') ? `${e.slice(2)}.svg` : '';
   return f ? `<img class="emo ${cls}" src="images/emoji/${f}" alt="">` : `<span class="emo ${cls}">${e}</span>`; };
@@ -4185,7 +4185,8 @@ function lemonState() {
 // Remedy: everything to make it on one card. Ingredients as amount tiles, then the steps as a numbered dot flow.
 function remedyMake(r) {
   const tiles = r.ingredients.map(g => { const [n, q] = ingRow(g), opt = /^optional/i.test(g);
-    return `<div class="rm-i ${opt ? 'opt' : ''}">${q || opt ? `<b>${q || 'Optional'}</b>` : ''}<span>${n.replace(/^Optional:\s*/i, '')}</span></div>`; }).join('');
+    const nm = n.replace(/^Optional:\s*/i, '');
+    return `<div class="rm-i ${opt ? 'opt' : ''}"><span class="rm-e">${emoHtml(nm)}</span><span class="rm-it">${q || opt ? `<b>${q || 'Optional'}</b>` : ''}<span>${nm}</span></span></div>`; }).join('');
   return `<section class="card glass rm-make">
     <div class="rm-h"><h3>${r.days ? 'Each morning' : 'Make it'}</h3><span><b class="dotnum">${r.ingredients.length}</b> things <b class="dotnum">${r.steps.length}</b> steps</span></div>
     <div class="rm-is">${tiles}</div>
