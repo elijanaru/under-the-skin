@@ -4204,18 +4204,23 @@ function cautionHTML(t) {
   return parts.length > 1 ? `<ul class="ck-l">${parts.map(x => `<li>${x}</li>`).join('')}</ul>` : `<b>${t}</b>`;
 }
 // Week by week as one graphic: four glasses that fill up layer by layer, tap a week for its one-line why.
-const WK_LAYER = [['Lemon', '#f2e39a'], ['Cayenne', '#d9532c'], ['Salt', '#ece8df'], ['Same glass', ''], ['Coconut or vinegar', '#f7efdc']];
 function wkGlass(n) {
-  // n = how many add-ins are in the glass by that week (lemon is always the base)
-  const L = [WK_LAYER[0], ...[1, 2, 4].map(k => WK_LAYER[k])].slice(0, n + 1), h = 34 / 4;
-  return `<svg viewBox="0 0 44 60" width="44" height="60" aria-hidden="true"><defs><clipPath id="wkc${n}"><path d="M8 10h28l-3 44a4 4 0 0 1-4 4H15a4 4 0 0 1-4-4z"/></clipPath></defs>
-    <g clip-path="url(#wkc${n})"><rect x="0" y="0" width="44" height="60" fill="#f7fbfb"/>${L.map(([, c], k) => `<rect x="0" y="${(56 - (k + 1) * h).toFixed(1)}" width="44" height="${(h + .6).toFixed(1)}" fill="${c}"/>`).join('')}</g>
-    <path d="M8 10h28l-3 44a4 4 0 0 1-4 4H15a4 4 0 0 1-4-4z" fill="none" stroke="#20301a" stroke-opacity=".55" stroke-width="1.6" stroke-linejoin="round"/>
-    <circle cx="32" cy="12" r="6" fill="#f2d24a" stroke="#d6a91f" stroke-width="1.2"/><path d="M32 7v10M27 12h10" stroke="#d6a91f" stroke-width=".8"/></svg>`;
+  // n = how many add-ins are in the glass by that week: lemon water is the base, then cayenne flecks, salt crystals, a milky swirl of coconut water
+  const G = 'M8 10h28l-3 44a4 4 0 0 1-4 4H15a4 4 0 0 1-4-4z';
+  const fleck = [[16, 30], [26, 26], [21, 38], [29, 41], [15, 46], [24, 49], [31, 33]];
+  return `<svg viewBox="0 0 44 60" width="44" height="60" aria-hidden="true"><defs><clipPath id="wkc${n}"><path d="${G}"/></clipPath>
+      <linearGradient id="wkl${n}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbf3c4"/><stop offset="1" stop-color="#f1df86"/></linearGradient></defs>
+    <g clip-path="url(#wkc${n})"><rect width="44" height="60" fill="#fbfdfc"/><rect y="20" width="44" height="40" fill="url(#wkl${n})"/>
+      ${n >= 3 ? '<path d="M6 34c6-4 12 3 18-1s10-3 16 1v26H6z" fill="#fffaf0" opacity=".85"/><path d="M10 40c5-2 9 2 14 0s8-2 12 0" stroke="#fff" stroke-width="1.6" fill="none" opacity=".9"/>' : ''}
+      ${n >= 1 ? fleck.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.25" fill="#c8402a"/>`).join('') : ''}
+      ${n >= 2 ? [[14, 53], [19, 54.5], [24, 53.5], [29, 54.5]].map(([x, y], i) => `<rect x="${x}" y="${y}" width="2.6" height="2.6" rx=".4" transform="rotate(${i * 23} ${x + 1.3} ${y + 1.3})" fill="#fff" stroke="#b9b4a8" stroke-width=".5"/>`).join('') : ''}
+      <path d="M8 20h28" stroke="#e6cf62" stroke-width="1"/><rect x="12" y="22" width="2.4" height="26" rx="1.2" fill="#fff" opacity=".55"/></g>
+    <path d="${G}" fill="none" stroke="#20301a" stroke-opacity=".6" stroke-width="1.6" stroke-linejoin="round"/>
+    <circle cx="32" cy="12" r="6" fill="#f2d24a" stroke="#d6a91f" stroke-width="1.2"/><path d="M32 7v10M27 12h10M28.5 8.5l7 7M35.5 8.5l-7 7" stroke="#d6a91f" stroke-width=".7"/></svg>`;
 }
 function wkCard(r) {
   const ls = lemonState(), now = ls && !ls.over ? ls.week : 0, sel = ui.wkSel || now || 1, W = r.weeks.find(w => w.w === sel) || r.weeks[0];
-  const keep = w => /^keep going/i.test(w.add), lab = w => keep(w) ? 'Same' : '+ ' + w.add.replace(/^Pinch of (good )?/i, '').replace(/ or 1 tsp apple cider vinegar$/i, '').replace(/^./, c => c.toUpperCase());
+  const keep = w => /^keep going/i.test(w.add), lab = w => keep(w) ? 'Same' : '+ ' + w.add.replace(/^Pinch of (good )?/i, '').replace(/ water or 1 tsp apple cider vinegar$/i, ' or vinegar').replace(/^./, c => c.toUpperCase());
   let n = 0;
   return `<section class="card wk3">
     <div class="wk3-row" role="tablist">${r.weeks.map(w => { if (!keep(w)) n++; return `<button role="tab" aria-selected="${w.w === sel}" class="wk3-w ${w.w === sel ? 'on' : ''} ${w.w === now ? 'now' : ''}" data-action="wkPick" data-w="${w.w}">${wkGlass(n)}<small>Week <b class="dotnum">${w.w}</b></small><em>${lab(w)}</em>${w.w === now ? '<i>Now</i>' : ''}</button>`; }).join('')}</div>
