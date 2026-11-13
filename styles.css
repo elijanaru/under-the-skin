@@ -12096,3 +12096,42 @@ html .mg4-r p { font-size: 13px; line-height: 1.38; margin-top: 2px; color: rgba
 .hb-st i { font-style: normal; color: rgba(32,48,26,.5); }
 .hb-care { padding: 10px 12px; border-radius: 14px; background: #fbf3e6; }
 @media (prefers-reduced-motion: reduce) { .hb-p.up .hb-pl img { animation: none; opacity: 0; } .hb-cr, .hb-p.back .hb-pl img, .hb-fig img, .hb-det { animation: none; } }
+
+/* The science of calm (13 Nov 2026): a time ruler from a hug to a night of sleep, then spec rows with the study behind a tap */
+.cs2-sub { margin: -4px 4px 10px; font-size: 13.5px; color: rgba(32,48,26,.56); }
+.cs2 { margin-bottom: 14px; padding: 16px 16px 6px; border-radius: 28px; background: rgba(255,255,255,.96); border: 1px solid rgba(48,64,35,.08); box-shadow: 0 16px 36px -18px color-mix(in srgb, var(--pc) 45%, transparent); color: #20301a; }
+.csr { padding: 4px 6px 14px; margin-bottom: 4px; border-bottom: 1px solid rgba(48,64,35,.09); }
+.csr-tr { position: relative; height: 86px; }
+.csr-tr::before { content: ''; position: absolute; left: 0; right: 0; top: 43px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, color-mix(in srgb, var(--pc) 20%, #eee), color-mix(in srgb, var(--pc) 70%, #20301a)); }
+.csr-tr > i { position: absolute; top: 39px; width: 1px; height: 10px; background: rgba(32,48,26,.25); }
+.csr-d { position: absolute; width: 22px; height: 22px; margin-left: -11px; display: grid; place-items: center; border-radius: 50%; background: #fff; color: color-mix(in srgb, var(--pc) 75%, #20301a); border: 1.5px solid color-mix(in srgb, var(--pc) 55%, #fff); box-shadow: 0 3px 8px -3px rgba(32,48,26,.25); transition: transform .35s cubic-bezier(.2,.8,.2,1), background .35s, color .35s; }
+.csr-d.l0 { top: 5px; } .csr-d.l1 { top: 33px; } .csr-d.l2 { top: 61px; }
+.csr-d.l0::after, .csr-d.l2::after { content: ''; position: absolute; left: 50%; width: 1px; height: 15px; background: color-mix(in srgb, var(--pc) 45%, transparent); }
+.csr-d.l0::after { top: 21px; } .csr-d.l2::after { bottom: 21px; }
+.csr-lb { position: relative; height: 14px; }
+.csr-lb small { position: absolute; transform: translateX(-50%); font-size: 10.5px; color: rgba(32,48,26,.48); white-space: nowrap; }
+.csr-lb small:last-child { transform: translateX(-70%); }
+.cs2-r { border-bottom: 1px solid rgba(48,64,35,.08); } .cs2-r:last-child { border-bottom: 0; }
+.cs2-r summary { list-style: none; display: flex; align-items: center; gap: 12px; padding: 12px 0; cursor: pointer; }
+.cs2-r summary::-webkit-details-marker { display: none; }
+.cs2-ic { flex: none; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 13px; background: color-mix(in srgb, var(--pc) 13%, #fff); color: color-mix(in srgb, var(--pc) 78%, #20301a); }
+.cs2-t { flex: 1; min-width: 0; }
+.cs2-t b { display: block; font-size: 15px; font-weight: 500; line-height: 1.25; }
+.cs2-t small { display: block; margin-top: 2px; font-size: 12.5px; line-height: 1.35; color: rgba(32,48,26,.58); }
+.cs2-d { flex: none; display: flex; align-items: baseline; gap: 3px; min-width: 50px; justify-content: flex-end; }
+.cs2-d b { font-size: 21px; font-weight: 400; color: #20301a; }
+.cs2-d small { font-size: 11.5px; color: rgba(32,48,26,.55); }
+.cs2-r summary > svg:last-child { flex: none; color: rgba(32,48,26,.4); transition: transform .3s; }
+.cs2-r[open] summary > svg:last-child { transform: rotate(180deg); }
+.cs2-b { margin: 0 0 12px 50px; padding: 10px 12px; border-radius: 14px; background: color-mix(in srgb, var(--pc) 6%, #fafaf8); animation: rise .45s ease both; }
+.cs2-b p { margin: 0; font-size: 13.5px; line-height: 1.5; color: rgba(32,48,26,.8); }
+.cs2-c { display: block; margin-top: 6px; font-size: 11.5px; font-weight: 500; color: color-mix(in srgb, var(--pc) 65%, #20301a); }
+.cs2:has(.cs2-r[data-k="0"][open]) .csr-d[data-k="0"] { transform: scale(1.15); background: var(--pc); color: #fff; border-color: var(--pc); }
+.cs2:has(.cs2-r[data-k="1"][open]) .csr-d[data-k="1"] { transform: scale(1.15); background: var(--pc); color: #fff; border-color: var(--pc); }
+.cs2:has(.cs2-r[data-k="2"][open]) .csr-d[data-k="2"] { transform: scale(1.15); background: var(--pc); color: #fff; border-color: var(--pc); }
+.cs2:has(.cs2-r[data-k="3"][open]) .csr-d[data-k="3"] { transform: scale(1.15); background: var(--pc); color: #fff; border-color: var(--pc); }
+.cs2:has(.cs2-r[data-k="4"][open]) .csr-d[data-k="4"] { transform: scale(1.15); background: var(--pc); color: #fff; border-color: var(--pc); }
+.cs2:has(.cs2-r[data-k="5"][open]) .csr-d[data-k="5"] { transform: scale(1.15); background: var(--pc); color: #fff; border-color: var(--pc); }
+.cs2:has(.cs2-r[data-k="6"][open]) .csr-d[data-k="6"] { transform: scale(1.15); background: var(--pc); color: #fff; border-color: var(--pc); }
+.cs2:has(.cs2-r[data-k="7"][open]) .csr-d[data-k="7"] { transform: scale(1.15); background: var(--pc); color: #fff; border-color: var(--pc); }
+@media (prefers-reduced-motion: reduce) { .csr-d { transition: none; } .cs2-b { animation: none; } }

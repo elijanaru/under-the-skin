@@ -6428,8 +6428,7 @@ function viewStress() {
           <span class="st3-ft"><small>Fastest calm</small><b>Breathe out longer than in</b>
           <span class="st3-nums"><span><em class="dotnum">4</em>in</span><span><em class="dotnum">6</em>out</span><span><em class="dotnum">5</em>min</span></span></span>${icon('chevR', 16)}</button>
         <h3 class="st2-h">Best ways to lower it</h3>${steps(sp[1])}
-        <h3 class="st2-h">The science of calm</h3>
-        <section class="card glass cs-list">${CALM_SCIENCE.map(x => `<details class="cs"><summary><span class="cs-g">${x.g}</span><span class="cs-t"><b>${x.t}</b><small>${x.c.replace(/\s*\(.*?\)/g, '')}</small></span>${evBadge(x.ev)}${icon('chevD', 14)}</summary><p>${x.s}</p></details>`).join('')}</section>`;
+        ${calmScience(info)}`;
   return `${topbar('Stress', { back: true })}<div class="pad st3-pad"><section class="st3-hero" data-lv="${lvl}">
     <span class="st3-media"><video src="images/stress-meditate.mp4" poster="images/stress-meditate.webp" muted loop playsinline ${auto} preload="auto" aria-hidden="true"></video></span>
     <div class="st3-b"><small><i></i>Day <span class="dotnum">${info.cd}</span> · ${PHASES[info.phase].name} phase</small><h1>Calm your stress</h1><p>${calm}</p>
@@ -6442,6 +6441,32 @@ function viewStress() {
   </div>`;
 }
 
+// The science of calm as a time ruler: every way to calm stress placed by how long it takes (a hug to a night of sleep), then spec rows with the study behind a tap.
+const CALM_IC = {
+  breath: '<path d="M3 9h10a3 3 0 1 0-3-3M3 13h14a3 3 0 1 1-3 3M3 17h6"/>',
+  sit: '<circle cx="12" cy="5" r="2"/><path d="M12 8v5M7 11.5l5 1.5 5-1.5M4.5 18.5c2.2-2 4.6-3 7.5-3s5.3 1 7.5 3M8 18.5h8"/>',
+  lie: '<circle cx="5" cy="12.5" r="2"/><path d="M8.5 14h11.5M3 18h18M10.5 14l2-2.5h3.5"/>',
+  tree: '<path d="M12 3c-3.5 0-6 2.7-6 6 0 3 2.4 5.5 6 5.5s6-2.5 6-5.5c0-3.3-2.5-6-6-6zM12 14.5V21M9 21h6M12 11l-2.2-2M12 12.5l2.4-2.2"/>',
+  sleep: '<path d="M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5z"/><path d="M15 3.5h3.5l-3.5 3.5h3.5"/>',
+  hug: '<circle cx="8" cy="5.5" r="2"/><circle cx="16" cy="5.5" r="2"/><path d="M4 20v-5a4 4 0 0 1 8 0M12 15a4 4 0 0 1 8 0v5M6.5 13.5l5.5 3.5 5.5-3.5"/>',
+  walk: '<circle cx="13.5" cy="4" r="1.8"/><path d="M10 21l2.5-6.5L15 17v4M12.5 14.5 13 8.5l-4 2.2v3M13 8.5l3 3.2h3"/>',
+  warm: '<path d="M10 3h4v3h-4zM8.5 6h7v2.6a4 4 0 0 1 2 3.4V18a3 3 0 0 1-3 3h-5a3 3 0 0 1-3-3v-6a4 4 0 0 1 2-3.4z"/><path d="M9.5 14c1-1 2 1 3 0s2 1 3 0"/>',
+};
+const calmIc = (k, s = 18) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${CALM_IC[k] || ''}</svg>`;
+function calmScience(info) {
+  const L = CALM_SCIENCE.map((x, k) => ({ ...x, k })).sort((a, b) => a.sec - b.sec), pc = (info && PH_HEX[info.phase]) || '#6c823e';
+  const pos = sec => Math.max(0, Math.min(1, Math.log(sec / 10) / Math.log(36000 / 10))) * 100;
+  const ticks = [[60, '1 min'], [600, '10 min'], [3600, '1 hour'], [28800, 'a night']];
+  return `<h3 class="st2-h">The science of calm</h3><p class="cs2-sub">How long each one needs, and what studies found.</p>
+    <section class="cs2" style="--pc:${pc}">
+      <div class="csr" aria-hidden="true"><div class="csr-tr">${ticks.map(([s]) => `<i style="left:${pos(s)}%"></i>`).join('')}
+        ${L.map((x, i) => `<span class="csr-d l${i % 3}" data-k="${x.k}" style="left:${pos(x.sec)}%">${calmIc(x.ic, 13)}</span>`).join('')}</div>
+        <div class="csr-lb">${ticks.map(([s, l]) => `<small style="left:${pos(s)}%">${l}</small>`).join('')}</div></div>
+      ${L.map(x => `<details class="cs2-r" data-k="${x.k}"><summary><span class="cs2-ic">${calmIc(x.ic)}</span><span class="cs2-t"><b>${x.t}</b><small>${x.r}</small></span>
+        <span class="cs2-d"><b class="dotnum">${x.d}</b><small>${x.u}</small></span>${icon('chevD', 14)}</summary>
+        <div class="cs2-b"><p>${x.s}</p><span class="cs2-c">${x.ev === 'tcm' ? 'Chinese medicine' : `${x.c.replace(/\s*\(.*?\)/g, '')}${x.src ? ` · ${x.src}` : ''}`}</span></div></details>`).join('')}
+    </section>`;
+}
 // ---------- hormone habits ----------
 // redraw only the Today habits card so the page doesn't jump or replay its animations
 // hand-drawn cat faces for the partner picker: a girl cat with a bow, a boy cat with a bow tie
