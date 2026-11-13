@@ -2387,6 +2387,24 @@ function findFoodPhoto(n, w = 300) {
 // Every food on the plate as one emoji. "e:name" is a drawn emoji in the same style (images/emoji/name.webp)
 // for foods that have no real emoji; the first match wins, so specific names come before families.
 const FOOD_EMO = [
+  // drawn emoji (images/emoji/*.svg) so every food shows exactly itself, never a look-alike
+  [/burdock & lotus|lotus root/i, 'd:lotus-root'], [/burdock/i, 'd:burdock'], [/daikon|mooli|korean radish|\(mu\)/i, 'd:daikon'], [/horseradish/i, 'd:horseradish'],
+  [/parsnip/i, 'd:parsnip'], [/salsify/i, 'd:salsify'], [/turnip(?! green)|rutabaga/i, 'd:turnip'], [/celeriac/i, 'd:celeriac'], [/jerusalem/i, 'd:jerusalem-artichoke'],
+  [/cassava/i, 'd:cassava'], [/taro|colocasia/i, 'd:taro'], [/^cauliflower/i, 'd:cauliflower'], [/brussels/i, 'd:brussels-sprouts'], [/kohlrabi/i, 'd:kohlrabi'],
+  [/artichoke/i, 'd:artichoke'], [/^chard/i, 'd:chard'], [/kale/i, 'd:kale'], [/bean sprouts|soybean sprouts|kongnamul/i, 'd:bean-sprouts'], [/cardoon/i, 'd:cardoon'],
+  [/bamboo/i, 'd:bamboo-shoot'], [/fiddlehead/i, 'd:fiddlehead'], [/samphire/i, 'd:samphire'], [/watercress/i, 'd:watercress'], [/dandelion/i, 'd:dandelion'],
+  [/leek|ramps/i, 'd:leek'], [/spring onion/i, 'd:spring-onion'], [/bitter gourd|bitter melon|karela/i, 'd:bitter-gourd'], [/bottle gourd|lauki/i, 'd:bottle-gourd'],
+  [/ridge gourd/i, 'd:ridge-gourd'], [/chayote/i, 'd:chayote'], [/okra|bhindi/i, 'd:okra'], [/drumstick|moringa pod/i, 'd:drumsticks'], [/long bean/i, 'd:long-beans'],
+  [/persimmon/i, 'd:persimmon'], [/papaya/i, 'd:papaya'], [/guava/i, 'd:guava'], [/dragon fruit/i, 'd:dragon-fruit'], [/passion ?fruit/i, 'd:passion-fruit'],
+  [/starfruit/i, 'd:starfruit'], [/loquat/i, 'd:loquat'], [/tamarind/i, 'd:tamarind'], [/custard apple/i, 'd:custard-apple'], [/lychee|litchi/i, 'd:lychee'],
+  [/rambutan/i, 'd:rambutan'], [/mangosteen/i, 'd:mangosteen'], [/prickly pear/i, 'd:prickly-pear'], [/feijoa/i, 'd:feijoa'], [/jackfruit/i, 'd:jackfruit'],
+  [/korean melon|chamoe/i, 'd:korean-melon'], [/asian pear/i, 'd:asian-pear'], [/apricot/i, 'd:apricot'], [/green plum|maesil|ume plum/i, 'd:green-plum'],
+  [/^plums|damson/i, 'd:plum'], [/yuzu/i, 'd:yuzu'], [/raspberr/i, 'd:raspberry'], [/blackberr/i, 'd:blackberry'], [/cranberr/i, 'd:cranberry'],
+  [/lingonberr/i, 'd:lingonberry'], [/currant/i, 'd:currants'], [/elderberr/i, 'd:elderberry'], [/cloudberr/i, 'd:cloudberry'], [/rosehip/i, 'd:rosehip'],
+  [/sea buckthorn/i, 'd:sea-buckthorn'], [/amla/i, 'd:amla'], [/jamun/i, 'd:jamun'],
+  [/shiitake/i, 'd:shiitake'], [/enoki|paengi/i, 'd:enoki'], [/king oyster|saesongi/i, 'd:king-oyster'], [/oyster mushroom|neutari/i, 'd:oyster-mushroom'],
+  [/chanterelle/i, 'd:chanterelle'], [/morel/i, 'd:morel'], [/porcini|slippery jack/i, 'd:porcini'], [/lion.s mane/i, 'd:lions-mane'], [/black trumpet/i, 'd:black-trumpet'],
+  [/button mushroom/i, 'd:button-mushroom'],
   [/lamb.s lettuce|turnip greens|beet greens/i, '🥬'], [/wild garlic/i, '🌿'], [/aubergine|eggplant/i, '🍆'],
   [/pineapple/i, '🍍'], [/custard apple|mangosteen|lychee|litchi|rambutan/i, '🍒'], [/prickly pear|guava/i, '🍐'], [/persimmon/i, '🍊'], [/papaya/i, '🥭'],
   [/jackfruit/i, '🍈'], [/dragon fruit|passion ?fruit|starfruit|loquat|tamarind/i, '🍑'],
@@ -2420,7 +2438,8 @@ const FOOD_EMO = [
   [/blueberr|bilberr|blackberr|elderberr|haskap|saskatoon|currant|jamun|^berries|wild berr|cranberr|lingonberr|raspberr|cloudberr|gooseberr|rosehip|sea buckthorn|amla/i, '🫐'],
   ];
 const foodEmo = n => (FOOD_EMO.find(([re]) => re.test(n || '')) || [, '🥗'])[1];
-const emoHtml = (n, cls = '') => { const e = foodEmo(n); return e.startsWith('e:') ? `<img class="emo ${cls}" src="images/emoji/${e.slice(2)}.webp" alt="">` : `<span class="emo ${cls}">${e}</span>`; };
+const emoHtml = (n, cls = '') => { const e = foodEmo(n), f = e.startsWith('e:') ? `${e.slice(2)}.webp` : e.startsWith('d:') ? `${e.slice(2)}.svg` : '';
+  return f ? `<img class="emo ${cls}" src="images/emoji/${f}" alt="">` : `<span class="emo ${cls}">${e}</span>`; };
 function plateFoods(k, phase, season, warm) {
   if (k === 'veg' || k === 'fruit') return plateSeasonal(k, phase, season, warm);
   const idx = { protein: 0, carbs: 1, fats: 2, spice: 3 }[k];
