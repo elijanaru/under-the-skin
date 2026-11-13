@@ -2130,6 +2130,17 @@ function recGrid(recs, meal) {
   return recs.filter(r => meal === 'All' || r.meal === meal).map((r, i) => `<button class="rcard tall ${photoUrl(r.id) ? 'has-photo' : ''}" data-action="nav" data-to="recipe/${r.id}">${recipeArt(r, ['wave', 'orb', 'drop', 'hill'][i % 4], 20 + i)}
           <div class="rc-top"><span class="rc-k">${r.raw ? 'Raw' : r.warm ? `Warm · ${r.meal}` : r.meal}</span></div><div class="rc-t">${r.name}</div><div class="rc-m">${r.time} min · ${r.kcal} kcal</div></button>`).join('');
 }
+// Rituals: the acupressure point as a small hand-drawn diagram (side of the foot, belly or top of the foot) and the phase tea as a real photo.
+const PT_TEA_WHY = { menstrual: 'Warms you and replaces what you lose', follicular: 'Light and clear while you rebuild', ovulatory: 'Lifts your mood, keeps blood flowing', luteal: 'Eases bloating and tension' };
+const PT_TEA = { menstrual: 'Ginger & red dates', follicular: 'Chrysanthemum', ovulatory: 'Rose', luteal: 'Rose' };
+function pointArt(code) {
+  const dot = (x, y) => `<circle cx="${x}" cy="${y}" r="9" fill="var(--pc)" opacity=".18"/><circle cx="${x}" cy="${y}" r="4.2" fill="var(--pc)" stroke="#fff" stroke-width="1.6"/>`;
+  const side = '<path d="M36 2v40q-1 14-8 21-6 9 4 11h66q12 0 12-7-2-6-14-8l-28-6q-12-4-14-14V2"/><circle cx="49" cy="49" r="4"/>';
+  const top = '<path d="M38 26q-8 18-2 34 5 16 22 17 18 1 24-14 7-16 9-33"/><ellipse cx="46" cy="16" rx="7.5" ry="9"/><ellipse cx="61" cy="13" rx="5" ry="6"/><ellipse cx="72" cy="15" rx="4.5" ry="5.5"/><ellipse cx="81" cy="20" rx="4" ry="5"/><ellipse cx="88" cy="27" rx="3.5" ry="4.5"/><path d="M47 26l2 18M61 20l-2 22" opacity=".45"/>';
+  const belly = '<path d="M30 2q-6 36 4 76M90 2q6 36-4 76"/><path d="M44 10q16 6 32 0" opacity=".4"/><ellipse cx="60" cy="30" rx="2.6" ry="3.6"/>';
+  const P = { SP6: [side, 50, 24], KI3: [side, 41, 52], CV4: [belly, 60, 52], LV3: [top, 54, 35] }[code] || [side, 50, 24];
+  return `<svg viewBox="0 0 120 80" aria-hidden="true"><g fill="none" stroke="#20301a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${P[0]}</g>${dot(P[1], P[2])}</svg>`;
+}
 function viewPlan() {
   const info = M.info, phase = info ? info.phase : 'follicular', ph = PHASES[phase], tcm = TCM[phase], P = PLAIN[phase];
   const sub = route().id;
@@ -2158,8 +2169,8 @@ function viewPlan() {
       <div class="rfx-steps">${RIT_STEPS[phase].map(([ic, t], i) => `<span style="--i:${i}"><i>${icon(ic, 18)}</i><b>${t}</b></span>`).join('')}</div>
       <details class="rfx-why"><summary>Why, in Chinese medicine ${icon('chevD', 13)}</summary><p>${P.tcm}</p><p>${P.do}</p></details></section>
       <div class="two-tiles">
-        <button class="card glass tile" data-action="nav" data-to="point/${phase}"><div class="pt-dot sm"><span></span></div><small>Press this point</small><b>${tcm.point.name}</b><span class="muted sm">${tcm.point.secs} seconds</span></button>
-        <div class="card glass tile"><span class="tile-ic">${icon('leaf', 22)}</span><small>Tea for today</small><b>${tcm.tea.name}</b></div>
+        <button class="pt2-t" data-action="nav" data-to="point/${phase}" style="--pc:${PH_HEX[phase]}"><span class="pt2-a">${pointArt(tcm.point.code)}</span><small>Press this point</small><b>${tcm.point.name}</b><span class="pt2-s"><b class="dotnum">${tcm.point.secs}</b> seconds · ${tcm.point.code}</span></button>
+        <button class="pt2-t" data-action="nav" data-to="tea" style="--pc:${PH_HEX[phase]}"><span class="pt2-a pt2-ph"><img src="${teaPhoto(PT_TEA[phase] || 'Tea', 360, 240)}" alt="" loading="lazy" decoding="async"></span><small>Tea for today</small><b>${tcm.tea.name}</b><span class="pt2-s">${PT_TEA_WHY[phase] || ''}</span></button>
       </div>
       ${sectionTitle('Rituals for you')}
       <div class="grid2 rit-g">${rits.map((r, i) => `<button class="rcard tall ${carePhoto(r.id) ? 'has-photo' : ''}" data-action="nav" data-to="ritual/${r.id}">${careArt(r.id, ['crown', 'drop', 'hill', 'wave', 'orb', 'peak'][i % 6], 40 + i)}

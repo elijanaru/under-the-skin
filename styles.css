@@ -12401,3 +12401,15 @@ html .pu2-dots i { width: 8px; height: 8px; background: rgba(32,48,26,.12); }
 html .pu2 .pu2-dots i.on { background: #20301a; }
 html .pu2-peek { background: #fafaf7; border: 1px solid rgba(32,48,26,.07); }
 html .pu2 .pu2-step .pu2-dots i.on { background: #20301a; }
+
+/* Rituals: press-this-point and tea-for-today as clean white tiles with a graphic or photo */
+.pt2-t { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 6px 6px 14px; border: 1px solid rgba(32,48,26,.07); border-radius: 26px; background: #fff; box-shadow: 0 14px 28px -22px rgba(32,48,26,.5); font: inherit; color: #20301a; text-align: left; cursor: pointer; }
+.pt2-a { display: grid; place-items: center; width: 100%; height: 96px; margin-bottom: 8px; border-radius: 20px; overflow: hidden; background: color-mix(in srgb, var(--pc) 10%, #faf9f5); }
+.pt2-a svg { width: 88%; height: 88%; }
+.pt2-ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pt2-t > small, .pt2-t > b, .pt2-s { padding: 0 8px; }
+.pt2-t > small { font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; color: rgba(32,48,26,.5); }
+.pt2-t > b { font-size: 16px; font-weight: 500; line-height: 1.2; }
+.pt2-s { margin-top: 2px; font-size: 12.5px; line-height: 1.35; color: rgba(32,48,26,.62); }
+.pt2-s b.dotnum { font-size: 14px; color: #20301a; }
+.pt2-t:active { transform: scale(.98); }
