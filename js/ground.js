@@ -38,12 +38,12 @@ export const GROUND_ROOTS = {
   d: ['Golden roots, 3 minutes', 'Sit on the ground and picture roots growing down on each out-breath', 'On each in-breath, draw warmth back up into your belly', 'Tonight'],
 };
 
-// What studies found: [authors, year, journal, short finding, detail], oldest first so the years read as a timeline
+// What studies found: [authors, year, journal, short finding, detail, people, time grounded], oldest first so the years read as a timeline
 export const GROUND_STUDIES = [
-  ['Ghaly & Teplitz', 2004, 'J Altern Complement Med', 'Calmer cortisol at night', '12 people with poor sleep slept on a grounded sheet for 8 weeks. Their night-time cortisol evened out toward a normal daily rhythm, and most said they slept better and woke less.'],
-  ['Brown, Chevalier & Hill', 2010, 'J Altern Complement Med', 'Less soreness after exercise', 'A pilot study of 8 people: those grounded after hard calf exercise felt less muscle pain and showed lower markers of muscle damage.'],
-  ['Chevalier et al.', 2013, 'J Altern Complement Med', 'Blood flows more freely', 'After two hours grounded, red blood cells clumped together less in 10 healthy adults, measured as a higher zeta potential.'],
-  ['Chevalier et al.', 2015, 'Psychological Reports', 'Better mood after an hour', 'In a small controlled trial, people who sat grounded for one hour reported a clearly better mood than those on a sham connection.'],
-  ['Oschman, Chevalier & Brown', 2015, 'J Inflamm Res', 'A review on inflammation', 'A review that pulls the early studies together and suggests grounding may calm inflammation and help recovery, while calling for larger trials.'],
+  ['Ghaly & Teplitz', 2004, 'Journal of Alternative and Complementary Medicine', 'Calmer cortisol at night', '12 people with poor sleep slept on a grounded sheet for 8 weeks. Their night-time cortisol evened out toward a normal daily rhythm, and most said they slept better and woke less.', 12, '8 weeks'],
+  ['Brown, Chevalier & Hill', 2010, 'Journal of Alternative and Complementary Medicine', 'Less soreness after exercise', 'A pilot study of 8 people: those grounded after hard calf exercise felt less muscle pain and showed lower markers of muscle damage.', 8, '3 days'],
+  ['Chevalier et al.', 2013, 'Journal of Alternative and Complementary Medicine', 'Blood flows more freely', 'After two hours grounded, red blood cells clumped together less in 10 healthy adults, measured as a higher zeta potential.', 10, '2 hours'],
+  ['Chevalier et al.', 2015, 'Psychological Reports', 'Better mood after an hour', 'In a small controlled trial, people who sat grounded for one hour reported a clearly better mood than those on a sham connection.', 40, '1 hour'],
+  ['Oschman, Chevalier & Brown', 2015, 'Journal of Inflammation Research', 'A review on inflammation', 'A review that pulls the early studies together and suggests grounding may calm inflammation and help recovery, while calling for larger trials.', 0, ''],
 ];
 export const GROUND_CAUTION = 'These are small studies, many from one research group, so think of grounding as a calm daily habit, not a treatment. Never ground outdoors in a thunderstorm, and only use indoor grounding mats that are properly wired and tested.';

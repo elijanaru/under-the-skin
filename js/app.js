@@ -502,9 +502,11 @@ function viewGround() {
       <div class="grr-f"><span>Repeat for ${GROUND_ROOTS.mins} minutes</span>${saveBtn(regTip('ground-roots', 'Grounding · roots', GROUND_ROOTS.d, 'ground'))}</div>
     </section>
 
-    ${sectionTitle('What studies found')}
-    <section class="card gr-card gr-st">${GROUND_STUDIES.map(([a, y, j, f, d], i) => `<button class="gr-s ${open === i ? 'on' : ''}" data-action="grStudy" data-i="${i}" aria-expanded="${open === i}"><span class="gr-y">${y}</span><span class="gr-s-t"><b>${f}</b><small>${a} · ${j}</small></span>${icon('chevD', 14)}</button>${open === i ? `<p class="gr-s-d">${d}</p>` : ''}`).join('')}
-      <p class="gr-caution">${icon('spark', 13)} ${GROUND_CAUTION}</p></section>
+    <section class="msd gr-msd" style="--pc:${PH_HEX[(M.info || {}).phase] || '#6c823e'}"><header class="msd-h"><small>What studies found</small><h3>Five small studies</h3><p>From ${GROUND_STUDIES[0][1]} to ${GROUND_STUDIES[GROUND_STUDIES.length - 1][1]}. Swipe the cards.</p></header>
+      <div class="msd-deck" role="list">${GROUND_STUDIES.map(([a, y, j, f, d, n, t], i) => `<article class="msd-c" role="listitem"><div class="msd-top"><b class="dotnum">${y}</b><span><small>${j}</small><em>${i + 1} of ${GROUND_STUDIES.length}</em></span></div>
+        <div class="grs-k">${n ? `<span><small>People</small><b class="dotnum">${n}</b></span><span><small>Grounded</small><b>${t}</b></span>` : '<span class="rv"><small>Type</small><b>Review of the studies above</b></span>'}</div>
+        <h4>${f}</h4><p>${d}</p><cite>${a}</cite></article>`).join('')}</div>
+      <div class="ck-first gr-ck"><span class="ck-i">!</span><div><small>Keep in mind</small><p>${GROUND_CAUTION}</p></div></div></section>
   </div>`;
 }
 // Ideas she can save straight from this page: today's tip for each of her focus areas first, then the rest.
