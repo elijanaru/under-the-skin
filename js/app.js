@@ -4054,6 +4054,26 @@ function cautionHTML(t) {
   const parts = [...new Set(t.split(/(?<=[.!])\s+(?=[A-Z])/).map(x => x.trim()).filter(Boolean))];
   return parts.length > 1 ? `<ul class="ck-l">${parts.map(x => `<li>${x}</li>`).join('')}</ul>` : `<b>${t}</b>`;
 }
+// Week by week as one graphic: four glasses that fill up layer by layer, tap a week for its one-line why.
+const WK_LAYER = [['Lemon', '#f2e39a'], ['Cayenne', '#d9532c'], ['Salt', '#ece8df'], ['Same glass', ''], ['Coconut or vinegar', '#f7efdc']];
+function wkGlass(n) {
+  // n = how many add-ins are in the glass by that week (lemon is always the base)
+  const L = [WK_LAYER[0], ...[1, 2, 4].map(k => WK_LAYER[k])].slice(0, n + 1), h = 34 / 4;
+  return `<svg viewBox="0 0 44 60" width="44" height="60" aria-hidden="true"><defs><clipPath id="wkc${n}"><path d="M8 10h28l-3 44a4 4 0 0 1-4 4H15a4 4 0 0 1-4-4z"/></clipPath></defs>
+    <g clip-path="url(#wkc${n})"><rect x="0" y="0" width="44" height="60" fill="#f7fbfb"/>${L.map(([, c], k) => `<rect x="0" y="${(56 - (k + 1) * h).toFixed(1)}" width="44" height="${(h + .6).toFixed(1)}" fill="${c}"/>`).join('')}</g>
+    <path d="M8 10h28l-3 44a4 4 0 0 1-4 4H15a4 4 0 0 1-4-4z" fill="none" stroke="#20301a" stroke-opacity=".55" stroke-width="1.6" stroke-linejoin="round"/>
+    <circle cx="32" cy="12" r="6" fill="#f2d24a" stroke="#d6a91f" stroke-width="1.2"/><path d="M32 7v10M27 12h10" stroke="#d6a91f" stroke-width=".8"/></svg>`;
+}
+function wkCard(r) {
+  const ls = lemonState(), now = ls && !ls.over ? ls.week : 0, sel = ui.wkSel || now || 1, W = r.weeks.find(w => w.w === sel) || r.weeks[0];
+  const keep = w => /^keep going/i.test(w.add), lab = w => keep(w) ? 'Same' : '+ ' + w.add.replace(/^Pinch of (good )?/i, '').replace(/ or 1 tsp apple cider vinegar$/i, '').replace(/^./, c => c.toUpperCase());
+  let n = 0;
+  return `<section class="card wk3">
+    <div class="wk3-row" role="tablist">${r.weeks.map(w => { if (!keep(w)) n++; return `<button role="tab" aria-selected="${w.w === sel}" class="wk3-w ${w.w === sel ? 'on' : ''} ${w.w === now ? 'now' : ''}" data-action="wkPick" data-w="${w.w}">${wkGlass(n)}<small>Week <b class="dotnum">${w.w}</b></small><em>${lab(w)}</em>${w.w === now ? '<i>Now</i>' : ''}</button>`; }).join('')}</div>
+    <div class="wk3-d"><b>${keep(W) ? 'Same glass, every day' : `Add ${W.add.replace(/^Pinch/, 'a pinch').replace(/^Coconut/, 'coconut')}`}</b><p>${splitSentences(W.gain)[0]}</p></div>
+    <div class="wk3-st"><b class="dotnum">2010</b><span>A new daily habit took about 66 days to feel automatic, and missing one day made no real difference.<i>Lally · European Journal of Social Psychology</i></span></div>
+  </section>`;
+}
 function viewRemedy(id) {
   const r = REMEDIES.find(x => x.id === id); if (!r) return viewMissing();
   const info = M.info, warm = warmWindow(info), organPhase = PHASE_ORDER.find(p => TCM[p].organ.includes(r.organ));
@@ -4084,10 +4104,7 @@ function viewRemedy(id) {
     ${tracker}
     ${remedyMake(r)}
     ${remedyScience(r)}
-    ${r.weeks ? (() => { const short = t => t.replace(/^Pinch of (good )?/i, '').replace(/^coconut water or 1 tsp apple cider vinegar$/i, 'coconut or vinegar').replace(/^./, c => c.toUpperCase()); let glass = ['Lemon'];
-      return `${sectionTitle('Week by week')}<p class="wk2-lead">Add one thing each week, so your glass grows with you.</p><section class="card wk2">${r.weeks.map(w => { const keep = /^keep going/i.test(w.add); if (!keep) glass = [...glass, short(w.add)];
-        return `<div class="wk2-r"><span class="wk2-n"><small>Week</small><b class="dotnum">${w.w}</b></span><div class="wk2-b"><b>${keep ? 'Same glass, every day' : `Add ${w.add.replace(/^Pinch/, 'a pinch').replace(/^Coconut/, 'coconut')}`}</b><p>${w.gain.length < 110 ? w.gain : splitSentences(w.gain)[0]}</p><span class="wk2-g">${icon('cup', 12)} ${glass.join(' · ')}</span></div></div>`; }).join('')}
-        <div class="sgt-st wk2-st"><b class="dotnum">2010</b><span><em>Lally</em>A new daily habit took about 66 days on average to feel automatic, and missing a single day made no real difference.<small>European Journal of Social Psychology</small></span></div></section>`; })() : ''}
+    ${r.weeks ? sectionTitle('Week by week') + `<p class="wk2-lead">Add one thing each week, so your glass grows with you.</p>` + wkCard(r) : ''}
     ${(() => { const nx = REMEDIES[(REMEDIES.indexOf(r) + 1) % REMEDIES.length]; return `<button class="card glass nu-next" data-action="nav" data-to="remedy/${nx.id}"><small>Next remedy</small><b>${nx.name}</b>${icon('chevR', 16)}</button>`; })()}
     <p class="fine center">Traditional home remedies, not a replacement for medical care.</p>
   </div>`;
@@ -8269,6 +8286,7 @@ const actions = {
     det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
     const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
   },
+  wkPick: (d, el) => { ui.wkSel = +d.w; const card = el.closest('.wk3'), r = REMEDIES.find(x => x.weeks); if (!card || !r) return render(); card.outerHTML = wkCard(r); },
   ritPick: (d, el) => {
     const box = el.closest('.sfc'), det = box.querySelector('.sfc-det'), it = ritList().find(x => x.i === +d.i); if (!it) return;
     const off = () => box.querySelectorAll('.sfc-i.on').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); });
