@@ -8303,7 +8303,7 @@ const actions = {
       ${H ? `<ol class="rtd-st">${H[0].map(([g, t], k) => `<li><i>${icon(g, 15)}</i><em class="dotnum">${k + 1}</em><span>${t}</span></li>`).join('')}</ol>` : `<p class="rtd-p">${how}</p>`}
       ${ph ? `<small class="rtd-k">Best in your cycle</small>${phaseFit(ph.split('').map(c => PK[c]), M.info && M.info.phase)}` : ''}
       ${st ? `<div class="rtd-study"><b class="dotnum">${yr}</b><span><small>What a study found</small>${st[0]}<i>${st[1].replace(/\s*(19|20)\d{2}/, '').replace(/\s*\((.*)\)/, ' · $1')}</i></span></div>` : ''}
-      ${care ? `<p class="rtd-care">${icon('bell', 13)} ${care}</p>` : ''}</div>
+      </div>
       <button class="bn-x" data-action="ritPick" data-i="${d.i}" aria-label="Close">${icon('close', 16)}</button>`;
     det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
     const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
