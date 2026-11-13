@@ -7088,10 +7088,44 @@ function apoInner() {
   return `<section class="sfc apo2">
       <header class="sfc-h"><small><i style="background:#6c823e"></i>${sn} · ${MONTHS[new Date().getMonth()]}</small><h3>${sn} apothecary</h3><p>${herbs.length ? 'Superfoods and warming herbs for immunity and warmth through the cold months.' : 'What nature makes best this season.'}</p></header>
       <div class="sfc-gh"><b>Season superfoods</b><small>${sup.length} to eat now</small></div><div class="sfc-grid">${sup.map(item).join('')}</div>
-      ${herbs.length ? `<div class="sfc-gh"><b>Herbs</b><small>From Chinese medicine, as teas and broths</small></div><div class="sfc-grid">${herbs.map((x, i) => item(x, i + sup.length)).join('')}</div>` : ''}
+      ${herbs.length ? herbBed(herbs) : ''}
       <div class="sfc-det" aria-live="polite" hidden></div>
       <footer class="sfc-f"><span>Small, food-sized amounts</span><span>Pregnant, breastfeeding or on medication? Ask your doctor first</span></footer>
     </section>`;
+}
+// The herb bed: each herb grows in two soil furrows; a tap pulls it out of the ground (root and all) and the card below tells what it does.
+const HERB_BED = {
+  'Astragalus': ['astragalus', 'Astragalus', '黄芪', ['Defences', 'Steady energy', 'After a cold']],
+  'Red dates': ['red-dates', 'Red dates', '大枣', ['Nourishes Blood', 'Calm mind', 'Natural sweetness']],
+  'Ginger root': ['ginger', 'Ginger', '生姜', ['Warm belly', 'Period cramps', 'Settles nausea']],
+  'Clove': ['clove', 'Clove', '丁香', ['Warm hands & feet', 'Easier digestion', 'Fresh breath']],
+  'Cinnamon bark': ['cinnamon', 'Cinnamon', '肉桂', ['Warming', 'Steadier blood sugar', 'Sweet without sugar']],
+  'Goji berries': ['goji', 'Goji', '枸杞', ['Nourishes Blood', 'Eyes', 'Antioxidants']],
+  'Reishi': ['reishi', 'Reishi', '灵芝', ['Calm', 'Deeper sleep', 'Immunity']],
+  'Chaga': ['chaga', 'Chaga', '白桦茸', ['Antioxidants', 'Dark, earthy brew', 'Immunity']],
+  'He shou wu': ['he-shou-wu', 'He shou wu', '何首乌', ['Hair', 'Vitality', 'Practitioner only']],
+};
+function herbBed(herbs) {
+  herbs = herbs || apoItems(apoSeason()).herbs;
+  const up = ui.herbUp, was = ui.herbWas; ui.herbWas = null;
+  const B = x => HERB_BED[x.n] || [x.n.toLowerCase().replace(/\W+/g, '-'), x.n, '', []];
+  const crumbs = '<span class="hb-cr" aria-hidden="true">' + [[-16, 4], [-9, -2], [-3, 8], [5, 0], [11, 6], [17, -1]].map(([x, y]) => `<i style="--x:${x}px;--y:${y}px"></i>`).join('') + '</span>';
+  const plant = i => { const x = herbs[i], b = B(x); return `<button class="hb-p${up === i ? ' up' : ''}${was === i ? ' back' : ''}" data-action="herbPull" data-i="${i}" aria-expanded="${up === i}" aria-label="${b[1]}"><span class="hb-pl"><img src="images/herbs/${b[0]}.svg" alt="" draggable="false"></span>${up === i ? crumbs : ''}<small>${b[1]}</small></button>`; };
+  const rows = [herbs.slice(0, 5).map((_, i) => i), herbs.slice(5).map((_, i) => i + 5)];
+  const x = herbs[up], det = x ? (() => {
+    const b = B(x), H = HERB_SPEC[x.n] || {}, cares = [x.warn, H.care].filter(Boolean), S = H.study;
+    return `<div class="hb-det" aria-live="polite">
+      <div class="hb-top"><figure class="hb-fig"><img src="images/herbs/${b[0]}.svg" alt=""></figure>
+        <div class="hb-id"><small>${b[2] ? `<span class="hb-han">${b[2]}</span>` : ''}${x.sub}</small><h4>${x.n}</h4>
+          <span class="hb-nat ${x.nat === 'warm' ? 'w' : 'n'}"><i></i>${x.nat === 'warm' ? 'Warming' : 'Neutral'}</span>
+          <p class="hb-why">${x.why}</p></div>
+        <button class="bn-x" data-action="herbPull" data-i="${up}" aria-label="Plant it back">${icon('close', 16)}</button></div>
+      <div class="hb-ben"><small>Good for</small>${b[3].map(t => `<span>${t}</span>`).join('')}</div>
+      <div class="hb-spec">${H.dose ? `<div><span>How much</span><b>${H.dose}</b></div>` : ''}<div><span>How</span><b>${x.how}</b></div></div>
+      ${S ? `<p class="hb-st"><small>What a study found</small>${S[0]} <i>${S[1]}</i></p>` : ''}
+      ${cares.length ? `<p class="hb-care"><small>Before you try</small>${cares.join(' ')}</p>` : ''}</div>`; })() : '<p class="hb-hint">Tap a herb to pull it out of the ground</p>';
+  return `<div class="hbed-w"><div class="sfc-gh"><b>Herbs</b><small>From Chinese medicine, as teas and broths</small></div>
+    <div class="hbed">${rows.map(r => `<div class="hb-row" style="--n:${r.length}">${r.map(plant).join('')}</div>`).join('')}</div>${det}</div>`;
 }
 // The season at a glance: what to eat and sip as small photos, one plain line to feel, the full story behind a tap.
 const SEASON_CHIPS = {
@@ -8403,6 +8437,12 @@ const actions = {
       <button class="bn-x" data-action="apoPick" data-i="${d.i}" aria-label="Close">${icon('close', 16)}</button>`;
     det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
     const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
+  },
+  herbPull: (d, el) => {
+    const i = +d.i; ui.herbWas = ui.herbUp === i ? i : ui.herbUp; ui.herbUp = ui.herbUp === i ? null : i;
+    const w = el.closest('.hbed-w'); if (!w) return render();
+    const tmp = document.createElement('div'); tmp.innerHTML = herbBed(); const nw = tmp.firstElementChild; w.replaceWith(nw);
+    const det = nw.querySelector('.hb-det'); if (det) { const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) setTimeout(() => det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' }), 450); }
   },
   wkPick: (d, el) => { ui.wkSel = +d.w; const card = el.closest('.wk3'), r = REMEDIES.find(x => x.weeks); if (!card || !r) return render(); card.outerHTML = wkCard(r); },
   ritPick: (d, el) => {
