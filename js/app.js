@@ -3588,21 +3588,16 @@ const FB_SPEC = {
   magnesium: ['Evening, the week before your period', '200 to 300 mg', ['1998', 'Walker', '200 mg magnesium a day eased bloating, swelling and breast tenderness in the second cycle.', 'Journal of Women’s Health']],
   seeds: ['Every day, the seeds switch on day 15', '2 tbsp a day'],
 };
-// Seed cycling, made plain: the cycle as two halves, which seeds in each, and where she is today.
+// Seed cycling, made plain: two simple rows, which seeds in which half, a Now tag on hers.
 function seedHalves() {
-  const info = M.info, L = info ? info.L : 28, h = Math.round(L / 2), cd = info ? Math.min(info.cd, L) : 0, first = !info || cd <= h;
-  const half = (on, from, to, phs, seeds) => `<div class="sdh-h ${on ? 'on' : ''}">
-      <div class="sdh-bar">${phs.map(p => `<i style="background:${PH_HEX[p]}"></i>`).join('')}</div>
-      <small>Day <b class="dotnum">${from}</b> to <b class="dotnum">${to}</b></small>
-      <em>${phs.map(p => PHASES[p].name).join(' & ')}</em>
-      <div class="sdh-s">${seeds.map(([k, n]) => `<span>${foodPhoto(k, 120) ? `<img src="${foodPhoto(k, 120)}" alt="" loading="lazy">` : ''}<b>1 tbsp</b>${n}</span>`).join('')}</div>
-      ${on && info ? `<strong>You, day <span class="dotnum">${cd}</span></strong>` : ''}</div>`;
-  return `<div class="sdh">${half(first, 1, h, ['menstrual', 'follicular'], [['Ground flaxseed', 'Flax, ground'], ['Pumpkin seeds', 'Pumpkin']])}${half(!first, h + 1, L, ['ovulatory', 'luteal'], [['Sesame seeds', 'Sesame'], ['Sunflower seeds', 'Sunflower']])}</div>`;
+  const info = M.info, L = info ? info.L : 28, h = Math.round(L / 2), first = !info || info.cd <= h;
+  const row = (on, days, a, b, txt) => `<div class="sdh-r ${on ? 'on' : ''}"><span class="sdh-ph">${[a, b].map(k => `<img src="${foodPhoto(k, 120)}" alt="" loading="lazy">`).join('')}</span><span><b>${days}</b><small>${txt}</small></span>${on && info ? '<em>Now</em>' : ''}</div>`;
+  return `<div class="sdh2">${row(first, `Day 1 to ${h}`, 'Ground flaxseed', 'Pumpkin seeds', 'Flax and pumpkin, 1 tbsp each')}${row(!first, `Day ${h + 1} to ${L}`, 'Sesame seeds', 'Sunflower seeds', 'Sesame and sunflower, 1 tbsp each')}</div>`;
 }
 function fbDetail(i) {
   const x = FB[i], on = x.hb && habitsDone(todayISO()).includes(x.hb);
   let [when, takes, st] = FB_SPEC[x.id] || [];
-  if (x.id === 'seeds') when = `Every day, switch on day ${Math.round((M.info ? M.info.L : 28) / 2) + 1}`;
+  if (x.id === 'seeds') when = 'Every day';
   return `<img src="images/fb/${x.id}.webp" alt=""><div class="fbd-b"><b>${x.t}</b><p>${x.why}</p>
     ${when ? `<div class="fbd-spec"><p><span>${icon('clock', 13)} When</span><b>${when}</b></p><p><span>${icon('drop', 13)} Takes</span><b>${takes}</b></p></div>` : ''}
     ${x.id === 'seeds' ? seedHalves() : ''}
