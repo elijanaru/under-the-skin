@@ -12230,3 +12230,10 @@ html .rs2 { grid-template-columns: 52px 1fr 40px; gap: 14px; }
 .msd-c h4 { margin: 0; font-size: 16px; font-weight: 500; line-height: 1.25; }
 .msd-c p { flex: 1; margin: 6px 0 10px; font-size: 13.5px; line-height: 1.45; color: rgba(32,48,26,.68); }
 .msd-c cite { font-style: normal; font-size: 12px; font-weight: 500; color: color-mix(in srgb, var(--pc) 65%, #20301a); }
+
+/* Supplements list: spec rows like Nutrients; this phase's bar a touch taller */
+.sup2-list { margin-top: 12px; }
+.sup2-r .nu2-ph i.me { height: 6px; margin-top: -1px; }
+.sup2-r .nu2-ph { align-items: center; }
+html .sup2-r > .nu2-d { max-width: 104px; }
+.sup2-r > .nu2-d > small { text-wrap: balance; }

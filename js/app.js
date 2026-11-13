@@ -4351,20 +4351,27 @@ function suppHand(now) {
     ${now ? `<p class="suh-key"><em></em>Helps most in your ${PHASES[now].name.toLowerCase()} phase</p>` : ''}
   </section>`;
 }
+// what each one is for, in a few words (the nutrient list has its own)
+const SUPP_FOR = { 'vitamin-c': 'Iron uptake, collagen', ginger: 'Period pain, nausea', creatine: 'Energy, brain, bone', 'b-complex': 'Energy, mood', probiotic: 'Gut, vaginal flora',
+  'vitamin-e': 'Cramps, skin', ashwagandha: 'Stress, sleep', prenatal: 'Before and in pregnancy', coq10: 'Egg quality', 'vitamin-d': 'Mood, follicles, bone' };
 function viewSupps() {
   const now = M.info && M.info.phase, tab = ui.supTab || (now ? 'now' : 'all');
   const L = SUPP_LIB.filter(x => ttc() || !/prenatal|coq10/.test(x.id)), on = L.filter(x => now && suppPhases(x).includes(now));
-  // when it helps, in words: a coloured dot and the phase name (four unlabelled dots said nothing)
-  const SHORT = { menstrual: 'Period', follicular: 'Follicular', ovulatory: 'Ovulation', luteal: 'Luteal' };
-  const dots = x => { const ph = suppPhases(x); return `<span class="sup-ph2">${ph.length >= 4 ? `<span><i style="--c:#6c823e"></i>All month</span>` : PHASE_ORDER.filter(p => ph.includes(p)).map(p => `<span class="${p === now ? 'me' : ''}"><i style="--c:${PHASE_COLOR.dark[p]}"></i>${SHORT[p]}</span>`).join('')}</span>`; };
-  const row = x => `<button class="sup-row" data-action="nav" data-to="supp/${x.id}"><span class="sup-sym ${x.han ? 'han cutf' : ''}">${x.han ? '<img src="images/sf/ginger.webp" alt="">' : x.sym}</span><span class="sup-t"><b>${x.name}</b><small>${x.dose} · ${x.when.toLowerCase()}</small><span class="sup-meta">${evBadge(x.ev)}${dots(x)}</span></span>${icon('chevR', 16)}</button>`;
+  // spec rows like the Nutrients list: a round photo of the food richest in it, what it's for, phase bars, the dose on the right in Doto
+  const pic = x => { const h = SUPP_HERO[x.id]; return h ? (h[0].startsWith('tea:') ? teaPhoto(h[0].slice(4), 300, 300) : foodPhoto(h[0], 300)) : ''; };
+  const forTxt = x => SUPP_FOR[x.id] || (NUTRIENTS.find(n => n.id === x.id) || {}).for || x.c.slice(0, 2).map(c => c[0]).join(', ');
+  const dose = x => { const m = x.dose.match(/^(Up to )?([\d.,–]+)\s*(mg|g|IU|µg|capsule)?/); return m ? `${m[1] ? '<small>up to</small>' : ''}<b class="dotnum">${m[2]}</b><small>${m[3] || ''}</small>` : `<b class="nu2-w">${x.dose}</b>`; };
+  const when = x => x.when.split(/,\s*/)[0].replace(/^Daily$/, 'Any time');
+  const dots = x => { const ph = suppPhases(x); return ph.length >= 4 ? '<em class="nu2-all">All month</em>' : `<span class="nu2-ph">${PHASE_ORDER.map(p => `<i class="${ph.includes(p) ? 'on' : ''} ${p === now ? 'me' : ''}" style="--c:${PH_HEX[p]}" title="${PHASES[p].name}"></i>`).join('')}</span>`; };
+  const row = x => `<button class="nu2-r sup2-r" data-action="nav" data-to="supp/${x.id}"><span class="nu2-p">${pic(x) ? `<img src="${pic(x)}" alt="" loading="lazy" decoding="async">` : ''}</span>
+    <span class="nu2-t"><b>${x.name.replace(/\s*\(.*?\)/, '')}</b><small>${forTxt(x)}</small>${dots(x)}</span><span class="nu2-d"><span>${dose(x)}</span><small>${when(x)}</small></span></button>`;
   return `${topbar('Supplements', { back: true })}<div class="pad sp2">
     <header class="t4-h sp-h"><small>Supplements</small><h1>Fill the gaps food can’t.</h1><p>Food comes first. Tap a pill to see what it does and when in your cycle it helps.</p></header>
     ${suppHand(now)}
     ${now && on.length ? suppStack(on, now) : ''}
     <div class="seg">${(now ? [['now', 'For now'], ['all', 'All']] : [['all', 'All']]).map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="supTab" data-v="${k}">${l}</button>`).join('')}</div>
-    <section class="card glass sup-list">${(tab === 'now' && on.length ? on : L).map(row).join('')}</section>
-    <p class="fine center">Dots show the phases each one helps most. Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}.</p></div>`;
+    <section class="nu2-list sup2-list"><p class="nu2-k"><span>Bars: the phases it helps most</span><span>Daily dose</span></p>${(tab === 'now' && on.length ? on : L).map(row).join('')}</section>
+    <p class="fine center">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}.</p></div>`;
 }
 // Science block for remedies, rituals and supplements: a numbered pathway, one card per study with its year, then cautions.
 function studyCards(study, cite) {
