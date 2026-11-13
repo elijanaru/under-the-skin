@@ -3598,12 +3598,13 @@ function fbDetail(i) {
   const x = FB[i], on = x.hb && habitsDone(todayISO()).includes(x.hb);
   let [when, takes, st] = FB_SPEC[x.id] || [];
   if (x.id === 'seeds') when = 'Every day';
+  if (x.id === 'carrot') { const L = M.info ? M.info.L : 28, P = M.info ? M.info.P : 5; when = `Day ${P + 1} to ${L - 3} of your cycle`; }
   return `<img src="images/fb/${x.id}.webp" alt=""><div class="fbd-b"><b>${x.t}</b><p>${x.why}</p>
     ${when ? `<div class="fbd-spec"><p><span>${icon('clock', 13)} When</span><b>${when}</b></p><p><span>${icon('drop', 13)} Takes</span><b>${takes}</b></p></div>` : ''}
     ${x.id === 'seeds' ? seedHalves() : ''}
     <ul>${(x.id === 'seeds' ? x.do.slice(2) : x.do).map(d => `<li>${icon('check', 11, 2.6)}<span>${d}</span></li>`).join('')}</ul>
     ${st ? `<div class="sgt-st fbd-st"><b class="dotnum">${st[0]}</b><span><em>${st[1]}</em>${st[2]}<small>${st[3]}</small></span></div>` : ''}
-    <span class="fbd-safe">${icon('heart', 12)} ${x.safe}</span>
+    ${x.id === 'carrot' ? '' : `<span class="fbd-safe">${icon('heart', 12)} ${x.safe}</span>`}
     <div class="fbd-acts">${x.hb ? `<button class="fbd-hb ${on ? 'on' : ''}" data-action="fbHabit" data-id="${x.hb}" data-i="${i}" aria-pressed="${!!on}">${icon('check', 13, 2.6)} ${on ? 'Done today' : 'Add to my daily habits'}</button>` : ''}${x.to ? `<button class="fbd-go" data-action="nav" data-to="${x.to[0]}">${x.to[1]} ${icon('chevR', 13)}</button>` : ''}</div></div>
     <button class="fbd-x" data-action="fbClose" aria-label="Close">${icon('close', 14)}</button>`;
 }
@@ -7479,16 +7480,17 @@ function viewArticle(id) {
   if (!(state.read || {})[a.id]) { state.read = { ...(state.read || {}), [a.id]: 1 }; save(); }
   const u = readPic(a, 1100), i = all.indexOf(a), m = new Date().getMonth() + 1;
   const nexts = all.filter(x => x !== a && (!x.month || x.month <= m)), n = nexts.find(x => !(state.read || {})[x.id]) || nexts[(i) % nexts.length];
-  return `<section class="art-hero">${u ? `<img src="${u}" alt="">` : glowArt('wave', 4)}<span class="art-shade"></span>
-    <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
-    <div class="art-h"><span class="lt-tag">${a.month ? `The Underskin letter · ${MONTHS[a.month - 1]}` : `${a.phase ? PHASES[a.phase].name + ' phase · ' : ''}${a.mins} min read`}</span><h1>${a.title}</h1>${a.lead ? `<p>${a.lead}</p>` : ''}</div></section>
-  <div class="pad article">
-    ${a.keys ? `<section class="card glass art-keys"><div class="spec-k">Key numbers</div>${a.keys.map(([b, t]) => `<div class="spec-row"><b>${b}</b><span>${t}</span></div>`).join('')}</section>` : ''}
+  const ph = a.phase ? PHASES[a.phase] : null;
+  return `<section class="art2-hero"><div class="art2-pic">${u ? `<img src="${u}" alt="">` : glowArt('wave', 4)}<button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button></div>
+    <div class="art2-h"><span class="art2-tag">${a.month ? `The Underskin letter · ${MONTHS[a.month - 1]}` : `${ph ? `<i style="background:${PH_HEX[a.phase]}"></i>${ph.name} phase · ` : ''}<b class="dotnum">${a.mins}</b> min read`}</span><h1>${a.title}</h1>${a.lead ? `<p>${a.lead}</p>` : ''}</div></section>
+  <div class="pad article art2">
+    ${a.keys ? `<section class="card art2-keys"><small class="art2-k">Key numbers</small>${a.keys.map(([b, t]) => `<div class="a2k"><span>${t}</span><b class="${/^[<>~±≈]?\s*\d/.test(b) ? 'dotnum' : ''}">${b}</b></div>`).join('')}</section>` : ''}
+    ${a.id === 'seed-cycling' ? `<section class="card art2-do"><small class="art2-k">How to do it</small>${seedHalves()}</section>` : ''}
     ${artGraph(a)}
-    ${a.body.map((p, k) => `<p>${p}</p>${k === 1 && ARTICLE_PIC[a.id] ? `<figure class="art-fig"><img src="${ARTICLE_PIC[a.id][0]}" alt="" loading="lazy"><figcaption>${ARTICLE_PIC[a.id][1]}</figcaption></figure>` : ''}`).join('')}
-    ${ARTICLE_STUDIES[a.id] ? `${sectionTitle('What studies found')}<section class="card gr-card gr-st art-st">${ARTICLE_STUDIES[a.id].map(([w, y, j, f, d]) => `<details><summary class="gr-s"><span class="gr-y">${y}</span><span class="gr-s-t"><b>${f}</b><small>${w} · ${j}</small></span>${icon('chevD', 14)}</summary><p class="gr-s-d">${d}</p></details>`).join('')}</section>` : ''}
+    <section class="card art2-body">${a.body.map((p, k) => `<p>${p}</p>${k === 1 && ARTICLE_PIC[a.id] ? `<figure class="art-fig"><img src="${ARTICLE_PIC[a.id][0]}" alt="" loading="lazy"><figcaption>${ARTICLE_PIC[a.id][1]}</figcaption></figure>` : ''}`).join('')}</section>
+    ${ARTICLE_STUDIES[a.id] ? `${sectionTitle('What studies found')}<section class="card gr-card gr-st art-st">${ARTICLE_STUDIES[a.id].map(([w, y, j, f, d], k) => `<details${k === 0 ? ' open' : ''}><summary class="gr-s"><span class="gr-y">${y}</span><span class="gr-s-t"><b>${f}</b><small>${w} · ${j}</small></span>${icon('chevD', 14)}</summary><p class="gr-s-d">${d}</p></details>`).join('')}</section>` : ''}
     ${a.to ? `<button class="card glass art-do" data-action="nav" data-to="${a.to}"><span>Try it in the app</span>${icon('chevR', 16)}</button>` : ''}
-    ${a.src ? `<section class="card glass tea-study art-src"><small>Sources · ${a.src}</small></section>` : ''}
+    ${a.src ? `<p class="art2-src">Sources: ${a.src}</p>` : ''}
     ${n ? `<button class="card nu-next art-next" data-action="nav" data-to="article/${n.id}">${readPic(n, 300) ? `<img src="${readPic(n, 300)}" alt="">` : ''}<span><small>Next read</small><b>${n.title}</b></span>${icon('chevR', 16)}</button>` : ''}
   </div>`;
 }

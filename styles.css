@@ -11943,3 +11943,27 @@ html .card.wk3 { background: #fff !important; padding: 16px 14px 14px !important
 .sdh-r b { display: block; font-size: 14.5px; font-weight: 600; color: #20301a; }
 .sdh-r small { display: block; font-size: 13px; color: rgba(32,48,26,.68); }
 .sdh-r em { flex: none; padding: 3px 9px; border-radius: 99px; background: #20301a; color: #fff; font-style: normal; font-size: 11px; font-weight: 500; }
+/* v951: articles, Apple-clean. Photo in its own card, the title in dark ink below it (never on the photo), key numbers as spec rows, the text on a white reading card */
+.art2-hero { padding: calc(env(safe-area-inset-top, 0px) + 10px) 16px 0; }
+.art2-pic { position: relative; height: 250px; border-radius: 30px; overflow: hidden; background: #eef1e6; box-shadow: 0 16px 34px rgba(60,40,30,.14); }
+.art2-pic > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.art2-pic .spec-btn { position: absolute; top: 12px; left: 12px; z-index: 2; }
+.art2-h { padding: 20px 6px 4px; display: grid; gap: 10px; }
+.art2-tag { justify-self: start; display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 99px; background: #fff; border: 1px solid rgba(48,64,35,.10); font-size: 12.5px; color: rgba(32,48,26,.7); }
+.art2-tag i { width: 8px; height: 8px; border-radius: 50%; }
+.art2-tag b { font: 900 13px/1 Doto, monospace; color: #20301a; }
+.art2-h h1 { margin: 0; font-size: 31px; font-weight: 600; letter-spacing: -.025em; line-height: 1.1; color: #20301a; }
+.art2-h p { margin: 0; font-size: 15.5px; line-height: 1.45; color: rgba(32,48,26,.66); }
+html .article.art2 .card.art2-keys, html .article.art2 .card.art2-do, html .article.art2 .card.art2-body { background: #fff !important; backdrop-filter: none; border: 1px solid rgba(48,64,35,.08); box-shadow: 0 12px 28px rgba(60,40,30,.07); }
+.art2-keys { padding: 16px 18px 6px; margin: 8px 0 14px; }
+.art2-k { display: block; font-size: 12px; font-weight: 500; letter-spacing: .02em; color: rgba(32,48,26,.55); margin-bottom: 4px; }
+.a2k { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 13px 0; border-bottom: 1px solid rgba(32,48,26,.08); }
+.a2k:last-child { border-bottom: 0; }
+.a2k span { font-size: 14px; line-height: 1.35; color: rgba(32,48,26,.72); }
+.a2k b { flex: none; max-width: 48%; text-align: right; font-size: 15px; font-weight: 600; color: #20301a; }
+.a2k b.dotnum { font: 900 22px/1 Doto, monospace; }
+.art2-do { padding: 16px 16px 12px; margin: 0 0 14px; }
+.art2-do .sdh2 { margin: 6px 0 0; }
+.art2-body { padding: 20px 20px 6px; margin: 0 0 6px; }
+html .article.art2 .art2-body p { font-size: 16px; line-height: 1.65; color: #304023; margin: 0 0 16px; }
+.art2-src { margin: 14px 6px 10px; font-size: 12.5px; line-height: 1.45; color: rgba(32,48,26,.55); }

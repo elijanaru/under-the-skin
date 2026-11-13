@@ -545,7 +545,7 @@ export const ARTICLE_STUDIES = {
 };
 export const ARTICLE_PIC = { 'four-phases': ['images/season-spring.jpg', 'Four phases, like four seasons'], estrogen: ['images/forest-path.jpg', 'Rising estrogen: the outward days'],
   'progesterone-pms': ['images/period-food.webp', 'Warm broth and protein keep the curve gentle'], 'yin-yang': ['images/forest-calm.jpg', 'Cooling Yin, warming Yang'],
-  iron: ['images/period-food.webp', 'Red meat and broth: the best-absorbed iron'], 'seed-cycling': ['images/season-fruit.webp', 'Seeds and fruit: easy nutrition, not a treatment'],
+  iron: ['images/period-food.webp', 'Red meat and broth: the best-absorbed iron'],
   brain: ['images/forest-path.jpg', 'Same mind, different weather'], sleep: ['images/move-meditate.webp', 'A cool room and a slow evening'],
   'ovulation-signs': ['images/read-lilies.webp', 'Bud to bloom: your body shows it'], 'skin-cycle': ['images/season-fruit.webp', 'Zinc and calm skin care'],
   'eat-cycle': ['images/season-veg.webp', 'Fresh first, warm later'], 'train-cycle': ['images/move-walk.webp', 'Every phase is a training phase'],
