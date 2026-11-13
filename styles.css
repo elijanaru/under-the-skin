@@ -10643,7 +10643,7 @@ html .home .hub-k > span:first-child { font: 600 20px/1.2 Outfit, sans-serif !im
 
 /* Consistency: every big page and card heading in one bold weight (were thin 300-400, some half thin half bold) */
 html .sci-h, html .tgw-t, html .rh2-h, html .st2-h, html .sy-h, html .rh3-h, html .br2-h,
-html .cal-head h2, html .pl-head h2, html .log-date h2, html .spec-name h1, html .rh-article > h2,
+html .cal-head h2, html .log-date h2, html .spec-name h1, html .rh-article > h2,
 html .szh-t h1, html .sz-story h2, html .hxd-in h1, html .pld-h b { font-weight: 600 !important; letter-spacing: -.02em; }
 html .sci-h span, html .br2-h span, html .br2-h em, html .rh3-h span, html .sy-h span, html .tgw-t span { font-weight: inherit !important; }
 
@@ -11967,3 +11967,14 @@ html .article.art2 .card.art2-keys, html .article.art2 .card.art2-do, html .arti
 .art2-body { padding: 20px 20px 6px; margin: 0 0 6px; }
 html .article.art2 .art2-body p { font-size: 16px; line-height: 1.65; color: #304023; margin: 0 0 16px; }
 .art2-src { margin: 14px 6px 10px; font-size: 12.5px; line-height: 1.45; color: rgba(32,48,26,.55); }
+
+/* Food page title back to its first look (the user preferred it): small caps eyebrow, light title, aim and TCM season below */
+html .pl-head .mv2-eyebrow { margin: 4px 0 0; }
+html .pl-head h2 { font-weight: 300 !important; font-size: 30px; letter-spacing: -.02em; color: #20301a; }
+html .pl-head p { color: rgba(48,64,35,.72); font-weight: 300; }
+html .pl-head .pl-han { font-family: 'Noto Serif SC', serif; }
+
+/* Food circles: every food as one emoji (real emoji, or a drawn one in the same style when none exists) */
+html .pld-foods .pld-emo { font-size: 34px; line-height: 1; background: rgba(255,255,255,.62); }
+html .pld-foods .pld-emo .emo { width: auto; height: auto; border: 0; box-shadow: none; background: none; border-radius: 0; display: block; font-size: inherit; }
+html .pld-foods .pld-emo img.emo { width: 42px; height: 42px; object-fit: contain; }

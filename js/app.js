@@ -2369,6 +2369,43 @@ function findFoodPhoto(n, w = 300) {
   return k ? foodPhoto(k, w) : '';
 }
 // The picture that fills each section of the plate when none of its foods has one.
+// Every food on the plate as one emoji. "e:name" is a drawn emoji in the same style (images/emoji/name.webp)
+// for foods that have no real emoji; the first match wins, so specific names come before families.
+const FOOD_EMO = [
+  [/lamb.s lettuce|turnip greens|beet greens/i, '🥬'], [/wild garlic/i, '🌿'], [/aubergine|eggplant/i, '🍆'],
+  [/pineapple/i, '🍍'], [/custard apple|mangosteen|lychee|litchi|rambutan/i, '🍒'], [/prickly pear|guava/i, '🍐'], [/persimmon/i, '🍊'], [/papaya/i, '🥭'],
+  [/jackfruit/i, '🍈'], [/dragon fruit|passion ?fruit|starfruit|loquat|tamarind/i, '🍑'],
+  // mushrooms early, so oyster and milk-cap mushrooms are not shellfish or milk
+  [/mushroom|chanterelle|porcini|morel|shiitake|enoki|maitake|matsutake|trumpet|lion’s mane|lion's mane|milk cap|blewit|slippery jack|songi|saesongi|neutari|paengi/i, '🍄‍🟫'],
+  // seeds, spices and pantry
+  [/black sesame/i, 'e:black-sesame'], [/sesame/i, 'e:sesame'], [/tahini/i, 'e:tahini'], [/flax/i, 'e:flaxseed'], [/chia/i, 'e:chia'],
+  [/hemp/i, 'e:hemp'], [/pumpkin seed/i, 'e:pumpkin-seeds'], [/sunflower/i, 'e:sunflower-seeds'], [/fennel seed/i, 'e:fennel-seeds'],
+  [/cinnamon/i, 'e:cinnamon'], [/cardamom/i, 'e:cardamom'], [/turmeric/i, 'e:turmeric'], [/goji/i, 'e:goji'], [/red date|jujube/i, 'e:red-dates'],
+  [/almond/i, 'e:almonds'], [/walnut/i, 'e:walnuts'], [/chestnut/i, '🌰'], [/peanut/i, '🥜'], [/coconut/i, '🥥'],
+  [/olive/i, '🫒'], [/ghee|butter/i, '🧈'], [/yoghurt|yogurt|kefir|milk/i, '🥛'], [/cheese/i, '🧀'], [/honey/i, '🍯'],
+  [/sourdough|bread/i, '🍞'], [/buckwheat|millet|quinoa|rice|grain/i, '🌾'], [/lentil|black bean|white bean|kidney|chickpea|^beans/i, '🫘'],
+  [/ginger/i, '🫚'], [/garlic/i, '🧄'], [/chilli|chili|gochu/i, '🌶️'], [/rose(?!hip)/i, '🌹'], [/elderflower/i, '🌼'],
+  // animal foods
+  [/liver/i, 'e:liver'], [/heart/i, '🫀'], [/broth|stew|soup/i, '🍲'], [/egg/i, '🥚'], [/chicken/i, '🍗'], [/turkey|duck/i, '🍗'],
+  [/lamb|beef|steak/i, '🥩'], [/salmon|sardine|mackerel|fish|trout|cod/i, '🐟'], [/prawn|shrimp/i, '🦐'], [/oyster(?! mush)|mussel|clam/i, '🦪'],
+  // vegetables
+  [/fennel/i, 'e:fennel'], [/radish|daikon|mooli|\bmu\)/i, 'e:radish'], [/rhubarb/i, 'e:rhubarb'], [/asparagus|fiddlehead|samphire|bamboo/i, 'e:asparagus'],
+  [/\bbeet/i, 'e:beetroot'], [/sweet potato|goguma|shakarkandi|cassava|taro|colocasia|yam/i, '🍠'], [/potato/i, '🥔'],
+  [/carrot|parsnip|salsify|burdock|root vegetable|turnip|rutabaga|celeriac|jerusalem|horseradish|lotus root/i, '🥕'],
+  [/pumpkin|squash|kabocha|danhobak/i, '🎃'], [/aubergine|eggplant/i, '🍆'], [/broccoli|cauliflower|brussels|kohlrabi/i, '🥦'],
+  [/corn|bhutta/i, '🌽'], [/pepper/i, '🫑'], [/tomato/i, '🍅'], [/cucumber|courgette|zucchini|aehobak|gourd|bitter melon|karela|lauki|chayote|okra|bhindi/i, '🥒'],
+  [/onion|leek|ramps/i, '🧅'], [/artichoke|cardoon/i, '🥬'], [/\bpeas?\b|edamame|broad bean|green bean|long bean|drumstick|moringa/i, '🫛'],
+  [/avocado/i, '🥑'], [/basil|parsley|coriander|mint|thyme|herb|nettle|wild garlic|minari|dandelion|watercress|samphire/i, '🌿'],
+  [/spinach|kale|chard|cabbage|lettuce|greens|collard|silverbeet|palak|sigeumchi|sarson|sprouts|kongnamul|water spinach/i, '🥬'],
+  // fruit
+  [/pomegranate/i, 'e:pomegranate'], [/fig/i, 'e:fig'], [/quince/i, 'e:quince'], [/lemon|yuzu/i, '🍋'], [/lime/i, '🍋‍🟩'],
+  [/orange|mandarin|citrus|kinnow|hallabong|gamgyul|clementine/i, '🍊'], [/apple(?!s? \()/i, '🍎'], [/asian pear|pear/i, '🍐'],
+  [/peach|nectarine|apricot|stone fruit|plum|damson|ume|maesil/i, '🍑'], [/cherr/i, '🍒'], [/strawberr/i, '🍓'], [/grape/i, '🍇'],
+  [/watermelon/i, '🍉'], [/melon|chamoe/i, '🍈'], [/banana|plantain/i, '🍌'], [/mango/i, '🥭'], [/pineapple/i, '🍍'], [/kiwi|feijoa/i, '🥝'],
+  [/blueberr|bilberr|blackberr|elderberr|haskap|saskatoon|currant|jamun|^berries|wild berr|cranberr|lingonberr|raspberr|cloudberr|gooseberr|rosehip|sea buckthorn|amla/i, '🫐'],
+  ];
+const foodEmo = n => (FOOD_EMO.find(([re]) => re.test(n || '')) || [, '🥗'])[1];
+const emoHtml = (n, cls = '') => { const e = foodEmo(n); return e.startsWith('e:') ? `<img class="emo ${cls}" src="images/emoji/${e.slice(2)}.webp" alt="">` : `<span class="emo ${cls}">${e}</span>`; };
 function plateFoods(k, phase, season, warm) {
   if (k === 'veg' || k === 'fruit') return plateSeasonal(k, phase, season, warm);
   const idx = { protein: 0, carbs: 1, fats: 2, spice: 3 }[k];
@@ -2458,12 +2495,12 @@ function plateSection(current, lite) {
   const country = SZ.COUNTRIES.find(x => x[0] === myCountry())?.[1] || '';
   const cook = warm ? `Warm and cooked, even in ${season === 'Summer' || season === 'Late summer' ? 'the heat' : season.toLowerCase()}. No iced drinks during your period and the 2–3 days before it.` : phase === 'luteal' ? `${PSn.cook} Lean warmer as your period gets close.` : PSn.cook;
   return `<section class="pl">
-    <div class="pl-head"><h2>${PHASES[phase].name} × ${season.toLowerCase()}</h2></div>
+    <div class="pl-head"><div class="mv2-eyebrow">Your plate today</div><h2>${PHASES[phase].name} × ${season.toLowerCase()}</h2><p>${PSn.aim} · ${T.el} season <span class="pl-han">${T.han}</span></p></div>
     <div class="pl-wheel ${ui.plAnim ? 'pl-anim' : ''}">${plateWheel(phase, season, sel, warm)}</div>
     <div class="pl-det" data-k="${sel}">
       <div class="pld-h"><b>${P.n}</b><span class="pld-p">${PLATE_SHARE[phase][sel]}%</span></div>
       <p>${plateWhy(sel, phase)}${live ? ` <em>In season in ${country} now.</em>` : ''}</p>
-      <div class="pld-foods">${foods.map(x => `<div>${x.photo ? `<img src="${x.photo}" alt="" loading="lazy">` : `<span>${x.g || '•'}</span>`}<small>${x.n}</small></div>`).join('')}</div>
+      <div class="pld-foods">${foods.map(x => `<div><span class="pld-emo">${emoHtml(x.n)}</span><small>${x.n}</small></div>`).join('')}</div>
     </div>
     ${lite ? '' : plRules([
       ['cook', `<i class="plr-ic">${warm ? '🍲' : phase === 'luteal' ? '🥘' : '🥗'}</i>`, 'Cook', warm ? 'Warm & cooked' : phase === 'luteal' ? 'Lean warmer' : PLATE_COOK_SHORT[season] || 'Fresh & cooked', 'How to cook today', cook],
