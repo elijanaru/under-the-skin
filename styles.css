@@ -11864,3 +11864,7 @@ html .cyb-key i.av { width: 0 !important; height: 12px !important; }
 .tst dd { margin: 0; font-size: 15px; font-weight: 500; color: #20301a; text-align: right; }
 .tst-go { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-top: 4px; padding: 13px 2px 2px; border: 0; background: none; font: 500 15px/1.2 Outfit, sans-serif; color: #20301a; cursor: pointer; }
 .tst-go svg { color: rgba(32,48,26,.45); }
+/* v944: the sun-time answer reads first and clearly */
+html .uvw-win { font-size: 15px; line-height: 1.5; color: #3a2a20; }
+html .uvw-win b { font-weight: 600; color: #20301a; }
+html .uvw-win { margin: 14px 2px 10px; padding: 12px 14px; border-radius: 18px; background: rgba(255,255,255,.62); }

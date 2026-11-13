@@ -5519,9 +5519,16 @@ function uvWidget() {
   const burn = burnMin(u), left = burn - run.m, dMin = dRate(u) > 0 ? Math.max(1, Math.round(Math.max(0, D_GOAL - iu) / dRate(u))) : null, win = dWindow(hours), sk = SKIN[mySkin() - 1];
   const pct = Math.min(100, iu / D_GOAL * 100), fmt = n => n.toLocaleString('en-US').replace(/,/g, ' ');
   const burnTxt = burn === Infinity ? ['No burn risk', 'right now'] : on ? (left <= 0 ? ['Get in the shade', 'your skin has had enough'] : [`${Math.max(1, Math.round(left))}`, 'min until you burn']) : [`${Math.round(Math.min(burn, 600))}`, 'min until you burn'];
-  const dTxt = iu >= D_GOAL ? ['Done', 'for today'] : dMin ? [`${dMin}`, `min for ${fmt(D_GOAL - iu)} IU`] : ['Too low', 'for vitamin D now'];
+  // vitamin D as minutes in the sun (arms and legs bare); if the sun is too weak now, the minutes at today's strongest hour
+  const pkH = hours.reduce((b, v, h) => (v > hours[b] ? h : b), 0), pkMin = dRate(hours[pkH]) > 0 ? Math.max(1, Math.round(Math.max(0, D_GOAL - iu) / dRate(hours[pkH]))) : null;
+  const dTxt = iu >= D_GOAL ? ['Done', 'enough vitamin D today'] : dMin && u >= 3 ? [`${dMin}`, `min in the sun ${iu > 0 ? 'still needed' : 'for vitamin D'}`] : pkMin && hours[pkH] >= 3 && pkH > now.getHours() ? [`${pkMin}`, `min at ${String(pkH).padStart(2, '0')}:00 for vitamin D`] : ['Not today', 'sun too weak for vitamin D'];
   const [la, ln] = myGeo(), clearPk = Math.max(...uvModel(la, ln)), lowSeason = Math.abs(la) >= 30 ? ` From ${la < 0 ? 'April to September' : 'October to March'}, 10–20 µg D3 a day keeps you topped up.` : '';
-  const winTxt = win ? `Best for vitamin D <b>${String(win[0]).padStart(2, '0')}:00–${String(win[1]).padStart(2, '0')}:00</b>, arms and legs bare, before you go pink.`
+  const hh = h => `${String(h).padStart(2, '0')}:00`, bMin = v => Math.round(Math.min(burnMin(v), 600));
+  // the one simple answer: how long to stay out for vitamin D, and when the burn would start
+  const plan = iu >= D_GOAL ? `You have enough vitamin D for today. More sun now only adds sun damage, so enjoy the shade.`
+    : dMin && u >= 3 ? `Go out for <b>${dMin} min</b> with arms and legs bare. That gives you enough vitamin D, and you would only start to burn after about <b>${bMin(u)} min</b>. Then shade, a hat or clothes.`
+    : pkMin && hours[pkH] >= 3 && pkH > now.getHours() ? `Go out around <b>${hh(pkH)}</b> for <b>${pkMin} min</b> with arms and legs bare. That gives you enough vitamin D, and you would only start to burn after about <b>${bMin(hours[pkH])} min</b>.` : '';
+  const winTxt = plan ? plan
     : live && clearPk >= 3 ? 'Clouds keep the UV under 3 today, too weak for vitamin D. A clearer day will do it.'
     : `The sun stays too low for vitamin D today.${lowSeason}`;
   const where = state.profile.geo ? `${icon('pin', 13)} For your location` : `${icon('pin', 13)} Rough guess for ${(() => { try { return new Intl.DisplayNames(['en'], { type: 'region' }).of(myCountry()); } catch (e) { return 'your country'; } })()}<button data-action="useGeo">Use my location</button>`;
@@ -5535,12 +5542,12 @@ function uvWidget() {
         <div class="uvw-st d"><span class="uvw-ic" style="--c:#e3a93a">${icon('sun', 15)}</span><div><b class="${/\d/.test(dTxt[0]) ? '' : 'w'}">${dTxt[0]}</b><small>${dTxt[1]}</small></div></div>
       </div>
     </div>
-    ${uvCurve(hours)}
     <p class="uvw-win">${winTxt}</p>
+    ${uvCurve(hours)}
     <div class="uvw-skin"><div class="uvw-sk-h"><small>Your skin</small><span><b>${sk[2]}</b> · ${sk[3]}</span></div>
       <div class="uvw-sw" role="radiogroup" aria-label="Your skin type">${SKIN.map((x, i) => `<button role="radio" aria-checked="${i + 1 === mySkin()}" aria-label="${x[2]}, ${x[3]}" class="${i + 1 === mySkin() ? 'on' : ''}" style="--s:${x[1]}" data-action="uvSkin" data-v="${i + 1}"></button>`).join('')}</div></div>
     <details class="uvw-more"><summary>How this works ${icon('chevD', 14)}</summary>
-      <p>Your skin makes vitamin D from UVB light, which only gets through when the sun is high, roughly UV 3 and above. With arms and legs bare, about a quarter of the time it takes your skin to turn pink gives around 1 000 IU. Longer does not make more, it only adds sun damage, so cover up or move into the shade once the burn timer runs out.</p>
+      <p><b>Short and bare beats long and covered.</b> Your skin only makes vitamin D when the sun is fairly high, UV 3 or more. A few minutes with arms and legs bare is enough for the whole day, about a quarter of the time it takes you to go pink. Staying longer makes no extra vitamin D, it only adds sun damage. So: get your minutes, then shade, a hat or clothes.</p>
       <p>Burn times are for your skin type with no sunscreen. Snow, water and sand reflect extra UV, and some medicines make skin more sensitive. ${live ? 'UV comes from Copernicus, the European atmosphere service, for your area. It includes clouds, ozone and haze and is updated every hour.' : 'Offline, this is a clear-sky estimate from the height of the sun, so clouds will lower it.'}</p>
     </details>
   </section>`;
@@ -8426,7 +8433,7 @@ const actions = {
       const { hours } = uvData(), r = sunRun(hours), day = sunDay();
       day.m = Math.round((day.m + r.m) * 10) / 10; day.iu = Math.round(day.iu + r.iu); state.sunOn = null;
       if (r.m >= 5) { const dn = doneToday(); if (!dn.includes('sun')) dn.push('sun'); }
-      save(); toast(r.iu >= 1 ? `+${Math.round(r.iu)} IU vitamin D` : 'Sun time saved');
+      save(); toast(r.iu >= 1 ? `Vitamin D: ${Math.min(100, Math.round(r.iu / D_GOAL * 100))}% of today's goal` : 'Sun time saved');
     } else { state.sunOn = Date.now(); save(); }
     uvRefresh();
   },
