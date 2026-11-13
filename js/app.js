@@ -3602,7 +3602,8 @@ function reminderBanners() {
 }
 function remindersSection() {
   const r = rem(), perm = 'Notification' in window ? Notification.permission : 'unsupported';
-  const tg = (k, label, sub) => `<div class="stepper-row"><span>${label}<small>${sub}</small></span><button class="toggle ${r[k] ? 'on' : ''}" data-action="remToggle" data-k="${k}" role="switch" aria-checked="${!!r[k]}" aria-label="${label}"><i></i></button></div>`;
+  const RIC = { period: 'drop', phase: 'leaf', cycle: 'spark', sunAm: 'sun', sunPm: 'sun', calm: 'mind', checkin: 'check' };
+  const tg = (k, label, sub) => `<div class="stepper-row"><span class="pf-ic ${k === 'sunPm' ? 'dusk' : ''}">${icon(RIC[k], 16)}</span><span>${label}<small>${sub}</small></span><button class="toggle ${r[k] ? 'on' : ''}" data-action="remToggle" data-k="${k}" role="switch" aria-checked="${!!r[k]}" aria-label="${label}"><i></i></button></div>`;
   const hr = hr12;
   return `${sectionTitle('Reminders')}
     <section class="card glass">
@@ -7762,8 +7763,8 @@ function viewProfile() {
   let body;
   if (tab === 'cycle') body = `${sectionTitle('Cycle')}
     <section class="card glass">
-      <div class="stepper-row"><span>Default cycle length<small>Used until you've logged 2+ periods · now ${s.avgCycle}d</small></span>${stepper('cycleLength', p.cycleLength, 'profile')}</div>
-      <div class="stepper-row"><span>Default period length<small>Now ${s.avgPeriod}d</small></span>${stepper('periodLength', p.periodLength, 'profile')}</div>
+      <div class="stepper-row"><span class="pf-ic">${icon('calendar', 16)}</span><span>Default cycle length<small>Used until you've logged 2+ periods · now ${s.avgCycle}d</small></span>${stepper('cycleLength', p.cycleLength, 'profile')}</div>
+      <div class="stepper-row"><span class="pf-ic">${icon('drop', 16)}</span><span>Default period length<small>Now ${s.avgPeriod}d</small></span>${stepper('periodLength', p.periodLength, 'profile')}</div>
     </section>
     ${sectionTitle('How you eat')}
     <section class="card glass"><div class="chips">${DIETS.map(x => `<button class="chip ${(p.diet || 'all') === x.k ? 'on' : ''}" data-action="setDiet" data-v="${x.k}">${x.g} ${x.t}</button>`).join('')}</div>
@@ -7776,17 +7777,17 @@ function viewProfile() {
     ${M.info ? calSyncCard() : ''}
     <button class="card glass pf-link" data-action="nav" data-to="saved"><span>${icon('save', 18)}</span><b>Saved tips<small>${(state.savedTips || []).length} saved, ready to use</small></b>${icon('chevR', 16)}</button>
     ${sectionTitle('Partner mode')}
-    <section class="card glass"><div class="stepper-row"><span>Show on Today<small>The partner card on your home screen</small></span><button class="toggle ${state.hidePartner ? '' : 'on'}" data-action="partnerToday" role="switch" aria-checked="${!state.hidePartner}" aria-label="Show the partner card on Today"><i></i></button></div>
-      <button class="list-btn" data-action="nav" data-to="share">${icon('heart', 18)} Share my cycle with partner & friends</button>
-      <button class="list-btn" data-action="nav" data-to="partners">${icon('chart', 18)} See my partners' dashboard</button>
+    <section class="card glass"><div class="stepper-row"><span class="pf-ic">${icon('users', 16)}</span><span>Show on Today<small>The partner card on your home screen</small></span><button class="toggle ${state.hidePartner ? '' : 'on'}" data-action="partnerToday" role="switch" aria-checked="${!state.hidePartner}" aria-label="Show the partner card on Today"><i></i></button></div>
+      <button class="list-btn" data-action="nav" data-to="share"><span class="pf-ic">${icon('heart', 16)}</span><span class="pf-lt">Share my cycle with partner & friends</span>${icon('chevR', 15)}</button>
+      <button class="list-btn" data-action="nav" data-to="partners"><span class="pf-ic">${icon('chart', 16)}</span><span class="pf-lt">See my partners' dashboard</span>${icon('chevR', 15)}</button>
       ${(state.partners || []).map(x => `<div class="list-btn">${ptAvatar(x, 'sm')}<span style="flex:1">${esc(x.n)}<small class="muted" style="display:block;font-size:12px">On your dashboard</small></span><button class="link muted-l" data-action="removePartner" data-id="${x.id}">Remove</button></div>`).join('')}</section>`;
   else if (tab === 'data') body = `${A.configured() || A.currentUser() ? accountCard() : ''}
     ${sectionTitle('Your data')}
     <section class="card glass">
-      <button class="list-btn" data-action="export">${icon('download', 18)} Export my data (JSON)</button>
-      ${A.currentUser() ? '' : `<button class="list-btn" data-action="demo">${icon('spark', 18)} Load sample cycles</button>`}
-      <button class="list-btn" data-action="nav" data-to="privacy">${icon('heart', 18)} Privacy: how your data is kept</button>
-      <button class="list-btn danger" data-action="reset">${icon('trash', 18)} Delete all data</button>
+      <button class="list-btn" data-action="export"><span class="pf-ic">${icon('download', 16)}</span><span class="pf-lt">Export my data<small>A JSON file of everything you logged</small></span></button>
+      ${A.currentUser() ? '' : `<button class="list-btn" data-action="demo"><span class="pf-ic">${icon('spark', 16)}</span><span class="pf-lt">Load sample cycles<small>See the app with example data</small></span></button>`}
+      <button class="list-btn" data-action="nav" data-to="privacy"><span class="pf-ic">${icon('save', 16)}</span><span class="pf-lt">Privacy<small>How your data is kept</small></span>${icon('chevR', 15)}</button>
+      <button class="list-btn danger" data-action="reset"><span class="pf-ic">${icon('trash', 16)}</span><span class="pf-lt">Delete all data<small>Can't be undone</small></span></button>
     </section>
     <p class="fine">${A.currentUser() ? 'Stored on this device and privately in your account.' : 'Everything is stored privately on this device.'} Underskin gives wellbeing estimates based on your logs and on Traditional Chinese Medicine concepts; it is not medical advice and must not be used as contraception.</p>`;
   else body = `${sectionTitle('Why you’re here')}
@@ -7797,7 +7798,7 @@ function viewProfile() {
     <section class="card pfc"><p class="pfc-sub">${icon('leaf', 13)} Your country sets what's in season</p>${countryPicker('profile', myCountry())}</section>`;
   const signedOut = A.configured() && !A.currentUser();
   return `${topbar('Profile', { back: true })}
-  <div class="pad">
+  <div class="pad pf2">
     <section class="card card-light pf-hero">
       <div class="profile-head"><label class="avatar xl ${p.photo ? 'has-photo' : ''}">${avatarInner(p)}<span class="av-edit">${icon('plus', 14, 2.4)}</span><input type="file" accept="image/*" data-photo="profile" hidden></label>
         <input class="field name-field" data-input="profile.name" value="${esc(p.name)}" placeholder="Your name" maxlength="24" aria-label="Your name"></div>
