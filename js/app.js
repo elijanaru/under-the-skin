@@ -6528,6 +6528,7 @@ const CALM_IC = {
   warm: '<path d="M10 3h4v3h-4zM8.5 6h7v2.6a4 4 0 0 1 2 3.4V18a3 3 0 0 1-3 3h-5a3 3 0 0 1-3-3v-6a4 4 0 0 1 2-3.4z"/><path d="M9.5 14c1-1 2 1 3 0s2 1 3 0"/>',
 };
 const calmIc = (k, s = 18) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${CALM_IC[k] || ''}</svg>`;
+const CALM_PH = { 'Long exhales': 'images/fb/breathe.webp', Meditation: 'images/tile-meditate.webp', 'Yoga nidra': 'images/tile-yoga.webp', 'Time in nature': 'images/forest-path.jpg', Sleep: 'images/fb/chamomile.webp', 'Hugs & touch': 'images/partner-hands.jpg', 'Gentle, not maximal, training': 'images/fb/walk.webp', 'Warmth on your belly': 'images/fb/heat.webp' };
 function calmScience(info) {
   const L = CALM_SCIENCE.map((x, k) => ({ ...x, k })).sort((a, b) => a.sec - b.sec), pc = (info && PH_HEX[info.phase]) || '#6c823e';
   const pos = sec => Math.max(0, Math.min(1, Math.log(sec / 10) / Math.log(36000 / 10))) * 100;
@@ -6537,7 +6538,7 @@ function calmScience(info) {
       <div class="csr" aria-hidden="true"><div class="csr-tr">${ticks.map(([s]) => `<i style="left:${pos(s)}%"></i>`).join('')}
         ${L.map((x, i) => `<span class="csr-d l${i % 3}" data-k="${x.k}" style="left:${pos(x.sec)}%">${calmIc(x.ic, 13)}</span>`).join('')}</div>
         <div class="csr-lb">${ticks.map(([s, l]) => `<small style="left:${pos(s)}%">${l}</small>`).join('')}</div></div>
-      ${L.map(x => `<details class="cs2-r" data-k="${x.k}"><summary><span class="cs2-ic">${calmIc(x.ic)}</span><span class="cs2-t"><b>${x.t}</b><small>${x.r}</small></span>
+      ${L.map(x => `<details class="cs2-r" data-k="${x.k}"><summary>${CALM_PH[x.t] ? `<span class="cs2-ph"><img src="${CALM_PH[x.t]}" alt="" loading="lazy" decoding="async"></span>` : `<span class="cs2-ic">${calmIc(x.ic)}</span>`}<span class="cs2-t"><b>${x.t}</b><small>${x.r}</small></span>
         <span class="cs2-d"><b class="dotnum">${x.d}</b><small>${x.u}</small></span>${icon('chevD', 14)}</summary>
         <div class="cs2-b"><p>${x.s}</p><span class="cs2-c">${x.ev === 'tcm' ? 'Chinese medicine' : `${x.c.replace(/\s*\(.*?\)/g, '')}${x.src ? ` · ${x.src}` : ''}`}</span></div></details>`).join('')}
     </section>`;
