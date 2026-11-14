@@ -172,9 +172,15 @@ export function hormonesRel(cd, L, P) {
   return out;
 }
 export function hormoneLevel(r) { return r < 0.2 ? 'Low' : r < 0.45 ? 'Moderate' : r < 0.8 ? 'High' : 'Peak'; }
+// Which way a hormone is heading. On its top or bottom day (higher or lower than both neighbours) it is
+// "steady": the day of the estrogen peak must not show a falling arrow next to "Peak".
+export function trendOf(prev, today, next) {
+  if ((today >= prev && today >= next) || (today <= prev && today <= next)) return 'steady';
+  return next - today > 0.03 ? 'rising' : today - next > 0.03 ? 'falling' : 'steady';
+}
 export function hormoneTrend(cd, L, P, h) {
-  const a = hormonesRel(cd - 0.5, L, P)[h], b = hormonesRel(cd + 0.5, L, P)[h];
-  return b - a > 0.03 ? 'rising' : a - b > 0.03 ? 'falling' : 'steady';
+  const r = d => hormonesRel(d, L, P)[h];
+  return trendOf(r(cd - 1), r(cd), r(cd + 1));
 }
 // Typical energy (0–1). Changes across the cycle are real but moderate: lowest in the days before and the first
 // days of the period, rising with estrogen, highest around ovulation, steady in the early/mid luteal phase.

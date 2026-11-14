@@ -753,10 +753,11 @@ function readout(cdRaw, L, P, isYou) {
   const ph = C.phaseFor(cd, L, P), h = C.hormonesRel(cd, L, P), tcm = TCM[ph];
   // which way each hormone is heading: today against tomorrow in the model (after the last day the next cycle starts)
   const nx = C.hormonesRel(cd >= L ? 1 : cd + 1, L, P);
+  const pv = C.hormonesRel(cd <= 1 ? L : cd - 1, L, P);
   const rows = HORMONES.map(x => {
     return `<div class="ro-row"><span class="ro-name"><svg width="16" height="8"><line x1="1" y1="4" x2="15" y2="4" stroke="${x.color}" stroke-width="2.2" stroke-linecap="round" ${x.dash ? `stroke-dasharray="${x.dash}"` : ''}/></svg>${x.name}</span>
       <span class="ro-bar ro-sp">${roSpark(x, cd, L, P)}</span>
-      <span class="ro-lvl">${(() => { const lv = C.hormoneLevel(h[x.key]), dv = nx[x.key] - h[x.key], d = dv > .03 ? 'rising' : dv < -.03 ? 'falling' : 'steady'; return `${lv} <em class="tr ${d}" aria-hidden="true">${trArrow(d)}</em>`; })()}</span></div>`;
+      <span class="ro-lvl">${(() => { const lv = C.hormoneLevel(h[x.key]), d = C.trendOf(pv[x.key], h[x.key], nx[x.key]); return `${lv} <em class="tr ${d}" aria-hidden="true">${trArrow(d)}</em>`; })()}</span></div>`;
   }).join('');
   return `<div class="ro-head"><div class="ro-phase">Day ${cdRaw} · ${PHASES[ph].name}</div></div>
     <div class="ro-rows">${rows}</div>
@@ -8083,7 +8084,7 @@ function pvToday(info, name, sup, snap) {
       <span class="pv2-meta"><em>${icon('clock', 13)} ${rec.time >= 60 ? `${Math.floor(rec.time / 60)} h${rec.time % 60 ? ` ${rec.time % 60}` : ''}` : `${rec.time} min`}</em><span class="pv2-more">Recipe ${icon('chevD', 14)}</span></span></span></summary>
       <div class="pv2-rec"><b class="pv2-sub">Ingredients</b>${rec.ingredients.map(g => `<div class="pv2-ing">${(e => `<span class="pv2-ie">${e ? emoRaw(e) : ''}</span>`)(ingEmo(String(g).replace(/^[\d½¼¾\/.\s–-]+(g|kg|ml|l|tbsp|tsp|cups?|slices?|cloves?|cans?|large|small|medium|handful)?\s*/i, '')))}<span>${g}</span></div>`).join('')}
         <b class="pv2-sub">Method</b>${rec.steps.map((x, i) => `<div class="pv2-step"><i>${i + 1}</i><p>${x}</p></div>`).join('')}</div></details>
-    <section class="pv2-card pv2-tea"><span class="pv2-3d sm">${cup3d(teaCupImg(td[1]), teaCupAttr(td[1]), td[1])}</span>
+    <section class="pv2-card pv2-tea"><span class="pv2-3d sm">${cup3d(teaCupImg(td[1]), teaCupAttr(td[1]) + (teaCupAttr(td[1]) ? ` data-fit="${/matcha/i.test(td[1]) ? 0.92 : /green tea/i.test(td[1]) ? 1.1 : 1.3}"` : ''), td[1])}</span>
       <div><small>Make her a cup of</small><b>${td[1]}</b><p>${td[2].replace(/\byour\b/g, 'her').replace(/\byou\b/g, 'she')}</p>
         <div class="pv2-row"><span>${icon('clock', 13)} Steep</span><b>${steep}</b></div><div class="pv2-row"><span>${icon('sun', 13)} When</span><b>${tWhen}</b></div></div></section>
     <section class="pv2-card pv2-bring"><div class="pv2-h"><b>Bring her</b><small>Pick these up on the way home</small></div>

@@ -12691,3 +12691,5 @@ details.rd-row[open] .rd-what { margin-top: 10px; }
 /* desktop phone mock: the fake status bar sits above the picture, so the arch starts right under it (no cut scallops) */
 @media (min-width: 560px) { .bgx { top: 50px; } .island { background: #141414 !important; } }
 .bgx-lotus { display: none; } /* the lotus lives only in the opening animation */
+/* partner tea tile: the 3D cup's canvas fits the tile, so the cup is never clipped at the sides */
+html .pv2-3d.sm .cup3d-w canvas.teacup3d { inset: 0; width: 100%; height: 100%; }
