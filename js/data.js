@@ -885,10 +885,10 @@ export const NUTRITION = {
 // Food fixes for logged symptoms.
 export const SYMPTOM_FOODS = {
   Cramps: { foods: ['Ginger tea', 'Salmon', 'Dark chocolate', 'Pumpkin seeds'], tip: 'Ginger, omega-3 and magnesium ease cramps best in studies. Keep your belly warm.', ev: 'some' },
-  Bloating: { foods: ['Peppermint tea', 'Bananas', 'Cucumber', 'Fennel'], tip: 'Cut back on salt and fizzy drinks; potassium-rich foods help balance water.', ev: 'emerging' },
+  Bloating: { foods: ['Peppermint tea', 'Bananas', 'Asparagus', 'Fennel'], tip: 'Go easy on salt and fizzy drinks for a few days. Potassium-rich foods help your body let go of extra water.', ev: 'emerging' },
   Cravings: { foods: ['Greek yoghurt', 'Dates + almonds', 'Apple + nut butter', 'Dark chocolate'], tip: 'Pair carbs with protein so blood sugar stays steady. Hunger in the luteal phase is real.', ev: 'some' },
   Fatigue: { foods: ['Lentils + lemon', 'Red meat', 'Liver', 'Eggs'], tip: 'Think iron + vitamin C. If tiredness lasts, ask for a ferritin test.', ev: 'strong' },
-  Acne: { foods: ['Pumpkin seeds', 'Salmon', 'Berries', 'Green tea'], tip: 'Lower-sugar, lower-dairy days and zinc-rich foods may help hormonal breakouts.', ev: 'emerging' },
+  Acne: { foods: ['Pumpkin seeds', 'Salmon', 'Berries', 'Green tea'], tip: 'Steady blood sugar and zinc-rich foods may help hormonal breakouts. Fewer sweets on breakout-prone days.', ev: 'emerging' },
   Headache: { foods: ['Water', 'Pumpkin seeds', 'Almonds', 'Banana'], tip: 'Hydrate first; magnesium-rich foods may help hormone-related headaches.', ev: 'some' },
   Insomnia: { foods: ['Kiwi', 'Tart cherries', 'Warm raw milk & honey', 'Pumpkin seeds'], tip: 'A light, naturally sweet snack before bed, like a banana or a few dates, can help.', ev: 'emerging' },
   Constipation: { foods: ['Prunes', 'Kiwi', 'Chia pudding', 'Warm water'], tip: 'Progesterone slows digestion: fibre plus plenty of fluid.', ev: 'strong' },
@@ -896,6 +896,20 @@ export const SYMPTOM_FOODS = {
   Nausea: { foods: ['Ginger', 'Banana', 'Peppermint tea'], tip: 'Small, frequent, plain meals.', ev: 'some' },
   'Back pain': { foods: ['Turmeric milk', 'Salmon', 'Ginger'], tip: 'Anti-inflammatory foods plus heat on the lower back.', ev: 'emerging' },
   Dizziness: { foods: ['Water + pinch of salt', 'Lentils', 'Dates'], tip: 'Hydrate and eat regularly; check iron if it repeats.', ev: 'some' },
+};
+
+// For how you feel: a daily amount and a two-word why for every food in SYMPTOM_FOODS (food-sized, conservative).
+export const SYMPTOM_FOOD_INFO = {
+  'Ginger tea': ['1 to 2 cups', 'Eases period pain'], Salmon: ['1 palm, twice a week', 'Omega-3 calms cramps'], 'Dark chocolate': ['2 squares, 85%', 'Magnesium'],
+  'Pumpkin seeds': ['2 tbsp', 'Magnesium and zinc'], 'Peppermint tea': ['1 cup after meals', 'Relaxes the gut'], Bananas: ['1 banana', 'Potassium'], Banana: ['1 banana', 'Potassium and B6'],
+  Asparagus: ['A handful, cooked', 'Lets go of water'], Fennel: ['½ bulb or 1 tsp seeds', 'Eases gas'], 'Greek yoghurt': ['1 small bowl', 'Protein steadies sugar'],
+  'Dates + almonds': ['2 dates, 6 almonds', 'Sweet with protein'], 'Apple + nut butter': ['1 apple, 1 tbsp', 'Fibre and fat'], 'Lentils + lemon': ['1 cup cooked', 'Iron plus vitamin C'],
+  'Red meat': ['1 palm', 'Easy-to-absorb iron'], Liver: ['50 g, once a week', 'Iron and B12'], Eggs: ['2 eggs', 'B12 and protein'], Berries: ['1 handful', 'Antioxidants'],
+  'Green tea': ['1 to 2 cups', 'Calms oily skin'], Water: ['2 big glasses now', 'Thirst brings headaches'], Almonds: ['1 handful', 'Magnesium'], Kiwi: ['2 kiwis', 'Sleep and digestion'],
+  'Tart cherries': ['1 handful', 'Natural melatonin'], 'Warm raw milk & honey': ['1 cup, 1 tsp honey', 'Warm and soothing'], Prunes: ['4 to 5', 'Gentle fibre'],
+  'Chia pudding': ['2 tbsp chia, soaked', 'Soluble fibre'], 'Warm water': ['1 big glass, morning', 'Wakes the gut'], 'Flax seeds': ['1 to 2 tbsp, ground', 'Softer breast pain'],
+  'Leafy greens': ['2 handfuls, cooked', 'Magnesium and folate'], 'Herbal tea': ['1 to 2 cups', 'Warm and calming'], Ginger: ['A thumb-sized slice', 'Settles the stomach'],
+  'Turmeric milk': ['1 cup, evening', 'Calms inflammation'], 'Water + pinch of salt': ['1 glass', 'Steadies blood pressure'], Lentils: ['1 cup cooked', 'Iron and folate'], Dates: ['2 to 3', 'Quick natural sugar'],
 };
 
 export const EVIDENCE = {

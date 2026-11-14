@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
+  PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -2202,7 +2202,7 @@ function viewPlan() {
     } else if (sub === 'foods') {
       const recent = recentSymptoms().filter(s => SYMPTOM_FOODS[s]).slice(0, 2);
       body = `<div class="eat-cat eb eb-free sf-top" data-phase="${phase}">${superInner(phase)}</div><div class="eat-cat eb eb-free sf-top apo-top">${apoInner()}</div>${dietGuideCard(phase)}
-        ${recent.length ? `${sectionTitle('For how you feel')}${recent.map(s => { const f = SYMPTOM_FOODS[s]; return `<section class="card glass fix"><div class="fix-h"><span class="fix-s">${s}</span></div><div class="foods">${f.foods.slice(0, 5).map(x => `<span class="food">${x}</span>`).join('')}</div></section>`; }).join('')}` : ''}`;
+        ${feelFoods(recent, warmWindow(info))}`;
     } else if (sub === 'super') { location.replace('#/plan/foods'); return '';
     } else if (sub === 'drinks' || sub === 'supps') {
       body = `${sub === 'drinks' ? `${plTea()}<div class="eat-cat eb eb-free sf-top" data-phase="${phase}">${drinksInner(phase)}</div>` : `<section class="card eat-cat eb" data-phase="${phase}">${eatCatInner(phase, sub)}</section>`}
@@ -2261,6 +2261,17 @@ function evBadge() { return ''; } // evidence labels are hidden everywhere (the 
 // Check-in symptoms whose emoji was crude or unclear (a red dot for acne, bricks for constipation) get drawn icons in the same glossy style.
 const LOG_DRAWN = { Cramps: 'cramps', 'Pelvic pain': 'pelvic-pain', 'Joint pain': 'joint-pain', Constipation: 'constipation', Acne: 'acne', 'Brain fog': 'brain-fog', 'Unusual colour': 'unusual-colour' };
 const logEmo = (n, e) => LOG_DRAWN[n] ? `<img class="lg-emo" src="images/emoji/log-${LOG_DRAWN[n]}.svg" alt="">` : (e || LOG_EMOJI[n] || '•');
+// For how you feel (Food guide, Superfoods): one white card per symptom she logged in the last days. Food tiles with a picture, amount and short why; the tip behind a tap.
+function feelFoods(recent, warm) {
+  if (!recent.length) return '';
+  return `${sectionTitle('For how you feel')}<p class="ff-lead">Foods for what you logged in the last few days.</p>${recent.map(s => {
+    const f = SYMPTOM_FOODS[s], foods = f.foods.filter(x => !(warm && RAW_COLD.test(x))).slice(0, 4), rk = reliefKey(s);
+    return `<section class="ff">
+      <header class="ff-h"><span class="ff-ic">${logEmo(s)}</span><span class="ff-t"><b>${s}</b><small>${warm ? 'Warm and cooked for now' : 'Logged recently'}</small></span>${rk ? `<button class="ff-go" data-action="nav" data-to="relief/${encodeURIComponent(rk)}">Relief ${icon('chevR', 13)}</button>` : ''}</header>
+      <div class="ff-grid">${foods.map(x => { const [amt, why] = SYMPTOM_FOOD_INFO[x] || ['', '']; const e = ingEmo(x) || (/tea/i.test(x) ? '🍵' : /water/i.test(x) ? 'd:water' : ''); return `<div class="ff-f"><span class="ff-e">${e ? emoRaw(e) : ''}</span><b>${x}</b>${amt ? `<em>${amt}</em>` : ''}${why ? `<small>${why}</small>` : ''}</div>`; }).join('')}</div>
+      <details class="ff-why"><summary>Why these help ${icon('chevD', 14)}</summary><p>${f.tip}</p></details>
+    </section>`; }).join('')}`;
+}
 function recentSymptoms() {
   const out = {};
   for (let i = 0; i < 4; i++) (getLog(C.iso(C.addDays(new Date(), -i))).symptoms || []).forEach(s => { out[s] = 1; });
@@ -2732,7 +2743,7 @@ function nourishBody(current) {
       <div class="rc-top"><span class="rc-k">${r.raw ? 'Raw' : r.warm ? 'Warm' : r.meal}</span><span class="rc-go">${icon('chevR', 16)}</span></div>
       <div class="rc-t">${r.name}</div><div class="rc-m">${r.time} min</div></button>`).join('')}</div>
 
-    ${recent.length ? `${sectionTitle('For how you feel')}${recent.map(s => { const f = SYMPTOM_FOODS[s]; return `<section class="card glass fix"><div class="fix-h"><span class="fix-s">${s}</span></div><div class="foods">${f.foods.slice(0, 5).map(x => `<span class="food">${x}</span>`).join('')}</div></section>`; }).join('')}` : ''}
+    ${feelFoods(recent, warm)}
 
     ${sugarSection(phase)}
     <button class="card gro-cta" data-action="nav" data-to="grocery"><span class="art-ic">${icon('check', 20)}</span><span class="art-t">My grocery list<small>For the next 7 days</small></span>${icon('chevR', 18)}</button>`;
