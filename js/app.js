@@ -8665,6 +8665,8 @@ const HIM_READS = {
     ['The reset is close', 'Her hormones are at their lowest just before her period.', 'She may want to pull back and be alone. Once her period starts, many women feel relief within a day or two.', 'Send her a kind message today, nothing needed back.'],
   ],
 };
+// How he and she both win when he does it: one simple line per read
+const HIM_GAIN = {"A new cycle starts": "She feels looked after on her lowest days, and that trust carries into the good weeks.","Why cramps hurt": "Less pain for her, and a calmer evening for you both.","She is losing iron": "More energy for her next week, and more of it for plans with you.","Keep her warm": "Warmth eases cramps, so she relaxes and the evening gets softer for both of you.","Her energy comes back": "Fresh air lifts her mood faster, and you get easy time together.","Estrogen is rising": "She is up for adventure now, so the plans you make this week land best.","She loves new things now": "New things together build attraction and fresh memories.","She is more social": "She has a great time, and your friends see you two as a team.","Her energy is up": "Training together is fun now and keeps you both fit.","Her skin glows": "She feels seen, and feeling wanted brings you closer.","Big talks go better": "Clear decisions with less friction.","Her body gets ready": "You both stay in charge of if and when a baby comes.","The surge": "Her desire is high, so a date now often ends closer.","Egg release": "You both get what you planned, baby or no baby.","A twinge, then warmth": "She feels understood, not guessed at.","Progesterone takes over": "Matching her slower pace avoids friction and feels close.","Her hunger is real": "Good food on hand means steadier moods and fewer crashes.","Cravings make sense": "Real sweets satisfy her without a sugar crash later.","Her sleep gets lighter": "Better sleep for her means a calmer, kinder week for you both.","A calm stretch": "Cooking together is easy time that feels close.","Bloating is normal": "She feels safe in her body around you.","Stress hits harder": "One less worry for her, and fewer arguments for you.","PMS is real": "You skip the classic fight, and she feels backed up.","Feelings run closer": "Feeling heard calms her faster than any solution.","She is more sensitive": "Touch feels good again, and she trusts you more.","Magnesium helps": "Easier days before her period, for both of you.","Warm food now": "Her body stays calmer, cramps can be milder, and you eat well too.","The reset is close": "She knows you are there, without any pressure."};
 // which read fits her cycle day: each phase's reads are spread over the days of that phase
 function readFor(cd, L, P) {
   const r = C.phaseRanges(L, P).find(x => cd >= x.from && cd <= x.to) || C.phaseRanges(L, P).slice(-1)[0];
@@ -8682,39 +8684,30 @@ function readRing(info) {
   }
   return `<svg class="rd-ring" viewBox="0 0 120 120" aria-hidden="true">${ticks}</svg><div class="rd-c"><b class="dotnum">${cd}</b><small>of ${L}</small></div>`;
 }
-function readCard(r, open) {
-  return `<p class="rd-what">${esc(r[2])}</p>
-    <div class="rd-try"><small>Do this today</small><b>${esc(r[3])}</b></div>
-    ${r[4] ? `<div class="rd-st"><b class="dotnum">${r[4][0]}</b><span><em>${esc(r[4][1])}</em>${esc(r[4][2])}</span></div>` : ''}`;
+function readCard(r) {
+  const g = HIM_GAIN[r[0]];
+  return `<div class="rd3">
+      <div class="rd3-r"><span class="rd3-i m">${icon('book', 15)}</span><span><small>What it means</small><p>${esc(r[2])}</p></span></div>
+      <div class="rd3-r"><span class="rd3-i d">${icon('hand', 15)}</span><span><small>What you do</small><b>${esc(r[3])}</b></span></div>
+      ${g ? `<div class="rd3-r"><span class="rd3-i g">${icon('heart', 15)}</span><span><small>How you both win</small><p>${esc(g)}</p></span></div>` : ''}</div>
+    ${r[4] ? `<details class="rd3-st"><summary>The study ${icon('chevD', 13)}</summary><div class="rd-st"><b class="dotnum">${r[4][0]}</b><span><em>${esc(r[4][1])}</em>${esc(r[4][2])}</span></div></details>` : ''}`;
 }
 // Read tab: today's read big, then the whole cycle as a list (past reads open, later ones unlock on their day)
+// Read tab: only today's read, in three simple parts (what it means, what he does, how they both win)
 function pvRead(snap, info, name) {
-  const { cd, L, P } = info, now = readFor(cd, L, P), ph = PHASES[now.phase];
-  const days = []; let last = '';
-  for (let d = 1; d <= L; d++) { const x = readFor(d, L, P), k = x.phase + x.i; if (k !== last) { days.push({ d, ...x }); last = k; } }
-  let list = '', cur = '';
-  for (const x of days) {
-    if (x.phase !== cur) { cur = x.phase; list += `<div class="rd-ph"><i style="background:${PH_HEX[x.phase]}"></i>${PHASES[x.phase].name}</div>`; }
-    const isNow = x.phase === now.phase && x.i === now.i, past = x.d < cd && !isNow;
-    list += isNow ? `<div class="rd-row now"><b class="dotnum">${x.d}</b><span><em>Today</em>${esc(x.r[0])}</span></div>`
-      : past ? `<details class="rd-row"><summary><b class="dotnum">${x.d}</b><span>${esc(x.r[0])}<small>${esc(x.r[1])}</small></span>${icon('chevD', 13)}</summary>${readCard(x.r)}</details>`
-      : `<div class="rd-row later"><b class="dotnum">${x.d}</b><span>${esc(x.r[0])}<small>Opens in ${plural(x.d - cd, 'day')}</small></span></div>`;
-  }
-  return `<div class="pv2-title"><small>Learn her cycle · day ${cd} of ${L}</small><h1>One read <b>a day</b></h1><p>Synced to ${name}’s cycle. Each day you learn what is happening in her body right now.</p></div>
+  const { cd, L } = info, now = readFor(cd, L, info.P), ph = PHASES[now.phase];
+  return `<div class="pv2-title"><small>Learn her cycle · day ${cd} of ${L}</small><h1>Today’s <b>read</b></h1><p>One short read a day, synced to ${name}’s cycle. A new one opens tomorrow.</p></div>
   ${snap.l ? pvLoss(name) : ''}
   <section class="pv2-card rd-today" style="--rc:${PH_HEX[now.phase]}">
     <div class="rd-top"><div class="rd-dial">${readRing(info)}</div><div class="rd-h"><small><i></i>${ph.name} phase</small><h2>${esc(now.r[0])}</h2><p>${esc(now.r[1])}</p></div></div>
-    <details class="rd-more"><summary>Read more ${icon('chevD', 13)}</summary>${readCard(now.r)}</details>
-  </section>
-  ${sectionTitle('Her whole cycle')}
-  <section class="pv2-card rd-list">${list}</section>
-  <p class="fine center">A new read opens every day, matched to her cycle day.</p>`;
+    ${readCard(now.r)}
+  </section>`;
 }
 // today's read on her page (his page has the Read tab only, no teaser)
 function pvReadTeaser(info, him) {
   const now = readFor(info.cd, info.L, info.P);
   return him ? ''
-    : `<section class="pv2-card rd-today" style="--rc:${PH_HEX[now.phase]}"><div class="rd-top"><div class="rd-dial">${readRing(info)}</div><div class="rd-h"><small><i></i>Today’s read</small><h2>${esc(now.r[0])}</h2><p>${esc(now.r[1])}</p></div></div><details class="rd-more"><summary>Read more ${icon('chevD', 13)}</summary>${readCard(now.r)}</details></section>`;
+    : `<section class="pv2-card rd-today" style="--rc:${PH_HEX[now.phase]}"><div class="rd-top"><div class="rd-dial">${readRing(info)}</div><div class="rd-h"><small><i></i>Today’s read</small><h2>${esc(now.r[0])}</h2><p>${esc(now.r[1])}</p></div></div>${readCard(now.r)}</section>`;
 }
 
 function viewWith(q) {
@@ -9838,11 +9831,13 @@ function render() {
   }
   if (r.name === 'with') {
     $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewWith(r.q)}</div>`;
+    if (keep) document.getElementById('view').scrollTop = keep; // a tap on his page keeps his place
     decorateStudies($app); mountFigures(); if (r.q.get('d')) refreshWith(r.q.get('d')); return;
   }
   let vo = null; if (!state || !state.onboarded) { try { vo = localStorage.getItem('uts.viewOnly'); } catch {} }
   if (vo) { // he opened her link before: the app is just her rhythm for him
     $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewWith(new URLSearchParams({ d: vo }))}</div>`;
+    if (keep) document.getElementById('view').scrollTop = keep;
     decorateStudies($app); mountFigures(); refreshWith(vo); return;
   }
   if (!state || !state.onboarded) {

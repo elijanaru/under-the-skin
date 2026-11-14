@@ -13249,3 +13249,22 @@ html .pv2-card.su { display: block; }
 html .pv2-title h1 { font-weight: 400; text-shadow: 0 1px 2px rgba(90,40,45,.45), 0 2px 20px rgba(90,40,45,.42); }
 html .pv2-title h1 b { font-weight: 600; text-shadow: 0 1px 2px rgba(90,40,45,.45), 0 2px 20px rgba(90,40,45,.42); }
 html .pv2-title small, html .pv2-title p { font-weight: 400; text-shadow: 0 1px 2px rgba(90,40,45,.4), 0 1px 12px rgba(90,40,45,.4); }
+/* his page hero: a framed window, so the arched background still shows around it */
+.pv-hero { margin: calc(var(--sbV) + 10px) -8px 16px !important; border-radius: 34px !important; border: 1px solid rgba(255,255,255,.75) !important; }
+.pv-hero .his-seg { left: 12px; right: 12px; top: 12px; } .pv-hero .his-seg.with-back { left: 68px; }
+.pv-hero .pv-back { top: 16px; left: 12px; }
+.pv-hero .stage-phase { top: 80px !important; }
+.pv-ttl small { font-size: 21px !important; font-weight: 300 !important; letter-spacing: 0 !important; }
+/* today's read in three simple parts */
+.rd3 { margin-top: 14px; border-top: 1px solid rgba(32,48,26,.08); }
+.rd3-r { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid rgba(32,48,26,.06); }
+.rd3-r:last-child { border-bottom: 0; }
+.rd3-i { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; }
+.rd3-i.m { background: #f1ede4; color: #5b6b48; } .rd3-i.d { background: color-mix(in srgb, var(--rc) 22%, #fff); color: #20301a; } .rd3-i.g { background: #f8e3ec; color: #c0507a; }
+.rd3-r small { display: block; font-size: 12px; font-weight: 500; color: rgba(32,48,26,.55); }
+.rd3-r p { margin: 2px 0 0; font-size: 14px; line-height: 1.45; color: rgba(32,48,26,.8); }
+.rd3-r b { display: block; margin-top: 2px; font-size: 15px; font-weight: 600; line-height: 1.35; color: #20301a; }
+.rd3-st { border-top: 1px solid rgba(32,48,26,.08); }
+.rd3-st summary { display: flex; justify-content: center; align-items: center; gap: 6px; padding: 12px 0 2px; font-size: 13.5px; font-weight: 600; cursor: pointer; list-style: none; }
+.rd3-st summary::-webkit-details-marker { display: none; }
+.rd3-st .rd-st { margin-top: 10px; }
