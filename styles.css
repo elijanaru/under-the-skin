@@ -13404,3 +13404,15 @@ html .fbp-step > div { flex: 1; min-width: 0; }
 html .pad.fb .fbp-step .fbp-c b { display: inline; margin: 0; font: 900 14px/1 var(--dot); letter-spacing: 0; color: #20301a !important; -webkit-text-fill-color: #20301a !important; text-shadow: none !important; }
 .fbp-c.full { background: hsl(calc(var(--hb) + 0 * var(--hk)) calc(34% * var(--hs)) 30%); color: #fff; }
 html .pad.fb .fbp-step .fbp-c.full b { color: #fff !important; -webkit-text-fill-color: #fff !important; }
+
+/* Balance › Breathe tile: the white dandelion sat on a white tile and nearly vanished; it now stands on a soft sage disc, like the moss under Ground */
+html .fbp-ph:has(img[src$="fb/breathe.webp"]) { background: radial-gradient(circle at 30% 35%, #c9d3b4 0 25px, transparent 26px); }
+/* Ground › phase practice steps: white Doto digits sat on the pale phase tint and vanished; dark ink digits on a slightly deeper tint */
+html .grp-ol i, html .grp-ol i .dotnum { background: color-mix(in srgb, var(--c) 34%, #fff) !important; color: #20301a !important; box-shadow: none; }
+
+/* Calendar (15 Nov 2026): the next-period card opens below the four scallops like Tea, so the arch window is never sliced under the title */
+.pad:has(> .cal3:first-child) { padding-top: 38px; }
+/* Check-in: the date sits on the arched background, so it is white with a soft shadow like every page title; its arrows are the white round buttons of the top bar */
+html .lg .log-date h2, html .lg .log-date .eyebrow { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.38), 0 2px 18px rgba(90,40,45,.34) !important; }
+html .lg .log-date .icon-btn { background: rgba(255,255,255,.9) !important; color: #20301a !important; border: 0 !important; box-shadow: 0 6px 16px -8px rgba(60,30,25,.45) !important; }
+html .lg .log-date .icon-btn[disabled] { opacity: .45; }
