@@ -4645,12 +4645,12 @@ function suppSafe(id) {
 // Food first: each food with what one serving gives, as a bar against her daily need
 const fmtAmt = v => v < 10 && v % 1 ? String(v) : String(Math.round(v));
 function suppFoodHead(id) {
-  const A = SUPP_FOOD_AMT[id]; if (!A) return '';
+  const A = SUPP_FOOD_AMT[id]; if (!A) return '<div class="ffq-h">Where you find it</div>';
   return `<div class="ff-h"><span>One serving gives</span><span>You need <b class="dotnum">${A.need[0]}</b> ${A.need[1]} a day</span></div>`;
 }
 function suppFoodRow(id, [f, tip], i) {
   const A = SUPP_FOOD_AMT[id], r = A && A.rows[i];
-  if (!r) return `<div class="spec-row"><b>${f}</b><span>${tip}</span></div>`;
+  if (!r) { const e = ingEmo(f) || (/meat|beef|lamb/i.test(f) ? '🥩' : '🌿'); return `<div class="ffq"><span class="ffq-e">${emoRaw(e)}</span><div><b>${f}</b><small>${tip}</small></div></div>`; }
   const [serv, v] = r, pc = Math.round(v / A.need[0] * 100), over = pc > 100;
   return `<div class="ff-r"><div class="ff-t"><b>${f}</b><span class="ff-v"><b class="dotnum">${fmtAmt(v)}</b>${A.need[1]}</span></div>
     <div class="ff-bar ${over ? 'over' : ''}" role="img" aria-label="About ${pc}% of your day"><span><i style="width:${Math.min(100, Math.max(3, pc))}%"></i></span><em>${over ? `${+(v / A.need[0]).toFixed(v / A.need[0] < 2 ? 1 : 0)}× your day` : `${pc}%`}</em></div>
@@ -5518,6 +5518,17 @@ const TEA_WHEEL = {
   focus: ['Clearer skin', 'Lowers androgens', 'Less unwanted hair', 'Eases bloating', 'Fresh breath', 'Light and minty'],
   premenstrual: ['Softens PMS', 'Ahead of cramps', 'Eases anxiety', 'Deeper sleep', 'Relaxes a tight belly', 'Warm, never cold'],
 };
+// Three brew bubbles under the wheel (Opal style): water heat, steep time and how much, each a ring that fills to its share of the scale.
+const TEA_BREW = { 'flow-start': [100, '10', 10, '4', 'slices', 'Fresh ginger'], 'flow-end': [100, '10', 10, '2', 'tsp', 'Dried nettle'], rising: [80, '2–3', 3, '1', 'tsp', 'Green tea'],
+  building: [80, '1', 1, '1', 'tsp', 'Matcha powder', 'Whisk'], peak: [100, '5', 5, '1', 'tbsp', 'Hibiscus'], settle: [100, '10', 10, '1', 'tbsp', 'Lemon balm', 'Steep, covered'],
+  focus: [100, '5–7', 7, '1', 'tbsp', 'Spearmint'], premenstrual: [100, '10', 10, '1', 'tbsp', 'Chamomile'] };
+function teaBubbles(w, info) {
+  const b = TEA_BREW[w]; if (!b) return '';
+  const pc = (info && PH_HEX[info.phase]) || '#6c823e', C = 2 * Math.PI * 34;
+  const ring = f => `<svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="34" fill="none" stroke="rgba(32,48,26,.1)" stroke-width="5"/><circle cx="40" cy="40" r="34" fill="none" stroke="${pc}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${(C * f).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 40 40)"/></svg>`;
+  const B = [[b[0] / 100, b[0], '°C', 'Water'], [b[2] / 15, b[1], 'min', b[6] || 'Steep'], [Math.min(1, +b[3] / 4), b[3], b[4], b[5]]];
+  return `<div class="tgb">${B.map(([f, v, u, l], i) => `<span class="tgb-b" style="--i:${i}">${ring(f)}<b><em class="dotnum">${v}</em>${u ? `<small>${u}</small>` : ''}</b><i>${l}</i></span>`).join('')}</div>`;
+}
 function teaWheel(info, w, td, steep, near, inPage) {
   const R = 86, A = [0, 60, 120, 180, 240, 300];
   const labels = (TEA_WHEEL[w] || []).map((t, i) => {
@@ -5526,12 +5537,11 @@ function teaWheel(info, w, td, steep, near, inPage) {
     return `<i class="tgw-dot" style="left:calc(50% + ${x}px);top:calc(50% + ${y}px)"></i><span class="tgw-l ${side}" style="${pos};--i:${i}">${t}</span>`;
   }).join('');
   return `<section class="tgw${inPage ? ' in-page' : ''}">
-      ${inPage ? '' : `<button class="tgw-back" data-action="back" aria-label="Back">${icon('chevL', 20)}</button>`}
       <small class="tgw-k">${info ? `Day ${info.cd} · ${PHASES[info.phase].name}` : 'Your tea today'}</small>
-      <h1 class="tgw-t">${td[1].replace(/ & /, ' <em>&amp;</em> ')}<span>benefits</span></h1>
+      <h1 class="tgw-t">${td[1].replace(/ & /, ' <em>&amp;</em> ')}<span>benefits</span></h1>${inPage ? '' : `<p class="tgw-sub">${td[2]}</p>`}
       <div class="tgw-stage"><span class="tgw-ring" aria-hidden="true"></span>${labels}
         <span class="cup3d-w tgw-cup"><img src="${teaCupImg(td[1])}" alt="" decoding="async">${teaCupAttr(td[1]) ? `<canvas class="teacup3d"${teaCupAttr(td[1])} data-fit="${/matcha/i.test(td[1]) ? 0.92 : /green tea/i.test(td[1]) ? 1.1 : 1.3}" aria-label="${td[1]}, turning slowly"></canvas>` : ''}</span></div>
-      <dl class="t4-spec tbr-l tgw-sp">${(TEA_REASONS[w] || []).map(([ic, t, x]) => `<div><dt><span>${icon(ic, 17)}</span></dt><dd><b>${t}</b><small>${x}</small></dd></div>`).join('')}<div><dt><span>${icon('cup', 17)}</span></dt><dd><b>Brew</b><small>${td[3]}</small></dd></div></dl>
+      ${inPage ? `<dl class="t4-spec tbr-l tgw-sp">${(TEA_REASONS[w] || []).map(([ic, t, x]) => `<div><dt><span>${icon(ic, 17)}</span></dt><dd><b>${t}</b><small>${x}</small></dd></div>`).join('')}<div><dt><span>${icon('cup', 17)}</span></dt><dd><b>Brew</b><small>${td[3]}</small></dd></div></dl>` : teaBubbles(w, info)}
       <button class="tgw-cta" data-action="nav" data-to="tea/day-${w}">How to brew it ${icon('chevR', 15)}</button>
     </section>`;
 }
@@ -5579,7 +5589,7 @@ function brewGrid(info) {
 function viewTea() {
   const info = M.info, w = info ? dayWindow(info) : 'rising', td = TEA_DAY[w], k = ui.teaK, G = k && TEA_GUIDE.find(x => x.k === k);
   const steep = (td[3].match(/\d+(?:–\d+)?\s*min/) || [''])[0], near = w === 'flow-start' || w === 'flow-end' || w === 'premenstrual';
-  return `<div class="pad tg">
+  return `${topbar('Tea', { back: true })}<div class="pad tg">
     ${teaWheel(info, w, td, steep, near)}
 
     ${cycleTeas(info)}
