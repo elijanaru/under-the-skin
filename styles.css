@@ -13330,3 +13330,6 @@ html .card.nw2 { margin-top: 14px; padding: 18px 16px 8px; border-radius: 30px; 
 /* Move hero and Relief hero: their titles sit inside a white card, so they keep dark ink (the white page-title rule is for titles on the background only). */
 html .rl-hero .page-h, html .rl-hero .page-h span, html .mvp .mvp-h { color: #20301a !important; -webkit-text-fill-color: #20301a !important; text-shadow: none !important; }
 html .mvp .mvp-h small { color: rgba(32,48,26,.62) !important; -webkit-text-fill-color: rgba(32,48,26,.62) !important; }
+
+/* Today alerts: a tip is never cut off mid-sentence (up to 3 lines instead of 2). */
+html .al-t small { -webkit-line-clamp: 3 !important; line-clamp: 3; }
