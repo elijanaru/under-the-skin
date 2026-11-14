@@ -49,7 +49,7 @@
     #splash { position: fixed; inset: 0; z-index: 9999; overflow: hidden; background: #f0cfc2 url(images/bg/mist.webp) center / 100% 100% no-repeat; transition: opacity .8s ease, visibility .8s; }
     #splash.out { opacity: 0; visibility: hidden; }
     #splash i, #splash .sx-lotus { position: absolute; display: block; background-repeat: no-repeat; pointer-events: none; }
-    #splash .sx-arch { inset: 0 -2%; background-image: url(images/bg/arch.webp); background-size: 100% 100%; opacity: 0; transform: scale(1.06); animation: sxArch 1.1s cubic-bezier(.2,.8,.2,1) forwards; }
+    #splash .sx-arch { inset: -24px 0 0; background-image: url(images/bg/arch.webp); background-size: 100% 100%; opacity: 0; transform: scale(1.06); animation: sxArch 1.1s cubic-bezier(.2,.8,.2,1) forwards; }
     #splash .sx-leaves { inset: 0; background-image: url(images/bg/leaves.webp); background-size: 100% 100%; transform-origin: 50% 0; opacity: 0; animation: sxLeaves 1.6s .25s ease-out forwards, sxSway 7s 1.85s ease-in-out infinite alternate; }
     #splash .sx-lotus { left: 12.27%; top: 11.75%; width: 75.46%; height: 25.6%; }
     #splash .sx-flower, #splash .sx-glow { inset: 0; background-image: url(images/bg/lotus.webp); background-size: contain; background-position: center; }
@@ -113,7 +113,7 @@
   <svg width="0" height="0" style="position:absolute"><filter id="ink"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.6"/></filter></svg>
   <div class="stage">
     <div class="phone">
-      <div class="bgx" aria-hidden="true"><i class="bgx-leaves"></i><i class="bgx-swirls"></i><i class="bgx-arch"></i></div>
+      <div class="bgx" aria-hidden="true"><i class="bgx-leaves"></i><i class="bgx-swl"></i><i class="bgx-swr"></i><i class="bgx-arch"></i></div>
       <div id="app"></div>
       <div id="overlay"></div>
       <div id="toast"></div>

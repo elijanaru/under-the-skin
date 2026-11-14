@@ -2522,7 +2522,7 @@ function plateFoods(k, phase, season, warm) {
   if (k === 'veg' || k === 'fruit') return plateSeasonal(k, phase, season, warm);
   const idx = { protein: 0, carbs: 1, fats: 2, spice: 3 }[k];
   let list = PLATE_GRID[phase][season][idx];
-  if (k === 'protein' && (myDiet() === 'veg' || myDiet() === 'vegan')) { const keep = list.filter(x => plainFits(x)); list = [...keep, ...PLANT_PROTEIN[phase].filter(x => plainFits(x) && !keep.includes(x))].slice(0, Math.max(4, list.length)); }
+  if (k === 'protein' && ['veg', 'vegan', 'pesc'].includes(myDiet())) { const keep = list.filter(x => plainFits(x)); list = [...keep, ...PLANT_PROTEIN[phase].filter(x => plainFits(x) && !keep.includes(x))].slice(0, Math.max(4, list.length)); }
   return list.map(x => { const n = x.slice(x.indexOf(' ') + 1); return { g: x.slice(0, x.indexOf(' ')), n, photo: findFoodPhoto(n) }; });
 }
 function plateWhy(k, phase) { return k === 'spice' ? PLATE_SPICE_WHY[phase] : EAT_GUIDE[phase].cats[k][0]; }
@@ -2545,7 +2545,7 @@ const PLATE_SET = {
   veg: () => UNS('1558234608-ae0b60563965'),
   fruit: { Winter: PEX(8639570), Autumn: UNS('1560806887-1e4cd0b6cbd6'), Spring: PEX(18018686), Summer: PEX(18018686), 'Late summer': UNS('1560806887-1e4cd0b6cbd6') },
 };
-const plateSetPic = (k, phase, season) => k === 'protein' && (myDiet() === 'veg' || myDiet() === 'vegan') ? foodPhoto('Peas & broad beans', 420) : k === 'veg' ? PLATE_SET.veg() : k === 'fruit' ? PLATE_SET.fruit[season] : PLATE_SET[k][phase];
+const plateSetPic = (k, phase, season) => k === 'protein' && myDiet() === 'pesc' ? foodPhoto('Salmon', 420) : k === 'protein' && (myDiet() === 'veg' || myDiet() === 'vegan') ? foodPhoto('Peas & broad beans', 420) : k === 'veg' ? PLATE_SET.veg() : k === 'fruit' ? PLATE_SET.fruit[season] : PLATE_SET[k][phase];
 // A rounded food portion: the wedge between angles a0 and a1, pulled in by h from both cut edges.
 function portionPath(cx, cy, R, a0, a1, h = 2.6, rr = 7) {
   const u = a => [Math.sin(a), -Math.cos(a)], n = a => [Math.cos(a), Math.sin(a)], f = v => v.toFixed(1);
@@ -7481,7 +7481,7 @@ function viewInsights() {
 
 // What a woman needs in a day (EU reference values for women 18 to 50), for the micronutrient bars on a recipe
 // one calm food photo per way of eating, for the onboarding picker
-const DIET_PIC = { all: () => photoUrl('citrus-salmon-salad', 520), animal: () => 'images/period-food.webp', veg: () => photoUrl('egg-kraut-plate', 520), vegan: () => photoUrl('living-green-salad', 520) };
+const DIET_PIC = { all: () => photoUrl('citrus-salmon-salad', 520), animal: () => 'images/period-food.webp', pesc: () => foodPhoto('Wild salmon', 520), veg: () => photoUrl('egg-kraut-plate', 520), vegan: () => photoUrl('living-green-salad', 520) };
 // ---------- The diet guide: what her way of eating needs to watch for her hormones ----------
 const dietFocus = (G, phase) => { const f = G.items.filter(x => x.ph.includes(phase)); return (f.length ? f : G.items).slice(0, 2); };
 function dietGuideCard(phase, compact) {
@@ -7521,7 +7521,7 @@ function dvPeek(d) {
   const G = DIET_GUIDE[d]; if (!G) return `<p class="dt-none">${icon('check', 13, 2.4)} Every recipe and food in the app fits you.</p>`;
   const take = G.items.filter(x => x.tag === 'take');
   return `<div class="dt-pk"><span class="dt-pg">${G.items.slice(0, 4).map((x, i) => `<i style="--c:${dvTint(x)};--i:${i}">${x.g}</i>`).join('')}${G.items.length > 4 ? `<i class="more">+${G.items.length - 4}</i>` : ''}</span>
-    <span class="dt-pt"><b>Your ${d === 'animal' ? 'animal-based' : d === 'veg' ? 'vegetarian' : 'vegan'} guide</b><small>${take.length ? `${take.length} to take daily · ` : ''}${G.items.length - take.length} to plan into meals</small></span></div>`;
+    <span class="dt-pt"><b>Your ${d === 'animal' ? 'animal-based' : d === 'pesc' ? 'pescetarian' : d === 'veg' ? 'vegetarian' : 'vegan'} guide</b><small>${take.length ? `${take.length} to take daily · ` : ''}${G.items.length - take.length} to plan into meals</small></span></div>`;
 }
 function viewDiet() {
   const d = myDiet(), G = DIET_GUIDE[d], info = M.info; if (!G) return viewMissing();
@@ -7555,6 +7555,7 @@ function viewDiet() {
 }
 // ---------- How she eats: everything, animal-based, vegetarian or vegan ----------
 const myDiet = () => (state && state.profile && state.profile.diet) || 'all';
+const LAND = /\b(meat|healing broth|bone broth|beef|chicken|lamb(?![’']s)|pork|bacon|turkey|duck|liver|oxtails?|marrow|bones?|gelatin|collagen|organs?|steak|mince|ham|sausage|venison|heart)\b/i;
 const DX = { meat: /\b(meat|seafood|shellfish|healing broth|beef|chicken|lamb(?![’']s)|pork|bacon|turkey|duck|liver|oxtails?|marrow|bones?|prawns?|shrimp|salmon|fish|sardines?|mussels?|oysters?|anchov\w*|tuna|cod|mackerel|gelatin|collagen|organs?|steak|mince|ham|sausage|venison|heart)\b/i,
   egg: /\beggs?\b|yolks?|mayonnaise/i, dairy: /\b(milk|cheese|cheddar|butter|ghee|cream|yoghurt|yogurt|kefir|feta|parmesan|ricotta|halloumi|whey|labneh|quark)\b/i, honey: /\bhoney(comb)?\b/i,
   plant: /\b(lentils?|chickpeas?|beans?|quinoa|buckwheat|rice|tofu|tempeh|oats?|pasta|seitan|soy|edamame|hummus)\b/i };
@@ -7563,9 +7564,9 @@ const PLANT_WORDS = /\b(coconut|almond|oat|plant|soy|rice|cashew|hemp|nut)\s+(co
 const VEGAN_SWAP = [[/\braw honey\b|\bhoney\b/gi, 'maple syrup'], [/\b(grass-fed )?(ghee or butter|butter or ghee|ghee|butter)\b(?! lettuce)/gi, 'olive oil'],
   [/\b(raw |whole |warm )?milk\b/gi, 'almond milk'], [/\b(raw )?cream\b/gi, 'coconut cream'], [/\b(raw |greek |full-fat greek )?(yoghurt|yogurt|kefir)\b/gi, 'coconut yoghurt'], [/\bbone broth\b/gi, 'vegetable broth']];
 const VEG_SWAP = [[/\bbone broth\b/gi, 'vegetable broth']];
-const lineKinds = t => { const c = t.replace(PLANT_WORDS, ' '); return { meat: DX.meat.test(c), egg: DX.egg.test(c), dairy: DX.dairy.test(c), honey: DX.honey.test(c), plant: DX.plant.test(c) }; };
-const lineFits = (t, d) => { const k = lineKinds(t); return d === 'vegan' ? !k.meat && !k.egg && !k.dairy && !k.honey : d === 'veg' ? !k.meat : d === 'animal' ? !k.plant : true; };
-const swapText = (t, d) => d === 'vegan' || d === 'veg' ? (d === 'vegan' ? VEGAN_SWAP : VEG_SWAP).reduce((x, [re, w]) => x.replace(re, (m, ...a) => (/^[A-Z]/.test(m) ? w.charAt(0).toUpperCase() + w.slice(1) : w)), t) : t;
+const lineKinds = t => { const c = t.replace(PLANT_WORDS, ' '); return { land: LAND.test(c), meat: DX.meat.test(c), egg: DX.egg.test(c), dairy: DX.dairy.test(c), honey: DX.honey.test(c), plant: DX.plant.test(c) }; };
+const lineFits = (t, d) => { const k = lineKinds(t); return d === 'vegan' ? !k.meat && !k.egg && !k.dairy && !k.honey : d === 'veg' ? !k.meat : d === 'pesc' ? !k.land : d === 'animal' ? !k.plant : true; };
+const swapText = (t, d) => d === 'vegan' || d === 'veg' || d === 'pesc' ? (d === 'vegan' ? VEGAN_SWAP : VEG_SWAP).reduce((x, [re, w]) => x.replace(re, (m, ...a) => (/^[A-Z]/.test(m) ? w.charAt(0).toUpperCase() + w.slice(1) : w)), t) : t;
 // "200 ml raw milk (or almond milk)" and "1 tbsp olive oil or ghee" offer a choice: return each option as a full line
 function lineAlts(line) {
   const q = line.match(ING_Q), qty = q ? q[0] : '', paren = line.match(/^(.*?)\s*\((?:or|use)\s+([^)]+)\)(.*)$/i);

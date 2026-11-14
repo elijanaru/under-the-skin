@@ -1450,6 +1450,7 @@ export const EAT_GUIDE = {
 export const DIETS = [
   { k: 'all', t: 'Everything', g: '🍽️', s: 'Meat, fish, eggs, dairy and plants' },
   { k: 'animal', t: 'Animal-based', g: '🥩', s: 'Meat, organs, eggs, raw dairy, fruit and honey' },
+  { k: 'pesc', t: 'Pescetarian', g: '🐟', s: 'Fish and seafood, eggs and dairy. No meat' },
   { k: 'veg', t: 'Vegetarian', g: '🥚', s: 'No meat or fish. Eggs and dairy, yes' },
   { k: 'vegan', t: 'Vegan', g: '🌱', s: 'Only plants' },
 ];
@@ -1487,6 +1488,20 @@ export const DIET_GUIDE = {
     warn: [
       ['Eat enough', '🍽️', 'Too few calories or too little fat can stop ovulation. A missing period means eat more.'],
       ['Test once a year', '🧪', 'Ferritin, B12 and vitamin D.'],
+    ] },
+  pesc: { title: 'Your pescetarian guide', lead: 'Fish, seafood, eggs and dairy cover most of what your cycle needs. Iron is the one to plan, and pick fish low in mercury.',
+    items: [
+      { n: 'Iron', cov: 1, g: '🩸', tag: 'watch', why: 'Red meat is the easiest iron, and your period takes some every month. Shellfish like mussels, clams and oysters are just as rich.', do: 'Mussels or clams once or twice a week, plus lentils, eggs and greens with vitamin C. Enjoy coffee and tea an hour away from those meals. Test ferritin before taking iron.', foods: 'Mussels, clams, oysters, sardines, lentils, eggs, cooked spinach', ph: ['menstrual'] },
+      { n: 'Omega-3', cov: 2, g: '🐟', tag: 'watch', why: 'Oily fish is the best source of DHA and EPA, which ease cramps and support mood and skin.', do: 'Oily fish twice a week: salmon, sardines, mackerel, anchovies or trout.', foods: 'Salmon, sardines, mackerel, anchovies, trout', ph: ['menstrual', 'luteal'] },
+      { n: 'Mercury', g: '🌊', tag: 'watch', why: 'Big predatory fish store mercury, which matters most when you are trying to conceive or pregnant.', do: 'Choose small fish and salmon most often. Keep tuna to once a week. Skip swordfish, shark, marlin and king mackerel when trying to conceive or pregnant.', foods: 'Sardines, anchovies, salmon, trout, herring', ph: [] },
+      { n: 'Vitamin D', dose: ['10-20', 'µg D3', 'October to March'], cov: 1, g: '☀️', tag: 'take', why: 'Oily fish gives some, but rarely enough in the dark months. Low levels go with PMS and low mood.', do: '10 to 20 µg (400 to 800 IU) of D3 a day from October to March, plus oily fish and daylight.', foods: 'Salmon, sardines, herring, egg yolks', ph: ['luteal'] },
+      { n: 'Zinc', cov: 2, g: '🦪', tag: 'watch', why: 'Zinc supports ovulation, clear skin and calmer PMS. Oysters are the richest food for it.', do: 'Oysters or mussels now and then, plus pumpkin seeds, cheese and eggs most days.', foods: 'Oysters, mussels, pumpkin seeds, cheese, eggs', ph: ['follicular', 'ovulatory'] },
+      { n: 'Iodine', cov: 2, g: '🧂', tag: 'watch', why: 'Your thyroid sets the pace of your cycle. Fish, seafood and dairy are good sources.', do: 'Fish or seafood a few times a week, dairy or eggs daily, and iodised salt.', foods: 'Cod, prawns, milk, yoghurt, eggs, iodised salt', ph: ['luteal'] },
+      { n: 'Protein', cov: 2, g: '🥚', tag: 'watch', why: 'Steady blood sugar and strong hormones need protein at every meal.', do: 'Fish, eggs, Greek yoghurt, cheese, lentils and beans: a palm-sized portion each meal.', foods: 'Salmon, eggs, Greek yoghurt, cottage cheese, lentils', ph: ['follicular', 'ovulatory'] },
+    ],
+    warn: [
+      ['Raw fish', '🍣', 'Sushi and raw fish only from a trusted place, in your follicular and ovulatory weeks. Around your period choose cooked fish, and none raw when pregnant.'],
+      ['Test once a year', '🧪', 'Ferritin and vitamin D.'],
     ] },
   animal: { title: 'Your animal-based guide', lead: 'Meat, organs, eggs and raw dairy cover most nutrients well. Keep an eye on these so your hormones stay balanced.',
     items: [

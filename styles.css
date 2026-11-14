@@ -12689,7 +12689,25 @@ details.rd-row[open] .rd-what { margin-top: 10px; }
 .rd-teaser small { display: block; font-size: 12.5px; color: #56624a; font-weight: 500; }
 .rd-teaser span > b { font-size: 16px; font-weight: 400; }
 /* desktop phone mock: the fake status bar sits above the picture, so the arch starts right under it (no cut scallops) */
-@media (min-width: 560px) { .bgx { top: 50px; } .island { background: #141414 !important; } }
+@media (min-width: 560px) { .island { background: #141414 !important; } }
 .bgx-lotus { display: none; } /* the lotus lives only in the opening animation */
 /* partner tea tile: the 3D cup's canvas fits the tile, so the cup is never clipped at the sides */
 html .pv2-3d.sm .cup3d-w canvas.teacup3d { inset: 0; width: 100%; height: 100%; }
+
+/* ---------- The window, final pick (14 Nov 2026, after testing five versions on Calendar, Today and Food) ----------
+   The whole frame shows: the concave scallops sit in the status-bar zone above the top pill, the frame runs down both
+   sides and every card sits inside it. The frame's brown is softened halfway so it melts into the mist. Willow strokes
+   and light swirls stay at the edges (the middle stays clean behind text); the top pill is frosted so the arch glows through. */
+.bgx-arch { inset: -24px 0 0; filter: saturate(.85) brightness(1.1) hue-rotate(-3deg); }
+.bgx-swirls { display: none; }
+.bgx-leaves { -webkit-mask-image: linear-gradient(90deg, #000 0 22%, transparent 34% 66%, #000 78% 100%); mask-image: linear-gradient(90deg, #000 0 22%, transparent 34% 66%, #000 78% 100%); }
+.bgx-swl, .bgx-swr { top: 42%; width: 43%; aspect-ratio: 419 / 1072; background-image: url(images/bg/swirls.webp); background-size: 200% 100%; opacity: .95; animation: bgxShine 11s ease-in-out infinite; }
+.bgx-swl { left: -7%; background-position: 0 0; }
+.bgx-swr { right: -7%; background-position: 100% 0; animation-delay: -5.5s; }
+.pad { padding-left: 24px; padding-right: 24px; }
+.topbar { margin-left: 20px; margin-right: 20px; background: linear-gradient(170deg, rgba(255,255,255,.78), rgba(255,255,255,.55)) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.4); backdrop-filter: blur(20px) saturate(1.4); border: 1px solid rgba(255,255,255,.9);
+  box-shadow: inset 0 1px 0 #fff, 0 10px 30px rgba(120,70,90,.1) !important; }
+/* five ways of eating: "Everything" runs wide on top, the four others in two rows below */
+.onb .dt-grid .dt-c:first-child:nth-last-child(5) { grid-column: 1 / -1; aspect-ratio: 2.3 / 1; }
+.onb .dt-grid .dt-c:first-child:nth-last-child(5) ~ .dt-c { aspect-ratio: 1 / 1; }
