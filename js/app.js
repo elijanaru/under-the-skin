@@ -7582,7 +7582,8 @@ const ING_Q = /^((?:juice of\s+)?(?:\d+(?:[.,]\d+)?|[½¼¾⅓⅔])(?:\s*(?:to|-
 const ING_EMO = [[/goji/i, 'e:goji'], [/ground beef/i, '🥩'], [/red dates|jujube/i, 'e:red-dates'], [/strawberr/i, '🍓'], [/(red|yellow|green|bell) pepper/i, '🫑'], [/cardamom/i, 'e:cardamom'], [/spring onion/i, 'd:spring-onion'], [/\bonions?\b|shallot/i, '🧅'], [/\bsalt\b/i, '🧂'],
   [/rosemary|thyme|oregano|bay lea/i, '🌿'], [/prawn|shrimp/i, '🦐'], [/parmesan|cheddar|feta|cheese/i, '🧀'], [/squash|pumpkin(?! seed)/i, '🎃'],
   [/lettuce|rocket|mixed leaves|bok choy/i, '🥬'], [/kimchi|sauerkraut/i, '🥬'], [/berries/i, '🫐'], [/bacon/i, '🥓'], [/hummus/i, '🫘'], [/\bcream\b/i, '🥛'],
-  [/mayonnaise|black pepper|cumin|paprika|curry|nutmeg|vanilla|nutritional yeast|tamari|mustard|toothpick|pickle|maple|dates/i, '']];
+  [/mayonnaise/i, 'd:mayonnaise'], [/black pepper|peppercorn/i, 'd:black-pepper'], [/cumin/i, 'd:cumin'], [/paprika/i, 'd:paprika'], [/curry/i, 'd:curry'], [/nutmeg/i, 'd:nutmeg'],
+  [/vanilla/i, 'd:vanilla'], [/nutritional yeast/i, 'd:nutritional-yeast'], [/tamari|soy sauce/i, 'd:tamari'], [/mustard/i, 'd:mustard'], [/toothpick/i, 'd:toothpick'], [/pickle|gherkin/i, '🥒'], [/maple/i, 'd:maple-syrup'], [/\bdates\b/i, 'd:dates']];
 const ingEmo = n => { const nm = String(n).replace(/\s*\(.*?\)/g, '').split(',')[0], pre = ING_EMO.find(([re]) => re.test(nm)); return pre ? pre[1] : ((FOOD_EMO.find(([re]) => re.test(nm)) || [, ''])[1]); };
 function recIngs(r) {
   const groups = [];

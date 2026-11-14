@@ -12433,3 +12433,4 @@ html .tf2-e, html .lt2-tag, html .msd-h small, html .mg4-r em, html .mg4-w figca
 }
 html .tf2-e, html .lt2-tag, html .mg4-w figcaption small { color: rgba(32,48,26,.6) !important; }
 html .section-title[class*="tone-"] h3::before { background: var(--lime) !important; box-shadow: none !important; }
+html .rci-h { text-transform: none !important; letter-spacing: 0 !important; font-size: 13px !important; font-weight: 600 !important; }
