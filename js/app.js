@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HORMONE_SIMPLE, HORMONE_RELAY, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
+  PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HORMONE_SIMPLE, HORMONE_RELAY, BODY_NOTES, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -1361,7 +1361,7 @@ function viewToday() {
 
   // one compact "heads-up" card: reminders, unusual cycle, learned patterns
   const alerts = dueReminders().filter(x => !/^(phase-|rh-)/.test(x.id)).map(x => `<div class="al-row"><span class="al-ic ${x.icon === 'drop' ? 'drop' : ''}">${x.icon === 'drop' ? DROP_ART : icon(x.icon, 17)}</span>
-      <span class="al-t" ${x.to ? `data-action="nav" data-to="${x.to}"` : ''}><b>${esc(x.title)}</b><small>${esc(x.body)}</small></span>
+      <span class="al-t ${x.id.startsWith('letter-') ? 'al-letter' : ''}" ${x.to ? `data-action="nav" data-to="${x.to}"` : ''}><b>${esc(x.title)}</b><small>${esc(x.body)}</small></span>
       <button class="bn-x" data-action="dismissRem" data-id="${x.id}" aria-label="Dismiss">${icon('close', 14)}</button></div>`);
   upcomingPatterns(patterns()).forEach(x => { const rk = reliefKey(x.name); alerts.push(`<div class="al-row" ${rk ? `data-action="nav" data-to="relief/${encodeURIComponent(rk)}"` : ''}>
       <span class="al-ic">${icon('chart', 15)}</span><span class="al-t"><b>${x.name} ${x.inDays === 0 ? 'today' : x.inDays === 1 ? 'tomorrow' : `in ${x.inDays} days`}</b><small>Your pattern: days ${x.from}–${x.to}</small>${QUICK_FIX[x.name] ? `<em class="al-fix">${icon('spark', 12)} ${QUICK_FIX[x.name]}</em>` : ''}</span>${rk ? icon('chevR', 14) : ''}</div>`); });
@@ -3623,7 +3623,7 @@ function eatTodayCard(info) {
 }
 
 // ---------- reminders ----------
-const REM_DEFAULT = { period: true, periodDays: 2, phase: true, cycle: true, rhythm: true, sunAm: true, sunPm: true, checkin: true, checkinHour: 20, calm: true, calmHour: 18, dismissed: {}, fired: {} };
+const REM_DEFAULT = { period: true, periodDays: 2, phase: true, cycle: true, rhythm: true, sunAm: true, sunPm: true, checkin: true, checkinHour: 20, calm: true, calmHour: 18, letters: true, lettersN: 2, dismissed: {}, fired: {} };
 const hr12 = h => `${((h + 11) % 12) + 1}${h < 12 ? 'am' : 'pm'}`;
 // How stressed she is today: 2 = she logged stress, 1 = a high-stress part of her cycle, 0 = calm
 const STRESS_MOODS = ['Stressed', 'Anxious', 'Irritable', 'Angry', 'Overwhelmed'];
@@ -3655,6 +3655,39 @@ async function scheduleSunNative(ask) {
     if (list.length) await LN.schedule({ notifications: list });
   } catch { /* notifications not available */ }
 }
+// Letters from your body: 1 to 3 short check-ins a day, matched to her phase and, when she has logged
+// enough, to her own patterns ("last cycles you often noted cramps around now").
+const LETTER_SLOTS = { 1: [[10, 0, 'am']], 2: [[9, 30, 'am'], [19, 30, 'pm']], 3: [[9, 0, 'am'], [13, 30, 'mid'], [19, 30, 'pm']] };
+const LETTER_TITLE = { am: 'A letter from your body', mid: 'Your body checking in', pm: 'A note for tonight' };
+function bodyNote(date, slot, di, pats) {
+  if (!di) return null;
+  const nm = (state.profile.name || '').trim().split(/\s+/)[0], n = nm || 'love', k = dayNum(date) + (slot === 'mid' ? 1 : slot === 'pm' ? 2 : 0);
+  // her own pattern, on about every other morning it applies
+  const p = slot === 'am' && k % 2 === 0 && (pats || []).find(x => di.cd >= x.from - 1 && di.cd <= x.to && x.cyclesN >= 2);
+  if (p) return `Last cycles you often noted ${p.name.toLowerCase()} around now. If it shows up again, be gentle with yourself. If it doesn’t, notice that too.`;
+  const list = BODY_NOTES[di.phase][slot];
+  return list[k % list.length].replace(/\{n\}/g, n);
+}
+function letterSlotNow(r) { const now = new Date(), m = now.getHours() * 60 + now.getMinutes(); return [...(LETTER_SLOTS[r.lettersN] || LETTER_SLOTS[2])].reverse().find(([h, mi]) => m >= h * 60 + mi); }
+async function scheduleLettersNative(ask) {
+  const LN = NATIVE && CAP?.Plugins?.LocalNotifications; if (!LN || !state?.onboarded || !M?.stats) return;
+  try {
+    const r = rem(); await LN.cancel({ notifications: Array.from({ length: 21 }, (_, i) => ({ id: 7300 + i })) });
+    if (!r.letters) return;
+    let p = await LN.checkPermissions();
+    if (p.display !== 'granted' && ask) p = await LN.requestPermissions();
+    if (p.display !== 'granted') return;
+    const pats = (() => { try { return patterns().list; } catch { return []; } })(), now = Date.now(), list = [];
+    for (let i = 0; i < 7; i++) {
+      const d = C.addDays(new Date(), i), di = C.dayInfo(d, M.stats);
+      (LETTER_SLOTS[r.lettersN] || LETTER_SLOTS[2]).forEach(([h, mi, slot], j) => {
+        const at = new Date(d.getFullYear(), d.getMonth(), d.getDate(), h, mi), body = bodyNote(d, slot, di, pats);
+        if (at > now && body) list.push({ id: 7300 + i * 3 + j, title: LETTER_TITLE[slot], body, schedule: { at } });
+      });
+    }
+    if (list.length) await LN.schedule({ notifications: list });
+  } catch { /* notifications not available */ }
+}
 function rem() { const o = state.reminders || {}, off = o.rhythm === false && !('sunAm' in o) ? { sunAm: false, sunPm: false } : {}; return state.reminders = { ...REM_DEFAULT, dismissed: {}, fired: {}, ...off, ...o }; }
 function dueReminders() {
   if (!M || !M.info) return [];
@@ -3663,6 +3696,11 @@ function dueReminders() {
     if (info.late) out.push({ id: 'late', icon: 'drop', title: `Period ${plural(info.late, 'day')} late`, body: postpartum() ? `After a birth${state.profile.bf ? ' and while breastfeeding' : ''}, late or paused periods are common. Log your period when it arrives${ttc() ? ', and take a test if you might be pregnant' : ''}.` : `Stress, travel and sleep can shift your cycle. Log your period when it arrives${ttc() ? ', and take a test if you might be pregnant' : ''}.` });
     else if (info.dueToday) out.push({ id: 'due', icon: 'drop', title: 'Period expected today', body: 'Keep warm, have supplies ready and plan a softer day.' });
     else if (!info.isPeriod && info.daysToPeriod <= r.periodDays) out.push({ id: 'period', icon: 'drop', title: `Period in ${plural(info.daysToPeriod, 'day')}`, body: 'Pack supplies, stock up on iron-rich food and ginger tea, and keep your calendar light.' });
+  }
+  if (r.letters) {
+    const sl = letterSlotNow(r);
+    if (sl) { const pats = (() => { try { return patterns().list; } catch { return []; } })(), body = bodyNote(new Date(), sl[2], info, pats);
+      if (body) out.push({ id: 'letter-' + sl[2], icon: 'mail', title: LETTER_TITLE[sl[2]], body, to: 'log' }); }
   }
   if (postpartum()) out.push({ id: 'postpartum', icon: 'heart', title: 'Your cycle after birth', body: state.profile.bf
     ? 'While breastfeeding, periods can pause or come irregularly, and you can ovulate before your first period returns. Predictions stay rough until your cycle settles.'
@@ -3719,7 +3757,7 @@ function reminderBanners() {
 }
 function remindersSection() {
   const r = rem(), perm = 'Notification' in window ? Notification.permission : 'unsupported';
-  const RIC = { period: 'drop', phase: 'leaf', cycle: 'spark', sunAm: 'sun', sunPm: 'sun', calm: 'mind', checkin: 'check' };
+  const RIC = { letters: 'mail', period: 'drop', phase: 'leaf', cycle: 'spark', sunAm: 'sun', sunPm: 'sun', calm: 'mind', checkin: 'check' };
   const tg = (k, label, sub) => `<div class="stepper-row"><span class="pf-ic ${k === 'sunPm' ? 'dusk' : ''}">${icon(RIC[k], 16)}</span><span>${label}<small>${sub}</small></span><button class="toggle ${r[k] ? 'on' : ''}" data-action="remToggle" data-k="${k}" role="switch" aria-checked="${!!r[k]}" aria-label="${label}"><i></i></button></div>`;
   const hr = hr12;
   return `${sectionTitle('Reminders')}
@@ -3732,6 +3770,9 @@ function remindersSection() {
       ${tg('sunPm', 'Sunset', 'Watch the evening light, 30 min before sunset')}
       ${tg('calm', 'Daily calm', 'Meditation every day, right away when you log stress')}
       ${r.calm ? `<div class="stepper-row sub"><span>Every day at</span><div class="stepper"><button data-action="remCalmHour" data-d="-1">−</button><span class="num">${hr(r.calmHour)}</span><button data-action="remCalmHour" data-d="1">+</button></div></div>` : ''}
+      ${tg('letters', 'Letters from your body', 'Short, loving check-ins matched to your cycle')}
+      ${r.letters ? `<div class="stepper-row sub"><span>A day</span><div class="seg lt-n">${[1, 2, 3].map(v => `<button class="${r.lettersN === v ? 'on' : ''}" data-action="remLettersN" data-v="${v}">${v}</button>`).join('')}</div></div>
+        ${M?.info ? `<p class="lt-prev">${icon('mail', 13)}<span>“${esc(bodyNote(new Date(), 'am', M.info, []))}”</span></p>` : ''}` : ''}
       ${tg('checkin', 'Daily check-in', 'If you haven’t logged yet')}
       ${r.checkin ? `<div class="stepper-row sub"><span>From</span><div class="stepper"><button data-action="remHour" data-d="-1">−</button><span class="num">${hr(r.checkinHour)}</span><button data-action="remHour" data-d="1">+</button></div></div>` : ''}
       ${perm === 'granted' ? `<p class="fine" style="margin:8px 0 0">${icon('check', 13)} Phone notifications on</p>`
@@ -9093,7 +9134,8 @@ const actions = {
     uvRefresh();
   },
   uvSkin: d => { state.profile.skin = +d.v; save(); uvRefresh(); },
-  remToggle: d => { const r = rem(); r[d.k] = !r[d.k]; save(); render(); if (d.k === 'sunAm' || d.k === 'sunPm') scheduleSunNative(r[d.k]); },
+  remToggle: d => { const r = rem(); r[d.k] = !r[d.k]; save(); render(); if (d.k === 'sunAm' || d.k === 'sunPm') scheduleSunNative(r[d.k]); if (d.k === 'letters') scheduleLettersNative(r[d.k]); },
+  remLettersN: d => { const r = rem(); r.lettersN = +d.v; save(); render(); scheduleLettersNative(); },
   remHour: d => { const r = rem(); r.checkinHour = (r.checkinHour + +d.d + 24) % 24; save(); render(); },
   remCalmHour: d => { const r = rem(); r.calmHour = (r.calmHour + +d.d + 24) % 24; save(); render(); },
   calmRem: async () => { const r = rem(); r.calm = !r.calm; save(); if (r.calm && 'Notification' in window && Notification.permission === 'default') { try { await Notification.requestPermission(); } catch { /* unsupported */ } } render(); fireNotifications(); },
@@ -9434,7 +9476,7 @@ function render() {
   if (wk) { const on = wk.querySelector('.on'); if (on) wk.scrollLeft = on.offsetLeft - wk.clientWidth / 2 + on.clientWidth / 2; }
 }
 
-setTimeout(() => { startSignals(); scheduleSunNative(); }, 800);
+setTimeout(() => { startSignals(); scheduleSunNative(); scheduleLettersNative(); }, 800);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { startSignals(); calSoon(); } });
 if ('serviceWorker' in navigator) {
   // pick up new versions right away: check on open and whenever the app comes back to the foreground,

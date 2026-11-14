@@ -1285,6 +1285,31 @@ export const MIND_GUIDE = {
   peak: { energy: 3, mood: 3, social: 3, rest: 1 }, settle: { energy: 2, mood: 2, social: 2, rest: 2 },
   focus: { energy: 2, mood: 2, social: 1, rest: 2 }, premenstrual: { energy: 1, mood: 1, social: 1, rest: 3 },
 };
+// Letters from your body: short loving check-ins, by phase and time of day. {n} = her first name, or "love".
+// Written as invitations, never as a guess at how she feels.
+export const BODY_NOTES = {
+  menstrual: {
+    am: ['Hey {n}, your body is doing a lot right now. You don’t have to earn your rest today.', 'Good morning, {n}. Slow is allowed today. What would feel kind to you this morning?', 'Your body is renewing itself. Before the day starts, ask it what it needs.'],
+    mid: ['A small pause, {n}. How does your body feel right now, honestly?', 'Warm drink, deep breath, shoulders down. Just checking in with you.', 'Some period days feel heavy, some feel fine. How is today for you?'],
+    pm: ['You made it through today. Is there anything your body wants to tell you before sleep?', 'A warm blanket and an early night count as self-care. You deserve both.', 'Let go of what didn’t get done today, {n}. Rest is part of the work.'],
+  },
+  follicular: {
+    am: ['A new phase of your cycle is beginning. How are you feeling today?', 'Good morning, {n}. Is there something new you want to start? Your energy may be on your side.', 'Notice what you feel like doing today, not only what you should.'],
+    mid: ['Quick check-in: how is your energy today, compared with last week?', 'Let’s see what patterns we can discover together. Ten seconds is enough.', 'What made you smile today, {n}?'],
+    pm: ['What did your body enjoy today? Movement, food, people? Notice it.', 'One small thing you’re proud of today. Hold on to it.', 'Sleep well tonight, {n}. Rising energy needs good rest too.'],
+  },
+  ovulatory: {
+    am: ['Good morning, {n}. Many women feel bright and social around now. How about you?', 'Your body is at its most fertile now. Whatever that means for you, check in with how you feel.', 'Say yes to something that lights you up today, if you feel like it.'],
+    mid: ['How do you feel in your body today? Confident, tired, somewhere in between? All of it is fine.', 'One deep breath, {n}. What do you feel right now?', 'Your body might be sending little signs today. Take a moment to listen.'],
+    pm: ['Who did you connect with today? Notice who gives you energy.', 'You don’t have to use every high-energy day. Resting tonight is a choice too.', 'Before sleep: what felt good today, {n}?'],
+  },
+  luteal: {
+    am: ['Your hormones are shifting. Have you noticed any changes in your sleep, appetite or mood?', 'Good morning, {n}. If you feel slower, that’s your body turning inward. If you don’t, that’s fine too.', 'Plan a softer day if you can. Fewer things, done well.'],
+    mid: ['Hungrier than usual? Your body uses a little more energy now. A warm, real meal is enough.', 'Check in with yourself, {n}. What is one thing you need today?', 'If little things feel big today, you’re not too much. Breathe out slowly.'],
+    pm: ['What has your body been trying to tell you lately?', 'What would you like to say no to this week, {n}? Your boundaries are allowed to be clear.', 'Wind down early tonight. Warm tea, dim lights, a soft evening.'],
+  },
+};
+
 // Hormones made simple: a nickname, one plain sentence, the month in four steps (level 0 to 3 for
 // period, follicular, ovulation, luteal, with what she may feel) and what high or low can feel like.
 export const HORMONE_SIMPLE = {

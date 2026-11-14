@@ -12836,3 +12836,11 @@ html .pv2-3d.sm .cup3d-w canvas.teacup3d { inset: 0; width: 100%; height: 100%; 
 .hs-mr .hs-m { grid-column: 1; grid-row: 2; padding-left: 15px; }
 .hs-mr p { grid-column: 2; grid-row: 1 / span 2; }
 .hs-curve svg { overflow: visible; padding-bottom: 4px; }
+/* Letters from your body */
+.seg.lt-n { margin: 0; padding: 3px; width: 132px; background: rgba(32,48,26,.06); border-color: transparent; }
+.seg.lt-n button { height: 32px; font-family: 'Doto', monospace; font-weight: 700; font-size: 15px; color: #56624a; }
+.seg.lt-n button.on { background: #20301a; color: #fff; }
+.lt-prev { display: flex; gap: 8px; align-items: flex-start; margin: 4px 0 10px; padding: 12px 14px; border-radius: 18px; background: #fff; font-size: 13.5px; line-height: 1.45; color: #304023; font-style: italic; }
+.lt-prev svg { flex: none; margin-top: 3px; color: #c9798f; }
+.al-t.al-letter small { font-style: italic; color: #304023; }
+.lt-prev { background: #f6f3ef; }
