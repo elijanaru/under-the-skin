@@ -8599,10 +8599,10 @@ function pvRead(snap, info, name) {
   <section class="pv2-card rd-list">${list}</section>
   <p class="fine center">A new read opens every day, matched to her cycle day.</p>`;
 }
-// small teaser on her page that leads to the Read tab
+// today's read on her page (his page has the Read tab only, no teaser)
 function pvReadTeaser(info, him) {
   const now = readFor(info.cd, info.L, info.P);
-  return him ? `<button class="pv2-card rd-teaser" data-action="hisTab" data-v="read" style="--rc:${PH_HEX[now.phase]}"><span class="rd-tn"><b class="dotnum">${info.cd}</b></span><span><small>Today’s read</small><b>${esc(now.r[0])}</b></span>${icon('chevR', 16)}</button>`
+  return him ? ''
     : `<section class="pv2-card rd-today" style="--rc:${PH_HEX[now.phase]}"><div class="rd-top"><div class="rd-dial">${readRing(info)}</div><div class="rd-h"><small><i></i>Today’s read</small><h2>${esc(now.r[0])}</h2><p>${esc(now.r[1])}</p></div></div><details class="rd-more"><summary>Read more ${icon('chevD', 13)}</summary>${readCard(now.r)}</details></section>`;
 }
 

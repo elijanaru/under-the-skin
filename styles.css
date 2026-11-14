@@ -13086,3 +13086,21 @@ html .hxt-g, html .rfx-g small { font-size: 11.5px !important; }
 html .bg4-k, html .grp-top small, html .hxt-g { color: rgba(32,48,26,.6) !important; }
 html .pc-soon, html body .purp:not(.full) .pc-soon { text-transform: none !important; letter-spacing: 0 !important; font-size: 11.5px !important; font-weight: 500 !important; }
 html .lt-tag i { text-transform: capitalize !important; letter-spacing: 0 !important; font-size: 11px !important; font-weight: 500; padding: 2px 8px; }
+/* Frame, 15 Nov 2026 (3): sage green instead of brown, and it scrolls with the page. The top band and
+   scallops sit at the top of each page's content and scroll away; the sides run the whole length; the
+   scallops are mirrored at the very bottom, so every page is one arched window. Pieces in images/bg/frame-*. */
+:root { --sbV: env(safe-area-inset-top, 0px); --sbFix: 0px; }
+@media (min-width: 560px) { :root { --sbV: 0px; --sbFix: 50px; } }
+.bgx-arch { display: none !important; }
+.bgx::before { height: var(--sbFix); background: linear-gradient(180deg, rgba(255,247,250,.7), rgba(246,233,238,.6) 45%, rgba(191,198,170,.86)); -webkit-backdrop-filter: blur(18px) saturate(1.15); backdrop-filter: blur(18px) saturate(1.15); box-shadow: inset 0 -1px 0 rgba(255,255,255,.7); filter: none; }
+.view { container-type: inline-size; }
+.view:not(:has(> .rh3)) {
+  background:
+    linear-gradient(180deg, rgba(255,247,250,.7), rgba(246,233,238,.6) calc(var(--sbV) * .45), rgba(191,198,170,.86) var(--sbV)) 0 0 / 100% calc(var(--sbV) + 30px) no-repeat local,
+    url(images/bg/frame-band.webp) 0 100% / 100% 104px no-repeat local,
+    url(images/bg/frame-top.webp) 0 calc(var(--sbV) + 26px) / 100% auto no-repeat local,
+    url(images/bg/frame-bottom.webp) 0 calc(100% - 100px) / 100% auto no-repeat local,
+    url(images/bg/frame-side.webp) 0 calc(var(--sbV) + 26px + 66.667cqw) / 100% auto repeat-y local !important;
+}
+#app:not(:has(.rh3)) .statusbar { color: #304023 !important; text-shadow: none; }
+#app:not(:has(.rh3)) .statusbar svg { color: #304023; filter: none; }
