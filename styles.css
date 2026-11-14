@@ -13047,3 +13047,9 @@ html .st4 { padding: 16px 16px 12px; background: #fff !important; border: 0 !imp
 /* Food plate: the food name on the background is a title too (white + shadow); the in-season note readable */
 html .pl-det .pld-h b, html .pl-det .pld-p { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.38), 0 2px 18px rgba(90,40,45,.34); }
 html .pl-det p em { color: #4f6b2a !important; font-style: normal; font-weight: 500; }
+/* Header band, tighter (15 Nov 2026): less frame above the scallops, title closer to the clock */
+.bgx-arch { top: calc(var(--sb0) + 26px); }
+.bgx::before { height: calc(var(--sb0) + 32px); }
+.topbar { height: 44px; margin-top: 0; margin-bottom: 26px; }
+@supports (padding: env(safe-area-inset-top)) { .topbar { margin-top: env(safe-area-inset-top, 0px); } }
+.topbar .icon-btn { width: 38px; height: 38px; }
