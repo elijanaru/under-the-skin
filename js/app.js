@@ -1598,12 +1598,26 @@ function viewCalendar() {
       <button class="cal-editbtn" data-action="calEdit">${icon('drop', 15)} Edit period days</button>`}
     </section>
     ${events().some(e => e.date >= todayISO()) ? upcomingEvents() : ''}
-    <section class="msd" style="--pc:${PH_HEX[(M.info || {}).phase] || '#6c823e'}"><header class="msd-h"><small>What studies found</small><h3>Your mind across the month</h3><p>Your abilities stay the same; energy and mood can shift. Swipe the studies.</p></header>
-      <div class="msd-deck" role="list">${MIND_SCIENCE.map((x, i) => { const yr = (x.c.match(/(19|20)\d{2}/) || [''])[0], who = x.c.slice(0, x.c.indexOf(yr)).trim(), jr = x.c.slice(x.c.indexOf(yr) + 4).replace(/^[\s,]+/, '');
-        return `<article class="msd-c" role="listitem"><div class="msd-top"><b class="dotnum">${yr}</b><span><small>${jr}</small><em>${i + 1} of ${MIND_SCIENCE.length}</em></span></div><h4>${x.t}</h4><p>${x.s}</p><cite>${who}</cite></article>`; }).join('')}</div></section>
+    <section class="msd msd2" style="--pc:${PH_HEX[(M.info || {}).phase] || '#6c823e'}"><header class="msd-h"><small>What studies found</small><h3>Your mind across the month</h3><p>Your abilities stay the same. Energy and mood can shift.</p></header>
+      <div class="msd-deck deck" role="list" data-dots="msd-dots">${MIND_SCIENCE.map(x => { const yr = (x.c.match(/(19|20)\d{2}/) || [''])[0], who = x.c.slice(0, x.c.indexOf(yr)).trim(), jr = x.c.slice(x.c.indexOf(yr) + 4).replace(/^[\s,]+/, '');
+        return `<article class="msd-c" role="listitem"><figure class="msd-g">${mindArt(x.g)}<figcaption>${x.f}</figcaption></figure><h4>${x.t}</h4><p>${x.s}</p><footer class="msd-f"><span><b>${who}</b><small>${jr}</small></span><em class="dotnum">${yr}</em></footer></article>`; }).join('')}</div>
+      <div class="lt-dots msd-dots" id="msd-dots">${MIND_SCIENCE.map((_, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div></section>
     <p class="fine center">Low mood that stays, or PMS that takes over your life, is worth a doctor’s visit.</p>
   </div>
 `;
+}
+// Calendar › Your mind across the month: one small chart per study over a 28-day phase strip (period, follicular, ovulation, luteal).
+function mindArt(g) {
+  const W = 260, segs = [['menstrual', 0, 46], ['follicular', 46, 111], ['ovulatory', 111, 139], ['luteal', 139, 260]];
+  const strip = (x0 = 0, k = 1) => segs.map(([ph, a, b]) => `<rect x="${x0 + a * k}" y="60" width="${(b - a) * k - 2}" height="6" rx="3" fill="${PH_HEX[ph]}" opacity=".75"/>`).join('');
+  const wave = (x0, k) => `<path d="M${x0} 50 C${x0 + 60 * k} 50 ${x0 + 90 * k} 10 ${x0 + 120 * k} 14 S${x0 + 150 * k} 46 ${x0 + 175 * k} 36 S${x0 + 230 * k} 30 ${x0 + 260 * k} 50" fill="none" stroke="var(--pc)" stroke-width="1.6" stroke-dasharray="3 4" opacity=".55"/>`;
+  let a = '';
+  if (g === 'flat') a = `${strip()}${wave(0, 1)}<path d="M4 30 H256" stroke="#20301a" stroke-width="2.6" stroke-linecap="round"/>${[23, 78, 125, 200].map(x => `<circle cx="${x}" cy="30" r="4.5" fill="#fff" stroke="#20301a" stroke-width="2.2"/>`).join('')}`;
+  else if (g === 'two') a = `${strip(0, .5)}${strip(130, .5)}${wave(0, .5)}${wave(130, .5)}<path d="M4 30 H256" stroke="#20301a" stroke-width="2.6" stroke-linecap="round"/>`;
+  else if (g === 'life') a = [['Stress', 1], ['Sleep', .86], ['People', .74], ['Cycle', .3]].map(([l, v], i) => `<text x="0" y="${11 + i * 17}" font-size="11" fill="#20301a" font-family="Outfit" font-weight="${i === 3 ? 400 : 500}">${l}</text><rect x="52" y="${3 + i * 17}" width="200" height="10" rx="5" fill="rgba(32,48,26,.07)"/><rect x="52" y="${3 + i * 17}" width="${200 * v}" height="10" rx="5" fill="${i === 3 ? 'var(--pc)' : '#20301a'}" opacity="${i === 3 ? .8 : 1 - i * .12}"/>`).join('');
+  else if (g === 'ratio') a = Array.from({ length: 20 }, (_, i) => { const x = 14 + (i % 10) * 26, y = i < 10 ? 20 : 50; return `<circle cx="${x}" cy="${y - 7}" r="4.2" fill="${i === 0 ? '#20301a' : i < 4 ? 'var(--pc)' : 'rgba(32,48,26,.14)'}"/><rect x="${x - 6.5}" y="${y - 1}" width="13" height="11" rx="5.5" fill="${i === 0 ? '#20301a' : i < 4 ? 'var(--pc)' : 'rgba(32,48,26,.14)'}"/>`; }).join('');
+  else if (g === 'e2') a = `${strip()}<rect x="200" y="2" width="58" height="56" rx="8" fill="${PH_HEX.luteal}" opacity=".12"/><path d="M0 50 C60 50 90 8 120 12 S150 44 175 34 S230 28 260 52" fill="none" stroke="var(--pc)" stroke-width="2.6" stroke-linecap="round"/><path d="M0 44 C60 44 90 22 120 24 S150 40 175 34 S230 32 260 50" fill="none" stroke="#20301a" stroke-width="2" stroke-dasharray="4 4" stroke-linecap="round"/><text x="6" y="12" font-size="10.5" font-family="Outfit" font-weight="500" fill="var(--pc)">Estradiol</text><text x="6" y="26" font-size="10.5" font-family="Outfit" font-weight="500" fill="#20301a">Serotonin</text>`;
+  return `<svg viewBox="0 0 ${W} 70" role="img" aria-hidden="true">${a}</svg>`;
 }
 // Under the calendar: her last cycles as bars (period days red, the rest in the cycle's phase tints), length in Doto, tap for dates.
 function cycleBars() {
@@ -8156,6 +8170,97 @@ function hisDay(info, name) {
     ${sectionTitle('You two today')}
     <section class="pv2-card hs2-tog"><div class="hs2-vs"><div><b class="dotnum">${her}<em>%</em></b><small>${name}’s energy</small></div><i></i><div><b class="dotnum">${pct}<em>%</em></b><small>Your drive now</small></div></div><p>${together}</p></section>`;
 }
+// ---------- Read for him: one short read a day, synced to her cycle day ----------
+// [title, one-line summary, what happens (2-3 short sentences), what you can do today, optional study [year, who, line]]
+const HIM_READS = {
+  menstrual: [
+    ['A new cycle starts', 'Her period is day 1 of her cycle, not the end of it.', 'Her body sheds the lining it built last month, over 3 to 7 days. Estrogen and progesterone are at their lowest now, so she can feel flat, tired and cold.', 'Take one job off her plate tonight without being asked.'],
+    ['Why cramps hurt', 'Her womb contracts to shed its lining, and it can really hurt.', 'Substances called prostaglandins make the womb squeeze. The more of them, the stronger the cramps. Most women get some cramps, and for some the pain is bad enough to stop a normal day.', 'Have a hot water bottle ready for her lower belly.', ['2001', 'Akin et al.', 'Steady heat on the belly eased cramps as well as ibuprofen.']],
+    ['She is losing iron', 'A period costs her blood, and iron with it.', 'An average period loses around 30 to 40 ml of blood. Low iron shows up as tiredness, cold hands and getting out of breath on the stairs.', 'Cook something rich in iron: beef, liver or lentils with lemon.', ['1966', 'Hallberg et al.', 'Measured an average blood loss of about 30 to 40 ml per period.']],
+    ['Keep her warm', 'These days her body wants warmth, inside and out.', 'In Chinese medicine the period is a time to keep the womb warm: soups, stews and warm drinks, and nothing iced or raw. Warmth also relaxes the muscles that cramp.', 'Make her a warm drink when she gets home.'],
+    ['Her energy comes back', 'Towards the end of her period, estrogen starts to climb again.', 'Each day now she feels a bit lighter and clearer. Her mood often lifts before the bleeding has fully stopped.', 'Suggest a slow walk outside together.'],
+  ],
+  follicular: [
+    ['Estrogen is rising', 'Every day this week her estrogen climbs a little higher.', 'Estrogen lifts mood, energy, skin and how easily words come. Many women feel most like themselves in this part of the cycle.', 'Plan something new for this week.'],
+    ['She loves new things now', 'Rising estrogen makes new things feel exciting.', 'Estrogen boosts dopamine, the brain chemical behind curiosity and reward. New places, ideas and plans feel good now.', 'Book a new place to eat or something you have never tried.'],
+    ['She is more social', 'She may want people around her this week.', 'With more energy and a brighter mood, many women feel like talking, meeting friends and going out.', 'Invite friends over, or say yes to her plans.'],
+    ['Her energy is up', 'She may feel like moving more and training harder.', 'Her strength and skills are the same all month. What changes is energy and drive, and both are high now.', 'Ask her to train with you, and let her pick.'],
+    ['Her skin glows', 'Estrogen keeps her skin plump and bright.', 'Estrogen supports collagen and helps skin hold water, so many women look and feel their best this week.', 'Tell her she looks good. It is true, so say it.'],
+    ['Big talks go better', 'Her mood is steady and hopeful this week.', 'This is a good time for bigger topics: plans, trips, money, the future. She has room for them now.', 'Bring up the plan you have been putting off.'],
+    ['Her body gets ready', 'One egg is ripening and her fertile days are opening.', 'Several follicles grow and one takes the lead. Her body is getting ready to release an egg in a few days, and her fertile window starts about 5 days before it.', 'If you are not planning a baby, be careful from now on.'],
+  ],
+  ovulatory: [
+    ['The surge', 'A spike of a hormone called LH releases her egg within about 1 to 2 days.', 'Estrogen is at its peak and LH spikes. Many women feel confident and attractive, and desire often peaks now.', 'Plan a proper date night.', ['2004', 'Bullivant et al.', 'Women’s desire rose around the LH surge, the days before ovulation.']],
+    ['Egg release', 'Her egg lives for about a day. Sperm can live up to 5.', 'That is why her fertile window is 6 days long and ends on the day she ovulates. Today or close to it is her most fertile point.', 'Trying for a baby: today counts most. If not: protection matters most today.', ['1995', 'Wilcox et al.', 'Almost all pregnancies came from sex in the 6 days ending on ovulation day.']],
+    ['A twinge, then warmth', 'Some women feel a short pain on one side when the egg is released.', 'About 1 in 5 women feel this for a few hours. After ovulation her body temperature rises by about 0.3 to 0.5 °C and stays up until her period.', 'Ask how she feels instead of guessing.'],
+  ],
+  luteal: [
+    ['Progesterone takes over', 'A calming hormone now leads, and she slows down a bit.', 'After ovulation her body makes progesterone. It is calming and a little sedating, and it keeps her body slightly warmer.', 'Suggest a cosy evening in.'],
+    ['Her hunger is real', 'She burns more energy now, so she gets hungrier.', 'In this phase her body uses about 100 to 300 more calories a day. Bigger appetite is biology, not a lack of discipline.', 'Keep good snacks at home: nuts, dates, dark chocolate.', ['1986', 'Webb', 'Measured energy use rising by about 90 to 280 calories a day after ovulation.']],
+    ['Cravings make sense', 'Sweet and starchy cravings often grow this week.', 'Falling serotonin later in the cycle makes carbs more tempting, because they help the brain make more of it.', 'Bring her a sweet that is real food: dates, figs or dark chocolate.'],
+    ['Her sleep gets lighter', 'A warmer body and shifting hormones make her sleep lighter.', 'Many women sleep worse in the week before their period: more waking, less deep sleep.', 'Keep the bedroom cool and dark, and let her sleep in when you can.', ['2007', 'Baker & Driver', 'Women reported poorer sleep in the days before their period.']],
+    ['A calm stretch', 'Around the middle of this phase, progesterone peaks.', 'Many women feel calm, homey and inward now. Quiet time at home fits better than a big night out.', 'Cook dinner together at home.'],
+    ['Bloating is normal', 'Her body holds more water this week.', 'Hormones make her keep more fluid, so she can feel puffy and her clothes feel tight. It goes away after her period starts.', 'Do not comment on her body. Compliments only.'],
+    ['Stress hits harder', 'Small stresses can feel bigger to her now.', 'As her hormones start to fall, her stress system reacts faster. The same problem can feel heavier than it did two weeks ago.', 'Take care of one thing that is stressing her.'],
+    ['PMS is real', 'Most women get some symptoms before their period.', 'Mood swings, tiredness, sore breasts and bloating are common. For about 3 to 8 in 100 women it is severe enough to have its own name, PMDD.', 'Never ask “is it your period?” Ask what would help.', ['2008', 'Yonkers et al.', 'A review in The Lancet found most women have some premenstrual symptoms.']],
+    ['Feelings run closer', 'She may cry more easily or feel things more.', 'Falling estrogen lowers serotonin, so feelings sit closer to the surface. It does not mean her feelings are less real.', 'Listen first. Do not try to fix it.'],
+    ['She is more sensitive', 'Her breasts and body may feel tender.', 'Many women are more sensitive to pain and touch in the days before their period.', 'Be gentle, and ask before you touch.'],
+    ['Magnesium helps', 'Magnesium-rich food can soften PMS.', 'Pumpkin seeds, dark chocolate, leafy greens and almonds are rich in magnesium, which supports mood and muscles.', 'Bring her pumpkin seeds or a bar of dark chocolate.', ['1991', 'Facchinetti et al.', 'Magnesium eased premenstrual mood changes in a small trial.']],
+    ['Warm food now', 'In the days before her period, warm food is best.', 'In Chinese medicine her body is getting ready to bleed, so warm, cooked meals support her more than salads and cold drinks.', 'Make a warm soup or stew tonight.'],
+    ['The reset is close', 'Her hormones are at their lowest just before her period.', 'She may want to pull back and be alone. Once her period starts, many women feel relief within a day or two.', 'Send her a kind message today, nothing needed back.'],
+  ],
+};
+// which read fits her cycle day: each phase's reads are spread over the days of that phase
+function readFor(cd, L, P) {
+  const r = C.phaseRanges(L, P).find(x => cd >= x.from && cd <= x.to) || C.phaseRanges(L, P).slice(-1)[0];
+  const arr = HIM_READS[r.key], n = r.to - r.from + 1;
+  const i = Math.min(arr.length - 1, Math.floor((cd - r.from) * arr.length / n));
+  return { phase: r.key, i, r: arr[i] };
+}
+function readRing(info) {
+  const { cd, L, P } = info, c = 60, R = 50;
+  let ticks = '';
+  for (let d = 1; d <= L; d++) {
+    const a = (-90 + (d - .5) * 360 / L) * Math.PI / 180, ph = C.phaseFor(d, L, P), on = d === cd, past = d < cd;
+    const r1 = on ? 38 : 43, r2 = on ? 56 : 53;
+    ticks += `<line x1="${(c + r1 * Math.cos(a)).toFixed(1)}" y1="${(c + r1 * Math.sin(a)).toFixed(1)}" x2="${(c + r2 * Math.cos(a)).toFixed(1)}" y2="${(c + r2 * Math.sin(a)).toFixed(1)}" stroke="${PH_HEX[ph]}" stroke-width="${on ? 3.4 : 2.2}" stroke-linecap="round" opacity="${on ? 1 : past ? .85 : .3}"/>`;
+  }
+  return `<svg class="rd-ring" viewBox="0 0 120 120" aria-hidden="true">${ticks}</svg><div class="rd-c"><b class="dotnum">${cd}</b><small>of ${L}</small></div>`;
+}
+function readCard(r, open) {
+  return `<p class="rd-what">${esc(r[2])}</p>
+    <div class="rd-try"><small>Do this today</small><b>${esc(r[3])}</b></div>
+    ${r[4] ? `<div class="rd-st"><b class="dotnum">${r[4][0]}</b><span><em>${esc(r[4][1])}</em>${esc(r[4][2])}</span></div>` : ''}`;
+}
+// Read tab: today's read big, then the whole cycle as a list (past reads open, later ones unlock on their day)
+function pvRead(snap, info, name) {
+  const { cd, L, P } = info, now = readFor(cd, L, P), ph = PHASES[now.phase];
+  const days = []; let last = '';
+  for (let d = 1; d <= L; d++) { const x = readFor(d, L, P), k = x.phase + x.i; if (k !== last) { days.push({ d, ...x }); last = k; } }
+  let list = '', cur = '';
+  for (const x of days) {
+    if (x.phase !== cur) { cur = x.phase; list += `<div class="rd-ph"><i style="background:${PH_HEX[x.phase]}"></i>${PHASES[x.phase].name}</div>`; }
+    const isNow = x.phase === now.phase && x.i === now.i, past = x.d < cd && !isNow;
+    list += isNow ? `<div class="rd-row now"><b class="dotnum">${x.d}</b><span><em>Today</em>${esc(x.r[0])}</span></div>`
+      : past ? `<details class="rd-row"><summary><b class="dotnum">${x.d}</b><span>${esc(x.r[0])}<small>${esc(x.r[1])}</small></span>${icon('chevD', 13)}</summary>${readCard(x.r)}</details>`
+      : `<div class="rd-row later"><b class="dotnum">${x.d}</b><span>${esc(x.r[0])}<small>Opens in ${plural(x.d - cd, 'day')}</small></span></div>`;
+  }
+  return `<div class="pv2-title"><small>Learn her cycle · day ${cd} of ${L}</small><h1>One read <b>a day</b></h1><p>Synced to ${name}’s cycle. Each day you learn what is happening in her body right now.</p></div>
+  <section class="pv2-card rd-today" style="--rc:${PH_HEX[now.phase]}">
+    <div class="rd-top"><div class="rd-dial">${readRing(info)}</div><div class="rd-h"><small><i></i>${ph.name} phase</small><h2>${esc(now.r[0])}</h2><p>${esc(now.r[1])}</p></div></div>
+    <details class="rd-more"><summary>Read more ${icon('chevD', 13)}</summary>${readCard(now.r)}</details>
+  </section>
+  ${sectionTitle('Her whole cycle')}
+  <section class="pv2-card rd-list">${list}</section>
+  <p class="fine center">A new read opens every day, matched to her cycle day.</p>`;
+}
+// small teaser on her page that leads to the Read tab
+function pvReadTeaser(info, him) {
+  const now = readFor(info.cd, info.L, info.P);
+  return him ? `<button class="pv2-card rd-teaser" data-action="hisTab" data-v="read" style="--rc:${PH_HEX[now.phase]}"><span class="rd-tn"><b class="dotnum">${info.cd}</b></span><span><small>Today’s read</small><b>${esc(now.r[0])}</b></span>${icon('chevR', 16)}</button>`
+    : `<section class="pv2-card rd-today" style="--rc:${PH_HEX[now.phase]}"><div class="rd-top"><div class="rd-dial">${readRing(info)}</div><div class="rd-h"><small><i></i>Today’s read</small><h2>${esc(now.r[0])}</h2><p>${esc(now.r[1])}</p></div></div><details class="rd-more"><summary>Read more ${icon('chevD', 13)}</summary>${readCard(now.r)}</details></section>`;
+}
+
 function viewWith(q) {
   const snap = b64d(q.get('d') || '');
   if (!snap || !snap.s || !snap.c) return `<div class="pad"><h1 class="page-h" style="margin-top:80px">Link not valid</h1><p class="muted">Ask her to send it again.</p></div>`;
@@ -8176,11 +8281,12 @@ function viewWith(q) {
   return `<header class="topbar">${state && state.onboarded ? `<button class="icon-btn dark" data-action="nav" data-to="partners" aria-label="Back">${icon('chevL', 22)}</button>` : '<span class="tb-spacer"></span>'}<div class="topbar-title">${name}’s rhythm</div><span style="width:40px"></span></header>
   ${mine ? `<div class="preview-bar">Preview: this is what she’ll see <button data-action="nav" data-to="partners">Done</button></div>` : ''}
   <div class="pad">
-    ${him ? `<div class="seg his-seg">${[['her', `${name}'s rhythm`], ['his', 'My day']].map(([k, l]) => `<button class="${(ui.hisTab || 'her') === k ? 'on' : ''}" data-action="hisTab" data-v="${k}">${l}</button>`).join('')}</div>` : ''}
-    ${him && ui.hisTab === 'his' ? `<div class="pv2-title"><small>Your day · ${fmt(today, { weekday: 'long', month: 'short', day: 'numeric' })}</small><h1>Your <b>24-hour drive</b></h1><p>Testosterone runs on a daily clock. Use it, and see what raises it.</p></div>${snap.g ? `<section class="pv2-card pv2-warn">${icon('heart', 16)}<p><b>Trying for a baby?</b> Never take testosterone or “T boosters”. Extra testosterone shuts down your sperm. Sleep, lifting and food below are the safe way.</p></section>` : ''}${hisDay(info, name)}</div>` : `
+    ${him ? `<div class="seg his-seg">${[['her', `${name}'s rhythm`], ['read', 'Read'], ['his', 'My day']].map(([k, l]) => `<button class="${(ui.hisTab || 'her') === k ? 'on' : ''}" data-action="hisTab" data-v="${k}">${l}</button>`).join('')}</div>` : ''}
+    ${him && ui.hisTab === 'read' ? `${pvRead(snap, info, name)}</div>` : him && ui.hisTab === 'his' ? `<div class="pv2-title"><small>Your day · ${fmt(today, { weekday: 'long', month: 'short', day: 'numeric' })}</small><h1>Your <b>24-hour drive</b></h1><p>Testosterone runs on a daily clock. Use it, and see what raises it.</p></div>${snap.g ? `<section class="pv2-card pv2-warn">${icon('heart', 16)}<p><b>Trying for a baby?</b> Never take testosterone or “T boosters”. Extra testosterone shuts down your sperm. Sleep, lifting and food below are the safe way.</p></section>` : ''}${hisDay(info, name)}</div>` : `
     <div class="pv2-title"><small>${role === 'partner' ? 'Partner view' : 'Friend view'} · ${fmt(today, { weekday: 'long', month: 'short', day: 'numeric' })}</small><h1>${name} is in her <b>${ph.name.toLowerCase()} phase</b></h1></div>
     <section class="hub pt-stage">${stageHero(info, Math.round(C.energyAt(info.cd, info.L, info.P) * 100), { nav: false, id: 'with', fert: !!snap.f })}</section>
     ${pvHerDay(info, S)}
+    ${role === 'partner' ? pvReadTeaser(info, him) : ''}
     ${snap.g && role === 'partner' ? pvTTC(snap, info, name) : ''}
     ${role === 'partner' ? `${pvToday(info, name, sup, snap)}
     ${pvShowUp(sup)}
@@ -8244,7 +8350,7 @@ const APPLE_SVG = `<svg viewBox="0 0 24 24" width="19" height="19" fill="current
 const GOOGLE_SVG = `<svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="hsl(calc(var(--hb) + 136 * var(--hk)) calc(53% * var(--hs2)) 43%)" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>`;
 function accountCard() {
   const u = A.currentUser();
-  if (u) return `<button class="ac-mini glass" data-action="nav" data-to="account"><span class="ac-cloud">${icon('check', 16, 2.4)}</span><span><b>Saved to your account</b><small>${esc(u.email || (u.phone ? '+' + u.phone : '') || 'Signed in')}</small></span>${icon('chevL', 16)}</button>`;
+  if (u) return `<button class="ac-mini glass" data-action="nav" data-to="account"><span class="ac-cloud">${icon('check', 16, 2.4)}</span><span><b>Saved to your account</b><small>${esc(u.email || (u.phone ? '+' + u.phone : '') || 'Signed in')}</small></span>${icon('chevR', 16)}</button>`;
   return `<section class="ac-promo card-light"><div class="eyebrow dark">Account</div><h3>Never lose your cycle</h3><p>Save your periods and logs to a private account. Sign in on any phone and everything is there.</p><button class="btn btn-dark btn-block" data-action="nav" data-to="account">Create account or sign in</button></section>`;
 }
 function syncLine() {

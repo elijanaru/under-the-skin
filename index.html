@@ -15,6 +15,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- fonts never block the first paint: the opening animation covers the swap -->
+  <link rel="preload" as="image" href="images/bg/mist.webp">
+  <link rel="preload" as="image" href="images/bg/arch.webp">
+  <link rel="preload" as="image" href="images/bg/lotus.webp">
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800&family=Doto:wght@900&family=Noto+Serif+SC:wght@300;500&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800&family=Doto:wght@900&family=Noto+Serif+SC:wght@300;500&display=swap" media="print" onload="this.media='all'">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ballet:opsz@16..72&family=Mrs+Saint+Delafield&family=Monsieur+La+Doulaise&family=Parisienne&family=Grenze+Gotisch:wght@300;400;700;900&family=Great+Vibes&family=Yellowtail&family=Inter+Tight:wght@500;600;700;800;900&family=IM+Fell+English+SC&family=IM+Fell+English:ital@1&display=swap" media="print" onload="this.media='all'">
@@ -40,36 +43,44 @@
   <link rel="modulepreload" href="js/sun.js">
   <link rel="modulepreload" href="js/account.js">
   <style>
-    /* Opening animation: a pink lotus rises on its pad, opens petal by petal on a soft dusk sky (mauve to peach), then the name in white */
-    #splash { position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center; background:
-      radial-gradient(46% 26% at 50% 42%, rgba(255, 240, 244, .42), transparent 72%),
-      radial-gradient(90% 40% at 50% 100%, rgba(255, 214, 190, .55), transparent 70%),
-      linear-gradient(180deg, #8c6a86 0%, #b4889a 48%, #dcaa9f 100%);
-      transition: opacity .55s ease, visibility .55s; }
+    /* Opening animation: the arched window of misty blush light. The frame settles, the willow strokes drift in,
+       the lotus opens from its base with a soft glow and light rising from its stamens, the swirls draw upward,
+       then the name. It ends on the same picture the app uses as its background, so it melts into the app. */
+    #splash { position: fixed; inset: 0; z-index: 9999; overflow: hidden; background: #f0cfc2 url(images/bg/mist.webp) center / 100% 100% no-repeat; transition: opacity .8s ease, visibility .8s; }
     #splash.out { opacity: 0; visibility: hidden; }
-    #splash .sp { display: grid; justify-items: center; gap: 16px; transform: translateY(-4vh); transition: transform .55s cubic-bezier(.2,.8,.2,1); }
-    #splash.out .sp { transform: translateY(-4vh) scale(1.05); }
-    #splash svg { width: 210px; height: 178px; overflow: visible; }
-    #splash .rip { fill: none; stroke: rgba(255,255,255,.22); stroke-width: 1; transform-origin: 100px 132px; transform: scale(.4); opacity: 0; animation: lpRip 2.4s ease-out forwards; }
-    #splash .rip.r2 { animation-delay: .5s; } #splash .rip.r3 { animation-delay: 1s; }
-    #splash .pad { transform-origin: 100px 132px; transform: scale(.6); opacity: 0; animation: lpPad .7s .05s cubic-bezier(.2,.9,.3,1) forwards; }
-    #splash .fl { transform-origin: 100px 126px; transform: translateY(14px) scale(.7); opacity: 0; animation: lpRise .6s .2s cubic-bezier(.2,.9,.3,1) forwards, lpBob 3.6s 1.8s ease-in-out infinite; }
-    #splash .pt { transform-origin: 0 0; transform: rotate(calc(var(--r) * .1)) scaleY(.92); animation: lpOpen 1s var(--d) cubic-bezier(.35,.85,.3,1) forwards; }
-        #splash .wm { font-family: 'Yellowtail', 'Brush Script MT', cursive; font-weight: 400; font-size: 46px; line-height: 1; letter-spacing: .01em; color: #fff; text-shadow: 0 2px 16px rgba(90,50,80,.35); margin-top: -4px; opacity: 0; animation: spWord .7s 1.2s ease forwards; }
-    #splash .bar { width: 64px; height: 2px; border-radius: 2px; background: rgba(255,255,255,.14); overflow: hidden; opacity: 0; animation: spWord .4s 1.45s ease forwards; }
-    #splash .bar i { display: block; width: 40%; height: 100%; border-radius: 2px; background: #efd4dd; animation: spBar 1.2s 1.45s ease-in-out infinite; }
-    @keyframes lpRip { 0% { opacity: 0; transform: scale(.4); } 25% { opacity: 1; } 100% { opacity: 0; transform: scale(1.25); } }
-    @keyframes lpPad { to { opacity: 1; transform: none; } }
-    @keyframes lpRise { to { opacity: 1; transform: none; } }
-    @keyframes lpBob { 50% { transform: translateY(-2.5px); } }
-    @keyframes lpOpen { to { transform: rotate(var(--r)) scaleY(1); } }
-    @keyframes lpPod { to { transform: scale(1); } }
-    @keyframes spWord { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    #splash i, #splash .sx-lotus { position: absolute; display: block; background-repeat: no-repeat; pointer-events: none; }
+    #splash .sx-arch { inset: 0 -2%; background-image: url(images/bg/arch.webp); background-size: 100% 100%; opacity: 0; transform: scale(1.06); animation: sxArch 1.1s cubic-bezier(.2,.8,.2,1) forwards; }
+    #splash .sx-leaves { inset: 0; background-image: url(images/bg/leaves.webp); background-size: 100% 100%; transform-origin: 50% 0; opacity: 0; animation: sxLeaves 1.6s .25s ease-out forwards, sxSway 7s 1.85s ease-in-out infinite alternate; }
+    #splash .sx-lotus { left: 12.27%; top: 11.75%; width: 75.46%; height: 25.6%; }
+    #splash .sx-flower, #splash .sx-glow { inset: 0; background-image: url(images/bg/lotus.webp); background-size: contain; background-position: center; }
+    #splash .sx-flower { transform-origin: 50% 82%; opacity: 0; transform: translateY(6%) scale(.55, .3); filter: blur(10px); animation: sxBloom 1.5s .35s cubic-bezier(.25,.85,.3,1) forwards, sxBob 5s 2s ease-in-out infinite; }
+    #splash .sx-glow { transform: scale(1.08); filter: blur(16px) saturate(1.5) brightness(1.25); mix-blend-mode: screen; opacity: 0; animation: sxGlowIn 1s 1.1s ease forwards, sxGlow 3.2s 2.1s ease-in-out infinite; }
+    #splash .sx-halo { left: 18%; right: 18%; top: 10%; bottom: -10%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,246,236,.95), rgba(255,214,222,.55) 45%, transparent 100%); opacity: 0; transform: scale(.4); animation: sxHalo 1.6s .6s ease-out forwards, sxGlow 3.2s 2.2s ease-in-out infinite; }
+    #splash .sx-mote { width: 7px; height: 7px; margin: -3.5px; border-radius: 50%; left: var(--x); top: var(--y); background: radial-gradient(circle, #fffaf0 0 30%, rgba(255,214,150,.85) 45%, transparent 72%); box-shadow: 0 0 10px 3px rgba(255,220,170,.55); opacity: 0; animation: sxMote 3.4s var(--d) ease-out infinite; }
+    #splash .sx-swirls { left: 6.8%; top: 38.05%; width: 86.49%; height: 53.6%; background-image: url(images/bg/swirls.webp); background-size: contain; background-position: center;
+      -webkit-mask: linear-gradient(to top, #000 42%, transparent 58%) 0 0 / 100% 260% no-repeat; mask: linear-gradient(to top, #000 42%, transparent 58%) 0 0 / 100% 260% no-repeat; animation: sxDraw 1.9s .5s cubic-bezier(.4,.1,.3,1) forwards; }
+    #splash .sx-word { position: absolute; left: 0; right: 0; top: 45%; display: grid; justify-items: center; gap: 14px; }
+    #splash .wm { font-family: 'Yellowtail', 'Brush Script MT', cursive; font-weight: 400; font-size: 50px; line-height: 1; letter-spacing: .01em; color: #fff; text-shadow: 0 0 22px rgba(255,236,214,.9), 0 2px 18px rgba(150,90,80,.35); opacity: 0; animation: spWord 1s 1.35s ease forwards; }
+    #splash .bar { width: 64px; height: 2px; border-radius: 2px; background: rgba(255,255,255,.35); overflow: hidden; opacity: 0; animation: spWord .5s 1.7s ease forwards; }
+    #splash .bar i { position: static; width: 40%; height: 100%; border-radius: 2px; background: #fff; animation: spBar 1.2s 1.7s ease-in-out infinite; }
+    #splash.out .sx-lotus { transition: transform .8s cubic-bezier(.2,.8,.2,1); transform: scale(1.04); }
+    @keyframes sxArch { to { opacity: 1; transform: none; } }
+    @keyframes sxLeaves { from { opacity: 0; transform: translateY(-3%) rotate(-1deg); } to { opacity: 1; transform: none; } }
+    @keyframes sxSway { from { transform: rotate(0); } to { transform: rotate(.6deg) translateX(.6%); } }
+    @keyframes sxBloom { 55% { opacity: 1; filter: blur(2px); } to { opacity: 1; transform: none; filter: none; } }
+    @keyframes sxBob { 50% { transform: translateY(-1.2%); } }
+    @keyframes sxGlowIn { to { opacity: .75; } }
+    @keyframes sxGlow { 0%, 100% { opacity: .5; } 50% { opacity: .95; } }
+    @keyframes sxHalo { to { opacity: .8; transform: none; } }
+    @keyframes sxMote { 0% { opacity: 0; transform: translateY(0) scale(.6); } 18% { opacity: 1; } 100% { opacity: 0; transform: translateY(-46px) scale(1.1); } }
+    @keyframes sxDraw { to { -webkit-mask-position: 0 100%; mask-position: 0 100%; } }
+    @keyframes spWord { from { opacity: 0; transform: translateY(8px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
     @keyframes spBar { from { transform: translateX(-110%); } to { transform: translateX(260%); } }
     @media (prefers-reduced-motion: reduce) {
-      #splash *, #splash .fl, #splash .pt { animation: none !important; }
-      #splash .pad, #splash .fl, #splash .pod, #splash .wm, #splash .bar { opacity: 1; transform: none; }
-      #splash .pt { transform: rotate(var(--r)); } #splash .rip { opacity: 0; }
+      #splash *, #splash i { animation: none !important; transition: none !important; }
+      #splash .sx-arch, #splash .sx-leaves, #splash .sx-flower, #splash .wm, #splash .bar { opacity: 1; transform: none; filter: none; }
+      #splash .sx-glow { opacity: .6; } #splash .sx-halo { opacity: .7; transform: none; } #splash .sx-mote { display: none; }
+      #splash .sx-swirls { -webkit-mask: none; mask: none; }
     }
   </style>
   <link rel="stylesheet" href="styles.css">
@@ -82,37 +93,16 @@
 </head>
 <body>
 <div id="splash" role="img" aria-label="Underskin is opening">
-  <div class="sp">
-    <svg viewBox="0 0 200 170" aria-hidden="true">
-      <defs>
-        <linearGradient id="lp-gb" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fbeef1"/><stop offset=".55" stop-color="#f2bfd0"/><stop offset="1" stop-color="#d9789b"/></linearGradient>
-        <linearGradient id="lp-gf" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fffaf6"/><stop offset=".5" stop-color="#f8d9e3"/><stop offset="1" stop-color="#e48aaa"/></linearGradient>
-        <linearGradient id="lp-gp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fbd6a"/><stop offset="1" stop-color="#6c823e"/></linearGradient>
-        <radialGradient id="lp-pod" cx="45%" cy="35%" r="70%"><stop offset="0" stop-color="#fbe7a2"/><stop offset=".6" stop-color="#e8c25a"/><stop offset="1" stop-color="#c99a2e"/></radialGradient>
-        <g id="lp-b"><path d="M0 0 C -15 -10 -17 -46 0 -70 C 17 -46 15 -10 0 0 Z" fill="url(#lp-gb)" stroke="rgba(201,95,135,.28)" stroke-width=".6"/><path d="M0 -4 C -1 -26 -1 -46 0 -64 M0 -8 C -6 -24 -7 -40 -4 -56 M0 -8 C 6 -24 7 -40 4 -56" fill="none" stroke="rgba(201,95,135,.22)" stroke-width=".55"/></g>
-        <g id="lp-f"><path d="M0 0 C -14 -9 -15 -40 0 -60 C 15 -40 14 -9 0 0 Z" fill="url(#lp-gf)" stroke="rgba(201,95,135,.3)" stroke-width=".6"/><path d="M0 -4 C -1 -22 -1 -40 0 -55 M0 -8 C -5 -21 -6 -34 -3.5 -48 M0 -8 C 5 -21 6 -34 3.5 -48" fill="none" stroke="rgba(201,95,135,.2)" stroke-width=".55"/></g>
-      </defs>
-      <ellipse class="rip" cx="100" cy="132" rx="88" ry="13"/><ellipse class="rip r2" cx="100" cy="132" rx="88" ry="13"/><ellipse class="rip r3" cx="100" cy="132" rx="88" ry="13"/>
-      <g class="pad">
-        <path d="M100 132 L64 122 C 40 124 26 132 30 140 C 36 151 82 155 112 150 C 150 146 172 138 166 130 C 160 121 132 119 108 122 Z" fill="url(#lp-gp)"/>
-        <path d="M100 132 L52 138 M100 132 L80 150 M100 132 L120 149 M100 132 L152 140 M100 132 L148 126 M100 132 L120 122" stroke="rgba(48,64,35,.28)" stroke-width=".8" fill="none"/>
-        <ellipse cx="100" cy="131" rx="30" ry="5" fill="rgba(48,64,35,.28)"/>
-        <path d="M44 132 C 56 126 74 124 86 125" stroke="rgba(255,255,255,.35)" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-      </g>
-      <g class="fl"><g transform="translate(100 128)">
-        <use href="#lp-b" class="pt" style="--r:-80deg;--d:0.45s"/><use href="#lp-b" class="pt" style="--r:80deg;--d:0.50s"/><use href="#lp-b" class="pt" style="--r:-58deg;--d:0.55s"/><use href="#lp-b" class="pt" style="--r:58deg;--d:0.60s"/><use href="#lp-b" class="pt" style="--r:-34deg;--d:0.65s"/><use href="#lp-b" class="pt" style="--r:34deg;--d:0.70s"/><use href="#lp-b" class="pt" style="--r:-12deg;--d:0.75s"/><use href="#lp-b" class="pt" style="--r:12deg;--d:0.80s"/>
-        <use href="#lp-f" class="pt" style="--r:-16deg;--d:0.86s"/><use href="#lp-f" class="pt" style="--r:16deg;--d:0.92s"/>
-        <use href="#lp-f" class="pt" style="--r:-62deg;--d:0.62s"/><use href="#lp-f" class="pt" style="--r:62deg;--d:0.68s"/><use href="#lp-f" class="pt" style="--r:-38deg;--d:0.74s"/><use href="#lp-f" class="pt" style="--r:38deg;--d:0.80s"/><use href="#lp-f" class="pt" style="--r:0deg;--d:0.98s"/>
-      </g></g>
-    </svg>
-    <div class="wm">underskin</div>
-    <div class="bar"><i></i></div>
-  </div>
+  <i class="sx-leaves"></i>
+  <div class="sx-lotus"><i class="sx-halo"></i><i class="sx-glow"></i><i class="sx-flower"></i><i class="sx-mote" style="--x:38%;--y:22%;--d:1.3s"></i><i class="sx-mote" style="--x:62%;--y:22%;--d:1.6s"></i><i class="sx-mote" style="--x:28%;--y:44%;--d:1.9s"></i><i class="sx-mote" style="--x:72%;--y:42%;--d:1.45s"></i><i class="sx-mote" style="--x:50%;--y:8%;--d:2.1s"></i><i class="sx-mote" style="--x:16%;--y:30%;--d:2.4s"></i><i class="sx-mote" style="--x:84%;--y:30%;--d:1.75s"></i><i class="sx-mote" style="--x:44%;--y:30%;--d:2.6s"></i></div>
+  <i class="sx-swirls"></i>
+  <i class="sx-arch"></i>
+  <div class="sx-word"><div class="wm">underskin</div><div class="bar"><i></i></div></div>
 </div>
 <script>
   // stays at least until the lotus has opened, and until the app has drawn its first screen
   (function () {
-    var t0 = Date.now(), calm = matchMedia('(prefers-reduced-motion: reduce)').matches, min = calm ? 450 : 1900, done = false;
+    var t0 = Date.now(), calm = matchMedia('(prefers-reduced-motion: reduce)').matches, min = calm ? 450 : 2600, done = false;
     function hide() { if (done) return; done = true; var el = document.getElementById('splash'); if (!el) return;
       setTimeout(function () { el.classList.add('out'); setTimeout(function () { el.remove(); }, 650); }, Math.max(0, min - (Date.now() - t0))); }
     window.__appReady = hide;
@@ -123,6 +113,7 @@
   <svg width="0" height="0" style="position:absolute"><filter id="ink"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.6"/></filter></svg>
   <div class="stage">
     <div class="phone">
+      <div class="bgx" aria-hidden="true"><i class="bgx-leaves"></i><i class="bgx-swirls"></i><i class="bgx-arch"></i></div>
       <div id="app"></div>
       <div id="overlay"></div>
       <div id="toast"></div>
