@@ -4356,11 +4356,13 @@ function symptomTrend() {
   const full = cyc.map((c, i) => i).filter(i => !cyc[i].now), max = Math.max(4, ...rows.flatMap(([, v]) => v));
   const trend = v => { if (full.length < 2) return '<span class="st2-tr">·</span>'; const d = v[full[full.length - 1]] - v[full[full.length - 2]];
     return d < 0 ? `<span class="st2-tr down">${icon('chevD', 11, 2.6)}${-d} fewer</span>` : d > 0 ? `<span class="st2-tr up"><span class="st2-up">${icon('chevD', 11, 2.6)}</span>${d} more</span>` : '<span class="st2-tr">Same</span>'; };
+  const ICON = { 'PMS moods': 'Irritable', Cramps: 'Cramps', Breakouts: 'Acne', Bloating: 'Bloating', Tiredness: 'Fatigue' }, lastI = full[full.length - 1];
   return `${sectionTitle('Cycle by cycle')}
-    <section class="card st2"><p class="st2-sub">Days you logged each one, per cycle. Fewer is better.</p>
-      <div class="st2-r st2-h"><span></span>${cyc.map(c => `<small>${c.now ? 'Now' : MONTHS[c.start.getMonth()].slice(0, 3)}</small>`).join('')}<span></span></div>
-      ${rows.map(([n, v]) => `<div class="st2-r"><b>${n}</b>${v.map((x, i) => `<span class="st2-c ${cyc[i].now ? 'now' : ''} ${i === full[full.length - 1] ? 'last' : ''}"><i style="height:${Math.max(x ? 12 : 0, x / max * 100)}%"></i><em class="dotnum">${x}</em></span>`).join('')}${trend(v)}</div>`).join('')}
-      <p class="st2-k">Compares your last full cycle with the one before.</p></section>`;
+    <section class="card st4"><p class="st4-sub">Days you logged each one, per cycle. Fewer is better.</p>
+      <div class="st4-r st4-mo"><span></span><span></span><div class="st4-bars">${cyc.map((c, i) => `<small class="${i === lastI ? 'last' : ''}">${c.now ? 'Now' : MONTHS[c.start.getMonth()].slice(0, 3)}</small>`).join('')}</div></div>
+      ${rows.map(([n, v]) => `<div class="st4-r"><span class="st4-ic">${logEmo(ICON[n] || n)}</span><span class="st4-t"><b>${n}</b>${trend(v)}</span>
+        <div class="st4-bars">${v.map((x, i) => `<span class="st4-c ${cyc[i].now ? 'now' : ''} ${i === lastI ? 'last' : ''}"><em class="dotnum">${x}</em><i style="height:${x ? Math.round(Math.max(5, x / max * 30)) : 3}px"></i></span>`).join('')}</div></div>`).join('')}
+      <p class="st4-k">Dark bar: your last full cycle, compared with the one before. Now is the cycle so far.</p></section>`;
 }
 function learnedCard() {
   const { stats, info } = M; if (!info) return '';
