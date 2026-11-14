@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HORMONE_SIMPLE, HORMONE_RELAY, BODY_NOTES, AFTER_STAGES, AFTER_TOPICS, TTC_TRY, TTC_STAGE, TTC_CHANCE, TTC_DOCTOR, TTC_BOTH, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
+  PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HORMONE_SIMPLE, HORMONE_RELAY, BODY_NOTES, AFTER_STAGES, AFTER_TOPICS, TTC_TRY, TTC_STAGE, TTC_CHANCE, TTC_DOCTOR, TTC_BOTH, LOSS_HELP, LOSS_STEPS, LOSS_WARN, LOSS_TOPICS, LOSS_REPEAT, LOSS_NOTES, LOSS_JOURNAL, LOSS_PARTNER, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -221,16 +221,37 @@ function afterBirth() { return purpose() === 'after'; }
 // How long she has been trying: stored as a start date, so the stage moves on by itself
 function ttcMonths(p = state && state.profile) { return p && p.ttcSince ? Math.max(0, C.diffDays(new Date(), C.parseISO(p.ttcSince)) / 30.4) : null; }
 function ttcStage(p = state && state.profile) {
-  if (!p || !p.ttc) return null; if (p.ttc === 'tx') return 'tx';
+  if (!p || !p.ttc || p.ttc === 'wait') return null; if (p.ttc === 'tx') return 'tx';
   const m = ttcMonths(p); return m == null ? null : p.ttc === 'new' && m < 1 ? 'new' : m < 6 ? 'lt6' : m < 12 ? '6to12' : 'gt12';
 }
-function ttcPicker(src, scope) {
-  return `<div class="pg-list">${TTC_TRY.map(([k, e, t, sm]) => `<button class="pg-o ${src.ttc === k ? 'on' : ''}" data-action="ttcSet" data-v="${k}" data-scope="${scope}" aria-pressed="${src.ttc === k}"><span class="pg-e">${e}</span><span class="pg-t"><b>${t}</b><small>${sm}</small></span><i>${icon('check', 14, 2.6)}</i></button>`).join('')}</div>
-    ${src.ttc ? `<p class="pg-what">${icon('heart', 15)}<span>${TTC_STAGE[ttcStage(src) || src.ttc][1]}</span></p>` : ''}`;
+// Pregnancy loss: when and how often (asked gently), a recovery mode for the first weeks, her own words
+const LOSS_WHEN = [['recent', 'In the last 3 months'], ['old', 'Longer ago']];
+const LOSS_N = [['1', 'Once'], ['2', 'Twice'], ['3', '3 or more'], ['skip', 'I’d rather not say']];
+function lossDays(p = state && state.profile) { return p && p.preg === 'loss' && p.lossAt ? Math.max(0, C.diffDays(new Date(), C.parseISO(p.lossAt))) : null; }
+function lossRecent(p = state && state.profile) { const d = lossDays(p); return d != null && d < 92; }
+// recovery mode: on by itself after a recent loss, and she can switch it off or on any time
+function lossCare(p = state && state.profile) { return !!p && p.preg === 'loss' && (p.lossCare != null ? !!p.lossCare : lossRecent(p)); }
+function lossWord(p = state && state.profile) { return p && p.lossWord === 'mc' ? 'miscarriage' : 'pregnancy loss'; }
+const lossQuiet = (p = state && state.profile) => !!p && (p.lossHelp || []).length === 1 && p.lossHelp[0] === 'quiet';
+// her first period after the loss: a bleed that started at least 10 days after it
+function lossFirstPeriod() { const p = state.profile; if (!p.lossAt || !M?.stats?.periods) return null; const t = C.addDays(C.parseISO(p.lossAt), 10); return M.stats.periods.find(x => x.start >= t) || null; }
+function lossStep() { const d = lossDays(); if (d == null) return -1; if (lossFirstPeriod()) return 2; return d < 14 ? 0 : 1; }
+function lossSteps(st) { return `<div class="ls-steps">${LOSS_STEPS.map(([, , n, w], i) => `<span class="${i === st ? 'on' : i < st ? 'done' : ''}"><i></i><b>${n}</b><small>${w}</small></span>`).join('')}</div>`; }
+// fertile-window pressure only when she is actively trying (never "when I'm ready", never in recovery unless she says she's ready)
+function ttcOn() { const p = state.profile; return ttc() && p.ttc !== 'wait' && !(lossCare() && !p.lossReady); }
+function lossHelpPicker(src, scope) {
+  const h = src.lossHelp || [];
+  return `<div class="pg-list">${LOSS_HELP.map(([k, e, t, sm]) => `<button class="pg-o ${h.includes(k) ? 'on' : ''}" data-action="lossHelp" data-v="${k}" data-scope="${scope}" aria-pressed="${h.includes(k)}"><span class="pg-e">${e === '🔒' ? GX_IC.lock : e}</span><span class="pg-t"><b>${t}</b><small>${sm}</small></span><i>${icon('check', 14, 2.6)}</i></button>`).join('')}</div>`;
 }
-function purposePicker(cur, act, full) {
+const TTC_WAIT = ['wait', '🕊️', 'When I’m ready', 'After my loss, there’s no rush'];
+function ttcPicker(src, scope) {
+  const opts = src.preg === 'loss' && lossRecent(src) ? [TTC_WAIT, ...TTC_TRY] : TTC_TRY;
+  return `<div class="pg-list">${opts.map(([k, e, t, sm]) => `<button class="pg-o ${src.ttc === k ? 'on' : ''}" data-action="ttcSet" data-v="${k}" data-scope="${scope}" aria-pressed="${src.ttc === k}"><span class="pg-e">${e}</span><span class="pg-t"><b>${t}</b><small>${sm}</small></span><i>${icon('check', 14, 2.6)}</i></button>`).join('')}</div>
+    ${src.ttc ? `<p class="pg-what">${icon('heart', 15)}<span>${src.ttc === 'wait' ? 'No pressure. The app stays gentle, and you can tell us when you’re ready.' : TTC_STAGE[ttcStage(src) || src.ttc][1]}</span></p>` : ''}`;
+}
+function purposePicker(cur, act, full, soft) {
   if (cur === 'notnow') cur = 'know';
-  return `<div class="purp ${full ? 'full' : ''}">${PURPOSES.map(x => { const u = x.img || hormonePhoto(x.photo, 600); return `<button class="purp-c ${cur === x.k ? 'on' : ''} ${x.soon ? 'soon' : ''}" ${x.soon ? 'disabled' : `data-action="${act}" data-v="${x.k}"`}>${u ? `<img src="${u}" alt=""${x.pos ? ` style="object-position:${x.pos}"` : ''}>` : ''}<span class="pc-shade"></span><span class="pc-in"><b>${x.t}</b><small>${x.s}</small></span>${x.soon ? '<span class="pc-soon">Coming soon</span>' : `<span class="pc-check">${icon('check', 14, 2.6)}</span>`}</button>`; }).join('')}</div>`;
+  return `<div class="purp ${full ? 'full' : ''}">${PURPOSES.map(x0 => { const x = soft && x0.k === 'conceive' ? { ...x0, s: 'Now, or later when I’m ready' } : x0; const u = x.img || hormonePhoto(x.photo, 600); return `<button class="purp-c ${cur === x.k ? 'on' : ''} ${x.soon ? 'soon' : ''}" ${x.soon ? 'disabled' : `data-action="${act}" data-v="${x.k}"`}>${u ? `<img src="${u}" alt=""${x.pos ? ` style="object-position:${x.pos}"` : ''}>` : ''}<span class="pc-shade"></span><span class="pc-in"><b>${x.t}</b><small>${x.s}</small></span>${x.soon ? '<span class="pc-soon">Coming soon</span>' : `<span class="pc-check">${icon('check', 14, 2.6)}</span>`}</button>`; }).join('')}</div>`;
 }
 const FOCUS_G = { pms: '🌺', skin: '💧', sleep: '😴', mood: '🌤️', energy: '⚡', eat: '🥗', tcm: '☯️', hormones: '🧬', body: '🔥', bloat: '🫧', regular: '🗓️' };
 function focusTiles(cur, act) { return `<div class="ftiles">${FOCUS.map(f => `<button class="ft ${cur.includes(f.k) ? 'on' : ''}" data-action="${act}" data-v="${f.k}"><span>${FOCUS_G[f.k]}</span>${f.t}</button>`).join('')}</div>`; }
@@ -604,7 +625,7 @@ new MutationObserver(() => { document.querySelectorAll('.deck').forEach(deckFx);
 let hiddenAt = 0;
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') hiddenAt = Date.now(); else if (hiddenAt && Date.now() - hiddenAt > 10 * 60 * 1000) { opensNow++; if (route().name === 'today') render(); } });
 function conceiveCard(info) {
-  if (!ttc()) return '';
+  if (!ttcOn()) return '';
   const today = C.startOfDay(new Date()), past = info.cd > info.ov && !info.fertile, base = past ? C.addDays(info.cycleStart, info.L) : info.cycleStart; // once this window is over, show the next one
   const start = C.addDays(base, info.ov - 6), peak1 = C.addDays(base, info.ov - 3), ovd = C.addDays(base, info.ov - 1);
   const inWin = !past && (info.fertile || (info.cd >= info.ov - 5 && info.cd <= info.ov)), d2 = C.diffDays(start, today);
@@ -631,6 +652,60 @@ function afterCard() {
     <div class="eyebrow dark">${st < 0 ? 'After birth' : afterAgeLabel()}</div>
     <h3>${x ? x[2] : 'Your first two years'}</h3><p>${x ? x[3] : 'Tell us your baby’s age and the app follows your recovery.'}</p>
     ${st < 0 ? '' : afterBar(st)}<span class="af-go">Your after-birth guide ${icon('chevR', 14)}</span></div></button>`;
+}
+// After a loss: one gentle card on Today in recovery mode (never fertile-window pressure or baby photos)
+function lossCard() {
+  if (!lossCare() || lossQuiet()) return '';
+  const p = state.profile, d = lossDays(), st = lossStep(), first = (p.lossHelp || ['body']).find(k => k !== 'quiet') || 'body';
+  const [t, l] = first === 'feel' ? ['Grief comes in waves', 'Whatever you feel today is allowed. Partners grieve too.']
+    : first === 'again' ? [p.lossReady ? 'Trying again, gently' : 'Trying again, when you’re ready', 'Medically, one period is all the wait you need. The choice is yours.']
+    : st === 0 ? ['Bleeding eases', 'Rest, warmth and pads. It should get lighter day by day.'] : st === 1 ? ['Waiting for your first period', 'Usually 4 to 6 weeks after. Predictions stay rough until then.'] : ['Your rhythm is coming back', 'Your first period came, so predictions find your rhythm again.'];
+  return `<button class="card ls-card" data-action="nav" data-to="loss"><img src="images/lotus-menstrual.webp" alt="" class="ls-pic"><div class="ls-in">
+    <div class="eyebrow dark">${d == null ? 'Gently' : `Week ${Math.floor(d / 7) + 1} after your ${lossWord()}`}</div>
+    <h3>${t}</h3><p>${l}</p>${st >= 0 ? lossSteps(st) : ''}<span class="af-go">Your recovery guide ${icon('chevR', 14)}</span></div></button>`;
+}
+function viewLoss() {
+  const p = state.profile, d = lossDays(), on = lossCare(), st = lossStep(), open = ui.lsOpen, word = lossWord(), help = p.lossHelp || [];
+  const head = st === 0 ? ['Bleeding eases', 'Rest, warmth and pads. Bleeding should get lighter day by day, and stop within about 2 weeks.'] : st === 1 ? ['Waiting for your first period', 'It usually comes 4 to 6 weeks after. Your predictions stay rough until then.'] : ['Your rhythm is coming back', 'Your first period came. From here your predictions find your rhythm again.'];
+  const tg = (f, t, sm, val) => `<div class="stepper-row"><span>${t}<small>${sm}</small></span><button class="toggle ${val ? 'on' : ''}" data-action="lossSet" data-f="${f}" role="switch" aria-checked="${!!val}" aria-label="${t}"><i></i></button></div>`;
+  return `${topbar('Gently', { back: true })}
+  <div class="pad af ls">
+    <h1 class="page-h">After your <span>${word}</span></h1>
+    <p class="hs-sub">What your body does now, why the grief is real, and trying again when you are ready.</p>
+    <section class="card card-light af-now ls-now"><div class="eyebrow dark">${d == null ? 'Your recovery' : `Week ${Math.floor(d / 7) + 1} after your ${word}`}</div>
+      ${st >= 0 ? `<h3>${head[0]}</h3><p>${head[1]}</p>${lossSteps(st)}` : '<p>Add when it happened in Profile, and this page follows your recovery week by week.</p>'}
+      <div class="ls-words"><small>Words that feel right</small><div class="af-age">${[['loss', 'Pregnancy loss'], ['mc', 'Miscarriage']].map(([k, t]) => `<button class="${(p.lossWord === 'mc' ? 'mc' : 'loss') === k ? 'on' : ''}" data-action="lossSet" data-f="word" data-v="${k}">${t}</button>`).join('')}</div></div></section>
+    <section class="card ls-warn"><div class="eyebrow">See a doctor today if</div>
+      ${LOSS_WARN.map(([a, b]) => `<div class="tr-r"><span>${b}</span><b>${a}</b></div>`).join('')}
+      <p>Very heavy bleeding, fainting or strong pain on one side: call your local emergency number now.</p></section>
+    ${LOSS_TOPICS.map(x => `<section class="card glass af-t ${open === x.k ? 'open' : ''}">
+      <button class="af-th" data-action="lossOpen" data-v="${x.k}" aria-expanded="${open === x.k}">
+        <span class="af-big"><b class="dotnum">${x.big.replace(/ ?([a-z]+)$/, '<em>$1</em>')}</b><small>${x.bigS}</small></span>
+        <span class="af-tt"><span class="eyebrow">${x.t}</span><b>${x.s}</b></span>${icon('chevD', 16)}</button>
+      <ul class="af-short">${x.short.map(l => `<li>${l}</li>`).join('')}</ul>
+      ${open === x.k ? `<div class="af-more">${x.more.map(l => `<p>${l}</p>`).join('')}
+        ${x.study ? `<div class="af-study"><span class="dotnum">${x.study[1]}</span><div><b>${x.study[0]}</b><small>${x.study[2]}</small><p>${x.study[3]}</p></div></div>` : ''}</div>` : `<button class="af-read" data-action="lossOpen" data-v="${x.k}">Read more</button>`}
+    </section>`).join('')}
+    ${p.lossN === '2' || p.lossN === '3' ? `<section class="card glass tr-spec ls-rep"><div class="eyebrow">After 2 or more losses</div><h3>Tests worth asking for</h3>
+      ${LOSS_REPEAT.map(([a, b]) => `<div class="tr-r"><span>${a}</span><b>${b}</b></div>`).join('')}
+      <small class="tr-cite">ESHRE guideline 2022. Coomarasamy et al. 2019 · NEJM (PRISM): with bleeding and 3 or more past losses, progesterone raised live births from 57% to 72%.</small></section>` : ''}
+    <section class="card card-light ls-ready"><div class="eyebrow dark">Trying again</div>
+      <h3>${p.lossReady ? 'You said you’re ready' : 'Only when you say so'}</h3>
+      <p>${p.lossReady ? 'Your fertile window is back on Today, gently. Changed your mind? That’s okay too.' : 'The app never assumes. When you feel ready, tell us and your fertile window comes back to Today.'}</p>
+      <button class="${p.lossReady ? 'ls-btn ghost' : 'ls-btn'}" data-action="lossSet" data-f="ready">${p.lossReady ? 'Not yet after all' : 'I’m ready to try again'}</button></section>
+    <section class="card glass ls-mem"><div class="eyebrow">Only for you</div><h3>A private place to remember</h3><p class="tr-sub">A date, a name or a few words. Nothing here is shared, ever.</p>
+      <label class="ls-f"><span>Date</span><input class="field" type="date" data-input="profile.lossMemDate" value="${esc(p.lossMemDate || p.lossAt || '')}" max="${todayISO()}"></label>
+      <label class="ls-f"><span>A name</span><input class="field" data-input="profile.lossName" value="${esc(p.lossName || '')}" maxlength="40" placeholder="Optional"></label>
+      <label class="ls-f"><span>A few words</span><textarea class="field" data-input="profile.lossWords" rows="3" maxlength="400" placeholder="Anything you want to keep">${esc(p.lossWords || '')}</textarea></label></section>
+    <section class="card glass ls-set"><div class="eyebrow">Your settings</div>
+      ${tg('care', 'Recovery mode', 'A gentle home screen, letters and journal', on)}
+      <label class="ls-f"><span>Your original due date</span><input class="field" type="date" data-input="profile.lossDue" value="${esc(p.lossDue || '')}"></label>
+      ${tg('due', 'A heads-up the week before', 'So the date doesn’t take you by surprise', p.lossDueOn)}
+      ${tg('share', 'Let my partner know', 'Their view shows how to support you. Your notes stay private.', p.lossShare)}
+      <div class="ls-words"><small>What helps right now</small><div class="af-age">${LOSS_HELP.map(([k, , t]) => `<button class="${help.includes(k) ? 'on' : ''}" data-action="lossHelp" data-v="${k}" data-scope="profile">${t}</button>`).join('')}</div></div></section>
+    <section class="card af-help"><b>${icon('heart', 15)} If it feels too heavy</b>
+      <p>Low or anxious for more than 2 weeks, or the moment keeps coming back? Tell your doctor or midwife. Pregnancy loss charities in your country also listen, for free. Thoughts of harming yourself: call your local emergency number now.</p></section>
+  </div>`;
 }
 function viewTrying() {
   const p = state.profile, st = ttcStage(), m = ttcMonths(), mo = st && st !== 'tx' && st !== 'new' ? Math.min(12, Math.floor(m) + 1) : 0;
@@ -1361,15 +1436,18 @@ function viewOnboarding() {
         <div class="big-stepper ${o.unsure ? 'dim' : ''}">${stepper('cycleLength', o.cycleLength, 'onb', true)}<span>days</span></div>
         <button class="chip unsure ${o.unsure ? 'on' : ''}" data-action="onbUnsure">${o.unsure ? icon('check', 14, 2.4) : ''} I’m not sure</button>
         ${o.unsure ? '<p class="muted sm">No problem: we’ll start with 28 days and learn your real cycle automatically as soon as you log your next period.</p>' : ''}`,
-    6: ui.onbPreg ? `<h2 class="onb-title">Have you been <span>pregnant before?</span></h2>
+    6: ui.onbLoss ? `<h2 class="onb-title">What would help <span>most right now?</span></h2>
+        <p class="muted">Pick as many as you like. Your home screen follows this, and you can change it any time.</p>
+        ${lossHelpPicker(o, 'onb')}` : ui.onbPreg ? `<h2 class="onb-title">Have you been <span>pregnant before?</span></h2>
         <p class="muted">Pregnancy and birth can change your cycle and what your body needs. Optional, and only you can see it.</p>
         ${pregPicker(o, 'onb')}` : `<h2 class="onb-title">Are you on <span>birth control?</span></h2>
         <div class="bc-list">${BIRTH_CONTROL.map(b => `<button class="bc-opt has-pic ${o.bc === b.k ? 'on' : ''}" data-action="onbBc" data-v="${b.k}"><span class="bc-pic">${BC_PIC[b.k] || ''}</span><span class="bc-tx"><b>${b.t}</b><small>${b.s}</small></span><i>${icon('check', 14, 2.6)}</i></button>`).join('')}</div>
         <div class="bc-slot">${bcQHTML(o)}</div>`,
-    7: ui.onbTry ? `<h2 class="onb-title">How long have you <span>been trying?</span></h2>
-        <p class="muted">Your fertile window, tips and when to see a doctor follow this. Only you can see it.</p>
+    7: ui.onbTry ? `${o.preg === 'loss' && lossRecent(o) ? `<h2 class="onb-title">Where are you <span>with trying?</span></h2>
+        <p class="muted">There’s no rush after your loss. Pick “When I’m ready” and the app stays gentle until you tell us.</p>` : `<h2 class="onb-title">How long have you <span>been trying?</span></h2>
+        <p class="muted">Your fertile window, tips and when to see a doctor follow this. Only you can see it.</p>`}
         ${ttcPicker(o, 'onb')}` : `<h2 class="onb-title">Why are <span>you here?</span></h2>
-        ${purposePicker(o.purpose || 'know', 'onbPurpose', true)}`,
+        ${purposePicker(o.purpose || 'know', 'onbPurpose', true, o.preg === 'loss' && lossRecent(o))}`,
     8: `<h2 class="onb-title">What are <span>your goals?</span></h2>
         <p class="muted">Pick as many as you like. We build your plan around them.</p>
         ${focusTiles(o.focus || [], 'onbFocus')}`,
@@ -1379,7 +1457,7 @@ function viewOnboarding() {
 
   const flash = ui.flashOut ? '<div class="flash-out"></div>' : ''; ui.flashOut = false;
   const anim = ui.onbAnim || ''; ui.onbAnim = '';
-  const sk = s + (ui.onbWhere ? 'w' : '') + (ui.onbPreg ? 'p' : '') + (ui.onbTry ? 't' : ''), still = (ui.onbStill || (!anim && ui.onbLast === sk)) ? 'still' : ''; ui.onbStill = false; ui.onbLast = sk;
+  const sk = s + (ui.onbWhere ? 'w' : '') + (ui.onbPreg ? 'p' : '') + (ui.onbLoss ? 'l' : '') + (ui.onbTry ? 't' : ''), still = (ui.onbStill || (!anim && ui.onbLast === sk)) ? 'still' : ''; ui.onbStill = false; ui.onbLast = sk;
   return `<div class="onb no-fig step-${s} ${s === 1 && ui.onbWhere ? 'where' : ''} ${anim} ${still}">${flash}
     <div class="onb-top"><button class="icon-btn dark" data-action="onbBack" aria-label="Back">${icon('chevL', 22)}</button>${dots}${sndBtn()}</div>
     <div class="onb-body">${body}</div>
@@ -1401,11 +1479,17 @@ function ppMonths(p = state && state.profile) {
 const postpartum = (p = state && state.profile) => !!p && p.preg === 'kids' && (p.bf || (ppMonths(p) != null && ppMonths(p) < 12));
 function pregPicker(src, scope) {
   const v = src.preg, when = src.ppAt ? (ppMonths(src) < 6 ? '6' : ppMonths(src) < 12 ? '12' : 'old') : src.ppOld ? 'old' : '';
+  const lw = src.lossAt ? (lossRecent(src) ? 'recent' : 'old') : src.lossOld ? 'old' : '';
   const what = v === 'kids' ? (src.bf || when === '6' || when === '12' ? 'Your predictions stay gentle while your cycle settles, and you get recovery and pelvic floor tips.' : 'Pelvic floor care becomes part of your plan.')
-    : v === 'loss' ? 'Thank you for telling us. It stays private, and we keep it in mind gently when you plan a pregnancy.' : '';
+    : v === 'loss' ? (lw === 'recent' ? 'For the next weeks the app turns gentle: no fertile-window pressure, care for your body and your feelings. You can switch it off any time.' : 'We keep it in mind gently, especially when you plan a pregnancy.') : '';
   return `<div class="pg-list">${PREG.map(([k, e, t, sm]) => `<button class="pg-o ${v === k ? 'on' : ''}" data-action="pregSet" data-f="preg" data-v="${k}" data-scope="${scope}" aria-pressed="${v === k}"><span class="pg-e">${e === 'lock' ? GX_IC.lock : e}</span><span class="pg-t"><b>${t}</b><small>${sm}</small></span><i>${icon('check', 14, 2.6)}</i></button>`).join('')}</div>
     ${v === 'kids' ? `<div class="pg-more"><small>Your last birth</small><div class="chips">${PP_WHEN.map(([k, t]) => `<button class="chip ${when === k ? 'on' : ''}" data-action="pregSet" data-f="when" data-v="${k}" data-scope="${scope}">${t}</button>`).join('')}</div>
       <button class="chip pg-bf ${src.bf ? 'on' : ''}" data-action="pregSet" data-f="bf" data-v="1" data-scope="${scope}">${src.bf ? icon('check', 13, 2.6) : '🍼'} I’m breastfeeding</button></div>` : ''}
+    ${v === 'loss' ? `<div class="pg-more pg-loss"><p class="pg-sorry">We’re so sorry. Thank you for trusting us. This stays private.</p>
+      <small>When?</small><div class="chips">${LOSS_WHEN.map(([k, t]) => `<button class="chip ${lw === k ? 'on' : ''}" data-action="pregSet" data-f="lwhen" data-v="${k}" data-scope="${scope}">${t}</button>`).join('')}</div>
+      ${lw === 'recent' ? `<label class="pg-date"><span>The day, if you like</span><input class="field" type="date" data-input="${scope}.lossAt" value="${src.lossAt || ''}" max="${todayISO()}"></label>` : ''}
+      <small>How many times?</small><div class="chips">${LOSS_N.map(([k, t]) => `<button class="chip ${src.lossN === k ? 'on' : ''}" data-action="pregSet" data-f="ln" data-v="${k}" data-scope="${scope}">${t}</button>`).join('')}</div>
+      ${scope === 'profile' ? `<button class="pg-go" data-action="nav" data-to="loss"><span><b>Your recovery guide</b><small>${lossCare(src) ? 'Recovery mode is on' : 'Body, feelings and trying again'}</small></span>${icon('chevR', 15)}</button>` : ''}</div>` : ''}
     ${what ? `<p class="pg-what">${icon('heart', 14)} ${what}</p>` : ''}`;
 }
 function stepper(field, val, scope, big) {
@@ -1434,7 +1518,7 @@ function viewToday() {
   else if (info.isPeriod) chips.push(`<span class="hchip">${icon('drop', 14)} Period · day ${info.cd}</span>`);
   else chips.push(`<span class="hchip">${icon('drop', 14)} Period in ${plural(info.daysToPeriod, 'day')}</span>`);
   chips.push(`<span class="hchip">${icon('sun', 14)} ${info.isOvulation ? 'Ovulation today' : `Ovulation in ${plural(info.daysToOv, 'day')}`}</span>`);
-  if (ttc()) chips.push(`<span class="hchip ${info.fertile ? 'hl' : ''}">${icon('spark', 14)} ${info.fertile ? 'Fertile' : 'Low fertility'}</span>`);
+  if (ttcOn()) chips.push(`<span class="hchip ${info.fertile ? 'hl' : ''}">${icon('spark', 14)} ${info.fertile ? 'Fertile' : 'Low fertility'}</span>`);
 
   // one compact "heads-up" card: reminders, unusual cycle, learned patterns
   const alerts = dueReminders().filter(x => !/^(phase-|rh-)/.test(x.id)).map(x => `<div class="al-row"><span class="al-ic ${x.icon === 'drop' ? 'drop' : ''}">${x.icon === 'drop' ? DROP_ART : icon(x.icon, 17)}</span>
@@ -1460,6 +1544,7 @@ function viewToday() {
     ${todayHub(info, energy, head)}
 
     ${conceiveCard(info)}
+    ${lossCard()}
     ${afterCard()}
     ${(() => { // at most two notices, most important first
       const n = [...alerts];
@@ -1900,7 +1985,7 @@ const JOURNAL = {
     'What felt heavy today, and what made it lighter?', 'What does your inner critic say, and what is a kinder answer?', 'What would make tomorrow feel softer?'],
 };
 function journalPrompt(d, phase, shift = 0) {
-  const list = [...(JOURNAL[phase] || []), ...JOURNAL.any];
+  const list = lossCare() ? LOSS_JOURNAL : [...(JOURNAL[phase] || []), ...JOURNAL.any];
   return list[(((dayNum(d) * 7 + shift) % list.length) + list.length) % list.length];
 }
 const JR_SHUF = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.7-5.6L20 8.5M20 4v4.5h-4.5M20 12a8 8 0 0 1-13.7 5.6L4 15.5M4 20v-4.5h4.5"/></svg>';
@@ -3752,6 +3837,7 @@ function bodyNote(date, slot, di, pats) {
   if (!di) return null;
   const nm = (state.profile.name || '').trim().split(/\s+/)[0], n = nm || 'love', k = dayNum(date) + (slot === 'mid' ? 1 : slot === 'pm' ? 2 : 0);
   // her own pattern, on about every other morning it applies
+  if (lossCare()) return lossQuiet() ? null : LOSS_NOTES[slot][k % LOSS_NOTES[slot].length].replace(/\{n\}/g, n);
   const p = slot === 'am' && k % 2 === 0 && !afterBirth() && (pats || []).find(x => di.cd >= x.from - 1 && di.cd <= x.to && x.cyclesN >= 2);
   if (p) return `Last cycles you often noted ${p.name.toLowerCase()} around now. If it shows up again, be gentle with yourself. If it doesn’t, notice that too.`;
   const list = (afterBirth() && (afterMonths() == null || afterMonths() < 24) ? BODY_NOTES.after : BODY_NOTES[di.phase])[slot];
@@ -3795,6 +3881,9 @@ function dueReminders() {
   if (postpartum()) out.push({ id: 'postpartum', icon: 'heart', title: 'Your cycle after birth', body: state.profile.bf
     ? 'While breastfeeding, periods can pause or come irregularly, and you can ovulate before your first period returns. Predictions stay rough until your cycle settles.'
     : 'In the first year after birth, cycles often run irregular. Your predictions sharpen with every period you log.' });
+  if (lossCare() && !lossQuiet() && !lossFirstPeriod()) out.push({ id: 'loss-cycle', icon: 'heart', title: 'Your cycle after your loss', body: 'Predictions stay rough until your first period, usually 4 to 6 weeks after. Log it when it comes.', to: 'loss' });
+  if (state.profile.preg === 'loss' && state.profile.lossDueOn && state.profile.lossDue) { const dd = C.diffDays(C.parseISO(state.profile.lossDue), C.startOfDay(new Date()));
+    if (dd >= 0 && dd <= 7) out.push({ id: 'loss-due', icon: 'heart', title: dd === 0 ? 'Today would have been your due date' : `Your due date is ${dd === 1 ? 'tomorrow' : `in ${dd} days`}`, body: 'It’s okay if this week feels heavy. Plan something gentle, and let someone close know.', to: 'loss' }); }
   if (state.profile.preg === 'kids') out.push({ id: 'pelvic', icon: 'heart', title: 'Pelvic floor, a few minutes a day', body: '3 sets of 10 slow squeezes a day keep your pelvic floor strong after pregnancy. Leaking or a heavy feeling? See a women’s health physio.' });
   if (r.phase) {
     const y = C.dayInfo(C.addDays(new Date(), -1), M.stats);
@@ -5089,7 +5178,8 @@ const COMPASS_SHORT = {
 // Under the period button: the pixel aura woman floating in the middle, tinted by her energy, with lines to five parts of her body.
 // Each label says what to do for that part today; tap it to see what is going on there and the two steps.
 function energyCard(info, energy) {
-  const w = dayWindow(info), c = COMPASS[w], parts = BODY_MAP[info.phase], open = parts.find(p => p.k === ui.enPart);
+  const heal = lossCare() && lossStep() >= 0 && lossStep() < 2; // the first weeks after a loss: a slow, warm day whatever the phase says
+  const w = dayWindow(info), c = heal ? { ...COMPASS['flow-start'], mode: 'Heal gently' } : COMPASS[w], parts = BODY_MAP[heal ? 'menstrual' : info.phase], open = parts.find(p => p.k === ui.enPart);
   const pin = k => BODY_PIN[k];
   const lines = parts.map(p => { const [lx, ly, sd, bx, by] = pin(p.k), x0 = sd === 'l' ? 96 : 244; return `<path class="${open && open.k === p.k ? 'on' : ''}" d="M${x0} ${ly + 16} H${sd === 'l' ? x0 + 14 : x0 - 14} L${bx} ${by}"/><circle class="em-dot ${open && open.k === p.k ? 'on' : ''}" cx="${bx}" cy="${by}" r="3.6"/>`; }).join('');
   const labels = parts.map(p => { const [lx, ly, sd] = pin(p.k); return `<button class="em-l ${sd} ${open && open.k === p.k ? 'on' : ''}" style="top:${ly}px" data-action="enPart" data-k="${p.k}" aria-expanded="${open && open.k === p.k ? 'true' : 'false'}"><small>${icon(p.ic, 11)} ${p.label}</small><b>${p.d}</b></button>`; }).join('');
@@ -5164,7 +5254,8 @@ function stageHero(info, energy, o = {}) {
   const cap = (ic, v, pct, k, to) => `<${nav ? 'button' : 'div'} class="cap" ${nav ? `data-action="nav" data-to="${to}"` : ''}><span class="cap-pill"><svg class="cap-o" viewBox="0 0 120 52" preserveAspectRatio="none" aria-hidden="true"><rect class="cap-t" x="1.5" y="1.5" width="117" height="49" rx="24.5"/><rect class="cap-p" x="1.5" y="1.5" width="117" height="49" rx="24.5" pathLength="100" stroke-dasharray="${Math.max(2, Math.round(pct))} 100"/></svg>${icon(ic, 15)}<b class="${/\d/.test(v) ? '' : 'word'}">${v}</b></span><small>${k}</small></${nav ? 'button' : 'div'}>`;
   const nextP = Math.max(0, info.daysToPeriod);
   const perCap = cap('drop', nextP === 0 ? 'Today' : `${nextP}d`, nextP === 0 ? 100 : (1 - nextP / L) * 100, 'Next period', 'calendar');
-  const fertCap = cap('heart', info.fertile ? 'Yes' : 'No', info.fertile ? 100 : 0, 'Fertile', 'guide');
+  const lw = nav && lossCare() ? lossDays() : null; // in recovery after a loss: her week of healing instead of fertile yes/no
+  const fertCap = lw != null ? cap('heart', `${Math.floor(lw / 7) + 1}w`, Math.min(100, lw / 42 * 100), 'Healing', 'loss') : cap('heart', info.fertile ? 'Yes' : 'No', info.fertile ? 100 : 0, 'Fertile', 'guide');
   return `<div class="opal">
     <div class="stage-scene"><img class="stage-bg" src="images/forest-calm.jpg" alt="" decoding="async"><span class="stage-tint"></span><span class="stage-light" aria-hidden="true"></span><span class="stage-vig" aria-hidden="true"></span>
       ${nav ? `<button class="stage-phase" data-action="nav" data-to="guide"><b>${ph.name}</b></button>` : `<span class="stage-phase"><b>${ph.name}</b></span>`}
@@ -5193,7 +5284,7 @@ function todayHub(info, energy, head = '') {
   const D = dayMoments(info), m = momentAt(D, nowH());
   return `<section class="hub"><div class="hub-life" aria-hidden="true">${SPORES}</div>${head}
     ${stageHero(info, energy)}
-    <div class="stage-after">${ttc() && info.fertile ? `<span class="fh-badge">${icon('spark', 13)} Fertile</span>` : ''}
+    <div class="stage-after">${ttcOn() && info.fertile ? `<span class="fh-badge">${icon('spark', 13)} Fertile</span>` : ''}
       ${periodPill(info)}
       ${energyCard(info, energy)}</div>
     <div class="hub-sec hub-plan">
@@ -7156,6 +7247,7 @@ function viewPartner(p) {
         <p class="body sm">${partnerRead(pi, p).split('. ').slice(1, 2).join('')}.</p></section>`; })()}
     ${(() => { const got = (state.sigLog || []).filter(x => x.pid === p.id).slice(0, 3); return got.length ? `<section class="card glass sig-log"><div class="eyebrow">From ${esc(p.n)}</div>${got.map(x => { const g = SIGNALS.find(y => y.k === x.k); return `<div class="sl"><span>${g ? g.g : '❤️'}</span><b>${g ? g.t : ''}</b><small>${fmtAgo(x.at)}</small></div>`; }).join('')}</section>` : ''; })()}
     ${loveBtn(p, true)}
+    ${p.l ? pvLoss(esc(p.n)) : ''}
 
     ${moodDesire(pi, p)}
     ${partnerCare(pi, esc(p.n))}
@@ -8137,7 +8229,8 @@ function mySnap(o = {}) {
   const { stats } = M, last = stats.periods[stats.periods.length - 1];
   const snap = { n: state.profile.name || 'Her', s: C.iso(last.start), c: stats.avgCycle, p: stats.avgPeriod, a: ui.shareAudience, f: state.profile.noFertile ? 0 : 1, i: myInbox() };
   if (state.profile.ptWho === 'm' && ui.shareAudience !== 'friend') snap.w = 'm'; // he only views, he never tracks
-  if (ttc() && ui.shareAudience !== 'friend') snap.g = 1; // trying for a baby: his page shows how he can help
+  if (ttcOn() && ui.shareAudience !== 'friend') snap.g = 1;
+  if (lossCare() && state.profile.lossShare && ui.shareAudience !== 'friend') snap.l = 1; // she chose to share it: his view shows how to support her // trying for a baby: his page shows how he can help
   if (state.profile.thumb && !o.short) snap.t = state.profile.thumb;
   const mo = getLog(todayISO()).moods || [];
   if (!state.profile.noMood && mo.length) { snap.m = mo.slice(0, 6); snap.md = todayISO(); } // today's moods, shared as she logs them
@@ -8165,10 +8258,10 @@ async function pullLive(i) {
     const snap = m && b64d(JSON.parse(m.message).d || ''); return snap && snap.s && snap.c ? snap : null;
   } catch { return null; }
 }
-const fresher = (old, nw) => nw && (nw.s !== old.s || +!!nw.f !== +!!old.f || String(nw.m) + nw.md !== String(old.m) + old.md || +nw.c !== +old.c || +nw.p !== +old.p || nw.z !== old.z || nw.n !== old.n);
+const fresher = (old, nw) => nw && (nw.s !== old.s || +!!nw.f !== +!!old.f || String(nw.m) + nw.md !== String(old.m) + old.md || +nw.c !== +old.c || +nw.p !== +old.p || nw.z !== old.z || nw.n !== old.n || +!!nw.l !== +!!old.l);
 async function refreshPartners() {
   let changed = false;
-  for (const p of (state.partners || []).filter(x => x.i)) { const nw = await pullLive(p.i); if (fresher(p, nw)) { Object.assign(p, { n: nw.n, s: nw.s, c: nw.c, p: nw.p, z: nw.z, f: nw.f, m: nw.m, md: nw.md }); changed = true; } }
+  for (const p of (state.partners || []).filter(x => x.i)) { const nw = await pullLive(p.i); if (fresher(p, nw)) { Object.assign(p, { n: nw.n, s: nw.s, c: nw.c, p: nw.p, z: nw.z, f: nw.f, m: nw.m, md: nw.md, l: nw.l }); changed = true; } }
   if (changed) { save(); if (['partners', 'today'].includes(route().name)) render(); }
 }
 // a link that is opened (or his saved view): swap in her latest rhythm if she has logged a new period since
@@ -8335,6 +8428,11 @@ function pvTTC(snap, info, name) {
     <section class="pv2-card hs2-boost">${PV_TTC.map(([ic, n, s, st, more]) => `<details class="hs2-x"><summary><span class="hs2-xic">${icon(ic, 16)}</span><span class="hs2-rt"><b>${n}</b><small>${s}</small></span>${icon('chevD', 13)}</summary>
       <div class="hs2-xb">${st ? `<div class="hs2-st"><b class="dotnum">${st[1]}</b><span><em>${st[0]}</em>${st[2]}</span></div>` : ''}${more ? `<p>${more}</p>` : ''}</div></details>`).join('')}</section>`;
 }
+function pvLoss(name) {
+  return `${sectionTitle('Through the loss, together')}
+    <p class="pv2-lead">${name} lost a pregnancy and chose to share it with you. Here is how to be there.</p>
+    <section class="pv2-card ls-pv">${LOSS_PARTNER.map(([a, b], i) => `<div class="ls-pr"><b class="dotnum">${i + 1}</b><span><em>${a}</em>${b}</span></div>`).join('')}</section>`;
+}
 function pvShowUp(sup) {
   return `${sectionTitle('How to show up')}
     <section class="pv2-card pv2-ds"><div class="pv2-dcol"><b class="y">${icon('check', 13, 2.6)} Do</b>${sup.do.map(x => `<p>${esc(x)}</p>`).join('')}</div>
@@ -8467,6 +8565,7 @@ function pvRead(snap, info, name) {
       : `<div class="rd-row later"><b class="dotnum">${x.d}</b><span>${esc(x.r[0])}<small>Opens in ${plural(x.d - cd, 'day')}</small></span></div>`;
   }
   return `<div class="pv2-title"><small>Learn her cycle · day ${cd} of ${L}</small><h1>One read <b>a day</b></h1><p>Synced to ${name}’s cycle. Each day you learn what is happening in her body right now.</p></div>
+  ${snap.l ? pvLoss(name) : ''}
   <section class="pv2-card rd-today" style="--rc:${PH_HEX[now.phase]}">
     <div class="rd-top"><div class="rd-dial">${readRing(info)}</div><div class="rd-h"><small><i></i>${ph.name} phase</small><h2>${esc(now.r[0])}</h2><p>${esc(now.r[1])}</p></div></div>
     <details class="rd-more"><summary>Read more ${icon('chevD', 13)}</summary>${readCard(now.r)}</details>
@@ -8508,7 +8607,7 @@ function viewWith(q) {
     <section class="hub pt-stage">${stageHero(info, Math.round(C.energyAt(info.cd, info.L, info.P) * 100), { nav: false, id: 'with', fert: !!snap.f })}</section>
     ${pvHerDay(info, S)}
     ${role === 'partner' ? pvReadTeaser(info, him) : ''}
-    ${snap.g && role === 'partner' ? pvTTC(snap, info, name) : ''}
+    ${snap.l && role === 'partner' ? pvLoss(name) : snap.g && role === 'partner' ? pvTTC(snap, info, name) : ''}
     ${role === 'partner' ? `${pvToday(info, name, sup, snap)}
     ${pvShowUp(sup)}
     ${sectionTitle('What to give her')}
@@ -8816,7 +8915,8 @@ const actions = {
     if (ui.onbStep === 1) { ui.onb.country = ui.onb.country || myCountry(); ui.onbWhere = false; }
     if (ui.onbStep === 6 && !ui.onb.bc) { toast('Pick one, so we can tailor your plan'); return; }
     if (ui.onbStep === 6 && !ui.onbPreg) { ui.onbPreg = true; ui.onbAnim = 'fwd'; render(); window.scrollTo(0, 0); return; } // birth control → pregnancy history
-    if (ui.onbStep === 6) ui.onbPreg = false;
+    if (ui.onbStep === 6 && !ui.onbLoss && ui.onb.preg === 'loss' && lossRecent(ui.onb)) { ui.onbLoss = true; ui.onbAnim = 'fwd'; render(); window.scrollTo(0, 0); return; } // a recent loss → what would help
+    if (ui.onbStep === 6) { ui.onbPreg = false; ui.onbLoss = false; }
     if (ui.onbStep === 7 && ui.onb.purpose === 'conceive' && !ui.onbTry) { ui.onbTry = true; ui.onbAnim = 'fwd'; render(); window.scrollTo(0, 0); return; } // trying → for how long
     if (ui.onbStep === 7) ui.onbTry = false;
     if (ui.onbStep < 10) { ui.onbStep += ui.onbStep === 4 && ui.onb.noPeriod ? 2 : 1; ui.onbAnim = 'fwd'; render(); window.scrollTo(0, 0); return; }
@@ -8825,7 +8925,7 @@ const actions = {
     if (!o.noPeriod) for (let i = 0; i < o.periodLength; i++) { const d = C.addDays(s, i); if (d <= new Date()) logs[C.iso(d)] = { flow: i === 0 || i === 1 ? 'medium' : 'light' }; }
     ui.arrive = true;
     let pend = null; try { pend = b64d(localStorage.getItem('uts.pendingPartner') || ''); localStorage.removeItem('uts.pendingPartner'); } catch {}
-    state = { onboarded: true, profile: { name: o.name.trim(), country: o.country || myCountry(), diet: o.diet || 'all', cycleLength: o.unsure || o.noPeriod ? 28 : o.cycleLength, cycleUnsure: !!(o.unsure || o.noPeriod), noPeriod: !!o.noPeriod || undefined, preg: o.preg || (o.purpose === 'after' ? 'kids' : undefined), ttc: o.purpose === 'conceive' && o.ttc || undefined, ttcSince: o.purpose === 'conceive' && o.ttcSince || undefined, ppAt: o.ppAt || undefined, ppOld: o.ppOld || undefined, bf: o.bf || undefined, bc: o.bc || 'none', bcPlan: hormonalBC(o.bc) ? o.bcPlan || 'think' : undefined, bcStop: o.bcPlan === 'stop' ? todayISO() : undefined, planStart: todayISO(), periodLength: o.periodLength, goals: o.goals, purpose: o.purpose || 'know', focus: (o.focus && o.focus.length) ? o.focus : ['hormones', 'energy', 'eat'], birthday: o.birthday || undefined, birthTime: o.birthday && o.birthTime || undefined, birthPlace: o.birthday && o.birthPlace || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
+    state = { onboarded: true, profile: { name: o.name.trim(), country: o.country || myCountry(), diet: o.diet || 'all', cycleLength: o.unsure || o.noPeriod ? 28 : o.cycleLength, cycleUnsure: !!(o.unsure || o.noPeriod), noPeriod: !!o.noPeriod || undefined, preg: o.preg || (o.purpose === 'after' ? 'kids' : undefined), ttc: o.purpose === 'conceive' && o.ttc || undefined, ttcSince: o.purpose === 'conceive' && o.ttcSince || undefined, ppAt: o.ppAt || undefined, ppOld: o.ppOld || undefined, lossAt: o.preg === 'loss' && o.lossAt || undefined, lossOld: o.preg === 'loss' && o.lossOld || undefined, lossN: o.preg === 'loss' && o.lossN || undefined, lossHelp: o.preg === 'loss' && o.lossHelp?.length ? o.lossHelp : undefined, bf: o.bf || undefined, bc: o.bc || 'none', bcPlan: hormonalBC(o.bc) ? o.bcPlan || 'think' : undefined, bcStop: o.bcPlan === 'stop' ? todayISO() : undefined, planStart: todayISO(), periodLength: o.periodLength, goals: o.goals, purpose: o.purpose || 'know', focus: (o.focus && o.focus.length) ? o.focus : ['hormones', 'energy', 'eat'], birthday: o.birthday || undefined, birthTime: o.birthday && o.birthTime || undefined, birthPlace: o.birthday && o.birthPlace || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
     if (pend && pend.s && pend.c) state.partners = [{ ...pend, id: Date.now().toString(36), added: Date.now() }];
     ui.scrollMem = {}; ui.navStack = []; save(); go('today'); render(); toTop(); requestAnimationFrame(toTop); setTimeout(toTop, 400); // she lands at the very top of Today
     if (state.partners?.length) { M = model(); syncTo(state.partners[0]); startSignals(); }
@@ -8834,17 +8934,22 @@ const actions = {
   termsAgree: () => { const at = Date.now(); state.termsAt = at; try { localStorage.setItem('uts.termsAt', String(at)); } catch {} save(); render(); },
   onbBack: () => { if (ui.onbStep === 1 && ui.onbWhere) { ui.onbWhere = false; ui.onbAnim = 'back'; render(); return; }
     if (ui.onbStep === 2) { ui.onbStep = 1; ui.onbWhere = true; ui.onbAnim = 'back'; render(); return; }
+    if (ui.onbStep === 6 && ui.onbLoss) { ui.onbLoss = false; ui.onbAnim = 'back'; render(); return; }
     if (ui.onbStep === 6 && ui.onbPreg) { ui.onbPreg = false; ui.onbAnim = 'back'; render(); return; }
     if (ui.onbStep === 7 && ui.onbTry) { ui.onbTry = false; ui.onbAnim = 'back'; render(); return; }
     if (ui.onbStep === 8 && ui.onb.purpose === 'conceive') { ui.onbStep = 7; ui.onbTry = true; ui.onbAnim = 'back'; render(); return; }
-    if (ui.onbStep === 7) { ui.onbStep = 6; ui.onbPreg = true; ui.onbAnim = 'back'; render(); return; }
+    if (ui.onbStep === 7) { ui.onbStep = 6; ui.onbPreg = true; ui.onbLoss = ui.onb.preg === 'loss' && lossRecent(ui.onb); ui.onbAnim = 'back'; render(); return; }
     if (ui.onbStep === 1 && ui.onbGateDone && !A.currentUser() && A.configured()) { ui.onbGateDone = false; ui.onbAnim = 'back'; render(); return; } ui.onbStep = Math.max(0, ui.onbStep - (ui.onbStep === 6 && ui.onb.noPeriod ? 2 : 1)); ui.onbAnim = 'back'; render(); },
   onbDiet: d => { ui.onb.diet = d.v; document.querySelectorAll('.dt-c').forEach(b => { b.classList.toggle('on', b.dataset.v === d.v); b.setAttribute('aria-pressed', b.dataset.v === d.v); }); const pk = document.querySelector('.dt-peek'); if (pk) pk.innerHTML = dvPeek(d.v); },
-  ttcSet: d => { const src = d.scope === 'onb' ? ui.onb : state.profile, x = TTC_TRY.find(t => t[0] === d.v); if (!x) return;
+  ttcSet: d => { const src = d.scope === 'onb' ? ui.onb : state.profile, x = TTC_TRY.find(t => t[0] === d.v);
+    if (d.v === 'wait') { src.ttc = 'wait'; delete src.ttcSince; if (d.scope !== 'onb') save(); ui.onbStill = true; return render(); }
+    if (!x) return;
     src.ttc = d.v; src.ttcSince = C.iso(C.addDays(new Date(), -x[4])); if (d.scope !== 'onb') save(); ui.onbStill = true; render(); },
   pregSet: d => {
     const src = d.scope === 'onb' ? ui.onb : state.profile;
-    if (d.f === 'preg') { src.preg = d.v; if (d.v !== 'kids') { delete src.ppAt; delete src.ppOld; delete src.bf; } }
+    if (d.f === 'preg') { src.preg = d.v; if (d.v !== 'kids') { delete src.ppAt; delete src.ppOld; delete src.bf; } if (d.v !== 'loss') ['lossAt', 'lossOld', 'lossN', 'lossHelp', 'lossCare'].forEach(k => delete src[k]); }
+    else if (d.f === 'lwhen') { if (d.v === 'old') { delete src.lossAt; src.lossOld = true; delete src.lossHelp; } else { delete src.lossOld; if (!lossRecent(src)) src.lossAt = C.iso(C.addDays(new Date(), -30)); } }
+    else if (d.f === 'ln') src.lossN = d.v;
     else if (d.f === 'bf') src.bf = !src.bf || undefined;
     else if (d.f === 'when') { delete src.ppAt; delete src.ppOld; if (d.v === 'old') src.ppOld = true; else src.ppAt = C.iso(C.addDays(new Date(), d.v === '6' ? -91 : -274)); }
     if (d.scope !== 'onb') save();
@@ -8876,6 +8981,17 @@ const actions = {
   onbFocus: d => { const f = ui.onb.focus = ui.onb.focus || []; const i = f.indexOf(d.v); i < 0 ? f.push(d.v) : f.splice(i, 1); markOn('onbFocus', d.v); },
   setPurpose: d => { state.profile.purpose = d.v; if (d.v === 'after' && !state.profile.preg) state.profile.preg = 'kids'; save(); toast(d.v === 'conceive' ? 'Fertility guidance on' : d.v === 'after' ? 'After-birth guidance on' : 'Saved'); render(); },
   afterAge: d => { const x = AFTER_AGE.find(a => a[0] === d.v); if (!x) return; const p = state.profile; p.preg = 'kids'; p.ppAt = C.iso(C.addDays(new Date(), -x[2])); delete p.ppOld; save(); render(); },
+  lossOpen: d => { ui.lsOpen = ui.lsOpen === d.v ? null : d.v; render(); },
+  lossHelp: d => { const src = d.scope === 'onb' ? ui.onb : state.profile; let h = [...(src.lossHelp || [])];
+    if (d.v === 'quiet') h = h.includes('quiet') ? [] : ['quiet']; else { h = h.filter(x => x !== 'quiet'); h = h.includes(d.v) ? h.filter(x => x !== d.v) : [...h, d.v]; }
+    src.lossHelp = h; if (d.scope !== 'onb') save(); ui.onbStill = true; render(); },
+  lossSet: d => { const p = state.profile;
+    if (d.f === 'care') p.lossCare = !lossCare();
+    else if (d.f === 'word') p.lossWord = d.v;
+    else if (d.f === 'due') { if (!p.lossDue) { toast('Add your due date first'); return; } p.lossDueOn = !p.lossDueOn || undefined; }
+    else if (d.f === 'share') { p.lossShare = !p.lossShare || undefined; p.liveM = null; (state.partners || []).forEach(x => syncTo(x)); publishLive(); toast(p.lossShare ? 'Shared gently with your partner' : 'No longer shared'); }
+    else if (d.f === 'ready') { if (p.lossReady) delete p.lossReady; else { p.lossReady = true; p.purpose = 'conceive'; if (!p.ttc || p.ttc === 'wait') { p.ttc = 'new'; p.ttcSince = todayISO(); } toast('Your fertile window is back on Today'); } }
+    save(); render(); },
   trOpen: () => { ui.trOpen = !ui.trOpen; render(); },
   afterOpen: d => { ui.afOpen = ui.afOpen === d.v ? null : d.v; render(); },
   setBc: d => { const p = state.profile; p.bc = d.v; if (!hormonalBC(d.v)) delete p.bcPlan; else p.bcPlan = p.bcPlan || 'think'; save(); render(); },
@@ -9617,6 +9733,7 @@ function render() {
     unlock: viewUnlock,
     after: viewAfter,
     trying: viewTrying,
+    loss: viewLoss,
     recipe: () => viewRecipe(r.id), ritual: () => viewRitual(r.id), point: () => viewPoint(r.id), article: () => viewArticle(r.id), learn: viewLearn,
   };
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];

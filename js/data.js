@@ -2553,3 +2553,54 @@ export const TTC_DO = {
   ovulatory: ['Your best days', 'Sex today and tomorrow', 'Check for clear, stretchy discharge', 'Today'],
   luteal: ['Stay warm and wait', 'Warm meals and gentle walks', 'Test if your period is a day late', 'This week'],
 };
+
+// ---------- After a pregnancy loss (miscarriage, ectopic or an ended pregnancy) ----------
+// Words: her own ("miscarriage" or "pregnancy loss"), never "failed". Doses conservative, cautions included.
+export const LOSS_HELP = [['body', '🌿', 'Healing my body', 'Bleeding, my first period, warning signs'], ['feel', '🤍', 'Making sense of my feelings', 'Grief, sleep and the people around me'],
+  ['again', '🌱', 'Knowing when I can try again', 'When it’s safe, and what helps'], ['quiet', '🔒', 'Just tracking quietly', 'No extra cards or notes']];
+// three recovery steps, by days since the loss
+export const LOSS_STEPS = [[0, 14, 'Bleeding eases', 'Weeks 1 to 2'], [14, 42, 'First period', 'Usually weeks 4 to 6'], [42, 9999, 'Your rhythm again', 'Cycles settle']];
+export const LOSS_WARN = [['Soaking 2 large pads an hour, 2 hours in a row', 'Heavy bleeding'], ['Fever over 38 °C, chills or smelly discharge', 'Infection'],
+  ['Strong pain that painkillers don’t ease', 'Pain'], ['Pain on one side, in the shoulder tip, or feeling faint', 'Emergency'], ['Still bleeding after 2 weeks, or a positive test after 4', 'Check-up']];
+export const LOSS_TOPICS = [
+  { k: 'body', ic: 'drop', t: 'Your body', big: '2 wks', bigS: 'bleeding usually eases', s: 'What is normal now',
+    short: ['Bleeding like a heavy period that slowly gets lighter over 1 to 2 weeks.', 'Your first period usually comes 4 to 6 weeks later.', 'Pads, not tampons, until the bleeding stops.'],
+    more: ['Pregnancy hormone (hCG) falls over a few weeks, so a pregnancy test can stay positive for up to about 4 weeks. That is normal and not a sign that something is left.',
+      'You can ovulate again about 2 weeks after the loss, before your first period. Your predictions in the app stay rough until that first period, then they find your rhythm again.',
+      'After a later loss your breasts can feel full or leak a little. A well-fitting bra, cool cabbage leaves and not expressing help it settle in a few days.'] },
+  { k: 'why', ic: 'heart', t: 'Not your fault', big: '15%', bigS: 'of recognised pregnancies', s: 'Why it happens',
+    short: ['Most early losses come from a chromosome change in the pregnancy itself.', 'Not from work, sport, sex, stress, lifting or a fall.', 'About 1 in 10 women have a miscarriage in their life.'],
+    more: ['In the first 12 weeks, about half of losses come from a random chromosome change as the cells first divide. Nothing she did started it, and nothing could have stopped it.',
+      'Age adds risk slowly from the mid thirties, and some health conditions do too, which is why tests are offered after repeat losses. One loss on its own does not mean the next pregnancy will go the same way: most women go on to have a baby.'],
+    study: ['Quenby et al.', 2021, 'The Lancet', 'Pooled data from millions of pregnancies: about 15 in 100 recognised pregnancies end in miscarriage, and about 1 in 10 women have one in their lifetime.'] },
+  { k: 'feel', ic: 'mind', t: 'Your feelings', big: '29%', bigS: 'show trauma signs a month on', s: 'Why the grief is real',
+    short: ['Grief, anger, guilt, jealousy and numbness are all normal.', 'It can come back at the due date, or at a friend’s scan photo.', 'Partners grieve too, often more quietly.'],
+    more: ['You lost a pregnancy and a future you had already started to imagine. People around you may not know it happened, so the grief can feel invisible. It is still grief.',
+      'Partners often hold it together for you and grieve later or alone. Telling each other how it is for each of you, even in a few words, protects you both.',
+      'Ask for help if you feel low or anxious for more than 2 weeks, if the moment keeps replaying, or if you can’t sleep. Talking to someone works, and the trauma signs usually ease with time.'],
+    study: ['Farren et al.', 2020, 'Am J Obstet Gynecol', 'Followed over 500 women after an early pregnancy loss: a month on, 29% had signs of post-traumatic stress, 24% anxiety and 11% depression. By 9 months these had fallen, but 18% still had trauma signs.'] },
+  { k: 'warm', ic: 'bowl', t: 'Warm days', big: '4 wks', bigS: 'of warm, slow food', s: 'Food and rest to rebuild',
+    short: ['Warm, cooked meals: bone broth, stews, eggs, root vegetables.', 'Rebuild iron: red meat or liver with peppers or lemon.', 'No raw or cold food while you bleed.'],
+    more: ['Chinese medicine calls the weeks after a loss a “small month”: a short version of the rest after birth. Warmth, broths, ginger and early nights, and no cold drinks or raw food until the bleeding stops.',
+      'If the bleeding was heavy, ask for a ferritin test. Take iron only if it is low and at the dose your doctor gives (often 40 to 65 mg a day or every other day), with vitamin C, a couple of hours apart from your coffee or tea. Iron can upset the stomach, so take it with a little food.',
+      'Gentle walks are good once you feel ready. Wait with hard training, swimming and sex until the bleeding has stopped.'] },
+  { k: 'again', ic: 'seed', t: 'Trying again', big: '1 period', bigS: 'is all the wait you need', s: 'When you are ready',
+    short: ['Ready is your decision, never a date in a calendar.', 'Medically, there is no need to wait beyond your first period.', 'Keep taking folic acid, 400 µg a day.'],
+    more: ['Waiting for one period makes a new due date easier to work out, but it isn’t needed for your health. Emotionally, take as long as you need: some women want to try straight away, some need months.',
+      'Folic acid 400 µg a day protects a new baby’s spine. Some women need 5 mg on prescription (diabetes, a high BMI, epilepsy medicine, or a past baby with a spine problem): ask your doctor.'],
+    study: ['Schliep et al.', 2016, 'Obstet Gynecol', 'Among about 1,000 women after an early loss, those who started trying within 3 months were more likely to have a baby (53% vs 36%) than those who waited, with no extra risk.'] },
+];
+// after 2 or more losses: what to ask for (ESHRE 2022 guideline), as spec rows
+export const LOSS_REPEAT = [['Blood tests', 'Antiphospholipid antibodies, thyroid (TSH and TPO)'], ['Ultrasound', 'The shape of your womb'], ['Chromosomes', 'Of the pregnancy tissue, sometimes of you both'],
+  ['Progesterone', 'Bleeding early in a new pregnancy? Ask about vaginal progesterone 400 mg twice a day, on prescription']];
+export const LOSS_NOTES = {
+  am: ['Good morning, {n}. There is no right way to feel today. Whatever comes is allowed.', 'Your body is healing, even on the days it doesn’t feel like it. Go slowly this morning.', 'Something warm to drink before anything else, {n}. You don’t have to be fine today.', 'Some mornings are heavier than others. If today is one, be as gentle with yourself as you would be with a friend.'],
+  mid: ['Just checking in, {n}. Have you eaten something warm today?', 'If grief comes in waves today, let it. It doesn’t mean you are going backwards.', 'A short walk, a hand on your belly, a few slow breaths. Small things count.'],
+  pm: ['You got through today. That is enough, {n}.', 'Tonight, rest is the only thing on your list.', 'If you want to, say what you feel out loud or write it down. If not, that’s okay too.', 'Your body did something hard. It deserves a warm bed and an early night.'],
+};
+export const LOSS_JOURNAL = ['What do you need most today, even if it’s small?', 'What would you like to say that you haven’t said yet?', 'Who has been good to be around lately?',
+  'What helped, even a little, today?', 'What do you want people to understand about how you feel?', 'What is one kind thing you can do for your body tonight?'];
+// his read (partner view), when she chooses to share
+export const LOSS_PARTNER = [['Say it out loud', 'Say “I’m so sorry” and name it. Silence feels like it didn’t matter.'], ['Ask, don’t fix', '“What do you need today?” beats advice or silver linings.'],
+  ['Take the load', 'Food, errands, telling family. Let her rest without asking.'], ['Your grief counts too', 'You lost something as well. Talk to her or a friend, don’t carry it alone.'],
+  ['Remember the dates', 'The due date and the day it happened can be hard. A small sign that you remember means a lot.']];
