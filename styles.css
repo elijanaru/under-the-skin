@@ -12735,6 +12735,22 @@ html .pv2-3d.sm .cup3d-w canvas.teacup3d { inset: 0; width: 100%; height: 100%; 
 .jr-e p { margin: 0; font-size: 14px; line-height: 1.45; color: #20301a; white-space: pre-wrap; }
 @media (prefers-reduced-motion: reduce) { .jr-q.in { animation: none; } }
 
+/* ---------- Pregnancy history picker (onboarding and Profile) ---------- */
+.pg-list { display: grid; gap: 10px; margin-top: 14px; }
+.pg-o { display: grid; grid-template-columns: 46px 1fr 24px; gap: 12px; align-items: center; width: 100%; text-align: left; padding: 12px 14px 12px 12px; border-radius: 22px; background: #fff; border: 1.5px solid rgba(32,48,26,.08); color: #20301a; box-shadow: 0 10px 26px -20px rgba(32,48,26,.4); transition: border-color .3s, transform .3s; }
+.pg-o:active { transform: scale(.985); }
+.pg-e { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-size: 22px; background: #f3efe9; }
+.pg-t b { display: block; font-size: 15.5px; font-weight: 500; } .pg-t small { display: block; font-size: 12.5px; color: #6b7462; margin-top: 2px; line-height: 1.3; }
+.pg-o > i { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; border: 1.5px solid rgba(32,48,26,.18); color: transparent; }
+.pg-o.on { border-color: #20301a; } .pg-o.on > i { background: #20301a; border-color: #20301a; color: #fff; }
+.pg-more { margin-top: 14px; padding: 14px; border-radius: 22px; background: rgba(255,255,255,.75); }
+.pg-more > small { display: block; font-size: 12.5px; font-weight: 500; color: #56624a; margin-bottom: 8px; }
+.pg-more .pg-bf { margin-top: 10px; }
+.pg-what { display: flex; gap: 8px; align-items: flex-start; margin: 12px 2px 0; font-size: 13px; line-height: 1.45; color: #304023; }
+.pg-what svg { flex: none; margin-top: 2px; color: #c9798f; }
+.pg-prof .pg-list { margin-top: 0; } .pg-prof .pg-o { box-shadow: none; background: #fbfaf8; }
+.pg-prof .pg-more { background: #f6f3ef; }
+
 /* For how you feel (Food guide, Superfoods): one white card per logged symptom, four food tiles (picture, name, amount, why), the tip behind a tap. */
 .ff-lead { margin: -6px 4px 12px; font-size: 14px; color: rgba(32,48,26,.66); }
 .ff { margin: 0 0 14px; padding: 16px 14px 6px; border-radius: 28px; background: rgba(255,255,255,.97); border: 1px solid rgba(48,64,35,.08); box-shadow: 0 16px 34px -22px rgba(48,64,35,.55); color: #20301a; }
@@ -12760,3 +12776,12 @@ html .pv2-3d.sm .cup3d-w canvas.teacup3d { inset: 0; width: 100%; height: 100%; 
 .ff-why[open] summary svg { transform: rotate(180deg); }
 .ff-why p { margin: 0 4px 12px; font-size: 13.5px; line-height: 1.45; color: rgba(32,48,26,.72); }
 @media (prefers-reduced-motion: reduce) { .ff-why summary svg { transition: none; } }
+/* Pregnancy follow-up: readable on the onboarding photo */
+.pg-more { background: #fff; box-shadow: 0 10px 26px -20px rgba(32,48,26,.4); }
+.pg-more > small { color: #56624a; }
+.pg-more .chips { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pg-more .chip { width: 100%; justify-content: center; text-align: center; padding: 10px 8px; border-radius: 999px; font-size: 13.5px; font-weight: 400; color: #20301a; background: #f6f3ef; border: 1.5px solid transparent; box-shadow: none; backdrop-filter: none; }
+.pg-more .chip.on { background: #20301a; color: #fff; border-color: #20301a; }
+.pg-more .pg-bf { grid-column: 1 / -1; }
+.onb.no-fig .pg-more .chip { background: #f6f3ef !important; color: #20301a !important; border: 1.5px solid transparent !important; box-shadow: none !important; -webkit-backdrop-filter: none; backdrop-filter: none; text-shadow: none !important; }
+.onb.no-fig .pg-more .chip.on { background: #20301a !important; color: #fff !important; border-color: #20301a !important; }

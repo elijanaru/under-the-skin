@@ -1286,7 +1286,9 @@ function viewOnboarding() {
         <div class="big-stepper ${o.unsure ? 'dim' : ''}">${stepper('cycleLength', o.cycleLength, 'onb', true)}<span>days</span></div>
         <button class="chip unsure ${o.unsure ? 'on' : ''}" data-action="onbUnsure">${o.unsure ? icon('check', 14, 2.4) : ''} I’m not sure</button>
         ${o.unsure ? '<p class="muted sm">No problem: we’ll start with 28 days and learn your real cycle automatically as soon as you log your next period.</p>' : ''}`,
-    6: `<h2 class="onb-title">Are you on <span>birth control?</span></h2>
+    6: ui.onbPreg ? `<h2 class="onb-title">Have you been <span>pregnant before?</span></h2>
+        <p class="muted">Pregnancy and birth can change your cycle and what your body needs. Optional, and only you can see it.</p>
+        ${pregPicker(o, 'onb')}` : `<h2 class="onb-title">Are you on <span>birth control?</span></h2>
         <div class="bc-list">${BIRTH_CONTROL.map(b => `<button class="bc-opt has-pic ${o.bc === b.k ? 'on' : ''}" data-action="onbBc" data-v="${b.k}"><span class="bc-pic">${BC_PIC[b.k] || ''}</span><span class="bc-tx"><b>${b.t}</b><small>${b.s}</small></span><i>${icon('check', 14, 2.6)}</i></button>`).join('')}</div>
         <div class="bc-slot">${bcQHTML(o)}</div>`,
     7: `<h2 class="onb-title">Why are <span>you here?</span></h2>
@@ -1300,7 +1302,7 @@ function viewOnboarding() {
 
   const flash = ui.flashOut ? '<div class="flash-out"></div>' : ''; ui.flashOut = false;
   const anim = ui.onbAnim || ''; ui.onbAnim = '';
-  const sk = s + (ui.onbWhere ? 'w' : ''), still = (ui.onbStill || (!anim && ui.onbLast === sk)) ? 'still' : ''; ui.onbStill = false; ui.onbLast = sk;
+  const sk = s + (ui.onbWhere ? 'w' : '') + (ui.onbPreg ? 'p' : ''), still = (ui.onbStill || (!anim && ui.onbLast === sk)) ? 'still' : ''; ui.onbStill = false; ui.onbLast = sk;
   return `<div class="onb no-fig step-${s} ${s === 1 && ui.onbWhere ? 'where' : ''} ${anim} ${still}">${flash}
     <div class="onb-top"><button class="icon-btn dark" data-action="onbBack" aria-label="Back">${icon('chevL', 22)}</button>${dots}${sndBtn()}</div>
     <div class="onb-body">${body}</div>
@@ -1309,6 +1311,25 @@ function viewOnboarding() {
       ${s === 10 ? '<p class="fine rm2-note">Underskin is a wellness app, not medical advice.</p>' : ''}
     </div>
   </div>`;
+}
+// ---------- Pregnancy history: asked once in onboarding (optional), editable in Profile ----------
+const PREG = [['never', '🌱', 'Never', 'Not yet, or not for me'], ['kids', '👶', 'Yes, I have children', 'One or more births'],
+  ['loss', '🌷', 'Yes, without a birth', 'A miscarriage, an ectopic or an ended pregnancy'], ['skip', 'lock', 'I’d rather not say', 'Skip this']];
+const PP_WHEN = [['6', 'Under 6 months'], ['12', '6 to 12 months'], ['old', 'Over a year ago']];
+// months since her last birth (estimated from what she picked and when), or null
+function ppMonths(p = state && state.profile) {
+  if (!p || p.preg !== 'kids' || !p.ppAt) return null;
+  return Math.max(0, Math.round(C.diffDays(new Date(), C.parseISO(p.ppAt)) / 30.4));
+}
+const postpartum = (p = state && state.profile) => !!p && p.preg === 'kids' && (p.bf || (ppMonths(p) != null && ppMonths(p) < 12));
+function pregPicker(src, scope) {
+  const v = src.preg, when = src.ppAt ? (ppMonths(src) < 6 ? '6' : ppMonths(src) < 12 ? '12' : 'old') : src.ppOld ? 'old' : '';
+  const what = v === 'kids' ? (src.bf || when === '6' || when === '12' ? 'Your predictions stay gentle while your cycle settles, and you get recovery and pelvic floor tips.' : 'Pelvic floor care becomes part of your plan.')
+    : v === 'loss' ? 'Thank you for telling us. It stays private, and we keep it in mind gently when you plan a pregnancy.' : '';
+  return `<div class="pg-list">${PREG.map(([k, e, t, sm]) => `<button class="pg-o ${v === k ? 'on' : ''}" data-action="pregSet" data-f="preg" data-v="${k}" data-scope="${scope}" aria-pressed="${v === k}"><span class="pg-e">${e === 'lock' ? GX_IC.lock : e}</span><span class="pg-t"><b>${t}</b><small>${sm}</small></span><i>${icon('check', 14, 2.6)}</i></button>`).join('')}</div>
+    ${v === 'kids' ? `<div class="pg-more"><small>Your last birth</small><div class="chips">${PP_WHEN.map(([k, t]) => `<button class="chip ${when === k ? 'on' : ''}" data-action="pregSet" data-f="when" data-v="${k}" data-scope="${scope}">${t}</button>`).join('')}</div>
+      <button class="chip pg-bf ${src.bf ? 'on' : ''}" data-action="pregSet" data-f="bf" data-v="1" data-scope="${scope}">${src.bf ? icon('check', 13, 2.6) : '🍼'} I’m breastfeeding</button></div>` : ''}
+    ${what ? `<p class="pg-what">${icon('heart', 14)} ${what}</p>` : ''}`;
 }
 function stepper(field, val, scope, big) {
   return `<div class="stepper ${big ? 'big' : ''}"><button data-action="step" data-field="${field}" data-d="-1" data-scope="${scope}">−</button>
@@ -2436,7 +2457,7 @@ function eatCatInner(phase, cat) {
   return `${cat === 'supps' ? `<header class="sfc-h sup-h"><small><i style="background:${PH_HEX[phase]}"></i>${PHASES[phase].name} phase</small><h3>${(PHASE_FUNDAMENTALS[phase] || {}).t || 'For your phase'}</h3><p>${C0[0]}</p></header>` : `<p class="eb-lead">${C0[0]}</p>`}
       <div class="eb-grid" style="--t1:${t1};--t2:${t2}">${items.map((x, i) => `<button class="eb-i ${i ? '' : 'on'}" data-action="ebPick" style="--i:${i}"><span class="eb-b">${x.face}</span><small>${x.n.replace(/\s*\(.*\)$/, '')}</small><template>${x.panel}</template></button>`).join('')}</div>
       <div class="eb-panel"><div class="ebp-in" aria-live="polite">${items[0]?.panel || ''}</div>${warm && (cat === 'dairy' || cat === 'drinks') ? `<p class="eb-warm">${icon('sun', 13)} These days: everything warm or at room temperature, nothing iced.</p>` : ''}</div>
-      ${cat === 'supps' ? `<p class="eg-note">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}.</p><button class="sup-all" data-action="nav" data-to="supp">All supplements: doses and studies ${icon('chevR', 14)}</button>` : ''}`;
+      ${cat === 'supps' ? `<p class="eg-note">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}${state.profile.bf ? ' or are breastfeeding' : ''}.</p><button class="sup-all" data-action="nav" data-to="supp">All supplements: doses and studies ${icon('chevR', 14)}</button>` : ''}`;
 }
 // The two best dishes for each phase, as one photo card with the day, the phase and its tagline in the middle.
 // Menstrual photos (Pexels licence): broth by jenvit keiwalinsarid (3559899), steak (618775). Others: recipe photos (Unsplash).
@@ -3639,10 +3660,14 @@ function dueReminders() {
   if (!M || !M.info) return [];
   const r = rem(), info = M.info, today = todayISO(), out = [];
   if (r.period) {
-    if (info.late) out.push({ id: 'late', icon: 'drop', title: `Period ${plural(info.late, 'day')} late`, body: `Stress, travel and sleep can shift your cycle. Log your period when it arrives${ttc() ? ', and take a test if you might be pregnant' : ''}.` });
+    if (info.late) out.push({ id: 'late', icon: 'drop', title: `Period ${plural(info.late, 'day')} late`, body: postpartum() ? `After a birth${state.profile.bf ? ' and while breastfeeding' : ''}, late or paused periods are common. Log your period when it arrives${ttc() ? ', and take a test if you might be pregnant' : ''}.` : `Stress, travel and sleep can shift your cycle. Log your period when it arrives${ttc() ? ', and take a test if you might be pregnant' : ''}.` });
     else if (info.dueToday) out.push({ id: 'due', icon: 'drop', title: 'Period expected today', body: 'Keep warm, have supplies ready and plan a softer day.' });
     else if (!info.isPeriod && info.daysToPeriod <= r.periodDays) out.push({ id: 'period', icon: 'drop', title: `Period in ${plural(info.daysToPeriod, 'day')}`, body: 'Pack supplies, stock up on iron-rich food and ginger tea, and keep your calendar light.' });
   }
+  if (postpartum()) out.push({ id: 'postpartum', icon: 'heart', title: 'Your cycle after birth', body: state.profile.bf
+    ? 'While breastfeeding, periods can pause or come irregularly, and you can ovulate before your first period returns. Predictions stay rough until your cycle settles.'
+    : 'In the first year after birth, cycles often run irregular. Your predictions sharpen with every period you log.' });
+  if (state.profile.preg === 'kids') out.push({ id: 'pelvic', icon: 'heart', title: 'Pelvic floor, a few minutes a day', body: '3 sets of 10 slow squeezes a day keep your pelvic floor strong after pregnancy. Leaking or a heavy feeling? See a women’s health physio.' });
   if (r.phase) {
     const y = C.dayInfo(C.addDays(new Date(), -1), M.stats);
     if (y && y.phase !== info.phase) out.push({ id: 'phase-' + info.phase, icon: 'spark', title: `Welcome to your ${PHASES[info.phase].name} phase`, body: `${PHASES[info.phase].tagline} Focus: ${NUTRITION[info.phase].focus}` });
@@ -4414,7 +4439,7 @@ function viewSupp(id) {
     ${(SUPP_FOOD[x.id] || []).length ? `${sectionTitle('Food first')}<section class="card glass nu-food">${suppFoodHead(x.id)}${SUPP_FOOD[x.id].map((r, i) => suppFoodRow(x.id, r, i)).join('')}${warmWindow(M.info) ? '<small class="tf-all">You\u2019re in your warm window: pick the cooked and warm ones until your period ends.</small>' : ''}</section>` : ''}
     ${remedyScience(x, { [x.id]: x })}
     ${(() => { const L = SUPP_LIB.filter(y => ttc() || !/prenatal|coq10/.test(y.id)), nx = L[(L.indexOf(x) + 1) % L.length]; return `<button class="card glass nu-next" data-action="nav" data-to="supp/${nx.id}"><small>Next</small><b>${nx.name}</b>${icon('chevR', 16)}</button>`; })()}
-    <p class="fine center">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}. Food first, supplements to fill the gaps.</p>
+    <p class="fine center">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}${state.profile.bf ? ' or are breastfeeding' : ''}. Food first, supplements to fill the gaps.</p>
   </div>`;
 }
 const suppShort = x => { const w = x.name.replace(/\s*\(.*\)/, '').split(' '); return /^vitamin$/i.test(w[0]) ? w.slice(0, 2).join(' ') : w[0]; };
@@ -4470,7 +4495,7 @@ function viewSupps() {
     ${now && on.length ? suppStack(on, now) : ''}
     <div class="seg">${(now ? [['now', 'For now'], ['all', 'All']] : [['all', 'All']]).map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="supTab" data-v="${k}">${l}</button>`).join('')}</div>
     <section class="nu2-list sup2-list"><p class="nu2-k"><span>Bars: the phases it helps most</span><span>Daily dose</span></p>${(tab === 'now' && on.length ? on : L).map(row).join('')}</section>
-    <p class="fine center">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}.</p></div>`;
+    <p class="fine center">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}${state.profile.bf ? ' or are breastfeeding' : ''}.</p></div>`;
 }
 // Science block for remedies, rituals and supplements: a numbered pathway, one card per study with its year, then cautions.
 function studyCards(study, cite) {
@@ -7912,6 +7937,8 @@ function viewProfile() {
     ${sectionTitle('How you eat')}
     <section class="card glass"><div class="chips">${DIETS.map(x => `<button class="chip ${(p.diet || 'all') === x.k ? 'on' : ''}" data-action="setDiet" data-v="${x.k}">${x.g} ${x.t}</button>`).join('')}</div>
       <p class="fine" style="margin:10px 0 0">${DIETS.find(x => x.k === (p.diet || 'all')).s}. Your recipes, food guide and supplements follow this.${DIET_GUIDE[p.diet] ? ` <button class="link" data-action="nav" data-to="diet">Open your guide</button>` : ''}</p></section>
+    ${sectionTitle('Pregnancy history')}
+    <section class="card glass pg-prof">${pregPicker(p, 'profile')}</section>
     ${sectionTitle('Birth control')}
     <section class="card glass"><div class="chips">${BIRTH_CONTROL.map(b => `<button class="chip ${(p.bc || 'none') === b.k ? 'on' : ''}" data-action="setBc" data-v="${b.k}">${b.t}</button>`).join('')}</div>
       ${hormonalBC(p.bc) ? `<p class="muted sm" style="margin:12px 0 8px">Coming off it?</p><div class="chips">${BC_PLAN.map(b => `<button class="chip ${p.bcPlan === b.k ? 'on' : ''}" data-action="setBcPlan" data-v="${b.k}">${b.t}</button>`).join('')}</div>` : ''}</section>
@@ -8639,13 +8666,15 @@ const actions = {
     if (ui.onbStep === 1 && !ui.onbWhere) { ui.onbWhere = true; ui.onbAnim = 'fwd'; render(); window.scrollTo(0, 0); return; } // name → where she lives
     if (ui.onbStep === 1) { ui.onb.country = ui.onb.country || myCountry(); ui.onbWhere = false; }
     if (ui.onbStep === 6 && !ui.onb.bc) { toast('Pick one, so we can tailor your plan'); return; }
+    if (ui.onbStep === 6 && !ui.onbPreg) { ui.onbPreg = true; ui.onbAnim = 'fwd'; render(); window.scrollTo(0, 0); return; } // birth control → pregnancy history
+    if (ui.onbStep === 6) ui.onbPreg = false;
     if (ui.onbStep < 10) { ui.onbStep += ui.onbStep === 4 && ui.onb.noPeriod ? 2 : 1; ui.onbAnim = 'fwd'; render(); window.scrollTo(0, 0); return; }
     if (!o_ok()) { toast('Pick the day your last period started'); ui.onbStep = 4; render(); return; }
     const o = ui.onb, logs = {}, s = C.parseISO(o.last);
     if (!o.noPeriod) for (let i = 0; i < o.periodLength; i++) { const d = C.addDays(s, i); if (d <= new Date()) logs[C.iso(d)] = { flow: i === 0 || i === 1 ? 'medium' : 'light' }; }
     ui.arrive = true;
     let pend = null; try { pend = b64d(localStorage.getItem('uts.pendingPartner') || ''); localStorage.removeItem('uts.pendingPartner'); } catch {}
-    state = { onboarded: true, profile: { name: o.name.trim(), country: o.country || myCountry(), diet: o.diet || 'all', cycleLength: o.unsure || o.noPeriod ? 28 : o.cycleLength, cycleUnsure: !!(o.unsure || o.noPeriod), noPeriod: !!o.noPeriod || undefined, bc: o.bc || 'none', bcPlan: hormonalBC(o.bc) ? o.bcPlan || 'think' : undefined, bcStop: o.bcPlan === 'stop' ? todayISO() : undefined, planStart: todayISO(), periodLength: o.periodLength, goals: o.goals, purpose: o.purpose || 'know', focus: (o.focus && o.focus.length) ? o.focus : ['hormones', 'energy', 'eat'], birthday: o.birthday || undefined, birthTime: o.birthday && o.birthTime || undefined, birthPlace: o.birthday && o.birthPlace || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
+    state = { onboarded: true, profile: { name: o.name.trim(), country: o.country || myCountry(), diet: o.diet || 'all', cycleLength: o.unsure || o.noPeriod ? 28 : o.cycleLength, cycleUnsure: !!(o.unsure || o.noPeriod), noPeriod: !!o.noPeriod || undefined, preg: o.preg || undefined, ppAt: o.ppAt || undefined, ppOld: o.ppOld || undefined, bf: o.bf || undefined, bc: o.bc || 'none', bcPlan: hormonalBC(o.bc) ? o.bcPlan || 'think' : undefined, bcStop: o.bcPlan === 'stop' ? todayISO() : undefined, planStart: todayISO(), periodLength: o.periodLength, goals: o.goals, purpose: o.purpose || 'know', focus: (o.focus && o.focus.length) ? o.focus : ['hormones', 'energy', 'eat'], birthday: o.birthday || undefined, birthTime: o.birthday && o.birthTime || undefined, birthPlace: o.birthday && o.birthPlace || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
     if (pend && pend.s && pend.c) state.partners = [{ ...pend, id: Date.now().toString(36), added: Date.now() }];
     ui.scrollMem = {}; ui.navStack = []; save(); go('today'); render(); toTop(); requestAnimationFrame(toTop); setTimeout(toTop, 400); // she lands at the very top of Today
     if (state.partners?.length) { M = model(); syncTo(state.partners[0]); startSignals(); }
@@ -8654,8 +8683,18 @@ const actions = {
   termsAgree: () => { const at = Date.now(); state.termsAt = at; try { localStorage.setItem('uts.termsAt', String(at)); } catch {} save(); render(); },
   onbBack: () => { if (ui.onbStep === 1 && ui.onbWhere) { ui.onbWhere = false; ui.onbAnim = 'back'; render(); return; }
     if (ui.onbStep === 2) { ui.onbStep = 1; ui.onbWhere = true; ui.onbAnim = 'back'; render(); return; }
+    if (ui.onbStep === 6 && ui.onbPreg) { ui.onbPreg = false; ui.onbAnim = 'back'; render(); return; }
+    if (ui.onbStep === 7) { ui.onbStep = 6; ui.onbPreg = true; ui.onbAnim = 'back'; render(); return; }
     if (ui.onbStep === 1 && ui.onbGateDone && !A.currentUser() && A.configured()) { ui.onbGateDone = false; ui.onbAnim = 'back'; render(); return; } ui.onbStep = Math.max(0, ui.onbStep - (ui.onbStep === 6 && ui.onb.noPeriod ? 2 : 1)); ui.onbAnim = 'back'; render(); },
   onbDiet: d => { ui.onb.diet = d.v; document.querySelectorAll('.dt-c').forEach(b => { b.classList.toggle('on', b.dataset.v === d.v); b.setAttribute('aria-pressed', b.dataset.v === d.v); }); const pk = document.querySelector('.dt-peek'); if (pk) pk.innerHTML = dvPeek(d.v); },
+  pregSet: d => {
+    const src = d.scope === 'onb' ? ui.onb : state.profile;
+    if (d.f === 'preg') { src.preg = d.v; if (d.v !== 'kids') { delete src.ppAt; delete src.ppOld; delete src.bf; } }
+    else if (d.f === 'bf') src.bf = !src.bf || undefined;
+    else if (d.f === 'when') { delete src.ppAt; delete src.ppOld; if (d.v === 'old') src.ppOld = true; else src.ppAt = C.iso(C.addDays(new Date(), d.v === '6' ? -91 : -274)); }
+    if (d.scope !== 'onb') save();
+    ui.onbStill = true; render();
+  },
   setDiet: d => { state.profile.diet = d.v; save(); toast(`${DIETS.find(x => x.k === d.v).t}: your recipes and food guide changed`); render(); },
   onbAgo: d => { const o = ui.onb, was = !!o.noPeriod; if (d.v === 'none') { o.noPeriod = !o.noPeriod; o.ago = null; } else { o.noPeriod = false; o.ago = +d.v; o.last = C.iso(C.addDays(new Date(), -d.v)); }
     // same layout: just move the tick and the date, so the picture above doesn't replay its entrance
