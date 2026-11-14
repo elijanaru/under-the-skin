@@ -7184,13 +7184,13 @@ function viewPartners(id) {
       const ask = `<div class="sy-who-q"><b>Who is your partner?</b><small>So we send the right kind of link.</small>
         <div class="sy-pick">${[['w', 'A woman'], ['m', 'A man']].map(([k, t]) => `<button class="sy-opt sy-cat ${who === k ? 'on' : ''}" data-action="ptWho" data-v="${k}" aria-pressed="${who === k}">${catFace(k)}<b>${t}</b></button>`).join('')}</div></div>`;
       const send = who ? `<div class="sy-send"><button class="btn btn-dark" data-action="shareSend">${icon('share', 16)} Send link</button><button class="btn btn-light" data-action="shareEmail">${icon('mail', 16)} Email it</button></div>` : '';
-      if (who === 'm') return `<div class="sy-head"><span class="hud">CONNECT · 2 STEPS</span><span class="sy-prog">${[sent, sent].map(x => `<i class="${x ? 'on' : ''}"></i>`).join('')}</span></div>
+      if (who === 'm') return `<div class="sy-head"><span class="hud">Connect in 2 steps</span><span class="sy-prog">${[sent, sent].map(x => `<i class="${x ? 'on' : ''}"></i>`).join('')}</span></div>
     <ol class="sy-flow">
       <li class="sy-st paper ${sent ? 'is-done' : ''}">${sent ? done() : '<span class="sy-n">01</span>'}<div class="sy-c">${ask}${send}</div></li>
       <li class="sy-st ${sent ? 'is-done' : ''}">${sent ? done() : '<span class="sy-n">02</span>'}<div class="sy-c">
         <span class="sy-who">Him</span><b>He opens the link</b><small>No account and no tracking. He sees your phase, energy and how to show up, plus My day: his own 24-hour hormone rhythm. It updates every day and he can save it to his home screen.</small></div></li>
     </ol>`;
-      return `<div class="sy-head"><span class="hud">${ps.length ? 'ADD SOMEONE NEW' : 'CONNECT · 2 STEPS'}</span><span class="sy-prog">${[sent, got].map(x => `<i class="${x ? 'on' : ''}"></i>`).join('')}</span></div>
+      return `<div class="sy-head"><span class="hud">${ps.length ? 'Add someone new' : 'Connect in 2 steps'}</span><span class="sy-prog">${[sent, got].map(x => `<i class="${x ? 'on' : ''}"></i>`).join('')}</span></div>
     <ol class="sy-flow">
       <li class="sy-st paper ${sent ? 'is-done' : ''}">${sent ? done() : '<span class="sy-n">01</span>'}<div class="sy-c">${ask}${send}</div></li>
       ${who ? `<li class="sy-st ${got ? 'is-done' : ''}">${got ? done() : '<span class="sy-n">02</span>'}<div class="sy-c">
@@ -8746,9 +8746,9 @@ function viewWith(q) {
   const herTab = !him || !ui.hisTab || ui.hisTab === 'her';
   return `${mine ? `<div class="preview-bar">Preview: this is what she’ll see <button data-action="nav" data-to="partners">Done</button></div>` : ''}
   <div class="pad pv-page">
-    ${herTab ? '' : `<div class="pv-top">${back}${seg}</div>`}
+    <div class="pv-top">${back}${seg}</div>
     ${him && ui.hisTab === 'read' ? `${pvRead(snap, info, name)}</div>` : him && ui.hisTab === 'his' ? `<div class="pv2-title"><small>Your day · ${fmt(today, { weekday: 'long', month: 'short', day: 'numeric' })}</small><h1>Your <b>24-hour drive</b></h1><p>Testosterone runs on a daily clock. Use it, and see what raises it.</p></div>${snap.g ? `<section class="pv2-card pv2-warn">${icon('heart', 16)}<p><b>Trying for a baby?</b> Never take testosterone or “T boosters”. Extra testosterone shuts down your sperm. Sleep, lifting and food below are the safe way.</p></section>` : ''}${hisDay(info, name)}</div>` : `
-    <section class="hub pt-stage pv-hero">${back}${seg}${stageHero(info, Math.round(C.energyAt(info.cd, info.L, info.P) * 100), { nav: false, id: 'with', fert: !!snap.f, title: `${name} is in her` })}</section>
+    <section class="hub pt-stage pv-hero">${stageHero(info, Math.round(C.energyAt(info.cd, info.L, info.P) * 100), { nav: false, id: 'with', fert: !!snap.f, title: `${name} is in her` })}</section>
     ${pvHerDay(info, S, sup)}
     ${role === 'partner' ? pvReadTeaser(info, him) : ''}
     ${snap.l && role === 'partner' ? pvLoss(name) : snap.g && role === 'partner' ? pvTTC(snap, info, name) : snap.f && role === 'partner' ? pvAvoid(snap, info, name) : ''}

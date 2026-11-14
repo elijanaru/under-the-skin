@@ -4833,7 +4833,7 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 
 /* ---- Lower cards: tinted glass with a crisp edge, so they stand off the pale glow instead of melting into it ---- */
 .glass, .card.glass, .hub:not(.home .hub), .card.flag, .conceive {
-  background: linear-gradient(170deg, rgba(255,255,255,.74), rgba(255,255,255,.46)) !important;
+  background: linear-gradient(170deg, rgba(255,255,255,.95), rgba(255,255,255,.86)) !important;
   border: 1px solid rgba(255,255,255,.9) !important;
   box-shadow: inset 0 1px 0 #fff, 0 0 0 1px rgba(48,64,35,.07), 0 20px 44px rgba(40,36,50,.14), 0 3px 8px rgba(40,36,50,.07) !important; }
 .chart-card.glass { background: linear-gradient(170deg, rgba(255,255,255,.88), rgba(255,255,255,.7)) !important; }
@@ -13333,3 +13333,21 @@ html .mvp .mvp-h small { color: rgba(32,48,26,.62) !important; -webkit-text-fill
 
 /* Today alerts: a tip is never cut off mid-sentence (up to 3 lines instead of 2). */
 html .al-t small { -webkit-line-clamp: 3 !important; line-clamp: 3; }
+
+/* Sweep (15 Nov 2026): every eyebrow and subline that sits straight on the arched background is white with a
+   soft shadow, like the white title above it (Breathe, Ground, Move, Tea, Supplements, Nutrients, Hormones,
+   Trying, After birth, Loss, Saved, Partners, Learn). Text inside cards stays dark ink. */
+html .t4-h > small, html .t4-h > p, html .hs-sub, html .mvc-sub, html .ts4-sub, html .ts-credit, html .bwx-hint,
+html .pad > p.muted, html .lt-soon, html .suh-key, html .sv-hero h2, html .sv-hero p, html .sync-hero > .sy-sub {
+  color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.38), 0 1px 12px rgba(90,40,45,.36) !important; }
+html .t4-h > small { font-weight: 500 !important; }
+/* his page: tabs sit on the frame band like a header, the scalloped window opens below them, the stage sits inside it */
+.pv-top { margin-top: calc(var(--sbV) + 8px); min-height: 1px; }
+.pv-top .his-seg { margin: 0; }
+.pv-top .pv-back { margin-bottom: 0; }
+.pv-hero { margin: 56px -4px 16px !important; }
+.pv-hero .stage-phase { top: 34px !important; }
+.pv-hero .stage-scene { aspect-ratio: 900 / 1180; }
+html .sy-head .hud { font-size: 13px !important; font-weight: 500 !important; letter-spacing: 0 !important; text-transform: none !important; color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.38), 0 1px 12px rgba(90,40,45,.36) !important; opacity: 1 !important; }
+html .sy-prog i { background: rgba(255,255,255,.45); } html .sy-prog i.on { background: #fff; }
+html .pad > .link.center-link { color: #fff !important; -webkit-text-fill-color: #fff !important; font-weight: 500; text-shadow: 0 1px 2px rgba(90,40,45,.38), 0 1px 12px rgba(90,40,45,.36); }
