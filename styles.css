@@ -12439,3 +12439,7 @@ html .uvw-top small, html .uvw-sk-h small { text-transform: none !important; let
 html .uvw-lv { letter-spacing: 0; font-size: 12px; font-weight: 600; }
 .uvw-bc { display: flex; gap: 8px; align-items: flex-start; margin: -2px 2px 12px; font-size: 13px; line-height: 1.45; color: #5b4a3a; }
 .uvw-bc svg { flex: none; margin-top: 3px; color: #c0841a; }
+/* Superfoods: section headers as headline + grey subline (no more squeezed two-column title) */
+html .sfc .sfc-gh { display: block; text-align: left; margin: 20px 2px 2px; padding-top: 16px; }
+html .sfc .sfc-gh b { display: block; font: 600 18px/22px Outfit, sans-serif; letter-spacing: -.01em; color: #20301a; }
+html .sfc .sfc-gh small { display: block; margin-top: 3px; text-align: left; font: 400 13px/18px Outfit, sans-serif; color: rgba(32,48,26,.58); }

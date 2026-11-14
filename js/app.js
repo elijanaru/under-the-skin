@@ -7210,10 +7210,16 @@ function apoItems(sn) {
   const herbs = apoHerbs(sn).map(([n, cn, nat, what, how, warn]) => ({ n, sub: cn, nat, why: what, how, warn, herb: true }));
   return { sup, herbs };
 }
+// Daily food-sized amount for each season superfood, shown as a chip like the phase superfoods.
+const SEASON_AMT = { 'Sea buckthorn': ['1', 'tsp juice'], Rosehips: ['1', 'tbsp'], Elderberries: ['1', 'tbsp syrup'], 'Raw sauerkraut': ['2', 'tbsp'], Walnuts: ['1', 'handful'], 'Raw honey': ['1', 'tsp'],
+  Pomegranate: ['½', 'fruit'], 'Pumpkin seeds': ['1', 'tbsp'], Turmeric: ['½', 'tsp'], 'Young nettle': ['1', 'cup tea'], 'Wild garlic': ['1', 'handful'], 'Dandelion greens': ['1', 'handful'],
+  'Broccoli sprouts': ['1', 'handful'], Watercress: ['1', 'handful'], Blueberries: ['1', 'handful'], Raspberries: ['1', 'handful'], Cherries: ['1', 'small bowl'], 'Ripe tomatoes': ['1–2', 'tomatoes'],
+  'Chia seeds': ['1', 'tbsp'], Watermelon: ['2', 'slices'], Blackberries: ['1', 'handful'], Figs: ['2', 'figs'], 'Sesame seeds': ['1', 'tbsp'], 'Ground flaxseed': ['1', 'tbsp'], Squash: ['1', 'cup'] };
+const seasonAmt = n => { const a = SEASON_AMT[n]; return a ? `<span class="sfc-am"><b class="dotnum">${a[0]}</b>${a[1]}</span>` : ''; };
 const apoPic = x => APO_CUT[x.n] ? { src: `images/sf/${APO_CUT[x.n]}.webp` } : { src: x.herb ? teaPhoto(x.n, 300, 300) : foodPhoto(x.k, 300), round: true };
 function apoInner() {
   const sn = apoSeason(), { sup, herbs } = apoItems(sn);
-  const item = (x, i) => { const p = apoPic(x); return `<button class="sfc-i" data-action="apoPick" data-i="${i}" aria-expanded="false"><img class="${p.round ? 'rd' : ''}" src="${p.src}" alt="" loading="lazy" decoding="async"><b>${x.n}</b><small>${x.herb ? (x.nat === 'warm' ? 'Warming' : 'Neutral') : x.sub}</small></button>`; };
+  const item = (x, i) => { const p = apoPic(x); return `<button class="sfc-i" data-action="apoPick" data-i="${i}" aria-expanded="false"><img class="${p.round ? 'rd' : ''}" src="${p.src}" alt="" loading="lazy" decoding="async"><b>${x.n}</b><small>${x.herb ? (x.nat === 'warm' ? 'Warming' : 'Neutral') : x.sub}</small>${x.herb ? '' : seasonAmt(x.n)}</button>`; };
   return `<section class="sfc apo2">
       <header class="sfc-h"><small><i style="background:#6c823e"></i>${sn} · ${MONTHS[new Date().getMonth()]}</small><h3>${sn} apothecary</h3><p>${herbs.length ? 'Superfoods and warming herbs for immunity and warmth through the cold months.' : 'What nature makes best this season.'}</p></header>
       <div class="sfc-gh"><b>Season superfoods</b><small>${sup.length} to eat now</small></div><div class="sfc-grid">${sup.map(item).join('')}</div>
