@@ -513,10 +513,10 @@ function viewGround() {
       <div class="grr-f"><span>Repeat for ${GROUND_ROOTS.mins} minutes</span>${saveBtn(regTip('ground-roots', 'Grounding · roots', GROUND_ROOTS.d, 'ground'))}</div>
     </section>
 
-    <section class="msd gr-msd" style="--pc:${PH_HEX[(M.info || {}).phase] || '#6c823e'}"><header class="msd-h"><small>What studies found</small><h3>Five small studies</h3><p>From ${GROUND_STUDIES[0][1]} to ${GROUND_STUDIES[GROUND_STUDIES.length - 1][1]}. Swipe the cards.</p></header>
-      <div class="msd-deck" role="list">${GROUND_STUDIES.map(([a, y, j, f, d, n, t], i) => `<article class="msd-c" role="listitem"><div class="msd-top"><b class="dotnum">${y}</b><span><small>${j}</small><em>${i + 1} of ${GROUND_STUDIES.length}</em></span></div>
-        <div class="grs-k">${n ? `<span><small>People</small><b class="dotnum">${n}</b></span><span><small>Grounded</small><b>${t}</b></span>` : '<span class="rv"><small>Type</small><b>Review of the studies above</b></span>'}</div>
-        <h4>${f}</h4><p>${d}</p><cite>${a}</cite></article>`).join('')}</div>
+    <section class="msd msd2 gr-msd" style="--pc:${PH_HEX[(M.info || {}).phase] || '#6c823e'}"><header class="msd-h"><small>What studies found</small><h3>Five small studies</h3><p>From ${GROUND_STUDIES[0][1]} to ${GROUND_STUDIES[GROUND_STUDIES.length - 1][1]}, small but promising.</p></header>
+      <div class="msd-deck deck" role="list" data-dots="grs-dots">${GROUND_STUDIES.map(([a, y, j, f, d, n, t], i) => `<article class="msd-c" role="listitem"><figure class="msd-g">${groundArt(i)}<figcaption>${n ? `${n} people · grounded ${t}` : 'A review of the studies before it'}</figcaption></figure>
+        <h4>${f}</h4><p>${d}</p><footer class="msd-f"><span><b>${a}</b><small>${j}</small></span><em class="dotnum">${y}</em></footer></article>`).join('')}</div>
+      <div class="lt-dots msd-dots" id="grs-dots">${GROUND_STUDIES.map((_, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div>
       <div class="ck-first gr-ck"><span class="ck-i">!</span><div><small>Keep in mind</small><p>${GROUND_CAUTION}</p></div></div></section>
   </div>`;
 }
@@ -1705,6 +1705,17 @@ function viewCalendar() {
     <p class="fine center">Low mood that stays, or PMS that takes over your life, is worth a doctor’s visit.</p>
   </div>
 `;
+}
+// Ground › Five small studies: one small chart per study, drawn from what it measured.
+function groundArt(i) {
+  const ink = '#20301a', pc = 'var(--pc)', soft = 'rgba(32,48,26,.14)', T = (x, y, t, c = ink, a = 'start') => `<text x="${x}" y="${y}" font-size="10.5" font-family="Outfit" font-weight="500" fill="${c}" text-anchor="${a}">${t}</text>`;
+  let g = '';
+  if (i === 0) g = `<path d="M0 40 C30 30 50 52 80 34 S130 50 160 30 S220 44 260 36" fill="none" stroke="${ink}" stroke-width="1.8" stroke-dasharray="4 4" opacity=".45"/><path d="M0 54 C40 54 60 12 90 12 S150 40 200 52 S240 56 260 56" fill="none" stroke="${pc}" stroke-width="2.8" stroke-linecap="round"/>${T(0, 68, 'Night')}${T(90, 68, 'Morning', ink, 'middle')}${T(260, 68, 'Night', ink, 'end')}${T(262, 10, 'After 8 weeks', pc, 'end')}${T(262, 24, 'Before', 'rgba(32,48,26,.55)', 'end')}`;
+  else if (i === 1) g = ['Day 1', 'Day 2', 'Day 3'].map((l, k) => { const x = 4 + k * 60, u = [44, 50, 40][k], gr = [32, 26, 16][k]; return `<rect x="${x}" y="${56 - u}" width="22" height="${u}" rx="6" fill="${soft}"/><rect x="${x + 26}" y="${56 - gr}" width="22" height="${gr}" rx="6" fill="${pc}"/>${T(x + 24, 68, l, ink, 'middle')}`; }).join('') + `${T(262, 34, 'Grounded', pc, 'end')}${T(262, 50, 'Not grounded', 'rgba(32,48,26,.55)', 'end')}`;
+  else if (i === 2) { const cl = [[34, 30], [44, 26], [40, 38], [52, 34], [30, 40], [48, 44], [58, 28]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="7" fill="#c9566a" stroke="#fff" stroke-width="1.2"/>`).join(''), fr = [[160, 18], [196, 30], [232, 16], [178, 46], [220, 48], [250, 36], [146, 40]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="7" fill="#c9566a"/><circle cx="${x}" cy="${y}" r="2.6" fill="#e9a3ae"/>`).join(''); g = `${cl}${fr}<path d="M88 32 H124" stroke="${ink}" stroke-width="1.6" stroke-linecap="round"/><path d="M118 27 L124 32 L118 37" fill="none" stroke="${ink}" stroke-width="1.6" stroke-linecap="round"/>${T(44, 68, 'Before', 'rgba(32,48,26,.6)', 'middle')}${T(198, 68, 'After 2 hours', ink, 'middle')}`; }
+  else if (i === 3) g = `${T(0, 20, 'Sham')}<rect x="52" y="11" width="200" height="12" rx="6" fill="${soft}"/><rect x="52" y="11" width="74" height="12" rx="6" fill="rgba(32,48,26,.35)"/>${T(0, 50, 'Grounded')}<rect x="52" y="41" width="200" height="12" rx="6" fill="${soft}"/><rect x="52" y="41" width="150" height="12" rx="6" fill="${pc}"/>${T(252, 68, 'Better mood', 'rgba(32,48,26,.55)', 'end')}`;
+  else g = [0, 1, 2, 3].map(k => `<g transform="translate(${8 + k * 30} ${10 + (k % 2) * 4})"><rect width="24" height="32" rx="4" fill="#fff" stroke="rgba(32,48,26,.3)"/><path d="M5 9h14M5 15h14M5 21h9" stroke="rgba(32,48,26,.3)" stroke-width="1.6" stroke-linecap="round"/>${T(12, 48, ['’04', '’10', '’13', '’15'][k], ink, 'middle')}</g>`).join('') + `<path d="M140 30 H170" stroke="${ink}" stroke-width="1.6" stroke-linecap="round"/><path d="M164 25 L170 30 L164 35" fill="none" stroke="${ink}" stroke-width="1.6" stroke-linecap="round"/><g transform="translate(186 4)"><rect width="40" height="50" rx="6" fill="${pc}"/><path d="M8 14h24M8 22h24M8 30h24M8 38h14" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".85"/></g>${T(206, 68, 'One review', ink, 'middle')}`;
+  return `<svg viewBox="0 0 260 70" role="img" aria-hidden="true">${g}</svg>`;
 }
 // Calendar › Your mind across the month: one small chart per study over a 28-day phase strip (period, follicular, ovulation, luteal).
 function mindArt(g) {
