@@ -3751,6 +3751,8 @@ function groceryCard() {
       <span class="gro2-go">${icon('chevR', 16, 2)}</span>
     </button>`;
 }
+// Plain words for the Chinese-medicine goals in the grocery summary.
+const GRO_PLAIN = { 'Move Liver Qi': 'Liver flow', 'Nourish Yin & Blood': 'Blood builders', 'Cruciferous veg': 'Cabbage family', 'Slow carbs': 'Slow carbs' };
 function viewGrocery() {
   // meat and organs come right after what's in season
   const AISLE_FIRST = ['In season now', 'Protein'], rank = a => { const i = AISLE_FIRST.indexOf(a); return i < 0 ? 9 : i; };
@@ -3760,7 +3762,7 @@ function viewGrocery() {
   // nutrients this week's basket covers, each with how much of it is ticked
   const nut = {};
   for (const it of flat) { const n = it.why.replace(/ · in season$/, ''); if (/^in season/i.test(n)) continue; (nut[n] = nut[n] || []).push(it); }
-  const nuts = Object.entries(nut).sort((x, y) => y[1].length - x[1].length).slice(0, 8);
+  const seas = flat.filter(it => /in season/i.test(it.why)), nuts = [...(seas.length ? [['In season', seas]] : []), ...Object.entries(nut).sort((x, y) => y[1].length - x[1].length)].slice(0, 8);
   const warm = M.info && warmWindow(M.info) || phases.includes('menstrual');
   const aisle = groups.some(([a]) => a === ui.groAisle) ? ui.groAisle : (groups[0] || [''])[0];
   return `${topbar('Grocery list', { back: true })}
@@ -3768,12 +3770,12 @@ function viewGrocery() {
     <h1 class="page-h">This week’s <span>basket</span></h1>
     <p class="gro-lead">Built from what your next 7 days need</p>
     <div class="gro-phs">${phases.map((p, i) => `${i ? `<span class="gro-arr">${icon('chevR', 12, 2)}</span>` : ''}<span class="gro-pc" style="--c:${PH_HEX[p]}"><i></i>${PHASES[p].name}</span>`).join('')}</div>
-    <section class="card glass gro-score">
-      <div class="gs-ring"><svg viewBox="0 0 124 124">${ring(total ? done / total : 0, 54, 8)}</svg><div><b>${done}</b><small>of ${total}</small></div></div>
-      <div class="gs-t"><div class="eyebrow">In the basket</div><p>${done === total && total ? 'All done. Your week is stocked.' : done ? `${total - done} to go. Tick them off as you shop.` : 'Tick foods off as you shop. Each nutrient ring fills up.'}</p>
-        ${done ? '<button class="link" data-action="groClear">Clear ticks</button>' : ''}</div>
+    <section class="card gro-sum">
+      <div class="gsm-top"><span class="gsm-n"><b class="dotnum">${done}</b><small>of ${total} in your basket</small></span>${done ? '<button class="gsm-clear" data-action="groClear">Clear ticks</button>' : ''}</div>
+      <span class="gsm-bar" aria-hidden="true"><i style="width:${total ? Math.round(done / total * 100) : 0}%"></i></span>
+      <p class="gsm-sub">${done === total && total ? 'All done. Your week is stocked.' : done ? `${total - done} to go. Each tick fills what it feeds.` : 'Tick foods off as you shop. Each tick fills what it feeds.'}</p>
+      <div class="gsm-nuts">${nuts.map(([n, l]) => { const d = l.filter(i => got[i.name.toLowerCase()]).length, k = Math.min(l.length, 7), f = Math.round(d / l.length * k); return `<div class="gsm-r ${d === l.length ? 'full' : ''}"><span class="gsm-l"><b>${GRO_PLAIN[n] || n}</b><em><b class="dotnum">${d}</b>/${l.length}</em></span><span class="gsm-seg" aria-hidden="true">${Array.from({ length: k }, (_, i) => `<i class="${i < f ? 'on' : ''}"></i>`).join('')}</span></div>`; }).join('')}</div>
     </section>
-    <div class="gro-nuts">${nuts.map(([n, l]) => { const d = l.filter(i => got[i.name.toLowerCase()]).length; return `<div class="gn ${d === l.length ? 'full' : ''}"><svg viewBox="0 0 64 64">${ring(d / l.length, 27, 5)}</svg><b>${d}/${l.length}</b><small>${n}</small></div>`; }).join('')}</div>
     ${warm ? `<p class="gro-warm">${icon('sun', 14)} Your period falls in this week: cook the produce and stew the fruit on those days.</p>` : ''}
     ${sectionTitle('Your list')}
     <div class="tea-tabs gro-tabs">${groups.map(([a, l]) => { const d = l.filter(i => got[i.name.toLowerCase()]).length; return `<button class="${a === aisle ? 'on' : ''} ${d === l.length ? 'full' : ''}" data-action="groAisle" data-v="${esc(a)}">${a} <i>${d}/${l.length}</i></button>`; }).join('')}</div>
