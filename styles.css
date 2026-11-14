@@ -13077,3 +13077,12 @@ html .bwk-pond img { display: block; width: 100%; height: 100%; max-width: none;
 html .bwk-pond img { width: auto; height: auto; max-width: 38px; max-height: 42px; object-fit: contain; }
 .bwk-pond span:not(.on) img { filter: none; opacity: .5; transform: none; max-height: 34px; }
 .bwk-pond .now:not(.on) img { opacity: .9; }
+
+/* Consistency sweep: the last spaced-out capital labels (Your energy, Your body's habits, the gland above each hormone, Fire, Press this point, Water heat, the phase on Ground, Coming soon, New) now use the one label style: sentence case, no letter spacing, medium weight. */
+html .en-top small, html .lm-pats > small, html .hxt-g, html .rfx-g small, html .pt2-t > small, html .bg4-k, html .grp-top small {
+  text-transform: none !important; letter-spacing: 0 !important; font-size: 12.5px !important; font-weight: 500 !important;
+}
+html .hxt-g, html .rfx-g small { font-size: 11.5px !important; }
+html .bg4-k, html .grp-top small, html .hxt-g { color: rgba(32,48,26,.6) !important; }
+html .pc-soon, html body .purp:not(.full) .pc-soon { text-transform: none !important; letter-spacing: 0 !important; font-size: 11.5px !important; font-weight: 500 !important; }
+html .lt-tag i { text-transform: capitalize !important; letter-spacing: 0 !important; font-size: 11px !important; font-weight: 500; padding: 2px 8px; }
