@@ -1775,8 +1775,40 @@ function calSyncCard() {
     </section>`;
 }
 
+// ---------- Journal: one reflection prompt a day, matched to her phase, instead of a blank note ----------
+const JOURNAL = {
+  any: ['What is something your body has been trying to tell you lately?', 'What gave you energy today, and what took it?', 'What would you like to let go of before you sleep?',
+    'When did you feel most like yourself today?', 'What did your body do for you today that you are grateful for?', 'What do you need more of this week?',
+    'Who made you feel seen lately?', 'What is one small thing you did well today?'],
+  menstrual: ['What does real rest look like for you right now?', 'What feeling came up today that you want to honour, not fix?', 'What are you ready to release with this cycle?',
+    'What would you tell a friend who felt the way you do today?', 'Looking back at your last cycle, what are you proud of?'],
+  follicular: ['What new idea keeps coming back to you?', 'What would you start if you knew it would work?', 'What do you want this cycle to be about?',
+    'Where do you want to put your fresh energy this week?', 'What are you curious about right now?'],
+  ovulatory: ['When did you feel confident today?', 'What conversation have you been wanting to have?', 'Who would you love to spend more time with?',
+    'What do you love about how you show up right now?', 'What did you say yes to today, and was it a real yes?'],
+  luteal: ['What is asking for your attention right now?', 'What boundary would protect your energy this week?', 'What is one thing you can take off your plate?',
+    'What felt heavy today, and what made it lighter?', 'What does your inner critic say, and what is a kinder answer?', 'What would make tomorrow feel softer?'],
+};
+function journalPrompt(d, phase, shift = 0) {
+  const list = [...(JOURNAL[phase] || []), ...JOURNAL.any];
+  return list[(((dayNum(d) * 7 + shift) % list.length) + list.length) % list.length];
+}
+const JR_SHUF = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.7-5.6L20 8.5M20 4v4.5h-4.5M20 12a8 8 0 0 1-13.7 5.6L4 15.5M4 20v-4.5h4.5"/></svg>';
+function journalCard(d, di, l, isToday) {
+  const h = new Date().getHours(), phase = di ? di.phase : 'follicular';
+  const q = l.notes && l.jp ? l.jp : journalPrompt(d, phase, ui.jpShift || 0);
+  const label = !isToday ? 'Reflection' : h >= 17 ? 'Tonight’s reflection' : h < 11 ? 'Morning reflection' : 'Today’s reflection';
+  const past = Object.keys(state.logs).filter(k => k !== C.iso(d) && state.logs[k].notes).sort().reverse().slice(0, 5);
+  return `<div class="jr" style="--jc:${PH_HEX[phase]}">
+    <div class="jr-top"><small><i></i>${label}</small><button class="jr-shuf" data-action="jpNext" aria-label="Another prompt">${JR_SHUF}<span>Another</span></button></div>
+    <p class="jr-q" id="jr-q">${esc(q)}</p>
+    <textarea class="lg-note jr-ta" rows="4" placeholder="Write a few honest lines…" data-input="log.notes" data-jp="${esc(q)}">${esc(l.notes || '')}</textarea>
+    <p class="jr-fine">${icon('check', 12, 2.4)} Private, saved as you type. A new prompt every day.</p>
+    ${past.length ? `<details class="jr-past"><summary>Your journal <small>${past.length} ${past.length === 1 ? 'entry' : 'entries'}</small>${icon('chevD', 13)}</summary>${past.map(k => { const x = state.logs[k]; return `<div class="jr-e"><small>${fmt(C.parseISO(k), { weekday: 'short', month: 'short', day: 'numeric' })}</small>${x.jp ? `<b>${esc(x.jp)}</b>` : ''}<p>${esc(x.notes)}</p></div>`; }).join('')}</details>` : ''}
+  </div>`;
+}
 const LOG_SECS = [['flow', 'drop', 'Period & down there'], ['body', 'user', 'Body'], ['mind', 'mind', 'Mind & mood'], ['rest', 'bolt', 'Energy'],
-  ['desire', 'heart', 'Desire & intimacy'], ['disrupt', 'clock', 'Cycle disruptors'], ['note', 'book', 'Note']];
+  ['desire', 'heart', 'Desire & intimacy'], ['disrupt', 'clock', 'Cycle disruptors'], ['note', 'book', 'Journal']];
 // What she is most likely to feel today: her own patterns first, then what's common in this phase.
 const PHASE_LIKELY = { menstrual: ['Cramps', 'Fatigue', 'Back pain', 'Bloating'], follicular: ['Energetic', 'Glowing skin', 'Acne', 'Headache'],
   ovulatory: ['Energetic', 'Glowing skin', 'Bloating', 'Pelvic pain'], luteal: ['Bloating', 'Tender breasts', 'Cravings', 'Acne'] };
@@ -1873,7 +1905,7 @@ function viewLog() {
       <p class="lg-fine">Only you see this.</p>`,
     fuel: `<div class="lg-k">Food</div>${chips('intake', INTAKE.filter(([n]) => n === 'Raw & cold food'))}<div class="lg-k">Supplements & medicine <button class="link lg-more" data-action="nav" data-to="nutrients">Doses & food first ${icon('chevR', 11)}</button></div>${chips('supp', SUPPS)}`,
     disrupt: `<p class="lg-fine top">These can shift your cycle.</p><div class="rt">${DISRUPTORS.filter(([n]) => ['Alcohol', 'Illness', 'Travel', 'Big stress', 'Shock or loss'].includes(n)).map(([v, e]) => lgPick((l.disrupt || []).includes(v), 'disrupt', v, true, 'rt-o', `<span>${logEmo(v, e)}</span><small>${v}</small>`)).join('')}</div>`,
-    note: `<textarea class="lg-note" rows="3" placeholder="Anything you want to remember about today…" data-input="log.notes">${esc(l.notes || '')}</textarea>`,
+    note: journalCard(d, di, l, isToday),
   };
   const total = Object.values(count).reduce((a, b) => a + b, 0);
   return `${topbar('Check-in')}
@@ -1881,7 +1913,7 @@ function viewLog() {
     <div class="log-date"><button class="icon-btn" data-action="logMove" data-d="-1" aria-label="Previous day">${icon('chevL', 20)}</button>
       <div><div class="eyebrow">${isToday ? 'Today' : fmt(d, { weekday: 'long' })}${di ? ` · Day ${di.cd} · ${PHASES[di.phase].name}` : ''}</div><h2>${fmt(d, { month: 'long', day: 'numeric' })}</h2></div>
       <button class="icon-btn" data-action="logMove" data-d="1" aria-label="Next day" ${isToday ? 'disabled' : ''}>${icon('chevR', 20)}</button></div>
-    ${(() => { const y = state.logs[C.iso(C.addDays(d, -1))]; return !total && y && Object.keys(y).some(f => f !== 'notes') ? `<button class="lg-copy" data-action="logCopy">${icon('plus', 16)}<span><b>Same as yesterday</b><small>One tap, then change what’s different</small></span></button>` : ''; })()}
+    ${(() => { const y = state.logs[C.iso(C.addDays(d, -1))]; return !total && y && Object.keys(y).some(f => f !== 'notes' && f !== 'jp') ? `<button class="lg-copy" data-action="logCopy">${icon('plus', 16)}<span><b>Same as yesterday</b><small>One tap, then change what’s different</small></span></button>` : ''; })()}
     ${LOG_SECS.map(([id, e, t], i) => `<section class="lg-sec ${open[id] ? 'open' : ''}" style="animation-delay:${i * 40}ms">
       <button class="lg-head" data-action="logSec" data-s="${id}" aria-expanded="${!!open[id]}"><span class="lg-ic">${icon(e, 18)}</span><b>${t}</b>${count[id] ? `<small>${count[id]}</small>` : ''}<span class="lg-chev">${icon('chevR', 16)}</span></button>
       ${open[id] ? `<div class="lg-in">${inner[id]}</div>` : ''}</section>`).join('')}
@@ -8944,8 +8976,16 @@ const actions = {
     ui.logDate = C.iso(n); render();
   },
   logSec: d => { const o = ui.logOpen = ui.logOpen || {}; o[d.s] = !o[d.s]; render(); },
+  // another journal prompt: swap only the question (and keep what she wrote), no re-render
+  jpNext: () => {
+    ui.jpShift = (ui.jpShift || 0) + 1;
+    const k = ui.logDate || todayISO(), d = C.parseISO(k), di = M.stats ? C.dayInfo(d, M.stats) : null, q = journalPrompt(d, di ? di.phase : 'follicular', ui.jpShift);
+    const el = document.getElementById('jr-q'), ta = document.querySelector('.jr-ta');
+    if (el) { el.classList.remove('in'); void el.offsetWidth; el.textContent = q; el.classList.add('in'); }
+    if (ta) { ta.dataset.jp = q; if (ta.value.trim()) setLog(k, { jp: q }); }
+  },
   logCopy: () => {
-    const k = ui.logDate || todayISO(), y = { ...(state.logs[C.iso(C.addDays(C.parseISO(k), -1))] || {}) }; delete y.notes;
+    const k = ui.logDate || todayISO(), y = { ...(state.logs[C.iso(C.addDays(C.parseISO(k), -1))] || {}) }; delete y.notes; delete y.jp;
     setLog(k, y); ui.logOpen = { flow: 1, body: 1, mind: 1 }; render();
   },
   logSet: d => {
@@ -9140,6 +9180,7 @@ document.addEventListener('input', e => {
     const lb = document.getElementById('lv-' + key); if (lb) lb.textContent = SLIDER_WORDS[key][n - 1];
     const go = document.querySelector('.lg-go .btn'); if (go && go.disabled) { go.disabled = false; go.innerHTML = `${icon('spark', 18)} See what this means`; }
   }
+  else if (scope === 'log' && key === 'notes') { setLog(ui.logDate || todayISO(), { notes: v, jp: v.trim() ? e.target.dataset.jp || null : null }); }
   else if (scope === 'log') { const n = key === 'temp' ? (v === '' ? null : Math.round(parseFloat(v) * 100) / 100) : v; setLog(ui.logDate || todayISO(), { [key]: Number.isNaN(n) ? null : n }); }
 });
 
