@@ -7683,7 +7683,10 @@ function viewSeason() {
   return `${topbar('In season', { back: true })}<div class="pad pv-sub sz3">
     <section class="sfc szc" data-phase="${phase || ''}">
       <header class="sfc-h"><small><i style="background:${phase ? PH_HEX[phase] : '#6c823e'}"></i>${country ? `${country} · ` : ''}${MONTHS[m - 1]}</small><h3>${sn} foods</h3><p>${n} foods are fresh where you live right now.${phase ? ` Picks for your ${PHASES[phase].name.toLowerCase()} phase come first.` : ''}</p></header>
-      ${groups.map(([k, name, e, list]) => `<div class="sfc-gh"><b>${name}</b><small>${list.length} fresh now</small></div><div class="sfc-grid">${list.map(i => item(i, e)).join('')}</div>`).join('')}
+      ${(() => { const cur = groups.some(g => g[0] === ui.szTab) ? ui.szTab : groups[0][0];
+        return `<div class="szt" role="tablist">${groups.map(([k, name, e, list]) => { const p = szPic(list[0].f), mine = phase ? list.filter(i => i.ph.includes(phase)).length : 0;
+          return `<button class="szt-b ${k === cur ? 'on' : ''}" role="tab" aria-selected="${k === cur}" data-action="szTab" data-v="${k}"><span class="szt-i">${p ? `<img src="${p.src}" alt="">` : emoRaw(e)}</span><b>${name}</b><small><span class="dotnum">${list.length}</span>${mine ? ` · ${mine} for you` : ''}</small></button>`; }).join('')}</div>
+        ${groups.map(([k, name, e, list]) => `<div class="sfc-grid szt-p" data-k="${k}" role="tabpanel" ${k === cur ? '' : 'hidden'}>${list.map(i => item(i, e)).join('')}</div>`).join('')}`; })()}
       <div class="sfc-det" aria-live="polite" hidden></div>
       ${warm ? `<p class="sfc-warm">${icon('sun', 13)} Your period is close: cook everything, nothing raw or iced.</p>` : ''}
       <footer class="sfc-f"><span>Changes by itself as the season turns</span><span>Wild mushrooms only from a market or a trained forager</span></footer>
@@ -9349,6 +9352,15 @@ const actions = {
       <button class="bn-x" data-action="drPick" data-i="${d.i}" aria-label="Close">${icon('close', 16)}</button>`;
     det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
     const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
+  },
+  // In season: switch the food group in place; only the grid changes, the page keeps its scroll
+  szTab: (d, el) => {
+    ui.szTab = d.v; const box = el.closest('.sfc'), det = box.querySelector('.sfc-det');
+    box.querySelectorAll('.szt-b').forEach(b => { const on = b === el; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+    box.querySelectorAll('.szt-p').forEach(g => { g.hidden = g.dataset.k !== d.v; });
+    box.querySelectorAll('.sfc-i.on').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); });
+    det.hidden = true; box.querySelector('.szt-p:not([hidden])')?.after(det);
+    el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest', inline: 'center' });
   },
   szPick: (d, el) => {
     const box = el.closest('.sfc'), det = box.querySelector('.sfc-det'), i = szList().flatMap(g => g[3]).find(x => x.f === d.f); if (!i) return;
