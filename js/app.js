@@ -2627,11 +2627,12 @@ function eatCatInner(phase, cat) {
   const items = warmChips(C0[1], cat, warm).map(([g, n]) => {
     const x = cat === 'supps' && !/algae|B12/i.test(n) && suppOf(n), why = x ? x.desc.split('. ')[0] + '.' : (EB_WHY.find(([r]) => r.test(n)) || [0, C0[0]])[1], pic = cat === 'supps' ? null : (EB_PIC.find(([r]) => r.test(n)) || [])[1]?.();
     const sym = cat === 'supps' ? (x ? x.sym : /B12/.test(n) ? 'B12' : /omega/i.test(n) ? 'Ω3' : n.slice(0, 2)) : '';
-    const face = x && x.han ? `<img class="cut" src="images/sf/ginger.webp" alt="" loading="lazy">` : pic ? `<img class="${pic.startsWith('images/') ? 'cut' : ''}" src="${pic}" alt="" loading="lazy">` : sym ? `<span class="eb-sym ${x && x.han ? 'han' : ''}">${sym}</span>` : `<em>${g}</em>`;
-    return { n, face, panel: `<span class="ebp-f">${face}</span><span class="ebp-t"><b>${n}</b><small>${why}</small>${/raw milk|milk, warmed|warm raw/i.test(n) && cat !== 'supps' ? `<span class="ebp-w">${icon('thermo', 13)} Warm raw milk very gently on low heat, only until it feels warm on your lip. Never boil it, or the good enzymes and bacteria are lost.</span>` : ''}</span>${x ? `<div class="sup-full">${suppSpec(x)}</div>` : ''}${cat === 'drinks' && /coffee/i.test(n) ? `<span class="sgt-st ebp-st"><b class="dotnum">1983</b><span><em>Morck</em>Coffee with a meal cut the iron absorbed from it by about 39%. Drunk an hour before the meal, it made no difference.<small>American Journal of Clinical Nutrition</small></span></span>` : ''}` };
+    const sh = x && SUPP_HERO[x.id], sp = sh ? (sh[0].startsWith('tea:') ? teaPhoto(sh[0].slice(4), 240, 240) : foodPhoto(sh[0], 240)) : '';
+    const face = sp ? `<img class="eb-ph" src="${sp}" alt="" loading="lazy" decoding="async">` : x && x.han ? `<img class="cut" src="images/sf/ginger.webp" alt="" loading="lazy">` : pic ? `<img class="${pic.startsWith('images/') ? 'cut' : ''}" src="${pic}" alt="" loading="lazy">` : sym ? `<span class="eb-sym ${x && x.han ? 'han' : ''}">${sym}</span>` : `<em>${g}</em>`;
+    return { n, face, panel: `<span class="ebp-f">${face}</span><span class="ebp-t"><b>${cat === 'supps' ? n.replace(/\s+\d[\d–.\s]*(g|mg|IU|µg)$/, '') : n}</b><small>${why}</small>${/raw milk|milk, warmed|warm raw/i.test(n) && cat !== 'supps' ? `<span class="ebp-w">${icon('thermo', 13)} Warm raw milk very gently on low heat, only until it feels warm on your lip. Never boil it, or the good enzymes and bacteria are lost.</span>` : ''}</span>${x ? `<div class="sup-full">${suppSpec(x)}</div>` : ''}${cat === 'drinks' && /coffee/i.test(n) ? `<span class="sgt-st ebp-st"><b class="dotnum">1983</b><span><em>Morck</em>Coffee with a meal cut the iron absorbed from it by about 39%. Drunk an hour before the meal, it made no difference.<small>American Journal of Clinical Nutrition</small></span></span>` : ''}` };
   });
   return `${cat === 'supps' ? `<header class="sfc-h sup-h"><small><i style="background:${PH_HEX[phase]}"></i>${PHASES[phase].name} phase</small><h3>${(PHASE_FUNDAMENTALS[phase] || {}).t || 'For your phase'}</h3><p>${C0[0]}</p></header>` : `<p class="eb-lead">${C0[0]}</p>`}
-      <div class="eb-grid" style="--t1:${t1};--t2:${t2}">${items.map((x, i) => `<button class="eb-i ${i ? '' : 'on'}" data-action="ebPick" style="--i:${i}"><span class="eb-b">${x.face}</span><small>${x.n.replace(/\s*\(.*\)$/, '')}</small><template>${x.panel}</template></button>`).join('')}</div>
+      <div class="eb-grid" style="--t1:${t1};--t2:${t2}">${items.map((x, i) => `<button class="eb-i ${i ? '' : 'on'}" data-action="ebPick" style="--i:${i}"><span class="eb-b">${x.face}</span><small>${x.n.replace(/\s*\(.*\)$/, '').replace(/\s+\d[\d–.\s]*(g|mg|IU|µg)$/, '')}</small><template>${x.panel}</template></button>`).join('')}</div>
       <div class="eb-panel"><div class="ebp-in" aria-live="polite">${items[0]?.panel || ''}</div>${warm && (cat === 'dairy' || cat === 'drinks') ? `<p class="eb-warm">${icon('sun', 13)} These days: everything warm or at room temperature, nothing iced.</p>` : ''}</div>
       ${cat === 'supps' ? `<p class="eg-note">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}${state.profile.bf ? ' or are breastfeeding' : ''}.</p><button class="sup-all" data-action="nav" data-to="supp">All supplements: doses and studies ${icon('chevR', 14)}</button>` : ''}`;
 }
@@ -6685,9 +6686,14 @@ function breathCycle(k) {
 // her breath this week: one dot for each day she finished a full session (breathing or the still sit)
 function breathWeek() {
   const L = state.breathLog || {}, t = todayISO();
-  const days = Array.from({ length: 7 }, (_, i) => C.addDays(new Date(), i - 6)), n = days.filter(d => L[C.iso(d)]).length;
-  return `<div class="bwk" aria-label="You breathed on ${n} of the last 7 days"><div class="bwk-h"><small>Breathed this week</small><b><span class="dotnum">${n}</span><em>/7 days</em></b><p>${n === 0 ? 'One minute today starts your week.' : n >= 5 ? 'A steady rhythm. Your body feels it.' : `${7 - n} more days to make it a habit.`}</p></div>
-    <div class="bwk-d">${days.map(d => { const k = C.iso(d), v = L[k] || 0; return `<span class="${k === t ? 'now' : ''} ${v ? 'on' : ''}"><i>${v ? icon('check', 13, 2.6) : ''}</i><small>${fmt(d, { weekday: 'narrow' })}</small></span>`; }).join('')}</div></div>`;
+  const days = Array.from({ length: 7 }, (_, i) => C.addDays(new Date(), i - 6)), n = days.filter(d => L[C.iso(d)]).length, sum = days.reduce((a, d) => a + (L[C.iso(d)] || 0), 0);
+  const msg = n === 0 ? 'Breathe once today and your first lotus opens.' : n >= 6 ? 'Your week is in full bloom. Your body feels it.' : n >= 4 ? 'A steady rhythm. Keep it gentle.' : `${7 - n} more ${7 - n === 1 ? 'day' : 'days'} and your week is in full bloom.`;
+  // one lotus per day: a closed bud until she breathes, then it opens
+  return `<div class="bwk bwk2" aria-label="You breathed on ${n} of the last 7 days">
+    <div class="bwk-top"><div class="bwk-h"><small>Your week of breath</small><b><span class="dotnum">${n}</span><em>of 7 days</em></b></div>
+      <span class="bwk-s"><b class="dotnum">${sum}</b><small>${sum === 1 ? 'session' : 'sessions'}</small></span></div>
+    <div class="bwk-pond">${days.map(d => { const k = C.iso(d), v = L[k] || 0; return `<span class="${k === t ? 'now' : ''} ${v ? 'on' : ''}"><i><img src="images/breath-${v ? 'bloom' : 'bud'}.webp" alt="" loading="lazy"></i><small>${k === t ? 'Today' : fmt(d, { weekday: 'narrow' })}</small></span>`; }).join('')}</div>
+    <p class="bwk-m">${msg}</p></div>`;
 }
 // Breathe page: the daily calm reminder, a bell with her time and a switch; stressed days get an extra nudge
 function calmRemCard() {
