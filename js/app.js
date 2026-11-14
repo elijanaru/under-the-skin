@@ -4366,7 +4366,7 @@ function symptomTrend() {
     <section class="card st4"><p class="st4-sub">Days you logged each one, per cycle. Fewer is better.</p>
       <div class="st4-r st4-mo"><span></span><span></span><div class="st4-bars">${cyc.map((c, i) => `<small class="${i === lastI ? 'last' : ''}">${c.now ? 'Now' : MONTHS[c.start.getMonth()].slice(0, 3)}</small>`).join('')}</div></div>
       ${rows.map(([n, v]) => `<div class="st4-r"><span class="st4-ic">${logEmo(ICON[n] || n)}</span><span class="st4-t"><b>${n}</b>${trend(v)}</span>
-        <div class="st4-bars">${v.map((x, i) => `<span class="st4-c ${cyc[i].now ? 'now' : ''} ${i === lastI ? 'last' : ''}"><em class="dotnum">${x}</em><i style="height:${x ? Math.round(Math.max(5, x / max * 30)) : 3}px"></i></span>`).join('')}</div></div>`).join('')}
+        <div class="st4-bars">${v.map((x, i) => `<span class="st4-c ${cyc[i].now ? 'now' : ''} ${i === lastI ? 'last' : ''}"><em class="dotnum">${x}</em><i style="height:${x ? Math.round(Math.max(6, x / max * 44)) : 3}px"></i></span>`).join('')}</div></div>`).join('')}
       <p class="st4-k">Dark bar: your last full cycle, compared with the one before. Now is the cycle so far.</p></section>`;
 }
 function learnedCard() {

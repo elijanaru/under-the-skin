@@ -13416,3 +13416,10 @@ html .grp-ol i, html .grp-ol i .dotnum { background: color-mix(in srgb, var(--c)
 html .lg .log-date h2, html .lg .log-date .eyebrow { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.38), 0 2px 18px rgba(90,40,45,.34) !important; }
 html .lg .log-date .icon-btn { background: rgba(255,255,255,.9) !important; color: #20301a !important; border: 0 !important; box-shadow: 0 6px 16px -8px rgba(60,30,25,.45) !important; }
 html .lg .log-date .icon-btn[disabled] { opacity: .45; }
+/* Insights › Cycle by cycle: taller bars on a shared baseline and crisper numbers, so one cycle against the next reads at a glance */
+html .st4-r:not(.st4-mo) .st4-bars { height: 66px; background: linear-gradient(rgba(32,48,26,.12), rgba(32,48,26,.12)) left bottom / 100% 1px no-repeat; padding-bottom: 1px; }
+html .st4-c i { width: 22px; border-radius: 7px 7px 3px 3px; background: #c9d3b4; }
+html .st4-c em { color: rgba(32,48,26,.78); font-size: 13.5px; margin-bottom: 5px; }
+html .st4-c.last em { color: #20301a; }
+html .st4-c.last i { background: #20301a; }
+html .st4-c.now i { background: repeating-linear-gradient(135deg, #c9d3b4 0 3px, #eef0e7 3px 6px); }
