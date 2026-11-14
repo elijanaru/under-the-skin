@@ -4151,9 +4151,11 @@ function viewReliefIndex() {
   return `${topbar('Balance', { back: true })}
   <div class="pad hg fb">
     <section class="fbp" aria-label="Balance your hormones, step by step">
-      <div class="fbp-title"><h1>Balance your <span>hormones</span></h1><p>Start with the fundamentals. When they feel easy, add the next step.</p></div>
-      ${(() => { let n = 0; return fbSteps(info).map(([t, sub, list], k) => `<div class="fbp-step"><span class="dotnum">${k + 1}</span><div><b>${t}</b><small>${sub}</small></div></div>
-      <div class="fbp-g">${list.map(([x, i], pos) => fbItem(x, i, done, pos, ++n)).join('')}</div>`).join(''); })()}
+      ${(() => { const S = fbSteps(info), all = S.reduce((a, x) => a + x[2].length, 0);
+        return `<div class="fbp-title"><h1>Balance your <span>hormones</span></h1><p>${all} small habits in three steps. When one step feels easy, add the next.</p></div>`; })()}
+      ${(() => { let n = 0; return fbSteps(info).map(([t, sub, list], k) => { const hb = list.filter(([x]) => x.hb), dn = hb.filter(([x]) => done.includes(x.hb)).length;
+        return `<div class="fbp-step"><span class="dotnum">${k + 1}</span><div><b>${t}</b><small>${sub}</small></div>${hb.length ? `<span class="fbp-c ${dn === hb.length ? 'full' : ''}" aria-label="${dn} of ${hb.length} done today">${icon('check', 11, 3)}<b class="dotnum">${dn}/${hb.length}</b></span>` : ''}</div>
+      <div class="fbp-g">${list.map(([x, i], pos) => fbItem(x, i, done, pos, ++n)).join('')}</div>`; }).join(''); })()}
       <div class="fbp-det" hidden></div>
     </section>
     ${seasonRituals(apoSeason())}

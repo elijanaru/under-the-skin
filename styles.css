@@ -13373,6 +13373,7 @@ html .pad > .link.center-link { color: #fff !important; -webkit-text-fill-color:
 .tgb-b b small { font-size: 11px; color: rgba(32,48,26,.6); }
 .tgb-b i { font-style: normal; font-size: 12px; line-height: 1.25; color: rgba(32,48,26,.66); text-align: center; }
 @media (prefers-reduced-motion: reduce) { .tgb-b { animation: none; } }
+
 /* Food › plate detail: the share of the plate was white Doto on the warm glow and nearly vanished; it sits in a white chip with dark ink like every other number chip */
 html .pld-h { align-items: center; }
 html .pld-h .pld-p { flex: none; align-self: center; color: #20301a !important; -webkit-text-fill-color: #20301a !important; text-shadow: none !important; background: rgba(255,255,255,.94); border-radius: 999px; padding: 4px 11px 3px; font-size: 15px; line-height: 1; box-shadow: 0 1px 8px rgba(32,48,26,.08); }
@@ -13394,3 +13395,12 @@ html .pld-h .pld-p { flex: none; align-self: center; color: #20301a !important; 
 .szt-p { animation: szt-in .45s ease both; }
 @keyframes szt-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .szt-p { animation: none; } .szt-b { transition: none; } }
+
+/* Balance (15 Nov 2026): sublines on the arched background are white with a soft shadow like their titles; each step shows how many of its daily habits are done today */
+html .pad.fb .fbp-title p, html .pad.fb .fbp-step small, .pad.fb .hg-sub { color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.35), 0 2px 14px rgba(90,40,45,.3); }
+html .pad.fb .fbp-title p { max-width: 30ch; font-size: 14px; }
+html .fbp-step > div { flex: 1; min-width: 0; }
+.fbp-c { flex: none; align-self: flex-start; margin-top: 4px; display: inline-flex; align-items: center; gap: 5px; padding: 6px 10px; border-radius: 999px; background: rgba(255,255,255,.94); box-shadow: 0 6px 16px -10px rgba(60,30,25,.45); color: #6c823e; }
+html .pad.fb .fbp-step .fbp-c b { display: inline; margin: 0; font: 900 14px/1 var(--dot); letter-spacing: 0; color: #20301a !important; -webkit-text-fill-color: #20301a !important; text-shadow: none !important; }
+.fbp-c.full { background: hsl(calc(var(--hb) + 0 * var(--hk)) calc(34% * var(--hs)) 30%); color: #fff; }
+html .pad.fb .fbp-step .fbp-c.full b { color: #fff !important; -webkit-text-fill-color: #fff !important; }
