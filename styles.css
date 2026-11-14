@@ -12443,3 +12443,161 @@ html .uvw-lv { letter-spacing: 0; font-size: 12px; font-weight: 600; }
 html .sfc .sfc-gh { display: block; text-align: left; margin: 20px 2px 2px; padding-top: 16px; }
 html .sfc .sfc-gh b { display: block; font: 600 18px/22px Outfit, sans-serif; letter-spacing: -.01em; color: #20301a; }
 html .sfc .sfc-gh small { display: block; margin-top: 3px; text-align: left; font: 400 13px/18px Outfit, sans-serif; color: rgba(32,48,26,.58); }
+
+/* ---------- Partner view + his day (redesign 14 Nov 2026) ---------- */
+.pv2-title { margin: 4px 2px 16px; }
+.pv2-title small { display: block; font-size: 12.5px; font-weight: 500; color: rgba(32,48,26,.6); }
+.pv2-title h1 { margin: 4px 0 0; font: 300 30px/1.12 Outfit, sans-serif; letter-spacing: -.02em; color: #20301a; }
+.pv2-title h1 b { font-weight: 600; }
+.pv2-title p { margin: 8px 0 0; font-size: 14px; line-height: 1.45; color: rgba(32,48,26,.62); }
+.pv2-lead { margin: -4px 4px 12px; font-size: 13.5px; line-height: 1.45; color: rgba(32,48,26,.6); }
+html .pv2-card { display: block; margin: 0 0 14px; padding: 18px; background: #fff; border: 1px solid rgba(32,48,26,.06); border-radius: 28px; box-shadow: 0 14px 34px -22px rgba(32,48,26,.35); color: #20301a; }
+.pv2-h { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.pv2-h b { font-size: 17px; font-weight: 600; }
+.pv2-h small { font-size: 12.5px; color: rgba(32,48,26,.55); text-align: right; }
+.pv2-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 11px 0; border-top: 1px solid rgba(32,48,26,.08); font-size: 14px; }
+.pv2-row span { color: rgba(32,48,26,.6); }
+.pv2-row b { font-weight: 600; text-align: right; }
+.pv2-lv { display: inline-flex; align-items: center; gap: 8px; }
+.pv2-lv i { display: inline-flex; gap: 3px; } .pv2-lv u { width: 16px; height: 6px; border-radius: 3px; background: rgba(32,48,26,.12); }
+.pv2-lv u.on { background: var(--lime); }
+.pv2-why, .hs2-r, .hs2-x { border-top: 1px solid rgba(32,48,26,.08); }
+.pv2-why summary { display: flex; justify-content: space-between; align-items: center; padding: 12px 0 2px; font-size: 14px; font-weight: 600; cursor: pointer; list-style: none; }
+.pv2-why summary::-webkit-details-marker, .pv2-card summary::-webkit-details-marker { display: none; }
+.pv2-why p { margin: 8px 0 0; font-size: 13.5px; line-height: 1.5; color: rgba(32,48,26,.75); }
+details[open] > summary > svg:last-child { transform: rotate(180deg); }
+/* bring her: emoji / photo tiles */
+.pv2-snacks { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pv2-snacks.six { grid-template-columns: 1fr 1fr 1fr; }
+html .pv2-sn { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2px; padding: 14px 8px 12px; border-radius: 22px; background: #f7f5f1; border: 0; font: inherit; color: #20301a; }
+.pv2-emo { display: grid; place-items: center; width: 54px; height: 54px; margin-bottom: 6px; border-radius: 50%; background: #fff; box-shadow: 0 6px 14px -8px rgba(32,48,26,.4); }
+html .pv2-emo .emo { margin: 0 !important; font-size: 30px; line-height: 1; width: 34px; height: 34px; display: grid; place-items: center; }
+html .pv2-emo img.emo { width: 34px; height: 34px; object-fit: contain; }
+.pv2-sn img:not(.emo) { width: 54px; height: 54px; margin-bottom: 6px; border-radius: 50%; object-fit: cover; box-shadow: 0 6px 14px -8px rgba(32,48,26,.4), 0 0 0 3px #fff; }
+.pv2-sn b { font-size: 13.5px; font-weight: 600; line-height: 1.2; }
+.pv2-sn small { font-size: 11.5px; line-height: 1.3; color: rgba(32,48,26,.6); }
+.pv2-snacks.six .pv2-sn { padding: 12px 4px 10px; } .pv2-snacks.six .pv2-emo { width: 46px; height: 46px; }
+/* cook together */
+.pv2-cook summary { display: grid; grid-template-columns: 76px 1fr auto; gap: 12px; align-items: center; cursor: pointer; list-style: none; }
+.pv2-cook summary > img { width: 76px; height: 76px; border-radius: 20px; object-fit: cover; }
+.pv2-ck small { display: block; font-size: 12.5px; font-weight: 500; color: var(--lime); }
+.pv2-ck b { display: block; margin: 2px 0 4px; font-size: 16px; font-weight: 600; line-height: 1.2; }
+.pv2-ck em { display: inline-flex; align-items: center; gap: 4px; font-style: normal; font-size: 12.5px; color: rgba(32,48,26,.6); }
+.pv2-more { display: inline-flex; align-items: center; gap: 3px; padding: 7px 11px; border-radius: 99px; background: #20301a; color: #fff; font-size: 12px; font-weight: 600; }
+.pv2-rec { margin-top: 14px; }
+.pv2-sub { display: block; margin: 12px 0 6px; font-size: 13px; font-weight: 600; color: var(--lime); }
+.pv2-ing { display: grid; grid-template-columns: 26px 1fr; gap: 8px; align-items: center; padding: 7px 0; border-top: 1px solid rgba(32,48,26,.07); font-size: 13.5px; }
+.pv2-ie { width: 24px; height: 24px; display: grid; place-items: center; }
+html .pv2-ie .emo { margin: 0 !important; font-size: 19px; width: 22px; height: 22px; display: grid; place-items: center; }
+.pv2-step { display: grid; grid-template-columns: 24px 1fr; gap: 10px; padding: 6px 0; }
+.pv2-step i { width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; background: #20301a; color: #fff; font: 900 11px var(--dot); font-style: normal; }
+.pv2-step p { margin: 0; font-size: 13.5px; line-height: 1.45; }
+/* do together + text her */
+.pv2-two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pv2-two .pv2-card { margin: 0 0 14px; padding: 16px; }
+.pv2-art { width: 44px; height: 44px; margin-bottom: 6px; }
+.pv2-do small, .pv2-say small { display: block; font-size: 12px; font-weight: 500; color: var(--lime); }
+.pv2-do b { display: block; margin: 3px 0 6px; font-size: 15px; font-weight: 600; line-height: 1.25; }
+.pv2-do em { font-style: normal; font-size: 12px; color: rgba(32,48,26,.6); }
+html .pv2-say { background: #20301a; color: #fff; }
+html .pv2-say small { color: rgba(255,255,255,.65); }
+.pv2-say p { margin: 6px 0 12px; font-size: 14px; line-height: 1.4; }
+.pv2-copy { display: inline-flex; align-items: center; gap: 5px; padding: 7px 12px; border: 0; border-radius: 99px; background: #fff; color: #20301a; font: 600 12px Outfit, sans-serif; }
+/* show up: do / skip */
+.pv2-ds { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.pv2-dcol > b { display: inline-flex; align-items: center; gap: 5px; margin-bottom: 4px; font-size: 13px; font-weight: 600; }
+.pv2-dcol > b.y { color: #4f7a2a; } .pv2-dcol > b.n { color: #c0504a; }
+.pv2-dcol p { margin: 0; padding: 8px 0; border-top: 1px solid rgba(32,48,26,.08); font-size: 13px; line-height: 1.35; }
+/* gifts */
+.pv2-gifts { gap: 10px; }
+html .pv2-gift { flex: none; width: 128px; padding: 16px 12px; border-radius: 24px; background: #fff; border: 1px solid rgba(32,48,26,.06); box-shadow: 0 12px 26px -20px rgba(32,48,26,.4); }
+.pv2-gift .gift-art { width: 48px; height: 48px; }
+.pv2-gift b { display: block; margin-top: 10px; font-size: 13.5px; font-weight: 600; line-height: 1.25; color: #20301a; }
+/* study row */
+.pv2-study summary { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; cursor: pointer; list-style: none; }
+.pv2-study summary > b { font: 900 24px var(--dot); color: var(--lime); }
+.pv2-study summary span { font-size: 13px; line-height: 1.35; } .pv2-study em { display: block; font-style: normal; font-weight: 600; }
+.pv2-study p { margin: 12px 0 0; font-size: 13.5px; line-height: 1.5; color: rgba(32,48,26,.75); }
+/* his hero */
+.hs2-top { display: flex; justify-content: space-between; gap: 12px; }
+.hs2-top small { font-size: 12.5px; font-weight: 500; color: rgba(32,48,26,.6); }
+.hs2-n { display: flex; align-items: baseline; gap: 2px; margin: 2px 0 0; } .hs2-n span { font: 900 54px/1 var(--dot); color: #20301a; } .hs2-n em { font-style: normal; font-size: 20px; font-weight: 600; }
+.hs2-of { font-size: 12px; color: rgba(32,48,26,.55); }
+.hs2-now { display: flex; flex-direction: column; align-items: flex-end; text-align: right; max-width: 48%; }
+.hs2-ic { display: grid; place-items: center; width: 38px; height: 38px; margin-bottom: 6px; border-radius: 50%; background: var(--lime); color: #fff; }
+.hs2-now b { font-size: 16px; font-weight: 600; } .hs2-now small { font-size: 12.5px; color: rgba(32,48,26,.6); }
+.hs2-curve { display: block; margin: 12px 0 4px; }
+.hs2-ax { font: 900 9px var(--dot); fill: rgba(32,48,26,.5); }
+.hs2-bubs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+.hs2-b { padding: 12px 6px 10px; border-radius: 20px; background: #f7f5f1; text-align: center; }
+.hs2-b b { display: block; font: 900 17px var(--dot); color: #20301a; } .hs2-b small { display: block; margin-top: 4px; font-size: 12.5px; font-weight: 600; } .hs2-b em { display: block; font-style: normal; font-size: 11px; color: rgba(32,48,26,.55); }
+.hs2-wake { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 12px; font-size: 12.5px; color: rgba(32,48,26,.6); }
+.hs2-wake span { margin-right: 2px; }
+.hs2-wake button { padding: 6px 10px; border-radius: 99px; border: 1px solid rgba(32,48,26,.12); background: #fff; font: 900 11px var(--dot); color: #20301a; }
+.hs2-wake button.on { background: #20301a; color: #fff; border-color: #20301a; }
+/* day plan + boost rows */
+html .hs2-plan, html .hs2-boost { padding: 4px 18px; }
+.hs2-r:first-child, .hs2-x:first-child { border-top: 0; }
+.hs2-r summary, .hs2-x summary { display: grid; grid-template-columns: 50px 30px 1fr auto; gap: 10px; align-items: center; padding: 12px 0; cursor: pointer; list-style: none; }
+.hs2-x summary { grid-template-columns: 34px 1fr auto; }
+.hs2-r summary > b { font: 900 13px var(--dot); color: rgba(32,48,26,.6); }
+.hs2-r.on summary > b { color: #20301a; }
+.hs2-ric, .hs2-xic { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #f1efe9; color: #20301a; }
+.hs2-r.on .hs2-ric { background: var(--lime); color: #fff; }
+.hs2-xic { width: 34px; height: 34px; background: color-mix(in srgb, var(--lime) 16%, #fff); color: color-mix(in srgb, var(--lime) 70%, #20301a); }
+.hs2-rt b { display: block; font-size: 14.5px; font-weight: 600; } .hs2-rt small { display: block; font-size: 12.5px; line-height: 1.3; color: rgba(32,48,26,.6); }
+.hs2-r p { margin: 0 0 12px 90px; font-size: 13px; line-height: 1.45; color: rgba(32,48,26,.75); }
+.hs2-v { padding: 5px 10px; border-radius: 99px; background: #f1efe9; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.hs2-xb { padding: 0 0 14px 44px; font-size: 13px; line-height: 1.45; color: rgba(32,48,26,.8); }
+.hs2-xb p { margin: 0 0 10px; } .hs2-xb p > b { display: block; font-size: 12.5px; color: var(--lime); }
+.hs2-st { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; padding: 10px 12px; border-radius: 16px; background: #f7f5f1; margin-bottom: 10px; }
+.hs2-st > b { font: 900 18px var(--dot); color: #20301a; } .hs2-st em { display: block; font-style: normal; font-weight: 600; }
+.hs2-care { display: flex; gap: 6px; align-items: flex-start; color: #8a5a1c; }
+/* you two */
+.hs2-vs { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 14px; align-items: center; text-align: center; margin-bottom: 12px; }
+.hs2-vs i { height: 44px; background: rgba(32,48,26,.12); }
+.hs2-vs b { display: block; font: 900 34px/1 var(--dot); color: #20301a; } .hs2-vs b em { font: 600 15px Outfit, sans-serif; font-style: normal; }
+.hs2-vs small { display: block; margin-top: 4px; font-size: 12.5px; color: rgba(32,48,26,.6); }
+.hs2-tog p { margin: 0; padding-top: 12px; border-top: 1px solid rgba(32,48,26,.08); font-size: 14px; line-height: 1.45; }
+@media (prefers-reduced-motion: no-preference) { .pv2-card { animation: rise-in .6s cubic-bezier(.2,.7,.2,1) both; } }
+.hs2-wake { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.hs2-wake span { grid-column: 1 / -1; margin: 0 0 2px; }
+.hs2-wake button { padding: 7px 0; }
+html .pv2-save { text-align: center; }
+html .pv2-save b { display: block; font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+html .pv2-save p { margin: 0; color: rgba(32,48,26,.65); }
+@media (prefers-reduced-motion: no-preference) { html .pv2-card { animation: rise .6s cubic-bezier(.2,.7,.2,1) both; } }
+/* partner view: 3D meal, 3D tea, trying for a baby */
+.pv2-meal summary { display: block; cursor: pointer; list-style: none; }
+.pv2-3d { display: block; position: relative; height: 210px; margin: -6px -6px 6px; border-radius: 22px; background: radial-gradient(70% 60% at 50% 55%, #fbf6ee, #f1ece3 70%); overflow: hidden; }
+.pv2-3d .cup3d-w img.dpt-cup { position: absolute; inset: 6%; width: 88%; height: 88%; object-fit: contain; }
+.pv2-3d .cup3d-w canvas.teacup3d { inset: -6%; width: 112%; height: 112%; }
+.pv2-mph { width: 100%; height: 100%; object-fit: cover; }
+.pv2-meal .pv2-ck b { font-size: 19px; }
+.pv2-why1 { display: block; font-size: 13px; line-height: 1.4; color: rgba(32,48,26,.65); margin-bottom: 10px; }
+.pv2-meta { display: flex; align-items: center; justify-content: space-between; }
+.pv2-tea { display: grid; grid-template-columns: 116px 1fr; gap: 14px; align-items: center; }
+.pv2-3d.sm { height: 132px; margin: 0; border-radius: 20px; }
+.pv2-tea small { display: block; font-size: 12.5px; font-weight: 500; color: var(--lime); }
+.pv2-tea > div > b { display: block; margin: 2px 0 4px; font-size: 17px; font-weight: 600; }
+.pv2-tea p { margin: 0 0 4px; font-size: 13px; line-height: 1.4; color: rgba(32,48,26,.65); }
+.pv2-tea .pv2-row { padding: 7px 0; font-size: 12.5px; } .pv2-tea .pv2-row span { display: inline-flex; align-items: center; gap: 4px; }
+.pv2-snacks.three { grid-template-columns: repeat(3, 1fr); gap: 8px; } .pv2-snacks.three .pv2-sn { padding: 12px 4px 10px; } .pv2-snacks.three .pv2-emo { width: 48px; height: 48px; }
+.pv2-ttop { display: flex; align-items: center; gap: 14px; }
+.pv2-ttop > b { font: 900 46px/1 var(--dot); color: #c0507a; }
+.pv2-ttop span { font-size: 14px; line-height: 1.35; color: rgba(32,48,26,.75); } .pv2-ttop em { display: block; font-style: normal; font-weight: 600; color: #20301a; }
+.pv2-win { margin-top: 14px; } .pv2-win > div { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
+.pv2-win i { position: relative; height: 12px; border-radius: 6px; background: #f3d9e4; }
+.pv2-win i.best { background: #e6a0bc; } .pv2-win i.now { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #20301a; }
+.pv2-win i u { position: absolute; right: -2px; top: -4px; width: 20px; height: 20px; border-radius: 50%; background: #f1c96a; border: 2px solid #fff; }
+.pv2-win > span { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11.5px; color: rgba(32,48,26,.55); }
+html .pv2-warn { display: flex; gap: 10px; align-items: flex-start; background: #fff4f6; border-color: #f3d3dd; }
+.pv2-warn svg { flex: none; margin-top: 2px; color: #c0507a; } .pv2-warn p { margin: 0; font-size: 13.5px; line-height: 1.45; }
+html .pv2-card.pv2-tea { display: grid; }
+html .pv2-card.pv2-ds { display: grid; }
+html .pv2-card.pv2-warn { display: flex; }
+.pv2-nowb { display: grid; place-items: center; flex: none; width: 56px; height: 56px; border-radius: 50%; background: #c0507a; color: #fff; box-shadow: 0 10px 22px -10px rgba(192,80,122,.7); }
+.pv2-ttop > b.pv2-nowb { color: #fff; }
+html .pv2-3d .cup3d-w { position: absolute; inset: 0; }
+html .pv2-3d img.dpt-cup { position: absolute; inset: 7%; width: 86%; height: 86%; max-width: none; object-fit: contain; transform: none; margin: 0; }
+html .pv2-card.pv2-ds:has(> .pv2-dcol:only-child) { grid-template-columns: 1fr; }

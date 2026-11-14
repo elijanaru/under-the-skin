@@ -7902,6 +7902,7 @@ function mySnap(o = {}) {
   const { stats } = M, last = stats.periods[stats.periods.length - 1];
   const snap = { n: state.profile.name || 'Her', s: C.iso(last.start), c: stats.avgCycle, p: stats.avgPeriod, a: ui.shareAudience, f: state.profile.noFertile ? 0 : 1, i: myInbox() };
   if (state.profile.ptWho === 'm' && ui.shareAudience !== 'friend') snap.w = 'm'; // he only views, he never tracks
+  if (ttc() && ui.shareAudience !== 'friend') snap.g = 1; // trying for a baby: his page shows how he can help
   if (state.profile.thumb && !o.short) snap.t = state.profile.thumb;
   const mo = getLog(todayISO()).moods || [];
   if (!state.profile.noMood && mo.length) { snap.m = mo.slice(0, 6); snap.md = todayISO(); } // today's moods, shared as she logs them
@@ -8040,24 +8041,120 @@ const HIS_BLOCKS = [
   [15, 24, 'Rebuild', 'Sleep. Most of your testosterone is made in deep sleep, so 7 to 9 hours keeps your drive high tomorrow.', 'moon'],
 ];
 function hisWake() { try { return +localStorage.getItem('uts.wake') || 7; } catch { return 7; } }
+// ---------- partner view (redesign 14 Nov 2026): clear, graphic, one tap for detail ----------
+const PV_MOOD = { menstrual: 'Quiet and inward', follicular: 'Curious and upbeat', ovulatory: 'Social and confident', luteal: 'Calmer, more sensitive' };
+const PV_NEEDS = { menstrual: 'Warmth, rest, fewer plans', follicular: 'New things, your support', ovulatory: 'Time out together', luteal: 'Calm, comfort, patience' };
+// Snacks to pick up for her: phase-made, and always warm or room-temperature on her period and the days before it.
+const PV_SNACK = {
+  menstrual: [['🍫', 'Dark chocolate', 'Magnesium eases cramps'], ['d:dates', 'Medjool dates', 'Iron and quick energy'], ['🍲', 'Bone broth', 'Warm minerals, easy on her belly']],
+  follicular: [['🫐', 'Berries', 'Fibre and vitamin C'], ['e:pumpkin-seeds', 'Pumpkin seeds', 'Zinc for the egg growing now'], ['🥛', 'Kefir', 'Good for her gut']],
+  ovulatory: [['🍓', 'Strawberries', 'Vitamin C for her glow'], ['🥕', 'Carrots & hummus', 'Fibre clears used oestrogen'], ['🥥', 'Coconut water', 'Light, natural hydration']],
+  luteal: [['🍌', 'Bananas', 'B6 for a steadier mood'], ['e:walnuts', 'Walnuts', 'Omega-3 for calm'], ['🍫', 'Dark chocolate', 'Magnesium tames cravings']],
+  warm: [['🍫', 'Dark chocolate', 'Magnesium eases cramps'], ['d:dates', 'Medjool dates', 'Iron and steady energy'], ['🍠', 'Baked sweet potato', 'Warm slow carbs for her mood']],
+};
+const pvEmo = e => `<span class="pv2-emo">${emoRaw(e)}</span>`;
+function pvToday(info, name, sup, snap) {
+  const warm = info.isPeriod || info.cd > info.L - 4, snacks = PV_SNACK[warm ? 'warm' : info.phase], ph = info.phase, w = hisWake(), dw = dayWindow(info);
+  const day = dayNum(C.startOfDay(new Date())), her = C.energyAt(info.cd, info.L, info.P);
+  const pool = myRecipes().filter(r => r.phases.includes(ph) && (r.meal === 'Dinner' || r.meal === 'Lunch') && (!warm || !r.raw) && dishModel(r));
+  const rec = pool.length ? pick(pool, day) : (tonightRecipe(ph, warm) || pick(recipesFor(ph, info), day)), D = dishModel(rec);
+  const td = TEA_DAY[dw], [steep, tWhen] = TEA_STEEP[dw] || ['', ''];
+  const when = warm ? 'Tonight, at home' : her > .7 ? `From ${hLabel(w + 7)}, your strongest hours` : `From ${hLabel(w + 11)}, when you’re calmer`;
+  const cup3d = (img, attr, label) => `<span class="cup3d-w"><img class="dpt-cup" src="${img}" alt="" loading="lazy">${attr ? `<canvas class="teacup3d"${attr} aria-label="${esc(label)}, turning slowly"></canvas>` : ''}</span>`;
+  return `${sectionTitle('Today for you two')}
+    <p class="pv2-lead">What to cook, make, bring and say. Made for her ${PHASES[ph].name.toLowerCase()} phase${warm ? ', all warm' : ''}.</p>
+    <details class="pv2-card pv2-meal"><summary>
+      <span class="pv2-3d">${D ? cup3d(D.img, ` data-model="${D.model}" data-elev="${D.elev || 0.9}" data-fit="${D.tileFit || D.fit}"${D.steam === 0 ? ' data-steam="0"' : ''}`, rec.name) : `<img class="pv2-mph" src="${photoUrl(rec.id, 500)}" alt="" loading="lazy">`}</span>
+      <span class="pv2-ck"><small>Cook together tonight</small><b>${rec.name}</b><span class="pv2-why1">${recWhy(rec)}</span>
+      <span class="pv2-meta"><em>${icon('clock', 13)} ${rec.time >= 60 ? `${Math.floor(rec.time / 60)} h${rec.time % 60 ? ` ${rec.time % 60}` : ''}` : `${rec.time} min`}</em><span class="pv2-more">Recipe ${icon('chevD', 14)}</span></span></span></summary>
+      <div class="pv2-rec"><b class="pv2-sub">Ingredients</b>${rec.ingredients.map(g => `<div class="pv2-ing">${(e => `<span class="pv2-ie">${e ? emoRaw(e) : ''}</span>`)(ingEmo(String(g).replace(/^[\d½¼¾\/.\s–-]+(g|kg|ml|l|tbsp|tsp|cups?|slices?|cloves?|cans?|large|small|medium|handful)?\s*/i, '')))}<span>${g}</span></div>`).join('')}
+        <b class="pv2-sub">Method</b>${rec.steps.map((x, i) => `<div class="pv2-step"><i>${i + 1}</i><p>${x}</p></div>`).join('')}</div></details>
+    <section class="pv2-card pv2-tea"><span class="pv2-3d sm">${cup3d(teaCupImg(td[1]), teaCupAttr(td[1]), td[1])}</span>
+      <div><small>Make her a cup of</small><b>${td[1]}</b><p>${td[2].replace(/\byour\b/g, 'her').replace(/\byou\b/g, 'she')}</p>
+        <div class="pv2-row"><span>${icon('clock', 13)} Steep</span><b>${steep}</b></div><div class="pv2-row"><span>${icon('sun', 13)} When</span><b>${tWhen}</b></div></div></section>
+    <section class="pv2-card pv2-bring"><div class="pv2-h"><b>Bring her</b><small>Pick these up on the way home</small></div>
+      <div class="pv2-snacks three">${snacks.map(([e, n, why]) => `<div class="pv2-sn">${pvEmo(e)}<b>${n}</b><small>${why}</small></div>`).join('')}</div></section>
+    <div class="pv2-two">
+      <section class="pv2-card pv2-do"><svg viewBox="0 0 64 64" class="pv2-art" aria-hidden="true">${(GIFT_ART.find(([r]) => r.test(sup.date)) || [0, GIFT_ART[0][1]])[1]}</svg><small>Do together</small><b>${esc(sup.date)}</b><em>${when}</em></section>
+      <section class="pv2-card pv2-say"><small>Text her</small><p>“${esc(sup.say)}”</p><button class="pv2-copy" data-action="copySay" data-t="${esc(sup.say)}">${icon('share', 13)} Copy</button></section>
+    </div>`;
+}
+// Trying for a baby: when she shares that goal, he gets the timing and the few things that make his part count.
+const PV_TTC = [
+  ['heart', 'Every 1 to 2 days in her window', 'The 2 days before her egg release count most.', ['Wilcox et al.', 1995, 'Pregnancies came only from sex in the 6 days ending on the day of egg release, most from the last 2.'], 'Keep it relaxed. Daily or every other day both work, no need to time it to the hour.'],
+  ['thermo', 'Keep them cool', 'Loose boxers. No hot tubs, saunas or laptop on your lap.', ['Mínguez-Alarcón et al.', 2018, 'Men who wore boxers had 25% more sperm than men in tighter underwear.'], ''],
+  ['leaf', 'A handful of walnuts a day', 'Plus zinc foods: beef, eggs, oysters, pumpkin seeds.', ['Robbins et al.', 2012, '75 g of walnuts a day for 12 weeks gave sperm that moved better and had a better shape.'], ''],
+  ['clock', 'Start now, it counts in 3 months', 'Sperm takes about 74 days to grow.', ['Heller & Clermont', 1963, 'Measured how long sperm take to form in men: about 74 days.'], 'So what you change today shows up in about 3 months.'],
+  ['bolt', 'No testosterone or “T boosters”', 'Extra testosterone shuts down your own sperm.', null, 'Also stop smoking, keep alcohol low, and skip most lubes: many slow sperm down. Use a sperm-friendly one or none.'],
+];
+function pvTTC(snap, info, name) {
+  const today = C.startOfDay(new Date()); let ov = -1;
+  for (let i = 0; i < 40; i++) if (snapInfo(snap, C.addDays(today, i)).isOvulation) { ov = i; break; }
+  const fert = info.fertile, open = ov > 5 ? ov - 5 : 0;
+  const big = fert ? 'Now' : `${open}`, line = fert ? (ov <= 2 && ov >= 0 ? `Her best days: today and the next ${ov === 0 ? 'hours' : `${plural(ov, 'day')}`}.` : 'Her fertile window is open.') : `days until her fertile window opens`;
+  const dots = Array.from({ length: 6 }, (_, k) => { const d = ov - 5 + k; return `<i class="${d === 0 ? 'now' : ''} ${k >= 4 ? 'best' : ''}">${k === 5 ? '<u></u>' : ''}</i>`; }).join('');
+  return `${sectionTitle('Trying for a baby')}
+    <p class="pv2-lead">${name} wants to get pregnant. Here is your part, short and simple.</p>
+    <section class="pv2-card pv2-ttc"><div class="pv2-ttop">${fert ? `<b class="pv2-nowb">${icon('heart', 26, 2.2)}</b>` : `<b class="dotnum">${big}</b>`}<span>${fert ? '<em>Fertile window</em>' : ''}${line}</span></div>
+      ${ov >= 0 ? `<div class="pv2-win"><div>${dots}</div><span><small>${fmt(C.addDays(today, ov - 5), { month: 'short', day: 'numeric' })}</small><small>Egg release ${fmt(C.addDays(today, ov), { month: 'short', day: 'numeric' })}</small></span></div>` : ''}</section>
+    <section class="pv2-card hs2-boost">${PV_TTC.map(([ic, n, s, st, more]) => `<details class="hs2-x"><summary><span class="hs2-xic">${icon(ic, 16)}</span><span class="hs2-rt"><b>${n}</b><small>${s}</small></span>${icon('chevD', 13)}</summary>
+      <div class="hs2-xb">${st ? `<div class="hs2-st"><b class="dotnum">${st[1]}</b><span><em>${st[0]}</em>${st[2]}</span></div>` : ''}${more ? `<p>${more}</p>` : ''}</div></details>`).join('')}</section>`;
+}
+function pvShowUp(sup) {
+  return `${sectionTitle('How to show up')}
+    <section class="pv2-card pv2-ds"><div class="pv2-dcol"><b class="y">${icon('check', 13, 2.6)} Do</b>${sup.do.map(x => `<p>${esc(x)}</p>`).join('')}</div>
+      <div class="pv2-dcol"><b class="n">${icon('close', 13, 2.6)} Skip</b>${sup.avoid.map(x => `<p>${esc(x.replace(/\s*\(TCM:[^)]*\)/, ''))}</p>`).join('')}</div></section>`;
+}
+function pvHerDay(info, S) {
+  const w = dayWindow(info), lvl = CALM[w][0], g = DAY_GUIDE[w];
+  return `<section class="pv2-card pv2-spec"><div class="pv2-h"><b>Her day</b><small>${g.title}</small></div>
+    <div class="pv2-row"><span>Mood</span><b>${PV_MOOD[info.phase]}</b></div>
+    <div class="pv2-row"><span>Stress</span><b class="pv2-lv">${['', 'Low', 'Medium', 'High'][lvl]}<i>${[1, 2, 3].map(i => `<u class="${i <= lvl ? 'on' : ''}"></u>`).join('')}</i></b></div>
+    <div class="pv2-row"><span>Best for</span><b>${(t => t.charAt(0).toUpperCase() + t.slice(1))(g.best.slice(0, 2).join(', ').toLowerCase())}</b></div>
+    <div class="pv2-row"><span>She needs</span><b>${PV_NEEDS[info.phase]}</b></div>
+    <details class="pv2-why"><summary>How she may feel ${icon('chevD', 13)}</summary><p>${S.feel}</p><p>${PT_STRESS[w]}</p></details></section>`;
+}
+// ---------- his day: testosterone on a 24-hour clock, and what raises it ----------
+const HIS_DO = ['Train hard, decide big', 'Deep work, meetings', 'Lift, sprint, play sport', 'Her time: talk, cook', 'Sleep 7 to 9 hours'];
+const HIS_BOOST = [
+  ['moon', 'Sleep 7 to 9 hours', '7–9 h', 'Most testosterone is made in deep sleep.', 'Same bedtime every night, a dark and cool room, screens away an hour before.', ['Leproult & Van Cauter', 2011, 'One week of 5-hour nights lowered daytime testosterone by 10 to 15% in healthy young men.'], ''],
+  ['dumbbell', 'Lift heavy', '3× a week', 'Big lifts raise testosterone during and after training.', 'Squats, deadlifts, presses and rows: 3 to 5 sets of 5 to 8 reps, with a rest day between sessions.', ['Kraemer & Ratamess', 2005, 'Heavy multi-joint lifts with short rests gave the biggest rise in testosterone after training.'], 'Learn the lifts with light weight first.'],
+  ['sun', 'Vitamin D in winter', '25–50 µg', 'Low vitamin D goes with low testosterone.', 'Midday sun on bare skin in summer. From October to March 25 to 50 µg (1000 to 2000 IU) D3 a day with a meal that has fat.', ['Pilz et al.', 2011, 'Men low in vitamin D who took 83 µg a day for a year had higher testosterone than men on placebo.'], 'Above 100 µg a day only with a blood test.'],
+  ['leaf', 'Zinc from food', 'Daily', 'Too little zinc pulls testosterone down.', 'Beef, eggs, oysters and pumpkin seeds most days.', ['Prasad et al.', 1996, 'A zinc-poor diet lowered testosterone in young men; zinc raised it in older men who were low.'], 'Supplements: at most 25 mg a day, short term.'],
+  ['heart', 'Keep the waist slim', 'Daily', 'Belly fat turns testosterone into oestrogen.', 'Protein at every meal, a 10 minute walk after meals, fewer sugary drinks.', ['Corona et al.', 2013, 'Across 24 studies, losing weight raised testosterone, and the more weight lost, the bigger the rise.'], ''],
+  ['sun', 'Morning light', '10 min', 'Daylight after waking sets the clock that times your peak.', 'Step outside within an hour of waking, no sunglasses, even when it is cloudy.', null, ''],
+];
+const HIS_FOOD = [['🥩', 'Beef', 'Zinc, iron, B12'], ['🥚', 'Whole eggs', 'Yolks: vitamin D'], ['🦪', 'Oysters', 'Richest in zinc'], ['e:pumpkin-seeds', 'Pumpkin seeds', 'Zinc, magnesium'], ['🥛', 'Raw milk', 'Protein, good fats'], ['🫒', 'Olive oil', 'Healthy fats']];
 function hisDay(info, name) {
-  const w = hisWake(), h = nowH(), since = ((h - w) % 24 + 24) % 24, b = HIS_BLOCKS.find(x => since >= x[0] && since < x[1]);
-  const tAt = t => .5 + .42 * Math.cos(2 * Math.PI * (t - 1) / 24); // hours since waking, peak about an hour after waking
-  const W = 320, H = 110, X = t => 8 + t / 24 * (W - 16), Y = v => H - 22 - v * (H - 40);
+  const w = hisWake(), h = nowH(), since = ((h - w) % 24 + 24) % 24, bi = HIS_BLOCKS.findIndex(x => since >= x[0] && since < x[1]), b = HIS_BLOCKS[bi];
+  const tAt = t => .5 + .42 * Math.cos(2 * Math.PI * (t - 1) / 24), pct = Math.round(tAt(since) / .92 * 100);
+  const W = 320, H = 104, X = t => 8 + t / 24 * (W - 16), Y = v => H - 22 - v * (H - 36);
   let d = ''; for (let t = 0; t <= 24; t += .25) d += `${d ? 'L' : 'M'}${X(t).toFixed(1)} ${Y(tAt(t)).toFixed(1)}`;
-  const bands = HIS_BLOCKS.map(([a, z, n], i) => `<rect x="${X(a)}" y="6" width="${X(z) - X(a)}" height="${H - 26}" rx="8" fill="${['#efd4dd', '#f5f0e6', '#e3ecc9', '#f3e2ea', '#e6e4f2'][i]}" opacity=".7"/>`).join('');
-  const her = C.energyAt(info.cd, info.L, info.P), low = info.isPeriod || info.cd > info.L - 4;
-  const together = low ? `${name}'s energy is low this week. Use your morning drive for the jobs, then bring her your calm evening: warm food, no big plans.`
-    : her > .7 ? `You're both full of energy. Plan something active together in your late afternoon, when your body is strongest.`
+  const her = Math.round(C.energyAt(info.cd, info.L, info.P) * 100), low = info.isPeriod || info.cd > info.L - 4;
+  const together = low ? `${name}’s energy is low this week. Use your morning drive for the jobs, then bring her your calm evening: warm food, no big plans.`
+    : her > 70 ? `You’re both full of energy. Plan something active together from ${hLabel(w + 7)}, when your body is strongest.`
     : `${name} is steady and focused. Keep evenings easy and save the big plans for when her energy rises.`;
-  return `<section class="card his-now"><div class="hn-top"><span class="hn-ic">${icon(b[4], 20)}</span><div><small>Right now · ${hLabel(h)}</small><b>${b[2]}</b></div></div><p>${b[3]}</p></section>
-    <section class="card his-curve"><div class="hc-h"><b>Your testosterone today</b><small>Woke at ${hLabel(w)}</small></div>
-      <svg viewBox="0 0 ${W} ${H}" width="100%" aria-label="Testosterone over your day, highest after waking">${bands}<path d="${d}" fill="none" stroke="#304023" stroke-width="2.4" stroke-linecap="round"/>
-        <line x1="${X(since)}" x2="${X(since)}" y1="6" y2="${H - 20}" stroke="#304023" stroke-dasharray="2 3" opacity=".5"/><circle cx="${X(since)}" cy="${Y(tAt(since))}" r="5.5" fill="#fff" stroke="#304023" stroke-width="2"/>
-        ${[0, 6, 12, 18, 24].map(t => `<text x="${X(t)}" y="${H - 4}" text-anchor="${t === 0 ? 'start' : t === 24 ? 'end' : 'middle'}" class="hc-ax">${hLabel(w + t)}</text>`).join('')}</svg>
-      <div class="hc-wake"><span>I usually wake at</span>${[5, 6, 7, 8, 9].map(x => `<button class="${x === w ? 'on' : ''}" data-action="hisWake" data-v="${x}">${x}:00</button>`).join('')}</div></section>
-    <section class="card his-blocks">${HIS_BLOCKS.map(([a, z, n, t, ic]) => `<div class="hb ${b[2] === n ? 'on' : ''}"><span class="hb-t">${hLabel(w + a)}</span><span class="hb-ic">${icon(ic, 16)}</span><div><b>${n}</b><p>${t}</p></div></div>`).join('')}</section>
-    <section class="card his-tog"><small>You two today</small><p>${together}</p></section>`;
+  const bub = (k, v, s) => `<div class="hs2-b"><b class="dotnum">${v}</b><small>${k}</small><em>${s}</em></div>`;
+  return `<section class="pv2-card hs2-hero">
+      <div class="hs2-top"><div><small>Testosterone now</small><b class="hs2-n"><span class="dotnum">${pct}</span><em>%</em></b><span class="hs2-of">of today’s peak</span></div>
+        <div class="hs2-now"><span class="hs2-ic">${icon(b[4], 18)}</span><b>${b[2]}</b><small>${HIS_DO[bi]}</small></div></div>
+      <svg class="hs2-curve" viewBox="0 0 ${W} ${H}" width="100%" aria-label="Testosterone over your day, highest after waking">
+        <defs><linearGradient id="hs2g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6c823e" stop-opacity=".28"/><stop offset="1" stop-color="#6c823e" stop-opacity="0"/></linearGradient></defs>
+        <path d="${d} L${X(24)} ${H - 22} L${X(0)} ${H - 22}Z" fill="url(#hs2g)"/><path d="${d}" fill="none" stroke="#20301a" stroke-width="2.4" stroke-linecap="round"/>
+        <line x1="${X(since)}" x2="${X(since)}" y1="4" y2="${H - 22}" stroke="#20301a" stroke-dasharray="2 3" opacity=".45"/><circle cx="${X(since)}" cy="${Y(tAt(since))}" r="5.5" fill="#fff" stroke="#20301a" stroke-width="2.2"/>
+        ${[0, 6, 12, 18, 24].map(t => `<text x="${X(t)}" y="${H - 5}" text-anchor="${t === 0 ? 'start' : t === 24 ? 'end' : 'middle'}" class="hs2-ax">${hLabel(w + t)}</text>`).join('')}</svg>
+      <div class="hs2-bubs">${bub('Train', hLabel(w + 7), 'strongest body')}${bub('Her time', hLabel(w + 11), 'calm and open')}${bub('Sleep by', hLabel(w + 16), 'for tomorrow’s drive')}</div>
+      <div class="hs2-wake"><span>I wake at</span>${[5, 6, 7, 8, 9].map(x => `<button class="${x === w ? 'on' : ''}" data-action="hisWake" data-v="${x}">${x}:00</button>`).join('')}</div></section>
+    ${sectionTitle('Your day plan')}
+    <section class="pv2-card hs2-plan">${HIS_BLOCKS.map(([a, z, n, t, ic], i) => `<details class="hs2-r ${i === bi ? 'on' : ''}"${i === bi ? ' open' : ''}><summary><b class="dotnum">${hLabel(w + a)}</b><span class="hs2-ric">${icon(ic, 15)}</span><span class="hs2-rt"><b>${n}</b><small>${HIS_DO[i]}</small></span>${icon('chevD', 13)}</summary><p>${t}</p></details>`).join('')}</section>
+    ${sectionTitle('Boost your drive')}
+    <p class="pv2-lead">Six habits with the best evidence. Tap one for how, the study and what to watch.</p>
+    <section class="pv2-card hs2-boost">${HIS_BOOST.map(([ic, n, v, s, how, st, care]) => `<details class="hs2-x"><summary><span class="hs2-xic">${icon(ic, 16)}</span><span class="hs2-rt"><b>${n}</b><small>${s}</small></span><b class="hs2-v">${v}</b></summary>
+      <div class="hs2-xb"><p><b>How</b>${how}</p>${st ? `<div class="hs2-st"><b class="dotnum">${st[1]}</b><span><em>${st[0]}</em>${st[2]}</span></div>` : ''}${care ? `<p class="hs2-care">${icon('spark', 12)} ${care}</p>` : ''}</div></details>`).join('')}</section>
+    ${sectionTitle('Eat for drive')}
+    <section class="pv2-card pv2-bring"><div class="pv2-snacks six">${HIS_FOOD.map(([e, n, why]) => `<div class="pv2-sn">${pvEmo(e)}<b>${n}</b><small>${why}</small></div>`).join('')}</div></section>
+    ${sectionTitle('You two today')}
+    <section class="pv2-card hs2-tog"><div class="hs2-vs"><div><b class="dotnum">${her}<em>%</em></b><small>${name}’s energy</small></div><i></i><div><b class="dotnum">${pct}<em>%</em></b><small>Your drive now</small></div></div><p>${together}</p></section>`;
 }
 function viewWith(q) {
   const snap = b64d(q.get('d') || '');
@@ -8080,30 +8177,18 @@ function viewWith(q) {
   ${mine ? `<div class="preview-bar">Preview: this is what she’ll see <button data-action="nav" data-to="partners">Done</button></div>` : ''}
   <div class="pad">
     ${him ? `<div class="seg his-seg">${[['her', `${name}'s rhythm`], ['his', 'My day']].map(([k, l]) => `<button class="${(ui.hisTab || 'her') === k ? 'on' : ''}" data-action="hisTab" data-v="${k}">${l}</button>`).join('')}</div>` : ''}
-    ${him && ui.hisTab === 'his' ? `<h1 class="hello" style="margin:6px 0 16px">Your <b>24-hour rhythm</b></h1>${hisDay(info, name)}</div>` : `
-    <div class="eyebrow">${role === 'partner' ? 'Partner view' : 'Friend view'} · ${fmt(today, { weekday: 'long', month: 'short', day: 'numeric' })}</div>
-    <h1 class="hello" style="margin:6px 0 16px">${name} is in her<br><b>${ph.name} phase</b></h1>
+    ${him && ui.hisTab === 'his' ? `<div class="pv2-title"><small>Your day · ${fmt(today, { weekday: 'long', month: 'short', day: 'numeric' })}</small><h1>Your <b>24-hour drive</b></h1><p>Testosterone runs on a daily clock. Use it, and see what raises it.</p></div>${snap.g ? `<section class="pv2-card pv2-warn">${icon('heart', 16)}<p><b>Trying for a baby?</b> Never take testosterone or “T boosters”. Extra testosterone shuts down your sperm. Sleep, lifting and food below are the safe way.</p></section>` : ''}${hisDay(info, name)}</div>` : `
+    <div class="pv2-title"><small>${role === 'partner' ? 'Partner view' : 'Friend view'} · ${fmt(today, { weekday: 'long', month: 'short', day: 'numeric' })}</small><h1>${name} is in her <b>${ph.name.toLowerCase()} phase</b></h1></div>
     <section class="hub pt-stage">${stageHero(info, Math.round(C.energyAt(info.cd, info.L, info.P) * 100), { nav: false, id: 'with', fert: !!snap.f })}</section>
-    ${(() => { const g = DAY_GUIDE[dayWindow(info)], rec = pick(recipesFor(info.phase, info), dayNum(today)); return `
-    <section class="card glass pv-day">
-      <div class="pv-top"><div><div class="eyebrow">Her day · ${g.energy.toLowerCase()} energy</div><h3>${g.title}</h3></div><span class="pv-e">${g.energy}</span></div>
-      <p class="body sm">Today is best for ${g.best.slice(0, 3).join(', ').toLowerCase()}.</p>
-    </section>
-    <details class="card glass pv-cook"><summary>${photoUrl(rec.id) ? `<img class="pv-cook-img" src="${photoUrl(rec.id)}" alt="" loading="lazy">` : `<span class="art-ic">${icon('bowl', 20)}</span>`}<span class="art-t">Cook for her: ${rec.name}<small>${rec.warm ? 'Warm & cooked: just right for this phase' : rec.raw ? 'Fresh & raw: perfect for her phase' : 'Made for her phase'} · ${rec.time} min</small></span>${icon('chevD', 18)}</summary>
-      <div class="pv-rec"><div class="eyebrow">Ingredients</div>${rec.ingredients.map(g => `<div class="ing">${icon('leaf', 14)}<span>${g}</span></div>`).join('')}
-      <div class="eyebrow mt">Method</div>${rec.steps.map((x, i) => `<div class="step"><span class="step-n">${i + 1}</span><p>${x}</p></div>`).join('')}</div></details>`; })()}
-    ${partnerCare(info, name)}
-    ${sectionTitle('How she may feel')}
-    <section class="card glass"><p class="body" style="margin:0">${S.feel}</p></section>
-    ${sectionTitle(role === 'partner' ? 'How to show up' : 'How to be a good friend')}
-    <section class="card glass">${list(sup.do, 'yes')}</section>
-    ${role === 'partner' ? `${sectionTitle('What to give her')}
-    <div class="hscroll">${sup.gifts.map((g, i) => `<div class="rcard gift g2">${giftArt(g)}<div class="rc-t">${esc(g.replace(/\s*😉/, ''))}</div></div>`).join('')}</div>
-    ${sectionTitle('Maybe avoid')}<section class="card glass">${list(sup.avoid, 'no')}</section>
-    ${role === 'partner' ? `<section class="card glass tea-study pv-why"><div class="eyebrow">Why your support matters</div><div class="ts-i"><p>When partners took part in a programme for premenstrual distress, women felt more understood and less distressed than when they went alone. Small things count most: noticing, listening, taking something off her plate.</p><small>Ussher & Perz 2017</small></div></section>` : ''}
-    <section class="card tcm-card"><div class="tcm-glyph">${tcm.elementGlyph}</div><div class="tcm-main"><div class="eyebrow">Make her a cup of</div><h3>${tcm.tea.name}</h3><p class="body sm">${tcm.tea.why}</p></div></section>
-    <section class="card card-light"><div class="eyebrow dark">Date idea</div><h3 class="dark-h">${esc(sup.date)}</h3></section>`
-    : `<section class="card card-light"><div class="eyebrow dark">Plan idea</div><h3 class="dark-h">${esc(sup.plan)}</h3></section>`}
+    ${pvHerDay(info, S)}
+    ${snap.g && role === 'partner' ? pvTTC(snap, info, name) : ''}
+    ${role === 'partner' ? `${pvToday(info, name, sup, snap)}
+    ${pvShowUp(sup)}
+    ${sectionTitle('What to give her')}
+    <div class="hscroll pv2-gifts">${sup.gifts.map(g => `<div class="pv2-gift">${giftArt(g)}<b>${esc(g.replace(/\s*😉/, ''))}</b></div>`).join('')}</div>
+    <details class="pv2-card pv2-study"><summary><b class="dotnum">2017</b><span><em>Ussher & Perz</em>Women felt more understood when their partner joined in.</span>${icon('chevD', 13)}</summary><p>In a programme for premenstrual distress, women whose partners took part felt more understood and less distressed than women who went alone. Small things count most: noticing, listening, taking something off her plate.</p></details>`
+    : `${sectionTitle('How to be a good friend')}<section class="pv2-card pv2-ds"><div class="pv2-dcol"><b class="y">${icon('check', 13, 2.6)} Do</b>${sup.do.map(x => `<p>${esc(x)}</p>`).join('')}</div></section>
+    <section class="pv2-card pv2-say"><small>Plan idea</small><p>${esc(sup.plan)}</p></section>`}
     ${sectionTitle('Her hormones')}
     <section class="card glass chart-card">${cycleChart(info, { id: 'with', compact: true, who: 'Her' })}</section>
     ${sectionTitle('Her next two weeks')}
@@ -8114,7 +8199,7 @@ function viewWith(q) {
         ? `<a class="btn btn-ghost btn-block" href="#/today">${icon('check', 16)} ${name} is on your dashboard</a>`
         : `<button class="btn btn-light btn-block" data-action="addPartner" data-d="${esc(q.get('d'))}">${icon('heart', 16)} Add ${name} to my app</button>
            <p class="fine center">You both use Underskin. Add her and you’ll see each other’s cycle side by side.</p>`)
-      : him ? `<section class="card glass pv-save"><b>Keep ${name} close</b><p class="body sm">Nothing to set up and nothing to track. Save this page to your home screen and it shows where she is every day.</p></section>
+      : him ? `<section class="pv2-card pv2-save"><b>Keep ${name} close</b><p class="body sm">Nothing to set up and nothing to track. Save this page to your home screen and it shows where she is every day.</p></section>
          <button class="link center-link" data-action="trackMine">I want to track my own cycle</button>`
       : `<a class="btn btn-light btn-block" href="#/today">Start tracking my cycle</a>
          <p class="fine center">Set up your own cycle and ${name} is added to your app. Then send her your link so you see each other.</p>`}
@@ -8873,6 +8958,7 @@ const actions = {
     sent();
   },
   hisTab: d => { ui.hisTab = d.v; render(); document.getElementById('view').scrollTop = 0; },
+  copySay: async d => { try { await navigator.clipboard.writeText(d.t); toast('Copied, now send it to her'); } catch { prompt('Copy and send', d.t); } },
   hisWake: d => { try { localStorage.setItem('uts.wake', d.v); } catch {} render(); },
   trackMine: () => { try { localStorage.removeItem('uts.viewOnly'); } catch {} go('today'); },
   ptWho: d => { state.profile.ptWho = d.v; save(); syRefresh() || render(); },
@@ -9082,12 +9168,12 @@ function render() {
   }
   if (r.name === 'with') {
     $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewWith(r.q)}</div>`;
-    decorateStudies($app); if (r.q.get('d')) refreshWith(r.q.get('d')); return;
+    decorateStudies($app); mountFigures(); if (r.q.get('d')) refreshWith(r.q.get('d')); return;
   }
   let vo = null; if (!state || !state.onboarded) { try { vo = localStorage.getItem('uts.viewOnly'); } catch {} }
   if (vo) { // he opened her link before: the app is just her rhythm for him
     $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewWith(new URLSearchParams({ d: vo }))}</div>`;
-    decorateStudies($app); refreshWith(vo); return;
+    decorateStudies($app); mountFigures(); refreshWith(vo); return;
   }
   if (!state || !state.onboarded) {
     document.documentElement.dataset.phase = '';
