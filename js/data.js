@@ -1357,6 +1357,22 @@ export const AFTER_TOPICS = [
     study: ['Bø et al.', 2017, 'British Journal of Sports Medicine', 'Expert advice: start pelvic floor training early after birth and build up exercise gradually, with high impact later.'] },
 ];
 
+// Trying to conceive: how long she has been trying, and what the app does with it.
+// [key, emoji, title, small line, days already trying]
+export const TTC_TRY = [['new', '🌱', 'Just starting', 'Or planning to start soon', 0], ['lt6', '🌸', 'Under 6 months', 'A few cycles so far', 90],
+  ['6to12', '🌷', '6 to 12 months', 'Longer than we hoped', 270], ['gt12', '🌹', 'Over a year', 'It’s been a long road', 450], ['tx', '🩺', 'In fertility treatment', 'IVF, IUI or tests with a clinic', 0]];
+export const TTC_STAGE = {
+  new: ['Getting ready', 'Start folate now, 400 µg a day, learn your fertile days and enjoy it. No pressure yet.'],
+  lt6: ['The first months', 'Most couples need a few cycles. Sex every 2 to 3 days, and every day or two in your fertile window.'],
+  '6to12': ['Time to check the basics', '35 or older? See your doctor now. Otherwise keep going, and confirm ovulation with LH tests.'],
+  gt12: ['Ask for a fertility check', 'After a year of trying you both deserve simple tests. You are far from alone: about 1 in 6 people go through this.'],
+  tx: ['Alongside your treatment', 'Your clinic leads. The app keeps your cycle, food, sleep and calm in step with it.'],
+};
+// Cumulative chance of pregnancy by cycle for couples who time sex to the fertile days (Gnoth 2003), month 1 to 12.
+export const TTC_CHANCE = [38, 55, 68, 74, 78, 81, 84, 86, 88, 90, 91, 92];
+export const TTC_DOCTOR = [['Under 35', 'After 12 months of trying'], ['35 to 39', 'After 6 months'], ['40 or older', 'Straight away'], ['Any age', 'Now, if periods are missing or very irregular, with endometriosis or PCOS, after a pelvic infection, or after 2 or more miscarriages']];
+export const TTC_BOTH = [['Her', 'Folate 400 µg a day, from 3 months before. Vitamin D 10 µg in winter. Iodine from fish or eggs.'], ['Him', 'Sperm take about 2.5 months to mature. Zinc foods, no laptop on the lap, no long hot baths.'], ['Timing', 'Sex every 2 to 3 days all month covers the fertile days without stress.'], ['Lube', 'Most lubricants slow sperm. Use a sperm-friendly one, or none.']];
+
 // Hormones made simple: a nickname, one plain sentence, the month in four steps (level 0 to 3 for
 // period, follicular, ovulation, luteal, with what she may feel) and what high or low can feel like.
 export const HORMONE_SIMPLE = {
