@@ -5278,7 +5278,7 @@ function stageHero(info, energy, o = {}) {
   const fertCap = lw != null ? cap('heart', `${Math.floor(lw / 7) + 1}w`, Math.min(100, lw / 42 * 100), 'Healing', 'loss') : cap('heart', info.fertile ? 'Yes' : 'No', info.fertile ? 100 : 0, 'Fertile', 'guide');
   return `<div class="opal">
     <div class="stage-scene"><img class="stage-bg" src="images/forest-calm.jpg" alt="" decoding="async"><span class="stage-tint"></span><span class="stage-light" aria-hidden="true"></span><span class="stage-vig" aria-hidden="true"></span>
-      ${nav ? `<button class="stage-phase" data-action="nav" data-to="guide"><b>${ph.name}</b></button>` : `<span class="stage-phase"><b>${ph.name}</b></span>`}
+      ${o.title ? `<span class="stage-phase pv-ttl"><small>${o.title}</small><b>${ph.name} <i>phase</i></b></span>` : nav ? `<button class="stage-phase" data-action="nav" data-to="guide"><b>${ph.name}</b></button>` : `<span class="stage-phase"><b>${ph.name}</b></span>`}
       <div class="stage-orb">${flowRing(info, o.id || 'today', true)}
         <span class="bubble ${info.phase}" title="${FLOWER[info.phase].n}">${flowerImg(info.phase)}<i class="bubble-glass"></i></span></div>
       <span class="stage-base"></span>
@@ -8440,17 +8440,62 @@ const PV_TTC = [
   ['clock', 'Start now, it counts in 3 months', 'Sperm takes about 74 days to grow.', ['Heller & Clermont', 1963, 'Measured how long sperm take to form in men: about 74 days.'], 'So what you change today shows up in about 3 months.'],
   ['bolt', 'No testosterone or “T boosters”', 'Extra testosterone shuts down your own sperm.', null, 'Also stop smoking, keep alcohol low, and skip most lubes: many slow sperm down. Use a sperm-friendly one or none.'],
 ];
+// Her fertile window as a tappable 10-day chart: bar height = chance of pregnancy from sex that day
+// (shape after Wilcox 1995: the 6 days ending on egg release, highest on the last 3). One chart, two framings:
+// 'ttc' when she is trying for a baby, 'avoid' when she is not.
+const FW_REL = [0.03, 0.05, 0.10, 0.16, 0.14, 0.27, 0.31, 0.33, 0.06, 0.03]; // offsets -7 .. +2 from egg release
+const FW_SAY = {
+  ttc: [['Before her window', 'Too early to count. Keep things relaxed.'], ['Before her window', 'Her window opens in a day or two.'],
+    ['Window open', 'Sperm from today can wait for her egg.'], ['Window open', 'Sperm from today can wait for her egg.'], ['Window open', 'Sperm from today can wait for her egg.'],
+    ['Best day', 'The 2 days before egg release count most.'], ['Best day', 'The 2 days before egg release count most.'],
+    ['Egg release', 'The egg lives 12 to 24 hours. Today still counts.'], ['Window closed', 'Her window has closed for this cycle.'], ['Window closed', 'Her window has closed for this cycle.']],
+  avoid: [['Lower', 'Lower chance, but not zero. Her egg release can come early.'], ['Lower', 'Lower chance, but not zero. Her egg release can come early.'],
+    ['Possible', 'Pregnancy is possible. Sperm can live up to 5 days inside her.'], ['Possible', 'Pregnancy is possible. Sperm can live up to 5 days inside her.'], ['Possible', 'Pregnancy is possible. Sperm can live up to 5 days inside her.'],
+    ['Highest', 'Highest chance of the month. Use a condom every time.'], ['Highest', 'Highest chance of the month. Use a condom every time.'],
+    ['Highest', 'Egg release. Highest chance of the month. Use a condom every time.'], ['Lower', 'Chance is falling, but her timing can be off by a day or two.'], ['Lower', 'Lower chance, but not zero.']],
+};
+function fwOv(snap) { const today = C.startOfDay(new Date()); for (let i = -2; i < 40; i++) if (snapInfo(snap, C.addDays(today, i)).isOvulation) return i; return null; }
+function pvFertChart(snap, mode) {
+  const today = C.startOfDay(new Date()), ov = fwOv(snap); if (ov == null) return '';
+  const todayIdx = ov - 7 <= 0 && ov + 2 >= 0 ? 7 - ov : -1;
+  const sel = ui.pvDay != null && ui.pvDay >= 0 && ui.pvDay < 10 ? ui.pvDay : todayIdx >= 0 ? todayIdx : 7;
+  const kind = k => k >= 5 && k <= 7 ? 'hi' : k >= 2 && k <= 4 ? 'mid' : 'lo';
+  const bars = FW_REL.map((r, k) => { const d = C.addDays(today, ov - 7 + k);
+    return `<button class="fw-b ${kind(k)} ${k === sel ? 'sel' : ''} ${k === todayIdx ? 'today' : ''}" data-action="pvDay" data-v="${k}" aria-label="${fmt(d, { weekday: 'long', month: 'short', day: 'numeric' })}: ${FW_SAY[mode][k][0]}">
+      <span class="fw-col"><i style="height:${Math.round(14 + r / 0.33 * 86)}%">${k === 7 ? '<u class="fw-egg"></u>' : ''}</i></span>
+      <small>${fmt(d, { weekday: 'narrow' })}</small><em class="dotnum">${d.getDate()}</em></button>`; }).join('');
+  const sd = C.addDays(today, ov - 7 + sel), [w, line] = FW_SAY[mode][sel];
+  return `<div class="fw ${mode}">
+      <div class="fw-bars">${bars}</div>
+      <div class="fw-key"><span><i class="hi"></i>${mode === 'ttc' ? 'Best days' : 'Highest'}</span><span><i class="mid"></i>${mode === 'ttc' ? 'Window open' : 'Possible'}</span><span><i class="egg"></i>Egg release</span></div>
+      <div class="fw-say ${kind(sel)}"><b>${sel === todayIdx ? 'Today' : fmt(sd, { weekday: 'long', month: 'short', day: 'numeric' })} · ${w}</b><p>${line}</p></div>
+      <p class="fw-tap">Tap a day</p></div>`;
+}
+function fwTop(snap, info, mode) {
+  const ov = fwOv(snap), fert = info.fertile, open = ov != null && ov > 5 ? ov - 5 : 0;
+  const line = fert ? (mode === 'ttc' ? (ov != null && ov <= 2 && ov >= 0 ? `Her best days: ${ov === 0 ? 'today' : `today and the next ${plural(ov, 'day')}`}.` : 'Her fertile window is open.') : 'Her fertile window is open now. Pregnancy can happen.')
+    : `${plural(open, 'day')} until her fertile window opens.`;
+  return `<div class="pv2-ttop">${fert ? `<b class="pv2-nowb ${mode}">${icon(mode === 'ttc' ? 'heart' : 'drop', 26, 2.2)}</b>` : `<b class="dotnum">${open}</b>`}<span><em>${fert ? 'Fertile window' : 'Not fertile yet'}</em>${line}</span></div>`;
+}
 function pvTTC(snap, info, name) {
-  const today = C.startOfDay(new Date()); let ov = -1;
-  for (let i = 0; i < 40; i++) if (snapInfo(snap, C.addDays(today, i)).isOvulation) { ov = i; break; }
-  const fert = info.fertile, open = ov > 5 ? ov - 5 : 0;
-  const big = fert ? 'Now' : `${open}`, line = fert ? (ov <= 2 && ov >= 0 ? `Her best days: today and the next ${ov === 0 ? 'hours' : `${plural(ov, 'day')}`}.` : 'Her fertile window is open.') : `days until her fertile window opens`;
-  const dots = Array.from({ length: 6 }, (_, k) => { const d = ov - 5 + k; return `<i class="${d === 0 ? 'now' : ''} ${k >= 4 ? 'best' : ''}">${k === 5 ? '<u></u>' : ''}</i>`; }).join('');
   return `${sectionTitle('Trying for a baby')}
     <p class="pv2-lead">${name} wants to get pregnant. Here is your part, short and simple.</p>
-    <section class="pv2-card pv2-ttc"><div class="pv2-ttop">${fert ? `<b class="pv2-nowb">${icon('heart', 26, 2.2)}</b>` : `<b class="dotnum">${big}</b>`}<span>${fert ? '<em>Fertile window</em>' : ''}${line}</span></div>
-      ${ov >= 0 ? `<div class="pv2-win"><div>${dots}</div><span><small>${fmt(C.addDays(today, ov - 5), { month: 'short', day: 'numeric' })}</small><small>Egg release ${fmt(C.addDays(today, ov), { month: 'short', day: 'numeric' })}</small></span></div>` : ''}</section>
+    <section class="pv2-card pv2-ttc">${fwTop(snap, info, 'ttc')}${pvFertChart(snap, 'ttc')}</section>
     <section class="pv2-card hs2-boost">${PV_TTC.map(([ic, n, s, st, more]) => `<details class="hs2-x"><summary><span class="hs2-xic">${icon(ic, 16)}</span><span class="hs2-rt"><b>${n}</b><small>${s}</small></span>${icon('chevD', 13)}</summary>
+      <div class="hs2-xb">${st ? `<div class="hs2-st"><b class="dotnum">${st[1]}</b><span><em>${st[0]}</em>${st[2]}</span></div>` : ''}${more ? `<p>${more}</p>` : ''}</div></details>`).join('')}</section>`;
+}
+// Not trying for a baby: the same window, framed as when pregnancy can happen and how to stay safe.
+const PV_AVOID = [
+  ['drop', 'Sperm live up to 5 days', 'Sex in the days before her window can still lead to pregnancy.', ['Wilcox et al.', 1995, 'Pregnancies came only from sex in the 6 days ending on the day of egg release.'], ''],
+  ['clock', 'Her egg lives 12 to 24 hours', 'After that, her window closes until next cycle.', null, 'The window is about 6 days a month, but you never know its exact edges.'],
+  ['moon', 'Her window can move', 'Stress, travel, illness and short sleep can shift egg release by days.', null, 'So these dates are estimates from her cycle, never a guarantee.'],
+  ['check', 'Protection every time', 'A condom or her chosen contraception, also outside the window.', ['Trussell', 2011, 'About 1 in 4 couples who relied on counting days alone had a pregnancy within a year.'], 'This app is not contraception. Talk with her about the method she wants.'],
+];
+function pvAvoid(snap, info, name) {
+  return `${sectionTitle('Her fertile window')}
+    <p class="pv2-lead">${name} is not trying for a baby. This is when pregnancy can happen, so you both stay safe.</p>
+    <section class="pv2-card pv2-ttc avoid">${fwTop(snap, info, 'avoid')}${pvFertChart(snap, 'avoid')}</section>
+    <section class="pv2-card hs2-boost">${PV_AVOID.map(([ic, n, s, st, more]) => `<details class="hs2-x"><summary><span class="hs2-xic">${icon(ic, 16)}</span><span class="hs2-rt"><b>${n}</b><small>${s}</small></span>${icon('chevD', 13)}</summary>
       <div class="hs2-xb">${st ? `<div class="hs2-st"><b class="dotnum">${st[1]}</b><span><em>${st[0]}</em>${st[2]}</span></div>` : ''}${more ? `<p>${more}</p>` : ''}</div></details>`).join('')}</section>`;
 }
 function pvLoss(name) {
@@ -8463,14 +8508,31 @@ function pvShowUp(sup) {
     <section class="pv2-card pv2-ds"><div class="pv2-dcol"><b class="y">${icon('check', 13, 2.6)} Do</b>${sup.do.map(x => `<p>${esc(x)}</p>`).join('')}</div>
       <div class="pv2-dcol"><b class="n">${icon('close', 13, 2.6)} Skip</b>${sup.avoid.map(x => `<p>${esc(x.replace(/\s*\(TCM:[^)]*\)/, ''))}</p>`).join('')}</div></section>`;
 }
-function pvHerDay(info, S) {
-  const w = dayWindow(info), lvl = CALM[w][0], g = DAY_GUIDE[w];
-  return `<section class="pv2-card pv2-spec"><div class="pv2-h"><b>Her day</b><small>${g.title}</small></div>
-    <div class="pv2-row"><span>Mood</span><b>${PV_MOOD[info.phase]}</b></div>
-    <div class="pv2-row"><span>Stress</span><b class="pv2-lv">${['', 'Low', 'Medium', 'High'][lvl]}<i>${[1, 2, 3].map(i => `<u class="${i <= lvl ? 'on' : ''}"></u>`).join('')}</i></b></div>
-    <div class="pv2-row"><span>Best for</span><b>${(t => t.charAt(0).toUpperCase() + t.slice(1))(g.best.slice(0, 2).join(', ').toLowerCase())}</b></div>
-    <div class="pv2-row"><span>She needs</span><b>${PV_NEEDS[info.phase]}</b></div>
-    <details class="pv2-why"><summary>How she may feel ${icon('chevD', 13)}</summary><p>${S.feel}</p><p>${PT_STRESS[w]}</p></details></section>`;
+// Her day as four tappable tiles: a mood face, a stress gauge, what the day is best for and what she needs.
+// Tap one and a short note opens under the grid.
+const PV_FACE = { menstrual: 'M24 41c3 1.6 9 1.6 12 0', follicular: 'M22 38c4 4.5 12 4.5 16 0', ovulatory: 'M20 36c5 7.5 15 7.5 20 0Z', luteal: 'M23 40c3.5-1.2 10.5-1.2 14 0' };
+function pvHerDay(info, S, sup = {}) {
+  const w = dayWindow(info), lvl = CALM[w][0], g = DAY_GUIDE[w], c = PH_HEX[info.phase], open = ui.pvTile || '';
+  const face = `<svg viewBox="0 0 60 60" class="hd-face" aria-hidden="true"><circle cx="30" cy="30" r="25" fill="${c}" opacity=".18"/><circle cx="30" cy="30" r="25" fill="none" stroke="${c}" stroke-width="2"/>
+    <circle cx="22.5" cy="26" r="2.4" fill="#20301a"/><circle cx="37.5" cy="26" r="2.4" fill="#20301a"/>
+    <path d="${PV_FACE[info.phase]}" fill="${info.phase === 'ovulatory' ? '#20301a' : 'none'}" stroke="#20301a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    ${info.phase === 'ovulatory' || info.phase === 'follicular' ? `<circle cx="16" cy="35" r="3.6" fill="${c}" opacity=".45"/><circle cx="44" cy="35" r="3.6" fill="${c}" opacity=".45"/>` : ''}</svg>`;
+  const ang = [-62, 0, 62][lvl - 1] || 0;
+  const gauge = `<svg viewBox="0 0 80 48" class="hd-gauge" aria-hidden="true">
+    <path d="M10 42a30 30 0 0 1 15-26" stroke="#9db36a" /><path d="M29 14a30 30 0 0 1 22 0" stroke="#e2b85c" /><path d="M55 16a30 30 0 0 1 15 26" stroke="#d98aa6" />
+    <g style="transform:rotate(${ang}deg);transform-origin:40px 42px"><path d="M40 42 L40 18" stroke="#20301a" stroke-width="2.6"/></g><circle cx="40" cy="42" r="4.2" fill="#20301a"/></svg>`;
+  const best = g.best.slice(0, 2), needsDo = (sup.do || []).slice(0, 2);
+  const tiles = [
+    ['mood', 'Mood', face, PV_MOOD[info.phase], `<p>${S.feel}</p>`],
+    ['stress', 'Stress', gauge, ['', 'Low', 'Medium', 'High'][lvl], `<p>${PT_STRESS[w]}</p>`],
+    ['best', 'Best for', `<span class="hd-ic">${icon('star', 22, 1.8)}</span>`, best.join(', '), `<div class="hd-chips">${g.best.map(x => `<span>${esc(x)}</span>`).join('')}</div><p>${g.why}</p>`],
+    ['needs', 'She needs', `<span class="hd-ic">${icon('heart', 22, 1.8)}</span>`, PV_NEEDS[info.phase], needsDo.length ? `<ul>${needsDo.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''],
+  ];
+  const cur = tiles.find(t => t[0] === open);
+  return `<section class="pv2-card pv2-spec hd" style="--pc:${c}"><div class="pv2-h"><b>Her day</b><small>${g.title}</small></div>
+    <div class="hd-grid">${tiles.map(([k, l, art, v], i) => `<button class="hd-t ${k === open ? 'on' : ''}" data-action="pvTile" data-v="${k}" aria-expanded="${k === open}">
+      <span class="hd-art">${art}</span><small>${l}</small><b>${esc(v)}</b>${icon(k === open ? 'close' : 'plus', 12, 2)}</button>`).join('')}</div>
+    ${cur ? `<div class="hd-note n-${tiles.indexOf(cur)}">${cur[4]}</div>` : '<p class="hd-hint">Tap a tile to see why</p>'}</section>`;
 }
 // ---------- his day: testosterone on a 24-hour clock, and what raises it ----------
 const HIS_DO = ['Train hard, decide big', 'Deep work, meetings', 'Lift, sprint, play sport', 'Her time: talk, cook', 'Sleep 7 to 9 hours'];
@@ -8623,16 +8685,17 @@ function viewWith(q) {
   const mine = state && state.onboarded && M?.stats?.periods?.length && snap.n === (state.profile.name || 'Her') && snap.s === C.iso(M.stats.periods[M.stats.periods.length - 1].start);
   const him = snap.w === 'm'; // a man only views her rhythm, he never tracks
   if (!(state && state.onboarded)) { try { localStorage.setItem(him ? 'uts.viewOnly' : 'uts.pendingPartner', q.get('d')); } catch {} }
-  return `<header class="topbar">${state && state.onboarded ? `<button class="icon-btn dark" data-action="nav" data-to="partners" aria-label="Back">${icon('chevL', 22)}</button>` : '<span class="tb-spacer"></span>'}<div class="topbar-title">${name}’s rhythm</div><span style="width:40px"></span></header>
-  ${mine ? `<div class="preview-bar">Preview: this is what she’ll see <button data-action="nav" data-to="partners">Done</button></div>` : ''}
-  <div class="pad">
-    ${him ? `<div class="seg his-seg">${[['her', `${name}'s rhythm`], ['read', 'Read'], ['his', 'My day']].map(([k, l]) => `<button class="${(ui.hisTab || 'her') === k ? 'on' : ''}" data-action="hisTab" data-v="${k}">${l}</button>`).join('')}</div>` : ''}
+  const back = state && state.onboarded ? `<button class="pv-back" data-action="nav" data-to="partners" aria-label="Back">${icon('chevL', 20)}</button>` : '';
+  const seg = him ? `<div class="seg his-seg ${back ? 'with-back' : ''}">${[['her', `${name}'s rhythm`], ['read', 'Read'], ['his', 'My day']].map(([k, l]) => `<button class="${(ui.hisTab || 'her') === k ? 'on' : ''}" data-action="hisTab" data-v="${k}">${l}</button>`).join('')}</div>` : '';
+  const herTab = !him || !ui.hisTab || ui.hisTab === 'her';
+  return `${mine ? `<div class="preview-bar">Preview: this is what she’ll see <button data-action="nav" data-to="partners">Done</button></div>` : ''}
+  <div class="pad pv-page">
+    ${herTab ? '' : `<div class="pv-top">${back}${seg}</div>`}
     ${him && ui.hisTab === 'read' ? `${pvRead(snap, info, name)}</div>` : him && ui.hisTab === 'his' ? `<div class="pv2-title"><small>Your day · ${fmt(today, { weekday: 'long', month: 'short', day: 'numeric' })}</small><h1>Your <b>24-hour drive</b></h1><p>Testosterone runs on a daily clock. Use it, and see what raises it.</p></div>${snap.g ? `<section class="pv2-card pv2-warn">${icon('heart', 16)}<p><b>Trying for a baby?</b> Never take testosterone or “T boosters”. Extra testosterone shuts down your sperm. Sleep, lifting and food below are the safe way.</p></section>` : ''}${hisDay(info, name)}</div>` : `
-    <div class="pv2-title"><small>${role === 'partner' ? 'Partner view' : 'Friend view'} · ${fmt(today, { weekday: 'long', month: 'short', day: 'numeric' })}</small><h1>${name} is in her <b>${ph.name.toLowerCase()} phase</b></h1></div>
-    <section class="hub pt-stage">${stageHero(info, Math.round(C.energyAt(info.cd, info.L, info.P) * 100), { nav: false, id: 'with', fert: !!snap.f })}</section>
-    ${pvHerDay(info, S)}
+    <section class="hub pt-stage pv-hero">${back}${seg}${stageHero(info, Math.round(C.energyAt(info.cd, info.L, info.P) * 100), { nav: false, id: 'with', fert: !!snap.f, title: `${name} is in her` })}</section>
+    ${pvHerDay(info, S, sup)}
     ${role === 'partner' ? pvReadTeaser(info, him) : ''}
-    ${snap.l && role === 'partner' ? pvLoss(name) : snap.g && role === 'partner' ? pvTTC(snap, info, name) : ''}
+    ${snap.l && role === 'partner' ? pvLoss(name) : snap.g && role === 'partner' ? pvTTC(snap, info, name) : snap.f && role === 'partner' ? pvAvoid(snap, info, name) : ''}
     ${role === 'partner' ? `${pvToday(info, name, sup, snap)}
     ${pvShowUp(sup)}
     ${sectionTitle('What to give her')}
@@ -9458,6 +9521,8 @@ const actions = {
     sent();
   },
   hisTab: d => { ui.hisTab = d.v; render(); document.getElementById('view').scrollTop = 0; },
+  pvTile: d => { ui.pvTile = ui.pvTile === d.v ? '' : d.v; render(); },
+  pvDay: d => { ui.pvDay = +d.v; render(); },
   copySay: async d => { try { await navigator.clipboard.writeText(d.t); toast('Copied, now send it to her'); } catch { prompt('Copy and send', d.t); } },
   hisWake: d => { try { localStorage.setItem('uts.wake', d.v); } catch {} render(); },
   trackMine: () => { try { localStorage.removeItem('uts.viewOnly'); } catch {} go('today'); },
