@@ -13438,3 +13438,8 @@ html .st4-c.last i { background: #20301a; }
 html .st4-c.now i { background: repeating-linear-gradient(135deg, #c9d3b4 0 3px, #eef0e7 3px 6px); }
 html .pad.sp2t > .spec:not(.stack):first-child { margin-left: 0 !important; margin-right: 0 !important; }
 html .pad.sp2t > .spec:not(.stack):first-child .spec-media { border-radius: 30px; overflow: hidden; box-shadow: 0 14px 34px rgba(32,48,26,.14); }
+/* Supplement › How much is safe, for supplements with no official limit: the line marks the most trials used, and beyond it is grey "not studied" rather than red "too much" */
+.sf-st .sf-over { background: repeating-linear-gradient(135deg, #dcdcd3 0 5px, #eeeee8 5px 10px); }
+.sf-st .sf-lim { background: #6c823e; }
+.sf-st .sf-lim small { color: #4f6230; }
+.sf-st .sf-k i.x { background: repeating-linear-gradient(135deg, #dcdcd3 0 3px, #eeeee8 3px 6px); }

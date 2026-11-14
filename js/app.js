@@ -4630,19 +4630,29 @@ const SAFE_UL = {
   'vitamin-c': [250, 500, 2000, 'mg', 'US', 'Europe set no limit. Above the US limit, loose stools and stomach upset are common.'],
   prenatal: [400, 400, 1000, 'µg', 'EU', 'Counts folic acid and methylfolate from pills. Folate from greens and liver does not count.'],
 };
+// No official limit for these: her dose against the highest daily dose that trials used safely.
+// [low, high, highest studied, unit, how long it was studied, what the studies were]
+const SAFE_STUDIED = {
+  ashwagandha: [300, 600, 600, 'mg', 'for 8 to 12 weeks', 'Trials gave 250 to 600 mg of root extract a day for 8 to 12 weeks (Chandrasekhar, 2012; Salve, 2019). Longer use is barely studied, so take a break after 8 weeks. Some European countries restrict it, and it is not for pregnancy.'],
+  ginger: [1000, 1000, 2000, 'mg', 'on period days', 'Period pain trials gave 750 to 2000 mg of ginger powder a day for the first 3 to 4 days of the period (Daily et al., 2015). Your 250 mg four times a day sits in the middle.'],
+  creatine: [3, 5, 5, 'g', 'for years', 'Long studies in women and men used 3 to 5 g a day for months to years without harm to the kidneys or liver (Kreider et al., 2017). Big loading doses are not needed.'],
+  coq10: [100, 200, 1200, 'mg', 'in reviews', 'A safety review found up to 1200 mg a day well tolerated (Hathcock and Shao, 2006). Egg quality trials used 200 to 600 mg a day for about 3 months.'],
+};
 function suppSafe(id) {
-  const S = SAFE_UL[id]; if (!S) return '';
-  const [lo, hi, ul, u, who, note] = S, top = Math.max(ul * 1.3, hi * 1.1), pc = v => (v / top * 100).toFixed(1);
+  const S = SAFE_UL[id], T = !S && SAFE_STUDIED[id]; if (!S && !T) return '';
+  const [lo, hi, ul, u] = S || T, top = Math.max(ul * 1.3, hi * 1.1), pc = v => (v / top * 100).toFixed(1);
   const dose = lo === 0 ? `≤${hi}` : lo === hi ? `${hi}` : `${lo}–${hi}`, at = hi >= ul;
-  return `<section class="card glass sf"><div class="sf-h"><div class="tf-k">How much is safe</div>
+  const line = S ? `${at ? 'Your dose stays at or under' : 'Your dose stays well under'} the ${S[4] === 'EU' ? 'EU' : 'US'} safe limit of <b>${ul} ${u}</b> a day.`
+    : `There is no official limit. ${at ? 'Your dose matches' : 'Your dose stays under'} the most that trials used safely, <b>${ul} ${u}</b> a day ${T[4]}.`;
+  return `<section class="card glass sf ${T ? 'sf-st' : ''}"><div class="sf-h"><div class="tf-k">How much is safe</div>
       <span class="sf-n"><b class="dotnum">${dose}</b><small>${u} a day</small></span>
-      <p>${at ? 'Your dose stays at or under' : 'Your dose stays well under'} the ${who === 'EU' ? 'EU' : 'US'} safe limit of <b>${ul} ${u}</b> a day.</p></div>
-    <div class="sf-bar" role="img" aria-label="Your dose ${dose} ${u}, safe limit ${ul} ${u}">
+      <p>${line}</p></div>
+    <div class="sf-bar" role="img" aria-label="Your dose ${dose} ${u}, ${S ? 'safe limit' : 'highest studied dose'} ${ul} ${u}">
       <i class="sf-ok" style="width:${pc(ul)}%"></i><i class="sf-over" style="left:${pc(ul)}%"></i>
       <i class="sf-dose" style="left:${pc(lo)}%;width:max(10px, ${(pc(hi) - pc(lo)).toFixed(1)}%)"></i>
-      <span class="sf-lim" style="left:${pc(ul)}%"><small>Limit</small></span></div>
-    <div class="sf-k"><span><i class="d"></i>Your dose</span><span><i class="o"></i>Safe every day</span><span><i class="x"></i>Too much</span></div>
-    <details class="sf-more"><summary>What the limit means ${icon('chevD', 13)}</summary><p>The most you can take every day, for years, that experts found safe for nearly all adults. ${note}</p></details></section>`;
+      <span class="sf-lim" style="left:${pc(ul)}%"><small>${S ? 'Limit' : 'Studied'}</small></span></div>
+    <div class="sf-k"><span><i class="d"></i>Your dose</span><span><i class="o"></i>${S ? 'Safe every day' : 'Used safely in trials'}</span><span><i class="x"></i>${S ? 'Too much' : 'Not studied'}</span></div>
+    <details class="sf-more"><summary>${S ? 'What the limit means' : 'What the trials used'} ${icon('chevD', 13)}</summary><p>${S ? `The most you can take every day, for years, that experts found safe for nearly all adults. ${S[5]}` : T[5]}</p></details></section>`;
 }
 // Food first: each food with what one serving gives, as a bar against her daily need
 const fmtAmt = v => v < 10 && v % 1 ? String(v) : String(Math.round(v));
