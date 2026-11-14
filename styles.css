@@ -12883,3 +12883,45 @@ html .pv2-3d.sm .cup3d-w canvas.teacup3d { inset: 0; width: 100%; height: 100%; 
 .bgx-arch { inset: 0; filter: saturate(.95) brightness(1.02) hue-rotate(-3deg); }
 .topbar { background: linear-gradient(170deg, rgba(255,255,255,.94), rgba(255,255,255,.82)) !important; border-color: #fff;
   box-shadow: inset 0 1px 0 #fff, 0 12px 30px -10px rgba(70,40,50,.22) !important; }
+/* After birth */
+.af-card { position: relative; display: block; width: 100%; padding: 0; overflow: hidden; text-align: left; border-radius: 28px; background: #fff; color: #20301a; }
+.af-pic { position: absolute; right: -40px; top: 0; height: 100%; width: auto; opacity: .95; -webkit-mask-image: linear-gradient(90deg, transparent, #000 45%); mask-image: linear-gradient(90deg, transparent, #000 45%); }
+.af-in { position: relative; padding: 20px 20px 18px; max-width: 72%; }
+.af-in h3 { margin: 6px 0 4px; font-size: 22px; font-weight: 500; letter-spacing: -.01em; }
+.af-in p { margin: 0; font-size: 13.5px; line-height: 1.45; color: #4a5640; }
+.af-bar { display: flex; gap: 5px; margin-top: 14px; }
+.af-bar i { flex: 1; height: 5px; border-radius: 3px; background: rgba(32,48,26,.1); }
+.af-bar i.done { background: rgba(32,48,26,.35); } .af-bar i.now { background: #c9798f; }
+.af-go { display: inline-flex; align-items: center; gap: 4px; margin-top: 12px; font-size: 13.5px; font-weight: 500; color: #20301a; }
+.af-now { padding: 20px; }
+.af-now h3 { margin: 6px 0 4px; font-size: 24px; font-weight: 400; color: #20301a; }
+.af-now > p { margin: 0; font-size: 14.5px; line-height: 1.5; color: #304023; }
+.af-tl { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin: 16px 0 4px; }
+.af-tl span { display: grid; gap: 6px; }
+.af-tl i { height: 5px; border-radius: 3px; background: rgba(32,48,26,.1); }
+.af-tl .done i { background: rgba(32,48,26,.35); } .af-tl .on i { background: #c9798f; }
+.af-tl small { font-size: 10.5px; line-height: 1.2; color: #8a927f; }
+.af-tl .on small { color: #20301a; font-weight: 500; }
+.af-age { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.af-age button { padding: 8px 12px; border-radius: 999px; background: #f6f3ef; font-size: 12.5px; color: #304023; }
+.af-age button.on { background: #20301a; color: #fff; }
+.af-t { padding: 16px 18px; }
+.af-th { display: grid; grid-template-columns: 82px 1fr 18px; gap: 14px; align-items: center; width: 100%; text-align: left; color: #20301a; }
+.af-th > svg { transition: transform .3s; } .af-t.open .af-th > svg { transform: rotate(180deg); }
+.af-big { display: grid; place-items: center; text-align: center; width: 82px; height: 82px; border-radius: 22px; background: #fff; }
+.af-big b { font-size: 22px; line-height: 1; } .af-big small { font-size: 10px; line-height: 1.2; color: #6b7462; padding: 0 6px; }
+.af-tt b { display: block; margin-top: 2px; font-size: 17px; font-weight: 500; line-height: 1.25; }
+.af-short { margin: 14px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.af-short li { position: relative; padding-left: 16px; font-size: 14px; line-height: 1.45; color: #304023; }
+.af-short li::before { content: ''; position: absolute; left: 2px; top: 8px; width: 6px; height: 6px; border-radius: 50%; background: #c9798f; }
+.af-read { margin-top: 12px; font-size: 13.5px; font-weight: 500; color: #20301a; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(32,48,26,.3); }
+.af-more { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(32,48,26,.08); }
+.af-more > p { margin: 0 0 10px; font-size: 14px; line-height: 1.55; color: #304023; }
+.af-study { display: grid; grid-template-columns: 56px 1fr; gap: 12px; margin-top: 6px; padding: 12px; border-radius: 18px; background: #fff; }
+.af-study > span { display: grid; place-items: center; height: 40px; border-radius: 12px; background: #20301a; color: #fff; font-size: 13px; }
+.af-study b { font-size: 13.5px; font-weight: 500; color: #20301a; } .af-study small { display: block; font-size: 12px; color: #6b7462; }
+.af-study p { margin: 4px 0 0; font-size: 13px; line-height: 1.45; color: #304023; }
+.af-help { padding: 16px 18px; background: #fff; border-radius: 24px; }
+.af-help b { display: flex; align-items: center; gap: 7px; font-size: 15px; font-weight: 500; color: #20301a; } .af-help b svg { color: #c9798f; }
+.af-help p { margin: 6px 0 0; font-size: 13.5px; line-height: 1.5; color: #304023; }
+.af-big b em { font-family: Outfit, sans-serif; font-style: normal; font-size: 13px; font-weight: 500; margin-left: 3px; }

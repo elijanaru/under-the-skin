@@ -1303,12 +1303,59 @@ export const BODY_NOTES = {
     mid: ['How do you feel in your body today? Confident, tired, somewhere in between? All of it is fine.', 'One deep breath, {n}. What do you feel right now?', 'Your body might be sending little signs today. Take a moment to listen.'],
     pm: ['Who did you connect with today? Notice who gives you energy.', 'You don’t have to use every high-energy day. Resting tonight is a choice too.', 'Before sleep: what felt good today, {n}?'],
   },
+  after: {
+    am: ['Good morning, {n}. You are learning a whole new person, and becoming a new one yourself. Go gently.', 'However last night went, you are doing enough. What would make today a little easier?', 'Your body did something huge. Warm breakfast first, everything else after.'],
+    mid: ['A small pause, {n}. When did you last eat, drink and breathe slowly?', 'Is there one thing someone else could take off your plate today? Asking is strength.', 'How are you, really? Not the baby. You.'],
+    pm: ['You don’t have to love every moment to be a good mother.', 'What did you miss today, and what surprised you? Both are allowed.', 'Rest when you can tonight, {n}. If the low feelings stay, tell someone you trust.'],
+  },
   luteal: {
     am: ['Your hormones are shifting. Have you noticed any changes in your sleep, appetite or mood?', 'Good morning, {n}. If you feel slower, that’s your body turning inward. If you don’t, that’s fine too.', 'Plan a softer day if you can. Fewer things, done well.'],
     mid: ['Hungrier than usual? Your body uses a little more energy now. A warm, real meal is enough.', 'Check in with yourself, {n}. What is one thing you need today?', 'If little things feel big today, you’re not too much. Breathe out slowly.'],
     pm: ['What has your body been trying to tell you lately?', 'What would you like to say no to this week, {n}? Your boundaries are allowed to be clear.', 'Wind down early tonight. Warm tea, dim lights, a soft evening.'],
   },
 };
+
+// After birth: the first two years as stages (months from, to), and five topics. Short first, the rest behind a tap.
+export const AFTER_STAGES = [
+  [0, 1.5, 'Healing', 'Your womb shrinks back, the bleeding eases and your hormones crash and settle. Rest is the work.'],
+  [1.5, 3, 'Finding your feet', 'The 6-week check-up. Gentle walks, pelvic floor squeezes and warm food.'],
+  [3, 6, 'Coming back to you', 'Hair may shed now. It is normal and grows back. Your first period may return if you’re not fully breastfeeding.'],
+  [6, 12, 'A new rhythm', 'Cycles often come back, irregular at first. Strength returns step by step.'],
+  [12, 24, 'Your new self', 'Your brain is still reshaping. Many women feel like themselves again, in a new way.'],
+];
+export const AFTER_TOPICS = [
+  { k: 'hormones', ic: 'flask', t: 'Your hormones', big: '100×', bigS: 'drop within days', s: 'The biggest hormone drop of your life',
+    short: ['Estrogen and progesterone fall back to pre-pregnancy levels within days of birth.', 'Prolactin stays high while you breastfeed and can hold your cycle back.', 'Oxytocin rises with feeding and skin-to-skin, for bonding and calm.'],
+    more: ['In late pregnancy estrogen and progesterone are a hundred times or more above normal. Once the placenta is born they fall within a few days. That crash is a big part of why tears come easily in the first week.',
+      'While you breastfeed, prolactin keeps ovulation quiet. You can still ovulate before your first period comes back, so it is not reliable birth control once feeds get fewer or after 6 months.',
+      'About 5 to 10% of women get an inflamed thyroid in the first year: first racing, anxious and losing weight, later tired, cold and low. A simple blood test checks it.'],
+    study: ['Hendrick et al.', 1998, 'Psychosomatics', 'Reviewed how the sharp fall of estrogen and progesterone after birth is linked to mood changes in sensitive women.'] },
+  { k: 'brain', ic: 'mind', t: 'Your brain', big: '2 yrs', bigS: 'changes last at least', s: 'Your brain fine-tunes for your baby',
+    short: ['Pregnancy reshapes the areas you use to read other people’s feelings.', 'It looks like fine-tuning, not loss: the changes predicted how strongly mothers bonded.', 'Forgetfulness is common and gets better.'],
+    more: ['Brain scans before and after a first pregnancy showed less grey matter in the areas for understanding others. The changes were so consistent a computer could tell mothers from non-mothers, and they lasted at least two years.',
+      'The bigger the change, the stronger the mother’s attachment to her baby. Scientists think the brain is pruning and specialising, a bit like it does in the teenage years.',
+      'A 2024 study scanned one woman 26 times through pregnancy and after: grey matter thinned while the brain’s wiring grew stronger, and part of it came back after birth.'],
+    study: ['Hoekzema et al.', 2017, 'Nature Neuroscience', 'Pregnancy changed grey matter in mothers’ social brain for at least 2 years, and the change predicted bonding.'] },
+  { k: 'self', ic: 'heart', t: 'Your sense of self', big: '1', bigS: 'new you, still growing', s: 'When your old self seems gone',
+    short: ['Many mothers feel their old self has died. There is a word for this change: matrescence.', 'Missing your old life while loving your baby is normal. Both can be true.', 'Keep one small thing that is only yours, every week.'],
+    more: ['Matrescence means becoming a mother. Like adolescence, it changes your body, hormones, brain, friendships and identity all at once. It was named by the anthropologist Dana Raphael in the 1970s.',
+      'Some women call it an ego death: the person you were, with her freedom and plans, seems to disappear. Grief for her is allowed. She is not gone, she is changing.',
+      'What helps: talk to other mothers honestly, name what you miss, protect one hour that is only yours, and let help in.'],
+    study: ['Athan & Reel', 2015, 'Feminism & Psychology', 'Described matrescence as a normal developmental passage, with ambivalence as part of it, not a failure.'] },
+  { k: 'mood', ic: 'leaf', t: 'Your mood', big: '1 in 7', bigS: 'mothers get postnatal depression', s: 'Baby blues, or something more?',
+    short: ['Baby blues: up to 4 in 5 mothers cry easily around days 3 to 5. It passes within 2 weeks.', 'Postnatal depression lasts longer and can start any time in the first year, or already in pregnancy.', 'It is common, it is not your fault, and it gets better with help.'],
+    more: ['Talk to your midwife, health visitor or doctor if for more than 2 weeks you feel low or empty, lose joy, can’t sleep even when your baby sleeps, feel anxious all the time, feel cut off from your baby, or have scary thoughts that won’t stop.',
+      'Depression can start in pregnancy too: about 1 in 10 women have it then. Talking therapy works well, and there are medicines that are safe while breastfeeding.',
+      'Go to emergency care at once if you have thoughts of harming yourself or your baby, or if you or someone close notices confusion, very strange beliefs or not sleeping at all. That can be postpartum psychosis. It is rare, treatable and needs help the same day.'],
+    study: ['Wisner et al.', 2013, 'JAMA Psychiatry', 'Screened 10,000 mothers: 14% had depression, and a third of them had it start in pregnancy.'] },
+  { k: 'body', ic: 'bowl', t: 'Your body & food', big: '40', bigS: 'warm days to rest', s: 'Warm, rest, rebuild',
+    short: ['Chinese medicine keeps the first 30 to 40 days warm: soups, broths, ginger, nothing cold or raw.', 'Rebuild with iron, protein and omega-3 fish.', 'Pelvic floor squeezes daily. Running and heavy lifting wait until about 12 weeks.'],
+    more: ['In China women “sit the month”: rest at home, keep warm and eat bone broth, eggs, ginger, red dates and rice porridge. Warm food is easy to digest when you are tired.',
+      'Breastfeeding uses about 500 extra calories a day. Eat when you are hungry and drink to thirst. Oily fish twice a week gives DHA for you and your baby.',
+      'Supplements, gently: keep taking your pregnancy vitamin while breastfeeding. Vitamin D 10 µg a day. DHA about 200 mg a day if you eat little fish. Iron only after a blood test shows it is low. Ask your midwife first if you take medication.',
+      'Pelvic floor: 3 sets of 10 slow squeezes a day. Leaking, heaviness or pain? A women’s health physio helps, at any time after birth.'],
+    study: ['Bø et al.', 2017, 'British Journal of Sports Medicine', 'Expert advice: start pelvic floor training early after birth and build up exercise gradually, with high impact later.'] },
+];
 
 // Hormones made simple: a nickname, one plain sentence, the month in four steps (level 0 to 3 for
 // period, follicular, ovulation, luteal, with what she may feel) and what high or low can feel like.
@@ -1390,6 +1437,7 @@ export const MIND_SCIENCE = [
 export const PURPOSES = [
   { k: 'know', t: 'Understand my body', s: 'Periods, rhythm and your biological clock', photo: 'Oestrogen', img: 'images/purpose-body.jpg', pos: '50% 62%' },
   { k: 'conceive', t: 'Trying to get pregnant', s: 'Fertile window, best days, preparing my body', photo: 'Prolactin', img: 'images/purpose-conceive.jpg', pos: '62% 42%' },
+  { k: 'after', t: 'After birth', s: 'Your hormones, brain and heart after a baby', img: 'images/purpose-after.jpg', pos: '80% 50%' },
   { k: 'menopause', t: 'Menopause', s: 'Perimenopause & menopause support', photo: 'Serotonin', soon: true },
 ];
 // What someone wants help with; each has a tailored tip per phase.

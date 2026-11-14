@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HORMONE_SIMPLE, HORMONE_RELAY, BODY_NOTES, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
+  PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HORMONE_SIMPLE, HORMONE_RELAY, BODY_NOTES, AFTER_STAGES, AFTER_TOPICS, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -217,6 +217,7 @@ const GOAL_TO_FOCUS = { 'Ease PMS': 'pms', 'Clearer skin': 'skin', 'Better sleep
 function purpose() { const p = state.profile; return p.purpose || ((p.goals || []).includes('Trying to conceive') ? 'conceive' : 'know'); }
 function focusKeys() { const p = state.profile; if (p.focus) return p.focus; const f = [...new Set((p.goals || []).map(g => GOAL_TO_FOCUS[g]).filter(Boolean))]; return f.length ? f : ['hormones', 'energy', 'eat']; }
 function ttc() { return purpose() === 'conceive'; }
+function afterBirth() { return purpose() === 'after'; }
 function purposePicker(cur, act, full) {
   if (cur === 'notnow') cur = 'know';
   return `<div class="purp ${full ? 'full' : ''}">${PURPOSES.map(x => { const u = x.img || hormonePhoto(x.photo, 600); return `<button class="purp-c ${cur === x.k ? 'on' : ''} ${x.soon ? 'soon' : ''}" ${x.soon ? 'disabled' : `data-action="${act}" data-v="${x.k}"`}>${u ? `<img src="${u}" alt=""${x.pos ? ` style="object-position:${x.pos}"` : ''}>` : ''}<span class="pc-shade"></span><span class="pc-in"><b>${x.t}</b><small>${x.s}</small></span>${x.soon ? '<span class="pc-soon">Coming soon</span>' : `<span class="pc-check">${icon('check', 14, 2.6)}</span>`}</button>`; }).join('')}</div>`;
@@ -604,6 +605,44 @@ function conceiveCard(info) {
     <p>${fmt(start, { month: 'short', day: 'numeric' })} – ${fmt(ovd, { month: 'short', day: 'numeric' })} · best: ${fmt(peak1, { month: 'short', day: 'numeric' })} – ${fmt(ovd, { month: 'short', day: 'numeric' })}</p>
     <div class="cv-bar">${Array.from({ length: 6 }, (_, i) => { const d = info.ov - 5 + i; return `<i class="${d >= info.ov - 2 ? 'peak' : ''} ${d === info.cd ? 'now' : ''}"></i>`; }).join('')}</div>
     <small>Sex every 1–2 days in this window gives the best chance. Estimates: an ovulation test confirms your real day.</small></div></section>`;
+}
+
+// After birth: where she is in the first two years, from her baby's age.
+const AFTER_AGE = [['3w', 'Under 6 weeks', 21], ['10w', '6 weeks to 3 months', 70], ['4m', '3 to 6 months', 137], ['9m', '6 to 12 months', 274], ['18m', '1 to 2 years', 548]];
+function afterMonths() { const p = state.profile; return p.ppAt ? C.diffDays(new Date(), C.parseISO(p.ppAt)) / 30.4 : null; }
+function afterStage() { const m = afterMonths(); if (m == null) return -1; const i = AFTER_STAGES.findIndex(([a, b]) => m >= a && m < b); return i < 0 ? AFTER_STAGES.length - 1 : i; }
+function afterAgeLabel() { const m = afterMonths(); if (m == null) return ''; const w = Math.round(m * 4.35); return m < 3 ? `Week ${Math.max(1, w)} after birth` : m < 24 ? `Month ${Math.floor(m) + 1} after birth` : 'Two years and more'; }
+function afterBar(st) { return `<div class="af-bar">${AFTER_STAGES.map((x, i) => `<i class="${i < st ? 'done' : i === st ? 'now' : ''}"></i>`).join('')}</div>`; }
+function afterCard() {
+  if (!afterBirth()) return '';
+  const st = afterStage(), x = AFTER_STAGES[st];
+  return `<button class="card af-card" data-action="nav" data-to="after"><img src="images/purpose-after.jpg" alt="" class="af-pic"><div class="af-in">
+    <div class="eyebrow dark">${st < 0 ? 'After birth' : afterAgeLabel()}</div>
+    <h3>${x ? x[2] : 'Your first two years'}</h3><p>${x ? x[3] : 'Tell us your baby’s age and the app follows your recovery.'}</p>
+    ${st < 0 ? '' : afterBar(st)}<span class="af-go">Your after-birth guide ${icon('chevR', 14)}</span></div></button>`;
+}
+function viewAfter() {
+  const st = afterStage(), p = state.profile, open = ui.afOpen;
+  const cur = AFTER_AGE.find(([k, , d]) => p.ppAt && Math.abs(C.diffDays(new Date(), C.parseISO(p.ppAt)) - d) < 1)?.[0];
+  return `${topbar('After birth', { back: true })}
+  <div class="pad af">
+    <h1 class="page-h">After birth, <span>gently</span></h1>
+    <p class="hs-sub">Your hormones, brain and sense of self all change after a baby. Here is what is normal, what helps, and when to ask for help.</p>
+    <section class="card card-light af-now"><div class="eyebrow dark">${st < 0 ? 'How old is your baby?' : afterAgeLabel()}</div>
+      ${st < 0 ? '' : `<h3>${AFTER_STAGES[st][2]}</h3><p>${AFTER_STAGES[st][3]}</p>
+      <div class="af-tl">${AFTER_STAGES.map(([a, b, n], i) => `<span class="${i === st ? 'on' : i < st ? 'done' : ''}"><i></i><small>${n}</small></span>`).join('')}</div>`}
+      <div class="af-age">${AFTER_AGE.map(([k, t]) => `<button class="${cur === k ? 'on' : ''}" data-action="afterAge" data-v="${k}">${t}</button>`).join('')}</div></section>
+    ${AFTER_TOPICS.map(x => `<section class="card glass af-t ${open === x.k ? 'open' : ''}">
+      <button class="af-th" data-action="afterOpen" data-v="${x.k}" aria-expanded="${open === x.k}">
+        <span class="af-big"><b class="dotnum">${x.big.replace(/ ?([a-z]+)$/, '<em>$1</em>')}</b><small>${x.bigS}</small></span>
+        <span class="af-tt"><span class="eyebrow">${x.t}</span><b>${x.s}</b></span>${icon('chevD', 16)}</button>
+      <ul class="af-short">${x.short.map(l => `<li>${l}</li>`).join('')}</ul>
+      ${open === x.k ? `<div class="af-more">${x.more.map(l => `<p>${l}</p>`).join('')}
+        <div class="af-study"><span class="dotnum">${x.study[1]}</span><div><b>${x.study[0]}</b><small>${x.study[2]}</small><p>${x.study[3]}</p></div></div></div>` : `<button class="af-read" data-action="afterOpen" data-v="${x.k}">Read more</button>`}
+    </section>`).join('')}
+    <section class="card af-help"><b>${icon('heart', 15)} If it feels too heavy</b>
+      <p>Low for more than two weeks? Tell your midwife, health visitor or doctor. Thoughts of harming yourself or your baby: call your local emergency number now. You are not alone, and it gets better.</p></section>
+  </div>`;
 }
 
 // ---------- flowing cycle hero (dark, liquid rings, glowing phase arc, today orb) ----------
@@ -1383,6 +1422,7 @@ function viewToday() {
     ${todayHub(info, energy, head)}
 
     ${conceiveCard(info)}
+    ${afterCard()}
     ${(() => { // at most two notices, most important first
       const n = [...alerts];
       if (info.cd >= info.ov - 2 && info.cd <= info.ov + 1) n.push(`<button class="al-row" data-action="nav" data-to="relief/${encodeURIComponent('Ovulation pain')}"><span class="al-ic">${icon('spark', 15)}</span><span class="al-t"><b>Twinge on one side?</b><small>That may be ovulation. 7 ways to ease it</small></span>${icon('chevR', 14)}</button>`);
@@ -3663,9 +3703,9 @@ function bodyNote(date, slot, di, pats) {
   if (!di) return null;
   const nm = (state.profile.name || '').trim().split(/\s+/)[0], n = nm || 'love', k = dayNum(date) + (slot === 'mid' ? 1 : slot === 'pm' ? 2 : 0);
   // her own pattern, on about every other morning it applies
-  const p = slot === 'am' && k % 2 === 0 && (pats || []).find(x => di.cd >= x.from - 1 && di.cd <= x.to && x.cyclesN >= 2);
+  const p = slot === 'am' && k % 2 === 0 && !afterBirth() && (pats || []).find(x => di.cd >= x.from - 1 && di.cd <= x.to && x.cyclesN >= 2);
   if (p) return `Last cycles you often noted ${p.name.toLowerCase()} around now. If it shows up again, be gentle with yourself. If it doesn’t, notice that too.`;
-  const list = BODY_NOTES[di.phase][slot];
+  const list = (afterBirth() && (afterMonths() == null || afterMonths() < 24) ? BODY_NOTES.after : BODY_NOTES[di.phase])[slot];
   return list[k % list.length].replace(/\{n\}/g, n);
 }
 function letterSlotNow(r) { const now = new Date(), m = now.getHours() * 60 + now.getMinutes(); return [...(LETTER_SLOTS[r.lettersN] || LETTER_SLOTS[2])].reverse().find(([h, mi]) => m >= h * 60 + mi); }
@@ -8733,7 +8773,7 @@ const actions = {
     if (!o.noPeriod) for (let i = 0; i < o.periodLength; i++) { const d = C.addDays(s, i); if (d <= new Date()) logs[C.iso(d)] = { flow: i === 0 || i === 1 ? 'medium' : 'light' }; }
     ui.arrive = true;
     let pend = null; try { pend = b64d(localStorage.getItem('uts.pendingPartner') || ''); localStorage.removeItem('uts.pendingPartner'); } catch {}
-    state = { onboarded: true, profile: { name: o.name.trim(), country: o.country || myCountry(), diet: o.diet || 'all', cycleLength: o.unsure || o.noPeriod ? 28 : o.cycleLength, cycleUnsure: !!(o.unsure || o.noPeriod), noPeriod: !!o.noPeriod || undefined, preg: o.preg || undefined, ppAt: o.ppAt || undefined, ppOld: o.ppOld || undefined, bf: o.bf || undefined, bc: o.bc || 'none', bcPlan: hormonalBC(o.bc) ? o.bcPlan || 'think' : undefined, bcStop: o.bcPlan === 'stop' ? todayISO() : undefined, planStart: todayISO(), periodLength: o.periodLength, goals: o.goals, purpose: o.purpose || 'know', focus: (o.focus && o.focus.length) ? o.focus : ['hormones', 'energy', 'eat'], birthday: o.birthday || undefined, birthTime: o.birthday && o.birthTime || undefined, birthPlace: o.birthday && o.birthPlace || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
+    state = { onboarded: true, profile: { name: o.name.trim(), country: o.country || myCountry(), diet: o.diet || 'all', cycleLength: o.unsure || o.noPeriod ? 28 : o.cycleLength, cycleUnsure: !!(o.unsure || o.noPeriod), noPeriod: !!o.noPeriod || undefined, preg: o.preg || (o.purpose === 'after' ? 'kids' : undefined), ppAt: o.ppAt || undefined, ppOld: o.ppOld || undefined, bf: o.bf || undefined, bc: o.bc || 'none', bcPlan: hormonalBC(o.bc) ? o.bcPlan || 'think' : undefined, bcStop: o.bcPlan === 'stop' ? todayISO() : undefined, planStart: todayISO(), periodLength: o.periodLength, goals: o.goals, purpose: o.purpose || 'know', focus: (o.focus && o.focus.length) ? o.focus : ['hormones', 'energy', 'eat'], birthday: o.birthday || undefined, birthTime: o.birthday && o.birthTime || undefined, birthPlace: o.birthday && o.birthPlace || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
     if (pend && pend.s && pend.c) state.partners = [{ ...pend, id: Date.now().toString(36), added: Date.now() }];
     ui.scrollMem = {}; ui.navStack = []; save(); go('today'); render(); toTop(); requestAnimationFrame(toTop); setTimeout(toTop, 400); // she lands at the very top of Today
     if (state.partners?.length) { M = model(); syncTo(state.partners[0]); startSignals(); }
@@ -8778,7 +8818,9 @@ const actions = {
   rmFlip: (d, el) => el.classList.toggle('open'),
   onbPurpose: d => { ui.onb.purpose = d.v; markOn('onbPurpose', d.v, true); },
   onbFocus: d => { const f = ui.onb.focus = ui.onb.focus || []; const i = f.indexOf(d.v); i < 0 ? f.push(d.v) : f.splice(i, 1); markOn('onbFocus', d.v); },
-  setPurpose: d => { state.profile.purpose = d.v; save(); toast(d.v === 'conceive' ? 'Fertility guidance on' : 'Saved'); render(); },
+  setPurpose: d => { state.profile.purpose = d.v; if (d.v === 'after' && !state.profile.preg) state.profile.preg = 'kids'; save(); toast(d.v === 'conceive' ? 'Fertility guidance on' : d.v === 'after' ? 'After-birth guidance on' : 'Saved'); render(); },
+  afterAge: d => { const x = AFTER_AGE.find(a => a[0] === d.v); if (!x) return; const p = state.profile; p.preg = 'kids'; p.ppAt = C.iso(C.addDays(new Date(), -x[2])); delete p.ppOld; save(); render(); },
+  afterOpen: d => { ui.afOpen = ui.afOpen === d.v ? null : d.v; render(); },
   setBc: d => { const p = state.profile; p.bc = d.v; if (!hormonalBC(d.v)) delete p.bcPlan; else p.bcPlan = p.bcPlan || 'think'; save(); render(); },
   setBcPlan: d => { const p = state.profile; p.bcPlan = d.v; if (d.v === 'stop' && !p.bcStop) p.bcStop = todayISO(); save(); render(); },
   setFocus: (d, el) => { const f = state.profile.focus = focusKeys().slice(); const i = f.indexOf(d.v); i < 0 ? f.push(d.v) : f.splice(i, 1); save();
@@ -9516,6 +9558,7 @@ function render() {
   const views = {
     today: viewToday, saved: viewSaved, ground: viewGround, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: () => viewBreathe(r.id), do: () => viewTopic(r.id), plan: viewPlan, diet: viewDiet, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: viewCalendar, manifest: viewManifest, moon: viewCalendar, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewReliefIndex, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), apothecary: () => { location.replace('#/plan/foods'); return ''; }, world: () => viewWorld(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
     unlock: viewUnlock,
+    after: viewAfter,
     recipe: () => viewRecipe(r.id), ritual: () => viewRitual(r.id), point: () => viewPoint(r.id), article: () => viewArticle(r.id), learn: viewLearn,
   };
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];
