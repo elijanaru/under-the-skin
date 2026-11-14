@@ -12413,3 +12413,15 @@ html .pu2 .pu2-step .pu2-dots i.on { background: #20301a; }
 .pt2-s { margin-top: 2px; font-size: 12.5px; line-height: 1.35; color: rgba(32,48,26,.62); }
 .pt2-s b.dotnum { font-size: 14px; color: #20301a; }
 .pt2-t:active { transform: scale(.98); }
+
+/* Onboarding over the forest (where you live, profile picture): centred, symmetric and high contrast.
+   An older catch-all (.onb.no-fig .onb-body > p / label) forced pale cream bold text and side margins onto these. */
+html .onb.no-fig .onb-body:has(.gx-sub) > .onb-title { text-align: center !important; align-self: stretch; }
+html .onb.no-fig .onb-body > .gx-sub { align-self: center; margin: -4px auto 0 !important; max-width: 320px; text-align: center !important; font-weight: 400 !important; color: #fff !important; text-shadow: 0 1px 10px rgba(50,24,38,.55) !important; }
+html .onb.no-fig .onb-body > .gxp-btn { color: #20301a !important; font-weight: 600 !important; text-shadow: none !important; }
+html .onb.no-fig .onb-body > .gxp-name { color: #fff !important; text-shadow: 0 1px 10px rgba(50,24,38,.55) !important; }
+html .gxw-why span { background: rgba(255,255,255,.92); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); border: 1px solid #fff; color: #20301a; font-weight: 600; text-shadow: none; box-shadow: 0 14px 28px -18px rgba(50,24,38,.55); }
+html .gxw-why .gx-fi.t2 { background: rgba(79,122,42,.13) !important; }
+html .gxw-why .gx-fi.t4 { background: rgba(192,132,23,.14) !important; }
+html .gxw-why .gx-fi.t1 { background: rgba(61,126,166,.13) !important; }
+html .gxw-why .gx-fi { margin: 0 !important; } html .gxw-why span { justify-content: flex-start; gap: 9px; padding: 14px 6px 13px; height: auto; }

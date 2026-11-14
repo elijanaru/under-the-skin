@@ -1264,7 +1264,7 @@ function viewOnboarding() {
         <input class="field big-in" data-input="onb.name" placeholder="Your first name" value="${esc(o.name)}" autocomplete="given-name" maxlength="24">
         <p class="onb-greet ${o.name.trim() ? 'on' : ''}">Nice to meet you, <b>${esc(o.name.trim())}</b> ✦</p>`,
     2: `<h2 class="onb-title">Add a <span>profile picture</span></h2>
-        <p class="gx-sub">It greets you on your home screen. Optional, and only you see it.</p>
+        <p class="gx-sub">It greets you on your home screen. Optional.</p>
         <label class="gxp ${o.photo ? 'has' : ''}"><span class="gxp-ring"><span class="gxp-img">${o.photo ? `<img src="${o.photo}" alt="Your photo">` : AVATAR_SVG}</span></span>
           <span class="gxp-cam">${o.photo ? icon('check', 18, 2.6) : GX_IC.cam}</span><input type="file" accept="image/*" data-photo="onb" hidden></label>
         <p class="gxp-name">${esc(o.name.trim() || 'You')}</p>
