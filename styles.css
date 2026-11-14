@@ -13003,7 +13003,7 @@ html .pv2-3d.sm .cup3d-w canvas.teacup3d { inset: 0; width: 100%; height: 100%; 
 @supports (padding: env(safe-area-inset-top)) { .topbar { margin-top: calc(2px + env(safe-area-inset-top, 0px)); } }
 .topbar .topbar-title { color: #fff; font-weight: 400; text-shadow: 0 1px 2px rgba(70,35,30,.35), 0 2px 16px rgba(70,35,30,.35); }
 .topbar .icon-btn { background: rgba(255,255,255,.88) !important; color: #20301a !important; border: 0 !important; box-shadow: 0 6px 16px -8px rgba(60,30,25,.45) !important; }
-.page-h, .page-h span, .section-title h3, .pad > .gx-title, .br2-h, .mvp-h, .rh2-h, .sy-h, .tgw-t {
+.page-h, .page-h span, .section-title h3, .pad > .gx-title, .br2-h, .mvp-h, .rh2-h, .sy-h, .pl-head h2, html .fbp-title h1, html .fbp-title h1 span, html .fbp-step b {
   color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.38), 0 2px 18px rgba(90,40,45,.34) !important; }
 .page-h span { opacity: .92; }
 .t4-h h1, .t4-h h2 { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.38), 0 2px 18px rgba(90,40,45,.34) !important; }
@@ -13021,3 +13021,29 @@ html .pv2-3d.sm .cup3d-w canvas.teacup3d { inset: 0; width: 100%; height: 100%; 
 .lt-paper { margin: 14px 0 6px; padding: 14px 16px 12px; border-radius: 20px; background: #fffaf6; box-shadow: inset 0 0 0 1px rgba(201,165,154,.35); }
 .lt-paper small { margin-top: 0; }
 .lt-arrive { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
+
+/* Insights › Patterns › Cycle by cycle: one block per symptom (icon, name, last-cycle count, trend chip), then a full-width bar strip per cycle. */
+html .st4 { padding: 16px 16px 12px; background: #fff !important; border: 0 !important; box-shadow: 0 10px 26px -14px rgba(48,64,35,.35) !important; color: #20301a; }
+.st4-sub { margin: 0 2px 4px; font-size: 13.5px; line-height: 1.4; color: rgba(32,48,26,.64); }
+.st4-r { padding: 14px 0 10px; border-top: 1px solid rgba(32,48,26,.08); }
+.st4-r:first-of-type { border-top: 0; }
+.st4-h { display: flex; align-items: center; gap: 10px; }
+.st4-ic { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #f4f2ed; font-size: 18px; line-height: 1; }
+.st4-ic img.lg-emo { width: 22px; height: 22px; }
+.st4-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.st4-t b { font-size: 15px; font-weight: 600; }
+.st4-t small { font-size: 12px; color: rgba(32,48,26,.56); }
+.st4 .st2-tr { flex: none; display: inline-flex; align-items: center; gap: 3px; padding: 5px 9px; border-radius: 99px; font: 500 11.5px/1 var(--font); color: rgba(32,48,26,.6); background: #f3f1ec; white-space: nowrap; }
+.st4 .st2-tr.down { background: #e9eedf; color: #3f5a1e; } .st4 .st2-tr.up { background: #f6e3e8; color: #9c3d58; }
+.st4 .st2-up { display: inline-flex; transform: rotate(180deg); }
+.st4-bars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 12px 0 0 46px; height: 74px; }
+.st4-c { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; min-width: 0; }
+.st4-c em { font: 900 13px/1 var(--dot); font-style: normal; color: rgba(32,48,26,.55); margin-bottom: 4px; }
+.st4-c i { display: block; width: 100%; max-width: 44px; max-height: 40px; border-radius: 8px; background: #d6dbc7; }
+.st4-c small { margin-top: 6px; font-size: 11px; font-weight: 500; color: rgba(32,48,26,.55); }
+.st4-c.last em { color: #20301a; } .st4-c.last i { background: #20301a; } .st4-c.last small { color: #20301a; }
+.st4-c.now i { background: repeating-linear-gradient(135deg, #d6dbc7 0 4px, #eef0e7 4px 8px); }
+.st4-k { margin: 6px 2px 0; font-size: 11.5px; color: rgba(32,48,26,.55); }
+/* Food plate: the food name on the background is a title too (white + shadow); the in-season note readable */
+html .pl-det .pld-h b, html .pl-det .pld-p { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.38), 0 2px 18px rgba(90,40,45,.34); }
+html .pl-det p em { color: #4f6b2a !important; font-style: normal; font-weight: 500; }
