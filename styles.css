@@ -13373,3 +13373,6 @@ html .pad > .link.center-link { color: #fff !important; -webkit-text-fill-color:
 .tgb-b b small { font-size: 11px; color: rgba(32,48,26,.6); }
 .tgb-b i { font-style: normal; font-size: 12px; line-height: 1.25; color: rgba(32,48,26,.66); text-align: center; }
 @media (prefers-reduced-motion: reduce) { .tgb-b { animation: none; } }
+/* Food › plate detail: the share of the plate was white Doto on the warm glow and nearly vanished; it sits in a white chip with dark ink like every other number chip */
+html .pld-h { align-items: center; }
+html .pld-h .pld-p { flex: none; align-self: center; color: #20301a !important; -webkit-text-fill-color: #20301a !important; text-shadow: none !important; background: rgba(255,255,255,.94); border-radius: 999px; padding: 4px 11px 3px; font-size: 15px; line-height: 1; box-shadow: 0 1px 8px rgba(32,48,26,.08); }
