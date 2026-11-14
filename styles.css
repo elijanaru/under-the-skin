@@ -13416,13 +13416,6 @@ html .grp-ol i, html .grp-ol i .dotnum { background: color-mix(in srgb, var(--c)
 html .lg .log-date h2, html .lg .log-date .eyebrow { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.38), 0 2px 18px rgba(90,40,45,.34) !important; }
 html .lg .log-date .icon-btn { background: rgba(255,255,255,.9) !important; color: #20301a !important; border: 0 !important; box-shadow: 0 6px 16px -8px rgba(60,30,25,.45) !important; }
 html .lg .log-date .icon-btn[disabled] { opacity: .45; }
-/* Insights › Cycle by cycle: taller bars on a shared baseline and crisper numbers, so one cycle against the next reads at a glance */
-html .st4-r:not(.st4-mo) .st4-bars { height: 66px; background: linear-gradient(rgba(32,48,26,.12), rgba(32,48,26,.12)) left bottom / 100% 1px no-repeat; padding-bottom: 1px; }
-html .st4-c i { width: 22px; border-radius: 7px 7px 3px 3px; background: #c9d3b4; }
-html .st4-c em { color: rgba(32,48,26,.78); font-size: 13.5px; margin-bottom: 5px; }
-html .st4-c.last em { color: #20301a; }
-html .st4-c.last i { background: #20301a; }
-html .st4-c.now i { background: repeating-linear-gradient(135deg, #c9d3b4 0 3px, #eef0e7 3px 6px); }
 
 /* Detail pages (remedy, supplement, tea, nutrient, recipe, ritual, acupressure), 15 Nov 2026: the page name sits on the frame band with the white back and menu buttons, and the photo opens below the four scallops instead of covering the arch */
 .pad.sp2t { padding-top: 38px; }
@@ -13438,8 +13431,16 @@ html .st4-c.last i { background: #20301a; }
 html .st4-c.now i { background: repeating-linear-gradient(135deg, #c9d3b4 0 3px, #eef0e7 3px 6px); }
 html .pad.sp2t > .spec:not(.stack):first-child { margin-left: 0 !important; margin-right: 0 !important; }
 html .pad.sp2t > .spec:not(.stack):first-child .spec-media { border-radius: 30px; overflow: hidden; box-shadow: 0 14px 34px rgba(32,48,26,.14); }
+
 /* Supplement › How much is safe, for supplements with no official limit: the line marks the most trials used, and beyond it is grey "not studied" rather than red "too much" */
 .sf-st .sf-over { background: repeating-linear-gradient(135deg, #dcdcd3 0 5px, #eeeee8 5px 10px); }
 .sf-st .sf-lim { background: #6c823e; }
 .sf-st .sf-lim small { color: #4f6230; }
 .sf-st .sf-k i.x { background: repeating-linear-gradient(135deg, #dcdcd3 0 3px, #eeeee8 3px 6px); }
+
+/* Sweep (15 Nov 2026): pages whose first block is a white card open it below the four scallops, never over them (Superfoods, Drinks, Recipes, Rituals, Move, Stress, Profile, In season) */
+.pad:has(> .eat-cat:first-child, > .pl-teac:first-child, > .pl-tonight:first-child, > .rfx:first-child, > .mvp:first-child, > .st3-hero:first-child, > .pf-hero:first-child, > .szc:first-child) { padding-top: 38px; }
+/* and the last lines still in dark ink on the arched background are white with a soft shadow like their titles */
+.pv-sub .pv-lead, .gro-page .gro-lead, .st3-body > .st2-h, .st3-body > h3.st2-h, .st3-body > .cs2-sub, .st3-body .cs2-sub, .pad > p.sg-score, .pad > p.plr-hint, .fcg-body > p.fine {
+  color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.35), 0 2px 14px rgba(90,40,45,.3) !important; }
+.pad > .pl-teac:first-child, .pad > .pl-tonight:first-child, .pad > .szc:first-child, .pad > .mvp:first-child { margin-top: 0 !important; }
