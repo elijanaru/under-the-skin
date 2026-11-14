@@ -13268,3 +13268,16 @@ html .pv2-title small, html .pv2-title p { font-weight: 400; text-shadow: 0 1px 
 .rd3-st summary { display: flex; justify-content: center; align-items: center; gap: 6px; padding: 12px 0 2px; font-size: 13.5px; font-weight: 600; cursor: pointer; list-style: none; }
 .rd3-st summary::-webkit-details-marker { display: none; }
 .rd3-st .rd-st { margin-top: 10px; }
+
+/* Round C (15 Nov 2026): the hormone chart and the calendar grid are crisp white paper, not see-through glass,
+   so the pink estrogen line and the days never blend into the pink window. Titles on the background are white. */
+html .card.glass.big-chart, html .card.glass.cal2, html .card.glass.chart-card {
+  background: linear-gradient(170deg, rgba(255,255,255,.97), rgba(255,255,255,.9)) !important;
+  border: 1px solid rgba(255,255,255,.95) !important; box-shadow: 0 1px 0 rgba(32,48,26,.04), 0 22px 44px -28px rgba(90,40,45,.45) !important; }
+html .cal-head h2, html .cal-head h2 span, html .msd-h h3 { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.4), 0 2px 18px rgba(90,40,45,.36) !important; }
+html .msd-h small { color: #fff !important; font-weight: 500; text-shadow: 0 1px 6px rgba(90,40,45,.4); }
+html .msd-h p, html .pad > p.fine.center { color: rgba(255,255,255,.95) !important; text-shadow: 0 1px 2px rgba(90,40,45,.35), 0 1px 12px rgba(90,40,45,.35); }
+html .cal-head h2 *, html .cal-head h2 b { color: #fff !important; -webkit-text-fill-color: #fff !important; }
+html .cal-head h2 svg { stroke: #fff; filter: drop-shadow(0 1px 3px rgba(90,40,45,.4)); }
+html .cal-head .cal-title, html .cal-head .cal-title span { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.4), 0 2px 18px rgba(90,40,45,.36) !important; }
+html .cal2 .cal-d:not(.fertile):not(.period):not([class*=per]):not(.ovu):not([class*=egg]) { background: #f6f3ee; }
