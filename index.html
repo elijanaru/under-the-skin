@@ -18,6 +18,8 @@
   <link rel="preload" as="image" href="images/bg/mist.webp">
   <link rel="preload" as="image" href="images/bg/arch.webp">
   <link rel="preload" as="image" href="images/bg/lotus.webp">
+  <link rel="preload" as="image" href="images/bg/lotus-petals.webp">
+  <link rel="preload" as="image" href="images/bg/lotus-lines.webp">
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800&family=Doto:wght@900&family=Noto+Serif+SC:wght@300;500&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800&family=Doto:wght@900&family=Noto+Serif+SC:wght@300;500&display=swap" media="print" onload="this.media='all'">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ballet:opsz@16..72&family=Mrs+Saint+Delafield&family=Monsieur+La+Doulaise&family=Parisienne&family=Grenze+Gotisch:wght@300;400;700;900&family=Great+Vibes&family=Yellowtail&family=Inter+Tight:wght@500;600;700;800;900&family=IM+Fell+English+SC&family=IM+Fell+English:ital@1&display=swap" media="print" onload="this.media='all'">
@@ -64,6 +66,10 @@
     #splash .bar { width: 64px; height: 2px; border-radius: 2px; background: rgba(255,255,255,.35); overflow: hidden; opacity: 0; animation: spWord .5s 1.7s ease forwards; }
     #splash .bar i { position: static; width: 40%; height: 100%; border-radius: 2px; background: #fff; animation: spBar 1.2s 1.7s ease-in-out infinite; }
     #splash.out .sx-lotus { transition: transform .8s cubic-bezier(.2,.8,.2,1); transform: scale(1.04); }
+    /* the lotus opens from a closed bud: drawn on a canvas, petals fold out from the base (script below) */
+    #splash canvas.sx-flower { position: absolute; inset: 0; width: 100%; height: 100%; background: none; transform: none; filter: drop-shadow(0 0 14px rgba(255,236,226,.55)); opacity: 0; animation: sxIn .5s .25s ease forwards, sxBob 5s 2.3s ease-in-out infinite; }
+    #splash .sx-glow { animation: sxGlowIn 1s 1.8s ease forwards, sxGlow 3.2s 2.8s ease-in-out infinite; }
+    @keyframes sxIn { to { opacity: 1; } }
     @keyframes sxArch { to { opacity: 1; transform: none; } }
     @keyframes sxLeaves { from { opacity: 0; transform: translateY(-3%) rotate(-1deg); } to { opacity: 1; transform: none; } }
     @keyframes sxSway { from { transform: rotate(0); } to { transform: rotate(.6deg) translateX(.6%); } }
@@ -94,11 +100,44 @@
 <body>
 <div id="splash" role="img" aria-label="Underskin is opening">
   <i class="sx-leaves"></i>
-  <div class="sx-lotus"><i class="sx-halo"></i><i class="sx-glow"></i><i class="sx-flower"></i><i class="sx-mote" style="--x:38%;--y:22%;--d:1.3s"></i><i class="sx-mote" style="--x:62%;--y:22%;--d:1.6s"></i><i class="sx-mote" style="--x:28%;--y:44%;--d:1.9s"></i><i class="sx-mote" style="--x:72%;--y:42%;--d:1.45s"></i><i class="sx-mote" style="--x:50%;--y:8%;--d:2.1s"></i><i class="sx-mote" style="--x:16%;--y:30%;--d:2.4s"></i><i class="sx-mote" style="--x:84%;--y:30%;--d:1.75s"></i><i class="sx-mote" style="--x:44%;--y:30%;--d:2.6s"></i></div>
+  <div class="sx-lotus"><i class="sx-halo"></i><i class="sx-glow"></i><canvas class="sx-flower" aria-hidden="true"></canvas><i class="sx-mote" style="--x:38%;--y:22%;--d:1.3s"></i><i class="sx-mote" style="--x:62%;--y:22%;--d:1.6s"></i><i class="sx-mote" style="--x:28%;--y:44%;--d:1.9s"></i><i class="sx-mote" style="--x:72%;--y:42%;--d:1.45s"></i><i class="sx-mote" style="--x:50%;--y:8%;--d:2.1s"></i><i class="sx-mote" style="--x:16%;--y:30%;--d:2.4s"></i><i class="sx-mote" style="--x:84%;--y:30%;--d:1.75s"></i><i class="sx-mote" style="--x:44%;--y:30%;--d:2.6s"></i></div>
   <i class="sx-swirls"></i>
   <i class="sx-arch"></i>
   <div class="sx-word"><div class="wm">underskin</div><div class="bar"><i></i></div></div>
 </div>
+<script>
+  // The lotus opens: thin slices of her lotus fan out from the base, from a closed bud to full bloom.
+  (function () {
+    var cv = document.querySelector('#splash .sx-flower'); if (!cv || !cv.getContext) return;
+    var calm = matchMedia('(prefers-reduced-motion: reduce)').matches, pet = new Image(), lin = new Image(), n = 0, last = -1;
+    function go() {
+      if (++n < 2) return;
+      var r = cv.getBoundingClientRect(), dpr = Math.min(2.5, window.devicePixelRatio || 1);
+      cv.width = Math.max(1, Math.round(r.width * dpr)); cv.height = Math.max(1, Math.round(r.height * dpr));
+      var ctx = cv.getContext('2d'), W = pet.width, H = pet.height, sc = Math.min(cv.width / W, cv.height / H), ox = (cv.width - W * sc) / 2, oy = (cv.height - H * sc) / 2;
+      var px = 366 / 732 * W, py = 432 / 512 * H, N = 120, A = Math.PI * .6, d = 2 * A / N;
+      function draw(e) {
+        if (e === last) return; last = e;
+        ctx.clearRect(0, 0, cv.width, cv.height); ctx.save(); ctx.translate(ox, oy); ctx.scale(sc, sc);
+        var k = .2 + .8 * e;
+        for (var i = 0; i < N; i++) {
+          var a0 = -A + i * d, am = a0 + d / 2, out = Math.abs(am) / A, rs = 1 - (1 - e) * (.18 + .5 * out * out);
+          ctx.save(); ctx.translate(px, py); ctx.rotate(am * (k - 1)); ctx.scale(rs, rs);
+          ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, W * 1.3, a0 - d * .7 - Math.PI / 2, a0 + d * 1.7 - Math.PI / 2); ctx.closePath(); ctx.clip();
+          ctx.drawImage(pet, -px, -py); ctx.restore();
+        }
+        ctx.globalAlpha = Math.max(0, Math.min(1, (e - .6) / .4)); ctx.drawImage(lin, 0, 0); ctx.restore();
+      }
+      if (calm) { draw(1); return; }
+      var t0 = performance.now() + 380, dur = 1750;
+      function f(now) { var t = Math.max(0, Math.min(1, (now - t0) / dur)), e = t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        draw(e); if (t < 1 && document.getElementById('splash')) requestAnimationFrame(f); }
+      f(performance.now()); requestAnimationFrame(f);
+      setTimeout(function () { draw(1); }, 2700); // a background webview may skip frames: always end in full bloom
+    }
+    pet.onload = lin.onload = go; pet.src = 'images/bg/lotus-petals.webp'; lin.src = 'images/bg/lotus-lines.webp';
+  })();
+</script>
 <script>
   // stays at least until the lotus has opened, and until the app has drawn its first screen
   (function () {
