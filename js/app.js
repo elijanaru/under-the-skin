@@ -4586,7 +4586,7 @@ function viewRemedy(id) {
         <div class="lm-dots">${dots}</div><div class="lm-foot">${ls.count} of 28 mornings done</div></section>`;
     }
   }
-  return `<div class="pad sp2">
+  return `${topbar('Remedy', { back: true })}<div class="pad sp2 sp2t">
     ${specHero({ stack: true, photo: carePhoto(r.id, 1000), glyph: r.glyph, han: true, eyebrow: `${r.nature} · ${r.element} · ${r.organ}`, name: r.name,
       label: r.take ? 'How to take it' : 'Key ingredients', rows: r.take ? [['Dose', r.take.dose], ['How often', r.take.often], ['When', r.take.when]] : r.ingredients.map(ingRow), desc: r.why })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle${r.raw ? ' · raw days' : ''}</div>${phaseFit(r.phases, M.info && M.info.phase)}${r.phases.length === 4 ? '<small class="tf-all">Good every day of your cycle</small>' : ''}
@@ -4673,7 +4673,7 @@ const SUPP_TIME = { magnesium: '2 to 3 cycles for PMS', iron: '2 to 3 months to 
 function viewSupp(id) {
   const x = SUPP_LIB.find(s => s.id === id); if (!x) return viewMissing();
   const ph = suppPhases(x), now = M.info && M.info.phase;
-  return `<div class="pad sp2">
+  return `${topbar('Supplement', { back: true })}<div class="pad sp2 sp2t">
     ${specHero({ stack: true, photo: suppPhoto(x.id), glyph: x.sym, han: x.han, eyebrow: 'Supplement', sym: !x.han, name: x.name, label: 'How to take it', max: 4,
       extra: SUPP_HERO[x.id] ? `<span class="sp-capchip"><span class="sd-cap ${x.han ? 'han cutf' : ''}">${x.han ? '<img src="images/sf/ginger.webp" alt="">' : x.sym}</span><small>Richest in<b>${SUPP_HERO[x.id][1]}</b></small></span>` : '',
       rows: [['Dose', x.dose], ['Form', x.form], ['When', x.when], ...(SUPP_TIME[x.id] ? [['Give it', SUPP_TIME[x.id]]] : [])], desc: x.desc })}
@@ -5626,7 +5626,7 @@ function viewTeaItem(id) {
   const temp = P.length ? TEMPS[Math.max(...P.map(p => TEMPS.indexOf(p.t)))] : '', best = [...new Set(P.flatMap(p => p.p))];
   const cold = ['cold', 'cool'].includes(temp), nearBleed = ph === 'menstrual' || (info && dayWindow(info) === 'premenstrual');
   const cautions = [warn, ...P.map(p => p.caution)].filter((x, i, a) => x && a.indexOf(x) === i);
-  return `<div class="pad sp2">
+  return `${topbar('Tea', { back: true })}<div class="pad sp2 sp2t">
     ${specHero({ stack: true, photo: teaPhoto(n, 800, 900), eyebrow: G ? `Tea for ${G.n.toLowerCase()}` : 'Tea', name: /tea|milk|coffee/i.test(n) ? n : `${n} tea`, label: 'Key ingredients',
       ...(P.length ? { block: teaKeyRows(P) } : { rows }), lead: n, desc: why })}
     ${P.length ? `<section class="card glass tea-fit">
@@ -5739,7 +5739,7 @@ function nuHero(x) {
 function viewNutrient(id) {
   const x = NUTRIENTS.find(n => n.id === id); if (!x) return viewNutrients();
   const ph = M.info && M.info.phase, i = NUTRIENTS.indexOf(x);
-  return `<div class="pad sp2">
+  return `${topbar('Nutrient', { back: true })}<div class="pad sp2 sp2t">
     ${specHero({ stack: true, ...nuHero(x), glyph: nuIc(x.id, 64), eyebrow: `For ${/^[A-Z]{2}/.test(x.for) ? x.for : x.for.charAt(0).toLowerCase() + x.for.slice(1)}`, name: x.n, label: 'Key facts', rows: x.d, lead: 'Why it helps', desc: x.why })}
     <section class="card glass tea-fit"><div class="tf-k">When it helps most</div>${phaseFit(x.p, ph)}</section>
     ${suppSafe(x.id)}
@@ -8026,7 +8026,7 @@ function viewRecipe(id) {
   const fav = (state.favorites || []).includes(id), serves = r.serves || 1, D3 = dishModel(r);
   // a dish with its own hero model (the taco) turns in 3D at the top of the page; drag to spin it
   const media = D3 && D3.hero ? `<span class="cup3d-w rcp-3d"><img src="${D3.img}" alt=""><canvas class="teacup3d" data-model="${D3.model}" data-elev="${D3.elev || 0.9}" data-fit="${D3.heroFit || D3.fit}" data-steam="0" aria-label="${esc(r.name)} in 3D. Drag to turn it."></canvas></span>` : '';
-  return `<div class="pad sp2 rcp">
+  return `${topbar('Recipe', { back: true })}<div class="pad sp2 sp2t rcp">
     ${(() => { const X = recipeMacros(r); return specHero({ stack: !media, media, photo: photoUrl(r.id) ? photoUrl(r.id, 1000) : '', glyph: '🥣', eyebrow: `${r.meal} · ${r.time} min · ${serves === 1 ? 'serves 1' : serves > 6 ? `${serves} pieces` : `serves ${serves}`}`, name: r.name, label: 'At a glance · per serving',
       block: (() => { const kc = [X.p * 4, X.c * 4, X.f * 9], T = kc.reduce((a, b) => a + b, 0) || 1;
         return `<div class="mac"><div class="mac-k"><b class="dotnum">${X.kcal}</b><small>kcal</small></div>
@@ -8069,7 +8069,7 @@ function ritualDo(r) {
 }
 function viewRitual(id) {
   const r = RITUALS.find(x => x.id === id); if (!r) return viewMissing();
-  return `<div class="pad sp2">
+  return `${topbar('Ritual', { back: true })}<div class="pad sp2 sp2t">
     ${specHero({ stack: true, photo: carePhoto(r.id, 1000), glyph: r.glyph, han: true, eyebrow: 'TCM ritual', name: r.name, label: 'At a glance',
       rows: [['Time', `${r.mins} min`], ['Your cycle', !M.info ? `${r.phases.length} phases` : r.phases.includes(M.info.phase) ? 'Good today' : `From ${PHASES[r.phases.find(p => PHASE_ORDER.indexOf(p) > PHASE_ORDER.indexOf(M.info.phase)) || r.phases[0]].name.toLowerCase()}`], ['Steps', `${r.steps.length}`]],
       lead: 'Why it helps', desc: r.why })}
@@ -8103,7 +8103,7 @@ function viewPoint(phase) {
       ${dot(89, 62)}<text x="154" y="72" class="pt-lab">LV3</text><text x="154" y="88" class="pt-sub">toe-bone</text><text x="154" y="101" class="pt-sub">dip</text>`,
   };
   const foot = `<svg viewBox="0 0 200 150" class="foot pt-art" role="img" aria-label="Where to press ${p.code}">${art[phase]}</svg>`;
-  return `<div class="pad sp2">
+  return `${topbar('Acupressure', { back: true })}<div class="pad sp2 sp2t">
     ${specHero({ stack: true, glyph: '穴', han: true, eyebrow: `Acupressure · ${PHASES[phase].name} phase`, name: `${p.code} · ${p.name}`, label: 'Key facts',
       rows: [['Press time', `${p.secs} s`], ['Where', phase === 'ovulatory' ? 'One point' : 'Both sides'], ['Organ', t.organ]], lead: `${p.name} · what it does`, desc: p.does })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit([phase], M.info && M.info.phase)}</section>
