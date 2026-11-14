@@ -2402,7 +2402,7 @@ function viewPlan() {
         ${feelFoods(recent, warmWindow(info))}`;
     } else if (sub === 'super') { location.replace('#/plan/foods'); return '';
     } else if (sub === 'drinks' || sub === 'supps') {
-      body = `${sub === 'drinks' ? `${plTea()}<div class="eat-cat eb eb-free sf-top" data-phase="${phase}">${drinksInner(phase)}</div>` : `<section class="card eat-cat eb" data-phase="${phase}">${eatCatInner(phase, sub)}</section>`}
+      body = `${sub === 'drinks' ? `${plTea()}<div class="eat-cat eb eb-free sf-top" data-phase="${phase}">${drinksInner(phase)}</div>${cafCard()}` : `<section class="card eat-cat eb" data-phase="${phase}">${eatCatInner(phase, sub)}</section>`}
         ${sub === 'drinks' ? `<button class="card gro-cta" data-action="nav" data-to="tea"><span class="art-ic">${icon('cup', 20)}</span><span class="art-t">Tea guide<small>A tea for every need</small></span>${icon('chevR', 18)}</button>` : ''}`;
     } else if (sub === 'sugar') {
       body = sugarSection(phase);
@@ -2607,6 +2607,39 @@ function drinksInner(phase) {
       ${warm ? `<p class="sfc-warm">${icon('sun', 13)} These days: everything warm or at room temperature, nothing iced.</p>` : ''}
       <footer class="sfc-f"><span>Tap a drink for when and how much</span><span>Ask your doctor if pregnant or on medication</span></footer>
     </section>`;
+}
+// Drinks › Your caffeine curve: pick coffee or matcha and the time of her last cup; the curve shows what is still in her at 11 pm.
+// Half-life about 5 hours in healthy adults; never "cut coffee", only when it is kindest to sleep.
+const CAF = { coffee: [95, 'Coffee'], matcha: [60, 'Matcha'] }, CAF_T = [8, 10, 12, 14, 16];
+function cafCard() {
+  const k = CAF[ui.cafK] ? ui.cafK : 'coffee', t0 = CAF_T.includes(ui.cafT) ? ui.cafT : 14, [mg, nm] = CAF[k], bed = 23, hl = 5;
+  const lv = h => h < t0 ? 0 : h < t0 + .75 ? mg * (h - t0) / .75 : mg * Math.pow(.5, (h - t0 - .75) / hl);
+  const X = h => 14 + (h - 6) / 18 * 292, Y = v => 112 - v / 100 * 92;
+  const pts = []; for (let h = 6; h <= 24.001; h += .25) pts.push(`${X(h).toFixed(1)},${Y(lv(h)).toFixed(1)}`);
+  const left = Math.round(lv(bed)), pc = (M.info && PH_HEX[M.info.phase]) || '#6c823e', late = M.info && M.info.phase === 'luteal';
+  const say = left <= 15 ? 'A gentle amount by bedtime.' : left <= 30 ? 'Still noticeable at bedtime for light sleepers.' : 'Enough to keep sleep lighter tonight.';
+  return `<section class="caf" style="--pc:${pc}">
+    <header class="caf-h"><small>Your caffeine curve</small><h3>Keep your cup, time it well.</h3><p>Caffeine halves about every 5 hours. See what is left when you go to bed.</p></header>
+    <div class="caf-seg" role="tablist" aria-label="Drink">${Object.entries(CAF).map(([x, [m, n]]) => `<button class="${x === k ? 'on' : ''}" data-action="cafK" data-v="${x}" role="tab" aria-selected="${x === k}"><img src="images/drinks/${x}.svg" alt="">${n}<small>${m} mg</small></button>`).join('')}</div>
+    <svg class="caf-g" viewBox="0 0 320 132" role="img" aria-label="${nm} at ${t0}:00, about ${left} mg left at 11 pm">
+      <rect x="${X(14)}" y="16" width="${X(24) - X(14)}" height="96" fill="rgba(32,48,26,.04)"/>
+      <line x1="${X(14)}" y1="16" x2="${X(14)}" y2="112" stroke="rgba(32,48,26,.22)" stroke-dasharray="3 3"/><text x="${X(14) + 4}" y="24" class="caf-l">2 pm</text>
+      <line x1="14" y1="112" x2="306" y2="112" stroke="rgba(32,48,26,.18)"/>
+      <path d="M${pts.join(' L')} L${X(24)},112 L${X(6)},112 Z" fill="${pc}" opacity=".16"/>
+      <polyline points="${pts.join(' ')}" fill="none" stroke="${pc}" stroke-width="2.6" stroke-linejoin="round"/>
+      <line x1="${X(bed)}" y1="16" x2="${X(bed)}" y2="112" stroke="#20301a" stroke-width="1.4"/><circle cx="${X(bed)}" cy="${Y(left)}" r="5" fill="#fff" stroke="#20301a" stroke-width="2"/>
+      <text x="${X(bed) - 4}" y="24" text-anchor="end" class="caf-l b">11 pm</text>
+      ${[6, 12, 18, 24].map(h => `<text x="${X(h)}" y="127" text-anchor="${h === 6 ? 'start' : h === 24 ? 'end' : 'middle'}" class="caf-l">${h === 24 ? '12 am' : h === 12 ? '12 pm' : h > 12 ? `${h - 12} pm` : `${h} am`}</text>`).join('')}
+    </svg>
+    <div class="caf-t" role="tablist" aria-label="Last cup at">${CAF_T.map(h => `<button class="${h === t0 ? 'on' : ''}" data-action="cafT" data-v="${h}" role="tab" aria-selected="${h === t0}">${h > 12 ? h - 12 : h}<small>${h >= 12 ? 'pm' : 'am'}</small></button>`).join('')}</div>
+    <div class="caf-r"><span class="caf-n"><b class="dotnum">${left}</b><small>mg left at 11 pm</small></span><p>${say}</p></div>
+    <details class="caf-more"><summary>What studies found ${icon('chevD', 13)}</summary>
+      <div class="sgt-st"><b class="dotnum">2013</b><span><em>Drake</em>A strong dose of caffeine even 6 hours before bed cut sleep by more than an hour, and people did not notice it.<small>Journal of Clinical Sleep Medicine</small></span></div>
+      <div class="sgt-st"><b class="dotnum">1992</b><span><em>Lane</em>Caffeine cleared more slowly in the second half of the cycle, so an earlier last cup is kinder in your luteal days.<small>European Journal of Clinical Pharmacology</small></span></div>
+      ${late ? `<p class="caf-note">${icon('moon', 13)} You are in your luteal phase: an earlier last cup helps sleep most now.</p>` : ''}
+      <p class="caf-fine">Pregnant or trying: up to 200 mg caffeine a day. On the pill, caffeine stays in you longer.</p>
+    </details>
+  </section>`;
 }
 // Supplements as a spec sheet: label left, value right, the study with author and year, the caution, the full sheet behind one tap.
 function suppSpec(x) {
@@ -9346,6 +9379,8 @@ const actions = {
     det.hidden = false; det.style.animation = 'none'; void det.offsetWidth; det.style.animation = '';
     const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
   },
+  cafK: (d, el) => { ui.cafK = d.v; const c = el.closest('.caf'), t = document.createElement('div'); t.innerHTML = cafCard(); c.replaceWith(t.firstElementChild); },
+  cafT: (d, el) => { ui.cafT = +d.v; const c = el.closest('.caf'), t = document.createElement('div'); t.innerHTML = cafCard(); c.replaceWith(t.firstElementChild); },
   drPick: (d, el) => {
     const box = el.closest('.sfc'), det = box.querySelector('.sfc-det'), phase = box.dataset.phase, n = drinkList(phase)[+d.i]; if (!n) return;
     if (el.closest('.sfc-det')) { box.querySelectorAll('.sfc-i.on').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); }); det.hidden = true; return; }
