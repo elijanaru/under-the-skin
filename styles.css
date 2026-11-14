@@ -13304,3 +13304,29 @@ html .gro-sum { padding: 18px 18px 16px; background: #fff !important; border: 0 
 .gsm-seg i.on { background: hsl(calc(var(--hb) + 140 * var(--hk)) calc(38% * var(--hs)) 38%); }
 .gsm-r.full .gsm-l > b::after { content: ' ✓'; color: hsl(calc(var(--hb) + 140 * var(--hk)) calc(38% * var(--hs)) 38%); }
 @media (prefers-reduced-motion: reduce) { .gsm-bar i, .gsm-seg i { transition: none; } }
+
+/* Nutrients: your week of supplements as a spec sheet (15 Nov 2026) */
+html .card.nw2 { margin-top: 14px; padding: 18px 16px 8px; border-radius: 30px; background: rgba(255,255,255,.97); border: 1px solid #fff; box-shadow: 0 1px 0 rgba(32,48,26,.04), 0 22px 44px -28px rgba(90,40,45,.45); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.nw2-h { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.nw2-h b { display: block; font-size: 17px; font-weight: 600; color: #20301a; }
+.nw2-h small { display: block; margin-top: 2px; font-size: 12.5px; line-height: 1.4; color: rgba(32,48,26,.58); }
+.nw2-log { flex: none; display: inline-flex; align-items: center; gap: 4px; height: 34px; padding: 0 14px; border: 0; border-radius: 17px; background: #20301a; color: #fff; font: 500 13px Outfit, sans-serif; cursor: pointer; }
+.nw2-days, .nw2-r { display: grid; grid-template-columns: 40px 1fr 112px 22px; align-items: center; gap: 10px; }
+.nw2-days { margin: 14px 0 2px; }
+.nw2-days .nw2-dl { grid-column: 3; }
+.nw2-dl { display: grid; grid-template-columns: repeat(7, 1fr); justify-items: center; }
+.nw2-days .nw2-dl i { font-style: normal; font-size: 10.5px; font-weight: 500; color: rgba(32,48,26,.45); }
+.nw2-days .nw2-dl i.td { color: #20301a; font-weight: 600; }
+.nw2-r { width: 100%; padding: 10px 0; border: 0; border-top: 1px solid rgba(32,48,26,.07); background: none; font: inherit; color: #20301a; text-align: left; cursor: pointer; }
+.nw2-p { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: #f3efe8; color: #304023; }
+.nw2-p img { width: 100%; height: 100%; object-fit: cover; }
+.nw2-t { min-width: 0; } .nw2-t b { display: block; font-size: 14.5px; font-weight: 600; }
+.nw2-t small { display: block; margin-top: 1px; font-size: 11.5px; line-height: 1.3; color: rgba(32,48,26,.55); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nw2-r .nw2-dl i { width: 10px; height: 10px; border-radius: 50%; background: rgba(32,48,26,.09); }
+.nw2-r .nw2-dl i.on { background: var(--pc); }
+.nw2-r .nw2-dl i.td { box-shadow: 0 0 0 1.5px #fff, 0 0 0 3px rgba(32,48,26,.55); }
+.nw2-r em { font: 400 16px/1 var(--dot); font-style: normal; text-align: right; color: #20301a; } .nw2-r em.z { color: rgba(32,48,26,.3); }
+
+/* Move hero: its title sits inside the white card, so it keeps dark ink (the white page-title rule is for titles on the background only). */
+html .mvp .mvp-h { color: #20301a !important; -webkit-text-fill-color: #20301a !important; text-shadow: none !important; }
+html .mvp .mvp-h small { color: rgba(32,48,26,.62) !important; -webkit-text-fill-color: rgba(32,48,26,.62) !important; }

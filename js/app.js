@@ -5663,13 +5663,25 @@ const phaseFit = (best, ph) => `<div class="tf-phases pf3">${PH4.map(([k, l]) =>
 // Drawn line icon for each nutrient (no emoji).
 const NU_IC = { magnesium: 'seed', b6: 'banana', iron: 'drop', 'vitamin-d': 'sun', 'omega-3': 'fish', zinc: 'shell', calcium: 'milk', inositol: 'grain', vitex: 'berry' };
 const nuIc = (id, size = 20) => icon(NU_IC[id] || 'leaf', size);
+// Her week of supplements as a spec sheet: one row per supplement (photo, name, dose and when),
+// seven day dots on the right (filled when she ticked it, today ringed) and the count in Doto.
 function suppWeek() {
-  const days = Array.from({ length: 7 }, (_, i) => getLog(C.iso(C.addDays(new Date(), -i))).supp || []);
-  const any = days.some(d => d.length), R = 27, Cc = 2 * Math.PI * R;
-  const items = SUPPS.filter(([n]) => NUTRIENTS.some(x => x.n === n)).map(([n, g]) => [n, g, days.filter(d => d.includes(n)).length, NUTRIENTS.find(x => x.n === n).id]);
-  return `<section class="card glass nu-week"><div class="nw-h"><small>Your last 7 days</small>${any ? '' : '<span>Nothing logged yet</span>'}</div>
-    <div class="mind-rings nw-rings">${items.map(([n, g, c, id], i) => `<button class="mv2-b r${c >= 5 ? 3 : c >= 3 ? 2 : c ? 1 : 0}" style="--i:${i}" data-action="nav" data-to="nutrients/${id}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * Math.max(.04, c / 7)).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-g">${nuIc(id, 18)}</span><b>${n}</b><small>${c}/7 days</small></button>`).join('')}</div>
-    <div class="nw-f"><p>${any ? 'Taken most days counts. Tap one for the dose and the best food sources.' : 'Tick supplements in your daily check-in and your week fills in here.'}</p><button class="pill-cta" data-action="nav" data-to="log">${icon('plus', 14)} Log today</button></div></section>`;
+  const today = C.startOfDay(new Date()), ds = Array.from({ length: 7 }, (_, k) => C.addDays(today, k - 6));
+  const days = ds.map(d => getLog(C.iso(d)).supp || []), any = days.some(d => d.length);
+  const pc = PH_HEX[(M.info && M.info.phase) || 'follicular'];
+  const pic = x => { const h = NU_HERO[x.id] || SUPP_HERO[x.id]; return h ? (h[0].startsWith('tea:') ? teaPhoto(h[0].slice(4), 160, 160) : foodPhoto(h[0], 160)) : ''; };
+  const items = SUPPS.map(([n]) => NUTRIENTS.find(x => x.n === n)).filter(Boolean).map(x => [x, days.map(d => d.includes(x.n))]);
+  const total = items.reduce((a, [, t]) => a + t.filter(Boolean).length, 0);
+  return `<section class="card nw2" style="--pc:${pc}">
+    <div class="nw2-h"><span><b>Your week of supplements</b><small>${any ? `${plural(total, 'tick')} in the last 7 days. Most days counts.` : 'Tick them in your daily check-in and your week fills in.'}</small></span>
+      <button class="nw2-log" data-action="nav" data-to="log">${icon('plus', 14)} Log</button></div>
+    <div class="nw2-days"><span></span><span class="nw2-dl">${ds.map((d, k) => `<i class="${k === 6 ? 'td' : ''}">${k === 6 ? 'T' : fmt(d, { weekday: 'narrow' })}</i>`).join('')}</span><span></span></div>
+    ${items.map(([x, t]) => { const c = t.filter(Boolean).length; return `<button class="nw2-r" data-action="nav" data-to="nutrients/${x.id}">
+      <span class="nw2-p">${pic(x) ? `<img src="${pic(x)}" alt="" loading="lazy" decoding="async">` : nuIc(x.id, 18)}</span>
+      <span class="nw2-t"><b>${x.n}</b><small>${esc(x.d[0][0])}${/test/i.test(x.d[0][1]) ? ` · ${esc(x.d[0][1])}` : ""}</small></span>
+      <span class="nw2-dl">${t.map((on, k) => `<i class="${on ? 'on' : ''} ${k === 6 ? 'td' : ''}"></i>`).join('')}</span>
+      <em class="dotnum ${c ? '' : 'z'}">${c}</em></button>`; }).join('')}
+  </section>`;
 }
 function viewNutrients() {
   const ph = M.info && M.info.phase, now = ph ? NUTRIENTS.filter(x => x.p.includes(ph) && x.p.length < 4) : [];
