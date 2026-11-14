@@ -1521,7 +1521,8 @@ function viewToday() {
   if (ttcOn()) chips.push(`<span class="hchip ${info.fertile ? 'hl' : ''}">${icon('spark', 14)} ${info.fertile ? 'Fertile' : 'Low fertility'}</span>`);
 
   // one compact "heads-up" card: reminders, unusual cycle, learned patterns
-  const alerts = dueReminders().filter(x => !/^(phase-|rh-)/.test(x.id)).map(x => `<div class="al-row"><span class="al-ic ${x.icon === 'drop' ? 'drop' : ''}">${x.icon === 'drop' ? DROP_ART : icon(x.icon, 17)}</span>
+  const due = dueReminders(), letter = due.find(x => x.id.startsWith('letter-'));
+  const alerts = due.filter(x => !/^(phase-|rh-|letter-)/.test(x.id)).map(x => `<div class="al-row"><span class="al-ic ${x.icon === 'drop' ? 'drop' : ''}">${x.icon === 'drop' ? DROP_ART : icon(x.icon, 17)}</span>
       <span class="al-t ${x.id.startsWith('letter-') ? 'al-letter' : ''}" ${x.to ? `data-action="nav" data-to="${x.to}"` : ''}><b>${esc(x.title)}</b><small>${esc(x.body)}</small></span>
       <button class="bn-x" data-action="dismissRem" data-id="${x.id}" aria-label="Dismiss">${icon('close', 14)}</button></div>`);
   upcomingPatterns(patterns()).forEach(x => { const rk = reliefKey(x.name); alerts.push(`<div class="al-row" ${rk ? `data-action="nav" data-to="relief/${encodeURIComponent(rk)}"` : ''}>
@@ -1543,6 +1544,7 @@ function viewToday() {
   return `<div class="pad home">
     ${todayHub(info, energy, head)}
 
+    ${letter ? letterCard(letter) : ''}
     ${conceiveCard(info)}
     ${lossCard()}
     ${afterCard()}
@@ -3832,7 +3834,7 @@ async function scheduleSunNative(ask) {
 // Letters from your body: 1 to 3 short check-ins a day, matched to her phase and, when she has logged
 // enough, to her own patterns ("last cycles you often noted cramps around now").
 const LETTER_SLOTS = { 1: [[10, 0, 'am']], 2: [[9, 30, 'am'], [19, 30, 'pm']], 3: [[9, 0, 'am'], [13, 30, 'mid'], [19, 30, 'pm']] };
-const LETTER_TITLE = { am: 'A letter from your body', mid: 'Your body checking in', pm: 'A note for tonight' };
+const LETTER_TITLE = { am: 'A letter from your body', mid: 'A midday letter from your body', pm: 'A letter for tonight' };
 function bodyNote(date, slot, di, pats) {
   if (!di) return null;
   const nm = (state.profile.name || '').trim().split(/\s+/)[0], n = nm || 'love', k = dayNum(date) + (slot === 'mid' ? 1 : slot === 'pm' ? 2 : 0);
@@ -3934,12 +3936,30 @@ function reminderBanners() {
     <div class="bn-t" ${x.to ? `data-action="nav" data-to="${x.to}"` : ''}><b>${esc(x.title)}</b><p>${esc(x.body)}</p></div>
     <button class="bn-x" data-action="dismissRem" data-id="${x.id}" aria-label="Dismiss">${icon('close', 16)}</button></section>`).join('');
 }
+// Letters from your body: a small hand-drawn envelope with a blush heart seal
+const LETTER_ART = `<svg viewBox="0 0 40 30" width="40" height="30" aria-hidden="true"><rect x="1.5" y="3" width="37" height="25" rx="4" fill="#fffaf6" stroke="#c9a59a" stroke-width="1.3"/><path d="M2.5 5 20 17.5 37.5 5" fill="none" stroke="#c9a59a" stroke-width="1.3" stroke-linejoin="round"/><path d="M20 21.6s-4.4-2.7-5.6-5.4c-.9-2 .4-4.3 2.6-4.3 1.2 0 2.1.6 2.5 1.4h1c.4-.8 1.3-1.4 2.5-1.4 2.2 0 3.5 2.3 2.6 4.3-1.2 2.7-5.6 5.4-5.6 5.4z" fill="#d97a93"/></svg>`;
+const letterTime = ([h, mi]) => `${((h + 11) % 12) + 1}:${String(mi).padStart(2, '0')} ${h < 12 ? 'am' : 'pm'}`;
+function letterCard(x) {
+  return `<section class="lt-today"><button class="bn-x" data-action="dismissRem" data-id="${x.id}" aria-label="Put the letter away">${icon('close', 14)}</button>
+    <span class="lt-seal">${LETTER_ART}</span><small>${esc(x.title)}</small><p>${esc(x.body)}</p><em>Love, your body</em></section>`;
+}
+function lettersCard() {
+  const r = rem(), perm = 'Notification' in window ? Notification.permission : 'unsupported', slots = LETTER_SLOTS[r.lettersN] || LETTER_SLOTS[2];
+  return `${sectionTitle('Letters from your body')}
+    <section class="card lt-set">
+      <div class="lt-top"><span class="lt-seal">${LETTER_ART}</span><span class="lt-tt"><b>Letters from your body</b><small>${r.letters ? `${r.lettersN === 1 ? 'One letter' : `${r.lettersN} letters`} a day · ${slots.map(letterTime).join(', ')}` : 'Short, loving letters matched to your cycle'}</small></span>
+        <button class="toggle ${r.letters ? 'on' : ''}" data-action="remToggle" data-k="letters" role="switch" aria-checked="${!!r.letters}" aria-label="Letters from your body"><i></i></button></div>
+      ${r.letters ? `${M?.info ? `<div class="lt-paper"><small>${LETTER_TITLE.am}</small><p>${esc(bodyNote(new Date(), 'am', M.info, []) || '')}</p><em>Love, your body</em></div>` : ''}
+        <div class="stepper-row sub"><span>Letters a day</span><div class="seg lt-n">${[1, 2, 3].map(v => `<button class="${r.lettersN === v ? 'on' : ''}" data-action="remLettersN" data-v="${v}">${v}</button>`).join('')}</div></div>
+        ${!NATIVE && perm === 'default' ? `<button class="ls-btn lt-arrive" data-action="remPermission">${icon('mail', 15)} Let your letters arrive on your phone</button>` : ''}` : ''}
+    </section>`;
+}
 function remindersSection() {
   const r = rem(), perm = 'Notification' in window ? Notification.permission : 'unsupported';
   const RIC = { letters: 'mail', period: 'drop', phase: 'leaf', cycle: 'spark', sunAm: 'sun', sunPm: 'sun', calm: 'mind', checkin: 'check' };
   const tg = (k, label, sub) => `<div class="stepper-row"><span class="pf-ic ${k === 'sunPm' ? 'dusk' : ''}">${icon(RIC[k], 16)}</span><span>${label}<small>${sub}</small></span><button class="toggle ${r[k] ? 'on' : ''}" data-action="remToggle" data-k="${k}" role="switch" aria-checked="${!!r[k]}" aria-label="${label}"><i></i></button></div>`;
   const hr = hr12;
-  return `${sectionTitle('Reminders')}
+  return `${lettersCard()}${sectionTitle('Reminders')}
     <section class="card glass">
       ${tg('period', 'Period coming', 'A heads-up before it starts')}
       ${r.period ? `<div class="stepper-row sub"><span>Days before</span>${stepper('periodDays', r.periodDays, 'rem')}</div>` : ''}
@@ -3949,9 +3969,6 @@ function remindersSection() {
       ${tg('sunPm', 'Sunset', 'Watch the evening light, 30 min before sunset')}
       ${tg('calm', 'Daily calm', 'Meditation every day, right away when you log stress')}
       ${r.calm ? `<div class="stepper-row sub"><span>Every day at</span><div class="stepper"><button data-action="remCalmHour" data-d="-1">−</button><span class="num">${hr(r.calmHour)}</span><button data-action="remCalmHour" data-d="1">+</button></div></div>` : ''}
-      ${tg('letters', 'Letters from your body', 'Short, loving check-ins matched to your cycle')}
-      ${r.letters ? `<div class="stepper-row sub"><span>A day</span><div class="seg lt-n">${[1, 2, 3].map(v => `<button class="${r.lettersN === v ? 'on' : ''}" data-action="remLettersN" data-v="${v}">${v}</button>`).join('')}</div></div>
-        ${M?.info ? `<p class="lt-prev">${icon('mail', 13)}<span>“${esc(bodyNote(new Date(), 'am', M.info, []))}”</span></p>` : ''}` : ''}
       ${tg('checkin', 'Daily check-in', 'If you haven’t logged yet')}
       ${r.checkin ? `<div class="stepper-row sub"><span>From</span><div class="stepper"><button data-action="remHour" data-d="-1">−</button><span class="num">${hr(r.checkinHour)}</span><button data-action="remHour" data-d="1">+</button></div></div>` : ''}
       ${perm === 'granted' ? `<p class="fine" style="margin:8px 0 0">${icon('check', 13)} Phone notifications on</p>`
