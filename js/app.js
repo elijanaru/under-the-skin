@@ -5647,19 +5647,20 @@ function uvData() {
   let c = null; try { c = JSON.parse(localStorage.getItem('uts.uv')); } catch { /* none yet */ }
   const live = c && c.key === key && c.src && Array.isArray(c.hours) ? c : null;
   if (!live || Date.now() - live.at > 36e5) uvFetch(key, la, ln);
-  return { hours: live ? live.hours : uvModel(la, ln), live: !!live };
+  return { hours: live ? live.hours : uvModel(la, ln), next: live && Array.isArray(live.next) ? live.next : uvModel(la, ln), live: !!live };
 }
 function uvFetch(key, la, ln) {
   if (ui.uvBusy || (ui.uvTry && Date.now() - ui.uvTry < 6e5) || !navigator.onLine) return;
   ui.uvBusy = true; ui.uvTry = Date.now();
-  const q = `latitude=${(+la).toFixed(1)}&longitude=${(+ln).toFixed(1)}&hourly=uv_index&timezone=${encodeURIComponent((Intl.DateTimeFormat().resolvedOptions().timeZone) || 'auto')}&forecast_days=1`;
+  const q = `latitude=${(+la).toFixed(1)}&longitude=${(+ln).toFixed(1)}&hourly=uv_index&timezone=${encodeURIComponent((Intl.DateTimeFormat().resolvedOptions().timeZone) || 'auto')}&forecast_days=2`;
   const get = u => fetch(u).then(r => (r.ok ? r.json() : Promise.reject(r.status))).then(j => {
     const v = j && j.hourly && j.hourly.uv_index; if (!v || !v.some(x => x != null)) return Promise.reject('empty');
-    const hours = Array(24).fill(0); j.hourly.time.forEach((t, i) => { hours[+t.slice(11, 13)] = Math.max(0, +(v[i] || 0)); }); return hours; });
+    const hours = Array(24).fill(0), next = Array(24).fill(0), d0 = j.hourly.time[0].slice(0, 10);
+    j.hourly.time.forEach((t, i) => { (t.slice(0, 10) === d0 ? hours : next)[+t.slice(11, 13)] = Math.max(0, +(v[i] || 0)); }); return { hours, next }; });
   // Copernicus CAMS (ECMWF): UV with clouds, ozone and aerosols, the same worldwide model national weather services build on
   get(`https://air-quality-api.open-meteo.com/v1/air-quality?${q}`).then(h => [h, 'cams'], () => get(`https://api.open-meteo.com/v1/forecast?${q}`).then(h => [h, 'wx']))
-    .then(([hours, src]) => {
-      try { localStorage.setItem('uts.uv', JSON.stringify({ key, at: Date.now(), hours, src })); } catch { /* storage full */ }
+    .then(([{ hours, next }, src]) => {
+      try { localStorage.setItem('uts.uv', JSON.stringify({ key, at: Date.now(), hours, next, src })); } catch { /* storage full */ }
       uvRefresh();
     }).catch(() => {}).finally(() => { ui.uvBusy = false; });
 }
@@ -5682,7 +5683,7 @@ function uvGauge(u) {
     <g fill="none" stroke-width="9" stroke-linecap="round">${segs}</g>
     <circle cx="${kx}" cy="${ky}" r="8.5" fill="#fff" stroke="${lv[2]}" stroke-width="3.5"/>
     <text x="${cx}" y="${cy + 6}" text-anchor="middle" class="uvw-n">${u.toFixed(1)}</text>
-    <text x="${cx}" y="${cy + 26}" text-anchor="middle" class="uvw-lv" fill="${lv[2]}">${lv[1].toUpperCase()}</text>
+    <text x="${cx}" y="${cy + 26}" text-anchor="middle" class="uvw-lv" fill="${lv[2]}">${lv[1]}</text>
   </svg>`;
 }
 function uvBars(hours, D) {
@@ -5740,23 +5741,29 @@ function uvCurve(hours) {
 // The hours that make the most vitamin D (UV 3 and up), joined into one window.
 function dWindow(hours) { const hs = hours.map((u, h) => (u >= 3 ? h : -1)).filter(h => h >= 0); return hs.length ? [hs[0], hs[hs.length - 1] + 1] : null; }
 function uvWidget() {
-  const { hours, live } = uvData(), D = dayMoments(M.info), now = new Date(), u = uvAt(hours, now), lv = uvLevel(u);
+  const { hours, next, live } = uvData(), D = dayMoments(M.info), now = new Date(), u = uvAt(hours, now), lv = uvLevel(u);
   const day = sunDay(), run = sunRun(hours), on = !!state.sunOn, iu = Math.round(day.iu + run.iu), mins = Math.round(day.m + run.m);
   const burn = burnMin(u), left = burn - run.m, dMin = dRate(u) > 0 ? Math.max(1, Math.round(Math.max(0, D_GOAL - iu) / dRate(u))) : null, win = dWindow(hours), sk = SKIN[mySkin() - 1];
   const pct = Math.min(100, iu / D_GOAL * 100), fmt = n => n.toLocaleString('en-US').replace(/,/g, ' ');
-  const burnTxt = burn === Infinity ? ['No burn risk', 'right now'] : on ? (left <= 0 ? ['Get in the shade', 'your skin has had enough'] : [`${Math.max(1, Math.round(left))}`, 'min until you burn']) : [`${Math.round(Math.min(burn, 600))}`, 'min until you burn'];
+  const burnTxt = burn === Infinity || u < 1 ? ['No burn risk', 'right now'] : !on && burn > 180 ? ['3 h+', 'before you could burn'] : on ? (left <= 0 ? ['Get in the shade', 'your skin has had enough'] : [`${Math.max(1, Math.round(left))}`, 'min until you burn']) : [`${Math.round(Math.min(burn, 600))}`, 'min until you burn'];
   // vitamin D as minutes in the sun (arms and legs bare); if the sun is too weak now, the minutes at today's strongest hour
   const pkH = hours.reduce((b, v, h) => (v > hours[b] ? h : b), 0), pkMin = dRate(hours[pkH]) > 0 ? Math.max(1, Math.round(Math.max(0, D_GOAL - iu) / dRate(hours[pkH]))) : null;
-  const dTxt = iu >= D_GOAL ? ['Done', 'enough vitamin D today'] : dMin && u >= 3 ? [`${dMin}`, `min in the sun ${iu > 0 ? 'still needed' : 'for vitamin D'}`] : pkMin && hours[pkH] >= 3 && pkH > now.getHours() ? [`${pkMin}`, `min at ${String(pkH).padStart(2, '0')}:00 for vitamin D`] : ['Not today', 'sun too weak for vitamin D'];
+  // the strong sun is over for today (evening, night): plan tomorrow instead
+  const peakT = Math.max(...hours), over = !(dMin && u >= 3) && !(pkMin && hours[pkH] >= 3 && pkH > now.getHours()) && peakT >= 3;
+  const tH = next.reduce((b, v, h) => (v > next[b] ? h : b), 0), tMin = next[tH] >= 3 ? Math.max(1, Math.round(D_GOAL / dRate(next[tH]))) : null;
+  const dTxt = iu >= D_GOAL ? ['Done', 'enough vitamin D today'] : dMin && u >= 3 ? [`${dMin}`, `min in the sun ${iu > 0 ? 'still needed' : 'for vitamin D'}`] : pkMin && hours[pkH] >= 3 && pkH > now.getHours() ? [`${pkMin}`, `min at ${String(pkH).padStart(2, '0')}:00 for vitamin D`]
+    : tMin ? [`${tMin}`, `min tomorrow at ${String(tH).padStart(2, '0')}:00`] : ['Not today', 'sun too weak for vitamin D'];
   const [la, ln] = myGeo(), clearPk = Math.max(...uvModel(la, ln)), lowSeason = Math.abs(la) >= 30 ? ` From ${la < 0 ? 'April to September' : 'October to March'}, 10–20 µg D3 a day keeps you topped up.` : '';
   const hh = h => `${String(h).padStart(2, '0')}:00`, bMin = v => Math.round(Math.min(burnMin(v), 600));
   // the one simple answer: how long to stay out for vitamin D, and when the burn would start
   const plan = iu >= D_GOAL ? `You have enough vitamin D for today. More sun now only adds sun damage, so enjoy the shade.`
     : dMin && u >= 3 ? `Go out for <b>${dMin} min</b> with arms and legs bare. That gives you enough vitamin D, and you would only start to burn after about <b>${bMin(u)} min</b>. Then shade, a hat or clothes.`
     : pkMin && hours[pkH] >= 3 && pkH > now.getHours() ? `Go out around <b>${hh(pkH)}</b> for <b>${pkMin} min</b> with arms and legs bare. That gives you enough vitamin D, and you would only start to burn after about <b>${bMin(hours[pkH])} min</b>.` : '';
+  const tomorrow = tMin ? `Tomorrow, go out around <b>${hh(tH)}</b> for <b>${tMin} min</b> with arms and legs bare. You would only start to burn after about <b>${bMin(next[tH])} min</b>.` : '';
   const winTxt = plan ? plan
-    : live && clearPk >= 3 ? 'Clouds keep the UV under 3 today, too weak for vitamin D. A clearer day will do it.'
-    : `The sun stays too low for vitamin D today.${lowSeason}`;
+    : over ? `Today’s strong sun is over. ${tomorrow || 'Tomorrow stays under UV 3, too weak for vitamin D.'}`
+    : live && clearPk >= 3 && peakT < 3 ? `Clouds keep the UV under 3 today, too weak for vitamin D. ${tomorrow || 'A clearer day will do it.'}`
+    : tomorrow ? `The sun stays too low for vitamin D today. ${tomorrow}` : `The sun stays too low for vitamin D today.${lowSeason}`;
   const where = state.profile.geo ? `${icon('pin', 13)} For your location` : `${icon('pin', 13)} Rough guess for ${(() => { try { return new Intl.DisplayNames(['en'], { type: 'region' }).of(myCountry()); } catch (e) { return 'your country'; } })()}<button data-action="useGeo">Use my location</button>`;
   return `<section class="card uvw ${on ? 'on' : ''}" aria-live="polite">
     <div class="uvw-top"><small>UV index · Vitamin D</small><em class="${live ? 'live' : ''}">${live ? 'Live' : 'Clear-sky estimate'}</em></div>
@@ -5769,6 +5776,7 @@ function uvWidget() {
       </div>
     </div>
     <p class="uvw-win">${winTxt}</p>
+    ${hormonalBC(state.profile.bc) && (peakT >= 3 || Math.max(...next) >= 3) ? `<p class="uvw-bc">${icon('spark', 13)}<span>On hormonal birth control, strong sun can leave brown patches on the face (melasma) more easily. SPF 30 or more on your face, even on short walks.</span></p>` : ''}
     ${uvCurve(hours)}
     <div class="uvw-skin"><div class="uvw-sk-h"><small>Your skin</small><span><b>${sk[2]}</b> · ${sk[3]}</span></div>
       <div class="uvw-sw" role="radiogroup" aria-label="Your skin type">${SKIN.map((x, i) => `<button role="radio" aria-checked="${i + 1 === mySkin()}" aria-label="${x[2]}, ${x[3]}" class="${i + 1 === mySkin() ? 'on' : ''}" style="--s:${x[1]}" data-action="uvSkin" data-v="${i + 1}"></button>`).join('')}</div></div>

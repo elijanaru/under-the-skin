@@ -12434,3 +12434,8 @@ html .tf2-e, html .lt2-tag, html .msd-h small, html .mg4-r em, html .mg4-w figca
 html .tf2-e, html .lt2-tag, html .mg4-w figcaption small { color: rgba(32,48,26,.6) !important; }
 html .section-title[class*="tone-"] h3::before { background: var(--lime) !important; box-shadow: none !important; }
 html .rci-h { text-transform: none !important; letter-spacing: 0 !important; font-size: 13px !important; font-weight: 600 !important; }
+/* UV card: calm labels like the rest of the app, and the birth control sun tip */
+html .uvw-top small, html .uvw-sk-h small { text-transform: none !important; letter-spacing: 0 !important; font-size: 12.5px !important; font-weight: 500 !important; }
+html .uvw-lv { letter-spacing: 0; font-size: 12px; font-weight: 600; }
+.uvw-bc { display: flex; gap: 8px; align-items: flex-start; margin: -2px 2px 12px; font-size: 13px; line-height: 1.45; color: #5b4a3a; }
+.uvw-bc svg { flex: none; margin-top: 3px; color: #c0841a; }
