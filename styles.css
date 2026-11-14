@@ -13327,6 +13327,6 @@ html .card.nw2 { margin-top: 14px; padding: 18px 16px 8px; border-radius: 30px; 
 .nw2-r .nw2-dl i.td { box-shadow: 0 0 0 1.5px #fff, 0 0 0 3px rgba(32,48,26,.55); }
 .nw2-r em { font: 400 16px/1 var(--dot); font-style: normal; text-align: right; color: #20301a; } .nw2-r em.z { color: rgba(32,48,26,.3); }
 
-/* Move hero: its title sits inside the white card, so it keeps dark ink (the white page-title rule is for titles on the background only). */
-html .mvp .mvp-h { color: #20301a !important; -webkit-text-fill-color: #20301a !important; text-shadow: none !important; }
+/* Move hero and Relief hero: their titles sit inside a white card, so they keep dark ink (the white page-title rule is for titles on the background only). */
+html .rl-hero .page-h, html .rl-hero .page-h span, html .mvp .mvp-h { color: #20301a !important; -webkit-text-fill-color: #20301a !important; text-shadow: none !important; }
 html .mvp .mvp-h small { color: rgba(32,48,26,.62) !important; -webkit-text-fill-color: rgba(32,48,26,.62) !important; }
