@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
+  PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HORMONE_SIMPLE, HORMONE_RELAY, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -6101,11 +6101,19 @@ function viewHormones() {
   return `${topbar('Hormones', { back: true })}
   <div class="pad">
     <h1 class="page-h">The role of <span>your hormones</span></h1>
+    <p class="hs-sub">Hormones are messengers. Your brain and ovaries send them through your blood to tell your body what to do. Over the month they take turns, which is why your energy and mood change.</p>
+    ${hormoneRelay(info)}
     <section class="card glass chart-card">${cycleChart(info, { id: 'hx', compact: true })}
       <p class="body sm">Day ${info.cd} · ${ph.name} phase. ${ph.hormones}</p></section>
     ${hormoneGrids(info)}
   </div>`;
 }
+const HS_PH = { menstrual: 'Period', follicular: 'Follicular', ovulatory: 'Ovulation', luteal: 'Luteal' };
+function hormoneRelay(info) {
+  return `<section class="card card-light hs-relay"><div class="eyebrow dark">Who leads when</div>
+    ${PHASE_ORDER.map(k => `<div class="hs-r ${info.phase === k ? 'on' : ''}" style="--c:${PH_HEX[k]}"><i aria-hidden="true"></i><div><span>${HS_PH[k]}${info.phase === k ? '<em>You are here</em>' : ''}</span><b>${HORMONE_RELAY[k].lead}</b><p>${HORMONE_RELAY[k].t}</p></div></div>`).join('')}</section>`;
+}
+const hsMeter = v => `<span class="hs-m" aria-label="${['Very low', 'Low', 'Medium', 'High'][v]}">${[1, 2, 3].map(j => `<i class="${v >= j ? 'on' : ''}" style="height:${4 + j * 3}px"></i>`).join('')}</span>`;
 // The hormone itself: its skeletal formula (small molecules) or its size (protein hormones).
 const PROTEIN_AA = { FSH: 'two chains of 92 and 111', LH: 'two chains of 92 and 121', Prolactin: 'one chain of 199', SHBG: 'two chains of 373', Insulin: 'two chains with 51 in total' };
 // Today: every hormone we can draw, as a swipe row of 3D models with what it does and where it is today.
@@ -6126,18 +6134,18 @@ function moleculeCard(n) {
 }
 function viewHormone(i) {
   const x = HORMONE_LIBRARY[i], info = M.info, n = hxNow(x, info), k = HX_KEY[x.n], u = hormonePhoto(x.n, 800), cr = HORMONE_PHOTOS[x.n];
-  const name = x.n === 'Oestrogen' ? 'Estrogen' : x.n, L = info.L, P = info.P, cd = Math.min(info.cd, L);
+  const name = x.n === 'Oestrogen' ? 'Estrogen' : x.n, L = info.L, P = info.P, cd = Math.min(info.cd, L); const sm = HORMONE_SIMPLE[x.n] || {};
   // her month for this hormone: a small curve with today marked
   let curve = '';
   if (k) {
     const W = 320, H = 80, X = d => 6 + (d - 1) / L * (W - 12), rel = d => C.hormonesRel(d, L, P)[k], Y = v => H - 10 - v * (H - 22);
     let d_ = ''; for (let t = 1; t <= L; t += .25) d_ += `${d_ ? 'L' : 'M'}${X(t).toFixed(1)} ${Y(rel(t)).toFixed(1)}`;
     const col = (HORMONES.find(h => h.key === k) || FULL_H.find(h => h.key === k) || {}).color || 'hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)';
-    curve = `<section class="card glass hxd-curve"><div class="eyebrow">Your month · ${L}-day cycle</div>
+    curve = `<div class="hxd-curve hs-curve">
       <svg viewBox="0 0 ${W} ${H}" width="100%"><path d="${d_}" fill="none" stroke="${col}" stroke-width="2.4" stroke-linecap="round"/>
         <line x1="${X(cd)}" x2="${X(cd)}" y1="12" y2="${H - 12}" stroke="#20301a" stroke-dasharray="2 3" opacity=".45"/><circle cx="${X(cd)}" cy="${Y(rel(cd))}" r="5.5" fill="${col}" stroke="#fff" stroke-width="2.5"/>
         <text x="${Math.min(W - 22, Math.max(22, X(cd)))}" y="9" text-anchor="middle" class="pat-ax hxd-today">Today</text>
-        <text x="6" y="${H}" class="pat-ax">Day 1</text><text x="${W - 6}" y="${H}" text-anchor="end" class="pat-ax">Day ${L}</text></svg></section>`;
+        <text x="6" y="${H}" class="pat-ax">Day 1</text><text x="${W - 6}" y="${H}" text-anchor="end" class="pat-ax">Day ${L}</text></svg></div>`;
   }
   return `${topbar(name, { back: true })}
   <div class="pad hxd">
@@ -6146,15 +6154,23 @@ function viewHormone(i) {
     <section class="card card-light hxd-now"><div class="hxd-nl"><div class="eyebrow dark">You, right now · day ${cd}</div>
       <div class="hxd-row"><b>${n.word}${hxArrow(n.tr)}</b></div><span class="hxd-amt">${n.amt}</span>
       <p>${n.note}</p></div><span class="hxd-ring">${k ? (() => { let pk = 0; for (let d = 1; d <= L; d++) pk = Math.max(pk, hAmtV(k, d, L, P)); const f = Math.min(1, hAmtV(k, cd, L, P) / (pk || 1)); return `${hxRing(f, 0)}<span class="hxd-pct"><b>${Math.max(1, Math.round(100 * f))}%</b><small>of peak</small></span>`; })() : `${hxRing(n.r, 0)}<small>level</small>`}</span></section>
-    ${curve}
-    ${moleculeCard(x.n)}
-    <section class="card glass hxd-b">
-      <div class="hx-row first"><span class="eyebrow">What it does</span><p>${x.role}</p></div>
-      <div class="hx-row"><span class="eyebrow">In your cycle</span><p>${x.cycle}</p></div>
-      <div class="hx-row"><span class="eyebrow">How much is normal</span><p>${x.range}</p></div>
-      <div class="hx-row"><span class="eyebrow">Support it ${evBadge(x.ev)}</span><p>${x.support}</p></div>
-    </section>
-    ${HORMONE_SCIENCE[x.n] ? `${sectionTitle('What studies found')}<section class="card glass tea-study">${HORMONE_SCIENCE[x.n].map(y => `<div class="ts-i"><div class="ts-h"><b>${y.t}</b>${evBadge(y.ev)}</div><p>${y.s}</p><small>${y.c}</small></div>`).join('')}</section>` : ''}
+    <section class="card card-light hs-simple"><div class="eyebrow dark">In simple words</div><h3>${sm.like || x.s}</h3><p>${sm.one || x.role}</p></section>
+    ${sm.month ? `<section class="card glass hs-month"><div class="eyebrow">Across your month</div>${curve}
+      ${PHASE_ORDER.map((ph, j) => `<div class="hs-mr ${info.phase === ph ? 'on' : ''}" style="--c:${PH_HEX[ph]}"><span class="hs-mn"><i></i>${HS_PH[ph]}</span>${hsMeter(sm.month[j][0])}<p>${sm.month[j][1]}</p></div>`).join('')}</section>`
+      : `<section class="card glass hs-month"><div class="eyebrow">In your cycle</div><p class="hs-cyc">${x.cycle}</p></section>`}
+    ${sm.high ? `<section class="card glass hs-feel"><div class="eyebrow">What you may notice</div>
+      <div class="hs-f"><span class="hs-fi up"><svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5"/></svg></span><div><b>When it’s high</b><p>${sm.high}</p></div></div>
+      <div class="hs-f"><span class="hs-fi"><svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v10M3.5 8.5 8 13l4.5-4.5"/></svg></span><div><b>When it’s low</b><p>${sm.low}</p></div></div></section>` : ''}
+    <section class="card glass hs-help"><div class="eyebrow">Help it along</div><p>${x.support}</p></section>
+    <details class="hs-sci"><summary><span><b>The science</b><small>${MOL_BALL[x.n] || PROTEIN_AA[x.n] ? 'The molecule, lab values and studies' : 'Lab values and studies'}</small></span>${icon('chevD', 16)}</summary>
+      ${moleculeCard(x.n)}
+      <section class="card glass hxd-b">
+        <div class="hx-row first"><span class="eyebrow">In detail</span><p>${x.role}</p></div>
+        <div class="hx-row"><span class="eyebrow">Through the cycle</span><p>${x.cycle}</p></div>
+        <div class="hx-row"><span class="eyebrow">How much is normal</span><p>${x.range}</p></div>
+      </section>
+      ${HORMONE_SCIENCE[x.n] ? `${sectionTitle('What studies found')}<section class="card glass tea-study">${HORMONE_SCIENCE[x.n].map(y => `<div class="ts-i"><div class="ts-h"><b>${y.t}</b>${evBadge(y.ev)}</div><p>${y.s}</p><small>${y.c}</small></div>`).join('')}</section>` : ''}
+    </details>
     <div class="hx-next">${HORMONE_LIBRARY.map((y, j) => `<button class="${j === i ? 'on' : ''}" data-action="nav" data-to="hormones/${j}">${y.n === 'Oestrogen' ? 'Estrogen' : y.n}</button>`).join('')}</div>
     <p class="fine center">Typical ranges for adult women; your own lab’s reference values may differ slightly. Not medical advice.</p>
   </div>`;

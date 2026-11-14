@@ -1285,6 +1285,51 @@ export const MIND_GUIDE = {
   peak: { energy: 3, mood: 3, social: 3, rest: 1 }, settle: { energy: 2, mood: 2, social: 2, rest: 2 },
   focus: { energy: 2, mood: 2, social: 1, rest: 2 }, premenstrual: { energy: 1, mood: 1, social: 1, rest: 3 },
 };
+// Hormones made simple: a nickname, one plain sentence, the month in four steps (level 0 to 3 for
+// period, follicular, ovulation, luteal, with what she may feel) and what high or low can feel like.
+export const HORMONE_SIMPLE = {
+  Oestrogen: { like: 'Your inner spring', one: 'Estrogen builds you up: the lining of your womb, your energy, your mood, your skin glow and strong bones.',
+    month: [[0, 'Low. Energy and mood can feel quieter while you bleed.'], [2, 'Climbing. More energy, a brighter mood, clearer skin.'], [3, 'At its highest. You feel social, confident and magnetic.'], [1, 'Medium, then it falls. Mood can wobble in the last days.']],
+    high: 'Energy, motivation, a lighter mood, glowing skin, wanting to go out.', low: 'Tired, flat mood, dry skin, poorer sleep.' },
+  Progesterone: { like: 'Your inner calm', one: 'Made only after the egg is released. It calms you, helps you sleep, warms you up and keeps the womb ready for a possible baby.',
+    month: [[0, 'Very low. Its drop is what started your period.'], [0, 'Very low. It isn’t made yet.'], [1, 'Starts to rise once the egg is out.'], [3, 'At its highest. Calmer, sleepier, warmer and often hungrier.']],
+    high: 'Calm and sleepy, a warmer body, a bigger appetite, sometimes bloating or tender breasts.', low: 'Restless sleep, feeling anxious, spotting in the days before your period.' },
+  FSH: { like: 'The wake-up call', one: 'Your brain sends it to your ovaries to wake up a few tiny egg sacs, so a new egg can ripen.',
+    month: [[2, 'Rising. It wakes up this month’s eggs.'], [1, 'Settles once one egg takes the lead.'], [2, 'A short bump next to the LH burst.'], [0, 'Low. Resting until your next period.']],
+    high: 'You don’t feel it. Very high levels can mean fewer eggs are left, for example closer to menopause.', low: 'You don’t feel it. Too little, from stress or eating too little, can delay ovulation.' },
+  LH: { like: 'The release button', one: 'Also sent by your brain. One big burst of LH makes the ripe egg pop out. That is ovulation, and it is what ovulation tests pick up.',
+    month: [[0, 'Low.'], [1, 'Low and slowly building.'], [3, 'One big burst. The egg comes out a day or so later.'], [0, 'Back to low.']],
+    high: 'Around the burst some women feel a twinge on one side, see clear stretchy discharge and feel more desire.', low: 'Without the burst no egg is released that month. Stress and eating too little can weaken it.' },
+  Testosterone: { like: 'Your spark', one: 'Women make a little of it too. It gives you drive, desire, confidence and strong muscles.',
+    month: [[1, 'Low and steady.'], [1, 'Slowly rising.'], [3, 'A small peak. More desire, drive and confidence.'], [1, 'Back to its usual level.']],
+    high: 'Drive, confidence, more desire. Far too much can show as acne, oily skin or extra hair.', low: 'Less desire, less motivation, weaker muscles.' },
+  Prolactin: { like: 'The milk and rest hormone', one: 'It makes breast milk after a birth. Outside of that, too much of it can pause ovulation.',
+    high: 'Missed periods, milky drops from the nipples, low desire.', low: 'Usually nothing you would notice.' },
+  SHBG: { like: 'The taxi', one: 'A protein that carries estrogen and testosterone through your blood. Hormones riding in the taxi can’t act, so it decides how strongly you feel them.',
+    high: 'Less free testosterone, so lower desire.', low: 'More free testosterone, so acne, oily skin or extra hair. Often goes with high blood sugar.' },
+  Insulin: { like: 'The sugar key', one: 'It opens your cells so the sugar from your food can get in and become energy.',
+    high: 'Cravings, energy crashes, weight around the belly and acne. It can push testosterone up too.', low: 'Very rare outside of diabetes.' },
+  Cortisol: { like: 'Your alarm clock', one: 'It wakes you up in the morning, gives you energy for the day and helps you handle stress. By night it should be low.',
+    high: 'Wired but tired, poor sleep, sugar cravings, a later ovulation and stronger PMS.', low: 'Hard to get going in the morning, worn out, dizzy when you stand up.' },
+  Adrenaline: { like: 'The emergency button', one: 'The instant rush when something startles you: a fast heart, fast breathing and quick energy.',
+    high: 'Racing heart, shaky, on edge, unable to switch off.', low: 'Calm. This is what you want most of the day.' },
+  'Thyroid hormones': { like: 'Your thermostat', one: 'They set how fast your body burns energy and makes heat.',
+    high: 'Running too fast: hot, sweaty, a racing heart, losing weight, anxious.', low: 'Running too slow: tired, cold hands and feet, dry skin, heavy or irregular periods.' },
+  Melatonin: { like: 'The night signal', one: 'It rises when it gets dark and tells your body it is time to sleep.',
+    high: 'Sleepy. At night that is exactly right.', low: 'Hard to fall asleep, light sleep, waking up at night.' },
+  Serotonin: { like: 'The good-mood messenger', one: 'It helps you feel calm and content and keeps your digestion moving. At night your body turns it into melatonin.',
+    high: 'Calm, content and steady.', low: 'Low mood, cravings for sweets, irritability. Often just before your period.' },
+  'Active vitamin D': { like: 'Sunshine as a hormone', one: 'Your skin makes it from sunlight. It keeps your bones strong and supports your immune system and mood.',
+    high: 'Only from too many supplements: nausea and thirst.', low: 'Tired, low mood, aches, getting ill often, stronger PMS.' },
+};
+// Who leads when: the month as a relay, in plain words.
+export const HORMONE_RELAY = {
+  menstrual: { lead: 'Everything low', t: 'Your hormones reset. The lining sheds and your body asks for rest.' },
+  follicular: { lead: 'Estrogen rises', t: 'A new egg ripens. Energy, mood and skin pick up.' },
+  ovulatory: { lead: 'LH bursts', t: 'The egg is released. Estrogen and testosterone peak, so you feel social and confident.' },
+  luteal: { lead: 'Progesterone leads', t: 'You turn calmer, slower and hungrier. When it falls at the end, mood can dip.' },
+};
+
 // Hormone pages · what studies found (keys match HORMONE_LIBRARY names).
 const LAB_RANGES = { t: 'Where the “normal” numbers come from', ev: 'strong', s: 'Researchers measured LH, FSH, estradiol and progesterone in healthy women through each phase of the cycle. Labs use ranges like these, which is why “normal” depends on your cycle day.', c: 'Stricker et al. 2006, Clinical Chemistry and Laboratory Medicine' };
 export const HORMONE_SCIENCE = {
