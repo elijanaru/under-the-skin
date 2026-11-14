@@ -3702,6 +3702,7 @@ function dueReminders() {
     if (sl) { const pats = (() => { try { return patterns().list; } catch { return []; } })(), body = bodyNote(new Date(), sl[2], info, pats);
       if (body) out.push({ id: 'letter-' + sl[2], icon: 'mail', title: LETTER_TITLE[sl[2]], body, to: 'log' }); }
   }
+  if (!state.paid && trialLeft() === 1) out.push({ id: 'trial-last', icon: 'gift', title: 'Your last free day', body: `Tomorrow Under the Skin asks for one payment of €${PRICE}. No subscription, and everything you logged stays.`, to: 'unlock' });
   if (postpartum()) out.push({ id: 'postpartum', icon: 'heart', title: 'Your cycle after birth', body: state.profile.bf
     ? 'While breastfeeding, periods can pause or come irregularly, and you can ovulate before your first period returns. Predictions stay rough until your cycle settles.'
     : 'In the first year after birth, cycles often run irregular. Your predictions sharpen with every period you log.' });
@@ -8017,7 +8018,8 @@ function viewProfile() {
       <button class="list-btn danger" data-action="reset"><span class="pf-ic">${icon('trash', 16)}</span><span class="pf-lt">Delete all data<small>Can't be undone</small></span></button>
     </section>
     <p class="fine">${A.currentUser() ? 'Stored on this device and privately in your account.' : 'Everything is stored privately on this device.'} Underskin gives wellbeing estimates based on your logs and on Traditional Chinese Medicine concepts; it is not medical advice and must not be used as contraception.</p>`;
-  else body = `${sectionTitle('Why you’re here')}
+  else body = `${state.paid ? '' : `<button class="card ul-pf" data-action="nav" data-to="unlock"><span class="ul-pf-n dotnum">${trialLeft()}</span><b>${trialLeft() === 1 ? 'free day left' : 'free days left'}<small>Then one payment of €${PRICE}, yours for good</small></b><em>Unlock</em></button>`}
+    ${sectionTitle('Why you’re here')}
     ${purposePicker(purpose(), 'setPurpose')}
     ${sectionTitle('Your goals')}
     <section class="card pfc"><p class="pfc-sub">${icon('spark', 13)} Your daily tips follow these<span><b class="dotnum">${focusKeys().length}</b> chosen</span></p>${focusPicker(focusKeys(), 'setFocus')}</section>
@@ -9135,6 +9137,8 @@ const actions = {
   },
   uvSkin: d => { state.profile.skin = +d.v; save(); uvRefresh(); },
   remToggle: d => { const r = rem(); r[d.k] = !r[d.k]; save(); render(); if (d.k === 'sunAm' || d.k === 'sunPm') scheduleSunNative(r[d.k]); if (d.k === 'letters') scheduleLettersNative(r[d.k]); },
+  buyUnlock: () => buyUnlock(),
+  restoreUnlock: () => restoreUnlock(),
   remLettersN: d => { const r = rem(); r.lettersN = +d.v; save(); render(); scheduleLettersNative(); },
   remHour: d => { const r = rem(); r.checkinHour = (r.checkinHour + +d.d + 24) % 24; save(); render(); },
   remCalmHour: d => { const r = rem(); r.calmHour = (r.calmHour + +d.d + 24) % 24; save(); render(); },
@@ -9400,6 +9404,59 @@ function playArrival(view) {
 // the very top of the page: the app view and the window (onboarding scrolls the window)
 function toTop() { try { window.scrollTo(0, 0); document.scrollingElement && (document.scrollingElement.scrollTop = 0); const v = document.getElementById('view'); if (v) v.scrollTop = 0; } catch {} }
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+// ---------- one payment after the free trial ----------
+// 3 free days from her first day in the app, then one payment of €9.89 unlocks everything for good.
+// Store apps: an in-app purchase (non-consumable, id below) through the NativePurchases plugin once it is installed.
+// Website: a payment link (PAY_LINK in js/config.js). On the local dev server the gate stays off (add ?paywall=1 to see it).
+const TRIAL_DAYS = 3, PRICE = '9.89', UNLOCK_ID = 'underskin_unlock';
+function trialStart() { if (!state.trialStart) { state.trialStart = todayISO(); save(true); } return state.trialStart; }
+function trialLeft() { return Math.max(0, TRIAL_DAYS - C.diffDays(C.startOfDay(new Date()), C.parseISO(trialStart()))); }
+const DEV_HOST = !NATIVE && /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+function locked() {
+  if (!state?.onboarded || state.paid) return false;
+  if (DEV_HOST && !/[?&]paywall=1/.test(location.search)) return false;
+  return trialLeft() === 0;
+}
+async function buyUnlock() {
+  const NP = NATIVE && CAP?.Plugins?.NativePurchases;
+  if (NP) {
+    try { ui.paying = true; render(); const r = await NP.purchaseProduct({ productIdentifier: UNLOCK_ID, productType: 'inapp', quantity: 1 }); if (r && (r.transactionId || r.purchaseToken)) return unlocked(r.transactionId || r.purchaseToken); }
+    catch (e) { toast(/cancel/i.test(String(e?.message || e)) ? 'Payment cancelled' : 'The payment didn’t go through. Please try again.'); }
+    ui.paying = false; render(); return;
+  }
+  let link = ''; try { link = (await import('./config.js')).PAY_LINK || ''; } catch {}
+  if (!NATIVE && link) { location.href = link; return; }
+  toast('Payments open very soon. Your 3 days stay free until then.');
+}
+async function restoreUnlock() {
+  const NP = NATIVE && CAP?.Plugins?.NativePurchases;
+  if (!NP) return toast(A.currentUser() ? 'No purchase found on this account yet' : 'Sign in with the account you paid with to restore it');
+  try { const r = await NP.restorePurchases(); const list = (r && (r.purchases || r.transactions)) || [];
+    const hit = list.find(x => (x.productIdentifier || x.productId) === UNLOCK_ID); if (hit) return unlocked(hit.transactionId || hit.purchaseToken || 'restored');
+    toast('No purchase found for this Apple or Google account'); }
+  catch { toast('Couldn’t reach the store. Please try again.'); }
+}
+function unlocked(ref) { state.paid = { at: todayISO(), ref: String(ref || '').slice(0, 80) }; ui.paying = false; save(true); toast('Unlocked. It’s yours for good'); location.hash = '#/today'; render(); }
+const UNLOCK_KEEP = [['calendar', 'Your cycle & predictions', 'Learns your rhythm with every period'], ['flask', 'Hormones made simple', 'What they do, day by day'], ['bowl', 'Food & recipes for each phase', 'Warm, raw-first, real food'], ['leaf', 'Breathe, ground & move', 'Matched to how you feel'], ['mail', 'Letters from your body', 'Gentle check-ins every day'], ['users', 'Partner view', 'He learns your cycle too']];
+function viewUnlock() {
+  const left = trialLeft(), lock = locked(), paid = !!state.paid;
+  return `${lock ? '' : topbar('Unlock', { back: true })}
+  <div class="pad ul">
+    <section class="ul-hero">${promisePet()}
+      <span class="ul-eb">${paid ? 'Unlocked' : lock ? 'Your 3 free days are over' : `${left} free ${left === 1 ? 'day' : 'days'} left`}</span>
+      <h1>${paid ? 'It’s yours, <span>for good</span>' : 'Keep Under the Skin, <span>for good</span>'}</h1>
+      <p>${paid ? 'Thank you for supporting a small team. Every update is yours too.' : 'One payment. No subscription, ever. Everything you’ve logged stays right here.'}</p></section>
+    ${paid ? '' : `<section class="card ul-price">
+      <div class="ul-amt"><span class="ul-cur">€</span><b class="dotnum">${PRICE}</b></div>
+      <small>Once · yours forever</small>
+      <button class="ul-cta" data-action="buyUnlock" ${ui.paying ? 'disabled' : ''}>${ui.paying ? 'Opening payment…' : `Unlock for €${PRICE}`}</button>
+      <div class="ul-no"><span>${icon('check', 12, 2.6)} No subscription</span><span>${icon('check', 12, 2.6)} No ads</span><span>${icon('check', 12, 2.6)} Data stays yours</span></div></section>`}
+    <section class="card glass ul-keep"><div class="eyebrow">Everything is included</div>
+      ${UNLOCK_KEEP.map(([ic, t, sub]) => `<div class="ul-r"><span class="ul-ic">${icon(ic, 16)}</span><span><b>${t}</b><small>${sub}</small></span>${icon('check', 15, 2.4)}</div>`).join('')}</section>
+    ${paid ? '' : `<div class="ul-links"><button data-action="restoreUnlock">Restore purchase</button>${A.configured() ? `<button data-action="nav" data-to="account">${A.currentUser() ? 'Your account' : 'Sign in'}</button>` : ''}</div>
+    <p class="fine center ul-fine">One-time payment of €${PRICE}, VAT included. No renewal and nothing charged automatically. Your logs are never deleted, even if you wait.</p>`}
+  </div>`;
+}
 function render() {
   const r = route(); secN = 0;
   unmountFigs.forEach(f => f()); unmountFigs = []; // stop 3D/particle loops even on views that mount none (account, love, with)
@@ -9449,10 +9506,16 @@ function render() {
   }
   if (ui.ambOn !== false) { ui.ambOn = false; ambience(false); } // fades out as she arrives in the app
   M = model();
-  const ph = (ui.phasePreview || M.info?.phase) || ''; // the whole app takes the colour of her phase
+  const ph = (ui.phasePreview || M.info?.phase) || '';
+  if (locked() && !['account', 'privacy', 'terms'].includes(r.name)) { // trial over: the unlock page is the whole app
+    if (document.documentElement.dataset.phase !== ph) document.documentElement.dataset.phase = ph;
+    $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewUnlock()}</div>`;
+    return;
+  } // the whole app takes the colour of her phase
   if (document.documentElement.dataset.phase !== ph) document.documentElement.dataset.phase = ph;
   const views = {
     today: viewToday, saved: viewSaved, ground: viewGround, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: () => viewBreathe(r.id), do: () => viewTopic(r.id), plan: viewPlan, diet: viewDiet, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: viewCalendar, manifest: viewManifest, moon: viewCalendar, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewReliefIndex, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), apothecary: () => { location.replace('#/plan/foods'); return ''; }, world: () => viewWorld(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
+    unlock: viewUnlock,
     recipe: () => viewRecipe(r.id), ritual: () => viewRitual(r.id), point: () => viewPoint(r.id), article: () => viewArticle(r.id), learn: viewLearn,
   };
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];
