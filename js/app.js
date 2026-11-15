@@ -10492,7 +10492,7 @@ function viewUnlock() {
       <h2>${paid ? '<span>It’s yours</span> <em>for good<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 12 C 50 20, 120 4, 196 14"/></svg></em>' : '<span>Keep Under the Skin</span> <em>for good<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 12 C 50 20, 120 4, 196 14"/></svg></em>'}</h2>
       <p class="o3-lead">${paid ? 'Thank you for supporting a <mark>small team</mark>. Every update is yours too, and part of what you paid helps fund new studies on women.' : 'One payment. <mark>No subscription</mark>, ever. Everything you’ve logged stays right here.'}</p>
       ${paid ? '' : `<div class="ul3-buy">
-        <div class="ul3-tag" aria-label="€${PRICE}, once"><i class="ul3-hole"></i><small>only</small><span class="ul3-amt"><em>€</em><b class="dotnum">${eu}</b><sup class="dotnum">.${ct}</sup></span><small>once, yours forever</small></div>
+        <div class="ul3-tag" aria-label="€${PRICE}, once"><i class="ul3-hole"></i><small>only</small><span class="ul3-amt"><em>€</em><b class="dotnum">${eu}</b><sup class="dotnum">${ct}</sup></span><small>once, yours forever</small></div>
         <button class="ul3-cta" data-action="buyUnlock" ${ui.paying ? 'disabled' : ''}>${ui.paying ? 'Opening payment…' : `Unlock for €${PRICE}`}</button>
       </div>`}
       <p class="o3-sign">with love, from our little team <i>♡</i></p>
