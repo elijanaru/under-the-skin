@@ -1451,9 +1451,9 @@ export const MIND_SCIENCE = [
 
 // Why someone uses the app — only 'conceive' shows pregnancy & fertility content.
 export const PURPOSES = [
-  { k: 'know', t: 'Understand my body', s: 'Periods, rhythm and your biological clock', photo: 'Oestrogen', img: 'images/purpose-body-lily.jpg', pos: '50% 60%' },
+  { k: 'know', t: 'Understand my body', s: 'Periods, rhythm and your biological clock', photo: 'Oestrogen', img: 'images/purpose-body.jpg', pos: '50% 62%' },
   { k: 'conceive', t: 'Trying to get pregnant', s: 'Fertile window, best days, preparing my body', photo: 'Prolactin', img: 'images/purpose-conceive.jpg', pos: '62% 42%' },
-  { k: 'after', t: 'After birth', s: 'Your hormones, brain and heart after a baby', img: 'images/purpose-after.jpg', pos: '80% 50%', soon: true },
+  { k: 'after', t: 'After birth', s: 'Your hormones, brain and heart after a baby', img: 'images/purpose-after-feet.jpg', pos: '50% 55%', soon: true },
   { k: 'menopause', t: 'Menopause', s: 'Perimenopause & menopause support', photo: 'Serotonin', soon: true },
 ];
 // What someone wants help with; each has a tailored tip per phase.

@@ -14228,3 +14228,6 @@ html .hxd-amt { font-size: 13px; }
 .tk-vt.tkm-on { filter: none; }
 .tk-vt.tkm-done > .vt { animation: none; }
 .tk-vt.tkm-done > .tk-glint { display: none; }
+/* After birth photo is pale: deepen the left side so the white words read */
+.purp-c.soon img[src*="purpose-after-feet"] { filter: saturate(.7) brightness(.78) !important; }
+.purp-c.soon:has(img[src*="purpose-after-feet"]) .pc-shade { background: linear-gradient(90deg, rgba(48,34,40,.55), rgba(48,34,40,.18) 70%, transparent) !important; }
