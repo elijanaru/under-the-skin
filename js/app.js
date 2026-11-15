@@ -4436,7 +4436,6 @@ function learnedCard() {
         ${tile('n', icon('bell', 15, 1.9), 'Next period', np.getDate(), '', n ? `Likely ${md(lo)} to ${md(hi)}` : (dn => dn > 1 ? `In ${dn} days` : dn === 1 ? 'Tomorrow' : 'Due now')(C.diffDays(np, M.today)), fmt(np, { month: 'short' }))}
         ${tile('o', icon('seed', 15, 1.9), 'Egg release', ov, '', `Fertile days ${Math.max(1, ov - 5)} to ${ov}${os.cd ? ', from your egg-white sign' : os.luteal ? ', from your check-ins' : ''}`, 'Day')}
       </div>
-      ${pats.length ? `<div class="lm-pats"><small>Your body’s habits</small>${pats.map(x => `<span class="lm-pat"><i>${logEmo(x.name)}</i><b>${x.name}</b><em>${x.from === x.to ? `Day ${x.from}` : `Days ${x.from} to ${x.to}`}</em><small>${x.cyclesN} of your cycles</small></span>`).join('')}</div>` : ''}
       <p class="lm-foot">${icon('spark', 12)} The more you log, the more personal every prediction gets.</p></section>`;
 }
 function headsUpCard() {
@@ -8087,7 +8086,7 @@ function viewRecipe(id) {
     ${recMicro(r)}
     ${sectionTitle('Why it’s good for you')}
     <section class="card rn-list rn2">${r.nutrients.map(n => { const [line, to] = NUTRIENT_ROLE[n] || [''], src = nuSource(n, r);
-      return `<${to ? `button data-action="nav" data-to="nutrients/${to}"` : 'div'} class="rn">${src && src.ph ? `<img class="rn-ph" src="${foodPhoto(src.ph, 160)}" alt="" loading="lazy" decoding="async">` : `<span class="rn-ic">${icon('leaf', 17)}</span>`}<span class="rn-t"><b>${n}</b><p>${line}</p>${src ? `<small>From the ${src.name.toLowerCase()}</small>` : ''}</span>${to ? icon('chevR', 15) : ''}</${to ? 'button' : 'div'}>`; }).join('')}</section>
+      return `<${to ? `button data-action="nav" data-to="nutrients/${to}"` : 'div'} class="rn">${(() => { const ph = src && src.ph && foodPhoto(src.ph, 160), e = src && ingEmo(src.name); return ph ? `<img class="rn-ph" src="${ph}" alt="" loading="lazy" decoding="async">` : e ? `<span class="rn-ic rn-emo">${emoRaw(e)}</span>` : `<span class="rn-ic">${icon('leaf', 17)}</span>`; })()}<span class="rn-t"><b>${n}</b><p>${line}</p>${src ? `<small>From the ${src.name.toLowerCase()}</small>` : ''}</span>${to ? icon('chevR', 15) : ''}</${to ? 'button' : 'div'}>`; }).join('')}</section>
     ${sectionTitle('Ingredients')}
     ${(() => { const d = myDiet(), D = DIETS.find(x => x.k === d); return d === 'all' ? '' : !fitsDiet(r) ? `<p class="rci-diet no">${icon('close', 12, 2.4)} Not ${D.t.toLowerCase()}: this one doesn't fit how you eat.</p>` : dietChanged(r) ? `<p class="rci-diet">${D.g} Made ${D.t.toLowerCase()} for you with simple swaps.</p>` : ''; })()}
     <section class="card rci-c"><div class="rci-top"><b><span class="dotnum">${r.ingredients.map(x => dietLine(x)).filter(Boolean).length}</span> ingredients</b><small>For ${serves === 1 ? '1 serving' : `${serves} ${serves > 6 ? 'pieces' : 'servings'}`} · tap to tick off</small></div>${recIngs(r)}</section>
