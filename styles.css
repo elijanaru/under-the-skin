@@ -16003,3 +16003,18 @@ button.br-up.go:active { transform: scale(.985); }
 .sb2 .sbw-d i { font-style: normal; font-family: var(--dot); font-weight: 900; font-size: 16px; color: #20301a; }
 .sb2 .sbw-d em { align-self: center; margin-right: 6px; padding: 4px 8px; border-radius: 99px; background: #304023; color: #fff; font: 600 11px/1 var(--font); font-style: normal; }
 html .view .section-title .link { white-space: nowrap; }
+
+/* Stress › The science of calm (Round B): one timeline instead of chips plus a repeated list. Each time band has a dot on a rail
+   that runs through the emoji tiles; every row still opens its study */
+.cs2.cs3 { position: relative; padding: 6px 16px 8px; }
+.cs3::before { content: ""; position: absolute; left: 39px; top: 26px; bottom: 40px; width: 2px; border-radius: 2px; background: linear-gradient(180deg, color-mix(in srgb, var(--pc) 30%, #fff), var(--pc)); }
+.cs3-band { position: relative; display: flex; align-items: center; gap: 12px; padding: 14px 0 4px; }
+.cs3-dot { width: 48px; flex: none; display: grid; place-items: center; }
+.cs3-dot::after { content: ""; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2.5px var(--pc), 0 3px 8px rgba(32,48,26,.15); position: relative; z-index: 1; }
+.cs3-band.last .cs3-dot::after { background: var(--pc); }
+.cs3-k { display: inline-flex; align-items: baseline; gap: 4px; font: 500 13px/1 var(--font); color: #4a5a3c; }
+.cs3-k b { font: 900 18px/1 var(--dot); color: #20301a; }
+.cs3 .cs2-r { position: relative; border-bottom: 0; }
+.cs3 .cs2-r summary { padding: 8px 0; }
+.cs3 .cs2-ph { position: relative; z-index: 1; margin: 0; }
+.cs3 .cs2-b { margin-left: 60px; }

@@ -7569,15 +7569,14 @@ function calmScience(info) {
   const pos = sec => Math.max(0, Math.min(1, Math.log(sec / 10) / Math.log(36000 / 10))) * 100;
   const ticks = [[60, '1 min'], [600, '10 min'], [3600, '1 hour'], [28800, 'a night']];
   return `${sectionTitle('The science of calm')}<p class="cs2-sub">How long each one needs, and what studies found.</p>
-    <section class="cs2" style="--pc:${pc}">
-      <div class="cld" role="group" aria-label="From fastest to slowest">${(() => { const B = [[], [], [], []]; L.forEach(x => B[x.sec < 60 ? 0 : x.sec <= 660 ? 1 : x.sec <= 1800 ? 2 : 3].push(x));
-        return B.map((g, i) => { if (!g.length) return ''; const f = g[0], l = g[g.length - 1], un = u => u === 'h' ? 'hours' : u === 's' ? 'seconds' : u;
-          const lab = g.length > 1 && f.d !== l.d ? `<b class="dotnum">${f.d}<i>–</i>${l.d}</b><small>${un(l.u)}</small>` : `<b class="dotnum">${f.d}</b><small>${un(f.u)}</small>`;
-          return `<div class="cld-r" style="--i:${i}"><span class="cld-t">${lab}</span><span class="cld-dot" aria-hidden="true"></span>
-            <span class="cld-c">${g.map(x => `<button data-action="calmJump" data-k="${x.k}"><span class="emo" aria-hidden="true">${x.g}</span>${CALM_LAB[x.t] || x.t}</button>`).join('')}</span></div>`; }).join(''); })()}</div>
-      ${L.map(x => `<details class="cs2-r" data-k="${x.k}"><summary><span class="cs2-ph emo" aria-hidden="true">${x.g}</span><span class="cs2-t"><b>${x.t}</b><small>${x.r}</small></span>
-        <span class="cs2-d"><b class="dotnum">${x.d}</b><small>${x.u}</small></span>${icon('chevD', 14)}</summary>
-        <div class="cs2-b"><p>${x.s}</p><span class="cs2-c">${x.ev === 'tcm' ? 'Chinese medicine' : `${x.c.replace(/\s*\(.*?\)/g, '')}${x.src ? ` · ${x.src}` : ''}`}</span></div></details>`).join('')}
+    <section class="cs2 cs3" style="--pc:${pc}">${(() => { const B = [[], [], [], []]; L.forEach(x => B[x.sec < 60 ? 0 : x.sec <= 660 ? 1 : x.sec <= 1800 ? 2 : 3].push(x));
+      const last = B.map(g => g.length > 0).lastIndexOf(true), un = u => u === 'h' ? 'hours' : u === 's' ? 'seconds' : u;
+      return B.map((g, i) => { if (!g.length) return ''; const f = g[0], l = g[g.length - 1], one = f.d === l.d;
+        const lab = one ? `<b class="dotnum">${f.d}</b> ${un(f.u)}` : `<b class="dotnum">${f.d}</b> to <b class="dotnum">${l.d}</b> ${un(l.u)}`;
+        return `<div class="cs3-band ${i === last ? 'last' : ''}"><span class="cs3-dot" aria-hidden="true"></span><span class="cs3-k">${i === last && f.u === 'h' ? 'Works over' : 'Works in'} ${lab}</span></div>
+        ${g.map(x => `<details class="cs2-r" data-k="${x.k}"><summary><span class="cs2-ph emo" aria-hidden="true">${x.g}</span><span class="cs2-t"><b>${x.t}</b><small>${x.r}</small></span>
+        ${one ? '' : `<span class="cs2-d"><b class="dotnum">${x.d}</b><small>${x.u}</small></span>`}${icon('chevD', 14)}</summary>
+        <div class="cs2-b"><p>${x.s}</p><span class="cs2-c">${x.ev === 'tcm' ? 'Chinese medicine' : `${x.c.replace(/\s*\(.*?\)/g, '')}${x.src ? ` · ${x.src}` : ''}`}</span></div></details>`).join('')}`; }).join(''); })()}
     </section>`;
 }
 // ---------- hormone habits ----------
