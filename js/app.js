@@ -8083,7 +8083,9 @@ const HERB_BUY = {
     glow: 'The classic herb for dark, thick hair, but never on your own.' },
 };
 // Real cut-out photos where we have them; the rest keep their drawings until matching cut-outs are made.
-const HERB_REAL = { ginger: 'ginger', cinnamon: 'cinnamon', goji: 'goji', 'red-dates': 'red-dates' };
+const HERB_REAL = { ginger: 'ginger', cinnamon: 'cinnamon', goji: 'goji', 'red-dates': 'red-dates', astragalus: 'astragalus' };
+// Real photos for the herb sheet hero, cut out with the subject lift (macOS Vision): [file, credit]
+const HERB_PHOTO = { astragalus: ['images/herbs/astragalus-real.webp', 'Root photo: “Racine astragale HUANGQI”, Wikimedia Commons, CC BY-SA 3.0. Slices: Fumikas Sagisavas, CC0.'] };
 const herbPic = k => (HERB_REAL[k] ? { src: `images/sf/${HERB_REAL[k]}.webp`, real: true } : { src: `images/herbs/${k}.svg`, real: false });
 // Herbs grow in a little garden bed: leaves above the soil, roots hidden. Tap one and it wiggles, pops out with soil crumbs,
 // and a sheet rises with the whole plant, roots and all, telling her about it one small chapter at a time.
@@ -8125,7 +8127,7 @@ function hsChapter(C, c) {
 // One page with everything (16 Nov 2026, her call): the note to meet it, then How to take it, Buy the best, a quick test and
 // the glow tip side by side, the study and the cautions, each a small card with its own icon; Plant it back closes.
 function herbSheet(x, i) {
-  const b = HERB_BED[x.n] || [x.n.toLowerCase().replace(/\W+/g, '-'), x.n, '', []], real = HERB_REAL[b[0]];
+  const b = HERB_BED[x.n] || [x.n.toLowerCase().replace(/\W+/g, '-'), x.n, '', []], real = HERB_REAL[b[0]], ph = HERB_PHOTO[b[0]];
   const H = HERB_SPEC[x.n] || {}, Y = HERB_BUY[b[0]] || {}, S = H.study, cares = [x.warn, H.care].filter(Boolean);
   const head = (ic, t) => `<h3><span class="hs-ic">${icon(ic, 16, 2)}</span>${t}</h3>`;
   const row = (ic, k, v) => `<div class="hs-row"><span>${icon(ic, 17, 1.9)}</span><div><b>${k}</b><small>${v}</small></div></div>`;
@@ -8134,7 +8136,7 @@ function herbSheet(x, i) {
     <div class="hs-hero">
       <svg class="o3-dood" viewBox="0 0 340 250" aria-hidden="true">${o3Spark('#f6c6d4', 46, 52, 0)}${o3Spark('#f1d58a', 296, 40, 1.1)}${o3Spark('#c9d6a8', 300, 200, 2)}${o3Spark('#f6c6d4', 34, 190, 1.5)}</svg>
       <span class="tsh-glow" aria-hidden="true"></span>
-      <img class="hs-plant" src="images/herbs/${b[0]}.svg" alt="${b[1]}, roots and all">
+      <img class="hs-plant${ph ? ' real' : ''}" src="${ph ? ph[0] : `images/herbs/${b[0]}.svg`}" alt="${ph ? `Dried ${b[1].toLowerCase()} roots` : `${b[1]}, roots and all`}">
       <span class="hs-crumbs" aria-hidden="true">${'<i></i>'.repeat(7)}</span>
       ${real ? `<figure class="hs-pol"><img src="images/sf/${real}.webp" alt=""><figcaption>in your kitchen</figcaption></figure>` : ''}
     </div>
@@ -8147,6 +8149,7 @@ function herbSheet(x, i) {
     ${S ? `<section class="hs-card hs-study">${head('book', 'What a study found')}<p>${S[0]}</p><p class="hs-cite">${S[1]}</p></section>` : ''}
     ${cares.length ? `<div class="tsh-warn hs-warn"><i>${icon('heart', 13, 2.2)}</i><span><b>Before you try</b> ${cares.join(' ')}</span></div>` : ''}
     <button class="hs-done" data-action="wsClose">${icon('leaf', 16, 2)} Plant it back</button>
+    ${ph ? `<p class="hs-credit">${ph[1]}</p>` : ''}
   </div>`;
 }
 function hsGo(to) {

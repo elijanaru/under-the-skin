@@ -15315,3 +15315,7 @@ html .sfc-i img[src*="sf/dandelion"] { transform: scale(.8); transform-origin: 5
   font: 600 15px/1 var(--font); cursor: pointer; box-shadow: 0 10px 20px -12px rgba(32,48,26,.6); }
 .hs-done:active { transform: scale(.97); }
 @media (prefers-reduced-motion: reduce) { .hs-card, .hs-mini { animation: none; } }
+/* Herb sheet hero: a real photo, cut out, lying at a slant like on her kitchen counter */
+.hs-plant.real { height: auto; width: 340px; max-width: 92%; margin-top: 10px; rotate: -16deg; filter: drop-shadow(0 16px 14px rgba(70,50,30,.24)); }
+.hs-pol img[src*="sf/astragalus"] { object-fit: cover; }
+.hs-credit { margin: 4px 10px 0; font-size: 10.5px; line-height: 1.4; color: rgba(32,48,26,.45); text-align: center; }
