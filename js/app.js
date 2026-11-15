@@ -7617,7 +7617,7 @@ const HB_PILLARS = [
 // a real photo and the study's key number for each pillar, so the list reads at a glance
 const HB_PIL_X = { 'Light & sleep': ['images/fb/sun.webp', '2 h', 'earlier clock'], 'Steady blood sugar': [() => foodPhoto('Eggs', 200), '−37%', 'sugar rise'],
   'A calm nervous system': ['images/fb/breathe.webp', '45', 'trials'], 'Walks and strength': ['images/fb/walk.webp', '2–5', 'min walk'], 'Liver & gut': ['images/fb/carrot.webp', '250', 'women'],
-  'Fewer hormone disruptors': ['images/fb/fascia.webp', '−45%', 'in 3 days'], 'Build your hormones': ['images/fb/seeds.webp', '259', 'women'] };
+  'Fewer hormone disruptors': ['images/fb/fascia.webp', '−45%', 'in 3 days'], 'Build your hormones': ['images/fb/seeds.webp', '−58%', 'no ovulation'] };
 function hormoneLibrary() {
   return `${sectionTitle('Your hormones, explained')}
     <div class="fig-wrap lib"><canvas class="figure" data-focus="head"></canvas><span class="lib-cap">Glands from head to womb. Tap a hormone below</span></div>
