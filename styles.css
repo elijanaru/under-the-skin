@@ -15706,3 +15706,17 @@ html .card.al2 { padding: 14px 16px 6px; border-radius: 28px; background: #fff !
 .al2-w.now { min-width: 0; padding: 6px 10px; border-radius: 99px; background: #304023; color: #fff; font: 600 12px/1 var(--font); }
 .al2-r > .ic { color: #9aa48e; }
 .al2-r .bn-x { color: #9aa48e; }
+
+/* Consistency sweep (Round E): Doto only for numbers; the word "in" in "1 in 8" is Outfit and the number stays on one line */
+.cyf-t > b { white-space: nowrap; }
+.cyf-t > b .cyf-w { font-family: Outfit, sans-serif; font-style: normal; font-size: 15px; font-weight: 500; color: rgba(32,48,26,.6); }
+.cyf-t.on > b .cyf-w { color: rgba(255,255,255,.7); }
+/* Manifest hero: the photo on top and the words below it on the white card, never white text over the photo */
+html .mfp-hero { height: auto; padding: 8px; background: rgba(255,255,255,.96); }
+html .mfp-hero img { position: relative; inset: auto; display: block; width: 100%; height: 190px; border-radius: 26px; }
+html .mfp-hero .mfp-shade { display: none; }
+html .mfp-hero .mfp-t { position: static; padding: 14px 12px 10px; color: #20301a; }
+html .mfp-hero .mfp-t small { display: inline-flex; align-items: center; gap: 6px; letter-spacing: 0; text-transform: none; font-size: 12.5px; font-weight: 500; opacity: 1; color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(40% * var(--hs)) 34%); }
+html .mfp-hero .mfp-t b { font-size: 28px; color: #20301a; }
+html .mfp-hero .mfp-t em { opacity: 1; color: rgba(32,48,26,.62); }
+.cyf + .plr-hint { text-align: center; margin-top: 10px; }

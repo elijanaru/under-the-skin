@@ -6682,7 +6682,7 @@ function factArt(g) {
 function cycleFacts() {
   const i = ui.cyFact, x = CYCLE_SCIENCE[i];
   return `<div class="cyf">${CYCLE_FACT.map((f, j) => `<button class="cyf-t ${i === j ? 'on' : ''}" data-action="cyFact" data-v="${j}" aria-expanded="${i === j}">
-      <b class="dotnum">${f.n}${f.u ? `<small>${f.u}</small>` : ''}</b>${factArt(f.g)}<span>${f.k}</span></button>`).join('')}</div>
+      <b class="dotnum">${f.n.replace(/ in /, '<em class="cyf-w">in</em>')}${f.u ? `<small>${f.u}</small>` : ''}</b>${factArt(f.g)}<span>${f.k}</span></button>`).join('')}</div>
     ${x ? `<div class="plr-d cyf-d"><b>${x.t}</b><p>${x.s}</p><small>${x.c}</small></div>` : '<p class="plr-hint">Tap a number for the study behind it</p>'}`;
 }
 function viewGuide() {
