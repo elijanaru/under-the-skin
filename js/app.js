@@ -6178,17 +6178,18 @@ function sunRun(hours) {
   for (let t = t0; t < t1; t += 6e4) iu += dRate(uvAt(hours, new Date(t))) * Math.min(1, (t1 - t) / 6e4);
   return { m: (t1 - t0) / 6e4, iu };
 }
-function uvGauge(u) {
+function uvGauge(u, cap) {
   const R = 54, cx = 70, cy = 68, a0 = 135, span = 270, max = 12, ang = v => (a0 + Math.min(v, max) / max * span) * Math.PI / 180;
   const pt = v => [cx + R * Math.cos(ang(v)), cy + R * Math.sin(ang(v))].map(n => n.toFixed(1));
   const arc = (v0, v1) => { const [x0, y0] = pt(v0), [x1, y1] = pt(v1); return `M${x0} ${y0} A${R} ${R} 0 ${(v1 - v0) / max * span > 180 ? 1 : 0} 1 ${x1} ${y1}`; };
   const segs = [[0, 3], [3, 6], [6, 8], [8, 11], [11, 12]].map(([v0, v1], i) => `<path d="${arc(v0 + (i ? .14 : 0), v1 - (i < 4 ? .14 : 0))}" stroke="${UV_LV[i][2]}" opacity="${u >= v0 ? 1 : .28}"/>`).join('');
   const [kx, ky] = pt(u), lv = uvLevel(u);
-  return `<svg class="uvw-g" viewBox="0 0 140 128" role="img" aria-label="UV index ${u.toFixed(1)}, ${lv[1]}">
+  return `<svg class="uvw-g" viewBox="0 0 140 128" role="img" aria-label="UV index ${u.toFixed(1)}, ${lv[1]}${cap ? `, ${cap}` : ''}">
     <g fill="none" stroke-width="9" stroke-linecap="round">${segs}</g>
     <circle cx="${kx}" cy="${ky}" r="8.5" fill="#fff" stroke="${lv[2]}" stroke-width="3.5"/>
     <text x="${cx}" y="${cy + 6}" text-anchor="middle" class="uvw-n">${u.toFixed(1)}</text>
     <text x="${cx}" y="${cy + 26}" text-anchor="middle" class="uvw-lv" fill="${lv[2]}">${lv[1]}</text>
+    ${cap ? `<text x="${cx}" y="${cy - 25}" text-anchor="middle" class="uvw-cap">${cap}</text>` : ''}
   </svg>`;
 }
 function uvBars(hours, D) {
@@ -6270,11 +6271,15 @@ function uvWidget() {
     : live && clearPk >= 3 && peakT < 3 ? `Clouds keep the UV under 3 today, too weak for vitamin D. ${tomorrow || 'A clearer day will do it.'}`
     : tomorrow ? `The sun stays too low for vitamin D today. ${tomorrow}` : `The sun stays too low for vitamin D today.${lowSeason}`;
   const where = state.profile.geo ? `${icon('pin', 13)} For your location` : `${icon('pin', 13)} Rough guess for ${(() => { try { return new Intl.DisplayNames(['en'], { type: 'region' }).of(myCountry()); } catch (e) { return 'your country'; } })()}<button data-action="useGeo">Use my location</button>`;
+  // after dark the reading is always 0, so the dial shows the next peak instead: today's before sunrise, tomorrow's after sunset
+  const litH = hours.map((v, h) => (v > .05 ? h : -1)).filter(h => h >= 0), dark = u < .05 && (!litH.length || now.getHours() < litH[0] || now.getHours() > litH[litH.length - 1]);
+  const early = dark && litH.length && now.getHours() < litH[0], pkArr = early ? hours : next, pkAt = pkArr.reduce((b, v, h) => (v > pkArr[b] ? h : b), 0);
+  const gauge = dark && pkArr[pkAt] > .05 ? uvGauge(pkArr[pkAt], `Peak ${early ? 'today' : 'tomorrow'}`) : uvGauge(u);
   return `<section class="card uvw ${on ? 'on' : ''}" aria-live="polite">
     <div class="uvw-top"><small>UV index · Vitamin D</small><em class="${live ? 'live' : ''}">${live ? 'Live' : 'Clear-sky estimate'}</em></div>
     <p class="uvw-where">${where}</p>
     <div class="uvw-main">
-      ${uvGauge(u)}
+      ${gauge}
       <div class="uvw-side">
         <div class="uvw-st ${on && left <= 5 && burn !== Infinity ? 'warn' : ''}"><span class="uvw-ic" style="--c:${lv[2]}">${icon('thermo', 15)}</span><div><b class="${/\d/.test(burnTxt[0]) ? '' : 'w'}">${burnTxt[0]}</b><small>${burnTxt[1]}</small></div></div>
         <div class="uvw-st d"><span class="uvw-ic" style="--c:#e3a93a">${icon('sun', 15)}</span><div><b class="${/\d/.test(dTxt[0]) ? '' : 'w'}">${dTxt[0]}</b><small>${dTxt[1]}</small></div></div>

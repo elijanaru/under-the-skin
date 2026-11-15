@@ -14644,3 +14644,5 @@ html:has(.onb.no-fig.step-10) .bgx { visibility: hidden; }
 /* Rhythm sits on its own dark page: its section titles stay plain white words with the warm sun dot, no frosted pill (her ask, 15 Nov 2026) */
 html .view:has(> .rh3) .section-title h3 { display: flex !important; padding: 0 !important; border-radius: 0; background: none !important; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none !important;
   color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 12px rgba(0,0,0,.35) !important; }
+/* UV dial after dark: the next peak, with when it comes under the level */
+html .uvw-cap { font: 500 10.5px/1 Outfit, sans-serif; fill: rgba(43,27,18,.6); }
