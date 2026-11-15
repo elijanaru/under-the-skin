@@ -11089,6 +11089,28 @@ function tkPlay(el) {
   el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up); el.addEventListener('lostpointercapture', up);
   set(); raf = requestAnimationFrame(tick);
 }
+// Unlock price comparison (16 Nov 2026, her wording): what each costs over five years. Other apps climb a pink step every
+// year (€40 to €90 a year, so €200 to €450 by year five); Under the Skin is one flat moss line at the price, paid once.
+function ulCompare() {
+  const X0 = 16, YW = 58, B = 128, k = 112 / 450, y = v => +(B - v * k).toFixed(1), x = t => X0 + t * YW, n = 5, p = +PRICE;
+  const stepUp = c => { let d = `M${x(0)} ${B}`; for (let t = 0; t < n; t++) d += ` V${y(c * (t + 1))} H${x(t + 1)}`; return d; };
+  const lo = [], hi = [];
+  for (let t = 0; t < n; t++) { hi.push(`${x(t)},${y(90 * (t + 1))}`, `${x(t + 1)},${y(90 * (t + 1))}`); lo.push(`${x(t)},${y(40 * (t + 1))}`, `${x(t + 1)},${y(40 * (t + 1))}`); }
+  const band = [...hi, ...lo.reverse()].join(' ');
+  return `<section class="card ul-cmp" aria-label="Most cycle apps: €40 to 90, every year, so €200 to €450 after five years. Under the Skin: €${PRICE}, once. Yours for good.">
+    <ul class="ulc-key"><li class="them"><i></i><span><b>Most cycle apps:</b> <span class="dotnum">€40–90</span>, every year.</span></li>
+      <li class="us"><i></i><span><b>Under the Skin:</b> <span class="dotnum">€${PRICE}</span>, once. Yours for good.</span></li></ul>
+    <svg class="ulc-ch" viewBox="0 0 320 150" role="img" aria-hidden="true">
+      <line class="ulc-base" x1="${X0}" y1="${B}" x2="${x(n)}" y2="${B}"/>
+      ${Array.from({ length: n - 1 }, (_, t) => `<line class="ulc-tick" x1="${x(t + 1)}" y1="${B}" x2="${x(t + 1)}" y2="${B + 4}"/>`).join('')}
+      <g class="ulc-grow"><polygon class="ulc-band" points="${band}"/><path class="ulc-hi" d="${stepUp(90)}"/><path class="ulc-lo" d="${stepUp(40)}"/></g>
+      <path class="ulc-us" d="M${x(0)} ${y(p)} H${x(n)}"/><circle class="ulc-dot" cx="${x(n)}" cy="${y(p)}" r="4.5"/>
+      <text class="ulc-n them" x="${x(n) - 2}" y="${y(450) - 6}" text-anchor="end">€200–450</text>
+      <text class="ulc-n us" x="${x(n) - 2}" y="${y(p) - 9}" text-anchor="end">€${PRICE}</text>
+      ${Array.from({ length: n }, (_, t) => `<text class="ulc-yr" x="${x(t) + YW / 2}" y="${B + 16}" text-anchor="middle">year ${t + 1}</text>`).join('')}
+    </svg>
+  </section>`;
+}
 function viewUnlock() {
   const left = trialLeft(), lock = locked(), paid = !!state.paid, nm = esc((state.profile.name || '').trim());
   const swirl = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';
@@ -11099,12 +11121,7 @@ function viewUnlock() {
       ${ulTicket()}
     </div>
     <span class="ul3-days">${paid ? `${icon('heart', 13)} Unlocked` : lock ? 'Your free cycle is over' : trialNextPeriod() ? 'Your period started · last free day' : `Free until your next period · <b class="dotnum">${left}</b> ${left === 1 ? 'day' : 'days'}`}</span>
-    ${paid ? '' : `<section class="card ul-cmp" aria-label="Most cycle apps: €40 to 90, every year. Under the Skin: €${PRICE}, once. Yours for good.">
-      <div class="ulc-r them"><p><b>Most cycle apps:</b> <span><b class="dotnum">€40–90</b>, every year.</span></p>
-        <div class="ulc-bar" aria-hidden="true">${['1', '2', '3'].map((y, i) => `<i style="--i:${i}"><small>year ${y}</small></i>`).join('')}<em>…</em></div></div>
-      <div class="ulc-r us"><p><b>Under the Skin:</b> <span><b class="dotnum">€${PRICE}</b>, once. Yours for good.</span></p>
-        <div class="ulc-bar" aria-hidden="true"><i><small>once</small></i></div></div>
-    </section>`}
+    ${paid ? '' : ulCompare()}
     <section class="o3-note ul3-note ul4-note">
       <small class="ul4-eye">${paid ? `Welcome home${nm ? `, ${nm}` : ''}` : `${nm ? `${nm}, your` : 'Your'} ticket is ready`}</small>
       <h2 class="ul4-h">${paid ? `It’s yours,<br><em>for good${swirl}</em>` : `One ticket,<br><em>yours forever${swirl}</em>`}</h2>
