@@ -9040,17 +9040,31 @@ function readCard(r) {
 // Read tab: today's read big, then the whole cycle as a list (past reads open, later ones unlock on their day)
 // Read tab: only today's read, in three simple parts (what it means, what he does, how they both win)
 const RD_EMO = { menstrual: '🌹', follicular: '🌱', ovulatory: '🌸', luteal: '🍂' };
+// her hormones as simple game stats for him: five chunky pips and one plain word, no curves, no arrows
+const RD_STAT = [
+  ['estrogen', 'Estrogen', '✨', 'Glow and mood', '#e0457b'],
+  ['testosterone', 'Testosterone', '🔥', 'Sex drive', '#e8590c'],
+  ['progesterone', 'Progesterone', '😴', 'Calm and sleepy', '#3f8a2e'],
+];
+const RD_WORD = ['Low', 'Low', 'Medium', 'High', 'Max'];
 function pvRead(snap, info, name) {
   const { cd, L } = info, now = readFor(cd, L, info.P), ph = PHASES[now.phase], r = now.r, g = HIM_GAIN[r[0]];
   const read = ((oakS().days || {})[C.iso(C.startOfDay(new Date()))] || []).includes('read');
+  const h = C.hormonesRel(cd, L, info.P);
+  const track = C.phaseRanges(L, info.P).map(x => `<i style="flex:${x.to - x.from + 1};background:${PH_HEX[x.key]}" class="${x.key === now.phase ? 'on' : ''}"></i>`).join('');
+  const stats = RD_STAT.map(([k, n, e, what, c]) => {
+    const p = Math.max(1, Math.round(h[k] * 4) + 1);
+    return `<div class="rd6-s" style="--sc:${c}"><span class="rd6-se" aria-hidden="true">${e}</span><span class="rd6-sn"><b>${n}</b><small>${what}</small></span><span class="rd6-p" role="img" aria-label="${p} of 5">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= p ? 'on' : ''}"></i>`).join('')}</span><em>${RD_WORD[p - 1]}</em></div>`;
+  }).join('');
   return `<div class="pv2-title"><small>Learn her cycle · day ${cd} of ${L}</small><h1>Today’s <b>read</b></h1><p>One short read a day, synced to ${name}’s cycle. A new one opens tomorrow.</p></div>
   ${snap.l ? pvLoss(name) : ''}
-  <section class="pv2-card rd5" style="--rc:${PH_HEX[now.phase]}">
-    <div class="rd5-h"><small><i></i>${ph.name} phase · day <b class="dotnum">${cd}</b> of ${L}</small><h2>${esc(r[0])}</h2></div>
-    <div class="rd5-chart">${cycleChart(info, { id: 'rd', compact: true, who: 'Her' })}</div>
-    <div class="rd5-rows">
-      <div class="rd5-r"><span class="rd5-e" aria-hidden="true">${RD_EMO[now.phase]}</span><span><small>What’s happening to her</small><p>${esc(r[1])}</p></span></div>
-      <div class="rd5-r"><span class="rd5-e" aria-hidden="true">🫶</span><span><small>What it means for you</small><p><b>${esc(r[3])}</b>${g ? ` ${esc(g)}` : ''}</p></span></div></div>
+  <section class="pv2-card rd6" style="--rc:${PH_HEX[now.phase]}">
+    <div class="rd6-h"><small><i></i>${ph.name} phase</small><span>Day <b class="dotnum">${cd}</b> of ${L}</span></div>
+    <h2>${esc(r[0])}</h2>
+    <div class="rd6-track" aria-hidden="true">${track}<b style="left:${((cd - .5) / L * 100).toFixed(1)}%"></b></div>
+    <div class="rd6-stats"><small class="rd6-lab">Her levels today</small>${stats}</div>
+    <div class="rd6-now"><span aria-hidden="true">${RD_EMO[now.phase]}</span><p>${esc(r[1])}</p></div>
+    <div class="rd6-move"><small>🫶 Your move</small><p>${esc(r[3])}</p>${g ? `<em>${esc(g)}</em>` : ''}</div>
     <div class="rd5-f">${r[4] ? `<details class="rd3-st"><summary>The study ${icon('chevD', 13)}</summary><div class="rd-st"><b class="dotnum">${r[4][0]}</b><span><em>${esc(r[4][1])}</em>${esc(r[4][2])}</span></div></details>` : '<span></span>'}
       <button class="rd5-ok ${read ? 'done' : ''}" data-action="rdOk">${read ? `${icon('check', 14, 2.4)} Read today` : 'Got it · +10 XP'}</button></div>
   </section>`;
