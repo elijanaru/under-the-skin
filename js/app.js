@@ -6953,7 +6953,7 @@ function viewStress() {
         <button class="st3-fast" data-action="nav" data-to="breathe"><span class="st3-orb" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="trk" cx="50" cy="50" r="40"/><circle class="arc-in" cx="50" cy="50" r="40" pathLength="100" stroke-dasharray="39 61" transform="rotate(-90 50 50)"/><circle class="arc-out" cx="50" cy="50" r="40" pathLength="100" stroke-dasharray="59 41" stroke-dashoffset="-40" transform="rotate(-90 50 50)"/><g class="dot"><circle cx="50" cy="10" r="6.5"/></g></svg><i></i><b class="in">In</b><b class="out">Out</b></span>
           <span class="st3-ft"><small>Fastest calm</small><b>Breathe out longer than in</b>
           <span class="st3-nums"><span><em class="dotnum">4</em>in</span><span><em class="dotnum">6</em>out</span><span><em class="dotnum">5</em>min</span></span></span>${icon('chevR', 16)}</button>
-        ${sectionTitle('Best ways to lower it')}${steps(sp[1])}
+        ${sectionTitle('Best ways to lower it')}${calmWays(sp[1])}
         ${calmScience(info)}`;
   return `${topbar('Stress', { back: true })}<div class="pad st3-pad"><section class="st3-hero" data-lv="${lvl}">
     <span class="st3-media"><video src="images/stress-meditate.mp4" poster="images/stress-meditate.webp" muted loop playsinline ${auto} preload="auto" aria-hidden="true"></video></span>
@@ -6967,6 +6967,20 @@ function viewStress() {
   </div>`;
 }
 
+// Best ways to lower it: one white card, a round photo for each action and a tick she taps when it's done (saved for today, only that row redraws).
+const CALM_WAY_PH = [[/breath/i, 'images/fb/breathe.webp'], [/yoga|stretch/i, 'images/tile-yoga.webp'], [/meditat/i, 'images/tile-meditate.webp'], [/heat|belly/i, 'images/fb/heat.webp'],
+  [/morning light|daylight/i, 'images/fb/sun.webp'], [/nature|walk/i, 'images/forest-path.jpg'], [/friends|cuddle|close people/i, 'images/partner-hands.jpg'],
+  [/sleep|night|rest/i, 'images/fb/chamomile.webp'], [/protein|meal|food|eat|magnesium/i, 'images/fb/seeds.webp'], [/train|movement/i, 'images/fb/walk.webp']];
+const calmDone = () => { try { const o = JSON.parse(localStorage.getItem('uts.calmWays') || '{}'); return o.d === todayISO() ? o.k || [] : []; } catch { return []; } };
+function calmWays(list) {
+  const done = calmDone();
+  return `<section class="cw" aria-label="Best ways to lower it">${list.map(t => {
+    const ph = (CALM_WAY_PH.find(([r]) => r.test(t)) || [])[1], on = done.includes(t);
+    return `<button class="cw-r ${on ? 'on' : ''}" data-action="calmWay" data-t="${esc(t)}" aria-pressed="${on}">
+      <span class="cw-p">${ph ? `<img src="${ph}" alt="" loading="lazy">` : icon(/calendar|plans|say no/i.test(t) ? 'calendar' : 'leaf', 21)}</span><span class="cw-t">${t}</span>
+      <span class="cw-k" aria-hidden="true">${icon('check', 14, 2.6)}</span></button>`; }).join('')}
+    <div class="cw-f"><span><em class="dotnum">${done.filter(x => list.includes(x)).length}</em> of <em class="dotnum">${list.length}</em> done today</span></div></section>`;
+}
 // The science of calm as a time ruler: every way to calm stress placed by how long it takes (a hug to a night of sleep), then spec rows with the study behind a tap.
 const CALM_IC = {
   breath: '<path d="M3 9h10a3 3 0 1 0-3-3M3 13h14a3 3 0 1 1-3 3M3 17h6"/>',
@@ -9028,17 +9042,17 @@ function readCard(r) {
 const RD_EMO = { menstrual: '🌹', follicular: '🌱', ovulatory: '🌸', luteal: '🍂' };
 function pvRead(snap, info, name) {
   const { cd, L } = info, now = readFor(cd, L, info.P), ph = PHASES[now.phase], r = now.r, g = HIM_GAIN[r[0]];
-  const slides = [[RD_EMO[now.phase], `${ph.name} phase`, r[0], r[1]], ['📖', 'What it means', '', r[2]], ['🫶', 'What you do', r[3], ''], g && ['💞', 'How you both win', '', g]].filter(Boolean);
-  const strip = C.phaseRanges(L, info.P).map(x => `<i style="flex:${x.to - x.from + 1};background:${PH_HEX[x.key]}"></i>`).join('');
+  const read = ((oakS().days || {})[C.iso(C.startOfDay(new Date()))] || []).includes('read');
   return `<div class="pv2-title"><small>Learn her cycle · day ${cd} of ${L}</small><h1>Today’s <b>read</b></h1><p>One short read a day, synced to ${name}’s cycle. A new one opens tomorrow.</p></div>
   ${snap.l ? pvLoss(name) : ''}
-  <section class="pv2-card rd4" style="--rc:${PH_HEX[now.phase]}" data-i="0" data-n="${slides.length}">
-    <div class="rd4-bars" aria-hidden="true">${slides.map((_, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div>
-    <div class="rd4-day"><span>Day <b class="dotnum">${cd}</b> of ${L}</span><span class="rd4-strip" aria-hidden="true">${strip}<b style="left:${((cd - .5) / L * 100).toFixed(1)}%"></b></span></div>
-    <div class="rd4-view"><div class="rd4-track">${slides.map(([e, k, t, p], i) => `<div class="rd4-s${i ? '' : ' first'}" aria-hidden="${i ? 'true' : 'false'}"><span class="rd4-e">${e}</span><small>${k}</small>${t ? `<h2>${esc(t)}</h2>` : ''}${p ? `<p>${esc(p)}</p>` : ''}</div>`).join('')}</div>
-      <button class="rd4-tap prev" data-action="rdGo" data-d="-1" aria-label="Back"></button><button class="rd4-tap next" data-action="rdGo" data-d="1" aria-label="Next"></button></div>
-    <div class="rd4-nav"><button class="rd4-b back" data-action="rdGo" data-d="-1" aria-label="Back" disabled>${icon('chevL', 16, 2)}</button><span class="rd4-hint">1 of ${slides.length}</span><button class="rd4-b go" data-action="rdGo" data-d="1">Next ${icon('chevR', 15, 2)}</button></div>
-    ${r[4] ? `<details class="rd3-st"><summary>The study ${icon('chevD', 13)}</summary><div class="rd-st"><b class="dotnum">${r[4][0]}</b><span><em>${esc(r[4][1])}</em>${esc(r[4][2])}</span></div></details>` : ''}
+  <section class="pv2-card rd5" style="--rc:${PH_HEX[now.phase]}">
+    <div class="rd5-h"><small><i></i>${ph.name} phase · day <b class="dotnum">${cd}</b> of ${L}</small><h2>${esc(r[0])}</h2></div>
+    <div class="rd5-chart">${cycleChart(info, { id: 'rd', compact: true, who: 'Her' })}</div>
+    <div class="rd5-rows">
+      <div class="rd5-r"><span class="rd5-e" aria-hidden="true">${RD_EMO[now.phase]}</span><span><small>What’s happening to her</small><p>${esc(r[1])}</p></span></div>
+      <div class="rd5-r"><span class="rd5-e" aria-hidden="true">🫶</span><span><small>What it means for you</small><p><b>${esc(r[3])}</b>${g ? ` ${esc(g)}` : ''}</p></span></div></div>
+    <div class="rd5-f">${r[4] ? `<details class="rd3-st"><summary>The study ${icon('chevD', 13)}</summary><div class="rd-st"><b class="dotnum">${r[4][0]}</b><span><em>${esc(r[4][1])}</em>${esc(r[4][2])}</span></div></details>` : '<span></span>'}
+      <button class="rd5-ok ${read ? 'done' : ''}" data-action="rdOk">${read ? `${icon('check', 14, 2.4)} Read today` : 'Got it · +10 XP'}</button></div>
   </section>`;
 }
 // today's read on her page (his page has the Read tab only, no teaser)
@@ -9549,6 +9563,12 @@ const actions = {
   mvOpen: d => { ui.mvOpen = ui.mvOpen === d.k ? null : d.k; render(); },
   supTab: d => { ui.supTab = d.v; render(); },
   stTab: d => { ui.stTab = d.v; render(); },
+  calmWay: (d, el) => {
+    let k = calmDone(); k = k.includes(d.t) ? k.filter(x => x !== d.t) : [...k, d.t];
+    try { localStorage.setItem('uts.calmWays', JSON.stringify({ d: todayISO(), k })); } catch {}
+    const on = k.includes(d.t); el.classList.toggle('on', on); el.setAttribute('aria-pressed', on);
+    const c = el.closest('.cw'), n = c && c.querySelector('.cw-f em'); if (n) n.textContent = c.querySelectorAll('.cw-r.on').length;
+  },
   pfTab: d => { ui.pfTab = d.v; render(); },
   groAisle: d => { ui.groAisle = d.v; render(); const t = document.querySelector('.gro-tabs'), on = t && t.querySelector('.on'); if (on) t.scrollLeft = on.offsetLeft - (t.clientWidth - on.offsetWidth) / 2; },
   czTab: d => { ui.czTab = d.v; render(); },
@@ -9914,18 +9934,7 @@ const actions = {
   },
   ytT: d => { ui.ytT = d.v; softWith(); },
   hisTab: d => { ui.hisTab = d.v; render(); document.getElementById('view').scrollTop = 0; },
-  rdGo: (d, el) => { // today's read as little story cards: tap to move on, the last one gives +10 XP for his oak
-    const c = el.closest('.rd4'); if (!c) return;
-    const n = +c.dataset.n, i0 = +c.dataset.i, i = Math.max(0, Math.min(n - 1, i0 + +d.d));
-    if (i0 === n - 1 && +d.d > 0) { oakDo('read', false, el); const go = c.querySelector('.rd4-b.go'); go.classList.add('done'); go.innerHTML = `${icon('check', 15, 2.4)} Read today`; return; }
-    c.dataset.i = i; c.querySelector('.rd4-track').style.transform = `translateX(${-i * 100}%)`;
-    c.querySelectorAll('.rd4-bars i').forEach((b, k) => b.classList.toggle('on', k <= i));
-    c.querySelectorAll('.rd4-s').forEach((s, k) => s.setAttribute('aria-hidden', k === i ? 'false' : 'true'));
-    c.querySelector('.rd4-b.back').disabled = i === 0; c.querySelector('.rd4-hint').textContent = `${i + 1} of ${n}`;
-    const go = c.querySelector('.rd4-b.go'), read = ((oakS().days || {})[C.iso(C.startOfDay(new Date()))] || []).includes('read');
-    go.classList.toggle('last', i === n - 1); go.classList.toggle('done', i === n - 1 && read);
-    go.innerHTML = i < n - 1 ? `Next ${icon('chevR', 15, 2)}` : read ? `${icon('check', 15, 2.4)} Read today` : 'Got it · +10 XP';
-  },
+  rdOk: (d, el) => { if (el.classList.contains('done')) return; oakDo('read', false, el); el.classList.add('done'); el.innerHTML = `${icon('check', 14, 2.4)} Read today`; },
   pvTile: d => { ui.pvTile = ui.pvTile === d.v ? '' : d.v; softWith(); },
   pvDay: d => { ui.pvDay = +d.v; softWith(); },
   pvDateSend: async (d, el) => { // the ticket lifts, folds into flight and flies off to her phone
