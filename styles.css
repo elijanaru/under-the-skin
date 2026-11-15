@@ -13503,3 +13503,6 @@ html .pad.sp2t > .spec:not(.stack):first-child .spec-media { border-radius: 30px
 .grs-care dd { margin: 0; text-align: right; font-size: 13px; color: #20301a; }
 .pad .gr-card { background: #fff !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
 @media (prefers-reduced-motion: reduce) { .grs-d { animation: none; } .grs-r summary > svg { transition: none; } }
+/* Recipe › Why it's good for you: when the food that carries a nutrient has no photo, its emoji stands in, on a white disc like the photos, instead of a generic leaf */
+html .rn2 .rn-emo { background: #fff; box-shadow: 0 4px 10px rgba(32,48,26,.12), inset 0 0 0 1px rgba(48,64,35,.06); }
+html .rn2 .rn-emo .emo { font-size: 24px; width: 26px; height: 26px; line-height: 26px; text-align: center; }
