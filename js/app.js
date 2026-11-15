@@ -6949,11 +6949,11 @@ function viewStress() {
     : tab === 'stretch'
       ? `<section class="st2-card"><span class="eyebrow">Stretch today</span><h3>${st[0]}</h3><p class="st2-sub">${st[1]}</p>${steps(st[2])}${evBadge('some')}</section>`
       : `<button class="bz-cta" data-action="nav" data-to="breathe"><i class="bz-mini"></i><span><b>Breathe with me</b><small>${((info && BREATHS[BREATH_FOR[info.phase]]) || BREATHS.sigh).name}${info ? " · for your phase" : ""}</small></span>${icon('chevR', 16)}</button>${groundCta()}
-        <section class="st2-why"><span class="eyebrow">Why today</span><p>${sp[0]}</p></section>
-        <button class="st3-fast" data-action="nav" data-to="breathe"><span class="st3-orb" aria-hidden="true"><i></i><b class="in">In</b><b class="out">Out</b></span>
+        <section class="st2-why"><span class="st2-wi" aria-hidden="true">🌿</span><span><span class="eyebrow">Why today</span><p>${sp[0]}</p></span></section>
+        <button class="st3-fast" data-action="nav" data-to="breathe"><span class="st3-orb" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="trk" cx="50" cy="50" r="40"/><circle class="arc-in" cx="50" cy="50" r="40" pathLength="100" stroke-dasharray="39 61" transform="rotate(-90 50 50)"/><circle class="arc-out" cx="50" cy="50" r="40" pathLength="100" stroke-dasharray="59 41" stroke-dashoffset="-40" transform="rotate(-90 50 50)"/><g class="dot"><circle cx="50" cy="10" r="6.5"/></g></svg><i></i><b class="in">In</b><b class="out">Out</b></span>
           <span class="st3-ft"><small>Fastest calm</small><b>Breathe out longer than in</b>
           <span class="st3-nums"><span><em class="dotnum">4</em>in</span><span><em class="dotnum">6</em>out</span><span><em class="dotnum">5</em>min</span></span></span>${icon('chevR', 16)}</button>
-        <h3 class="st2-h">Best ways to lower it</h3>${steps(sp[1])}
+        ${sectionTitle('Best ways to lower it')}${steps(sp[1])}
         ${calmScience(info)}`;
   return `${topbar('Stress', { back: true })}<div class="pad st3-pad"><section class="st3-hero" data-lv="${lvl}">
     <span class="st3-media"><video src="images/stress-meditate.mp4" poster="images/stress-meditate.webp" muted loop playsinline ${auto} preload="auto" aria-hidden="true"></video></span>
@@ -6984,7 +6984,7 @@ function calmScience(info) {
   const L = CALM_SCIENCE.map((x, k) => ({ ...x, k })).sort((a, b) => a.sec - b.sec), pc = (info && PH_HEX[info.phase]) || '#6c823e';
   const pos = sec => Math.max(0, Math.min(1, Math.log(sec / 10) / Math.log(36000 / 10))) * 100;
   const ticks = [[60, '1 min'], [600, '10 min'], [3600, '1 hour'], [28800, 'a night']];
-  return `<h3 class="st2-h">The science of calm</h3><p class="cs2-sub">How long each one needs, and what studies found.</p>
+  return `${sectionTitle('The science of calm')}<p class="cs2-sub">How long each one needs, and what studies found.</p>
     <section class="cs2" style="--pc:${pc}">
       <div class="csr" aria-hidden="true"><div class="csr-tr">${ticks.map(([s]) => `<i style="left:${pos(s)}%"></i>`).join('')}
         ${L.map((x, i) => `<span class="csr-d l${i % 3}" data-k="${x.k}" style="left:${pos(x.sec)}%">${calmIc(x.ic, 13)}</span>`).join('')}</div>

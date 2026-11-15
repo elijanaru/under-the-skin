@@ -13988,3 +13988,28 @@ html .view:has(> .hob.v-d) { --hobbg: linear-gradient(180deg, rgba(246,238,240,0
 .yt-av img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .yt-pick { position: absolute; left: 50%; top: 66px; margin-left: 14px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #20301a; color: #fff; box-shadow: 0 0 0 2.5px #fff; cursor: pointer; }
 .yt-o .yt-pick svg { width: 12px !important; height: 12px !important; filter: none !important; }
+
+/* Stress (round B, 15 Nov 2026): its headings sit on the frosted pill like every other section, the subline on a frosted strip,
+   Why today gets a small icon, and Fastest calm is a breathing ring: a dot travels 4 s of in-breath and 6 s of out-breath */
+html .st3-body .cs2-sub { display: block; width: fit-content; max-width: 100%; box-sizing: border-box; margin: -2px 0 12px; padding: 8px 14px; border-radius: 16px;
+  background: rgba(255,255,255,.55); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.75);
+  color: rgba(32,48,26,.85) !important; -webkit-text-fill-color: rgba(32,48,26,.85) !important; text-shadow: none !important; }
+html .st3-body .section-title { margin-top: 6px; }
+html .st3-body .st2-why { display: flex; align-items: flex-start; gap: 12px; }
+.st2-wi { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; font-size: 20px; line-height: 1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(60% * var(--hs)) 92%); }
+html .st3-body .st2-why p { margin-top: 3px; }
+html .st3-orb { background: none; width: 96px; height: 96px; }
+html .st3-orb svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.st3-orb .trk { fill: none; stroke: hsl(calc(var(--hb) + 0 * var(--hk)) calc(30% * var(--hs)) 94%); stroke-width: 9; }
+.st3-orb .arc-in { fill: none; stroke: hsl(calc(var(--hb) + 0 * var(--hk)) calc(55% * var(--hs)) 84%); stroke-width: 9; stroke-linecap: round; }
+.st3-orb .arc-out { fill: none; stroke: hsl(calc(var(--hb) + 0 * var(--hk)) calc(48% * var(--hs)) 62%); stroke-width: 9; stroke-linecap: round; }
+.st3-orb .dot { transform-origin: 50px 50px; animation: stDot 10s linear infinite; }
+.st3-orb .dot circle { fill: #fff; stroke: #20301a; stroke-width: 2.5; }
+@keyframes stDot { 0% { transform: rotate(0); } 40% { transform: rotate(144deg); } 100% { transform: rotate(360deg); } }
+html .st3-orb i { inset: 22px; background: hsl(calc(var(--hb) + 0 * var(--hk)) calc(45% * var(--hs)) 90%); }
+html .st3-orb b { font-size: 14px; font-weight: 600; z-index: 1; }
+@media (prefers-reduced-motion: reduce) { .st3-orb .dot { animation: none; } }
+/* Breathe: the swipe hint under What each breath does on a frosted strip (was white on the blush) */
+html .view .bwx-hint { display: inline-flex; align-items: center; gap: 4px; width: fit-content; margin-top: -2px; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,.58); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.75);
+  color: rgba(32,48,26,.8) !important; -webkit-text-fill-color: rgba(32,48,26,.8) !important; text-shadow: none !important; font-size: 12.5px; font-weight: 500; }
