@@ -13473,3 +13473,6 @@ html .pad.sp2t > .spec:not(.stack):first-child .spec-media { border-radius: 30px
 .caf-more .sgt-st { margin-top: 8px; }
 .caf-note { margin: 10px 0 0; display: flex; gap: 6px; align-items: center; font-size: 13px; color: #304023; }
 .caf-fine { margin: 10px 0 0; font-size: 12px; color: rgba(32,48,26,.6); }
+
+/* Hormones › chart card: the paragraph repeating the Day card sits behind one tap */
+.hx-more { margin: 12px 4px 0; }

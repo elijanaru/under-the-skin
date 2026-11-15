@@ -6415,7 +6415,7 @@ function viewHormones() {
     <p class="hs-sub">Hormones are messengers. Your brain and ovaries send them through your blood to tell your body what to do. Over the month they take turns, which is why your energy and mood change.</p>
     ${hormoneRelay(info)}
     <section class="card glass chart-card">${cycleChart(info, { id: 'hx', compact: true })}
-      <p class="body sm">Day ${info.cd} · ${ph.name} phase. ${ph.hormones}</p></section>
+      <details class="sf-more hx-more"><summary>What day ${info.cd} means ${icon('chevD', 13)}</summary><p>${ph.name} phase. ${ph.hormones}</p></details></section>
     ${hormoneGrids(info)}
   </div>`;
 }
