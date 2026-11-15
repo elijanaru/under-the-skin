@@ -8922,8 +8922,7 @@ function viewWith(q) {
         ? `<a class="btn btn-ghost btn-block" href="#/today">${icon('check', 16)} ${name} is on your dashboard</a>`
         : `<button class="btn btn-light btn-block" data-action="addPartner" data-d="${esc(q.get('d'))}">${icon('heart', 16)} Add ${name} to my app</button>
            <p class="fine center">You both use Underskin. Add her and you’ll see each other’s cycle side by side.</p>`)
-      : him ? `<section class="pv2-card pv2-save"><b>Save to your home screen</b>
-        <ol class="sv-steps"><li><span>iPhone</span>Tap <svg class="sv-ios" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 9H6a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10a1 1 0 0 0-1-1h-2M12 15V3M8 7l4-4 4 4"/></svg> Share, then <em>Add to Home Screen</em></li><li><span>Android</span>Tap ⋮ in Chrome, then <em>Add to Home screen</em></li></ol></section>
+      : him ? `<section class="pv2-card pv2-save"><span class="sv-ic">📲</span><p><b>Save this page to your home screen</b>so you see her day with one tap.</p></section>
          <button class="link center-link" data-action="trackMine">I want to track my own cycle</button>`
       : `<a class="btn btn-light btn-block" href="#/today">Start tracking my cycle</a>
          <p class="fine center">Set up your own cycle and ${name} is added to your app. Then send her your link so you see each other.</p>`}
