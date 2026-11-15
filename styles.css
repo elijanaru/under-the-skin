@@ -15945,3 +15945,7 @@ html .drc .drt-t b.drt-tl { font-size: 18px !important; letter-spacing: -.04em; 
 /* Ground studies (Round B): the first author sits in each row next to the year, so every study reads author + year without a tap */
 .grs-r .grs-a { font-style: normal; font-weight: 600; color: #304023; }
 .grs-r .grs-p { row-gap: 4px; } .grs-r .grs-p small { flex-basis: 100%; }
+
+/* Heads-up (Round C): the quick fix as up to three complete chips in the phase tint, never a sentence cut off mid-word */
+.al2-fx { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+.al2-fx i { font: 500 12px/1.2 var(--font); font-style: normal; color: #304023; padding: 5px 9px; border-radius: 99px; background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(30% * var(--hs)) 94%); }

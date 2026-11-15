@@ -1755,7 +1755,7 @@ function viewToday() {
       <span class="al2-t" ${x.to ? `data-action="nav" data-to="${x.to}" role="button"` : ''}><b>${esc(x.title)}</b><small>${esc(x.body)}</small></span>
       <button class="bn-x" data-action="dismissRem" data-id="${x.id}" aria-label="Dismiss">${icon('close', 14)}</button></div>`);
   upcomingPatterns(patterns()).forEach(x => { const rk = reliefKey(x.name); alerts.push(`<${rk ? `button data-action="nav" data-to="relief/${encodeURIComponent(rk)}"` : 'div'} class="al2-r">
-      <span class="al2-e emo" aria-hidden="true">${LOG_EMOJI[x.name] || '🌿'}</span><span class="al2-t"><b>${x.name}</b><small>Your pattern · days ${x.from === x.to ? x.from : `${x.from} to ${x.to}`}</small>${QUICK_FIX[x.name] ? `<em>${QUICK_FIX[x.name]}</em>` : ''}</span>${alWhen(x.inDays)}</${rk ? 'button' : 'div'}>`); });
+      <span class="al2-e emo" aria-hidden="true">${LOG_EMOJI[x.name] || '🌿'}</span><span class="al2-t"><b>${x.name}</b><small>Your pattern · ${x.from === x.to ? `day ${x.from}` : `days ${x.from} to ${x.to}`}</small>${QUICK_FIX[x.name] ? fixChips(QUICK_FIX[x.name]) : ''}</span>${alWhen(x.inDays)}</${rk ? 'button' : 'div'}>`); });
 
   // 7-day energy bars for the tile
   let bars = '';
@@ -4725,6 +4725,8 @@ function patterns() {
   return { list, eAvg, L, cycles: cycles.size };
 }
 // One-line fix shown under every heads-up, so a warning always comes with what to do.
+// A quick fix as up to three small complete chips (no sentence cut off with an ellipsis).
+const fixChips = t => `<span class="al2-fx">${String(t).replace(/\.$/, '').split(/,\s(?:and\s)?|\sand\s/).slice(0, 3).map(c => `<i>${c.charAt(0).toUpperCase() + c.slice(1)}</i>`).join('')}</span>`;
 const QUICK_FIX = {
   Cramps: 'Heat on your belly, magnesium in the evening, warm ginger tea.',
   'Ovulation pain': 'Heat on the sore side and a slow walk.',
