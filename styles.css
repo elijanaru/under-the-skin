@@ -15672,3 +15672,7 @@ html .card.hbc { padding: 6px 0 4px; border-radius: 32px; background: #fbf9f7 !i
 /* Today: the forest hero runs edge to edge (the page pad is 24px now, the old -18px left a light green strip each side) */
 html .home .hub { margin-left: -24px !important; margin-right: -24px !important; }
 html .home .hub .caps { width: calc(100% - 40px) !important; }
+/* Clean emoji instead of line icons: relief steps without a photo, Balance pillars */
+.rls-ph.emo-ph { background: #fff; }
+.rls-ph.emo-ph .emo { font-size: 24px; line-height: 1; } .rls-ph.emo-ph img.emo { width: 28px; height: 28px; object-fit: contain; }
+.hg-pi .emo { font-size: 24px; line-height: 1; } .hg-pi img.emo { width: 26px; height: 26px; object-fit: contain; }

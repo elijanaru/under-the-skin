@@ -4470,7 +4470,7 @@ function viewReliefIndex() {
   const likely = [...new Set([...recent, ...(w ? RELIEF_WINDOW[w] : [])])].filter(k => RELIEF[k]).slice(0, 3);
   const chip = k => `<button class="rx2-chip" data-action="nav" data-to="relief/${encodeURIComponent(k)}"><img src="${reliefPhoto(k, 120)}" alt="">${k}${recent.has(k) ? '<i>logged</i>' : ''}</button>`;
   const done = habitsDone(todayISO()), H = habitsBlock();
-  const pillar = (P, i) => `<details class="hg-p" style="--c:${P.c};--i:${i}"><summary><span class="hg-pi">${icon(P.ic, 19, 1.8)}</span><span class="hg-pt"><b>${P.t}</b><small>${P.s}</small></span>${(HB_PIL_X[P.t] || [])[1] ? `<span class="hg-k"><b class="dotnum">${HB_PIL_X[P.t][1]}</b><small>${HB_PIL_X[P.t][2]}</small></span>` : ''}<span class="hg-pc">${icon('chevD', 16)}</span></summary>
+  const pillar = (P, i) => `<details class="hg-p" style="--c:${P.c};--i:${i}"><summary><span class="hg-pi">${emoRaw(HB_PIL_EMO[P.t] || '🌿')}</span><span class="hg-pt"><b>${P.t}</b><small>${P.s}</small></span>${(HB_PIL_X[P.t] || [])[1] ? `<span class="hg-k"><b class="dotnum">${HB_PIL_X[P.t][1]}</b><small>${HB_PIL_X[P.t][2]}</small></span>` : ''}<span class="hg-pc">${icon('chevD', 16)}</span></summary>
       <div class="hg-pin"><ul>${P.do.map(x => `<li>${icon('check', 12, 2.6)}<span>${x}</span></li>`).join('')}</ul><p><b>Why it works</b>${P.why}</p>${P.st ? `<div class="hg-st"><small>What studies found</small><div class="sgt-st"><b class="dotnum">${P.st[2]}</b><span><em>${P.st[1]}</em>${P.st[0]}<small>${P.st[3]}</small></span></div></div>` : ''}</div></details>`;
   return `${topbar('Balance', { back: true })}
   <div class="pad hg fb">
@@ -4504,6 +4504,10 @@ function reliefStepPic(t) {
   const [k, v] = [m[1].slice(0, 1), m[1].slice(2)];
   return k === 'f' ? `images/fb/${v}.webp` : k === 't' ? teaPhoto(v, 160, 160) : k === 'p' ? foodPhoto(v, 160) : v;
 }
+// Relief steps without a photo get a clean emoji instead of a line icon.
+const RS_EMO = [[/press lv3|taichong/i, '🦶'], [/sp6/i, '🦵'], [/pain relief|ibuprofen|pill/i, '💊'], [/alcohol/i, '🍷'], [/ferritin|thyroid|blood test/i, '🩸'], [/bra\b/i, '👙'], [/chasteberry|vitex/i, '🫐'],
+  [/heat|warm|hot|bath|soak/i, '♨️'], [/tea/i, '🍵'], [/breath|calm|meditat/i, '🌬️'], [/press|massage|point|rub/i, '👐'], [/sleep|nap|bed|rest/i, '🌙'], [/walk|move|yoga|stretch/i, '👟'], [/doctor/i, '🩺']];
+const reliefEmo = t => (RS_EMO.find(([r]) => r.test(t)) || [, '🌿'])[1];
 function reliefIcon(t) {
   const x = t.toLowerCase();
   return /heat|warm|hot|bath|soak|castor/.test(x) ? 'thermo' : /tea|drink|water|broth|juice/.test(x) ? 'cup' : /breath|calm|meditat/.test(x) ? 'leaf'
@@ -4568,7 +4572,7 @@ function reliefSheet(k) {
     <section class="o3-note hs-note"><p class="o3-lead">${w0}</p>${wr.length ? `<p class="rls-why">${wr.join(' ')}</p>` : ''}</section>
     <section class="hs-card">${head('heart', 'What helps')}<p class="rls-hint">${help.length ? `${help.length} of ${R.steps.length} work for you, so they sit at the top.` : 'Tap the heart on what helps you. Next time it moves to the top.'}</p>
       <div class="rls-l">${order.map(i => { const x = R.steps[i], [d0, ...dr] = splitSentences(x.d), ph = reliefStepPic(x.t);
-        return `<div class="rls-s ${help.includes(i) ? 'helped' : ''}">${ph ? `<span class="rls-ph"><img src="${ph}" alt="" loading="lazy" decoding="async"></span>` : `<span class="rls-ph ic">${icon(reliefIcon(x.t), 18)}</span>`}
+        return `<div class="rls-s ${help.includes(i) ? 'helped' : ''}">${ph ? `<span class="rls-ph"><img src="${ph}" alt="" loading="lazy" decoding="async"></span>` : `<span class="rls-ph ic emo-ph">${emoRaw(reliefEmo(x.t))}</span>`}
           <div class="rls-b"><b>${x.t}</b><p>${d0}</p>${dr.length ? `<details><summary>More ${icon('chevD', 11)}</summary><p>${dr.join(' ')}</p></details>` : ''}</div>
           <button class="rs-heart ${help.includes(i) ? 'on' : ''}" data-action="reliefHelp" data-k="${esc(k)}" data-i="${i}" aria-label="This helps me">${icon('heart', 17)}</button></div>`; }).join('')}</div></section>
     ${food ? `<section class="hs-card">${head('bowl', 'Eat & drink for this')}<div class="rls-f">${food.foods.filter(x => !(warm && RAW_COLD.test(x))).map(x => `<span>${emoRaw(ffEmo(x))}<b>${x}</b>${(SYMPTOM_FOOD_INFO[x] || [])[0] ? `<small>${SYMPTOM_FOOD_INFO[x][0]}</small>` : ''}</span>`).join('')}</div></section>` : ''}
@@ -7510,6 +7514,7 @@ function habitsDone(k) { return ((state.habits || {})[k] || []); }
 // hormones, each a short line with the full do-list and the why behind a tap.
 const HB_PIC = { 'morning-sun': 'images/rhythm-sun.webp', lemon: 'images/tea-ginger.webp', calm: 'images/tile-meditate.webp', walk: 'images/tile-walk.webp', 'phone-free': 'images/forest-calm.jpg' };
 const HB_HORM = { 'morning-sun': ['Cortisol', 'Melatonin'], lemon: ['Hydration', 'Vitamin C'], calm: ['Cortisol', 'Progesterone'], walk: ['Insulin', 'Cortisol'], 'phone-free': ['Cortisol', 'Dopamine'] };
+const HB_PIL_EMO = { 'Light & sleep': '🌅', 'Steady blood sugar': '🍳', 'A calm nervous system': '🕊️', 'Walks and strength': '👟', 'Liver & gut': '🥬', 'Fewer hormone disruptors': '🫙', 'Build your hormones': '🥚' };
 const HB_PILLARS = [
   { ic: 'sun', c: '#d99a1e', t: 'Light & sleep', st: ['People who camped for a week in natural light, with no lamps or screens, had their inner clock shift about 2 hours earlier, with melatonin rising near sunset.', 'Wright', '2013', 'Current Biology'], s: 'Morning light in, evening light down.', do: ['Daylight in your eyes within an hour of waking', 'Warm, low lamps after sunset and dimmed screens', 'Bed at a similar time, 7 to 9 hours', 'Extra rest on your period'], why: 'Light sets the master clock that times melatonin, cortisol and the ovaries’ own rhythm. Regular sleep is linked with steadier cycles and calmer PMS.' },
   { ic: 'bowl', c: '#5b7f2e', t: 'Steady blood sugar', st: ['Eating vegetables and protein before the carbs lowered the sugar rise by about 37% an hour after the meal, compared with carbs first.', 'Shukla', '2015', 'Diabetes Care'], s: 'Protein and fat first, no long fasting.', do: ['Start the day with protein: eggs, raw milk or kefir', 'Vegetables and protein before the sweet part of a meal', 'Coffee or tea with food, not instead of it', 'A short walk after meals'], why: 'Big sugar swings push insulin and cortisol up. High insulin tells the ovaries to make more testosterone, which can show up as acne, cravings and irregular cycles.' },
@@ -8715,6 +8720,10 @@ const ING_PH = [[/egg/, 'Pasture eggs'], [/broccoli/, 'Broccoli'], [/kimchi/, 'A
   [/sweet potato/, 'Sweet potatoes'], [/potato/, 'Potatoes'], [/carrot/, 'Carrots'], [/kale/, 'Kale'], [/walnut/, 'Walnuts'], [/almond/, 'Almonds'], [/berr/, 'Berries'], [/orange|mandarin/, 'Oranges & mandarins'],
   [/kiwi/, 'Kiwifruit'], [/pepper/, 'Peppers'], [/mushroom/, 'Mushrooms'], [/oyster/, 'Oysters'], [/mussel/, 'Mussels'], [/milk|butter/, 'Grass-fed raw milk & butter'], [/pumpkin|squash/, 'Pumpkin'],
   [/cabbage/, 'Cabbage'], [/tomato/, 'Tomatoes'], [/cucumber/, 'Cucumber'], [/broad bean|fava/, 'Broad beans'], [/green bean/, 'Green beans'], [/turmeric/, 'Turmeric'], [/honey/, 'Raw honey'], [/cod/, 'Cod'], [/prawn/, 'Prawns']];
+// A clean emoji for every nutrient, used when no ingredient photo shows where it comes from.
+const NU_EMO = { Iron: '🥩', 'Heme iron': '🥩', Fibre: '🫘', 'Vitamin C': '🍋', Magnesium: 'e:pumpkin-seeds', Potassium: '🍌', Protein: '🍗', Probiotics: '🫙', 'B vitamins': '🍄',
+  B12: '🥩', 'Omega-3': '🐟', 'Plant omega-3': 'e:flaxseed', Antioxidants: '🫐', Sulforaphane: '🥦', Zinc: '🦪', 'Complex carbs': '🍠', 'Slow carbs': '🍠', 'Vitamin B6': 'e:sunflower-seeds',
+  Folate: '🥬', Collagen: '🍲', Minerals: 'e:black-sesame', 'Healthy fats': '🥑', Choline: '🥚', Calcium: '🥛', 'Vitamin A': '🥕', Electrolytes: '🥥', 'Fat-soluble vitamins': '🧈' };
 function nuSource(n, r) {
   const re = NU_SRC[n]; if (!re) return null;
   const ing = r.ingredients.map(x => String(x).replace(/^[A-Za-z ]+:\s*/, '')).find(x => re.test(x.toLowerCase())); if (!ing) return null;
@@ -8741,7 +8750,7 @@ function viewRecipe(id) {
     ${recMicro(r)}
     ${sectionTitle('Why it’s good for you')}
     <section class="card rn-list rn2">${r.nutrients.map(n => { const [line, to] = NUTRIENT_ROLE[n] || [''], src = nuSource(n, r);
-      return `<${to ? `button data-action="nav" data-to="nutrients/${to}"` : 'div'} class="rn">${(() => { const ph = src && src.ph && foodPhoto(src.ph, 160), e = src && ingEmo(src.name); return n === 'Iron' ? '<img class="rn-ph rn-el" src="images/sf/iron.webp" alt="" loading="lazy" decoding="async">' : ph ? `<img class="rn-ph" src="${ph}" alt="" loading="lazy" decoding="async">` : e ? `<span class="rn-ic rn-emo">${emoRaw(e)}</span>` : `<span class="rn-ic">${icon('leaf', 17)}</span>`; })()}<span class="rn-t"><b>${n}</b><p>${line}</p>${src ? `<small>From the ${src.name.toLowerCase()}</small>` : ''}</span>${to ? icon('chevR', 15) : ''}</${to ? 'button' : 'div'}>`; }).join('')}</section>
+      return `<${to ? `button data-action="nav" data-to="nutrients/${to}"` : 'div'} class="rn">${(() => { const ph = src && src.ph && foodPhoto(src.ph, 160), e = src && ingEmo(src.name); return n === 'Iron' ? '<img class="rn-ph rn-el" src="images/sf/iron.webp" alt="" loading="lazy" decoding="async">' : ph ? `<img class="rn-ph" src="${ph}" alt="" loading="lazy" decoding="async">` : `<span class="rn-ic rn-emo">${emoRaw(e || NU_EMO[n] || '🌿')}</span>`; })()}<span class="rn-t"><b>${n}</b><p>${line}</p>${src ? `<small>From the ${src.name.toLowerCase()}</small>` : ''}</span>${to ? icon('chevR', 15) : ''}</${to ? 'button' : 'div'}>`; }).join('')}</section>
     ${sectionTitle('Ingredients')}
     ${(() => { const d = myDiet(), D = DIETS.find(x => x.k === d); return d === 'all' ? '' : !fitsDiet(r) ? `<p class="rci-diet no">${icon('close', 12, 2.4)} Not ${D.t.toLowerCase()}: this one doesn't fit how you eat.</p>` : dietChanged(r) ? `<p class="rci-diet">${D.g} Made ${D.t.toLowerCase()} for you with simple swaps.</p>` : ''; })()}
     <section class="card rci-c"><div class="rci-top"><b><span class="dotnum">${r.ingredients.map(x => dietLine(x)).filter(Boolean).length}</span> ingredients</b><small>For ${serves === 1 ? '1 serving' : `${serves} ${serves > 6 ? 'pieces' : 'servings'}`} · tap to tick off</small></div>${recIngs(r)}</section>
