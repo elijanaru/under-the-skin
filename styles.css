@@ -15123,3 +15123,9 @@ html .tgw.in-page .tgw-stage { height: 300px; }
 .tsh-m small { display: block; margin-top: 2px; font-size: 13px; line-height: 1.42; color: rgba(32,48,26,.7); }
 .tsh .tsh-more { --n: 3; }
 html .tsh-m .emo { margin: 0 !important; align-self: flex-start; position: static; transform: none; }
+
+/* Sweep: page headings (Insights, Blood sugar, Share, Grocery, Hormones, Cycle guide, life stages, Letter) sat left-aligned across the scallop dips
+   while Food and Check-in centre theirs in the window; now every page heading and its subline are centred in the arch window the same way */
+html .view .pad > h1.page-h { text-align: center; margin: 30px auto 14px !important; }
+html .view .pad > h1.page-h + p { text-align: center; margin: -4px 14px 18px !important; text-wrap: balance; }
+html .view .gro-page > .gro-phs { justify-content: center; }
