@@ -11000,12 +11000,12 @@ function playArrival(view) {
 function toTop() { try { window.scrollTo(0, 0); document.scrollingElement && (document.scrollingElement.scrollTop = 0); const v = document.getElementById('view'); if (v) v.scrollTop = 0; } catch {} }
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 // ---------- one payment after the free trial ----------
-// Free until her next period starts (from her first day in the app), then one payment of €16.80 unlocks everything for good.
+// Free until her next period starts (from her first day in the app), then one payment of €24.99 unlocks everything for good.
 // The first day of that period stays free; the gate shows from day 2. If she logs no new period, it ends a week after the
 // period we predicted, and never later than 45 days after she started.
 // Store apps: an in-app purchase (non-consumable, id below) through the NativePurchases plugin once it is installed.
 // Website: a payment link (PAY_LINK in js/config.js). On the local dev server the gate stays off (add ?paywall=1 to see it).
-const TRIAL_MAX = 45, PRICE = '16.80', UNLOCK_ID = 'underskin_unlock';
+const TRIAL_MAX = 45, PRICE = '24.99', UNLOCK_ID = 'underskin_unlock';
 function trialStart() { if (!state.trialStart) { state.trialStart = todayISO(); save(true); } return state.trialStart; }
 function trialNextPeriod() { const t0 = C.parseISO(trialStart()); return C.periodsFromLogs(state.logs || {}).find(p => C.diffDays(p.start, t0) > 0) || null; }
 function trialEnd() {
