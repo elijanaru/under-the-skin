@@ -251,7 +251,7 @@ function ttcPicker(src, scope) {
 }
 function purposePicker(cur, act, full, soft) {
   if (cur === 'notnow') cur = 'know';
-  return `<div class="purp ${full ? 'full' : ''}">${PURPOSES.map(x0 => { const x = soft && x0.k === 'conceive' ? { ...x0, s: 'Now, or later when I’m ready' } : x0; const u = x.img || hormonePhoto(x.photo, 600); return `<button class="purp-c ${cur === x.k ? 'on' : ''} ${x.soon ? 'soon' : ''}" ${x.soon ? 'disabled' : `data-action="${act}" data-v="${x.k}"`}>${u ? `<img src="${u}" alt=""${x.pos ? ` style="object-position:${x.pos}"` : ''}>` : ''}<span class="pc-shade"></span><span class="pc-in"><b>${x.t}</b><small>${x.s}</small></span>${x.soon ? '<span class="pc-soon">Coming soon</span>' : `<span class="pc-check">${icon('check', 14, 2.6)}</span>`}</button>`; }).join('')}</div>`;
+  return `<div class="purp ${full ? 'full' : ''}">${PURPOSES.map(x0 => { const x = soft && x0.k === 'conceive' ? { ...x0, s: 'Now, or later when I’m ready' } : x0; const u = x.img || hormonePhoto(x.photo, 600); return `<button class="purp-c ${cur === x.k ? 'on' : ''} ${x.soon ? 'soon' : ''}" ${x.soon ? 'disabled' : `data-action="${act}" data-v="${x.k}"`}>${u ? `<img src="${u}" alt=""${x.pos ? ` style="object-position:${x.pos}"` : ''}>` : ''}<span class="pc-shade"></span><span class="pc-in"><b>${x.t}</b><small>${x.s}</small></span>${x.soon ? `<span class="pc-lock" aria-hidden="true"><i class="sp a">✦</i><i class="sp b">✦</i><i class="sp c">✦</i><span class="pc-lk">${GX_IC.lock}</span></span><span class="pc-soon">Coming soon</span>` : `<span class="pc-check">${icon('check', 14, 2.6)}</span>`}</button>`; }).join('')}</div>`;
 }
 const FOCUS_G = { pms: '🌺', skin: '💧', sleep: '😴', mood: '🌤️', energy: '⚡', eat: '🥗', tcm: '☯️', hormones: '🧬', body: '🔥', bloat: '🫧', regular: '🗓️' };
 function focusTiles(cur, act) { return `<div class="ftiles">${FOCUS.map(f => `<button class="ft ${cur.includes(f.k) ? 'on' : ''}" data-action="${act}" data-v="${f.k}"><span>${FOCUS_G[f.k]}</span>${f.t}</button>`).join('')}</div>`; }
@@ -443,6 +443,8 @@ function trainSafe() {
 }
 // ---------- grounding: bare skin on the earth ----------
 // A tiny drawn scene for each surface in "Where to stand" (same order as GROUND_WHERE).
+// her hand-painted pictures for each surface, same order as GROUND_WHERE
+const GROUND_PIC = ['sand', 'grass', 'soil', 'sea', 'stone', 'road'];
 const GROUND_ART = [
   '<svg viewBox="0 0 120 56"><rect width="120" height="56" fill="#efdcbc"/><path d="M0 0h120v16c-14 6-24-4-40 2s-26 8-40 2S12 12 0 18z" fill="#a9cdd0"/><path d="M0 18c12-6 26 2 40-2s24-8 40-2 26 4 40-2" fill="none" stroke="#fff" stroke-width="2" opacity=".8"/><g fill="#caa77a"><ellipse cx="44" cy="34" rx="4" ry="6.5"/><ellipse cx="58" cy="44" rx="4" ry="6.5"/><ellipse cx="74" cy="32" rx="4" ry="6.5"/></g></svg>',
   `<svg viewBox="0 0 120 56"><rect width="120" height="56" fill="#e3ecd3"/><g fill="none" stroke="#6c823e" stroke-width="2.4" stroke-linecap="round">${Array.from({ length: 14 }, (_, i) => `<path d="M${6 + i * 8.4} 56c${i % 2 ? 2 : -2}-10 ${i % 3 - 1}-20 ${i % 2 ? 4 : -3}-${24 + (i * 7) % 14}"/>`).join('')}</g><g fill="#fff" stroke="#9fc3c8" stroke-width=".8"><circle cx="22" cy="24" r="2.4"/><circle cx="64" cy="18" r="2.8"/><circle cx="96" cy="28" r="2.2"/></g></svg>`,
@@ -498,7 +500,7 @@ function viewGround() {
     </section>` : ''}
 
     ${sectionTitle('Where to stand')}
-    <section class="card gr-card"><p class="gr-wh-sub">How well each surface connects you to the earth.</p><div class="gr-where">${GROUND_WHERE.map(([n, v, t], i) => `<div class="${v ? '' : 'no'}"><span class="gr-art">${GROUND_ART[i] || ''}</span><span class="gr-m" aria-label="${v ? `Connects ${v} of 3` : 'Blocks it'}">${v ? [1, 2, 3].map(i => `<i class="${i <= v ? 'on' : ''}"></i>`).join('') : ''}<em>${['Blocks it', 'A little', 'Good', 'Best'][v]}</em></span><b>${n}</b><small>${t}</small></div>`).join('')}</div></section>
+    <section class="card gr-card"><p class="gr-wh-sub">How well each surface connects you to the earth.</p><div class="gr-where">${GROUND_WHERE.map(([n, v, t], i) => `<div class="gw ${v ? '' : 'no'}"><img class="gw-pic" src="images/ground/${GROUND_PIC[i]}.webp" alt="" loading="lazy"><span class="gw-n"><b>${n}</b>${v ? `<span class="gw-d" role="img" aria-label="Connects ${v} of 3">${[1, 2, 3].map(i => `<i class="${i <= v ? 'on' : ''}"></i>`).join('')}</span>` : ''}</span>${v ? '' : '<em class="gw-no">Blocks it</em>'}<small>${t}</small></div>`).join('')}</div></section>
 
     <section class="grr">
       <div class="grr-h"><small>${icon('clock', 12)} ${GROUND_ROOTS.mins} minute practice</small><b>Golden roots</b><p>Sit on the earth and feel held. An old visualisation from many traditions.</p></div>
@@ -1333,11 +1335,11 @@ function onbPromise() {
   const no = [['subscriptions', 'One payment, yours for good'], ['ads', 'Never, not even small ones'], ['hidden fees', 'The price you see is all'], ['selling your data', 'It stays yours, always'], ['popups', 'No nagging to upgrade']];
   const steps = [['gift', 'Today', 'Full app, free'], ['calendar', 'Day 3', 'Decide, no charge before'], ['heart', 'Forever', 'One payment']];
   return `<div class="op op2">
-    <section class="op-hero">
-      ${promisePet()}
-      <h2>We hate<br><s>subscriptions</s></h2>
-      <p>We’re a small team and this is our passion project. Try everything free for 3 days. If you love it, unlock the full app with one payment.</p>
+    <section class="op-hero op-arch" aria-label="We hate subscriptions">
+      <div class="oa-art" aria-hidden="true">${['mist', 'arch', 'leaves', 'lotus', 'swirls'].map(k => `<img class="oa-${k}" src="images/pay/${k}.webp" alt="">`).join('')}</div>
+      <div class="oa-txt"><small>Under the Skin</small><h2><span>We hate</span><em>subscriptions<i></i></em></h2><p>One payment, yours for good.</p></div>
     </section>
+    <p class="oa-lead">We’re a small team and this is our passion project. Try everything free for 3 days. If you love it, unlock the full app with one payment.</p>
     <section class="op-card op-path">${steps.map(([ic, t, d], i) => `<div class="op-st ${i === 0 ? 'now' : ''}"><span>${icon(ic, 17)}</span><b>${t}</b><small>${d}</small></div>`).join('')}</section>
     <section class="op-card"><ul class="op-no">${no.map(([a, b]) => `<li><span class="op-x">${icon('close', 12, 2.6)}</span><div><b>No ${a}</b><small>${b}</small></div></li>`).join('')}</ul></section>
   </div>`;
@@ -1489,8 +1491,8 @@ const postpartum = (p = state && state.profile) => !!p && p.preg === 'kids' && (
 function pregPicker(src, scope) {
   const v = src.preg, when = src.ppAt ? (ppMonths(src) < 6 ? '6' : ppMonths(src) < 12 ? '12' : 'old') : src.ppOld ? 'old' : '';
   const lw = src.lossAt ? (lossRecent(src) ? 'recent' : 'old') : src.lossOld ? 'old' : '';
-  const what = v === 'kids' ? (src.bf || when === '6' || when === '12' ? 'Your predictions stay gentle while your cycle settles, and you get recovery and pelvic floor tips.' : 'Pelvic floor care becomes part of your plan.')
-    : v === 'loss' ? (lw === 'recent' ? 'For the next weeks the app turns gentle: no fertile-window pressure, care for your body and your feelings. You can switch it off any time.' : 'We keep it in mind gently, especially when you plan a pregnancy.') : '';
+  const what = v === 'kids' ? (src.bf || when === '6' || when === '12' ? 'Your predictions stay gentle while your cycle settles, and you get recovery and pelvic floor tips.' : 'Pelvic floor care becomes part of your plan, to keep your core and bladder strong.')
+    : v === 'loss' ? (lw === 'recent' ? 'For the next weeks the app turns gentle: no fertile-window pressure, care for your body and your feelings. You can switch it off any time.' : 'The app keeps this in mind gently. When you plan a pregnancy, you get extra care and support.') : '';
   return `<div class="pg-list">${PREG.map(([k, e, t, sm]) => `<button class="pg-o ${v === k ? 'on' : ''}" data-action="pregSet" data-f="preg" data-v="${k}" data-scope="${scope}" aria-pressed="${v === k}"><span class="pg-e">${e === 'lock' ? GX_IC.lock : e}</span><span class="pg-t"><b>${t}</b><small>${sm}</small>${k === 'loss' ? `<em class="pg-priv">${GX_IC.lock}<span>This info stays private, love. It’s an important step that helps us understand your body.</span></em>` : ''}</span><i>${icon('check', 14, 2.6)}</i></button>`).join('')}</div>
     ${v === 'kids' ? `<div class="pg-box pg-kids">
       <div class="pg-bh"><span class="pg-bi" aria-hidden="true">👶</span><span><b>When was your last birth?</b><small>So we know how gentle your plan should be</small></span></div>
@@ -1504,7 +1506,7 @@ function pregPicker(src, scope) {
       <small class="pg-q">How many times?</small>
       <div class="pg-dots">${LOSS_N.filter(x => x[0] !== 'skip').map(([k], i) => `<button class="pg-dot ${src.lossN === k ? 'on' : ''}" data-action="pregSet" data-f="ln" data-v="${k}" data-scope="${scope}" aria-pressed="${src.lossN === k}" aria-label="${LOSS_N[i][1]}"><b class="dotnum">${k === '3' ? '3+' : k}</b></button>`).join('')}<button class="pg-dot skip ${src.lossN === 'skip' ? 'on' : ''}" data-action="pregSet" data-f="ln" data-v="skip" data-scope="${scope}" aria-pressed="${src.lossN === 'skip'}">Rather not say</button></div>
       ${scope === 'profile' ? `<button class="pg-go" data-action="nav" data-to="loss"><span><b>Your recovery guide</b><small>${lossCare(src) ? 'Recovery mode is on' : 'Body, feelings and trying again'}</small></span>${icon('chevR', 15)}</button>` : ''}</div>` : ''}
-    ${what ? `<p class="pg-what">${icon('heart', 14)} ${what}</p>` : ''}`;
+    ${what ? `<p class="pg-what pg-what2">${icon('heart', 15)}<span><b>What this changes for you</b>${what}</span></p>` : ''}`;
 }
 function stepper(field, val, scope, big) {
   return `<div class="stepper ${big ? 'big' : ''}"><button data-action="step" data-field="${field}" data-d="-1" data-scope="${scope}">−</button>
@@ -7222,6 +7224,14 @@ function showTicket0(name, from, x) {
     ${from ? `<button class="btn btn-love btn-block" data-action="openLove" data-id="${from.id}">${icon('heart', 16)} Say yes with love</button>` : ''}
     <button class="btn btn-ghost btn-block" data-action="sigClose">Close</button></div>`;
   $app.appendChild(el);
+  { // the Rive ticket drops in on its "With love" back, lands and turns over; the CSS ticket stays as the fallback
+    const box = el.querySelector('.tk-vt');
+    if (box && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      box.classList.add('rv-wait'); const cv = document.createElement('canvas'); cv.className = 'tk-rv'; box.appendChild(cv);
+      import('./riveticket.js').then(RT => RT.play(cv, vtData(box), 'arrive', 3000)).catch(() => null)
+        .then(rv => { if (rv && el.isConnected) { box.classList.add('rv-on'); el._rv = rv; } else { cv.remove(); box.classList.remove('rv-wait'); } });
+    }
+  }
   setTimeout(() => { const c = el.querySelector('.tk-vt'); if (!c) return; const r = c.getBoundingClientRect(); heartBurst(r.left + r.width / 2, r.top + r.height / 2); }, 1500);
   import('./sfx.js').then(S => S.breeze({ dur: 1.8, vol: .14 })).catch(() => {});
 }
@@ -8696,8 +8706,26 @@ function vtTicket({ to, from, plan, when, note }) {
     <div class="vt-face vt-back" aria-hidden="true"><svg class="vt-seal" viewBox="0 30 140 90">${VT_DEFS}${vtLotus(false)}</svg><b>With love</b><span>from ${esc(from)}</span></div></div>`;
 }
 // The ticket flies: a copy lifts off the card, tilts, and sails up and away to the top right, leaving a trail of hearts.
-function ticketFly(el) {
+// what the HTML ticket shows, handed to the Rive ticket so both say the same
+function vtData(box) {
+  const q = s => (box.querySelector(s)?.textContent || '').trim(), ln = [...box.querySelectorAll('.vt-lines span')].map(x => x.textContent.split(':').slice(1).join(':').trim());
+  return { title: q('.vt-h em'), plan: q('.vt-plan'), name: ln[0] || '', when: ln[1] || '', from: ln[2] || '', date: q('.vt-adm span') };
+}
+// his tap: the Rive ticket (squeeze, turn, fold into an envelope, fly off with hearts) over the real one; false if Rive can't play
+async function ticketFlyRive(el) {
+  const vt = el.querySelector('.vt'); if (!vt) return false;
+  const r = vt.getBoundingClientRect(), cw = r.width * 400 / 340, ch = cw * 420 / 400, cv = document.createElement('canvas');
+  Object.assign(cv.style, { position: 'fixed', left: (r.left + r.width / 2 - cw / 2) + 'px', top: (r.top + r.height / 2 - ch * 250 / 420) + 'px', width: cw + 'px', height: ch + 'px', zIndex: 90, pointerEvents: 'none' });
+  document.body.appendChild(cv);
+  const RT = await import('./riveticket.js').catch(() => null), rv = RT && await RT.play(cv, vtData(vt), 'send', 4000);
+  if (!rv) { cv.remove(); return false; }
+  el.classList.add('gone');
+  await new Promise(res => setTimeout(res, 2550));
+  try { rv.cleanup(); } catch {} cv.remove(); return true;
+}
+async function ticketFly(el) {
   el.classList.add('flying');
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches && await ticketFlyRive(el)) return true;
   const r = el.getBoundingClientRect(), fly = el.cloneNode(true);
   fly.className = el.className + ' tk-fly'; fly.removeAttribute('data-action');
   Object.assign(fly.style, { position: 'fixed', left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', margin: 0, zIndex: 90, pointerEvents: 'none' });
@@ -9541,7 +9569,7 @@ const actions = {
   calEdit: () => { ui.calEdit = !ui.calEdit; if (!ui.calEdit) ui.calFix = null; if (!ui.calEdit) toast('Saved · predictions updated'); calRefresh(null, true); },
   pinPartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (!p) return; p.pin = !p.pin; save(); toast(p.pin ? `${p.n} pinned to your home screen` : 'Unpinned'); render(); },
   openLove: d => { document.querySelector('.sig-pop')?.remove(); ui.loveFor = d.id; render(); if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().catch(() => {}); },
-  sigClose: () => document.querySelector('.sig-pop')?.remove(),
+  sigClose: () => { const p = document.querySelector('.sig-pop'); try { p?._rv?.cleanup(); } catch {} p?.remove(); },
   loveClose: () => { ui.loveFor = null; render(); },
   noop: () => {},
   sendLove: async (d, el) => {
@@ -10306,7 +10334,9 @@ function render() {
   }
   if (!state || !state.onboarded) {
     document.documentElement.dataset.phase = '';
+    const still = ui.onbStill, wy = window.scrollY; // a pick on the same step keeps her place instead of jumping to the top
     $app.innerHTML = `${statusbar()}<div class="view onb-view ${fresh ? 'enter' : ''}" id="view">${viewOnboarding()}</div>`;
+    if (still && !fresh) { if (keep) document.getElementById('view').scrollTop = keep; if (wy) window.scrollTo(0, wy); }
     mountFigures();
     // the hormone panel: drag along the chart too, it moves the day slider
     document.querySelectorAll('.o9-hp').forEach(card => {
