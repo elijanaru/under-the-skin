@@ -8679,8 +8679,7 @@ function viewProfile() {
   return `${topbar('Profile', { back: true })}
   <div class="pad pf2">
     <section class="card card-light pf-hero o3-note pf3">
-      <svg class="o3-dood pf3-dood" viewBox="0 0 340 220" aria-hidden="true">${o3Spark('#f6c6d4', 40, 46, 0)}${o3Spark('#f1d58a', 298, 36, 1.2)}${o3Spark('#c9d6a8', 306, 150, 2)}${o3Spark('#f6c6d4', 30, 160, 1.6)}
-        <path class="pf3-heart" d="M282 98 c -4 -7 -14 -5 -13 3 c 1 6 9 10 13 14 c 4 -4 12 -8 13 -14 c 1 -8 -9 -10 -13 -3 z"/></svg>
+      <svg class="o3-dood pf3-dood" viewBox="0 0 340 220" aria-hidden="true">${o3Spark('#f6c6d4', 40, 46, 0)}${o3Spark('#f1d58a', 298, 36, 1.2)}${o3Spark('#c9d6a8', 306, 150, 2)}${o3Spark('#f6c6d4', 30, 160, 1.6)}</svg>
       <div class="profile-head"><label class="avatar xl ${p.photo ? 'has-photo' : ''}">${avatarInner(p)}<svg class="pf3-ring" viewBox="0 0 120 120" aria-hidden="true"><path d="M60 6 C 92 5, 115 28, 113 61 C 111 93, 88 114, 58 113 C 27 112, 6 90, 7 59 C 8 30, 30 8, 63 9"/></svg><span class="av-edit">${icon('plus', 14, 2.4)}</span><input type="file" accept="image/*" data-photo="profile" hidden></label>
         <span class="pf3-name"><input class="field name-field" data-input="profile.name" value="${esc(p.name)}" placeholder="Your name" maxlength="24" aria-label="Your name"><svg viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M6 10 C 46 4, 80 13, 112 8 S 172 5, 194 9"/></svg></span></div>
       <p class="pf-learn">${learn}</p>
@@ -10622,17 +10621,25 @@ function unlocked(ref) { state.paid = { at: todayISO(), ref: String(ref || '').s
 const UNLOCK_KEEP = [['calendar', 'Your cycle & predictions', 'Learns your rhythm with every period'], ['flask', 'Hormones made simple', 'What they do, day by day'], ['bowl', 'Food & recipes for each phase', 'Warm, raw-first, real food'], ['leaf', 'Breathe, ground & move', 'Matched to how you feel'], ['mail', 'Letters from your body', 'Gentle check-ins every day'], ['users', 'Partner view', 'They learn your cycle too']];
 // The price as a ticket, made like his date ticket: barcode stub, punched edges, serif and script title, typewriter lines,
 // the lotus collage and a round price stamp. It turns over from its "With love" back as the page opens.
+// The price as a museum ticket (her moodboard): a dusty rose stub with her name in script and a barcode, a big art panel
+// with a real lotus on the misty forest, serif type, notched corners. It tilts slowly in 3D with a soft holographic sheen,
+// and follows her finger a little.
+const TK3_BARS = [3, 1, 2, 1, 1, 3, 1, 2, 2, 1, 3, 1, 1, 2, 1, 3, 2, 1, 1, 2, 3, 1, 2, 1, 1, 3, 1, 2];
 function ulTicket() {
-  const d = new Date(), p2 = n => String(n).padStart(2, '0'), name = esc((state.profile.name || '').trim().toUpperCase() || 'YOU');
-  return `<div class="tk-vt ul3-vt" aria-label="A ticket for Under the Skin: €${PRICE}, one payment, yours forever"><div class="vt">
-    <div class="vt-face vt-front">
-      <div class="vt-stub">${VT_BAR}<div class="vt-adm"><b>Admit one</b><span>${p2(d.getDate())}-${p2(d.getMonth() + 1)}-${d.getFullYear()}</span></div></div>
-      <div class="vt-main"><div class="vt-stars" aria-hidden="true">★★★★★</div>
-        <h4 class="vt-h"><span>A ticket for</span><em>Under the Skin</em></h4><p class="vt-plan">One payment, yours for good.</p>
-        <div class="vt-lines"><span>NAME : ${name}</span><span>PRICE : €${PRICE}</span><span>VALID : FOREVER</span></div></div>
-      <div class="vt-art">${VT_ART}</div>
-      <span class="vt-stamp ul3-stamp" aria-hidden="true"><small>only</small><b>€${PRICE}</b><i>♥</i></span></div>
-    <div class="vt-face vt-back" aria-hidden="true"><svg class="vt-seal" viewBox="0 30 140 90">${VT_DEFS}${vtLotus(false)}</svg><b>With love</b><span>from our little team</span></div></div></div>`;
+  const d = new Date(), nm = esc((state.profile.name || '').trim() || 'You');
+  const date = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' });
+  let y = 0; const bars = TK3_BARS.map((w, k) => { const r = k % 2 ? '' : `<rect x="0" y="${y}" width="40" height="${w}"/>`; y += w + 1; return r; }).join('');
+  return `<div class="tk3" aria-label="A ticket for Under the Skin: €${PRICE}, one payment, yours forever"><div class="tk3-in">
+    <div class="tk3-stub" aria-hidden="true"><span class="tk3-name">${nm}</span>
+      <svg class="tk3-bar" viewBox="0 0 40 ${y}" preserveAspectRatio="none">${bars}</svg>
+      <small class="tk3-adm">admit one</small><small class="tk3-d">${date}</small></div>
+    <div class="tk3-art">
+      <img class="tk3-bg" src="images/welcome-forest.jpg" alt="" decoding="async">
+      <img class="tk3-lotus" src="images/lotus-ovulatory.webp" alt="" decoding="async">
+      <div class="tk3-t"><b>Under the Skin</b><span>a ticket for ${nm}</span><span>one payment, yours forever</span></div>
+      <span class="tk3-p"><small>€</small>${PRICE}</span>
+    </div>
+    <i class="tk3-holo" aria-hidden="true"></i></div></div>`;
 }
 function viewUnlock() {
   const left = trialLeft(), lock = locked(), paid = !!state.paid;
@@ -10775,6 +10782,9 @@ if ('serviceWorker' in navigator) {
 }
 setInterval(() => { if (state?.onboarded) { M = model(); fireNotifications(); } }, 15 * 60 * 1000);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.querySelector('.ws')) wsClose(); });
+document.addEventListener('pointermove', e => { const t = e.target.closest?.('.tk3'); if (!t) return; const r = t.getBoundingClientRect();
+  t.style.setProperty('--px', (((e.clientX - r.left) / r.width - .5) * 14).toFixed(2)); t.style.setProperty('--py', (((e.clientY - r.top) / r.height - .5) * -12).toFixed(2)); });
+document.addEventListener('pointerout', e => { const t = e.target.closest?.('.tk3'); if (t && !t.contains(e.relatedTarget)) { t.style.setProperty('--px', 0); t.style.setProperty('--py', 0); } });
 window.addEventListener('hashchange', () => { wsClose(true); if (route().name !== 'log') ui.logDate = null; if (route().name !== 'calendar') ui.calEdit = false; render(); });
 setInterval(() => { const sb = document.querySelector('.statusbar span'); if (sb) sb.textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(/\s?[AP]M/, ''); }, 30000);
 render();

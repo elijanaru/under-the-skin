@@ -14980,7 +14980,6 @@ html .pf2 .pf-seg { padding: 5px; gap: 4px; border: 0; border-radius: 20px 22px 
 html .pf2 .pf-seg button { font: 700 19px/1 Caveat, 'Outfit', cursive; color: #4b5741; }
 html .pf2 .pf-seg button.on { background: #fde9ef; color: #b04f6c; border-radius: 14px 16px 13px 17px; transform: rotate(-2deg); box-shadow: 0 6px 12px -8px rgba(176,79,108,.6), inset 0 0 0 1.5px rgba(176,79,108,.25); }
 /* handwritten section titles on her page, still on the frosted pill */
-html .view .pf2 .section-title h3 { font: 700 26px/1 Caveat, 'Outfit', cursive !important; letter-spacing: 0; }
 /* free days and goal chips as stickers */
 html .pf2 .ul-pf { border-radius: 20px 24px 18px 26px; transform: rotate(-.6deg); }
 html .pf2 .ul-pf-n { display: grid; place-items: center; width: 50px; height: 50px; border-radius: 52% 46% 55% 47% / 48% 55% 45% 52%; background: #fde9ef; color: #b04f6c; transform: rotate(-6deg); }
@@ -15006,3 +15005,62 @@ html .toggle.on i { background: #fff; }
 html .btn.sh-go { background: #20301a; color: #fff; border: 0; box-shadow: 0 10px 24px -12px rgba(32,48,26,.6); }
 html .btn.sh-go svg { color: #efd4dd; }
 html .btn.sh-pv { margin-top: 10px; background: rgba(255,255,255,.7); color: #20301a; border: 1px solid rgba(255,255,255,.9); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+
+/* Unlock ticket, museum style (15 Nov 2026 night): stub + big lotus art panel, notched corners, slow 3D tilt, holo sheen */
+@property --rx { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --ry { syntax: '<number>'; inherits: true; initial-value: 0; }
+.ul3-buy:has(.tk3) { margin-left: -14px; margin-right: -14px; }
+.tk3 { --px: 0; --py: 0; position: relative; width: 100%; perspective: 900px; filter: drop-shadow(0 22px 22px rgba(70,30,45,.32)) drop-shadow(0 4px 6px rgba(70,30,45,.12));
+  animation: tk3In 1.3s cubic-bezier(.22,1,.36,1) .3s both; touch-action: pan-y; }
+@keyframes tk3In { from { opacity: 0; transform: translateY(26px) scale(.94); } }
+.tk3-in { position: relative; display: grid; grid-template-columns: 26% 1fr; height: 184px; border-radius: 6px; overflow: hidden;
+  transform: rotateX(calc((var(--rx) + var(--py)) * 1deg)) rotateY(calc((var(--ry) + var(--px)) * 1deg)) rotate(-1.2deg);
+  animation: tk3Tilt 9s ease-in-out infinite; transition: transform .25s ease-out;
+  -webkit-mask: radial-gradient(circle 12px at 0 0, #0000 97%, #000) top left / 51% 51% no-repeat, radial-gradient(circle 12px at 100% 0, #0000 97%, #000) top right / 51% 51% no-repeat,
+    radial-gradient(circle 12px at 0 100%, #0000 97%, #000) bottom left / 51% 51% no-repeat, radial-gradient(circle 12px at 100% 100%, #0000 97%, #000) bottom right / 51% 51% no-repeat;
+  mask: radial-gradient(circle 12px at 0 0, #0000 97%, #000) top left / 51% 51% no-repeat, radial-gradient(circle 12px at 100% 0, #0000 97%, #000) top right / 51% 51% no-repeat,
+    radial-gradient(circle 12px at 0 100%, #0000 97%, #000) bottom left / 51% 51% no-repeat, radial-gradient(circle 12px at 100% 100%, #0000 97%, #000) bottom right / 51% 51% no-repeat; }
+@keyframes tk3Tilt { 0%, 100% { --rx: 4; --ry: -7; } 25% { --rx: -3; --ry: -2; } 50% { --rx: -4; --ry: 7; } 75% { --rx: 3; --ry: 2; } }
+/* the stub */
+.tk3-stub { position: relative; display: grid; place-items: center; overflow: hidden; color: #5e2f3c;
+  background: radial-gradient(rgba(94,47,60,.07) 1px, transparent 1.3px) 0 0 / 7px 7px, linear-gradient(160deg, #e8c7cb, #d9adb5); }
+.tk3-stub::after { content: ''; position: absolute; right: 0; top: 10px; bottom: 10px; border-right: 1.6px dashed rgba(255,255,255,.75); }
+.tk3-name { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-90deg); white-space: nowrap; font: 400 34px/1 Parisienne, 'Great Vibes', cursive; color: #5e2f3c; translate: 14px 0; }
+.tk3-bar { position: absolute; left: 10px; top: 22px; bottom: 22px; width: 22px; height: calc(100% - 44px); fill: #fff; opacity: .92; }
+.tk3-adm, .tk3-d { position: absolute; right: 9px; font: 400 9px/1 'DM Serif Display', Georgia, serif; letter-spacing: .04em; color: rgba(94,47,60,.75); writing-mode: vertical-rl; }
+.tk3-adm { bottom: 16px; } .tk3-d { top: 16px; }
+/* the art panel */
+.tk3-art { position: relative; overflow: hidden; background: #2b3424; }
+.tk3-bg { position: absolute; inset: -12px; width: calc(100% + 24px); height: calc(100% + 24px); object-fit: cover; object-position: 50% 62%;
+  filter: saturate(.85) brightness(.82); transform: translate(calc(var(--ry) * .5px), calc(var(--rx) * -.5px)) scale(1.04); }
+.tk3-art::before { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(100deg, rgba(24,30,20,.72) 0%, rgba(24,30,20,.25) 46%, rgba(24,30,20,0) 70%), radial-gradient(70% 90% at 78% 58%, rgba(255,214,226,.35), transparent 70%); }
+.tk3-lotus { position: absolute; z-index: 2; right: -18px; bottom: -26px; width: 190px; height: auto; filter: drop-shadow(0 0 18px rgba(255,200,215,.55)) drop-shadow(0 14px 14px rgba(20,10,15,.35));
+  transform: translate(calc(var(--ry) * -1.3px), calc(var(--rx) * 1.3px)) rotate(-6deg); animation: tk3Bloom 1.6s cubic-bezier(.2,.8,.2,1) .7s both; }
+@keyframes tk3Bloom { from { opacity: 0; scale: .82; } }
+.tk3-t { position: absolute; z-index: 3; left: 14px; top: 14px; display: grid; gap: 1px; color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,.35); }
+.tk3-t b { font: 400 25px/1 'DM Serif Display', Georgia, serif; letter-spacing: -.005em; margin-bottom: 4px; }
+.tk3-t span { font: italic 400 11.5px/1.3 'IM Fell English', Georgia, serif; opacity: .9; }
+.tk3-p { position: absolute; z-index: 3; left: 14px; bottom: 12px; font: 400 34px/1 Parisienne, 'Great Vibes', cursive; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,.4); }
+.tk3-p small { font-size: .6em; margin-right: 1px; }
+.tk3-life { position: absolute; z-index: 3; right: 12px; bottom: 9px; font: italic 400 9.5px/1 'IM Fell English', Georgia, serif; color: rgba(255,255,255,.75); }
+/* holographic sheen that slides as it tilts */
+.tk3-holo { position: absolute; inset: 0; z-index: 4; pointer-events: none; mix-blend-mode: soft-light; opacity: .85;
+  background: linear-gradient(112deg, transparent 28%, rgba(255,170,205,.9) 40%, rgba(170,255,230,.85) 47%, rgba(255,236,160,.85) 54%, rgba(190,170,255,.8) 60%, transparent 72%) calc(50% + (var(--ry) + var(--px)) * 7%) 50% / 260% 100% no-repeat; }
+.tk3-holo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(112deg, transparent 44%, rgba(255,255,255,.55) 49%, transparent 54%) calc(50% + (var(--ry) + var(--px)) * 9%) 50% / 300% 100% no-repeat; mix-blend-mode: overlay; }
+@media (prefers-reduced-motion: reduce) { .tk3, .tk3-in, .tk3-lotus { animation: none; } }
+
+/* Her call (15 Nov 2026 night): the herb garden and sheet, the tea sheet and Profile go back to Outfit, no handwriting */
+html .hg-hint { font: 500 13.5px/1.2 var(--font); color: #b04f6c; }
+html .hg-tag b { font: 600 13px/1.15 var(--font); letter-spacing: -.005em; }
+html .hs-h h2 { font: 500 32px/1.05 var(--font); letter-spacing: -.02em; color: #20301a; }
+html .hs-ch h3 { font: 600 19px/1.15 var(--font); letter-spacing: -.01em; }
+html .hs-row b { font: 600 14px/1.2 var(--font); }
+html .hs-cite { font: 500 13px/1.3 var(--font); }
+html .hs-pol figcaption { font: 500 10.5px/1.2 var(--font); }
+html .tsh-h small { font: 600 13px/1.2 var(--font); letter-spacing: .02em; }
+html .tsh-h h2 { font: 500 34px/1.08 var(--font); letter-spacing: -.02em; color: #20301a; }
+html .tsh-st b { font: 600 15px/1.2 var(--font); }
+html .tsh .o3-sign { font: 500 14px/1.3 var(--font) !important; }
+html .pf3 .name-field { font: 500 32px/1.1 var(--font) !important; color: #20301a !important; -webkit-text-fill-color: #20301a; letter-spacing: -.02em; }
+html .pf2 .pf3 .pf-learn { font: 400 14px/1.4 var(--font); color: rgba(32,48,26,.65); }
+html .pf2 .pf-seg button { font: 500 13.5px/1 var(--font); }
