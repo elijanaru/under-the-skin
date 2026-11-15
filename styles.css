@@ -15676,3 +15676,8 @@ html .home .hub .caps { width: calc(100% - 40px) !important; }
 .rls-ph.emo-ph { background: #fff; }
 .rls-ph.emo-ph .emo { font-size: 24px; line-height: 1; } .rls-ph.emo-ph img.emo { width: 28px; height: 28px; object-fit: contain; }
 .hg-pi .emo { font-size: 24px; line-height: 1; } .hg-pi img.emo { width: 26px; height: 26px; object-fit: contain; }
+/* 3D cups and dishes open at their final size: the flat picture stays hidden while the 3D loads (it only shows if 3D can't run),
+   and the 3D fades in where it will stay, with no slide or scale */
+.cup3d-w:has(canvas.teacup3d) > img { opacity: 0 !important; }
+.cup3d-w canvas.teacup3d, .tg-3d .teacup3d { transform: none !important; transition: opacity .6s ease !important; }
+html .rn2 .rn-ore img.emo { width: 30px; height: 30px; image-rendering: pixelated; }
