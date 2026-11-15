@@ -8511,8 +8511,7 @@ const HOB = [
 ];
 function himOnboarding(name) {
   const i = Math.min(ui.hob || 0, HOB.length - 1), Q = HOB[i], a = ui.hobA || {};
-  const v = (() => { try { return localStorage.getItem('uts.hobv') || 'a'; } catch { return 'a'; } })();
-  return `<div class="pad hob v-${v}${v === 'c' ? '' : ' ph'}"><div class="hob-card">
+  return `<div class="pad hob ph"><div class="hob-card">
     <div class="hob-dots">${HOB.map((_, k) => `<i class="${k <= i ? 'on' : ''}"></i>`).join('')}</div>
     ${i === 0 ? `<label class="hob-av">${a.ph ? `<img src="${esc(a.ph)}" alt="">` : '<span>🌳</span>'}<i>${icon(a.ph ? 'check' : 'plus', 13, 2.6)}</i><input type="file" accept="image/*" data-photo="him" hidden></label><em class="hob-avt">${a.ph ? 'Looking good' : 'Add a photo, if you like'}</em>` : `<span class="hob-e">${Q.e}</span>`}
     <small>${i === 0 ? `Welcome. ${name} shared her rhythm with you.` : `${i + 1} of ${HOB.length}`}</small>
