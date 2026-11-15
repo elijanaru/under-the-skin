@@ -169,7 +169,9 @@ function tabbar(active) {
 // Each section on a page gets the next tone (deep green, lime glow, black glass), so sections are easy to tell apart.
 let secN = 0;
 function sectionTitle(t, more) {
-  return `<div class="section-title tone-${secN++ % 3}"><h3>${t}</h3>${more ? `<button class="link" data-action="nav" data-to="${more[1]}">${more[0]}</button>` : ''}</div>`;
+  // long titles step down a size so the frosted pill stays one line (two-line pills read as a blob), more so beside a button
+  const ln = String(t).replace(/<[^>]+>/g, '').length > 20 ? (more ? ' ln2' : ' ln') : '';
+  return `<div class="section-title tone-${secN++ % 3}${ln}"><h3>${t}</h3>${more ? `<button class="link" data-action="nav" data-to="${more[1]}">${more[0]}</button>` : ''}</div>`;
 }
 
 // ---------- SVG: phase ring ----------

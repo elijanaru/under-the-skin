@@ -14544,3 +14544,10 @@ html:has(.onb.no-fig:not(.step-9):not(.step-10)) .bgx, html:has(.onb-welcome) .b
 .msd-key span { display: inline-flex; align-items: center; gap: 6px; }
 .msd-key i { width: 16px; height: 0; border-top: 2.6px solid #20301a; border-radius: 2px; }
 .msd-key i.dz { border-top: 2px dotted var(--pc, #8c9768); opacity: .9; }
+/* Section titles over 20 letters wrapped into a two-line pill (Hormone balancing habits on Today, Your body's other messengers,
+   Ideas for your ovulatory days); they step down to 20px, 18px when they share the row with a button, and stay on one line */
+html .view .section-title.ln h3 { font-size: 20px !important; white-space: nowrap; }
+html .view .section-title.ln2 h3 { font-size: 18px !important; white-space: nowrap; }
+html .view .section-title.ln2 { gap: 8px; }
+/* Hormone tiles: Doto numerals sit flush against the word before them (Typical5–25); a hair of room on both sides */
+html .hxn { margin: 0 .14em 0 .18em; }
