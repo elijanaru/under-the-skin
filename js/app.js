@@ -8768,7 +8768,7 @@ function viewShare() {
   return `${topbar('Partner mode', { back: true })}
   <div class="pad">
     <h1 class="page-h">Share your <span>rhythm</span></h1>
-    <p class="muted">Send a private link. They'll see your phase, how you might feel and how to show up for you. And it updates every day on its own. If your partner uses Underskin too, they can add you with one tap and you'll both see each other's cycle.</p>
+    <p class="muted">One private link that updates itself every day: your phase, how you might feel and how to show up for you.</p>
     <div class="seg">${[['partner', 'Partner'], ['friend', 'Friends']].map(([k, l]) => `<button class="${aud === k ? 'on' : ''}" data-action="shareAud" data-v="${k}">${l}</button>`).join('')}</div>
     <section class="card card-light">
       <div class="eyebrow dark">They will see today</div>
@@ -8776,15 +8776,17 @@ function viewShare() {
       <p class="dp-text">${SUPPORT[M.info.phase].feel}</p>
       <div class="chips mt">${sup.do.slice(0, 3).map(x => `<span class="chip static">${esc(x)}</span>`).join('')}</div>
     </section>
-    <section class="card glass">
-      <div class="stepper-row"><span>Share period dates<small>Next period countdown</small></span><span class="toggle on locked"><i></i></span></div>
+    <section class="card glass sh-hold"><div class="sh-k">What the link holds</div>
+      <div class="stepper-row"><span>Your name${state.profile.thumb ? ' and photo' : ''}<small>So they know it's you</small></span><span class="sh-tag">${icon('check', 13, 2.4)}Always</span></div>
+      <div class="stepper-row"><span>Share period dates<small>Next period countdown</small></span><span class="sh-tag">${icon('check', 13, 2.4)}Always</span></div>
       <div class="stepper-row"><span>Share fertile window<small>Egg release and fertile days</small></span><button class="toggle ${state.profile.noFertile ? '' : 'on'}" data-action="shareFertile" role="switch" aria-checked="${!state.profile.noFertile}" aria-label="Share fertile window"><i></i></button></div>
       <div class="stepper-row"><span>Share today's mood<small>Updates on its own as you log it</small></span><button class="toggle ${state.profile.noMood ? '' : 'on'}" data-action="shareMood" role="switch" aria-checked="${!state.profile.noMood}" aria-label="Share today's mood"><i></i></button></div>
-      <div class="stepper-row"><span>Symptoms & notes<small>Always private</small></span><span class="toggle locked"><i></i></span></div>
+      <div class="stepper-row"><span>Symptoms & notes<small>Never in the link</small></span><span class="sh-tag pv">${icon('lock', 13, 2.2)}Private</span></div>
     </section>
-    <button class="btn btn-light btn-block" data-action="shareSend">${icon('heart', 18)} Share link with ${aud === 'partner' ? 'my partner' : 'friends'}</button>
-    <button class="btn btn-ghost btn-block" data-action="sharePreview">Preview what they'll see</button>
-    <p class="fine center">The link holds your name and cycle estimates, plus your photo and star sign if you added them. Today's mood if you log one, never symptoms or notes. Anyone with the link can view it. Share it with people you trust.</p>
+    <button class="btn btn-light btn-block sh-go" data-action="shareSend">${icon('heart', 18)} Share link with ${aud === 'partner' ? 'my partner' : 'friends'}</button>
+    <button class="btn btn-ghost btn-block sh-pv" data-action="sharePreview">Preview what they'll see</button>
+    <p class="sh-both">${icon('users', 16)}<span>${aud === 'partner' ? 'Your partner uses Underskin too? They add you in one tap and you both see each other’s cycle.' : 'Friends on Underskin add you in one tap and you both see each other’s cycle.'}</span></p>
+    <p class="fine center">Anyone with the link can view it, so share it with people you trust.</p>
   </div>`;
 }
 // Little drawings for gift ideas, picked by what the gift is.

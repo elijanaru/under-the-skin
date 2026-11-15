@@ -14988,3 +14988,21 @@ html .pf2 .pfc .chip { border-radius: 14px 16px 13px 17px; }
 html .pf2 .pfc .chip:nth-child(3n+1) { transform: rotate(-1.2deg); } html .pf2 .pfc .chip:nth-child(3n+2) { transform: rotate(1deg); }
 @media (prefers-reduced-motion: reduce) { .pf3-ring path, .pf3-name path { animation: none; stroke-dashoffset: 0; } .pf3-heart { animation: none; } }
 html .pf3 .profile-head { display: flex !important; flex-direction: column; align-items: center; }
+
+/* Switches: one style across the app (Share, Reminders, Letters, Profile): a soft ink track when off, her phase moss when on, white knob.
+   The old lime track with a dark knob stayed on Share and Reminders while Profile had already moved on. */
+html .toggle { background: rgba(32,48,26,.16); box-shadow: inset 0 1px 2px rgba(32,48,26,.12); }
+html .toggle i { background: #fff; box-shadow: 0 2px 5px rgba(32,48,26,.25); }
+html .toggle.on { background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(40% * var(--hs)) 36%); }
+html .toggle.on i { background: #fff; }
+/* Partner mode › Share: what the link holds as rows with Always / Private tags instead of greyed-out switches */
+.sh-hold .sh-k { margin: 0 0 4px; font-size: 12.5px; font-weight: 500; color: rgba(32,48,26,.6); }
+.sh-tag { flex: none; display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px 5px 9px; border-radius: 99px; font-size: 12.5px; font-weight: 600;
+  background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(40% * var(--hs)) 94%); color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(40% * var(--hs)) 30%); }
+.sh-tag.pv { background: #f3eef0; color: #7a4a5c; }
+.sh-both { display: flex; align-items: flex-start; gap: 10px; margin: 4px 0 10px; padding: 12px 14px; border-radius: 18px; background: rgba(255,255,255,.62);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.75); font-size: 13.5px; line-height: 1.4; color: #20301a; }
+.sh-both svg { flex: none; margin-top: 1px; color: #6c823e; }
+html .btn.sh-go { background: #20301a; color: #fff; border: 0; box-shadow: 0 10px 24px -12px rgba(32,48,26,.6); }
+html .btn.sh-go svg { color: #efd4dd; }
+html .btn.sh-pv { margin-top: 10px; background: rgba(255,255,255,.7); color: #20301a; border: 1px solid rgba(255,255,255,.9); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
