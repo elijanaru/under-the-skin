@@ -1478,6 +1478,8 @@ function viewOnboarding() {
 const PREG = [['never', '🌱', 'Never', 'Not yet, or not for me'], ['kids', '👶', 'Yes, I have children', 'One or more births'],
   ['loss', '🌷', 'Yes, without a birth', 'A miscarriage, an ectopic or an ended pregnancy'], ['skip', 'lock', 'I’d rather not say', 'Skip this']];
 const PP_WHEN = [['6', 'Under 6 months'], ['12', '6 to 12 months'], ['old', 'Over a year ago']];
+const PP_TILE = [['6', '0-6', 'months ago'], ['12', '6-12', 'months ago'], ['old', '1+', 'year ago']];
+const LOSS_TILE = [['recent', '🌱', 'In the last 3 months'], ['old', '🍂', 'Longer ago']];
 // months since her last birth (estimated from what she picked and when), or null
 function ppMonths(p = state && state.profile) {
   if (!p || p.preg !== 'kids' || !p.ppAt) return null;
@@ -1490,12 +1492,17 @@ function pregPicker(src, scope) {
   const what = v === 'kids' ? (src.bf || when === '6' || when === '12' ? 'Your predictions stay gentle while your cycle settles, and you get recovery and pelvic floor tips.' : 'Pelvic floor care becomes part of your plan.')
     : v === 'loss' ? (lw === 'recent' ? 'For the next weeks the app turns gentle: no fertile-window pressure, care for your body and your feelings. You can switch it off any time.' : 'We keep it in mind gently, especially when you plan a pregnancy.') : '';
   return `<div class="pg-list">${PREG.map(([k, e, t, sm]) => `<button class="pg-o ${v === k ? 'on' : ''}" data-action="pregSet" data-f="preg" data-v="${k}" data-scope="${scope}" aria-pressed="${v === k}"><span class="pg-e">${e === 'lock' ? GX_IC.lock : e}</span><span class="pg-t"><b>${t}</b><small>${sm}</small></span><i>${icon('check', 14, 2.6)}</i></button>`).join('')}</div>
-    ${v === 'kids' ? `<div class="pg-more"><small>Your last birth</small><div class="chips">${PP_WHEN.map(([k, t]) => `<button class="chip ${when === k ? 'on' : ''}" data-action="pregSet" data-f="when" data-v="${k}" data-scope="${scope}">${t}</button>`).join('')}</div>
-      <button class="chip pg-bf ${src.bf ? 'on' : ''}" data-action="pregSet" data-f="bf" data-v="1" data-scope="${scope}">${src.bf ? icon('check', 13, 2.6) : '🍼'} I’m breastfeeding</button></div>` : ''}
-    ${v === 'loss' ? `<div class="pg-more pg-loss"><p class="pg-sorry">We’re so sorry. Thank you for trusting us. This stays private.</p>
-      <small>When?</small><div class="chips">${LOSS_WHEN.map(([k, t]) => `<button class="chip ${lw === k ? 'on' : ''}" data-action="pregSet" data-f="lwhen" data-v="${k}" data-scope="${scope}">${t}</button>`).join('')}</div>
+    ${v === 'kids' ? `<div class="pg-box pg-kids">
+      <div class="pg-bh"><span class="pg-bi" aria-hidden="true">👶</span><span><b>When was your last birth?</b><small>So we know how gentle your plan should be</small></span></div>
+      <div class="pg-tiles">${PP_TILE.map(([k, n, u]) => `<button class="pg-tile ${when === k ? 'on' : ''}" data-action="pregSet" data-f="when" data-v="${k}" data-scope="${scope}" aria-pressed="${when === k}"><b class="dotnum">${n}</b><small>${u}</small></button>`).join('')}</div>
+      <button class="pg-sw ${src.bf ? 'on' : ''}" data-action="pregSet" data-f="bf" data-v="1" data-scope="${scope}" role="switch" aria-checked="${!!src.bf}"><span class="pg-bi sm" aria-hidden="true">🍼</span><span><b>I’m breastfeeding</b><small>Your cycle may pause or be irregular</small></span><i></i></button></div>` : ''}
+    ${v === 'loss' ? `<div class="pg-box pg-loss2">
+      <div class="pg-hug"><span aria-hidden="true">🌷</span><div><b>We’re so sorry.</b><small>Thank you for trusting us.</small><em>${GX_IC.lock} This stays private</em></div></div>
+      <small class="pg-q">When was it?</small>
+      <div class="pg-two">${LOSS_TILE.map(([k, e, t]) => `<button class="pg-tile wide ${lw === k ? 'on' : ''}" data-action="pregSet" data-f="lwhen" data-v="${k}" data-scope="${scope}" aria-pressed="${lw === k}"><span aria-hidden="true">${e}</span><b>${t}</b></button>`).join('')}</div>
       ${lw === 'recent' ? `<label class="pg-date"><span>The day, if you like</span><input class="field" type="date" data-input="${scope}.lossAt" value="${src.lossAt || ''}" max="${todayISO()}"></label>` : ''}
-      <small>How many times?</small><div class="chips">${LOSS_N.map(([k, t]) => `<button class="chip ${src.lossN === k ? 'on' : ''}" data-action="pregSet" data-f="ln" data-v="${k}" data-scope="${scope}">${t}</button>`).join('')}</div>
+      <small class="pg-q">How many times?</small>
+      <div class="pg-dots">${LOSS_N.filter(x => x[0] !== 'skip').map(([k], i) => `<button class="pg-dot ${src.lossN === k ? 'on' : ''}" data-action="pregSet" data-f="ln" data-v="${k}" data-scope="${scope}" aria-pressed="${src.lossN === k}" aria-label="${LOSS_N[i][1]}"><b class="dotnum">${k === '3' ? '3+' : k}</b></button>`).join('')}<button class="pg-dot skip ${src.lossN === 'skip' ? 'on' : ''}" data-action="pregSet" data-f="ln" data-v="skip" data-scope="${scope}" aria-pressed="${src.lossN === 'skip'}">Rather not say</button></div>
       ${scope === 'profile' ? `<button class="pg-go" data-action="nav" data-to="loss"><span><b>Your recovery guide</b><small>${lossCare(src) ? 'Recovery mode is on' : 'Body, feelings and trying again'}</small></span>${icon('chevR', 15)}</button>` : ''}</div>` : ''}
     ${what ? `<p class="pg-what">${icon('heart', 14)} ${what}</p>` : ''}`;
 }
@@ -9112,8 +9119,8 @@ function viewWith(q) {
 `
     : `${sectionTitle('How to be a good friend')}<section class="pv2-card pv2-ds"><div class="pv2-dcol"><b class="y">${icon('check', 13, 2.6)} Do</b>${sup.do.map(x => `<p>${esc(x)}</p>`).join('')}</div></section>
     <section class="pv2-card pv2-say"><small>Plan idea</small><p>${esc(sup.plan)}</p></section>`}
-    ${sectionTitle('Her hormones')}
-    <section class="card glass chart-card">${cycleChart(info, { id: 'with', compact: true, who: 'Her' })}</section>
+    ${him ? '' : `${sectionTitle('Her hormones')}
+    <section class="card glass chart-card">${cycleChart(info, { id: 'with', compact: true, who: 'Her' })}</section>`}
     ${sectionTitle('Her next two weeks')}
     ${ptCalendar(snap, !!snap.f)}
     <p class="fine center">Estimates based on her cycle. Every body is different, so ask her too.</p>

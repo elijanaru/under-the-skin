@@ -14073,3 +14073,44 @@ html .view .bwx-hint { display: inline-flex; align-items: center; gap: 4px; widt
 .rd6-move small { font-size: 12px; font-weight: 600; color: #cfe0b4; }
 .rd6-move p { margin: 4px 0 0; font: 600 18px/1.3 Outfit, sans-serif; letter-spacing: -.01em; }
 .rd6-move em { display: block; margin-top: 4px; font-style: normal; font-size: 13px; line-height: 1.4; color: rgba(255,255,255,.75); }
+
+/* pregnancy follow-ups: last birth as three number tiles + a breastfeeding switch; loss as a soft hug card with emoji tiles and number dots */
+.pg-box { margin-top: 14px; padding: 16px 14px 14px; border-radius: 26px; background: #fff; box-shadow: 0 14px 30px -22px rgba(32,48,26,.45); color: #20301a; }
+.pg-bh { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.pg-bh b, .pg-sw b { display: block; font-size: 15.5px; font-weight: 600; letter-spacing: -.01em; }
+.pg-bh small, .pg-sw small { display: block; margin-top: 2px; font-size: 12.5px; color: #56624a; }
+.pg-bi { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #fbeef2; font-size: 22px; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
+.pg-bi.sm { width: 38px; height: 38px; font-size: 19px; background: #f3f5ee; }
+.pg-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.pg-tile { display: grid; justify-items: center; text-align: center; gap: 2px; padding: 14px 6px 12px; border-radius: 20px; border: 1.5px solid rgba(32,48,26,.08); background: #faf7f5; color: #20301a; font-family: Outfit, sans-serif; cursor: pointer; transition: background .3s, border-color .3s, transform .2s; }
+.pg-tile:active { transform: scale(.97); }
+.pg-tile b.dotnum { font-size: 24px; line-height: 1.1; }
+.pg-tile small { font-size: 12px; color: #56624a; }
+.pg-tile.on { background: #20301a; border-color: #20301a; color: #fff; }
+.pg-tile.on small { color: rgba(255,255,255,.75); }
+.pg-sw { display: grid; grid-template-columns: 38px 1fr 46px; align-items: center; gap: 12px; width: 100%; margin-top: 10px; padding: 10px 12px 10px 10px; border-radius: 20px; border: 1.5px solid rgba(32,48,26,.08); background: #fff; text-align: left; color: #20301a; font-family: Outfit, sans-serif; cursor: pointer; }
+.pg-sw b { font-size: 14.5px; }
+.pg-sw > i { position: relative; width: 46px; height: 28px; border-radius: 99px; background: #e4e6de; transition: background .3s; }
+.pg-sw > i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; box-shadow: 0 2px 5px rgba(32,48,26,.25); transition: transform .3s cubic-bezier(.3,1.4,.5,1); }
+.pg-sw.on > i { background: #6c823e; }
+.pg-sw.on > i::after { transform: translateX(18px); }
+.pg-hug { display: flex; align-items: center; gap: 12px; padding: 14px; margin: -4px -2px 14px; border-radius: 20px; background: linear-gradient(135deg, #fbeef2, #f6e4ea); }
+.pg-hug > span { flex: none; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: #fff; font-size: 22px; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; box-shadow: 0 6px 14px -8px rgba(160,80,110,.45); }
+.pg-hug b { display: block; font-size: 16px; font-weight: 600; }
+.pg-hug small { display: block; margin-top: 2px; font-size: 13px; color: #56624a; }
+.pg-hug em { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; padding: 3px 9px 3px 7px; border-radius: 99px; background: rgba(255,255,255,.75); font-style: normal; font-size: 11.5px; font-weight: 500; color: #304023; }
+.pg-hug em svg { width: 13px; height: 13px; }
+.pg-q { display: block; margin: 0 2px 8px; font-size: 12.5px; font-weight: 600; color: #56624a; }
+.pg-two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.pg-tile.wide { grid-auto-flow: row; padding: 12px 10px; gap: 4px; }
+.pg-tile.wide span { font-size: 22px; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
+.pg-tile.wide b { font-size: 13.5px; font-weight: 500; }
+.pg-loss2 .pg-date { margin: -6px 2px 14px; }
+.pg-dots { display: flex; align-items: center; gap: 8px; }
+.pg-dot { flex: none; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; border: 1.5px solid rgba(32,48,26,.08); background: #faf7f5; color: #20301a; cursor: pointer; transition: background .3s, transform .2s; }
+.pg-dot b.dotnum { font-size: 17px; }
+.pg-dot.skip { flex: 1; width: auto; border-radius: 99px; font: 400 13px Outfit, sans-serif; }
+.pg-dot:active { transform: scale(.95); }
+.pg-dot.on { background: #20301a; border-color: #20301a; color: #fff; }
+.pg-prof .pg-box { box-shadow: none; background: #f6f3ef; } .pg-prof .pg-tile, .pg-prof .pg-dot { background: #fff; }
+.pg-loss2 .pg-go { margin-top: 14px; }
