@@ -8122,9 +8122,15 @@ function hsChapter(C, c) {
   const [ic, t, html] = C[c];
   return `<div class="hs-ch"><header><span class="hs-ic">${icon(ic, 18, 2)}</span><h3>${t}</h3><small>${c + 1} of ${C.length}</small></header>${html}</div>`;
 }
+// One page with everything (16 Nov 2026, her call): the note to meet it, then How to take it, Buy the best, a quick test and
+// the glow tip side by side, the study and the cautions, each a small card with its own icon; Plant it back closes.
 function herbSheet(x, i) {
-  const b = HERB_BED[x.n] || [x.n.toLowerCase().replace(/\W+/g, '-'), x.n, '', []], C = herbChapters(x, b), real = HERB_REAL[b[0]];
-  return `<div class="hs" data-i="${i}" data-c="0">
+  const b = HERB_BED[x.n] || [x.n.toLowerCase().replace(/\W+/g, '-'), x.n, '', []], real = HERB_REAL[b[0]];
+  const H = HERB_SPEC[x.n] || {}, Y = HERB_BUY[b[0]] || {}, S = H.study, cares = [x.warn, H.care].filter(Boolean);
+  const head = (ic, t) => `<h3><span class="hs-ic">${icon(ic, 16, 2)}</span>${t}</h3>`;
+  const row = (ic, k, v) => `<div class="hs-row"><span>${icon(ic, 17, 1.9)}</span><div><b>${k}</b><small>${v}</small></div></div>`;
+  const duo = [Y.test && ['flask', 'A quick test', Y.test, 't'], Y.glow && ['spark', 'For your glow', Y.glow, 'g']].filter(Boolean);
+  return `<div class="hs hs1" data-i="${i}">
     <div class="hs-hero">
       <svg class="o3-dood" viewBox="0 0 340 250" aria-hidden="true">${o3Spark('#f6c6d4', 46, 52, 0)}${o3Spark('#f1d58a', 296, 40, 1.1)}${o3Spark('#c9d6a8', 300, 200, 2)}${o3Spark('#f6c6d4', 34, 190, 1.5)}</svg>
       <span class="tsh-glow" aria-hidden="true"></span>
@@ -8133,10 +8139,14 @@ function herbSheet(x, i) {
       ${real ? `<figure class="hs-pol"><img src="images/sf/${real}.webp" alt=""><figcaption>in your kitchen</figcaption></figure>` : ''}
     </div>
     <header class="hs-h"><small>${b[2] ? `<span class="hs-zh">${b[2]}</span>` : ''}${x.sub || ''}</small><h2>${b[1]}</h2></header>
-    <section class="o3-note hs-note">${hsChapter(C, 0)}</section>
-    <nav class="hs-nav"><button class="hs-back" data-action="hsGo" data-d="-1" aria-label="Back" disabled>${icon('chevL', 18, 2)}</button>
-      <span class="hs-dots">${C.map((_, k) => `<button data-action="hsGo" data-to="${k}" class="${k ? '' : 'on'}" aria-label="Chapter ${k + 1}"></button>`).join('')}</span>
-      <button class="hs-next" data-action="hsGo" data-d="1">Next ${icon('chevL', 15, 2.2)}</button></nav>
+    <section class="o3-note hs-note"><p class="hs-nat ${x.nat === 'warm' ? 'w' : 'n'}"><i></i>${x.nat === 'warm' ? 'Warming' : 'Neutral'} in Chinese medicine</p>
+      <p class="o3-lead">${x.why}</p><div class="hs-good">${(b[3] || []).map((t, k) => `<span style="--k:${k}">${t}</span>`).join('')}</div></section>
+    <section class="hs-card">${head('cup', 'How to take it')}<div class="hs-rows">${H.dose ? row('bowl', 'How much', H.dose) : ''}${row('cup', 'How', x.how)}</div></section>
+    ${Y.ok ? `<section class="hs-card">${head('search', 'Buy the best')}<div class="hb-bg">${[['ok', 'check', 'Look for'], ['no', 'close', 'Skip'], ['at', 'pin', 'Where'], ['kp', 'clock', 'Keeps']].map(([k, ic, t]) => `<div class="hb-b ${k}"><i>${icon(ic, 13, 2.2)}</i><b>${t}</b><span>${Y[k]}</span></div>`).join('')}</div></section>` : ''}
+    ${duo.length ? `<div class="hs-duo ${duo.length === 1 ? 'one' : ''}">${duo.map(([ic, t, v, c]) => `<section class="hs-mini ${c}">${head(ic, t)}<p>${v}</p></section>`).join('')}</div>` : ''}
+    ${S ? `<section class="hs-card hs-study">${head('book', 'What a study found')}<p>${S[0]}</p><p class="hs-cite">${S[1]}</p></section>` : ''}
+    ${cares.length ? `<div class="tsh-warn hs-warn"><i>${icon('heart', 13, 2.2)}</i><span><b>Before you try</b> ${cares.join(' ')}</span></div>` : ''}
+    <button class="hs-done" data-action="wsClose">${icon('leaf', 16, 2)} Plant it back</button>
   </div>`;
 }
 function hsGo(to) {
@@ -10164,9 +10174,6 @@ const actions = {
       const sh = wsOpen(herbSheet(x, i), 'ws-herb'); el.classList.remove('pull'); if (!sh) return;
       el.classList.add('out');
       sh._onClose = () => { el.classList.remove('out'); el.classList.add('back'); setTimeout(() => el.classList.remove('back'), 1000); };
-      const note = sh.querySelector('.hs-note'); let x0 = null;
-      note.addEventListener('pointerdown', e => { x0 = e.clientX; });
-      note.addEventListener('pointerup', e => { if (x0 == null) return; const dx = e.clientX - x0; x0 = null; if (Math.abs(dx) > 50) hsGo(+sh.querySelector('.hs').dataset.c + (dx < 0 ? 1 : -1)); });
     };
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return go();
     el.classList.add('pull'); setTimeout(go, 760);

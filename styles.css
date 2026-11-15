@@ -15285,3 +15285,33 @@ html .drc .drt-f { text-transform: none !important; letter-spacing: 0 !important
 .csl-c small span { display: block; font-size: 11.5px; }
 /* Superfoods: the dandelion bunch read bigger than its neighbours */
 html .sfc-i img[src*="sf/dandelion"] { transform: scale(.8); transform-origin: 50% 60%; }
+
+/* Herb sheet on one page (16 Nov 2026): every chapter stacked as small cards, no Next */
+.hs1 { gap: 12px; padding-bottom: 6px; }
+.hs1 .hs-note { margin-top: 18px; min-height: 0; padding: 24px 18px 18px; }
+.hs1 .hs-nat { margin-bottom: 6px; }
+.hs1 .hs-note .o3-lead { margin: 0 !important; font-size: 16px !important; }
+.hs-card, .hs-mini { text-align: left; padding: 14px 14px 14px; border-radius: 22px; background: rgba(255,255,255,.82);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.9), 0 10px 22px -16px rgba(60,30,40,.35); animation: o3In .8s cubic-bezier(.22,1,.36,1) both; }
+.hs1 > :nth-child(4) { animation-delay: .15s; } .hs1 > :nth-child(5) { animation-delay: .22s; } .hs1 > :nth-child(6) { animation-delay: .29s; } .hs1 > :nth-child(7) { animation-delay: .36s; }
+.hs1 h3 { display: flex; align-items: center; gap: 9px; margin: 0 0 10px; font: 600 16px/1.2 var(--font); letter-spacing: -.01em; color: #20301a; text-shadow: none; }
+.hs1 h3 .hs-ic { width: 30px; height: 30px; border-width: 1.6px; }
+.hs1 .hs-rows { gap: 8px; }
+.hs1 .hs-row { padding: 10px 12px; }
+.hs1 .hs-row > span { width: 30px; height: 30px; }
+.hs1 .hb-bg { gap: 7px; }
+.hs-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.hs-duo.one { grid-template-columns: 1fr; }
+.hs-mini { padding: 13px 13px 14px; }
+.hs-mini h3 { flex-direction: column; align-items: flex-start; gap: 7px; margin-bottom: 6px; font-size: 14.5px; }
+.hs-mini p, .hs-study > p:not(.hs-cite) { margin: 0; font-size: 13.5px; line-height: 1.45; color: rgba(32,48,26,.82); }
+.hs-mini.t { background: #f3f6ea; } .hs-mini.g { background: #fdf0f3; }
+.hs-mini.g .hs-ic { color: #b04f6c; border-color: #b04f6c; }
+.hs-study p { font-size: 14px !important; }
+.hs1 .hs-cite { margin: 8px 0 0; }
+.hs-warn { margin: 0; transform: none; }
+.hs-warn span b { color: #20301a; font-weight: 600; }
+.hs-done { align-self: center; display: inline-flex; align-items: center; gap: 8px; margin: 6px 0 2px; padding: 14px 24px; border: 0; border-radius: 999px; background: #20301a; color: #fff;
+  font: 600 15px/1 var(--font); cursor: pointer; box-shadow: 0 10px 20px -12px rgba(32,48,26,.6); }
+.hs-done:active { transform: scale(.97); }
+@media (prefers-reduced-motion: reduce) { .hs-card, .hs-mini { animation: none; } }
