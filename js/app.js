@@ -1511,7 +1511,7 @@ function teaSheet(ph, i) {
   const [n, f] = PHASE_TEAS[ph][i], [why, amt, water, steep, when, warn] = PHASE_TEA_SPEC[ph][i], good = TEA4_GOOD[ph][i];
   const steps = [['bowl', 'You need', amt], ['thermo', 'Water', water], ['clock', 'Steep', steep], ['sun', 'When', when]];
   return `<div class="tsh" style="--c:${PH_HEX[ph]}">
-    <header class="tsh-h"><small>a cup for ${f.toLowerCase()}</small>
+    <header class="tsh-h"><small>made for ${f.toLowerCase()}</small>
       <h2>${n}<svg viewBox="0 0 200 18" preserveAspectRatio="none" aria-hidden="true"><path d="M4 11 C 40 5, 72 14, 106 8 S 170 6, 196 10"/></svg></h2></header>
     <div class="tsh-hero">
       <svg class="o3-dood" viewBox="0 0 340 250" aria-hidden="true">${o3Spark('#f6c6d4', 40, 46, 0)}${o3Spark('#f1d58a', 300, 34, 1.1)}${o3Spark('#c9d6a8', 312, 212, 2)}${o3Spark('#f6c6d4', 28, 196, 1.5)}
@@ -4189,7 +4189,7 @@ function dueReminders() {
   if (r.calm && !(state.breathLog || {})[today]) {
     const st = stressToday(info);
     if (st === 2) out.push({ id: 'calm-now', icon: 'leaf', title: 'Stressed? Breathe with me for 3 minutes', body: 'You logged stress today. Breathing out longer than in calms your nervous system within minutes.', to: 'breathe/stress' });
-    else if (new Date().getHours() >= r.calmHour) out.push({ id: 'calm-daily', icon: 'leaf', title: st ? 'A high-stress day in your cycle' : 'Your 10 minutes of calm', body: st ? 'Your body is under more strain today. Ten slow minutes now lowers cortisol before bed.' : 'Sit, breathe slowly and let the day settle. Ten minutes is enough.', to: 'breathe/stress' });
+    else if (st && new Date().getHours() >= r.calmHour) out.push({ id: 'calm-daily', icon: 'leaf', title: st ? 'A high-stress day in your cycle' : 'Your 10 minutes of calm', body: st ? 'Your body is under more strain today. Ten slow minutes now lowers cortisol before bed.' : 'Sit, breathe slowly and let the day settle. Ten minutes is enough.', to: 'breathe/stress' });
   }
   if (r.checkin && !state.logs[today] && new Date().getHours() >= r.checkinHour) {
     out.push({ id: 'checkin', icon: 'heart', title: 'How are you feeling today?', body: 'A 10-second check-in helps Underskin learn your patterns.', to: 'log' });
@@ -5758,22 +5758,22 @@ const TEA_WIN = [['flow-start', 'Period · first days'], ['flow-end', 'End of pe
 // Four cycle teas as one overhead photo of glass mugs; the recipe is written on top of each tea.
 // The four best teas for the phase she is in, as one overhead photo of four glass cups, what each is for written on the tea.
 const PHASE_TEAS = {
-  menstrual: [['Ginger & cinnamon', 'Cramps', ['fresh ginger', 'cinnamon', 'orange'], 'Simmer 10 min. 2 to 3 cups a day.'],
-    ['Red dates & goji', 'Low iron', ['red dates', 'goji berries', 'ginger'], 'Simmer 5 dates and 1 tbsp goji for 15 min.'],
-    ['Raspberry leaf', 'Womb care', ['raspberry leaf', 'a little honey'], '1 tbsp, covered, 10 min. 1 to 2 cups. Not in pregnancy without your midwife.'],
-    ['Chamomile & fennel', 'Bloating', ['chamomile', 'fennel seeds'], '1 tbsp chamomile and ½ tsp fennel, covered, 10 min.']],
+  menstrual: [['Ginger & cinnamon', 'Softer cramps', ['fresh ginger', 'cinnamon', 'orange'], 'Simmer 10 min. 2 to 3 cups a day.'],
+    ['Red dates & goji', 'Iron refill', ['red dates', 'goji berries', 'ginger'], 'Simmer 5 dates and 1 tbsp goji for 15 min.'],
+    ['Raspberry leaf', 'Happy womb', ['raspberry leaf', 'a little honey'], '1 tbsp, covered, 10 min. 1 to 2 cups. Not in pregnancy without your midwife.'],
+    ['Chamomile & fennel', 'Bye-bye bloat', ['chamomile', 'fennel seeds'], '1 tbsp chamomile and ½ tsp fennel, covered, 10 min.']],
   follicular: [['Nettle & lemon', 'Iron refill', ['nettle leaf', 'lemon'], '2 tsp dried leaf, 10 min, between meals.'],
-    ['Green tea & jasmine', 'Focus', ['green tea', 'jasmine'], '80 °C water, 2 to 3 min, before noon.'],
-    ['Dandelion root', 'Liver & skin', ['roasted root', 'fresh ginger'], 'Simmer 1 tbsp for 10 min. Ask first if you take water tablets.'],
+    ['Green tea & jasmine', 'Laser focus', ['green tea', 'jasmine'], '80 °C water, 2 to 3 min, before noon.'],
+    ['Dandelion root', 'Glass skin', ['roasted root', 'fresh ginger'], 'Simmer 1 tbsp for 10 min. Ask first if you take water tablets.'],
     ['Mint & lemon', 'Fresh energy', ['fresh mint', 'lemon'], 'A handful of leaves, 5 min. Hot or cool.']],
-  ovulatory: [['Hibiscus & rose', 'Heat & glow', ['hibiscus', 'rose petals'], '1 tbsp, 5 min. Warm or cool. Ask first if you take blood pressure pills.'],
-    ['Matcha', 'Steady energy', ['matcha', 'warm milk or water'], '1 tsp whisked at 80 °C, before noon.'],
+  ovulatory: [['Hibiscus & rose', 'Glow up', ['hibiscus', 'rose petals'], '1 tbsp, 5 min. Warm or cool. Ask first if you take blood pressure pills.'],
+    ['Matcha', 'All-day energy', ['matcha', 'warm milk or water'], '1 tsp whisked at 80 °C, before noon.'],
     ['Spearmint & cucumber', 'Clear skin', ['spearmint', 'cucumber'], '1 tbsp leaves, 5 to 7 min, twice a day.'],
-    ['Lemongrass & lime', 'Light belly', ['lemongrass', 'lime'], '2 bruised stalks, 10 min.']],
-  luteal: [['Chamomile & lavender', 'Sleep', ['chamomile', 'lavender'], '1 tbsp and ½ tsp lavender, covered, 10 min, in the evening.'],
-    ['Lemon balm', 'Anxiety', ['lemon balm', 'a little honey'], '1 tbsp, covered, 10 min, in the afternoon.'],
-    ['Rooibos & vanilla', 'Cravings', ['rooibos', 'vanilla', 'orange peel'], '1 tbsp, 5 to 7 min. No caffeine, any time.'],
-    ['Ginger & fennel', 'Bloating', ['fresh ginger', 'fennel seeds'], '3 slices and ½ tsp seeds, 10 min, after meals.']],
+    ['Lemongrass & lime', 'Happy gut', ['lemongrass', 'lime'], '2 bruised stalks, 10 min.']],
+  luteal: [['Chamomile & lavender', 'Deep sleep', ['chamomile', 'lavender'], '1 tbsp and ½ tsp lavender, covered, 10 min, in the evening.'],
+    ['Lemon balm', 'Calm mind', ['lemon balm', 'a little honey'], '1 tbsp, covered, 10 min, in the afternoon.'],
+    ['Rooibos & vanilla', 'No sugar cravings', ['rooibos', 'vanilla', 'orange peel'], '1 tbsp, 5 to 7 min. No caffeine, any time.'],
+    ['Ginger & fennel', 'Bye-bye bloat', ['fresh ginger', 'fennel seeds'], '3 slices and ½ tsp seeds, 10 min, after meals.']],
 };
 // Spec for each of the four phase teas: [why, amount, water, steep, when, caution].
 const PHASE_TEA_SPEC = {
@@ -5796,7 +5796,7 @@ const PHASE_TEA_SPEC = {
 };
 function t4Detail(ph, i) {
   const [n, f] = PHASE_TEAS[ph][i], [why, amt, water, steep, when, warn] = PHASE_TEA_SPEC[ph][i];
-  return `<div class="t4-dh"><img src="images/tea4/${ph}-${i}.webp" alt=""><div><small>For ${f.toLowerCase()}</small><b>${n}</b></div></div>
+  return `<div class="t4-dh"><img src="images/tea4/${ph}-${i}.webp" alt=""><div><small>Made for ${f.toLowerCase()}</small><b>${n}</b></div></div>
     <p class="t4-why">${why}</p>
     <dl class="t4-spec">${[['bowl', 'You need', amt], ['thermo', 'Water', water], ['clock', 'Steep', steep], ['sun', 'When', when]].map(([ic, k, v]) => `<div><dt>${icon(ic, 15)}${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
     ${warn ? `<p class="t4-warn">${icon('heart', 13)} ${warn}</p>` : ''}`;
@@ -5804,7 +5804,7 @@ function t4Detail(ph, i) {
 function cycleTeas(info) {
   const ph = (info && info.phase) || 'follicular', T = PHASE_TEAS[ph], sel = -1;
   return `<section class="t4" data-ph="${ph}" style="--c:${PH_HEX[ph]}">
-    <header class="t4-h"><small>The ultimate tea guide</small><h2>Four teas for your ${PHASES[ph].name.toLowerCase()} phase.</h2><p>Chosen for what your body needs right now. Tap one to open it.</p></header>
+    <header class="t4-h"><small>${PHASES[ph].name} phase${info && info.cd ? ` · day ${info.cd}` : ''}</small><h2>Your 4 teas right now</h2><p>Each one does one job for your body this week. Tap a cup to see how to make it.</p></header>
     <div class="t4-g">${T.map(([n, f, ing], i) => `<button class="t4-t" data-action="ctPick" data-i="${i}" aria-haspopup="dialog">
       <img src="images/tea4/${ph}-${i}.webp" alt="" loading="lazy" decoding="async"><small>${f}</small><b>${n}</b><span>${icon('clock', 12)} ${PHASE_TEA_SPEC[ph][i][3]}</span></button>`).join('')}</div>
   </section>`;
@@ -5872,21 +5872,15 @@ function brewGrid(info) {
     <defs><linearGradient id="bgh"><stop offset="0" stop-color="#9cc0d6"/><stop offset=".55" stop-color="#e9b45a"/><stop offset="1" stop-color="#d9603f"/></linearGradient></defs>
     ${[[75.5, 'Green'], [144, 'Herbs']].map(([x, l]) => `<circle cx="${x - (x > 140 ? 3 : 0)}" cy="23" r="7" fill="#fff" stroke="${ink}" stroke-width="2"/><text x="${x - (x > 140 ? 3 : 0)}" y="44" text-anchor="${x > 140 ? 'end' : 'middle'}" class="bg-lb">${l}</text>`).join('')}
     <text x="6" y="11" class="bg-lb">60°</text><text x="144" y="11" text-anchor="end" class="bg-lb">100°</text></svg>`;
-  const cover = `<svg viewBox="0 0 150 46" aria-hidden="true"><ellipse cx="75" cy="12" rx="34" ry="5" fill="${ink}"/><path d="M47 16h56l-5 22a6 6 0 0 1-6 5H58a6 6 0 0 1-6-5z" fill="#fff" stroke="${ink}" stroke-width="2"/>
-    <path d="M103 22h5a6 6 0 0 1 0 12h-6" fill="none" stroke="${ink}" stroke-width="2"/><path d="M62 33c0-6 6-6 6-12M75 33c0-6 6-6 6-12" fill="none" stroke="${pc}" stroke-width="2.2" stroke-linecap="round"/>
-    <path d="M85 19l-4 2 4 2" fill="none" stroke="${pc}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   const x = m => 6 + m / 15 * 138;
   const steep = `<svg viewBox="0 0 150 46" aria-hidden="true"><line x1="6" y1="30" x2="144" y2="30" stroke="${mute}" stroke-width="2"/>${[0, 5, 10, 15].map(m => `<line x1="${x(m)}" y1="27" x2="${x(m)}" y2="33" stroke="rgba(32,48,26,.35)" stroke-width="1.5"/><text x="${x(m)}" y="44" text-anchor="${m ? m === 15 ? 'end' : 'middle' : 'start'}" class="bg-lb">${m}</text>`).join('')}
     <rect x="${x(5)}" y="8" width="${x(10) - x(5)}" height="9" rx="4.5" fill="${pc}"/><rect x="${x(10)}" y="19" width="${x(15) - x(10)}" height="9" rx="4.5" fill="#c98a4a"/>
     <text x="${x(5) - 4}" y="16" text-anchor="end" class="bg-lb">Herbs</text><text x="${x(10) - 4}" y="27" text-anchor="end" class="bg-lb">Roots</text></svg>`;
-  const days = Array.from({ length: 9 }, (_, i) => i), dx = i => 10 + i * 16.2;
-  const warm = `<svg viewBox="0 0 150 46" aria-hidden="true"><rect x="${dx(1) - 7}" y="12" width="${dx(7) - dx(1) + 14}" height="16" rx="8" fill="#f6d9b8"/>
-    ${days.map(i => `<circle cx="${dx(i)}" cy="20" r="${i >= 4 && i <= 7 ? 5.5 : 3}" fill="${i >= 4 && i <= 7 ? '#c81e34' : i >= 1 && i <= 3 ? '#d9853f' : 'rgba(32,48,26,.25)'}"/>`).join('')}
-    <text x="${dx(1) - 6}" y="42" class="bg-lb">3 days before</text><text x="${dx(7) + 6}" y="42" text-anchor="end" class="bg-lb">period</text></svg>`;
+  const vs = (no, yes, a, b) => `<div class="bg-vs"><span class="no"><img src="${no}" alt=""><i>${O3_X}</i><small>${a}</small></span><span class="yes"><img src="${yes}" alt=""><i>${O3_TICK}</i><small>${b}</small></span></div>`;
   const T = [['Water heat', '<b class="dotnum">80</b><small>° / </small><b class="dotnum">100</b><small>°C</small>', heat, 'Green tea and matcha at 80 °C, herbs, roots and spices at a full boil.'],
-    ['Cover the cup', '<b class="bg-w">Saucer on</b>', cover, 'A saucer on top keeps the healing oils in your tea, not in the air.'],
+    ['Cover the cup', '<b class="bg-w">Saucer on</b>', vs('images/drinks/chamomile-tea.svg', 'images/drinks/cup-covered.svg', 'Open', 'Covered'), 'The good oils stay in your cup instead of floating away with the steam.'],
     ['Steep long enough', '<b class="dotnum">5</b><small>–</small><b class="dotnum">15</b><small>min</small>', steep, 'Herbs 5 to 10 minutes, roots like ginger 10 to 15.'],
-    ['Around your period', '<b class="bg-w">Hot, never iced</b>', warm, 'From 3 days before your period until bleeding ends.']];
+    ['Around your period', '<b class="bg-w">Drink it hot</b>', vs('images/drinks/iced-matcha.svg', 'images/drinks/ginger-tea.svg', 'Iced', 'Hot'), 'From 3 days before your period until it ends.']];
   return `<div class="bg4" style="--pc:${pc}">${T.map(([t, v, g, d], i) => `<div class="bg4-t" style="--i:${i}"><small class="bg4-k">${t}</small><span class="bg4-v">${v}</span>${g}<p>${d}</p></div>`).join('')}</div>`;
 }
 function viewTea() {
@@ -6701,7 +6695,7 @@ function viewHormones() {
   return `${topbar('Hormones', { back: true })}
   <div class="pad">
     <h1 class="page-h">The role of <span>your hormones</span></h1>
-    <p class="hs-sub">Hormones are messengers. Your brain and ovaries send them through your blood to tell your body what to do. Over the month they take turns, which is why your energy and mood change.</p>
+    <p class="hs-sub">Messengers from your brain and ovaries. They take turns over the month, so your energy and mood change.</p>
     ${hormoneRelay(info)}
     <section class="card glass chart-card">${cycleChart(info, { id: 'hx', compact: true })}
       <details class="sf-more hx-more"><summary>What day ${info.cd} means ${icon('chevD', 13)}</summary><p>${ph.name} phase. ${ph.hormones}</p></details></section>
@@ -6709,9 +6703,15 @@ function viewHormones() {
   </div>`;
 }
 const HS_PH = { menstrual: 'Period', follicular: 'Follicular', ovulatory: 'Ovulation', luteal: 'Luteal' };
+// Who leads when: a strip of the four phases sized to her cycle with a You pin, then one spec row per phase
+// (phase left, the hormone that leads right); her phase is open with what it means, the others open on a tap.
 function hormoneRelay(info) {
-  return `<section class="card card-light hs-relay"><div class="eyebrow dark">Who leads when</div>
-    ${PHASE_ORDER.map(k => `<div class="hs-r ${info.phase === k ? 'on' : ''}" style="--c:${PH_HEX[k]}"><i aria-hidden="true"></i><div><span>${HS_PH[k]}${info.phase === k ? '<em>You are here</em>' : ''}</span><b>${HORMONE_RELAY[k].lead}</b><p>${HORMONE_RELAY[k].t}</p></div></div>`).join('')}</section>`;
+  const L = info.L || 28, P = Math.min(info.P || 5, L - 10), ov = Math.max(P + 3, L - 14);
+  const len = { menstrual: P, follicular: Math.max(1, ov - 2 - P), ovulatory: 3, luteal: Math.max(1, L - ov - 1) };
+  const pin = Math.min(98, Math.max(2, (info.cd - .5) / L * 100));
+  return `<section class="card glass hs-relay hs-relay2"><div class="hr-k">Who leads when</div>
+    <div class="hr-strip" aria-hidden="true">${PHASE_ORDER.map(k => `<i class="${info.phase === k ? 'on' : ''}" style="flex:${len[k]};--c:${PH_HEX[k]}"></i>`).join('')}<span class="hr-pin" style="left:${pin}%"><b>Day <em class="dotnum">${info.cd}</em></b></span></div>
+    ${PHASE_ORDER.map(k => `<details class="hr-r ${info.phase === k ? 'on' : ''}" style="--c:${PH_HEX[k]}" ${info.phase === k ? 'open' : ''}><summary><i aria-hidden="true"></i><span>${HS_PH[k]}${info.phase === k ? '<em>You</em>' : ''}</span><b>${HORMONE_RELAY[k].lead}</b>${icon('chevD', 13)}</summary><p>${HORMONE_RELAY[k].t}</p></details>`).join('')}</section>`;
 }
 const hsMeter = v => `<span class="hs-m" aria-label="${['Very low', 'Low', 'Medium', 'High'][v]}">${[1, 2, 3].map(j => `<i class="${v >= j ? 'on' : ''}" style="height:${4 + j * 3}px"></i>`).join('')}</span>`;
 // The hormone itself: its skeletal formula (small molecules) or its size (protein hormones).
@@ -6996,6 +6996,7 @@ const BZ_IC = {
 };
 const bzIc = id => (BZ_IC[id] ? BZ_IC[id]() : '');
 // What each breath does: one card per practice, her phase's breath first
+const BZ_BEST = { still: ['🫧', 'A head that won’t go quiet'], sigh: ['😮‍💨', 'Calm in 30 seconds'], belly: ['🌸', 'Period cramps'], box: ['🎤', 'Before a big talk'], even: ['💗', 'A racing heart'], 478: ['🌙', 'Falling asleep'] };
 const BZ_DOES = { still: 'Notice a thought, let it go.', sigh: 'Calms you within seconds.', belly: 'Softens cramps and tension.', box: 'Steady and clear under pressure.', even: 'Heart and breath in step.', 478: 'Helps you fall asleep.' };
 const BZ_COL = { still: '#6c823e', sigh: '#5f93a8', belly: '#d9768f', box: '#6c823e', even: '#c99327', 478: '#8f79bd' };
 // three spec rows on each breath card: when it helps most, the counts of one breath, and how long a full session takes
@@ -7014,18 +7015,14 @@ function breathGuide(phase, k) {
   const FX = [['Calm', 'leaf'], ['Focus', 'spark'], ['Sleep', 'moon'], ['Cramps', 'drop']];
   return `${sectionTitle('What each breath does')}
     <p class="bwx-hint">${order.length} practices · swipe ${icon('chevR', 12)}</p>
-    <div class="bwx">${order.map(id => { const B = BREATHS[id], col = BZ_COL[id] || '#6c823e', fx = BZ_FX[id] || [];
-      return `<article class="bwx-c ${id === k ? 'on' : ''}" style="--c:${col}">
-        <div class="bwx-h"><span class="bwx-g">${bzIc(id) || B.g}</span><div><b>${B.name}</b></div>${id === mine ? '<em>For you now</em>' : ''}</div>
+    <div class="bwx">${order.map(id => { const B = BREATHS[id], col = BZ_COL[id] || '#6c823e', [e, best] = BZ_BEST[id] || ['🌿', BZ_DOES[id] || B.for];
+      // just the moving breath, its name and what it's best for; tap the card to breathe it in the player
+      return `<button class="bwx-c bwx2 ${id === k ? 'on' : ''}" style="--c:${col}" data-action="bzPhase" data-v="${id}" aria-label="${B.name}, best for ${best.toLowerCase()}. Tap to try it.">
+        ${id === mine ? '<em class="bwx-now">For you now</em>' : ''}
         <div class="bwx-art">${breathShape(B, col, true)}</div>
-        <p class="bwx-does">${BZ_DOES[id] || B.for}</p>
-        ${bwxSpec(id)}
-        <div class="bwx-tags">${FX.filter((_, i) => fx[i] === 3).map(([t, ic]) => `<span>${icon(ic, 12)} ${t}</span>`).join('')}</div>
-        ${(() => { const S = BZ_STUDY[id]; if (!S) return ''; const yr = (S[1].match(/(19|20)\d{2}/) || [''])[0], who = yr ? S[1].slice(0, S[1].indexOf(yr)).trim() : S[1], src = (S[1].match(/\(([^)]+)\)/) || [])[1] || '';
-          return `<details class="bwx-why"><summary>What studies found ${icon('chevD', 12)}</summary><div class="sgt-st">${yr ? `<b class="dotnum">${yr}</b>` : ''}<span><em>${who}</em>${S[0]}${src ? `<small>${src}</small>` : ''}</span></div></details>`; })()}
-        <div class="bwx-f">
-          <button class="bwx-go" data-action="bzPhase" data-v="${id}">${id === k ? 'In the player' : `${icon('play', 12)} Try it`}</button></div>
-      </article>`; }).join('')}</div>`;
+        <b class="bwx-n">${B.name}</b>
+        <span class="bwx-best"><small>Best for</small><span class="emo" aria-hidden="true">${e}</span> ${best}</span>
+      </button>`; }).join('')}</div>`;
 }
 // Her month as one strip with a breath for each phase: the bar shows where she is today, each tile opens that breath in the player.
 const BZ_PH_WHY = { menstrual: 'Hormones at their lowest. Warm hands, slow belly, cramps soften.', follicular: 'Energy climbs. Even counts keep a fresh, busy mind clear.',
@@ -8621,13 +8618,14 @@ function viewRecipe(id) {
     ${recMicro(r)}
     ${sectionTitle('Why it’s good for you')}
     <section class="card rn-list rn2">${r.nutrients.map(n => { const [line, to] = NUTRIENT_ROLE[n] || [''], src = nuSource(n, r);
-      return `<${to ? `button data-action="nav" data-to="nutrients/${to}"` : 'div'} class="rn">${(() => { const ph = src && src.ph && foodPhoto(src.ph, 160), e = src && ingEmo(src.name); return ph ? `<img class="rn-ph" src="${ph}" alt="" loading="lazy" decoding="async">` : e ? `<span class="rn-ic rn-emo">${emoRaw(e)}</span>` : `<span class="rn-ic">${icon('leaf', 17)}</span>`; })()}<span class="rn-t"><b>${n}</b><p>${line}</p>${src ? `<small>From the ${src.name.toLowerCase()}</small>` : ''}</span>${to ? icon('chevR', 15) : ''}</${to ? 'button' : 'div'}>`; }).join('')}</section>
+      return `<${to ? `button data-action="nav" data-to="nutrients/${to}"` : 'div'} class="rn">${(() => { const ph = src && src.ph && foodPhoto(src.ph, 160), e = src && ingEmo(src.name); return n === 'Iron' ? '<img class="rn-ph rn-el" src="images/sf/iron.webp" alt="" loading="lazy" decoding="async">' : ph ? `<img class="rn-ph" src="${ph}" alt="" loading="lazy" decoding="async">` : e ? `<span class="rn-ic rn-emo">${emoRaw(e)}</span>` : `<span class="rn-ic">${icon('leaf', 17)}</span>`; })()}<span class="rn-t"><b>${n}</b><p>${line}</p>${src ? `<small>From the ${src.name.toLowerCase()}</small>` : ''}</span>${to ? icon('chevR', 15) : ''}</${to ? 'button' : 'div'}>`; }).join('')}</section>
     ${sectionTitle('Ingredients')}
     ${(() => { const d = myDiet(), D = DIETS.find(x => x.k === d); return d === 'all' ? '' : !fitsDiet(r) ? `<p class="rci-diet no">${icon('close', 12, 2.4)} Not ${D.t.toLowerCase()}: this one doesn't fit how you eat.</p>` : dietChanged(r) ? `<p class="rci-diet">${D.g} Made ${D.t.toLowerCase()} for you with simple swaps.</p>` : ''; })()}
     <section class="card rci-c"><div class="rci-top"><b><span class="dotnum">${r.ingredients.map(x => dietLine(x)).filter(Boolean).length}</span> ingredients</b><small>For ${serves === 1 ? '1 serving' : `${serves} ${serves > 6 ? 'pieces' : 'servings'}`} · tap to tick off</small></div>${recIngs(r)}</section>
     ${sectionTitle('Recipe')}
     <section class="card rcs">${r.steps.map((s, i) => { const [t, d] = Array.isArray(s) ? s : ['', s]; return `<div class="rcs-s"><span class="rcs-n dotnum">${i + 1}</span><div>${t ? `<b>${t}</b>` : ''}<p>${fitsDiet(r) ? swapText(d, myDiet()) : d}</p></div></div>`; }).join('')}</section>
     <p class="fine center">Check every ingredient for allergies before you cook.</p>
+    ${r.nutrients.includes('Iron') ? '<p class="fine center rcp-credit">Iron photo: Alchemist-hp, Wikimedia Commons, Free Art License.</p>' : ''}
     ${r.source ? `<p class="fine center">Adapted from <a class="src" href="${r.url}" target="_blank" rel="noopener">${r.source}</a></p>` : ''}
     ${!media && RECIPE_PHOTOS[r.id]?.by ? `<p class="fine center">Photo: <a class="src" href="${RECIPE_PHOTOS[r.id].page}?utm_source=under_the_skin&utm_medium=referral" target="_blank" rel="noopener">${esc(RECIPE_PHOTOS[r.id].by)}</a> on <a class="src" href="https://unsplash.com/?utm_source=under_the_skin&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></p>` : ''}
   </div>`;
