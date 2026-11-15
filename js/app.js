@@ -893,7 +893,11 @@ function cycleChart(info, { id = 'cc', compact = false, who = 'You' } = {}) {
   </div>`;
 }
 // One drawn arrow per hormone: where it is heading tomorrow (up, flat or down).
-const trArrow = tr => `<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform:rotate(${tr === 'rising' ? -40 : tr === 'falling' ? 40 : 0}deg)"><path d="M2.5 8h11M9 3.5 13.5 8 9 12.5"/></svg>`;
+// Straight up, straight down or flat: no rotated arrows, they read as the wrong direction at small size.
+const TR_PATH = { rising: 'M8 13.5v-11M3.5 7 8 2.5 12.5 7', falling: 'M8 2.5v11M3.5 9 8 13.5 12.5 9', steady: 'M2.5 8h11M9 3.5 13.5 8 9 12.5' };
+const trArrow = tr => `<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${TR_PATH[tr] || TR_PATH.steady}"/></svg>`;
+// the word and the arrow must agree: past its top a hormone is "High" and falling, never "Peak" with a falling arrow
+const trLevel = (lv, d) => (lv === 'Peak' && d === 'falling' ? 'High' : lv);
 // a tiny curve of one hormone across her whole cycle, today as a dot on it: where it is and where it goes next
 function roSpark(x, cd, L, P) {
   const W = 120, H = 24, pts = [];
@@ -910,7 +914,7 @@ function readout(cdRaw, L, P, isYou) {
   const rows = HORMONES.map(x => {
     return `<div class="ro-row"><span class="ro-name"><svg width="16" height="8"><line x1="1" y1="4" x2="15" y2="4" stroke="${x.color}" stroke-width="2.2" stroke-linecap="round" ${x.dash ? `stroke-dasharray="${x.dash}"` : ''}/></svg>${x.name}</span>
       <span class="ro-bar ro-sp">${roSpark(x, cd, L, P)}</span>
-      <span class="ro-lvl">${(() => { const lv = C.hormoneLevel(h[x.key]), d = C.trendOf(pv[x.key], h[x.key], nx[x.key]); return `${lv} <em class="tr ${d}" aria-hidden="true">${trArrow(d)}</em>`; })()}</span></div>`;
+      <span class="ro-lvl">${(() => { const d = C.trendOf(pv[x.key], h[x.key], nx[x.key]), lv = trLevel(C.hormoneLevel(h[x.key]), d); return `${lv} <em class="tr ${d}" aria-hidden="true">${trArrow(d)}</em>`; })()}</span></div>`;
   }).join('');
   return `<div class="ro-head"><div class="ro-phase">Day ${cdRaw} · ${PHASES[ph].name}</div></div>
     <div class="ro-rows">${rows}</div>
@@ -4873,7 +4877,7 @@ function alignmentCard(info) {
   const ph = PHASES[info.phase], tcm = TCM[info.phase], moon = Z.moonPhase(new Date()), cp = cosmicProfile();
   const h = C.hormonesRel(Math.min(info.cd, info.L), info.L, info.P);
   const hs = HORMONES.filter(x => x.key !== 'fsh').map(x => ({ ...x, v: h[x.key], tr: C.hormoneTrend(Math.min(info.cd, info.L), info.L, info.P, x.key) })).sort((a, b) => b.v - a.v).slice(0, 2);
-  const hLine = hs.map(x => `${x.name} ${C.hormoneLevel(x.v).toLowerCase()}${x.tr === 'rising' ? ' and rising' : x.tr === 'falling' ? ' and falling' : ''}`).join(' · ');
+  const hLine = hs.map(x => `${x.name} ${trLevel(C.hormoneLevel(x.v), x.tr).toLowerCase()}${x.tr === 'rising' ? ' and rising' : x.tr === 'falling' ? ' and falling' : ''}`).join(' · ');
   const waxing = moon.age < 14.77, building = info.phase === 'follicular' || info.phase === 'ovulatory';
   const moonSync = waxing === building ? (waxing ? 'In sync: moon and hormones are both building.' : 'In sync: moon and body are both turning inward.') : (waxing ? 'The moon is building while your body turns inward. Honour your body first.' : 'The moon is releasing while your energy rises. Use both: let go and begin.');
   const rem = remediesFor(info)[dayNum(new Date()) % Math.max(1, remediesFor(info).length)] || REMEDIES[0];
@@ -6346,7 +6350,7 @@ function hxNow(x, info) {
     const r = C.hormonesRel(cd, L, P)[k], tr = C.hormoneTrend(cd, L, P, k);
     let pk = 1; for (let d = 1; d <= L; d++) if (C.hormonesRel(d, L, P)[k] > C.hormonesRel(pk, L, P)[k]) pk = d;
     const when = Math.abs(pk - cd) <= 1 ? 'At its peak around now' : `Peaks around day ${pk} of your cycle`;
-    return { r, word: LV_WORD(r), tr, amt: '≈ ' + hAmount(k, cd, L, P), note: `${{ rising: 'Rising', falling: 'Falling', steady: 'Steady' }[tr]} · ${when}` };
+    return { r, word: trLevel(LV_WORD(r), tr), tr, amt: '≈ ' + hAmount(k, cd, L, P), note: `${{ rising: 'Rising', falling: 'Falling', steady: 'Steady' }[tr]} · ${when}` };
   }
   const D = dayMoments(info), dark = h < D.rise || h > D.set + .5, lat = myGeo()[0], mo = new Date().getMonth();
   switch (x.n) {
@@ -8440,8 +8444,10 @@ const GIFT_ART = [
   [/night|surprise/i, '<path d="M38 12a16 16 0 1 0 12 26 18 18 0 0 1-12-26z" fill="#efd4dd" stroke="#304023" stroke-width="2" stroke-linejoin="round"/><path d="M48 14l1.5 3 3 1.5-3 1.5-1.5 3-1.5-3-3-1.5 3-1.5z" fill="#f1c96a"/>'],
   [/massage/i, '<path d="M14 44q0-14 10-20l6 6q-6 4-6 14M50 44q0-14-10-20l-6 6q6 4 6 14" fill="#efd4dd" stroke="#304023" stroke-width="2" stroke-linejoin="round"/><path d="M32 14q-4 6 0 10 4-4 0-10z" fill="#e3ecc9" stroke="#304023" stroke-width="1.6"/>'],
 ];
-function giftArt(g) { const a = (GIFT_ART.find(([r]) => r.test(g)) || [0, '<rect x="14" y="26" width="36" height="26" rx="4" fill="#efd4dd" stroke="#304023" stroke-width="2"/><rect x="11" y="20" width="42" height="9" rx="3" fill="#fff" stroke="#304023" stroke-width="2"/><path d="M32 20v32M32 20q-10-10-12-2t12 2q10-10 12-2t-12 2" fill="none" stroke="#304023" stroke-width="2"/>'])[1];
-  return `<svg class="gift-art" viewBox="0 0 64 64" aria-hidden="true">${a}</svg>`; }
+// a cute emoji per gift idea (was a line drawing)
+const GIFT_EMO = [[/water bottle/i, '♨️'], [/chocolate/i, '🍫'], [/fries/i, '🍟'], [/snack/i, '🍪'], [/tea/i, '🍵'], [/sock/i, '🧦'], [/bath|salt/i, '🛁'], [/flower/i, '💐'], [/book/i, '📚'],
+  [/ticket/i, '🎟️'], [/class|workshop/i, '🎨'], [/dinner|reservation/i, '🍽️'], [/wear/i, '👗'], [/night|surprise/i, '✨'], [/massage/i, '💆‍♀️']];
+function giftArt(g) { return `<span class="gift-emo" aria-hidden="true">${(GIFT_EMO.find(([r]) => r.test(g)) || [0, '🎁'])[1]}</span>`; }
 // Her next two weeks as a real calendar: date, phase colour, period drops, fertile days, today ringed.
 function ptCalendar(snap, showF) {
   const today = C.startOfDay(new Date()), start = C.addDays(today, -((today.getDay() + 6) % 7)), cells = [];
@@ -8847,7 +8853,8 @@ function viewWith(q) {
         ? `<a class="btn btn-ghost btn-block" href="#/today">${icon('check', 16)} ${name} is on your dashboard</a>`
         : `<button class="btn btn-light btn-block" data-action="addPartner" data-d="${esc(q.get('d'))}">${icon('heart', 16)} Add ${name} to my app</button>
            <p class="fine center">You both use Underskin. Add her and you’ll see each other’s cycle side by side.</p>`)
-      : him ? `<section class="pv2-card pv2-save"><b>Keep ${name} close</b><p class="body sm">Nothing to set up and nothing to track. Save this page to your home screen and it shows where she is every day.</p></section>
+      : him ? `<section class="pv2-card pv2-save"><b>Save to your home screen</b>
+        <ol class="sv-steps"><li><span>iPhone</span>Tap <svg class="sv-ios" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 9H6a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10a1 1 0 0 0-1-1h-2M12 15V3M8 7l4-4 4 4"/></svg> Share, then <em>Add to Home Screen</em></li><li><span>Android</span>Tap ⋮ in Chrome, then <em>Add to Home screen</em></li></ol></section>
          <button class="link center-link" data-action="trackMine">I want to track my own cycle</button>`
       : `<a class="btn btn-light btn-block" href="#/today">Start tracking my cycle</a>
          <p class="fine center">Set up your own cycle and ${name} is added to your app. Then send her your link so you see each other.</p>`}

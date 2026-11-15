@@ -13625,3 +13625,15 @@ html .pad > p.muted, html .lt-soon, html .sync-hero > .sy-sub, html .pad.fb .fbp
   display: block; width: fit-content; max-width: 100%; box-sizing: border-box; padding: 8px 14px; border-radius: 16px;
   background: rgba(255,255,255,.55); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.75);
   color: rgba(32,48,26,.85) !important; -webkit-text-fill-color: rgba(32,48,26,.85) !important; text-shadow: none !important; }
+
+/* gift ideas: one cute emoji on a soft pearl disc (were line drawings) */
+.gift-emo { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #fff, #f7e3ea 80%); box-shadow: inset 0 0 0 1px rgba(255,255,255,.9), 0 8px 16px -10px rgba(192,80,122,.45);
+  font-size: 30px; line-height: 1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
+.rcard.gift.g2 .gift-emo { width: 64px; height: 64px; font-size: 34px; }
+/* his page: save to home screen, two one-line steps */
+html .pv2-card.pv2-save { text-align: left; }
+.sv-steps { list-style: none; margin: 10px 0 0; padding: 0; }
+.sv-steps li { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 6px; padding: 10px 0; border-top: 1px solid rgba(32,48,26,.08); font-size: 13.5px; color: rgba(32,48,26,.8); }
+.sv-steps li span { flex: none; min-width: 64px; font-size: 12px; font-weight: 600; color: #6c823e; }
+.sv-steps em { font-style: normal; font-weight: 600; color: #20301a; }
+.sv-ios { vertical-align: -2px; color: #2f6fdf; }
