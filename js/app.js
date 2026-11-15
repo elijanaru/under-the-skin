@@ -3162,7 +3162,7 @@ const CHAI_RE = /ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i;
 const MATCHA_RE = /matcha|green tea/i;
 // Every tea turns as the 3D cup that looks most like it: matcha, green tea, a mint cup for the green leafy teas,
 // the floral chamomile cup for the golden and red infusions. Milky drinks (chai, cacao, turmeric milk) keep their photo.
-const TEA_CUP = [[/matcha/i, 'matcha', 'cup-matcha'], [/green tea/i, 'greentea', 'cup-matcha'], [/chai|cacao|turmeric/i, '', 'cup-chai'], [/hibiscus|bissap|roselle/i, '', 'cup-hibiscus'],
+const TEA_CUP = [[/matcha/i, 'matcha', 'cup-matcha'], [/green tea/i, 'greentea', 'cup-matcha'], [/chai|cacao|turmeric/i, '', 'cup-chai'], [/hibiscus|bissap|roselle/i, 'hibiscus', 'cup-hibiscus'],
   [/mint|lemon balm|nettle|lemongrass|jasmine|tulsi|moringa/i, 'mint-tea', 'cup-mint'], [/./, 'chamomile', 'cup-chamomile']];
 const teaCup = n => TEA_CUP.find(([re]) => re.test(n || ''));
 const teaCupImg = n => `images/${teaCup(n)[2]}.webp`;
