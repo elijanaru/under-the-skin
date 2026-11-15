@@ -159,7 +159,7 @@ function topbar(title, { back } = {}) {
     ? `<button class="icon-btn dark" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>`
     : `<span class="tb-spacer"></span>`;
   return `<header class="topbar">${left}<div class="topbar-title">${title}</div>
-    <button class="icon-btn dark" data-action="nav" data-to="profile" aria-label="Menu">${icon('menu', 22)}</button></header>`;
+    ${location.hash.startsWith('#/profile') ? '<span class="tb-spacer"></span>' : `<button class="icon-btn dark" data-action="nav" data-to="profile" aria-label="Menu">${icon('menu', 22)}</button>`}</header>`;
 }
 function tabbar(active) {
   const items = [['today', 'home', 'Today'], ['calendar', 'calendar', 'Calendar'], ['log', 'plus', 'Log'], ['plan', 'bowl', 'Food guide'], ['insights', 'chart', 'Insights']];
@@ -1399,6 +1399,62 @@ function promisePet() {
 // Hand-drawn bits shared by the onboarding promise and the unlock page: a wobbly cross, a wobbly tick, sparkles around her lotus.
 const O3_X = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.8 C 10 10.5, 13.6 13.6, 17.6 17.4 M17.2 6.2 C 13.8 9.8, 10.2 13.8, 6.4 17.8"/></svg>';
 const O3_TICK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 12.8 C 7.4 14.2, 8.8 15.8, 10 17.6 C 12.4 12.6, 15.2 9, 18.8 6.2"/></svg>';
+// A four-point hand-drawn sparkle that twinkles (shared by the onboarding lotus, the tea sheet and the herb sheet).
+const o3Spark = (c, x0, y0, r) => `<path class="o3-sp" style="--d:${r}s" d="M${x0} ${y0 - 7} C ${x0 + .8} ${y0 - 1.5}, ${x0 + 1.5} ${y0 - .8}, ${x0 + 7} ${y0} C ${x0 + 1.5} ${y0 + .8}, ${x0 + .8} ${y0 + 1.5}, ${x0} ${y0 + 7} C ${x0 - .8} ${y0 + 1.5}, ${x0 - 1.5} ${y0 + .8}, ${x0 - 7} ${y0} C ${x0 - 1.5} ${y0 - .8}, ${x0 - .8} ${y0 - 1.5}, ${x0} ${y0 - 7} Z" fill="${c}"/>`;
+// A whimsical sheet that rises from below and fills the phone (tea cards, herbs). It lives next to #app, so a re-render
+// of the page never wipes it; drag the top down, tap the shade or the close button to let it sink back.
+function wsOpen(html, cls = '') {
+  wsClose(true);
+  const app = document.getElementById('app'); if (!app) return;
+  const el = document.createElement('div');
+  el.className = `ws ${cls}`; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
+  el.innerHTML = `<div class="ws-bg" data-action="wsClose"></div><div class="ws-sh"><div class="ws-top"><span class="ws-grab" aria-hidden="true"></span>
+    <button class="ws-x" data-action="wsClose" aria-label="Close">${icon('close', 17, 2.2)}</button></div><div class="ws-in">${html}</div></div>`;
+  app.parentElement.appendChild(el);
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('up')));
+  const sh = el.querySelector('.ws-sh'), top = el.querySelector('.ws-top'); let y0 = null, dy = 0;
+  top.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; y0 = e.clientY; dy = 0; sh.style.transition = 'none'; top.setPointerCapture(e.pointerId); });
+  top.addEventListener('pointermove', e => { if (y0 == null) return; dy = Math.max(0, e.clientY - y0); sh.style.transform = `translateY(${dy}px)`; });
+  const end = () => { if (y0 == null) return; y0 = null; sh.style.transition = ''; sh.style.transform = ''; if (dy > 90) wsClose(); };
+  top.addEventListener('pointerup', end); top.addEventListener('pointercancel', end);
+  setTimeout(() => el.querySelector('.ws-x')?.focus({ preventScroll: true }), 400);
+  return el;
+}
+function wsClose(now) {
+  document.querySelectorAll('.ws').forEach(el => {
+    el._onClose?.(); el._onClose = null;
+    if (now) return el.remove();
+    el.classList.remove('up'); el.classList.add('down');
+    setTimeout(() => el.remove(), matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 480);
+  });
+}
+// What each phase tea does for her, as three little stickers around the cup.
+const TEA4_GOOD = {
+  menstrual: [['Eases cramps', 'Warms your belly', 'Settles nausea'], ['Builds Blood', 'Gently sweet', 'Warming'], ['Tones the womb', 'Rich in minerals', 'Mild & earthy'], ['Softens bloating', 'Relaxes the womb', 'Calms you']],
+  follicular: [['Iron refill', 'Minerals', 'Fresh energy'], ['Calm focus', 'Antioxidants', 'Gentle caffeine'], ['Kind to your liver', 'Clearer skin', 'Easy digestion'], ['Wakes you up', 'No extra caffeine', 'Fresh breath']],
+  ovulatory: [['Vitamin C glow', 'Cools you down', 'Antioxidants'], ['Steady energy', 'Calm L-theanine', 'No crash'], ['Clearer skin', 'Fewer breakouts', 'Cooling'], ['Light belly', 'Easy digestion', 'Citrus fresh']],
+  luteal: [['Deeper sleep', 'Winds you down', 'Softer mood'], ['Calms anxiety', 'Lifts your mood', 'Quiet mind'], ['Tames cravings', 'Caffeine free', 'Naturally sweet'], ['Eases bloating', 'Warms digestion', 'Less gas']],
+};
+function teaSheet(ph, i) {
+  const [n, f] = PHASE_TEAS[ph][i], [why, amt, water, steep, when, warn] = PHASE_TEA_SPEC[ph][i], good = TEA4_GOOD[ph][i];
+  const steps = [['bowl', 'You need', amt], ['thermo', 'Water', water], ['clock', 'Steep', steep], ['sun', 'When', when]];
+  return `<div class="tsh" style="--c:${PH_HEX[ph]}">
+    <header class="tsh-h"><small>a cup for ${f.toLowerCase()}</small>
+      <h2>${n}<svg viewBox="0 0 200 18" preserveAspectRatio="none" aria-hidden="true"><path d="M4 11 C 40 5, 72 14, 106 8 S 170 6, 196 10"/></svg></h2></header>
+    <div class="tsh-hero">
+      <svg class="o3-dood" viewBox="0 0 340 250" aria-hidden="true">${o3Spark('#f6c6d4', 40, 46, 0)}${o3Spark('#f1d58a', 300, 34, 1.1)}${o3Spark('#c9d6a8', 312, 212, 2)}${o3Spark('#f6c6d4', 28, 196, 1.5)}
+        <circle class="o3-sp" style="--d:.7s" cx="84" cy="22" r="2.6" fill="#e6b1c4"/><circle class="o3-sp" style="--d:1.8s" cx="258" cy="236" r="2.4" fill="#b8c78f"/></svg>
+      <svg class="tsh-steam" viewBox="0 0 80 60" aria-hidden="true"><path d="M22 56 C 14 44, 30 36, 22 22 S 28 6, 24 2"/><path d="M40 56 C 32 42, 48 34, 40 18 S 46 4, 42 0"/><path d="M58 56 C 50 44, 66 36, 58 22 S 64 6, 60 2"/></svg>
+      <span class="tsh-glow" aria-hidden="true"></span>
+      <img class="tsh-cup" src="images/tea4/${ph}-${i}.webp" alt="">
+      ${good.map((g, k) => `<span class="tsh-stk s${k}" style="--k:${k}">${g}</span>`).join('')}
+    </div>
+    <section class="o3-note tsh-note"><p class="o3-lead">${why}</p></section>
+    <div class="tsh-steps">${steps.map(([ic, k, v], j) => `<div class="tsh-st" style="--k:${j}"><span>${icon(ic, 19, 1.9)}</span><b>${k}</b><small>${v}</small></div>`).join('')}</div>
+    ${warn ? `<p class="tsh-warn"><i>${icon('heart', 14, 2)}</i>${warn}</p>` : ''}
+    <p class="o3-sign">sip it slowly, it’s your moment <i>♡</i></p>
+  </div>`;
+}
 function o3Hero() {
   const spark = (c, x0, y0, r) => `<path class="o3-sp" style="--d:${r}s" d="M${x0} ${y0 - 7} C ${x0 + .8} ${y0 - 1.5}, ${x0 + 1.5} ${y0 - .8}, ${x0 + 7} ${y0} C ${x0 + 1.5} ${y0 + .8}, ${x0 + .8} ${y0 + 1.5}, ${x0} ${y0 + 7} C ${x0 - .8} ${y0 + 1.5}, ${x0 - 1.5} ${y0 + .8}, ${x0 - 7} ${y0} C ${x0 - 1.5} ${y0 - .8}, ${x0 - .8} ${y0 - 1.5}, ${x0} ${y0 - 7} Z" fill="${c}"/>`;
   return `<section class="o3-hero" aria-hidden="true">
@@ -4026,7 +4082,7 @@ function dueReminders() {
   if (state.profile.preg === 'loss' && state.profile.lossDueOn && state.profile.lossDue) { const dd = C.diffDays(C.parseISO(state.profile.lossDue), C.startOfDay(new Date()));
     if (dd >= 0 && dd <= 7) out.push({ id: 'loss-due', icon: 'heart', title: dd === 0 ? 'Today would have been your due date' : `Your due date is ${dd === 1 ? 'tomorrow' : `in ${dd} days`}`, body: 'It’s okay if this week feels heavy. Plan something gentle, and let someone close know.', to: 'loss' }); }
   if (state.profile.preg === 'kids') out.push({ id: 'pelvic', icon: 'heart', title: 'Pelvic floor, a few minutes a day', body: '3 sets of 10 slow squeezes a day keep your pelvic floor strong after pregnancy. Leaking or a heavy feeling? See a women’s health physio.' });
-  if (r.phase) {
+  if (false && r.phase) { // the New phase reminder was removed from settings (15 Nov 2026)
     const y = C.dayInfo(C.addDays(new Date(), -1), M.stats);
     if (y && y.phase !== info.phase) out.push({ id: 'phase-' + info.phase, icon: 'spark', title: `Welcome to your ${PHASES[info.phase].name} phase`, body: `${PHASES[info.phase].tagline} Focus: ${NUTRITION[info.phase].focus}` });
   }
@@ -4102,7 +4158,6 @@ function remindersSection() {
     <section class="card glass">
       ${tg('period', 'Period coming', 'A heads-up before it starts')}
       ${r.period ? `<div class="stepper-row sub"><span>Days before</span>${stepper('periodDays', r.periodDays, 'rem')}</div>` : ''}
-      ${tg('phase', 'New phase', 'When your hormones shift')}
       ${tg('cycle', 'Cycle tips', 'Magnesium before your period, warm food, early nights, plans coming up')}
       ${tg('sunAm', 'Morning light', 'Sunlight in your eyes, 20 min after sunrise')}
       ${tg('sunPm', 'Sunset', 'Watch the evening light, 30 min before sunset')}
@@ -5665,12 +5720,11 @@ function t4Detail(ph, i) {
     ${warn ? `<p class="t4-warn">${icon('heart', 13)} ${warn}</p>` : ''}`;
 }
 function cycleTeas(info) {
-  const ph = (info && info.phase) || 'follicular', T = PHASE_TEAS[ph], sel = 0;
+  const ph = (info && info.phase) || 'follicular', T = PHASE_TEAS[ph], sel = -1;
   return `<section class="t4" data-ph="${ph}" style="--c:${PH_HEX[ph]}">
-    <header class="t4-h"><small>The ultimate tea guide</small><h2>Four teas for your ${PHASES[ph].name.toLowerCase()} phase.</h2><p>Chosen for what your body needs right now. Tap one to brew it.</p></header>
-    <div class="t4-g">${T.map(([n, f, ing], i) => `<button class="t4-t ${i === sel ? 'on' : ''}" data-action="ctPick" data-i="${i}" aria-pressed="${i === sel}">
+    <header class="t4-h"><small>The ultimate tea guide</small><h2>Four teas for your ${PHASES[ph].name.toLowerCase()} phase.</h2><p>Chosen for what your body needs right now. Tap one to open it.</p></header>
+    <div class="t4-g">${T.map(([n, f, ing], i) => `<button class="t4-t" data-action="ctPick" data-i="${i}" aria-haspopup="dialog">
       <img src="images/tea4/${ph}-${i}.webp" alt="" loading="lazy" decoding="async"><small>${f}</small><b>${n}</b><span>${icon('clock', 12)} ${PHASE_TEA_SPEC[ph][i][3]}</span></button>`).join('')}</div>
-    <div class="t4-d" aria-live="polite">${t4Detail(ph, sel)}</div>
   </section>`;
 }
 // Today's tea as a benefit wheel: the turning 3D cup in the middle, what it does for her all around it.
@@ -7925,31 +7979,74 @@ const HERB_BUY = {
 // Real cut-out photos where we have them; the rest keep their drawings until matching cut-outs are made.
 const HERB_REAL = { ginger: 'ginger', cinnamon: 'cinnamon', goji: 'goji', 'red-dates': 'red-dates' };
 const herbPic = k => (HERB_REAL[k] ? { src: `images/sf/${HERB_REAL[k]}.webp`, real: true } : { src: `images/herbs/${k}.svg`, real: false });
+// Herbs grow in a little garden bed: leaves above the soil, roots hidden. Tap one and it wiggles, pops out with soil crumbs,
+// and a sheet rises with the whole plant, roots and all, telling her about it one small chapter at a time.
+const HG_PEB = [[22, 40, 3], [64, 52, 2.2], [118, 36, 2.6], [150, 56, 1.8], [196, 44, 3.2], [240, 54, 2], [286, 38, 2.4], [330, 50, 2.8], [96, 60, 1.6], [270, 60, 1.6]];
+const HG_SOIL = `<svg class="hg-soil" viewBox="0 0 360 70" preserveAspectRatio="none" aria-hidden="true">
+  <path d="M0 16 C 30 7, 52 18, 84 11 S 140 4, 172 13 S 236 20, 268 10 S 330 6, 360 15 V70 H0Z" fill="#6f4d38"/>
+  <path d="M0 30 C 40 24, 80 34, 120 28 S 200 22, 240 30 S 320 34, 360 27 V70 H0Z" fill="#5b3e2e"/>
+  <path d="M0 16 C 30 7, 52 18, 84 11 S 140 4, 172 13 S 236 20, 268 10 S 330 6, 360 15" fill="none" stroke="#9c7556" stroke-width="2.4" stroke-linecap="round"/>
+  ${HG_PEB.map(([x, y, r]) => `<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r * .75}" fill="#8d6a50"/>`).join('')}</svg>`;
 function herbBed(herbs) {
   herbs = herbs || apoItems(apoSeason()).herbs;
-  const up = ui.herbUp, was = ui.herbWas; ui.herbWas = null;
   const B = x => HERB_BED[x.n] || [x.n.toLowerCase().replace(/\W+/g, '-'), x.n, '', []];
-    const tile = i => { const x = herbs[i], b = B(x), on = up === i; return `<button class="hb2${on ? ' on' : ''}" style="--i:${i}" data-action="herbPull" data-i="${i}" aria-expanded="${on}" aria-label="${b[1]}">
-      <span class="hb2-dish">${b[2] ? `<i class="hb2-han" aria-hidden="true">${b[2].slice(0, 2)}</i>` : ''}<img class="${herbPic(b[0]).real ? 'real' : 'drawn'}" src="${herbPic(b[0]).src}" alt="" draggable="false"><em class="hb2-go" aria-hidden="true">${icon(on ? 'close' : 'plus', 12, 2.6)}</em></span>
-      <b>${b[1]}</b><small>${(b[3] || [])[0] || ''}</small></button>`; };
-  const x = herbs[up], det = x ? (() => {
-    const b = B(x), H = HERB_SPEC[x.n] || {}, cares = [x.warn, H.care].filter(Boolean), S = H.study;
-    return `<div class="hb-det" aria-live="polite">
-      <div class="hb-top"><figure class="hb-fig ${herbPic(b[0]).real ? 'real' : ''}"><img src="${herbPic(b[0]).src}" alt=""></figure>
-        <div class="hb-id"><small>${b[2] ? `<span class="hb-han">${b[2]}</span>` : ''}${x.sub}</small><h4>${x.n}</h4>
-          <span class="hb-nat ${x.nat === 'warm' ? 'w' : 'n'}"><i></i>${x.nat === 'warm' ? 'Warming' : 'Neutral'}</span>
-          <p class="hb-why">${x.why}</p></div>
-        <button class="bn-x" data-action="herbPull" data-i="${up}" aria-label="Plant it back">${icon('close', 16)}</button></div>
-      <div class="hb-ben"><small>Good for</small>${b[3].map(t => `<span>${t}</span>`).join('')}</div>
-      <div class="hb-spec">${H.dose ? `<div><span>How much</span><b>${H.dose}</b></div>` : ''}<div><span>How</span><b>${x.how}</b></div></div>
-      ${(() => { const Y = HERB_BUY[b[0]]; if (!Y) return ''; return `<div class="hb-buy"><small class="hb-buy-k">Buy the best</small>
-        <div class="hb-bg">${[['ok', 'check', 'Look for'], ['no', 'close', 'Skip'], ['at', 'pin', 'Where'], ['kp', 'clock', 'Keeps']].map(([k, ic, t]) => `<div class="hb-b ${k}"><i>${icon(ic, 13, 2.2)}</i><b>${t}</b><span>${Y[k]}</span></div>`).join('')}</div>
-        ${Y.test ? `<p class="hb-test"><i>${icon('search', 15)}</i><span><b>Quick test</b>${Y.test}</span></p>` : ''}
-        ${Y.glow ? `<p class="hb-glow"><i>${icon('spark', 15)}</i><span><b>For your glow</b>${Y.glow}</span></p>` : ''}</div>`; })()}
-      ${S ? `<p class="hb-st"><small>What a study found</small>${S[0]} <i>${S[1]}</i></p>` : ''}
-      ${cares.length ? `<p class="hb-care"><small>Before you try</small>${cares.join(' ')}</p>` : ''}</div>`; })() : '<p class="hb-hint">Tap a herb to see what it does</p>';
-  return `<div class="hbed-w"><div class="sfc-gh"><b>Herbs</b><small>From Chinese medicine, as teas and broths</small></div>
-    <div class="hb2-grid">${herbs.map((_, i) => tile(i)).join('')}</div>${det}</div>`;
+  const plant = i => { const b = B(herbs[i]); return `<button class="hg-p" style="--i:${i}" data-action="herbPull" data-i="${i}" aria-haspopup="dialog" aria-label="Pull out ${b[1]}">
+      <img src="images/herbs/${b[0]}.svg" alt="" draggable="false">${'<i class="hg-cr"></i>'.repeat(6)}
+      <span class="hg-tag"><b>${b[1]}</b>${b[2] ? `<small>${b[2]}</small>` : ''}</span></button>`; };
+  const rows = []; for (let i = 0; i < herbs.length; i += 3) rows.push(herbs.slice(i, i + 3).map((_, k) => i + k));
+  return `<div class="hbed-w hg-w"><div class="sfc-gh"><b>Herbs</b><small>From Chinese medicine, as teas and broths</small></div>
+    <div class="hg"><p class="hg-hint">pull one out of the ground <svg viewBox="0 0 40 24" aria-hidden="true"><path d="M4 20 C 14 20, 26 16, 32 6 M25 7 L33 5 L34 13"/></svg></p>
+      ${rows.map(r => `<div class="hg-row">${r.map(plant).join('')}${HG_SOIL}</div>`).join('')}</div></div>`;
+}
+// The chapters of one herb, each a single small thing to look at.
+function herbChapters(x, b) {
+  const H = HERB_SPEC[x.n] || {}, Y = HERB_BUY[b[0]] || {}, S = H.study, cares = [x.warn, H.care].filter(Boolean), C = [];
+  const row = (ic, k, v) => `<div class="hs-row"><span>${icon(ic, 18, 1.9)}</span><div><b>${k}</b><small>${v}</small></div></div>`;
+  C.push(['leaf', `Meet ${b[1].toLowerCase()}`, `<p class="hs-nat ${x.nat === 'warm' ? 'w' : 'n'}"><i></i>${x.nat === 'warm' ? 'Warming' : 'Neutral'} in Chinese medicine</p>
+    <p class="o3-lead">${x.why}</p><div class="hs-good">${(b[3] || []).map((t, k) => `<span style="--k:${k}">${t}</span>`).join('')}</div>`]);
+  C.push(['cup', 'How to take it', `<div class="hs-rows">${H.dose ? row('bowl', 'How much', H.dose) : ''}${row('cup', 'How', x.how)}</div>`]);
+  if (Y.ok) C.push(['search', 'Buy the best', `<div class="hb-bg">${[['ok', 'check', 'Look for'], ['no', 'close', 'Skip'], ['at', 'pin', 'Where'], ['kp', 'clock', 'Keeps']].map(([k, ic, t]) => `<div class="hb-b ${k}"><i>${icon(ic, 13, 2.2)}</i><b>${t}</b><span>${Y[k]}</span></div>`).join('')}</div>`]);
+  if (Y.test) C.push(['flask', 'A quick test', `<p class="o3-lead">${Y.test}</p>`]);
+  if (Y.glow) C.push(['spark', 'For your glow', `<p class="o3-lead">${Y.glow}</p>`]);
+  if (S) C.push(['book', 'What a study found', `<p class="o3-lead">${S[0]}</p><p class="hs-cite">${S[1]}</p>`]);
+  if (cares.length) C.push(['heart', 'Before you try', `<p class="o3-lead">${cares.join(' ')}</p>`]);
+  return C;
+}
+function hsChapter(C, c) {
+  const [ic, t, html] = C[c];
+  return `<div class="hs-ch"><header><span class="hs-ic">${icon(ic, 18, 2)}</span><h3>${t}</h3><small>${c + 1} of ${C.length}</small></header>${html}</div>`;
+}
+function herbSheet(x, i) {
+  const b = HERB_BED[x.n] || [x.n.toLowerCase().replace(/\W+/g, '-'), x.n, '', []], C = herbChapters(x, b), real = HERB_REAL[b[0]];
+  return `<div class="hs" data-i="${i}" data-c="0">
+    <div class="hs-hero">
+      <svg class="o3-dood" viewBox="0 0 340 250" aria-hidden="true">${o3Spark('#f6c6d4', 46, 52, 0)}${o3Spark('#f1d58a', 296, 40, 1.1)}${o3Spark('#c9d6a8', 300, 200, 2)}${o3Spark('#f6c6d4', 34, 190, 1.5)}</svg>
+      <span class="tsh-glow" aria-hidden="true"></span>
+      <img class="hs-plant" src="images/herbs/${b[0]}.svg" alt="${b[1]}, roots and all">
+      <span class="hs-crumbs" aria-hidden="true">${'<i></i>'.repeat(7)}</span>
+      ${real ? `<figure class="hs-pol"><img src="images/sf/${real}.webp" alt=""><figcaption>in your kitchen</figcaption></figure>` : ''}
+    </div>
+    <header class="hs-h"><small>${b[2] ? `<span class="hs-zh">${b[2]}</span>` : ''}${x.sub || ''}</small><h2>${b[1]}</h2></header>
+    <section class="o3-note hs-note">${hsChapter(C, 0)}</section>
+    <nav class="hs-nav"><button class="hs-back" data-action="hsGo" data-d="-1" aria-label="Back" disabled>${icon('chevL', 18, 2)}</button>
+      <span class="hs-dots">${C.map((_, k) => `<button data-action="hsGo" data-to="${k}" class="${k ? '' : 'on'}" aria-label="Chapter ${k + 1}"></button>`).join('')}</span>
+      <button class="hs-next" data-action="hsGo" data-d="1">Next ${icon('chevL', 15, 2.2)}</button></nav>
+  </div>`;
+}
+function hsGo(to) {
+  const el = document.querySelector('.ws .hs'); if (!el) return;
+  const x = apoItems(apoSeason()).herbs[+el.dataset.i]; if (!x) return;
+  const b = HERB_BED[x.n] || [x.n.toLowerCase().replace(/\W+/g, '-'), x.n, '', []], C = herbChapters(x, b), c0 = +el.dataset.c;
+  if (to >= C.length) return wsClose();
+  const c = Math.max(0, Math.min(C.length - 1, to)); if (c === c0) return;
+  el.dataset.c = c;
+  const note = el.querySelector('.hs-note'); note.innerHTML = hsChapter(C, c);
+  const ch = note.firstElementChild; ch.classList.add(c > c0 ? 'fwd' : 'bk');
+  note.animate?.([{ transform: 'rotate(-1.2deg) scale(.985)' }, { transform: 'rotate(-1.2deg) scale(1)' }], { duration: 420, easing: 'cubic-bezier(.3,1.4,.5,1)' });
+  el.querySelectorAll('.hs-dots button').forEach((d, k) => d.classList.toggle('on', k === c));
+  el.querySelector('.hs-back').disabled = c === 0;
+  el.querySelector('.hs-next').innerHTML = c === C.length - 1 ? `Plant it back ${icon('leaf', 15, 2)}` : `Next ${icon('chevL', 15, 2.2)}`;
+  const pl = el.querySelector('.hs-plant'); pl?.animate?.([{ transform: 'rotate(0)' }, { transform: `rotate(${c > c0 ? 4 : -4}deg)` }, { transform: 'rotate(0)' }], { duration: 700, easing: 'ease-in-out' });
 }
 // The season at a glance: what to eat and sip as small photos, one plain line to feel, the full story behind a tap.
 const SEASON_CHIPS = {
@@ -8581,9 +8678,11 @@ function viewProfile() {
   const signedOut = A.configured() && !A.currentUser();
   return `${topbar('Profile', { back: true })}
   <div class="pad pf2">
-    <section class="card card-light pf-hero">
-      <div class="profile-head"><label class="avatar xl ${p.photo ? 'has-photo' : ''}">${avatarInner(p)}<span class="av-edit">${icon('plus', 14, 2.4)}</span><input type="file" accept="image/*" data-photo="profile" hidden></label>
-        <input class="field name-field" data-input="profile.name" value="${esc(p.name)}" placeholder="Your name" maxlength="24" aria-label="Your name"></div>
+    <section class="card card-light pf-hero o3-note pf3">
+      <svg class="o3-dood pf3-dood" viewBox="0 0 340 220" aria-hidden="true">${o3Spark('#f6c6d4', 40, 46, 0)}${o3Spark('#f1d58a', 298, 36, 1.2)}${o3Spark('#c9d6a8', 306, 150, 2)}${o3Spark('#f6c6d4', 30, 160, 1.6)}
+        <path class="pf3-heart" d="M282 98 c -4 -7 -14 -5 -13 3 c 1 6 9 10 13 14 c 4 -4 12 -8 13 -14 c 1 -8 -9 -10 -13 -3 z"/></svg>
+      <div class="profile-head"><label class="avatar xl ${p.photo ? 'has-photo' : ''}">${avatarInner(p)}<svg class="pf3-ring" viewBox="0 0 120 120" aria-hidden="true"><path d="M60 6 C 92 5, 115 28, 113 61 C 111 93, 88 114, 58 113 C 27 112, 6 90, 7 59 C 8 30, 30 8, 63 9"/></svg><span class="av-edit">${icon('plus', 14, 2.4)}</span><input type="file" accept="image/*" data-photo="profile" hidden></label>
+        <span class="pf3-name"><input class="field name-field" data-input="profile.name" value="${esc(p.name)}" placeholder="Your name" maxlength="24" aria-label="Your name"><svg viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M6 10 C 46 4, 80 13, 112 8 S 172 5, 194 9"/></svg></span></div>
       <p class="pf-learn">${learn}</p>
       ${signedOut && tab !== 'data' ? `<button class="pill-cta pf-cta" data-action="pfTab" data-v="data">${icon('heart', 15)} Save my cycle to an account</button>` : ''}
     </section>
@@ -9933,11 +10032,20 @@ const actions = {
     const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
   },
   herbPull: (d, el) => {
-    const i = +d.i; ui.herbWas = ui.herbUp === i ? i : ui.herbUp; ui.herbUp = ui.herbUp === i ? null : i;
-    const w = el.closest('.hbed-w'); if (!w) return render();
-    const tmp = document.createElement('div'); tmp.innerHTML = herbBed(); const nw = tmp.firstElementChild; w.replaceWith(nw);
-    const det = nw.querySelector('.hb-det'); if (det) { const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) setTimeout(() => det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' }), 450); }
+    const i = +d.i, x = apoItems(apoSeason()).herbs[i]; if (!x || el.classList.contains('pull')) return;
+    const go = () => {
+      const sh = wsOpen(herbSheet(x, i), 'ws-herb'); el.classList.remove('pull'); if (!sh) return;
+      el.classList.add('out');
+      sh._onClose = () => { el.classList.remove('out'); el.classList.add('back'); setTimeout(() => el.classList.remove('back'), 1000); };
+      const note = sh.querySelector('.hs-note'); let x0 = null;
+      note.addEventListener('pointerdown', e => { x0 = e.clientX; });
+      note.addEventListener('pointerup', e => { if (x0 == null) return; const dx = e.clientX - x0; x0 = null; if (Math.abs(dx) > 50) hsGo(+sh.querySelector('.hs').dataset.c + (dx < 0 ? 1 : -1)); });
+    };
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return go();
+    el.classList.add('pull'); setTimeout(go, 760);
   },
+  hsGo: d => { const el = document.querySelector('.ws .hs'); if (el) hsGo(d.to != null ? +d.to : +el.dataset.c + +d.d); },
+
   wkPick: (d, el) => { ui.wkSel = +d.w; const card = el.closest('.wk3'), r = REMEDIES.find(x => x.weeks); if (!card || !r) return render(); card.outerHTML = wkCard(r); },
   ritPick: (d, el) => {
     const box = el.closest('.sfc'), det = box.querySelector('.sfc-det'), it = ritList().find(x => x.i === +d.i); if (!it) return;
@@ -10184,7 +10292,8 @@ const actions = {
   apoTab: d => { ui.apoTab = d.v; ui.apoSel = null; render(); },
   apoSel: d => { ui.apoSel = ui.apoSel === d.v ? null : d.v; render(); if (ui.apoSel) document.getElementById('apo-d')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
   teaMood: (d, el) => { const box = el.closest('.tmo'), det = box.querySelector('.tmo-d'); box.querySelectorAll('.tmo-p button').forEach(b => { b.classList.toggle('on', b === el); b.setAttribute('aria-pressed', b === el); }); det.innerHTML = teaMoodCard(+d.i); det.style.animation = 'none'; void det.offsetWidth; det.style.animation = ''; },
-  ctPick: (d, el) => { const box = el.closest('.t4'), ph = box.dataset.ph, det = box.querySelector('.t4-d'); box.querySelectorAll('.t4-t').forEach(b => { b.classList.toggle('on', b === el); b.setAttribute('aria-pressed', b === el); }); det.innerHTML = t4Detail(ph, +d.i); det.style.animation = 'none'; void det.offsetWidth; det.style.animation = ''; },
+  ctPick: (d, el) => { const ph = el.closest('.t4').dataset.ph; wsOpen(teaSheet(ph, +d.i), 'ws-tea'); },
+  wsClose: () => wsClose(),
   szClose: (d, el) => { const box = el.closest('.szp'); box.querySelector('.szp-det').hidden = true; box.querySelectorAll('.szp-i.on').forEach(b => b.classList.remove('on')); },
   seasonFood: d => { ui.seasonFood = ui.seasonFood === d.f ? null : d.f; render(); if (ui.seasonFood) document.querySelector('.sf-detail')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); },
   seasonFilter: d => { ui.seasonFilter = d.v; render(); },
@@ -10663,7 +10772,8 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.addEventListener('controllerchange', () => { if (had && !reloaded) { reloaded = true; location.reload(); } });
 }
 setInterval(() => { if (state?.onboarded) { M = model(); fireNotifications(); } }, 15 * 60 * 1000);
-window.addEventListener('hashchange', () => { if (route().name !== 'log') ui.logDate = null; if (route().name !== 'calendar') ui.calEdit = false; render(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.querySelector('.ws')) wsClose(); });
+window.addEventListener('hashchange', () => { wsClose(true); if (route().name !== 'log') ui.logDate = null; if (route().name !== 'calendar') ui.calEdit = false; render(); });
 setInterval(() => { const sb = document.querySelector('.statusbar span'); if (sb) sb.textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(/\s?[AP]M/, ''); }, 30000);
 render();
 // first screen is drawn: lift the splash (rAF never fires in a background or prewarmed webview, so a timer backs it up instead of the 7 s cut-off)
