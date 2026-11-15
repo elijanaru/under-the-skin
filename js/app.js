@@ -5196,11 +5196,31 @@ function viewSupps() {
     <p class="fine center">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}${state.profile.bf ? ' or are breastfeeding' : ''}.</p></div>`;
 }
 // Science block for remedies, rituals and supplements: a numbered pathway, one card per study with its year, then cautions.
+// The real effect size for studies whose sentence has no number (checked against the papers):
+// b = bars [value %, short label] with a caption, c = one chip [big number, what it means].
+const STUDY_NUM = {
+  'Vaucher 2012': { cap: 'Drop in tiredness after 12 weeks', b: [[48, 'Iron'], [29, 'Placebo']] },
+  'Stoffel 2017': { cap: 'Share of the iron absorbed', b: [[22, 'Alternate'], [16, 'Daily']] },
+  'Thys-Jacobs 1998': { cap: 'Drop in PMS symptoms by cycle 3', b: [[48, 'Calcium'], [30, 'Placebo']] },
+  'Lyoo 2012': { cap: 'Free of depression at 8 weeks', b: [[52, 'Creatine'], [26, 'Placebo']] },
+  'Dréno 2001': { cap: 'Two thirds of red spots gone at 3 months', b: [[31, 'Zinc'], [63, 'Antibiotic']] },
+  'Chandrasekhar 2012': { cap: 'Drop in blood cortisol after 60 days', b: [[28, 'Lower']] },
+  'Lasco 2012': { cap: 'Drop in period pain over 2 months', b: [[41, 'Lower']] },
+  'Chocano-Bedoya 2011': { cap: 'PMS risk with the most riboflavin from food', b: [[35, 'Lower']] },
+  'Gokhale 1996': { cap: 'Girls whose period pain was gone', b: [[87, 'Pain free']] },
+  'Wyatt 1999': { c: ['2.3×', 'the odds of feeling better vs placebo'] },
+  'Czeizel 1992': { c: ['0 vs 6', 'babies with a spine defect'] },
+};
+function stcNum(k) {
+  const x = STUDY_NUM[k]; if (!x) return '';
+  if (x.c) return `<div class="stc-k stc-chip stc-chip2"><b class="dotnum">${x.c[0]}</b><small>${x.c[1]}</small></div>`;
+  return `<div class="stc-k stc-num"><small class="stc-cap">${x.cap}</small>${x.b.map(([v, l], i) => `<div class="stc-b ${i ? 'b' : 'a'}"><small>${l}</small><span class="stc-tr"><i style="width:${v}%"></i></span><b class="dotnum">${l === 'Lower' ? '−' : ''}${v}%</b></div>`).join('')}</div>`;
+}
 function studyCards(study, cite) {
   const ss = study.split(/(?<=\.)\s+(?=[A-Z])/), cs = cite.split(' · ');
   const pairs = ss.length === cs.length ? ss.map((t, i) => [t, cs[i]]) : [[study, cite]];
   return `<div class="stc ${pairs.length === 1 ? 'one' : ''}">${pairs.map(([t, c], i) => { const y = (c.match(/\b(1[89]\d\d|20\d\d)\b/) || [])[1] || '', tag = (c.match(/\(([^)]+)\)/) || [])[1] || '', who = c.replace(/\([^)]*\)/g, '').replace(y, '').trim();
-    return `<article class="stc-c" style="--i:${i}"><div class="stc-h"><b class="dotnum">${y}</b><span>${who}${tag ? `<em>${tag.charAt(0).toUpperCase() + tag.slice(1)}</em>` : ''}</span></div>${stcKey(t) || stcOut(STUDY_KEY[`${who.split(/\s/)[0]} ${y}`])}<p>${t}</p></article>`; }).join('')}</div>`;
+    return `<article class="stc-c" style="--i:${i}"><div class="stc-h"><b class="dotnum">${y}</b><span>${who}${tag ? `<em>${tag.charAt(0).toUpperCase() + tag.slice(1)}</em>` : ''}</span></div>${stcNum(`${who.split(/\s/)[0]} ${y}`) || stcKey(t) || stcOut(STUDY_KEY[`${who.split(/\s/)[0]} ${y}`])}<p>${t}</p></article>`; }).join('')}</div>`;
 }
 // A finding without a number: what it changed as an arrow, the outcome in bold and what it was compared with
 function stcOut(k) {
