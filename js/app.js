@@ -1866,7 +1866,7 @@ function viewCalendar() {
     ${events().some(e => e.date >= todayISO()) ? upcomingEvents() : ''}
     <section class="msd msd2" style="--pc:${PH_HEX[(M.info || {}).phase] || '#6c823e'}"><header class="msd-h"><small>What studies found</small><h3>Your mind across the month</h3><p>Your abilities stay the same. Energy and mood can shift.</p></header>
       <div class="msd-deck deck" role="list" data-dots="msd-dots">${MIND_SCIENCE.map(x => { const yr = (x.c.match(/(19|20)\d{2}/) || [''])[0], who = x.c.slice(0, x.c.indexOf(yr)).trim(), jr = x.c.slice(x.c.indexOf(yr) + 4).replace(/^[\s,]+/, '');
-        return `<article class="msd-c" role="listitem"><figure class="msd-g">${mindArt(x.g)}<figcaption>${x.f}</figcaption></figure><h4>${x.t}</h4><p>${x.s}</p><footer class="msd-f"><span><b>${who}</b><small>${jr}</small></span><em class="dotnum">${yr}</em></footer></article>`; }).join('')}</div>
+        return `<article class="msd-c" role="listitem"><figure class="msd-g">${mindArt(x.g)}${x.g === 'flat' || x.g === 'two' ? '<div class="msd-key"><span><i class="ln"></i>Your thinking</span><span><i class="dz"></i>Your hormones</span></div>' : ''}<figcaption>${x.f}</figcaption></figure><h4>${x.t}</h4><p>${x.s}</p><footer class="msd-f"><span><b>${who}</b><small>${jr}</small></span><em class="dotnum">${yr}</em></footer></article>`; }).join('')}</div>
       <div class="lt-dots msd-dots" id="msd-dots">${MIND_SCIENCE.map((_, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div></section>
     <p class="fine center">Low mood that stays, or PMS that takes over your life, is worth a doctor’s visit.</p>
   </div>

@@ -14538,3 +14538,9 @@ html .fx-ti.sym span { background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(40%
    freeze it on the pale last steps. */
 html:has(.onb) .bgx, html:has(.onb) .bgx * { animation-play-state: paused !important; }
 html:has(.onb.no-fig:not(.step-9):not(.step-10)) .bgx, html:has(.onb-welcome) .bgx { visibility: hidden; }
+
+/* Calendar › Your mind across the month: a tiny key so the solid line and the dotted wave read without guessing */
+.msd-key { display: flex; gap: 14px; margin: 4px 0 2px; font-size: 11.5px; font-weight: 500; color: #304023; }
+.msd-key span { display: inline-flex; align-items: center; gap: 6px; }
+.msd-key i { width: 16px; height: 0; border-top: 2.6px solid #20301a; border-radius: 2px; }
+.msd-key i.dz { border-top: 2px dotted var(--pc, #8c9768); opacity: .9; }
