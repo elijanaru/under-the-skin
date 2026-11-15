@@ -14864,7 +14864,7 @@ html .tg .tgw { margin-top: 40px; }
 .ws-x:focus { outline: none; } .ws-x:focus-visible { outline: 2px solid #e6b1c4; outline-offset: 2px; }
 
 /* Herb garden (15 Nov 2026 night): herbs planted in soil, leaves up, roots hidden; tap pulls one out */
-.hg { position: relative; margin-top: 10px; padding: 12px 8px 0; border-radius: 26px; overflow: hidden;
+.hg:not(.pad) { position: relative; margin-top: 10px; padding: 12px 8px 0; border-radius: 26px; overflow: hidden;
   background: radial-gradient(rgba(176,79,108,.06) 1px, transparent 1.3px) 0 0 / 15px 15px, linear-gradient(180deg, #fdf1f4 0%, #f6eef0 40%, #eef0e1 100%); }
 .hg-hint { display: flex; align-items: center; justify-content: center; gap: 4px; margin: 0 0 2px; font: 600 21px/1 Caveat, 'Outfit', cursive; color: #b04f6c; }
 .hg-hint svg { width: 34px; height: 22px; fill: none; stroke: #b04f6c; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; transform: translateY(-4px); }
@@ -15470,3 +15470,45 @@ html .bzp-o small { line-height: 1.3; }
 .lf-open > p { margin: 10px auto 0; max-width: 30ch; font-size: 14.5px; line-height: 1.5; color: #304023; }
 .lf-open > p.lf-more { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(32,48,26,.08); font-size: 13px; color: rgba(32,48,26,.7); }
 @media (prefers-reduced-motion: reduce) { .em-l.lf, .lf-e { animation: none; } }
+/* Profile: the + sits dead centre in its white dot (16 Nov 2026) */
+html .profile-head .av-edit { display: grid !important; place-items: center; padding: 0; line-height: 0; font-size: 0; }
+html .profile-head .av-edit svg { display: block; margin: 0; }
+/* Tea sheet: honey cream, her pick (16 Nov 2026); the glow behind the cup is white */
+html .ws-tea .ws-sh { background: radial-gradient(rgba(48,64,35,.05) 1px, transparent 1.3px) 0 0 / 15px 15px, linear-gradient(180deg, #fffbf2 0%, #fbf0dc 55%, #f3e3c3 100%) !important; }
+html .ws-tea .tsh-glow { background: radial-gradient(closest-side, rgba(255,255,255,.95), rgba(255,255,255,0)) !important; }
+/* Profile card sits higher and tighter (16 Nov 2026) */
+html .pf2 .pf-hero.pf3 { margin-top: 4px; padding-top: 22px; padding-bottom: 18px; }
+html .pf3 .profile-head { gap: 6px; margin-top: 0; }
+.pf3-name { margin-top: 2px; }
+html .pf2 .pf3 .pf-learn { margin-top: 4px; }
+.pf3 .pf-cta { margin-top: 10px; }
+/* For how you feel, superfood style (16 Nov 2026) */
+.ff-top { margin-bottom: 18px; }
+.ff2 + .ff2 { margin-top: 14px; }
+.ff2 .sfc-h h3 { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.ff2-ic { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font-size: 28px; line-height: 1; background: #fff; box-shadow: 0 8px 18px rgba(48,64,35,.12), inset 0 0 0 1px rgba(32,48,26,.06); }
+.ff2-ic img.lg-emo { width: 32px; height: 32px; }
+.ff2 .sfc-i em { display: grid; place-items: center; height: 118px; }
+.ff2 .sfc-i em .emo { font-size: 66px; line-height: 1; }
+.ff2 .sfc-i em img.emo { width: 100px; height: 100px; object-fit: contain; filter: drop-shadow(0 8px 10px rgba(32,48,26,.14)); }
+.ws-sf .hs-plant.emo .emo { font-size: 120px; line-height: 1; }
+.ws-sf .hs-plant.emo img.emo { width: 150px; height: 150px; object-fit: contain; }
+/* Relief guide sheet */
+.rls-hint { margin: 2px 0 10px; font-size: 13px; line-height: 1.4; color: rgba(32,48,26,.62); }
+.rls-why { margin: 8px 0 0; font-size: 13.5px; line-height: 1.5; color: rgba(32,48,26,.7); }
+.rls-l { display: grid; gap: 8px; }
+.rls-s { display: grid; grid-template-columns: 50px 1fr 34px; gap: 12px; align-items: start; padding: 12px; border-radius: 20px; background: #fff; border: 1px solid rgba(32,48,26,.07); transition: background .3s, border-color .3s; }
+.rls-s.helped { background: #fdf3f6; border-color: rgba(176,79,108,.22); }
+.rls-ph { width: 50px; height: 50px; border-radius: 16px; overflow: hidden; display: grid; place-items: center; background: #f4f1ea; color: #6c823e; }
+.rls-ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.rls-b { min-width: 0; }
+.rls-b b { display: block; font: 600 15px/1.25 var(--font); color: #20301a; }
+.rls-b p { margin: 3px 0 0; font-size: 13.5px; line-height: 1.45; color: #304023; }
+.rls-b details summary { list-style: none; display: inline-flex; align-items: center; gap: 3px; margin-top: 6px; font: 500 12.5px var(--font); color: #6c823e; cursor: pointer; }
+.rls-b details summary::-webkit-details-marker { display: none; }
+.rls-s .rs-heart { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; border: 1px solid rgba(32,48,26,.12); background: #fff; color: rgba(32,48,26,.45); padding: 0; }
+.rls-s .rs-heart.on { background: #b04f6c; border-color: #b04f6c; color: #fff; }
+.rls-f { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.rls-f > span { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 6px; border-radius: 18px; background: #fff; border: 1px solid rgba(32,48,26,.07); text-align: center; }
+.rls-f .emo { font-size: 30px; line-height: 1.1; } .rls-f img.emo { width: 34px; height: 34px; }
+.rls-f b { font: 500 13.5px/1.2 var(--font); color: #20301a; } .rls-f small { font-size: 11.5px; color: rgba(32,48,26,.6); }

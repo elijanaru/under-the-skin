@@ -2624,8 +2624,7 @@ function viewPlan() {
         <div class="grid2 pv-rec">${recGrid(recs, cur)}</div>`;
     } else if (sub === 'foods') {
       const recent = recentSymptoms().filter(s => SYMPTOM_FOODS[s]).slice(0, 2);
-      body = `<div class="eat-cat eb eb-free sf-top" data-phase="${phase}">${superInner(phase)}</div><div class="eat-cat eb eb-free sf-top apo-top">${apoInner()}</div>${dietGuideCard(phase)}
-        ${feelFoods(recent, warmWindow(info))}`;
+      body = `${recent.length ? `<div class="ff-top">${feelFoods(recent, warmWindow(info))}</div>` : ''}<div class="eat-cat eb eb-free sf-top" data-phase="${phase}">${superInner(phase)}</div><div class="eat-cat eb eb-free sf-top apo-top">${apoInner()}</div>${dietGuideCard(phase)}`;
     } else if (sub === 'super') { location.replace('#/plan/foods'); return '';
     } else if (sub === 'drinks' || sub === 'supps') {
       body = `${sub === 'drinks' ? `${plTea()}<div class="eat-cat eb eb-free sf-top" data-phase="${phase}">${drinksInner(phase)}</div>${cafCard()}` : `<section class="card eat-cat eb" data-phase="${phase}">${eatCatInner(phase, sub)}</section>`}
@@ -2684,15 +2683,21 @@ function evBadge() { return ''; } // evidence labels are hidden everywhere (the 
 // Check-in symptoms whose emoji was crude or unclear (a red dot for acne, bricks for constipation) get drawn icons in the same glossy style.
 const LOG_DRAWN = { Cramps: 'cramps', 'Pelvic pain': 'pelvic-pain', 'Joint pain': 'joint-pain', Constipation: 'constipation', Acne: 'acne', 'Brain fog': 'brain-fog', 'Unusual colour': 'unusual-colour' };
 const logEmo = (n, e) => LOG_DRAWN[n] ? `<img class="lg-emo" src="images/emoji/log-${LOG_DRAWN[n]}.svg" alt="">` : (e || LOG_EMOJI[n] || '•');
-// For how you feel (Food guide, Superfoods): one white card per symptom she logged in the last days. Food tiles with a picture, amount and short why; the tip behind a tap.
+// For how you feel (Superfoods top, Food guide): one white card per symptom she logged in the last days, in the same style as
+// the superfoods (16 Nov 2026, her call): cut-out or emoji tiles with the amount; a tap lifts the tile and a sheet rises from below.
+const FF_CUT = [[/pumpkin seed/i, 'pumpkin-seeds'], [/^ginger/i, 'ginger'], [/chocolate|cacao/i, 'cacao'], [/berries/i, 'blueberries'], [/chia/i, 'chia'],
+  [/flax/i, 'flaxseed'], [/fennel/i, 'fennel-seeds'], [/^dates/i, 'medjool'], [/honey/i, 'raw-honey'], [/^walnut/i, 'walnuts']];
+const ffPic = x => { const c = FF_CUT.find(([r]) => r.test(x)); return c ? `images/sf/${c[1]}.webp` : ''; };
+const ffEmo = x => ingEmo(x) || (/tea/i.test(x) ? '🍵' : /water/i.test(x) ? 'd:water' : '🌿');
+const ffList = (s, warm) => SYMPTOM_FOODS[s].foods.filter(x => !(warm && RAW_COLD.test(x))).slice(0, 4);
 function feelFoods(recent, warm) {
   if (!recent.length) return '';
-  return `${sectionTitle('For how you feel')}<p class="ff-lead">Foods for what you logged in the last few days.</p>${recent.map(s => {
-    const f = SYMPTOM_FOODS[s], foods = f.foods.filter(x => !(warm && RAW_COLD.test(x))).slice(0, 4), rk = reliefKey(s);
-    return `<section class="ff">
-      <header class="ff-h"><span class="ff-ic">${logEmo(s)}</span><span class="ff-t"><b>${s}</b><small>${warm ? 'Warm and cooked for now' : 'Logged recently'}</small></span>${rk ? `<button class="ff-go" data-action="nav" data-to="relief/${encodeURIComponent(rk)}">Relief ${icon('chevR', 13)}</button>` : ''}</header>
-      <div class="ff-grid">${foods.map(x => { const [amt, why] = SYMPTOM_FOOD_INFO[x] || ['', '']; const e = ingEmo(x) || (/tea/i.test(x) ? '🍵' : /water/i.test(x) ? 'd:water' : ''); return `<div class="ff-f"><span class="ff-e">${e ? emoRaw(e) : ''}</span><b>${x}</b>${amt ? `<em>${amt}</em>` : ''}${why ? `<small>${why}</small>` : ''}</div>`; }).join('')}</div>
-      <details class="ff-why"><summary>Why these help ${icon('chevD', 14)}</summary><p>${f.tip}</p></details>
+  return `${sectionTitle('For how you feel')}${recent.map(s => {
+    const f = SYMPTOM_FOODS[s], foods = ffList(s, warm);
+    return `<section class="sfc ff2">
+      <header class="sfc-h"><small><i></i>You logged ${warm ? '· warm and cooked for now' : 'this lately'}</small><h3><span class="ff2-ic" aria-hidden="true">${logEmo(s)}</span>${s}</h3><p>${f.tip}</p></header>
+      <div class="sfc-grid">${foods.map((x, i) => { const [amt, why] = SYMPTOM_FOOD_INFO[x] || ['', ''], src = ffPic(x);
+        return `<button class="sfc-i" style="--i:${i}" data-action="ffPick" data-s="${esc(s)}" data-i="${i}">${src ? `<img src="${src}" alt="" loading="lazy" decoding="async">` : `<em>${emoRaw(ffEmo(x))}</em>`}<b>${x}</b>${why ? `<small>${why}</small>` : ''}${amt ? sfAmtHTML(amt) : ''}</button>`; }).join('')}</div>
     </section>`; }).join('')}`;
 }
 function recentSymptoms() {
@@ -4421,7 +4426,7 @@ function viewReliefIndex() {
   const likely = [...new Set([...recent, ...(w ? RELIEF_WINDOW[w] : [])])].filter(k => RELIEF[k]).slice(0, 3);
   const chip = k => `<button class="rx2-chip" data-action="nav" data-to="relief/${encodeURIComponent(k)}"><img src="${reliefPhoto(k, 120)}" alt="">${k}${recent.has(k) ? '<i>logged</i>' : ''}</button>`;
   const done = habitsDone(todayISO()), H = habitsBlock();
-  const pillar = (P, i) => `<details class="hg-p" style="--c:${P.c};--i:${i}"><summary>${(() => { const X = HB_PIL_X[P.t] || [], src = typeof X[0] === 'function' ? X[0]() : X[0]; return src ? `<span class="hg-ph"><img src="${src}" alt="" loading="lazy" decoding="async"></span>` : `<span class="hg-pi">${icon(P.ic, 19, 1.8)}</span>`; })()}<span class="hg-pt"><b>${P.t}</b><small>${P.s}</small></span>${(HB_PIL_X[P.t] || [])[1] ? `<span class="hg-k"><b class="dotnum">${HB_PIL_X[P.t][1]}</b><small>${HB_PIL_X[P.t][2]}</small></span>` : ''}<span class="hg-pc">${icon('chevD', 16)}</span></summary>
+  const pillar = (P, i) => `<details class="hg-p" style="--c:${P.c};--i:${i}"><summary><span class="hg-pi">${icon(P.ic, 19, 1.8)}</span><span class="hg-pt"><b>${P.t}</b><small>${P.s}</small></span>${(HB_PIL_X[P.t] || [])[1] ? `<span class="hg-k"><b class="dotnum">${HB_PIL_X[P.t][1]}</b><small>${HB_PIL_X[P.t][2]}</small></span>` : ''}<span class="hg-pc">${icon('chevD', 16)}</span></summary>
       <div class="hg-pin"><ul>${P.do.map(x => `<li>${icon('check', 12, 2.6)}<span>${x}</span></li>`).join('')}</ul><p><b>Why it works</b>${P.why}</p>${P.st ? `<div class="hg-st"><small>What studies found</small><div class="sgt-st"><b class="dotnum">${P.st[2]}</b><span><em>${P.st[1]}</em>${P.st[0]}<small>${P.st[3]}</small></span></div></div>` : ''}</div></details>`;
   return `${topbar('Balance', { back: true })}
   <div class="pad hg fb">
@@ -4434,7 +4439,6 @@ function viewReliefIndex() {
       <div class="fbp-det" hidden></div>
     </section>
     ${seasonRituals(apoSeason())}
-    ${el5()}
     ${H.fert.length ? `${sectionTitle('Fertility & feminine flow')}<div class="hg-list">${H.fert.map(H.row).join('')}</div>` : ''}
     ${sectionTitle('Seven pillars of balance')}
     <p class="hg-sub">What protects and balances a woman’s hormones. Tap one for what to do and why.</p>
@@ -4492,6 +4496,32 @@ function reliefFood(k, L, food) {
     ${warmWindow(M.info) ? `<p class="sfc-warm">${icon('sun', 13)} These days: warm and cooked, nothing raw or iced.</p>` : ''}
   </section>`;
 }
+// The relief guide rises from below like the herb and superfood sheets (16 Nov 2026, her call: no separate Relief page).
+function reliefSheet(k) {
+  const R = RELIEF[k], help = (state.reliefHelp || {})[k] || [], order = R.steps.map((_, i) => i).sort((a, b) => help.includes(b) - help.includes(a));
+  const [w0, ...wr] = splitSentences(R.why), st = RELIEF_STUDY[k], food = SYMPTOM_FOODS[k] || (k === 'PMS mood' ? SYMPTOM_FOODS.Cravings : null), warm = warmWindow(M.info);
+  const head = (ic, t) => `<h3><span class="hs-ic">${icon(ic, 16, 2)}</span>${t}</h3>`;
+  return `<div class="hs hs1 sfs rls">
+    <div class="hs-hero">
+      <svg class="o3-dood" viewBox="0 0 340 250" aria-hidden="true">${o3Spark('#f6c6d4', 46, 52, 0)}${o3Spark('#f1d58a', 296, 40, 1.1)}${o3Spark('#c9d6a8', 300, 200, 2)}${o3Spark('#f6c6d4', 34, 190, 1.5)}</svg>
+      <span class="tsh-glow" aria-hidden="true"></span><img class="hs-plant sf rd" src="${reliefPhoto(k, 480)}" alt="">
+    </div>
+    <header class="hs-h"><small>Ways to ease it</small><h2>${k}</h2></header>
+    <section class="o3-note hs-note"><p class="o3-lead">${w0}</p>${wr.length ? `<p class="rls-why">${wr.join(' ')}</p>` : ''}</section>
+    <section class="hs-card">${head('heart', 'What helps')}<p class="rls-hint">${help.length ? `${help.length} of ${R.steps.length} work for you, so they sit at the top.` : 'Tap the heart on what helps you. Next time it moves to the top.'}</p>
+      <div class="rls-l">${order.map(i => { const x = R.steps[i], [d0, ...dr] = splitSentences(x.d), ph = reliefStepPic(x.t);
+        return `<div class="rls-s ${help.includes(i) ? 'helped' : ''}">${ph ? `<span class="rls-ph"><img src="${ph}" alt="" loading="lazy" decoding="async"></span>` : `<span class="rls-ph ic">${icon(reliefIcon(x.t), 18)}</span>`}
+          <div class="rls-b"><b>${x.t}</b><p>${d0}</p>${dr.length ? `<details><summary>More ${icon('chevD', 11)}</summary><p>${dr.join(' ')}</p></details>` : ''}</div>
+          <button class="rs-heart ${help.includes(i) ? 'on' : ''}" data-action="reliefHelp" data-k="${esc(k)}" data-i="${i}" aria-label="This helps me">${icon('heart', 17)}</button></div>`; }).join('')}</div></section>
+    ${food ? `<section class="hs-card">${head('bowl', 'Eat & drink for this')}<div class="rls-f">${food.foods.filter(x => !(warm && RAW_COLD.test(x))).map(x => `<span>${emoRaw(ffEmo(x))}<b>${x}</b>${(SYMPTOM_FOOD_INFO[x] || [])[0] ? `<small>${SYMPTOM_FOOD_INFO[x][0]}</small>` : ''}</span>`).join('')}</div></section>` : ''}
+    ${st ? `<section class="hs-card hs-study">${head('book', 'What a study found')}<p>${st[2]}</p><p class="hs-cite">${st[1]} ${st[0]}, ${st[3]}</p></section>` : ''}
+    ${R.tcm ? `<section class="hs-card">${head('yinyang', 'In Chinese medicine')}<p>${R.tcm}</p></section>` : ''}
+    ${R.doctor ? `<div class="tsh-warn hs-warn"><i>${icon('plus', 13, 2.2)}</i><span><b>See a doctor if</b> ${R.doctor}</span></div>` : ''}
+    <p class="hs-fine">General information, not medical advice. Check with a pharmacist before painkillers or supplements.</p>
+    <button class="hs-done" data-action="wsClose">${icon('leaf', 16, 2)} Feeling better</button>
+  </div>`;
+}
+const reliefOpen = k => wsOpen(reliefSheet(k), 'ws-herb ws-sf ws-rl');
 function viewRelief(id) {
   const k = decodeURIComponent(id || ''), R = RELIEF[k]; if (!R) return viewMissing();
   const food = SYMPTOM_FOODS[k] || (k === 'PMS mood' ? SYMPTOM_FOODS.Cravings : null), L = RELIEF_LINKS[k] || {};
@@ -8291,7 +8321,7 @@ function viewSeason() {
     <section class="sfc szc" data-phase="${phase || ''}">
       <header class="sfc-h"><small><i style="background:${phase ? PH_HEX[phase] : '#6c823e'}"></i>${country ? `${country} · ` : ''}${MONTHS[m - 1]}</small><h3>${sn} foods</h3><p>${n} foods are fresh where you live right now.${phase ? ` Picks for your ${PHASES[phase].name.toLowerCase()} phase come first.` : ''}</p></header>
       ${(() => { const cur = groups.some(g => g[0] === ui.szTab) ? ui.szTab : groups[0][0];
-        return `<div class="szt" role="tablist">${groups.map(([k, name, e, list]) => { const p = szPic(list[0].f), mine = phase ? list.filter(i => i.ph.includes(phase)).length : 0;
+        return `<div class="szt" role="tablist">${groups.map(([k, name, e, list]) => { const p = k === 'fungi' ? { src: 'images/fungi/icon-porcini.webp' } : szPic(list[0].f), mine = phase ? list.filter(i => i.ph.includes(phase)).length : 0;
           return `<button class="szt-b ${k === cur ? 'on' : ''}" role="tab" aria-selected="${k === cur}" data-action="szTab" data-v="${k}"><span class="szt-i">${p ? `<img src="${p.src}" alt="">` : emoRaw(e)}</span><b>${name}</b><small><span class="dotnum">${list.length}</span>${mine ? ` · ${mine} for you` : ''}</small></button>`; }).join('')}</div>
         ${groups.map(([k, name, e, list]) => `<div class="sfc-grid szt-p" data-k="${k}" role="tabpanel" ${k === cur ? '' : 'hidden'}>${list.map(i => item(i, e)).join('')}</div>`).join('')}`; })()}
       <div class="sfc-det" aria-live="polite" hidden></div>
@@ -9973,7 +10003,13 @@ const actions = {
     if (!confirm('Delete your account and the copy of your data in the cloud? This cannot be undone. The data on this phone stays.')) return;
     try { await A.deleteAccount(); if (state) { delete state.account; save(true); } toast('Account deleted'); render(); } catch (e) { toast(e.message); }
   },
-  nav: d => go(d.to),
+  nav: d => { const m = /^relief\/(.+)$/.exec(d.to || ''), k = m && decodeURIComponent(m[1]); if (k && RELIEF[k]) return reliefOpen(k); if (document.querySelector('.ws')) wsClose(true); go(d.to); },
+  ffPick: (d, el) => {
+    const s = d.s, warm = warmWindow(M.info), x = ffList(s, warm)[+d.i]; if (!x) return;
+    const [amt, why] = SYMPTOM_FOOD_INFO[x] || ['', ''];
+    sfOpen(el, { src: ffPic(x), emoji: emoRaw(ffEmo(x)), name: x, eyebrow: `For your ${s.toLowerCase()}`, tag: why, why: SYMPTOM_FOODS[s].tip,
+      rows: [['bowl', 'How much', amt || 'A small portion'], ['leaf', 'When', warm ? 'These days, warm and cooked' : 'Today and the next few days']], study: null, care: '' });
+  },
   back: () => (history.length > 1 ? history.back() : go('today')),
   selectDay: d => { ui.selected = d.date; render(); },
   onbEnter: d => {
@@ -10153,7 +10189,7 @@ const actions = {
   reliefHelp: (d, el) => {
     const H = state.reliefHelp = state.reliefHelp || {}, l = H[d.k] = H[d.k] || [], i = +d.i, at = l.indexOf(i);
     at < 0 ? l.push(i) : l.splice(at, 1); save();
-    el.classList.toggle('on', at < 0); el.closest('.rs').classList.toggle('helped', at < 0);
+    el.classList.toggle('on', at < 0); el.closest('.rs, .rs2, .rls-s')?.classList.toggle('helped', at < 0);
     if (at < 0) plusOne(el);
   },
   rhView: d => { ui.rhView = d.v; render(); },
