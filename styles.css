@@ -15383,3 +15383,28 @@ html .bwx-c.bwx2 { position: relative; display: grid; justify-items: center; gap
 /* Brew it right: the drawn cups a little bigger */
 .bg-vs img { width: 58px; height: 58px; }
 html .rn .rn-ph.rn-el { padding: 3px; }
+
+/* Hormones › Who leads when (Round C): a phase strip sized to her cycle with a Day pin, then spec rows
+   (phase left, the lead hormone right); her phase open, the rest one tap away */
+.hs-relay2 { padding: 18px 18px 6px; }
+.hr-k { font-size: 12.5px; font-weight: 500; color: rgba(32,48,26,.6); }
+.hr-strip { position: relative; display: flex; gap: 3px; height: 10px; margin: 34px 0 10px; }
+.hr-strip > i { border-radius: 5px; background: color-mix(in srgb, var(--c) 35%, #fff); }
+.hr-strip > i.on { background: var(--c); }
+.hr-pin { position: absolute; bottom: 14px; transform: translateX(-50%); display: grid; justify-items: center; }
+.hr-pin b { padding: 3px 9px; border-radius: 99px; background: #20301a; color: #fff; font-size: 11.5px; font-weight: 500; white-space: nowrap; }
+.hr-pin b em { font-style: normal; font-size: 12px; }
+.hr-pin::after { content: ''; width: 2px; height: 8px; background: #20301a; border-radius: 1px; }
+.hr-r { border-top: 1px solid rgba(32,48,26,.07); }
+.hr-r:first-of-type { border-top: 0; }
+.hr-r summary { list-style: none; display: grid; grid-template-columns: 12px 1fr auto 14px; align-items: center; gap: 10px; padding: 13px 0; cursor: pointer; }
+.hr-r summary::-webkit-details-marker { display: none; }
+.hr-r summary > i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+.hr-r summary span { display: flex; align-items: center; gap: 8px; font-size: 14px; color: rgba(32,48,26,.7); }
+.hr-r summary span em { font-style: normal; font-size: 10.5px; font-weight: 500; padding: 2px 8px; border-radius: 99px; background: #20301a; color: #fff; }
+.hr-r summary b { font-size: 15px; font-weight: 600; color: #20301a; text-align: right; }
+.hr-r summary svg { color: rgba(32,48,26,.4); transition: transform .3s ease; }
+.hr-r[open] summary svg { transform: rotate(180deg); }
+.hr-r p { margin: -4px 0 13px 22px; padding: 10px 12px; border-radius: 14px; background: color-mix(in srgb, var(--c) 12%, #fff); font-size: 13.5px; line-height: 1.45; color: rgba(32,48,26,.8); }
+@media (prefers-reduced-motion: reduce) { .hr-r summary svg { transition: none; } }
+.hr-pin b em { margin-left: 3px; }
