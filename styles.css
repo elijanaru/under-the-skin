@@ -15965,3 +15965,29 @@ button.br-up.go:active { transform: scale(.985); }
 .al2-r.hfx > .al2-t { align-self: center; min-height: 46px; align-content: center; }
 .al2-r.hfx > .al2-w { align-self: center; grid-row: 1; grid-column: 3; }
 .al2-r.hfx > .al2-fx { grid-column: 2 / -1; margin-top: 0; }
+
+/* Grocery (Round E): the phase dot key sits right under the list; Swapped for the season as photo rows like the list above */
+.gro-key { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin: -2px 6px 6px; font: 500 12.5px/1.2 var(--font); color: #304023; }
+.gro-key span { display: inline-flex; align-items: center; gap: 6px; }
+.gro-key i { width: 9px; height: 9px; border-radius: 50%; }
+.gro-key small { font: 400 12px/1.2 var(--font); color: #4a5a3c; }
+.gro-page .gro-swap.gsw { padding: 8px 18px 16px; }
+.gro-page .gro-swap.gsw > .gsw-r { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid rgba(48,64,35,.08); }
+.gro-page .gro-swap.gsw > .gsw-r:first-child { border-top: 0; }
+.gsw-pair { display: inline-flex; align-items: center; gap: 4px; color: #9aa48e; }
+.gsw-i { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex: none; background: #f6f2ea; }
+.gsw-e { display: grid; place-items: center; font-size: 20px; line-height: 1; }
+.gsw-i.off { width: 30px; height: 30px; filter: grayscale(1); opacity: .7; }
+.gsw-e.off { font-size: 15px; }
+.gsw-n { min-width: 0; display: grid; gap: 2px; }
+.gro-page .gsw .gsw-n b { font: 600 15px/1.25 var(--font); color: #20301a; }
+.gsw-n small { font: 400 12px/1.3 var(--font); color: #5d6a50; }
+.gsw-v { font: 600 12px/1 var(--font); color: #304023; padding: 6px 10px; border-radius: 99px; background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(30% * var(--hs)) 94%); white-space: nowrap; }
+.gro-page .gro-swap.gsw > .gsw-sk { display: block; font-size: inherit; padding: 12px 0 2px; border-top: 1px solid rgba(48,64,35,.08); }
+.gsw .gsw-r + .gsw-sk, .gsw .gsw-sk:first-child { margin-top: 0; }
+.gsw .gsw-sk:first-child { border-top: 0; }
+.gsw-k { display: block; font: 500 12px/1.2 var(--font); color: #5d6a50; margin-bottom: 8px; }
+.gsw-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.gsw-chips > span { display: inline-flex; align-items: center; gap: 7px; padding: 3px 11px 3px 3px; border-radius: 99px; background: #f6f2ea; font: 500 13px/1 var(--font); color: #304023; }
+.gsw-chips .gsw-i.off { width: 26px; height: 26px; }
+.gsw-f { margin: 12px 0 0; font: 400 12px/1.4 var(--font); color: #5d6a50; }

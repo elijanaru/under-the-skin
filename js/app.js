@@ -4091,6 +4091,8 @@ const GRO_EMO = [[/potato/i, '🍠'], [/pumpkin|squash/i, '🎃'], [/spinach|col
   [/egg/i, '🥚'], [/beef|lamb|meat|liver|organ/i, '🥩'], [/chicken|duck|turkey/i, '🍗'], [/milk|kefir|yog|cheese|butter|ghee/i, '🥛'], [/lentil|bean|pea|chickpea/i, '🫘'], [/mushroom|shiitake/i, '🍄'], [/avocado/i, '🥑'], [/tomato/i, '🍅'], [/pepper/i, '🫑'],
   [/melon/i, '🍉'], [/fig|date|prune/i, '🫐'], [/ginger|turmeric/i, '🫚'], [/herb|mint|parsley|basil|cilantro|dill/i, '🌿'], [/seaweed|kelp|nori|gim|miyeok/i, '🌊'], [/millet|rice|buckwheat|quinoa|grain/i, '🌾'], [/honey|molasses/i, '🍯'], [/cinnamon|spice|clove/i, '✨'], [/kimchi|sauerkraut|ferment/i, '🫙']];
 const groEmoji = n => (GRO_EMO.find(([r]) => r.test(n)) || [0, '🌱'])[1];
+// a small round food photo for the grocery page, or its emoji tile when there is no photo
+const groPic = (n, cls = '') => { const ph = foodPhoto(n, 120); return ph ? `<img class="gsw-i ${cls}" src="${ph}" alt="" loading="lazy">` : `<span class="gsw-i gsw-e ${cls}" aria-hidden="true">${groEmoji(n)}</span>`; };
 // Food page: the grocery list as a little basket of this week's real foods, how many and how many are already in
 function groceryCard() {
   const flat = groceryItems().flatMap(([, l]) => l), got = state.grocery || {}, total = flat.length, done = flat.filter(i => got[i.name.toLowerCase()]).length;
@@ -4143,10 +4145,13 @@ function viewGrocery() {
       <section class="card glass">${list.map(it => { const k = it.name.toLowerCase(), ph = foodPhoto(it.name, 120); return `<button class="check-row gro ${got[k] ? 'on' : ''}" data-action="groToggle" data-k="${esc(k)}">
         <span class="cb">${icon('check', 14, 2.2)}</span>${ph ? `<img class="gro-img" src="${ph}" alt="" loading="lazy">` : `<span class="gro-img gro-emo" aria-hidden="true">${groEmoji(it.name)}</span>`}<span class="gro-n">${esc(it.name)}<small>${it.why}</small></span>
         <span class="gro-ph">${it.phases.map(p => `<i style="background:${PH_HEX[p]}" title="${PHASES[p].name}"></i>`).join('')}</span></button>`; }).join('')}</section>`).join('')}
-    ${swaps.length ? `${sectionTitle('Swapped for the season')}<section class="card glass gro-swap">${swaps.map(x => `<div><s>${x.out}</s>${icon('chevR', 12)}<b>${x.alt || 'skip this week'}</b><small>${x.why}</small></div>`).join('')}
-      <p class="fine" style="margin:8px 0 0">Not in season where you live this month, so swapped for a local food with the same nutrient.</p></section>` : ''}
+    <div class="gro-key">${phases.map(p => `<span><i style="background:${PH_HEX[p]}"></i>${PHASES[p].name}</span>`).join('')}<small>the phase each food supports</small></div>
+    ${swaps.length ? (() => { const sw = swaps.filter(x => x.alt), sk = swaps.filter(x => !x.alt);
+      return `${sectionTitle('Swapped for the season')}<section class="card glass gro-swap gsw">
+      ${sw.map(x => `<div class="gsw-r"><span class="gsw-pair">${groPic(x.out, 'off')}${icon('chevR', 13)}${groPic(x.alt)}</span><span class="gsw-n"><b>${esc(x.alt)}</b><small>Same ${esc(x.why.toLowerCase())} as ${esc(x.out.toLowerCase())}</small></span></div>`).join('')}
+      ${sk.length ? `<div class="gsw-sk"><span class="gsw-k">Left off this month</span><div class="gsw-chips">${sk.map(x => `<span>${groPic(x.out, 'off')}${esc(x.out)}</span>`).join('')}</div></div>` : ''}
+      <p class="gsw-f">Not in season where you live this month${sw.length ? ', so swapped for a local food with the same nutrient' : ''}. They come back in their season.</p></section>`; })() : ''}
     <section class="card glass gro-share"><div><b>Shopping with someone?</b><small>Send the list as text</small></div><button class="pill-cta" data-action="groShare">${icon('download', 15)} Share list</button></section>
-    <p class="fine center">Dots show which phase each food supports.</p>
   </div>`;
 }
 function eatTodayCard(info) {
