@@ -13606,3 +13606,22 @@ html .ff-lead { color: #fff !important; -webkit-text-fill-color: #fff !important
 .fw.ttc .fw-key i.hi { background: #7fa84e; } .fw.ttc .fw-key i.lo { background: #e07f7c; }
 .fw.ttc .fw-b.egg i, .fw.avoid .fw-b.egg i { background: linear-gradient(#9a84d4, #bfaee6); }
 .fw-key i.egg { background: #9a84d4; box-shadow: none; border-radius: 50%; }
+
+/* His date ticket: a big cute emoji in the pearl disc, and the love button under it sends the ticket to her */
+.dt-emo { font-size: 46px; line-height: 1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; filter: drop-shadow(0 6px 8px rgba(192,80,122,.22)); animation: dtBob 4.5s ease-in-out infinite; }
+@keyframes dtBob { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-4px) rotate(4deg); } }
+html .lb2.dt-send { margin: -4px 0 16px; }
+.sig-x { margin: -4px auto 14px; padding: 10px 16px; max-width: 280px; border-radius: 18px; background: rgba(255,255,255,.85); color: #20301a; font-size: 15px; font-weight: 500; line-height: 1.35; box-shadow: 0 8px 20px -12px rgba(192,80,122,.5); }
+@media (prefers-reduced-motion: reduce) { .dt-emo { animation: none; } }
+
+/* Titles and sublines on the arched background (15 Nov 2026, her pick): a frosted pearl pill with dark ink,
+   so they read on every part of the blush, peach and willow light. */
+html .view .section-title h3, html .view .pv-page .section-title h3 { display: inline-flex !important; width: auto; padding: 7px 16px 7px 12px !important; border-radius: 999px;
+  background: rgba(255,255,255,.62) !important; -webkit-backdrop-filter: blur(14px) saturate(1.3); backdrop-filter: blur(14px) saturate(1.3);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.8), 0 6px 18px -8px rgba(60,30,40,.25) !important;
+  color: #20301a !important; -webkit-text-fill-color: #20301a !important; text-shadow: none !important; }
+html .pv-page p.pv2-lead, html .pad > p.hg-sub, html .pad > .hg-sub, html .gr-st-sub, html .rit-sub, html .tgw-sub, html .t4-h > p, html .hs-sub, html .mvc-sub, html .ts4-sub,
+html .pad > p.muted, html .lt-soon, html .sync-hero > .sy-sub, html .pad.fb .fbp-title p {
+  display: block; width: fit-content; max-width: 100%; box-sizing: border-box; padding: 8px 14px; border-radius: 16px;
+  background: rgba(255,255,255,.55); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.75);
+  color: rgba(32,48,26,.85) !important; -webkit-text-fill-color: rgba(32,48,26,.85) !important; text-shadow: none !important; }

@@ -7159,16 +7159,16 @@ function handleSignal(m) {
   const sig = SIGNALS.find(x => x.k === d.k); if (!sig) return;
   const from = (state.partners || []).find(x => x.i === d.fi);
   (state.sigLog = state.sigLog || []).unshift({ k: d.k, f: d.f, at: (m.time || Date.now() / 1000) * 1000, pid: from?.id }); state.sigLog = state.sigLog.slice(0, 30); save();
-  showSignal(sig, d.f, from);
+  showSignal(sig, d.f, from, d.x);
   if (document.hidden && 'Notification' in window && Notification.permission === 'granted') navigator.serviceWorker?.ready.then(r => r.showNotification(`${sig.g} ${d.f}`, { body: `${d.f} ${sig.s}`, icon: 'icons/icon-192.png', tag: 'sig-' + m.id })).catch(() => {});
 }
-function showSignal(sig, name, from) {
+function showSignal(sig, name, from, x) {
   document.querySelector('.sig-pop')?.remove();
   const isLove = LOVE.includes(sig);
   const hearts = Array.from({ length: 18 }, (_, i) => `<i style="left:${(i * 37) % 100}%;animation-delay:${(i * .3) % 4}s;animation-duration:${5 + (i % 4)}s;width:${14 + (i * 7) % 18}px;height:${14 + (i * 7) % 18}px">${HEART(i % 3 === 1 ? '#fff' : isLove ? '#ff2d4b' : 'hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)')}</i>`).join('');
   const el = document.createElement('div'); el.className = `sig-pop ${isLove ? 'love' : 'care'}`;
   el.innerHTML = `<div class="lv-hearts">${hearts}</div><div class="lv-in"><div class="lv-art">${loveArt('xl')}<span class="lv-av">${from && from.t ? `<img src="${esc(from.t)}" alt="">` : esc((name || '?')[0])}</span><span class="lv-g">${sig.g}</span></div>
-    <h1>${esc(name)} ${sig.s}</h1><p class="muted">just now · Underskin</p>
+    <h1>${esc(name)} ${sig.s}</h1>${x ? `<p class="sig-x">${esc(String(x).slice(0, 120))}</p>` : ''}<p class="muted">just now · Underskin</p>
     ${from ? `<button class="btn btn-love btn-block" data-action="openLove" data-id="${from.id}">${icon('heart', 16)} Send love back</button>` : ''}
     <button class="btn btn-ghost btn-block" data-action="sigClose">Close</button></div>`;
   $app.appendChild(el);
@@ -7213,7 +7213,7 @@ function viewLove(q) {
   if (!l) return `<div class="pad"><h1 class="page-h" style="margin-top:80px">Link not valid</h1></div>`;
   const hearts = Array.from({ length: 24 }, (_, i) => `<i style="left:${(i * 37) % 100}%;animation-delay:${(i * .37) % 7}s;animation-duration:${6 + (i % 5)}s;width:${12 + (i * 7) % 22}px;height:${12 + (i * 7) % 22}px">${HEART(i % 3 === 1 ? '#fff' : '#ff2d4b')}</i>`).join('');
   return `<div class="love-view"><div class="lv-hearts">${hearts}</div>
-    <div class="lv-in"><div class="lv-art">${loveArt('xl')}<span class="lv-av">${d.t ? `<img src="${esc(d.t)}" alt="">` : esc((d.f || '?')[0])}</span><span class="lv-g">${icon(l.ic, 26)}</span></div><h1>${esc(d.f || 'Someone')} ${l.s}</h1>
+    <div class="lv-in"><div class="lv-art">${loveArt('xl')}<span class="lv-av">${d.t ? `<img src="${esc(d.t)}" alt="">` : esc((d.f || '?')[0])}</span><span class="lv-g">${icon(l.ic, 26)}</span></div><h1>${esc(d.f || 'Someone')} ${l.s}</h1>${d.x ? `<p class="sig-x">${esc(String(d.x).slice(0, 120))}</p>` : ''}
       <p class="muted">${fmt(new Date(), { weekday: 'long' })} · with love, from Underskin</p>
       ${state && state.onboarded ? `<a class="btn btn-love btn-block" href="#/partners">${icon('heart', 16)} Send love back</a>` : `<a class="btn btn-light btn-block" href="#/today">Get Underskin</a>`}</div></div>`;
 }
@@ -8512,6 +8512,8 @@ const PV_SKIP = {
   luteal: ['Saying “calm down”', 'Comments on her cravings or her body'],
   all: ['Fixing it when she just wants you to listen', 'Leaving dishes and laundry for her to notice', 'Blaming her mood on her hormones'],
 };
+// a cute emoji for the date idea of her phase (sofa night, something new, out dancing, home comfort)
+const dateEmo = t => [[/sofa|film|blanket/i, '🍿'], [/new|class|trip/i, '🎡'], [/danc|event|out\b/i, '🥂'], [/home|cook|comfort|early/i, '🍲'], [/walk/i, '🌷'], [/dinner/i, '🍝']].find(([r]) => r.test(t))?.[1] || '💝';
 const pvEmo = e => `<span class="pv2-emo">${emoRaw(e)}</span>`;
 function pvToday(info, name, sup, snap) {
   const warm = info.isPeriod || info.cd > info.L - 4, sn = SZ.seasonName(myCountry(), new Date().getMonth() + 1), snacks = (PV_SNACK[sn] || PV_SNACK.Autumn)[warm ? 'warm' : info.phase], ph = info.phase, w = hisWake(), dw = dayWindow(info);
@@ -8534,10 +8536,15 @@ function pvToday(info, name, sup, snap) {
       <p class="hd-hint duo-hint">Tap the dish or the cup for how to make it</p></section>
     <section class="pv2-card pv2-bring"><div class="pv2-h"><b>Bring her</b><small>In season now · on the way home</small></div>
       <div class="pv2-snacks three">${snacks.map(([e, n, why]) => `<div class="pv2-sn">${pvEmo(e)}<b>${n}</b><small>${why}</small></div>`).join('')}</div></section>
-    <section class="pv2-card pv2-date"><div class="dt-art"><svg viewBox="0 0 64 64" aria-hidden="true">${(GIFT_ART.find(([r]) => r.test(sup.date)) || [0, GIFT_ART[0][1]])[1]}</svg>
+    <section class="pv2-card pv2-date"><div class="dt-art"><span class="dt-emo" aria-hidden="true">${dateEmo(sup.date)}</span>
         ${[1, 2, 3].map(k => `<svg class="dt-h h${k}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></svg>`).join('')}<i class="dt-s s1"></i><i class="dt-s s2"></i></div>
       <div class="dt-txt"><small>A date for two</small><b>${esc(sup.date)}</b><span>${icon('clock', 12)} ${when}</span></div>
-      <div class="dt-stub"><b class="dotnum">2</b><small>for two</small></div></section>`;
+      <div class="dt-stub"><b class="dotnum">2</b><small>for two</small></div></section>
+    ${snap && (snap.a || 'partner') === 'partner' ? `<button class="lb2 dt-send" data-action="pvDateSend" aria-label="Send ${name} this date">
+      <span class="lb2-hearts" aria-hidden="true">${[0, 1, 2, 3].map(i => `<i style="--d:${i * .9}s;--x:${[18, 38, 62, 80][i]}%">${HEART(i % 2 ? '#f4c6d6' : '#e6809c')}</i>`).join('')}</span>
+      <span class="lb2-art">${loveBtnArt()}</span>
+      <span class="lb2-t"><b>Send ${name} this date</b><small>Lands on her phone as a ticket</small></span>
+      <span class="lb2-go">${icon('heart', 16, 2)}</span></button>` : ''}`;
 }
 // Trying for a baby: when she shares that goal, he gets the timing and the few things that make his part count.
 // His part when she is trying for a baby: the habits with the most research behind them, as tiles.
@@ -9661,6 +9668,19 @@ const actions = {
   hisTab: d => { ui.hisTab = d.v; render(); document.getElementById('view').scrollTop = 0; },
   pvTile: d => { ui.pvTile = ui.pvTile === d.v ? '' : d.v; softWith(); },
   pvDay: d => { ui.pvDay = +d.v; softWith(); },
+  pvDateSend: async (d, el) => { // his date ticket goes to her phone like a love signal, or out through the share sheet
+    const r = route(); let raw = r.q && r.q.get('d'); if (!raw) { try { raw = localStorage.getItem('uts.viewOnly'); } catch {} }
+    const snap = raw && b64d(raw); if (!snap) return;
+    const info = snapInfo(snap, C.startOfDay(new Date())), sup = SUPPORT[info.phase]?.partner; if (!sup) return;
+    const b = el.getBoundingClientRect(); heartBurst(b.left + b.width / 2, b.top + b.height / 2);
+    const me = (state && state.profile && state.profile.name) || 'Your partner', x = `${dateEmo(sup.date)} ${sup.date}`;
+    let ok = false;
+    if (snap.i) { try { ok = (await fetch(RELAY + snap.i, { method: 'POST', body: JSON.stringify({ k: 'date', f: me, x }) })).ok; } catch {} }
+    if (ok) { toast(`🎟️ Sent to ${snap.n || 'her'}`); return; }
+    const url = `${appBase()}#/love?d=${b64e({ f: me, k: 'date', x })}`, text = `🎟️ A date for two: ${sup.date}`;
+    if (await shareOut({ text, url })) { toast(`Date sent to ${snap.n || 'her'} ❤️`); return; }
+    try { await navigator.clipboard.writeText(`${text} ${url}`); toast('Copied: paste it in your chat ❤️'); } catch { prompt('Copy and send', `${text} ${url}`); }
+  },
   pvDuo: (d, el) => { // open the recipe of the tapped tile under the pair, in place (the 3D dish and cup keep turning)
     const card = el.closest('.pv2-duo'); if (!card) return;
     const on = el.getAttribute('aria-expanded') !== 'true';
