@@ -2821,17 +2821,27 @@ const DR_WHEN = [[/matcha/i, 'sun', 'Morning'], [/coffee/i, 'clock', 'Before 2 p
   [/raspberry leaf/i, 'drop', 'Period & luteal'], [/broth/i, 'drop', 'Period days'], [/lemon/i, 'sun', 'On waking'], [/nettle/i, 'leaf', 'After your period'], [/green juice/i, 'sun', 'Morning'],
   [/coconut water/i, 'sun', 'Hot or active days'], [/mineral water/i, 'clock', 'All day'], [/hibiscus/i, 'clock', 'Afternoon'], [/chamomile/i, 'moon', 'Evening']];
 const drWhen = n => { const w = DR_WHEN.find(([r]) => r.test(n)); return w ? `<span class="sfc-am dr-w">${icon(w[1], 12)}${w[2]}</span>` : ''; };
+// Drinks › through the day: each drink sits at the hour it suits best (hour, time, am/pm, words)
+const DR_SLOT = [[/lemon/i, 6.5, '6:30', 'am', 'On waking'], [/mineral water/i, 7, '7', 'am', 'Then sip all day'], [/iced matcha/i, 11, '11', 'am', 'Late morning'], [/matcha latte/i, 10.5, '10:30', 'am', 'With a snack'],
+  [/matcha/i, 8, '8', 'am', 'Morning'], [/green juice/i, 9, '9', 'am', 'Mid-morning'], [/coffee/i, 9.5, '9:30', 'am', 'With breakfast'], [/red date/i, 11.5, '11:30', 'am', 'Late morning'],
+  [/coconut water/i, 12.5, '12:30', 'pm', 'Midday'], [/ginger/i, 13.5, '1:30', 'pm', 'After lunch'], [/cacao/i, 14.5, '2:30', 'pm', 'Before 4 pm'], [/hibiscus/i, 15, '3', 'pm', 'Afternoon'],
+  [/nettle/i, 16, '4', 'pm', 'Afternoon'], [/raspberry leaf/i, 16.5, '4:30', 'pm', 'Afternoon'], [/broth/i, 18.5, '6:30', 'pm', 'With dinner'], [/chamomile/i, 21, '9', 'pm', 'Before bed']];
+const drSlot = n => (DR_SLOT.find(([r]) => r.test(n)) || [0, 12, '12', 'pm', 'Any time']).slice(1);
 const drinkArt = n => { const m = DRINK_ART.find(([r]) => r.test(n)); return m ? `images/drinks/${m[1]}.svg` : ''; };
 function drinksInner(phase) {
   const C0 = EAT_GUIDE[phase].cats.drinks, warm = warmWindow(M.info) && phase === (M.info && M.info.phase);
   return `<section class="sfc drc" data-phase="${phase}">
       <header class="sfc-h"><small><i style="background:${PH_HEX[phase]}"></i>${PHASES[phase].name} phase</small><h3>${DR_TITLE[phase]}</h3><p>${DR_SUB[phase]}</p></header>
-      <div class="sfc-grid">${drinkList(phase).map((n, i) => { const sp = DRINK_SPEC.find(([r]) => r.test(n)), pic = (EB_PIC.find(([r]) => r.test(n)) || [])[1]?.();
+      <div class="drt" role="list">
+        <span class="drt-end">${icon('sun', 14)} Wake up</span>
+        ${drinkList(phase).map((n, i) => [n, i, drSlot(n)]).sort((x, y) => x[2][0] - y[2][0]).map(([n, i, sl]) => { const sp = DRINK_SPEC.find(([r]) => r.test(n)), pic = (EB_PIC.find(([r]) => r.test(n)) || [])[1]?.();
         const art = drinkArt(n), img = art || pic;
-        return `<button class="sfc-i" style="--i:${i}" data-action="drPick" data-i="${i}" aria-expanded="false">${img ? `<img class="${art ? 'drw' : img.startsWith('images/') ? '' : 'rd'}" src="${img}" alt="" loading="lazy" decoding="async">` : ''}<b>${n}</b>${sp ? `<small>${sp[1]}</small>` : ''}${drWhen(n)}</button>`; }).join('')}</div>
+        return `<button class="sfc-i drt-r" role="listitem" style="--i:${i}" data-action="drPick" data-i="${i}" aria-expanded="false"><span class="drt-t"><b class="dotnum">${sl[1]}</b><small>${sl[2]}</small></span><span class="drt-c">${img ? `<img class="${art ? 'drw' : img.startsWith('images/') ? '' : 'rd'}" src="${img}" alt="" loading="lazy" decoding="async">` : ''}</span><span class="drt-n"><b>${n}</b><small>${sp ? `${sp[1]} · ` : ''}${sl[3]}</small></span>${icon('chevD', 15)}</button>`; }).join('')}
+        <span class="drt-end">${icon('moon', 14)} Sleep</span>
+      </div>
       <div class="sfc-det" aria-live="polite" hidden></div>
       ${warm ? `<p class="sfc-warm">${icon('sun', 13)} These days: everything warm or at room temperature, nothing iced.</p>` : ''}
-      <footer class="sfc-f"><span>Tap a drink for when and how much</span><span>Ask your doctor if pregnant or on medication</span></footer>
+      <footer class="sfc-f drt-f">Tap a drink for when and how much. Pregnant or on medication? Ask your doctor first.</footer>
     </section>`;
 }
 // Drinks › Your caffeine curve: pick coffee or matcha and the time of her last cup; the curve shows what is still in her at 11 pm.
@@ -7332,9 +7342,9 @@ function calmScience(info) {
   const ticks = [[60, '1 min'], [600, '10 min'], [3600, '1 hour'], [28800, 'a night']];
   return `${sectionTitle('The science of calm')}<p class="cs2-sub">How long each one needs, and what studies found.</p>
     <section class="cs2" style="--pc:${pc}">
-      <div class="csr" aria-hidden="true"><div class="csr-tr">${ticks.map(([s]) => `<i style="left:${pos(s)}%"></i>`).join('')}
-        ${L.map((x, i) => `<span class="csr-d l${i % 3}" data-k="${x.k}" style="left:${pos(x.sec)}%">${calmIc(x.ic, 13)}</span>`).join('')}</div>
-        <div class="csr-lb">${ticks.map(([s, l]) => `<small style="left:${pos(s)}%">${l}</small>`).join('')}</div></div>
+      <div class="csl" role="group" aria-label="How long each one takes">${(() => { const B = [[], [], [], []]; L.forEach(x => B[x.sec < 60 ? 0 : x.sec <= 660 ? 1 : x.sec <= 1800 ? 2 : 3].push(x));
+        return B.map((g, i) => { if (!g.length) return ''; const f = g[0], l = g[g.length - 1], lab = g.length > 1 ? `<b class="dotnum">${f.d}</b> to <b class="dotnum">${l.d}</b> ${l.u}` : `<b class="dotnum">${f.d}</b> ${f.u === 'h' ? 'hours' : f.u}`;
+          return `<div class="csl-c" style="--h:${16 + i * 16}px">${g.map(x => `<button class="csl-p" data-action="calmJump" data-k="${x.k}" aria-label="${esc(x.t)}">${CALM_PH[x.t] ? `<img src="${CALM_PH[x.t]}" alt="" decoding="async">` : calmIc(x.ic)}</button>`).join('')}<i class="csl-b"></i><small>${lab}</small></div>`; }).join(''); })()}</div>
       ${L.map(x => `<details class="cs2-r" data-k="${x.k}"><summary>${CALM_PH[x.t] ? `<span class="cs2-ph"><img src="${CALM_PH[x.t]}" alt="" loading="lazy" decoding="async"></span>` : `<span class="cs2-ic">${calmIc(x.ic)}</span>`}<span class="cs2-t"><b>${x.t}</b><small>${x.r}</small></span>
         <span class="cs2-d"><b class="dotnum">${x.d}</b><small>${x.u}</small></span>${icon('chevD', 14)}</summary>
         <div class="cs2-b"><p>${x.s}</p><span class="cs2-c">${x.ev === 'tcm' ? 'Chinese medicine' : `${x.c.replace(/\s*\(.*?\)/g, '')}${x.src ? ` · ${x.src}` : ''}`}</span></div></details>`).join('')}
@@ -10071,6 +10081,7 @@ const actions = {
   },
   rtPeek: (d, row) => { const el = row.closest('.rt'); if (RT && RT.el === el) return; rtNow(el, row); },
   rtSkip: () => { if (RT) { RT.paused = false; RT.el.classList.remove('paused'); rtBtn(RT.el.querySelector('.rt-go'), 'Pause', 'pause'); rtStep(RT.i + 1); } },
+  calmJump: d => { const r = document.querySelector(`.cs2-r[data-k="${d.k}"]`); if (!r) return; r.open = true; r.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' }); },
   calmWay: (d, el) => {
     let k = calmDone(); k = k.includes(d.t) ? k.filter(x => x !== d.t) : [...k, d.t];
     try { localStorage.setItem('uts.calmWays', JSON.stringify({ d: todayISO(), k })); } catch {}
@@ -10136,7 +10147,8 @@ const actions = {
     const off = () => box.querySelectorAll('.sfc-i.on').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); });
     if (el.closest('.sfc-det') || el.classList.contains('on')) { off(); det.hidden = true; return; }
     off(); el.classList.add('on'); el.setAttribute('aria-expanded', 'true');
-    { const items = [...el.parentElement.querySelectorAll('.sfc-i')], k = items.indexOf(el); items[Math.min(items.length - 1, Math.floor(k / 2) * 2 + 1)].after(det); }
+    if (el.classList.contains('drt-r')) el.after(det);
+    else { const items = [...el.parentElement.querySelectorAll('.sfc-i')], k = items.indexOf(el); items[Math.min(items.length - 1, Math.floor(k / 2) * 2 + 1)].after(det); }
     const p = apoPic(x), H = (x.herb && HERB_SPEC[x.n]) || {}, cares = [x.warn, H.care].filter(Boolean), S = H.study;
     det.innerHTML = `<img class="${p.round ? 'rd' : ''}" src="${p.src}" alt=""><div><small class="sfc-o">${x.herb ? `${x.sub} · ${x.nat === 'warm' ? 'warming' : 'neutral'}` : x.sub}</small><b>${x.n}</b><p>${x.why}</p>
       <span class="sfc-dose">${icon('drop', 12)} ${H.dose ? `${H.dose}. ` : ''}${x.how}</span>
@@ -10167,7 +10179,8 @@ const actions = {
     const off = () => box.querySelectorAll('.sfc-i.on').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); });
     if (el.closest('.sfc-det') || el.classList.contains('on')) { off(); det.hidden = true; return; }
     off(); el.classList.add('on'); el.setAttribute('aria-expanded', 'true');
-    { const items = [...el.parentElement.querySelectorAll('.sfc-i')], k = items.indexOf(el); items[Math.min(items.length - 1, Math.floor(k / 2) * 2 + 1)].after(det); }
+    if (el.classList.contains('drt-r')) el.after(det);
+    else { const items = [...el.parentElement.querySelectorAll('.sfc-i')], k = items.indexOf(el); items[Math.min(items.length - 1, Math.floor(k / 2) * 2 + 1)].after(det); }
     const [n, how, why] = it.r, [when, takes, ph, st, care] = it.m, P = { m: 'Period', f: 'Follicular', o: 'Ovulation', l: 'Luteal' };
     const yr = st ? (st[1].match(/(19|20)\d{2}/) || [''])[0] : '';
     const H = RIT_HOW[n], PK = { m: 'menstrual', f: 'follicular', o: 'ovulatory', l: 'luteal' };
@@ -10191,7 +10204,8 @@ const actions = {
     const was = el.classList.contains('on'); box.querySelectorAll('.sfc-i').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); });
     if (was) { det.hidden = true; return; }
     el.classList.add('on'); el.setAttribute('aria-expanded', 'true');
-    { const items = [...el.parentElement.querySelectorAll('.sfc-i')], k = items.indexOf(el); items[Math.min(items.length - 1, Math.floor(k / 2) * 2 + 1)].after(det); }
+    if (el.classList.contains('drt-r')) el.after(det);
+    else { const items = [...el.parentElement.querySelectorAll('.sfc-i')], k = items.indexOf(el); items[Math.min(items.length - 1, Math.floor(k / 2) * 2 + 1)].after(det); }
     const sp = DRINK_SPEC.find(([r]) => r.test(n)) || [], why = (EB_WHY.find(([r]) => r.test(n)) || [0, ''])[1], img = el.querySelector('img');
     const serve = /iced/i.test(n) ? 'Iced' : /water|juice/i.test(n) ? 'Room temperature' : /warm|tea|broth|cacao|coffee|latte|matcha/i.test(n) ? 'Hot or warm' : 'Room temperature';
     const rows = [['When', sp[2]], ['How much', sp[3]], ['Caffeine', sp[4]], ['Serve', serve]].filter(r => r[1]);
@@ -10219,7 +10233,8 @@ const actions = {
     const was = el.classList.contains('on'); box.querySelectorAll('.sfc-i').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); });
     if (was) { det.hidden = true; return; }
     el.classList.add('on'); el.setAttribute('aria-expanded', 'true');
-    { const items = [...el.parentElement.querySelectorAll('.sfc-i')], k = items.indexOf(el); items[Math.min(items.length - 1, Math.floor(k / 2) * 2 + 1)].after(det); }
+    if (el.classList.contains('drt-r')) el.after(det);
+    else { const items = [...el.parentElement.querySelectorAll('.sfc-i')], k = items.indexOf(el); items[Math.min(items.length - 1, Math.floor(k / 2) * 2 + 1)].after(det); }
     const p = szPic(i.f), phase = M.info ? M.info.phase : null, warm = M.info && warmWindow(M.info), fungi = i.kind === 'fungi';
     const note = i.nature === 'cool' && warm ? 'A cooling food. Your period is close, so cook it and add ginger or cinnamon.' : NATURE[i.nature][1];
     det.innerHTML = `${p ? `<img class="${p.round ? 'rd' : ''}" src="${p.src}" alt="">` : ''}<div><small class="sfc-o">${NATURE[i.nature][0]} food</small><b>${i.f}</b><p>${fungi ? 'Earthy and grounding. Always cook it, in butter, a stew or a broth.' : note}</p>
@@ -10700,10 +10715,10 @@ function playArrival(view) {
 function toTop() { try { window.scrollTo(0, 0); document.scrollingElement && (document.scrollingElement.scrollTop = 0); const v = document.getElementById('view'); if (v) v.scrollTop = 0; } catch {} }
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 // ---------- one payment after the free trial ----------
-// 3 free days from her first day in the app, then one payment of €9.89 unlocks everything for good.
+// 3 free days from her first day in the app, then one payment of €16.80 unlocks everything for good.
 // Store apps: an in-app purchase (non-consumable, id below) through the NativePurchases plugin once it is installed.
 // Website: a payment link (PAY_LINK in js/config.js). On the local dev server the gate stays off (add ?paywall=1 to see it).
-const TRIAL_DAYS = 3, PRICE = '9.89', UNLOCK_ID = 'underskin_unlock';
+const TRIAL_DAYS = 3, PRICE = '16.80', UNLOCK_ID = 'underskin_unlock';
 function trialStart() { if (!state.trialStart) { state.trialStart = todayISO(); save(true); } return state.trialStart; }
 function trialLeft() { return Math.max(0, TRIAL_DAYS - C.diffDays(C.startOfDay(new Date()), C.parseISO(trialStart()))); }
 const DEV_HOST = !NATIVE && /^(localhost|127\.0\.0\.1)$/.test(location.hostname);

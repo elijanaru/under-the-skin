@@ -15236,3 +15236,48 @@ html .purp:not(.full) .purp-c.soon .pc-in { margin-right: 100px; }
 html .purp:not(.full) .purp-c.soon .pc-in b, html .purp:not(.full) .purp-c.soon .pc-in small { text-shadow: 0 0 3px #fff, 0 0 8px #fff, 0 0 12px #fff !important; }
 html body .purp:not(.full) .purp-c.soon .pc-soon { left: 4px; right: auto; top: auto; bottom: 6px; padding: 3px 8px; font-size: 10px; letter-spacing: .04em; transform: rotate(-5deg);
   background: #fff !important; box-shadow: 0 4px 10px -5px rgba(60,30,40,.45); }
+
+/* Drinks & tea › through the day (16 Nov 2026): the loose 2-column grid with a lone last cup becomes one timeline
+   from waking to sleep; each drink at its best hour (Doto time, drawn cup, name + what it does), tap opens the spec below */
+.drt { position: relative; display: grid; gap: 4px; margin: 6px 0 0; padding: 4px 0; }
+.drt::before { content: ''; position: absolute; left: 75px; top: 14px; bottom: 14px; width: 2px; border-radius: 2px;
+  background: linear-gradient(180deg, #f1d58a, color-mix(in srgb, var(--pc, #6c823e) 55%, #fff) 50%, #b8b2d6); }
+.drt-end { position: relative; z-index: 1; justify-self: start; display: inline-flex; align-items: center; gap: 6px; margin-left: 52px; padding: 5px 11px; border-radius: 99px;
+  background: #fff; box-shadow: inset 0 0 0 1px rgba(32,48,26,.08); font: 600 12px/1 var(--font); color: #4b5741; }
+.drt-end .ic { color: #b98a1e; } .drt-end:last-child .ic { color: #6b5fa6; }
+html .drc .drt-r.sfc-i { position: relative; display: grid; grid-template-columns: 52px 50px 1fr 16px; align-items: center; gap: 0 12px; width: 100%; margin: 0; padding: 8px 6px 8px 0;
+  text-align: left; background: none !important; border: 0 !important; box-shadow: none !important; border-radius: 18px; cursor: pointer; animation: none; }
+html .drc .drt-r.sfc-i.on { background: rgba(255,255,255,.7) !important; }
+.drt-t { display: grid; justify-items: end; line-height: 1; }
+.drt-t b { font: 400 22px/1 var(--dot) !important; color: #20301a; }
+.drt-t small { margin-top: 3px; font: 600 10.5px/1 var(--font); letter-spacing: .04em; text-transform: uppercase; color: rgba(32,48,26,.5); }
+.drt-c { position: relative; z-index: 1; display: grid; place-items: center; width: 50px; height: 50px; border-radius: 50%; background: #fff;
+  box-shadow: 0 0 0 4px #fbfaf6, 0 8px 16px -10px rgba(32,48,26,.45); }
+html .drc .drt-c img, html .drc .drt-c img.drw { width: 38px; height: 38px; max-width: 38px; margin: 0; padding: 0; border-radius: 0; object-fit: contain; background: none; box-shadow: none; filter: none; }
+html .drc .drt-c img.rd, html .drc .drt-c img:not(.drw) { width: 44px; height: 44px; max-width: 44px; border-radius: 50%; object-fit: cover; }
+.drt-n { min-width: 0; display: grid; gap: 3px; }
+html .drc .drt-n b { margin: 0; font: 600 15.5px/1.2 var(--font); color: #20301a; text-align: left; }
+html .drc .drt-n small { display: block; margin: 0; font: 400 12.5px/1.3 var(--font); color: rgba(32,48,26,.62); text-align: left; }
+.drt-r > .ic { color: rgba(32,48,26,.4); transition: transform .3s ease; }
+.drt-r.on > .ic { transform: rotate(180deg); }
+.drt + .sfc-det, .drt .sfc-det { margin: 4px 0 8px; }
+html .drc .drt > .sfc-det { grid-column: 1 / -1; }
+.drt-f { display: block !important; margin-top: 12px; text-align: center; font-size: 11.5px; line-height: 1.4; color: rgba(32,48,26,.55); }
+@media (prefers-reduced-motion: reduce) { .drt-r > .ic { transition: none; } }
+html .drc .drt-t b { font: 400 22px/1 'Doto', monospace !important; letter-spacing: -.02em; }
+html .drc .drt-f { text-transform: none !important; letter-spacing: 0 !important; font-weight: 400; }
+
+/* Stress › The science of calm (Round B): the cramped icon ruler becomes a staircase of time, seconds to a night,
+   each step holding the round photos of what fits in it; tap one to open its study below */
+.csl { display: grid; grid-template-columns: repeat(4, 1fr); align-items: end; gap: 8px; padding: 6px 2px 16px; margin-bottom: 4px; border-bottom: 1px solid rgba(48,64,35,.09); }
+.csl-c { display: flex; flex-direction: column; align-items: center; }
+.csl-p { width: 44px; height: 44px; margin-top: -12px; padding: 0; border: 0; border-radius: 50%; overflow: hidden; display: grid; place-items: center; cursor: pointer;
+  background: #f3eee6; color: #304023; box-shadow: 0 0 0 2.5px #fff, 0 4px 10px -5px rgba(32,48,26,.4); transition: transform .25s ease; -webkit-tap-highlight-color: transparent; }
+.csl-p:first-child { margin-top: 0; }
+.csl-p:active { transform: scale(.92); }
+.csl-p img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.csl-b { display: block; width: 100%; height: var(--h); margin-top: 8px; border-radius: 12px 12px 6px 6px; background: color-mix(in srgb, var(--pc) 22%, #fff); }
+.csl-c:last-child .csl-b { background: var(--pc); }
+.csl-c small { margin-top: 7px; font-size: 12px; color: rgba(32,48,26,.62); white-space: nowrap; }
+.csl-c small b { font-size: 13px; font-weight: 400; color: #20301a; }
+@media (prefers-reduced-motion: reduce) { .csl-p { transition: none; } }
