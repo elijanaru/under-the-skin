@@ -534,11 +534,14 @@ function viewGround() {
       <div class="grr-f"><span>Repeat for ${GROUND_ROOTS.mins} minutes</span>${saveBtn(regTip('ground-roots', 'Grounding · roots', GROUND_ROOTS.d, 'ground'))}</div>
     </section>
 
-    <section class="msd msd2 gr-msd" style="--pc:${PH_HEX[(M.info || {}).phase] || '#6c823e'}"><header class="msd-h"><small>What studies found</small><h3>Five small studies</h3><p>From ${GROUND_STUDIES[0][1]} to ${GROUND_STUDIES[GROUND_STUDIES.length - 1][1]}, small but promising.</p></header>
-      <div class="msd-deck deck" role="list" data-dots="grs-dots">${GROUND_STUDIES.map(([a, y, j, f, d, n, t], i) => `<article class="msd-c" role="listitem"><figure class="msd-g">${groundArt(i)}<figcaption>${n ? `${n} people · grounded ${t}` : 'A review of the studies before it'}</figcaption></figure>
-        <h4>${f}</h4><p>${d}</p><footer class="msd-f"><span><b>${a}</b><small>${j}</small></span><em class="dotnum">${y}</em></footer></article>`).join('')}</div>
-      <div class="lt-dots msd-dots" id="grs-dots">${GROUND_STUDIES.map((_, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div>
-      <div class="ck-first gr-ck"><span class="ck-i">!</span><div><small>Keep in mind</small><p>${GROUND_CAUTION}</p></div></div></section>
+    ${sectionTitle('What studies found')}<p class="hg-sub gr-st-sub">Five small studies, ${GROUND_STUDIES[0][1]} to ${GROUND_STUDIES[GROUND_STUDIES.length - 1][1]}. Tap one for the chart.</p>
+    <section class="grs" style="--pc:${PH_HEX[(M.info || {}).phase] || '#6c823e'}">
+      ${GROUND_STUDIES.map(([a, y, j, f, d, n, t], i) => `<details class="grs-r"><summary><b class="dotnum grs-y">${y}</b><span class="grs-t"><b>${f}</b>
+        <span class="grs-p" aria-label="${n ? `${n} people` : 'A review'}">${n ? `<i class="grs-dots">${'<i></i>'.repeat(n)}</i><small>${n} people · ${t}</small>` : '<small>A review of the studies before it</small>'}</span></span>${icon('chevD', 15)}</summary>
+        <div class="grs-d"><figure class="msd-g">${groundArt(i)}</figure><p>${d}</p><small><b>${a}</b> · ${j}</small></div></details>`).join('')}
+      <dl class="grs-care"><div><dt>${icon('heart', 14)} How to read it</dt><dd>Small studies: a calm habit, not a treatment</dd></div>
+        <div><dt>${icon('bolt', 14)} Outdoors</dt><dd>Never in a thunderstorm</dd></div><div><dt>${icon('home', 14)} Indoor mats</dt><dd>Only properly wired and tested ones</dd></div></dl>
+    </section>
   </div>`;
 }
 // Ideas she can save straight from this page: today's tip for each of her focus areas first, then the rest.

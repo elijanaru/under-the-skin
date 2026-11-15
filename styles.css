@@ -13476,3 +13476,30 @@ html .pad.sp2t > .spec:not(.stack):first-child .spec-media { border-radius: 30px
 
 /* Hormones › chart card: the paragraph repeating the Day card sits behind one tap */
 .hx-more { margin: 12px 4px 0; }
+
+/* Ground › What studies found (15 Nov 2026): one white list instead of a carousel of paragraphs. Each row: the year in Doto, the finding, one dot per person in the study; the chart and the full text sit behind the tap. Safety as three short spec rows */
+.gr-st-sub { color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.35), 0 2px 14px rgba(90,40,45,.3); }
+.grs { margin: 0 0 18px; padding: 6px 18px 14px; border-radius: 30px; background: #fff; box-shadow: 0 14px 34px rgba(48,64,35,.10); color: #20301a; }
+.grs-r { border-bottom: 1px solid rgba(32,48,26,.08); }
+.grs-r summary { list-style: none; display: flex; align-items: center; gap: 14px; padding: 14px 0; cursor: pointer; }
+.grs-r summary::-webkit-details-marker { display: none; }
+.grs-r summary > svg { flex: none; color: rgba(32,48,26,.45); transition: transform .3s; }
+.grs-r[open] summary > svg { transform: rotate(180deg); }
+.grs-y { flex: none; width: 52px; font-size: 19px; font-weight: 900; color: #20301a; }
+.grs-t { flex: 1; min-width: 0; display: grid; gap: 6px; }
+.grs-t > b { font-size: 15.5px; font-weight: 600; line-height: 1.25; }
+.grs-p { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.grs-p small { font-size: 12px; color: rgba(32,48,26,.6); }
+.grs-dots { display: inline-flex; flex-wrap: wrap; gap: 2.5px; max-width: 150px; }
+.grs-dots i { width: 5px; height: 5px; border-radius: 50%; background: var(--pc); }
+.grs-d { padding: 0 0 16px 66px; animation: tgwIn .5s ease both; }
+.grs-d .msd-g { margin: 0 0 10px; padding: 8px; border-radius: 16px; background: #f6f3ee; }
+.grs-d .msd-g svg { display: block; width: 100%; height: auto; }
+.grs-d p { margin: 0; font-size: 14px; line-height: 1.45; color: #304023; }
+.grs-d small { display: block; margin-top: 8px; font-size: 12px; color: rgba(32,48,26,.6); }
+.grs-care { margin: 12px 0 0; padding: 12px 14px; border-radius: 18px; background: #fbf3f4; display: grid; gap: 8px; }
+.grs-care div { display: flex; justify-content: space-between; gap: 12px; }
+.grs-care dt { flex: none; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #8a3a4e; }
+.grs-care dd { margin: 0; text-align: right; font-size: 13px; color: #20301a; }
+.pad .gr-card { background: #fff !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+@media (prefers-reduced-motion: reduce) { .grs-d { animation: none; } .grs-r summary > svg { transition: none; } }
