@@ -14641,3 +14641,6 @@ html:has(.onb.no-fig.step-10) .bgx { visibility: hidden; }
   background: radial-gradient(closest-side, rgba(255,246,249,.95), rgba(255,218,230,.6) 45%, rgba(255,218,230,0) 100%); animation: o3Glow 5s ease-in-out infinite; }
 @keyframes o3Glow { 0%, 100% { opacity: .7; transform: scale(.96); } 50% { opacity: 1; transform: scale(1.04); } }
 @media (prefers-reduced-motion: reduce) { .o3-hero::before { animation: none; } }
+/* Rhythm sits on its own dark page: its section titles stay plain white words with the warm sun dot, no frosted pill (her ask, 15 Nov 2026) */
+html .view:has(> .rh3) .section-title h3 { display: flex !important; padding: 0 !important; border-radius: 0; background: none !important; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none !important;
+  color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 12px rgba(0,0,0,.35) !important; }
