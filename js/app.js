@@ -2570,7 +2570,7 @@ const PLAN_TITLE = { recipes: 'Recipes', foods: 'Superfoods', drinks: 'Drinks & 
 // Food page, after the plate: a row of picture options (cut-out photo + title). The chosen one shows a short line and
 // its best picks for this phase underneath, with a pill into the full page.
 // tab pictures are trimmed, square and centred copies (images/fx) so every tile sits the same
-const FX_CATS = [['recipes', 'Recipes'], ['season', 'In season'], ['foods', 'Superfoods'], ['drinks', 'Drinks'], ['supps', 'Supplements'], ['sugar', 'Blood sugar']].map(([k, t]) => [k, t, `images/fx/${k}.webp`]);
+const FX_CATS = [['recipes', 'Recipes'], ['season', 'In season'], ['foods', 'Superfoods'], ['drinks', 'Drinks'], ['sugar', 'Blood sugar']].map(([k, t]) => [k, t, `images/fx/${k}.webp`]);
 // her diet guide sits right after Superfoods: Vegan guide, Veggie guide, Pesci guide, Primal guide, or Diet guides when she eats everything
 const FX_GUIDE = { vegan: 'Vegan guide', veg: 'Veggie guide', pesc: 'Pesci guide', animal: 'Primal guide' };
 function fxCats() { const d = myDiet(), L = [...FX_CATS]; L.splice(3, 0, ['guide', FX_GUIDE[d] || 'Diet guides', `images/fx/guide-${FX_GUIDE[d] ? d : 'all'}.webp`]); return L; }
