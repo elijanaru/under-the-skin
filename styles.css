@@ -14501,3 +14501,9 @@ html .pl .pld-foods > div { width: 68px; }
 html .pl .pld-foods .pld-emo { width: 62px; height: 62px; font-size: 30px; }
 html .pl .pld-foods .pld-emo img.emo { width: 36px; height: 36px; }
 html .pl .pld-foods small { font-size: 11.5px; }
+html .fx-p .fx-t { padding: 14px 4px 12px; font-size: 12.5px; }
+html .fx-p .fx-t b { overflow-wrap: normal; word-break: normal; hyphens: manual; }
+html .fx-p .fx-bs { padding: 4px 0 0; border: 0; box-shadow: none; background: none; }
+/* the letter tile shares the old .sym class of the symptom rows (a 110px grid), which pushed Cr, Ω3 and Zn off centre */
+html .fx-ti.sym { grid-template-columns: 1fr; gap: 0; padding: 0; height: 72px; }
+html .fx-ti.sym span { background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(40% * var(--hs)) 96%); box-shadow: inset 0 0 0 1px rgba(32,48,26,.08), 0 6px 14px -8px rgba(32,48,26,.4); }
