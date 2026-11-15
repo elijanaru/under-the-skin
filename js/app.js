@@ -2423,7 +2423,7 @@ function viewPlan() {
       <div class="grid2 rit-g">${rits.map((r, i) => `<button class="rcard tall ${carePhoto(r.id) ? 'has-photo' : ''}" data-action="nav" data-to="ritual/${r.id}">${careArt(r.id, ['crown', 'drop', 'hill', 'wave', 'orb', 'peak'][i % 6], 40 + i)}
         <div class="rc-top"><span class="rit-min">${icon('clock', 11)} ${r.mins} min</span><span class="rit-seal" aria-hidden="true">${r.glyph}</span></div>
         <div class="rit-foot">${r.phases.includes(phase) ? `<span class="rit-you">For you</span>` : ''}<div class="rc-t">${r.name}</div></div></button>`).join('')}</div>
-      ${sectionTitle('Home remedies')}
+      ${sectionTitle('Home remedies')}<p class="hg-sub rit-sub">Kitchen remedies with their dose, studies and cautions. The ones for your phase come first.</p>
       <div class="grid2 rit-g">${M.info ? remedyCards(M.info) : ''}</div>
       <button class="card gro-cta" data-action="nav" data-to="relief"><span class="art-ic">${icon('heart', 20)}</span><span class="art-t">Relief guide<small>Cramps, PMS, sleep, skin</small></span>${icon('chevR', 18)}</button>`;
     } else {
@@ -4848,7 +4848,8 @@ function remedyCards(info) {
   return REMEDIES.slice().sort((a, b) => remediesFor(info).includes(b) - remediesFor(info).includes(a)).map((r, i) => {
     const ok = remediesFor(info).includes(r);
     return `<button class="rcard tall ${ok ? '' : 'dim'} ${carePhoto(r.id) ? 'has-photo' : ''}" data-action="nav" data-to="remedy/${r.id}">${careArt(r.id, ['orb', 'drop', 'wave', 'crown', 'hill'][i % 5], 80 + i)}
-      <div class="rc-top"><span class="rit-min">${icon('clock', 11)} ${r.take ? r.take.when.split(',')[0].replace('Spread over your meals', 'With meals') : r.organ}</span><span class="rit-seal" aria-hidden="true">${r.glyph}</span></div><div class="rit-foot">${ok ? '' : '<span class="rit-you not">Not now</span>'}<div class="rc-t">${r.name}</div>${r.take ? `<small class="rit-dose"><b>${r.take.dose}</b>${r.take.often}</small>` : ''}</div></button>`;
+      <div class="rc-top"><span class="rit-min">${icon('clock', 11)} ${r.take ? r.take.when.split(',')[0].replace('Spread over your meals', 'With meals') : r.organ}</span><span class="rit-seal" aria-hidden="true">${r.glyph}</span></div><div class="rit-foot">${ok ? '' : (() => { const off = warmWindow(info) && r.raw && r.phases.includes(info.phase);
+        return `<span class="rit-you not rit-when">${off ? `${icon('sun', 11)} Warm days: paused` : `${r.phases.map(p => `<i style="background:${PH_HEX[p]}"></i>`).join('')}${(() => { const O = PHASE_ORDER, i0 = O.indexOf(info.phase), nx = [1, 2, 3].map(k => O[(i0 + k) % 4]).find(p => r.phases.includes(p)) || r.phases[0]; return `Best in ${PHASES[nx].name.toLowerCase()}`; })()}`}</span>`; })()}<div class="rc-t">${r.name}</div>${r.take ? `<small class="rit-dose"><b>${r.take.dose}</b>${r.take.often}</small>` : ''}</div></button>`;
   }).join('');
 }
 

@@ -13506,3 +13506,9 @@ html .pad.sp2t > .spec:not(.stack):first-child .spec-media { border-radius: 30px
 /* Recipe › Why it's good for you: when the food that carries a nutrient has no photo, its emoji stands in, on a white disc like the photos, instead of a generic leaf */
 html .rn2 .rn-emo { background: #fff; box-shadow: 0 4px 10px rgba(32,48,26,.12), inset 0 0 0 1px rgba(48,64,35,.06); }
 html .rn2 .rn-emo .emo { font-size: 24px; width: 26px; height: 26px; line-height: 26px; text-align: center; }
+
+/* Rituals › Home remedies (15 Nov 2026): a white subline under the title; a remedy that is not for now says when it is best (phase dots + Best in luteal) or why it is paused, instead of a bare Not now */
+.rit-sub { color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.35), 0 2px 14px rgba(90,40,45,.3); }
+.rit-you.rit-when { display: inline-flex; align-items: center; gap: 3px; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rit-you.rit-when i { flex: none; width: 7px; height: 7px; border-radius: 50%; }
+.rit-you.rit-when i:last-of-type { margin-right: 3px; }
