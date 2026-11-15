@@ -8498,6 +8498,76 @@ const HIS_BLOCKS = [
   [11, 15, 'Wind down', 'Testosterone is lower and you’re calmer and more open. The best time for her, for talks and for cooking together.', 'heart'],
   [15, 24, 'Rebuild', 'Sleep. Most of your testosterone is made in deep sleep, so 7 to 9 hours keeps your drive high tomorrow.', 'moon'],
 ];
+// ---------- his profile (a 4-question onboarding) and his oak: a small daily game that grows a tree ----------
+function himP() { try { return JSON.parse(localStorage.getItem('uts.him') || '{}'); } catch { return {}; } }
+function himSave(p) { try { localStorage.setItem('uts.him', JSON.stringify(p)); } catch {} }
+const HOB = [
+  { k: 'n', e: '👋', q: 'What should we call you?', input: true },
+  { k: 'age', e: '🎂', q: 'How old are you?', o: [['18', '18 to 24'], ['25', '25 to 34'], ['35', '35 to 44'], ['45', '45 or older']] },
+  { k: 'diet', e: '🍽️', q: 'How do you eat?', o: [['all', '🍖 A bit of everything'], ['animal', '🥩 Animal-based'], ['veg', '🧀 Vegetarian'], ['vegan', '🌱 Vegan']] },
+  { k: 'goal', e: '🎯', q: 'What do you want most?', o: [['energy', '⚡ More energy'], ['strong', '💪 Get stronger'], ['her', '🤍 Be there for her'], ['baby', '👶 A baby together']] },
+];
+function himOnboarding(name) {
+  const i = Math.min(ui.hob || 0, HOB.length - 1), Q = HOB[i], a = ui.hobA || {};
+  return `<div class="pad hob"><div class="hob-card">
+    <div class="hob-dots">${HOB.map((_, k) => `<i class="${k <= i ? 'on' : ''}"></i>`).join('')}</div>
+    <span class="hob-e">${Q.e}</span>
+    <small>${i === 0 ? `Welcome. ${name} shared her rhythm with you.` : `${i + 1} of ${HOB.length}`}</small>
+    <h1>${Q.q}</h1>
+    ${Q.input ? `<input class="hob-in" id="hob-n" type="text" maxlength="24" autocomplete="given-name" placeholder="Your first name" value="${esc(a.n || '')}">
+      <button class="hob-go" data-action="hobNext">Next ${icon('chevR', 16)}</button>`
+    : `<div class="hob-o">${Q.o.map(([v, l]) => `<button class="${a[Q.k] === v ? 'on' : ''}" data-action="hobPick" data-k="${Q.k}" data-v="${v}">${l}</button>`).join('')}</div>`}
+    ${i > 0 ? `<button class="hob-back" data-action="hobBack">${icon('chevL', 14)} Back</button>` : ''}
+    <p class="hob-fine">Stays on this phone. It shapes your food, your plan and your game.</p></div></div>`;
+}
+const OAK_LV = [[0, 'Acorn', '🌰'], [60, 'Sprout', '🌱'], [150, 'Sapling', '🌿'], [300, 'Young oak', '🌳'], [520, 'Strong oak', '🌳'], [800, 'Mighty oak', '🏆']];
+const OAK_Q = () => { const d = himP().diet;
+  return [['sun', '☀️', 'Morning light', '10 min outside', 10], ['train', '🏋️', 'Train or move', 'Lift, sprint, play', 20],
+    ['food', d === 'vegan' || d === 'veg' ? '🎃' : '🥩', 'Eat for drive', d === 'vegan' ? 'Seeds or lentils' : d === 'veg' ? 'Eggs or seeds' : 'Beef, eggs or oysters', 10],
+    ['love', '💌', 'Send her love', 'A heart or a date', 15], ['sleep', '🌙', 'Slept 7 hours', 'Last night', 20]]; };
+function oakS() { try { return JSON.parse(localStorage.getItem('uts.oak') || '{}'); } catch { return {}; } }
+function oakSave(o) { try { localStorage.setItem('uts.oak', JSON.stringify(o)); } catch {} }
+const oakLv = xp => { let i = 0; OAK_LV.forEach(([t], k) => { if (xp >= t) i = k; }); return i; };
+// the oak drawn by level: acorn, sprout, sapling, then a crown that grows fuller, gold leaves at the top level
+function oakArt(lv) {
+  const g = Math.min(lv, 5), trunkH = [0, 18, 34, 52, 64, 72][g], crown = [0, 0, 16, 28, 36, 42][g], cy = 128 - trunkH;
+  const leaf = g === 5 ? '#e9b949' : '#6c9a3c', leaf2 = g === 5 ? '#f6d27a' : '#8cb85a';
+  return `<svg class="oak-art" viewBox="0 0 160 150" aria-hidden="true">
+    <ellipse cx="80" cy="132" rx="58" ry="9" fill="#5b4632" opacity=".25"/><path d="M26 132q54-12 108 0" stroke="#7a5b3c" stroke-width="5" fill="none" stroke-linecap="round"/>
+    ${g === 0 ? `<g class="oak-acorn"><ellipse cx="80" cy="120" rx="11" ry="13" fill="#b9814a"/><path d="M68 112q12-12 24 0q-12 4-24 0z" fill="#6f4a2a"/><path d="M80 101v-5" stroke="#6f4a2a" stroke-width="3" stroke-linecap="round"/></g>` : ''}
+    ${g === 1 ? `<g class="oak-sway"><path d="M80 130V${cy}" stroke="#6c9a3c" stroke-width="4" stroke-linecap="round"/><path d="M80 ${cy + 4}q-16-6-18-18q14 0 18 18zM80 ${cy + 8}q16-6 18-18q-14 0-18 18z" fill="#8cb85a"/></g>` : ''}
+    ${g >= 2 ? `<g class="oak-sway"><path d="M80 130V${cy}M80 ${cy + trunkH * .45}l-14-12M80 ${cy + trunkH * .3}l15-13" stroke="#6b4b2f" stroke-width="${4 + g * 1.6}" stroke-linecap="round" fill="none"/>
+      <g class="oak-crown"><circle cx="80" cy="${cy - crown * .2}" r="${crown}" fill="${leaf}"/><circle cx="${80 - crown * .75}" cy="${cy + crown * .25}" r="${crown * .7}" fill="${leaf}"/><circle cx="${80 + crown * .75}" cy="${cy + crown * .25}" r="${crown * .7}" fill="${leaf}"/>
+      <circle cx="${80 - crown * .3}" cy="${cy - crown * .45}" r="${crown * .45}" fill="${leaf2}" opacity=".9"/><circle cx="${80 + crown * .45}" cy="${cy - crown * .1}" r="${crown * .32}" fill="${leaf2}" opacity=".7"/>
+      ${g >= 4 ? [[-.5, .1], [.4, -.4], [.7, .4], [-.1, .5]].map(([dx, dy]) => `<ellipse cx="${80 + dx * crown}" cy="${cy + dy * crown}" rx="3.2" ry="4" fill="#b9814a"/>`).join('') : ''}</g></g>` : ''}
+    ${g === 5 ? '<g class="oak-spark"><path d="M30 40l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#f6d27a"/><path d="M134 30l1.5 4 4 1.5-4 1.5-1.5 4-1.5-4-4-1.5 4-1.5z" fill="#f6d27a"/></g>' : ''}</svg>`;
+}
+function oakCard() {
+  const o = oakS(), xp = o.xp || 0, lv = oakLv(xp), [t0, nm, em] = OAK_LV[lv], nx = OAK_LV[lv + 1], today = C.iso(C.startOfDay(new Date())), done = (o.days || {})[today] || [];
+  const pct = nx ? Math.round((xp - t0) / (nx[0] - t0) * 100) : 100, Q = OAK_Q();
+  return `<section class="pv2-card oak" id="oak">
+    <div class="oak-top"><div class="oak-stage">${oakArt(lv)}</div>
+      <div class="oak-meta"><small>Your oak · level ${lv + 1}</small><b>${em} ${nm}</b>
+        <div class="oak-bar"><i style="width:${pct}%"></i></div><span><b class="dotnum">${xp}</b> XP${nx ? ` · ${nx[0] - xp} to ${nx[1]}` : ' · fully grown'}</span>
+        <span class="oak-streak">🔥 ${o.streak ? `<b class="dotnum">${o.streak}</b> day streak` : "3 quests = day 1"}</span></div></div>
+    <small class="oak-qh">Today’s quests · ${done.length}/${Q.length}</small>
+    <div class="oak-q">${Q.map(([k, e, t, s, x]) => `<button class="${done.includes(k) ? 'done' : ''}" data-action="oakQ" data-k="${k}" ${done.includes(k) ? 'aria-pressed="true"' : ''}><span class="oak-qe">${done.includes(k) ? '✅' : e}</span><span class="oak-qt"><b>${t}</b><small>${s}</small></span><em>+${x} XP</em></button>`).join('')}</div>
+  </section>`;
+}
+// complete a quest: XP, a floating +XP, a level-up burst, and the card redraws in place
+function oakDo(k, quiet, el) {
+  const o = oakS(), today = C.iso(C.startOfDay(new Date())), days = o.days = o.days || {}, done = days[today] = days[today] || [], Q = OAK_Q().find(q => q[0] === k); if (!Q || done.includes(k)) return;
+  const before = oakLv(o.xp || 0); done.push(k); o.xp = (o.xp || 0) + Q[4];
+  if (done.length === 3) { const y = C.iso(C.addDays(C.startOfDay(new Date()), -1)); o.streak = (days[y] || []).length >= 3 ? (o.streak || 0) + 1 : 1; }
+  Object.keys(days).sort().slice(0, -14).forEach(d => delete days[d]); oakSave(o);
+  const card = document.getElementById('oak');
+  if (el) { const r = el.getBoundingClientRect(), f = document.createElement('i'); f.className = 'oak-pop'; f.textContent = `+${Q[4]} XP`; f.style.left = (r.left + r.width - 40) + 'px'; f.style.top = (r.top + 6) + 'px'; document.body.appendChild(f); setTimeout(() => f.remove(), 1300); }
+  if (card) { card.outerHTML = oakCard(); const nc = document.getElementById('oak'); nc.classList.add('soft'); const lv = oakLv(o.xp);
+    if (lv > before) { nc.classList.add('lvup'); const r = nc.querySelector('.oak-stage').getBoundingClientRect(); heartBurst(r.left + r.width / 2, r.top + r.height / 2); toast(`Level up: ${OAK_LV[lv][2]} ${OAK_LV[lv][1]}`); } }
+  if (!quiet && !card) toast(`+${Q[4]} XP`);
+  const nc = document.getElementById('oak'), pg = nc && nc.parentElement, ix = pg ? [...pg.children].indexOf(nc) : -1;
+  if (softWith.parts && ix >= 0) softWith.parts[ix] = oakCard(); // so a later tap elsewhere does not redraw the oak
+}
 const HIS_EMO = ['⚡', '🎯', '🏋️', '🤍', '🌙'];
 const HIS_SHORT = ['Peak', 'Focus', 'Train', 'Her time', 'Sleep'];
 function hisWake() { try { return +localStorage.getItem('uts.wake') || 7; } catch { return 7; } }
@@ -8735,6 +8805,12 @@ const HIS_BOOST = [
   ['heart', 'Keep the waist slim', 'Daily', 'Belly fat turns testosterone into oestrogen.', 'Protein at every meal, a 10 minute walk after meals, fewer sugary drinks.', ['Corona et al.', 2013, 'Across 24 studies, losing weight raised testosterone, and the more weight lost, the bigger the rise.'], ''],
   ['sun', 'Morning light', '10 min', 'Daylight after waking sets the clock that times your peak.', 'Step outside within an hour of waking, no sunglasses, even when it is cloudy.', null, ''],
 ];
+const HIS_FOOD_BY = {
+  animal: [['🥩', 'Beef', 'Zinc, iron, B12'], ['🥚', 'Whole eggs', 'Yolks: vitamin D'], ['🦪', 'Oysters', 'Richest in zinc'], ['🥛', 'Raw milk', 'Protein, good fats'], ['🧈', 'Butter', 'Vitamins A, D, K2'], ['🍯', 'Raw honey', 'Clean quick fuel']],
+  veg: [['🥚', 'Whole eggs', 'Yolks: vitamin D'], ['🥛', 'Raw milk', 'Protein, good fats'], ['e:pumpkin-seeds', 'Pumpkin seeds', 'Zinc, magnesium'], ['🫘', 'Lentils', 'Zinc, iron, protein'], ['e:walnuts', 'Walnuts', 'Omega-3 for sperm'], ['🫒', 'Olive oil', 'Healthy fats']],
+  vegan: [['e:pumpkin-seeds', 'Pumpkin seeds', 'Zinc, magnesium'], ['🫘', 'Lentils', 'Zinc, iron, protein'], ['e:walnuts', 'Walnuts', 'Omega-3 for sperm'], ['🍅', 'Cooked tomatoes', 'Lycopene'], ['🥬', 'Spinach', 'Magnesium'], ['🫒', 'Olive oil', 'Healthy fats']],
+};
+const hisFood = () => { const d = himP().diet; return d === 'animal' ? HIS_FOOD_BY.animal : d === 'veg' ? HIS_FOOD_BY.veg : d === 'vegan' ? HIS_FOOD_BY.vegan : HIS_FOOD; };
 const HIS_FOOD = [['🥩', 'Beef', 'Zinc, iron, B12'], ['🥚', 'Whole eggs', 'Yolks: vitamin D'], ['🦪', 'Oysters', 'Richest in zinc'], ['e:pumpkin-seeds', 'Pumpkin seeds', 'Zinc, magnesium'], ['🥛', 'Raw milk', 'Protein, good fats'], ['🫒', 'Olive oil', 'Healthy fats']];
 // You two today: two liquid orbs (her energy, his drive) joined by a beating heart, a time switch that moves his drive
 // through the day, and the plan that fits you both at that time.
@@ -8800,7 +8876,7 @@ function hisDay(info, name) {
     <section class="pv2-card hs2-boost">${HIS_BOOST.map(([ic, n, v, s, how, st, care]) => `<details class="hs2-x"><summary><span class="hs2-xic">${icon(ic, 16)}</span><span class="hs2-rt"><b>${n}</b><small>${s}</small></span><b class="hs2-v">${v}</b></summary>
       <div class="hs2-xb"><p><b>How</b>${how}</p>${st ? `<div class="hs2-st"><b class="dotnum">${st[1]}</b><span><em>${st[0]}</em>${st[2]}</span></div>` : ''}${care ? `<p class="hs2-care">${icon('spark', 12)} ${care}</p>` : ''}</div></details>`).join('')}</section>
     ${sectionTitle('Eat for drive')}
-    <section class="pv2-card pv2-bring"><div class="pv2-snacks six">${HIS_FOOD.map(([e, n, why]) => `<div class="pv2-sn">${pvEmo(e)}<b>${n}</b><small>${why}</small></div>`).join('')}</div></section>
+    <section class="pv2-card pv2-bring"><div class="pv2-snacks six">${hisFood().map(([e, n, why]) => `<div class="pv2-sn">${pvEmo(e)}<b>${n}</b><small>${why}</small></div>`).join('')}</div></section>
     ${youTwo(info, name, w, since, tAt, her, low)}`;
 }
 // ---------- Read for him: one short read a day, synced to her cycle day ----------
@@ -8908,10 +8984,11 @@ function viewWith(q) {
   const back = state && state.onboarded ? `<button class="pv-back" data-action="nav" data-to="partners" aria-label="Back">${icon('chevL', 20)}</button>` : '';
   const seg = him ? `<div class="seg his-seg ${back ? 'with-back' : ''}">${[['her', `${name}'s rhythm`], ['read', 'Read'], ['his', 'My day']].map(([k, l]) => `<button class="${(ui.hisTab || 'her') === k ? 'on' : ''}" data-action="hisTab" data-v="${k}">${l}</button>`).join('')}</div>` : '';
   const herTab = !him || !ui.hisTab || ui.hisTab === 'her';
+  if (him && !mine && !himP().at) return himOnboarding(name);
   return `${mine ? `<div class="preview-bar">Preview: this is what she’ll see <button data-action="nav" data-to="partners">Done</button></div>` : ''}
   <div class="pad pv-page">
     <div class="pv-top">${back}${seg}</div>
-    ${him && ui.hisTab === 'read' ? `${pvRead(snap, info, name)}</div>` : him && ui.hisTab === 'his' ? `<div class="pv2-title"><small>Your day · ${fmt(today, { weekday: 'long', month: 'short', day: 'numeric' })}</small><h1>Your <b>24-hour drive</b></h1><p>Testosterone runs on a daily clock. Use it, and see what raises it.</p></div>${snap.g ? `<section class="pv2-card pv2-warn">${icon('heart', 16)}<p><b>Trying for a baby?</b> Never take testosterone or “T boosters”. Extra testosterone shuts down your sperm. Sleep, lifting and food below are the safe way.</p></section>` : ''}${hisDay(info, name)}</div>` : `
+    ${him && ui.hisTab === 'read' ? `${pvRead(snap, info, name)}</div>` : him && ui.hisTab === 'his' ? `<div class="pv2-title"><small>${himP().n ? `${esc(himP().n)}’s day` : 'Your day'} · ${fmt(today, { weekday: 'long', month: 'short', day: 'numeric' })}</small><h1>Your <b>24-hour drive</b></h1><p>Testosterone runs on a daily clock. Use it, and see what raises it.</p></div>${oakCard()}${snap.g ? `<section class="pv2-card pv2-warn">${icon('heart', 16)}<p><b>Trying for a baby?</b> Never take testosterone or “T boosters”. Extra testosterone shuts down your sperm. Sleep, lifting and food below are the safe way.</p></section>` : ''}${hisDay(info, name)}</div>` : `
     <section class="hub pt-stage pv-hero">${stageHero(info, Math.round(C.energyAt(info.cd, info.L, info.P) * 100), { nav: false, id: 'with', fert: !!snap.f, title: `${name} is in her` })}</section>
     ${pvHerDay(info, S, sup)}
     ${role === 'partner' ? pvReadTeaser(info, him) : ''}
@@ -9759,10 +9836,10 @@ const actions = {
     const snap = pvSnap(); if (!snap || el.classList.contains('flying')) return;
     const info = snapInfo(snap, C.startOfDay(new Date())), sup = SUPPORT[info.phase]?.partner; if (!sup) return;
     if (!snap.i) { toast(`${snap.n || 'She'} needs to open her app once, then her link can receive it`); return; }
-    const me = (state && state.profile && state.profile.name) || 'Your partner', x = `${dateEmo(sup.date)} ${sup.date}`;
+    const me = himP().n || (state && state.profile && state.profile.name) || 'Your partner', x = `${dateEmo(sup.date)} ${sup.date}`;
     const send = fetch(RELAY + snap.i, { method: 'POST', body: JSON.stringify({ k: 'date', f: me, x }) }).then(r => r.ok).catch(() => false);
     const ok = await ticketFly(el);
-    if (await send) { ticketSent(el); } else { el.classList.remove('flying', 'gone'); el.animate([{ opacity: 0, transform: 'translateY(-14px) scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.8,.2,1)' }); toast('Couldn’t send: check your connection'); }
+    if (await send) { ticketSent(el); oakDo('love', true); } else { el.classList.remove('flying', 'gone'); el.animate([{ opacity: 0, transform: 'translateY(-14px) scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.8,.2,1)' }); toast('Couldn’t send: check your connection'); }
     return ok;
   },
   pvLove: () => { // the little love tiles, sent live to her phone
@@ -9778,8 +9855,9 @@ const actions = {
     const snap = pvSnap(), l = LOVE.find(x => x.k === d.k); if (!snap || !l) return;
     const b = el.getBoundingClientRect(); heartBurst(b.left + b.width / 2, b.top + b.height / 2);
     if (!snap.i) { toast(`${snap.n || 'She'} needs to open her app once, then her link can receive it`); return; }
-    const me = (state && state.profile && state.profile.name) || 'Your partner';
+    const me = himP().n || (state && state.profile && state.profile.name) || 'Your partner';
     let ok = false; try { ok = (await fetch(RELAY + snap.i, { method: 'POST', body: JSON.stringify({ k: l.k, f: me }) })).ok; } catch {}
+    if (ok) oakDo('love', true);
     setTimeout(() => { document.querySelector('.love-sheet.pv')?.remove(); toast(ok ? `${l.g} Sent to ${snap.n || 'her'}` : 'Couldn’t send: check your connection'); }, 500);
   },
   pvDuo: (d, el) => { // open the recipe of the tapped tile under the pair, in place (the 3D dish and cup keep turning)
@@ -9793,6 +9871,15 @@ const actions = {
   mfTile: d => { ui.mfTile = ui.mfTile === +d.v ? null : +d.v; softWith(); },
   copySay: async d => { try { await navigator.clipboard.writeText(d.t); toast('Copied, now send it to her'); } catch { prompt('Copy and send', d.t); } },
   hisWake: d => { try { localStorage.setItem('uts.wake', d.v); } catch {} softWith(); },
+  oakQ: (d, el) => oakDo(d.k, false, el),
+  hobNext: () => { const v = (document.getElementById('hob-n')?.value || '').trim(); if (!v) { document.getElementById('hob-n')?.focus(); return; } ui.hobA = { ...(ui.hobA || {}), n: v.slice(0, 24) }; ui.hob = 1; render(); },
+  hobBack: () => { ui.hob = Math.max(0, (ui.hob || 0) - 1); render(); },
+  hobPick: d => {
+    ui.hobA = { ...(ui.hobA || {}), [d.k]: d.v };
+    if ((ui.hob || 0) < HOB.length - 1) { ui.hob = (ui.hob || 0) + 1; render(); return; }
+    himSave({ ...ui.hobA, at: Date.now() }); const o = oakS(); if (!o.xp) { o.xp = 20; oakSave(o); }
+    ui.hob = 0; ui.hisTab = 'his'; render(); document.getElementById('view').scrollTop = 0; setTimeout(() => toast('🌰 Your oak is planted · +20 XP'), 400);
+  },
   hsPick: (d, el) => { // the sun moves to the part of the day he tapped, in place
     const card = el.closest('.hs3'); if (!card) return; const i = +d.i, b = HIS_BLOCKS[i];
     card.querySelectorAll('.hs3-parts button').forEach(x => { const on = x === el; x.classList.toggle('on', on); x.setAttribute('aria-selected', on); });
