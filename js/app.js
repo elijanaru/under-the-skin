@@ -243,12 +243,12 @@ function lossSteps(st) { return `<div class="ls-steps">${LOSS_STEPS.map(([, , n,
 function ttcOn() { const p = state.profile; return ttc() && p.ttc !== 'wait' && !(lossCare() && !p.lossReady); }
 function lossHelpPicker(src, scope) {
   const h = src.lossHelp || [];
-  return `<div class="pg-list">${LOSS_HELP.map(([k, e, t, sm]) => `<button class="pg-o ${h.includes(k) ? 'on' : ''}" data-action="lossHelp" data-v="${k}" data-scope="${scope}" aria-pressed="${h.includes(k)}"><span class="pg-e">${e === '🔒' ? GX_IC.lock : e}</span><span class="pg-t"><b>${t}</b><small>${sm}</small></span><i>${icon('check', 14, 2.6)}</i></button>`).join('')}</div>`;
+  return `<div class="pg-list">${LOSS_HELP.map(([k, e, t, sm]) => `<button class="pg-o ${h.includes(k) ? 'on' : ''}" data-action="lossHelp" data-v="${k}" data-scope="${scope}" aria-pressed="${h.includes(k)}"><span class="pg-e">${e === '🔒' ? GX_IC.lock : e}</span><span class="pg-t"><b>${t}</b>${sm ? `<small>${sm}</small>` : ''}</span><i>${icon('check', 14, 2.6)}</i></button>`).join('')}</div>`;
 }
 const TTC_WAIT = ['wait', '🕊️', 'When I’m ready', 'After my loss, there’s no rush'];
 function ttcPicker(src, scope) {
   const opts = src.preg === 'loss' && lossRecent(src) ? [TTC_WAIT, ...TTC_TRY] : TTC_TRY;
-  return `<div class="pg-list">${opts.map(([k, e, t, sm]) => `<button class="pg-o ${src.ttc === k ? 'on' : ''}" data-action="ttcSet" data-v="${k}" data-scope="${scope}" aria-pressed="${src.ttc === k}"><span class="pg-e">${e}</span><span class="pg-t"><b>${t}</b><small>${sm}</small></span><i>${icon('check', 14, 2.6)}</i></button>`).join('')}</div>
+  return `<div class="pg-list">${opts.map(([k, e, t, sm]) => `<button class="pg-o ${src.ttc === k ? 'on' : ''}" data-action="ttcSet" data-v="${k}" data-scope="${scope}" aria-pressed="${src.ttc === k}"><span class="pg-e">${e}</span><span class="pg-t"><b>${t}</b>${sm ? `<small>${sm}</small>` : ''}</span><i>${icon('check', 14, 2.6)}</i></button>`).join('')}</div>
     ${src.ttc ? `<p class="pg-what">${icon('heart', 15)}<span>${src.ttc === 'wait' ? 'No pressure. The app stays gentle, and you can tell us when you’re ready.' : TTC_STAGE[ttcStage(src) || src.ttc][1]}</span></p>` : ''}`;
 }
 // Locked purpose cards: two old steel chains cross the card like an X, ivy creeps along them, and a weathered padlock overgrown with weeds hangs where they meet.
@@ -1542,7 +1542,7 @@ function viewOnboarding() {
   </div>`;
 }
 // ---------- Pregnancy history: asked once in onboarding (optional), editable in Profile ----------
-const PREG = [['never', '🌱', 'Never', 'Not yet, or not for me'], ['kids', '👶', 'Yes, I have children', 'One or more births'],
+const PREG = [['never', '🌱', 'Never', ''], ['kids', '👶', 'Yes, I have children', 'One or more births'],
   ['loss', '🌷', 'Yes, without a birth', 'A miscarriage, an ectopic or an ended pregnancy'], ['skip', 'lock', 'I’d rather not say', 'Skip this']];
 const PP_WHEN = [['6', 'Under 6 months'], ['12', '6 to 12 months'], ['old', 'Over a year ago']];
 const PP_TILE = [['6', '0-6', 'months ago'], ['12', '6-12', 'months ago'], ['old', '1+', 'year ago']];
@@ -1558,7 +1558,7 @@ function pregPicker(src, scope) {
   const lw = src.lossAt ? (lossRecent(src) ? 'recent' : 'old') : src.lossOld ? 'old' : '';
   const what = v === 'kids' ? (src.bf || when === '6' || when === '12' ? 'Your predictions stay gentle while your cycle settles, and you get recovery and pelvic floor tips.' : 'Pelvic floor care becomes part of your plan, to keep your core and bladder strong.')
     : v === 'loss' ? (lw === 'recent' ? 'For the next weeks the app turns gentle: no fertile-window pressure, care for your body and your feelings. You can switch it off any time.' : 'The app keeps this in mind gently. When you plan a pregnancy, you get extra care and support.') : '';
-  return `<div class="pg-list">${PREG.map(([k, e, t, sm]) => `<button class="pg-o ${v === k ? 'on' : ''}" data-action="pregSet" data-f="preg" data-v="${k}" data-scope="${scope}" aria-pressed="${v === k}"><span class="pg-e">${e === 'lock' ? GX_IC.lock : e}</span><span class="pg-t"><b>${t}</b><small>${sm}</small>${k === 'loss' ? `<em class="pg-priv">${GX_IC.lock}<span>This info stays private, love. It’s an important step that helps us understand your body.</span></em>` : ''}</span><i>${icon('check', 14, 2.6)}</i></button>`).join('')}</div>
+  return `<div class="pg-list">${PREG.map(([k, e, t, sm]) => `<button class="pg-o ${v === k ? 'on' : ''}" data-action="pregSet" data-f="preg" data-v="${k}" data-scope="${scope}" aria-pressed="${v === k}"><span class="pg-e">${e === 'lock' ? GX_IC.lock : e}</span><span class="pg-t"><b>${t}</b>${sm ? `<small>${sm}</small>` : ''}${k === 'loss' ? `<em class="pg-priv">${GX_IC.lock}<span>This info stays private, love. It’s an important step that helps us understand your body.</span></em>` : ''}</span><i>${icon('check', 14, 2.6)}</i></button>`).join('')}</div>
     ${v === 'kids' ? `<div class="pg-box pg-kids">
       <div class="pg-bh"><span class="pg-bi" aria-hidden="true">👶</span><span><b>When was your last birth?</b><small>So we know how gentle your plan should be</small></span></div>
       <div class="pg-tiles">${PP_TILE.map(([k, n, u]) => `<button class="pg-tile ${when === k ? 'on' : ''}" data-action="pregSet" data-f="when" data-v="${k}" data-scope="${scope}" aria-pressed="${when === k}"><b class="dotnum">${n}</b><small>${u}</small></button>`).join('')}</div>
