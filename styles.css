@@ -14770,3 +14770,21 @@ html body .purp:not(.full) .purp-c .pc-check { position: relative !important; to
 .ul3-stamp small { font-size: 12px; }
 .ul3-vt .vt-h em { font-size: 26px; }
 .ul3-vt .vt-art { width: 98px; height: 106px; }
+
+/* Herb detail: Buy the best guide (2x2 icon tiles, quick test, for your glow) */
+.hb-buy { margin: 14px 0 0; }
+.hb-buy-k { display: block; margin-bottom: 7px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: rgba(32,48,26,.5); }
+.hb-bg { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.hb-b { display: grid; grid-template-columns: auto 1fr; align-items: center; align-content: start; column-gap: 7px; row-gap: 4px; padding: 10px 11px 11px; border-radius: 16px; background: #fff; border: 1px solid rgba(48,64,35,.1); }
+.hb-b i { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(108,130,62,.14); color: #4f6430; }
+.hb-b.no i { background: rgba(214,120,120,.15); color: #a65454; }
+.hb-b.at i { background: rgba(230,177,196,.3); color: #9a5670; }
+.hb-b.kp i { background: rgba(140,151,104,.16); color: #5d6a3c; }
+.hb-b b { font-size: 12px; font-weight: 500; color: #20301a; }
+.hb-b span { grid-column: 1 / -1; font-size: 12px; line-height: 1.38; color: rgba(32,48,26,.72); }
+.hb-test, .hb-glow { display: flex; gap: 10px; align-items: flex-start; margin: 7px 0 0; padding: 10px 12px; border-radius: 16px; font-size: 12.5px; line-height: 1.42; color: rgba(32,48,26,.78); }
+.hb-test { background: #fff; border: 1px dashed rgba(108,130,62,.4); }
+.hb-glow { background: linear-gradient(135deg, #fbe9ef, #f8eef2); border: 1px solid rgba(230,177,196,.45); }
+.hb-test > i, .hb-glow > i { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: #fff; color: #4f6430; box-shadow: 0 1px 3px rgba(32,48,26,.08); }
+.hb-glow > i { color: #b0577a; }
+.hb-test b, .hb-glow b { display: block; margin-bottom: 1px; font-size: 12px; font-weight: 500; color: #20301a; }

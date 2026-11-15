@@ -7901,6 +7901,27 @@ const HERB_BED = {
   'Chaga': ['chaga', 'Chaga', '白桦茸', ['Antioxidants', 'Dark, earthy brew', 'Immunity']],
   'He shou wu': ['he-shou-wu', 'He shou wu', '何首乌', ['Hair', 'Vitality', 'Practitioner only']],
 };
+// How to buy each herb at its best (look for, skip, where, how long it keeps), a quick home test where one exists, and what it can do for her glow.
+const HERB_BUY = {
+  astragalus: { ok: 'Pale yellow, sweet-smelling slices, wide and fibrous', no: 'Grey or musty slices, or a sour sulphur smell', at: 'A Chinese herbal pharmacy or an organic herb shop', kp: 'Up to a year in a dark, airtight jar',
+    glow: 'In Chinese medicine it’s the root for a bright, rosy face when you’re run down.' },
+  'red-dates': { ok: 'Deep glossy red, plump, wrinkled but still soft', no: '“Honey dates” or sugar-coated ones, dull dusty skins', at: 'Asian grocers or a Chinese herb shop, organic if you can', kp: 'Months airtight, in the fridge in summer',
+    glow: 'Chinese medicine’s food for Blood: rosy cheeks and soft, shiny hair.' },
+  ginger: { ok: 'Firm and shiny, snaps cleanly, smells sharp', no: 'Wrinkled, soft, or mouldy at the ends', at: 'Organic, so the skin is clean enough to leave on', kp: '3 weeks in a paper bag in the fridge, or freeze and grate it frozen',
+    test: 'Scrape it with a teaspoon: fresh ginger peels like paper and smells sharp right away.', glow: 'Warms circulation, so cold, pale skin gets a softer flush.' },
+  clove: { ok: 'Whole buds, dark reddish brown, round head still on', no: 'Ground cloves, pale or shrivelled buds', at: 'A spice merchant, organic and whole', kp: 'A year whole, airtight and dark',
+    test: 'Drop one in water: a fresh clove sinks or floats upright. Lying flat on top means the oil is gone.', glow: 'Fresh breath. Never put clove oil on skin undiluted, it burns.' },
+  cinnamon: { ok: '“Ceylon” or Cinnamomum verum, from Sri Lanka', no: 'Plain “cinnamon”: in shops it’s usually cassia', at: 'Organic shops or spice merchants that print Ceylon on the label', kp: 'Sticks 2 to 3 years, ground about 6 months',
+    test: 'Ceylon rolls like a cigar, many thin papery layers that crumble in your fingers. Cassia is one thick, hard curl.', glow: 'Steadier blood sugar means fewer sugar crashes, often kinder to skin.' },
+  goji: { ok: 'Bright orange-red, soft and a little sticky', no: '“Sulphured”, very glossy or hard berries', at: 'Organic shops: look for unsulphured and Ningxia on the pack', kp: 'Months in a cool, dark, airtight jar',
+    glow: 'Full of zeaxanthin, the orange pigment that guards your eyes.' },
+  reishi: { ok: 'Dual extract of the fruiting body, beta-glucans on the label', no: 'Mycelium on grain: mostly starch, little mushroom', at: 'Mushroom brands that publish their lab tests', kp: 'Dry and airtight, it keeps for years',
+    glow: 'China’s old “beauty mushroom”, mostly for calm and deeper sleep.' },
+  chaga: { ok: 'Wild chunks from birch, black crust, orange inside', no: 'Chaga grown on grain, or not from birch', at: 'Small northern foragers who harvest it sustainably', kp: 'Dry chunks keep for years; one chunk brews 2 to 3 times',
+    glow: 'Rich in antioxidants. High in oxalates, so keep it to a cup now and then.' },
+  'he-shou-wu': { ok: 'Only prepared root (Zhi He Shou Wu), cooked with black beans', no: 'Raw root and unlabelled powders: linked to liver harm', at: 'Only through a licensed Chinese medicine practitioner', kp: 'Your practitioner decides how long',
+    glow: 'The classic herb for dark, thick hair, but never on your own.' },
+};
 // Real cut-out photos where we have them; the rest keep their drawings until matching cut-outs are made.
 const HERB_REAL = { ginger: 'ginger', cinnamon: 'cinnamon', goji: 'goji', 'red-dates': 'red-dates' };
 const herbPic = k => (HERB_REAL[k] ? { src: `images/sf/${HERB_REAL[k]}.webp`, real: true } : { src: `images/herbs/${k}.svg`, real: false });
@@ -7921,6 +7942,10 @@ function herbBed(herbs) {
         <button class="bn-x" data-action="herbPull" data-i="${up}" aria-label="Plant it back">${icon('close', 16)}</button></div>
       <div class="hb-ben"><small>Good for</small>${b[3].map(t => `<span>${t}</span>`).join('')}</div>
       <div class="hb-spec">${H.dose ? `<div><span>How much</span><b>${H.dose}</b></div>` : ''}<div><span>How</span><b>${x.how}</b></div></div>
+      ${(() => { const Y = HERB_BUY[b[0]]; if (!Y) return ''; return `<div class="hb-buy"><small class="hb-buy-k">Buy the best</small>
+        <div class="hb-bg">${[['ok', 'check', 'Look for'], ['no', 'close', 'Skip'], ['at', 'pin', 'Where'], ['kp', 'clock', 'Keeps']].map(([k, ic, t]) => `<div class="hb-b ${k}"><i>${icon(ic, 13, 2.2)}</i><b>${t}</b><span>${Y[k]}</span></div>`).join('')}</div>
+        ${Y.test ? `<p class="hb-test"><i>${icon('search', 15)}</i><span><b>Quick test</b>${Y.test}</span></p>` : ''}
+        ${Y.glow ? `<p class="hb-glow"><i>${icon('spark', 15)}</i><span><b>For your glow</b>${Y.glow}</span></p>` : ''}</div>`; })()}
       ${S ? `<p class="hb-st"><small>What a study found</small>${S[0]} <i>${S[1]}</i></p>` : ''}
       ${cares.length ? `<p class="hb-care"><small>Before you try</small>${cares.join(' ')}</p>` : ''}</div>`; })() : '<p class="hb-hint">Tap a herb to see what it does</p>';
   return `<div class="hbed-w"><div class="sfc-gh"><b>Herbs</b><small>From Chinese medicine, as teas and broths</small></div>
