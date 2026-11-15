@@ -8214,7 +8214,7 @@ const HERB_BUY = {
   chaga: { ok: 'Wild chunks from birch, black crust, orange inside', no: 'Chaga grown on grain, or not from birch', at: 'Small northern foragers who harvest it sustainably', kp: 'Dry chunks keep for years; one chunk brews 2 to 3 times',
     glow: 'Rich in antioxidants. High in oxalates, so keep it to a cup now and then.' },
   'he-shou-wu': { ok: 'Only prepared root (Zhi He Shou Wu), cooked with black beans', no: 'Raw root and unlabelled powders: linked to liver harm', at: 'Only through a licensed Chinese medicine practitioner', kp: 'Your practitioner decides how long',
-    glow: 'The classic herb for dark, thick hair, but never on your own.' },
+    glow: 'The classic herb for dark, thick hair. Take it only when a Chinese medicine practitioner gives it to you: in rare cases it can harm the liver.' },
 };
 // Real cut-out photos where we have them; the rest keep their drawings until matching cut-outs are made.
 const HERB_REAL = { ginger: 'ginger', cinnamon: 'cinnamon', goji: 'goji', 'red-dates': 'red-dates', astragalus: 'astragalus' };
@@ -8275,7 +8275,7 @@ const LOOKS = {
   goji: ['Full of zeaxanthin, the orange pigment that guards your eyes, plus vitamin C for collagen.', 'eyes:Bright eyes', 'skin:Collagen'],
   reishi: ['China’s old “beauty mushroom”: deeper sleep shows as softer under-eyes and calmer skin.', 'sleep:Rested eyes', 'skin:Calmer skin'],
   chaga: ['Packed with antioxidants that help skin cope with sun and stress. A cup now and then.', 'skin:Antioxidants', 'glow:Even tone'],
-  'he shou wu': ['The classic Chinese herb for dark, thick hair, but only ever with a practitioner.', 'hair:Dark, thick hair', 'glow:Vitality'],
+  'he shou wu': ['The classic Chinese herb for dark, thick hair. Take it only when a Chinese medicine practitioner gives it to you: in rare cases it can harm the liver.', 'hair:Dark, thick hair', 'glow:Vitality'],
   'blackstrap molasses': ['Iron and minerals: low iron shows as pale skin, dark circles and hair that sheds.', 'glow:Less pale', 'hair:Less shedding'],
   turmeric: ['Calms inflammation, which can show on your face as redness and puffiness.', 'skin:Less redness', 'puff:Less puffy'],
   nettle: ['Rich in iron, silica and minerals, the building blocks of strong hair and nails.', 'hair:Strong hair', 'nails:Stronger nails'],
