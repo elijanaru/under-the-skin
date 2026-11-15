@@ -7901,17 +7901,20 @@ const HERB_BED = {
   'Chaga': ['chaga', 'Chaga', '白桦茸', ['Antioxidants', 'Dark, earthy brew', 'Immunity']],
   'He shou wu': ['he-shou-wu', 'He shou wu', '何首乌', ['Hair', 'Vitality', 'Practitioner only']],
 };
+// Real cut-out photos where we have them; the rest keep their drawings until matching cut-outs are made.
+const HERB_REAL = { ginger: 'ginger', cinnamon: 'cinnamon', goji: 'goji', 'red-dates': 'red-dates' };
+const herbPic = k => (HERB_REAL[k] ? { src: `images/sf/${HERB_REAL[k]}.webp`, real: true } : { src: `images/herbs/${k}.svg`, real: false });
 function herbBed(herbs) {
   herbs = herbs || apoItems(apoSeason()).herbs;
   const up = ui.herbUp, was = ui.herbWas; ui.herbWas = null;
   const B = x => HERB_BED[x.n] || [x.n.toLowerCase().replace(/\W+/g, '-'), x.n, '', []];
-  const crumbs = '<span class="hb-cr" aria-hidden="true">' + [[-16, 4], [-9, -2], [-3, 8], [5, 0], [11, 6], [17, -1]].map(([x, y]) => `<i style="--x:${x}px;--y:${y}px"></i>`).join('') + '</span>';
-  const plant = i => { const x = herbs[i], b = B(x); return `<button class="hb-p${up === i ? ' up' : ''}${was === i ? ' back' : ''}" data-action="herbPull" data-i="${i}" aria-expanded="${up === i}" aria-label="${b[1]}"><span class="hb-pl"><img src="images/herbs/${b[0]}.svg" alt="" draggable="false"></span>${up === i ? crumbs : ''}<small>${b[1]}</small></button>`; };
-  const rows = [herbs.slice(0, 5).map((_, i) => i), herbs.slice(5).map((_, i) => i + 5)];
+    const tile = i => { const x = herbs[i], b = B(x), on = up === i; return `<button class="hb2${on ? ' on' : ''}" style="--i:${i}" data-action="herbPull" data-i="${i}" aria-expanded="${on}" aria-label="${b[1]}">
+      <span class="hb2-dish">${b[2] ? `<i class="hb2-han" aria-hidden="true">${b[2].slice(0, 2)}</i>` : ''}<img class="${herbPic(b[0]).real ? 'real' : 'drawn'}" src="${herbPic(b[0]).src}" alt="" draggable="false"><em class="hb2-go" aria-hidden="true">${icon(on ? 'close' : 'plus', 12, 2.6)}</em></span>
+      <b>${b[1]}</b><small>${(b[3] || [])[0] || ''}</small></button>`; };
   const x = herbs[up], det = x ? (() => {
     const b = B(x), H = HERB_SPEC[x.n] || {}, cares = [x.warn, H.care].filter(Boolean), S = H.study;
     return `<div class="hb-det" aria-live="polite">
-      <div class="hb-top"><figure class="hb-fig"><img src="images/herbs/${b[0]}.svg" alt=""></figure>
+      <div class="hb-top"><figure class="hb-fig ${herbPic(b[0]).real ? 'real' : ''}"><img src="${herbPic(b[0]).src}" alt=""></figure>
         <div class="hb-id"><small>${b[2] ? `<span class="hb-han">${b[2]}</span>` : ''}${x.sub}</small><h4>${x.n}</h4>
           <span class="hb-nat ${x.nat === 'warm' ? 'w' : 'n'}"><i></i>${x.nat === 'warm' ? 'Warming' : 'Neutral'}</span>
           <p class="hb-why">${x.why}</p></div>
@@ -7919,9 +7922,9 @@ function herbBed(herbs) {
       <div class="hb-ben"><small>Good for</small>${b[3].map(t => `<span>${t}</span>`).join('')}</div>
       <div class="hb-spec">${H.dose ? `<div><span>How much</span><b>${H.dose}</b></div>` : ''}<div><span>How</span><b>${x.how}</b></div></div>
       ${S ? `<p class="hb-st"><small>What a study found</small>${S[0]} <i>${S[1]}</i></p>` : ''}
-      ${cares.length ? `<p class="hb-care"><small>Before you try</small>${cares.join(' ')}</p>` : ''}</div>`; })() : '<p class="hb-hint">Tap a herb to pull it out of the ground</p>';
+      ${cares.length ? `<p class="hb-care"><small>Before you try</small>${cares.join(' ')}</p>` : ''}</div>`; })() : '<p class="hb-hint">Tap a herb to see what it does</p>';
   return `<div class="hbed-w"><div class="sfc-gh"><b>Herbs</b><small>From Chinese medicine, as teas and broths</small></div>
-    <div class="hbed">${rows.map(r => `<div class="hb-row" style="--n:${r.length}">${r.map(plant).join('')}</div>`).join('')}</div>${det}</div>`;
+    <div class="hb2-grid">${herbs.map((_, i) => tile(i)).join('')}</div>${det}</div>`;
 }
 // The season at a glance: what to eat and sip as small photos, one plain line to feel, the full story behind a tap.
 const SEASON_CHIPS = {
