@@ -15064,3 +15064,11 @@ html .tsh .o3-sign { font: 500 14px/1.3 var(--font) !important; }
 html .pf3 .name-field { font: 500 32px/1.1 var(--font) !important; color: #20301a !important; -webkit-text-fill-color: #20301a; letter-spacing: -.02em; }
 html .pf2 .pf3 .pf-learn { font: 400 14px/1.4 var(--font); color: rgba(32,48,26,.65); }
 html .pf2 .pf-seg button { font: 500 13.5px/1 var(--font); }
+
+/* Locked cards (15 Nov 2026 night): a vintage verdigris padlock with brass scrolls; no blur filters (the card-size drop-shadows
+   re-painted every frame while the lock swayed, that was the lag); it drops in, swings to rest and stays still */
+html .purp-c.soon .pc-chain, html .purp-c.soon .pc-padlock { filter: none !important; }
+html .purp-c.soon .pc-chain .pc-cl { stroke-opacity: 1; }
+.pc-pl { animation: pcLockDrop .7s cubic-bezier(.3,1.3,.5,1) 1s both; }
+.pc-pl2 { animation: pcLockRest 2.2s ease-in-out 1.6s both; }
+@keyframes pcLockRest { 0% { transform: rotate(0); } 18% { transform: rotate(8deg); } 40% { transform: rotate(-5deg); } 60% { transform: rotate(2.6deg); } 80% { transform: rotate(-1deg); } 100% { transform: rotate(0); } }
