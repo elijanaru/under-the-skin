@@ -15669,3 +15669,6 @@ html .card.hbc { padding: 6px 0 4px; border-radius: 32px; background: #fbf9f7 !i
 @keyframes hbc-pop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
 .ws-hb .hbs-done.on { background: #304023; color: #fff; }
 @media (prefers-reduced-motion: reduce) { .hbc-p, .hbc.first .hbc-i, .hbc.first .hbc-c, .hbc-i.pop .hbc-ok { animation: none; } }
+/* Today: the forest hero runs edge to edge (the page pad is 24px now, the old -18px left a light green strip each side) */
+html .home .hub { margin-left: -24px !important; margin-right: -24px !important; }
+html .home .hub .caps { width: calc(100% - 40px) !important; }
