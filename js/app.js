@@ -7630,7 +7630,10 @@ function viewApothecary() {
 // The season's apothecary inside Superfoods: the same calm grid, superfoods first, warming herbs in the cold half of the year.
 const APO_CUT = { 'Ginger root': 'ginger', 'Cinnamon bark': 'cinnamon', 'Goji berries': 'goji', 'Red dates': 'red-dates', 'Raw honey': 'raw-honey', 'Pumpkin seeds': 'pumpkin-seeds', Pomegranate: 'pomegranate', Turmeric: 'turmeric', 'Ground flaxseed': 'flaxseed', 'Chia seeds': 'chia', Sauerkraut: 'sauerkraut', 'Raw sauerkraut': 'sauerkraut', 'Young nettle': 'nettle', 'Dandelion greens': 'dandelion', 'Broccoli sprouts': 'broccoli-sprouts', Blueberries: 'blueberries', 'Sesame seeds': 'tahini' };
 function apoItems(sn) {
-  const sup = (SEASON_SUPER[sn] || SEASON_SUPER.Autumn).map(([k, n, tag, why, how, warn]) => ({ n, sub: tag, k, why, how, warn, herb: false }));
+  // foods already shown in her phase superfoods above (Pumpkin seeds, Raw honey, Pomegranate…) are not repeated here
+  const ph = (M.info && M.info.phase) || 'follicular', S = SUPERFOODS[ph] || {}, seen = new Set([...(S.list || []), ...(S.gems || [])].map(f => String(f[1]).toLowerCase()));
+  const all = (SEASON_SUPER[sn] || SEASON_SUPER.Autumn).map(([k, n, tag, why, how, warn]) => ({ n, sub: tag, k, why, how, warn, herb: false })), fresh = all.filter(x => !seen.has(x.n.toLowerCase()));
+  const sup = fresh.length >= 2 ? fresh : all;
   const herbs = apoHerbs(sn).map(([n, cn, nat, what, how, warn]) => ({ n, sub: cn, nat, why: what, how, warn, herb: true }));
   return { sup, herbs };
 }
@@ -8639,13 +8642,16 @@ function pvShowUp(sup, phase) {
 }
 // Her day as four tappable tiles: a mood face, a stress gauge, what the day is best for and what she needs.
 // Tap one and a short note opens under the grid.
-const PV_FACE = { menstrual: 'M24 41c3 1.6 9 1.6 12 0', follicular: 'M22 38c4 4.5 12 4.5 16 0', ovulatory: 'M20 36c5 7.5 15 7.5 20 0Z', luteal: 'M23 40c3.5-1.2 10.5-1.2 14 0' };
+// one emoji per tile and phase: her mood, what the day is best for, what she needs
+const PV_EMO = {
+  mood: { menstrual: '😌', follicular: '😊', ovulatory: '😄', luteal: '🥱' },
+  best: { menstrual: '🛁', follicular: '🌱', ovulatory: '💃', luteal: '🏡' },
+  needs: { menstrual: '🫖', follicular: '🌷', ovulatory: '💌', luteal: '🤍' },
+};
 function pvHerDay(info, S, sup = {}) {
+  pvHerDay.args = [info, S, sup];
   const w = dayWindow(info), lvl = CALM[w][0], g = DAY_GUIDE[w], c = PH_HEX[info.phase], open = ui.pvTile || '';
-  const face = `<svg viewBox="0 0 60 60" class="hd-face" aria-hidden="true"><circle cx="30" cy="30" r="25" fill="${c}" opacity=".18"/><circle cx="30" cy="30" r="25" fill="none" stroke="${c}" stroke-width="2"/>
-    <circle cx="22.5" cy="26" r="2.4" fill="#20301a"/><circle cx="37.5" cy="26" r="2.4" fill="#20301a"/>
-    <path d="${PV_FACE[info.phase]}" fill="${info.phase === 'ovulatory' ? '#20301a' : 'none'}" stroke="#20301a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-    ${info.phase === 'ovulatory' || info.phase === 'follicular' ? `<circle cx="16" cy="35" r="3.6" fill="${c}" opacity=".45"/><circle cx="44" cy="35" r="3.6" fill="${c}" opacity=".45"/>` : ''}</svg>`;
+  const face = `<span class="hd-emo">${PV_EMO.mood[info.phase]}</span>`;
   const ang = [-62, 0, 62][lvl - 1] || 0;
   const gauge = `<svg viewBox="0 0 80 48" class="hd-gauge" aria-hidden="true">
     <path d="M10 42a30 30 0 0 1 15-26" stroke="#9db36a" /><path d="M29 14a30 30 0 0 1 22 0" stroke="#e2b85c" /><path d="M55 16a30 30 0 0 1 15 26" stroke="#d98aa6" />
@@ -8654,8 +8660,8 @@ function pvHerDay(info, S, sup = {}) {
   const tiles = [
     ['mood', 'Mood', face, PV_MOOD[info.phase], `<p>${S.feel}</p>`],
     ['stress', 'Stress', gauge, ['', 'Low', 'Medium', 'High'][lvl], `<p>${PT_STRESS[w]}</p>`],
-    ['best', 'Best for', `<span class="hd-ic">${icon('star', 22, 1.8)}</span>`, best.join(', '), `<div class="hd-chips">${g.best.map(x => `<span>${esc(x)}</span>`).join('')}</div><p>${g.why}</p>`],
-    ['needs', 'She needs', `<span class="hd-ic">${icon('heart', 22, 1.8)}</span>`, PV_NEEDS[info.phase], needsDo.length ? `<ul>${needsDo.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''],
+    ['best', 'Best for', `<span class="hd-emo">${PV_EMO.best[info.phase]}</span>`, best.join(', '), `<div class="hd-chips">${g.best.map(x => `<span>${esc(x)}</span>`).join('')}</div><p>${g.why}</p>`],
+    ['needs', 'She needs', `<span class="hd-emo">${PV_EMO.needs[info.phase]}</span>`, PV_NEEDS[info.phase], needsDo.length ? `<ul>${needsDo.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''],
   ];
   const cur = tiles.find(t => t[0] === open);
   return `<section class="pv2-card pv2-spec hd" style="--pc:${c}"><div class="pv2-h"><b>Her day</b><small>${g.title}</small></div>
@@ -9654,7 +9660,14 @@ const actions = {
     sent();
   },
   hisTab: d => { ui.hisTab = d.v; render(); document.getElementById('view').scrollTop = 0; },
-  pvTile: d => { ui.pvTile = ui.pvTile === d.v ? '' : d.v; render(); },
+  pvTile: d => {
+    // swap only the Her day card so the page does not redraw or jump
+    ui.pvTile = ui.pvTile === d.v ? '' : d.v;
+    const el = document.querySelector('.pv2-card.hd');
+    if (!el || !pvHerDay.args) return render();
+    el.outerHTML = pvHerDay(...pvHerDay.args);
+    document.querySelector('.pv2-card.hd')?.classList.add('still');
+  },
   pvDay: d => { ui.pvDay = +d.v; render(); },
   mfTab: d => { ui.mfTab = d.v; ui.mfTile = null; render(); },
   mfTile: d => { ui.mfTile = ui.mfTile === +d.v ? null : +d.v; render(); },
