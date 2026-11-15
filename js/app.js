@@ -1399,14 +1399,25 @@ function promisePet() {
 function onbPromise() {
   const no = [['subscriptions', 'One payment, yours for good'], ['ads', 'Never, not even small ones'], ['hidden fees', 'The price you see is all'], ['selling your data', 'It stays yours, always'], ['popups', 'No nagging to upgrade']];
   const steps = [['gift', 'Today', 'Full app, free'], ['calendar', 'Day 3', 'Decide, no charge before'], ['heart', 'Forever', 'One payment']];
-  return `<div class="op op2">
-    <section class="op-hero op-arch" aria-label="We hate subscriptions">
-      <div class="oa-art" aria-hidden="true">${['mist', 'arch', 'leaves', 'lotus', 'swirls'].map(k => `<img class="oa-${k}" src="images/pay/${k}.webp" alt="">`).join('')}</div>
-      <div class="oa-txt"><small>Under the Skin</small><h2><span>We hate</span><em>subscriptions<i></i></em></h2><p>One payment, yours for good.</p></div>
+  // hand-drawn bits: a wobbly cross, a scribbled strike, a dashed path between the stickers, little sparkles
+  const x = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.8 C 10 10.5, 13.6 13.6, 17.6 17.4 M17.2 6.2 C 13.8 9.8, 10.2 13.8, 6.4 17.8"/></svg>';
+  const spark = (c, x0, y0, r) => `<path class="o3-sp" style="--d:${r}s" d="M${x0} ${y0 - 7} C ${x0 + .8} ${y0 - 1.5}, ${x0 + 1.5} ${y0 - .8}, ${x0 + 7} ${y0} C ${x0 + 1.5} ${y0 + .8}, ${x0 + .8} ${y0 + 1.5}, ${x0} ${y0 + 7} C ${x0 - .8} ${y0 + 1.5}, ${x0 - 1.5} ${y0 + .8}, ${x0 - 7} ${y0} C ${x0 - 1.5} ${y0 - .8}, ${x0 - .8} ${y0 - 1.5}, ${x0} ${y0 - 7} Z" fill="${c}"/>`;
+  return `<div class="op op2 op3">
+    <section class="o3-hero" aria-hidden="true">
+      <svg class="o3-dood" viewBox="0 0 340 200">${spark('#fff', 44, 58, 0)}${spark('#f6c6d4', 296, 40, 1.2)}${spark('#fff', 306, 150, 2.1)}${spark('#f1d58a', 30, 150, 1.6)}
+        <circle class="o3-sp" style="--d:.6s" cx="78" cy="24" r="2.6" fill="#fff"/><circle class="o3-sp" style="--d:1.9s" cx="262" cy="178" r="2.4" fill="#fff"/></svg>
+      <img class="o3-lotus" src="images/pay/lotus-free.webp" alt="">
     </section>
-    <p class="oa-lead">We’re a small team and this is our passion project. Try everything free for 3 days. If you love it, unlock the full app with one payment.</p>
-    <section class="op-card op-path">${steps.map(([ic, t, d], i) => `<div class="op-st ${i === 0 ? 'now' : ''}"><span>${icon(ic, 17)}</span><b>${t}</b><small>${d}</small></div>`).join('')}</section>
-    <section class="op-card"><ul class="op-no">${no.map(([a, b]) => `<li><span class="op-x">${icon('close', 12, 2.6)}</span><div><b>No ${a}</b><small>${b}</small></div></li>`).join('')}</ul></section>
+    <section class="o3-note" aria-label="We hate subscriptions">
+      <h2><span>We hate</span> <em>subscriptions<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 15 C 40 9, 70 17, 104 11 S 170 8, 196 12"/></svg></em></h2>
+      <p class="o3-sub">One payment, yours for good.</p>
+      <p class="o3-lead">We’re a <mark>small team</mark> and this is our <mark>passion project</mark>. Try everything free for 3 days. If you love it, unlock the full app with one payment.</p>
+      <p class="o3-sign">with love, from our little team <i>♡</i></p>
+    </section>
+    <section class="op-card o3-path">${steps.map(([ic, t, d], i) => `<div class="o3-st ${i === 0 ? 'now' : ''}"><span>${icon(ic, 18)}</span><b>${t}</b><small>${d}</small></div>`).join('')}
+      <svg class="o3-trail" viewBox="0 0 300 30" preserveAspectRatio="none" aria-hidden="true"><path d="M30 18 C 70 4, 100 28, 150 15 S 230 6, 270 18"/></svg></section>
+    <section class="op-card o3-no"><ul class="op-no">${no.map(([a, b]) => `<li><span class="op-x o3-x">${x}</span><div><b>No ${a}</b><small>${b}</small></div></li>`).join('')}
+      <li class="o3-yes"><span class="op-x o3-heart">${icon('heart', 15, 2.2)}</span><div><b>Yes to a small team</b><small>Who want to make a difference for women</small></div></li></ul></section>
   </div>`;
 }
 // The cycle question shows her actual cycle: four phase arcs sized from the length she picks, redrawn on every tap.

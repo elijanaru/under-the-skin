@@ -14562,3 +14562,69 @@ html .view .section-title.ln2 { gap: 8px; }
 }
 /* Hormone tiles: Doto numerals sit flush against the word before them (Typical5–25); a hair of room on both sides */
 html .hxn { margin: 0 .14em 0 .18em; }
+
+/* "We hate subscriptions" (15 Nov 2026, redesign): the forest fills the whole step, only her lotus floats on it (no arch, no frame line),
+   and the words sit on a handwritten paper note with washi tape; sticker steps, scribbled crosses. Motion is transform/opacity only. */
+.onb.no-fig.step-10::before { position: fixed !important; inset: -6px !important; height: auto !important;
+  background: linear-gradient(180deg, rgba(246,238,240,0) 30%, rgba(246,238,240,.28) 100%), url(images/intro-forest.jpg) 50% 40% / cover !important; }
+html:has(.onb.no-fig.step-10) .bgx { visibility: hidden; }
+.onb.step-10 .onb-foot { background: linear-gradient(rgba(246,238,240,0), rgba(246,238,240,.9) 46%) !important; }
+.op3 { gap: 16px; font-family: var(--font); }
+.op3 > * { animation: o3In 1s cubic-bezier(.22,1,.36,1) both; }
+.op3 > :nth-child(2) { animation-delay: .35s; } .op3 > :nth-child(3) { animation-delay: .5s; } .op3 > :nth-child(4) { animation-delay: .62s; }
+@keyframes o3In { from { opacity: 0; transform: translateY(14px); } }
+.o3-hero { position: relative; height: 196px; margin: -8px -10px -34px; display: grid; place-items: center; animation: none !important; }
+.o3-lotus { position: relative; z-index: 1; width: 300px; max-width: 92%; height: auto; filter: drop-shadow(0 0 22px rgba(255,236,242,.85)) drop-shadow(0 10px 18px rgba(80,40,52,.18));
+  animation: o3Bloom 1.6s cubic-bezier(.2,.8,.2,1) both, o3Float 6s ease-in-out 1.6s infinite; transform-origin: 50% 80%; }
+@keyframes o3Bloom { from { opacity: 0; transform: scale(.7) translateY(16px); } }
+@keyframes o3Float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-6px) rotate(.8deg); } }
+.o3-dood { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.o3-sp { transform-box: fill-box; transform-origin: center; animation: o3Twinkle 3.2s ease-in-out infinite; animation-delay: var(--d); }
+@keyframes o3Twinkle { 0%, 100% { opacity: .95; transform: scale(1); } 50% { opacity: .35; transform: scale(.6); } }
+
+/* the paper note */
+.o3-note { position: relative; z-index: 2; margin: 0 4px; padding: 30px 22px 20px; text-align: center; border-radius: 20px 24px 18px 26px;
+  background: #fffdf9; color: #20301a; transform: rotate(-1.2deg);
+  box-shadow: 0 1px 0 #fff inset, 0 22px 40px -18px rgba(60,30,40,.45), 0 3px 8px rgba(60,30,40,.08);
+  background-image: radial-gradient(rgba(176,79,108,.05) 1px, transparent 1.2px); background-size: 14px 14px; }
+.o3-note::before { content: ''; position: absolute; left: 50%; top: -13px; width: 108px; height: 28px; transform: translateX(-50%) rotate(2.5deg);
+  background: repeating-linear-gradient(90deg, rgba(239,190,206,.78) 0 10px, rgba(246,214,224,.78) 10px 20px);
+  -webkit-mask: linear-gradient(90deg, transparent 0 3px, #000 3px calc(100% - 3px), transparent 0), conic-gradient(from -45deg at 50% 3px, #000 90deg, transparent 0) 0 0 / 6px 100%;
+  box-shadow: 0 2px 4px rgba(60,30,40,.1); }
+.o3-note h2 { margin: 0 !important; font-weight: 400; line-height: 1; color: #20301a; text-shadow: none !important; }
+.o3-note h2 span { display: block; font: 600 34px/1 Caveat, 'Outfit', cursive; color: #304023; }
+.o3-note h2 em { position: relative; display: inline-block; margin-top: 2px; font: 700 52px/1.02 Caveat, 'Outfit', cursive; font-style: normal; color: #b04f6c; letter-spacing: -.01em; }
+.o3-note h2 em svg { position: absolute; left: -4%; top: 44%; width: 108%; height: 22px; overflow: visible; }
+.o3-note h2 em path { fill: none; stroke: #304023; stroke-width: 3.4; stroke-linecap: round; stroke-dasharray: 220; stroke-dashoffset: 220; animation: o3Strike .9s cubic-bezier(.6,0,.2,1) 1.2s forwards; }
+@keyframes o3Strike { to { stroke-dashoffset: 0; } }
+.o3-sub { margin: 6px 0 0 !important; font: 600 23px/1.15 Caveat, 'Outfit', cursive !important; color: #6c823e !important; }
+.o3-lead { margin: 14px 0 0 !important; font: 500 17.5px/1.5 var(--font) !important; color: #20301a !important; letter-spacing: -.005em; text-wrap: pretty; }
+.o3-lead mark { background: linear-gradient(transparent 52%, rgba(239,190,206,.75) 52% 88%, transparent 88%); color: inherit; padding: 0 2px; border-radius: 3px; font-weight: 600; }
+.o3-sign { margin: 12px 0 0 !important; font: 600 21px/1 Caveat, 'Outfit', cursive !important; color: #b04f6c !important; }
+.o3-sign i { font-style: normal; display: inline-block; animation: o3Beat 2.4s ease-in-out infinite; }
+@keyframes o3Beat { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.25); } 30% { transform: scale(1); } }
+
+/* sticker steps on a doodled path */
+.o3-path { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); padding: 18px 8px 16px; transform: rotate(.7deg); }
+.o3-trail { position: absolute; left: 8%; right: 8%; top: 24px; width: 84%; height: 30px; z-index: 0; overflow: visible; }
+.o3-trail path { fill: none; stroke: #8c9768; stroke-width: 2.2; stroke-linecap: round; stroke-dasharray: 2 7; }
+.o3-st { position: relative; z-index: 1; display: grid; justify-items: center; text-align: center; gap: 1px; padding: 0 4px; }
+.o3-st > span { width: 46px; height: 46px; margin-bottom: 6px; display: grid; place-items: center; background: #fff; color: #6c823e;
+  border-radius: 52% 46% 55% 47% / 48% 55% 45% 52%; border: 2px solid #6c823e; box-shadow: 0 6px 12px -6px rgba(32,48,26,.45); transform: rotate(-6deg); }
+.o3-st:nth-child(2) > span { transform: rotate(5deg); color: #b04f6c; border-color: #b04f6c; }
+.o3-st:nth-child(3) > span { transform: rotate(-3deg); color: #b04f6c; border-color: #b04f6c; background: #fde9ef; }
+.o3-st.now > span { background: #6c823e; color: #fff; }
+.o3-st b { font: 700 24px/1 Caveat, 'Outfit', cursive; color: #20301a; }
+.o3-st small { font-size: 12.5px; line-height: 1.3; font-weight: 500; color: #4b5741; }
+
+/* the no list with scribbled crosses, and one yes */
+.o3-no .op-no b { font-size: 15.5px; }
+.o3-x { background: #fde4eb !important; border-radius: 50% 44% 52% 46% !important; }
+.o3-x svg { width: 16px; height: 16px; fill: none; stroke: #c4566f; stroke-width: 2.6; stroke-linecap: round; }
+.o3-yes { border-top: 1.5px dashed rgba(108,130,62,.35) !important; margin-top: 2px; }
+.o3-yes .o3-heart { background: #6c823e !important; color: #fff !important; border-radius: 50% 46% 52% 47% !important; }
+.o3-yes b { color: #4f6a2a !important; }
+@media (prefers-reduced-motion: reduce) { .op3 > *, .o3-lotus, .o3-sp, .o3-sign i { animation: none !important; } .o3-note h2 em path { animation: none; stroke-dashoffset: 0; } }
+.o3-hero { height: 178px; margin: 18px -10px -30px; }
+.o3-lotus { width: 250px; }
+.o3-lead mark { padding: 0; border-radius: 2px; }
