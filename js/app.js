@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HORMONE_SIMPLE, HORMONE_RELAY, BODY_NOTES, AFTER_STAGES, AFTER_TOPICS, TTC_TRY, TTC_STAGE, TTC_CHANCE, TTC_DOCTOR, TTC_BOTH, LOSS_HELP, LOSS_STEPS, LOSS_WARN, LOSS_TOPICS, LOSS_REPEAT, LOSS_NOTES, LOSS_JOURNAL, LOSS_PARTNER, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS,
+  PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HORMONE_SIMPLE, HORMONE_RELAY, BODY_NOTES, AFTER_STAGES, AFTER_TOPICS, TTC_TRY, TTC_STAGE, TTC_CHANCE, TTC_DOCTOR, TTC_BOTH, LOSS_HELP, LOSS_STEPS, LOSS_WARN, LOSS_TOPICS, LOSS_REPEAT, LOSS_NOTES, LOSS_JOURNAL, LOSS_PARTNER, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS, STUDY_KEY,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -1396,18 +1396,23 @@ function promisePet() {
     <g class="op-pet-sp"><path d="M136 34 l2 6 6 2 -6 2 -2 6 -2 -6 -6 -2 6 -2z" fill="#e8b52c"/><path d="M24 26 l1.5 4 4 1.5 -4 1.5 -1.5 4 -1.5 -4 -4 -1.5 4 -1.5z" fill="#c4566f"/><circle cx="142" cy="74" r="2.4" fill="#8fae5a"/></g>
   </svg>`;
 }
-function onbPromise() {
-  const no = [['subscriptions', 'One payment, yours for good'], ['ads', 'Never, not even small ones'], ['hidden fees', 'The price you see is all'], ['selling your data', 'It stays yours, always'], ['popups', 'No nagging to upgrade']];
-  const steps = [['gift', 'Today', 'Full app, free'], ['calendar', 'Day 3', 'Decide, no charge before'], ['heart', 'Forever', 'One payment']];
-  // hand-drawn bits: a wobbly cross, a scribbled strike, a dashed path between the stickers, little sparkles
-  const x = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.8 C 10 10.5, 13.6 13.6, 17.6 17.4 M17.2 6.2 C 13.8 9.8, 10.2 13.8, 6.4 17.8"/></svg>';
+// Hand-drawn bits shared by the onboarding promise and the unlock page: a wobbly cross, a wobbly tick, sparkles around her lotus.
+const O3_X = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.8 C 10 10.5, 13.6 13.6, 17.6 17.4 M17.2 6.2 C 13.8 9.8, 10.2 13.8, 6.4 17.8"/></svg>';
+const O3_TICK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 12.8 C 7.4 14.2, 8.8 15.8, 10 17.6 C 12.4 12.6, 15.2 9, 18.8 6.2"/></svg>';
+function o3Hero() {
   const spark = (c, x0, y0, r) => `<path class="o3-sp" style="--d:${r}s" d="M${x0} ${y0 - 7} C ${x0 + .8} ${y0 - 1.5}, ${x0 + 1.5} ${y0 - .8}, ${x0 + 7} ${y0} C ${x0 + 1.5} ${y0 + .8}, ${x0 + .8} ${y0 + 1.5}, ${x0} ${y0 + 7} C ${x0 - .8} ${y0 + 1.5}, ${x0 - 1.5} ${y0 + .8}, ${x0 - 7} ${y0} C ${x0 - 1.5} ${y0 - .8}, ${x0 - .8} ${y0 - 1.5}, ${x0} ${y0 - 7} Z" fill="${c}"/>`;
-  return `<div class="op op2 op3">
-    <section class="o3-hero" aria-hidden="true">
+  return `<section class="o3-hero" aria-hidden="true">
       <svg class="o3-dood" viewBox="0 0 340 200">${spark('#fff', 44, 58, 0)}${spark('#f6c6d4', 296, 40, 1.2)}${spark('#fff', 306, 150, 2.1)}${spark('#f1d58a', 30, 150, 1.6)}
         <circle class="o3-sp" style="--d:.6s" cx="78" cy="24" r="2.6" fill="#fff"/><circle class="o3-sp" style="--d:1.9s" cx="262" cy="178" r="2.4" fill="#fff"/></svg>
       <img class="o3-lotus" src="images/pay/lotus-free.webp" alt="">
-    </section>
+    </section>`;
+}
+function onbPromise() {
+  const no = [['subscriptions', 'One payment, yours for good'], ['ads', 'Never, not even small ones'], ['hidden fees', 'The price you see is all'], ['selling your data', 'It stays yours, always'], ['popups', 'No nagging to upgrade']];
+  const steps = [['gift', 'Today', 'Full app, free'], ['calendar', 'Day 3', 'Decide, no charge before'], ['heart', 'Forever', 'One payment']];
+  const x = O3_X;
+  return `<div class="op op2 op3">
+    ${o3Hero()}
     <section class="o3-note" aria-label="We hate subscriptions">
       <h2><span>We hate</span> <em>subscriptions<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 15 C 40 9, 70 17, 104 11 S 170 8, 196 12"/></svg></em></h2>
       <p class="o3-sub">One payment, yours for good.</p>
@@ -4894,7 +4899,13 @@ function studyCards(study, cite) {
   const ss = study.split(/(?<=\.)\s+(?=[A-Z])/), cs = cite.split(' · ');
   const pairs = ss.length === cs.length ? ss.map((t, i) => [t, cs[i]]) : [[study, cite]];
   return `<div class="stc ${pairs.length === 1 ? 'one' : ''}">${pairs.map(([t, c], i) => { const y = (c.match(/\b(1[89]\d\d|20\d\d)\b/) || [])[1] || '', tag = (c.match(/\(([^)]+)\)/) || [])[1] || '', who = c.replace(/\([^)]*\)/g, '').replace(y, '').trim();
-    return `<article class="stc-c" style="--i:${i}"><div class="stc-h"><b class="dotnum">${y}</b><span>${who}${tag ? `<em>${tag.charAt(0).toUpperCase() + tag.slice(1)}</em>` : ''}</span></div>${stcKey(t)}<p>${t}</p></article>`; }).join('')}</div>`;
+    return `<article class="stc-c" style="--i:${i}"><div class="stc-h"><b class="dotnum">${y}</b><span>${who}${tag ? `<em>${tag.charAt(0).toUpperCase() + tag.slice(1)}</em>` : ''}</span></div>${stcKey(t) || stcOut(STUDY_KEY[`${who.split(/\s/)[0]} ${y}`])}<p>${t}</p></article>`; }).join('')}</div>`;
+}
+// A finding without a number: what it changed as an arrow, the outcome in bold and what it was compared with
+function stcOut(k) {
+  if (!k) return '';
+  const [o, dir, vs] = k, ar = dir === 'down' ? 'M12 5v14M6 13l6 6 6-6' : 'M12 19V5M6 11l6-6 6 6';
+  return `<div class="stc-k stc-o ${dir}"><span class="stc-ar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${ar}"/></svg></span><span class="stc-ot"><b>${o}</b>${vs ? `<small>${vs}</small>` : ''}</span></div>`;
 }
 // The study's key number as a graphic: two bars when it compares with placebo, one bar otherwise.
 function stcKey(t) {
@@ -10472,19 +10483,23 @@ function unlocked(ref) { state.paid = { at: todayISO(), ref: String(ref || '').s
 const UNLOCK_KEEP = [['calendar', 'Your cycle & predictions', 'Learns your rhythm with every period'], ['flask', 'Hormones made simple', 'What they do, day by day'], ['bowl', 'Food & recipes for each phase', 'Warm, raw-first, real food'], ['leaf', 'Breathe, ground & move', 'Matched to how you feel'], ['mail', 'Letters from your body', 'Gentle check-ins every day'], ['users', 'Partner view', 'He learns your cycle too']];
 function viewUnlock() {
   const left = trialLeft(), lock = locked(), paid = !!state.paid;
+  const [eu, ct] = PRICE.split('.');
   return `${lock ? '' : topbar('Unlock', { back: true })}
-  <div class="pad ul">
-    <section class="ul-hero">${promisePet()}
-      <span class="ul-eb">${paid ? 'Unlocked' : lock ? 'Your 3 free days are over' : `${left} free ${left === 1 ? 'day' : 'days'} left`}</span>
-      <h1>${paid ? 'It’s yours, <span>for good</span>' : 'Keep Under the Skin, <span>for good</span>'}</h1>
-      <p>${paid ? 'Thank you for supporting a small team. Every update is yours too.' : 'One payment. No subscription, ever. Everything you’ve logged stays right here.'}</p></section>
-    ${paid ? '' : `<section class="card ul-price">
-      <div class="ul-amt"><span class="ul-cur">€</span><b class="dotnum">${PRICE}</b></div>
-      <small>Once · yours forever</small>
-      <button class="ul-cta" data-action="buyUnlock" ${ui.paying ? 'disabled' : ''}>${ui.paying ? 'Opening payment…' : `Unlock for €${PRICE}`}</button>
-      <div class="ul-no"><span>${icon('check', 12, 2.6)} No subscription</span><span>${icon('check', 12, 2.6)} No ads</span><span>${icon('check', 12, 2.6)} Data stays yours</span></div></section>`}
-    <section class="card glass ul-keep"><div class="eyebrow">Everything is included</div>
-      ${UNLOCK_KEEP.map(([ic, t, sub]) => `<div class="ul-r"><span class="ul-ic">${icon(ic, 16)}</span><span><b>${t}</b><small>${sub}</small></span>${icon('check', 15, 2.4)}</div>`).join('')}</section>
+  <div class="pad ul ul3">
+    ${o3Hero()}
+    <span class="ul3-days">${paid ? `${icon('heart', 13)} Unlocked` : lock ? 'Your 3 free days are over' : `<b class="dotnum">${left}</b> free ${left === 1 ? 'day' : 'days'} left`}</span>
+    <section class="o3-note ul3-note">
+      <h2>${paid ? '<span>It’s yours</span> <em>for good<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 12 C 50 20, 120 4, 196 14"/></svg></em>' : '<span>Keep Under the Skin</span> <em>for good<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 12 C 50 20, 120 4, 196 14"/></svg></em>'}</h2>
+      <p class="o3-lead">${paid ? 'Thank you for supporting a <mark>small team</mark>. Every update is yours too, and part of what you paid helps fund new studies on women.' : 'One payment. <mark>No subscription</mark>, ever. Everything you’ve logged stays right here.'}</p>
+      ${paid ? '' : `<div class="ul3-buy">
+        <div class="ul3-tag" aria-label="€${PRICE}, once"><i class="ul3-hole"></i><small>only</small><span class="ul3-amt"><em>€</em><b class="dotnum">${eu}</b><sup class="dotnum">.${ct}</sup></span><small>once, yours forever</small></div>
+        <button class="ul3-cta" data-action="buyUnlock" ${ui.paying ? 'disabled' : ''}>${ui.paying ? 'Opening payment…' : `Unlock for €${PRICE}`}</button>
+      </div>`}
+      <p class="o3-sign">with love, from our little team <i>♡</i></p>
+    </section>
+    ${paid ? '' : `<ul class="ul3-no">${['No subscription', 'No ads', 'Data stays yours'].map((t, i) => `<li style="--r:${[-2, 1.5, -1][i]}deg"><span class="o3-x">${O3_X}</span>${t}</li>`).join('')}</ul>`}
+    <section class="card ul3-keep"><h3>Everything is included</h3>
+      ${UNLOCK_KEEP.map(([ic, t, sub], i) => `<div class="ul3-r" style="--i:${i}"><span class="ul3-ic">${icon(ic, 17)}</span><span><b>${t}</b><small>${sub}</small></span><i class="ul3-tick">${O3_TICK}</i></div>`).join('')}</section>
     ${paid ? '' : `<div class="ul-links"><button data-action="restoreUnlock">Restore purchase</button>${A.configured() ? `<button data-action="nav" data-to="account">${A.currentUser() ? 'Your account' : 'Sign in'}</button>` : ''}</div>
     <p class="fine center ul-fine">One-time payment of €${PRICE}, VAT included. No renewal and nothing charged automatically. Your logs are never deleted, even if you wait.</p>`}
   </div>`;

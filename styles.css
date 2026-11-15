@@ -14646,3 +14646,11 @@ html .view:has(> .rh3) .section-title h3 { display: flex !important; padding: 0 
   color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 12px rgba(0,0,0,.35) !important; }
 /* UV dial after dark: the next peak, with when it comes under the level */
 html .uvw-cap { font: 500 10.5px/1 Outfit, sans-serif; fill: rgba(43,27,18,.6); }
+/* Studies without a number (34 of 44 cards were text only): what changed as a drawn arrow in a phase-tint disc,
+   the outcome in bold ink with what it was compared with in grey under it */
+html .stc-k.stc-o { display: flex; align-items: center; gap: 10px; justify-self: start; max-width: 100%; padding: 7px 12px 7px 7px; border-radius: 16px; background: #f6f4ee; box-shadow: inset 0 0 0 1px rgba(32,48,26,.06); }
+.stc-o .stc-ar { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: hsl(calc(var(--hb) + 103 * var(--hk)) calc(34% * var(--hs2)) 44%); color: #fff; }
+html .stc-k.stc-o { min-width: 0; padding-right: 16px; }
+.stc-ot { display: grid; gap: 1px; min-width: 0; }
+.stc-ot b { font-size: 15px; font-weight: 600; line-height: 1.2; color: #20301a; }
+.stc-ot small { font-size: 12px; font-weight: 500; line-height: 1.25; color: rgba(32,48,26,.6); }

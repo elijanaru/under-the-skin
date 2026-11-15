@@ -2604,3 +2604,25 @@ export const LOSS_JOURNAL = ['What do you need most today, even if it’s small?
 export const LOSS_PARTNER = [['Say it out loud', 'Say “I’m so sorry” and name it. Silence feels like it didn’t matter.'], ['Ask, don’t fix', '“What do you need today?” beats advice or silver linings.'],
   ['Take the load', 'Food, errands, telling family. Let her rest without asking.'], ['Your grief counts too', 'You lost something as well. Talk to her or a friend, don’t carry it alone.'],
   ['Remember the dates', 'The due date and the day it happened can be hard. A small sign that you remember means a lot.']];
+
+// What each study measured, as a graphic on its card: [outcome, 'down' | 'up', what it was compared with].
+// Taken from the finding's own sentence and the trial's design; keyed by first author and year.
+export const STUDY_KEY = {
+  'Facchinetti 1991': ['PMS mood', 'down', 'vs placebo'], 'Proctor 2001': ['Period pain', 'down', 'vs placebo'],
+  'Stoffel 2017': ['Iron absorbed', 'up', 'every other day'], 'Vaucher 2012': ['Tiredness', 'down', 'vs placebo'],
+  'Harel 1996': ['Period pain', 'down', 'vs placebo'], 'Rahbar 2012': ['Period pain', 'down', 'like ibuprofen'],
+  'Hallberg 1989': ['Iron absorbed', 'up', 'with a meal'], 'Henmi 2003': ['Progesterone', 'up', 'vs nothing'],
+  'Ozgoli 2009': ['Period pain', 'down', 'like ibuprofen'], 'Daily 2015': ['Period pain', 'down', 'review'],
+  'Smith-Ryan 2021': ['Strength', 'up', 'review'], 'Lyoo 2012': ['Low mood', 'down', 'vs placebo'],
+  'Lasco 2012': ['Period pain', 'down', 'vs placebo'], 'Chocano-Bedoya 2011': ['PMS risk', 'down', 'over 10 years'],
+  'Gokhale 1996': ['Period pain', 'down', '556 women'], 'Reid 2003': ['Healthy flora', 'up', 'vs placebo'],
+  'Jafari 2020': ['PMS symptoms', 'down', 'vs placebo'], 'Dréno 2001': ['Acne spots', 'down', 'near the antibiotic'],
+  'Ziaei 2005': ['Pain and bleeding', 'down', 'vs placebo'], 'London 1987': ['PMS tension', 'down', 'vs placebo'],
+  'Chandrasekhar 2012': ['Cortisol', 'down', 'vs placebo'], 'Salve 2019': ['Stress', 'down', 'vs placebo'],
+  'Wyatt 1999': ['PMS symptoms', 'down', '9 trials'], 'Kashanian 2007': ['PMS symptoms', 'down', 'vs placebo'],
+  'Thys-Jacobs 1998': ['PMS symptoms', 'down', 'vs placebo'], 'Czeizel 1992': ['Neural tube defects', 'down', 'about 4,700 women'],
+  'Xu 2018': ['Eggs retrieved', 'up', 'before IVF'], 'Florou 2020': ['Pregnancies', 'up', '5 trials'],
+  'Penniston 2007': ['Urine citrate', 'up', 'kidney stones'], 'Östman 2005': ['Sugar rise', 'down', 'with a meal'],
+  'Abuelgasim 2021': ['Cough and cold', 'down', 'vs usual care'], 'Vuksan 2007': ['Blood pressure', 'down', '12 weeks'],
+  'Gaskins 2009': ['Estrogen', 'down', 'more fibre'], 'Goldin 1982': ['Blood estrogen', 'down', 'more in the stool'],
+};
