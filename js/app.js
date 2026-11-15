@@ -4050,16 +4050,29 @@ function groceryCard() {
 }
 // Plain words for the Chinese-medicine goals in the grocery summary.
 const GRO_PLAIN = { 'Move Liver Qi': 'Liver flow', 'Nourish Yin & Blood': 'Blood builders', 'Cruciferous veg': 'Cabbage family', 'Slow carbs': 'Slow carbs' };
+// Grocery basket (Opal style): one ring with how much is in the basket, three nutrient bubbles that fill as she ticks,
+// the full what-it-covers grid behind one tap. Ticking redraws only this card and the row, never the page.
+function grocerySum() {
+  const got = state.grocery || {}, flat = groceryItems().flatMap(([, l]) => l), total = flat.length, done = flat.filter(i => got[i.name.toLowerCase()]).length;
+  const nut = {};
+  for (const it of flat) { const n = it.why.replace(/ · in season$/, ''); if (/^in season/i.test(n)) continue; (nut[n] = nut[n] || []).push(it); }
+  const seas = flat.filter(it => /in season/i.test(it.why)), nuts = [...(seas.length ? [['In season', seas]] : []), ...Object.entries(nut).sort((x, y) => y[1].length - x[1].length)].slice(0, 8);
+  const arc = (r, w, pct) => { const C0 = 2 * Math.PI * r, c = r + w / 2; return `<svg viewBox="0 0 ${2 * c} ${2 * c}" aria-hidden="true"><circle cx="${c}" cy="${c}" r="${r}" class="gs2-bg" stroke-width="${w}"/>${pct > 0 ? `<circle cx="${c}" cy="${c}" r="${r}" class="gs2-fg" stroke-width="${w}" stroke-dasharray="${(pct * C0).toFixed(1)} ${C0.toFixed(1)}" transform="rotate(-90 ${c} ${c})"/>` : ''}</svg>`; };
+  const cnt = l => l.filter(i => got[i.name.toLowerCase()]).length;
+  const head = done === total && total ? 'Your week is stocked' : done ? `${total - done} to go` : 'Ready to shop';
+  const sub = done === total && total ? 'Everything your next 7 days need is home.' : 'Tick foods off as you shop. Each tick fills what it feeds.';
+  return `<section class="card gro-sum gro-sum2" id="gro-sum">
+    <div class="gs2-top"><span class="gs2-ring">${arc(44, 9, total ? done / total : 0)}<span><b class="dotnum">${done}</b><small>of <span class="dotnum">${total}</span></small></span></span>
+      <span class="gs2-t"><b>${head}</b><small>${sub}</small>${done ? '<button class="gsm-clear" data-action="groClear">Clear ticks</button>' : ''}</span></div>
+    <div class="gs2-bub">${nuts.slice(0, 3).map(([n, l]) => { const d = cnt(l); return `<span class="gs2-b ${d === l.length ? 'full' : ''}"><span class="gs2-bw">${arc(20, 4.5, d / l.length)}<b class="dotnum">${d}</b></span><small>${GRO_PLAIN[n] || n}</small><em>of <span class="dotnum">${l.length}</span></em></span>`; }).join('')}</div>
+    ${nuts.length > 3 ? `<details class="gs2-more"><summary>All it covers ${icon('chevD', 13)}</summary><div class="gsm-nuts">${nuts.map(([n, l]) => { const d = cnt(l), k = Math.min(l.length, 7), f = Math.round(d / l.length * k); return `<div class="gsm-r ${d === l.length ? 'full' : ''}"><span class="gsm-l"><b>${GRO_PLAIN[n] || n}</b><em><b class="dotnum">${d}</b>/${l.length}</em></span><span class="gsm-seg" aria-hidden="true">${Array.from({ length: k }, (_, j) => `<i class="${j < f ? 'on' : ''}"></i>`).join('')}</span></div>`; }).join('')}</div></details>` : ''}
+  </section>`;
+}
 function viewGrocery() {
   // meat and organs come right after what's in season
   const AISLE_FIRST = ['In season now', 'Protein'], rank = a => { const i = AISLE_FIRST.indexOf(a); return i < 0 ? 9 : i; };
   const phases = weekPhases(), groups = groceryItems().map((g, i) => [g, i]).sort((x, y) => rank(x[0][0]) - rank(y[0][0]) || x[1] - y[1]).map(x => x[0]), swaps = groceryItems.swaps || [], got = state.grocery || {};
   const flat = groups.flatMap(([, l]) => l), total = flat.length, done = flat.filter(i => got[i.name.toLowerCase()]).length;
-  const ring = (pct, r, w) => { const C0 = 2 * Math.PI * r; return `<circle cx="${r + w}" cy="${r + w}" r="${r}" class="gr-bg" stroke-width="${w}"/>${pct > 0 ? '' : '<!--'}<circle cx="${r + w}" cy="${r + w}" r="${r}" class="gr-fg" stroke-width="${w}" stroke-dasharray="${(pct * C0).toFixed(1)} ${C0.toFixed(1)}" transform="rotate(-90 ${r + w} ${r + w})"/>${pct > 0 ? '' : '-->'}`; };
-  // nutrients this week's basket covers, each with how much of it is ticked
-  const nut = {};
-  for (const it of flat) { const n = it.why.replace(/ · in season$/, ''); if (/^in season/i.test(n)) continue; (nut[n] = nut[n] || []).push(it); }
-  const seas = flat.filter(it => /in season/i.test(it.why)), nuts = [...(seas.length ? [['In season', seas]] : []), ...Object.entries(nut).sort((x, y) => y[1].length - x[1].length)].slice(0, 8);
   const warm = M.info && warmWindow(M.info) || phases.includes('menstrual');
   const aisle = groups.some(([a]) => a === ui.groAisle) ? ui.groAisle : (groups[0] || [''])[0];
   return `${topbar('Grocery list', { back: true })}
@@ -4067,12 +4080,7 @@ function viewGrocery() {
     <h1 class="page-h">This week’s <span>basket</span></h1>
     <p class="gro-lead">Built from what your next 7 days need</p>
     <div class="gro-phs">${phases.map((p, i) => `${i ? `<span class="gro-arr">${icon('chevR', 12, 2)}</span>` : ''}<span class="gro-pc" style="--c:${PH_HEX[p]}"><i></i>${PHASES[p].name}</span>`).join('')}</div>
-    <section class="card gro-sum">
-      <div class="gsm-top"><span class="gsm-n"><b class="dotnum">${done}</b><small>of ${total} in your basket</small></span>${done ? '<button class="gsm-clear" data-action="groClear">Clear ticks</button>' : ''}</div>
-      <span class="gsm-bar" aria-hidden="true"><i style="width:${total ? Math.round(done / total * 100) : 0}%"></i></span>
-      <p class="gsm-sub">${done === total && total ? 'All done. Your week is stocked.' : done ? `${total - done} to go. Each tick fills what it feeds.` : 'Tick foods off as you shop. Each tick fills what it feeds.'}</p>
-      <div class="gsm-nuts">${nuts.map(([n, l]) => { const d = l.filter(i => got[i.name.toLowerCase()]).length, k = Math.min(l.length, 7), f = Math.round(d / l.length * k); return `<div class="gsm-r ${d === l.length ? 'full' : ''}"><span class="gsm-l"><b>${GRO_PLAIN[n] || n}</b><em><b class="dotnum">${d}</b>/${l.length}</em></span><span class="gsm-seg" aria-hidden="true">${Array.from({ length: k }, (_, i) => `<i class="${i < f ? 'on' : ''}"></i>`).join('')}</span></div>`; }).join('')}</div>
-    </section>
+    ${grocerySum()}
     ${warm ? `<p class="gro-warm">${icon('sun', 14)} Your period falls in this week: cook the produce and stew the fruit on those days.</p>` : ''}
     ${sectionTitle('Your list')}
     <div class="tea-tabs gro-tabs">${groups.map(([a, l]) => { const d = l.filter(i => got[i.name.toLowerCase()]).length; return `<button class="${a === aisle ? 'on' : ''} ${d === l.length ? 'full' : ''}" data-action="groAisle" data-v="${esc(a)}">${a} <i>${d}/${l.length}</i></button>`; }).join('')}</div>
@@ -10719,7 +10727,14 @@ const actions = {
   rmTab: d => { ui.rmTab = d.v; render(); },
   insHx: () => { ui.insTab = 'learn'; render(); const v = document.getElementById('view'), a = document.getElementById('ins-hx'); if (v && a) v.scrollTo({ top: v.scrollTop + a.getBoundingClientRect().top - 70, behavior: 'smooth' }); },
   hxJump: d => { document.getElementById('hx-' + d.i)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
-  groToggle: d => { const g = state.grocery = state.grocery || {}; g[d.k] ? delete g[d.k] : (g[d.k] = 1); save(); render(); },
+  groToggle: (d, el) => {
+    const g = state.grocery = state.grocery || {}; g[d.k] ? delete g[d.k] : (g[d.k] = 1); save();
+    const sum = document.getElementById('gro-sum'); if (!sum || !el) return render();
+    el.classList.toggle('on', !!g[d.k]);
+    const open = sum.querySelector('.gs2-more')?.open; sum.outerHTML = grocerySum(); if (open) document.querySelector('#gro-sum .gs2-more').open = true;
+    const grp = groceryItems().find(([, l]) => l.some(i => i.name.toLowerCase() === d.k)), tab = grp && [...document.querySelectorAll('.gro-tabs button')].find(b => b.dataset.v === grp[0]);
+    if (tab) { const n = grp[1].filter(i => g[i.name.toLowerCase()]).length; tab.querySelector('i').textContent = `${n}/${grp[1].length}`; tab.classList.toggle('full', n === grp[1].length); }
+  },
   groClear: () => { state.grocery = {}; save(); render(); },
   groShare: async () => {
     const got = state.grocery || {};
