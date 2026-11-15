@@ -10484,9 +10484,22 @@ async function restoreUnlock() {
 }
 function unlocked(ref) { state.paid = { at: todayISO(), ref: String(ref || '').slice(0, 80) }; ui.paying = false; save(true); toast('Unlocked. It’s yours for good'); location.hash = '#/today'; render(); }
 const UNLOCK_KEEP = [['calendar', 'Your cycle & predictions', 'Learns your rhythm with every period'], ['flask', 'Hormones made simple', 'What they do, day by day'], ['bowl', 'Food & recipes for each phase', 'Warm, raw-first, real food'], ['leaf', 'Breathe, ground & move', 'Matched to how you feel'], ['mail', 'Letters from your body', 'Gentle check-ins every day'], ['users', 'Partner view', 'They learn your cycle too']];
+// The price as a ticket, made like his date ticket: barcode stub, punched edges, serif and script title, typewriter lines,
+// the lotus collage and a round price stamp. It turns over from its "With love" back as the page opens.
+function ulTicket() {
+  const d = new Date(), p2 = n => String(n).padStart(2, '0'), name = esc((state.profile.name || '').trim().toUpperCase() || 'YOU');
+  return `<div class="tk-vt ul3-vt" aria-label="A ticket for Under the Skin: €${PRICE}, one payment, yours forever"><div class="vt">
+    <div class="vt-face vt-front">
+      <div class="vt-stub">${VT_BAR}<div class="vt-adm"><b>Admit one</b><span>${p2(d.getDate())}-${p2(d.getMonth() + 1)}-${d.getFullYear()}</span></div></div>
+      <div class="vt-main"><div class="vt-stars" aria-hidden="true">★★★★★</div>
+        <h4 class="vt-h"><span>A ticket for</span><em>Under the Skin</em></h4><p class="vt-plan">One payment, yours for good.</p>
+        <div class="vt-lines"><span>NAME : ${name}</span><span>PRICE : €${PRICE}</span><span>VALID : FOREVER</span></div></div>
+      <div class="vt-art">${VT_ART}</div>
+      <span class="vt-stamp ul3-stamp" aria-hidden="true"><small>only</small><b>€${PRICE}</b><i>♥</i></span></div>
+    <div class="vt-face vt-back" aria-hidden="true"><svg class="vt-seal" viewBox="0 30 140 90">${VT_DEFS}${vtLotus(false)}</svg><b>With love</b><span>from our little team</span></div></div></div>`;
+}
 function viewUnlock() {
   const left = trialLeft(), lock = locked(), paid = !!state.paid;
-  const [eu, ct] = PRICE.split('.');
   return `${lock ? '' : topbar('Unlock', { back: true })}
   <div class="pad ul ul3">
     ${o3Hero()}
@@ -10495,7 +10508,7 @@ function viewUnlock() {
       <h2>${paid ? '<span>It’s yours</span> <em>for good<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 12 C 50 20, 120 4, 196 14"/></svg></em>' : '<span>Keep Under the Skin</span> <em>for good<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 12 C 50 20, 120 4, 196 14"/></svg></em>'}</h2>
       <p class="o3-lead">${paid ? 'Thank you for supporting a <mark>small team</mark>. Every update is yours too, and part of what you paid helps fund new studies on women.' : 'One payment. <mark>No subscription</mark>, ever. Everything you’ve logged stays right here.'}</p>
       ${paid ? '' : `<div class="ul3-buy">
-        <div class="ul3-tag" aria-label="€${PRICE}, once"><i class="ul3-hole"></i><small>only</small><span class="ul3-amt"><em>€</em><b class="dotnum">${eu}</b><sup class="dotnum">${ct}</sup></span><small>once, yours forever</small></div>
+        ${ulTicket()}
         <button class="ul3-cta" data-action="buyUnlock" ${ui.paying ? 'disabled' : ''}>${ui.paying ? 'Opening payment…' : `Unlock for €${PRICE}`}</button>
       </div>`}
       <p class="o3-sign">with love, from our little team <i>♡</i></p>
