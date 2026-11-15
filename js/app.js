@@ -7131,6 +7131,7 @@ const LOVE = [
   { k: 'date', ic: 'moon', g: '🌙', t: 'Date night?', s: 'wants a date night with you' },
   { k: 'choc', ic: 'bar', g: '🍫', t: 'Chocolate run', s: 'is bringing you chocolate' },
   { k: 'love', ic: 'heart', g: '❤️', t: 'Love you', s: 'loves you' },
+  { k: 'miss', ic: 'heart', g: '🥺', t: 'Miss you', s: 'misses you' },
 ];
 const CARE = [
   { k: 'eat', ic: 'bowl', g: '🍽️', t: 'Time to eat', s: 'says: time to eat something nourishing' },
@@ -7168,6 +7169,7 @@ function handleSignal(m) {
 }
 function showSignal(sig, name, from, x) {
   document.querySelector('.sig-pop')?.remove();
+  if (sig.k === 'date' && x) return showTicket(name, from, x);
   const isLove = LOVE.includes(sig);
   const hearts = Array.from({ length: 18 }, (_, i) => `<i style="left:${(i * 37) % 100}%;animation-delay:${(i * .3) % 4}s;animation-duration:${5 + (i % 4)}s;width:${14 + (i * 7) % 18}px;height:${14 + (i * 7) % 18}px">${HEART(i % 3 === 1 ? '#fff' : isLove ? '#ff2d4b' : 'hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)')}</i>`).join('');
   const el = document.createElement('div'); el.className = `sig-pop ${isLove ? 'love' : 'care'}`;
@@ -7176,6 +7178,20 @@ function showSignal(sig, name, from, x) {
     ${from ? `<button class="btn btn-love btn-block" data-action="openLove" data-id="${from.id}">${icon('heart', 16)} Send love back</button>` : ''}
     <button class="btn btn-ghost btn-block" data-action="sigClose">Close</button></div>`;
   $app.appendChild(el);
+  import('./sfx.js').then(S => S.breeze({ dur: 1.8, vol: .14 })).catch(() => {});
+}
+// His date ticket lands on her phone: it drops in from the top with a little spin, settles, a light glints across it and hearts burst.
+function showTicket(name, from, x) {
+  const m = String(x).match(/^(\S+)\s+(.*)$/) || [0, '💝', x], emo = m[1], plan = m[2];
+  const el = document.createElement('div'); el.className = 'sig-pop tk-pop';
+  const hearts = Array.from({ length: 14 }, (_, i) => `<i style="left:${(i * 41) % 100}%;animation-delay:${1 + (i * .23) % 3}s;animation-duration:${5 + (i % 4)}s;width:${12 + (i * 7) % 16}px;height:${12 + (i * 7) % 16}px">${HEART(i % 3 === 1 ? '#fff' : '#e6809c')}</i>`).join('');
+  el.innerHTML = `<div class="lv-hearts">${hearts}</div><div class="tk-in">
+    <p class="tk-from">${esc(name)} sent you</p>
+    <div class="tk-card"><span class="tk-glint"></span><div class="tk-l"><span class="tk-emo">${esc(emo)}</span></div><div class="tk-m"><small>A date for two</small><b>${esc(plan.slice(0, 90))}</b><span>${fmt(new Date(), { weekday: 'long' })}</span></div><div class="tk-r"><b class="dotnum">2</b><small>for two</small></div></div>
+    ${from ? `<button class="btn btn-love btn-block" data-action="openLove" data-id="${from.id}">${icon('heart', 16)} Say yes with love</button>` : ''}
+    <button class="btn btn-ghost btn-block" data-action="sigClose">Close</button></div>`;
+  $app.appendChild(el);
+  setTimeout(() => { const c = el.querySelector('.tk-card'); if (!c) return; const r = c.getBoundingClientRect(); heartBurst(r.left + r.width / 2, r.top + r.height / 2); }, 1050);
   import('./sfx.js').then(S => S.breeze({ dur: 1.8, vol: .14 })).catch(() => {});
 }
 let sigSource = null;
@@ -7192,7 +7208,7 @@ async function startSignals() {
   try { sigSource = new EventSource(`${RELAY}${id}/sse`); sigSource.onmessage = e => { try { const m = JSON.parse(e.data); if (m.event === 'message') handleSignal(m); } catch {} }; } catch {}
 }
 // Pastel disc + ink colour for each love tile, so the sheet reads like a little box of stickers.
-const LS_TINT = { hug: ['#fbe0e8', '#b0475f'], kiss: ['#f9d3dd', '#c2385c'], tea: ['#f3ead9', '#8a6a3a'], think: ['#ece6f6', '#6d5a9c'], strong: ['#fbefcf', '#a8781a'], date: ['#e6e4f2', '#4f4a82'], choc: ['#f0e0d6', '#7a4a36'], love: ['#ffd9e1', '#e0405f'],
+const LS_TINT = { miss: ['#fde3ea', '#c0507a'], hug: ['#fbe0e8', '#b0475f'], kiss: ['#f9d3dd', '#c2385c'], tea: ['#f3ead9', '#8a6a3a'], think: ['#ece6f6', '#6d5a9c'], strong: ['#fbefcf', '#a8781a'], date: ['#e6e4f2', '#4f4a82'], choc: ['#f0e0d6', '#7a4a36'], love: ['#ffd9e1', '#e0405f'],
   eat: ['#e9f0d8', '#4f6a2a'], water: ['#dcecf0', '#2f6a7a'], rest: ['#e6e4f2', '#4f4a82'], walk: ['#e3ecc9', '#4f6a2a'] };
 function loveSheet() {
   const p = (state.partners || []).find(x => x.id === ui.loveFor); if (!p) return '';
@@ -7202,7 +7218,7 @@ function loveSheet() {
     <div class="ls-grip"></div>
     <div class="ls2-head"><span class="lb2-art">${loveBtnArt()}${ptAvatar(p, 'sm')}</span><div><h3>Send love to ${esc(p.n)}</h3><p>${sent ? `${sent} ${sent === 1 ? 'heart' : 'hearts'} sent so far` : 'Tap one and it lands on her phone'}</p></div></div>
     <div class="ls2-k">${icon('heart', 13, 2)} Love</div>
-    <div class="ls2-grid">${LOVE.map(tile).join('')}</div>
+    <div class="ls2-grid love">${LOVE.map(tile).join('')}</div>
     <div class="ls2-k care">${icon('leaf', 13, 2)} Care nudges</div>
     <div class="ls2-grid">${CARE.map(tile).join('')}</div></div></div>`;
 }
@@ -8518,6 +8534,32 @@ const PV_SKIP = {
   luteal: ['Saying “calm down”', 'Comments on her cravings or her body'],
   all: ['Fixing it when she just wants you to listen', 'Leaving dishes and laundry for her to notice', 'Blaming her mood on her hormones'],
 };
+// her snapshot on his page (from the link, or the saved view-only link)
+function pvSnap() { const r = route(); let raw = r.name === 'with' && r.q ? r.q.get('d') : null; if (!raw) { try { raw = localStorage.getItem('uts.viewOnly'); } catch {} } return raw ? b64d(raw) : null; }
+// The ticket flies: a copy lifts off the card, tilts, and sails up and away to the top right, leaving a trail of hearts.
+function ticketFly(el) {
+  el.classList.add('flying');
+  const r = el.getBoundingClientRect(), fly = el.cloneNode(true);
+  fly.className = el.className + ' tk-fly'; fly.removeAttribute('data-action');
+  Object.assign(fly.style, { position: 'fixed', left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', margin: 0, zIndex: 90, pointerEvents: 'none' });
+  document.body.appendChild(fly); el.classList.add('gone');
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { fly.remove(); return Promise.resolve(true); }
+  const dx = innerWidth - r.left - r.width * .3, dy = -r.top - r.height;
+  const a = fly.animate([
+    { transform: 'none', boxShadow: '0 10px 30px -18px rgba(192,80,122,.4)', offset: 0 },
+    { transform: 'translateY(-14px) scale(1.04) rotate(-2deg)', boxShadow: '0 30px 50px -20px rgba(192,80,122,.55)', offset: .22 },
+    { transform: `translate(${dx * .35}px, ${dy * .25}px) scale(.62) rotate(-9deg)`, opacity: 1, offset: .55 },
+    { transform: `translate(${dx}px, ${dy}px) scale(.12) rotate(-22deg)`, opacity: 0, offset: 1 },
+  ], { duration: 1250, easing: 'cubic-bezier(.45,0,.2,1)', fill: 'forwards' });
+  let n = 0; const trail = setInterval(() => { const q = fly.getBoundingClientRect(); if (n++ > 9) return clearInterval(trail); const h = document.createElement('i'); h.className = 'tk-trail'; h.innerHTML = HEART(n % 2 ? '#e6809c' : '#f4c6d6'); h.style.left = (q.left + q.width / 2) + 'px'; h.style.top = (q.top + q.height / 2) + 'px'; document.body.appendChild(h); setTimeout(() => h.remove(), 1200); }, 90);
+  return a.finished.then(() => { clearInterval(trail); fly.remove(); return true; });
+}
+// back on his page the ticket returns and its stub says Sent
+function ticketSent(el) {
+  el.classList.remove('gone'); el.classList.add('sent');
+  el.animate([{ opacity: 0, transform: 'scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 500, easing: 'cubic-bezier(.2,.8,.2,1)' });
+  setTimeout(() => el.classList.remove('flying', 'sent'), 6000);
+}
 // a cute emoji for the date idea of her phase (sofa night, something new, out dancing, home comfort)
 const dateEmo = t => [[/sofa|film|blanket/i, '🍿'], [/new|class|trip/i, '🎡'], [/danc|event|out\b/i, '🥂'], [/home|cook|comfort|early/i, '🍲'], [/walk/i, '🌷'], [/dinner/i, '🍝']].find(([r]) => r.test(t))?.[1] || '💝';
 const pvEmo = e => `<span class="pv2-emo">${emoRaw(e)}</span>`;
@@ -8542,14 +8584,14 @@ function pvToday(info, name, sup, snap) {
       <p class="hd-hint duo-hint">Tap the dish or the cup for how to make it</p></section>
     <section class="pv2-card pv2-bring"><div class="pv2-h"><b>Bring her</b><small>In season now · on the way home</small></div>
       <div class="pv2-snacks three">${snacks.map(([e, n, why]) => `<div class="pv2-sn">${pvEmo(e)}<b>${n}</b><small>${why}</small></div>`).join('')}</div></section>
-    <section class="pv2-card pv2-date"><div class="dt-art"><span class="dt-emo" aria-hidden="true">${dateEmo(sup.date)}</span>
+    <section class="pv2-card pv2-date" role="button" tabindex="0" data-action="pvDateSend" aria-label="Send ${name} this date"><div class="dt-art"><span class="dt-emo" aria-hidden="true">${dateEmo(sup.date)}</span>
         ${[1, 2, 3].map(k => `<svg class="dt-h h${k}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></svg>`).join('')}<i class="dt-s s1"></i><i class="dt-s s2"></i></div>
       <div class="dt-txt"><small>A date for two</small><b>${esc(sup.date)}</b><span>${icon('clock', 12)} ${when}</span></div>
-      <div class="dt-stub"><b class="dotnum">2</b><small>for two</small></div></section>
-    ${snap && (snap.a || 'partner') === 'partner' ? `<button class="lb2 dt-send" data-action="pvDateSend" aria-label="Send ${name} this date">
+      <div class="dt-stub"><svg class="dt-plane" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 3 10.5l7 2.5 2.5 7z" fill="#fff" stroke="#c0507a" stroke-width="1.7" stroke-linejoin="round"/><path d="m21 3-11 10" stroke="#c0507a" stroke-width="1.7" stroke-linecap="round"/></svg><span class="dt-ok" aria-hidden="true">${icon('check', 18, 2.6)}</span><small class="dt-go">Tap to send</small><small class="dt-done">Sent to ${name}</small></div></section>
+    ${snap && (snap.a || 'partner') === 'partner' ? `<button class="lb2 dt-send" data-action="pvLove" aria-label="Send ${name} love">
       <span class="lb2-hearts" aria-hidden="true">${[0, 1, 2, 3].map(i => `<i style="--d:${i * .9}s;--x:${[18, 38, 62, 80][i]}%">${HEART(i % 2 ? '#f4c6d6' : '#e6809c')}</i>`).join('')}</span>
       <span class="lb2-art">${loveBtnArt()}</span>
-      <span class="lb2-t"><b>Send ${name} this date</b><small>Lands on her phone as a ticket</small></span>
+      <span class="lb2-t"><b>Send ${name} love</b><small>A hug, a kiss or I miss you</small></span>
       <span class="lb2-go">${icon('heart', 16, 2)}</span></button>` : ''}`;
 }
 // Trying for a baby: when she shares that goal, he gets the timing and the few things that make his part count.
@@ -9675,18 +9717,32 @@ const actions = {
   hisTab: d => { ui.hisTab = d.v; render(); document.getElementById('view').scrollTop = 0; },
   pvTile: d => { ui.pvTile = ui.pvTile === d.v ? '' : d.v; softWith(); },
   pvDay: d => { ui.pvDay = +d.v; softWith(); },
-  pvDateSend: async (d, el) => { // his date ticket goes to her phone like a love signal, or out through the share sheet
-    const r = route(); let raw = r.q && r.q.get('d'); if (!raw) { try { raw = localStorage.getItem('uts.viewOnly'); } catch {} }
-    const snap = raw && b64d(raw); if (!snap) return;
+  pvDateSend: async (d, el) => { // the ticket lifts, folds into flight and flies off to her phone
+    const snap = pvSnap(); if (!snap || el.classList.contains('flying')) return;
     const info = snapInfo(snap, C.startOfDay(new Date())), sup = SUPPORT[info.phase]?.partner; if (!sup) return;
-    const b = el.getBoundingClientRect(); heartBurst(b.left + b.width / 2, b.top + b.height / 2);
+    if (!snap.i) { toast(`${snap.n || 'She'} needs to open her app once, then her link can receive it`); return; }
     const me = (state && state.profile && state.profile.name) || 'Your partner', x = `${dateEmo(sup.date)} ${sup.date}`;
-    let ok = false;
-    if (snap.i) { try { ok = (await fetch(RELAY + snap.i, { method: 'POST', body: JSON.stringify({ k: 'date', f: me, x }) })).ok; } catch {} }
-    if (ok) { toast(`🎟️ Sent to ${snap.n || 'her'}`); return; }
-    const url = `${appBase()}#/love?d=${b64e({ f: me, k: 'date', x })}`, text = `🎟️ A date for two: ${sup.date}`;
-    if (await shareOut({ text, url })) { toast(`Date sent to ${snap.n || 'her'} ❤️`); return; }
-    try { await navigator.clipboard.writeText(`${text} ${url}`); toast('Copied: paste it in your chat ❤️'); } catch { prompt('Copy and send', `${text} ${url}`); }
+    const send = fetch(RELAY + snap.i, { method: 'POST', body: JSON.stringify({ k: 'date', f: me, x }) }).then(r => r.ok).catch(() => false);
+    const ok = await ticketFly(el);
+    if (await send) { ticketSent(el); } else { el.classList.remove('flying', 'gone'); el.animate([{ opacity: 0, transform: 'translateY(-14px) scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.8,.2,1)' }); toast('Couldn’t send: check your connection'); }
+    return ok;
+  },
+  pvLove: () => { // the little love tiles, sent live to her phone
+    const snap = pvSnap(); if (!snap) return;
+    document.querySelector('.love-sheet.pv')?.remove();
+    const tile = l => { const [bg, ink] = LS_TINT[l.k] || ['#fbe0e8', '#b0475f']; return `<button class="ls2-b" data-action="pvLoveSend" data-k="${l.k}" style="--bg:${bg};--ink:${ink}"><span class="ls2-ic">${l.k === 'miss' ? '<b class="ls2-emo">🥺</b>' : icon(l.ic, 22, 1.9)}</span><small>${l.t}</small></button>`; };
+    $app.insertAdjacentHTML('beforeend', `<div class="love-sheet pv" data-action="pvLoveClose"><div class="ls-card ls2" data-action="noop"><div class="ls-grip"></div>
+      <div class="ls2-head"><span class="lb2-art">${loveBtnArt()}</span><div><h3>Send love to ${esc(snap.n || 'her')}</h3><p>Tap one and it lands on her phone</p></div></div>
+      <div class="ls2-grid love">${LOVE.map(tile).join('')}</div></div></div>`);
+  },
+  pvLoveClose: () => document.querySelector('.love-sheet.pv')?.remove(),
+  pvLoveSend: async (d, el) => {
+    const snap = pvSnap(), l = LOVE.find(x => x.k === d.k); if (!snap || !l) return;
+    const b = el.getBoundingClientRect(); heartBurst(b.left + b.width / 2, b.top + b.height / 2);
+    if (!snap.i) { toast(`${snap.n || 'She'} needs to open her app once, then her link can receive it`); return; }
+    const me = (state && state.profile && state.profile.name) || 'Your partner';
+    let ok = false; try { ok = (await fetch(RELAY + snap.i, { method: 'POST', body: JSON.stringify({ k: l.k, f: me }) })).ok; } catch {}
+    setTimeout(() => { document.querySelector('.love-sheet.pv')?.remove(); toast(ok ? `${l.g} Sent to ${snap.n || 'her'}` : 'Couldn’t send: check your connection'); }, 500);
   },
   pvDuo: (d, el) => { // open the recipe of the tapped tile under the pair, in place (the 3D dish and cup keep turning)
     const card = el.closest('.pv2-duo'); if (!card) return;
