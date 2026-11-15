@@ -13940,3 +13940,51 @@ html .view .t4-h :is(h1, h2), html .view .pv2-title h1, html .view .pv2-title h1
   text-shadow: 0 0 2px rgba(255,255,255,.95), 0 0 14px rgba(255,255,255,.95), 0 0 28px rgba(255,255,255,.8) !important; }
 html .view .t4-h > small, html .view .pv2-title small { display: inline-block; padding: 4px 11px; border-radius: 99px; background: rgba(255,255,255,.66); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.8); }
 html .view .t4-h > p, html .view .pv2-title p, html .view .fbp-title p { color: #20301a !important; -webkit-text-fill-color: #20301a !important; font-weight: 400 !important; text-shadow: 0 0 2px rgba(255,255,255,.95), 0 0 12px rgba(255,255,255,.95), 0 0 22px rgba(255,255,255,.8) !important; }
+
+/* ── His onboarding: background variants (a misty forest, b pink forest light, c arch fitted, d hands) ── */
+html .view:has(> .hob.ph) { position: relative; background: var(--hobbg, #f6eef0) !important; }
+html .view:has(> .hob.v-a) { --hobbg: linear-gradient(180deg, rgba(246,238,240,0) 45%, rgba(246,238,240,.55)) , url(images/welcome-forest.jpg) center 30% / cover no-repeat; }
+html .view:has(> .hob.v-b) { --hobbg: linear-gradient(180deg, rgba(246,238,240,0) 45%, rgba(246,238,240,.5)), url(images/intro-forest.jpg) center 30% / cover no-repeat; }
+html .view:has(> .hob.v-d) { --hobbg: linear-gradient(180deg, rgba(246,238,240,0) 30%, #f6eef0 52%), url(images/partner-hands.jpg) center top / auto 60% no-repeat, #f6eef0; }
+.hob.ph { position: relative; align-items: flex-end; padding-top: 0 !important; padding-bottom: 26px !important; }
+.hob.ph .hob-card { position: relative; z-index: 1; background: rgba(255,255,255,.7); box-shadow: inset 0 0 0 1px rgba(255,255,255,.85), 0 24px 50px -24px rgba(40,50,30,.45); }
+.hob.v-c { align-items: flex-end; padding-top: 0 !important; padding-bottom: 128px !important; }
+.hob.v-c .hob-card { margin: 0 6px; background: rgba(255,255,255,.6); }
+/* photo on step 1 */
+.hob-av { position: relative; display: inline-grid; place-items: center; width: 82px; height: 82px; border-radius: 50%; cursor: pointer; background: radial-gradient(circle at 40% 35%, #fff, #eef2e4 80%); box-shadow: inset 0 0 0 2px #fff, 0 10px 22px -12px rgba(32,48,26,.4); }
+.hob-av span { font-size: 40px; line-height: 1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
+.hob-av img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.hob-av i { position: absolute; right: -2px; bottom: 2px; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: #20301a; color: #fff; box-shadow: 0 0 0 3px #fff; }
+.hob-avt { display: block; margin-top: 8px; font-style: normal; font-size: 12px; color: rgba(32,48,26,.6); }
+
+/* ── Sun dial: a real sun with turning rays, hills on the horizon, any wake time ── */
+.hs3-sun .rays { stroke: #f8cf62; stroke-width: 2.6; stroke-linecap: round; transform-box: view-box; animation: hs3Rays 40s linear infinite; transition: opacity .4s; }
+@keyframes hs3Rays { to { transform: rotate(360deg); } }
+.hs3-sun .core { fill: url(#hs3c); stroke: rgba(255,246,214,.9); stroke-width: 1.5; }
+.hs3-sun.night .rays, .hs3-sun.night .shine { opacity: 0; }
+.hs3-sun .shine { transition: opacity .4s; }
+.hs3-sun .glow { animation: hs3Glow 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.hs3-wake { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
+.hs3-wk { flex: 1; min-width: 0; display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: rgba(244,241,230,.7); }
+.hs3-wk i { font-style: normal; font-size: 15px; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
+.hs3-wk b { font-size: 15px; color: #f6c453; }
+.hs3-wake button { flex: none; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,.18); background: none; color: rgba(244,241,230,.88); font: 500 12.5px Outfit, sans-serif; cursor: pointer; }
+.hs3-wake .hs3-up { background: #f6c453; border-color: #f6c453; color: #1f2b19; }
+.hs3-slide { margin-top: 10px; padding: 14px 14px 12px; border-radius: 20px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1); }
+.hs3-sl-h { display: flex; align-items: baseline; justify-content: space-between; font-size: 13px; color: rgba(244,241,230,.8); }
+.hs3-sl-h b { font-size: 24px; color: #f6c453; }
+.hs3-range { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; margin: 12px 0 6px; border-radius: 6px; background: linear-gradient(90deg, #7d8fd6, #f6c453 30%, #e8954a); outline: none; }
+.hs3-range::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; border-radius: 50%; background: radial-gradient(circle at 38% 35%, #fff7d6, #fbd468 50%, #ee9a3c); box-shadow: 0 0 0 4px rgba(246,196,83,.25), 0 2px 8px rgba(0,0,0,.35); cursor: pointer; }
+.hs3-range::-moz-range-thumb { width: 26px; height: 26px; border: 0; border-radius: 50%; background: #fbd468; }
+.hs3-sl-k { display: flex; justify-content: space-between; font: 400 10.5px var(--dot); color: rgba(244,241,230,.45); }
+.hs3-sl-b { display: flex; gap: 8px; margin-top: 12px; }
+.hs3-sl-b button { flex: 1; padding: 10px; border-radius: 999px; border: 1px solid rgba(255,255,255,.18); background: none; color: #f4f1e6; font: 500 13px Outfit, sans-serif; cursor: pointer; }
+.hs3-sl-b button.on { background: #fff; color: #1f2b19; border-color: #fff; }
+@media (prefers-reduced-motion: reduce) { .hs3-sun .rays, .hs3-sun .glow { animation: none; } }
+
+/* You two: her photo or a bow, his photo or a tree */
+.yt-o { position: relative; }
+.yt-av { position: absolute; left: 50%; top: 52px; width: 52px; height: 52px; margin: -26px 0 0 -26px; border-radius: 50%; overflow: hidden; box-shadow: 0 0 0 3px #fff, 0 6px 14px -6px rgba(0,0,0,.3); }
+.yt-av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.yt-pick { position: absolute; left: 50%; top: 66px; margin-left: 14px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #20301a; color: #fff; box-shadow: 0 0 0 2.5px #fff; cursor: pointer; }
+.yt-o .yt-pick svg { width: 12px !important; height: 12px !important; filter: none !important; }

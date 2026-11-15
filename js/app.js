@@ -372,7 +372,7 @@ function ctScrub(inp) {
   box.querySelector('.ct-tip').textContent = r.tip;
   inp.setAttribute('aria-valuetext', `${ctTime(x)}: ${r.lvl.toLowerCase()} cortisol`);
 }
-document.addEventListener('input', e => { if (e.target.matches && e.target.matches('.ct-range')) ctScrub(e.target); });
+document.addEventListener('input', e => { if (e.target.matches && e.target.matches('.ct-range')) ctScrub(e.target); if (e.target.matches && e.target.matches('.hs3-range')) { const o = document.getElementById('hs3-rv'); if (o) o.textContent = hLabel(+e.target.value); } });
 // Stress opens Breathe with this on top: one headline, one tip, one clean curve of her day (slide along it), studies behind a tap.
 function cortisolSec(info) {
   const h = nowH(), pts = [];
@@ -8277,6 +8277,7 @@ document.addEventListener('change', e => {
   const t = e.target, scope = t.dataset?.photo, f = t.files?.[0]; if (!scope || !f) return;
   readPhoto(f).then(d => {
     if (scope.startsWith('ba-')) { const ba = baGet(); ba[scope.slice(3)] = { d: Date.now(), img: d.full }; if (!baSet(ba)) return toast('Not enough space on this phone for the photo'); toast('Photo saved on this phone'); }
+    else if (scope === 'him') { if (!himP().at) { ui.hobA = { ...(ui.hobA || {}), n: (document.getElementById('hob-n')?.value || ui.hobA?.n || '').trim(), ph: d.thumb }; } else { himSave({ ...himP(), ph: d.thumb }); toast('Photo saved on this phone'); } }
     else if (scope === 'onb') { ui.onb.photo = d.full; ui.onb.thumb = d.thumb; } else { state.profile.photo = d.full; state.profile.thumb = d.thumb; save(); toast('Profile picture saved'); }
     render();
   }).catch(() => toast('Couldn’t read that photo'));
@@ -8510,9 +8511,10 @@ const HOB = [
 ];
 function himOnboarding(name) {
   const i = Math.min(ui.hob || 0, HOB.length - 1), Q = HOB[i], a = ui.hobA || {};
-  return `<div class="pad hob"><div class="hob-card">
+  const v = (() => { try { return localStorage.getItem('uts.hobv') || 'a'; } catch { return 'a'; } })();
+  return `<div class="pad hob v-${v}${v === 'c' ? '' : ' ph'}"><div class="hob-card">
     <div class="hob-dots">${HOB.map((_, k) => `<i class="${k <= i ? 'on' : ''}"></i>`).join('')}</div>
-    <span class="hob-e">${Q.e}</span>
+    ${i === 0 ? `<label class="hob-av">${a.ph ? `<img src="${esc(a.ph)}" alt="">` : '<span>🌳</span>'}<i>${icon(a.ph ? 'check' : 'plus', 13, 2.6)}</i><input type="file" accept="image/*" data-photo="him" hidden></label><em class="hob-avt">${a.ph ? 'Looking good' : 'Add a photo, if you like'}</em>` : `<span class="hob-e">${Q.e}</span>`}
     <small>${i === 0 ? `Welcome. ${name} shared her rhythm with you.` : `${i + 1} of ${HOB.length}`}</small>
     <h1>${Q.q}</h1>
     ${Q.input ? `<input class="hob-in" id="hob-n" type="text" maxlength="24" autocomplete="given-name" placeholder="Your first name" value="${esc(a.n || '')}">
@@ -8571,7 +8573,26 @@ function oakDo(k, quiet, el) {
 }
 const HIS_EMO = ['⚡', '🎯', '🏋️', '🤍', '🌙'];
 const HIS_SHORT = ['Peak', 'Focus', 'Train', 'Her time', 'Sleep'];
-function hisWake() { try { return +localStorage.getItem('uts.wake') || 7; } catch { return 7; } }
+// His wake time works for any man and any morning: what he set (any time, 15-minute steps), learned from the
+// mornings he taps "I'm up" (median of the last week), and set by itself when he opens the page before his usual time.
+const wkGet = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
+const wkPut = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+const wkToday = () => C.iso(C.startOfDay(new Date()));
+function wakeUsual() {
+  const rec = wkGet('uts.wakes', []).filter(x => Date.now() - x[0] < 8 * 864e5).map(x => x[1]).sort((a, b) => a - b);
+  return rec.length >= 3 ? rec[Math.floor(rec.length / 2)] : (+wkGet('uts.wake', 7) || 7);
+}
+function wakeSet(h, how) { // how: 'auto' (opened early), 'up' (tapped I'm up), 'set' (chose a time)
+  const d = wkToday(); wkPut('uts.wakeT', { d, h, how });
+  if (how !== 'set') wkPut('uts.wakes', [...wkGet('uts.wakes', []).filter(x => x[2] !== d), [Date.now(), h, d]].slice(-10));
+}
+function wakeToday() { const t = wkGet('uts.wakeT', null); return t && t.d === wkToday() ? t : null; }
+function hisWake() {
+  const t = wakeToday(); if (t) return t.h;
+  const h = nowH(), u = wakeUsual();
+  if (h >= 4 && h < u - .25) { const e = Math.floor(h * 4) / 4; wakeSet(e, 'auto'); return e; } // he's up earlier than usual
+  return u;
+}
 // ---------- partner view (redesign 14 Nov 2026): clear, graphic, one tap for detail ----------
 const PV_MOOD = { menstrual: 'Quiet and inward', follicular: 'Curious and upbeat', ovulatory: 'Social and confident', luteal: 'Calmer, more sensitive' };
 const PV_NEEDS = { menstrual: 'Warmth, rest, fewer plans', follicular: 'New things, your support', ovulatory: 'Time out together', luteal: 'Calm, comfort, patience' };
@@ -8853,19 +8874,18 @@ const HIS_FOOD = [['🥩', 'Beef', 'Zinc, iron, B12'], ['🥚', 'Whole eggs', 'Y
 // You two today: two liquid orbs (her energy, his drive) joined by a beating heart, a time switch that moves his drive
 // through the day, and the plan that fits you both at that time.
 const YT_TIMES = [['now', 'Now', null, 'right now'], ['am', 'Morning', 2, 'this morning'], ['pm', 'Afternoon', 7, 'this afternoon'], ['eve', 'Evening', 12, 'this evening']];
-function ytOrb(v, c1, c2, emo, label, id) {
+function ytOrb(v, c1, c2, emo, label, id, pic, pick) {
   const y = 100 - v; // the liquid line, 0 top 100 bottom
   return `<div class="yt-o"><svg viewBox="0 0 100 100" aria-hidden="true"><defs><clipPath id="yc-${id}"><circle cx="50" cy="50" r="46"/></clipPath>
       <linearGradient id="yg-${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs>
       <circle cx="50" cy="50" r="46" fill="#fff"/>
       <g clip-path="url(#yc-${id})"><g class="yt-wv" style="transform:translateY(${y}px)"><path d="M-100 0q25-7 50 0t50 0 50 0 50 0 50 0v110h-250z" fill="url(#yg-${id})" opacity=".45"/><path class="b" d="M-100 4q25-7 50 0t50 0 50 0 50 0 50 0v110h-250z" fill="url(#yg-${id})"/></g></g>
       <circle cx="50" cy="50" r="46" fill="none" stroke="${c2}" stroke-width="2.5" opacity=".55"/></svg>
-    <span class="yt-emo">${emo}</span><b class="dotnum">${v}<em>%</em></b><small>${label}</small></div>`;
+    ${pic ? `<span class="yt-av"><img src="${esc(pic)}" alt=""></span>` : `<span class="yt-emo">${emo}</span>`}${pick ? `<label class="yt-pick" aria-label="Add your photo">${icon('plus', 12, 2.6)}<input type="file" accept="image/*" data-photo="him" hidden></label>` : ''}<b class="dotnum">${v}<em>%</em></b><small>${label}</small></div>`;
 }
 function youTwo(info, name, w, since, tAt, her, low) {
   const tk = ui.ytT || 'now', T = YT_TIMES.find(x => x[0] === tk) || YT_TIMES[0], at = T[2] == null ? since : T[2];
   const his = Math.round(tAt(at) / .92 * 100), when = T[2] == null ? 'now' : `at ${hLabel(w + T[2])}`;
-  const hE = her >= 70 ? '😄' : her >= 45 ? '🙂' : '😌', mE = his >= 75 ? '💪' : his >= 50 ? '🙂' : '😴';
   const V = low ? ['Cosy', '🛋️', `Bring her warmth: soup, a film, a blanket and no big plans ${when === 'now' ? 'today' : 'tonight'}.`, '#e6809c']
     : her >= 70 && his >= 70 ? ['Adventure', '🚴', `You’re both full of energy ${when}. A hike, a dance class or a bike ride together.`, '#7fa84e']
     : his >= 70 ? ['Do it together', '🧺', `Your drive is high ${when}, hers is steady. Cook together or take a long walk.`, '#e2a93c']
@@ -8874,9 +8894,9 @@ function youTwo(info, name, w, since, tAt, her, low) {
   const match = Math.round((her + his) / 2);
   return `${sectionTitle('You two today')}
     <section class="pv2-card yt" style="--yv:${V[3]}">
-      <div class="yt-pair">${ytOrb(her, '#fbd3df', '#e6809c', hE, `${name}’s energy`, 'h')}
+      <div class="yt-pair">${ytOrb(her, '#fbd3df', '#e6809c', '🎀', `${name}’s energy`, 'h', pvSnap()?.t)}
         <div class="yt-mid"><svg class="yt-heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.6-4.7-9.7-9.3C.8 8.3 3 4.4 6.8 4.4c2.1 0 3.6 1.1 4.3 2.5h1.8c.7-1.4 2.2-2.5 4.3-2.5 3.8 0 6 3.9 4.5 7.3C19.6 16.3 12 21 12 21z"/></svg><b class="dotnum">${match}</b><small>together</small></div>
-        ${ytOrb(his, '#bfe3f0', '#5aa3c9', mE, `Your drive`, 'm')}</div>
+        ${ytOrb(his, '#bfe3f0', '#5aa3c9', '🌳', `Your drive`, 'm', himP().ph, true)}</div>
       <div class="yt-seg" role="tablist">${YT_TIMES.map(([k, l]) => `<button class="${k === tk ? 'on' : ''}" data-action="ytT" data-v="${k}" role="tab" aria-selected="${k === tk}">${l}</button>`).join('')}</div>
       <div class="yt-vibe"><span class="yt-ve">${V[1]}</span><div><small>Your vibe ${T[3]}</small><b>${V[0]}</b><p>${V[2]}</p></div></div>
     </section>`;
@@ -8898,17 +8918,28 @@ function hisDay(info, name) {
         <div class="hs3-now"><b id="hs3-name">${cur.n}</b><small id="hs3-when">${cur.when === 'Now' ? 'Right now' : `From ${cur.when}`}</small></div></div>
       <svg class="hs3-dial" viewBox="0 0 320 168" aria-hidden="true">
         <defs><linearGradient id="hs3a" x1="0" x2="1"><stop offset="0" stop-color="#f6c453"/><stop offset=".55" stop-color="#e8954a"/><stop offset="1" stop-color="#7d8fd6"/></linearGradient>
-          <radialGradient id="hs3s"><stop offset="0" stop-color="#fff6d6"/><stop offset=".45" stop-color="#f6c453"/><stop offset="1" stop-color="#f6c453" stop-opacity="0"/></radialGradient></defs>
+          <radialGradient id="hs3s"><stop offset="0" stop-color="#fff2c4" stop-opacity=".9"/><stop offset=".4" stop-color="#f6c453" stop-opacity=".45"/><stop offset="1" stop-color="#f6c453" stop-opacity="0"/></radialGradient>
+          <radialGradient id="hs3c" cx=".38" cy=".35" r=".75"><stop offset="0" stop-color="#fff7d6"/><stop offset=".45" stop-color="#fbd468"/><stop offset="1" stop-color="#ee9a3c"/></radialGradient></defs>
         <path d="${arc}" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="16" stroke-linecap="round"/>
         <path d="${arc}" fill="none" stroke="url(#hs3a)" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 7"/>
-        <line x1="14" x2="306" y1="${CY}" y2="${CY}" stroke="rgba(255,255,255,.22)"/>
+        <path d="M0 ${CY} C30 ${CY - 9} 58 ${CY - 10} 92 ${CY - 3} S150 ${CY - 13} 196 ${CY - 4} S262 ${CY - 15} 320 ${CY - 2} V${CY + 4} H0Z" fill="rgba(8,16,6,.45)"/>
+        ${[[44, 9], [72, 7], [238, 10], [262, 7.5]].map(([x, k]) => `<g transform="translate(${x} ${CY - (x < 100 ? 8 : 9)})" fill="rgba(8,16,6,.6)"><rect x="-.8" y="-${k * .6}" width="1.6" height="${k * .6}"/><circle cy="-${k * .85}" r="${k * .5}"/><circle cx="-${k * .3}" cy="-${k * .62}" r="${k * .36}"/><circle cx="${k * .3}" cy="-${k * .62}" r="${k * .36}"/></g>`).join('')}
+        <line x1="0" x2="320" y1="${CY + .5}" y2="${CY + .5}" stroke="rgba(255,255,255,.16)"/>
         ${parts.filter(p => !p.night).map(p => { const [x, y] = pos(p.a); return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="rgba(255,255,255,.55)"/>`; }).join('')}
         <text x="${CX - R}" y="${CY + 16}" text-anchor="middle" class="hs3-ax">${hLabel(w)}</text><text x="${CX}" y="${CY + 16}" text-anchor="middle" class="hs3-ax">${hLabel(w + 8)}</text><text x="${CX + R}" y="${CY + 16}" text-anchor="middle" class="hs3-ax">${hLabel(w + AW)}</text>
-        <g class="hs3-sun ${cur.night ? 'night' : ''}" id="hs3-sun" style="transform:translate(${cur.x}px,${cur.y}px)"><circle r="30" fill="url(#hs3s)" opacity=".75"/><circle class="core" r="13"/><path class="moon" d="M4-11a12 12 0 1 0 8 19 10 10 0 0 1-8-19z"/></g>
+        <g class="hs3-sun ${cur.night ? 'night' : ''}" id="hs3-sun" style="transform:translate(${cur.x}px,${cur.y}px)"><circle class="glow" r="36" fill="url(#hs3s)" opacity=".7"/>
+          <g class="rays">${Array.from({ length: 12 }, (_, k) => { const a = k * Math.PI / 6, r1 = 17.5, r2 = k % 2 ? 23 : 26.5; return `<line x1="${(r1 * Math.cos(a)).toFixed(1)}" y1="${(r1 * Math.sin(a)).toFixed(1)}" x2="${(r2 * Math.cos(a)).toFixed(1)}" y2="${(r2 * Math.sin(a)).toFixed(1)}"/>`; }).join('')}</g>
+          <circle class="core" r="13" fill="url(#hs3c)"/><circle class="shine" cx="-4" cy="-4.5" r="4" fill="#fffbe9" opacity=".75"/><path class="moon" d="M4-11a12 12 0 1 0 8 19 10 10 0 0 1-8-19z"/></g>
       </svg>
       <div class="hs3-parts" role="tablist">${parts.map(p => `<button class="${p.i === bi ? 'on' : ''}" role="tab" aria-selected="${p.i === bi}" data-action="hsPick" data-i="${p.i}" data-x="${p.x}" data-y="${p.y}" data-pct="${p.pct}" data-n="${esc(p.n)}" data-when="${p.when}" data-night="${p.night ? 1 : ''}"><span>${p.emo}</span><b class="dotnum">${p.when === 'Now' ? hLabel(w + p.a) : p.when}</b><small>${HIS_SHORT[p.i]}</small>${p.i === bi ? '<i>now</i>' : ''}</button>`).join('')}</div>
       <div class="hs3-note" id="hs3-note"><b>${HIS_DO[bi]}</b><p>${cur.txt}</p></div>
-      <div class="hs3-wake"><span>I wake at</span>${[5, 6, 7, 8, 9].map(x => `<button class="${x === w ? 'on' : ''}" data-action="hisWake" data-v="${x}">${x}:00</button>`).join('')}</div></section>
+      ${(() => { const t = wakeToday(), late = !t && h >= 4 && h < 14 && h > w + .5;
+        return `<div class="hs3-wake"><span class="hs3-wk"><i aria-hidden="true">${t ? '☀️' : '⏰'}</i><span>${t ? (t.how === 'auto' ? 'Up early today' : 'Up today at') : 'Usually up at'}</span><b class="dotnum">${hLabel(w)}</b></span>
+          ${late ? `<button class="hs3-up" data-action="hisUp">I’m up now</button>` : ''}<button class="hs3-ch" data-action="hisWakeEdit" aria-expanded="false">Change</button></div>
+        <div class="hs3-slide" hidden><div class="hs3-sl-h"><span>I woke up at</span><b class="dotnum" id="hs3-rv">${hLabel(w)}</b></div>
+          <input class="hs3-range" type="range" min="3" max="14" step=".25" value="${w}" aria-label="When you woke up">
+          <div class="hs3-sl-k"><span>03:00</span><span>14:00</span></div>
+          <div class="hs3-sl-b"><button data-action="hisWakeSave" data-how="set">Just today</button><button class="on" data-action="hisWakeSave" data-how="usual">Every day</button></div></div>`; })()}</section>
     ${sectionTitle('Boost your drive')}
     <p class="pv2-lead">Six habits with the best evidence. Tap one for how, the study and what to watch.</p>
     <section class="pv2-card hs2-boost">${HIS_BOOST.map(([ic, n, v, s, how, st, care]) => `<details class="hs2-x"><summary><span class="hs2-xic">${icon(ic, 16)}</span><span class="hs2-rt"><b>${n}</b><small>${s}</small></span><b class="hs2-v">${v}</b></summary>
@@ -9927,7 +9958,11 @@ const actions = {
   mfTab: d => { ui.mfTab = d.v; ui.mfTile = null; softWith(); },
   mfTile: d => { ui.mfTile = ui.mfTile === +d.v ? null : +d.v; softWith(); },
   copySay: async d => { try { await navigator.clipboard.writeText(d.t); toast('Copied, now send it to her'); } catch { prompt('Copy and send', d.t); } },
-  hisWake: d => { try { localStorage.setItem('uts.wake', d.v); } catch {} softWith(); },
+  hisUp: () => { wakeSet(Math.floor(nowH() * 4) / 4, 'up'); softWith(); toast('☀️ Good morning. Your day starts now'); },
+  hisWakeEdit: (d, el) => { const s = el.closest('.hs3')?.querySelector('.hs3-slide'); if (!s) return; s.hidden = !s.hidden; el.setAttribute('aria-expanded', !s.hidden); el.textContent = s.hidden ? 'Change' : 'Close'; },
+  hisWakeSave: (d, el) => { const v = +el.closest('.hs3-slide').querySelector('.hs3-range').value;
+    if (d.how === 'usual') { wkPut('uts.wake', v); wkPut('uts.wakes', []); }
+    wakeSet(v, 'set'); softWith(); },
   oakQ: (d, el) => oakDo(d.k, false, el),
   hobNext: () => { const v = (document.getElementById('hob-n')?.value || '').trim(); if (!v) { document.getElementById('hob-n')?.focus(); return; } ui.hobA = { ...(ui.hobA || {}), n: v.slice(0, 24) }; ui.hob = 1; render(); },
   hobBack: () => { ui.hob = Math.max(0, (ui.hob || 0) - 1); render(); },
