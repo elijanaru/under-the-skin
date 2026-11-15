@@ -1096,7 +1096,7 @@ export const REMEDIES = [
   { id: 'heart-foods', name: 'Heart Support', glyph: '紅', organ: 'Heart', element: 'Fire', nature: 'Daily foods', phases: ['ovulatory', 'luteal', 'menstrual', 'follicular'],
     take: { dose: '1 or 2 of these foods', often: 'Every day', when: 'Spread over your meals', more: ['clock', 'Easy start', '1 tbsp raw cacao or ½ pomegranate a day'] },
     why: 'Foods and nutrients for heart and circulation: magnesium, omega-3, CoQ10, vitamin D3 + K2, selenium and B vitamins.',
-    ingredients: ['Pomegranate', 'Raw cacao', 'Raw garlic', 'Turmeric', 'Extra-virgin olive oil', 'Black seed oil', 'Wild fish (omega-3)'],
+    ingredients: ['100 g pomegranate seeds', '1 tbsp raw cacao', '1 clove raw garlic, crushed', '½ tsp turmeric with black pepper', '2 tbsp extra-virgin olive oil', '1 tsp black seed oil', '120 g wild fish, twice a week'],
     steps: ['Add one or two of these foods to your day.', 'Pomegranate and cacao support the heart every day.', 'Talk to your doctor before adding supplements, especially with heart conditions or medication.'] },
 ];
 
@@ -2269,8 +2269,8 @@ export const REMEDY_SCIENCE = {
     study: 'No carrot trials yet, but women who ate more fibre had lower estrogen levels across the cycle, because fibre helps the gut clear what the liver has used. In 20 women followed for a year, those with a bigger, fibre-rich stool passed more estrogen out with it, and the more they passed, the lower the estrogen in their blood.',
     cite: 'Gaskins 2009 (BioCycle) · Goldin 1982 (NEJM)', caution: 'Raw and cooling in Chinese medicine: pause it during your period and the 2–3 days before, and eat cooked carrots instead. Lots of carrots can tint your palms slightly orange, which is harmless and fades.' },
   'heart-foods': { ev: 'some', c: [['Cacao flavanols', 'Gently lower blood pressure'], ['Garlic allicin', 'Relaxes the vessel walls'], ['Omega-3', 'From wild fish, steadies the heart rhythm']],
-    study: 'Cacao flavanols lowered the top number by about 2 mmHg in a Cochrane review, small but steady. Garlic lowered the top number by about 8 mmHg in people with high blood pressure.',
-    cite: 'Ried 2017 (Cochrane) · Ried 2016 (meta-analysis)', caution: 'Raw garlic can upset an empty stomach, so eat it with food. On heart or blood-thinning medicine, ask your doctor before supplements.' },
+    study: 'Cacao flavanols lowered the top number by about 2 mmHg in a Cochrane review, small but steady. Garlic lowered the top number by about 8 mmHg in people with high blood pressure. Pomegranate juice lowered the top number by about 5 mmHg across 8 trials. A diet rich in extra-virgin olive oil cut heart attacks, strokes and heart deaths by about 30% in 7,447 people over 5 years.',
+    cite: 'Ried 2017 (Cochrane) · Ried 2016 (meta-analysis) · Sahebkar 2017 (meta-analysis) · Estruch 2018 (PREDIMED)', caution: 'Raw garlic can upset an empty stomach, so eat it with food. Keep black seed oil to 1 tsp a day and skip it in pregnancy. With gallstones, keep turmeric to food amounts. On heart, blood pressure or blood-thinning medicine, ask your doctor before supplements.' },
 };
 
 // Relief → the teas and nutrients that belong to it, plus a glyph for the tile.
