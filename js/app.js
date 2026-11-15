@@ -305,7 +305,7 @@ const FOCUS_G = { pms: '🌺', skin: '💧', sleep: '😴', mood: '🌤️', ene
 function focusTiles(cur, act) { return `<div class="ftiles">${FOCUS.map(f => `<button class="ft ${cur.includes(f.k) ? 'on' : ''}" data-action="${act}" data-v="${f.k}"><span>${FOCUS_G[f.k]}</span>${f.t}</button>`).join('')}</div>`; }
 // toggle selection classes in place — no full re-render, so it stays smooth
 function markOn(act, v, single) { document.querySelectorAll(`[data-action="${act}"]`).forEach(b => { if (single) b.classList.toggle('on', b.dataset.v === v); else if (b.dataset.v === v) b.classList.toggle('on'); }); }
-function focusPicker(cur, act) { return `<div class="chips">${FOCUS.map(f => `<button class="chip ${cur.includes(f.k) ? 'on' : ''}" data-action="${act}" data-v="${f.k}">${f.t}</button>`).join('')}</div>`; }
+function focusPicker(cur, act) { return `<div class="chips">${FOCUS.map(f => `<button class="chip ${cur.includes(f.k) ? 'on' : ''}" data-action="${act}" data-v="${f.k}">${f.e ? `<span class="chip-e" aria-hidden="true">${f.e}</span>` : ''}${f.t}</button>`).join('')}</div>`; }
 // Where each tip leads when tapped.
 const TIP_TO = { pms: 'article/progesterone-pms', skin: 'article/skin-cycle', sleep: 'article/sleep', mood: 'article/brain', energy: 'article/iron', eat: 'article/eat-cycle', tcm: 'article/yin-yang', body: 'article/train-cycle', bloat: 'article/bloating', regular: 'article/four-phases', ttc: 'article/ovulation-signs' };
 const HORMONE_READ = { menstrual: 'iron', follicular: 'estrogen', ovulatory: 'ovulation-signs', luteal: 'progesterone-pms' };

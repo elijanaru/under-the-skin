@@ -1458,15 +1458,15 @@ export const PURPOSES = [
 ];
 // What someone wants help with; each has a tailored tip per phase.
 export const FOCUS = [
-  { k: 'pms', t: 'Ease PMS & cramps', photo: 'Progesterone' },
-  { k: 'skin', t: 'Clearer skin', photo: 'Active vitamin D' },
-  { k: 'energy', t: 'More energy', photo: 'Adrenaline' },
-  { k: 'eat', t: 'Eat for my cycle', photo: 'Insulin' },
-  { k: 'tcm', t: 'Chinese medicine', photo: 'Thyroid hormones' },
-  { k: 'hormones', t: 'Understand my hormones', photo: 'LH' },
-  { k: 'body', t: 'Snatched, toned body', photo: 'Testosterone' },
-  { k: 'bloat', t: 'Less bloating', photo: 'Cortisol' },
-  { k: 'regular', t: 'A regular period', photo: 'FSH' },
+  { k: 'pms', e: '🌷', t: 'Ease PMS & cramps', photo: 'Progesterone' },
+  { k: 'skin', e: '💧', t: 'Clearer skin', photo: 'Active vitamin D' },
+  { k: 'energy', e: '🔋', t: 'More energy', photo: 'Adrenaline' },
+  { k: 'eat', e: '🥗', t: 'Eat for my cycle', photo: 'Insulin' },
+  { k: 'tcm', e: '🍵', t: 'Chinese medicine', photo: 'Thyroid hormones' },
+  { k: 'hormones', e: '🧬', t: 'Understand my hormones', photo: 'LH' },
+  { k: 'body', e: '💪', t: 'Snatched, toned body', photo: 'Testosterone' },
+  { k: 'bloat', e: '🫧', t: 'Less bloating', photo: 'Cortisol' },
+  { k: 'regular', e: '🩸', t: 'A regular period', photo: 'FSH' },
 ];
 export const TIPS = {
   body: {
