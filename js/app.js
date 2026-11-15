@@ -5212,6 +5212,10 @@ const STUDY_NUM = {
   'Gokhale 1996': { cap: 'Girls whose period pain was gone', b: [[87, 'Pain free']] },
   'Wyatt 1999': { c: ['2.3×', 'the odds of feeling better vs placebo'] },
   'Czeizel 1992': { c: ['0 vs 6', 'babies with a spine defect'] },
+  'Reid 2003': { cap: 'Back to a healthy flora at 60 days', b: [[37, 'Probiotic'], [13, 'Placebo']] },
+  'Harel 1996': { cap: 'Drop in period symptom score on fish oil', b: [[37, 'Lower']] },
+  'Ziaei 2005': { c: ['1.6 vs 17', 'hours of period pain, vitamin E vs placebo'] },
+  'Vuksan 2007': { c: ['−6', 'mmHg on the top number vs a wheat bran control'] },
 };
 function stcNum(k) {
   const x = STUDY_NUM[k]; if (!x) return '';
