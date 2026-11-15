@@ -510,16 +510,33 @@ function groundEnergy() {
   return `<section class="en">${[0, 1, 2, 3, 4, 5].map(i => `<span class="en-sp s${i}" aria-hidden="true"></span>`).join('')}
     <div class="en-paper"><div class="en-cols"><div class="en-t"><h3>Energy takers${ring()}</h3>${col(EN_TAKE)}</div><div class="en-g"><h3>Energy givers${ring()}</h3>${col(EN_GIVE)}</div></div></div></section>`;
 }
-// Ground with a tree: four quiet ink panels, one practice each.
+// Ground with a tree: a guided ten minutes. One big ink drawing for the step she is on (its full words under it),
+// four short rows with the time in Doto; Start runs the shared routine countdown, a tap on a row previews it.
 const TREE_STEPS = [
-  ['Meet the tree', 'Rest both palms on the trunk. Breathe slowly and feel the bark, cool or warm, under your hands.'],
-  ['Share one light', 'Picture a soft white glow around your body, then let it widen until it holds the tree as well.'],
-  ['Close the loop', 'Breathe in light through your crown, send it up over the treetop, down through the roots and back into your feet.'],
-  ['Sit and settle', 'Sit with your back to the trunk, eyes closed, for ten minutes. Let the tree hold you upright.'],
+  ['Meet the tree', 'Palms on the bark, slow breaths', 60, 'Rest both palms on the trunk. Breathe slowly and feel the bark, cool or warm, under your hands.'],
+  ['Share one light', 'A soft glow around you both', 120, 'Picture a soft white glow around your body, then let it widen until it holds the tree as well.'],
+  ['Close the loop', 'Light up, over and down the roots', 120, 'Breathe in light through your crown, send it up over the treetop, down through the roots and back into your feet.'],
+  ['Sit and settle', 'Back to the trunk, eyes closed', 300, 'Sit with your back to the trunk and close your eyes. Let the tree hold you upright.'],
 ];
 function groundTree() {
-  return `<section class="gtr"><div class="gtr-h"><small>A tree practice</small><b>Ground with a tree</b><p>Find a big, old tree you like. Ten quiet minutes, four steps.</p></div>
-    <ol class="gtr-g">${TREE_STEPS.map(([t, x], i) => `<li class="gtr-c" style="--i:${i}"><img src="images/tree-ink-${i}.webp" alt="" loading="lazy" decoding="async"><span><b><span class="dotnum">${i + 1}</span> ${t}</b><small>${x}</small></span></li>`).join('')}</ol></section>`;
+  const sum = TREE_STEPS.reduce((a, x) => a + x[2], 0), [t0, , , x0] = TREE_STEPS[0];
+  return `<section class="rt gtr2" data-kind="tree"><span class="eyebrow">A tree practice</span><h3>Ground with a tree</h3>
+    <div class="rt-sum"><span class="rt-sub">Find a big, old tree you like.</span><b><em class="dotnum">${Math.round(sum / 60)}</em> min</b></div>
+    <figure class="rt-now"><img src="images/tree-ink-0.webp" alt="" decoding="async"><figcaption><b><i class="dotnum">1</i> ${t0}</b><span>${x0}</span></figcaption></figure>
+    <ol class="rt-l">${TREE_STEPS.map(([t, sh, sec, x], i) => `<li class="rt-r ${i ? '' : 'peek'}" data-s="${sec}" data-i="${i}" data-x="${esc(x)}" data-action="rtPeek" role="button" tabindex="0">
+      <span class="rt-p"><img src="images/tree-ink-${i}.webp" alt="" loading="lazy" decoding="async"></span>
+      <span class="rt-t"><b>${t}</b><small>${sh}</small></span><em class="rt-n dotnum">${mmss(sec)}</em><i class="rt-bar" aria-hidden="true"></i></li>`).join('')}</ol>
+    <div class="rt-ctl"><button class="rt-go" data-action="rtGo">${icon('play', 15)}<span>Start</span></button><button class="rt-skip" data-action="rtSkip" hidden>Next ${icon('chevR', 14)}</button></div></section>`;
+}
+// the big drawing and words of a tree row (also used while the countdown runs)
+function rtNow(el, row) {
+  const now = el.querySelector('.rt-now'); if (!now || !row) return;
+  const i = +row.dataset.i, img = now.querySelector('img'), cap = now.querySelector('figcaption');
+  el.querySelectorAll('.rt-r').forEach(r => r.classList.toggle('peek', r === row));
+  if (now.dataset.i === String(i)) return; now.dataset.i = i;
+  now.classList.remove('swap'); void now.offsetWidth; now.classList.add('swap');
+  img.src = `images/tree-ink-${i}.webp`;
+  cap.innerHTML = `<b><i class="dotnum">${i + 1}</i> ${esc(row.querySelector('.rt-t b').textContent)}</b><span>${esc(row.dataset.x)}</span>`;
 }
 function viewGround() {
   const info = M.info, ph = info && info.phase, P = ph && GROUND_PHASE[ph];
@@ -4193,36 +4210,38 @@ function habitsBlock() {
       <div class="hg-ring" aria-label="${n} of ${total} done"><svg viewBox="0 0 120 120" aria-hidden="true">${seg}</svg><b class="dotnum">${n}</b><small>of ${total}</small></div>
     </section>` };
 }
-// The five elements of balance (earth, water, fire, air, space): an old way of seeing balance, each with three
-// simple things to do in every phase to ground her and support her hormones.
+// The five elements of Chinese medicine (wood, fire, earth, metal, water), the same ones the plate and remedies use:
+// each with three simple things to do in every phase. It opens on the element of her phase (follicular is Wood).
 const EL5 = [
-  { k: 'earth', n: 'Earth', c: '#9a7444', s: 'Ground and nourish', why: 'Earth is stability. A steady rhythm, real food and contact with the ground keep cortisol and blood sugar calm, the base every hormone is built on.',
-    p: { menstrual: ['Warm, slow-cooked meals: bone broth, stews, root vegetables', '10 minutes sitting or lying on the ground', 'Rest more and cancel what can wait'],
-      follicular: ['Eggs, sprouts and fresh seeds to rebuild', 'A barefoot walk on grass or sand', 'Start one new routine you can keep'],
-      ovulatory: ['Colourful salads with eggs and good fats', 'Feet in the grass after busy social days', 'Regular meals, even when you feel unstoppable'],
-      luteal: ['Sweet roots: sweet potato, pumpkin, carrots', 'Sit with your back against a tree', 'Protein and fat at every meal to calm cravings'] } },
-  { k: 'water', n: 'Water', c: '#4f87a8', s: 'Flow and minerals', why: 'Water is flow. Hydration, minerals and warm baths keep blood, lymph and the calming side of your nervous system moving.',
-    p: { menstrual: ['Warm water and herbal tea through the day, never iced', 'A warm bath or a hot water bottle', 'Iron and minerals: red meat, beetroot, a pinch of sea salt'],
-      follicular: ['A big glass of warm lemon water in the morning', 'A swim or a long shower to wake up', 'Juicy fruit, cucumber and berries'],
-      ovulatory: ['Extra water and coconut water on hot days', 'Time by the sea, a lake or a river', 'Hydrating fruit: watermelon, melon, citrus'],
-      luteal: ['A pinch of salt in your water as you run warmer', 'An Epsom salt bath before bed', 'Leafy greens and a warm cacao drink for magnesium'] } },
-  { k: 'fire', n: 'Fire', c: '#d0683c', s: 'Warmth and drive', why: 'Fire is energy and digestion. Sunlight, movement and warming spices set your body clock and help you use sugar well.',
+  { k: 'wood', n: 'Wood', c: '#6c823e', s: 'Grow and flow', why: 'Wood is the Liver in Chinese medicine: it keeps blood and mood moving smoothly through the month. Stretching, green food, a little sour taste and bed before 11 support it, and the liver is also where used estrogen is cleared.',
+    p: { menstrual: ['A slow side stretch to ease cramps', 'Warm greens: cooked kale or spinach with a squeeze of lemon', 'Let go of plans that feel forced'],
+      follicular: ['Sprouts, fresh herbs and lemon on your food', 'Stretch or flow yoga in the morning', 'Plan one new project you are excited about'],
+      ovulatory: ['Bitter greens: rocket, dandelion, radicchio', 'Dance or move freely', 'Say what bothers you kindly instead of holding it in'],
+      luteal: ['Bed before 11 pm, the liver’s repair hours', 'Cooked cabbage family veg: broccoli, cabbage, kale', 'Walk off irritability outside'] } },
+  { k: 'fire', n: 'Fire', c: '#d0683c', s: 'Warmth and joy', why: 'Fire is the Heart in Chinese medicine: warmth, joy and drive. Sunlight, movement and warming spices set your body clock and help you use sugar well.',
     p: { menstrual: ['Ginger and cinnamon tea', 'Gentle sun on your skin, no hard training', 'Keep your feet and belly warm'],
       follicular: ['Morning sun within an hour of waking', 'Strength training and new classes', 'Turmeric, black pepper and ginger in your food'],
       ovulatory: ['Your strongest workouts: sprints and heavy lifts', 'Mint or hibiscus tea if you run hot', 'Say the bold thing, pitch the idea'],
       luteal: ['Steady, moderate training with longer rests', 'Warming spices: cinnamon, cardamom, fennel', 'Sun breaks to lift your mood'] } },
-  { k: 'air', n: 'Air', c: '#6f9a86', s: 'Breath and mind', why: 'Air is breath. Slow breathing and fresh air switch on your calming nervous system, lower cortisol and give progesterone room.',
+  { k: 'earth', n: 'Earth', c: '#9a7444', s: 'Ground and nourish', why: 'Earth is the Spleen and Stomach in Chinese medicine: digestion and stability. A steady rhythm, real food and contact with the ground keep cortisol and blood sugar calm, the base every hormone is built on.',
+    p: { menstrual: ['Warm, slow-cooked meals: bone broth, stews, root vegetables', '10 minutes sitting or lying on the ground', 'Rest more and cancel what can wait'],
+      follicular: ['Eggs, sprouts and fresh seeds to rebuild', 'A barefoot walk on grass or sand', 'Start one new routine you can keep'],
+      ovulatory: ['Colourful salads with eggs and good fats', 'Feet in the grass after busy social days', 'Regular meals, even when you feel unstoppable'],
+      luteal: ['Sweet roots: sweet potato, pumpkin, carrots', 'Sit with your back against a tree', 'Protein and fat at every meal to calm cravings'] } },
+  { k: 'metal', n: 'Metal', c: '#7d8794', s: 'Breath and letting go', why: 'Metal is the Lung in Chinese medicine: breath, skin and letting go. Slow breathing and fresh air switch on your calming nervous system, lower cortisol and give progesterone room.',
     p: { menstrual: ['Warm belly breathing, hands below your navel', 'Open a window, sleep in fresh air', 'Journal what you want to let go'],
       follicular: ['Box breathing before focus work', 'A brisk walk outside', 'Plan, learn and brainstorm'],
       ovulatory: ['Even breathing: in for 5, out for 5', 'Time outdoors with friends', 'Talk it out and connect'],
       luteal: ['Long out-breaths: in for 4, out for 8', 'Lavender or chamomile before bed', 'Less news, fewer screens'] } },
-  { k: 'space', n: 'Space', c: '#7c6aae', s: 'Stillness and sleep', why: 'Space is stillness. Sleep, silence and boundaries give your glands time to repair and reset every night.',
-    p: { menstrual: ['Bed early, 8 to 9 hours', 'Say no to extra plans', 'Ten minutes of silence or meditation'],
-      follicular: ['A clear, tidy space for new projects', 'A morning without your phone', 'The same bedtime every night'],
-      ovulatory: ['Protect one quiet evening', 'Meditate even when you feel great', 'Screens off an hour before bed'],
-      luteal: ['Declutter one small corner', 'Phone away in the evening', 'A slow stretch or yin yoga before sleep'] } },
+  { k: 'water', n: 'Water', c: '#4f87a8', s: 'Flow and minerals', why: 'Water is the Kidney in Chinese medicine: your deep reserves, rest and flow. Hydration, minerals and warm baths keep blood, lymph and the calming side of your nervous system moving.',
+    p: { menstrual: ['Warm water and herbal tea through the day, never iced', 'A warm bath or a hot water bottle', 'Iron and minerals: red meat, beetroot, a pinch of sea salt'],
+      follicular: ['A big glass of warm lemon water in the morning', 'A swim or a long shower to wake up', 'Juicy fruit, cucumber and berries'],
+      ovulatory: ['Extra water and coconut water on hot days', 'Time by the sea, a lake or a river', 'Hydrating fruit: watermelon, melon, citrus'],
+      luteal: ['A pinch of salt in your water as you run warmer', 'An Epsom salt bath before bed', 'Leafy greens and a warm cacao drink for magnesium'] } },
 ];
 const EL5_ART = {
+  wood: '<path d="M22 38V14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M22 22c-6 0-10-4-10-10 6 0 10 4 10 10zM22 28c6 0 10-4 10-10-6 0-10 4-10 10z" fill="currentColor" opacity=".9"/><path d="M14 38h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+  metal: '<circle cx="22" cy="22" r="11" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="22" cy="22" r="4.5" fill="currentColor" opacity=".9"/><path d="M14.5 14.5l-3-3M29.5 14.5l3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".6"/>',
   earth: '<path d="M6 30l9-12 6 7 5-9 12 14z" fill="currentColor" opacity=".9"/><path d="M4 33h36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
   water: '<path d="M22 6c-6 9-10 14-10 19a10 10 0 0 0 20 0c0-5-4-10-10-19z" fill="currentColor" opacity=".9"/><path d="M17 26a5 5 0 0 0 5 5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/>',
   fire: '<path d="M22 5c2 7 10 11 10 20a10 10 0 0 1-20 0c0-5 3-8 5-10 0 4 2 6 4 6-2-6-1-11 1-16z" fill="currentColor" opacity=".9"/>',
@@ -4230,11 +4249,11 @@ const EL5_ART = {
   space: '<circle cx="22" cy="22" r="8" fill="currentColor" opacity=".9"/><g fill="currentColor"><circle cx="8" cy="10" r="1.6"/><circle cx="36" cy="9" r="1.2"/><circle cx="35" cy="34" r="1.6"/><circle cx="9" cy="34" r="1.1"/></g><circle cx="22" cy="22" r="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 3"/>',
 };
 function el5(ph, k) {
-  ph = ph || (M.info && M.info.phase) || 'follicular'; const E = EL5.find(x => x.k === k) || EL5[0];
+  ph = ph || (M.info && M.info.phase) || 'follicular'; const mine = (TCM[ph] && TCM[ph].element || 'Wood').toLowerCase(), E = EL5.find(x => x.k === (k || mine)) || EL5[0];
   return `<section class="el5" data-ph="${ph}" data-k="${E.k}">
-    <div class="el5-h"><small>Balance your hormones</small><b>The five elements</b><p>An old way of seeing balance. Tap an element for what to do in this phase.</p></div>
-    <div class="el5-row">${EL5.map(x => `<button class="${x.k === E.k ? 'on' : ''}" style="--c:${x.c}" data-action="el5" data-ph="${ph}" data-k="${x.k}" aria-pressed="${x.k === E.k}"><span><svg viewBox="0 0 44 44" aria-hidden="true">${EL5_ART[x.k]}</svg></span><b>${x.n}</b></button>`).join('')}</div>
-    <div class="el5-card" style="--c:${E.c}"><div class="el5-ct"><span><svg viewBox="0 0 44 44" aria-hidden="true">${EL5_ART[E.k]}</svg></span><div><b>${E.n}</b><small>${E.s} · ${PHASES[ph].name} phase</small></div></div>
+    <div class="el5-h"><small>Balance your hormones</small><b>The five elements</b><p>Chinese medicine’s map of balance. Yours now is ${EL5.find(x => x.k === mine)?.n || 'Wood'}. Tap any for what to do this phase.</p></div>
+    <div class="el5-row">${EL5.map(x => `<button class="${x.k === E.k ? 'on' : ''}" style="--c:${x.c}" data-action="el5" data-ph="${ph}" data-k="${x.k}" aria-pressed="${x.k === E.k}"><span><svg viewBox="0 0 44 44" aria-hidden="true">${EL5_ART[x.k]}</svg>${x.k === mine ? '<i class="el5-me" aria-label="Your phase"></i>' : ''}</span><b>${x.n}</b></button>`).join('')}</div>
+    <div class="el5-card" style="--c:${E.c}"><div class="el5-ct"><span><svg viewBox="0 0 44 44" aria-hidden="true">${EL5_ART[E.k]}</svg></span><div><b>${E.n} <em class="el5-han">${Z.FIVE[E.n] ? Z.FIVE[E.n].han : ''}</em></b><small>${E.s} · ${PHASES[ph].name} phase</small></div></div>
       <ol>${E.p[ph].map((t, i) => `<li><i>${i + 1}</i>${t}</li>`).join('')}</ol>
       <details class="el5-why"><summary>Why ${E.n.toLowerCase()} helps ${icon('chevD', 13)}</summary><p>${E.why}</p></details></div>
   </section>`;
@@ -4255,7 +4274,7 @@ function viewReliefIndex() {
       ${(() => { const S = fbSteps(info), all = S.reduce((a, x) => a + x[2].length, 0);
         return `<div class="fbp-title"><h1>Balance your <span>hormones</span></h1><p>${all} small habits in three steps. When one step feels easy, add the next.</p></div>`; })()}
       ${(() => { let n = 0; return fbSteps(info).map(([t, sub, list], k) => { const hb = list.filter(([x]) => x.hb), dn = hb.filter(([x]) => done.includes(x.hb)).length;
-        return `<div class="fbp-step"><span class="dotnum">${k + 1}</span><div><b>${t}</b><small>${sub}</small></div>${hb.length ? `<span class="fbp-c ${dn === hb.length ? 'full' : ''}" aria-label="${dn} of ${hb.length} done today">${icon('check', 11, 3)}<b class="dotnum">${dn}/${hb.length}</b></span>` : ''}</div>
+        return `<div class="fbp-step"><span class="dotnum">${k + 1}</span><div><b>${t}</b><small>${sub}</small></div>${hb.length ? `<span class="fbp-c ${dn === hb.length ? 'full' : ''}" aria-label="${dn} of ${hb.length} done today">${dn ? `${icon('check', 11, 3)}<b class="dotnum">${dn}/${hb.length}</b>` : `<b class="dotnum">${hb.length}</b><em class="fbp-to">today</em>`}</span>` : ''}</div>
       <div class="fbp-g">${list.map(([x, i], pos) => fbItem(x, i, done, pos, ++n)).join('')}</div>`; }).join(''); })()}
       <div class="fbp-det" hidden></div>
     </section>
@@ -7064,7 +7083,7 @@ function rtStep(i) {
   const rows = [...RT.el.querySelectorAll('.rt-r')];
   if (i >= rows.length) return rtStop(true);
   rows.forEach((r, j) => { r.classList.toggle('done', j < i); r.classList.toggle('on', j === i); if (j < i) { r.style.setProperty('--p', 1); r.querySelector('.rt-n').textContent = mmss(+r.dataset.s); } });
-  RT.i = i; RT.len = +rows[i].dataset.s * 1000; RT.end = performance.now() + RT.len;
+  RT.i = i; RT.len = +rows[i].dataset.s * 1000; RT.end = performance.now() + RT.len; rtNow(RT.el, rows[i]);
   if (i) { const ctx = bellCtx(); if (ctx) ringBell(ctx, ctx.currentTime + .05, .55, true); }
 }
 function rtTick() {
@@ -9779,6 +9798,7 @@ const actions = {
     if (RT && RT.el === el) { RT.paused = !RT.paused; if (RT.paused) { RT.rest = RT.end - performance.now(); rtBtn(btn, 'Resume', 'play'); } else { RT.end = performance.now() + RT.rest; rtBtn(btn, 'Pause', 'pause'); } el.classList.toggle('paused', RT.paused); return; }
     rtStop(); RT = { el, iv: setInterval(rtTick, 200) }; el.classList.add('run'); el.classList.remove('paused'); rtBtn(btn, 'Pause', 'pause'); el.querySelector('.rt-skip').hidden = false; rtStep(0);
   },
+  rtPeek: (d, row) => { const el = row.closest('.rt'); if (RT && RT.el === el) return; rtNow(el, row); },
   rtSkip: () => { if (RT) { RT.paused = false; RT.el.classList.remove('paused'); rtBtn(RT.el.querySelector('.rt-go'), 'Pause', 'pause'); rtStep(RT.i + 1); } },
   calmWay: (d, el) => {
     let k = calmDone(); k = k.includes(d.t) ? k.filter(x => x !== d.t) : [...k, d.t];

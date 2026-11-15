@@ -14507,3 +14507,28 @@ html .fx-p .fx-bs { padding: 4px 0 0; border: 0; box-shadow: none; background: n
 /* the letter tile shares the old .sym class of the symptom rows (a 110px grid), which pushed Cr, Ω3 and Zn off centre */
 html .fx-ti.sym { grid-template-columns: 1fr; gap: 0; padding: 0; height: 72px; }
 html .fx-ti.sym span { background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(40% * var(--hs)) 96%); box-shadow: inset 0 0 0 1px rgba(32,48,26,.08), 0 6px 14px -8px rgba(32,48,26,.4); }
+
+/* Ground › Ground with a tree as a guided ten minutes (was four ink panels with three to five lines of small text each):
+   the big drawing for the step she is on, four short rows with the time in Doto, Start runs the routine countdown */
+.gtr2 .rt-now { margin: 14px 0 6px; }
+.gtr2 .rt-now img { display: block; width: 100%; aspect-ratio: 624 / 344; object-fit: cover; border-radius: 22px; background: #faf8f3; box-shadow: inset 0 0 0 1px rgba(32,48,26,.08); }
+.gtr2 .rt-now figcaption { padding: 12px 4px 4px; min-height: 108px; box-sizing: border-box; }
+.gtr2 .rt-now figcaption b { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; color: #20301a; }
+.gtr2 .rt-now figcaption b i { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--ac); color: #fff; font: 400 13px/1 var(--dot); font-style: normal; }
+.gtr2 .rt-now figcaption span { display: block; margin-top: 5px; font-size: 14px; line-height: 1.45; color: rgba(32,48,26,.74); }
+.gtr2 .rt-now.swap img, .gtr2 .rt-now.swap figcaption { animation: gtrSwap .5s ease both; }
+@keyframes gtrSwap { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.gtr2 .rt-r { cursor: pointer; }
+.gtr2 .rt-p { overflow: hidden; background: #faf8f3; box-shadow: inset 0 0 0 1px rgba(32,48,26,.08); }
+.gtr2 .rt-p img { width: 100%; height: 100%; object-fit: cover; }
+.gtr2:not(.run) .rt-r.peek { background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(40% * var(--hs)) 96%); }
+.gtr2:not(.run) .rt-r.peek::before, .gtr2:not(.run) .rt-r.peek + .rt-r::before { opacity: 0; }
+.gtr2:not(.run) .rt-r.peek .rt-p { box-shadow: inset 0 0 0 2px var(--ac); }
+.rt.run .rt-r.on .rt-p:has(img) { background: #faf8f3; box-shadow: inset 0 0 0 2.5px var(--ac); }
+@media (prefers-reduced-motion: reduce) { .gtr2 .rt-now.swap img, .gtr2 .rt-now.swap figcaption { animation: none; } }
+
+/* Balance › five elements (Chinese medicine): a small dot marks the element of her phase, the han glyph sits beside the name */
+.el5-row span { position: relative; }
+.el5-me { position: absolute; top: 1px; right: 1px; width: 11px; height: 11px; border-radius: 50%; background: #20301a; box-shadow: 0 0 0 2.5px #fff; }
+.el5-han { font-style: normal; font-family: 'Noto Serif SC', serif; font-weight: 500; font-size: .8em; color: var(--c); margin-left: 4px; }
+.fbp-c .fbp-to { font-style: normal; font: 500 11px/1 var(--font); margin-left: 3px; opacity: .8; }
