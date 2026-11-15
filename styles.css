@@ -14042,3 +14042,4 @@ html .view .bwx-hint { display: inline-flex; align-items: center; gap: 4px; widt
 .cw-f { display: flex; justify-content: flex-end; padding: 11px 0 10px; font-size: 12.5px; font-weight: 500; color: rgba(32,48,26,.6); }
 .cw-f em { font-style: normal; font-family: var(--dot); font-weight: 700; font-size: 15px; color: #20301a; }
 @media (prefers-reduced-motion: reduce) { .cw-k { transition: none; } }
+.cw-p:has(img[src$="fb/breathe.webp"]) { background: #d3dcc0; }
