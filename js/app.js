@@ -8593,7 +8593,7 @@ function pvFertChart(snap, mode) {
   const sel = ui.pvDay != null && ui.pvDay >= 0 && ui.pvDay < 10 ? ui.pvDay : todayIdx >= 0 ? todayIdx : 7;
   const kind = k => k >= 5 && k <= 7 ? 'hi' : k >= 2 && k <= 4 ? 'mid' : 'lo';
   const bars = FW_REL.map((r, k) => { const d = C.addDays(today, ov - 7 + k);
-    return `<button class="fw-b ${kind(k)} ${k === sel ? 'sel' : ''} ${k === todayIdx ? 'today' : ''}" data-action="pvDay" data-v="${k}" aria-label="${fmt(d, { weekday: 'long', month: 'short', day: 'numeric' })}: ${FW_SAY[mode][k][0]}">
+    return `<button class="fw-b ${kind(k)}${k === 7 ? ' egg' : ''} ${k === sel ? 'sel' : ''} ${k === todayIdx ? 'today' : ''}" data-action="pvDay" data-v="${k}" aria-label="${fmt(d, { weekday: 'long', month: 'short', day: 'numeric' })}: ${FW_SAY[mode][k][0]}">
       <span class="fw-col"><i style="height:${Math.round(14 + r / 0.33 * 86)}%">${k === 7 ? '<u class="fw-egg"></u>' : ''}</i></span>
       <small>${fmt(d, { weekday: 'narrow' })}</small><em class="dotnum">${d.getDate()}</em></button>`; }).join('');
   const sd = C.addDays(today, ov - 7 + sel), [w, line] = FW_SAY[mode][sel];

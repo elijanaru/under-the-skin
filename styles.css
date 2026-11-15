@@ -13595,5 +13595,14 @@ html .pv2-3d.duo-v:not(.tea) .cup3d-w canvas.teacup3d { inset: 8%; width: 84%; h
 .duo-how { margin: 12px 2px 0; font-size: 13.5px; line-height: 1.45; color: rgba(32,48,26,.8); }
 @media (prefers-reduced-motion: reduce) { .duo-pan { animation: none; } }
 .pv2-step p b { font-weight: 600; color: #20301a; }
+
 /* Superfoods › For how you feel: its subline sat in dark ink on the arched background under a white title; white with the same soft shadow as the other sublines */
 html .ff-lead { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(70,30,38,.6), 0 1px 12px rgba(70,30,38,.46) !important; }
+
+/* Fertile window when she is trying: green best days, yellow window open, red low; egg release day in its own lilac.
+   When she is not trying the scale stays red for the highest chance (a warning), green for low. */
+.fw.ttc .fw-b.hi i { background: linear-gradient(#7fa84e, #a3c47a); }
+.fw.ttc .fw-b.lo i { background: #e07f7c; }
+.fw.ttc .fw-key i.hi { background: #7fa84e; } .fw.ttc .fw-key i.lo { background: #e07f7c; }
+.fw.ttc .fw-b.egg i, .fw.avoid .fw-b.egg i { background: linear-gradient(#9a84d4, #bfaee6); }
+.fw-key i.egg { background: #9a84d4; box-shadow: none; border-radius: 50%; }
