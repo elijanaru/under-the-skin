@@ -14549,5 +14549,14 @@ html:has(.onb.no-fig:not(.step-9):not(.step-10)) .bgx, html:has(.onb-welcome) .b
 html .view .section-title.ln h3 { font-size: 20px !important; white-space: nowrap; }
 html .view .section-title.ln2 h3 { font-size: 18px !important; white-space: nowrap; }
 html .view .section-title.ln2 { gap: 8px; }
+
+/* Onboarding in the phone preview: the status bar floats over the step so the photo fills behind the clock and battery.
+   #view is a size container, which makes it the frame for the fixed photo, so the view itself starts at the top and pads
+   the status bar height instead of sitting under a solid strip of page colour. */
+@media (min-width: 560px) {
+  #app:has(> .view.onb-view) > .statusbar { position: absolute; top: 0; left: 0; right: 0; z-index: 30; }
+  #app > .view.onb-view:not(:has(.onb-welcome.full)) { padding-top: 50px; }
+  #app > .view.onb-view .snd-btn.float { top: 60px; }
+}
 /* Hormone tiles: Doto numerals sit flush against the word before them (Typical5–25); a hair of room on both sides */
 html .hxn { margin: 0 .14em 0 .18em; }
