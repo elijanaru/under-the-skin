@@ -15949,3 +15949,13 @@ html .drc .drt-t b.drt-tl { font-size: 18px !important; letter-spacing: -.04em; 
 /* Heads-up (Round C): the quick fix as up to three complete chips in the phase tint, never a sentence cut off mid-word */
 .al2-fx { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
 .al2-fx i { font: 500 12px/1.2 var(--font); font-style: normal; color: #304023; padding: 5px 9px; border-radius: 99px; background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(30% * var(--hs)) 94%); }
+
+/* Feel better › Get ahead of it (Round B): the quick fixes as the same complete chips as the Today heads-up */
+.br-up .al2-fx { margin-top: 8px; }
+html .br2b .br-up { align-items: flex-start; }
+html .br2b .br-up .hu-when { margin-top: 2px; }
+button.br-up.go { width: 100%; margin: 0; text-align: left; font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+button.br-up.go > div { flex: 1; min-width: 0; }
+button.br-up.go > .ic { flex: none; align-self: center; color: #9aa48e; }
+button.br-up.go:active { transform: scale(.985); }
+@media (prefers-reduced-motion: reduce) { button.br-up.go:active { transform: none; } }

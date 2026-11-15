@@ -2496,7 +2496,7 @@ function viewBrain(id) {
   </section>
   <div class="pad br br2b">
     ${body}
-    ${R && isToday && R.up.length ? `${sectionTitle('Get ahead of it')}${[...R.up].sort((a, b) => a.inDays - b.inDays).map(x => `<section class="br-up"><span class="hu-when ${x.inDays > 1 ? 'n' : ''}">${x.inDays === 0 ? 'Today' : x.inDays === 1 ? 'Tomorrow' : `<small>in</small><b class="dotnum">${x.inDays}</b><small>days</small>`}</span><div><b>${x.name}</b> usually on ${dayRange(x)}${QUICK_FIX[x.name] ? `<small>${QUICK_FIX[x.name]}</small>` : ''}</div></section>`).join('')}` : ''}
+    ${R && isToday && R.up.length ? `${sectionTitle('Get ahead of it')}${[...R.up].sort((a, b) => a.inDays - b.inDays).map(x => { const rk = reliefKey(x.name), tag = rk ? `button data-action="nav" data-to="relief/${encodeURIComponent(rk)}"` : 'section'; return `<${tag} class="br-up ${rk ? 'go' : ''}"><span class="hu-when ${x.inDays > 1 ? 'n' : ''}">${x.inDays === 0 ? 'Today' : x.inDays === 1 ? 'Tomorrow' : `<small>in</small><b class="dotnum">${x.inDays}</b><small>days</small>`}</span><div><b>${x.name}</b> usually on ${dayRange(x)}${QUICK_FIX[x.name] ? fixChips(QUICK_FIX[x.name]) : ''}</div>${rk ? icon('chevR', 15) : ''}</${rk ? 'button' : 'section'}>`; }).join('')}` : ''}
     ${n ? `<button class="btn btn-block br2-edit" data-action="logDay" data-date="${k}">${icon('check', 16)} Edit check-in</button>` : ''}
     <p class="fine center">General information, not medical advice or contraception.</p>
   </div>`;
