@@ -6408,12 +6408,14 @@ const STUDY_ART = [
 function studyArt(t) { const a = (STUDY_ART.find(([r]) => r.test(t)) || [0, '<circle cx="24" cy="24" r="15" fill="#efd4dd"/><circle cx="22" cy="22" r="7" fill="#fff" stroke="#304023" stroke-width="1.8"/><path d="M27 27l7 7" stroke="#304023" stroke-width="2.2" stroke-linecap="round"/>'])[1];
   return `<svg class="ts-art" viewBox="6 6 36 36" aria-hidden="true">${a}</svg>`; }
 function decorateStudies(v) { v.querySelectorAll('.tea-study .ts-i:not(.has-art)').forEach(el => { el.classList.add('has-art'); el.insertAdjacentHTML('afterbegin', studyArt(el.textContent)); }); }
+// Amount lines read in Outfit; only the numbers (≈ 295, 5-25, < 10) are Doto.
+const hxAmt = t => String(t || '').replace(/([≈<>~]\s?)?\d[\d.,]*(\s?[-–]\s?\d[\d.,]*)?/g, m => `<i class="hxn">${m}</i>`);
 // Every hormone as a tile: the cycle hormones first, then the body's other messengers. Used on the Hormones page and in Insights > Learn.
 function hormoneGrids(info) {
   const tile = (x, i) => { const n = hxNow(x, info); return `<button class="hxt ${n.r > .66 ? 'hi' : n.r < .2 ? 'lo' : ''}" data-action="nav" data-to="hormones/${i}">
       <span class="hxt-g">${x.g.replace(/\s*\(.*?\)/g, '').replace(/ glands?$/i, '')}</span><b>${x.n === 'Oestrogen' ? 'Estrogen' : x.n}</b><small class="hxt-s">${x.s}</small>
       ${MOL_BALL[x.n] || PROT_BALL[x.n] ? `<span class="hxt-mol" aria-hidden="true">${MOL_BALL[x.n] || protBall(x.n)}</span>` : hxRing(n.r, i)}
-      <span class="hxt-now"><em>${n.word}${hxArrow(n.tr)}</em><span>${n.amt}</span></span></button>`; };
+      <span class="hxt-now"><em>${n.word}${hxArrow(n.tr)}</em><span>${hxAmt(n.amt)}</span></span></button>`; };
   const cyc = HORMONE_LIBRARY.map((x, i) => [x, i]).filter(([x]) => HX_KEY[x.n]), rest = HORMONE_LIBRARY.map((x, i) => [x, i]).filter(([x]) => !HX_KEY[x.n]);
   return `${sectionTitle('Your cycle hormones today')}
     <div class="hx-grid">${cyc.map(([x, i]) => tile(x, i)).join('')}</div>
@@ -6479,7 +6481,7 @@ function viewHormone(i) {
     <div class="hxd-top"><div class="hxd-in"><span class="hx-gland">${x.g}</span><h1>${name}</h1><p>${x.s}</p></div>
       ${MOL_BALL[x.n] || PROT_BALL[x.n] ? `<span class="hxd-mol" aria-hidden="true">${MOL_BALL[x.n] || protBall(x.n)}</span>` : ''}</div>
     <section class="card card-light hxd-now"><div class="hxd-nl"><div class="eyebrow dark">You, right now · day ${cd}</div>
-      <div class="hxd-row"><b>${n.word}${hxArrow(n.tr)}</b></div><span class="hxd-amt">${n.amt}</span>
+      <div class="hxd-row"><b>${n.word}${hxArrow(n.tr)}</b></div><span class="hxd-amt">${hxAmt(n.amt)}</span>
       <p>${n.note}</p></div><span class="hxd-ring">${k ? (() => { let pk = 0; for (let d = 1; d <= L; d++) pk = Math.max(pk, hAmtV(k, d, L, P)); const f = Math.min(1, hAmtV(k, cd, L, P) / (pk || 1)); return `${hxRing(f, 0)}<span class="hxd-pct"><b>${Math.max(1, Math.round(100 * f))}%</b><small>of peak</small></span>`; })() : `${hxRing(n.r, 0)}<small>level</small>`}</span></section>
     <section class="card card-light hs-simple"><div class="eyebrow dark">In simple words</div><h3>${sm.like || x.s}</h3><p>${sm.one || x.role}</p></section>
     ${sm.month ? `<section class="card glass hs-month"><div class="eyebrow">Across your month</div>${curve}

@@ -14205,3 +14205,7 @@ html .view .bwx-hint { display: inline-flex; align-items: center; gap: 4px; widt
 .onb .pg-what.pg-what2 { background: rgba(255,255,255,.9) !important; }
 .onb .pg-what2, .onb .pg-what2 span { color: #304023 !important; text-shadow: none !important; font-weight: 400 !important; }
 .onb .pg-what2 b { color: #20301a !important; font-weight: 600 !important; }
+/* Hormones (15 Nov 2026): the amount line under each hormone was 11px Doto for words too ("Typical", "Spikes in seconds"); words are Outfit now and only the numbers are Doto */
+html .hxt-now span, html .hxd-amt { font-family: var(--font); font-size: 12px; font-weight: 500; letter-spacing: 0; color: rgba(32,48,26,.66) !important; }
+html .hxd-amt { font-size: 13px; }
+.hxn { font-style: normal; font-family: var(--dot); font-weight: 900; font-size: 1.18em; color: #20301a; }
