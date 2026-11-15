@@ -15941,3 +15941,7 @@ html .pad.fb .fbp-ph img { max-width: 100%; }
 /* Drinks timeline (Round A): times like 12:30 step down a size and the time column widens a little so the Doto digits never run under the drink */
 html .drc .drt-r.sfc-i { grid-template-columns: 56px 50px 1fr 16px; gap: 0 10px; }
 html .drc .drt-t b.drt-tl { font-size: 18px !important; letter-spacing: -.04em; }
+
+/* Ground studies (Round B): the first author sits in each row next to the year, so every study reads author + year without a tap */
+.grs-r .grs-a { font-style: normal; font-weight: 600; color: #304023; }
+.grs-r .grs-p { row-gap: 4px; } .grs-r .grs-p small { flex-basis: 100%; }

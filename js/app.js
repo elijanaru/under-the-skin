@@ -605,7 +605,7 @@ function viewGround() {
     ${sectionTitle('What studies found')}<p class="hg-sub gr-st-sub">Five small studies, ${GROUND_STUDIES[0][1]} to ${GROUND_STUDIES[GROUND_STUDIES.length - 1][1]}. Tap one for the chart.</p>
     <section class="grs" style="--pc:${PH_HEX[(M.info || {}).phase] || '#6c823e'}">
       ${GROUND_STUDIES.map(([a, y, j, f, d, n, t], i) => `<details class="grs-r"><summary><b class="dotnum grs-y">${y}</b><span class="grs-t"><b>${f}</b>
-        <span class="grs-p" aria-label="${n ? `${n} people` : 'A review'}">${n ? `<i class="grs-dots">${'<i></i>'.repeat(n)}</i><small>${n} people · ${t}</small>` : '<small>A review of the studies before it</small>'}</span></span>${icon('chevD', 15)}</summary>
+        <span class="grs-p" aria-label="${n ? `${n} people` : 'A review'}">${n ? `<i class="grs-dots">${'<i></i>'.repeat(n)}</i><small><em class="grs-a">${a.split(/[ ,&]/)[0]}</em> · ${n} people · ${t}</small>` : `<small><em class="grs-a">${a.split(/[ ,&]/)[0]}</em> · reviews the earlier work</small>`}</span></span>${icon('chevD', 15)}</summary>
         <div class="grs-d"><figure class="msd-g">${groundArt(i)}</figure><p>${d}</p><small><b>${a}</b> · ${j}</small></div></details>`).join('')}
       <dl class="grs-care"><div><dt>${icon('heart', 14)} How to read it</dt><dd>Small studies: a calm habit, not a treatment</dd></div>
         <div><dt>${icon('bolt', 14)} Outdoors</dt><dd>Never in a thunderstorm</dd></div><div><dt>${icon('home', 14)} Indoor mats</dt><dd>Only properly wired and tested ones</dd></div></dl>
