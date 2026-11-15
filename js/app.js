@@ -3051,7 +3051,7 @@ const SB_PIC = { fibre: () => foodPhoto('Aged kimchi (mugeunji)', 360), move: ()
 function sugarSpec(on) {
   const keep = sugarKeep(on), n = SUGAR_TRICKS.filter(t => on.includes(t.k)).length, next = SUGAR_TRICKS.filter(t => !on.includes(t.k) && t.k !== 'berberine').sort((a, b) => b.eff - a.eff)[0];
   return `<div><dt>Peak rise</dt><dd><span class="dotnum">+${Math.round(30 * keep)}</span> mg/dL${keep < 1 ? ' <s>+30</s>' : ''}</dd></div>
-    <div><dt>Tricks you use</dt><dd><span class="dotnum">${n}</span> of <span class="dotnum">${SUGAR_TRICKS.length}</span></dd></div>
+    <div><dt>Tricks you use</dt><dd>${n ? `<span class="dotnum">${n}</span> of <span class="dotnum">${SUGAR_TRICKS.length}</span>` : 'None yet'}</dd></div>
     ${next ? `<div><dt>Biggest next step</dt><dd>${next.n}</dd></div>` : ''}`;
 }
 function sugarSection(phase) {
@@ -3078,7 +3078,7 @@ function sugarScore(on) {
   const keep = sugarKeep(on);
   const pct = Math.round((1 - keep) * 100);
   // ring bubble: fills as the spike shrinks (the illustration caps at 50%, which is a full ring)
-  return `<span class="sbr" style="--p:${Math.min(100, pct * 2)}"></span><b>${pct}%</b><span>${pct ? 'smaller spike' : 'tap a trick'}</span>`;
+  return `<span class="sbr" style="--p:${Math.min(100, pct * 2)}"></span>${pct ? `<b>${pct}%</b><span>smaller spike</span>` : `<b class="sbr-go">${icon('chevD', 22, 2)}</b><span>tap a trick</span>`}`;
 }
 
 // ---------- cosmic rhythm ----------

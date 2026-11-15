@@ -14435,3 +14435,9 @@ html .stc-k.stc-chip { display: inline-flex; align-items: baseline; gap: 8px; ju
   background: hsl(calc(var(--hb) + 0 * var(--hk)) calc(30% * var(--hs)) 95%); box-shadow: inset 0 0 0 1px rgba(32,48,26,.06); }
 .stc-chip .dotnum { font-size: 22px; line-height: 1; color: #20301a; }
 .stc-chip small { font-size: 12.5px; font-weight: 500; color: #304023; }
+
+/* Blood sugar: eyebrow in sentence case like every other card; empty score bubble points down to the tricks */
+html .sb2 .sb-top small { text-transform: none !important; letter-spacing: 0 !important; font-size: 12.5px; font-weight: 500; color: #4f6a2f; }
+html .sb2 .sb-score b.sbr-go { display: grid; place-items: center; font-family: var(--font); color: #20301a; animation: sbrNudge 2.6s ease-in-out infinite; }
+@keyframes sbrNudge { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(3px); } }
+@media (prefers-reduced-motion: reduce) { html .sb2 .sb-score b.sbr-go { animation: none; } }
