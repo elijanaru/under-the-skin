@@ -8524,13 +8524,14 @@ function pvToday(info, name, sup, snap) {
   return `${sectionTitle('Today for you two')}
     <p class="pv2-lead">What to cook, make and bring her. Made for her ${PHASES[ph].name.toLowerCase()} phase${warm ? ', all warm' : ''}.</p>
     <section class="pv2-card pv2-duo">
-      <div class="duo-c"><span class="pv2-3d duo-v">${D ? cup3d(D.img, ` data-model="${D.model}" data-elev="${D.elev || 0.9}" data-fit="${D.tileFit || D.fit}"${D.steam === 0 ? ' data-steam="0"' : ''}`, rec.name) : `<img class="pv2-mph" src="${photoUrl(rec.id, 500)}" alt="" loading="lazy">`}</span>
+      <div class="duo-c" role="button" tabindex="0" data-action="pvDuo" data-v="dish" aria-expanded="false"><span class="pv2-3d duo-v">${D ? cup3d(D.img, ` data-model="${D.model}" data-elev="${D.elev || 0.9}" data-fit="${D.tileFit || D.fit}"${D.steam === 0 ? ' data-steam="0"' : ''}`, rec.name) : `<img class="pv2-mph" src="${photoUrl(rec.id, 500)}" alt="" loading="lazy">`}</span>
         <small>Cook together</small><b>${rec.name}</b><p>${recWhy(rec)}</p><em>${icon('clock', 12)} ${rec.time >= 60 ? `${Math.floor(rec.time / 60)} h${rec.time % 60 ? ` ${rec.time % 60}` : ''}` : `${rec.time} min`}</em></div>
-      <div class="duo-c"><span class="pv2-3d duo-v tea">${cup3d(teaCupImg(td[1]), teaCupAttr(td[1]) + (teaCupAttr(td[1]) ? ` data-fit="${/matcha/i.test(td[1]) ? 0.92 : /green tea/i.test(td[1]) ? 1.1 : 1.3}"` : ''), td[1])}</span>
+      <div class="duo-c" role="button" tabindex="0" data-action="pvDuo" data-v="tea" aria-expanded="false"><span class="pv2-3d duo-v tea">${cup3d(teaCupImg(td[1]), teaCupAttr(td[1]) + (teaCupAttr(td[1]) ? ` data-fit="${/matcha/i.test(td[1]) ? 0.92 : /green tea/i.test(td[1]) ? 1.1 : 1.3}"` : ''), td[1])}</span>
         <small>Make her a cup</small><b>${td[1]}</b><p>${td[2].replace(/\byour\b/g, 'her').replace(/\byou\b/g, 'she')}</p><em>${icon('clock', 12)} ${steep}${tWhen ? ` · ${tWhen.toLowerCase()}` : ''}</em></div>
-      <details class="duo-more"><summary>The recipe ${icon('chevD', 14)}</summary>
-        <div class="pv2-rec"><b class="pv2-sub">Ingredients</b>${rec.ingredients.map(g => `<div class="pv2-ing">${(e => `<span class="pv2-ie">${e ? emoRaw(e) : ''}</span>`)(ingEmo(String(g).replace(/^[\d½¼¾\/.\s–-]+(g|kg|ml|l|tbsp|tsp|cups?|slices?|cloves?|cans?|large|small|medium|handful)?\s*/i, '')))}<span>${g}</span></div>`).join('')}
-        <b class="pv2-sub">Method</b>${rec.steps.map((x, i) => `<div class="pv2-step"><i>${i + 1}</i><p>${x}</p></div>`).join('')}</div></details></section>
+      <div class="duo-pan" data-p="dish" hidden><div class="pv2-rec"><b class="pv2-sub">Ingredients</b>${rec.ingredients.map(g => `<div class="pv2-ing">${(e => `<span class="pv2-ie">${e ? emoRaw(e) : ''}</span>`)(ingEmo(String(g).replace(/^[\d½¼¾\/.\s–-]+(g|kg|ml|l|tbsp|tsp|cups?|slices?|cloves?|cans?|large|small|medium|handful)?\s*/i, '')))}<span>${g}</span></div>`).join('')}
+        <b class="pv2-sub">Method</b>${rec.steps.map((x, i) => `<div class="pv2-step"><i>${i + 1}</i><p>${Array.isArray(x) ? `<b>${x[0]}.</b> ${x[1]}` : x}</p></div>`).join('')}</div></div>
+      <div class="duo-pan" data-p="tea" hidden>${(b => b ? `<div class="duo-brew"><div><b class="dotnum">${b[0]}°</b><small>Water</small></div><div><b class="dotnum">${b[1]}</b><small>${b[6] === 'Whisk' ? 'min whisking' : b[6] ? 'min, covered' : 'min steeping'}</small></div><div><b class="dotnum">${b[3]}</b><small>${b[4]} ${b[5].toLowerCase()}</small></div></div>` : '')(TEA_BREW[dw])}<p class="duo-how">${td[3]}</p></div>
+      <p class="hd-hint duo-hint">Tap the dish or the cup for how to make it</p></section>
     <section class="pv2-card pv2-bring"><div class="pv2-h"><b>Bring her</b><small>In season now · on the way home</small></div>
       <div class="pv2-snacks three">${snacks.map(([e, n, why]) => `<div class="pv2-sn">${pvEmo(e)}<b>${n}</b><small>${why}</small></div>`).join('')}</div></section>
     <section class="pv2-card pv2-date"><div class="dt-art"><svg viewBox="0 0 64 64" aria-hidden="true">${(GIFT_ART.find(([r]) => r.test(sup.date)) || [0, GIFT_ART[0][1]])[1]}</svg>
@@ -9660,6 +9661,13 @@ const actions = {
   hisTab: d => { ui.hisTab = d.v; render(); document.getElementById('view').scrollTop = 0; },
   pvTile: d => { ui.pvTile = ui.pvTile === d.v ? '' : d.v; softWith(); },
   pvDay: d => { ui.pvDay = +d.v; softWith(); },
+  pvDuo: (d, el) => { // open the recipe of the tapped tile under the pair, in place (the 3D dish and cup keep turning)
+    const card = el.closest('.pv2-duo'); if (!card) return;
+    const on = el.getAttribute('aria-expanded') !== 'true';
+    card.querySelectorAll('.duo-c').forEach(c => { const me = c === el && on; c.setAttribute('aria-expanded', me); c.classList.toggle('on', me); });
+    card.querySelectorAll('.duo-pan').forEach(p => { p.hidden = !(on && p.dataset.p === d.v); });
+    card.querySelector('.duo-hint').hidden = on;
+  },
   mfTab: d => { ui.mfTab = d.v; ui.mfTile = null; softWith(); },
   mfTile: d => { ui.mfTile = ui.mfTile === +d.v ? null : +d.v; softWith(); },
   copySay: async d => { try { await navigator.clipboard.writeText(d.t); toast('Copied, now send it to her'); } catch { prompt('Copy and send', d.t); } },
