@@ -6597,7 +6597,12 @@ function viewMove() {
       <h1 class="mvp-h"><small>Today, do</small>${top.n}</h1>
       ${mvFig(top.k, true)}
       <p class="mvp-works"><i></i>Working now: ${T.works}</p>
-      <div class="mvp-stats"><div><small>How long</small><b>${T.long.replace(/ to /, '–')}</b><em>${T.freq}</em></div><div><small>How hard</small><b>${D.int.split(':')[0]}</b><em>${(D.int.split(':')[1] || '').trim()}</em></div><div><small>Warm up</small><b>${D.warm.split(',')[0]}</b><em>${(D.warm.split(',')[1] || ' easy, then build').trim()}</em></div></div>
+      ${(() => { const num = v => { const m = String(v).match(/^([\d–]+)\s*(.*)$/); return m ? `<b class="dotnum">${m[1]}</b><span>${m[2]}</span>` : `<b>${v}</b>`; };
+        const word = D.int.split(':')[0], lvl = /^Medium to hard/.test(word) ? 4 : /^Hard/.test(word) ? 5 : /^Medium/.test(word) ? 3 : /^(Light|Steady)/.test(word) ? 2 : 1;
+        return `<dl class="mvp-spec">
+          <div><dt>How long</dt><dd>${num(T.long.replace(/ to /, '–'))}<small>${T.freq}</small></dd></div>
+          <div><dt>How hard</dt><dd><span class="mvp-int" role="img" aria-label="Intensity ${lvl} of 5">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</span><b class="mvp-w">${word.replace(/ if you feel strong/, '')}</b><small>${/if you feel strong/.test(word) ? 'If you feel strong · ' : ''}${(D.int.split(':')[1] || '').trim()}</small></dd></div>
+          <div><dt>Warm up</dt><dd>${num(D.warm.split(',')[0])}<small>${(D.warm.split(',')[1] || ' easy, then build').trim()}</small></dd></div></dl>`; })()}
       ${mvInfo(top.k, D, true)}
     </section>
     ${month}

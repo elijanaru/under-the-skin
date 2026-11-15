@@ -13512,3 +13512,16 @@ html .rn2 .rn-emo .emo { font-size: 24px; width: 26px; height: 26px; line-height
 .rit-you.rit-when { display: inline-flex; align-items: center; gap: 3px; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rit-you.rit-when i { flex: none; width: 7px; height: 7px; border-radius: 50%; }
 .rit-you.rit-when i:last-of-type { margin-right: 3px; }
+/* Move › today's training: How long, How hard and Warm up as spec rows (label left, value right) instead of three cramped tiles; intensity as a five-step bar */
+.mvp-spec { margin: 14px 0 0; padding: 2px 14px; border-radius: 20px; background: #f7f4ef; }
+.mvp-spec > div { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-top: 1px solid rgba(32,48,26,.08); }
+.mvp-spec > div:first-child { border-top: 0; }
+.mvp-spec dt { flex: none; font-size: 13px; color: rgba(32,48,26,.68); }
+.mvp-spec dd { margin: 0; display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: baseline; column-gap: 6px; text-align: right; }
+.mvp-spec dd b { font-size: 15px; font-weight: 600; color: #20301a; }
+.mvp-spec dd b.dotnum { font: 400 21px/1 var(--dot); }
+.mvp-spec dd > span:not(.mvp-int) { font-size: 13px; color: #20301a; }
+.mvp-spec dd small { flex-basis: 100%; margin-top: 3px; font-size: 11.5px; color: rgba(32,48,26,.6); }
+.mvp-int { display: inline-flex; gap: 3px; align-self: center; }
+.mvp-int i { width: 7px; height: 14px; border-radius: 3px; background: rgba(32,48,26,.12); }
+.mvp-int i.on { background: hsl(calc(var(--hb) + 0 * var(--hk)) calc(46% * var(--hs)) 42%); }
