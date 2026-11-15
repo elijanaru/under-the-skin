@@ -14628,3 +14628,16 @@ html:has(.onb.no-fig.step-10) .bgx { visibility: hidden; }
 .o3-hero { height: 178px; margin: 18px -10px -30px; }
 .o3-lotus { width: 250px; }
 .o3-lead mark { padding: 0; border-radius: 2px; }
+.o3-yes { align-items: flex-start !important; }
+.o3-yes .o3-heart { margin-top: 1px; }
+.o3-yes small { line-height: 1.35; }
+/* onboarding in the phone preview: text scrolling under the floating status bar is frosted, like iOS, so the clock stays clear */
+@media (min-width: 560px) { #app:has(> .view.onb-view:not(:has(.onb-welcome.full))) > .statusbar { background: transparent !important; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  -webkit-mask-image: linear-gradient(#000 62%, transparent); mask-image: linear-gradient(#000 62%, transparent); } }
+/* lotus sits higher, fully clear of the note and its tape, with a soft breathing glow behind it (opacity only, no filter animation) */
+.o3-hero { height: 176px; margin: 4px -10px 0; place-items: start center; }
+.o3-lotus { width: 250px; margin-top: 2px; filter: drop-shadow(0 0 10px rgba(255,240,245,.95)) drop-shadow(0 0 26px rgba(255,214,228,.85)) drop-shadow(0 8px 16px rgba(80,40,52,.16)); }
+.o3-hero::before { content: ''; position: absolute; left: 50%; top: 8px; width: 290px; height: 190px; margin-left: -145px; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(255,246,249,.95), rgba(255,218,230,.6) 45%, rgba(255,218,230,0) 100%); animation: o3Glow 5s ease-in-out infinite; }
+@keyframes o3Glow { 0%, 100% { opacity: .7; transform: scale(.96); } 50% { opacity: 1; transform: scale(1.04); } }
+@media (prefers-reduced-motion: reduce) { .o3-hero::before { animation: none; } }

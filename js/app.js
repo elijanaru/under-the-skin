@@ -1417,7 +1417,7 @@ function onbPromise() {
     <section class="op-card o3-path">${steps.map(([ic, t, d], i) => `<div class="o3-st ${i === 0 ? 'now' : ''}"><span>${icon(ic, 18)}</span><b>${t}</b><small>${d}</small></div>`).join('')}
       <svg class="o3-trail" viewBox="0 0 300 30" preserveAspectRatio="none" aria-hidden="true"><path d="M30 18 C 70 4, 100 28, 150 15 S 230 6, 270 18"/></svg></section>
     <section class="op-card o3-no"><ul class="op-no">${no.map(([a, b]) => `<li><span class="op-x o3-x">${x}</span><div><b>No ${a}</b><small>${b}</small></div></li>`).join('')}
-      <li class="o3-yes"><span class="op-x o3-heart">${icon('heart', 15, 2.2)}</span><div><b>Yes to a small team</b><small>Who want to make a difference for women</small></div></li></ul></section>
+      <li class="o3-yes"><span class="op-x o3-heart">${icon('heart', 15, 2.2)}</span><div><b>Yes to research on women</b><small>Women’s health is underfunded. A small part of every payment helps fund new studies.</small></div></li></ul></section>
   </div>`;
 }
 // The cycle question shows her actual cycle: four phase arcs sized from the length she picks, redrawn on every tap.
