@@ -7239,7 +7239,6 @@ function viewBreathe(from) {
   return `${topbar('Breathe', { back: true })}
   <div class="pad bz-pad">
     <header class="t4-h bz-h"><small>A minute for you</small><h1>Come back to your breath.</h1><p>Pick a practice. One minute is enough.</p></header>
-    ${breathWeek()}
     <div class="bzp" role="tablist" aria-label="Choose a breathing practice">${[rec, ...BREATH_ORDER.filter(x => x !== rec)].map(x => `<button class="bzp-o ${x === k ? 'on' : ''}" role="tab" aria-selected="${x === k}" data-action="bzPick" data-v="${x}">
       ${x === rec ? `<em>${phase ? 'For your phase' : 'Start here'}</em>` : ''}<span class="bzp-g emo" aria-hidden="true">${(BZ_BEST[x] || ['🌿'])[0]}</span><b>${BREATHS[x].name}</b><small>${(BZ_BEST[x] || [, BREATHS[x].when])[1]}</small></button>`).join('')}</div>
     <section class="bz" data-pat="${k}">
@@ -7275,7 +7274,6 @@ function viewBreathe(from) {
       </div>
     </section>
     ${calmRemCard()}
-    ${breathGuide(phase, k)}
     ${dayQuote()}
   </div>`;
 }
