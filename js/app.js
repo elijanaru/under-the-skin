@@ -7133,6 +7133,7 @@ const LOVE = [
   { k: 'love', ic: 'heart', g: '❤️', t: 'Love you', s: 'loves you' },
   { k: 'miss', ic: 'heart', g: '🥺', t: 'Miss you', s: 'misses you' },
 ];
+const PV_LOVE = ['kiss', 'think', 'love', 'miss']; // the only ones on his love sheet
 const CARE = [
   { k: 'eat', ic: 'bowl', g: '🍽️', t: 'Time to eat', s: 'says: time to eat something nourishing' },
   { k: 'water', ic: 'drop', g: '💧', t: 'Drink water', s: 'reminds you to drink some water' },
@@ -7187,11 +7188,11 @@ function showTicket(name, from, x) {
   const hearts = Array.from({ length: 14 }, (_, i) => `<i style="left:${(i * 41) % 100}%;animation-delay:${1 + (i * .23) % 3}s;animation-duration:${5 + (i % 4)}s;width:${12 + (i * 7) % 16}px;height:${12 + (i * 7) % 16}px">${HEART(i % 3 === 1 ? '#fff' : '#e6809c')}</i>`).join('');
   el.innerHTML = `<div class="lv-hearts">${hearts}</div><div class="tk-in">
     <p class="tk-from">${esc(name)} sent you</p>
-    <div class="tk-card"><span class="tk-glint"></span><div class="tk-l"><span class="tk-emo">${esc(emo)}</span></div><div class="tk-m"><small>A date for two</small><b>${esc(plan.slice(0, 90))}</b><span>${fmt(new Date(), { weekday: 'long' })}</span></div><div class="tk-r"><b class="dotnum">2</b><small>for two</small></div></div>
+    <div class="tk-vt">${vtTicket({ to: (state && state.profile && state.profile.name) || 'You', from: name, plan: plan.slice(0, 90), when: fmt(new Date(), { weekday: 'long' }) })}<span class="tk-glint"></span></div>
     ${from ? `<button class="btn btn-love btn-block" data-action="openLove" data-id="${from.id}">${icon('heart', 16)} Say yes with love</button>` : ''}
     <button class="btn btn-ghost btn-block" data-action="sigClose">Close</button></div>`;
   $app.appendChild(el);
-  setTimeout(() => { const c = el.querySelector('.tk-card'); if (!c) return; const r = c.getBoundingClientRect(); heartBurst(r.left + r.width / 2, r.top + r.height / 2); }, 1050);
+  setTimeout(() => { const c = el.querySelector('.tk-vt'); if (!c) return; const r = c.getBoundingClientRect(); heartBurst(r.left + r.width / 2, r.top + r.height / 2); }, 1500);
   import('./sfx.js').then(S => S.breeze({ dur: 1.8, vol: .14 })).catch(() => {});
 }
 let sigSource = null;
@@ -8556,7 +8557,7 @@ function oakCard() {
 }
 // complete a quest: XP, a floating +XP, a level-up burst, and the card redraws in place
 function oakDo(k, quiet, el) {
-  const o = oakS(), today = C.iso(C.startOfDay(new Date())), days = o.days = o.days || {}, done = days[today] = days[today] || [], Q = OAK_Q().find(q => q[0] === k); if (!Q || done.includes(k)) return;
+  const o = oakS(), today = C.iso(C.startOfDay(new Date())), days = o.days = o.days || {}, done = days[today] = days[today] || [], Q = OAK_Q().find(q => q[0] === k) || (k === 'read' ? ['read', '📖', 'Today’s read', '', 10] : null); if (!Q || done.includes(k)) return;
   const before = oakLv(o.xp || 0); done.push(k); o.xp = (o.xp || 0) + Q[4];
   if (done.length === 3) { const y = C.iso(C.addDays(C.startOfDay(new Date()), -1)); o.streak = (days[y] || []).length >= 3 ? (o.streak || 0) + 1 : 1; }
   Object.keys(days).sort().slice(0, -14).forEach(d => delete days[d]); oakSave(o);
@@ -8608,6 +8609,42 @@ const PV_SKIP = {
 };
 // her snapshot on his page (from the link, or the saved view-only link)
 function pvSnap() { const r = route(); let raw = r.name === 'with' && r.q ? r.q.get('d') : null; if (!raw) { try { raw = localStorage.getItem('uts.viewOnly'); } catch {} } return raw ? b64d(raw) : null; }
+// The date ticket: a vintage blush ticket (barcode stub, punched edges, typewriter lines) with a lotus collage.
+const VT_TITLE = t => [[/sofa|film|blanket/i, 'Sofa Night'], [/new|class|trip/i, 'Something New'], [/danc|event|out\b/i, 'A Night Out'], [/home|cook|comfort|early/i, 'Comfort Night']].find(([r]) => r.test(t))?.[1] || 'Us Two';
+const VT_PETAL = 'M0 0C-11-13-10-33 0-46C10-33 11-13 0 0Z';
+const vtPetal = (a, s, f) => `<g transform="rotate(${a}) scale(${s})"><path d="${VT_PETAL}" fill="${f}"/><path d="M0-4V-40M-3-6C-6-18-5-30-1-40M3-6C6-18 5-30 1-40" stroke="#9c4b66" stroke-width=".6" fill="none" opacity=".3"/></g>`;
+const vtLotus = (bud = true) => `<g transform="translate(70 96)">${[[-72, .74], [-38, .9], [0, 1], [38, .9], [72, .74]].map(([a, s]) => vtPetal(a, s, 'url(#vtB)')).join('')}
+    <ellipse cx="0" cy="-17" rx="9" ry="3.6" fill="#e5c060"/><g fill="#b8862e">${[-5, -1.5, 2, 5.5].map(x => `<circle cx="${x}" cy="-17.5" r=".9"/>`).join('')}</g>
+    ${[[-54, .78], [-24, .94], [24, .94], [54, .78], [0, .8]].map(([a, s]) => vtPetal(a, s, 'url(#vtP)')).join('')}</g>
+  ${bud ? `<g transform="translate(114 64) rotate(24) scale(.5)">${vtPetal(-16, .9, 'url(#vtB)')}${vtPetal(16, .9, 'url(#vtB)')}${vtPetal(0, 1, 'url(#vtP)')}</g>` : ''}`;
+const VT_DEFS = `<defs><linearGradient id="vtP" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fdf2f4"/><stop offset=".55" stop-color="#f0bccb"/><stop offset="1" stop-color="#cf7d96"/></linearGradient>
+  <linearGradient id="vtB" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#f3cfd8"/><stop offset=".6" stop-color="#df9cb0"/><stop offset="1" stop-color="#b65d7b"/></linearGradient>
+  <radialGradient id="vtL" cx=".45" cy=".4" r=".7"><stop offset="0" stop-color="#a6b27f"/><stop offset="1" stop-color="#6c7a48"/></radialGradient></defs>`;
+const VT_ART = (() => {
+  const txt = ['her rhythm and your plans,', 'a slow evening, two cups', 'of tea and nowhere to be.', 'Tonight is for the two of', 'you. Phones away, hands', 'free, and the whole night', 'to be close again. Admit'];
+  const wing = (s, c, e) => `<g transform="scale(${s} 1)"><path d="M0-1C-6-14-22-17-21-5C-20 3-9 4 0 1Z" fill="${c}" stroke="${e}" stroke-width=".8"/><path d="M0 1C-5 4-15 6-13 13C-11 18-3 12 0 3Z" fill="${c}" stroke="${e}" stroke-width=".8" opacity=".92"/><path d="M-4-2C-9-8-15-10-17-6M-3 3C-7 6-10 9-10 12" stroke="${e}" stroke-width=".5" fill="none" opacity=".6"/></g>`;
+  return `<svg viewBox="0 0 140 150" aria-hidden="true">${VT_DEFS}
+    <g transform="rotate(-4 70 100)"><rect x="6" y="64" width="132" height="66" fill="#ead9b9"/><rect x="6" y="64" width="132" height="66" fill="none" stroke="#c9b28a" stroke-width=".6"/>
+      <g font-family="'Courier Prime','Courier New',monospace" font-size="6.6" fill="#5e4a38" opacity=".72">${txt.map((t, i) => `<text x="10" y="${75 + i * 8.3}">${t}</text>`).join('')}</g></g>
+    <path d="M70 131 120 124C124 139 102 148 70 148 37 148 15 140 19 129 23 119 49 115 70 116Z" fill="url(#vtL)"/>
+    <path d="M70 131 40 120M70 131 28 135M70 131 52 146M70 131 92 147M70 131 112 140" stroke="#58663a" stroke-width=".7" opacity=".55"/>
+    <path d="M70 120C68 108 70 99 70 92M74 122C90 106 102 88 110 68" stroke="#6c7a48" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    ${vtLotus()}
+    <g transform="translate(34 40) rotate(-16) scale(.9)">${wing(1, '#cdb6dc', '#8f78a6')}${wing(-1, '#cdb6dc', '#8f78a6')}<path d="M0-7V9" stroke="#5b4636" stroke-width="1.7" stroke-linecap="round"/><path d="M0-7C-2-12-4-13-6-13M0-7C2-12 4-13 6-13" stroke="#5b4636" stroke-width=".6" fill="none"/></g></svg>`;
+})();
+const VT_BAR = (() => { const w = [3, 1, 2, 1, 4, 1, 1, 3, 2, 1, 3, 1, 2, 4, 1, 2, 1, 3, 1, 2, 3, 1]; let y = 0, s = '';
+  w.forEach((h, i) => { if (i % 2 === 0) s += `<rect x="0" y="${y}" width="22" height="${h * 1.6}"/>`; y += h * 1.6 + (i % 2 ? 0 : 1.6); });
+  return `<svg class="vt-bar" viewBox="0 0 22 ${y.toFixed(0)}" preserveAspectRatio="none" aria-hidden="true"><g fill="#4b3426">${s}</g></svg>`; })();
+function vtTicket({ to, from, plan, when, note }) {
+  const d = new Date(), p2 = n => String(n).padStart(2, '0'), U = s => esc(String(s || '')).toUpperCase();
+  return `<div class="vt"><div class="vt-face vt-front">
+      <div class="vt-stub">${VT_BAR}<div class="vt-adm"><b>Admit two</b><span>${p2(d.getDate())}-${p2(d.getMonth() + 1)}-${d.getFullYear()}</span></div></div>
+      <div class="vt-main"><div class="vt-stars" aria-hidden="true">★★★★★</div>${note ? `<p class="vt-note">${note}</p>` : ''}
+        <h4 class="vt-h"><span>A ticket for</span><em>${VT_TITLE(plan)}</em></h4><p class="vt-plan">${esc(plan)}</p>
+        <div class="vt-lines"><span>NAME : ${U(to)}</span><span>WHEN : ${U(when)}</span><span>FROM : ${U(from)}</span></div></div>
+      <div class="vt-art">${VT_ART}</div><span class="vt-stamp" aria-hidden="true"><b>Sent</b><i>♥</i><small>to ${esc(to)}</small></span></div>
+    <div class="vt-face vt-back" aria-hidden="true"><svg class="vt-seal" viewBox="0 30 140 90">${VT_DEFS}${vtLotus(false)}</svg><b>With love</b><span>from ${esc(from)}</span></div></div>`;
+}
 // The ticket flies: a copy lifts off the card, tilts, and sails up and away to the top right, leaving a trail of hearts.
 function ticketFly(el) {
   el.classList.add('flying');
@@ -8616,21 +8653,25 @@ function ticketFly(el) {
   Object.assign(fly.style, { position: 'fixed', left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', margin: 0, zIndex: 90, pointerEvents: 'none' });
   document.body.appendChild(fly); el.classList.add('gone');
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) { fly.remove(); return Promise.resolve(true); }
-  const dx = innerWidth - r.left - r.width * .3, dy = -r.top - r.height;
-  const a = fly.animate([
-    { transform: 'none', boxShadow: '0 10px 30px -18px rgba(192,80,122,.4)', offset: 0 },
-    { transform: 'translateY(-14px) scale(1.04) rotate(-2deg)', boxShadow: '0 30px 50px -20px rgba(192,80,122,.55)', offset: .22 },
-    { transform: `translate(${dx * .35}px, ${dy * .25}px) scale(.62) rotate(-9deg)`, opacity: 1, offset: .55 },
-    { transform: `translate(${dx}px, ${dy}px) scale(.12) rotate(-22deg)`, opacity: 0, offset: 1 },
-  ], { duration: 1250, easing: 'cubic-bezier(.45,0,.2,1)', fill: 'forwards' });
-  let n = 0; const trail = setInterval(() => { const q = fly.getBoundingClientRect(); if (n++ > 9) return clearInterval(trail); const h = document.createElement('i'); h.className = 'tk-trail'; h.innerHTML = HEART(n % 2 ? '#e6809c' : '#f4c6d6'); h.style.left = (q.left + q.width / 2) + 'px'; h.style.top = (q.top + q.height / 2) + 'px'; document.body.appendChild(h); setTimeout(() => h.remove(), 1200); }, 90);
+  const dx = innerWidth - r.left - r.width * .45, dy = -r.top - r.height * .6;
+  const T = (x, y, ry, rz, sx, sy) => `perspective(1100px) translate(${x}px, ${y}px) rotateY(${ry}deg) rotateZ(${rz}deg) scale(${sx}, ${sy})`;
+  const a = fly.animate([ // press and squeeze, spring up, turn over to the "With love" back, squeeze flat, then zip off to her phone
+    { transform: T(0, 0, 0, 0, 1, 1), offset: 0 },
+    { transform: T(0, 6, 0, 0, 1.06, .86), offset: .1 },
+    { transform: T(0, -30, 0, -2, .96, 1.06), offset: .24 },
+    { transform: T(0, -44, 180, 2, .88, .88), offset: .46 },
+    { transform: T(0, -44, 180, 0, .9, .9), offset: .56 },
+    { transform: T(0, -48, 180, 0, .74, .07), offset: .7 },
+    { transform: T(dx, dy, 180, -8, .05, .01), offset: 1 },
+  ], { duration: 2000, easing: 'cubic-bezier(.45,0,.25,1)', fill: 'forwards' });
+  let n = 0, trail; setTimeout(() => { trail = setInterval(() => { const q = fly.getBoundingClientRect(); if (n++ > 9) return clearInterval(trail); const h = document.createElement('i'); h.className = 'tk-trail'; h.innerHTML = HEART(n % 2 ? '#e6809c' : '#f4c6d6'); h.style.left = (q.left + q.width / 2) + 'px'; h.style.top = (q.top + q.height / 2) + 'px'; document.body.appendChild(h); setTimeout(() => h.remove(), 1200); }, 70); }, 1350);
   return a.finished.then(() => { clearInterval(trail); fly.remove(); return true; });
 }
 // back on his page the ticket returns and its stub says Sent
 function ticketSent(el) {
   el.classList.remove('gone'); el.classList.add('sent');
   el.animate([{ opacity: 0, transform: 'scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 500, easing: 'cubic-bezier(.2,.8,.2,1)' });
-  setTimeout(() => el.classList.remove('flying', 'sent'), 6000);
+  el.classList.remove('flying');
 }
 // a cute emoji for the date idea of her phase (sofa night, something new, out dancing, home comfort)
 const dateEmo = t => [[/sofa|film|blanket/i, '🍿'], [/new|class|trip/i, '🎡'], [/danc|event|out\b/i, '🥂'], [/home|cook|comfort|early/i, '🍲'], [/walk/i, '🌷'], [/dinner/i, '🍝']].find(([r]) => r.test(t))?.[1] || '💝';
@@ -8656,14 +8697,11 @@ function pvToday(info, name, sup, snap) {
       <p class="hd-hint duo-hint">Tap the dish or the cup for how to make it</p></section>
     <section class="pv2-card pv2-bring"><div class="pv2-h"><b>Bring her</b><small>In season now · on the way home</small></div>
       <div class="pv2-snacks three">${snacks.map(([e, n, why]) => `<div class="pv2-sn">${pvEmo(e)}<b>${n}</b><small>${why}</small></div>`).join('')}</div></section>
-    <section class="pv2-card pv2-date" role="button" tabindex="0" data-action="pvDateSend" aria-label="Send ${name} this date"><div class="dt-art"><span class="dt-emo" aria-hidden="true">${dateEmo(sup.date)}</span>
-        ${[1, 2, 3].map(k => `<svg class="dt-h h${k}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></svg>`).join('')}<i class="dt-s s1"></i><i class="dt-s s2"></i></div>
-      <div class="dt-txt"><small>A date for two</small><b>${esc(sup.date)}</b><span>${icon('clock', 12)} ${when}</span></div>
-      <div class="dt-stub"><svg class="dt-plane" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 3 10.5l7 2.5 2.5 7z" fill="#fff" stroke="#c0507a" stroke-width="1.7" stroke-linejoin="round"/><path d="m21 3-11 10" stroke="#c0507a" stroke-width="1.7" stroke-linecap="round"/></svg><span class="dt-ok" aria-hidden="true">${icon('check', 18, 2.6)}</span><small class="dt-go">Tap to send</small><small class="dt-done">Sent to ${name}</small></div></section>
+    <section class="pv2-vt" role="button" tabindex="0" data-action="pvDateSend" aria-label="Send ${name} this date">${vtTicket({ to: name, from: himP().n || 'Me', plan: sup.date, when: warm ? 'Tonight, at home' : `Today, ${hLabel(her > .7 ? w + 7 : w + 11)}`, note: `*Tap the ticket and it flies to ${esc(name)}’s phone.` })}</section>
     ${snap && (snap.a || 'partner') === 'partner' ? `<button class="lb2 dt-send" data-action="pvLove" aria-label="Send ${name} love">
       <span class="lb2-hearts" aria-hidden="true">${[0, 1, 2, 3].map(i => `<i style="--d:${i * .9}s;--x:${[18, 38, 62, 80][i]}%">${HEART(i % 2 ? '#f4c6d6' : '#e6809c')}</i>`).join('')}</span>
       <span class="lb2-art">${loveBtnArt()}</span>
-      <span class="lb2-t"><b>Send ${name} love</b><small>A hug, a kiss or I miss you</small></span>
+      <span class="lb2-t"><b>Send ${name} love</b><small>Kisses, love you or I miss you</small></span>
       <span class="lb2-go">${icon('heart', 16, 2)}</span></button>` : ''}`;
 }
 // Trying for a baby: when she shares that goal, he gets the timing and the few things that make his part count.
@@ -8948,13 +8986,20 @@ function readCard(r) {
 }
 // Read tab: today's read big, then the whole cycle as a list (past reads open, later ones unlock on their day)
 // Read tab: only today's read, in three simple parts (what it means, what he does, how they both win)
+const RD_EMO = { menstrual: '🌹', follicular: '🌱', ovulatory: '🌸', luteal: '🍂' };
 function pvRead(snap, info, name) {
-  const { cd, L } = info, now = readFor(cd, L, info.P), ph = PHASES[now.phase];
+  const { cd, L } = info, now = readFor(cd, L, info.P), ph = PHASES[now.phase], r = now.r, g = HIM_GAIN[r[0]];
+  const slides = [[RD_EMO[now.phase], `${ph.name} phase`, r[0], r[1]], ['📖', 'What it means', '', r[2]], ['🫶', 'What you do', r[3], ''], g && ['💞', 'How you both win', '', g]].filter(Boolean);
+  const strip = C.phaseRanges(L, info.P).map(x => `<i style="flex:${x.to - x.from + 1};background:${PH_HEX[x.key]}"></i>`).join('');
   return `<div class="pv2-title"><small>Learn her cycle · day ${cd} of ${L}</small><h1>Today’s <b>read</b></h1><p>One short read a day, synced to ${name}’s cycle. A new one opens tomorrow.</p></div>
   ${snap.l ? pvLoss(name) : ''}
-  <section class="pv2-card rd-today" style="--rc:${PH_HEX[now.phase]}">
-    <div class="rd-top"><div class="rd-dial">${readRing(info)}</div><div class="rd-h"><small><i></i>${ph.name} phase</small><h2>${esc(now.r[0])}</h2><p>${esc(now.r[1])}</p></div></div>
-    ${readCard(now.r)}
+  <section class="pv2-card rd4" style="--rc:${PH_HEX[now.phase]}" data-i="0" data-n="${slides.length}">
+    <div class="rd4-bars" aria-hidden="true">${slides.map((_, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div>
+    <div class="rd4-day"><span>Day <b class="dotnum">${cd}</b> of ${L}</span><span class="rd4-strip" aria-hidden="true">${strip}<b style="left:${((cd - .5) / L * 100).toFixed(1)}%"></b></span></div>
+    <div class="rd4-view"><div class="rd4-track">${slides.map(([e, k, t, p], i) => `<div class="rd4-s${i ? '' : ' first'}" aria-hidden="${i ? 'true' : 'false'}"><span class="rd4-e">${e}</span><small>${k}</small>${t ? `<h2>${esc(t)}</h2>` : ''}${p ? `<p>${esc(p)}</p>` : ''}</div>`).join('')}</div>
+      <button class="rd4-tap prev" data-action="rdGo" data-d="-1" aria-label="Back"></button><button class="rd4-tap next" data-action="rdGo" data-d="1" aria-label="Next"></button></div>
+    <div class="rd4-nav"><button class="rd4-b back" data-action="rdGo" data-d="-1" aria-label="Back" disabled>${icon('chevL', 16, 2)}</button><span class="rd4-hint">1 of ${slides.length}</span><button class="rd4-b go" data-action="rdGo" data-d="1">Next ${icon('chevR', 15, 2)}</button></div>
+    ${r[4] ? `<details class="rd3-st"><summary>The study ${icon('chevD', 13)}</summary><div class="rd-st"><b class="dotnum">${r[4][0]}</b><span><em>${esc(r[4][1])}</em>${esc(r[4][2])}</span></div></details>` : ''}
   </section>`;
 }
 // today's read on her page (his page has the Read tab only, no teaser)
@@ -9830,6 +9875,18 @@ const actions = {
   },
   ytT: d => { ui.ytT = d.v; softWith(); },
   hisTab: d => { ui.hisTab = d.v; render(); document.getElementById('view').scrollTop = 0; },
+  rdGo: (d, el) => { // today's read as little story cards: tap to move on, the last one gives +10 XP for his oak
+    const c = el.closest('.rd4'); if (!c) return;
+    const n = +c.dataset.n, i0 = +c.dataset.i, i = Math.max(0, Math.min(n - 1, i0 + +d.d));
+    if (i0 === n - 1 && +d.d > 0) { oakDo('read', false, el); const go = c.querySelector('.rd4-b.go'); go.classList.add('done'); go.innerHTML = `${icon('check', 15, 2.4)} Read today`; return; }
+    c.dataset.i = i; c.querySelector('.rd4-track').style.transform = `translateX(${-i * 100}%)`;
+    c.querySelectorAll('.rd4-bars i').forEach((b, k) => b.classList.toggle('on', k <= i));
+    c.querySelectorAll('.rd4-s').forEach((s, k) => s.setAttribute('aria-hidden', k === i ? 'false' : 'true'));
+    c.querySelector('.rd4-b.back').disabled = i === 0; c.querySelector('.rd4-hint').textContent = `${i + 1} of ${n}`;
+    const go = c.querySelector('.rd4-b.go'), read = ((oakS().days || {})[C.iso(C.startOfDay(new Date()))] || []).includes('read');
+    go.classList.toggle('last', i === n - 1); go.classList.toggle('done', i === n - 1 && read);
+    go.innerHTML = i < n - 1 ? `Next ${icon('chevR', 15, 2)}` : read ? `${icon('check', 15, 2.4)} Read today` : 'Got it · +10 XP';
+  },
   pvTile: d => { ui.pvTile = ui.pvTile === d.v ? '' : d.v; softWith(); },
   pvDay: d => { ui.pvDay = +d.v; softWith(); },
   pvDateSend: async (d, el) => { // the ticket lifts, folds into flight and flies off to her phone
@@ -9845,10 +9902,10 @@ const actions = {
   pvLove: () => { // the little love tiles, sent live to her phone
     const snap = pvSnap(); if (!snap) return;
     document.querySelector('.love-sheet.pv')?.remove();
-    const tile = l => { const [bg, ink] = LS_TINT[l.k] || ['#fbe0e8', '#b0475f']; return `<button class="ls2-b" data-action="pvLoveSend" data-k="${l.k}" style="--bg:${bg};--ink:${ink}"><span class="ls2-ic">${l.k === 'miss' ? '<b class="ls2-emo">🥺</b>' : icon(l.ic, 22, 1.9)}</span><small>${l.t}</small></button>`; };
+    const tile = l => { const [bg, ink] = LS_TINT[l.k] || ['#fbe0e8', '#b0475f']; return `<button class="ls2-b" data-action="pvLoveSend" data-k="${l.k}" style="--bg:${bg};--ink:${ink}"><span class="ls2-ic"><b class="ls2-emo">${l.g}</b></span><small>${l.t}</small></button>`; };
     $app.insertAdjacentHTML('beforeend', `<div class="love-sheet pv" data-action="pvLoveClose"><div class="ls-card ls2" data-action="noop"><div class="ls-grip"></div>
       <div class="ls2-head"><span class="lb2-art">${loveBtnArt()}</span><div><h3>Send love to ${esc(snap.n || 'her')}</h3><p>Tap one and it lands on her phone</p></div></div>
-      <div class="ls2-grid love">${LOVE.map(tile).join('')}</div></div></div>`);
+      <div class="ls2-grid love four">${PV_LOVE.map(k => LOVE.find(l => l.k === k)).map(tile).join('')}</div></div></div>`);
   },
   pvLoveClose: () => document.querySelector('.love-sheet.pv')?.remove(),
   pvLoveSend: async (d, el) => {
