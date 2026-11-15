@@ -15319,3 +15319,33 @@ html .sfc-i img[src*="sf/dandelion"] { transform: scale(.8); transform-origin: 5
 .hs-plant.real { height: auto; width: 340px; max-width: 92%; margin-top: 10px; rotate: -16deg; filter: drop-shadow(0 16px 14px rgba(70,50,30,.24)); }
 .hs-pol img[src*="sf/astragalus"] { object-fit: cover; }
 .hs-credit { margin: 4px 10px 0; font-size: 10.5px; line-height: 1.4; color: rgba(32,48,26,.45); text-align: center; }
+
+/* 16 Nov 2026 · Herb bed hint without the arrow; the apothecary is one section (title, garden, then what's ripe) */
+html .hg-hint { justify-content: center; }
+html .apo2 .hg-w { margin-top: 6px; }
+html .apo2 .hg-w + .sfc-gh { margin-top: 22px; }
+
+/* Superfood sheet: rises from below like the herbs, the food's cut-out floats in the hero */
+.sfc-i.lift { animation: sfLift .26s cubic-bezier(.3,1.5,.5,1) both; }
+@keyframes sfLift { 50% { transform: translateY(-10px) scale(1.04); } 100% { transform: translateY(-16px) scale(.96); opacity: .6; } }
+.sfc-i.out img { opacity: .25; transition: opacity .3s; }
+.sfs .hs-plant.sf { height: 200px; width: auto; max-width: 74%; object-fit: contain; rotate: 0deg; margin-top: 18px; filter: drop-shadow(0 16px 16px rgba(70,50,40,.2)); }
+.sfs .hs-plant.sf.rd { width: 190px; height: 190px; max-width: none; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 6px #fff, 0 16px 26px rgba(70,50,40,.18); filter: none; }
+.sfs .hs-plant.sf.emo { display: grid; place-items: center; font-size: 120px; line-height: 1; }
+.sfs .hs-fine { margin: 0; padding: 0 6px; font-size: 12.5px; line-height: 1.4; text-align: center; color: rgba(32,48,26,.55); }
+@media (prefers-reduced-motion: reduce) { .sfc-i.lift { animation: none; } }
+
+/* Breathe › first week of breath: future days are empty dashed spots, a key explains bud vs bloom, one pill to start */
+.bwk-pond .bwk-fut { width: 26px; height: 26px; margin-top: 14px; border-radius: 50%; border: 1.5px dashed rgba(32,48,26,.2); background: rgba(255,255,255,.6); }
+.bwk-pond .fut small { color: rgba(32,48,26,.35); }
+.bwk3.first .bwk-pond span:not(.on):not(.now) img { opacity: .35; }
+.bwk3 .bwk-pond .now:not(.on) img { opacity: 1; animation: bwkWait 3.2s ease-in-out infinite; transform-origin: 50% 100%; }
+@keyframes bwkWait { 50% { transform: scale(1.08) rotate(-3deg); } }
+.bwk-key { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(32,48,26,.08); font-size: 12.5px; color: rgba(32,48,26,.65); }
+.bwk-key span { display: inline-flex; align-items: center; gap: 5px; }
+.bwk-key img { width: 16px; height: 20px; object-fit: contain; }
+.bwk-key .bwk-go { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; padding: 8px 14px; border: 0; border-radius: 999px; background: #20301a; color: #fff; font: 500 13px/1 var(--font); cursor: pointer; }
+html .bwk3.zero .bwk-ring .dotnum { color: rgba(32,48,26,.4); }
+@media (prefers-reduced-motion: reduce) { .bwk3 .bwk-pond .now:not(.on) img { animation: none; } }
+/* the sheet scrolls; its parts never squash to fit a short phone */
+.ws-herb .hs > * { flex-shrink: 0; }

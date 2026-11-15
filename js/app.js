@@ -7046,19 +7046,28 @@ function breathCycle(k) {
     <details class="bzc-more"><summary>Why this breath ${icon('chevD', 13)}</summary>${R.filter(r => r.key === info.phase).map(r => `<p><b>${BZ_PH_NAME[r.key]} · ${BREATHS[BREATH_FOR[r.key]].name}</b>${BZ_PH_WHY[r.key]}</p>`).join('')}</details>
   </section>`;
 }
-// her breath this week: one dot for each day she finished a full session (breathing or the still sit)
+// her breath this week: one lotus for each day she finished a full session (breathing or the still sit).
+// In her first week (16 Nov 2026, her call: seven closed buds read as missed days) the week starts on her first day:
+// days still to come are empty dashed spots, today's bud waits in a soft frame, and a small key says what a bud and a bloom mean.
 function breathWeek() {
-  const L = state.breathLog || {}, t = todayISO();
-  const days = Array.from({ length: 7 }, (_, i) => C.addDays(new Date(), i - 6)), n = days.filter(d => L[C.iso(d)]).length, sum = days.reduce((a, d) => a + (L[C.iso(d)] || 0), 0);
-  const msg = n === 0 ? 'Breathe once today and your first lotus opens.' : n >= 6 ? 'Your week is in full bloom. Your body feels it.' : n >= 4 ? 'A steady rhythm. Keep it gentle.' : `${7 - n} more ${7 - n === 1 ? 'day' : 'days'} and your week is in full bloom.`;
-  // one lotus per day: a closed bud until she breathes, then it opens
+  const L = state.breathLog || {}, t = todayISO(), today = C.startOfDay(new Date());
+  const logged = Object.keys(L).filter(k => L[k]).sort(), s0 = [trialStart(), logged[0]].filter(Boolean).sort()[0], since = C.diffDays(today, C.parseISO(s0));
+  const first = since >= 0 && since < 7, start = first ? C.parseISO(s0) : C.addDays(today, -6);
+  const days = Array.from({ length: 7 }, (_, i) => C.addDays(start, i)), n = days.filter(d => L[C.iso(d)]).length, sum = days.reduce((a, d) => a + (L[C.iso(d)] || 0), 0);
+  const doneToday = !!L[t], left = first ? 6 - since : 0;
+  const msg = n === 0 ? 'Each day you breathe, one lotus opens. Today’s bud is waiting for you.'
+    : n >= 6 ? 'Your week is in full bloom. Your body feels it.'
+    : first ? (doneToday ? `Today’s lotus is open. ${left ? `${left} more ${left === 1 ? 'day' : 'days'} to fill your first week.` : 'Your first week is complete.'}` : 'Breathe once today and today’s lotus opens.')
+    : n >= 4 ? 'A steady rhythm. Keep it gentle.' : `${7 - n} more ${7 - n === 1 ? 'day' : 'days'} and your week is in full bloom.`;
   const R = 19, len = 2 * Math.PI * R;
-  // Opal pattern: a short title + one line on the left, a ring of the week on the right; minutes and sessions as one spec row
-  return `<div class="bwk bwk2 bwk3 ${n ? '' : 'zero'}" aria-label="You breathed on ${n} of the last 7 days">
-    <div class="bwk-top"><div class="bwk-h"><b>Your week of breath</b><p>${msg}</p></div>
-      <span class="bwk-ring" aria-hidden="true"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="${R}"/>${n ? `<circle class="on" cx="22" cy="22" r="${R}" stroke-dasharray="${(len * n / 7).toFixed(1)} ${len.toFixed(1)}"/>` : ''}</svg>${n ? `<b class="dotnum">${n}</b><small>of 7</small>` : '<img src="images/breath-bud.webp" alt="">'}</span></div>
-    <div class="bwk-pond">${days.map(d => { const k = C.iso(d), v = L[k] || 0; return `<span class="${k === t ? 'now' : ''} ${v ? 'on' : ''}"><i><img src="images/breath-${v ? 'bloom' : 'bud'}.webp" alt="" loading="lazy"></i><small>${k === t ? 'Today' : fmt(d, { weekday: 'narrow' })}</small></span>`; }).join('')}</div>
-    ${sum ? `<div class="bwk-row"><span>Sessions this week</span><b><span class="dotnum">${sum}</span></b></div>` : ''}</div>`;
+  const spot = d => { const k = C.iso(d), v = L[k] || 0, fut = k > t, now = k === t;
+    return `<span class="${now ? 'now' : ''} ${v ? 'on' : ''} ${fut ? 'fut' : ''}">${fut ? '<i class="bwk-fut" aria-hidden="true"></i>' : `<i><img src="images/breath-${v ? 'bloom' : 'bud'}.webp" alt="" loading="lazy"></i>`}<small>${now ? 'Today' : fmt(d, { weekday: 'narrow' })}</small></span>`; };
+  return `<div class="bwk bwk2 bwk3 ${n ? '' : 'zero'} ${first ? 'first' : ''}" aria-label="You breathed on ${n} of ${first ? 'the first 7 days' : 'the last 7 days'}">
+    <div class="bwk-top"><div class="bwk-h"><b>${first ? 'Your first week of breath' : 'Your week of breath'}</b><p>${msg}</p></div>
+      <span class="bwk-ring" aria-hidden="true"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="${R}"/>${n ? `<circle class="on" cx="22" cy="22" r="${R}" stroke-dasharray="${(len * n / 7).toFixed(1)} ${len.toFixed(1)}"/>` : ''}</svg><b class="dotnum">${n}</b><small>of 7</small></span></div>
+    <div class="bwk-pond">${days.map(spot).join('')}</div>
+    ${first || !n ? `<div class="bwk-key"><span><img src="images/breath-bud.webp" alt="">Not yet</span><span><img src="images/breath-bloom.webp" alt="">You breathed</span>${doneToday ? '' : `<button class="bwk-go" data-action="bzTop">Breathe now ${icon('chevR', 13, 2.2)}</button>`}</div>` : ''}
+    ${sum && !first ? `<div class="bwk-row"><span>Sessions this week</span><b><span class="dotnum">${sum}</span></b></div>` : ''}</div>`;
 }
 // Breathe page: the daily calm reminder, a bell with her time and a switch; stressed days get an extra nudge
 function calmRemCard() {
@@ -7143,7 +7152,6 @@ function viewBreathe(from) {
     </section>
     ${breathWeek()}
     ${calmRemCard()}
-    ${from === 'stress' && M.info ? cortisolSec(M.info) : ''}
     ${breathGuide(phase, k)}
     ${dayQuote()}
   </div>`;
@@ -8022,7 +8030,7 @@ function viewApothecary() {
   </div>`;
 }
 // The season's apothecary inside Superfoods: the same calm grid, superfoods first, warming herbs in the cold half of the year.
-const APO_CUT = { 'Ginger root': 'ginger', 'Cinnamon bark': 'cinnamon', 'Goji berries': 'goji', 'Red dates': 'red-dates', 'Raw honey': 'raw-honey', 'Pumpkin seeds': 'pumpkin-seeds', Pomegranate: 'pomegranate', Turmeric: 'turmeric', 'Ground flaxseed': 'flaxseed', 'Chia seeds': 'chia', Sauerkraut: 'sauerkraut', 'Raw sauerkraut': 'sauerkraut', 'Young nettle': 'nettle', 'Dandelion greens': 'dandelion', 'Broccoli sprouts': 'broccoli-sprouts', Blueberries: 'blueberries', 'Sesame seeds': 'tahini' };
+const APO_CUT = { 'Ginger root': 'ginger', 'Cinnamon bark': 'cinnamon', 'Goji berries': 'goji', 'Red dates': 'red-dates', 'Raw honey': 'raw-honey', 'Pumpkin seeds': 'pumpkin-seeds', Pomegranate: 'pomegranate', Turmeric: 'turmeric', 'Ground flaxseed': 'flaxseed', 'Chia seeds': 'chia', Sauerkraut: 'sauerkraut', 'Raw sauerkraut': 'sauerkraut', 'Young nettle': 'nettle', 'Dandelion greens': 'dandelion', 'Broccoli sprouts': 'broccoli-sprouts', Blueberries: 'blueberries', 'Sesame seeds': 'tahini', Elderberries: 'elderberries', Walnuts: 'walnuts' };
 function apoItems(sn) {
   // foods already shown in her phase superfoods above (Pumpkin seeds, Raw honey, Pomegranate…) are not repeated here
   const ph = (M.info && M.info.phase) || 'follicular', S = SUPERFOODS[ph] || {}, seen = new Set([...(S.list || []), ...(S.gems || [])].map(f => String(f[1]).toLowerCase()));
@@ -8042,9 +8050,9 @@ function apoInner() {
   const sn = apoSeason(), { sup, herbs } = apoItems(sn);
   const item = (x, i) => { const p = apoPic(x); return `<button class="sfc-i" data-action="apoPick" data-i="${i}" aria-expanded="false"><img class="${p.round ? 'rd' : ''}" src="${p.src}" alt="" loading="lazy" decoding="async"><b>${x.n}</b><small>${x.herb ? (x.nat === 'warm' ? 'Warming' : 'Neutral') : x.sub}</small>${x.herb ? '' : seasonAmt(x.n)}</button>`; };
   return `<section class="sfc apo2">
-      <header class="sfc-h"><small><i style="background:#6c823e"></i>${sn} · ${MONTHS[new Date().getMonth()]}</small><h3>${sn} apothecary</h3><p>${herbs.length ? 'Superfoods and warming herbs for immunity and warmth through the cold months.' : 'What nature makes best this season.'}</p></header>
-      <div class="sfc-gh"><b>Season superfoods</b><small>${sup.length} to eat now</small></div><div class="sfc-grid">${sup.map(item).join('')}</div>
+      <header class="sfc-h"><small><i style="background:#6c823e"></i>${sn} · ${MONTHS[new Date().getMonth()]}</small><h3>${sn} apothecary</h3><p>${herbs.length ? 'Warming roots, barks and berries for teas and broths, and the foods that ripen now.' : 'What nature makes best this season.'}</p></header>
       ${herbs.length ? herbBed(herbs) : ''}
+      <div class="sfc-gh"><b>${herbs.length ? 'Ripe this season' : 'Season superfoods'}</b><small>${sup.length} to eat now</small></div><div class="sfc-grid">${sup.map(item).join('')}</div>
       <div class="sfc-det" aria-live="polite" hidden></div>
       <footer class="sfc-f"><span>Small, food-sized amounts</span><span>Pregnant, breastfeeding or on medication? Ask your doctor first</span></footer>
     </section>`;
@@ -8102,8 +8110,8 @@ function herbBed(herbs) {
       <img src="images/herbs/${b[0]}.svg" alt="" draggable="false">${'<i class="hg-cr"></i>'.repeat(6)}
       <span class="hg-tag"><b>${b[1]}</b>${b[2] ? `<small>${b[2]}</small>` : ''}</span></button>`; };
   const rows = []; for (let i = 0; i < herbs.length; i += 3) rows.push(herbs.slice(i, i + 3).map((_, k) => i + k));
-  return `<div class="hbed-w hg-w"><div class="sfc-gh"><b>Herbs</b><small>From Chinese medicine, as teas and broths</small></div>
-    <div class="hg"><p class="hg-hint">pull one out of the ground <svg viewBox="0 0 40 24" aria-hidden="true"><path d="M4 20 C 14 20, 26 16, 32 6 M25 7 L33 5 L34 13"/></svg></p>
+  return `<div class="hbed-w hg-w">
+    <div class="hg"><p class="hg-hint">pull one out of the ground</p>
       ${rows.map(r => `<div class="hg-row">${r.map(plant).join('')}${HG_SOIL}</div>`).join('')}</div></div>`;
 }
 // The chapters of one herb, each a single small thing to look at.
@@ -8151,6 +8159,46 @@ function herbSheet(x, i) {
     <button class="hs-done" data-action="wsClose">${icon('leaf', 16, 2)} Plant it back</button>
     ${ph ? `<p class="hs-credit">${ph[1]}</p>` : ''}
   </div>`;
+}
+// Superfoods and season foods open the same way as the herbs (16 Nov 2026, her call): a sheet rises from below with the picture,
+// what it does, how much and how, a study where there is one, and the cautions, all on one page.
+const SF_PHOTO_CREDIT = { elderberries: 'Photo: “2023 08 Reifezeit Holunder”, Taubenflieger68, Wikimedia Commons, CC BY-SA 4.0.', walnuts: 'Photo: “W Nuss Gr 99”, Horst Frank, Wikimedia Commons, CC BY-SA 3.0.' };
+function sfSheetData(f, ph, gem) {
+  const [file, tag] = SF_CUT[f[1]] || [], st = SF_STUDY[f[1]], P = PHASES[ph] ? PHASES[ph].name : '';
+  return { src: file ? `images/sf/${file}.webp` : '', emoji: f[0], name: f[1], eyebrow: gem ? `Hidden gem · ${f[6]}` : `${P} phase superfood`, tag: gem ? '' : tag, why: f[2],
+    rows: [['bowl', 'How much', f[3]], ['leaf', 'Best in', `Your ${P.toLowerCase()} phase`]], study: st ? [st[2], `${st[0]} ${st[1]}`] : null, care: SF_CARE[f[1]] || '', file };
+}
+function apoSheetData(x) {
+  const p = apoPic(x), a = SEASON_AMT[x.n], file = APO_CUT[x.n];
+  return { src: p.src, round: p.round, name: x.n, eyebrow: `${apoSeason()} · ripe now`, tag: x.sub, why: x.why,
+    rows: [a && ['bowl', 'How much', `${a[0]} ${a[1]} a day`], ['cup', 'How', x.how]].filter(Boolean), study: null, care: x.warn || '', file };
+}
+function sfSheet(o) {
+  const head = (ic, t) => `<h3><span class="hs-ic">${icon(ic, 16, 2)}</span>${t}</h3>`;
+  const row = (ic, k, v) => `<div class="hs-row"><span>${icon(ic, 17, 1.9)}</span><div><b>${k}</b><small>${v}</small></div></div>`;
+  const credit = SF_PHOTO_CREDIT[o.file];
+  return `<div class="hs hs1 sfs">
+    <div class="hs-hero">
+      <svg class="o3-dood" viewBox="0 0 340 250" aria-hidden="true">${o3Spark('#f6c6d4', 46, 52, 0)}${o3Spark('#f1d58a', 296, 40, 1.1)}${o3Spark('#c9d6a8', 300, 200, 2)}${o3Spark('#f6c6d4', 34, 190, 1.5)}</svg>
+      <span class="tsh-glow" aria-hidden="true"></span>
+      ${o.src ? `<img class="hs-plant sf${o.round ? ' rd' : ''}" src="${o.src}" alt="${esc(o.name)}">` : `<span class="hs-plant sf emo" aria-hidden="true">${o.emoji || ''}</span>`}
+    </div>
+    <header class="hs-h"><small>${o.eyebrow}</small><h2>${o.name}</h2></header>
+    <section class="o3-note hs-note">${o.tag ? `<p class="hs-nat n"><i></i>${o.tag}</p>` : ''}<p class="o3-lead">${o.why}</p></section>
+    <section class="hs-card">${head('cup', 'How to take it')}<div class="hs-rows">${o.rows.map(r => row(...r)).join('')}</div></section>
+    ${o.study ? `<section class="hs-card hs-study">${head('book', 'What a study found')}<p>${o.study[0]}</p><p class="hs-cite">${o.study[1]}</p></section>` : ''}
+    ${o.care ? `<div class="tsh-warn hs-warn"><i>${icon('heart', 13, 2.2)}</i><span><b>Before you try</b> ${o.care}</span></div>` : ''}
+    <p class="hs-fine">Amounts are per day and food-sized. Pregnant, breastfeeding or on medication? Ask your doctor first.</p>
+    <button class="hs-done" data-action="wsClose">${icon('leaf', 16, 2)} Back in the basket</button>
+    ${credit ? `<p class="hs-credit">${credit}</p>` : ''}
+  </div>`;
+}
+// the tile hops up a little, then the sheet rises with it
+function sfOpen(el, o) {
+  if (el.classList.contains('lift')) return;
+  const go = () => { const sh = wsOpen(sfSheet(o), 'ws-herb ws-sf'); el.classList.remove('lift'); if (sh) { el.classList.add('out'); sh._onClose = () => el.classList.remove('out'); } };
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return go();
+  el.classList.add('lift'); setTimeout(go, 260);
 }
 function hsGo(to) {
   const el = document.querySelector('.ws .hs'); if (!el) return;
@@ -10156,6 +10204,7 @@ const actions = {
     sh.dataset.p = d.p; sh.innerHTML = cfSheet(d.p); sh.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   },
   apoPick: (d, el) => {
+    if (!el.closest('.sfc-det')) { const { sup, herbs } = apoItems(apoSeason()), x = [...sup, ...herbs][+d.i]; if (x && !x.herb) return sfOpen(el, apoSheetData(x)); }
     const box = el.closest('.sfc'), det = box.querySelector('.sfc-det'), { sup, herbs } = apoItems(apoSeason()), x = [...sup, ...herbs][+d.i]; if (!x) return;
     const off = () => box.querySelectorAll('.sfc-i.on').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); });
     if (el.closest('.sfc-det') || el.classList.contains('on')) { off(); det.hidden = true; return; }
@@ -10181,6 +10230,7 @@ const actions = {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return go();
     el.classList.add('pull'); setTimeout(go, 760);
   },
+  bzTop: () => { const b = document.querySelector('#view .bz'); b && b.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); },
   hsGo: d => { const el = document.querySelector('.ws .hs'); if (el) hsGo(d.to != null ? +d.to : +el.dataset.c + +d.d); },
 
   wkPick: (d, el) => { ui.wkSel = +d.w; const card = el.closest('.wk3'), r = REMEDIES.find(x => x.weeks); if (!card || !r) return render(); card.outerHTML = wkCard(r); },
@@ -10258,6 +10308,7 @@ const actions = {
   },
   sfPick: (d, el) => {
     const box = el.closest('.sfc'), ph = box.dataset.phase, g = d.g != null ? SUPERFOODS[ph].gems[+d.g] : null, f = g ? [g[0], g[1], g[3], `${g[4]}`, null, false, g[2]] : SUPERFOODS[ph].list.filter(x => !(x[5] && myDiet() === 'vegan'))[+d.i], det = box.querySelector('.sfc-det');
+    if (f) return sfOpen(el, sfSheetData(f, ph, !!g));
     const was = el.classList.contains('on'); box.querySelectorAll('.sfc-i').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); });
     if (was) { det.hidden = true; return; }
     el.classList.add('on'); el.setAttribute('aria-expanded', 'true');
