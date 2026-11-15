@@ -14200,7 +14200,7 @@ html .view .bwx-hint { display: inline-flex; align-items: center; gap: 4px; widt
 
 /* Rive date ticket on her phone: the canvas sits over the ticket box (artboard 400x420, ticket 340x170 centred at 200,250) */
 .tk-vt .tk-rv { position: absolute; left: -8.82%; top: 0; width: 117.65%; aspect-ratio: 400 / 420; transform: translateY(-39.3%); pointer-events: none; z-index: 5; }
-.tk-vt.rv-wait .vt, .tk-vt.rv-wait .tk-glint { visibility: hidden; animation: none; }
+.tk-vt.rv-wait > .vt, .tk-vt.rv-wait > .tk-glint { visibility: hidden; animation: none; }
 .tk-vt.rv-on { filter: none; }
 .onb .pg-what.pg-what2 { background: rgba(255,255,255,.9) !important; }
 .onb .pg-what2, .onb .pg-what2 span { color: #304023 !important; text-shadow: none !important; font-weight: 400 !important; }
@@ -14209,3 +14209,22 @@ html .view .bwx-hint { display: inline-flex; align-items: center; gap: 4px; widt
 html .hxt-now span, html .hxd-amt { font-family: var(--font); font-size: 12px; font-weight: 500; letter-spacing: 0; color: rgba(32,48,26,.66) !important; }
 html .hxd-amt { font-size: 13px; }
 .hxn { font-style: normal; font-family: var(--dot); font-weight: 900; font-size: 1.18em; color: #20301a; }
+
+/* the date ticket's motion (js/ticketmotion.js): a front and a back copy, shade, envelope and hearts, driven frame by frame */
+.tkm { pointer-events: none; overflow: visible; }
+.tkm-t { position: absolute; inset: 0; transform-origin: 50% 50%; will-change: transform; }
+.tkm-sh { position: absolute; left: 7px; right: 7px; top: 6px; bottom: 6px; border-radius: 10px; background: rgba(107,58,72,.34); filter: blur(12px); }
+.tkm-lift { position: absolute; inset: 0; }
+.tkm-face { position: absolute; inset: 0; overflow: hidden; border-radius: 4px; }
+.tkm .vt { animation: none !important; transform: none !important; transform-style: flat; margin: 0; }
+.tkm-front .vt-back { display: none; }
+.tkm-back .vt-front { visibility: hidden; }
+.tkm-back .vt-back { transform: none !important; -webkit-backface-visibility: visible; backface-visibility: visible; }
+.tkm .vt-stamp { display: none !important; }
+.tkm-shade { position: absolute; inset: 0; opacity: 0; background: linear-gradient(90deg, rgba(90,58,64,.34), rgba(90,58,64,.12) 50%, rgba(90,58,64,.3)); }
+.tkm-glint { position: absolute; top: -10%; bottom: -10%; left: 50%; width: 46%; margin-left: -23%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.55) 50%, transparent); mix-blend-mode: soft-light; transform: translateX(-400px); }
+.tkm-env { position: absolute; inset: 0; opacity: 0; overflow: visible; }
+.tkm-h { position: absolute; left: 0; top: 0; opacity: 0; transform-origin: 50% 50%; filter: drop-shadow(0 2px 3px rgba(150,60,90,.25)); }
+.tk-vt.tkm-on { filter: none; }
+.tk-vt.tkm-done > .vt { animation: none; }
+.tk-vt.tkm-done > .tk-glint { display: none; }

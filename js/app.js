@@ -7226,12 +7226,11 @@ function showTicket0(name, from, x) {
     ${from ? `<button class="btn btn-love btn-block" data-action="openLove" data-id="${from.id}">${icon('heart', 16)} Say yes with love</button>` : ''}
     <button class="btn btn-ghost btn-block" data-action="sigClose">Close</button></div>`;
   $app.appendChild(el);
-  { // the Rive ticket drops in on its "With love" back, lands and turns over; the CSS ticket stays as the fallback
+  { // the ticket drops in on its "With love" back, lands with a hop and turns over (motion from the Rive scene); CSS version as fallback
     const box = el.querySelector('.tk-vt');
     if (box && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      box.classList.add('rv-wait'); const cv = document.createElement('canvas'); cv.className = 'tk-rv'; box.appendChild(cv);
-      import('./riveticket.js').then(RT => RT.play(cv, vtData(box), 'arrive', 3000)).catch(() => null)
-        .then(rv => { if (rv && el.isConnected) { box.classList.add('rv-on'); el._rv = rv; } else { cv.remove(); box.classList.remove('rv-wait'); } });
+      box.classList.add('rv-wait');
+      import('./ticketmotion.js').then(M => M.arrive(box)).catch(() => false).then(ok => { if (ok) box.classList.add('tkm-done'); box.classList.remove('rv-wait'); });
     }
   }
   setTimeout(() => { const c = el.querySelector('.tk-vt'); if (!c) return; const r = c.getBoundingClientRect(); heartBurst(r.left + r.width / 2, r.top + r.height / 2); }, 1500);
@@ -8708,26 +8707,10 @@ function vtTicket({ to, from, plan, when, note }) {
     <div class="vt-face vt-back" aria-hidden="true"><svg class="vt-seal" viewBox="0 30 140 90">${VT_DEFS}${vtLotus(false)}</svg><b>With love</b><span>from ${esc(from)}</span></div></div>`;
 }
 // The ticket flies: a copy lifts off the card, tilts, and sails up and away to the top right, leaving a trail of hearts.
-// what the HTML ticket shows, handed to the Rive ticket so both say the same
-function vtData(box) {
-  const q = s => (box.querySelector(s)?.textContent || '').trim(), ln = [...box.querySelectorAll('.vt-lines span')].map(x => x.textContent.split(':').slice(1).join(':').trim());
-  return { title: q('.vt-h em'), plan: q('.vt-plan'), name: ln[0] || '', when: ln[1] || '', from: ln[2] || '', date: q('.vt-adm span') };
-}
-// his tap: the Rive ticket (squeeze, turn, fold into an envelope, fly off with hearts) over the real one; false if Rive can't play
-async function ticketFlyRive(el) {
-  const vt = el.querySelector('.vt'); if (!vt) return false;
-  const r = vt.getBoundingClientRect(), cw = r.width * 400 / 340, ch = cw * 420 / 400, cv = document.createElement('canvas');
-  Object.assign(cv.style, { position: 'fixed', left: (r.left + r.width / 2 - cw / 2) + 'px', top: (r.top + r.height / 2 - ch * 250 / 420) + 'px', width: cw + 'px', height: ch + 'px', zIndex: 90, pointerEvents: 'none' });
-  document.body.appendChild(cv);
-  const RT = await import('./riveticket.js').catch(() => null), rv = RT && await RT.play(cv, vtData(vt), 'send', 4000);
-  if (!rv) { cv.remove(); return false; }
-  el.classList.add('gone');
-  await new Promise(res => setTimeout(res, 2550));
-  try { rv.cleanup(); } catch {} cv.remove(); return true;
-}
 async function ticketFly(el) {
   el.classList.add('flying');
-  if (!matchMedia('(prefers-reduced-motion: reduce)').matches && await ticketFlyRive(el)) return true;
+  // the motion from the Rive scene, played by the app itself (squeeze, turn, fold into an envelope, fly off with hearts)
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) { const M = await import('./ticketmotion.js').catch(() => null); if (M && await M.send(el).catch(() => false)) return true; el.classList.remove('gone'); }
   const r = el.getBoundingClientRect(), fly = el.cloneNode(true);
   fly.className = el.className + ' tk-fly'; fly.removeAttribute('data-action');
   Object.assign(fly.style, { position: 'fixed', left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', margin: 0, zIndex: 90, pointerEvents: 'none' });
@@ -9571,7 +9554,7 @@ const actions = {
   calEdit: () => { ui.calEdit = !ui.calEdit; if (!ui.calEdit) ui.calFix = null; if (!ui.calEdit) toast('Saved · predictions updated'); calRefresh(null, true); },
   pinPartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (!p) return; p.pin = !p.pin; save(); toast(p.pin ? `${p.n} pinned to your home screen` : 'Unpinned'); render(); },
   openLove: d => { document.querySelector('.sig-pop')?.remove(); ui.loveFor = d.id; render(); if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().catch(() => {}); },
-  sigClose: () => { const p = document.querySelector('.sig-pop'); try { p?._rv?.cleanup(); } catch {} p?.remove(); },
+  sigClose: () => document.querySelector('.sig-pop')?.remove(),
   loveClose: () => { ui.loveFor = null; render(); },
   noop: () => {},
   sendLove: async (d, el) => {
