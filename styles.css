@@ -15723,3 +15723,16 @@ html .mfp-hero .mfp-t em { opacity: 1; color: rgba(32,48,26,.62); }
 /* Herb sheet heroes are real cut-out photos for every herb (16 Nov 2026); only the long astragalus roots keep their tilt */
 html .hs-plant.real { width: auto; height: auto; max-width: 84%; max-height: 220px; object-fit: contain; rotate: -3deg; margin-top: 14px; }
 html .hs-plant.real[src*="astragalus"] { width: 340px; max-width: 92%; max-height: none; rotate: -16deg; margin-top: 10px; }
+
+/* For your looks (16 Nov 2026): two emoji chips and one plain line on every herb and food sheet */
+.hs-looks { background: #fdf3f5; }
+.hs-looks .hs-ic { color: #b04f6c; border-color: #b04f6c; }
+.hs-looks .lk-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.hs-looks .lk { display: flex; align-items: center; gap: 9px; padding: 9px 10px; border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 1px rgba(176,79,108,.12); min-width: 0; }
+.hs-looks .lk i { flex: none; width: 32px; height: 32px; display: grid; place-items: center; border-radius: 11px; background: #fbe4ea; font-style: normal; }
+.hs-looks .lk i .emo { font-size: 18px; line-height: 1; }
+.hs-looks .lk b { font: 500 13.5px/1.2 var(--font); color: #20301a; }
+.hs-looks p { margin: 0; font-size: 13.5px; line-height: 1.45; color: rgba(32,48,26,.82); }
+/* he shou wu: the slices run past the photo's edges, so it sits whole in a white photo frame instead of a cut-out */
+html .hs-plant.real[src*="-photo."] { box-sizing: border-box; max-width: 78%; max-height: 206px; padding: 7px; background: #fff; border-radius: 22px;
+  rotate: -3deg; filter: none; box-shadow: 0 14px 26px -14px rgba(70,50,30,.38), 0 0 0 1px rgba(70,50,30,.06); }

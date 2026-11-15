@@ -8223,7 +8223,7 @@ const HERB_PHOTO = { astragalus: ['images/herbs/astragalus-real.webp', 'Root pho
   clove: ['images/herbs/clove-real.webp', 'Photo: Jacek Halicki, Wikimedia Commons, CC BY-SA 4.0, cut out.'],
   chaga: ['images/herbs/chaga-real.webp', 'Photo: JBouchez, Wikimedia Commons, CC BY-SA 4.0, cut out.'],
   reishi: ['images/herbs/reishi-real.webp', 'Photo: Rev. Daniel Elis Axelrod, Wikimedia Commons, CC0.'],
-  'he-shou-wu': ['images/herbs/he-shou-wu-real.webp', 'Photo: Badagnani, Wikimedia Commons, CC BY 3.0, cut out.'],
+  'he-shou-wu': ['images/herbs/he-shou-wu-photo.webp', 'Photo: Badagnani, Wikimedia Commons, CC BY 3.0.'],
   ginger: ['images/sf/ginger.webp', ''], cinnamon: ['images/sf/cinnamon.webp', ''], goji: ['images/sf/goji.webp', ''], 'red-dates': ['images/sf/red-dates.webp', ''] };
 const herbPic = k => (HERB_REAL[k] ? { src: `images/sf/${HERB_REAL[k]}.webp`, real: true } : { src: `images/herbs/${k}.svg`, real: false });
 // Herbs grow in a little garden bed: leaves above the soil, roots hidden. Tap one and it wiggles, pops out with soil crumbs,
@@ -8263,6 +8263,74 @@ function hsChapter(C, c) {
   const [ic, t, html] = C[c];
   return `<div class="hs-ch"><header><span class="hs-ic">${icon(ic, 18, 2)}</span><h3>${t}</h3><small>${c + 1} of ${C.length}</small></header>${html}</div>`;
 }
+// What each herb and food can do for how she looks (16 Nov 2026, her call): two quick chips and one plain line, shown on every herb
+// and food sheet right under the name. Kept modest: "can", "helps", food amounts.
+const LOOK_E = { skin: '✨', glow: '🌸', hair: '💇‍♀️', eyes: '👀', nails: '💅', puff: '🫧', breath: '🌿', sleep: '😴', lips: '💋' };
+const LOOKS = {
+  astragalus: ['In Chinese medicine it’s the root for a bright face when you’re run down, so you look rested again.', 'glow:Rested face', 'skin:Brighter skin'],
+  'red dates': ['Chinese medicine’s food for Blood: rosy cheeks and soft, shiny hair.', 'glow:Rosy cheeks', 'hair:Shiny hair'],
+  ginger: ['Warms your circulation, so pale, cold skin gets a soft flush and a bloated belly settles.', 'glow:Soft flush', 'puff:Less bloated'],
+  clove: ['A clove in your tea keeps your breath fresh. Never put the oil on skin undiluted, it burns.', 'breath:Fresh breath', 'glow:Warm hands'],
+  cinnamon: ['Steadier blood sugar means fewer sugar crashes, which is often kinder to your skin.', 'skin:Steadier skin', 'glow:Less sugar puff'],
+  goji: ['Full of zeaxanthin, the orange pigment that guards your eyes, plus vitamin C for collagen.', 'eyes:Bright eyes', 'skin:Collagen'],
+  reishi: ['China’s old “beauty mushroom”: deeper sleep shows as softer under-eyes and calmer skin.', 'sleep:Rested eyes', 'skin:Calmer skin'],
+  chaga: ['Packed with antioxidants that help skin cope with sun and stress. A cup now and then.', 'skin:Antioxidants', 'glow:Even tone'],
+  'he shou wu': ['The classic Chinese herb for dark, thick hair, but only ever with a practitioner.', 'hair:Dark, thick hair', 'glow:Vitality'],
+  'blackstrap molasses': ['Iron and minerals: low iron shows as pale skin, dark circles and hair that sheds.', 'glow:Less pale', 'hair:Less shedding'],
+  turmeric: ['Calms inflammation, which can show on your face as redness and puffiness.', 'skin:Less redness', 'puff:Less puffy'],
+  nettle: ['Rich in iron, silica and minerals, the building blocks of strong hair and nails.', 'hair:Strong hair', 'nails:Stronger nails'],
+  'black sesame': ['In Chinese medicine the food for dark, glossy hair; its good fats soften dry skin.', 'hair:Glossy hair', 'skin:Softer skin'],
+  baobab: ['Very high in vitamin C, which your skin needs to build collagen.', 'skin:Collagen', 'glow:Even tone'],
+  moringa: ['Iron, vitamin A and C in one leaf: a brighter, less tired look.', 'glow:Less tired look', 'hair:Hair'],
+  'broccoli sprouts': ['Sulforaphane switches on your skin’s own antioxidant shield and helps your liver clear used estrogen.', 'skin:Calmer skin', 'glow:Own sun shield'],
+  'ground flaxseed': ['Omega-3 and lignans: softer, less dry skin and steadier hormones behind it.', 'skin:Softer skin', 'hair:Glossy hair'],
+  'pumpkin seeds': ['Zinc helps skin heal, so spots fade faster, and it feeds strong nails.', 'skin:Fewer spots', 'nails:Strong nails'],
+  sauerkraut: ['A happy gut often shows as calmer skin and a flatter belly.', 'skin:Calmer skin', 'puff:Less bloated'],
+  parsley: ['Gently moves water and freshens breath, with plenty of vitamin C.', 'puff:Less puffy', 'breath:Fresh breath'],
+  'raw honey': ['Draws in moisture: a dab soothes dry lips and dry patches.', 'lips:Soft lips', 'skin:Soothed skin'],
+  'black seed oil': ['Studied for calmer, less inflamed skin and a soft sheen.', 'skin:Calmer skin', 'glow:Soft sheen'],
+  'dandelion greens': ['Bitter greens get digestion going and gently move water.', 'puff:Less puffy', 'skin:Clearer skin'],
+  'sun-dried shiitake': ['Sun-dried caps carry vitamin D; low vitamin D is common when hair thins.', 'hair:Fuller hair', 'glow:Vitamin D'],
+  pomegranate: ['Its polyphenols help skin cope with sun, for a rosy, even glow.', 'glow:Rosy glow', 'skin:Sun defence'],
+  'wild blueberries': ['Deep blue anthocyanins guard your collagen and your eyes.', 'skin:Collagen', 'eyes:Bright eyes'],
+  'chia seeds': ['Omega-3 and water-holding fibre: plumper skin and easier digestion.', 'skin:Plump skin', 'puff:Flatter belly'],
+  'brazil nuts': ['Selenium feeds your thyroid, which shows in hair, skin and nails. Two nuts a day, no more.', 'hair:Hair', 'nails:Nails'],
+  'fresh mint': ['Settles a bloated belly and freshens your breath.', 'puff:Flatter belly', 'breath:Fresh breath'],
+  coriander: ['A light, cooling herb that eases bloating.', 'puff:Less bloated', 'skin:Fresh skin'],
+  'bissap (hibiscus)': ['Ruby anthocyanins and vitamin C, which your skin needs for collagen.', 'glow:Rosy glow', 'skin:Collagen'],
+  'extra virgin olive oil': ['Good fats and vitamin E keep skin supple and hair glossy.', 'skin:Supple skin', 'hair:Glossy hair'],
+  'dulse seaweed': ['Iodine for your thyroid: a slow thyroid shows as dry skin and dull hair. A pinch is enough.', 'hair:Shinier hair', 'skin:Less dry'],
+  'tiger nuts': ['Prebiotic fibre for a calm gut and vitamin E for your skin.', 'puff:Easy digestion', 'skin:Vitamin E'],
+  'raw cacao': ['Flavanols bring more blood flow to your skin, so it looks fresher.', 'glow:Fresher skin', 'skin:Sun defence'],
+  'sesame seeds and tahini': ['Zinc and good fats help skin repair and stay soft.', 'skin:Softer skin', 'hair:Hair'],
+  'sunflower seeds': ['Vitamin E protects your skin; B6 can ease breakouts before your period.', 'skin:Soft skin', 'glow:Calmer PMS skin'],
+  'fennel seeds': ['Eases bloating fast and freshens your breath after meals.', 'puff:Flatter belly', 'breath:Fresh breath'],
+  carob: ['Sweet like cacao but caffeine-free, so it never steals your beauty sleep.', 'sleep:Beauty sleep', 'nails:Calcium'],
+  rooibos: ['Caffeine-free antioxidants; cooled, it makes a soothing face rinse.', 'skin:Calmer skin', 'sleep:Evening friendly'],
+  'dried longan': ['Chinese medicine’s sweet fruit for Blood and sleep: a rested, rosy face.', 'sleep:Rested eyes', 'glow:Rosy glow'],
+  'medjool dates': ['Potassium, iron and fibre: steady energy that shows as a less tired face.', 'glow:Less tired look', 'puff:Smooth digestion'],
+  'sea buckthorn': ['Rare omega-7 and vitamin C: dewy, nourished skin.', 'skin:Dewy skin', 'glow:Collagen'],
+  rosehips: ['One of the richest vitamin C foods, the base of firm skin.', 'skin:Collagen', 'glow:Even tone'],
+  elderberries: ['Dark berries full of antioxidants for skin and defences.', 'skin:Antioxidants', 'glow:Fewer sick days'],
+  walnuts: ['Omega-3 and vitamin E for supple skin and glossy hair.', 'skin:Supple skin', 'hair:Glossy hair'],
+  'wild garlic': ['Sulphur greens that help your liver clear, often shown as clearer skin.', 'skin:Clearer skin', 'glow:Fresh look'],
+  watercress: ['Vitamin A and C in a peppery leaf for a bright complexion.', 'skin:Bright skin', 'glow:Even tone'],
+  raspberries: ['Vitamin C for collagen and ellagic acid for sun-tired skin.', 'skin:Collagen', 'glow:Rosy glow'],
+  cherries: ['Natural melatonin for deeper sleep: softer under-eyes.', 'sleep:Deeper sleep', 'eyes:Rested eyes'],
+  'ripe tomatoes': ['Lycopene helps your skin cope with the sun, best with olive oil.', 'skin:Sun defence', 'glow:Warm glow'],
+  watermelon: ['Mostly water plus lycopene: hydrated, fresh skin.', 'skin:Hydrated skin', 'puff:Less puffy'],
+  blackberries: ['Vitamin C and dark antioxidants for firm skin.', 'skin:Collagen', 'glow:Rosy glow'],
+  figs: ['Fibre and calcium for smooth digestion and strong nails.', 'puff:Smooth digestion', 'nails:Strong nails'],
+  squash: ['Beta-carotene gives skin a soft, warm glow.', 'glow:Warm glow', 'skin:Vitamin A'],
+};
+const LOOK_ALIAS = { 'ginger root': 'ginger', 'cinnamon bark': 'cinnamon', 'goji berries': 'goji', 'turmeric with black pepper': 'turmeric', 'raw sauerkraut': 'sauerkraut',
+  'young nettle': 'nettle', blueberries: 'wild blueberries', 'sesame seeds': 'sesame seeds and tahini' };
+function looksFor(n) { const k = String(n || '').toLowerCase(); return LOOKS[LOOK_ALIAS[k] || k]; }
+function looksCard(n) {
+  const L = looksFor(n); if (!L) return '';
+  const chips = L.slice(1).map(c => { const [a, t] = c.split(':'); return `<span class="lk"><i>${emoRaw(LOOK_E[a] || '✨')}</i><b>${t}</b></span>`; }).join('');
+  return `<section class="hs-card hs-looks"><h3><span class="hs-ic">${icon('spark', 16, 2)}</span>For your looks</h3><div class="lk-row">${chips}</div><p>${L[0]}</p></section>`;
+}
 // One page with everything (16 Nov 2026, her call): the note to meet it, then How to take it, Buy the best, a quick test and
 // the glow tip side by side, the study and the cautions, each a small card with its own icon; Plant it back closes.
 function herbSheet(x, i) {
@@ -8270,7 +8338,7 @@ function herbSheet(x, i) {
   const H = HERB_SPEC[x.n] || {}, Y = HERB_BUY[b[0]] || {}, S = H.study, cares = [x.warn, H.care].filter(Boolean);
   const head = (ic, t) => `<h3><span class="hs-ic">${icon(ic, 16, 2)}</span>${t}</h3>`;
   const row = (ic, k, v) => `<div class="hs-row"><span>${icon(ic, 17, 1.9)}</span><div><b>${k}</b><small>${v}</small></div></div>`;
-  const duo = [Y.test && ['flask', 'A quick test', Y.test, 't'], Y.glow && ['spark', 'For your glow', Y.glow, 'g']].filter(Boolean);
+  const duo = [Y.test && ['flask', 'A quick test', Y.test, 't']].filter(Boolean);
   return `<div class="hs hs1" data-i="${i}">
     <div class="hs-hero">
       <svg class="o3-dood" viewBox="0 0 340 250" aria-hidden="true">${o3Spark('#f6c6d4', 46, 52, 0)}${o3Spark('#f1d58a', 296, 40, 1.1)}${o3Spark('#c9d6a8', 300, 200, 2)}${o3Spark('#f6c6d4', 34, 190, 1.5)}</svg>
@@ -8280,6 +8348,7 @@ function herbSheet(x, i) {
       ${real && (!ph || ph[0] !== `images/sf/${real}.webp`) ? `<figure class="hs-pol"><img src="images/sf/${real}.webp" alt=""><figcaption>in your kitchen</figcaption></figure>` : ''}
     </div>
     <header class="hs-h"><small>${b[2] ? `<span class="hs-zh">${b[2]}</span>` : ''}${x.sub || ''}</small><h2>${b[1]}</h2></header>
+    ${looksCard(b[1])}
     <section class="o3-note hs-note"><p class="hs-nat ${x.nat === 'warm' ? 'w' : 'n'}"><i></i>${x.nat === 'warm' ? 'Warming' : 'Neutral'} in Chinese medicine</p>
       <p class="o3-lead">${x.why}</p><div class="hs-good">${(b[3] || []).map((t, k) => `<span style="--k:${k}">${t}</span>`).join('')}</div></section>
     <section class="hs-card">${head('cup', 'How to take it')}<div class="hs-rows">${H.dose ? row('bowl', 'How much', H.dose) : ''}${row('cup', 'How', x.how)}</div></section>
@@ -8315,6 +8384,7 @@ function sfSheet(o) {
       ${o.src ? `<img class="hs-plant sf${o.round ? ' rd' : ''}" src="${o.src}" alt="${esc(o.name)}">` : `<span class="hs-plant sf emo" aria-hidden="true">${o.emoji || ''}</span>`}
     </div>
     <header class="hs-h"><small>${o.eyebrow}</small><h2>${o.name}</h2></header>
+    ${looksCard(o.name)}
     <section class="o3-note hs-note">${o.tag ? `<p class="hs-nat n"><i></i>${o.tag}</p>` : ''}<p class="o3-lead">${o.why}</p></section>
     <section class="hs-card">${head('cup', 'How to take it')}<div class="hs-rows">${o.rows.map(r => row(...r)).join('')}</div></section>
     ${o.study ? `<section class="hs-card hs-study">${head('book', 'What a study found')}<p>${o.study[0]}</p><p class="hs-cite">${o.study[1]}</p></section>` : ''}
