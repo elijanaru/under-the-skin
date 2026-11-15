@@ -14265,3 +14265,55 @@ html .view .cal-head .icon-btn svg { stroke: #20301a !important; }
 @keyframes pcLockSway { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(6deg); } 75% { transform: rotate(-6deg); } }
 .onb.still .pc-cl, .onb.still .pc-pl { animation: none; }
 @media (prefers-reduced-motion: reduce) { .pc-cl, .pc-pl, .pc-pl2 { animation: none !important; } }
+
+/* ── Date tickets: one design per phase (period keeps the blush lotus) ── */
+html .vt[data-ph] { color: var(--vt-ink); }
+html .vt[data-ph] .vt-face::before { background: radial-gradient(120% 80% at 82% 12%, rgba(255,255,255,.34), transparent 60%), radial-gradient(90% 70% at 10% 100%, var(--vt-shade), transparent 70%), linear-gradient(135deg, var(--vt-a), var(--vt-b)); }
+html .vt[data-ph] .vt-stars, html .vt[data-ph] .vt-note, html .vt[data-ph] .vt-plan { color: var(--vt-ink); }
+html .vt[data-ph] .vt-plan { opacity: .9; }
+html .vt[data-ph] .vt-stub { border-right-color: color-mix(in srgb, var(--vt-ink) 70%, transparent); }
+html .vt[data-ph] .vt-h em { color: var(--vt-title, var(--vt-ink)); text-shadow: 0 0 10px var(--vt-glow), 0 0 3px var(--vt-glow); }
+html .vt[data-ph] .vt-lines span { text-shadow: 0 0 6px var(--vt-glow); }
+html .vt[data-ph="menstrual"] { --vt-a: #efcfd0; --vt-b: #e8bfc1; --vt-ink: #4b3426; --vt-glow: rgba(239,207,208,.95); --vt-shade: rgba(176,92,104,.12); }
+html .vt[data-ph="follicular"] { --vt-a: #dfe8cc; --vt-b: #cbd9b2; --vt-ink: #2f3d22; --vt-title: #3f5a26; --vt-glow: rgba(223,232,204,.95); --vt-shade: rgba(90,120,60,.14); }
+html .vt[data-ph="ovulatory"] { --vt-a: #f6e3b4; --vt-b: #edcf8c; --vt-ink: #4a3412; --vt-title: #6b4a12; --vt-glow: rgba(246,227,180,.95); --vt-shade: rgba(170,120,40,.14); }
+html .vt[data-ph="luteal"] { --vt-a: #e6dcef; --vt-b: #d4c5e4; --vt-ink: #3a2a4a; --vt-title: #4e3768; --vt-glow: rgba(230,220,239,.95); --vt-shade: rgba(110,80,150,.14); }
+.vt .vt-flame { transform-box: fill-box; transform-origin: 50% 100%; animation: vtFlick 2.4s ease-in-out infinite; }
+.vt .vt-glow { animation: vtGlow 2.4s ease-in-out infinite; }
+@keyframes vtFlick { 0%, 100% { transform: scale(1, 1) rotate(0); } 30% { transform: scale(.94, 1.06) rotate(-3deg); } 60% { transform: scale(1.04, .95) rotate(2deg); } }
+@keyframes vtGlow { 0%, 100% { opacity: .85; } 50% { opacity: 1; } }
+
+/* ── Her ticket buttons: a glossy rose Say yes and a pearl Close, with tiny hearts and blossoms in the corners ── */
+.tk-in .tkb { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; min-height: 56px; padding: 0 22px; border: 0; border-radius: 999px; cursor: pointer;
+  font: 600 16.5px/1 Outfit, sans-serif; letter-spacing: -.005em; overflow: visible; isolation: isolate; -webkit-tap-highlight-color: transparent; transition: transform .25s cubic-bezier(.3,1.4,.5,1); }
+.tk-in .tkb:active { transform: scale(.96); }
+.tkb::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; }
+.tkb::after { content: ""; position: absolute; left: 14px; right: 14px; top: 3px; height: 46%; z-index: 0; border-radius: 999px; background: linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,0)); pointer-events: none; }
+.tkb-t { position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 9px; }
+.tkb-t svg { width: 17px; height: 17px; }
+.tkb-shine { position: absolute; inset: 0; z-index: 1; border-radius: inherit; overflow: hidden; pointer-events: none; }
+.tkb-shine::before { content: ""; position: absolute; top: -20%; bottom: -20%; left: -40%; width: 28%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.7), transparent); transform: skewX(-18deg); animation: tkbShine 4.2s ease-in-out 2.4s infinite; }
+@keyframes tkbShine { 0% { left: -40%; } 38%, 100% { left: 120%; } }
+.tk-in .tkb-yes { margin-top: 24px; color: #fff; text-shadow: 0 1px 2px rgba(120,20,50,.35); }
+.tkb-yes::before { background: linear-gradient(180deg, #f38aa8 0%, #e45d86 52%, #c9406b 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -3px 8px rgba(140,20,60,.35), 0 14px 30px -10px rgba(214,64,110,.6), 0 0 0 3px rgba(255,255,255,.55); }
+.tk-in .tkb-close { margin-top: 12px; color: #20301a; }
+.tkb-close::before { background: linear-gradient(180deg, #ffffff, #f8eef2 60%, #f1e2e8);
+  box-shadow: inset 0 1px 0 #fff, inset 0 -2px 6px rgba(200,140,160,.25), 0 10px 22px -12px rgba(120,60,80,.45), 0 0 0 1px rgba(230,128,156,.25); }
+.tkb-close::after { opacity: .9; }
+.tkb-close .tkb-shine::before { background: linear-gradient(100deg, transparent, rgba(255,214,226,.9), transparent); animation-delay: 3.1s; }
+.tkb-c { position: absolute; z-index: 3; width: 16px; height: 16px; pointer-events: none; animation: tkbBob 3s ease-in-out infinite; }
+.tkb-c svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 2px 3px rgba(150,40,80,.3)); }
+.tkb-c.c1 { left: 12px; top: -7px; transform: rotate(-18deg); }
+.tkb-c.c2 { right: 26px; top: -9px; width: 12px; height: 12px; animation-delay: .8s; }
+.tkb-c.c3 { left: 34px; bottom: -7px; width: 11px; height: 11px; animation-delay: 1.5s; }
+.tkb-c.c4 { right: 10px; bottom: -6px; transform: rotate(16deg); animation-delay: 2.2s; }
+.tkb-yes .tkb-c svg path { stroke: #e45d86; stroke-width: 1.4; }
+@keyframes tkbBob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -3px; } }
+.tk-in .tkb { animation: tkbIn .7s cubic-bezier(.3,1.4,.5,1) 2.3s both; }
+.tk-in .tkb-close { animation-delay: 2.45s; }
+@keyframes tkbIn { from { opacity: 0; transform: translateY(14px) scale(.92); } to { opacity: 1; transform: none; } }
+.tk-in .tkb-yes::before { animation: tkbPulse 2.6s ease-in-out 3.2s infinite; }
+@keyframes tkbPulse { 0%, 100% { box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -3px 8px rgba(140,20,60,.35), 0 14px 30px -10px rgba(214,64,110,.6), 0 0 0 3px rgba(255,255,255,.55); }
+  50% { box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -3px 8px rgba(140,20,60,.35), 0 18px 36px -10px rgba(214,64,110,.75), 0 0 0 6px rgba(255,255,255,.35); } }
+@media (prefers-reduced-motion: reduce) { .tkb-shine::before, .tkb-c, .tk-in .tkb, .tk-in .tkb-yes::before, .vt .vt-flame, .vt .vt-glow { animation: none !important; } }

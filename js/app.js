@@ -7236,12 +7236,12 @@ function handleSignal(m) {
   const sig = SIGNALS.find(x => x.k === d.k); if (!sig) return;
   const from = (state.partners || []).find(x => x.i === d.fi);
   (state.sigLog = state.sigLog || []).unshift({ k: d.k, f: d.f, at: (m.time || Date.now() / 1000) * 1000, pid: from?.id }); state.sigLog = state.sigLog.slice(0, 30); save();
-  showSignal(sig, d.f, from, d.x);
+  showSignal(sig, d.f, from, d.x, d);
   if (document.hidden && 'Notification' in window && Notification.permission === 'granted') navigator.serviceWorker?.ready.then(r => r.showNotification(`${sig.g} ${d.f}`, { body: `${d.f} ${sig.s}`, icon: 'icons/icon-192.png', tag: 'sig-' + m.id })).catch(() => {});
 }
-function showSignal(sig, name, from, x) {
+function showSignal(sig, name, from, x, meta) {
   document.querySelector('.sig-pop')?.remove();
-  if (sig.k === 'date' && x) return showTicket(name, from, x);
+  if (sig.k === 'date' && x) return showTicket(name, from, x, meta);
   const isLove = LOVE.includes(sig);
   const hearts = Array.from({ length: 18 }, (_, i) => `<i style="left:${(i * 37) % 100}%;animation-delay:${(i * .3) % 4}s;animation-duration:${5 + (i % 4)}s;width:${14 + (i * 7) % 18}px;height:${14 + (i * 7) % 18}px">${HEART(i % 3 === 1 ? '#fff' : isLove ? '#ff2d4b' : 'hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)')}</i>`).join('');
   const el = document.createElement('div'); el.className = `sig-pop ${isLove ? 'love' : 'care'}`;
@@ -7261,16 +7261,17 @@ function afterSplash(fn) {
   const mo = new MutationObserver(() => { if (sp.classList.contains('out') || !sp.isConnected) go(); });
   mo.observe(sp, { attributes: true, attributeFilter: ['class'] }); mo.observe(document.body, { childList: true }); setTimeout(go, 9000);
 }
-function showTicket(name, from, x) { afterSplash(() => showTicket0(name, from, x)); }
-function showTicket0(name, from, x) {
+function showTicket(name, from, x, meta) { afterSplash(() => showTicket0(name, from, x, meta)); }
+function showTicket0(name, from, x, meta) {
+  meta = meta || {};
   const m = String(x).match(/^(\S+)\s+(.*)$/) || [0, '💝', x], emo = m[1], plan = m[2];
   const el = document.createElement('div'); el.className = 'sig-pop tk-pop';
   const hearts = Array.from({ length: 14 }, (_, i) => `<i style="left:${(i * 41) % 100}%;animation-delay:${1 + (i * .23) % 3}s;animation-duration:${5 + (i % 4)}s;width:${12 + (i * 7) % 16}px;height:${12 + (i * 7) % 16}px">${HEART(i % 3 === 1 ? '#fff' : '#e6809c')}</i>`).join('');
   el.innerHTML = `<div class="lv-hearts">${hearts}</div><div class="tk-in">
     <p class="tk-from">${esc(name)} sent you</p>
-    <div class="tk-vt">${vtTicket({ to: (state && state.profile && state.profile.name) || 'You', from: name, plan: plan.slice(0, 90), when: fmt(new Date(), { weekday: 'long' }) })}<span class="tk-glint"></span></div>
-    ${from ? `<button class="btn btn-love btn-block" data-action="openLove" data-id="${from.id}">${icon('heart', 16)} Say yes with love</button>` : ''}
-    <button class="btn btn-ghost btn-block" data-action="sigClose">Close</button></div>`;
+    <div class="tk-vt">${vtTicket({ to: (state && state.profile && state.profile.name) || 'You', from: name, plan: plan.slice(0, 90), when: fmt(new Date(), { weekday: 'long' }), title: meta.t, ph: PHASES[meta.ph] ? meta.ph : null })}<span class="tk-glint"></span></div>
+    ${from ? `<button class="tkb tkb-yes" data-action="openLove" data-id="${from.id}"><span class="tkb-shine" aria-hidden="true"></span>${TKB_CORNERS('#fff')}<span class="tkb-t">${HEART('#fff')} Say yes with love</span></button>` : ''}
+    <button class="tkb tkb-close" data-action="sigClose"><span class="tkb-shine" aria-hidden="true"></span>${TKB_CORNERS('#e6809c', 1)}<span class="tkb-t">Close</span></button></div>`;
   $app.appendChild(el);
   { // the ticket drops in on its "With love" back, lands with a hop and turns over (motion from the Rive scene); CSS version as fallback
     const box = el.querySelector('.tk-vt');
@@ -8717,6 +8718,20 @@ const PV_SKIP = {
 // her snapshot on his page (from the link, or the saved view-only link)
 function pvSnap() { const r = route(); let raw = r.name === 'with' && r.q ? r.q.get('d') : null; if (!raw) { try { raw = localStorage.getItem('uts.viewOnly'); } catch {} } return raw ? b64d(raw) : null; }
 // The date ticket: a vintage blush ticket (barcode stub, punched edges, typewriter lines) with a lotus collage.
+// Her ticket buttons: tiny hearts and blossoms tucked in the corners
+const TKB_CORNERS = (c, flower) => { const f = flower
+    ? `<svg viewBox="-6 -6 12 12">${[0, 72, 144, 216, 288].map(a => `<ellipse cy="-2.6" rx="1.9" ry="2.7" fill="${c}" transform="rotate(${a})"/>`).join('')}<circle r="1.5" fill="#f3d27a"/></svg>`
+    : `<svg viewBox="0 0 24 22"><path d="M12 21C5 15 1 11 1 6.5A5.5 5.5 0 0 1 12 4a5.5 5.5 0 0 1 11 2.5C23 11 19 15 12 21Z" fill="${c}"/></svg>`;
+  return `<i class="tkb-c c1" aria-hidden="true">${f}</i><i class="tkb-c c2" aria-hidden="true">${f}</i><i class="tkb-c c3" aria-hidden="true">${f}</i><i class="tkb-c c4" aria-hidden="true">${f}</i>`; };
+// One date ticket per phase, with its own design, and a few ideas that change day to day: [emoji, title, what you'll do]
+const DATE_IDEAS = {
+  menstrual: [['🍿', 'Sofa Night', 'Sofa, blankets and her comfort film'], ['🛁', 'Slow Evening', 'A warm bath for her, then tea and a foot rub'], ['🍲', 'Soup and Stories', 'Cook a warm soup together, phones away']],
+  follicular: [['🎡', 'Something New', 'Try a new restaurant, class or day trip'], ['🎨', 'Make Something', 'A pottery or painting class for two'], ['🚲', 'Little Adventure', 'Bike or walk somewhere new to you both']],
+  ovulatory: [['🥂', 'A Night Out', 'Dinner out, dancing or an event'], ['🎶', 'Live Music', 'A gig, a jazz bar or a dance class'], ['🌅', 'Golden Hour', 'A sunset picnic somewhere with a view']],
+  luteal: [['🍲', 'Comfort Night', 'Home-cooked comfort food and an early night'], ['🕯️', 'Candle Dinner', 'Her favourite warm dish, candles, phones away'], ['🌿', 'Slow Walk', 'A slow walk in nature, then something warm']],
+};
+const dateIdea = info => { const L = DATE_IDEAS[info.phase] || DATE_IDEAS.follicular; return L[dayNum(new Date()) % L.length]; };
+const dateSentKey = () => 'uts.dateSent', dateSentToday = () => { try { return localStorage.getItem(dateSentKey()) === todayISO(); } catch { return false; } };
 const VT_TITLE = t => [[/sofa|film|blanket/i, 'Sofa Night'], [/new|class|trip/i, 'Something New'], [/danc|event|out\b/i, 'A Night Out'], [/home|cook|comfort|early/i, 'Comfort Night']].find(([r]) => r.test(t))?.[1] || 'Us Two';
 const VT_PETAL = 'M0 0C-11-13-10-33 0-46C10-33 11-13 0 0Z';
 const vtPetal = (a, s, f) => `<g transform="rotate(${a}) scale(${s})"><path d="${VT_PETAL}" fill="${f}"/><path d="M0-4V-40M-3-6C-6-18-5-30-1-40M3-6C6-18 5-30 1-40" stroke="#9c4b66" stroke-width=".6" fill="none" opacity=".3"/></g>`;
@@ -8741,15 +8756,46 @@ const VT_ART = (() => {
 })();
 const VT_BAR = (() => { const w = [3, 1, 2, 1, 4, 1, 1, 3, 2, 1, 3, 1, 2, 4, 1, 2, 1, 3, 1, 2, 3, 1]; let y = 0, s = '';
   w.forEach((h, i) => { if (i % 2 === 0) s += `<rect x="0" y="${y}" width="22" height="${h * 1.6}"/>`; y += h * 1.6 + (i % 2 ? 0 : 1.6); });
-  return `<svg class="vt-bar" viewBox="0 0 22 ${y.toFixed(0)}" preserveAspectRatio="none" aria-hidden="true"><g fill="#4b3426">${s}</g></svg>`; })();
-function vtTicket({ to, from, plan, when, note }) {
+  return `<svg class="vt-bar" viewBox="0 0 22 ${y.toFixed(0)}" preserveAspectRatio="none" aria-hidden="true"><g fill="currentColor">${s}</g></svg>`; })();
+// the collage on each phase's ticket: a typed note behind a hand-drawn object
+const vtNote = (lines, fill, edge, ink) => `<g transform="rotate(-4 70 100)"><rect x="6" y="64" width="132" height="66" fill="${fill}"/><rect x="6" y="64" width="132" height="66" fill="none" stroke="${edge}" stroke-width=".6"/>
+  <g font-family="'Courier Prime','Courier New',monospace" font-size="6.6" fill="${ink}" opacity=".72">${lines.map((t, i) => `<text x="10" y="${75 + i * 8.3}">${t}</text>`).join('')}</g></g>`;
+const vtSpark = (x, y, s, c) => `<path transform="translate(${x} ${y}) scale(${s})" d="M0-6C.6-1.6 1.6-.6 6 0 1.6.6.6 1.6 0 6-.6 1.6-1.6.6-6 0-1.6-.6-.6-1.6 0-6Z" fill="${c}"/>`;
+const VT_ART_PH = {
+  follicular: `<svg viewBox="0 0 140 150" aria-hidden="true">${vtNote(['somewhere new, just us two,', 'a map with no plans on it,', 'say yes to whatever comes.', 'New places, new stories', 'and the same hand to hold.', 'Pack light. Admit two.'], '#e6ead2', '#b7c294', '#3e4a2c')}
+    <path d="M44 52c-6 0-9-6-4-9 1-6 9-7 12-3 5-2 10 2 8 7 3 3 0 7-4 6Z" fill="#fff" opacity=".9"/><path d="M104 36c-5 0-7-5-3-7 1-5 7-6 10-2 4-1 8 2 6 6 2 3 0 6-3 5Z" fill="#fff" opacity=".85"/>
+    <path d="M80 20C100 20 112 36 110 54 108 70 94 80 86 92H74C66 80 52 70 50 54 48 36 60 20 80 20Z" fill="#a9bd84" stroke="#5f7140" stroke-width="1"/>
+    <path d="M80 20C69 38 70 74 76 92H84C90 74 91 38 80 20Z" fill="#f4efe0" stroke="#5f7140" stroke-width=".8"/>
+    <path d="M80 20C60 30 56 64 70 90M80 20C100 30 104 64 90 90" fill="none" stroke="#5f7140" stroke-width=".8" opacity=".7"/>
+    <path d="M58 40C66 44 94 44 102 40" fill="none" stroke="#e6a6b8" stroke-width="3" opacity=".9"/>
+    <path d="M75 92 74 102M85 92 86 102" stroke="#6e5536" stroke-width=".9"/><rect x="72" y="101" width="16" height="11" rx="2.5" fill="#b4875a" stroke="#6e5536" stroke-width=".8"/><path d="M73 105H87M73 108H87" stroke="#8d6640" stroke-width=".6"/>
+    <path d="M70 131 120 124C124 139 102 148 70 148 37 148 15 140 19 129 23 119 49 115 70 116Z" fill="#8fa266"/>
+    <path d="M40 132C38 122 42 116 46 112M46 112c-5 1-8-2-8-6 5 0 8 2 8 6Zm0 0c1-5 5-7 9-6-1 5-5 7-9 6Z" fill="#6c823e" stroke="#4f6a2f" stroke-width=".8"/>
+    <path d="M108 134c0-9 3-14 7-18M115 116c-4 0-7-3-6-7 4 0 7 3 6 7Zm0 0c2-4 6-5 9-3-2 4-6 5-9 3Z" fill="#8c9768" stroke="#4f6a2f" stroke-width=".8"/></svg>`,
+  ovulatory: `<svg viewBox="0 0 140 150" aria-hidden="true">${vtNote(['tonight we dress up,', 'a table for two by the', 'window, music too loud,', 'and you, glowing. Dance', 'until the lights come up.', 'Golden hour. Admit two.'], '#f3e6c4', '#d4b77a', '#5a4422')}
+    <g transform="translate(60 92) rotate(-16)"><path d="M-17-24C-17-13 17-13 17-24Z" fill="#f2c95e" opacity=".9"/><path d="M-19-26C-19-11 19-11 19-26Z" fill="rgba(255,255,255,.35)" stroke="#8a6a3a" stroke-width="1.1"/><path d="M-14-24H10" stroke="#fff" stroke-width="1.2" opacity=".8"/><path d="M0-15V14" stroke="#8a6a3a" stroke-width="1.6"/><ellipse cy="15" rx="11" ry="3" fill="rgba(255,255,255,.4)" stroke="#8a6a3a" stroke-width="1.1"/></g>
+    <g transform="translate(96 92) rotate(16)"><path d="M-17-24C-17-13 17-13 17-24Z" fill="#f2c95e" opacity=".9"/><path d="M-19-26C-19-11 19-11 19-26Z" fill="rgba(255,255,255,.35)" stroke="#8a6a3a" stroke-width="1.1"/><path d="M-10-24H14" stroke="#fff" stroke-width="1.2" opacity=".8"/><path d="M0-15V14" stroke="#8a6a3a" stroke-width="1.6"/><ellipse cy="15" rx="11" ry="3" fill="rgba(255,255,255,.4)" stroke="#8a6a3a" stroke-width="1.1"/></g>
+    ${vtSpark(78, 50, 1.3, '#e7b53e')}${vtSpark(66, 38, .7, '#f2c95e')}${vtSpark(92, 34, .9, '#e7b53e')}${vtSpark(110, 52, .6, '#f2c95e')}
+    <g fill="#f6dc8e"><circle cx="58" cy="64" r="1.4"/><circle cx="62" cy="58" r="1"/><circle cx="98" cy="62" r="1.3"/><circle cx="95" cy="56" r=".9"/></g>
+    <path d="M70 131 120 124C124 139 102 148 70 148 37 148 15 140 19 129 23 119 49 115 70 116Z" fill="#e4c57e"/>
+    <path d="M30 136c10-8 22-6 26 2-8 6-20 6-26-2Z" fill="#e6a6b8" stroke="#b0475f" stroke-width=".7"/><path d="M110 136c-10-8-22-6-26 2 8 6 20 6 26-2Z" fill="#e6a6b8" stroke="#b0475f" stroke-width=".7"/><circle cx="70" cy="139" r="4" fill="#d9849e" stroke="#b0475f" stroke-width=".7"/></svg>`,
+  luteal: `<svg viewBox="0 0 140 150" aria-hidden="true"><defs><radialGradient id="vtFl" cx=".5" cy=".7" r=".6"><stop offset="0" stop-color="#fff3c4"/><stop offset=".6" stop-color="#f6b45a"/><stop offset="1" stop-color="#e2774a"/></radialGradient><radialGradient id="vtGl"><stop offset="0" stop-color="#ffe2a8" stop-opacity=".75"/><stop offset="1" stop-color="#ffe2a8" stop-opacity="0"/></radialGradient></defs>
+    ${vtNote(['slow down tonight, love,', 'something warm on the', 'stove, a candle, a blanket', 'and nowhere else to be.', 'Phones away. Feet up.', 'Early night. Admit two.'], '#ece4f2', '#bfaed3', '#4a3a5c')}
+    <circle cx="76" cy="44" r="26" fill="url(#vtGl)" class="vt-glow"/>
+    <path class="vt-flame" d="M76 30C70 38 70 46 76 50 82 46 82 38 76 30Z" fill="url(#vtFl)"/><path d="M76 50V54" stroke="#4a3a2c" stroke-width="1.2"/>
+    <rect x="66" y="54" width="20" height="50" rx="3" fill="#f8f2e8" stroke="#bba98f" stroke-width=".9"/><path d="M68 54v8c0 3 3 3 3 0v-4c0-2 2-2 2 0v10c0 3 3 3 3 0V54" fill="#fffaf2" stroke="#bba98f" stroke-width=".6"/>
+    <ellipse cx="76" cy="106" rx="22" ry="5" fill="#c99e58" stroke="#8a6a36" stroke-width=".9"/><path d="M98 104c8 0 8 8 0 8" fill="none" stroke="#8a6a36" stroke-width="2"/><rect x="62" y="100" width="28" height="6" rx="2" fill="#d7ae68" stroke="#8a6a36" stroke-width=".8"/>
+    <path d="M70 131 120 124C124 139 102 148 70 148 37 148 15 140 19 129 23 119 49 115 70 116Z" fill="#b7a5cc"/>
+    ${[[34, 0], [42, 6], [112, -4]].map(([x, r]) => `<g transform="translate(${x} 134) rotate(${r})"><path d="M0 0V-36" stroke="#6c823e" stroke-width="1.1"/>${[-30, -25, -20, -15, -10].map((y, i) => `<ellipse cx="${i % 2 ? 2 : -2}" cy="${y}" rx="2" ry="3.2" fill="${i % 2 ? '#9b7fc0' : '#b49ad6'}"/>`).join('')}<ellipse cy="-34" rx="1.6" ry="2.6" fill="#b49ad6"/></g>`).join('')}</svg>`,
+};
+function vtTicket({ to, from, plan, when, note, title, ph }) {
   const d = new Date(), p2 = n => String(n).padStart(2, '0'), U = s => esc(String(s || '')).toUpperCase();
-  return `<div class="vt"><div class="vt-face vt-front">
+  return `<div class="vt"${ph ? ` data-ph="${ph}"` : ''}><div class="vt-face vt-front">
       <div class="vt-stub">${VT_BAR}<div class="vt-adm"><b>Admit two</b><span>${p2(d.getDate())}-${p2(d.getMonth() + 1)}-${d.getFullYear()}</span></div></div>
       <div class="vt-main"><div class="vt-stars" aria-hidden="true">★★★★★</div>${note ? `<p class="vt-note">${note}</p>` : ''}
-        <h4 class="vt-h"><span>A ticket for</span><em>${VT_TITLE(plan)}</em></h4><p class="vt-plan">${esc(plan)}</p>
+        <h4 class="vt-h"><span>A ticket for</span><em>${esc(title || VT_TITLE(plan))}</em></h4><p class="vt-plan">${esc(plan)}</p>
         <div class="vt-lines"><span>NAME : ${U(to)}</span><span>WHEN : ${U(when)}</span><span>FROM : ${U(from)}</span></div></div>
-      <div class="vt-art">${VT_ART}</div><span class="vt-stamp" aria-hidden="true"><b>Sent</b><i>♥</i><small>to ${esc(to)}</small></span></div>
+      <div class="vt-art">${VT_ART_PH[ph] || VT_ART}</div><span class="vt-stamp" aria-hidden="true"><b>Sent</b><i>♥</i><small>to ${esc(to)}</small></span></div>
     <div class="vt-face vt-back" aria-hidden="true"><svg class="vt-seal" viewBox="0 30 140 90">${VT_DEFS}${vtLotus(false)}</svg><b>With love</b><span>from ${esc(from)}</span></div></div>`;
 }
 // The ticket flies: a copy lifts off the card, tilts, and sails up and away to the top right, leaving a trail of hearts.
@@ -8775,6 +8821,14 @@ async function ticketFly(el) {
   ], { duration: 2000, easing: 'cubic-bezier(.45,0,.25,1)', fill: 'forwards' });
   let n = 0, trail; setTimeout(() => { trail = setInterval(() => { const q = fly.getBoundingClientRect(); if (n++ > 9) return clearInterval(trail); const h = document.createElement('i'); h.className = 'tk-trail'; h.innerHTML = HEART(n % 2 ? '#e6809c' : '#f4c6d6'); h.style.left = (q.left + q.width / 2) + 'px'; h.style.top = (q.top + q.height / 2) + 'px'; document.body.appendChild(h); setTimeout(() => h.remove(), 1200); }, 70); }, 1350);
   return a.finished.then(() => { clearInterval(trail); fly.remove(); return true; });
+}
+// once it's sent, the ticket's place folds shut and Send her love slides up into it
+function ticketGone(el) {
+  const h = el.offsetHeight, cs = getComputedStyle(el);
+  el.style.overflow = 'hidden'; el.classList.remove('flying');
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return el.remove();
+  el.animate([{ height: h + 'px', marginTop: cs.marginTop, marginBottom: cs.marginBottom, opacity: 0 }, { height: '0px', marginTop: '0px', marginBottom: '0px', opacity: 0 }],
+    { duration: 620, easing: 'cubic-bezier(.65,0,.25,1)', fill: 'forwards' }).finished.then(() => el.remove());
 }
 // back on his page the ticket returns and its stub says Sent
 function ticketSent(el) {
@@ -8806,7 +8860,7 @@ function pvToday(info, name, sup, snap) {
       <p class="hd-hint duo-hint">Tap the dish or the cup for how to make it</p></section>
     <section class="pv2-card pv2-bring"><div class="pv2-h"><b>Bring her</b><small>In season now · on the way home</small></div>
       <div class="pv2-snacks three">${snacks.map(([e, n, why]) => `<div class="pv2-sn">${pvEmo(e)}<b>${n}</b><small>${why}</small></div>`).join('')}</div></section>
-    <section class="pv2-vt" role="button" tabindex="0" data-action="pvDateSend" aria-label="Send ${name} this date">${vtTicket({ to: name, from: himP().n || 'Me', plan: sup.date, when: warm ? 'Tonight, at home' : `Today, ${hLabel(her > .7 ? w + 7 : w + 11)}`, note: `*Tap the ticket and it flies to ${esc(name)}’s phone.` })}</section>
+    ${dateSentToday() ? '' : (([, dt, dp]) => `<section class="pv2-vt" role="button" tabindex="0" data-action="pvDateSend" aria-label="Send ${name} this date">${vtTicket({ to: name, from: himP().n || 'Me', plan: dp, title: dt, ph, when: warm ? 'Tonight, at home' : `Today, ${hLabel(her > .7 ? w + 7 : w + 11)}`, note: `*Tap the ticket and it flies to ${esc(name)}’s phone.` })}</section>`)(dateIdea(info))}
     ${snap && (snap.a || 'partner') === 'partner' ? `<button class="lb2 dt-send" data-action="pvLove" aria-label="Send ${name} love">
       <span class="lb2-hearts" aria-hidden="true">${[0, 1, 2, 3].map(i => `<i style="--d:${i * .9}s;--x:${[18, 38, 62, 80][i]}%">${HEART(i % 2 ? '#f4c6d6' : '#e6809c')}</i>`).join('')}</span>
       <span class="lb2-art">${loveBtnArt()}</span>
@@ -10019,12 +10073,12 @@ const actions = {
   pvDay: d => { ui.pvDay = +d.v; softWith(); },
   pvDateSend: async (d, el) => { // the ticket lifts, folds into flight and flies off to her phone
     const snap = pvSnap(); if (!snap || el.classList.contains('flying')) return;
-    const info = snapInfo(snap, C.startOfDay(new Date())), sup = SUPPORT[info.phase]?.partner; if (!sup) return;
+    const info = snapInfo(snap, C.startOfDay(new Date())), [emo, title, plan] = dateIdea(info);
     if (!snap.i) { toast(`${snap.n || 'She'} needs to open her app once, then her link can receive it`); return; }
-    const me = himP().n || (state && state.profile && state.profile.name) || 'Your partner', x = `${dateEmo(sup.date)} ${sup.date}`;
-    const send = fetch(RELAY + snap.i, { method: 'POST', body: JSON.stringify({ k: 'date', f: me, x }) }).then(r => r.ok).catch(() => false);
+    const me = himP().n || (state && state.profile && state.profile.name) || 'Your partner', x = `${emo} ${plan}`;
+    const send = fetch(RELAY + snap.i, { method: 'POST', body: JSON.stringify({ k: 'date', f: me, x, t: title, ph: info.phase }) }).then(r => r.ok).catch(() => false);
     const ok = await ticketFly(el);
-    if (await send) { ticketSent(el); oakDo('love', true); } else { el.classList.remove('flying', 'gone'); el.animate([{ opacity: 0, transform: 'translateY(-14px) scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.8,.2,1)' }); toast('Couldn’t send: check your connection'); }
+    if (await send) { try { localStorage.setItem(dateSentKey(), todayISO()); } catch {} ticketGone(el); oakDo('love', true); } else { el.classList.remove('flying', 'gone'); el.animate([{ opacity: 0, transform: 'translateY(-14px) scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.8,.2,1)' }); toast('Couldn’t send: check your connection'); }
     return ok;
   },
   pvLove: () => { // the little love tiles, sent live to her phone
