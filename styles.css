@@ -15904,3 +15904,13 @@ html .view .fx-p.fx-guide { padding: 0; background: transparent; box-shadow: non
 .fx-guide > .fx-all { margin-top: 22px; }
 @media (prefers-reduced-motion: reduce) { .gd-jb i { animation: none; } .fx-guide .gd-note h2 em path { animation: none; stroke-dashoffset: 0; } }
 .gd-grid .dv-t b { padding-right: 14px; }
+
+/* Feel better (Round B): the hero card sits below the arch scallops; with no check-in yet it carries the ask and a dark Check in pill
+   (the loose line and white button on the arch are gone); no Back to home under the page, the home button is at the top */
+html .br2 .br2-card { margin-top: 34px; }
+.br2-sub { position: relative; margin: 10px 0 14px; max-width: 250px; font-size: 14.5px; line-height: 1.45; color: rgba(32,48,26,.66); }
+.br2-cta { position: relative; display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border: 0; border-radius: 99px; background: #20301a; color: #fff; font: 500 15px/1 var(--font); cursor: pointer; box-shadow: 0 10px 22px -12px rgba(32,48,26,.6); }
+.br2-cta:active { transform: scale(.97); }
+html .btn.br2-edit { margin-top: 6px; background: rgba(255,255,255,.88); color: #20301a; border: 1px solid #fff; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+html .br2 .br2-card { margin-left: 10px; margin-right: 10px; }
+html .br2 .br2-pal { width: 104px; height: 92px; margin-right: -4px; }

@@ -2466,7 +2466,7 @@ function viewBrain(id) {
     ...R.notes.filter(x => x.tone === 'info').map(x => ({ id: x.t, e: x.emo, t: x.t, why: x.p, recs: [] }))] : [];
   const good = R ? [...R.notes.filter(x => x.tone === 'good'), ...R.cards.filter(c => c.good).map(c => ({ t: c.s, p: c.why }))] : [];
   const n = warns.length + acts.length + good.length;
-  const body = !R || !n ? `<section class="br-empty"><p>Log a few things and I’ll tell you exactly what to do today.</p><button class="btn btn-light" data-action="nav" data-to="log">${icon('plus', 18)} Check in</button></section>` : `
+  const body = !R || !n ? '' : `
     ${warns.map(w => `<section class="bx-warn"><span class="bx-wi">!</span><div><small>Check this</small><b>${w.t}</b><p>${w.p}</p></div></section>`).join('')}
     ${acts.length ? `${sectionTitle('What helps today')}
     <div class="bx-plan">${acts.map(x => `<section class="bx-t">
@@ -2490,14 +2490,14 @@ function viewBrain(id) {
       </svg>
       <div class="br2-day"><span>${isToday ? 'Today' : fmt(C.parseISO(k), { month: 'short', day: 'numeric' })}</span>${R ? `<span>Day <b>${R.di.cd}</b></span><span class="br2-ph">${ph.name}</span>` : ''}</div>
       <h1 class="br2-h">What your body<em>is saying</em></h1>
+      ${!n && isToday ? `<p class="br2-sub">Tell me how you feel in 10 seconds and I’ll tell you what helps today.</p><button class="br2-cta" data-action="nav" data-to="log">${icon('plus', 17, 2.2)} Check in</button>` : ''}
       ${n ? `<p class="br2-n">${acts.length ? `<b>${acts.length}</b> ${acts.length === 1 ? 'tip' : 'tips'}` : ''}${acts.length && warns.length ? ' · ' : ''}${warns.length ? `<b>${warns.length}</b> to check` : ''}${!acts.length && !warns.length ? 'All looking good' : ''}</p>` : ''}
     </div>
   </section>
   <div class="pad br br2b">
     ${body}
     ${R && isToday && R.up.length ? `${sectionTitle('Get ahead of it')}${[...R.up].sort((a, b) => a.inDays - b.inDays).map(x => `<section class="br-up"><span class="hu-when ${x.inDays > 1 ? 'n' : ''}">${x.inDays === 0 ? 'Today' : x.inDays === 1 ? 'Tomorrow' : `<small>in</small><b class="dotnum">${x.inDays}</b><small>days</small>`}</span><div><b>${x.name}</b> usually on ${dayRange(x)}${QUICK_FIX[x.name] ? `<small>${QUICK_FIX[x.name]}</small>` : ''}</div></section>`).join('')}` : ''}
-    <button class="btn btn-dark btn-block br2-go" data-action="nav" data-to="today">${icon('home', 18)} Back to home</button>
-    <button class="btn btn-ghost btn-block" data-action="logDay" data-date="${k}">Edit check-in</button>
+    ${n ? `<button class="btn btn-block br2-edit" data-action="logDay" data-date="${k}">${icon('check', 16)} Edit check-in</button>` : ''}
     <p class="fine center">General information, not medical advice or contraception.</p>
   </div>`;
 }
