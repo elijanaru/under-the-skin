@@ -8734,15 +8734,43 @@ const HIS_BOOST = [
   ['sun', 'Morning light', '10 min', 'Daylight after waking sets the clock that times your peak.', 'Step outside within an hour of waking, no sunglasses, even when it is cloudy.', null, ''],
 ];
 const HIS_FOOD = [['🥩', 'Beef', 'Zinc, iron, B12'], ['🥚', 'Whole eggs', 'Yolks: vitamin D'], ['🦪', 'Oysters', 'Richest in zinc'], ['e:pumpkin-seeds', 'Pumpkin seeds', 'Zinc, magnesium'], ['🥛', 'Raw milk', 'Protein, good fats'], ['🫒', 'Olive oil', 'Healthy fats']];
+// You two today: two liquid orbs (her energy, his drive) joined by a beating heart, a time switch that moves his drive
+// through the day, and the plan that fits you both at that time.
+const YT_TIMES = [['now', 'Now', null, 'right now'], ['am', 'Morning', 2, 'this morning'], ['pm', 'Afternoon', 7, 'this afternoon'], ['eve', 'Evening', 12, 'this evening']];
+function ytOrb(v, c1, c2, emo, label, id) {
+  const y = 100 - v; // the liquid line, 0 top 100 bottom
+  return `<div class="yt-o"><svg viewBox="0 0 100 100" aria-hidden="true"><defs><clipPath id="yc-${id}"><circle cx="50" cy="50" r="46"/></clipPath>
+      <linearGradient id="yg-${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs>
+      <circle cx="50" cy="50" r="46" fill="#fff"/>
+      <g clip-path="url(#yc-${id})"><g class="yt-wv" style="transform:translateY(${y}px)"><path d="M-100 0q25-7 50 0t50 0 50 0 50 0 50 0v110h-250z" fill="url(#yg-${id})" opacity=".45"/><path class="b" d="M-100 4q25-7 50 0t50 0 50 0 50 0 50 0v110h-250z" fill="url(#yg-${id})"/></g></g>
+      <circle cx="50" cy="50" r="46" fill="none" stroke="${c2}" stroke-width="2.5" opacity=".55"/></svg>
+    <span class="yt-emo">${emo}</span><b class="dotnum">${v}<em>%</em></b><small>${label}</small></div>`;
+}
+function youTwo(info, name, w, since, tAt, her, low) {
+  const tk = ui.ytT || 'now', T = YT_TIMES.find(x => x[0] === tk) || YT_TIMES[0], at = T[2] == null ? since : T[2];
+  const his = Math.round(tAt(at) / .92 * 100), when = T[2] == null ? 'now' : `at ${hLabel(w + T[2])}`;
+  const hE = her >= 70 ? '😄' : her >= 45 ? '🙂' : '😌', mE = his >= 75 ? '💪' : his >= 50 ? '🙂' : '😴';
+  const V = low ? ['Cosy', '🛋️', `Bring her warmth: soup, a film, a blanket and no big plans ${when === 'now' ? 'today' : 'tonight'}.`, '#e6809c']
+    : her >= 70 && his >= 70 ? ['Adventure', '🚴', `You’re both full of energy ${when}. A hike, a dance class or a bike ride together.`, '#7fa84e']
+    : his >= 70 ? ['Do it together', '🧺', `Your drive is high ${when}, hers is steady. Cook together or take a long walk.`, '#e2a93c']
+    : her >= 70 ? ['Follow her lead', '✨', `She has more spark than you ${when}. Say yes to her plan and keep it light.`, '#9a84d4']
+    : ['Easy', '🌙', `You’re both winding down ${when}. Tea, music and an early night.`, '#7aa6c4'];
+  const match = Math.round((her + his) / 2);
+  return `${sectionTitle('You two today')}
+    <section class="pv2-card yt" style="--yv:${V[3]}">
+      <div class="yt-pair">${ytOrb(her, '#fbd3df', '#e6809c', hE, `${name}’s energy`, 'h')}
+        <div class="yt-mid"><svg class="yt-heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.6-4.7-9.7-9.3C.8 8.3 3 4.4 6.8 4.4c2.1 0 3.6 1.1 4.3 2.5h1.8c.7-1.4 2.2-2.5 4.3-2.5 3.8 0 6 3.9 4.5 7.3C19.6 16.3 12 21 12 21z"/></svg><b class="dotnum">${match}</b><small>together</small></div>
+        ${ytOrb(his, '#bfe3f0', '#5aa3c9', mE, `Your drive`, 'm')}</div>
+      <div class="yt-seg" role="tablist">${YT_TIMES.map(([k, l]) => `<button class="${k === tk ? 'on' : ''}" data-action="ytT" data-v="${k}" role="tab" aria-selected="${k === tk}">${l}</button>`).join('')}</div>
+      <div class="yt-vibe"><span class="yt-ve">${V[1]}</span><div><small>Your vibe ${T[3]}</small><b>${V[0]}</b><p>${V[2]}</p></div></div>
+    </section>`;
+}
 function hisDay(info, name) {
   const w = hisWake(), h = nowH(), since = ((h - w) % 24 + 24) % 24, bi = HIS_BLOCKS.findIndex(x => since >= x[0] && since < x[1]), b = HIS_BLOCKS[bi];
   const tAt = t => .5 + .42 * Math.cos(2 * Math.PI * (t - 1) / 24), pct = Math.round(tAt(since) / .92 * 100);
   const W = 320, H = 104, X = t => 8 + t / 24 * (W - 16), Y = v => H - 22 - v * (H - 36);
   let d = ''; for (let t = 0; t <= 24; t += .25) d += `${d ? 'L' : 'M'}${X(t).toFixed(1)} ${Y(tAt(t)).toFixed(1)}`;
   const her = Math.round(C.energyAt(info.cd, info.L, info.P) * 100), low = info.isPeriod || info.cd > info.L - 4;
-  const together = low ? `${name}’s energy is low this week. Use your morning drive for the jobs, then bring her your calm evening: warm food, no big plans.`
-    : her > 70 ? `You’re both full of energy. Plan something active together from ${hLabel(w + 7)}, when your body is strongest.`
-    : `${name} is steady and focused. Keep evenings easy and save the big plans for when her energy rises.`;
   const bub = (k, v, s) => `<div class="hs2-b"><b class="dotnum">${v}</b><small>${k}</small><em>${s}</em></div>`;
   return `<section class="pv2-card hs2-hero">
       <div class="hs2-top"><div><small>Testosterone now</small><b class="hs2-n"><span class="dotnum">${pct}</span><em>%</em></b><span class="hs2-of">of today’s peak</span></div>
@@ -8762,8 +8790,7 @@ function hisDay(info, name) {
       <div class="hs2-xb"><p><b>How</b>${how}</p>${st ? `<div class="hs2-st"><b class="dotnum">${st[1]}</b><span><em>${st[0]}</em>${st[2]}</span></div>` : ''}${care ? `<p class="hs2-care">${icon('spark', 12)} ${care}</p>` : ''}</div></details>`).join('')}</section>
     ${sectionTitle('Eat for drive')}
     <section class="pv2-card pv2-bring"><div class="pv2-snacks six">${HIS_FOOD.map(([e, n, why]) => `<div class="pv2-sn">${pvEmo(e)}<b>${n}</b><small>${why}</small></div>`).join('')}</div></section>
-    ${sectionTitle('You two today')}
-    <section class="pv2-card hs2-tog"><div class="hs2-vs"><div><b class="dotnum">${her}<em>%</em></b><small>${name}’s energy</small></div><i></i><div><b class="dotnum">${pct}<em>%</em></b><small>Your drive now</small></div></div><p>${together}</p></section>`;
+    ${youTwo(info, name, w, since, tAt, her, low)}`;
 }
 // ---------- Read for him: one short read a day, synced to her cycle day ----------
 // [title, one-line summary, what happens (2-3 short sentences), what you can do today, optional study [year, who, line]]
@@ -9714,6 +9741,7 @@ const actions = {
     try { await navigator.clipboard.writeText(url); toast('Link copied'); } catch { prompt('Copy this link', url); }
     sent();
   },
+  ytT: d => { ui.ytT = d.v; softWith(); },
   hisTab: d => { ui.hisTab = d.v; render(); document.getElementById('view').scrollTop = 0; },
   pvTile: d => { ui.pvTile = ui.pvTile === d.v ? '' : d.v; softWith(); },
   pvDay: d => { ui.pvDay = +d.v; softWith(); },

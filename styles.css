@@ -13680,3 +13680,34 @@ html .pv2-card.pv2-date.sent .dt-done { display: block; }
 @keyframes tkFade { from { opacity: 0; transform: translateY(8px); } }
 @media (prefers-reduced-motion: reduce) { .tk-card, .tk-glint, .tk-from, .tk-in .btn, .dt-plane, .dt-ok { animation: none !important; } .tk-glint { display: none; } }
 .ls2-grid.love { grid-template-columns: repeat(3, 1fr); }
+
+/* His page › You two today: two liquid orbs (her energy in her phase colour, his drive in sky blue) joined by a beating heart,
+   a time switch that moves his drive through the day, and the vibe that fits you both */
+html .pv2-card.yt { display: block; padding: 18px 16px 16px; background: linear-gradient(160deg, #fff 40%, color-mix(in srgb, var(--yv) 10%, #fff)); }
+.yt-pair { display: grid; grid-template-columns: 1fr 74px 1fr; align-items: center; }
+.yt-o { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.yt-o svg { width: 104px; height: 104px; filter: drop-shadow(0 10px 16px rgba(32,48,26,.12)); }
+.yt-wv { transition: transform 1s cubic-bezier(.2,.8,.2,1); }
+.yt-wv path { animation: ytWave 3.2s linear infinite; } .yt-wv path.b { animation-duration: 4.4s; animation-direction: reverse; }
+@keyframes ytWave { to { transform: translateX(50px); } }
+.yt-emo { position: absolute; top: 30px; font-size: 34px; line-height: 1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; filter: drop-shadow(0 3px 4px rgba(32,48,26,.18)); animation: ytBob 3.6s ease-in-out infinite; }
+.yt-o:last-child .yt-emo { animation-delay: 1.2s; }
+@keyframes ytBob { 50% { transform: translateY(-4px) rotate(4deg); } }
+.yt-o b { margin-top: 8px; font: 400 24px/1 var(--dot); color: #20301a; } .yt-o b em { font: 600 13px Outfit, sans-serif; font-style: normal; }
+.yt-o small { margin-top: 3px; font-size: 12px; line-height: 1.25; color: rgba(32,48,26,.62); }
+.yt-mid { display: flex; flex-direction: column; align-items: center; margin-top: -30px; }
+.yt-heart { width: 40px; height: 40px; fill: var(--yv); filter: drop-shadow(0 6px 10px color-mix(in srgb, var(--yv) 45%, transparent)); animation: ytBeat 1.4s ease-in-out infinite; transition: fill .5s; }
+@keyframes ytBeat { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.16); } 30% { transform: scale(.98); } 45% { transform: scale(1.08); } }
+.yt-mid b { margin-top: 2px; font: 400 18px/1 var(--dot); color: #20301a; } .yt-mid small { font-size: 10.5px; color: rgba(32,48,26,.55); }
+.yt-pair::before { content: none; }
+.yt-seg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin: 16px 0 12px; padding: 4px; border-radius: 999px; background: rgba(32,48,26,.05); }
+.yt-seg button { padding: 8px 0; border: 0; border-radius: 999px; background: none; font: 500 12.5px Outfit, sans-serif; color: rgba(32,48,26,.6); cursor: pointer; transition: background .25s, color .25s; }
+.yt-seg button.on { background: #fff; color: #20301a; box-shadow: 0 4px 12px -6px rgba(32,48,26,.3); }
+.yt-vibe { display: flex; gap: 12px; align-items: flex-start; padding: 14px; border-radius: 22px; background: color-mix(in srgb, var(--yv) 14%, #fff); animation: hdIn .35s ease both; }
+.yt-ve { flex: none; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: #fff; font-size: 24px; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; box-shadow: 0 6px 12px -8px rgba(32,48,26,.3); }
+.yt-vibe small { display: block; font-size: 11.5px; font-weight: 500; color: color-mix(in srgb, var(--yv) 75%, #20301a); }
+.yt-vibe b { display: block; margin: 1px 0 3px; font-size: 17px; font-weight: 600; color: #20301a; }
+.yt-vibe p { margin: 0; font-size: 13.5px; line-height: 1.45; color: rgba(32,48,26,.78); }
+@media (prefers-reduced-motion: reduce) { .yt-wv path, .yt-emo, .yt-heart { animation: none; } }
+.yt-seg button { display: block; width: 100%; min-width: 0; margin: 0; text-align: center; }
+.yt-pair { align-items: start; } .yt-mid { margin-top: 26px; }
