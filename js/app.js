@@ -7035,11 +7035,12 @@ function routineCard(kind, eyebrow, [title, sub, list]) {
     <div class="rt-ctl"><button class="rt-go" data-action="rtGo">${icon('play', 15)}<span>Start</span></button><button class="rt-skip" data-action="rtSkip" hidden>Next ${icon('chevR', 14)}</button></div></section>`;
 }
 let RT = null;
+const rtBtn = (b, l, ic) => { b.innerHTML = `${icon(ic, 15)}<span>${l}</span>`; };
 function rtStop(done) {
   if (!RT) return; clearInterval(RT.iv); const { el } = RT; RT = null;
   if (!el.isConnected) return;
   el.classList.remove('run'); el.querySelectorAll('.rt-r').forEach(r => { r.classList.remove('on', 'done'); r.style.setProperty('--p', 0); r.querySelector('.rt-n').textContent = mmss(+r.dataset.s); });
-  el.querySelector('.rt-go span').textContent = done ? 'Again' : 'Start'; el.querySelector('.rt-skip').hidden = true;
+  rtBtn(el.querySelector('.rt-go'), done ? 'Again' : 'Start', 'play'); el.querySelector('.rt-skip').hidden = true;
   if (done) { const ctx = bellCtx(); if (ctx) ringBell(ctx, ctx.currentTime + .05, .8); }
 }
 function rtStep(i) {
@@ -9757,11 +9758,11 @@ const actions = {
   supTab: d => { ui.supTab = d.v; render(); },
   stTab: d => { rtStop(); ui.stTab = d.v; render(); },
   rtGo: (d, btn) => {
-    const el = btn.closest('.rt'), lab = btn.querySelector('span');
-    if (RT && RT.el === el) { RT.paused = !RT.paused; if (RT.paused) { RT.rest = RT.end - performance.now(); lab.textContent = 'Resume'; } else { RT.end = performance.now() + RT.rest; lab.textContent = 'Pause'; } el.classList.toggle('paused', RT.paused); return; }
-    rtStop(); RT = { el, iv: setInterval(rtTick, 200) }; el.classList.add('run'); el.classList.remove('paused'); lab.textContent = 'Pause'; el.querySelector('.rt-skip').hidden = false; rtStep(0);
+    const el = btn.closest('.rt');
+    if (RT && RT.el === el) { RT.paused = !RT.paused; if (RT.paused) { RT.rest = RT.end - performance.now(); rtBtn(btn, 'Resume', 'play'); } else { RT.end = performance.now() + RT.rest; rtBtn(btn, 'Pause', 'pause'); } el.classList.toggle('paused', RT.paused); return; }
+    rtStop(); RT = { el, iv: setInterval(rtTick, 200) }; el.classList.add('run'); el.classList.remove('paused'); rtBtn(btn, 'Pause', 'pause'); el.querySelector('.rt-skip').hidden = false; rtStep(0);
   },
-  rtSkip: () => { if (RT) { RT.paused = false; RT.el.classList.remove('paused'); RT.el.querySelector('.rt-go span').textContent = 'Pause'; rtStep(RT.i + 1); } },
+  rtSkip: () => { if (RT) { RT.paused = false; RT.el.classList.remove('paused'); rtBtn(RT.el.querySelector('.rt-go'), 'Pause', 'pause'); rtStep(RT.i + 1); } },
   calmWay: (d, el) => {
     let k = calmDone(); k = k.includes(d.t) ? k.filter(x => x !== d.t) : [...k, d.t];
     try { localStorage.setItem('uts.calmWays', JSON.stringify({ d: todayISO(), k })); } catch {}
