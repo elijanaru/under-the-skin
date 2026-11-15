@@ -10875,6 +10875,7 @@ function mountFigures() {
   document.querySelectorAll('.mn-pg').forEach(row => { const on = row.querySelector('.on'); if (on) row.scrollLeft = on.offsetLeft - (row.clientWidth - on.offsetWidth) / 2; });
   // today's tea as a turning 3D cup; the tea photo stays if 3D can't run
   // The 3D cup only loads once its card is on screen and the phone is idle, so the app opens fast.
+  document.querySelectorAll('.ul4 .tk4:not(.tkp)').forEach(tkPlay);
   document.querySelectorAll('canvas.teacup3d').forEach(c => {
     const hero = c.closest('.tg-hero, .cup3d-w'), fail = () => { hero?.classList.remove('tg-3d', 'tg-ready'); c.remove(); };
     const start = () => import('./teacup3d.js').then(m => {
@@ -10982,6 +10983,32 @@ function ulTicket() {
       <div class="tk4-band"><div><b>Under the Skin</b><span>a ticket back to yourself</span></div><span class="tk4-p"><em><small>€</small>${PRICE}</em><i>once, forever</i></span></div>
     </div>
     <i class="tk3-holo" aria-hidden="true"></i></div></div></div>`;
+}
+// The price ticket is a toy in her hand: drag it with a finger and it tilts and turns in 3D (the shine and the
+// ground shadow follow), let go and it springs back with a little wobble, then keeps its slow idle sway.
+function tkPlay(el) {
+  el.classList.add('tkp');
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches, rot = el.querySelector('.tk4-rot');
+  let rx = 0, ry = 0, vx = 0, vy = 0, grab = null, raf = 0, last = performance.now(), t0 = last;
+  const set = () => { el.style.setProperty('--rx', rx.toFixed(2)); el.style.setProperty('--ry', ry.toFixed(2)); };
+  const tick = now => {
+    if (!el.isConnected) return; raf = requestAnimationFrame(tick);
+    const dt = Math.min(.05, (now - last) / 1000); last = now; if (document.hidden || grab) return;
+    const t = (now - t0) / 1000, tx = still ? 0 : 6 * Math.sin(t * .62), ty = still ? 0 : 14 * Math.sin(t * .45);
+    vx += (90 * (tx - rx) - 9 * vx) * dt; vy += (90 * (ty - ry) - 9 * vy) * dt; rx += vx * dt; ry += vy * dt; set();
+  };
+  el.addEventListener('pointerdown', e => {
+    grab = { x: e.clientX, y: e.clientY, rx, ry, lx: e.clientX, ly: e.clientY, lt: performance.now() }; vx = vy = 0;
+    el.classList.add('grab'); el.setPointerCapture?.(e.pointerId);
+  });
+  el.addEventListener('pointermove', e => {
+    if (!grab) return; const now = performance.now(), dtm = Math.max(8, now - grab.lt);
+    const nry = Math.max(-62, Math.min(62, grab.ry + (e.clientX - grab.x) * .42)), nrx = Math.max(-42, Math.min(42, grab.rx - (e.clientY - grab.y) * .36));
+    vy = (nry - ry) / dtm * 1000; vx = (nrx - rx) / dtm * 1000; ry = nry; rx = nrx; grab.lt = now; set();
+  });
+  const up = () => { if (!grab) return; grab = null; el.classList.remove('grab'); vx = Math.max(-260, Math.min(260, vx)); vy = Math.max(-320, Math.min(320, vy)); last = performance.now(); };
+  el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up); el.addEventListener('lostpointercapture', up);
+  set(); raf = requestAnimationFrame(tick);
 }
 function viewUnlock() {
   const left = trialLeft(), lock = locked(), paid = !!state.paid, nm = esc((state.profile.name || '').trim());
@@ -11126,7 +11153,7 @@ if ('serviceWorker' in navigator) {
 }
 setInterval(() => { if (state?.onboarded) { M = model(); fireNotifications(); } }, 15 * 60 * 1000);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.querySelector('.ws')) wsClose(); });
-document.addEventListener('pointermove', e => { const t = e.target.closest?.('.tk3'); if (!t) return; const r = t.getBoundingClientRect();
+document.addEventListener('pointermove', e => { const t = e.target.closest?.('.tk3'); if (!t || t.classList.contains('tkp')) return; const r = t.getBoundingClientRect();
   t.style.setProperty('--px', (((e.clientX - r.left) / r.width - .5) * 14).toFixed(2)); t.style.setProperty('--py', (((e.clientY - r.top) / r.height - .5) * -12).toFixed(2)); });
 document.addEventListener('pointerout', e => { const t = e.target.closest?.('.tk3'); if (t && !t.contains(e.relatedTarget)) { t.style.setProperty('--px', 0); t.style.setProperty('--py', 0); } });
 window.addEventListener('hashchange', () => { wsClose(true); if (route().name !== 'log') ui.logDate = null; if (route().name !== 'calendar') ui.calEdit = false; render(); });

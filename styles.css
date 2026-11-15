@@ -15681,3 +15681,11 @@ html .home .hub .caps { width: calc(100% - 40px) !important; }
 .cup3d-w:has(canvas.teacup3d) > img { opacity: 0 !important; }
 .cup3d-w canvas.teacup3d, .tg-3d .teacup3d { transform: none !important; transition: opacity .6s ease !important; }
 html .rn2 .rn-ore img.emo { width: 30px; height: 30px; image-rendering: pixelated; }
+/* Unlock ticket as a finger toy (16 Nov 2026): JS drives --rx/--ry (drag, spring back, idle sway), so the CSS sway is off;
+   the ticket follows the finger directly while held, squeezes a touch, and the title is a cute swash font */
+.ul4 .tk3.tk4.tkp { animation: tk3In 1.3s cubic-bezier(.22,1,.36,1) .2s both; touch-action: none; cursor: grab; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.ul4 .tk4.tkp .tk4-rot { transition: scale .3s cubic-bezier(.3,1.5,.5,1); }
+.ul4 .tk4.tkp.grab { cursor: grabbing; }
+.ul4 .tk4.tkp.grab .tk4-rot { scale: .97; }
+.ul4 .tk4.tkp img { pointer-events: none; -webkit-user-drag: none; }
+html .tk4-band b { white-space: nowrap; font: 800 19.5px/1 'Sansita Swashed', 'DM Serif Display', Georgia, serif; letter-spacing: .005em; color: #5a2a4a; }
