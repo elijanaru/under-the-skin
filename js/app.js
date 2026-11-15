@@ -2397,7 +2397,7 @@ function foodExplore(phase, info) {
   if (k === 'recipes') {
     const recs = recipesFor(phase, info).filter(r => photoUrl(r.id)).slice(0, 6);
     lead = warm ? 'Your period is close, so warm and cooked dishes come first.' : `Dishes that fit your ${name.toLowerCase()} phase and the season.`;
-    body = `<div class="fx-big">${recs.map(r => `<button class="fx-b" data-action="nav" data-to="recipe/${r.id}"><img src="${photoUrl(r.id, 520)}" alt="" loading="lazy" decoding="async"><b>${r.name}</b><small>${r.time} min</small></button>`).join('')}</div>`;
+    body = `<div class="fx-big">${recs.map(r => `<button class="fx-b" data-action="nav" data-to="recipe/${r.id}"><img src="${photoUrl(r.id, 520)}" alt="" loading="lazy" decoding="async"><b>${r.name}</b><small>${icon('clock', 13)}<i class="dotnum">${r.time}</i> min${r.raw ? '<em>Raw</em>' : r.warm ? '<em class="w">Warm</em>' : ''}</small></button>`).join('')}</div>`;
   } else if (k === 'season') {
     const m = new Date().getMonth() + 1, sz = SZ.seasonal(myCountry(), m), seen = new Set(), its = sz.filter(x => x.ph.includes(phase) && szCut(x.f)).concat(sz.filter(x => !x.ph.includes(phase) && szCut(x.f))).filter(x => { const c = szCut(x.f); if (seen.has(c)) return false; seen.add(c); return true; }).slice(0, 9); // one tile per picture, no repeats
     lead = `${SZ.seasonName(myCountry(), m)} foods where you live, the ones for your phase first.`;
@@ -2410,7 +2410,7 @@ function foodExplore(phase, info) {
     const C0 = EAT_GUIDE[phase].cats[k], L = warmChips(C0[1], k, warm && phase === (info && info.phase)).slice(0, 9);
     lead = C0[0].split('. ')[0].replace(/\.?$/, '.');
     body = `<div class="fx-g">${L.map(([, n]) => { if (k === 'supps') { const x = suppOf(n), sym = x ? x.sym : /B12/.test(n) ? 'B12' : /omega/i.test(n) ? 'Ω3' : n.slice(0, 2);
-      return `<button class="fx-t" data-action="nav" data-to="plan/supps"><span class="fx-ti sym"><span>${sym}</span></span><b>${n}</b></button>`; }
+      return `<button class="fx-t" data-action="nav" data-to="plan/supps"><span class="fx-ti sym"><span>${sym}</span></span><b>${n.replace(/\s+[\d.,–-]+\s*(g|mg|µg|mcg|IU)$/i, '')}</b></button>`; }
       const pic = (EB_PIC.find(([r]) => r.test(n)) || [])[1]?.(); return tile(pic, n, 'data-action="nav" data-to="plan/drinks"', pic && !pic.startsWith('images/')); }).join('')}</div>`;
   } else {
     // blood sugar: one simple curve graphic and three steps, the full page behind See all
@@ -2861,7 +2861,13 @@ function plateFoods(k, phase, season, warm) {
   if (k === 'protein' && ['veg', 'vegan', 'pesc'].includes(myDiet())) { const keep = list.filter(x => plainFits(x)); list = [...keep, ...PLANT_PROTEIN[phase].filter(x => plainFits(x) && !keep.includes(x))].slice(0, Math.max(4, list.length)); }
   return list.map(x => { const n = x.slice(x.indexOf(' ') + 1); return { g: x.slice(0, x.indexOf(' ')), n, photo: findFoodPhoto(n) }; });
 }
-function plateWhy(k, phase) { return k === 'spice' ? PLATE_SPICE_WHY[phase] : EAT_GUIDE[phase].cats[k][0]; }
+// When the plate shows what is in season, veg and fruit give the phase reason without naming foods, so the line never contradicts the season chips below it.
+const PLATE_WHY_SEASON = {
+  veg: { menstrual: 'Cook them soft and warm, so they are easy to digest and bring minerals back.', follicular: 'Fresh, crisp veg brings fibre and colour while estrogen rises.',
+    ovulatory: 'Colourful veg, plus some lightly cooked cabbage family greens to help clear the extra estrogen.', luteal: 'Roasted, grounding veg eases bloating and keeps you steady.' },
+  fruit: { menstrual: 'Stewed, warm fruit is easy on your belly.', follicular: 'Fresh fruit: its vitamin C helps you absorb iron.', ovulatory: 'Juicy, hydrating fruit for your peak.', luteal: 'Sweet but steady, best with a little fat or protein.' },
+};
+function plateWhy(k, phase, live) { return k === 'spice' ? PLATE_SPICE_WHY[phase] : live && PLATE_WHY_SEASON[k] ? PLATE_WHY_SEASON[k][phase] : EAT_GUIDE[phase].cats[k][0]; }
 function petalPath(cx, r0, r1, a0, a1, rr = 7) {
   const p = (r, a) => `${(cx + r * Math.sin(a)).toFixed(1)} ${(cx - r * Math.cos(a)).toFixed(1)}`;
   const i0 = r0 + rr, i1 = r1 - rr, d0 = rr / i1, e0 = rr / i0;
@@ -2947,7 +2953,7 @@ function plateSection(current, lite) {
     <div class="pl-wheel ${ui.plAnim ? 'pl-anim' : ''}">${plateWheel(phase, season, sel, warm)}</div>
     <div class="pl-det" data-k="${sel}">
       <div class="pld-h"><b>${P.n}</b><span class="pld-p">${PLATE_SHARE[phase][sel]}%</span></div>
-      <p>${plateWhy(sel, phase)}${live ? ` <em>In season in ${country} now.</em>` : ''}</p>
+      <p>${plateWhy(sel, phase, live)}${live ? ` <em>In season in ${country} now.</em>` : ''}</p>
       <div class="pld-foods">${foods.map(x => `<div><span class="pld-emo">${emoHtml(x.n)}</span><small>${x.n}</small></div>`).join('')}</div>
     </div>
     ${lite ? '' : plRules([

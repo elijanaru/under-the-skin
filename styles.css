@@ -14465,3 +14465,39 @@ html .br2b .hu-when { display: grid; place-items: center; align-content: center;
   font: 600 11.5px/1.15 Outfit, sans-serif; letter-spacing: .02em; text-transform: none; text-align: center; color: #9a3d58; }
 html .br2b .hu-when b { font: 400 24px/1 var(--dot); color: #9a3d58; margin: 1px 0; }
 html .br2b .hu-when small { display: block; margin: 0; font-size: 10.5px; font-weight: 500; color: rgba(154,61,88,.8); }
+
+/* Food › plate: the tapped section sits in one white card under the plate (Opal: hero object, then one glass card), no text loose on the arch */
+html .pl .pl-det { margin: 6px 0 4px; padding: 18px 18px 16px; border-radius: 28px; background: rgba(255,255,255,.92); border: 1px solid rgba(255,255,255,.9);
+  box-shadow: 0 18px 40px -26px rgba(70,30,40,.35), inset 0 1px 0 rgba(255,255,255,.9); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+html .view .pl .pl-det .pld-h b { text-shadow: none !important; color: #20301a !important; -webkit-text-fill-color: #20301a !important; }
+html .view .pl .pl-det .pld-h .pld-p { background: hsl(calc(var(--hb) + 0 * var(--hk)) calc(30% * var(--hs)) 95%); box-shadow: inset 0 0 0 1px rgba(32,48,26,.06); }
+html .pl .pl-det > p { margin: 8px 0 14px; font-size: 14.5px; line-height: 1.5; color: rgba(32,48,26,.72); text-shadow: none; }
+html .pl .pld-foods .pld-emo { background: #f6f3ef; border-color: rgba(32,48,26,.08); }
+
+/* Food › explore: the chosen category's picks sat loose on the arch (heading, line and recipe names in grey on the blush);
+   the panel is now one white card, and the category row a set of frosted glass tiles with the chosen one solid white */
+html .fx-c { background: rgba(255,255,255,.42); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.7); transition: background .3s ease, box-shadow .3s ease; }
+html .fx-c:not(.on) b { color: #304023; }
+html .fx-c.on { background: #fff; box-shadow: inset 0 0 0 1.5px #20301a, 0 10px 22px -12px rgba(32,48,26,.45); }
+html .fx-c.on b { font-weight: 600; }
+html .view .fx-p { margin-top: 10px; padding: 20px 18px 18px; border-radius: 30px; background: #fff; overflow: hidden;
+  box-shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 14px 34px -18px rgba(32,48,26,.35); }
+html .fx-p h3 { font-size: 21px; }
+html .fx-lead { color: rgba(32,48,26,.68); }
+html .fx-p .fx-big { margin: 0 -18px; padding: 0 18px 2px; }
+html .fx-b { width: 64%; }
+html .fx-b img { aspect-ratio: 4/4.4; border-radius: 22px; }
+html .fx-b b { font-weight: 600; font-size: 15.5px; }
+html .fx-b small { display: flex; align-items: center; gap: 4px; color: rgba(32,48,26,.62); }
+html .fx-b small svg { flex: none; opacity: .7; }
+html .fx-b small i { font: 400 14px/1 var(--dot); font-style: normal; color: #20301a; }
+html .fx-b small em { margin-left: 6px; padding: 2px 8px; border-radius: 99px; font-style: normal; font-size: 11.5px; font-weight: 600; background: #eaf0dc; color: #4f6a2f; }
+html .fx-b small em.w { background: #f8e8e0; color: #9a4f2e; }
+html .fx-p .fx-all { margin: 16px 0 0; border: 0; background: #20301a; color: #fff; }
+html .fx-p .fx-all svg { stroke: #fff; }
+html .pl .pl-det { overflow: hidden; }
+html .pl .pld-foods { margin: 0 -18px; padding: 2px 18px 4px; gap: 10px; }
+html .pl .pld-foods > div { width: 68px; }
+html .pl .pld-foods .pld-emo { width: 62px; height: 62px; font-size: 30px; }
+html .pl .pld-foods .pld-emo img.emo { width: 36px; height: 36px; }
+html .pl .pld-foods small { font-size: 11.5px; }
