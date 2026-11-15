@@ -14114,3 +14114,8 @@ html .view .bwx-hint { display: inline-flex; align-items: center; gap: 4px; widt
 .pg-dot.on { background: #20301a; border-color: #20301a; color: #fff; }
 .pg-prof .pg-box { box-shadow: none; background: #f6f3ef; } .pg-prof .pg-tile, .pg-prof .pg-dot { background: #fff; }
 .pg-loss2 .pg-go { margin-top: 14px; }
+
+/* onboarding photo stays pinned to the screen: when a pick opens a box and the page grows, the cover photo used to rescale (looked like a zoom) */
+.onb.no-fig:not(.step-9):not(.step-10)::before, .onb.no-fig:not(.step-9):not(.step-10)::after { position: fixed !important; }
+.pg-priv { font-style: normal; display: flex; align-items: flex-start; gap: 5px; margin-top: 6px; font-size: 12px; line-height: 1.35; color: #6c4a58; font-weight: 500; }
+.pg-priv svg { flex: none; width: 13px; height: 13px; margin-top: 1px; }
