@@ -10176,7 +10176,10 @@ const actions = {
   rmFlip: (d, el) => el.classList.toggle('open'),
   onbPurpose: d => { ui.onb.purpose = d.v; markOn('onbPurpose', d.v, true); },
   onbFocus: d => { const f = ui.onb.focus = ui.onb.focus || []; const i = f.indexOf(d.v); i < 0 ? f.push(d.v) : f.splice(i, 1); markOn('onbFocus', d.v); },
-  setPurpose: d => { state.profile.purpose = d.v; if (d.v === 'after' && !state.profile.preg) state.profile.preg = 'kids'; save(); toast(d.v === 'conceive' ? 'Fertility guidance on' : d.v === 'after' ? 'After-birth guidance on' : 'Saved'); render(); },
+  setPurpose: d => { state.profile.purpose = d.v; if (d.v === 'after' && !state.profile.preg) state.profile.preg = 'kids'; save(); toast(d.v === 'conceive' ? 'Fertility guidance on' : d.v === 'after' ? 'After-birth guidance on' : 'Saved');
+    // on Profile only the picker changes: move the tick in place, so the photo ring and the locked chains don't replay
+    const cards = route().name === 'profile' ? document.querySelectorAll('#view .purp-c[data-action="setPurpose"]') : [];
+    if (cards.length) { cards.forEach(b => b.classList.toggle('on', b.dataset.v === purpose())); M = model(); } else render(); },
   afterAge: d => { const x = AFTER_AGE.find(a => a[0] === d.v); if (!x) return; const p = state.profile; p.preg = 'kids'; p.ppAt = C.iso(C.addDays(new Date(), -x[2])); delete p.ppOld; save(); render(); },
   lossOpen: d => { ui.lsOpen = ui.lsOpen === d.v ? null : d.v; render(); },
   lossHelp: d => { const src = d.scope === 'onb' ? ui.onb : state.profile; let h = [...(src.lossHelp || [])];
