@@ -4216,17 +4216,47 @@ function reminderBanners() {
 // Letters from your body: a small hand-drawn envelope with a blush heart seal
 const LETTER_ART = `<svg viewBox="0 0 40 30" width="40" height="30" aria-hidden="true"><rect x="1.5" y="3" width="37" height="25" rx="4" fill="#fffaf6" stroke="#c9a59a" stroke-width="1.3"/><path d="M2.5 5 20 17.5 37.5 5" fill="none" stroke="#c9a59a" stroke-width="1.3" stroke-linejoin="round"/><path d="M20 21.6s-4.4-2.7-5.6-5.4c-.9-2 .4-4.3 2.6-4.3 1.2 0 2.1.6 2.5 1.4h1c.4-.8 1.3-1.4 2.5-1.4 2.2 0 3.5 2.3 2.6 4.3-1.2 2.7-5.6 5.4-5.6 5.4z" fill="#d97a93"/></svg>`;
 const letterTime = ([h, mi]) => `${((h + 11) % 12) + 1}:${String(mi).padStart(2, '0')} ${h < 12 ? 'am' : 'pm'}`;
-function letterCard(x) {
-  return `<section class="lt-today"><button class="bn-x" data-action="dismissRem" data-id="${x.id}" aria-label="Put the letter away">${icon('close', 14)}</button>
-    <span class="lt-seal">${LETTER_ART}</span><small>${esc(x.title)}</small><p>${esc(x.body)}</p><em>Love, your body</em></section>`;
+// Letters from your body as real envelopes (16 Nov 2026, from her moodboard): engraved cherubs, calligraphy, lace and a dove cameo,
+// airmail stripes, a wax seal, a burgundy one with her name in silver. A new design every day; tap and the flap lifts and the letter rises out.
+const LV_DOVE = '<path d="M9 35c5 1 10 0 14-3-3-6-4-14-1-22 5 5 8 11 9 18 3-6 9-10 17-10-2 4-4 7-8 10 4 0 7 1 9 3l5-2-2 5c-4 6-11 9-19 9-4 4-10 6-17 5l4-4c-5-1-9-4-11-9z" fill="#fff"/><circle cx="47.5" cy="34" r="1.2" fill="#7a96ab"/>';
+function lvDoily(r = 46) {
+  let sc = ''; const n = 28;
+  for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2, x = Math.cos(a) * r, y = Math.sin(a) * r; sc += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r * .16).toFixed(1)}"/>`; }
+  let holes = ''; for (let i = 0; i < 20; i++) { const a = i / 20 * Math.PI * 2; holes += `<circle cx="${(Math.cos(a) * r * .8).toFixed(1)}" cy="${(Math.sin(a) * r * .8).toFixed(1)}" r="1.6" fill="#eee9de"/>`; }
+  return `<g fill="#fbfaf6" stroke="rgba(120,110,95,.25)" stroke-width=".6">${sc}<circle r="${r}"/></g>${holes}<circle r="${(r * .66).toFixed(1)}" fill="none" stroke="rgba(120,110,95,.2)" stroke-dasharray="1.5 2"/>`;
 }
+const LV_SEAL = '<path d="M30 4c6 1 9-2 14 2s3 8 7 12 1 9 3 14-4 8-6 12-7 4-12 7-9 0-14 0-9-4-12-8-6-6-6-11 1-9 2-13 4-8 8-10 10-4 16-5z" fill="#8c1f2e"/><circle cx="30" cy="30" r="17" fill="none" stroke="#6d1220" stroke-width="2.4" opacity=".7"/><path d="M30 39s-10-6-10-12a5.5 5.5 0 0 1 10-3 5.5 5.5 0 0 1 10 3c0 6-10 12-10 12z" fill="#6d1220"/><path d="M24 22c3-4 9-5 13-2" stroke="#c45464" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".7"/>';
+const LV_KINDS = ['cherub', 'daylight', 'bisous', 'airmail', 'thanks', 'heart', 'wine'];
+function letterEnv(title, body, o = {}) {
+  const nm = (state.profile.name || '').trim().split(/\s+/)[0] || 'You', info = M && M.info, kind = LV_KINDS[((dayNum(new Date()) + (o.shift || 0)) % LV_KINDS.length + LV_KINDS.length) % LV_KINDS.length];
+  const d = new Date(), date = `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
+  const type = info ? `day ${info.cd} · ${PHASES[info.phase].name.toLowerCase()} phase` : 'from your body';
+  const flap = `<svg class="lv-flap" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path class="lv-fl" d="M0 0H100L54 52Q50 55 46 52Z"/></svg><svg class="lv-sides" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 100L44 56M100 100L56 56"/></svg>`;
+  const ph = info ? `images/lotus-${info.phase}.webp` : 'images/lotus-follicular.webp';
+  const deco = {
+    cherub: `<img class="lv-angel" src="images/letters/cherubs.webp" alt=""><span class="lv-type t1">${type}<br>${date}<br>open me slowly</span><b class="lv-w f-ballet">Miss you</b>`,
+    daylight: `<svg class="lv-doily" viewBox="-60 -60 120 120" aria-hidden="true">${lvDoily()}<ellipse rx="22" ry="17" fill="#a9c1d3"/><ellipse rx="22" ry="17" fill="none" stroke="#fff" stroke-width="1.6"/><g transform="translate(-28 -26) scale(1.05)">${LV_DOVE}</g></svg><b class="lv-w f-doul emb">Daylight</b><span class="lv-type t2">${type}</span>`,
+    bisous: `<b class="lv-caps">BISOUS</b><b class="lv-w f-vibes big">Bisous</b><span class="lv-type t3">${date}</span>`,
+    airmail: `<span class="lv-stamp"><img src="${ph}" alt=""><i>${info ? info.cd : '01'}</i></span><span class="lv-post" aria-hidden="true"></span><span class="lv-type t4">par avion · ${type}<br>to ${esc(nm.toLowerCase())}, with love</span><b class="lv-w f-paris">For you</b>`,
+    thanks: `<span class="lv-win"><img src="images/welcome-forest.jpg" alt=""></span><span class="lv-type t5">a small note to say thank you for all that you carry</span><b class="lv-w f-doul">Thank you</b>`,
+    heart: `<img class="lv-angel r" src="images/letters/cherubs.webp" alt=""><svg class="lv-seal" viewBox="0 0 60 60" aria-hidden="true">${LV_SEAL}</svg><b class="lv-w f-mrs">Into my heart</b><span class="lv-type t6">${date}</span>`,
+    wine: `<span class="lv-type t7">a letter from your body</span><b class="lv-w f-doul silver">${esc(nm)}</b>`,
+  }[kind];
+  return `<section class="lv lv-${kind}" data-action="letterOpen" role="button" tabindex="0" aria-expanded="false" aria-label="${esc(title)}. Tap to open">
+    ${o.dismiss ? `<button class="bn-x lv-x" data-action="dismissRem" data-id="${o.dismiss}" aria-label="Put the letter away">${icon('close', 14)}</button>` : ''}
+    <div class="lv-paper"><small>${esc(title)}</small><p>${esc(body)}</p><em>Love, your body</em></div>
+    <div class="lv-env">${deco}${flap}</div>
+    <small class="lv-hint">${icon('mail', 13)} Tap to open your letter</small>
+  </section>`;
+}
+function letterCard(x) { return letterEnv(x.title, x.body, { dismiss: x.id }); }
 function lettersCard() {
   const r = rem(), perm = 'Notification' in window ? Notification.permission : 'unsupported', slots = LETTER_SLOTS[1];
   return `${sectionTitle('Letters from your body')}
     <section class="card lt-set">
       <div class="lt-top"><span class="lt-seal">${LETTER_ART}</span><span class="lt-tt"><b>Letters from your body</b><small>${r.letters ? `One letter a day · ${slots.map(letterTime).join(', ')}` : 'Short, loving letters matched to your cycle'}</small></span>
         <button class="toggle ${r.letters ? 'on' : ''}" data-action="remToggle" data-k="letters" role="switch" aria-checked="${!!r.letters}" aria-label="Letters from your body"><i></i></button></div>
-      ${r.letters ? `${M?.info ? `<div class="lt-paper"><small>${LETTER_TITLE.am}</small><p>${esc(bodyNote(new Date(), 'am', M.info, []) || '')}</p><em>Love, your body</em></div>` : ''}
+      ${r.letters ? `${M?.info ? letterEnv(LETTER_TITLE.am, bodyNote(new Date(), 'am', M.info, []) || '', { shift: 0 }) : ''}
         ${!NATIVE && perm === 'default' ? `<button class="ls-btn lt-arrive" data-action="remPermission">${icon('mail', 15)} Let your letters arrive on your phone</button>` : ''}` : ''}
     </section>`;
 }
@@ -4263,9 +4293,9 @@ const RELIEF_IC = { 'Face fascia': 'hand', 'Ovulation pain': 'seed', Cramps: 'th
 const reliefIc = (k, size = 20) => icon(RELIEF_IC[k] || 'leaf', size);
 const RELIEF_EMOJI = { 'Face fascia': '💆‍♀️', 'Ovulation pain': '🥚', Cramps: '🌀', 'PMS mood': '🌧️', Bloating: '🎈', Insomnia: '🌙', Acne: '🫧', Headache: '🤕', Fatigue: '🪫', 'Tender breasts': '💗' };
 // A calm real photo for each relief topic (no faces): the tea or food that helps most.
-const RELIEF_PIC = { 'Face fascia': 'tea:Rose', 'Ovulation pain': 'tea:cover-ovulation', Cramps: 'tea:Ginger & cinnamon', 'PMS mood': 'tea:Lemon balm', Bloating: 'tea:Fennel',
+const RELIEF_PIC = { 'Face fascia': 'img:images/fb/fascia.webp', 'Ovulation pain': 'tea:cover-ovulation', Cramps: 'tea:Ginger & cinnamon', 'PMS mood': 'tea:Lemon balm', Bloating: 'tea:Fennel',
   Insomnia: 'tea:Lavender', Acne: 'tea:Spearmint', Headache: 'tea:Peppermint', Fatigue: 'tea:Nettle leaf', 'Tender breasts': 'Ground flaxseed' };
-const reliefPhoto = (k, w) => { const p = RELIEF_PIC[k] || 'tea:Chamomile'; return p.startsWith('tea:') ? teaPhoto(p.slice(4), w, Math.round(w * 1.15)) : foodPhoto(p, w); };
+const reliefPhoto = (k, w) => { const p = RELIEF_PIC[k] || 'tea:Chamomile'; return p.startsWith('img:') ? p.slice(4) : p.startsWith('tea:') ? teaPhoto(p.slice(4), w, Math.round(w * 1.15)) : foodPhoto(p, w); };
 // "Feel better, gently": one collage poster of small rituals that support her hormones (tap any for what to do, why and
 // a safe amount), merged with the old hormone habits page: her daily five, help for what she feels, and the seven pillars.
 const FB = [
@@ -4463,6 +4493,20 @@ function reliefIcon(t) {
     : /sun|light|outside/.test(x) ? 'sun' : /journal|talk|write|mind|friend/.test(x) ? 'mind' : 'spark';
 }
 // One study per symptom: [year, first author, what it found in plain words, journal]
+// A second study for some symptoms, shown under the first: [year, first author, finding, journal]
+const RELIEF_STUDY2 = {
+  Cramps: ['2012', 'Rahnama', '250 mg ginger four times a day for the first 3 days of the period eased pain more than placebo.', 'BMC Complementary & Alternative Medicine'],
+  'PMS mood': ['1999', 'Wyatt', 'Across 9 trials, up to 100 mg vitamin B6 a day helped PMS, low mood included.', 'BMJ · review'],
+  Acne: ['2007', 'Smith', '12 weeks of low-sugar, slow-carb meals meant fewer spots than usual meals in young men.', 'American Journal of Clinical Nutrition'],
+};
+// When each symptom shows up in the cycle, for the at-a-glance strip.
+const RELIEF_WHEN = {
+  Cramps: [['menstrual'], 'Days 1 to 3 of your period'], 'Ovulation pain': [['ovulatory'], 'Mid-cycle, one side, up to 2 days'],
+  'PMS mood': [['luteal'], '3 to 10 days before your period'], Bloating: [['luteal', 'menstrual'], 'The week before and first days of your period'],
+  Insomnia: [['luteal'], 'The last days before your period'], Acne: [['luteal'], '7 to 10 days before your period'],
+  Headache: [['luteal', 'menstrual'], '2 days before to 3 days into your period'], Fatigue: [['menstrual', 'luteal'], 'Your period and the days before it'],
+  'Tender breasts': [['luteal'], 'The week or two before your period'], 'Face fascia': [['luteal'], 'Puffiest in the last days before your period'],
+};
 const RELIEF_STUDY = {
   Cramps: ['2001', 'Akin', 'A gentle heat patch on the lower belly eased period pain as well as ibuprofen did.', 'Obstetrics & Gynecology'],
   Headache: ['1991', 'Facchinetti', 'Magnesium taken from mid-cycle meant fewer headache days and less pain with menstrual migraine.', 'Headache'],
@@ -4520,19 +4564,25 @@ function viewRelief(id) {
   const k = decodeURIComponent(id || ''), R = RELIEF[k]; if (!R) return viewMissing();
   const food = SYMPTOM_FOODS[k] || (k === 'PMS mood' ? SYMPTOM_FOODS.Cravings : null), L = RELIEF_LINKS[k] || {};
   const help = (state.reliefHelp || {})[k] || [], order = R.steps.map((_, i) => i).sort((a, b) => help.includes(b) - help.includes(a));
+  const [w0, ...wr] = splitSentences(R.why), [ph, whenT] = RELIEF_WHEN[k] || [[], ''], me = M.info && M.info.phase;
+  // each step shows its photo once; a photo another step already used gives way to the step's number
+  const seen = new Set(), pics = R.steps.map(x => { const p = reliefStepPic(x.t); if (!p || seen.has(p)) return ''; seen.add(p); return p; });
+  const studies = [RELIEF_STUDY[k], RELIEF_STUDY2[k]].filter(Boolean);
+  const know = (ic, label, text) => { const [a, ...r] = splitSentences(text); return `<details class="rl-k"><summary><span class="rl-ki">${ic}</span><span class="rl-kt"><small>${label}</small><b>${a}</b></span>${r.length ? icon('chevD', 14) : ''}</summary>${r.length ? `<p>${r.join(' ')}</p>` : ''}</details>`; };
   return `${topbar('Relief', { back: true })}
   <div class="pad">
-    ${(() => { const [w0, ...wr] = splitSentences(R.why); return `<section class="rl-hero"><img src="${reliefPhoto(k, 640)}" alt="" decoding="async"><div><small>${RELIEF_IC[k] ? icon(RELIEF_IC[k], 13, 2) : ''} Relief</small><h1 class="page-h">${k}</h1><p class="rl-sub">${w0}</p></div></section>${wr.length ? `<details class="rl-why"><summary>Why it happens ${icon('chevR', 12)}</summary><p>${wr.join(' ')}</p></details>` : ''}`; })()}
+    <section class="rl-hero"><img src="${reliefPhoto(k, 640)}" alt="" decoding="async"><div><small>${RELIEF_IC[k] ? icon(RELIEF_IC[k], 13, 2) : ''} Relief</small><h1 class="page-h">${k}</h1><p class="rl-sub">${w0}</p>
+      ${whenT ? `<div class="rl-at"><div class="rl-strip" aria-hidden="true">${PHASE_ORDER.map(p => `<i class="${ph.includes(p) ? 'on' : ''} ${p === me ? 'me' : ''}" style="--c:${PH_HEX[p]}"></i>`).join('')}</div>
+        <div class="rl-spec"><div><dt>When it shows</dt><dd>${whenT}</dd></div><div><dt>Try first</dt><dd>${R.steps[0].t}</dd></div><div><dt>Ways that help</dt><dd><span class="dotnum">${R.steps.length}</span></dd></div></div></div>` : ''}
+      ${wr.length ? `<details class="rl-why rl-why2"><summary>Why it happens ${icon('chevD', 13)}</summary><p>${wr.join(' ')}</p></details>` : ''}</div></section>
     ${sectionTitle('What helps')}
-    <p class="rl-hint">${help.length ? `${icon('heart', 12)} ${help.length} of ${R.steps.length} work for you, so they’re at the top.` : `Tap ${icon('heart', 12)} on what helps you. Next time it moves to the top.`}</p>
-    <section class="card rs2-list">${order.map(i => { const x = R.steps[i], [d0, ...dr] = splitSentences(x.d), go = x.to ? `<button class="link rs-go" data-action="nav" data-to="${x.to}">Open ${icon('chevR', 12)}</button>` : '';
-      return `<div class="rs2 ${help.includes(i) ? 'helped' : ''}">${(ph => ph ? `<span class="rs2-ph"><img src="${ph}" alt="" loading="lazy" decoding="async"></span>` : `<span class="rs2-ic">${icon(reliefIcon(x.t), 18)}</span>`)(reliefStepPic(x.t))}
+    <section class="card rs2-list"><p class="rl-hint rl-hint2">${help.length ? `${icon('heart', 12)} ${help.length} of ${R.steps.length} work for you, so they’re at the top.` : `Tap ${icon('heart', 12)} on what helps you. Next time it moves to the top.`}</p>${order.map(i => { const x = R.steps[i], [d0, ...dr] = splitSentences(x.d), go = x.to ? `<button class="link rs-go" data-action="nav" data-to="${x.to}">Open ${icon('chevR', 12)}</button>` : '';
+      return `<div class="rs2 ${help.includes(i) ? 'helped' : ''}">${pics[i] ? `<span class="rs2-ph"><img src="${pics[i]}" alt="" loading="lazy" decoding="async"></span>` : `<span class="rs2-ic rs2-n"><b class="dotnum">${i + 1}</b></span>`}
       <div class="rs2-b"><b>${x.t}</b><p>${d0}</p>${dr.length ? `<details class="rs2-more"><summary>More ${icon('chevR', 11)}</summary><p>${dr.join(' ')}</p>${go}</details>` : go}</div>
       <button class="rs-heart ${help.includes(i) ? 'on' : ''}" data-action="reliefHelp" data-k="${k}" data-i="${i}" aria-label="This helps me">${icon('heart', 18)}</button></div>`; }).join('')}</section>
     ${reliefFood(k, L, food)}
-    ${RELIEF_STUDY[k] ? (([yr, who, t, j]) => `${sectionTitle('What studies found')}<section class="card rl-st"><div class="sgt-st"><b class="dotnum">${yr}</b><span><em>${who}</em>${t}<small>${j}</small></span></div></section>`)(RELIEF_STUDY[k]) : ''}
-    <section class="card tcm-card rl-tcm"><div class="tcm-glyph">${icon('yinyang', 24)}</div><div class="tcm-main"><div class="eyebrow">In Chinese medicine</div><p class="body">${R.tcm}</p></div></section>
-    ${R.doctor ? `<section class="card glass rl-doc"><span>${icon('plus', 20)}</span><div><small>See a doctor if</small><p>${R.doctor}</p></div></section>` : ''}
+    ${studies.length ? `${sectionTitle('What studies found')}<section class="card rl-st rl-st2">${studies.map(([yr, who, t, j]) => `<div class="sgt-st"><b class="dotnum">${yr}</b><span><em>${who}</em>${t}<small>${j}</small></span></div>`).join('')}</section>` : ''}
+    <section class="card rl-know">${know(icon('yinyang', 18), 'In Chinese medicine', R.tcm)}${R.doctor ? know(icon('plus', 18), 'See a doctor if', R.doctor) : ''}</section>
     <p class="fine center">General information, not medical advice. Check with a pharmacist before taking painkillers or supplements.</p>
   </div>`;
 }
@@ -10001,6 +10051,12 @@ const actions = {
     try { await A.deleteAccount(); if (state) { delete state.account; save(true); } toast('Account deleted'); render(); } catch (e) { toast(e.message); }
   },
   nav: d => { const m = /^relief\/(.+)$/.exec(d.to || ''), k = m && decodeURIComponent(m[1]); if (k && RELIEF[k]) return reliefOpen(k); if (document.querySelector('.ws')) wsClose(true); go(d.to); },
+  letterOpen: (d, el) => {
+    const lv = el.closest('.lv'); if (!lv) return;
+    const open = !lv.classList.contains('open'), pp = lv.querySelector('.lv-paper');
+    lv.style.setProperty('--ph', `${pp.offsetHeight}px`);
+    lv.classList.toggle('open', open); lv.setAttribute('aria-expanded', open);
+  },
   ffPick: (d, el) => {
     const s = d.s, warm = warmWindow(M.info), x = ffList(s, warm)[+d.i]; if (!x) return;
     const [amt, why] = SYMPTOM_FOOD_INFO[x] || ['', ''];
