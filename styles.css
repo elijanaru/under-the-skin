@@ -13747,3 +13747,43 @@ html .view .pad.fb .fbp-title p { padding: 0 !important; background: none !impor
 html .view .pad.fb .fbp-step { padding: 10px 12px; border-radius: 22px; background: rgba(255,255,255,.62); -webkit-backdrop-filter: blur(16px) saturate(1.3); backdrop-filter: blur(16px) saturate(1.3); box-shadow: inset 0 0 0 1px rgba(255,255,255,.8), 0 8px 20px -14px rgba(60,30,40,.3); }
 html .view .pad.fb .fbp-step b { color: #20301a !important; -webkit-text-fill-color: #20301a !important; text-shadow: none !important; }
 html .view .pad.fb .fbp-step small { color: rgba(32,48,26,.7) !important; -webkit-text-fill-color: rgba(32,48,26,.7) !important; text-shadow: none !important; }
+
+/* His drive as a sun dial (his symbol, like the lotus is hers): dark forest card, a gold sun that travels over the horizon
+   from his wake time to bedtime, five tappable parts of his day that move the sun in place */
+html .pv2-card.hs3 { display: block; padding: 20px 16px 16px; border: 0; color: #f4f1e6;
+  background: radial-gradient(120% 70% at 50% 100%, #3a4a2a 0%, #1f2b19 55%, #172012 100%); box-shadow: 0 24px 40px -24px rgba(23,32,18,.7); }
+.hs3-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; }
+.hs3-top small { display: block; font-size: 12px; font-weight: 500; letter-spacing: .02em; color: rgba(244,241,230,.6); }
+.hs3-n { display: flex; align-items: baseline; gap: 2px; margin-top: 4px; }
+.hs3-n .dotnum { font: 900 52px/1 var(--dot); color: #f6c453; text-shadow: 0 0 22px rgba(246,196,83,.35); }
+.hs3-n em { font: 600 18px Outfit, sans-serif; font-style: normal; color: #f6c453; }
+.hs3-now { text-align: right; }
+.hs3-now b { display: block; font-size: 19px; font-weight: 600; color: #fff; }
+.hs3-now small { margin-top: 2px; }
+.hs3-dial { display: block; width: 100%; margin: 8px 0 4px; overflow: visible; }
+.hs3-ax { font: 400 10.5px var(--dot); fill: rgba(244,241,230,.55); }
+.hs3-sun { transition: transform .9s cubic-bezier(.3,.9,.2,1); }
+.hs3-sun .core { fill: #f6c453; stroke: #fff6d6; stroke-width: 2; transition: opacity .4s; }
+.hs3-sun .moon { fill: #c9d2f2; opacity: 0; transition: opacity .4s; }
+.hs3-sun.night .core { opacity: 0; } .hs3-sun.night .moon { opacity: 1; } .hs3-sun.night circle:first-child { opacity: .25; }
+.hs3-sun circle:first-child { animation: hs3Glow 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes hs3Glow { 50% { transform: scale(1.18); opacity: .55; } }
+.hs3-parts { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 6px; }
+.hs3-parts button { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 10px 2px 9px; border-radius: 18px; border: 1px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.06); color: #f4f1e6; font: inherit; cursor: pointer; transition: background .25s, border-color .25s, transform .15s; -webkit-tap-highlight-color: transparent; }
+.hs3-parts button:active { transform: scale(.95); }
+.hs3-parts button span { font-size: 20px; line-height: 1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
+.hs3-parts button b { font: 400 12px/1 var(--dot); color: rgba(244,241,230,.85); }
+.hs3-parts button small { font-size: 11px; font-weight: 500; color: rgba(244,241,230,.7); }
+.hs3-parts button.on { background: #f6c453; border-color: #f6c453; color: #1f2b19; }
+.hs3-parts button.on b, .hs3-parts button.on small { color: #1f2b19; }
+.hs3-parts button i { position: absolute; top: -7px; padding: 1px 7px; border-radius: 999px; background: #fff; color: #1f2b19; font-size: 9.5px; font-weight: 600; font-style: normal; letter-spacing: .03em; text-transform: uppercase; }
+.hs3-note { margin-top: 12px; padding: 14px 16px; border-radius: 20px; background: rgba(255,255,255,.07); }
+.hs3-note b { display: block; font-size: 15px; font-weight: 600; color: #f6c453; }
+.hs3-note p { margin: 4px 0 0; font-size: 13.5px; line-height: 1.45; color: rgba(244,241,230,.82); }
+.hs3-wake { display: flex; align-items: center; gap: 6px; margin-top: 14px; }
+.hs3-wake span { flex: none; margin-right: 2px; font-size: 12px; color: rgba(244,241,230,.6); }
+.hs3-wake button { flex: 1; min-width: 0; padding: 7px 0; border-radius: 999px; border: 1px solid rgba(255,255,255,.14); background: none; color: rgba(244,241,230,.8); font: 400 11.5px var(--dot); cursor: pointer; }
+.hs3-wake button.on { background: #fff; color: #1f2b19; border-color: #fff; }
+@media (prefers-reduced-motion: reduce) { .hs3-sun, .hs3-sun circle:first-child { transition: none; animation: none; } }
+.hs3-parts button i { top: auto; bottom: -7px; } .hs3-parts { margin-bottom: 4px; }

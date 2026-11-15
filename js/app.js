@@ -8498,6 +8498,8 @@ const HIS_BLOCKS = [
   [11, 15, 'Wind down', 'Testosterone is lower and you’re calmer and more open. The best time for her, for talks and for cooking together.', 'heart'],
   [15, 24, 'Rebuild', 'Sleep. Most of your testosterone is made in deep sleep, so 7 to 9 hours keeps your drive high tomorrow.', 'moon'],
 ];
+const HIS_EMO = ['⚡', '🎯', '🏋️', '🤍', '🌙'];
+const HIS_SHORT = ['Peak', 'Focus', 'Train', 'Her time', 'Sleep'];
 function hisWake() { try { return +localStorage.getItem('uts.wake') || 7; } catch { return 7; } }
 // ---------- partner view (redesign 14 Nov 2026): clear, graphic, one tap for detail ----------
 const PV_MOOD = { menstrual: 'Quiet and inward', follicular: 'Curious and upbeat', ovulatory: 'Social and confident', luteal: 'Calmer, more sensitive' };
@@ -8771,19 +8773,28 @@ function hisDay(info, name) {
   const W = 320, H = 104, X = t => 8 + t / 24 * (W - 16), Y = v => H - 22 - v * (H - 36);
   let d = ''; for (let t = 0; t <= 24; t += .25) d += `${d ? 'L' : 'M'}${X(t).toFixed(1)} ${Y(tAt(t)).toFixed(1)}`;
   const her = Math.round(C.energyAt(info.cd, info.L, info.P) * 100), low = info.isPeriod || info.cd > info.L - 4;
-  const bub = (k, v, s) => `<div class="hs2-b"><b class="dotnum">${v}</b><small>${k}</small><em>${s}</em></div>`;
-  return `<section class="pv2-card hs2-hero">
-      <div class="hs2-top"><div><small>Testosterone now</small><b class="hs2-n"><span class="dotnum">${pct}</span><em>%</em></b><span class="hs2-of">of today’s peak</span></div>
-        <div class="hs2-now"><span class="hs2-ic">${icon(b[4], 18)}</span><b>${b[2]}</b><small>${HIS_DO[bi]}</small></div></div>
-      <svg class="hs2-curve" viewBox="0 0 ${W} ${H}" width="100%" aria-label="Testosterone over your day, highest after waking">
-        <defs><linearGradient id="hs2g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6c823e" stop-opacity=".28"/><stop offset="1" stop-color="#6c823e" stop-opacity="0"/></linearGradient></defs>
-        <path d="${d} L${X(24)} ${H - 22} L${X(0)} ${H - 22}Z" fill="url(#hs2g)"/><path d="${d}" fill="none" stroke="#20301a" stroke-width="2.4" stroke-linecap="round"/>
-        <line x1="${X(since)}" x2="${X(since)}" y1="4" y2="${H - 22}" stroke="#20301a" stroke-dasharray="2 3" opacity=".45"/><circle cx="${X(since)}" cy="${Y(tAt(since))}" r="5.5" fill="#fff" stroke="#20301a" stroke-width="2.2"/>
-        ${[0, 6, 12, 18, 24].map(t => `<text x="${X(t)}" y="${H - 5}" text-anchor="${t === 0 ? 'start' : t === 24 ? 'end' : 'middle'}" class="hs2-ax">${hLabel(w + t)}</text>`).join('')}</svg>
-      <div class="hs2-bubs">${bub('Train', hLabel(w + 7), 'strongest body')}${bub('Her time', hLabel(w + 11), 'calm and open')}${bub('Sleep by', hLabel(w + 16), 'for tomorrow’s drive')}</div>
-      <div class="hs2-wake"><span>I wake at</span>${[5, 6, 7, 8, 9].map(x => `<button class="${x === w ? 'on' : ''}" data-action="hisWake" data-v="${x}">${x}:00</button>`).join('')}</div></section>
-    ${sectionTitle('Your day plan')}
-    <section class="pv2-card hs2-plan">${HIS_BLOCKS.map(([a, z, n, t, ic], i) => `<details class="hs2-r ${i === bi ? 'on' : ''}"${i === bi ? ' open' : ''}><summary><b class="dotnum">${hLabel(w + a)}</b><span class="hs2-ric">${icon(ic, 15)}</span><span class="hs2-rt"><b>${n}</b><small>${HIS_DO[i]}</small></span>${icon('chevD', 13)}</summary><p>${t}</p></details>`).join('')}</section>
+  // the sun dial: his drive follows the sun, highest after waking. Five parts of his day, tap one and the sun moves there.
+  const R = 128, CX = 160, CY = 150, AW = 16, pos = t => { const a = Math.PI - Math.min(t, AW) / AW * Math.PI; return [CX + R * Math.cos(a), CY - R * Math.sin(a)]; };
+  const parts = HIS_BLOCKS.map(([a, z, n, txt, ic], i) => { const t = i === bi ? since : (a + Math.min(z, AW)) / 2, night = i === HIS_BLOCKS.length - 1;
+    const [x, y] = night ? [CX + R, CY] : pos(t); return { i, a, n, txt, emo: HIS_EMO[i], x: x.toFixed(1), y: y.toFixed(1), pct: Math.round(tAt(i === bi ? since : (a + z) / 2) / .92 * 100), night, when: i === bi ? 'Now' : hLabel(w + a) }; });
+  const cur = parts[bi];
+  const arc = `M${CX - R} ${CY} A${R} ${R} 0 0 1 ${CX + R} ${CY}`;
+  return `<section class="pv2-card hs3" data-sel="${bi}">
+      <div class="hs3-top"><div><small>Your drive · testosterone</small><b class="hs3-n"><span class="dotnum" id="hs3-pct">${cur.pct}</span><em>%</em></b></div>
+        <div class="hs3-now"><b id="hs3-name">${cur.n}</b><small id="hs3-when">${cur.when === 'Now' ? 'Right now' : `From ${cur.when}`}</small></div></div>
+      <svg class="hs3-dial" viewBox="0 0 320 168" aria-hidden="true">
+        <defs><linearGradient id="hs3a" x1="0" x2="1"><stop offset="0" stop-color="#f6c453"/><stop offset=".55" stop-color="#e8954a"/><stop offset="1" stop-color="#7d8fd6"/></linearGradient>
+          <radialGradient id="hs3s"><stop offset="0" stop-color="#fff6d6"/><stop offset=".45" stop-color="#f6c453"/><stop offset="1" stop-color="#f6c453" stop-opacity="0"/></radialGradient></defs>
+        <path d="${arc}" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="16" stroke-linecap="round"/>
+        <path d="${arc}" fill="none" stroke="url(#hs3a)" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 7"/>
+        <line x1="14" x2="306" y1="${CY}" y2="${CY}" stroke="rgba(255,255,255,.22)"/>
+        ${parts.filter(p => !p.night).map(p => { const [x, y] = pos(p.a); return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="rgba(255,255,255,.55)"/>`; }).join('')}
+        <text x="${CX - R}" y="${CY + 16}" text-anchor="middle" class="hs3-ax">${hLabel(w)}</text><text x="${CX}" y="${CY + 16}" text-anchor="middle" class="hs3-ax">${hLabel(w + 8)}</text><text x="${CX + R}" y="${CY + 16}" text-anchor="middle" class="hs3-ax">${hLabel(w + AW)}</text>
+        <g class="hs3-sun ${cur.night ? 'night' : ''}" id="hs3-sun" style="transform:translate(${cur.x}px,${cur.y}px)"><circle r="30" fill="url(#hs3s)" opacity=".75"/><circle class="core" r="13"/><path class="moon" d="M4-11a12 12 0 1 0 8 19 10 10 0 0 1-8-19z"/></g>
+      </svg>
+      <div class="hs3-parts" role="tablist">${parts.map(p => `<button class="${p.i === bi ? 'on' : ''}" role="tab" aria-selected="${p.i === bi}" data-action="hsPick" data-i="${p.i}" data-x="${p.x}" data-y="${p.y}" data-pct="${p.pct}" data-n="${esc(p.n)}" data-when="${p.when}" data-night="${p.night ? 1 : ''}"><span>${p.emo}</span><b class="dotnum">${p.when === 'Now' ? hLabel(w + p.a) : p.when}</b><small>${HIS_SHORT[p.i]}</small>${p.i === bi ? '<i>now</i>' : ''}</button>`).join('')}</div>
+      <div class="hs3-note" id="hs3-note"><b>${HIS_DO[bi]}</b><p>${cur.txt}</p></div>
+      <div class="hs3-wake"><span>I wake at</span>${[5, 6, 7, 8, 9].map(x => `<button class="${x === w ? 'on' : ''}" data-action="hisWake" data-v="${x}">${x}:00</button>`).join('')}</div></section>
     ${sectionTitle('Boost your drive')}
     <p class="pv2-lead">Six habits with the best evidence. Tap one for how, the study and what to watch.</p>
     <section class="pv2-card hs2-boost">${HIS_BOOST.map(([ic, n, v, s, how, st, care]) => `<details class="hs2-x"><summary><span class="hs2-xic">${icon(ic, 16)}</span><span class="hs2-rt"><b>${n}</b><small>${s}</small></span><b class="hs2-v">${v}</b></summary>
@@ -9781,7 +9792,15 @@ const actions = {
   mfTab: d => { ui.mfTab = d.v; ui.mfTile = null; softWith(); },
   mfTile: d => { ui.mfTile = ui.mfTile === +d.v ? null : +d.v; softWith(); },
   copySay: async d => { try { await navigator.clipboard.writeText(d.t); toast('Copied, now send it to her'); } catch { prompt('Copy and send', d.t); } },
-  hisWake: d => { try { localStorage.setItem('uts.wake', d.v); } catch {} render(); },
+  hisWake: d => { try { localStorage.setItem('uts.wake', d.v); } catch {} softWith(); },
+  hsPick: (d, el) => { // the sun moves to the part of the day he tapped, in place
+    const card = el.closest('.hs3'); if (!card) return; const i = +d.i, b = HIS_BLOCKS[i];
+    card.querySelectorAll('.hs3-parts button').forEach(x => { const on = x === el; x.classList.toggle('on', on); x.setAttribute('aria-selected', on); });
+    const sun = card.querySelector('#hs3-sun'); sun.style.transform = `translate(${d.x}px,${d.y}px)`; sun.classList.toggle('night', !!d.night);
+    card.querySelector('#hs3-pct').textContent = d.pct; card.querySelector('#hs3-name').textContent = d.n;
+    card.querySelector('#hs3-when').textContent = d.when === 'Now' ? 'Right now' : `From ${d.when}`;
+    const note = card.querySelector('#hs3-note'); note.innerHTML = `<b>${HIS_DO[i]}</b><p>${b[3]}</p>`; note.animate([{ opacity: 0, transform: 'translateY(-4px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: 'ease-out' });
+  },
   trackMine: () => { try { localStorage.removeItem('uts.viewOnly'); } catch {} go('today'); },
   ptWho: d => { state.profile.ptWho = d.v; save(); syRefresh() || render(); },
   shareEmail: () => {
