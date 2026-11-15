@@ -8173,9 +8173,9 @@ function apoInner() {
   const sn = apoSeason(), { sup, herbs } = apoItems(sn);
   const item = (x, i) => { const p = apoPic(x); return `<button class="sfc-i" data-action="apoPick" data-i="${i}" aria-expanded="false"><img class="${p.round ? 'rd' : ''}" src="${p.src}" alt="" loading="lazy" decoding="async"><b>${x.n}</b><small>${x.herb ? (x.nat === 'warm' ? 'Warming' : 'Neutral') : x.sub}</small>${x.herb ? '' : seasonAmt(x.n)}</button>`; };
   return `<section class="sfc apo2">
-      <header class="sfc-h"><small><i style="background:#6c823e"></i>${sn} · ${MONTHS[new Date().getMonth()]}</small><h3>${sn} apothecary</h3><p>${herbs.length ? 'Warming roots, barks and berries for teas and broths, and the foods that ripen now.' : 'What nature makes best this season.'}</p></header>
+      <header class="sfc-h"><small><i style="background:#6c823e"></i>${sn} · ${MONTHS[new Date().getMonth()]}</small><h3>${sn} apothecary</h3><p>${herbs.length ? 'Warming roots, barks and berries for teas and broths.' : 'What nature makes best this season.'}</p></header>
       ${herbs.length ? herbBed(herbs) : ''}
-      <div class="sfc-gh"><b>${herbs.length ? 'Ripe this season' : 'Season superfoods'}</b><small>${sup.length} to eat now</small></div><div class="sfc-grid">${sup.map(item).join('')}</div>
+      ${herbs.length ? '' : `<div class="sfc-gh"><b>Season superfoods</b><small>${sup.length} to eat now</small></div><div class="sfc-grid">${sup.map(item).join('')}</div>`}
       <div class="sfc-det" aria-live="polite" hidden></div>
       <footer class="sfc-f"><span>Small, food-sized amounts</span><span>Pregnant, breastfeeding or on medication? Ask your doctor first</span></footer>
     </section>`;
