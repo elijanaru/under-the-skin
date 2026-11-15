@@ -7856,7 +7856,7 @@ function viewSeason() {
       ${warm ? `<p class="sfc-warm">${icon('sun', 13)} Your period is close: cook everything, nothing raw or iced.</p>` : ''}
       <footer class="sfc-f"><span>Changes by itself as the season turns</span><span>Wild mushrooms only from a market or a trained forager</span></footer>
     </section>
-    <div class="season-ctl"><span class="fine">Your country</span>${countryPicker('profile', c)}</div>
+    <details class="szn"><summary><span class="szn-f" aria-hidden="true">${flagOf(c)}</span><span class="szn-t"><small>Seasons for</small><b>${esc(SZ.COUNTRIES.find(x => x[0] === c)?.[1] || c)}</b></span><span class="szn-go">Change ${icon('chevD', 13)}</span></summary>${countryPicker('profile', c)}</details>
   </div>`;
 }
 
