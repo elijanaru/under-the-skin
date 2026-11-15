@@ -1754,8 +1754,8 @@ function viewToday() {
   const alerts = due.filter(x => !/^(phase-|rh-|letter-)/.test(x.id)).map(x => `<div class="al2-r"><span class="al2-e emo" aria-hidden="true">${AL_EMO[x.icon] || '🔔'}</span>
       <span class="al2-t" ${x.to ? `data-action="nav" data-to="${x.to}" role="button"` : ''}><b>${esc(x.title)}</b><small>${esc(x.body)}</small></span>
       <button class="bn-x" data-action="dismissRem" data-id="${x.id}" aria-label="Dismiss">${icon('close', 14)}</button></div>`);
-  upcomingPatterns(patterns()).forEach(x => { const rk = reliefKey(x.name); alerts.push(`<${rk ? `button data-action="nav" data-to="relief/${encodeURIComponent(rk)}"` : 'div'} class="al2-r">
-      <span class="al2-e emo" aria-hidden="true">${LOG_EMOJI[x.name] || '🌿'}</span><span class="al2-t"><b>${x.name}</b><small>Your pattern · ${x.from === x.to ? `day ${x.from}` : `days ${x.from} to ${x.to}`}</small>${QUICK_FIX[x.name] ? fixChips(QUICK_FIX[x.name]) : ''}</span>${alWhen(x.inDays)}</${rk ? 'button' : 'div'}>`); });
+  upcomingPatterns(patterns()).forEach(x => { const rk = reliefKey(x.name); alerts.push(`<${rk ? `button data-action="nav" data-to="relief/${encodeURIComponent(rk)}"` : 'div'} class="al2-r ${QUICK_FIX[x.name] ? 'hfx' : ''}">
+      <span class="al2-e emo" aria-hidden="true">${LOG_EMOJI[x.name] || '🌿'}</span><span class="al2-t"><b>${x.name}</b><small>Your pattern · ${x.from === x.to ? `day ${x.from}` : `days ${x.from} to ${x.to}`}</small></span>${alWhen(x.inDays)}${QUICK_FIX[x.name] ? fixChips(QUICK_FIX[x.name]) : ''}</${rk ? 'button' : 'div'}>`); });
 
   // 7-day energy bars for the tile
   let bars = '';
@@ -4839,7 +4839,7 @@ function learnedCard() {
         ${tile('c', icon('calendar', 15, 1.9), 'Your cycle', L, `days${stats.variation ? ` ±${pm}` : ''}`, n ? `From ${plural(n, 'cycle')}` : 'Log your next period')}
         ${tile('p', icon('drop', 15, 1.9), 'Your period', Pd, 'days', stats.periods.length ? `From ${plural(stats.periods.length, 'period')}` : 'Default until you log')}
         ${tile('n', icon('bell', 15, 1.9), 'Next period', np.getDate(), '', n ? `Likely ${md(lo)} to ${md(hi)}` : (dn => dn > 1 ? `In ${dn} days` : dn === 1 ? 'Tomorrow' : 'Due now')(C.diffDays(np, M.today)), fmt(np, { month: 'short' }))}
-        ${tile('o', icon('seed', 15, 1.9), 'Egg release', ov, '', `Fertile days ${Math.max(1, ov - 5)} to ${ov}${os.cd ? ', from your egg-white sign' : os.luteal ? ', from your check-ins' : ''}`, 'Day')}
+        ${tile('o', icon('seed', 15, 1.9), 'Egg release', ov, '', `Fertile days ${Math.max(1, ov - 5)} to ${ov + 1}${os.cd ? ', from your egg-white sign' : os.luteal ? ', from your check-ins' : ''}`, 'Day')}
       </div>
       <p class="lm-foot">${icon('spark', 12)} The more you log, the more personal every prediction gets.</p></section>`;
 }

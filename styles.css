@@ -15959,3 +15959,9 @@ button.br-up.go > div { flex: 1; min-width: 0; }
 button.br-up.go > .ic { flex: none; align-self: center; color: #9aa48e; }
 button.br-up.go:active { transform: scale(.985); }
 @media (prefers-reduced-motion: reduce) { button.br-up.go:active { transform: none; } }
+
+/* Today › Heads-up (Round C): the quick-fix chips run the full width under the title, emoji and countdown sit on the title row */
+.al2-r.hfx { align-items: start; row-gap: 9px; }
+.al2-r.hfx > .al2-t { align-self: center; min-height: 46px; align-content: center; }
+.al2-r.hfx > .al2-w { align-self: center; grid-row: 1; grid-column: 3; }
+.al2-r.hfx > .al2-fx { grid-column: 2 / -1; margin-top: 0; }
