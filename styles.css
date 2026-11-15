@@ -13525,3 +13525,8 @@ html .rn2 .rn-emo .emo { font-size: 24px; width: 26px; height: 26px; line-height
 .mvp-int { display: inline-flex; gap: 3px; align-self: center; }
 .mvp-int i { width: 7px; height: 14px; border-radius: 3px; background: rgba(32,48,26,.12); }
 .mvp-int i.on { background: hsl(calc(var(--hb) + 0 * var(--hk)) calc(46% * var(--hs)) 42%); }
+/* Today › Hormone balancing habits: the count in the ring was hollow 700-weight Doto on a faint track; full 900 dots on a slightly firmer track. The Breathe row's white dandelion vanished on the cream disc, so its disc is willow like on Balance */
+html .hh2-n { font-weight: 900; font-size: 26px; }
+html .hh2-ring circle:not(.on) { stroke: rgba(48,64,35,.13); }
+html .hh2-p:has(img[src$="fb/breathe.webp"]) { background: #d3dcc0; }
+html .hh2-p img[src$="fb/breathe.webp"] { width: 48px; height: 48px; }
