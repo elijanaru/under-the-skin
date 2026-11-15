@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HORMONE_SIMPLE, HORMONE_RELAY, BODY_NOTES, AFTER_STAGES, AFTER_TOPICS, TTC_TRY, TTC_STAGE, TTC_CHANCE, TTC_DOCTOR, TTC_BOTH, LOSS_HELP, LOSS_STEPS, LOSS_WARN, LOSS_TOPICS, LOSS_REPEAT, LOSS_NOTES, LOSS_JOURNAL, LOSS_PARTNER, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS, STUDY_KEY,
+  PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, DIET_CYCLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HORMONE_SIMPLE, HORMONE_RELAY, BODY_NOTES, AFTER_STAGES, AFTER_TOPICS, TTC_TRY, TTC_STAGE, TTC_CHANCE, TTC_DOCTOR, TTC_BOTH, LOSS_HELP, LOSS_STEPS, LOSS_WARN, LOSS_TOPICS, LOSS_REPEAT, LOSS_NOTES, LOSS_JOURNAL, LOSS_PARTNER, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS, STUDY_KEY,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -2571,8 +2571,11 @@ const PLAN_TITLE = { recipes: 'Recipes', foods: 'Superfoods', drinks: 'Drinks & 
 // its best picks for this phase underneath, with a pill into the full page.
 // tab pictures are trimmed, square and centred copies (images/fx) so every tile sits the same
 const FX_CATS = [['recipes', 'Recipes'], ['season', 'In season'], ['foods', 'Superfoods'], ['drinks', 'Drinks'], ['supps', 'Supplements'], ['sugar', 'Blood sugar']].map(([k, t]) => [k, t, `images/fx/${k}.webp`]);
+// her diet guide sits right after Superfoods: Vegan guide, Veggie guide, Pesci guide, Primal guide, or Diet guides when she eats everything
+const FX_GUIDE = { vegan: 'Vegan guide', veg: 'Veggie guide', pesc: 'Pesci guide', animal: 'Primal guide' };
+function fxCats() { const d = myDiet(), L = [...FX_CATS]; L.splice(3, 0, ['guide', FX_GUIDE[d] || 'Diet guides', `images/fx/guide-${FX_GUIDE[d] ? d : 'all'}.webp`]); return L; }
 function foodExplore(phase, info) {
-  const k = FX_CATS.some(c => c[0] === ui.fxCat) ? ui.fxCat : 'recipes', name = PHASES[phase].name, warm = warmWindow(info);
+  const CATS = fxCats(), k = CATS.some(c => c[0] === ui.fxCat) ? ui.fxCat : 'recipes', name = PHASES[phase].name, warm = warmWindow(info);
   const tile = (img, t, act, round) => `<button class="fx-t" ${act}><span class="fx-ti ${round ? 'rd' : ''}">${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}</span><b>${t}</b></button>`;
   let lead = '', body = '';
   if (k === 'recipes') {
@@ -2583,6 +2586,8 @@ function foodExplore(phase, info) {
     const m = new Date().getMonth() + 1, sz = SZ.seasonal(myCountry(), m), seen = new Set(), its = sz.filter(x => x.ph.includes(phase) && szCut(x.f)).concat(sz.filter(x => !x.ph.includes(phase) && szCut(x.f))).filter(x => { const c = szCut(x.f); if (seen.has(c)) return false; seen.add(c); return true; }).slice(0, 9); // one tile per picture, no repeats
     lead = `${SZ.seasonName(myCountry(), m)} foods where you live, the ones for your phase first.`;
     body = `<div class="fx-g">${its.map(x => tile(szCut(x.f), x.f.charAt(0).toUpperCase() + x.f.slice(1), `data-action="seasonGo" data-f="${esc(x.f)}"`)).join('')}</div>`;
+  } else if (k === 'guide') {
+    body = dietGuidePanel(phase);
   } else if (k === 'foods') {
     const S = SUPERFOODS[phase], L = S.list.filter(f => !(f[5] && myDiet() === 'vegan') && SF_CUT[f[1]]).slice(0, 9);
     lead = S.lead;
@@ -2605,10 +2610,60 @@ function foodExplore(phase, info) {
       <div class="fx-bs-k"><span><i class="sp"></i>Sweet food alone</span><span><i style="background:${PH_HEX[phase]}"></i>With these three steps</span></div>
       <ol class="fx-bs-s">${[['leaf', 'Veg first', 'Eat the vegetables before the rest'], ['drop', 'Add protein and fat', 'Eggs, meat, butter or nuts with every carb'], ['walk', 'Walk 10 minutes', 'Right after you eat']].map(([ic, t, d], i) => `<li><b class="fx-bs-n">${i + 1}</b><span><b>${t}</b><small>${d}</small></span></li>`).join('')}</ol></div>`;
   }
-  const cat = FX_CATS.find(c => c[0] === k);
-  return `<div class="fx-cats" role="tablist">${FX_CATS.map(([id, t, img]) => `<button class="fx-c ${id === k ? 'on' : ''}" role="tab" aria-selected="${id === k}" data-action="fxCat" data-v="${id}"><span><img src="${img}" alt="" loading="lazy" decoding="async"></span><b>${t}</b></button>`).join('')}</div>
-    <section class="fx-p"><h3>${cat[1]} in <em style="color:color-mix(in srgb, ${PH_HEX[phase]} 70%, #20301a)">${name}</em></h3><p class="fx-lead">${lead}</p>${body}
-      <button class="fx-all" data-action="nav" data-to="plan/${k}">See all ${cat[1].toLowerCase()} ${icon('chevR', 14)}</button></section>`;
+  const cat = CATS.find(c => c[0] === k);
+  return `<div class="fx-cats" role="tablist">${CATS.map(([id, t, img]) => `<button class="fx-c ${id === k ? 'on' : ''}" role="tab" aria-selected="${id === k}" data-action="fxCat" data-v="${id}"><span><img src="${img}" alt="" loading="lazy" decoding="async"></span><b>${t}</b></button>`).join('')}</div>
+    ${k === 'guide' ? `<section class="fx-p fx-guide">${body}</section>` : `<section class="fx-p"><h3>${cat[1]} in <em style="color:color-mix(in srgb, ${PH_HEX[phase]} 70%, #20301a)">${name}</em></h3><p class="fx-lead">${lead}</p>${body}
+      <button class="fx-all" data-action="nav" data-to="plan/${k}">See all ${cat[1].toLowerCase()} ${icon('chevR', 14)}</button></section>`}`;
+}
+// ---------- Diet guides on the Food page (16 Nov 2026, her call) ----------
+// In the style of the onboarding note and the unlock ticket: a taped paper note, one ticket per phase (what to load up on, the best
+// kind, three foods and a warm or raw stamp), her kind of iron as two little jars, the daily take, the nutrients to look after,
+// easy swaps and sticky-note watch-outs. She eats everything? She can peek at any of the four guides.
+const DG_TEMP = { warm: 'Warm & cooked', raw: 'Raw welcome', late: 'Warm before your period' };
+const DG_SWIRL = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';
+const DG_ARROW = '<svg viewBox="0 0 40 20" aria-hidden="true"><path d="M3 11 C 12 6, 22 14, 33 9 M27 4 C 30 6, 33 8, 35 9 C 32 11, 30 13, 28 16"/></svg>';
+function dietGuidePanel(phase) {
+  const my = myDiet(), d = DIET_CYCLE[my] ? my : (DIET_CYCLE[ui.dgPick] ? ui.dgPick : 'vegan'), C = DIET_CYCLE[d], G = DIET_GUIDE[d], mine = d === my;
+  const ord = [...PHASE_ORDER.slice(PHASE_ORDER.indexOf(phase)), ...PHASE_ORDER.slice(0, PHASE_ORDER.indexOf(phase))];
+  const take = G.items.filter(x => x.tag === 'take'), look = G.items.map((x, i) => ({ x, i })).filter(o => o.x.tag !== 'take'), plant = C.iron === 'plant';
+  const tk = k => { const [t, g, kind, why, foods, temp] = C.phases[k];
+    return `<article class="gd-tk ${k === phase ? 'now' : ''}" style="--c:${PH_HEX[k]}">
+      <div class="gd-stub" aria-hidden="true"><span class="gd-sg">${g}</span><b class="gd-ph">${PHASES[k].name}</b><small>${k === phase ? 'you are here' : 'admit one'}</small></div>
+      <div class="gd-main"><small class="gd-lo">${PHASES[k].name} · load up on</small><b class="gd-t">${t}</b><p class="gd-k"><span>${kind}</span></p>
+        <ul class="gd-f">${foods.map(([e, n]) => `<li><i>${e}</i>${n}</li>`).join('')}</ul><p class="gd-why">${why}</p>
+        <span class="gd-stamp ${temp}">${DG_TEMP[temp]}</span></div></article>`; };
+  const boost = plant ? [['🍋', 'Vitamin C at the same meal', 'Lemon, peppers, berries or kiwi'], ['🫘', 'Soak or sprout', 'Beans, lentils and seeds, overnight'], ['🍳', 'Cook in a cast-iron pan', 'A little iron moves into your food'], ['☕', 'Coffee and tea, an hour apart', 'Enjoy them, just not with iron meals']]
+    : [[d === 'pesc' ? '🦪' : '🥩', 'The easy kind first', d === 'pesc' ? 'Mussels, clams and sardines' : 'Red meat, liver and bone marrow'], ['🍋', 'Vitamin C on the side', 'Helps the plant iron in the same meal'], ['🍳', 'Cook in a cast-iron pan', 'A little iron moves into your food'], ['☕', 'Coffee and tea, an hour apart', 'Enjoy them, just not with iron meals']];
+  const jar = (lo, hi, label, on) => `<div class="gd-jar ${on ? 'mine' : ''}"><span class="gd-jb" aria-hidden="true"><i style="height:${lo / 40 * 100}%"></i><i class="r" style="bottom:${lo / 40 * 100}%;height:${(hi - lo) / 40 * 100}%"></i></span>
+    <b class="dotnum">${lo}–${hi}%</b><small>${label}</small>${on ? '<span class="gd-yours">yours</span>' : ''}</div>`;
+  return `${mine ? '' : `<div class="gd-pick"><p>You eat everything, so every recipe fits you. Peek at a guide:</p>
+      <div>${['vegan', 'veg', 'pesc', 'animal'].map(k => `<button class="gd-pk ${k === d ? 'on' : ''}" data-action="dgPick" data-v="${k}" aria-pressed="${k === d}"><img src="images/fx/guide-${k}.webp" alt="" loading="lazy"><b>${DIET_CYCLE[k].name}</b></button>`).join('')}</div></div>`}
+    <section class="o3-note gd-note"><h2><span>${mine ? 'Your' : 'The'}</span> <em>${C.name.toLowerCase()} guide${DG_SWIRL}</em></h2>
+      <p class="o3-sub">${C.sub}</p><p class="o3-lead">${C.lead}</p><p class="o3-sign">with love, from our little team <i>♡</i></p></section>
+
+    <h4 class="gd-h">Your cycle, <span class="gd-hl">ticket by ticket</span></h4>
+    <div class="gd-tks" tabindex="0" aria-label="What to load up on in each phase">${ord.map(tk).join('')}</div>
+
+    <section class="gd-card gd-iron"><h4 class="gd-h">Your kind of <span class="gd-hl">iron</span></h4>
+      <div class="gd-jars">${jar(2, 20, 'Plant iron', plant)}${jar(15, 35, 'Meat & fish iron', !plant)}</div>
+      <p class="gd-jl">How much of the iron on your plate your body takes in</p>
+      <ul class="gd-yes">${boost.map(([e, t, x]) => `<li><span class="gd-tick">${O3_TICK}</span><i>${e}</i><div><b>${t}</b><small>${x}</small></div></li>`).join('')}</ul>
+      <p class="gd-when">${icon('calendar', 14)} Load up from the week before your period until it ends.</p></section>
+
+    ${take.length ? `<section class="gd-card gd-take"><h4 class="gd-h">Your daily <span class="gd-hl">take</span></h4>
+      <ul>${take.map(x => `<li><i>${x.g}</i><span><b>${x.n}</b><small>${x.dose[2]}</small></span><span class="gd-dose"><b class="dotnum">${x.dose[0].replace('-', '–')}</b>${x.dose[1]}</span></li>`).join('')}</ul>
+      <p class="gd-fine">Ask your doctor or pharmacist first if you take medication, are pregnant or breastfeeding.</p></section>` : ''}
+
+    <h4 class="gd-h">Look after <span class="gd-hl">these</span></h4>
+    <div class="dv-grid gd-grid" data-d="${d}">${look.map(({ x, i }) => `<button class="dv-t" data-action="dvOpen" data-i="${i}" style="--c:${dvTint(x)}" aria-expanded="false">
+      <span class="dv-g">${x.g}</span><b>${x.n}</b>${dvMeter(x.cov, d)}<span class="dv-more">${icon('chevD', 13)}</span></button>`).join('')}</div>
+
+    <h4 class="gd-h">Easy <span class="gd-hl">swaps</span></h4>
+    <div class="gd-sw">${C.swaps.map(([e, a, b], i) => `<div class="gd-s" style="--r:${[-1.4, 1.1, -.7, 1.3][i % 4]}deg"><i>${e}</i><s>${a}</s><span class="gd-ar">${DG_ARROW}</span><b>${b}</b></div>`).join('')}</div>
+
+    <h4 class="gd-h">Little <span class="gd-hl">watch-outs</span></h4>
+    <div class="gd-notes">${[...G.warn, ...(C.notes || [])].map(([t, g, x], i) => `<div class="gd-n n${i % 3}"><span>${g}</span><b>${t}</b><p>${x}</p></div>`).join('')}</div>
+    <button class="fx-all" data-action="fxCat" data-v="recipes">Recipes for how you eat ${icon('chevR', 14)}</button>`;
 }
 // Recipes page: her phase's dishes (no raw ones in the warm window), filtered by meal in place.
 const REC_MEALS = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Drink'];
@@ -8655,8 +8710,8 @@ function dvFoods(str) {
 const DV_COV = [['Almost none', '#c9798f'], ['A little', '#c9a24a'], ['Enough with a plan', '#6c823e']];
 const dvMeter = (c, d) => c == null ? '' : `<span class="dv-m" style="--m:${DV_COV[c][1]}" aria-label="${d === 'vegan' ? 'From plants' : 'From your food'}: ${DV_COV[c][0]}"><span>${[0, 1, 2].map(i => `<i class="${i <= c ? 'on' : ''}"></i>`).join('')}</span><small>${DV_COV[c][0]}</small></span>`;
 const dvTint = x => PH_HEX[x.ph[0]] || '#6c823e';
-function dvSheet(i) {
-  const d = myDiet(), G = DIET_GUIDE[d], x = G && G.items[i]; if (!x) return '';
+function dvSheet(i, dd) {
+  const d = dd || myDiet(), G = DIET_GUIDE[d], x = G && G.items[i]; if (!x) return '';
   const F = dvFoods(x.foods), steps = x.do.split(/(?<=\.)\s+/).filter(Boolean).slice(0, 3);
   return `<div class="dvs" style="--c:${dvTint(x)}"><button class="cfs-x" data-action="dvOpen" data-i="${i}" aria-label="Close">${icon('close', 14, 2.2)}</button>
     <div class="dvs-h"><span class="dv-g">${x.g}</span><span><small>${x.tag === 'take' ? 'Take it' : 'Plan it into meals'}</small><b>${x.n}</b></span></div>
@@ -10415,14 +10470,14 @@ const actions = {
     const sc = document.getElementById('sg-score'); if (sc) { sc.innerHTML = sugarScore(sugarDone()); sc.classList.remove('pop'); void sc.offsetWidth; sc.classList.add('pop'); }
   },
   dvOpen: (d, el) => {
-    const grid = document.querySelector('.dv-grid'); if (!grid) return;
+    const grid = el.closest('.dv-grid') || document.querySelector('.dv-grid'); if (!grid) return;
     const open = grid.querySelector('.dvs-w'), same = open && open.dataset.i === d.i;
     if (open) open.remove();
     grid.querySelectorAll('.dv-t').forEach(t => { t.classList.toggle('open', !same && t.dataset.i === d.i); t.setAttribute('aria-expanded', !same && t.dataset.i === d.i); });
     if (same) return;
     const tiles = [...grid.querySelectorAll('.dv-t')], k = tiles.findIndex(t => t.dataset.i === d.i); if (k < 0) return;
     const after = tiles[Math.min(k + (k % 2 ? 0 : 1), tiles.length - 1)], box = document.createElement('div');
-    box.className = 'dvs-w'; box.dataset.i = d.i; box.innerHTML = dvSheet(+d.i); after.after(box);
+    box.className = 'dvs-w'; box.dataset.i = d.i; box.innerHTML = dvSheet(+d.i, grid.dataset.d); after.after(box);
     setTimeout(() => box.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 60);
   },
   cfOpen: (d, el) => {
@@ -10549,6 +10604,7 @@ const actions = {
     const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
   },
   // swap only the picks panel: the plate, the scroll and the tab row stay as they are
+  dgPick: d => { ui.dgPick = d.v; actions.fxCat({ v: 'guide' }); },
   fxCat: d => {
     ui.fxCat = d.v;
     const old = document.querySelector('#view .fx-p');

@@ -1685,6 +1685,52 @@ export const DIET_GUIDE = {
     ] },
 };
 
+// The diet guides on the Food page (16 Nov 2026, her call): for each way of eating, what to load up on in each phase as a ticket
+// [title, emoji, the best kind, why, three foods, temp: warm | raw | late (warm in the last days before the period)], the easy swaps
+// [emoji, from, to] and a short note. Raw only in the follicular and ovulatory weeks; warm and cooked around the period.
+export const DIET_CYCLE = {
+  vegan: { name: 'Vegan', sub: 'Plants, with a plan.', iron: 'plant',
+    lead: 'Plants can carry your whole cycle. Cover <mark>B12, iron and omega-3</mark>, eat <mark>enough</mark>, and your hormones stay happy.',
+    phases: {
+      menstrual: ['Iron', '🩸', 'Plant iron with vitamin C at the same meal', 'Your period takes iron every month. Refill it while you bleed.', [['🥣', 'Warm lentil soup with lemon'], ['🎃', 'Pumpkin seeds'], ['🥬', 'Cooked spinach with tahini']], 'warm'],
+      follicular: ['Protein & zinc', '🌱', 'Sprouted lentils, hemp and pumpkin seeds', 'Rising estrogen is ripening your egg. Zinc and protein help build it.', [['🌱', 'Sprouted lentil salad'], ['🥦', 'Broccoli sprouts'], ['🎃', 'Pumpkin seeds']], 'raw'],
+      ovulatory: ['Fibre & antioxidants', '🫐', 'Raw greens, berries and ground flax', 'Estrogen peaks now. Fibre carries the used hormones out.', [['🫐', 'Berries'], ['🥗', 'A big raw salad'], ['🌰', 'One Brazil nut']], 'raw'],
+      luteal: ['Magnesium, then iron', '🍫', 'Cacao and tahini now, lentils with lemon the week before your period', 'Magnesium calms cramps and cravings. Start refilling iron before you bleed.', [['🍫', 'Raw cacao'], ['🥄', 'Tahini'], ['🍠', 'Baked sweet potato']], 'late'],
+    },
+    notes: [['No kelp tablets', '🌊', 'Their iodine dose swings far too high. Iodised salt or 150 µg a day is the safe way.'], ['Soak and sprout', '🫘', 'Soak beans, lentils, nuts and seeds overnight: it frees more iron and zinc and makes them easier to digest.']],
+    swaps: [['🥛', 'Milk', 'Almond milk with added calcium'], ['🧈', 'Butter', 'Olive oil or coconut oil'], ['🍯', 'Honey', 'Maple syrup'], ['🥚', 'Egg in baking', '1 tbsp ground flax + 3 tbsp water']] },
+  veg: { name: 'Vegetarian', sub: 'Eggs, dairy and plants.', iron: 'plant',
+    lead: 'Eggs and dairy cover a lot. Plan your <mark>iron and omega-3</mark> and your cycle has all it needs.',
+    phases: {
+      menstrual: ['Iron', '🩸', 'Eggs and lentils with vitamin C', 'Your period takes iron every month. Refill it while you bleed.', [['🍳', 'Eggs with cooked spinach'], ['🥣', 'Warm lentil soup with lemon'], ['🎃', 'Pumpkin seeds']], 'warm'],
+      follicular: ['Protein & zinc', '🥚', 'Eggs, kefir and pumpkin seeds', 'Rising estrogen is ripening your egg. Protein and zinc help build it.', [['🥚', 'Eggs'], ['🥛', 'Raw milk kefir'], ['🥦', 'Broccoli sprouts']], 'raw'],
+      ovulatory: ['Fibre & antioxidants', '🫐', 'Raw veg, berries and ground flax', 'Estrogen peaks now. Fibre carries the used hormones out.', [['🫐', 'Berries with yoghurt'], ['🥗', 'A big raw salad'], ['🥄', 'Ground flaxseed']], 'raw'],
+      luteal: ['Magnesium, then iron', '🧀', 'Cacao and raw cheese now, eggs and lentils the week before your period', 'Magnesium and calcium ease PMS. Start refilling iron before you bleed.', [['🍫', 'Raw cacao'], ['🧀', 'Raw cheese'], ['🍠', 'Baked sweet potato']], 'late'],
+    },
+    notes: [['Planning a pregnancy?', '🌷', 'Start a prenatal with folate, iodine, choline and algae DHA three months before.'], ['Eggs every day', '🥚', 'Eggs bring choline, B12 and protein in one go. Two a day is a lovely habit.']],
+    swaps: [['🥩', 'Meat iron', 'Lentils with a squeeze of lemon'], ['🐟', 'Fish omega-3', 'Algae oil'], ['🍲', 'Bone broth', 'Mushroom and seaweed broth'], ['🍮', 'Gelatin', 'Agar']] },
+  pesc: { name: 'Pescetarian', sub: 'The sea, eggs and dairy.', iron: 'heme',
+    lead: 'Fish and shellfish bring the <mark>easy kind of iron</mark> and omega-3. Choose <mark>small fish</mark> for less mercury.',
+    phases: {
+      menstrual: ['Iron & omega-3', '🦪', 'Mussels, clams and sardines, cooked', 'Shellfish iron is the easy kind, and omega-3 softens cramps.', [['🦪', 'Steamed mussels'], ['🐟', 'Warm sardines'], ['🍲', 'A fish soup']], 'warm'],
+      follicular: ['Protein & zinc', '🥚', 'Oysters, eggs and pumpkin seeds', 'Rising estrogen is ripening your egg. Zinc and protein help build it.', [['🦪', 'Oysters now and then'], ['🥚', 'Eggs'], ['🎃', 'Pumpkin seeds']], 'raw'],
+      ovulatory: ['Omega-3 & antioxidants', '🐟', 'Wild salmon, berries and raw greens', 'Estrogen peaks now. Omega-3 and colour keep your skin glowing.', [['🐟', 'Wild salmon'], ['🫐', 'Berries'], ['🥗', 'A big raw salad']], 'raw'],
+      luteal: ['Magnesium, then iron', '🍫', 'Cacao and seeds now, mussels or sardines the week before your period', 'Magnesium calms cramps and cravings. Start refilling iron before you bleed.', [['🍫', 'Raw cacao'], ['🐟', 'Sardines'], ['🍠', 'Baked sweet potato']], 'late'],
+    },
+    notes: [['Planning a pregnancy?', '🌷', 'Keep to small fish and salmon, skip swordfish, shark and marlin, and start a prenatal with folate three months before.']],
+    swaps: [['🥩', 'Red meat iron', 'Mussels or clams'], ['🫀', 'Liver', 'Oysters'], ['🐟', 'Big tuna', 'Sardines and salmon'], ['🍲', 'Bone broth', 'Fish bone broth']] },
+  animal: { name: 'Primal', sub: 'Meat, eggs, raw dairy and fruit.', iron: 'heme',
+    lead: 'Animal foods bring the <mark>easiest iron</mark>, B12 and protein. Add <mark>fruit and magnesium</mark> and your hormones stay balanced.',
+    phases: {
+      menstrual: ['Iron', '🥩', 'Red meat and liver, warm and slow-cooked', 'Meat iron is the easiest to absorb. Refill what your period takes.', [['🍲', 'Bone broth'], ['🥩', 'Slow-cooked beef'], ['🫀', 'Liver, 100 g a week']], 'warm'],
+      follicular: ['Protein & fresh fruit', '🥚', 'Eggs, raw dairy and berries', 'Rising estrogen is ripening your egg. Protein builds it, fruit brings vitamin C.', [['🥚', 'Pasture eggs'], ['🥛', 'Raw milk or kefir'], ['🍓', 'Berries']], 'raw'],
+      ovulatory: ['Vitamin C & fibre', '🍊', 'Fruit every day and a little raw veg', 'Estrogen peaks now. Fibre from fruit carries the used hormones out.', [['🍊', 'Citrus'], ['🥝', 'Kiwi'], ['🐟', 'Wild salmon']], 'raw'],
+      luteal: ['Magnesium & a few more carbs', '🍯', 'Cacao, avocado, honey and sweet potato', 'Magnesium and a few more carbs calm cravings and help you sleep.', [['🍫', 'Raw cacao'], ['🥑', 'Avocado'], ['🍯', 'Raw honey']], 'late'],
+    },
+    notes: [['Liver and pregnancy', '🫀', 'About 100 g of liver a week is plenty. Skip it when pregnant or trying to conceive: it holds a lot of vitamin A.'], ['Raw milk', '🥛', 'Only from a tested farm you trust, kept cold. Choose pasteurised milk when you are pregnant.'], ['Fruit every day', '🍓', 'Meat has no fibre, and fibre is what carries used estrogen out of your body.']],
+    swaps: [['🍞', 'Bread', 'Sweet potato or ripe fruit'], ['🍬', 'Sugar', 'A little raw honey'], ['🌻', 'Seed oils', 'Butter, ghee or tallow'], ['🥤', 'Energy drinks', 'Mineral water with a pinch of salt']] },
+};
+
 // The best spices and superfoods for each phase: [emoji, name, why, how much, photo ['tea'|'food', name] or null, not vegan].
 // Small, food-sized amounts only. Raw ones sit in the follicular and ovulatory weeks, never around the period.
 export const SUPERFOODS = {
