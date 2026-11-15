@@ -1748,11 +1748,14 @@ function viewToday() {
 
   // one compact "heads-up" card: reminders, unusual cycle, learned patterns
   const due = dueReminders(), letter = due.find(x => x.id.startsWith('letter-'));
-  const alerts = due.filter(x => !/^(phase-|rh-|letter-)/.test(x.id)).map(x => `<div class="al-row"><span class="al-ic ${x.icon === 'drop' ? 'drop' : ''}">${x.icon === 'drop' ? DROP_ART : icon(x.icon, 17)}</span>
-      <span class="al-t ${x.id.startsWith('letter-') ? 'al-letter' : ''}" ${x.to ? `data-action="nav" data-to="${x.to}"` : ''}><b>${esc(x.title)}</b><small>${esc(x.body)}</small></span>
+  // heads-up rows: emoji tile, title + short grey line, countdown on the right, the guide one tap away
+  const AL_EMO = { drop: '🩸', bell: '🔔', moon: '🌙', sun: '☀️', leaf: '🌿', heart: '💗', spark: '✨', cup: '🍵', pill: '💊', mind: '💭', chart: '📈' };
+  const alWhen = d => d === 0 ? '<span class="al2-w now">Today</span>' : `<span class="al2-w"><b class="dotnum">${d}</b><small>${d === 1 ? 'day' : 'days'}</small></span>`;
+  const alerts = due.filter(x => !/^(phase-|rh-|letter-)/.test(x.id)).map(x => `<div class="al2-r"><span class="al2-e emo" aria-hidden="true">${AL_EMO[x.icon] || '🔔'}</span>
+      <span class="al2-t" ${x.to ? `data-action="nav" data-to="${x.to}" role="button"` : ''}><b>${esc(x.title)}</b><small>${esc(x.body)}</small></span>
       <button class="bn-x" data-action="dismissRem" data-id="${x.id}" aria-label="Dismiss">${icon('close', 14)}</button></div>`);
-  upcomingPatterns(patterns()).forEach(x => { const rk = reliefKey(x.name); alerts.push(`<div class="al-row" ${rk ? `data-action="nav" data-to="relief/${encodeURIComponent(rk)}"` : ''}>
-      <span class="al-ic">${icon('chart', 15)}</span><span class="al-t"><b>${x.name} ${x.inDays === 0 ? 'today' : x.inDays === 1 ? 'tomorrow' : `in ${x.inDays} days`}</b><small>Your pattern: ${x.from === x.to ? `day ${x.from}` : `days ${x.from} to ${x.to}`}</small>${QUICK_FIX[x.name] ? `<em class="al-fix">${icon('spark', 12)} ${QUICK_FIX[x.name]}</em>` : ''}</span>${rk ? icon('chevR', 14) : ''}</div>`); });
+  upcomingPatterns(patterns()).forEach(x => { const rk = reliefKey(x.name); alerts.push(`<${rk ? `button data-action="nav" data-to="relief/${encodeURIComponent(rk)}"` : 'div'} class="al2-r">
+      <span class="al2-e emo" aria-hidden="true">${LOG_EMOJI[x.name] || '🌿'}</span><span class="al2-t"><b>${x.name}</b><small>Your pattern · days ${x.from === x.to ? x.from : `${x.from} to ${x.to}`}</small>${QUICK_FIX[x.name] ? `<em>${QUICK_FIX[x.name]}</em>` : ''}</span>${alWhen(x.inDays)}</${rk ? 'button' : 'div'}>`); });
 
   // 7-day energy bars for the tile
   let bars = '';
@@ -1776,8 +1779,8 @@ function viewToday() {
     ${afterCard()}
     ${(() => { // at most two notices, most important first
       const n = [...alerts];
-      if (info.cd >= info.ov - 2 && info.cd <= info.ov + 1) n.push(`<button class="al-row" data-action="nav" data-to="relief/${encodeURIComponent('Ovulation pain')}"><span class="al-ic">${icon('spark', 15)}</span><span class="al-t"><b>Twinge on one side?</b><small>That may be ovulation. 7 ways to ease it</small></span>${icon('chevR', 14)}</button>`);
-      return n.length ? `<section class="card glass alerts">${n.slice(0, 2).join('')}</section>` : '';
+      if (info.cd >= info.ov - 2 && info.cd <= info.ov + 1) n.push(`<button class="al2-r" data-action="nav" data-to="relief/${encodeURIComponent('Ovulation pain')}"><span class="al2-e emo" aria-hidden="true">🌼</span><span class="al2-t"><b>Twinge on one side?</b><small>That may be ovulation</small><em>7 gentle ways to ease it</em></span>${icon('chevR', 15)}</button>`);
+      return n.length ? `<section class="card al2"><header class="al2-h"><b>Heads-up</b><small>Coming up for you</small></header>${n.slice(0, 2).join('')}</section>` : '';
     })()}
     ${cycleFlag()}
 
