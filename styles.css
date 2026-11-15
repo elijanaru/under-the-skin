@@ -13503,6 +13503,7 @@ html .pad.sp2t > .spec:not(.stack):first-child .spec-media { border-radius: 30px
 .grs-care dd { margin: 0; text-align: right; font-size: 13px; color: #20301a; }
 .pad .gr-card { background: #fff !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
 @media (prefers-reduced-motion: reduce) { .grs-d { animation: none; } .grs-r summary > svg { transition: none; } }
+
 /* Recipe › Why it's good for you: when the food that carries a nutrient has no photo, its emoji stands in, on a white disc like the photos, instead of a generic leaf */
 html .rn2 .rn-emo { background: #fff; box-shadow: 0 4px 10px rgba(32,48,26,.12), inset 0 0 0 1px rgba(48,64,35,.06); }
 html .rn2 .rn-emo .emo { font-size: 24px; width: 26px; height: 26px; line-height: 26px; text-align: center; }
@@ -13512,6 +13513,7 @@ html .rn2 .rn-emo .emo { font-size: 24px; width: 26px; height: 26px; line-height
 .rit-you.rit-when { display: inline-flex; align-items: center; gap: 3px; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rit-you.rit-when i { flex: none; width: 7px; height: 7px; border-radius: 50%; }
 .rit-you.rit-when i:last-of-type { margin-right: 3px; }
+
 /* Move › today's training: How long, How hard and Warm up as spec rows (label left, value right) instead of three cramped tiles; intensity as a five-step bar */
 .mvp-spec { margin: 14px 0 0; padding: 2px 14px; border-radius: 20px; background: #f7f4ef; }
 .mvp-spec > div { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-top: 1px solid rgba(32,48,26,.08); }
@@ -13525,8 +13527,22 @@ html .rn2 .rn-emo .emo { font-size: 24px; width: 26px; height: 26px; line-height
 .mvp-int { display: inline-flex; gap: 3px; align-self: center; }
 .mvp-int i { width: 7px; height: 14px; border-radius: 3px; background: rgba(32,48,26,.12); }
 .mvp-int i.on { background: hsl(calc(var(--hb) + 0 * var(--hk)) calc(46% * var(--hs)) 42%); }
+
 /* Today › Hormone balancing habits: the count in the ring was hollow 700-weight Doto on a faint track; full 900 dots on a slightly firmer track. The Breathe row's white dandelion vanished on the cream disc, so its disc is willow like on Balance */
 html .hh2-n { font-weight: 900; font-size: 26px; }
 html .hh2-ring circle:not(.on) { stroke: rgba(48,64,35,.13); }
 html .hh2-p:has(img[src$="fb/breathe.webp"]) { background: #d3dcc0; }
 html .hh2-p img[src$="fb/breathe.webp"] { width: 48px; height: 48px; }
+
+/* Sweep (15 Nov 2026), Your plan and Account: lines on the arched background are white with a soft shadow; the 90-day thread labels are white pills with dark ink instead of outlined boxes; the glow, method and science sections keep white headers above white cards; the Account card opens below the scallops */
+.ph-p, .rm2-glow > .rm2-k, .rm2-how > .rm2-k, .rm2-res > .rm2-k, .rm2-glow > h3, .rm2-how > h3, .rm2-res > h3, .rm2-glow > h3 em, .rm2-glow > .rm2-sub, .rm2-res > .rm2-sub, .pad.ac > p.fine {
+  color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.38), 0 2px 18px rgba(90,40,45,.34) !important; }
+.rm-node span { padding: 6px 12px !important; border: 0 !important; outline: 0 !important; border-radius: 999px !important; background: #fff !important; color: #20301a !important; font-weight: 500 !important; box-shadow: 0 6px 16px -8px rgba(60,30,25,.45) !important; }
+.rm2-gc { background: #fff !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; box-shadow: 0 10px 26px rgba(48,64,35,.10) !important; }
+.rm2-gc b { color: #20301a !important; } .rm2-gc p { color: #3c4a2e !important; }
+.pad:has(> .ac-hero:first-child) { padding-top: 38px; }
+html .rm-node { box-shadow: none !important; background: none !important; border: 0 !important; }
+.rm2-month > .rm2-line, .rm2-month > .rm2-k.sm { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.35), 0 2px 14px rgba(90,40,45,.3) !important; }
+.rm2-pts li, .rm-steps { background: #fff !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; border-color: transparent !important; }
+.rm-steps { padding: 4px 14px; border-radius: 22px; box-shadow: 0 10px 26px rgba(48,64,35,.10); }
+.rm2-pts li b, .rm-step b { color: #20301a !important; } .rm2-pts li p, .rm-step p { color: #3c4a2e !important; }
