@@ -8870,11 +8870,11 @@ function recipeMacros(r) { const p = r.protein || 0, c = RECIPE_CARBS[r.id] ?? M
 // Which ingredient in the dish brings each nutrient, and a photo of it.
 const NU_SRC = {
   Protein: /egg|beef|lamb|meat|chicken|turkey|salmon|sardine|mackerel|cod|fish|prawn|liver|yog|kefir|cheese|lentil|bean/, Probiotics: /kimchi|sauerkraut|kefir|yog|miso/,
-  'B vitamins': /egg|beef|lamb|liver|salmon|chicken|mushroom|spinach/, Iron: /beef|lamb|liver|meat|lentil|spinach|beet|sardine|mussel|oyster/, 'Heme iron': /beef|lamb|liver|meat|sardine|mussel|oyster/,
-  Fibre: /broccoli|bean|lentil|flax|chia|kale|carrot|beet|cabbage|apple|pear|berr|sweet potato/, 'Vitamin C': /lemon|orange|kiwi|pepper|broccoli|berr|kale|citrus|cabbage|tomato/,
-  Magnesium: /pumpkin seed|cacao|chocolate|spinach|almond|sesame|tahini|cashew|bean|avocado/, Potassium: /avocado|sweet potato|potato|spinach|beet|coconut|banana/,
+  'B vitamins': /egg|beef|lamb|liver|salmon|chicken|mushroom|spinach/, Iron: /beef|lamb|liver|meat|lentil|spinach|beet|sardine|mussel|oyster|chickpea|bean|cacao|quinoa|pumpkin seed|sesame|tahini/, 'Heme iron': /beef|lamb|liver|meat|sardine|mussel|oyster/,
+  Fibre: /broccoli|bean|lentil|flax|chia|kale|carrot|beet|cabbage|apple|pear|berr|sweet potato|chickpea|quinoa|date/, 'Vitamin C': /lemon|lime|orange|kiwi|pepper|broccoli|berr|kale|citrus|cabbage|tomato/,
+  Magnesium: /pumpkin seed|cacao|chocolate|spinach|almond|sesame|tahini|cashew|bean|avocado|walnut|quinoa/, Potassium: /avocado|sweet potato|potato|spinach|beet|coconut|banana|date|bean|squash|pumpkin/,
   B12: /egg|beef|lamb|liver|salmon|sardine|mussel|oyster|milk/, 'Omega-3': /salmon|sardine|mackerel|anchov|flax|chia|walnut/, Antioxidants: /berr|cacao|beet|pomegranate|kale|tomato|turmeric/,
-  Sulforaphane: /broccoli|cabbage|kale|sprout|radish|cauliflower/, Zinc: /pumpkin seed|oyster|beef|lamb|sesame|tahini|egg/, 'Complex carbs': /sweet potato|potato|rice|bean|lentil|pumpkin|squash|buckwheat/,
+  Sulforaphane: /broccoli|cabbage|kale|sprout|radish|cauliflower/, Zinc: /pumpkin seed|oyster|prawn|shrimp|crab|mussel|beef|lamb|sesame|tahini|egg/, 'Complex carbs': /sweet potato|potato|rice|bean|lentil|pumpkin|squash|buckwheat/,
   'Slow carbs': /sweet potato|potato|rice|bean|lentil|pumpkin|squash|buckwheat/, 'Vitamin B6': /salmon|chicken|potato|banana|sunflower|pistachio|chickpea/, Folate: /broccoli|spinach|avocado|lentil|bean|asparagus|egg/,
   Collagen: /broth|bone/, 'Healthy fats': /avocado|olive|butter|tahini|walnut|almond|seed|ghee|coconut/, Choline: /egg|liver|salmon/, Calcium: /sesame|tahini|yog|kefir|cheese|milk|sardine|kale|almond/,
   'Vitamin A': /carrot|sweet potato|liver|pumpkin|egg|spinach|kale/, 'Fat-soluble vitamins': /butter|egg|liver|ghee|cream/,
@@ -8889,10 +8889,13 @@ const ING_PH = [[/egg/, 'Pasture eggs'], [/broccoli/, 'Broccoli'], [/kimchi/, 'A
 const NU_EMO = { Iron: 'd:iron-ore', 'Heme iron': 'd:iron-ore', Fibre: '🫘', 'Vitamin C': '🍋', Magnesium: 'e:pumpkin-seeds', Potassium: '🍌', Protein: '🍗', Probiotics: '🫙', 'B vitamins': '🍄',
   B12: '🥩', 'Omega-3': '🐟', 'Plant omega-3': 'e:flaxseed', Antioxidants: '🫐', Sulforaphane: '🥦', Zinc: '🦪', 'Complex carbs': '🍠', 'Slow carbs': '🍠', 'Vitamin B6': 'e:sunflower-seeds',
   Folate: '🥬', Collagen: '🍲', Minerals: 'e:black-sesame', 'Healthy fats': '🥑', Choline: '🥚', Calcium: '🥛', 'Vitamin A': '🥕', Electrolytes: '🥥', 'Fat-soluble vitamins': '🧈' };
+// Ingredients that match a nutrient's keyword but carry little of it: an oil is only a fat source (toasted sesame oil has
+// no real zinc, the seeds do), mayonnaise is not a vitamin A source, and almond or coconut milk is not a magnesium one.
+const nuNot = (n, x) => (n !== 'Healthy fats' && /\boil\b|mayonnaise/.test(x)) || (n === 'Magnesium' && /milk/.test(x));
 function nuSource(n, r) {
   const re = NU_SRC[n]; if (!re) return null;
-  const ing = r.ingredients.map(x => String(x).replace(/^[A-Za-z ]+:\s*/, '')).find(x => re.test(x.toLowerCase())); if (!ing) return null;
-  const low = ing.toLowerCase(), ph = (ING_PH.find(([q]) => q.test(low)) || [])[1];
+  const ing = r.ingredients.map(x => String(x).replace(/^[A-Za-z ]+:\s*/, '')).find(x => re.test(x.toLowerCase()) && !nuNot(n, x.toLowerCase())); if (!ing) return null;
+  const low = ing.toLowerCase().replace(/\(.*?\)/g, ""), ph = (ING_PH.find(([q]) => q.test(low)) || [])[1];
   return { name: ingRow(ing)[0].replace(/,.*$/, '').replace(/\s+florets?$/i, ''), ph: ph && foodPhoto(ph, 160) ? ph : '' };
 }
 function viewRecipe(id) {
