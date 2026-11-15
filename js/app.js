@@ -170,7 +170,7 @@ function tabbar(active) {
 let secN = 0;
 function sectionTitle(t, more) {
   // long titles step down a size so the frosted pill stays one line (two-line pills read as a blob), more so beside a button
-  const ln = String(t).replace(/<[^>]+>/g, '').length > 20 ? (more ? ' ln2' : ' ln') : '';
+  const tl = String(t).replace(/<[^>]+>/g, '').length, ln = tl > 20 ? (more ? ' ln2' : ' ln') : more && tl + more[0].length > 26 ? ' ln2' : '';
   return `<div class="section-title tone-${secN++ % 3}${ln}"><h3>${t}</h3>${more ? `<button class="link" data-action="nav" data-to="${more[1]}">${more[0]}</button>` : ''}</div>`;
 }
 
@@ -3321,7 +3321,8 @@ function sugarSection(phase) {
       <dl class="sb-spec" id="sg-spec">${sugarSpec(on)}</dl>
       <p class="sb-st"><small>What studies found</small>Eating vegetables and protein before the carbs made the sugar rise after a meal about a third smaller. <i>Shukla et al. 2015</i></p>
       ${luteal ? `<p class="sb-note">${icon('spark', 13)} Second half of your cycle: you’re a little less insulin-sensitive, so these help most now.</p>` : ''}
-      ${pat.length ? `<div class="sm-pat">${pat.slice(0, 2).map(x => `<div>${icon('chart', 14)}<span><b>Your pattern:</b> ${x.name.toLowerCase()} on ${x.from === x.to ? `day ${x.from}` : `days ${x.from}–${x.to}`} · use these tricks then</span></div>`).join('')}</div>` : ''}
+      ${pat.length ? `<div class="sb-when"><small>When your body asks for them most</small>${pat.slice(0, 2).map(x => { const now = M.info && M.info.cd >= x.from && M.info.cd <= x.to;
+        return `<div class="sbw-r"><span class="sbw-e emo" aria-hidden="true">${LOG_EMOJI[x.name] || '🌿'}</span><b>${x.name}</b><span class="sbw-d">${now ? '<em>Now</em>' : ''}${x.from === x.to ? `Day <i class="dotnum">${x.from}</i>` : `Days <i class="dotnum">${x.from}</i> to <i class="dotnum">${x.to}</i>`}</span></div>`; }).join('')}</div>` : ''}
     </div>
     ${sectionTitle('Blood sugar tricks', ['How they work', 'sugar'])}
     <section class="card sugar-big">

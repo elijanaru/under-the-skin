@@ -15991,3 +15991,15 @@ button.br-up.go:active { transform: scale(.985); }
 .gsw-chips > span { display: inline-flex; align-items: center; gap: 7px; padding: 3px 11px 3px 3px; border-radius: 99px; background: #f6f2ea; font: 500 13px/1 var(--font); color: #304023; }
 .gsw-chips .gsw-i.off { width: 26px; height: 26px; }
 .gsw-f { margin: 12px 0 0; font: 400 12px/1.4 var(--font); color: #5d6a50; }
+
+/* Blood sugar (Round A): her own pattern as spec rows (emoji + symptom left, day right) instead of two faint outlined notes;
+   a section title beside a long button steps down so neither wraps */
+.sb2 .sb-when { margin: 10px 0 0; }
+.sb2 .sb-when > small { display: block; padding: 4px 0 6px; font: 500 12px/1.2 var(--font); color: #5f7a32; }
+.sb2 .sbw-r { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid rgba(48,64,35,0.09); }
+.sb2 .sbw-r > .sbw-e { margin: 0; width: 30px; height: 30px; flex: none; display: grid; place-items: center; border-radius: 10px; background: #f6f3ee; font-size: 16px; line-height: 1; }
+.sb2 .sbw-r > b { flex: 1; min-width: 0; font: 500 14px/1.2 var(--font); color: #20301a; }
+.sb2 .sbw-d { display: inline-flex; align-items: baseline; gap: 4px; font: 500 13px/1 var(--font); color: #304023; white-space: nowrap; }
+.sb2 .sbw-d i { font-style: normal; font-family: var(--dot); font-weight: 900; font-size: 16px; color: #20301a; }
+.sb2 .sbw-d em { align-self: center; margin-right: 6px; padding: 4px 8px; border-radius: 99px; background: #304023; color: #fff; font: 600 11px/1 var(--font); font-style: normal; }
+html .view .section-title .link { white-space: nowrap; }
