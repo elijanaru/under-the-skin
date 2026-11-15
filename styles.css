@@ -13595,3 +13595,5 @@ html .pv2-3d.duo-v:not(.tea) .cup3d-w canvas.teacup3d { inset: 8%; width: 84%; h
 .duo-how { margin: 12px 2px 0; font-size: 13.5px; line-height: 1.45; color: rgba(32,48,26,.8); }
 @media (prefers-reduced-motion: reduce) { .duo-pan { animation: none; } }
 .pv2-step p b { font-weight: 600; color: #20301a; }
+/* Superfoods › For how you feel: its subline sat in dark ink on the arched background under a white title; white with the same soft shadow as the other sublines */
+html .ff-lead { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(70,30,38,.6), 0 1px 12px rgba(70,30,38,.46) !important; }
