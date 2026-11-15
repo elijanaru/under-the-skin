@@ -15640,3 +15640,32 @@ html .rl-hint.rl-hint2 { margin: 0 0 6px; padding: 0 2px 10px; border-bottom: 1p
 .rl-lab { display: flex; gap: 3px; margin-bottom: 4px; }
 .rl-lab small { flex: 1; text-align: center; font-size: 11px; color: rgba(32,48,26,.45); }
 .rl-lab small.on { color: #20301a; font-weight: 600; }
+
+/* Habits circle on Today (her "habits of happy people" moodboard): cut-out objects on a thin ring, serif italic names */
+html .card.hbc { padding: 6px 0 4px; border-radius: 32px; background: #fbf9f7 !important; border: 1px solid rgba(48,64,35,.08) !important; box-shadow: 0 10px 30px rgba(32,48,26,.08); margin-bottom: 14px; overflow: hidden; }
+.hbc { --ac: hsl(calc(var(--hb) + 79 * var(--hk)) calc(45% * var(--hs)) 38%); }
+.hbc[data-ph="menstrual"] { --dot: #c9506a; } .hbc[data-ph="follicular"] { --dot: #6c823e; } .hbc[data-ph="ovulatory"] { --dot: #d4a23a; } .hbc[data-ph="luteal"] { --dot: #9a7cc0; }
+.hbc-o { position: relative; width: 100%; aspect-ratio: 340 / 480; }
+.hbc-ring { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hbc-ring ellipse { fill: none; stroke: #304023; stroke-opacity: .55; stroke-width: 1; vector-effect: non-scaling-stroke; }
+.hbc-c { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 52%; text-align: center; display: grid; justify-items: center; }
+.hbc-c > i { font: italic 400 26px/1 'DM Serif Display', Georgia, serif; color: #20301a; letter-spacing: -.01em; }
+.hbc-c > b { font: 500 31px/.98 Outfit, sans-serif; color: #20301a; letter-spacing: -.035em; margin-top: 4px; }
+.hbc-n { margin-top: 12px; display: inline-flex; align-items: center; gap: 6px; font: 400 12px/1 Outfit, sans-serif; color: #4d5a43; }
+.hbc-n .doto { font-family: Doto, monospace; font-weight: 800; font-size: 17px; color: #20301a; }
+.hbc-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--dot, #6c823e); }
+.hbc-why { margin-top: 8px; display: inline-flex; align-items: center; gap: 3px; padding: 6px 11px; border-radius: 99px; background: #fff; border: 1px solid rgba(48,64,35,.12); font: 400 11.5px/1 Outfit, sans-serif; color: #304023; }
+.hbc-i { position: absolute; width: 86px; margin-left: -43px; margin-top: -32px; display: grid; justify-items: center; gap: 3px; background: none; border: 0; padding: 0; color: #20301a; -webkit-tap-highlight-color: transparent; z-index: 1; }
+.hbc-p { position: relative; width: 64px; height: 64px; display: grid; place-items: center; animation: hbc-float 7s ease-in-out infinite; animation-delay: calc(var(--i) * -.7s); }
+.hbc-p img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 6px 7px rgba(40,30,20,.16)); transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+.hbc-i:active .hbc-p img { transform: scale(.92); }
+.hbc-i em { font: italic 400 13.5px/1.05 'DM Serif Display', Georgia, serif; text-align: center; color: #20301a; text-wrap: balance; max-width: 88px; padding: 1px 5px 2px; border-radius: 8px; background: #fbf9f7; position: relative; z-index: 1; }
+.hbc-ok { position: absolute; right: -2px; top: -2px; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: #304023; color: #fff; box-shadow: 0 0 0 2px #fbf9f7; font-style: normal; }
+.hbc-i.pop .hbc-ok { animation: hbc-pop .5s cubic-bezier(.3,1.6,.5,1); }
+.hbc.first .hbc-i { animation: hbc-in .8s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(.15s + var(--i) * .06s); }
+.hbc.first .hbc-c { animation: hbc-in .9s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes hbc-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes hbc-in { from { opacity: 0; translate: 0 8px; } to { opacity: 1; translate: 0 0; } }
+@keyframes hbc-pop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+.ws-hb .hbs-done.on { background: #304023; color: #fff; }
+@media (prefers-reduced-motion: reduce) { .hbc-p, .hbc.first .hbc-i, .hbc.first .hbc-c, .hbc-i.pop .hbc-ok { animation: none; } }

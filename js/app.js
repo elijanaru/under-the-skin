@@ -1823,27 +1823,47 @@ function exploreGrid(info) {
 const HB_SHORT = { 'morning-sun': ['sun', 'Morning sun'], lemon: ['drop', 'Warm lemon water'], 'phone-free': ['mind', 'No phone first hour'], walk: ['leaf', 'Walk after meals'], calm: ['heart', 'Breathe 5 minutes'], ground: ['seed', 'Barefoot on the ground'] };
 // the fundamentals in the order of the Balance page, step 1
 const HB_ORDER = ['morning-sun', 'lemon', 'phone-free', 'walk', 'calm', 'ground'];
-function habitsHome(info) {
-  return `${sectionTitle('Hormone balancing habits', ['Why', 'relief'])}${hhCard(info)}`;
-}
-// six fundamentals for her exact phase: progress ring, photo rows, tick on the right, tap a row for why + how
+function habitsHome(info) { return hhCard(info); }
+// Short names for the habits circle.
+const HB_LABEL = { 'heat-belly': 'Warm belly', lemon: 'Lemon water', 'golden-milk': 'Golden milk', 'mag-night': 'Magnesium', calm: 'Slow breaths', walk: 'Walk after meals',
+  'morning-sun': 'Morning sun', 'seed-cycle': 'Seed cycling', 'phone-free': 'Slow mornings', ground: 'Bare feet', 'carrot-salad': 'Raw carrot', 'chamomile-eve': 'Chamomile',
+  'protein-bfast': 'Protein breakfast', 'bitter-greens': 'Bitter greens', 'dry-brush': 'Dry brushing', 'early-night': 'Early nights', 'foot-bath': 'Warm foot bath' };
+const hbImg = img => `images/${img.includes('/') ? img : `fb/${img}`}.webp`;
+const hbFind = id => (PHASE_FUNDAMENTALS[(M.info || {}).phase || 'follicular'] || PHASE_FUNDAMENTALS.follicular).list.find(x => x[0] === id);
+// "habits for Hormone Balance": her phase's habits as cut-out objects on a thin ring, title in the middle (her moodboard).
+// Each object opens a sheet with why + how and a done button; done ones wear a little green tick.
 function hhCard(info) {
   const phase = info ? info.phase : 'follicular', F = PHASE_FUNDAMENTALS[phase], done = habitsDone(todayISO());
-  const n = F.list.filter(x => done.includes(x[0])).length, N = F.list.length, R = 27, L = 2 * Math.PI * R;
-  const rows = F.list.map(([id, img, t, when, does, why, how]) => {
-    const on = done.includes(id), open = ui.hhOpen === id;
-    return `<li class="hh2-r ${on ? 'on' : ''} ${open ? 'open' : ''}">
-      <button class="hh2-m" data-action="hhOpen" data-id="${id}" aria-expanded="${open}"><span class="hh2-p"><img src="images/fb/${img}.webp" alt="" loading="lazy" decoding="async"></span>
-        <span class="hh2-t"><b>${t}</b><small>${when} · ${does}</small></span></button>
-      <button class="hh2-c" data-action="habitTick" data-id="${id}" aria-pressed="${on}" aria-label="${on ? 'Done' : 'Mark done'}: ${t}">${icon('check', 15, 2.6)}</button>
-      <div class="hh2-d"><div><p>${why}</p><p class="hh2-how"><b>How</b>${how}</p></div></div></li>`;
+  const N = F.list.length, n = F.list.filter(x => done.includes(x[0])).length, first = !ui.hbcSeen; ui.hbcSeen = true;
+  const RX = 33, RY = 35;
+  const items = F.list.map(([id, img, t], i) => {
+    const a = -Math.PI / 2 + i * 2 * Math.PI / N, x = 50 + RX * Math.cos(a), y = 50 + RY * Math.sin(a), on = done.includes(id);
+    return `<button class="hbc-i ${on ? 'on' : ''}" style="left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;--i:${i}" data-action="hbcOpen" data-id="${id}" aria-label="${t}${on ? ', done today' : ''}">
+      <span class="hbc-p"><img src="${hbImg(img)}" alt="" decoding="async">${on ? `<i class="hbc-ok">${icon('check', 11, 3)}</i>` : ''}</span><em>${HB_LABEL[id] || t}</em></button>`;
   }).join('');
-  return `<section class="card hh2" data-ph="${phase}">
-      <div class="hh2-h"><span class="hh2-o"><svg class="hh2-ring" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="${R}"/><circle class="on${n ? '' : ' zero'}" cx="32" cy="32" r="${R}" stroke-dasharray="${L.toFixed(1)}" stroke-dashoffset="${(L * (1 - n / N)).toFixed(1)}"/></svg>
-        <b class="hh2-n">${n ? `${n}<small>of ${N}</small>` : `${N}<small>to do</small>`}</b></span>
-        <div><span class="hh2-e">${info ? `Your ${PHASES[phase].name.toLowerCase()} phase` : 'This phase'}</span><h3>${F.t}</h3><p>${n === N ? 'All six done. Beautiful.' : F.s}</p></div></div>
-      <ul class="hh2-l">${rows}</ul>
-    </section>`;
+  return `<section class="card hbc ${first ? 'first' : ''}" data-ph="${phase}">
+    <div class="hbc-o">
+      <svg class="hbc-ring" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><ellipse cx="50" cy="50" rx="${RX}" ry="${RY}"/></svg>
+      <div class="hbc-c"><i>habits for</i><b>Hormone<br>Balance</b>
+        <span class="hbc-n"><span class="hbc-dot"></span>${PHASES[phase].name} · <b class="doto">${n}</b>/${N} today</span>
+        <button class="hbc-why" data-action="nav" data-to="relief">Why these ${icon('chevR', 11, 2.2)}</button></div>
+      ${items}
+    </div>
+  </section>`;
+}
+function hbcSheet(id) {
+  const h = hbFind(id); if (!h) return '';
+  const [, img, t, when, does, why, how] = h, on = habitsDone(todayISO()).includes(id), ph = PHASES[(M.info || {}).phase || 'follicular'].name;
+  return `<div class="hs hs1 sfs hbs">
+    <div class="hs-hero">
+      <svg class="o3-dood" viewBox="0 0 340 250" aria-hidden="true">${o3Spark('#f6c6d4', 46, 52, 0)}${o3Spark('#f1d58a', 296, 40, 1.1)}${o3Spark('#c9d6a8', 300, 200, 2)}${o3Spark('#f6c6d4', 34, 190, 1.5)}</svg>
+      <span class="tsh-glow" aria-hidden="true"></span><img class="hs-plant sf" src="${hbImg(img)}" alt="">
+    </div>
+    <header class="hs-h"><small>${when} · ${ph} phase</small><h2>${t}</h2></header>
+    <section class="o3-note hs-note"><p class="o3-lead">${does}.</p><p class="rls-why">${why}</p></section>
+    <section class="hs-card"><h3><span class="hs-ic">${icon('leaf', 16, 2)}</span>How</h3><p>${how}</p></section>
+    <button class="hs-done hbs-done ${on ? 'on' : ''}" data-action="hbcTick" data-id="${id}" aria-pressed="${on}">${icon('check', 16, 2.4)} ${on ? 'Done today' : 'Mark as done today'}</button>
+  </div>`;
 }
 function logChips(l) {
   const out = [], e = x => `${icon(LOG_IC[x] || 'spark', 13)} ${x}`;
@@ -7479,12 +7499,10 @@ function catFace(k) {
   </svg>`;
 }
 function hhRefresh() {
-  const old = document.querySelector('#view .hh2'); if (!old) return false;
+  const old = document.querySelector('#view .hbc'); if (!old) return false;
   const t = document.createElement('div'); t.innerHTML = hhCard(M.info); const nu = t.firstElementChild;
-  const was = [...old.querySelectorAll('.hh2-r')].map(r => r.classList.contains('on'));
-  nu.querySelectorAll('.hh2-r').forEach((r, i) => { if (r.classList.contains('on') && !was[i]) r.classList.add('pop'); });
-  const ring = old.querySelector('.hh2-ring .on'), off = ring && ring.getAttribute('stroke-dashoffset');
-  const nr = nu.querySelector('.hh2-ring .on'); if (off && nr) { const to = nr.getAttribute('stroke-dashoffset'); nr.setAttribute('stroke-dashoffset', off); requestAnimationFrame(() => requestAnimationFrame(() => nr.setAttribute('stroke-dashoffset', to))); }
+  const was = [...old.querySelectorAll('.hbc-i')].map(r => r.classList.contains('on'));
+  nu.querySelectorAll('.hbc-i').forEach((r, i) => { if (r.classList.contains('on') && !was[i]) r.classList.add('pop'); });
   old.replaceWith(nu); return true;
 }
 function habitsDone(k) { return ((state.habits || {})[k] || []); }
@@ -10577,6 +10595,8 @@ const actions = {
   focusTick: d => { const k = todayISO(), f = state.focusDone = state.focusDone || {}; const a = f[k] = f[k] || []; const i = +d.i; a.includes(i) ? a.splice(a.indexOf(i), 1) : a.push(i); for (const x in f) if (x !== k) delete f[x]; save(); render(); },
   habitTick: d => { const k = todayISO(), H = state.habits = state.habits || {}; const a = H[k] = H[k] || []; a.includes(d.id) ? a.splice(a.indexOf(d.id), 1) : a.push(d.id);
     const cut = C.iso(C.addDays(new Date(), -60)); for (const x in H) if (x < cut) delete H[x]; save(); hhRefresh() || render(); },
+  hbcOpen: d => { wsOpen(hbcSheet(d.id), 'ws-herb ws-sf ws-hb'); },
+  hbcTick: (d, el) => { actions.habitTick(d); const on = habitsDone(todayISO()).includes(d.id); el.classList.toggle('on', on); el.setAttribute('aria-pressed', on); el.innerHTML = `${icon('check', 16, 2.4)} ${on ? 'Done today' : 'Mark as done today'}`; if (on) setTimeout(() => wsClose(), 650); },
   hhOpen: d => { ui.hhOpen = ui.hhOpen === d.id ? null : d.id; hhRefresh() || render(); },
   addPartner: d => { const snap = b64d(d.d); if (!snap) return; const ps = state.partners = state.partners || [];
     const old = ps.find(x => x.n === snap.n);
