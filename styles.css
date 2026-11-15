@@ -14361,3 +14361,61 @@ html .view .lg .log-date .icon-btn svg { stroke: #20301a !important; }
 @media (prefers-reduced-motion: reduce) { .szn .cpick { animation: none; } }
 html .szn .cpick { background: none !important; border: 0 !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; padding: 0 10px 12px !important; }
 html .szn .cp-q { background: #f6f3ee !important; border: 0 !important; border-radius: 16px !important; box-shadow: none !important; }
+
+/* Stress › Meditate and Stretch (15 Nov 2026): a guided routine card. A hand-drawn pose (or a Doto step number) per row, its time in Doto,
+   Start runs a countdown down the rows: the live row tints, a thin bar fills in her phase colour, finished rows soften */
+.rt { --ac: hsl(calc(var(--hb) + 79 * var(--hk)) calc(38% * var(--hs)) 36%); margin: 0 0 18px; padding: 22px 18px 18px; border-radius: 30px; background: #fff; box-shadow: 0 14px 34px rgba(48,64,35,.10); color: #20301a; }
+.rt .eyebrow { display: block; font-size: 12.5px; font-weight: 500; color: rgba(32,48,26,.6); text-transform: none; letter-spacing: 0; }
+.rt h3 { margin: 4px 0 2px; font-size: 24px; font-weight: 500; line-height: 1.15; color: #20301a; }
+.rt-sum { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid rgba(48,64,35,.10); }
+.rt-sub { font-size: 14px; color: rgba(32,48,26,.62); }
+.rt-sum b { flex: none; font-size: 13px; font-weight: 500; color: rgba(32,48,26,.62); }
+.rt-sum em { font-style: normal; font-size: 22px; font-weight: 900; color: #20301a; margin-right: 2px; }
+.rt-l { list-style: none; margin: 4px 0 14px; padding: 0; }
+.rt-r { position: relative; display: flex; align-items: center; gap: 14px; padding: 12px 8px; margin: 0 -8px; border-radius: 18px; transition: background .4s ease, opacity .4s ease; }
+.rt-r + .rt-r::before { content: ''; position: absolute; left: 8px; right: 8px; top: 0; height: 1px; background: rgba(48,64,35,.08); }
+.rt-p { flex: none; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: #eef0e4; color: #4d6130; transition: background .4s ease, color .4s ease; }
+.rt-p svg { width: 40px; height: 40px; }
+.rt-p i { font-style: normal; font-size: 20px; font-weight: 900; color: #20301a; }
+.rt-t { flex: 1; min-width: 0; }
+.rt-t b { display: block; font-size: 15px; font-weight: 600; line-height: 1.3; color: #20301a; }
+.rt-t small { display: block; margin-top: 2px; font-size: 13px; line-height: 1.35; color: rgba(32,48,26,.6); }
+.rt-n { flex: none; font-style: normal; font-size: 16px; font-weight: 900; color: #20301a; min-width: 44px; text-align: right; }
+.rt-bar { position: absolute; left: 74px; right: 8px; bottom: 5px; height: 3px; border-radius: 3px; background: rgba(48,64,35,.08); opacity: 0; overflow: hidden; }
+.rt-bar::after { content: ''; position: absolute; inset: 0; background: var(--ac); transform-origin: left; transform: scaleX(var(--p, 0)); }
+.rt.run .rt-r { opacity: .5; }
+.rt.run .rt-r.on { opacity: 1; background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(40% * var(--hs)) 95%); }
+.rt.run .rt-r.on::before, .rt.run .rt-r.on + .rt-r::before { opacity: 0; }
+.rt.run .rt-r.on .rt-p { background: var(--ac); color: #fff; }
+.rt.run .rt-r.on .rt-p i { color: #fff; }
+.rt.run .rt-r.on .rt-bar { opacity: 1; }
+.rt.run .rt-r.done { opacity: .42; }
+.rt.paused .rt-r.on .rt-n { animation: rtBlink 1.4s ease-in-out infinite; }
+@keyframes rtBlink { 50% { opacity: .35; } }
+.rt-ctl { display: flex; gap: 10px; }
+.rt-go { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 50px; border: 0; border-radius: 99px; background: #20301a; color: #fff; font: 500 16px var(--font); cursor: pointer; box-shadow: 0 10px 22px -10px rgba(32,48,26,.6); }
+.rt-go:active, .rt-skip:active { transform: scale(.97); }
+.rt-skip { flex: none; display: inline-flex; align-items: center; gap: 4px; height: 50px; padding: 0 18px; border: 0; border-radius: 99px; background: #eef0e4; color: #20301a; font: 500 15px var(--font); cursor: pointer; }
+@media (prefers-reduced-motion: reduce) { .rt-r, .rt-p { transition: none; } .rt.paused .rt-r.on .rt-n { animation: none; } }
+
+/* Breathe › week of breath (bwk3): title + one line left, a phase-tinted ring of the week right, sessions as a spec row */
+html .bwk3 .bwk-top { align-items: center; }
+html .bwk3 .bwk-h { gap: 4px; }
+html .bwk3 .bwk-h b { display: block; margin: 0; font-size: 17px; font-weight: 500; color: #20301a; white-space: normal; }
+html .bwk3 .bwk-h p { margin: 0; font-size: 13.5px; line-height: 1.35; color: rgba(32,48,26,.62); }
+.bwk-ring { position: relative; flex: none; display: grid; place-items: center; align-content: center; width: 68px; height: 68px; }
+.bwk-ring svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.bwk-ring circle { fill: none; stroke: rgba(32,48,26,.09); stroke-width: 4; }
+.bwk-ring circle.on { stroke: hsl(calc(var(--hb) + 0 * var(--hk)) calc(42% * var(--hs)) 52%); stroke-linecap: round; transition: stroke-dasharray 1.2s cubic-bezier(.2,.8,.2,1); }
+.bwk-ring .dotnum { position: relative; font-size: 24px; line-height: 1; color: #20301a; }
+.bwk-ring img { position: relative; width: 26px; height: 32px; object-fit: contain; opacity: .85; }
+.bwk-ring small { position: relative; margin-top: 2px; font-size: 10px; font-weight: 500; color: rgba(32,48,26,.55); }
+.bwk3 .bwk-row { display: flex; align-items: baseline; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(32,48,26,.08); font-size: 13.5px; color: rgba(32,48,26,.62); }
+.bwk3 .bwk-row b { font-weight: 500; color: #20301a; }
+.bwk3 .bwk-row .dotnum { font-size: 18px; }
+@media (prefers-reduced-motion: reduce) { .bwk-ring circle.on { transition: none; } }
+/* Stress routine card, follow-up: Next only while running, bigger poses, the stretch tip as a soft note */
+.rt-skip[hidden] { display: none; }
+.rt-p svg { width: 46px; height: 46px; stroke-width: 2.4; }
+.rt-tip { display: flex; align-items: flex-start; gap: 8px; margin: -6px 0 14px; padding: 10px 12px; border-radius: 16px; background: #f4f5ec; font-size: 13.5px; line-height: 1.4; color: rgba(32,48,26,.78); }
+.rt-tip svg { flex: none; margin-top: 2px; color: #6c823e; }

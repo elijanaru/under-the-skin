@@ -6827,11 +6827,13 @@ function breathWeek() {
   const days = Array.from({ length: 7 }, (_, i) => C.addDays(new Date(), i - 6)), n = days.filter(d => L[C.iso(d)]).length, sum = days.reduce((a, d) => a + (L[C.iso(d)] || 0), 0);
   const msg = n === 0 ? 'Breathe once today and your first lotus opens.' : n >= 6 ? 'Your week is in full bloom. Your body feels it.' : n >= 4 ? 'A steady rhythm. Keep it gentle.' : `${7 - n} more ${7 - n === 1 ? 'day' : 'days'} and your week is in full bloom.`;
   // one lotus per day: a closed bud until she breathes, then it opens
-  return `<div class="bwk bwk2" aria-label="You breathed on ${n} of the last 7 days">
-    <div class="bwk-top"><div class="bwk-h"><small>Your week of breath</small><b><span class="dotnum">${n}</span><em>of 7 days</em></b></div>
-      <span class="bwk-s"><b class="dotnum">${sum}</b><small>${sum === 1 ? 'session' : 'sessions'}</small></span></div>
+  const R = 19, len = 2 * Math.PI * R;
+  // Opal pattern: a short title + one line on the left, a ring of the week on the right; minutes and sessions as one spec row
+  return `<div class="bwk bwk2 bwk3 ${n ? '' : 'zero'}" aria-label="You breathed on ${n} of the last 7 days">
+    <div class="bwk-top"><div class="bwk-h"><b>Your week of breath</b><p>${msg}</p></div>
+      <span class="bwk-ring" aria-hidden="true"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="${R}"/>${n ? `<circle class="on" cx="22" cy="22" r="${R}" stroke-dasharray="${(len * n / 7).toFixed(1)} ${len.toFixed(1)}"/>` : ''}</svg>${n ? `<b class="dotnum">${n}</b><small>of 7</small>` : '<img src="images/breath-bud.webp" alt="">'}</span></div>
     <div class="bwk-pond">${days.map(d => { const k = C.iso(d), v = L[k] || 0; return `<span class="${k === t ? 'now' : ''} ${v ? 'on' : ''}"><i><img src="images/breath-${v ? 'bloom' : 'bud'}.webp" alt="" loading="lazy"></i><small>${k === t ? 'Today' : fmt(d, { weekday: 'narrow' })}</small></span>`; }).join('')}</div>
-    <p class="bwk-m">${msg}</p></div>`;
+    ${sum ? `<div class="bwk-row"><span>Sessions this week</span><b><span class="dotnum">${sum}</span></b></div>` : ''}</div>`;
 }
 // Breathe page: the daily calm reminder, a bell with her time and a switch; stressed days get an extra nudge
 function calmRemCard() {
@@ -6997,14 +6999,71 @@ function mountBreath(el) {
   btn.addEventListener('click', go);
   return () => { cancelAnimationFrame(raf); btn.removeEventListener('click', go); };
 }
+// Stretch and Meditate as a guided routine: a hand-drawn pose (or step number) per row, its time in Doto,
+// and Start runs a countdown down the rows with a soft bell between steps. Only the card updates, never the page.
+const POSE = {
+  stand: '<circle cx="24" cy="8.5" r="3"/><path d="M24 12v15M24 27l-4 13M24 27l4 13M24 15l-6-10M24 15l6-10"/>',
+  fold: '<path d="M21 40V24M27 40V24M24 23l6 10"/><circle cx="31" cy="36.5" r="3"/><path d="M29 32l-1 8"/>',
+  lunge: '<circle cx="22" cy="9" r="3"/><path d="M22 12v14M22 26l9 4v10M22 26l-8 14H6M22 15l-2-10M22 15l3-10"/>',
+  table: '<circle cx="11" cy="21" r="3"/><path d="M15 24c5-3 12-3 17 0M16 24v16M32 24v16h10"/>',
+  child: '<circle cx="9" cy="37" r="3"/><path d="M13 37l9-5 8 2M30 34l-10 6h12M13 39H4"/>',
+  lie: '<circle cx="8" cy="35" r="3"/><path d="M11 37h15M26 37l4-10 8 4M15 36l13-8"/>',
+  wall: '<path d="M41 4v36" opacity=".45"/><circle cx="7" cy="36" r="3"/><path d="M10 38h24l4-28"/>',
+  sfold: '<circle cx="33" cy="27" r="3"/><path d="M12 38h30M12 38l17-9M24 32l12 5"/>',
+  seat: '<circle cx="22" cy="14" r="3"/><path d="M21 17l-1 21M20 38h18M20 38l9-8 4 8M21 22l9 8M21 22l-7 14"/>',
+  dog: '<circle cx="14" cy="31" r="3"/><path d="M8 40l16-26 16 26"/>',
+};
+const poseOf = t => /child/i.test(t) ? 'child' : /wall/i.test(t) ? 'wall' : /cat-cow|hands and knees/i.test(t) ? 'table' : /downward|plank|cobra/i.test(t) ? 'dog'
+  : /seated forward fold|seated fold/i.test(t) ? 'sfold' : /lunge/i.test(t) ? 'lunge' : /reclined|lying|on your back|hug both/i.test(t) ? 'lie' : /fold/i.test(t) ? 'fold'
+  : /seated|figure-four|pigeon|twist|neck|warm hands|butterfly/i.test(t) ? 'seat' : 'stand';
+const poseSvg = k => `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${POSE[k] || POSE.stand}<path d="M3 40.5h42" stroke-width="1.2" opacity=".35"/></svg>`;
+function stepSecs(t) {
+  const side = /a side|each side/i.test(t) ? 2 : 1, m = t.match(/(\d+)(?:–\d+)?\s*min/i), b = t.match(/(\d+)\s*breaths/i);
+  return Math.min(360, m ? +m[1] * 60 * side : b ? +b[1] * 6 * side : 60 * side);
+}
+const mmss = s => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`;
+function routineCard(kind, eyebrow, [title, sub, list]) {
+  const tip = kind === 'stretch' ? list.filter(t => /^(stay|don)/i.test(t)) : []; list = list.filter(t => !tip.includes(t));
+  const total = +((title.match(/(\d+)\s*min/) || [])[1] || 0) * 60;
+  const secs = kind === 'stretch' ? list.map(stepSecs) : list.map(() => Math.max(30, Math.round((total || 300) / list.length)));
+  const sum = secs.reduce((a, b) => a + b, 0);
+  return `<section class="rt" data-kind="${kind}"><span class="eyebrow">${eyebrow}</span><h3>${title.replace(/\s*·\s*\d+\s*min$/, '')}</h3>
+    <div class="rt-sum"><span class="rt-sub">${sub}</span><b><em class="dotnum">${Math.round(sum / 60)}</em> min</b></div>
+    <ol class="rt-l">${list.map((t, i) => { const c = kind === 'stretch' ? t.indexOf(', ') : -1, name = c > 0 ? t.slice(0, c) : t, meta = c > 0 ? t.slice(c + 2) : '';
+      return `<li class="rt-r" data-s="${secs[i]}"><span class="rt-p">${kind === 'stretch' ? poseSvg(poseOf(t)) : `<i class="dotnum">${i + 1}</i>`}</span>
+        <span class="rt-t"><b>${name}</b>${meta ? `<small>${meta}</small>` : ''}</span><em class="rt-n dotnum">${mmss(secs[i])}</em><i class="rt-bar" aria-hidden="true"></i></li>`; }).join('')}</ol>${tip.length ? `<p class="rt-tip">${icon('leaf', 14)}<span>${tip.join('. ')}</span></p>` : ''}
+    <div class="rt-ctl"><button class="rt-go" data-action="rtGo">${icon('play', 15)}<span>Start</span></button><button class="rt-skip" data-action="rtSkip" hidden>Next ${icon('chevR', 14)}</button></div></section>`;
+}
+let RT = null;
+function rtStop(done) {
+  if (!RT) return; clearInterval(RT.iv); const { el } = RT; RT = null;
+  if (!el.isConnected) return;
+  el.classList.remove('run'); el.querySelectorAll('.rt-r').forEach(r => { r.classList.remove('on', 'done'); r.style.setProperty('--p', 0); r.querySelector('.rt-n').textContent = mmss(+r.dataset.s); });
+  el.querySelector('.rt-go span').textContent = done ? 'Again' : 'Start'; el.querySelector('.rt-skip').hidden = true;
+  if (done) { const ctx = bellCtx(); if (ctx) ringBell(ctx, ctx.currentTime + .05, .8); }
+}
+function rtStep(i) {
+  const rows = [...RT.el.querySelectorAll('.rt-r')];
+  if (i >= rows.length) return rtStop(true);
+  rows.forEach((r, j) => { r.classList.toggle('done', j < i); r.classList.toggle('on', j === i); if (j < i) { r.style.setProperty('--p', 1); r.querySelector('.rt-n').textContent = mmss(+r.dataset.s); } });
+  RT.i = i; RT.len = +rows[i].dataset.s * 1000; RT.end = performance.now() + RT.len;
+  if (i) { const ctx = bellCtx(); if (ctx) ringBell(ctx, ctx.currentTime + .05, .55, true); }
+}
+function rtTick() {
+  if (!RT || !RT.el.isConnected) { if (RT) { clearInterval(RT.iv); RT = null; } return; }
+  if (RT.paused) return;
+  const left = Math.max(0, RT.end - performance.now()), r = RT.el.querySelectorAll('.rt-r')[RT.i];
+  r.style.setProperty('--p', (1 - left / RT.len).toFixed(4)); r.querySelector('.rt-n').textContent = mmss(Math.ceil(left / 1000));
+  if (!left) rtStep(RT.i + 1);
+}
 function viewStress() {
   const { info } = M, w = dayWindow(info), [lvl, calm] = CALM[w], sp = STRESS_PLAN[w], st = STRETCH[w], md = MEDITATE[w], tab = ui.stTab || 'calm';
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches, auto = still ? '' : 'autoplay';
   const steps = l => `<div class="st2-steps">${l.map((t, i) => `<div class="st2-step"><span>${i + 1}</span><p>${t}</p></div>`).join('')}</div>`;
   const body = tab === 'meditate'
-    ? `<section class="st2-card"><span class="eyebrow">Meditate today</span><h3>${md[0]}</h3><p class="st2-sub">${md[1]}</p>${steps(md[2])}${evBadge('some')}</section>`
+    ? routineCard('meditate', 'Meditate today', md)
     : tab === 'stretch'
-      ? `<section class="st2-card"><span class="eyebrow">Stretch today</span><h3>${st[0]}</h3><p class="st2-sub">${st[1]}</p>${steps(st[2])}${evBadge('some')}</section>`
+      ? routineCard('stretch', 'Stretch today', st)
       : `<button class="bz-cta" data-action="nav" data-to="breathe"><i class="bz-mini"></i><span><b>Breathe with me</b><small>${((info && BREATHS[BREATH_FOR[info.phase]]) || BREATHS.sigh).name}${info ? " · for your phase" : ""}</small></span>${icon('chevR', 16)}</button>${groundCta()}
         <section class="st2-why"><span class="st2-wi" aria-hidden="true">🌿</span><span><span class="eyebrow">Why today</span><p>${sp[0]}</p></span></section>
         <button class="st3-fast" data-action="nav" data-to="breathe"><span class="st3-orb" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="trk" cx="50" cy="50" r="40"/><circle class="arc-in" cx="50" cy="50" r="40" pathLength="100" stroke-dasharray="39 61" transform="rotate(-90 50 50)"/><circle class="arc-out" cx="50" cy="50" r="40" pathLength="100" stroke-dasharray="59 41" stroke-dashoffset="-40" transform="rotate(-90 50 50)"/><g class="dot"><circle cx="50" cy="10" r="6.5"/></g></svg><i></i><b class="in">In</b><b class="out">Out</b></span>
@@ -9696,7 +9755,13 @@ const actions = {
   mvTab: d => { ui.mvTab = d.v; render(); },
   mvOpen: d => { ui.mvOpen = ui.mvOpen === d.k ? null : d.k; render(); },
   supTab: d => { ui.supTab = d.v; render(); },
-  stTab: d => { ui.stTab = d.v; render(); },
+  stTab: d => { rtStop(); ui.stTab = d.v; render(); },
+  rtGo: (d, btn) => {
+    const el = btn.closest('.rt'), lab = btn.querySelector('span');
+    if (RT && RT.el === el) { RT.paused = !RT.paused; if (RT.paused) { RT.rest = RT.end - performance.now(); lab.textContent = 'Resume'; } else { RT.end = performance.now() + RT.rest; lab.textContent = 'Pause'; } el.classList.toggle('paused', RT.paused); return; }
+    rtStop(); RT = { el, iv: setInterval(rtTick, 200) }; el.classList.add('run'); el.classList.remove('paused'); lab.textContent = 'Pause'; el.querySelector('.rt-skip').hidden = false; rtStep(0);
+  },
+  rtSkip: () => { if (RT) { RT.paused = false; RT.el.classList.remove('paused'); RT.el.querySelector('.rt-go span').textContent = 'Pause'; rtStep(RT.i + 1); } },
   calmWay: (d, el) => {
     let k = calmDone(); k = k.includes(d.t) ? k.filter(x => x !== d.t) : [...k, d.t];
     try { localStorage.setItem('uts.calmWays', JSON.stringify({ d: todayISO(), k })); } catch {}
