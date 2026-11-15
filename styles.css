@@ -14441,3 +14441,27 @@ html .sb2 .sb-top small { text-transform: none !important; letter-spacing: 0 !im
 html .sb2 .sb-score b.sbr-go { display: grid; place-items: center; font-family: var(--font); color: #20301a; animation: sbrNudge 2.6s ease-in-out infinite; }
 @keyframes sbrNudge { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(3px); } }
 @media (prefers-reduced-motion: reduce) { html .sb2 .sb-score b.sbr-go { animation: none; } }
+
+/* Sweep: the older page headings (Blood sugar, Insights, Read, Grocery, Hormones, Share, 90 days, life stages, Move, Feel better)
+   still sat in a frosted panel over the arch; like the newer headers they now sit straight on it in dark ink with a soft pearl glow,
+   and the line under a heading reads the same way instead of a second pill */
+html .view h1.page-h, html .view .br2-h, html .view .rh2-h, html .view .mvp-h { padding: 0 4px; border-radius: 0; background: none !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+html .view h1.page-h, html .view h1.page-h span, html .view .rh2-h {
+  text-shadow: 0 0 2px rgba(255,255,255,.95), 0 0 14px rgba(255,255,255,.95), 0 0 28px rgba(255,255,255,.8) !important; }
+/* Feel better and Move keep their headings inside the white hero card: no glow there, and Feel better's two lines (What your body / is saying) are a grid again, the panel rule had made them run together as "bodyis" */
+html .view .br2-h { display: grid; width: auto; padding: 0; }
+html .view .mvp-h { padding: 0; }
+html .view h1.page-h + p { display: block; width: auto; margin: 0 4px 14px; padding: 0; border-radius: 0; background: none !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+  font-size: 15px; line-height: 1.45; color: #20301a !important; -webkit-text-fill-color: #20301a !important; font-weight: 400 !important;
+  text-shadow: 0 0 2px rgba(255,255,255,.95), 0 0 12px rgba(255,255,255,.95), 0 0 22px rgba(255,255,255,.8) !important; }
+/* Superfoods › For how you feel: its subline was the last white line on the blush; the frosted pearl subline like the other section sublines */
+html .view .ff-lead { display: block; width: fit-content; max-width: 100%; box-sizing: border-box; margin: -4px 0 12px; padding: 8px 14px; border-radius: 16px;
+  background: rgba(255,255,255,.55); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.75);
+  color: rgba(32,48,26,.85) !important; -webkit-text-fill-color: rgba(32,48,26,.85) !important; text-shadow: none !important; }
+/* Feel better › Get ahead of it: the when tag was an outlined box wider than its word; now a small rose date tile, the number in Doto */
+html .br2b .br-up { align-items: center; }
+html .br2b .hu-when { display: grid; place-items: center; align-content: center; flex: none; width: 62px; min-width: 0; min-height: 56px; padding: 6px 4px; box-sizing: border-box; border-radius: 16px;
+  background: #f8e8ee !important; border: 0 !important; box-shadow: inset 0 0 0 1px rgba(154,61,88,.1) !important;
+  font: 600 11.5px/1.15 Outfit, sans-serif; letter-spacing: .02em; text-transform: none; text-align: center; color: #9a3d58; }
+html .br2b .hu-when b { font: 400 24px/1 var(--dot); color: #9a3d58; margin: 1px 0; }
+html .br2b .hu-when small { display: block; margin: 0; font-size: 10.5px; font-weight: 500; color: rgba(154,61,88,.8); }

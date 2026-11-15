@@ -2287,13 +2287,13 @@ function viewBrain(id) {
   const n = warns.length + acts.length + good.length;
   const body = !R || !n ? `<section class="br-empty"><p>Log a few things and I’ll tell you exactly what to do today.</p><button class="btn btn-light" data-action="nav" data-to="log">${icon('plus', 18)} Check in</button></section>` : `
     ${warns.map(w => `<section class="bx-warn"><span class="bx-wi">!</span><div><small>Check this</small><b>${w.t}</b><p>${w.p}</p></div></section>`).join('')}
-    ${acts.length ? `<div class="br-h">What helps today</div>
+    ${acts.length ? `${sectionTitle('What helps today')}
     <div class="bx-plan">${acts.map(x => `<section class="bx-t">
       <div class="bx-top"><span class="bx-e">${x.e}</span><b>${x.t}</b></div>
       ${x.why ? `<p class="bx-why">${x.why}</p>` : ''}
       ${x.recs.length ? `<div class="bx-recs">${x.recs.map(r => `<button class="bx-r" data-action="nav" data-to="${r.to}">${r.cup ? `<span class="cup3" aria-hidden="true"><img src="${r.cup}" alt=""><i></i></span>` : r.img ? `<img src="${r.img}" alt="" loading="lazy">` : `<span class="bx-re">${r.e}</span>`}<span class="bx-rt"><small>${r.k}</small>${r.t}</span></button>`).join('')}</div>` : ''}
     </section>`).join('')}</div>` : ''}
-    ${good.length ? `<div class="br-h">Going well</div><div class="bx-good">${good.map(g => `<div><b>🌟 ${g.t}</b>${g.p ? `<p>${g.p}</p>` : ''}</div>`).join('')}</div>` : ''}`;
+    ${good.length ? `${sectionTitle('Going well')}<div class="bx-good">${good.map(g => `<div><b>🌟 ${g.t}</b>${g.p ? `<p>${g.p}</p>` : ''}</div>`).join('')}</div>` : ''}`;
   return `<section class="br-hero br2">
     <div class="br2-top"><button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>
     <button class="spec-btn br2-home" data-action="nav" data-to="today" aria-label="Home">${icon('home', 20)}</button></div>
@@ -2314,7 +2314,7 @@ function viewBrain(id) {
   </section>
   <div class="pad br br2b">
     ${body}
-    ${R && isToday && R.up.length ? `<div class="br-h">Get ahead of it</div>${R.up.map(x => `<section class="br-up"><span class="hu-when">${x.inDays === 0 ? 'Today' : x.inDays === 1 ? 'Tomorrow' : `In ${x.inDays} days`}</span><div><b>${x.name}</b> usually on ${dayRange(x)}${QUICK_FIX[x.name] ? `<small>${QUICK_FIX[x.name]}</small>` : ''}</div></section>`).join('')}` : ''}
+    ${R && isToday && R.up.length ? `${sectionTitle('Get ahead of it')}${[...R.up].sort((a, b) => a.inDays - b.inDays).map(x => `<section class="br-up"><span class="hu-when ${x.inDays > 1 ? 'n' : ''}">${x.inDays === 0 ? 'Today' : x.inDays === 1 ? 'Tomorrow' : `<small>in</small><b class="dotnum">${x.inDays}</b><small>days</small>`}</span><div><b>${x.name}</b> usually on ${dayRange(x)}${QUICK_FIX[x.name] ? `<small>${QUICK_FIX[x.name]}</small>` : ''}</div></section>`).join('')}` : ''}
     <button class="btn btn-dark btn-block br2-go" data-action="nav" data-to="today">${icon('home', 18)} Back to home</button>
     <button class="btn btn-ghost btn-block" data-action="logDay" data-date="${k}">Edit check-in</button>
     <p class="fine center">General information, not medical advice or contraception.</p>
