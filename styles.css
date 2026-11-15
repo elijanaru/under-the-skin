@@ -14532,3 +14532,9 @@ html .fx-ti.sym span { background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(40%
 .el5-me { position: absolute; top: 1px; right: 1px; width: 11px; height: 11px; border-radius: 50%; background: #20301a; box-shadow: 0 0 0 2.5px #fff; }
 .el5-han { font-style: normal; font-family: 'Noto Serif SC', serif; font-weight: 500; font-size: .8em; color: var(--c); margin-left: 4px; }
 .fbp-c .fbp-to { font-style: normal; font: 500 11px/1 var(--font); margin-left: 3px; opacity: .8; }
+
+/* Performance (onboarding lag): the arched background keeps swaying under onboarding, which forced every frosted field and
+   button above it to re-blur each frame. While onboarding is up, its photo covers the background, so hide it there and
+   freeze it on the pale last steps. */
+html:has(.onb) .bgx, html:has(.onb) .bgx * { animation-play-state: paused !important; }
+html:has(.onb.no-fig:not(.step-9):not(.step-10)) .bgx, html:has(.onb-welcome) .bgx { visibility: hidden; }
