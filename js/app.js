@@ -11099,6 +11099,12 @@ function viewUnlock() {
       ${ulTicket()}
     </div>
     <span class="ul3-days">${paid ? `${icon('heart', 13)} Unlocked` : lock ? 'Your free cycle is over' : trialNextPeriod() ? 'Your period started · last free day' : `Free until your next period · <b class="dotnum">${left}</b> ${left === 1 ? 'day' : 'days'}`}</span>
+    ${paid ? '' : `<section class="card ul-cmp" aria-label="Most cycle apps: €40 to 90, every year. Under the Skin: €${PRICE}, once. Yours for good.">
+      <div class="ulc-r them"><p><b>Most cycle apps:</b> <span><b class="dotnum">€40–90</b>, every year.</span></p>
+        <div class="ulc-bar" aria-hidden="true">${['1', '2', '3'].map((y, i) => `<i style="--i:${i}"><small>year ${y}</small></i>`).join('')}<em>…</em></div></div>
+      <div class="ulc-r us"><p><b>Under the Skin:</b> <span><b class="dotnum">€${PRICE}</b>, once. Yours for good.</span></p>
+        <div class="ulc-bar" aria-hidden="true"><i><small>once</small></i></div></div>
+    </section>`}
     <section class="o3-note ul3-note ul4-note">
       <small class="ul4-eye">${paid ? `Welcome home${nm ? `, ${nm}` : ''}` : `${nm ? `${nm}, your` : 'Your'} ticket is ready`}</small>
       <h2 class="ul4-h">${paid ? `It’s yours,<br><em>for good${swirl}</em>` : `One ticket,<br><em>yours forever${swirl}</em>`}</h2>
