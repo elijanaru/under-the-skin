@@ -7182,7 +7182,16 @@ function showSignal(sig, name, from, x) {
   import('./sfx.js').then(S => S.breeze({ dur: 1.8, vol: .14 })).catch(() => {});
 }
 // His date ticket lands on her phone: it drops in from the top with a little spin, settles, a light glints across it and hearts burst.
-function showTicket(name, from, x) {
+// run something once the opening splash has lifted, so an arrival animation is seen and not played under it
+function afterSplash(fn) {
+  const sp = document.getElementById('splash');
+  if (!sp || sp.classList.contains('out') || getComputedStyle(sp).display === 'none') return fn();
+  let done = false; const go = () => { if (done) return; done = true; mo.disconnect(); setTimeout(fn, 650); };
+  const mo = new MutationObserver(() => { if (sp.classList.contains('out') || !sp.isConnected) go(); });
+  mo.observe(sp, { attributes: true, attributeFilter: ['class'] }); mo.observe(document.body, { childList: true }); setTimeout(go, 9000);
+}
+function showTicket(name, from, x) { afterSplash(() => showTicket0(name, from, x)); }
+function showTicket0(name, from, x) {
   const m = String(x).match(/^(\S+)\s+(.*)$/) || [0, '💝', x], emo = m[1], plan = m[2];
   const el = document.createElement('div'); el.className = 'sig-pop tk-pop';
   const hearts = Array.from({ length: 14 }, (_, i) => `<i style="left:${(i * 41) % 100}%;animation-delay:${1 + (i * .23) % 3}s;animation-duration:${5 + (i % 4)}s;width:${12 + (i * 7) % 16}px;height:${12 + (i * 7) % 16}px">${HEART(i % 3 === 1 ? '#fff' : '#e6809c')}</i>`).join('');
