@@ -14323,6 +14323,24 @@ html .view .pad.sp2t .spec.stack > .spec-name h1 { color: #20301a !important; -w
   text-shadow: 0 0 2px rgba(255,255,255,.95), 0 0 14px rgba(255,255,255,.95), 0 0 28px rgba(255,255,255,.8) !important; }
 html .view .pad.sp2t .spec.stack > .spec-name .eyebrow { display: inline-block; padding: 4px 11px; border-radius: 99px; background: rgba(255,255,255,.66); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.8); color: #6c823e !important; -webkit-text-fill-color: #6c823e !important; text-shadow: none !important; font-weight: 600; }
+
+
+/* ── Sweep (15 Nov 2026, late): the last white lines sitting straight on the pale arch become dark ink with a pearl glow,
+   like the page headings; small labels turn moss. Text on photos and the top bar stays white. ── */
+html .view :is(.lg .log-date h2, .pl-head h2, .pl-det .pld-h b, .sv-hero h2, .rm2-glow > h3, .rm2-how > h3, .rm2-res > h3, .sync-hero .sy-h, .sync-hero .sy-h span) {
+  color: #20301a !important; -webkit-text-fill-color: #20301a !important;
+  text-shadow: 0 0 2px rgba(255,255,255,.95), 0 0 14px rgba(255,255,255,.95), 0 0 28px rgba(255,255,255,.8) !important; }
+html .view .rm2-glow > h3 em { color: #b04f6c !important; -webkit-text-fill-color: #b04f6c !important; }
+html .view :is(.lg .log-date .eyebrow, .rm2-glow > .rm2-k, .rm2-how > .rm2-k, .rm2-res > .rm2-k, .rm2-month > .rm2-k.sm, .sy-head .hud) {
+  color: #4f6a2f !important; -webkit-text-fill-color: #4f6a2f !important; font-weight: 600 !important;
+  text-shadow: 0 0 2px rgba(255,255,255,.95), 0 0 10px rgba(255,255,255,.95), 0 0 18px rgba(255,255,255,.8) !important; }
+html .view :is(.sv-hero p, .ph-p, .rm2-glow > .rm2-sub, .rm2-res > .rm2-sub, .rm2-month > .rm2-line, .suh-key, .fcg-body > p.fine, .pad > p.plr-hint, .pad > p.sg-score, .pad > p.sg-score .link,
+  .pad > .link.center-link, .ts-credit, .gro-page .gro-lead, .pad > p.gro-lead, .pl-det .pld-p, .pad > p.pv-lead, .pv-sub .pv-lead) {
+  color: rgba(32,48,26,.88) !important; -webkit-text-fill-color: rgba(32,48,26,.88) !important;
+  text-shadow: 0 0 2px rgba(255,255,255,.95), 0 0 12px rgba(255,255,255,.95), 0 0 22px rgba(255,255,255,.8) !important; }
+html .view .pl-det .pld-p b, html .view .pl-det .pld-p strong { color: #4f6a2f !important; -webkit-text-fill-color: #4f6a2f !important; }
+html .view .lg .log-date .icon-btn { background: #fff !important; color: #20301a !important; border: 0 !important; box-shadow: 0 6px 16px -8px rgba(60,30,40,.35), inset 0 0 0 1px rgba(32,48,26,.06) !important; }
+html .view .lg .log-date .icon-btn svg { stroke: #20301a !important; }
 /* research wall: Doto only for the number; units (wks, g) and a symbol like Fe in Outfit */
 .rm2-n small { font-family: var(--font); font-size: 15px; font-weight: 500; letter-spacing: 0; margin-left: 5px; }
 .rm2-n.w small { font-size: 30px; font-weight: 600; margin: 0; }
