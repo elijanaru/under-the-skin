@@ -1995,7 +1995,7 @@ function viewCalendar() {
   return `${topbar('Calendar')}
   <div class="pad">
     ${answer}
-    <div class="cal-mind">${mindSection(mph, true)}</div>
+    <div class="cal-mind"><section class="mg4" style="--pc:${PH_HEX[mph] || '#6c823e'}"><header class="mg4-h"><b>Your days right now</b><small>How your energy moves through this cycle</small></header>${mindWave(mph)}</section></div>
     <div class="cal-head"><button class="icon-btn" data-action="calMove" data-d="-1" aria-label="Previous month">${icon('chevL', 20)}</button>
       <h2><button class="cal-title" data-action="calPick">${fmt(m, { month: 'long' })} <span>${m.getFullYear()}</span>${icon('chevD', 16)}</button>${thisMonth ? '' : '<button class="cal-today" data-action="calToday">Today</button>'}</h2>
       <button class="icon-btn" data-action="calMove" data-d="1" aria-label="Next month">${icon('chevR', 20)}</button></div>
@@ -5501,24 +5501,30 @@ const COMPASS_SHORT = {
   peak: ['Pitch, present, ask', 'Saying yes to all', 'Dance, sprint, lift'], settle: ['Finish & deep work', 'Starting five things', 'Steady strength'],
   focus: ['Wrap up & organise', 'Late nights', 'Pilates & walks'], premenstrual: ['Only what’s due', 'Harsh self-talk', 'Gentle & warm'],
 };
-// Under the period button: the pixel aura woman floating in the middle, tinted by her energy, with lines to five parts of her body.
-// Each label says what to do for that part today; tap it to see what is going on there and the two steps.
+// Under the period button: the pixel aura woman floating in the middle, with five sticky notes about her life today
+// (16 Nov 2026, her call: food and moves were repeating the cards below): her superpower, work, people, self-care and a line to
+// say to herself. Tap a note and a little card opens under her with the whole thing.
+const LIFE_PIN = { super: 'mind', work: 'gut', social: 'heart', care: 'womb', say: 'legs' };
+function lifeParts(phase) {
+  const ph = PHASES[phase], P = PLAIN[phase] || {};
+  return [{ k: 'super', e: '✨', label: 'Superpower', d: ph.superpower.title, what: ph.superpower.text, more: P.mind },
+    { k: 'social', e: '💞', label: 'People', d: ph.social.title, what: ph.social.text },
+    { k: 'work', e: '💼', label: 'Work', d: ph.mind.title, what: ph.mind.text },
+    { k: 'care', e: '🛁', label: 'Self-care', d: ph.selfcare.title, what: ph.selfcare.text },
+    { k: 'say', e: '🌸', label: 'Mantra', d: 'A kind line', what: `“${ph.affirmation}”` }];
+}
 function energyCard(info, energy) {
   const heal = lossCare() && lossStep() >= 0 && lossStep() < 2; // the first weeks after a loss: a slow, warm day whatever the phase says
-  const w = dayWindow(info), c = heal ? { ...COMPASS['flow-start'], mode: 'Heal gently' } : COMPASS[w], parts = BODY_MAP[heal ? 'menstrual' : info.phase], open = parts.find(p => p.k === ui.enPart);
-  const pin = k => BODY_PIN[k];
-  const lines = parts.map(p => { const [lx, ly, sd, bx, by] = pin(p.k), x0 = sd === 'l' ? 96 : 244; return `<path class="${open && open.k === p.k ? 'on' : ''}" d="M${x0} ${ly + 16} H${sd === 'l' ? x0 + 14 : x0 - 14} L${bx} ${by}"/><circle class="em-dot ${open && open.k === p.k ? 'on' : ''}" cx="${bx}" cy="${by}" r="3.6"/>`; }).join('');
-  const labels = parts.map(p => { const [lx, ly, sd] = pin(p.k); return `<button class="em-l ${sd} ${open && open.k === p.k ? 'on' : ''}" style="top:${ly}px" data-action="enPart" data-k="${p.k}" aria-expanded="${open && open.k === p.k ? 'true' : 'false'}"><small>${icon(p.ic, 11)} ${p.label}</small><b>${p.d}</b></button>`; }).join('');
+  const w = dayWindow(info), c = heal ? { ...COMPASS['flow-start'], mode: 'Heal gently' } : COMPASS[w], parts = lifeParts(heal ? 'menstrual' : info.phase), open = parts.find(p => p.k === ui.enPart);
+  const pin = p => BODY_PIN[LIFE_PIN[p.k]];
+  const lines = parts.map(p => { const [lx, ly, sd, bx, by] = pin(p), x0 = sd === 'l' ? 96 : 244; return `<path class="${open && open.k === p.k ? 'on' : ''}" d="M${x0} ${ly + 16} H${sd === 'l' ? x0 + 14 : x0 - 14} L${bx} ${by}"/><circle class="em-dot ${open && open.k === p.k ? 'on' : ''}" cx="${bx}" cy="${by}" r="3.6"/>`; }).join('');
+  const labels = parts.map((p, i) => { const [lx, ly, sd] = pin(p); return `<button class="em-l lf ${sd} ${open && open.k === p.k ? 'on' : ''}" style="top:${ly}px;--i:${i}" data-action="enPart" data-k="${p.k}" aria-expanded="${open && open.k === p.k ? 'true' : 'false'}"><small><span class="emo" aria-hidden="true">${p.e}</span> ${p.label}</small><b>${p.d}</b></button>`; }).join('');
   return `<section class="en en2 lvl-${c.lvl}">
     <div class="em-head"><b>${c.mode}</b></div>
     <div class="em-map"><svg class="em-svg" viewBox="0 0 340 300" aria-hidden="true">${lines}</svg>
       <span class="em-fig"><img src="images/pixel-aura-${c.lvl}.png" alt="Your body today"></span>${labels}</div>
-    ${open ? `<div class="em-open"><div class="em-oh"><span class="em-oi">${icon(open.ic, 16)}</span><div><small>${open.label} · today</small><b>${open.d}</b></div>${saveBtn(regTip(`body-${info.phase}-${open.k}`, open.label, [open.d, open.steps[0], open.steps[1], 'Today'], open.to))}</div>
-      <p>${open.what}</p>
-      <ol class="em-steps">${open.steps.map((t, i) => `<li><i>${i + 1}</i>${t}</li>`).join('')}</ol>
-      <div class="en-r no">${icon('close', 12, 2.4)}<span><em>Skip today</em>${open.avoid}</span></div>
-      <button class="em-go" data-action="nav" data-to="${open.to}">${open.link} ${icon('chevR', 14)}</button></div>`
-    : ''}
+    ${open ? `<div class="em-open lf-open"><span class="lf-e" aria-hidden="true">${open.e}</span><small>${open.label} · today</small><b>${open.d}</b>
+      <p>${open.what}</p>${open.more ? `<p class="lf-more">${open.more}</p>` : ''}</div>` : ''}
   </section>`;
 }
 function compassSec(info) {
@@ -7043,28 +7049,48 @@ function breathCycle(k) {
     <details class="bzc-more"><summary>Why this breath ${icon('chevD', 13)}</summary>${R.filter(r => r.key === info.phase).map(r => `<p><b>${BZ_PH_NAME[r.key]} · ${BREATHS[BREATH_FOR[r.key]].name}</b>${BZ_PH_WHY[r.key]}</p>`).join('')}</details>
   </section>`;
 }
-// her breath this week: one lotus for each day she finished a full session (breathing or the still sit).
-// In her first week (16 Nov 2026, her call: seven closed buds read as missed days) the week starts on her first day:
-// days still to come are empty dashed spots, today's bud waits in a soft frame, and a small key says what a bud and a bloom mean.
-function breathWeek() {
+// Her lotus (16 Nov 2026, her call): one big lotus at the top of Breathe, closed when her week starts.
+// Every day she finishes a breath it opens a little wider; seven days is full bloom. Her first week starts on her first day.
+function breathWeekData() {
   const L = state.breathLog || {}, t = todayISO(), today = C.startOfDay(new Date());
   const logged = Object.keys(L).filter(k => L[k]).sort(), s0 = [trialStart(), logged[0]].filter(Boolean).sort()[0], since = C.diffDays(today, C.parseISO(s0));
   const first = since >= 0 && since < 7, start = first ? C.parseISO(s0) : C.addDays(today, -6);
-  const days = Array.from({ length: 7 }, (_, i) => C.addDays(start, i)), n = days.filter(d => L[C.iso(d)]).length, sum = days.reduce((a, d) => a + (L[C.iso(d)] || 0), 0);
-  const doneToday = !!L[t], left = first ? 6 - since : 0;
-  const msg = n === 0 ? 'Each day you breathe, one lotus opens. Today’s bud is waiting for you.'
-    : n >= 6 ? 'Your week is in full bloom. Your body feels it.'
-    : first ? (doneToday ? `Today’s lotus is open. ${left ? `${left} more ${left === 1 ? 'day' : 'days'} to fill your first week.` : 'Your first week is complete.'}` : 'Breathe once today and today’s lotus opens.')
-    : n >= 4 ? 'A steady rhythm. Keep it gentle.' : `${7 - n} more ${7 - n === 1 ? 'day' : 'days'} and your week is in full bloom.`;
-  const R = 19, len = 2 * Math.PI * R;
-  const spot = d => { const k = C.iso(d), v = L[k] || 0, fut = k > t, now = k === t;
-    return `<span class="${now ? 'now' : ''} ${v ? 'on' : ''} ${fut ? 'fut' : ''}">${fut ? '<i class="bwk-fut" aria-hidden="true"></i>' : `<i><img src="images/breath-${v ? 'bloom' : 'bud'}.webp" alt="" loading="lazy"></i>`}<small>${now ? 'Today' : fmt(d, { weekday: 'narrow' })}</small></span>`; };
-  return `<div class="bwk bwk2 bwk3 ${n ? '' : 'zero'} ${first ? 'first' : ''}" aria-label="You breathed on ${n} of ${first ? 'the first 7 days' : 'the last 7 days'}">
-    <div class="bwk-top"><div class="bwk-h"><b>${first ? 'Your first week of breath' : 'Your week of breath'}</b><p>${msg}</p></div>
-      <span class="bwk-ring" aria-hidden="true"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="${R}"/>${n ? `<circle class="on" cx="22" cy="22" r="${R}" stroke-dasharray="${(len * n / 7).toFixed(1)} ${len.toFixed(1)}"/>` : ''}</svg><b class="dotnum">${n}</b><small>of 7</small></span></div>
-    <div class="bwk-pond">${days.map(spot).join('')}</div>
-    ${first || !n ? `<div class="bwk-key"><span><img src="images/breath-bud.webp" alt="">Not yet</span><span><img src="images/breath-bloom.webp" alt="">You breathed</span>${doneToday ? '' : `<button class="bwk-go" data-action="bzTop">Breathe now ${icon('chevR', 13, 2.2)}</button>`}</div>` : ''}
-    ${sum && !first ? `<div class="bwk-row"><span>Sessions this week</span><b><span class="dotnum">${sum}</span></b></div>` : ''}</div>`;
+  const days = Array.from({ length: 7 }, (_, i) => C.addDays(start, i)), n = days.filter(d => L[C.iso(d)]).length;
+  return { L, t, days, n, first, doneToday: !!L[t] };
+}
+function lotusSvg(o) {
+  const back = [-80, 80, -56, 56, -30, 30, 0], front = [-48, 48, -20, 20];
+  return `<svg class="blo-svg" viewBox="-130 -150 260 190" style="--o:${o.toFixed(3)}" aria-hidden="true">
+    <defs><linearGradient id="bloA" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#f2c9d6"/><stop offset="1" stop-color="#fff"/></linearGradient>
+      <linearGradient id="bloB" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#e08aa8"/><stop offset=".65" stop-color="#f5cddb"/><stop offset="1" stop-color="#fff6f8"/></linearGradient>
+      <radialGradient id="bloC"><stop offset="0" stop-color="#fff1b8"/><stop offset="1" stop-color="#ffe08a" stop-opacity="0"/></radialGradient></defs>
+    <ellipse class="blo-ripple" cx="0" cy="22" rx="112" ry="13"/><ellipse class="blo-ripple r2" cx="0" cy="22" rx="78" ry="9"/>
+    <path class="blo-pad" d="M-12 16 C -66 0, -120 10, -112 24 C -104 36, -44 38, -4 26 Z"/><path class="blo-pad" d="M12 16 C 66 0, 120 10, 112 24 C 104 36, 44 38, 4 26 Z"/>
+    <circle class="blo-glow" cx="0" cy="-34" r="46" fill="url(#bloC)"/>
+    ${back.map(t => `<path class="blo-p" style="--t:${t}deg" d="M0 10 C -24 -22 -22 -76 0 -104 C 22 -76 24 -22 0 10 Z" fill="url(#bloA)"/>`).join('')}
+    ${front.map(t => `<path class="blo-p f" style="--t:${t}deg" d="M0 12 C -20 -14 -18 -62 0 -84 C 18 -62 20 -14 0 12 Z" fill="url(#bloB)"/>`).join('')}
+    <path class="blo-bud" d="M0 14 C -17 -8 -15 -50 0 -68 C 15 -50 17 -8 0 14 Z" fill="url(#bloB)"/>
+    <g class="blo-heart"><circle cx="0" cy="-30" r="5" fill="#f3c45a"/><circle cx="-6" cy="-36" r="1.6" fill="#f3c45a"/><circle cx="6" cy="-36" r="1.6" fill="#f3c45a"/><circle cx="0" cy="-40" r="1.6" fill="#f3c45a"/></g>
+  </svg>`;
+}
+function lotusTxt(D) {
+  const { n, first, doneToday } = D;
+  return n >= 7 ? ['Full bloom', 'Seven days of breath. Your nervous system feels it.']
+    : n === 0 ? [first ? 'Your lotus is still asleep' : 'Your lotus closed up again', 'Breathe once today and she opens her first petals.']
+    : doneToday ? ['A little wider today', `Come back tomorrow and she opens even more.`]
+    : ['She’s waiting for you', 'One breath today opens her a little wider.'];
+}
+function breathWeek() {
+  const D = breathWeekData(), { L, t, days, n, doneToday } = D, [h, p] = lotusTxt(D);
+  const dots = days.map(d => { const k = C.iso(d), on = !!L[k], fut = k > t, now = k === t;
+    return `<span class="${on ? 'on' : ''} ${fut ? 'fut' : ''} ${now ? 'now' : ''}"><i>${on ? '🌸' : ''}</i><small>${now ? 'Today' : fmt(d, { weekday: 'narrow' })}</small></span>`; }).join('');
+  return `<section class="blo ${n >= 7 ? 'full' : ''}" aria-label="Your lotus: ${n} of 7 days of breath this week">
+    <svg class="blo-sp" viewBox="0 0 340 220" aria-hidden="true">${o3Spark('#f6c6d4', 40, 46, 0)}${o3Spark('#f1d58a', 302, 36, 1.1)}${o3Spark('#c9d6a8', 312, 170, 2)}${o3Spark('#f6c6d4', 26, 160, 1.5)}</svg>
+    <div class="blo-stage">${lotusSvg(n / 7)}<span class="blo-n"><b class="dotnum">${n}</b><small>of 7</small></span></div>
+    <div class="blo-txt"><h3>${h}</h3><p>${p}</p></div>
+    <div class="blo-days" aria-hidden="true">${dots}</div>
+    ${doneToday ? '' : `<button class="blo-go" data-action="bzTop">${icon('leaf', 15, 2)} Breathe and open her</button>`}
+  </section>`;
 }
 // Breathe page: the daily calm reminder, a bell with her time and a switch; stressed days get an extra nudge
 function calmRemCard() {
@@ -7088,7 +7114,9 @@ function breathDone() {
   // keep only the last 60 days
   const cut = C.iso(C.addDays(new Date(), -60)); Object.keys(L).forEach(k => { if (k < cut) delete L[k]; });
   save();
-  const w = document.querySelector('.bwk'); if (w) w.outerHTML = breathWeek();
+  const w = document.querySelector('#view .blo'); if (w) { const t = document.createElement('div'); t.innerHTML = breathWeek(); const nw = t.firstElementChild;
+    w.className = nw.className; w.querySelector('.blo-svg').style.setProperty('--o', nw.querySelector('.blo-svg').style.getPropertyValue('--o'));
+    ['.blo-n', '.blo-txt', '.blo-days'].forEach(q => { w.querySelector(q).innerHTML = nw.querySelector(q).innerHTML; }); w.querySelector('.blo-go')?.remove(); }
 }
 // A quote for each day, chosen for where she is in her cycle: three per part of the cycle, turning daily.
 // Public-domain sources and translations only (Legge, Müller, Gummere, Long, KJV, 19th-century writers).
@@ -7113,8 +7141,9 @@ function viewBreathe(from) {
   return `${topbar('Breathe', { back: true })}
   <div class="pad bz-pad">
     <header class="t4-h bz-h"><small>A minute for you</small><h1>Come back to your breath.</h1><p>Pick a practice. One minute is enough.</p></header>
+    ${breathWeek()}
     <div class="bzp" role="tablist" aria-label="Choose a breathing practice">${[rec, ...BREATH_ORDER.filter(x => x !== rec)].map(x => `<button class="bzp-o ${x === k ? 'on' : ''}" role="tab" aria-selected="${x === k}" data-action="bzPick" data-v="${x}">
-      ${x === rec ? `<em>${phase ? 'For your phase' : 'Start here'}</em>` : ''}<span class="bzp-g">${bzIc(x) || BREATHS[x].g}</span><b>${BREATHS[x].name}</b><small>${BREATHS[x].when}</small></button>`).join('')}</div>
+      ${x === rec ? `<em>${phase ? 'For your phase' : 'Start here'}</em>` : ''}<span class="bzp-g emo" aria-hidden="true">${(BZ_BEST[x] || ['🌿'])[0]}</span><b>${BREATHS[x].name}</b><small>${(BZ_BEST[x] || [, BREATHS[x].when])[1]}</small></button>`).join('')}</div>
     <section class="bz" data-pat="${k}">
       <div class="bz-stage"><div class="bz-card-h"><span><small>${k === rec ? (phase ? 'For your phase' : 'Start here') : B.when}</small><b>${B.name}</b></span><span class="bz-n"></span></div>
         <svg class="bz-lotus" viewBox="-110 -120 220 170" aria-hidden="true">
@@ -7147,7 +7176,6 @@ function viewBreathe(from) {
         <p class="bz-say">Stay in the present.</p>
       </div>
     </section>
-    ${breathWeek()}
     ${calmRemCard()}
     ${breathGuide(phase, k)}
     ${dayQuote()}
