@@ -13560,3 +13560,15 @@ html .rm-it > b { order: 2; flex: none; max-width: 45%; text-align: right; font:
 .hd-emo { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: color-mix(in srgb, var(--pc) 20%, #fff); font-size: 26px; line-height: 1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
 .hd-t.on .hd-emo { background: color-mix(in srgb, var(--pc) 30%, #fff); }
 .pv2-card.hd.still .hd-gauge g { animation: none; }
+
+/* His page: section titles and their sublines on the arched background read clearly (stronger soft shadow, white sublines) */
+.pv-page .section-title h3 { color: #fff !important; -webkit-text-fill-color: #fff !important; font-weight: 500 !important; text-shadow: 0 1px 2px rgba(70,30,38,.55), 0 2px 16px rgba(70,30,38,.45) !important; }
+.pv-page > p.pv2-lead { color: #fff; font-weight: 400; text-shadow: 0 1px 2px rgba(70,30,38,.6), 0 1px 12px rgba(70,30,38,.45); }
+/* Fertile window bars as a traffic light: red highest chance, yellow possible, green low */
+.fw-col i, .fw-b.lo i { background: #a9c07a; }
+.fw-b.mid i { background: #ecc560; }
+.fw-b.hi i { background: linear-gradient(#cf4f55, #e0787a); }
+.fw-key i.hi { background: #cf4f55; } .fw-key i.mid { background: #ecc560; }
+.fw-key i.lo { background: #a9c07a; }
+.fw-egg { background: radial-gradient(circle at 35% 32%, #fff, #f4efe6 70%); box-shadow: 0 3px 8px -2px rgba(32,48,26,.45); }
+.fw-key i.egg { background: #fff; box-shadow: inset 0 0 0 1.5px #20301a; }

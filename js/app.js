@@ -8544,13 +8544,13 @@ function pvToday(info, name, sup, snap) {
 const PV_MF = {
   cut: [
     ['♨️', 'Heat down there', 'Saunas, hot tubs, hot baths, a laptop on the lap.', ['Garolla et al.', 2013, 'Two 15-minute saunas a week for 3 months cut sperm count and movement. It came back about 6 months after stopping.'], 'Testicles work best a few degrees cooler than the body. Laptop on a table, showers warm, not hot.'],
-    ['🩲', 'Polyester and tight pants', 'Loose cotton boxers instead of tight synthetic briefs.', ['Mínguez-Alarcón et al.', 2018, 'Men who mostly wore boxers had 25% more sperm than men in tighter underwear.'], 'Synthetic fabric traps heat and builds static. In a small 1993 study men wearing polyester slings stopped making sperm until they took them off.'],
+    ['🩲', 'Polyester and tight pants', 'Loose organic cotton boxers instead of tight synthetic briefs.', ['Mínguez-Alarcón et al.', 2018, 'Men who mostly wore boxers had 25% more sperm than men in tighter underwear.'], 'Synthetic fabric traps heat and builds static. In a small 1993 study men wearing polyester slings stopped making sperm until they took them off.'],
     ['📱', 'Phone in the front pocket', 'Carry it in a bag or a back pocket.', ['Adams et al.', 2014, 'Across 10 studies, men exposed to mobile phones had about 8% less sperm movement.'], 'Also no phone or laptop on the lap in bed.'],
     ['🧾', 'Plastics and receipts', 'No food heated in plastic, no water bottles left in the sun.', ['Li et al.', 2011, 'Men with more BPA from plastics in their urine were more likely to have low sperm count and movement.'], 'Glass or steel bottles and boxes, and say no to paper receipts: most are coated with BPA or BPS.'],
     ['🚬', 'Smoking and weed', 'Cigarettes, vapes and joints.', ['Gundersen et al.', 2015, 'Men who smoked weed more than once a week had 28% fewer sperm.'], 'Smoking tobacco lowers sperm count and movement too. Both recover once you stop.'],
     ['🍺', 'More than a few drinks', 'Keep alcohol to a few drinks a week.', ['Jensen et al.', 2014, 'Sperm counts dropped step by step from about 5 drinks a week, most in men with 25 or more.'], 'Weekend binges count. Spread the few you have.'],
     ['💉', 'Testosterone and “T boosters”', 'Gym steroids, TRT and booster powders.', null, 'Testosterone from outside tells your body to stop making its own, and sperm stop with it. Sleep, lifting and food raise it the safe way.'],
-    ['💧', 'Most lubes', 'Many store lubes slow sperm down.', ['Agarwal et al.', 2008, 'Common lubes cut sperm movement in the lab. A sperm-friendly one did not.'], 'Use a lube labelled sperm-friendly or fertility-friendly, or none.'],
+    ['💧', 'Most lubes', 'Pick one labelled sperm-friendly, or use none.', ['Agarwal et al.', 2008, 'Common lubes cut sperm movement in the lab. A sperm-friendly one did not.'], 'Look for “fertility-friendly” or “sperm-friendly” on the pack: these match the pH and salt of her fertile fluid (Pre-Seed is one). Skip saliva, standard water or silicone lubes and spermicide. Use only a little, and let her own fluid do most of the work in her window.'],
   ],
   more: [
     ['☀️', 'Morning sun', 'Daylight on bare skin, vitamin D in winter.', ['Blomberg Jensen et al.', 2011, 'Men low in vitamin D had fewer fast-moving, normally shaped sperm.'], 'From October to March 25 to 50 µg (1000 to 2000 IU) D3 a day with a meal that has fat. Above 100 µg only with a blood test.'],
@@ -8598,7 +8598,7 @@ function pvFertChart(snap, mode) {
   const sd = C.addDays(today, ov - 7 + sel), [w, line] = FW_SAY[mode][sel];
   return `<div class="fw ${mode}">
       <div class="fw-bars">${bars}</div>
-      <div class="fw-key"><span><i class="hi"></i>${mode === 'ttc' ? 'Best days' : 'Highest'}</span><span><i class="mid"></i>${mode === 'ttc' ? 'Window open' : 'Possible'}</span><span><i class="egg"></i>Egg release</span></div>
+      <div class="fw-key"><span><i class="hi"></i>${mode === 'ttc' ? 'Best days' : 'Highest'}</span><span><i class="mid"></i>${mode === 'ttc' ? 'Window open' : 'Possible'}</span><span><i class="lo"></i>Low</span><span><i class="egg"></i>Egg release</span></div>
       <div class="fw-say ${kind(sel)}"><b>${sel === todayIdx ? 'Today' : fmt(sd, { weekday: 'long', month: 'short', day: 'numeric' })} · ${w}</b><p>${line}</p></div>
       <p class="fw-tap">Tap a day</p></div>`;
 }
@@ -8612,7 +8612,6 @@ function pvTTC(snap, info, name) {
   return `${sectionTitle('Trying for a baby')}
     <p class="pv2-lead">${name} wants to get pregnant. Here is your part, short and simple.</p>
     <section class="pv2-card pv2-ttc">${fwTop(snap, info, 'ttc')}${pvFertChart(snap, 'ttc')}</section>
-    <p class="pv2-lead">Every 1 to 2 days in her window is enough. The rest of your part is how you treat your body.</p>
     ${pvMF()}`;
 }
 // Not trying for a baby: the same window, framed as when pregnancy can happen and how to stay safe.
