@@ -4534,6 +4534,12 @@ function patternUnlock(P) {
     <details class="pu2-more"><summary>What you will see ${icon('chevD', 14)}</summary><p>Which days cramps, bloating or low moods tend to arrive, how your energy really moves across the month, and a heads-up the day before they come back.</p></details>
     <button class="pill-cta pu2-go" data-action="nav" data-to="log">${icon('plus', 14)} Check in today</button></section>`;
 }
+// Her logged energy grouped by the phase each day really fell in (her own cycle lengths), shared by the energy rings and By phase.
+function energyByPhase() {
+  const by = {};
+  for (const k in state.logs) { const l = state.logs[k]; if (!l || !l.energy) continue; const di = C.dayInfo(C.parseISO(k), M.stats); if (di) (by[di.phase] = by[di.phase] || []).push(l.energy); }
+  return by;
+}
 function patternsSection() {
   const P = patterns(), L = P.L, info = M.info;
   // energy: your logged average vs the hormone model
@@ -4558,8 +4564,8 @@ function patternsSection() {
     // how closely her logs follow the hormone forecast (0 to 100)
     const diffs = pts.map(([d, v]) => Math.abs(v - (1 + 4 * C.energyAt(d, L, M.stats.avgPeriod))));
     const inStep = Math.round(100 * (1 - diffs.reduce((x, y) => x + y, 0) / diffs.length / 4));
-    // average logged energy in each phase, out of 5
-    const phAvg = ranges.map(r => { const v = P.eAvg.slice(r.from, r.to + 1).filter(x => x != null); return { k: r.key, v: v.length ? v.reduce((x, y) => x + y, 0) / v.length : null }; });
+    // average logged energy in each phase, out of 5: by the real phase of each day she logged, the same numbers as By phase below
+    const eBy = energyByPhase(), phAvg = ranges.map(r => { const v = eBy[r.key] || []; return { k: r.key, v: v.length ? v.reduce((x, y) => x + y, 0) / v.length : null }; });
     const low = phAvg.filter(x => x.v != null).sort((x, y) => x.v - y.v)[0];
     const flat = top - Math.min(...pts.map(p => p[1])) < .6;
     const head = flat ? 'Your energy stays even' : `Best on days ${bA === bB ? bA : `${bA} to ${bB}`}`;
