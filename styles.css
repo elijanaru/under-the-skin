@@ -15636,3 +15636,7 @@ html .rl-hint.rl-hint2 { margin: 0 0 6px; padding: 0 2px 10px; border-bottom: 1p
 .rl-k[open] summary > svg { transform: rotate(180deg); }
 .rl-k p { margin: -4px 0 14px 48px; font-size: 13.5px; line-height: 1.5; color: rgba(32,48,26,.75); }
 @media (prefers-reduced-motion: reduce) { .rl-k summary > svg { transition: none; } }
+.rl-strip i.me:not(.on) { background: color-mix(in srgb, var(--c) 30%, #fff); }
+.rl-lab { display: flex; gap: 3px; margin-bottom: 4px; }
+.rl-lab small { flex: 1; text-align: center; font-size: 11px; color: rgba(32,48,26,.45); }
+.rl-lab small.on { color: #20301a; font-weight: 600; }

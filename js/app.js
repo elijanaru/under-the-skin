@@ -4572,7 +4572,7 @@ function viewRelief(id) {
   return `${topbar('Relief', { back: true })}
   <div class="pad">
     <section class="rl-hero"><img src="${reliefPhoto(k, 640)}" alt="" decoding="async"><div><small>${RELIEF_IC[k] ? icon(RELIEF_IC[k], 13, 2) : ''} Relief</small><h1 class="page-h">${k}</h1><p class="rl-sub">${w0}</p>
-      ${whenT ? `<div class="rl-at"><div class="rl-strip" aria-hidden="true">${PHASE_ORDER.map(p => `<i class="${ph.includes(p) ? 'on' : ''} ${p === me ? 'me' : ''}" style="--c:${PH_HEX[p]}"></i>`).join('')}</div>
+      ${whenT ? `<div class="rl-at"><div class="rl-strip" aria-hidden="true">${PHASE_ORDER.map(p => `<i class="${ph.includes(p) ? 'on' : ''} ${p === me ? 'me' : ''}" style="--c:${PH_HEX[p]}"></i>`).join('')}</div><div class="rl-lab" aria-hidden="true">${PHASE_ORDER.map(p => `<small class="${ph.includes(p) ? 'on' : ''}">${p === me ? 'You' : HS_PH[p]}</small>`).join('')}</div>
         <div class="rl-spec"><div><dt>When it shows</dt><dd>${whenT}</dd></div><div><dt>Try first</dt><dd>${R.steps[0].t}</dd></div><div><dt>Ways that help</dt><dd><span class="dotnum">${R.steps.length}</span></dd></div></div></div>` : ''}
       ${wr.length ? `<details class="rl-why rl-why2"><summary>Why it happens ${icon('chevD', 13)}</summary><p>${wr.join(' ')}</p></details>` : ''}</div></section>
     ${sectionTitle('What helps')}
@@ -4582,7 +4582,7 @@ function viewRelief(id) {
       <button class="rs-heart ${help.includes(i) ? 'on' : ''}" data-action="reliefHelp" data-k="${k}" data-i="${i}" aria-label="This helps me">${icon('heart', 18)}</button></div>`; }).join('')}</section>
     ${reliefFood(k, L, food)}
     ${studies.length ? `${sectionTitle('What studies found')}<section class="card rl-st rl-st2">${studies.map(([yr, who, t, j]) => `<div class="sgt-st"><b class="dotnum">${yr}</b><span><em>${who}</em>${t}<small>${j}</small></span></div>`).join('')}</section>` : ''}
-    <section class="card rl-know">${know(icon('yinyang', 18), 'In Chinese medicine', R.tcm)}${R.doctor ? know(icon('plus', 18), 'See a doctor if', R.doctor) : ''}</section>
+    <section class="card glass rl-know">${know(icon('yinyang', 18), 'In Chinese medicine', R.tcm)}${R.doctor ? know(icon('plus', 18), 'See a doctor if', R.doctor) : ''}</section>
     <p class="fine center">General information, not medical advice. Check with a pharmacist before taking painkillers or supplements.</p>
   </div>`;
 }
