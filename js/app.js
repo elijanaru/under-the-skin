@@ -3145,7 +3145,7 @@ function plateSection(current, lite) {
   const country = SZ.COUNTRIES.find(x => x[0] === myCountry())?.[1] || '';
   const cook = warm ? `Warm and cooked, even in ${season === 'Summer' || season === 'Late summer' ? 'the heat' : season.toLowerCase()}. No iced drinks during your period and the 2–3 days before it.` : phase === 'luteal' ? `${PSn.cook} Lean warmer as your period gets close.` : PSn.cook;
   return `<section class="pl">
-    <div class="pl-head"><div class="mv2-eyebrow">Your plate today</div><h2>${PHASES[phase].name} × ${season.toLowerCase()}</h2><p>${PSn.aim} · ${T.el} season <span class="pl-han">${T.han}</span></p></div>
+    <div class="pl-head"><div class="mv2-eyebrow">Your plate today</div><h2>${PHASES[phase].name} × ${season.toLowerCase()}</h2><p>${PSn.aim} · ${(D => D ? `${D.t} <span class="pl-han pl-dg">${D.g}</span>` : `${T.el} season <span class="pl-han">${T.han}</span>`)(myDiet() !== 'all' && DIETS.find(d => d.k === myDiet()))}</p></div>
     <div class="pl-wheel ${ui.plAnim ? 'pl-anim' : ''}">${plateWheel(phase, season, sel, warm)}</div>
     <div class="pl-det" data-k="${sel}">
       <div class="pld-h"><b>${P.n}</b><span class="pld-p">${PLATE_SHARE[phase][sel]}%</span></div>

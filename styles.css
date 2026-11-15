@@ -15763,3 +15763,5 @@ html .hs-plant.real[src*="-photo."] { box-sizing: border-box; max-width: 78%; ma
 .ulc-grow { clip-path: inset(0 100% 0 0); animation: ulcDraw 1.4s cubic-bezier(.45,0,.2,1) .3s forwards; }
 @keyframes ulcDraw { to { clip-path: inset(0 0 0 0); } }
 @media (prefers-reduced-motion: reduce) { .ulc-grow { animation: none; clip-path: none; } }
+/* Plate header: with a diet chosen, her diet (Vegan 🌱, Vegetarian 🥚…) takes the place of the season element */
+html .pl-head .pl-han.pl-dg { font-family: var(--font); font-size: 15px; }
