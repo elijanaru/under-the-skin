@@ -7393,16 +7393,19 @@ const CALM_IC = {
 };
 const calmIc = (k, s = 18) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${CALM_IC[k] || ''}</svg>`;
 const CALM_PH = { 'Long exhales': 'images/fb/breathe.webp', Meditation: 'images/tile-meditate.webp', 'Yoga nidra': 'images/tile-yoga.webp', 'Time in nature': 'images/forest-path.jpg', Sleep: 'images/fb/chamomile.webp', 'Hugs & touch': 'images/partner-hands.jpg', 'Gentle, not maximal, training': 'images/fb/walk.webp', 'Warmth on your belly': 'images/fb/heat.webp' };
+const CALM_LAB = { 'Hugs & touch': 'A long hug', 'Time in nature': 'Nature', 'Gentle, not maximal, training': 'Easy training', 'Warmth on your belly': 'Belly warmth' };
 function calmScience(info) {
   const L = CALM_SCIENCE.map((x, k) => ({ ...x, k })).sort((a, b) => a.sec - b.sec), pc = (info && PH_HEX[info.phase]) || '#6c823e';
   const pos = sec => Math.max(0, Math.min(1, Math.log(sec / 10) / Math.log(36000 / 10))) * 100;
   const ticks = [[60, '1 min'], [600, '10 min'], [3600, '1 hour'], [28800, 'a night']];
   return `${sectionTitle('The science of calm')}<p class="cs2-sub">How long each one needs, and what studies found.</p>
     <section class="cs2" style="--pc:${pc}">
-      <div class="csl" role="group" aria-label="How long each one takes">${(() => { const B = [[], [], [], []]; L.forEach(x => B[x.sec < 60 ? 0 : x.sec <= 660 ? 1 : x.sec <= 1800 ? 2 : 3].push(x));
-        return B.map((g, i) => { if (!g.length) return ''; const f = g[0], l = g[g.length - 1], lab = g.length > 1 ? `<b class="dotnum">${f.d}</b> to <b class="dotnum">${l.d}</b><span>${l.u}</span>` : `<b class="dotnum">${f.d}</b><span>${f.u === 'h' ? 'hours' : f.u === 's' ? 'seconds' : f.u}</span>`;
-          return `<div class="csl-c" style="--h:${16 + i * 16}px">${g.map(x => `<button class="csl-p" data-action="calmJump" data-k="${x.k}" aria-label="${esc(x.t)}">${CALM_PH[x.t] ? `<img src="${CALM_PH[x.t]}" alt="" decoding="async">` : calmIc(x.ic)}</button>`).join('')}<i class="csl-b"></i><small>${lab}</small></div>`; }).join(''); })()}</div>
-      ${L.map(x => `<details class="cs2-r" data-k="${x.k}"><summary>${CALM_PH[x.t] ? `<span class="cs2-ph"><img src="${CALM_PH[x.t]}" alt="" loading="lazy" decoding="async"></span>` : `<span class="cs2-ic">${calmIc(x.ic)}</span>`}<span class="cs2-t"><b>${x.t}</b><small>${x.r}</small></span>
+      <div class="cld" role="group" aria-label="From fastest to slowest">${(() => { const B = [[], [], [], []]; L.forEach(x => B[x.sec < 60 ? 0 : x.sec <= 660 ? 1 : x.sec <= 1800 ? 2 : 3].push(x));
+        return B.map((g, i) => { if (!g.length) return ''; const f = g[0], l = g[g.length - 1], un = u => u === 'h' ? 'hours' : u === 's' ? 'seconds' : u;
+          const lab = g.length > 1 && f.d !== l.d ? `<b class="dotnum">${f.d}<i>–</i>${l.d}</b><small>${un(l.u)}</small>` : `<b class="dotnum">${f.d}</b><small>${un(f.u)}</small>`;
+          return `<div class="cld-r" style="--i:${i}"><span class="cld-t">${lab}</span><span class="cld-dot" aria-hidden="true"></span>
+            <span class="cld-c">${g.map(x => `<button data-action="calmJump" data-k="${x.k}"><span class="emo" aria-hidden="true">${x.g}</span>${CALM_LAB[x.t] || x.t}</button>`).join('')}</span></div>`; }).join(''); })()}</div>
+      ${L.map(x => `<details class="cs2-r" data-k="${x.k}"><summary><span class="cs2-ph emo" aria-hidden="true">${x.g}</span><span class="cs2-t"><b>${x.t}</b><small>${x.r}</small></span>
         <span class="cs2-d"><b class="dotnum">${x.d}</b><small>${x.u}</small></span>${icon('chevD', 14)}</summary>
         <div class="cs2-b"><p>${x.s}</p><span class="cs2-c">${x.ev === 'tcm' ? 'Chinese medicine' : `${x.c.replace(/\s*\(.*?\)/g, '')}${x.src ? ` · ${x.src}` : ''}`}</span></div></details>`).join('')}
     </section>`;

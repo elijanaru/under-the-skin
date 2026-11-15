@@ -15512,3 +15512,19 @@ html .pf2 .pf3 .pf-learn { margin-top: 4px; }
 .rls-f > span { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 6px; border-radius: 18px; background: #fff; border: 1px solid rgba(32,48,26,.07); text-align: center; }
 .rls-f .emo { font-size: 30px; line-height: 1.1; } .rls-f img.emo { width: 34px; height: 34px; }
 .rls-f b { font: 500 13.5px/1.2 var(--font); color: #20301a; } .rls-f small { font-size: 11.5px; color: rgba(32,48,26,.6); }
+/* Stress › The science of calm as a calm ladder (17 Nov 2026): fastest at the top, a night of sleep at the bottom; tap a chip for its study row */
+.cld { position: relative; display: grid; gap: 4px; margin: 4px 0 12px; padding: 4px 0 6px; }
+.cld::before { content: ""; position: absolute; left: 84px; top: 22px; bottom: 26px; width: 2px; border-radius: 2px; background: linear-gradient(180deg, color-mix(in srgb, var(--pc) 35%, #fff), var(--pc)); }
+.cld-r { position: relative; display: grid; grid-template-columns: 72px 26px 1fr; align-items: start; gap: 0; padding: 8px 0; animation: rise .5s ease both; animation-delay: calc(var(--i) * 70ms); }
+.cld-t { text-align: right; padding-top: 4px; }
+.cld-t b { display: block; font: 900 20px/1 var(--dot); color: #20301a; white-space: nowrap; }
+.cld-t b i { font-style: normal; font-family: var(--font); font-weight: 400; font-size: 15px; margin: 0 1px; color: rgba(32,48,26,.5); }
+.cld-t small { display: block; margin-top: 3px; font-size: 11.5px; color: rgba(32,48,26,.58); }
+.cld-dot { justify-self: center; margin-top: 8px; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2.5px var(--pc), 0 3px 8px rgba(32,48,26,.15); z-index: 1; }
+.cld-r:last-child .cld-dot { background: var(--pc); }
+.cld-c { display: flex; flex-wrap: wrap; gap: 6px; padding-left: 4px; }
+.cld-c button { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px 0 8px; border-radius: 99px; border: 1px solid rgba(32,48,26,.08); background: #f7f5f0; font: 500 13.5px/1 var(--font); color: #20301a; cursor: pointer; transition: transform .2s, background .2s; }
+.cld-c button .emo { font-size: 18px; line-height: 1; }
+.cld-c button:active { transform: scale(.96); background: color-mix(in srgb, var(--pc) 14%, #fff); }
+.cs2-ph.emo { display: grid; place-items: center; font-size: 25px; line-height: 1; background: color-mix(in srgb, var(--pc) 10%, #fff); }
+@media (prefers-reduced-motion: reduce) { .cld-r { animation: none; } }
