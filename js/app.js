@@ -1675,8 +1675,8 @@ function hhCard(info) {
       <div class="hh2-d"><div><p>${why}</p><p class="hh2-how"><b>How</b>${how}</p></div></div></li>`;
   }).join('');
   return `<section class="card hh2" data-ph="${phase}">
-      <div class="hh2-h"><span class="hh2-o"><svg class="hh2-ring" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="${R}"/><circle class="on" cx="32" cy="32" r="${R}" stroke-dasharray="${L.toFixed(1)}" stroke-dashoffset="${(L * (1 - n / N)).toFixed(1)}"/></svg>
-        <b class="hh2-n">${n}<small>of ${N}</small></b></span>
+      <div class="hh2-h"><span class="hh2-o"><svg class="hh2-ring" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="${R}"/><circle class="on${n ? '' : ' zero'}" cx="32" cy="32" r="${R}" stroke-dasharray="${L.toFixed(1)}" stroke-dashoffset="${(L * (1 - n / N)).toFixed(1)}"/></svg>
+        <b class="hh2-n">${n ? `${n}<small>of ${N}</small>` : `${N}<small>to do</small>`}</b></span>
         <div><span class="hh2-e">${info ? `Your ${PHASES[phase].name.toLowerCase()} phase` : 'This phase'}</span><h3>${F.t}</h3><p>${n === N ? 'All six done. Beautiful.' : F.s}</p></div></div>
       <ul class="hh2-l">${rows}</ul>
     </section>`;

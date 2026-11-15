@@ -14419,3 +14419,13 @@ html .bwk3 .bwk-h p { margin: 0; font-size: 13.5px; line-height: 1.35; color: rg
 .rt-p svg { width: 46px; height: 46px; stroke-width: 2.4; }
 .rt-tip { display: flex; align-items: flex-start; gap: 8px; margin: -6px 0 14px; padding: 10px 12px; border-radius: 16px; background: #f4f5ec; font-size: 13.5px; line-height: 1.4; color: rgba(32,48,26,.78); }
 .rt-tip svg { flex: none; margin-top: 2px; color: #6c823e; }
+html .hh2-ring .on.zero { opacity: 0; }
+
+/* Charts: axis words and legends were pale grey (300 weight, 42 to 56% ink) on white; now readable ink, current phase still darkest */
+html .cchart-svg .band-days { font-size: 10.5px; font-weight: 500; fill: rgba(32,48,26,.66); }
+html .cchart-svg .band-days.on { fill: #4f6a2f; }
+html .legend .lg { color: rgba(32,48,26,.82); font-weight: 500; }
+html .legend .lg.off { color: rgba(32,48,26,.4); }
+html .readout .ro-phase { font-weight: 500; color: #20301a; }
+html .mg4-seg span { font-size: 11px; font-weight: 500; color: rgba(32,48,26,.6); }
+html .mg4-seg span.on { color: #20301a; font-weight: 600; }
