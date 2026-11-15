@@ -2191,7 +2191,7 @@ export const REMEDY_SCIENCE = {
     study: 'Lemon juice raises citrate in urine, which helps prevent kidney stones. A spoon of vinegar with a meal softened the blood sugar rise after it (week 4).',
     cite: 'Penniston 2007 · Östman 2005', caution: 'Acid softens tooth enamel: drink with a straw or rinse with water after, and wait 30 minutes before brushing.' },
   'lung-elixir': { ev: 'emerging', c: [['Allicin', 'Forms when garlic is pressed and rested'], ['Honey', 'Coats the throat, antibacterial'], ['Thymoquinone', 'From black seed oil, anti-inflammatory']],
-    study: 'A review found honey eased cough and cold symptoms better than usual care. In a small trial, people taking garlic every day caught fewer colds.',
+    study: 'A review found honey eased cough and cold symptoms better than usual care. In a 12-week trial of 146 people, those taking garlic every day caught 24 colds against 65 on placebo, about 63% fewer.',
     cite: 'Abuelgasim 2021 (review) · Lissiman 2014 (Cochrane)', caution: 'Start with 2 cloves: raw garlic can upset the stomach. On blood thinners, ask your doctor. Skip the black seed oil in pregnancy. Never give honey to babies under 1.' },
   'circulation-shot': { ev: 'emerging', c: [['Capsaicin', 'From cayenne, warms and widens blood vessels'], ['Olive polyphenols', 'Protect the heart and vessels'], ['Chia fibre & ALA', 'Plant omega-3, steadies blood sugar']],
     study: 'In a large Spanish trial, a diet rich in extra-virgin olive oil lowered heart attacks and strokes by about 30%. In people with type 2 diabetes, chia every day for 12 weeks lowered blood pressure a little.',
@@ -2203,7 +2203,7 @@ export const REMEDY_SCIENCE = {
     study: 'No trials on carrots and hormones yet. Women who ate more fibre had lower estrogen levels across the cycle, because fibre helps the gut clear what the liver has used.',
     cite: 'Gaskins 2009 (BioCycle)', caution: 'Raw and cooling in Chinese medicine: pause it during your period and the 2–3 days before, and eat cooked carrots instead. Lots of carrots can tint your palms slightly orange, which is harmless and fades.' },
   'heart-foods': { ev: 'some', c: [['Cacao flavanols', 'Gently lower blood pressure'], ['Garlic allicin', 'Relaxes the vessel walls'], ['Omega-3', 'From wild fish, steadies the heart rhythm']],
-    study: 'Cacao flavanols lowered blood pressure a little in a Cochrane review. Garlic lowered the top number by about 8 mmHg in people with high blood pressure.',
+    study: 'Cacao flavanols lowered the top number by about 2 mmHg in a Cochrane review, small but steady. Garlic lowered the top number by about 8 mmHg in people with high blood pressure.',
     cite: 'Ried 2017 (Cochrane) · Ried 2016 (meta-analysis)', caution: 'Raw garlic can upset an empty stomach, so eat it with food. On heart or blood-thinning medicine, ask your doctor before supplements.' },
 };
 

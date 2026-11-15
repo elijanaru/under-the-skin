@@ -2707,7 +2707,7 @@ function cafCard() {
 function suppSpec(x) {
   const rows = [['Dose', x.dose], ['Form', x.form], ['When', x.when], ['Feel it', SUPP_TIME[x.id]], ['Food first', SUPP_HERO[x.id] && SUPP_HERO[x.id][1]]].filter(r => r[1]);
   return `<dl class="sup-spec">${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v.charAt(0).toUpperCase() + v.slice(1)}</dd></div>`).join('')}</dl>
-    ${x.study ? `<span class="sr-st sup-st"><small>What studies found</small>${x.study.split('. ')[0].replace(/\.$/, '')}. <i>${x.cite}</i></span>` : ''}
+    ${x.study ? `<span class="sr-st sup-st"><small>What studies found</small>${x.study.split('. ')[0].replace(/\.$/, '')}. <i>${x.cite.split(' · ').filter((c, i, A) => i === 0 || !/\b(19|20)\d\d\b/.test(c) && !A.slice(1, i).some(d => /\b(19|20)\d\d\b/.test(d))).join(' · ')}</i></span>` : ''}
     ${x.caution ? `<span class="sfc-care sup-care"><small>Before you try</small>${x.caution}</span>` : ''}
     <button class="ebp-go" data-action="nav" data-to="supp/${x.id}">Full sheet ${icon('chevR', 13)}</button>`;
 }
@@ -4861,7 +4861,12 @@ function studyCards(study, cite) {
 // The study's key number as a graphic: two bars when it compares with placebo, one bar otherwise.
 function stcKey(t) {
   const n = [...t.matchAll(/(\d+(?:\.\d+)?)\s?%/g)].map(m => +m[1]).filter(v => v > 0 && v <= 100).slice(0, 2);
-  if (!n.length) return '';
+  if (!n.length) {
+    // no percentage: the key number as a chip (blood pressure, minutes, markers, breaths)
+    const m = t.match(/(\d+)\s?(mmHg|minutes|inflammation markers|breaths a minute)/); if (!m) return '';
+    const down = /lower|cut|less|fewer|held .* back/i.test(t) && !/breaths/.test(m[2]), u = { mmHg: 'mmHg on the top number', minutes: down ? 'minutes shorter' : 'minutes', 'inflammation markers': 'inflammation markers lower', 'breaths a minute': 'breaths a minute' }[m[2]];
+    return `<div class="stc-k stc-chip"><b class="dotnum">${down && m[2] === 'mmHg' ? '−' : ''}${m[1]}</b><small>${u}</small></div>`;
+  }
   const bars = n.length === 2 && /placebo|control|without/i.test(t) ? [[n[0], 'With it', 'a'], [n[1], /placebo/i.test(t) ? 'Placebo' : 'Without', 'b']] : [[n[0], /lower|fewer|less|reduc|cut|drop|prevent/i.test(t) ? 'Lower' : /more|higher|rais|improv|increase/i.test(t) ? 'Better' : 'Result', 'a']];
   return `<div class="stc-k">${bars.map(([v, l, k]) => `<div class="stc-b ${k}"><small>${l}</small><span class="stc-tr"><i style="width:${v}%"></i></span><b class="dotnum">${l === 'Lower' ? '−' : ''}${v}%</b></div>`).join('')}</div>`;
 }
