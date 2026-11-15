@@ -14317,3 +14317,9 @@ html .vt[data-ph="luteal"] { --vt-a: #e6dcef; --vt-b: #d4c5e4; --vt-ink: #3a2a4a
 @keyframes tkbPulse { 0%, 100% { box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -3px 8px rgba(140,20,60,.35), 0 14px 30px -10px rgba(214,64,110,.6), 0 0 0 3px rgba(255,255,255,.55); }
   50% { box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -3px 8px rgba(140,20,60,.35), 0 18px 36px -10px rgba(214,64,110,.75), 0 0 0 6px rgba(255,255,255,.35); } }
 @media (prefers-reduced-motion: reduce) { .tkb-shine::before, .tkb-c, .tk-in .tkb, .tk-in .tkb-yes::before, .vt .vt-flame, .vt .vt-glow { animation: none !important; } }
+
+/* ── Spec sheet titles under the photo (supplements, remedies): dark ink with a pearl glow, eyebrow as a frosted pill (white was lost on the pale arch) ── */
+html .view .pad.sp2t .spec.stack > .spec-name h1 { color: #20301a !important; -webkit-text-fill-color: #20301a !important;
+  text-shadow: 0 0 2px rgba(255,255,255,.95), 0 0 14px rgba(255,255,255,.95), 0 0 28px rgba(255,255,255,.8) !important; }
+html .view .pad.sp2t .spec.stack > .spec-name .eyebrow { display: inline-block; padding: 4px 11px; border-radius: 99px; background: rgba(255,255,255,.66); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.8); color: #6c823e !important; -webkit-text-fill-color: #6c823e !important; text-shadow: none !important; font-weight: 600; }
