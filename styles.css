@@ -13004,9 +13004,9 @@ html .pv2-3d.sm .cup3d-w canvas.teacup3d { inset: 0; width: 100%; height: 100%; 
 .topbar .topbar-title { color: #fff; font-weight: 400; text-shadow: 0 1px 2px rgba(70,35,30,.35), 0 2px 16px rgba(70,35,30,.35); }
 .topbar .icon-btn { background: rgba(255,255,255,.88) !important; color: #20301a !important; border: 0 !important; box-shadow: 0 6px 16px -8px rgba(60,30,25,.45) !important; }
 .page-h, .page-h span, .section-title h3, .pad > .gx-title, .br2-h, .mvp-h, .rh2-h, .sy-h, .pl-head h2, html .fbp-title h1, html .fbp-title h1 span, html .fbp-step b {
-  color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.38), 0 2px 18px rgba(90,40,45,.34) !important; }
+  color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(70,30,38,.58), 0 2px 16px rgba(70,30,38,.46) !important; }
 .page-h span { opacity: .92; }
-.t4-h h1, .t4-h h2 { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.38), 0 2px 18px rgba(90,40,45,.34) !important; }
+.t4-h h1, .t4-h h2 { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(70,30,38,.58), 0 2px 16px rgba(70,30,38,.46) !important; }
 /* Letters from your body: a letter, never a "notification" */
 .lt-today { position: relative; margin: 0 0 16px; padding: 18px 20px 16px; border-radius: 26px; background: linear-gradient(180deg, #fffdfb, #fff8f3); box-shadow: inset 0 0 0 1px rgba(201,165,154,.35), 0 14px 30px -18px rgba(90,40,45,.35); color: #20301a; }
 .lt-today .bn-x { position: absolute; top: 12px; right: 12px; }
@@ -13045,7 +13045,7 @@ html .st4 { padding: 16px 16px 12px; background: #fff !important; border: 0 !imp
 .st4-c.now i { background: repeating-linear-gradient(135deg, #d3d8c3 0 3px, #eef0e7 3px 6px); }
 .st4-k { margin: 6px 2px 0; font-size: 11.5px; color: rgba(32,48,26,.55); }
 /* Food plate: the food name on the background is a title too (white + shadow); the in-season note readable */
-html .pl-det .pld-h b, html .pl-det .pld-p { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.38), 0 2px 18px rgba(90,40,45,.34); }
+html .pl-det .pld-h b, html .pl-det .pld-p { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(70,30,38,.58), 0 2px 16px rgba(70,30,38,.46); }
 html .pl-det p em { color: #4f6b2a !important; font-style: normal; font-weight: 500; }
 /* Header band, tighter (15 Nov 2026): less frame above the scallops, title closer to the clock */
 .bgx-arch { top: calc(var(--sb0) + 26px); }
@@ -13339,7 +13339,7 @@ html .al-t small { -webkit-line-clamp: 3 !important; line-clamp: 3; }
    Trying, After birth, Loss, Saved, Partners, Learn). Text inside cards stays dark ink. */
 html .t4-h > small, html .t4-h > p, html .hs-sub, html .mvc-sub, html .ts4-sub, html .ts-credit, html .bwx-hint,
 html .pad > p.muted, html .lt-soon, html .suh-key, html .sv-hero h2, html .sv-hero p, html .sync-hero > .sy-sub {
-  color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.38), 0 1px 12px rgba(90,40,45,.36) !important; }
+  color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(70,30,38,.6), 0 1px 12px rgba(70,30,38,.46) !important; }
 html .t4-h > small { font-weight: 500 !important; }
 /* his page: tabs sit on the frame band like a header, the scalloped window opens below them, the stage sits inside it */
 .pv-top { margin-top: calc(var(--sbV) + 8px); min-height: 1px; }
@@ -13348,9 +13348,9 @@ html .t4-h > small { font-weight: 500 !important; }
 .pv-hero { margin: 56px -4px 16px !important; }
 .pv-hero .stage-phase { top: 34px !important; }
 .pv-hero .stage-scene { aspect-ratio: 900 / 1180; }
-html .sy-head .hud { font-size: 13px !important; font-weight: 500 !important; letter-spacing: 0 !important; text-transform: none !important; color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.38), 0 1px 12px rgba(90,40,45,.36) !important; opacity: 1 !important; }
+html .sy-head .hud { font-size: 13px !important; font-weight: 500 !important; letter-spacing: 0 !important; text-transform: none !important; color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(70,30,38,.6), 0 1px 12px rgba(70,30,38,.46) !important; opacity: 1 !important; }
 html .sy-prog i { background: rgba(255,255,255,.45); } html .sy-prog i.on { background: #fff; }
-html .pad > .link.center-link { color: #fff !important; -webkit-text-fill-color: #fff !important; font-weight: 500; text-shadow: 0 1px 2px rgba(90,40,45,.38), 0 1px 12px rgba(90,40,45,.36); }
+html .pad > .link.center-link { color: #fff !important; -webkit-text-fill-color: #fff !important; font-weight: 500; text-shadow: 0 1px 2px rgba(70,30,38,.6), 0 1px 12px rgba(70,30,38,.46); }
 
 /* Supplement › Food first, for supplements without serving amounts: emoji, food and a short how-to, one hairline row each */
 .ffq-h { padding: 10px 0 2px; font-size: 11.5px; color: #6c823e; letter-spacing: .02em; }
@@ -13413,14 +13413,14 @@ html .grp-ol i, html .grp-ol i .dotnum { background: color-mix(in srgb, var(--c)
 /* Calendar (15 Nov 2026): the next-period card opens below the four scallops like Tea, so the arch window is never sliced under the title */
 .pad:has(> .cal3:first-child) { padding-top: 38px; }
 /* Check-in: the date sits on the arched background, so it is white with a soft shadow like every page title; its arrows are the white round buttons of the top bar */
-html .lg .log-date h2, html .lg .log-date .eyebrow { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.38), 0 2px 18px rgba(90,40,45,.34) !important; }
+html .lg .log-date h2, html .lg .log-date .eyebrow { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(70,30,38,.58), 0 2px 16px rgba(70,30,38,.46) !important; }
 html .lg .log-date .icon-btn { background: rgba(255,255,255,.9) !important; color: #20301a !important; border: 0 !important; box-shadow: 0 6px 16px -8px rgba(60,30,25,.45) !important; }
 html .lg .log-date .icon-btn[disabled] { opacity: .45; }
 
 /* Detail pages (remedy, supplement, tea, nutrient, recipe, ritual, acupressure), 15 Nov 2026: the page name sits on the frame band with the white back and menu buttons, and the photo opens below the four scallops instead of covering the arch */
 .pad.sp2t { padding-top: 38px; }
 .pad.sp2t > .spec:first-child .spec-btn { display: none; }
-html .pad.sp2t .spec.stack > .spec-name h1, html .pad.sp2t .spec.stack > .spec-name .eyebrow { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.38), 0 2px 18px rgba(90,40,45,.34) !important; }
+html .pad.sp2t .spec.stack > .spec-name h1, html .pad.sp2t .spec.stack > .spec-name .eyebrow { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(70,30,38,.58), 0 2px 16px rgba(70,30,38,.46) !important; }
 
 /* Insights › Cycle by cycle: taller bars on a shared baseline and crisper numbers, so one cycle against the next reads at a glance */
 html .st4-r:not(.st4-mo) .st4-bars { height: 66px; background: linear-gradient(rgba(32,48,26,.12), rgba(32,48,26,.12)) left bottom / 100% 1px no-repeat; padding-bottom: 1px; }
@@ -13536,7 +13536,7 @@ html .hh2-p img[src$="fb/breathe.webp"] { width: 48px; height: 48px; }
 
 /* Sweep (15 Nov 2026), Your plan and Account: lines on the arched background are white with a soft shadow; the 90-day thread labels are white pills with dark ink instead of outlined boxes; the glow, method and science sections keep white headers above white cards; the Account card opens below the scallops */
 .ph-p, .rm2-glow > .rm2-k, .rm2-how > .rm2-k, .rm2-res > .rm2-k, .rm2-glow > h3, .rm2-how > h3, .rm2-res > h3, .rm2-glow > h3 em, .rm2-glow > .rm2-sub, .rm2-res > .rm2-sub, .pad.ac > p.fine {
-  color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(90,40,45,.38), 0 2px 18px rgba(90,40,45,.34) !important; }
+  color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(70,30,38,.58), 0 2px 16px rgba(70,30,38,.46) !important; }
 .rm-node span { padding: 6px 12px !important; border: 0 !important; outline: 0 !important; border-radius: 999px !important; background: #fff !important; color: #20301a !important; font-weight: 500 !important; box-shadow: 0 6px 16px -8px rgba(60,30,25,.45) !important; }
 .rm2-gc { background: #fff !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; box-shadow: 0 10px 26px rgba(48,64,35,.10) !important; }
 .rm2-gc b { color: #20301a !important; } .rm2-gc p { color: #3c4a2e !important; }
@@ -13559,11 +13559,11 @@ html .rm-it > b { order: 2; flex: none; max-width: 45%; text-align: right; font:
 /* Her day tiles: one emoji per tile on a soft phase-tint disc (was a drawn smiley and outline icons) */
 .hd-emo { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: color-mix(in srgb, var(--pc) 20%, #fff); font-size: 26px; line-height: 1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
 .hd-t.on .hd-emo { background: color-mix(in srgb, var(--pc) 30%, #fff); }
-.pv2-card.hd.still .hd-gauge g { animation: none; }
+
 
 /* His page: section titles and their sublines on the arched background read clearly (stronger soft shadow, white sublines) */
 .pv-page .section-title h3 { color: #fff !important; -webkit-text-fill-color: #fff !important; font-weight: 500 !important; text-shadow: 0 1px 2px rgba(70,30,38,.55), 0 2px 16px rgba(70,30,38,.45) !important; }
-.pv-page > p.pv2-lead { color: #fff; font-weight: 400; text-shadow: 0 1px 2px rgba(70,30,38,.6), 0 1px 12px rgba(70,30,38,.45); }
+.pv-page p.pv2-lead { color: #fff; font-weight: 400; text-shadow: 0 1px 2px rgba(70,30,38,.6), 0 1px 12px rgba(70,30,38,.45); }
 /* Fertile window bars as a traffic light: red highest chance, yellow possible, green low */
 .fw-col i, .fw-b.lo i { background: #a9c07a; }
 .fw-b.mid i { background: #ecc560; }
@@ -13572,3 +13572,9 @@ html .rm-it > b { order: 2; flex: none; max-width: 45%; text-align: right; font:
 .fw-key i.lo { background: #a9c07a; }
 .fw-egg { background: radial-gradient(circle at 35% 32%, #fff, #f4efe6 70%); box-shadow: 0 3px 8px -2px rgba(32,48,26,.45); }
 .fw-key i.egg { background: #fff; box-shadow: inset 0 0 0 1.5px #20301a; }
+
+/* His page duo: the 3D plate sat on a canvas wider than its tile and was cut at the sides; it now fits inside */
+html .pv2-3d.duo-v:not(.tea) .cup3d-w canvas.teacup3d { inset: 8%; width: 84%; height: 84%; }
+/* a card swapped in place after a tap does not replay its entrance */
+.pv-page > .soft { animation: none !important; }
+.pv-page > .soft .hd-gauge g, .pv-page > .soft .fw-col i { animation: none !important; }

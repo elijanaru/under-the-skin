@@ -8648,7 +8648,6 @@ const PV_EMO = {
   needs: { menstrual: '🫖', follicular: '🌷', ovulatory: '💌', luteal: '🤍' },
 };
 function pvHerDay(info, S, sup = {}) {
-  pvHerDay.args = [info, S, sup];
   const w = dayWindow(info), lvl = CALM[w][0], g = DAY_GUIDE[w], c = PH_HEX[info.phase], open = ui.pvTile || '';
   const face = `<span class="hd-emo">${PV_EMO.mood[info.phase]}</span>`;
   const ang = [-62, 0, 62][lvl - 1] || 0;
@@ -9659,17 +9658,10 @@ const actions = {
     sent();
   },
   hisTab: d => { ui.hisTab = d.v; render(); document.getElementById('view').scrollTop = 0; },
-  pvTile: d => {
-    // swap only the Her day card so the page does not redraw or jump
-    ui.pvTile = ui.pvTile === d.v ? '' : d.v;
-    const el = document.querySelector('.pv2-card.hd');
-    if (!el || !pvHerDay.args) return render();
-    el.outerHTML = pvHerDay(...pvHerDay.args);
-    document.querySelector('.pv2-card.hd')?.classList.add('still');
-  },
-  pvDay: d => { ui.pvDay = +d.v; render(); },
-  mfTab: d => { ui.mfTab = d.v; ui.mfTile = null; render(); },
-  mfTile: d => { ui.mfTile = ui.mfTile === +d.v ? null : +d.v; render(); },
+  pvTile: d => { ui.pvTile = ui.pvTile === d.v ? '' : d.v; softWith(); },
+  pvDay: d => { ui.pvDay = +d.v; softWith(); },
+  mfTab: d => { ui.mfTab = d.v; ui.mfTile = null; softWith(); },
+  mfTile: d => { ui.mfTile = ui.mfTile === +d.v ? null : +d.v; softWith(); },
   copySay: async d => { try { await navigator.clipboard.writeText(d.t); toast('Copied, now send it to her'); } catch { prompt('Copy and send', d.t); } },
   hisWake: d => { try { localStorage.setItem('uts.wake', d.v); } catch {} render(); },
   trackMine: () => { try { localStorage.removeItem('uts.viewOnly'); } catch {} go('today'); },
@@ -9909,6 +9901,21 @@ function viewUnlock() {
     <p class="fine center ul-fine">One-time payment of €${PRICE}, VAT included. No renewal and nothing charged automatically. Your logs are never deleted, even if you wait.</p>`}
   </div>`;
 }
+// His page: a tap on a tile, a day or a tab swaps only the cards whose markup changed,
+// so the page keeps its place, the stage and 3D cups keep running and nothing replays its entrance.
+function softWith() {
+  const r = route(), page = document.querySelector('#view .pv-page'), parts = softWith.parts;
+  let vo = null; if (r.name !== 'with') { try { vo = localStorage.getItem('uts.viewOnly'); } catch {} }
+  if (!page || !parts || (r.name !== 'with' && !vo)) return render();
+  const t = document.createElement('div'); t.innerHTML = viewWith(r.name === 'with' ? r.q : new URLSearchParams({ d: vo }));
+  const np = t.querySelector('.pv-page'), next = np ? [...np.children] : [];
+  if (next.length !== parts.length || page.children.length !== parts.length) return render();
+  const html = next.map(c => c.outerHTML), live = [...page.children];
+  if (next.some((c, i) => html[i] !== parts[i] && c.querySelector('.cup3d-w, canvas, .pt-stage'))) return render();
+  next.forEach((c, i) => { if (html[i] !== parts[i]) { c.classList.add('soft'); live[i].replaceWith(c); decorateStudies(c); } });
+  softWith.parts = html;
+}
+softWith.keep = () => { const pg = document.querySelector('#view .pv-page'); softWith.parts = pg ? [...pg.children].map(c => c.outerHTML) : null; };
 function render() {
   const r = route(); secN = 0;
   unmountFigs.forEach(f => f()); unmountFigs = []; // stop 3D/particle loops even on views that mount none (account, love, with)
@@ -9933,13 +9940,13 @@ function render() {
     return;
   }
   if (r.name === 'with') {
-    $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewWith(r.q)}</div>`;
+    $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewWith(r.q)}</div>`; softWith.keep();
     if (keep) document.getElementById('view').scrollTop = keep; // a tap on his page keeps his place
     decorateStudies($app); mountFigures(); if (r.q.get('d')) refreshWith(r.q.get('d')); return;
   }
   let vo = null; if (!state || !state.onboarded) { try { vo = localStorage.getItem('uts.viewOnly'); } catch {} }
   if (vo) { // he opened her link before: the app is just her rhythm for him
-    $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewWith(new URLSearchParams({ d: vo }))}</div>`;
+    $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewWith(new URLSearchParams({ d: vo }))}</div>`; softWith.keep();
     if (keep) document.getElementById('view').scrollTop = keep;
     decorateStudies($app); mountFigures(); refreshWith(vo); return;
   }
