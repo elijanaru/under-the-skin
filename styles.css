@@ -15072,3 +15072,54 @@ html .purp-c.soon .pc-chain .pc-cl { stroke-opacity: 1; }
 .pc-pl { animation: pcLockDrop .7s cubic-bezier(.3,1.3,.5,1) 1s both; }
 .pc-pl2 { animation: pcLockRest 2.2s ease-in-out 1.6s both; }
 @keyframes pcLockRest { 0% { transform: rotate(0); } 18% { transform: rotate(8deg); } 40% { transform: rotate(-5deg); } 60% { transform: rotate(2.6deg); } 80% { transform: rotate(-1deg); } 100% { transform: rotate(0); } }
+
+/* Unlock ticket v4 (15 Nov 2026 night): whimsical, her dreamy reference art (placeholder), scalloped short edges,
+   pastel lilac-blush stub, frosted band with the title, price and "once, forever", twinkles */
+.tk4 .tk3-in { border-radius: 4px;
+  -webkit-mask: radial-gradient(circle 6px at 0 50%, #0000 96%, #000) 0 0 / 100% 17px repeat-y, radial-gradient(circle 6px at 100% 50%, #0000 96%, #000) 0 0 / 100% 17px repeat-y,
+    radial-gradient(circle 10px at 26% 0, #0000 96%, #000), radial-gradient(circle 10px at 26% 100%, #0000 96%, #000);
+  -webkit-mask-composite: source-in; mask: radial-gradient(circle 6px at 0 50%, #0000 96%, #000) 0 0 / 100% 17px repeat-y, radial-gradient(circle 6px at 100% 50%, #0000 96%, #000) 0 0 / 100% 17px repeat-y,
+    radial-gradient(circle 10px at 26% 0, #0000 96%, #000), radial-gradient(circle 10px at 26% 100%, #0000 96%, #000); mask-composite: intersect; }
+.tk4 .tk3-stub { color: #5f3f63; background: radial-gradient(rgba(95,63,99,.08) 1px, transparent 1.3px) 0 0 / 7px 7px, linear-gradient(165deg, #f7e1ea 0%, #e9dcf2 55%, #dfe9f1 100%); }
+.tk4 .tk3-stub::after { border-right-color: rgba(95,63,99,.35); border-right-style: dotted; border-right-width: 2px; }
+.tk4 .tk3-name { color: #6a3f66; font-size: 36px; translate: 10px 0; }
+.tk4 .tk3-bar { fill: #6a3f66; opacity: .55; left: 12px; width: 18px; top: 34px; bottom: 34px; height: calc(100% - 68px); }
+.tk4-adm, .tk4-d { position: absolute; left: 0; right: 0; text-align: center; font: italic 400 10px/1 'IM Fell English', Georgia, serif; color: rgba(95,63,99,.75); letter-spacing: .02em; }
+.tk4-adm { top: 14px; } .tk4-d { bottom: 13px; font-size: 9px; }
+.tk4 .tk3-art { background: #efe6f0; }
+.tk4 .tk3-art::before { background: linear-gradient(180deg, rgba(255,255,255,0) 55%, rgba(255,255,255,.18)); }
+.tk4 .tk3-bg { filter: none; object-position: 30% 45%; }
+.tk4-sp { position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.tk4-no { position: absolute; z-index: 3; right: 10px; top: 9px; padding: 3px 8px; border-radius: 99px; background: rgba(255,255,255,.62); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  font: italic 400 9.5px/1.2 'IM Fell English', Georgia, serif; color: #5f3f63; }
+.tk4-band { position: absolute; z-index: 3; left: 8px; right: 8px; bottom: 8px; display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; padding: 8px 11px 8px;
+  border-radius: 14px 16px 13px 17px; background: rgba(255,255,255,.7); -webkit-backdrop-filter: blur(10px) saturate(1.2); backdrop-filter: blur(10px) saturate(1.2);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.8), 0 6px 14px -8px rgba(80,50,90,.35); color: #3d2b45; }
+.tk4-band b { display: block; font: 400 19px/1 'DM Serif Display', Georgia, serif; letter-spacing: -.005em; }
+.tk4-band div span { display: block; margin-top: 3px; font: italic 400 11px/1.2 'IM Fell English', Georgia, serif; color: rgba(61,43,69,.75); }
+.tk4-p { flex: none; display: grid; justify-items: end; font: 400 27px/.9 Parisienne, 'Great Vibes', cursive; color: #6a3f66; }
+.tk4-p small { display: inline; font-size: .62em; }
+.tk4-p i { font: italic 400 9.5px/1.2 'IM Fell English', Georgia, serif; color: rgba(61,43,69,.7); margin-top: 2px; }
+.tk4 .tk3-holo { opacity: .55; }
+.tk4-p em { font-style: normal; white-space: nowrap; } .tk4-p { font-size: 25px; }
+.tk4-band { padding: 7px 11px; }
+
+/* Tea pages (15 Nov 2026 night): the misty forest behind them instead of the arch, softly blurred; the cup bigger */
+html:has(.pad.tg), html:has(.pad.tp > .tgw) { --tea-forest: 1; }
+html:has(.pad.tg) .bgx, html:has(.pad.tp > .tgw) .bgx { visibility: hidden; }
+html .view:has(> .pad.tg), html .view:has(> .pad.tp > .tgw) {
+  background: linear-gradient(180deg, rgba(30,40,26,.16) 0%, rgba(246,238,240,0) 26%, rgba(246,238,240,.1) 100%), url(images/intro-forest-soft.jpg) 50% 40% / cover no-repeat scroll !important; }
+html .tgw.in-page .tgw-cup { width: 168px !important; height: 168px !important; }
+html .tgw.in-page .tgw-cup img { inset: 6%; width: 88%; height: 88%; }
+html .tgw.in-page .tgw-stage { height: 300px; }
+
+/* Tea sheet: What it does, four deeper benefits with the research behind each */
+.tsh-more { margin: 4px 0 0; padding: 16px 14px 6px; text-align: left; border-radius: 22px; background: rgba(255,255,255,.78); box-shadow: inset 0 0 0 1px rgba(255,255,255,.9), 0 10px 22px -16px rgba(60,30,40,.35); }
+.tsh-more h3 { margin: 0 0 6px 2px; font: 600 15px/1.2 var(--font); color: #20301a; text-shadow: none; }
+.tsh-m { display: flex; gap: 12px; align-items: flex-start; padding: 11px 0; border-top: 1px solid rgba(32,48,26,.07); }
+.tsh-m:first-of-type { border-top: 0; }
+.tsh-m .emo { flex: none; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: #f3f1e6; font-size: 19px; line-height: 1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
+.tsh-m b { display: block; font: 600 14.5px/1.25 var(--font); color: #20301a; }
+.tsh-m small { display: block; margin-top: 2px; font-size: 13px; line-height: 1.42; color: rgba(32,48,26,.7); }
+.tsh .tsh-more { --n: 3; }
+html .tsh-m .emo { margin: 0 !important; align-self: flex-start; position: static; transform: none; }

@@ -1436,6 +1436,77 @@ const TEA4_GOOD = {
   ovulatory: [['Vitamin C glow', 'Cools you down', 'Antioxidants'], ['Steady energy', 'Calm L-theanine', 'No crash'], ['Clearer skin', 'Fewer breakouts', 'Cooling'], ['Light belly', 'Easy digestion', 'Citrus fresh']],
   luteal: [['Deeper sleep', 'Winds you down', 'Softer mood'], ['Calms anxiety', 'Lifts your mood', 'Quiet mind'], ['Tames cravings', 'Caffeine free', 'Naturally sweet'], ['Eases bloating', 'Warms digestion', 'Less gas']],
 };
+// What each phase tea does in more depth: [emoji, short title, one line with the research behind it].
+const TEA4_MORE = {
+  menstrual: [
+    [['🌡️', 'Eases period pain', 'In a trial of 150 students, ginger in the first 3 days of the period eased cramps as well as ibuprofen (Ozgoli 2009).'],
+     ['🩸', 'Lighter heavy days', 'Ginger taken from the day before the period reduced blood loss over three cycles (Kashefi 2015).'],
+     ['🍬', 'Softer sugar cravings', 'Cinnamon slowed how fast the stomach empties and softened the blood sugar rise after a meal (Hlebowicz 2007).'],
+     ['🤢', 'Settles nausea', 'Ginger is one of the best-studied natural remedies for nausea, the kind that can come with cramps.']],
+    [['🩸', 'Builds Blood', 'In Chinese medicine red dates and goji are the classic tonic after bleeding, gently sweet and warming.'],
+     ['👁️', 'Bright eyes', 'Daily goji for 90 days raised the protective pigment in the eye in older adults (Bucheli 2011).'],
+     ['🌙', 'A calmer mind', 'Jujube, the red date, is a classic Chinese herb for a restless mind and light sleep.'],
+     ['🌿', 'Feeds your gut', 'Red dates bring soluble fibre that feeds the good bacteria in your gut.']],
+    [['💪', 'Tones the womb', 'Its fragarine is thought to help the womb muscle contract more evenly, a use passed down for generations.'],
+     ['🪨', 'Rich in minerals', 'The leaf brings magnesium, potassium and iron, all of which you lose a little of when you bleed.'],
+     ['🌸', 'Calmer cramps', 'Midwives and herbalists have long used it to ease period cramps.'],
+     ['🍃', 'Gentle astringent', 'Its tannins tighten tissue gently, traditionally used for heavy, loose flows.']],
+    [['🌼', 'Relaxes cramps', 'Drinking chamomile tea raised glycine, a compound that relaxes muscle spasms (Wang 2005).'],
+     ['🌿', 'Fennel for pain', 'Fennel eased period pain about as well as mefenamic acid in a trial (Namavar Jahromi 2003).'],
+     ['🎈', 'Less bloating', 'Fennel relaxes the gut wall so trapped gas can pass.'],
+     ['😴', 'Softer sleep', 'Apigenin in chamomile binds the same calming receptors as sleep pills, but gently.']]],
+  follicular: [
+    [['🧲', 'Iron, absorbed', 'Nettle brings iron and calcium, and the vitamin C in lemon helps your body absorb plant iron.'],
+     ['🩸', 'Vitamin K', 'Nettle leaf is rich in vitamin K, which your blood needs to clot well.'],
+     ['🤧', 'Hay fever help', 'In a small trial, freeze-dried nettle eased hay fever for many people (Mittman 1990).'],
+     ['🦴', 'Kinder joints', 'Nettle eased achy joints in a small trial (Randall 2000).']],
+    [['🎯', 'Calm focus', 'L-theanine with a little caffeine sharpened attention and switching between tasks (Owen 2008).'],
+     ['☀️', 'Skin sun defence', 'Green tea polyphenols for 12 weeks lowered UV redness and improved skin elasticity (Heinrich 2011).'],
+     ['🌼', 'The scent calms', 'Just the smell of jasmine tea lowered heart rate and calmed mood (Kuroda 2005).'],
+     ['❤️', 'Kind to your heart', 'In large reviews, green tea drinkers have lower LDL cholesterol.']],
+    [['🫒', 'Bile flowing', 'Its bitter compounds get bile flowing, which helps you digest fats.'],
+     ['🦠', 'Feeds good bacteria', 'The root is rich in inulin, a fibre that feeds the good bacteria in your gut.'],
+     ['✨', 'Clearer skin', 'Long used in herbal medicine to clear the skin through the liver.'],
+     ['💧', 'Gentle water flush', 'Dandelion leaf raised urine output in a small study (Clare 2009); the root is milder.']],
+    [['🧠', 'Wakes you up', 'The smell of peppermint improved alertness and memory in studies (Moss 2008).'],
+     ['🌀', 'Easy belly', 'Menthol relaxes the gut; peppermint oil eases IBS cramps in many trials.'],
+     ['🍋', 'Vitamin C', 'Lemon adds vitamin C, which your skin needs to build collagen.'],
+     ['💧', 'Water you enjoy', 'A tasty way to drink more, and good hydration shows in your skin.']]],
+  ovulatory: [
+    [['❤️', 'Healthy blood pressure', 'Three cups of hibiscus a day for 6 weeks lowered blood pressure in adults (McKay 2010).'],
+     ['🌹', 'Rose for mood', 'Rose tea eased period pain and anxiety in teenage girls in a trial (Tseng 2005).'],
+     ['🍓', 'Deep red antioxidants', 'Its colour comes from anthocyanins, the same antioxidants as in berries.'],
+     ['✨', 'Vitamin C glow', 'Hibiscus is rich in vitamin C, which your skin uses to make collagen.']],
+    [['🎯', 'Sharper attention', 'In a trial, matcha improved attention and reaction time within an hour (Dietz 2017).'],
+     ['🍵', 'The whole leaf', 'You drink the ground leaf, so you get far more catechins than from steeped green tea.'],
+     ['🏃‍♀️', 'Fuels your workout', 'Green tea extract raised fat burning during moderate exercise (Venables 2008).'],
+     ['🧘‍♀️', 'Less stress', 'High-theanine matcha lowered stress in students in a trial (Unno 2018).']],
+    [['⚖️', 'Lowers androgens', 'Two cups a day for 30 days lowered free testosterone in women with PCOS (Grant 2010).'],
+     ['🪒', 'Less unwanted hair', 'Women in that trial felt their unwanted hair had improved.'],
+     ['✨', 'Fewer breakouts', 'Lower androgens are linked with fewer hormonal breakouts along the jaw.'],
+     ['🥒', 'Cool and fresh', 'Cucumber adds water and a cooling freshness on hot days.']],
+    [['🌀', 'Settles the stomach', 'Lemongrass is used across Asia to ease gas and a heavy belly.'],
+     ['😌', 'Eases anxiety', 'Lemongrass scent lowered anxiety in a small trial (Goes 2015).'],
+     ['🍋', 'Vitamin C', 'Lime adds vitamin C and a bright, clean taste.'],
+     ['🌙', 'Caffeine free', 'Light and citrusy, any time of day.']]],
+  luteal: [
+    [['😴', 'Better sleep', 'Two weeks of chamomile tea improved sleep quality in new mothers (Chang 2016).'],
+     ['🌧️', 'Softer PMS', 'Chamomile eased the mood symptoms of PMS in a trial (Sharifi 2014).'],
+     ['💜', 'Lavender calm', 'Lavender scent eased PMS irritability and low mood in a trial (Matsumoto 2013).'],
+     ['🌼', 'Gentle on nerves', 'Apigenin in chamomile binds the same calming receptors as sleep pills, gently.']],
+    [['😌', 'Calmer and brighter', 'Lemon balm improved calmness and mood within hours in trials (Kennedy 2004).'],
+     ['🌙', 'Sleep and restlessness', 'Lemon balm eased restlessness and sleep problems in a study (Cases 2011).'],
+     ['🌧️', 'Softer PMS', 'Lemon balm eased PMS symptoms in teenage girls in a trial (Akbarzadeh 2015).'],
+     ['🍯', 'Soothing', 'A spoon of honey makes it a warm, comforting evening cup.']],
+    [['🌙', 'Caffeine free', 'Drink it any time, even late in the evening.'],
+     ['🧲', 'Keeps your iron', 'Rooibos is low in tannins, so it barely blocks the iron from your food.'],
+     ['🍬', 'Cravings', 'Vanilla’s sweet smell can satisfy a sweet tooth without sugar.'],
+     ['🌿', 'Its own antioxidant', 'Aspalathin, found only in rooibos, is studied for steadier blood sugar.']],
+    [['🎈', 'Less bloating', 'Fennel relaxes the gut wall so trapped gas can pass.'],
+     ['⏱️', 'Faster digestion', 'Ginger helped the stomach empty faster after meals (Wu 2008).'],
+     ['🔥', 'Warming', 'Warming in Chinese medicine, just what the days before your period need.'],
+     ['🤢', 'Settles nausea', 'Ginger is one of the best-studied natural remedies for nausea.']]],
+};
 function teaSheet(ph, i) {
   const [n, f] = PHASE_TEAS[ph][i], [why, amt, water, steep, when, warn] = PHASE_TEA_SPEC[ph][i], good = TEA4_GOOD[ph][i];
   const steps = [['bowl', 'You need', amt], ['thermo', 'Water', water], ['clock', 'Steep', steep], ['sun', 'When', when]];
@@ -1451,6 +1522,7 @@ function teaSheet(ph, i) {
       ${good.map((g, k) => `<span class="tsh-stk s${k}" style="--k:${k}">${g}</span>`).join('')}
     </div>
     <section class="o3-note tsh-note"><p class="o3-lead">${why}</p></section>
+    ${(TEA4_MORE[ph] || [])[i] ? `<section class="tsh-more"><h3>What it does</h3>${TEA4_MORE[ph][i].map(([e, t, x], j) => `<div class="tsh-m" style="--j:${j}"><span class="emo">${e}</span><div><b>${t}</b><small>${x}</small></div></div>`).join('')}</section>` : ''}
     <div class="tsh-steps">${steps.map(([ic, k, v], j) => `<div class="tsh-st" style="--k:${j}"><span>${icon(ic, 19, 1.9)}</span><b>${k}</b><small>${v}</small></div>`).join('')}</div>
     ${warn ? `<p class="tsh-warn"><i>${icon('heart', 14, 2)}</i>${warn}</p>` : ''}
     <p class="o3-sign">sip it slowly, it’s your moment <i>♡</i></p>
@@ -3995,7 +4067,7 @@ function eatTodayCard(info) {
 }
 
 // ---------- reminders ----------
-const REM_DEFAULT = { period: true, periodDays: 2, phase: true, cycle: true, rhythm: true, sunAm: true, sunPm: true, checkin: true, checkinHour: 20, calm: true, calmHour: 18, letters: true, lettersN: 2, dismissed: {}, fired: {} };
+const REM_DEFAULT = { period: true, periodDays: 2, phase: true, cycle: true, rhythm: true, sunAm: true, sunPm: true, checkin: true, checkinHour: 20, calm: true, calmHour: 18, letters: true, lettersN: 1, dismissed: {}, fired: {} };
 const hr12 = h => `${((h + 11) % 12) + 1}${h < 12 ? 'am' : 'pm'}`;
 // How stressed she is today: 2 = she logged stress, 1 = a high-stress part of her cycle, 0 = calm
 const STRESS_MOODS = ['Stressed', 'Anxious', 'Irritable', 'Angry', 'Overwhelmed'];
@@ -4041,7 +4113,7 @@ function bodyNote(date, slot, di, pats) {
   const list = (afterBirth() && (afterMonths() == null || afterMonths() < 24) ? BODY_NOTES.after : BODY_NOTES[di.phase])[slot];
   return list[k % list.length].replace(/\{n\}/g, n);
 }
-function letterSlotNow(r) { const now = new Date(), m = now.getHours() * 60 + now.getMinutes(); return [...(LETTER_SLOTS[r.lettersN] || LETTER_SLOTS[2])].reverse().find(([h, mi]) => m >= h * 60 + mi); }
+function letterSlotNow(r) { const now = new Date(), m = now.getHours() * 60 + now.getMinutes(); return [...(LETTER_SLOTS[1])].reverse().find(([h, mi]) => m >= h * 60 + mi); }
 async function scheduleLettersNative(ask) {
   const LN = NATIVE && CAP?.Plugins?.LocalNotifications; if (!LN || !state?.onboarded || !M?.stats) return;
   try {
@@ -4053,7 +4125,7 @@ async function scheduleLettersNative(ask) {
     const pats = (() => { try { return patterns().list; } catch { return []; } })(), now = Date.now(), list = [];
     for (let i = 0; i < 7; i++) {
       const d = C.addDays(new Date(), i), di = C.dayInfo(d, M.stats);
-      (LETTER_SLOTS[r.lettersN] || LETTER_SLOTS[2]).forEach(([h, mi, slot], j) => {
+      (LETTER_SLOTS[1]).forEach(([h, mi, slot], j) => {
         const at = new Date(d.getFullYear(), d.getMonth(), d.getDate(), h, mi), body = bodyNote(d, slot, di, pats);
         if (at > now && body) list.push({ id: 7300 + i * 3 + j, title: LETTER_TITLE[slot], body, schedule: { at } });
       });
@@ -4140,13 +4212,12 @@ function letterCard(x) {
     <span class="lt-seal">${LETTER_ART}</span><small>${esc(x.title)}</small><p>${esc(x.body)}</p><em>Love, your body</em></section>`;
 }
 function lettersCard() {
-  const r = rem(), perm = 'Notification' in window ? Notification.permission : 'unsupported', slots = LETTER_SLOTS[r.lettersN] || LETTER_SLOTS[2];
+  const r = rem(), perm = 'Notification' in window ? Notification.permission : 'unsupported', slots = LETTER_SLOTS[1];
   return `${sectionTitle('Letters from your body')}
     <section class="card lt-set">
-      <div class="lt-top"><span class="lt-seal">${LETTER_ART}</span><span class="lt-tt"><b>Letters from your body</b><small>${r.letters ? `${r.lettersN === 1 ? 'One letter' : `${r.lettersN} letters`} a day · ${slots.map(letterTime).join(', ')}` : 'Short, loving letters matched to your cycle'}</small></span>
+      <div class="lt-top"><span class="lt-seal">${LETTER_ART}</span><span class="lt-tt"><b>Letters from your body</b><small>${r.letters ? `One letter a day · ${slots.map(letterTime).join(', ')}` : 'Short, loving letters matched to your cycle'}</small></span>
         <button class="toggle ${r.letters ? 'on' : ''}" data-action="remToggle" data-k="letters" role="switch" aria-checked="${!!r.letters}" aria-label="Letters from your body"><i></i></button></div>
       ${r.letters ? `${M?.info ? `<div class="lt-paper"><small>${LETTER_TITLE.am}</small><p>${esc(bodyNote(new Date(), 'am', M.info, []) || '')}</p><em>Love, your body</em></div>` : ''}
-        <div class="stepper-row sub"><span>Letters a day</span><div class="seg lt-n">${[1, 2, 3].map(v => `<button class="${r.lettersN === v ? 'on' : ''}" data-action="remLettersN" data-v="${v}">${v}</button>`).join('')}</div></div>
         ${!NATIVE && perm === 'default' ? `<button class="ls-btn lt-arrive" data-action="remPermission">${icon('mail', 15)} Let your letters arrive on your phone</button>` : ''}` : ''}
     </section>`;
 }
@@ -5760,7 +5831,7 @@ function teaWheel(info, w, td, steep, near, inPage) {
   }).join('');
   return `<section class="tgw${inPage ? ' in-page' : ''}">
       <small class="tgw-k">${info ? `Day ${info.cd} · ${PHASES[info.phase].name}` : 'Your tea today'}</small>
-      <h1 class="tgw-t">${td[1].replace(/ & /, ' <em>&amp;</em> ')}<span>benefits</span></h1>${inPage ? '' : `<p class="tgw-sub">${td[2]}</p>`}
+      <h1 class="tgw-t">${td[1].replace(/ & /, ' <em>&amp;</em> ')}</h1>${inPage ? '' : `<p class="tgw-sub">${td[2]}</p>`}
       <div class="tgw-stage"><span class="tgw-ring" aria-hidden="true"></span>${labels}
         <span class="cup3d-w tgw-cup"><img src="${teaCupImg(td[1])}" alt="" decoding="async">${teaCupAttr(td[1]) ? `<canvas class="teacup3d"${teaCupAttr(td[1])} data-fit="${/matcha/i.test(td[1]) ? 0.92 : /green tea/i.test(td[1]) ? 1.1 : 1.3}" aria-label="${td[1]}, turning slowly"></canvas>` : ''}</span></div>
       ${inPage ? `<dl class="t4-spec tbr-l tgw-sp">${(TEA_REASONS[w] || []).map(([ic, t, x]) => `<div><dt><span>${icon(ic, 17)}</span></dt><dd><b>${t}</b><small>${x}</small></dd></div>`).join('')}<div><dt><span>${icon('cup', 17)}</span></dt><dd><b>Brew</b><small>${td[3]}</small></dd></div></dl>` : teaBubbles(w, info)}
@@ -8682,7 +8753,7 @@ function viewProfile() {
     <section class="card card-light pf-hero o3-note pf3">
       <svg class="o3-dood pf3-dood" viewBox="0 0 340 220" aria-hidden="true">${o3Spark('#f6c6d4', 40, 46, 0)}${o3Spark('#f1d58a', 298, 36, 1.2)}${o3Spark('#c9d6a8', 306, 150, 2)}${o3Spark('#f6c6d4', 30, 160, 1.6)}</svg>
       <div class="profile-head"><label class="avatar xl ${p.photo ? 'has-photo' : ''}">${avatarInner(p)}<svg class="pf3-ring" viewBox="0 0 120 120" aria-hidden="true"><path d="M60 6 C 92 5, 115 28, 113 61 C 111 93, 88 114, 58 113 C 27 112, 6 90, 7 59 C 8 30, 30 8, 63 9"/></svg><span class="av-edit">${icon('plus', 14, 2.4)}</span><input type="file" accept="image/*" data-photo="profile" hidden></label>
-        <span class="pf3-name"><input class="field name-field" data-input="profile.name" value="${esc(p.name)}" placeholder="Your name" maxlength="24" aria-label="Your name"><svg viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M6 10 C 46 4, 80 13, 112 8 S 172 5, 194 9"/></svg></span></div>
+        <span class="pf3-name"><input class="field name-field" data-input="profile.name" value="${esc(p.name)}" placeholder="Your name" maxlength="24" aria-label="Your name"></span></div>
       <p class="pf-learn">${learn}</p>
       ${signedOut && tab !== 'data' ? `<button class="pill-cta pf-cta" data-action="pfTab" data-v="data">${icon('heart', 15)} Save my cycle to an account</button>` : ''}
     </section>
@@ -10628,17 +10699,16 @@ const UNLOCK_KEEP = [['calendar', 'Your cycle & predictions', 'Learns your rhyth
 const TK3_BARS = [3, 1, 2, 1, 1, 3, 1, 2, 2, 1, 3, 1, 1, 2, 1, 3, 2, 1, 1, 2, 3, 1, 2, 1, 1, 3, 1, 2];
 function ulTicket() {
   const d = new Date(), nm = esc((state.profile.name || '').trim() || 'You');
-  const date = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' });
+  const date = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   let y = 0; const bars = TK3_BARS.map((w, k) => { const r = k % 2 ? '' : `<rect x="0" y="${y}" width="40" height="${w}"/>`; y += w + 1; return r; }).join('');
-  return `<div class="tk3" aria-label="A ticket for Under the Skin: €${PRICE}, one payment, yours forever"><div class="tk3-in">
-    <div class="tk3-stub" aria-hidden="true"><span class="tk3-name">${nm}</span>
-      <svg class="tk3-bar" viewBox="0 0 40 ${y}" preserveAspectRatio="none">${bars}</svg>
-      <small class="tk3-adm">admit one</small><small class="tk3-d">${date}</small></div>
+  return `<div class="tk3 tk4" aria-label="A ticket back to yourself: Under the Skin, €${PRICE}, one payment, yours forever"><div class="tk3-in">
+    <div class="tk3-stub" aria-hidden="true"><small class="tk4-adm">admit one</small><span class="tk3-name">${nm}</span>
+      <svg class="tk3-bar" viewBox="0 0 40 ${y}" preserveAspectRatio="none">${bars}</svg><small class="tk4-d">${date}</small></div>
     <div class="tk3-art">
-      <img class="tk3-bg" src="images/welcome-forest.jpg" alt="" decoding="async">
-      <img class="tk3-lotus" src="images/lotus-ovulatory.webp" alt="" decoding="async">
-      <div class="tk3-t"><b>Under the Skin</b><span>a ticket for ${nm}</span><span>one payment, yours forever</span></div>
-      <span class="tk3-p"><small>€</small>${PRICE}</span>
+      <img class="tk3-bg" src="images/pay/ticket-art.webp" alt="" decoding="async">
+      <svg class="tk4-sp" viewBox="0 0 240 184" aria-hidden="true">${o3Spark('#fff', 196, 26, 0)}${o3Spark('#f1d58a', 222, 70, 1.3)}${o3Spark('#fff', 150, 14, 2.1)}<circle class="o3-sp" style="--d:.8s" cx="176" cy="48" r="2" fill="#fff"/></svg>
+      <span class="tk4-no">No. 001 · one way</span>
+      <div class="tk4-band"><div><b>Under the Skin</b><span>a ticket back to yourself</span></div><span class="tk4-p"><em><small>€</small>${PRICE}</em><i>once, forever</i></span></div>
     </div>
     <i class="tk3-holo" aria-hidden="true"></i></div></div>`;
 }
