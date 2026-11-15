@@ -14248,3 +14248,20 @@ html .view .pad > p.fine.center { opacity: .78; }
 html .view .cal-head .icon-btn { background: #fff !important; color: #20301a !important; border: 0 !important; -webkit-backdrop-filter: none; backdrop-filter: none;
   box-shadow: 0 6px 16px -8px rgba(60,30,40,.35), inset 0 0 0 1px rgba(32,48,26,.06) !important; }
 html .view .cal-head .icon-btn svg { stroke: #20301a !important; }
+
+/* ── Locked purpose cards (After birth, Menopause): steel chains in an X with a hanging padlock ── */
+.purp.full .purp-c.soon .pc-chain, .purp.full .purp-c.soon .pc-padlock { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.purp.full .purp-c.soon .pc-chain { z-index: 1; filter: drop-shadow(0 3px 3px rgba(30,20,25,.38)); }
+.purp.full .purp-c.soon .pc-in { z-index: 2; right: 128px !important; }
+.purp.full .purp-c.soon .pc-padlock { z-index: 3; filter: drop-shadow(0 6px 6px rgba(30,20,25,.42)); }
+.purp.full .purp-c.soon .pc-soon { z-index: 4; }
+.pc-cl.a { animation: pcChainA 1s cubic-bezier(.2,.8,.2,1) .15s both; }
+.pc-cl.b { animation: pcChainB 1s cubic-bezier(.2,.8,.2,1) .35s both; }
+@keyframes pcChainA { from { transform: translateX(-420px); } to { transform: none; } }
+@keyframes pcChainB { from { transform: translateX(420px); } to { transform: none; } }
+.pc-pl { animation: pcLockDrop .75s cubic-bezier(.3,1.4,.5,1) 1.05s both; }
+.pc-pl2 { animation: pcLockSway 3.4s ease-in-out 1.8s infinite; }
+@keyframes pcLockDrop { from { transform: translateY(-80px); opacity: 0; } 40% { opacity: 1; } to { transform: none; opacity: 1; } }
+@keyframes pcLockSway { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(6deg); } 75% { transform: rotate(-6deg); } }
+.onb.still .pc-cl, .onb.still .pc-pl { animation: none; }
+@media (prefers-reduced-motion: reduce) { .pc-cl, .pc-pl, .pc-pl2 { animation: none !important; } }

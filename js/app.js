@@ -249,9 +249,55 @@ function ttcPicker(src, scope) {
   return `<div class="pg-list">${opts.map(([k, e, t, sm]) => `<button class="pg-o ${src.ttc === k ? 'on' : ''}" data-action="ttcSet" data-v="${k}" data-scope="${scope}" aria-pressed="${src.ttc === k}"><span class="pg-e">${e}</span><span class="pg-t"><b>${t}</b><small>${sm}</small></span><i>${icon('check', 14, 2.6)}</i></button>`).join('')}</div>
     ${src.ttc ? `<p class="pg-what">${icon('heart', 15)}<span>${src.ttc === 'wait' ? 'No pressure. The app stays gentle, and you can tell us when you’re ready.' : TTC_STAGE[ttcStage(src) || src.ttc][1]}</span></p>` : ''}`;
 }
+// Locked purpose cards: two old steel chains cross the card like an X, ivy creeps along them, and a weathered padlock overgrown with weeds hangs where they meet.
+const PC_GREEN = ['#4a6130', '#6c823e', '#8c9768', '#5b7a3a', '#a3b26f'];
+function pcLeaf(x, y, r, sz, c) { // pointed ivy leaf with a pale midrib
+  return `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${r.toFixed(0)}) scale(${sz})"><path d="M0 0 C2.5 -4.4 8.6 -4.8 12 0 C8.6 4.8 2.5 4.4 0 0Z" fill="${c}"/><path d="M1 0 H10" stroke="rgba(235,240,215,.55)" stroke-width=".7"/></g>`;
+}
+function pcIvy(x0, x1, seed) { // a wavy vine along the chain (chain-local x axis) with leaves on alternating sides
+  let d = '', l = '', n = 0;
+  const step = x0 < x1 ? 3 : -3;
+  for (let x = x0; step > 0 ? x <= x1 : x >= x1; x += step) { const y = 4.2 * Math.sin((x + seed) / 8); d += (d ? ' L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); }
+  for (let x = x0 + step * 3; step > 0 ? x <= x1 : x >= x1; x += step * 4) { const y = 4.2 * Math.sin((x + seed) / 8), side = n++ % 2 ? 1 : -1;
+    l += pcLeaf(x, y, side * (60 + (n * 37 % 50)) + (step < 0 ? 180 : 0), .62 + (n * 13 % 7) / 18, PC_GREEN[(n + seed) % 5]); }
+  return `<path d="${d}" fill="none" stroke="#4f6a2f" stroke-width="1.3" stroke-linecap="round"/>${l}`;
+}
+function pcChains(k) {
+  const CX = 240, CY = 76, g = id => `<linearGradient id="${id}${k}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6d3c6"/><stop offset=".32" stop-color="#a3a196"/><stop offset=".56" stop-color="#585a52"/><stop offset=".8" stop-color="#8b897c"/><stop offset="1" stop-color="#c2bfb2"/></linearGradient>`;
+  const chain = (ang, cls, ivy) => { let o = '', e = '';
+    for (let i = -24; i <= 24; i++) { const x = i * 15;
+      if (i % 2 === 0) o += `<rect x="${x - 11}" y="-6.2" width="22" height="12.4" rx="6.2" fill="none" stroke="url(#pcs${k})" stroke-width="3.6"/>`;
+      else e += `<rect x="${x - 10.5}" y="-2.3" width="21" height="4.6" rx="2.3" fill="url(#pcs${k})" stroke="rgba(60,62,58,.55)" stroke-width=".6"/>`; }
+    return `<g transform="translate(${CX} ${CY}) rotate(${ang})"><g class="pc-cl ${cls}">${o}${e}${ivy}</g></g>`; };
+  const vb = `viewBox="0 0 345 150" preserveAspectRatio="xMidYMid slice"`;
+  // weeds and ivy around the lock (lock-local coords: shackle -18..2, body -1..28)
+  const vine = `<path d="M-15 20 C-23 8 -19 -10 -8 -19 C0 -25 12 -22 15 -12 C17 -5 14 2 19 8" fill="none" stroke="#4f6a2f" stroke-width="1.5" stroke-linecap="round"/>`
+    + [[-19, 8, -120, .8, 0], [-18, -6, -150, .72, 1], [-11, -18, 160, .8, 3], [0, -23, -100, .66, 2], [10, -21, -40, .78, 1], [15, -9, 20, .7, 4], [18, 4, 40, .82, 0], [-16, 16, 150, .7, 2]]
+      .map(([x, y, r, z, c]) => pcLeaf(x, y, r, z, PC_GREEN[c])).join('');
+  // short weed tufts at the lower corners, and tendrils hanging below the lock
+  const tuft = (x, dir) => [[0, -9, 2], [3, -12, 1.6], [6, -8, 1.8]].map(([o, h, w], i) => `<path d="M${x} 26 Q${x + dir * (o + 2)} ${26 + h / 2} ${x + dir * (o + 6)} ${26 + h}" fill="none" stroke="${PC_GREEN[(i + (dir > 0 ? 2 : 0)) % 5]}" stroke-width="${w}" stroke-linecap="round"/>`).join('');
+  const weeds = tuft(-15, -1) + tuft(15, 1)
+    + `<path d="M-7 28 C-9 36 -4 42 -7 50" fill="none" stroke="#4f6a2f" stroke-width="1.2" stroke-linecap="round"/><path d="M5 28 C8 34 3 38 6 44" fill="none" stroke="#4f6a2f" stroke-width="1.2" stroke-linecap="round"/>`
+    + pcLeaf(-7, 34, 150, .62, PC_GREEN[1]) + pcLeaf(-6, 42, 20, .58, PC_GREEN[2]) + pcLeaf(-7, 50, 110, .6, PC_GREEN[0]) + pcLeaf(6, 36, 30, .56, PC_GREEN[4]) + pcLeaf(6, 44, 120, .6, PC_GREEN[1])
+    + pcLeaf(-19, 25, -150, .85, PC_GREEN[3]) + pcLeaf(19, 25, -30, .85, PC_GREEN[0])
+    + `<g transform="translate(-14 4)"><circle cx="0" cy="-1.3" r="1" fill="#f3efe2"/><circle cx="1.3" cy=".2" r="1" fill="#f3efe2"/><circle cx="-1.3" cy=".2" r="1" fill="#f3efe2"/><circle cx="0" cy="1.4" r="1" fill="#f3efe2"/><circle r=".75" fill="#e9c46a"/></g>`;
+  return `<svg class="pc-chain" ${vb} aria-hidden="true"><defs>${g('pcs')}</defs>${chain(26, 'a', pcIvy(-14, -96, 3) + pcIvy(16, 62, 9))}${chain(-26, 'b', pcIvy(14, 104, 5) + pcIvy(-16, -58, 1))}</svg>
+    <svg class="pc-padlock" ${vb} aria-hidden="true"><defs>${g('pcl')}<linearGradient id="pcb${k}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d8d8cf"/><stop offset=".45" stop-color="#9da097"/><stop offset="1" stop-color="#5d625a"/></linearGradient>
+      <radialGradient id="pcr${k}"><stop offset="0" stop-color="#8a5634" stop-opacity=".75"/><stop offset="1" stop-color="#8a5634" stop-opacity="0"/></radialGradient>
+      <radialGradient id="pcv${k}"><stop offset="0" stop-color="#6f9278" stop-opacity=".7"/><stop offset="1" stop-color="#6f9278" stop-opacity="0"/></radialGradient></defs>
+      <g class="pc-pl" style="transform-origin:${CX}px ${CY}px"><g class="pc-pl2" style="transform-origin:${CX}px ${CY}px"><g transform="translate(${CX} ${CY + 17})">
+        <path d="M-10 2 V-8 a10 10 0 0 1 20 0 V2" fill="none" stroke="url(#pcl${k})" stroke-width="5.2" stroke-linecap="round"/>
+        <rect x="-17" y="-1" width="34" height="29" rx="7" fill="url(#pcb${k})" stroke="rgba(55,58,52,.7)" stroke-width=".8"/>
+        <ellipse cx="9" cy="20" rx="8" ry="6" fill="url(#pcr${k})"/><ellipse cx="-10" cy="6" rx="6" ry="4" fill="url(#pcr${k})"/><ellipse cx="-6" cy="22" rx="9" ry="5" fill="url(#pcv${k})"/>
+        <path d="M-12 3 H11" stroke="rgba(255,255,255,.55)" stroke-width="1.4" stroke-linecap="round"/>
+        <path d="M4 5 l7 3 M-13 16 l5 -2 M6 24 l6 -1" stroke="rgba(255,255,255,.35)" stroke-width=".6"/>
+        <circle cy="11" r="3.4" fill="#33372f"/><rect x="-1.4" y="12" width="2.8" height="7" rx="1.2" fill="#33372f"/>
+        <g class="pc-weeds">${vine}${weeds}</g>
+      </g></g></g></svg>`;
+}
 function purposePicker(cur, act, full, soft) {
   if (cur === 'notnow') cur = 'know';
-  return `<div class="purp ${full ? 'full' : ''}">${PURPOSES.map(x0 => { const x = soft && x0.k === 'conceive' ? { ...x0, s: 'Now, or later when I’m ready' } : x0; const u = x.img || hormonePhoto(x.photo, 600); return `<button class="purp-c ${cur === x.k ? 'on' : ''} ${x.soon ? 'soon' : ''}" ${x.soon ? 'disabled' : `data-action="${act}" data-v="${x.k}"`}>${u ? `<img src="${u}" alt=""${x.pos ? ` style="object-position:${x.pos}"` : ''}>` : ''}<span class="pc-shade"></span><span class="pc-in"><b>${x.t}</b><small>${x.s}</small></span>${x.soon ? `<span class="pc-lock" aria-hidden="true"><i class="sp a">✦</i><i class="sp b">✦</i><i class="sp c">✦</i><span class="pc-lk">${GX_IC.lock}</span></span><span class="pc-soon">Coming soon</span>` : `<span class="pc-check">${icon('check', 14, 2.6)}</span>`}</button>`; }).join('')}</div>`;
+  return `<div class="purp ${full ? 'full' : ''}">${PURPOSES.map(x0 => { const x = soft && x0.k === 'conceive' ? { ...x0, s: 'Now, or later when I’m ready' } : x0; const u = x.img || hormonePhoto(x.photo, 600); return `<button class="purp-c ${cur === x.k ? 'on' : ''} ${x.soon ? 'soon' : ''}" ${x.soon ? 'disabled' : `data-action="${act}" data-v="${x.k}"`}>${u ? `<img src="${u}" alt=""${x.pos ? ` style="object-position:${x.pos}"` : ''}>` : ''}<span class="pc-shade"></span><span class="pc-in"><b>${x.t}</b><small>${x.s}</small></span>${x.soon ? (full ? pcChains(x.k) : `<span class="pc-lock" aria-hidden="true"><i class="sp a">✦</i><i class="sp b">✦</i><i class="sp c">✦</i><span class="pc-lk">${GX_IC.lock}</span></span>`) + `<span class="pc-soon">Coming soon</span>` : `<span class="pc-check">${icon('check', 14, 2.6)}</span>`}</button>`; }).join('')}</div>`;
 }
 const FOCUS_G = { pms: '🌺', skin: '💧', sleep: '😴', mood: '🌤️', energy: '⚡', eat: '🥗', tcm: '☯️', hormones: '🧬', body: '🔥', bloat: '🫧', regular: '🗓️' };
 function focusTiles(cur, act) { return `<div class="ftiles">${FOCUS.map(f => `<button class="ft ${cur.includes(f.k) ? 'on' : ''}" data-action="${act}" data-v="${f.k}"><span>${FOCUS_G[f.k]}</span>${f.t}</button>`).join('')}</div>`; }
