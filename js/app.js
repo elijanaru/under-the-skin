@@ -299,7 +299,7 @@ function pcChains(k) {
 }
 function purposePicker(cur, act, full, soft) {
   if (cur === 'notnow') cur = 'know';
-  return `<div class="purp ${full ? 'full' : ''}">${PURPOSES.map(x0 => { const x = soft && x0.k === 'conceive' ? { ...x0, s: 'Now, or later when I’m ready' } : x0; const u = x.img || hormonePhoto(x.photo, 600); return `<button class="purp-c ${cur === x.k ? 'on' : ''} ${x.soon ? 'soon' : ''}" ${x.soon ? 'disabled' : `data-action="${act}" data-v="${x.k}"`}>${u ? `<img src="${u}" alt=""${x.pos ? ` style="object-position:${x.pos}"` : ''}>` : ''}<span class="pc-shade"></span><span class="pc-in"><b>${x.t}</b><small>${x.s}</small></span>${x.soon ? (full ? pcChains(x.k) : `<span class="pc-lock" aria-hidden="true"><i class="sp a">✦</i><i class="sp b">✦</i><i class="sp c">✦</i><span class="pc-lk">${GX_IC.lock}</span></span>`) + `<span class="pc-soon">Coming soon</span>` : `<span class="pc-check">${icon('check', 14, 2.6)}</span>`}</button>`; }).join('')}</div>`;
+  return `<div class="purp ${full ? 'full' : ''}">${PURPOSES.map(x0 => { const x = soft && x0.k === 'conceive' ? { ...x0, s: 'Now, or later when I’m ready' } : x0; const u = x.img || hormonePhoto(x.photo, 600); return `<button class="purp-c ${cur === x.k ? 'on' : ''} ${x.soon ? 'soon' : ''}" ${x.soon ? 'disabled' : `data-action="${act}" data-v="${x.k}"`}>${u ? `<img src="${u}" alt=""${x.pos ? ` style="object-position:${x.pos}"` : ''}>` : ''}<span class="pc-shade"></span><span class="pc-in"><b>${x.t}</b><small>${x.s}</small></span>${x.soon ? pcChains(x.k) + `<span class="pc-soon">Coming soon</span>` : `<span class="pc-check">${icon('check', 14, 2.6)}</span>`}</button>`; }).join('')}</div>`;
 }
 const FOCUS_G = { pms: '🌺', skin: '💧', sleep: '😴', mood: '🌤️', energy: '⚡', eat: '🥗', tcm: '☯️', hormones: '🧬', body: '🔥', bloat: '🫧', regular: '🗓️' };
 function focusTiles(cur, act) { return `<div class="ftiles">${FOCUS.map(f => `<button class="ft ${cur.includes(f.k) ? 'on' : ''}" data-action="${act}" data-v="${f.k}"><span>${FOCUS_G[f.k]}</span>${f.t}</button>`).join('')}</div>`; }
@@ -10483,7 +10483,7 @@ async function restoreUnlock() {
   catch { toast('Couldn’t reach the store. Please try again.'); }
 }
 function unlocked(ref) { state.paid = { at: todayISO(), ref: String(ref || '').slice(0, 80) }; ui.paying = false; save(true); toast('Unlocked. It’s yours for good'); location.hash = '#/today'; render(); }
-const UNLOCK_KEEP = [['calendar', 'Your cycle & predictions', 'Learns your rhythm with every period'], ['flask', 'Hormones made simple', 'What they do, day by day'], ['bowl', 'Food & recipes for each phase', 'Warm, raw-first, real food'], ['leaf', 'Breathe, ground & move', 'Matched to how you feel'], ['mail', 'Letters from your body', 'Gentle check-ins every day'], ['users', 'Partner view', 'He learns your cycle too']];
+const UNLOCK_KEEP = [['calendar', 'Your cycle & predictions', 'Learns your rhythm with every period'], ['flask', 'Hormones made simple', 'What they do, day by day'], ['bowl', 'Food & recipes for each phase', 'Warm, raw-first, real food'], ['leaf', 'Breathe, ground & move', 'Matched to how you feel'], ['mail', 'Letters from your body', 'Gentle check-ins every day'], ['users', 'Partner view', 'They learn your cycle too']];
 function viewUnlock() {
   const left = trialLeft(), lock = locked(), paid = !!state.paid;
   const [eu, ct] = PRICE.split('.');
