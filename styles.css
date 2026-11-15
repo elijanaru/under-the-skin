@@ -15130,6 +15130,59 @@ html .view .pad > h1.page-h { text-align: center; margin: 30px auto 14px !import
 html .view .pad > h1.page-h + p { text-align: center; margin: -4px 14px 18px !important; text-wrap: balance; }
 html .view .gro-page > .gro-phs { justify-content: center; }
 
+/* Tea (16 Nov 2026): today's tea sits on the clear pink forest (no blur, no veil, only a soft shade under the status bar);
+   the full tea guide sits on her blush, honey and willow glow */
+html .view:has(> .pad.tp > .tgw) {
+  background: linear-gradient(180deg, rgba(30,40,26,.18) 0%, rgba(30,40,26,0) 16%), url(images/intro-forest.jpg) 50% 40% / cover no-repeat scroll !important; }
+html .view:has(> .pad.tg) {
+  background: url(images/tea-glow-bg.webp) 50% 0 / cover no-repeat scroll, #8a8d64 !important; }
+
+/* Profile: a tab only redraws what changed; the account button stays in place, hidden on Data */
+.pf2 .pf-cta[hidden] { display: none !important; }
+
+/* Profile › Why you're here: the locked cards wear the whole chain like in onboarding, the lock where the chains cross,
+   Coming soon tucked at the bottom right */
+html .purp:not(.full) .purp-c.soon .pc-chain { -webkit-mask-image: none; mask-image: none; }
+html body .purp:not(.full) .purp-c.soon .pc-soon { top: auto; bottom: 8px; right: 10px; padding: 4px 10px; font-size: 11px; }
+html .purp:not(.full) .purp-c.soon .pc-in { margin-right: 92px; }
+html .purp:not(.full) .purp-c.soon .pc-in b, html .purp:not(.full) .purp-c.soon .pc-in small { position: relative; }
+
+/* Unlock v5 (16 Nov 2026): the ticket is the hero instead of the lotus, a real 3D card (stacked card-stock edges behind the face,
+   a wide slow tilt and a ground shadow that follows it); bold Outfit title, emojis in the included list */
+.ul4 { padding-top: 10px; }
+.ul4-stage { position: relative; margin: 6px -14px 4px; padding: 18px 0 28px; }
+.ul4-sp { position: absolute; inset: -6px 0 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.ul4 .tk3.tk4 { filter: none; perspective: 700px; animation: tk3In 1.3s cubic-bezier(.22,1,.36,1) .2s both, tk4Tilt 10s ease-in-out 1.4s infinite; }
+@keyframes tk4Tilt { 0%, 100% { --rx: 6; --ry: -14; } 25% { --rx: -5; --ry: -4; } 50% { --rx: -7; --ry: 14; } 75% { --rx: 5; --ry: 4; } }
+.tk4-rot { position: relative; transform-style: preserve-3d;
+  transform: translateY(calc(var(--rx) * -.7px)) rotateX(calc((var(--rx) + var(--py)) * 1deg)) rotateY(calc((var(--ry) + var(--px)) * 1deg)) rotate(-2deg); transition: transform .25s ease-out; }
+.ul4 .tk4 .tk3-in { height: 200px; transform: translateZ(0); animation: none; transition: none; }
+.tk4-edge { position: absolute; inset: 0; border-radius: 4px; background: linear-gradient(180deg, #e9d9e6, #cdb8d0);
+  -webkit-mask: radial-gradient(circle 6px at 0 50%, #0000 96%, #000) 0 0 / 100% 17px repeat-y, radial-gradient(circle 6px at 100% 50%, #0000 96%, #000) 0 0 / 100% 17px repeat-y,
+    radial-gradient(circle 10px at 26% 0, #0000 96%, #000), radial-gradient(circle 10px at 26% 100%, #0000 96%, #000);
+  -webkit-mask-composite: source-in; mask: radial-gradient(circle 6px at 0 50%, #0000 96%, #000) 0 0 / 100% 17px repeat-y, radial-gradient(circle 6px at 100% 50%, #0000 96%, #000) 0 0 / 100% 17px repeat-y,
+    radial-gradient(circle 10px at 26% 0, #0000 96%, #000), radial-gradient(circle 10px at 26% 100%, #0000 96%, #000); mask-composite: intersect; }
+.tk4-edge.e1 { transform: translateZ(-2px); } .tk4-edge.e2 { transform: translateZ(-4px); background: linear-gradient(180deg, #dcc8da, #bba4c0); }
+.tk4-edge.e3 { transform: translateZ(-6px); background: linear-gradient(180deg, #cdb6cc, #a88fae); }
+.tk4-ground { position: absolute; left: 10%; right: 10%; bottom: -30px; height: 30px; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(80,40,70,.34), rgba(80,40,70,.12) 60%, transparent);
+  transform: translateX(calc((var(--ry) + var(--px)) * -1.1px)) scaleX(calc(1 - (var(--rx) + var(--py)) * .018)); }
+.ul4-note { margin-top: 10px; padding-top: 28px; text-align: center; }
+.ul4-eye { display: inline-block; padding: 5px 12px; border-radius: 99px; background: #f3eedf; font: 600 12.5px/1.2 var(--font); letter-spacing: .01em; color: #6c823e; }
+html .ul4-note h2.ul4-h { margin: 12px 0 0 !important; font: 700 36px/1.04 var(--font) !important; letter-spacing: -.03em; color: #20301a; }
+html .ul4-note h2.ul4-h em { display: inline-block; position: relative; margin-top: 2px; font: 800 40px/1.05 var(--font); font-style: normal; letter-spacing: -.035em; color: #b04f6c; }
+html .ul4-note h2.ul4-h em svg { position: absolute; left: -2%; top: auto; bottom: -12px; width: 104%; height: 16px; overflow: visible; }
+html .ul4-note h2.ul4-h em path { fill: none; stroke: #e6b1c4; stroke-width: 5; stroke-linecap: round; opacity: 1; stroke-dasharray: 260; stroke-dashoffset: 260; animation: o3Strike 1s cubic-bezier(.6,0,.2,1) 1s forwards; }
+.ul4-note .o3-lead { margin: 18px 0 0 !important; }
+.ul4-note .ul3-cta { margin-top: 18px; }
+.ul4-note .o3-sign { margin-top: 14px !important; }
+html .ul3-keep h3 { font: 700 21px/1.1 var(--font); letter-spacing: -.02em; margin-bottom: 8px; }
+html .ul3-ic.emo { font-size: 20px; line-height: 1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; background: #f6f1e4; }
+html .ul3-r:nth-of-type(even) .ul3-ic.emo { background: #fbecf1; }
+@media (prefers-reduced-motion: reduce) { .ul4 .tk3.tk4 { animation: none; } html .ul4-note h2.ul4-h em path { animation: none; stroke-dashoffset: 0; } }
+.ul4-stage { margin: 6px 2px 4px; }
+html .ul3-ic.emo, html .ul3-r .ul3-ic.emo { font-size: 22px !important; }
+
 /* Blood sugar (Round A): why spikes matter as three steps, tricks as photo tiles, insulin by phase as four bars */
 .sg-why { padding: 18px 14px 12px; }
 .sgw-row { display: grid; grid-template-columns: 1fr 14px 1fr 14px 1fr; align-items: start; gap: 4px; }

@@ -264,15 +264,15 @@ function pcIvy(x0, x1, seed) { // a wavy vine along the chain (chain-local x axi
     l += pcLeaf(x, y, side * (60 + (n * 37 % 50)) + (step < 0 ? 180 : 0), .62 + (n * 13 % 7) / 18, PC_GREEN[(n + seed) % 5]); }
   return `<path d="${d}" fill="none" stroke="#4f6a2f" stroke-width="1.3" stroke-linecap="round"/>${l}`;
 }
-function pcChains(k, big) {
-  const CX = 240, CY = 76, g = id => `<linearGradient id="${id}${k}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6d3c6"/><stop offset=".32" stop-color="#a3a196"/><stop offset=".56" stop-color="#585a52"/><stop offset=".8" stop-color="#8b897c"/><stop offset="1" stop-color="#c2bfb2"/></linearGradient>`;
+function pcChains(k, big, wide) {
+  const CX = wide ? 268 : 240, CY = 76, ANG = wide ? 13 : 26, g = id => `<linearGradient id="${id}${k}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6d3c6"/><stop offset=".32" stop-color="#a3a196"/><stop offset=".56" stop-color="#585a52"/><stop offset=".8" stop-color="#8b897c"/><stop offset="1" stop-color="#c2bfb2"/></linearGradient>`;
   const chain = (ang, cls, ivy) => { let o = '', e = '';
     for (let i = -24; i <= 24; i++) { const x = i * 15;
       if (i % 2 === 0) o += `<rect x="${x - 11}" y="-6.2" width="22" height="12.4" rx="6.2" fill="none" stroke="url(#pcs${k})" stroke-width="3.6"/>`;
       else e += `<rect x="${x - 10.5}" y="-2.3" width="21" height="4.6" rx="2.3" fill="url(#pcs${k})" stroke="rgba(60,62,58,.55)" stroke-width=".6"/>`; }
     return `<g transform="translate(${CX} ${CY}) rotate(${ang})"><g class="pc-cl ${cls}">${o}${e}${ivy}</g></g>`; };
   const vb = `viewBox="0 0 345 150" preserveAspectRatio="xMidYMid slice"`;
-  return `<svg class="pc-chain" ${vb} aria-hidden="true"><defs>${g('pcs')}</defs>${chain(26, 'a', pcIvy(-14, -96, 3) + pcIvy(16, 62, 9))}${chain(-26, 'b', pcIvy(14, 104, 5) + pcIvy(-16, -58, 1))}</svg>
+  return `<svg class="pc-chain" ${vb} aria-hidden="true"><defs>${g('pcs')}</defs>${chain(ANG, 'a', pcIvy(-14, -96, 3) + pcIvy(16, 62, 9))}${chain(-ANG, 'b', pcIvy(14, 104, 5) + pcIvy(-16, -58, 1))}</svg>
     <svg class="pc-padlock" ${vb} aria-hidden="true"><defs>
       <linearGradient id="pcs2${k}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8f6a2c"/><stop offset=".3" stop-color="#e6c983"/><stop offset=".55" stop-color="#b48a42"/><stop offset=".8" stop-color="#d9b56a"/><stop offset="1" stop-color="#7d5a24"/></linearGradient>
       <radialGradient id="pcg${k}" cx=".42" cy=".38" r=".75"><stop offset="0" stop-color="#5f8a63"/><stop offset=".55" stop-color="#3b6148"/><stop offset="1" stop-color="#22392b"/></radialGradient>
@@ -300,7 +300,7 @@ function pcChains(k, big) {
 }
 function purposePicker(cur, act, full, soft) {
   if (cur === 'notnow') cur = 'know';
-  return `<div class="purp ${full ? 'full' : ''}">${PURPOSES.map(x0 => { const x = soft && x0.k === 'conceive' ? { ...x0, s: 'Now, or later when I’m ready' } : x0; const u = x.img || hormonePhoto(x.photo, 600); return `<button class="purp-c ${cur === x.k ? 'on' : ''} ${x.soon ? 'soon' : ''}" ${x.soon ? 'disabled' : `data-action="${act}" data-v="${x.k}"`}>${u ? `<img src="${u}" alt=""${x.pos ? ` style="object-position:${x.pos}"` : ''}>` : ''}<span class="pc-shade"></span><span class="pc-in"><b>${x.t}</b><small>${x.s}</small></span>${x.soon ? pcChains(x.k, full) + `<span class="pc-soon">Coming soon</span>` : `<span class="pc-check">${icon('check', 14, 2.6)}</span>`}</button>`; }).join('')}</div>`;
+  return `<div class="purp ${full ? 'full' : ''}">${PURPOSES.map(x0 => { const x = soft && x0.k === 'conceive' ? { ...x0, s: 'Now, or later when I’m ready' } : x0; const u = x.img || hormonePhoto(x.photo, 600); return `<button class="purp-c ${cur === x.k ? 'on' : ''} ${x.soon ? 'soon' : ''}" ${x.soon ? 'disabled' : `data-action="${act}" data-v="${x.k}"`}>${u ? `<img src="${u}" alt=""${x.pos ? ` style="object-position:${x.pos}"` : ''}>` : ''}<span class="pc-shade"></span><span class="pc-in"><b>${x.t}</b><small>${x.s}</small></span>${x.soon ? pcChains(x.k, full, !full) + `<span class="pc-soon">Coming soon</span>` : `<span class="pc-check">${icon('check', 14, 2.6)}</span>`}</button>`; }).join('')}</div>`;
 }
 const FOCUS_G = { pms: '🌺', skin: '💧', sleep: '😴', mood: '🌤️', energy: '⚡', eat: '🥗', tcm: '☯️', hormones: '🧬', body: '🔥', bloat: '🫧', regular: '🗓️' };
 function focusTiles(cur, act) { return `<div class="ftiles">${FOCUS.map(f => `<button class="ft ${cur.includes(f.k) ? 'on' : ''}" data-action="${act}" data-v="${f.k}"><span>${FOCUS_G[f.k]}</span>${f.t}</button>`).join('')}</div>`; }
@@ -8728,6 +8728,24 @@ function profileRings() {
   return `<div class="mind-rings pf-rings">${items.map(([t, v, u, f], i) => `<div class="mv2-b r3" style="--i:${i}"><svg viewBox="0 0 64 64"><circle class="t" cx="32" cy="32" r="${R}"/><circle class="p" cx="32" cy="32" r="${R}" stroke-dasharray="${(Cc * Math.max(.06, Math.min(1, f))).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="mv2-g pf-n">${v}</span><b>${t}</b><small>${u}</small></div>`).join('')}</div>`;
 }
 const PF_TABS = [['you', 'You'], ['cycle', 'Cycle'], ['alerts', 'Reminders'], ['data', 'Data']];
+// Profile tabs swap in place: only the nodes whose markup changed are replaced, so the photo ring, sparkles and stat rings
+// don't redraw on every tab and the page keeps its place.
+function softPatch(a, b) {
+  if (a.outerHTML === b.outerHTML) return;
+  const same = a.tagName === b.tagName && a.attributes.length === b.attributes.length && [...b.attributes].every(x => a.getAttribute(x.name) === x.value)
+    && a.childNodes.length === b.childNodes.length && a.children.length && [...a.childNodes].every((n, i) => n.nodeType === 1 || n.isEqualNode(b.childNodes[i]));
+  if (!same) { a.replaceWith(b); return; }
+  const ac = [...a.children], bc = [...b.children]; ac.forEach((c, i) => softPatch(c, bc[i]));
+}
+function softProfile() {
+  const pad = document.querySelector('#view > .pad.pf2');
+  if (!pad) return render();
+  const t = document.createElement('div'); t.innerHTML = viewProfile();
+  const np = t.querySelector('.pad.pf2'); if (!np) return render();
+  const ac = [...pad.children], bc = [...np.children];
+  bc.forEach((c, i) => { if (ac[i]) softPatch(ac[i], c); else pad.appendChild(c); });
+  ac.slice(bc.length).forEach(c => c.remove());
+}
 function viewProfile() {
   const p = state.profile, s = M.stats, tab = ui.pfTab || 'you', n = s.periods.length;
   const learn = n >= 6 ? 'Your predictions are fully personal now.' : n >= 2 ? `Learning your rhythm · ${6 - n} more ${6 - n === 1 ? 'period' : 'periods'} to fully personal` : 'Log your periods and predictions become yours';
@@ -8779,7 +8797,7 @@ function viewProfile() {
       <div class="profile-head"><label class="avatar xl ${p.photo ? 'has-photo' : ''}">${avatarInner(p)}<svg class="pf3-ring" viewBox="0 0 120 120" aria-hidden="true"><path d="M60 6 C 92 5, 115 28, 113 61 C 111 93, 88 114, 58 113 C 27 112, 6 90, 7 59 C 8 30, 30 8, 63 9"/></svg><span class="av-edit">${icon('plus', 14, 2.4)}</span><input type="file" accept="image/*" data-photo="profile" hidden></label>
         <span class="pf3-name"><input class="field name-field" data-input="profile.name" value="${esc(p.name)}" placeholder="Your name" maxlength="24" aria-label="Your name"></span></div>
       <p class="pf-learn">${learn}</p>
-      ${signedOut && tab !== 'data' ? `<button class="pill-cta pf-cta" data-action="pfTab" data-v="data">${icon('heart', 15)} Save my cycle to an account</button>` : ''}
+      ${signedOut ? `<button class="pill-cta pf-cta" data-action="pfTab" data-v="data"${tab === 'data' ? ' hidden' : ''}>${icon('heart', 15)} Save my cycle to an account</button>` : ''}
     </section>
     <div class="seg pf-seg">${PF_TABS.map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="pfTab" data-v="${k}">${l}</button>`).join('')}</div>
     ${body}
@@ -10059,7 +10077,7 @@ const actions = {
     const on = k.includes(d.t); el.classList.toggle('on', on); el.setAttribute('aria-pressed', on);
     const c = el.closest('.cw'), n = c && c.querySelector('.cw-f em'); if (n) n.textContent = c.querySelectorAll('.cw-r.on').length;
   },
-  pfTab: d => { ui.pfTab = d.v; render(); },
+  pfTab: d => { ui.pfTab = d.v; softProfile(); },
   groAisle: d => { ui.groAisle = d.v; render(); const t = document.querySelector('.gro-tabs'), on = t && t.querySelector('.on'); if (on) t.scrollLeft = on.offsetLeft - (t.clientWidth - on.offsetWidth) / 2; },
   czTab: d => { ui.czTab = d.v; render(); },
   bzPick: d => { ui.bzK = d.v; render(); },
@@ -10714,7 +10732,7 @@ async function restoreUnlock() {
   catch { toast('Couldn’t reach the store. Please try again.'); }
 }
 function unlocked(ref) { state.paid = { at: todayISO(), ref: String(ref || '').slice(0, 80) }; ui.paying = false; save(true); toast('Unlocked. It’s yours for good'); location.hash = '#/today'; render(); }
-const UNLOCK_KEEP = [['calendar', 'Your cycle & predictions', 'Learns your rhythm with every period'], ['flask', 'Hormones made simple', 'What they do, day by day'], ['bowl', 'Food & recipes for each phase', 'Warm, raw-first, real food'], ['leaf', 'Breathe, ground & move', 'Matched to how you feel'], ['mail', 'Letters from your body', 'Gentle check-ins every day'], ['users', 'Partner view', 'They learn your cycle too']];
+const UNLOCK_KEEP = [['🗓️', 'Your cycle & predictions', 'Learns your rhythm with every period'], ['🧬', 'Hormones made simple', 'What they do, day by day'], ['🥗', 'Food & recipes for each phase', 'Warm, raw-first, real food'], ['🌿', 'Breathe, ground & move', 'Matched to how you feel'], ['💌', 'Letters from your body', 'Gentle check-ins every day'], ['💞', 'Partner view', 'They learn your cycle too']];
 // The price as a ticket, made like his date ticket: barcode stub, punched edges, serif and script title, typewriter lines,
 // the lotus collage and a round price stamp. It turns over from its "With love" back as the page opens.
 // The price as a museum ticket (her moodboard): a dusty rose stub with her name in script and a barcode, a big art panel
@@ -10725,7 +10743,7 @@ function ulTicket() {
   const d = new Date(), nm = esc((state.profile.name || '').trim() || 'You');
   const date = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   let y = 0; const bars = TK3_BARS.map((w, k) => { const r = k % 2 ? '' : `<rect x="0" y="${y}" width="40" height="${w}"/>`; y += w + 1; return r; }).join('');
-  return `<div class="tk3 tk4" aria-label="A ticket back to yourself: Under the Skin, €${PRICE}, one payment, yours forever"><div class="tk3-in">
+  return `<div class="tk3 tk4" aria-label="A ticket back to yourself: Under the Skin, €${PRICE}, one payment, yours forever"><i class="tk4-ground" aria-hidden="true"></i><div class="tk4-rot"><i class="tk4-edge e3" aria-hidden="true"></i><i class="tk4-edge e2" aria-hidden="true"></i><i class="tk4-edge e1" aria-hidden="true"></i><div class="tk3-in">
     <div class="tk3-stub" aria-hidden="true"><small class="tk4-adm">admit one</small><span class="tk3-name">${nm}</span>
       <svg class="tk3-bar" viewBox="0 0 40 ${y}" preserveAspectRatio="none">${bars}</svg><small class="tk4-d">${date}</small></div>
     <div class="tk3-art">
@@ -10734,26 +10752,28 @@ function ulTicket() {
       <span class="tk4-no">No. 001 · one way</span>
       <div class="tk4-band"><div><b>Under the Skin</b><span>a ticket back to yourself</span></div><span class="tk4-p"><em><small>€</small>${PRICE}</em><i>once, forever</i></span></div>
     </div>
-    <i class="tk3-holo" aria-hidden="true"></i></div></div>`;
+    <i class="tk3-holo" aria-hidden="true"></i></div></div></div>`;
 }
 function viewUnlock() {
-  const left = trialLeft(), lock = locked(), paid = !!state.paid;
+  const left = trialLeft(), lock = locked(), paid = !!state.paid, nm = esc((state.profile.name || '').trim());
+  const swirl = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';
   return `${lock ? '' : topbar('Unlock', { back: true })}
-  <div class="pad ul ul3">
-    ${o3Hero()}
+  <div class="pad ul ul3 ul4">
+    <div class="ul4-stage">
+      <svg class="ul4-sp" viewBox="0 0 360 250" aria-hidden="true">${o3Spark('#f1d58a', 26, 34, 0)}${o3Spark('#fff', 334, 22, 1.1)}${o3Spark('#c9d6a8', 344, 214, 2)}${o3Spark('#f6c6d4', 14, 222, 1.6)}<circle class="o3-sp" style="--d:.6s" cx="300" cy="236" r="2.4" fill="#fff"/><circle class="o3-sp" style="--d:1.8s" cx="58" cy="10" r="2" fill="#fff"/></svg>
+      ${ulTicket()}
+    </div>
     <span class="ul3-days">${paid ? `${icon('heart', 13)} Unlocked` : lock ? 'Your 3 free days are over' : `<b class="dotnum">${left}</b> free ${left === 1 ? 'day' : 'days'} left`}</span>
-    <section class="o3-note ul3-note">
-      <h2>${paid ? '<span>It’s yours</span> <em>for good<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 12 C 50 20, 120 4, 196 14"/></svg></em>' : '<span>Keep Under the Skin</span> <em>for good<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 12 C 50 20, 120 4, 196 14"/></svg></em>'}</h2>
+    <section class="o3-note ul3-note ul4-note">
+      <small class="ul4-eye">${paid ? `Welcome home${nm ? `, ${nm}` : ''}` : `${nm ? `${nm}, your` : 'Your'} ticket is ready`}</small>
+      <h2 class="ul4-h">${paid ? `It’s yours,<br><em>for good${swirl}</em>` : `One ticket,<br><em>yours forever${swirl}</em>`}</h2>
       <p class="o3-lead">${paid ? 'Thank you for supporting a <mark>small team</mark>. Every update is yours too, and part of what you paid helps fund new studies on women.' : 'One payment. <mark>No subscription</mark>, ever. Everything you’ve logged stays right here.'}</p>
-      ${paid ? '' : `<div class="ul3-buy">
-        ${ulTicket()}
-        <button class="ul3-cta" data-action="buyUnlock" ${ui.paying ? 'disabled' : ''}>${ui.paying ? 'Opening payment…' : `Unlock for €${PRICE}`}</button>
-      </div>`}
+      ${paid ? '' : `<button class="ul3-cta" data-action="buyUnlock" ${ui.paying ? 'disabled' : ''}>${ui.paying ? 'Opening payment…' : `Unlock for €${PRICE}`}</button>`}
       <p class="o3-sign">with love, from our little team <i>♡</i></p>
     </section>
     ${paid ? '' : `<ul class="ul3-no">${['No subscription', 'No ads', 'Data stays yours'].map((t, i) => `<li style="--r:${[-2, 1.5, -1][i]}deg"><span class="o3-x">${O3_X}</span>${t}</li>`).join('')}</ul>`}
     <section class="card ul3-keep"><h3>Everything is included</h3>
-      ${UNLOCK_KEEP.map(([ic, t, sub], i) => `<div class="ul3-r" style="--i:${i}"><span class="ul3-ic">${icon(ic, 17)}</span><span><b>${t}</b><small>${sub}</small></span><i class="ul3-tick">${O3_TICK}</i></div>`).join('')}</section>
+      ${UNLOCK_KEEP.map(([ic, t, sub], i) => `<div class="ul3-r" style="--i:${i}"><span class="ul3-ic emo" aria-hidden="true">${ic}</span><span><b>${t}</b><small>${sub}</small></span><i class="ul3-tick">${O3_TICK}</i></div>`).join('')}</section>
     ${paid ? '' : `<div class="ul-links"><button data-action="restoreUnlock">Restore purchase</button>${A.configured() ? `<button data-action="nav" data-to="account">${A.currentUser() ? 'Your account' : 'Sign in'}</button>` : ''}</div>
     <p class="fine center ul-fine">One-time payment of €${PRICE}, VAT included. No renewal and nothing charged automatically. Your logs are never deleted, even if you wait.</p>`}
   </div>`;
