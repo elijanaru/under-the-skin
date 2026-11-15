@@ -6060,22 +6060,46 @@ function sugarTrickList(on) {
   };
   return `<section class="card sg-list"><p class="sgl-sub">Tap one for how, what studies found and when to skip it.</p>${SG_WHEN.map(([w, h]) => { const l = SUGAR_TRICKS.filter(t => t.w === w); return l.length ? `<div class="sgl-g"><h4>${h}</h4>${l.map(row).join('')}</div>` : ''; }).join('')}</section>`;
 }
+// Blood sugar: why spikes matter as a three-step graphic, the tricks as photo tiles that flatten the curve,
+// and how well insulin works in each phase as four bars with her phase lit, the studies behind one tap.
+const SG_SHORT = { fibre: 'Fibre first', move: 'Move first', acv: 'Vinegar', tea: 'Teas', berberine: 'Berberine', d3mg: 'D3 + Mg', minerals: 'Minerals', spices: 'Spices' };
+const SG_INS = { menstrual: [.74, 'Steady'], follicular: [1, 'Best'], ovulatory: [.86, 'Good'], luteal: [.58, 'Lower'] };
+const SG_STUDY = [
+  ['2010', 'Yeung et al.', 'Insulin and insulin resistance were highest in the luteal phase in 257 healthy women followed for up to two cycles.', 'J Clin Endocrinol Metab · BioCycle study'],
+  ['2007', 'Davidsen et al.', 'Across studies women ate more in the luteal phase, from about 90 up to 500 kcal a day.', 'Int J Obesity · review'],
+  ['2003', 'Fessler', 'Food intake dipped to its lowest around ovulation in the studies reviewed.', 'Quarterly Review of Biology · review'],
+  ['2020', 'Benton et al.', 'Resting burn rose a little in the luteal phase in the pooled studies.', 'PLoS One · meta-analysis'],
+];
 function viewSugar() {
-  const on = sugarDone();
-  const luteal = M.info && M.info.phase === 'luteal';
+  const on = sugarDone(), me = M.info ? M.info.phase : null;
+  const step = (n, t, s, d) => `<div class="sgw-s"><span class="sgw-i"><svg viewBox="0 0 40 40" width="40" height="40">${d}</svg></span><b>${t}</b><small>${s}</small></div>`;
   return `${topbar('Blood sugar', { back: true })}
   <div class="pad">
     <h1 class="page-h">Balance your <span>blood sugar</span></h1>
-    ${whatsGoingOn(`Every meal makes your blood sugar rise. Big spikes bring cravings, energy crashes and make your body release lots of insulin. Over time that speeds up ageing. Small tricks keep the curve gentle.${luteal ? ' <b>Right now, in your luteal phase, your body is a little less insulin-sensitive. These tricks help most this week.</b>' : ''}`)}
+    <p class="muted">Gentle curves mean steady energy, calmer cravings and clearer skin.</p>
+    <section class="card glass sg-why">
+      <div class="sgw-row">
+        ${step(1, 'Sugar spikes', 'after a carb-heavy meal', '<path d="M6 32 Q14 32 17 20 T22 8 Q26 8 29 22 T36 30" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>')}
+        <span class="sgw-ar">${icon('chevR', 14, 2.4)}</span>
+        ${step(2, 'Insulin rush', 'to clear it fast', '<g fill="currentColor"><circle cx="13" cy="14" r="3.4"/><circle cx="24" cy="11" r="3.4"/><circle cx="19" cy="22" r="3.4"/><circle cx="29" cy="21" r="3.4"/><circle cx="12" cy="27" r="3.4"/><circle cx="24" cy="31" r="3.4"/></g>')}
+        <span class="sgw-ar">${icon('chevR', 14, 2.4)}</span>
+        ${step(3, 'Crash & cravings', 'tired, hungry again', '<path d="M6 10 Q14 10 18 22 T30 32 L35 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M30 27 L35 32 L30 36" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>')}
+      </div>
+      <details class="sgw-more"><summary>Why it matters ${icon('chevD', 14)}</summary><p>Every meal makes your blood sugar rise. Big spikes bring cravings and energy crashes and make your body release lots of insulin. Over years that speeds up ageing of skin and vessels. Small tricks before and with the meal keep the curve gentle.</p></details>
+    </section>
     <section class="card glass sugar"><div class="eyebrow">Your meal today · tap what you did</div><div id="sg-chart">${sugarCurve(on)}</div>
-      <div class="sg-chips">${SUGAR_TRICKS.map(t => `<button class="${on.includes(t.k) ? 'on' : ''}" data-action="sugarTrick" data-v="${t.k}">${icon(t.ic, 14)} ${t.n}</button>`).join('')}</div></section>
+      <div class="sg-tiles">${SUGAR_TRICKS.map(t => { const pic = SB_PIC[t.k] ? SB_PIC[t.k]() : ''; return `<button class="${on.includes(t.k) ? 'on' : ''}" data-action="sugarTrick" data-v="${t.k}" aria-pressed="${on.includes(t.k)}"><span class="sgt-ph">${pic ? `<img src="${pic}" alt="" loading="lazy">` : ''}<i>${icon('check', 11, 3)}</i></span><small>${SG_SHORT[t.k] || t.n}</small></button>`; }).join('')}</div></section>
     <p class="sg-score">${icon('spark', 14)} Each trick adds a point to <button class="link" data-action="nav" data-to="rhythm">your rhythm today</button></p>
     ${sectionTitle('8 tricks')}
     ${sugarTrickList(on)}
     ${sectionTitle('Sugar in this phase')}
-    <section class="card glass sg-cyc">${PHASE_ORDER.filter(p => !M.info || M.info.phase === p).map(p => { const x = SUGAR_CYCLE[p], me = M.info && M.info.phase === p; return `<div class="sgc ${me ? 'me' : ''}" style="--pc:${PHASE_COLOR.dark[p]}"><i></i><div><b>${PHASES[p].name}${me ? ' <em>you</em>' : ''}</b><small>${x.t}</small><p>${x.d}</p></div></div>`; }).join('')}
-      <p class="sgc-src">${evBadge('some')} Insulin and insulin resistance were higher in the luteal phase in 257 women (Yeung et al. 2010, JCEM, BioCycle study). Resting burn rises a little after ovulation (Benton et al. 2020, PLoS One).</p></section>
-    <p class="fine center">From the book “Krankheitslügen entlarvt”. The chart is an illustration of a typical meal, not a measurement.</p>
+    <section class="card glass sg-ph">
+      <div class="sgp-k">How well insulin works</div>
+      <div class="sgp-bars">${PHASE_ORDER.map(p => { const [v, w] = SG_INS[p], y = p === me; return `<div class="sgp-b ${y ? 'me' : ''}" style="--pc:${PHASE_COLOR.light[p]}"><em>${w}</em><span><i style="height:${Math.round(v * 100)}%"></i></span><small>${y ? 'You' : PHASES[p].name.replace(/ phase$/i, '')}</small></div>`; }).join('')}</div>
+      ${me ? `<div class="sgp-me" style="--pc:${PHASE_COLOR.light[me]}"><b>${PHASES[me].name} · ${SUGAR_CYCLE[me].t}</b><p>${SUGAR_CYCLE[me].d}</p></div>` : ''}
+      <details class="sgp-st"><summary>What studies found ${icon('chevD', 14)}</summary>${SG_STUDY.map(([y, w, f, j]) => `<div class="sgp-r"><b class="dotnum">${y}</b><span><em>${w}</em>${f}<small>${j}</small></span></div>`).join('')}</details>
+    </section>
+    <p class="fine center">The chart shows a typical meal, not a measurement.</p>
   </div>`;
 }
 // ---------- live your rhythm: sun, moon, body — one daily score ----------

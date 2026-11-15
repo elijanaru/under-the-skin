@@ -15129,3 +15129,57 @@ html .tsh-m .emo { margin: 0 !important; align-self: flex-start; position: stati
 html .view .pad > h1.page-h { text-align: center; margin: 30px auto 14px !important; }
 html .view .pad > h1.page-h + p { text-align: center; margin: -4px 14px 18px !important; text-wrap: balance; }
 html .view .gro-page > .gro-phs { justify-content: center; }
+
+/* Blood sugar (Round A): why spikes matter as three steps, tricks as photo tiles, insulin by phase as four bars */
+.sg-why { padding: 18px 14px 12px; }
+.sgw-row { display: grid; grid-template-columns: 1fr 14px 1fr 14px 1fr; align-items: start; gap: 4px; }
+.sgw-s { display: grid; justify-items: center; text-align: center; gap: 3px; }
+.sgw-i { width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; margin-bottom: 4px;
+  background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(40% * var(--hs)) 94%); color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(40% * var(--hs)) 34%); }
+.sgw-s:nth-child(3) .sgw-i { background: #f6ecd8; color: #9a6b12; }
+.sgw-s:nth-child(5) .sgw-i { background: #f6e4e8; color: #a24f62; }
+.sgw-s b { font-size: 13.5px; font-weight: 600; line-height: 1.2; color: #20301a; }
+.sgw-s small { font-size: 11.5px; line-height: 1.3; color: rgba(32,48,26,.58); }
+.sgw-ar { align-self: start; margin-top: 22px; color: rgba(32,48,26,.35); display: grid; place-items: center; }
+.sgw-more, .sgp-st { margin-top: 12px; border-top: 1px solid rgba(32,48,26,.08); }
+.sgw-more summary, .sgp-st summary { list-style: none; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 11px 0 2px; font-size: 13.5px; font-weight: 500; color: #304023; cursor: pointer; }
+.sgw-more summary::-webkit-details-marker, .sgp-st summary::-webkit-details-marker { display: none; }
+.sgw-more summary svg, .sgp-st summary svg { transition: transform .3s ease; }
+.sgw-more[open] summary svg, .sgp-st[open] summary svg { transform: rotate(180deg); }
+.sgw-more p { margin: 8px 4px 4px; font-size: 14px; line-height: 1.5; color: rgba(32,48,26,.78); }
+.sg-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px 6px; margin-top: 12px; }
+.sg-tiles button { display: grid; justify-items: center; gap: 6px; padding: 0; border: 0; background: none; font: inherit; color: #20301a; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.sg-tiles .sgt-ph { width: 56px; height: 56px; box-shadow: 0 0 0 2px #fff, 0 4px 10px -4px rgba(32,48,26,.35); transition: box-shadow .25s ease, transform .25s ease; }
+.sg-tiles button:active .sgt-ph { transform: scale(.94); }
+.sg-tiles button.on .sgt-ph { box-shadow: 0 0 0 2px #fff, 0 0 0 4px hsl(calc(var(--hb) + 79 * var(--hk)) calc(40% * var(--hs)) 36%); }
+.sg-tiles button.on .sgt-ph i { display: grid; background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(40% * var(--hs)) 30% / .62); }
+.sg-tiles small { font-size: 12px; font-weight: 500; line-height: 1.15; text-align: center; }
+.sg-tiles button.on small { font-weight: 600; }
+.sg-ph { padding: 18px 16px 12px; }
+.sgp-k { font-size: 12.5px; font-weight: 500; color: rgba(32,48,26,.6); }
+.sgp-bars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 10px 0 4px; }
+.sgp-b { display: grid; justify-items: center; gap: 6px; }
+.sgp-b em { font-style: normal; font-size: 12px; font-weight: 500; color: rgba(32,48,26,.55); }
+.sgp-b span { position: relative; width: 100%; max-width: 54px; height: 88px; border-radius: 14px; background: rgba(32,48,26,.05); display: flex; align-items: flex-end; overflow: hidden; }
+.sgp-b span i { display: block; width: 100%; border-radius: 14px; background: color-mix(in srgb, var(--pc) 30%, #fff); }
+.sgp-b small { font-size: 12px; color: rgba(32,48,26,.6); }
+.sgp-b.me em, .sgp-b.me small { color: #20301a; font-weight: 600; }
+.sgp-b.me span i { background: var(--pc); }
+.sgp-me { margin-top: 12px; padding: 12px 14px; border-radius: 18px; background: color-mix(in srgb, var(--pc) 10%, #fff); border-left: 3px solid var(--pc); }
+.sgp-me b { display: block; font-size: 14.5px; font-weight: 600; color: #20301a; }
+.sgp-me p { margin: 4px 0 0; font-size: 13.5px; line-height: 1.45; color: rgba(32,48,26,.75); }
+.sgp-r { display: grid; grid-template-columns: 46px 1fr; gap: 10px; padding: 10px 2px; border-top: 1px solid rgba(32,48,26,.06); }
+.sgp-r:first-of-type { border-top: 0; margin-top: 6px; }
+.sgp-r > b { font-size: 15px; color: #304023; padding-top: 1px; }
+.sgp-r span { font-size: 13.5px; line-height: 1.45; color: rgba(32,48,26,.8); }
+.sgp-r em { display: block; font-style: normal; font-weight: 600; color: #20301a; }
+.sgp-r small { display: block; margin-top: 2px; font-size: 11.5px; color: rgba(32,48,26,.5); }
+@media (prefers-reduced-motion: reduce) { .sg-tiles .sgt-ph, .sgw-more summary svg, .sgp-st summary svg { transition: none; } }
+.sugar .sg-leg { color: #20301a; font-size: 12.5px; }
+.sugar .sg-leg i { background: #4f7a2a; }
+.sugar .sg-leg i.red { background: repeating-linear-gradient(90deg, rgba(32,48,26,.6) 0 4px, transparent 4px 7px); }
+/* Profile locked cards: a flatter chain X that spans the whole card, the lock on the right, Coming soon as a sticker on the photo */
+html .purp:not(.full) .purp-c.soon .pc-in { margin-right: 100px; }
+html .purp:not(.full) .purp-c.soon .pc-in b, html .purp:not(.full) .purp-c.soon .pc-in small { text-shadow: 0 0 3px #fff, 0 0 8px #fff, 0 0 12px #fff !important; }
+html body .purp:not(.full) .purp-c.soon .pc-soon { left: 4px; right: auto; top: auto; bottom: 6px; padding: 3px 8px; font-size: 10px; letter-spacing: .04em; transform: rotate(-5deg);
+  background: #fff !important; box-shadow: 0 4px 10px -5px rgba(60,30,40,.45); }
