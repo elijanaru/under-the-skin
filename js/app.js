@@ -1838,7 +1838,7 @@ const hbFind = id => (PHASE_FUNDAMENTALS[(M.info || {}).phase || 'follicular'] |
 function hhCard(info) {
   const phase = info ? info.phase : 'follicular', F = PHASE_FUNDAMENTALS[phase], done = habitsDone(todayISO());
   const N = F.list.length, n = F.list.filter(x => done.includes(x[0])).length, first = !ui.hbcSeen; ui.hbcSeen = true;
-  const RX = 33, RY = 35;
+  const RX = 33, RY = 36;
   const items = F.list.map(([id, img, t], i) => {
     const a = -Math.PI / 2 + i * 2 * Math.PI / N, x = 50 + RX * Math.cos(a), y = 50 + RY * Math.sin(a), on = done.includes(id);
     return `<button class="hbc-i ${on ? 'on' : ''}" style="left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;--i:${i}" data-action="hbcOpen" data-id="${id}" aria-label="${t}${on ? ', done today' : ''}">
@@ -1848,7 +1848,7 @@ function hhCard(info) {
     <div class="hbc-o">
       <svg class="hbc-ring" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><ellipse cx="50" cy="50" rx="${RX}" ry="${RY}"/></svg>
       <div class="hbc-c"><i>habits for</i><b>Hormone<br>Balance</b>
-        <span class="hbc-n"><span class="hbc-dot"></span>${PHASES[phase].name} · <b class="doto">${n}</b>/${N} today</span>
+        <span class="hbc-n"><span class="hbc-dot"></span>${PHASES[phase].name} · <b class="doto">${n}/${N}</b> today</span>
         <button class="hbc-why" data-action="nav" data-to="relief">Why these ${icon('chevR', 11, 2.2)}</button></div>
       ${items}
     </div>

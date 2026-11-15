@@ -15914,3 +15914,11 @@ html .br2 .br2-card { margin-top: 34px; }
 html .btn.br2-edit { margin-top: 6px; background: rgba(255,255,255,.88); color: #20301a; border: 1px solid #fff; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
 html .br2 .br2-card { margin-left: 10px; margin-right: 10px; }
 html .br2 .br2-pal { width: 104px; height: 92px; margin-right: -4px; }
+
+/* Habits ring (Round C): taller ring and a tighter centre so the side labels never sit on the title; the done count reads as one Doto number */
+html .hbc-o { aspect-ratio: 340 / 510; }
+html .hbc-c { width: 50%; }
+html .hbc-c > i { font-size: 23px; }
+html .hbc-c > b { font-size: 29px; margin-top: 3px; }
+html .hbc-n { margin-top: 10px; gap: 5px; }
+html .hbc-n .doto { font-size: 16px; font-weight: 600; letter-spacing: .02em; }
