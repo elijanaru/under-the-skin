@@ -1995,7 +1995,6 @@ function viewCalendar() {
   return `${topbar('Calendar')}
   <div class="pad">
     ${answer}
-    <div class="cal-mind"><section class="mg4" style="--pc:${PH_HEX[mph] || '#6c823e'}"><header class="mg4-h"><b>Your days right now</b><small>How your energy moves through this cycle</small></header>${mindWave(mph)}</section></div>
     <div class="cal-head"><button class="icon-btn" data-action="calMove" data-d="-1" aria-label="Previous month">${icon('chevL', 20)}</button>
       <h2><button class="cal-title" data-action="calPick">${fmt(m, { month: 'long' })} <span>${m.getFullYear()}</span>${icon('chevD', 16)}</button>${thisMonth ? '' : '<button class="cal-today" data-action="calToday">Today</button>'}</h2>
       <button class="icon-btn" data-action="calMove" data-d="1" aria-label="Next month">${icon('chevR', 20)}</button></div>
@@ -2011,11 +2010,6 @@ function viewCalendar() {
       <button class="cal-editbtn" data-action="calEdit">${icon('drop', 15)} Edit period days</button>`}
     </section>
     ${events().some(e => e.date >= todayISO()) ? upcomingEvents() : ''}
-    <section class="msd msd2" style="--pc:${PH_HEX[(M.info || {}).phase] || '#6c823e'}"><header class="msd-h"><small>What studies found</small><h3>Your mind across the month</h3><p>Your abilities stay the same. Energy and mood can shift.</p></header>
-      <div class="msd-deck deck" role="list" data-dots="msd-dots">${MIND_SCIENCE.map(x => { const yr = (x.c.match(/(19|20)\d{2}/) || [''])[0], who = x.c.slice(0, x.c.indexOf(yr)).trim(), jr = x.c.slice(x.c.indexOf(yr) + 4).replace(/^[\s,]+/, '');
-        return `<article class="msd-c" role="listitem"><figure class="msd-g">${mindArt(x.g)}${x.g === 'flat' || x.g === 'two' ? '<div class="msd-key"><span><i class="ln"></i>Your thinking</span><span><i class="dz"></i>Your hormones</span></div>' : ''}<figcaption>${x.f}</figcaption></figure><h4>${x.t}</h4><p>${x.s}</p><footer class="msd-f"><span><b>${who}</b><small>${jr}</small></span><em class="dotnum">${yr}</em></footer></article>`; }).join('')}</div>
-      <div class="lt-dots msd-dots" id="msd-dots">${MIND_SCIENCE.map((_, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div></section>
-    <p class="fine center">Low mood that stays, or PMS that takes over your life, is worth a doctor’s visit.</p>
   </div>
 `;
 }
@@ -8296,7 +8290,7 @@ function seasonChips(sn) {
 const SZ_CUT = [[/pineapple/i, 'pineapple'], [/custard apple/i, ''], [/mushroom|shiitake|enoki|maitake|chanterelle|porcini|morel|matsutake|songi|neutari|paengi|slippery|milk caps/i, 'mushrooms'], [/carrot/i, 'carrots'], [/root vegetables/i, 'parsnips'], [/leek/i, 'leeks'],
   [/pumpkin|squash|kabocha|danhobak/i, 'pumpkin'], [/beet/i, 'beetroot'], [/spinach|silverbeet|sigeumchi|palak/i, 'spinach'], [/eggs/i, 'eggs'], [/mussel/i, 'mussels'], [/aubergine|eggplant/i, 'aubergine'], [/avocado/i, 'avocado'],
   [/fennel/i, 'fennel'], [/broccoli/i, 'broccoli'], [/rosemary|oregano|thyme|sage/i, 'rosemary'], [/cauliflower/i, 'cauliflower'], [/apple/i, 'apples'], [/tomato/i, 'tomatoes'], [/oyster/i, 'oysters'], [/cucumber/i, 'cucumber'],
-  [/sweet potato|goguma|shakarkandi/i, 'sweet-potato'], [/basil/i, 'basil'], [/banana/i, 'bananas'], [/papaya/i, 'papaya'], [/strawberr/i, 'strawberries'], [/courgette|zucchini|aehobak/i, 'courgette'], [/kale|collard/i, 'kale'],
+  [/sweet potato|goguma|shakarkandi/i, 'sweet-potato'], [/basil/i, 'basil'], [/banana/i, 'bananas'], [/papaya/i, 'papaya'], [/strawberr/i, 'strawberries'], [/courgette|zucchini|aehobak/i, 'courgette'], [/collard|mustard green/i, 'collards'], [/kale/i, 'kale'],
   [/pear/i, 'pears'], [/cabbage/i, 'cabbage'], [/celeriac/i, 'celeriac'], [/parsnip/i, 'parsnips'], [/brussels/i, 'brussels'], [/chard/i, 'chard'], [/jerusalem/i, ''], [/artichoke/i, 'artichokes'], [/^peppers|bell pepper|gochu/i, 'peppers'],
   [/green beans|long beans/i, 'green-beans'], [/asparagus/i, 'asparagus'], [/lemon(?!grass)/i, 'lemons'], [/lime/i, 'limes'], [/coconut/i, 'coconut'], [/okra|bhindi/i, 'okra'], [/mango/i, 'mango'], [/plantain/i, 'plantains'],
   [/walnut|pecan/i, 'walnuts'], [/chestnut/i, 'chestnuts'], [/quince/i, 'quince'], [/pomegranate/i, 'pomegranate'], [/persimmon/i, 'persimmon'], [/orange|mandarin|citrus|kinnow|gamgyul|hallabong|yuzu/i, 'oranges'],
