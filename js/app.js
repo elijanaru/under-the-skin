@@ -8219,7 +8219,12 @@ const HERB_BUY = {
 // Real cut-out photos where we have them; the rest keep their drawings until matching cut-outs are made.
 const HERB_REAL = { ginger: 'ginger', cinnamon: 'cinnamon', goji: 'goji', 'red-dates': 'red-dates', astragalus: 'astragalus' };
 // Real photos for the herb sheet hero, cut out with the subject lift (macOS Vision): [file, credit]
-const HERB_PHOTO = { astragalus: ['images/herbs/astragalus-real.webp', 'Root photo: “Racine astragale HUANGQI”, Wikimedia Commons, CC BY-SA 3.0. Slices: Fumikas Sagisavas, CC0.'] };
+const HERB_PHOTO = { astragalus: ['images/herbs/astragalus-real.webp', 'Root photo: “Racine astragale HUANGQI”, Wikimedia Commons, CC BY-SA 3.0. Slices: Fumikas Sagisavas, CC0.'],
+  clove: ['images/herbs/clove-real.webp', 'Photo: Jacek Halicki, Wikimedia Commons, CC BY-SA 4.0, cut out.'],
+  chaga: ['images/herbs/chaga-real.webp', 'Photo: JBouchez, Wikimedia Commons, CC BY-SA 4.0, cut out.'],
+  reishi: ['images/herbs/reishi-real.webp', 'Photo: Rev. Daniel Elis Axelrod, Wikimedia Commons, CC0.'],
+  'he-shou-wu': ['images/herbs/he-shou-wu-real.webp', 'Photo: Badagnani, Wikimedia Commons, CC BY 3.0, cut out.'],
+  ginger: ['images/sf/ginger.webp', ''], cinnamon: ['images/sf/cinnamon.webp', ''], goji: ['images/sf/goji.webp', ''], 'red-dates': ['images/sf/red-dates.webp', ''] };
 const herbPic = k => (HERB_REAL[k] ? { src: `images/sf/${HERB_REAL[k]}.webp`, real: true } : { src: `images/herbs/${k}.svg`, real: false });
 // Herbs grow in a little garden bed: leaves above the soil, roots hidden. Tap one and it wiggles, pops out with soil crumbs,
 // and a sheet rises with the whole plant, roots and all, telling her about it one small chapter at a time.
@@ -8270,9 +8275,9 @@ function herbSheet(x, i) {
     <div class="hs-hero">
       <svg class="o3-dood" viewBox="0 0 340 250" aria-hidden="true">${o3Spark('#f6c6d4', 46, 52, 0)}${o3Spark('#f1d58a', 296, 40, 1.1)}${o3Spark('#c9d6a8', 300, 200, 2)}${o3Spark('#f6c6d4', 34, 190, 1.5)}</svg>
       <span class="tsh-glow" aria-hidden="true"></span>
-      <img class="hs-plant${ph ? ' real' : ''}" src="${ph ? ph[0] : `images/herbs/${b[0]}.svg`}" alt="${ph ? `Dried ${b[1].toLowerCase()} roots` : `${b[1]}, roots and all`}">
+      <img class="hs-plant${ph ? ' real' : ''}" src="${ph ? ph[0] : `images/herbs/${b[0]}.svg`}" alt="${b[1]}">
       <span class="hs-crumbs" aria-hidden="true">${'<i></i>'.repeat(7)}</span>
-      ${real ? `<figure class="hs-pol"><img src="images/sf/${real}.webp" alt=""><figcaption>in your kitchen</figcaption></figure>` : ''}
+      ${real && (!ph || ph[0] !== `images/sf/${real}.webp`) ? `<figure class="hs-pol"><img src="images/sf/${real}.webp" alt=""><figcaption>in your kitchen</figcaption></figure>` : ''}
     </div>
     <header class="hs-h"><small>${b[2] ? `<span class="hs-zh">${b[2]}</span>` : ''}${x.sub || ''}</small><h2>${b[1]}</h2></header>
     <section class="o3-note hs-note"><p class="hs-nat ${x.nat === 'warm' ? 'w' : 'n'}"><i></i>${x.nat === 'warm' ? 'Warming' : 'Neutral'} in Chinese medicine</p>
@@ -8283,7 +8288,7 @@ function herbSheet(x, i) {
     ${S ? `<section class="hs-card hs-study">${head('book', 'What a study found')}<p>${S[0]}</p><p class="hs-cite">${S[1]}</p></section>` : ''}
     ${cares.length ? `<div class="tsh-warn hs-warn"><i>${icon('heart', 13, 2.2)}</i><span><b>Before you try</b> ${cares.join(' ')}</span></div>` : ''}
     <button class="hs-done" data-action="wsClose">${icon('leaf', 16, 2)} Plant it back</button>
-    ${ph ? `<p class="hs-credit">${ph[1]}</p>` : ''}
+    ${ph && ph[1] ? `<p class="hs-credit">${ph[1]}</p>` : ''}
   </div>`;
 }
 // Superfoods and season foods open the same way as the herbs (16 Nov 2026, her call): a sheet rises from below with the picture,

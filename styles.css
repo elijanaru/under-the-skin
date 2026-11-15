@@ -15720,3 +15720,6 @@ html .mfp-hero .mfp-t small { display: inline-flex; align-items: center; gap: 6p
 html .mfp-hero .mfp-t b { font-size: 28px; color: #20301a; }
 html .mfp-hero .mfp-t em { opacity: 1; color: rgba(32,48,26,.62); }
 .cyf + .plr-hint { text-align: center; margin-top: 10px; }
+/* Herb sheet heroes are real cut-out photos for every herb (16 Nov 2026); only the long astragalus roots keep their tilt */
+html .hs-plant.real { width: auto; height: auto; max-width: 84%; max-height: 220px; object-fit: contain; rotate: -3deg; margin-top: 14px; }
+html .hs-plant.real[src*="astragalus"] { width: 340px; max-width: 92%; max-height: none; rotate: -16deg; margin-top: 10px; }
