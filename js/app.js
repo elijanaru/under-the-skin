@@ -1545,7 +1545,7 @@ function onbPromise() {
     <section class="o3-note" aria-label="We hate subscriptions">
       <h2><span>We hate</span> <em>subscriptions<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 15 C 40 9, 70 17, 104 11 S 170 8, 196 12"/></svg></em></h2>
       <p class="o3-sub">One payment, yours for good.</p>
-      <p class="o3-lead">We’re a <mark>small team</mark> and this is our <mark>passion project</mark>. Try everything free for 3 days. If you love it, unlock the full app with one payment.</p>
+      <p class="o3-lead">We’re a <mark>small team</mark> and this is our <mark>passion project</mark>. Try everything free <mark>until your next period starts</mark>, so you see your whole cycle first. If you love it, unlock the full app with one payment.</p>
       <p class="o3-sign">with love, from our little team <i>♡</i></p>
     </section>
     <section class="op-card o3-path">${steps.map(([ic, t, d], i) => `<div class="o3-st ${i === 0 ? 'now' : ''}"><span>${icon(ic, 18)}</span><b>${t}</b><small>${d}</small></div>`).join('')}
@@ -1681,7 +1681,7 @@ function viewOnboarding() {
     <div class="onb-top"><button class="icon-btn dark" data-action="onbBack" aria-label="Back">${icon('chevL', 22)}</button>${dots}${sndBtn()}</div>
     <div class="onb-body">${body}</div>
     <div class="onb-foot">
-      <button class="pearl-btn wide" data-action="onbNext" ${s === 1 && !ui.onbWhere && !o.name.trim() ? 'disabled' : ''}><span>${s === 10 ? 'Start my 3 free days' : s === 8 ? 'See my plan' : 'Continue'}</span></button>
+      <button class="pearl-btn wide" data-action="onbNext" ${s === 1 && !ui.onbWhere && !o.name.trim() ? 'disabled' : ''}><span>${s === 10 ? 'Start free until my period' : s === 8 ? 'See my plan' : 'Continue'}</span></button>
       ${s === 10 ? '<p class="fine rm2-note">Underskin is a wellness app, not medical advice.</p>' : ''}
     </div>
   </div>`;
@@ -4157,7 +4157,7 @@ function dueReminders() {
     if (sl) { const pats = (() => { try { return patterns().list; } catch { return []; } })(), body = bodyNote(new Date(), sl[2], info, pats);
       if (body) out.push({ id: 'letter-' + sl[2], icon: 'mail', title: LETTER_TITLE[sl[2]], body, to: 'log' }); }
   }
-  if (!state.paid && trialLeft() === 1) out.push({ id: 'trial-last', icon: 'gift', title: 'Your last free day', body: `Tomorrow Under the Skin asks for one payment of €${PRICE}. No subscription, and everything you logged stays.`, to: 'unlock' });
+  if (!state.paid && trialLeft() === 1) out.push({ id: 'trial-last', icon: 'gift', title: 'Your last free day', body: `${trialNextPeriod() ? 'Your period has started, so your free cycle ends today. ' : ''}From tomorrow Under the Skin asks for one payment of €${PRICE}. No subscription, and everything you logged stays.`, to: 'unlock' });
   if (postpartum()) out.push({ id: 'postpartum', icon: 'heart', title: 'Your cycle after birth', body: state.profile.bf
     ? 'While breastfeeding, periods can pause or come irregularly, and you can ovulate before your first period returns. Predictions stay rough until your cycle settles.'
     : 'In the first year after birth, cycles often run irregular. Your predictions sharpen with every period you log.' });
@@ -8791,7 +8791,7 @@ function viewProfile() {
       <button class="list-btn danger" data-action="reset"><span class="pf-ic">${icon('trash', 16)}</span><span class="pf-lt">Delete all data<small>Can't be undone</small></span></button>
     </section>
     <p class="fine">${A.currentUser() ? 'Stored on this device and privately in your account.' : 'Everything is stored privately on this device.'} Underskin gives wellbeing estimates based on your logs and on Traditional Chinese Medicine concepts; it is not medical advice and must not be used as contraception.</p>`;
-  else body = `${state.paid ? '' : `<button class="card ul-pf" data-action="nav" data-to="unlock"><span class="ul-pf-n dotnum">${trialLeft()}</span><b>${trialLeft() === 1 ? 'free day left' : 'free days left'}<small>Then one payment of €${PRICE}, yours for good</small></b><em>Unlock</em></button>`}
+  else body = `${state.paid ? '' : `<button class="card ul-pf" data-action="nav" data-to="unlock"><span class="ul-pf-n dotnum">${trialLeft()}</span><b>${trialLeft() === 1 ? 'free day left' : 'free days left'}<small>Free until your next period, then one payment of €${PRICE}, yours for good</small></b><em>Unlock</em></button>`}
     ${sectionTitle('Why you’re here')}
     ${purposePicker(purpose(), 'setPurpose')}
     ${ttc() ? `${sectionTitle('How long you’ve been trying')}<section class="card glass pg-prof">${ttcPicker(state.profile, 'profile')}</section>` : ''}
@@ -10715,12 +10715,21 @@ function playArrival(view) {
 function toTop() { try { window.scrollTo(0, 0); document.scrollingElement && (document.scrollingElement.scrollTop = 0); const v = document.getElementById('view'); if (v) v.scrollTop = 0; } catch {} }
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 // ---------- one payment after the free trial ----------
-// 3 free days from her first day in the app, then one payment of €16.80 unlocks everything for good.
+// Free until her next period starts (from her first day in the app), then one payment of €16.80 unlocks everything for good.
+// The first day of that period stays free; the gate shows from day 2. If she logs no new period, it ends a week after the
+// period we predicted, and never later than 45 days after she started.
 // Store apps: an in-app purchase (non-consumable, id below) through the NativePurchases plugin once it is installed.
 // Website: a payment link (PAY_LINK in js/config.js). On the local dev server the gate stays off (add ?paywall=1 to see it).
-const TRIAL_DAYS = 3, PRICE = '16.80', UNLOCK_ID = 'underskin_unlock';
+const TRIAL_MAX = 45, PRICE = '16.80', UNLOCK_ID = 'underskin_unlock';
 function trialStart() { if (!state.trialStart) { state.trialStart = todayISO(); save(true); } return state.trialStart; }
-function trialLeft() { return Math.max(0, TRIAL_DAYS - C.diffDays(C.startOfDay(new Date()), C.parseISO(trialStart()))); }
+function trialNextPeriod() { const t0 = C.parseISO(trialStart()); return C.periodsFromLogs(state.logs || {}).find(p => C.diffDays(p.start, t0) > 0) || null; }
+function trialEnd() {
+  const t0 = C.parseISO(trialStart()), cap = C.addDays(t0, TRIAL_MAX), next = trialNextPeriod();
+  if (!next && !state.trialPred && M && M.info && M.info.nextStart && C.diffDays(M.info.nextStart, t0) > 0) { state.trialPred = C.iso(M.info.nextStart); save(true); }
+  const end = next ? C.addDays(next.start, 1) : state.trialPred ? C.addDays(C.parseISO(state.trialPred), 7) : cap;
+  return end < cap ? end : cap;
+}
+function trialLeft() { return Math.max(0, C.diffDays(trialEnd(), C.startOfDay(new Date()))); }
 const DEV_HOST = !NATIVE && /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
 function locked() {
   if (!state?.onboarded || state.paid) return false;
@@ -10736,7 +10745,7 @@ async function buyUnlock() {
   }
   let link = ''; try { link = (await import('./config.js')).PAY_LINK || ''; } catch {}
   if (!NATIVE && link) { location.href = link; return; }
-  toast('Payments open very soon. Your 3 days stay free until then.');
+  toast('Payments open very soon. Everything stays free until then.');
 }
 async function restoreUnlock() {
   const NP = NATIVE && CAP?.Plugins?.NativePurchases;
@@ -10778,7 +10787,7 @@ function viewUnlock() {
       <svg class="ul4-sp" viewBox="0 0 360 250" aria-hidden="true">${o3Spark('#f1d58a', 26, 34, 0)}${o3Spark('#fff', 334, 22, 1.1)}${o3Spark('#c9d6a8', 344, 214, 2)}${o3Spark('#f6c6d4', 14, 222, 1.6)}<circle class="o3-sp" style="--d:.6s" cx="300" cy="236" r="2.4" fill="#fff"/><circle class="o3-sp" style="--d:1.8s" cx="58" cy="10" r="2" fill="#fff"/></svg>
       ${ulTicket()}
     </div>
-    <span class="ul3-days">${paid ? `${icon('heart', 13)} Unlocked` : lock ? 'Your 3 free days are over' : `<b class="dotnum">${left}</b> free ${left === 1 ? 'day' : 'days'} left`}</span>
+    <span class="ul3-days">${paid ? `${icon('heart', 13)} Unlocked` : lock ? 'Your free cycle is over' : trialNextPeriod() ? 'Your period started · last free day' : `Free until your next period · <b class="dotnum">${left}</b> ${left === 1 ? 'day' : 'days'}`}</span>
     <section class="o3-note ul3-note ul4-note">
       <small class="ul4-eye">${paid ? `Welcome home${nm ? `, ${nm}` : ''}` : `${nm ? `${nm}, your` : 'Your'} ticket is ready`}</small>
       <h2 class="ul4-h">${paid ? `It’s yours,<br><em>for good${swirl}</em>` : `One ticket,<br><em>yours forever${swirl}</em>`}</h2>

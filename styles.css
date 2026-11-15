@@ -15283,3 +15283,5 @@ html .drc .drt-f { text-transform: none !important; letter-spacing: 0 !important
 @media (prefers-reduced-motion: reduce) { .csl-p { transition: none; } }
 .csl-c small { text-align: center; line-height: 1.25; }
 .csl-c small span { display: block; font-size: 11.5px; }
+/* Superfoods: the dandelion bunch read bigger than its neighbours */
+html .sfc-i img[src*="sf/dandelion"] { transform: scale(.8); transform-origin: 50% 60%; }
