@@ -14323,3 +14323,6 @@ html .view .pad.sp2t .spec.stack > .spec-name h1 { color: #20301a !important; -w
   text-shadow: 0 0 2px rgba(255,255,255,.95), 0 0 14px rgba(255,255,255,.95), 0 0 28px rgba(255,255,255,.8) !important; }
 html .view .pad.sp2t .spec.stack > .spec-name .eyebrow { display: inline-block; padding: 4px 11px; border-radius: 99px; background: rgba(255,255,255,.66); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.8); color: #6c823e !important; -webkit-text-fill-color: #6c823e !important; text-shadow: none !important; font-weight: 600; }
+/* research wall: Doto only for the number; units (wks, g) and a symbol like Fe in Outfit */
+.rm2-n small { font-family: var(--font); font-size: 15px; font-weight: 500; letter-spacing: 0; margin-left: 5px; }
+.rm2-n.w small { font-size: 30px; font-weight: 600; margin: 0; }

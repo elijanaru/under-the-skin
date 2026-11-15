@@ -1079,7 +1079,7 @@ function roadmapRaw(keys, name, day) {
       <h3>What research shows</h3>
       <p class="rm2-sub">Tap a study to read more.</p>
       <div class="rm2-wall">${RESEARCH_WALL.map((r, i) => `<button class="rm2-st ${r.big ? 'big' : ''}" data-action="rmFlip" style="--i:${i}">
-        <span class="rm2-n">${r.n}</span><span class="rm2-t">${r.t}</span><span class="rm2-more">${r.more}</span>
+        <span class="rm2-n ${/\d/.test(r.n) ? '' : 'w'}">${String(r.n).replace(/(^|\s+)([A-Za-z][A-Za-z.]*)/g, '<small>$2</small>')}</span><span class="rm2-t">${r.t}</span><span class="rm2-more">${r.more}</span>
         <span class="rm2-src">${evBadge(r.ev)}<small>${r.src}</small></span></button>`).join('')}</div>
       <div class="rm2-goals">${keys.map(k => `<p>${ROADMAP[k].g} ${ROADMAP[k].r} ${evBadge(ROADMAP[k].ev)}</p>`).join('')}</div>
     </section>
