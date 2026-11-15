@@ -7343,7 +7343,7 @@ function calmScience(info) {
   return `${sectionTitle('The science of calm')}<p class="cs2-sub">How long each one needs, and what studies found.</p>
     <section class="cs2" style="--pc:${pc}">
       <div class="csl" role="group" aria-label="How long each one takes">${(() => { const B = [[], [], [], []]; L.forEach(x => B[x.sec < 60 ? 0 : x.sec <= 660 ? 1 : x.sec <= 1800 ? 2 : 3].push(x));
-        return B.map((g, i) => { if (!g.length) return ''; const f = g[0], l = g[g.length - 1], lab = g.length > 1 ? `<b class="dotnum">${f.d}</b> to <b class="dotnum">${l.d}</b> ${l.u}` : `<b class="dotnum">${f.d}</b> ${f.u === 'h' ? 'hours' : f.u}`;
+        return B.map((g, i) => { if (!g.length) return ''; const f = g[0], l = g[g.length - 1], lab = g.length > 1 ? `<b class="dotnum">${f.d}</b> to <b class="dotnum">${l.d}</b><span>${l.u}</span>` : `<b class="dotnum">${f.d}</b><span>${f.u === 'h' ? 'hours' : f.u === 's' ? 'seconds' : f.u}</span>`;
           return `<div class="csl-c" style="--h:${16 + i * 16}px">${g.map(x => `<button class="csl-p" data-action="calmJump" data-k="${x.k}" aria-label="${esc(x.t)}">${CALM_PH[x.t] ? `<img src="${CALM_PH[x.t]}" alt="" decoding="async">` : calmIc(x.ic)}</button>`).join('')}<i class="csl-b"></i><small>${lab}</small></div>`; }).join(''); })()}</div>
       ${L.map(x => `<details class="cs2-r" data-k="${x.k}"><summary>${CALM_PH[x.t] ? `<span class="cs2-ph"><img src="${CALM_PH[x.t]}" alt="" loading="lazy" decoding="async"></span>` : `<span class="cs2-ic">${calmIc(x.ic)}</span>`}<span class="cs2-t"><b>${x.t}</b><small>${x.r}</small></span>
         <span class="cs2-d"><b class="dotnum">${x.d}</b><small>${x.u}</small></span>${icon('chevD', 14)}</summary>
