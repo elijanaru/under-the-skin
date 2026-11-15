@@ -2913,7 +2913,7 @@ function drinksInner(phase) {
         <span class="drt-end">${icon('sun', 14)} Wake up</span>
         ${drinkList(phase).map((n, i) => [n, i, drSlot(n)]).sort((x, y) => x[2][0] - y[2][0]).map(([n, i, sl]) => { const sp = DRINK_SPEC.find(([r]) => r.test(n)), pic = (EB_PIC.find(([r]) => r.test(n)) || [])[1]?.();
         const art = drinkArt(n), img = art || pic;
-        return `<button class="sfc-i drt-r" role="listitem" style="--i:${i}" data-action="drPick" data-i="${i}" aria-expanded="false"><span class="drt-t"><b class="dotnum">${sl[1]}</b><small>${sl[2]}</small></span><span class="drt-c">${img ? `<img class="${art ? 'drw' : img.startsWith('images/') ? '' : 'rd'}" src="${img}" alt="" loading="lazy" decoding="async">` : ''}</span><span class="drt-n"><b>${n}</b><small>${sp ? `${sp[1]} · ` : ''}${sl[3]}</small></span>${icon('chevD', 15)}</button>`; }).join('')}
+        return `<button class="sfc-i drt-r" role="listitem" style="--i:${i}" data-action="drPick" data-i="${i}" aria-expanded="false"><span class="drt-t"><b class="dotnum ${sl[1].length > 4 ? 'drt-tl' : ''}">${sl[1]}</b><small>${sl[2]}</small></span><span class="drt-c">${img ? `<img class="${art ? 'drw' : img.startsWith('images/') ? '' : 'rd'}" src="${img}" alt="" loading="lazy" decoding="async">` : ''}</span><span class="drt-n"><b>${n}</b><small>${sp ? `${sp[1]} · ` : ''}${sl[3]}</small></span>${icon('chevD', 15)}</button>`; }).join('')}
         <span class="drt-end">${icon('moon', 14)} Sleep</span>
       </div>
       <div class="sfc-det" aria-live="polite" hidden></div>
@@ -6177,7 +6177,7 @@ function suppWeek() {
       <span class="nw2-p">${pic(x) ? `<img src="${pic(x)}" alt="" loading="lazy" decoding="async">` : nuIc(x.id, 18)}</span>
       <span class="nw2-t"><b>${x.n}</b><small>${esc(x.d[0][0])}${/test/i.test(x.d[0][1]) ? ` · ${esc(x.d[0][1])}` : ""}</small></span>
       <span class="nw2-dl">${t.map((on, k) => `<i class="${on ? 'on' : ''} ${k === 6 ? 'td' : ''}"></i>`).join('')}</span>
-      <em class="dotnum ${c ? '' : 'z'}">${c}</em></button>`; }).join('')}
+      <em class="dotnum ${c ? '' : 'z'}">${c || ''}</em></button>`; }).join('')}
   </section>`;
 }
 function viewNutrients() {
