@@ -13835,3 +13835,8 @@ html .pv2-card.oak { display: block; padding: 16px; background: linear-gradient(
 .oak-pop { position: fixed; z-index: 95; font: 600 15px Outfit, sans-serif; font-style: normal; color: #a8781a; text-shadow: 0 2px 8px rgba(255,255,255,.9); pointer-events: none; animation: oakPop 1.2s ease-out forwards; }
 @keyframes oakPop { 0% { opacity: 0; transform: translateY(6px) scale(.8); } 20% { opacity: 1; transform: translateY(-4px) scale(1.1); } 100% { opacity: 0; transform: translateY(-46px) scale(1); } }
 @media (prefers-reduced-motion: reduce) { .oak-sway, .oak-acorn, .oak-spark path, .oak.lvup .oak-crown, .hob-e { animation: none !important; } }
+/* tea Key ingredients rows: scoped so the date ticket's .tk-r (Doto, dashed stub) can't restyle them */
+.tk-rows .tk-r { align-self: auto; flex-direction: row; align-items: center; justify-content: flex-start; gap: 12px; margin: 0; padding: 12px 0; border-left: 0; border-bottom: 1px solid rgba(48,64,35,0.14); }
+.tk-rows .tk-r:last-child { border-bottom: 0; }
+.tk-rows .tk-r b { font: 600 15px/1.25 var(--font); color: #20301a; overflow-wrap: anywhere; }
+.tk-rows .tk-r small { font-size: 13px; font-weight: 400; line-height: 1.35; color: rgba(32,48,26,0.66); }
