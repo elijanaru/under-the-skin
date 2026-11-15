@@ -46,6 +46,8 @@ p { margin: 0; }
   .stage { padding: 28px; }
   .phone {
     width: 400px; height: min(860px, calc(100dvh - 56px)); border-radius: 58px;
+    /* The phone is the frame for every fixed layer (onboarding photo, arched background), so nothing spills over the desk around it */
+    contain: layout paint; isolation: isolate;
     box-shadow: 0 0 0 10px rgba(120,70,90,0.18), 0 0 0 11px rgba(120,70,90,0.18), 0 40px 120px rgba(120,70,90,0.18), 0 0 120px hsl(calc(var(--hb) + 143 * var(--hk)) calc(37% * var(--hs2)) 39% / .15);
   }
   .statusbar {
