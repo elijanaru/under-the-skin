@@ -1858,6 +1858,7 @@ export const SUPERFOODS = {
     ['🥬', 'Sauerkraut', 'Live cultures for the gut that clears estrogen.', '1 to 2 tbsp, raw, with a meal', ['food', 'Sauerkraut']],
     ['🌿', 'Parsley', 'Vitamin C, vitamin K and folate in one handful.', '1 small handful, chopped over food', ['food', 'Parsley']],
     ['🍯', 'Raw honey', 'Gentle energy, enzymes and a soothing throat.', '1 tsp, stirred into warm (not hot) drinks', ['food', 'Raw honey'], true],
+    ['🐝', 'Bee bread', 'Pollen the bees pack into the comb and ferment: protein, B vitamins and iron for the rebuild after your period.', '½ to 1 tsp a day, chewed slowly or on yoghurt. Start with a few grains. Skip it with a pollen or bee allergy or asthma', null, true],
   ] },
   ovulatory: { lead: 'Light, cooling herbs and antioxidant superfoods for your peak, plus fibre to carry out the extra estrogen.',
     gems: [
@@ -1872,6 +1873,7 @@ export const SUPERFOODS = {
     ['🌰', 'Brazil nuts', 'Selenium for your thyroid and egg quality.', '1 to 2 nuts a day, no more: more can tip you over the safe selenium limit', null],
     ['🌿', 'Fresh mint', 'Cooling and easy on digestion on hot, busy days.', '1 small handful in water, tea or salads', ['food', 'Mint']],
     ['🌿', 'Coriander', 'A fresh herb that supports digestion and brings vitamin K.', '1 small handful, chopped', ['food', 'Parsley & coriander']],
+    ['👑', 'Royal jelly', 'The food of the queen bee: B vitamins and proteins. In a small trial, women who took it for two cycles had milder PMS.', '¼ tsp fresh (about 1 g) a day, at room temperature, under your tongue. Skip it with a bee or pollen allergy, asthma, or when pregnant', null, true],
   ] },
   luteal: { lead: 'Warming spices and magnesium-rich superfoods calm cravings, bloating and PMS.',
     gems: [
