@@ -16078,3 +16078,11 @@ html .hub-tip-in .fn2 .fn-t small { font-size: 13px; line-height: 1.35; color: #
 html .hub-tip-in .fn2 summary .ic { transition: transform .3s ease; }
 html .hub-tip-in .fn2 .fn[open] summary .ic { transform: rotate(180deg); }
 html .hub-tip-in .fn2 .fn > p { margin: -2px 0 12px 56px !important; font-size: 13.5px !important; line-height: 1.45; color: #304023; }
+
+/* Ground › For your phase (Round B): the surface that suits her phase as a picture beside the title, then Where / How long / When as spec rows and solid ink step numbers like every other numbered list */
+html .grp .grp-hero { display: grid; grid-template-columns: 84px 1fr; gap: 14px; align-items: center; margin-top: 10px; }
+html .grp .grp-hero img { width: 84px; height: 84px; border-radius: 22px; object-fit: cover; box-shadow: 0 8px 18px rgba(32,48,26,.14); }
+html .grp .grp-hero h3 { margin: 0 0 3px; font-weight: 600; color: #20301a; }
+html .grp .grp-spec dd { color: #20301a; font-weight: 600; }
+html .grp .grp-spec dd .dotnum { font: 900 18px/1 var(--dot); color: #20301a; }
+html .grp-ol i, html .grp-ol i .dotnum { background: #20301a !important; color: #fff !important; font: 800 13px/1 var(--dot) !important; }

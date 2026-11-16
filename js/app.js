@@ -498,6 +498,8 @@ function trainSafe() {
 // A tiny drawn scene for each surface in "Where to stand" (same order as GROUND_WHERE).
 // her hand-painted pictures for each surface, same order as GROUND_WHERE
 const GROUND_PIC = ['sand', 'grass', 'soil', 'sea', 'stone', 'road'];
+// the surface that suits each phase best (picture from Where to stand, plain words for the spot)
+const GROUND_SPOT = { menstrual: ['sand', 'Sun-warmed, dry sand'], follicular: ['grass', 'Dewy morning grass'], ovulatory: ['sea', 'Wet sand at the water'], luteal: ['soil', 'Garden or park soil'] };
 const GROUND_ART = [
   '<svg viewBox="0 0 120 56"><rect width="120" height="56" fill="#efdcbc"/><path d="M0 0h120v16c-14 6-24-4-40 2s-26 8-40 2S12 12 0 18z" fill="#a9cdd0"/><path d="M0 18c12-6 26 2 40-2s24-8 40-2 26 4 40-2" fill="none" stroke="#fff" stroke-width="2" opacity=".8"/><g fill="#caa77a"><ellipse cx="44" cy="34" rx="4" ry="6.5"/><ellipse cx="58" cy="44" rx="4" ry="6.5"/><ellipse cx="74" cy="32" rx="4" ry="6.5"/></g></svg>',
   `<svg viewBox="0 0 120 56"><rect width="120" height="56" fill="#e3ecd3"/><g fill="none" stroke="#6c823e" stroke-width="2.4" stroke-linecap="round">${Array.from({ length: 14 }, (_, i) => `<path d="M${6 + i * 8.4} 56c${i % 2 ? 2 : -2}-10 ${i % 3 - 1}-20 ${i % 2 ? 4 : -3}-${24 + (i * 7) % 14}"/>`).join('')}</g><g fill="#fff" stroke="#9fc3c8" stroke-width=".8"><circle cx="22" cy="24" r="2.4"/><circle cx="64" cy="18" r="2.8"/><circle cx="96" cy="28" r="2.2"/></g></svg>`,
@@ -563,9 +565,9 @@ function viewGround() {
     ${P ? `${sectionTitle(`For your ${PHASES[ph].name.toLowerCase()} phase`)}
     <section class="grp" style="--c:${PH_HEX[ph]}">
       <div class="grp-top"><small><i></i>${PHASES[ph].name} phase${ph === 'menstrual' || late ? ` · ${icon('thermo', 12)} Keep warm` : ''}</small>${saveBtn(regTip(`ground-${ph}`, `Grounding · ${PHASES[ph].name}`, phd, 'ground'))}</div>
-      <h3>${P.t}</h3><p class="grp-sub">${phd[0]}</p>
-      <dl class="grp-spec"><div><dt>When</dt><dd>${phd[3]}</dd></div></dl>
-      <ol class="tf2-ol grp-ol"><li><i class="dotnum">1</i>${phd[1]}</li><li><i class="dotnum">2</i>${phd[2]}</li></ol>
+      <div class="grp-hero"><img src="images/ground/${GROUND_SPOT[ph][0]}.webp" alt="" loading="lazy"><div><h3>${P.t}</h3><p class="grp-sub">${phd[0]}</p></div></div>
+      <dl class="grp-spec"><div><dt>Where</dt><dd>${GROUND_SPOT[ph][1]}</dd></div>${(phd[1].match(/(\d+) minutes/) || [])[1] ? `<div><dt>How long</dt><dd><b class="dotnum">${phd[1].match(/(\d+) minutes/)[1]}</b> min</dd></div>` : ''}<div><dt>When</dt><dd>${phd[3]}</dd></div></dl>
+      <ol class="tf2-ol grp-ol"><li><i class="dotnum">1</i>${phd[1].replace(/^\d+ minutes (\w)/, (m, c) => c.toUpperCase())}</li><li><i class="dotnum">2</i>${phd[2]}</li></ol>
       <details class="grp-why"><summary>Why in this phase ${icon('chevD', 13)}</summary><p>${P.why}</p></details>
     </section>` : ''}
 
