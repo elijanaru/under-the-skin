@@ -3328,11 +3328,11 @@ const CHAI_RE = /ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i;
 const MATCHA_RE = /matcha|green tea/i;
 // Every drink shows the 3D model that looks most like it (16 Nov 2026, her call: only the app's own 3D models, and
 // no two drinks in one list share a cup; 16 Nov 2026 her coffee mug added): the white mug for coffee, the glass latte for cacao and milky drinks, matcha, green tea, the blue
-// mint cup for leafy teas and water, the red hibiscus cup for hibiscus and red dates, the amber teacup for ginger and spiced teas, the pho
-// bowl for broth and the floral chamomile cup for chamomile, lemon and coconut water.
+// mint cup for leafy teas and water, the red hibiscus cup for hibiscus and red dates, the amber teacup for ginger and spiced teas,
+// her blue and white broth bowl for broth and the floral chamomile cup for chamomile, lemon and coconut water.
 const TEA_CUP = [[/matcha/i, 'matcha', 'cup3d/matcha'], [/coffee|espresso/i, 'coffee', 'cup3d/coffee'], [/green tea|green juice/i, 'greentea', 'cup3d/greentea'],
   [/chai|cacao|cocoa|latte|turmeric|golden milk|\bmilk\b|kefir/i, 'latte', 'cup3d/latte'],
-  [/hibiscus|bissap|roselle|rosehip|red date/i, 'hibiscus', 'cup3d/hibiscus'], [/broth/i, 'pho', 'cup3d/pho'],
+  [/hibiscus|bissap|roselle|rosehip|red date/i, 'hibiscus', 'cup3d/hibiscus'], [/broth/i, 'broth', 'cup3d/broth'],
   [/mint|lemon balm|nettle|lemongrass|jasmine|tulsi|moringa|raspberry leaf|dandelion|mineral water/i, 'mint-tea', 'cup3d/mint-tea'],
   [/chamomile|lemon water|coconut water/i, 'chamomile', 'cup3d/chamomile'],
   [/ginger|cinnamon|rooibos|black tea|cardamom|clove|fire cider/i, 'teacup', 'cup3d/teacup'], [/./, 'chamomile', 'cup3d/chamomile']];
