@@ -4689,20 +4689,33 @@ const HP_TIER = [
   { n: 'Sex & rhythm', s: 'Estrogen · progesterone · testosterone · thyroid · melatonin', c: '#6c823e', h: ['estrogen', 'progesterone', 'testosterone', 'thyroid', 'melatonin'], lead: 'The top is where you feel it. It follows the base, so start there.',
     feel: [['💋', 'Libido'], ['✨', 'Energy'], ['🌀', 'Digestion'], ['💅', 'Skin, hair, nails'], ['🗓️', 'Cycle'], ['🌡️', 'Body temperature'], ['🍑', 'Body shape'], ['⚖️', 'Metabolism'], ['😴', 'Sleep and waking']] },
 ];
+const HP_MOL = { estrogen: 'Oestrogen', progesterone: 'Progesterone', testosterone: 'Testosterone', thyroid: 'Thyroid hormones', melatonin: 'Melatonin', cortisol: 'Cortisol', preg: 'Pregnenolone', dhea: 'DHEA' };
+const hpMol = k => k === 'insulin' ? protBall('Insulin') : k === 'oxytocin' ? protBall('Oxytocin') : (MOL_BALL[HP_MOL[k]] || '');
+// a trapezoid with softly rounded corners
+function hpBand(x0t, x1t, y0, x1b, x0b, y1, r = 16) {
+  const P = [[x0t, y0], [x1t, y0], [x1b, y1], [x0b, y1]], n = P.length;
+  const at = (a, b, d) => { const L = Math.hypot(b[0] - a[0], b[1] - a[1]); return [a[0] + (b[0] - a[0]) * d / L, a[1] + (b[1] - a[1]) * d / L]; };
+  let d = '';
+  P.forEach((p, k) => { const prev = P[(k + n - 1) % n], next = P[(k + 1) % n], s = at(p, prev, r), e = at(p, next, r);
+    d += `${k ? 'L' : 'M'}${s[0].toFixed(1)} ${s[1].toFixed(1)} Q${p[0]} ${p[1]} ${e[0].toFixed(1)} ${e[1].toFixed(1)} `; });
+  return d + 'Z';
+}
 function hormonePyramid() {
-  const sel = ui.hpT ?? 0, T = HP_TIER[sel];
-  const hw = y => 40 + 130 * y / 640, X = (y, s) => (170 + s * hw(y)).toFixed(1);
-  const band = (k, y0, y1) => `<g class="hp-t ${k === sel ? 'on' : ''}" data-action="hpTier" data-v="${k}" role="button" tabindex="0" aria-pressed="${k === sel}" aria-label="${HP_TIER[k].n}">
-    <path d="M${X(y0, -1)} ${y0} H${X(y0, 1)} L${X(y1, 1)} ${y1} H${X(y1, -1)} Z"/></g>`;
-  // where each hormone sits, in viewBox units (340 x 470)
-  const POS = { estrogen: [138, 82], progesterone: [202, 82], testosterone: [118, 158], thyroid: [170, 158], melatonin: [222, 158],
-    preg: [138, 350], dhea: [202, 350], cortisol: [100, 540], insulin: [170, 540], oxytocin: [240, 540] };
-  const bub = Object.entries(POS).map(([k, [x, y]]) => { const H = HP_HORM[k];
-    return `<button class="hp-b" style="left:${((x + 4) / 348 * 100).toFixed(2)}%;top:${((y + 4) / 648 * 100).toFixed(2)}%" data-action="hpHorm" data-k="${k}"><span>${emoRaw(H[0])}</span><small>${H[1]}</small></button>`; }).join('');
-  const peek = (k, y) => `<span class="hp-pk" style="top:${((y + 4) / 648 * 100).toFixed(2)}%" aria-hidden="true"><small>knocked off by</small>${HP_TIER[k].off.slice(0, 5).map(i => emoRaw(HP_ITEM[i][0])).join('')}</span>`;
-  const lab = (k, y, sub) => `<text class="hp-n" x="170" y="${y}">${HP_TIER[k].n}</text>${sub ? `<text class="hp-s" x="170" y="${y + 15}">${sub}</text>` : ''}`;
+  const sel = ui.hpT ?? 0, T = HP_TIER[sel], VW = 340, VH = 660;
+  const hw = y => 62 + 108 * y / VH, X = (y, s) => +(170 + s * hw(y)).toFixed(1);
+  const TIERS = [[2, 0, 252], [1, 264, 444], [0, 456, 660]];
+  const band = (k, y0, y1) => `<g class="hp-t t${k} ${k === sel ? 'on' : ''}" data-action="hpTier" data-v="${k}" role="button" tabindex="0" aria-pressed="${k === sel}" aria-label="${HP_TIER[k].n}">
+    <path class="hp-f" d="${hpBand(X(y0, -1), X(y0, 1), y0, X(y1, 1), X(y1, -1), y1)}"/><path class="hp-sh" d="M${X(y0, -1) + 18} ${y0 + 2.5} H${X(y0, 1) - 18}"/></g>`;
+  // each molecule: centre x, centre y, width (viewBox units)
+  const POS = { estrogen: [134, 78, 62], progesterone: [206, 78, 62], testosterone: [113, 166, 52], thyroid: [170, 166, 50], melatonin: [227, 166, 52],
+    preg: [128, 370, 76], dhea: [212, 370, 76], cortisol: [98, 566, 64], insulin: [170, 566, 64], oxytocin: [242, 566, 64] };
+  const pc = (v, of) => (v / of * 100).toFixed(2) + '%';
+  const mols = Object.entries(POS).map(([k, [x, y, w]], i) => { const H = HP_HORM[k];
+    return `<button class="hp-m" style="left:${pc(x - w / 2, VW)};top:${pc(y - 30, VH)};width:${pc(w, VW)};--i:${i}" data-action="hpHorm" data-k="${k}" aria-label="${H[1]}"><span class="hp-mo">${hpMol(k)}</span><small>${H[1]}</small></button>`; }).join('');
+  const peek = (k, y) => `<span class="hp-pk" style="top:${pc(y, VH)}" aria-hidden="true"><small>knocked off by</small>${HP_TIER[k].off.slice(0, 5).map(i => emoRaw(HP_ITEM[i][0])).join('')}</span>`;
+  const lab = (y, n, sub) => `<text class="hp-n" x="170" y="${y}">${n}</text>${sub ? `<text class="hp-s" x="170" y="${y + 16}">${sub}</text>` : ''}`;
   const chip = (k, kind) => { const x = HP_ITEM[k]; return `<button class="hp-c ${kind}" data-action="hpItem" data-k="${k}" data-kind="${kind}"><span>${emoRaw(x[0])}</span><small>${x[1]}</small></button>`; };
-  const detail = T.feel ? `<h5 class="hp-dh">You feel it in</h5><div class="hp-feel">${T.feel.map(([e, n]) => `<span class="hp-f"><span>${emoRaw(e)}</span><small>${n}</small></span>`).join('')}</div>
+  const detail = T.feel ? `<h5 class="hp-dh">You feel it in</h5><div class="hp-feel">${T.feel.map(([e, n]) => `<span class="hp-f2"><span>${emoRaw(e)}</span><small>${n}</small></span>`).join('')}</div>
       <button class="hp-go" data-action="hpTier" data-v="0">Start at the base ${icon('chevR', 13)}</button>`
     : `<h5 class="hp-dh off">Knocked off by</h5><div class="hp-grid">${T.off.map(k => chip(k, 'off')).join('')}</div>
       <h5 class="hp-dh on">Brought back by</h5><div class="hp-grid">${T.on.map(k => chip(k, 'on')).join('')}</div>
@@ -4710,14 +4723,17 @@ function hormonePyramid() {
   return `<section class="hp">
     <div class="bgx2-head"><h1>Balance your <span>hormones</span></h1><p>Your hormones stack like a pyramid. The base sets the tone for everything above it. Tap a level.</p></div>
     <div class="hp-wrap">
-      <svg class="hp-svg" viewBox="-4 -4 348 648" aria-label="The hormone pyramid">
-        ${band(2, 0, 240)}${band(1, 250, 430)}${band(0, 440, 640)}
-        <g class="hp-txt" aria-hidden="true">${lab(2, 226)}${lab(1, 282, 'the raw material')}${lab(0, 474, 'start here')}<text class="hp-base" x="170" y="629">Hormone balance starts here</text></g>
-        <path class="hp-arr" d="M16 420 L84 60" marker-end="url(#hpA)"/><defs><marker id="hpA" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1 L8 5 L1 9" fill="none" stroke="#b04f6c" stroke-width="1.6" stroke-linecap="round"/></marker></defs>
-        <text class="hp-inf" transform="translate(36 236) rotate(-79.3)">influence</text>
+      <svg class="hp-svg" viewBox="0 0 ${VW} ${VH}" aria-label="The hormone pyramid">
+        <defs><linearGradient id="hpg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffafb"/><stop offset="1" stop-color="#fbe9ee"/></linearGradient>
+          <linearGradient id="hpg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffaf5"/><stop offset="1" stop-color="#fbeadf"/></linearGradient>
+          <linearGradient id="hpg0" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fdf6f4"/><stop offset="1" stop-color="#f7dfe6"/></linearGradient></defs>
+        <path class="hp-arr" d="M14 600 L82 40" marker-end="url(#hpA)"/><defs><marker id="hpA" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1 L8 5 L1 9" fill="none" stroke="#b04f6c" stroke-width="1.6" stroke-linecap="round"/></marker></defs>
+        <text class="hp-inf" transform="translate(34 300) rotate(-83)">influence</text>
+        ${TIERS.map(([k, y0, y1]) => band(k, y0, y1)).join('')}
+        <g class="hp-txt" aria-hidden="true">${lab(236, HP_TIER[2].n)}${lab(296, HP_TIER[1].n, 'the raw material')}${lab(490, HP_TIER[0].n, 'start here')}<text class="hp-base" x="170" y="646">Hormone balance starts here</text></g>
       </svg>
       <p class="hp-note" aria-hidden="true">you feel it in your skin, sleep, cycle and mood</p>
-      ${bub}${peek(1, 402)}${peek(0, 592)}
+      ${mols}${peek(1, 424)}${peek(0, 618)}
     </div>
     <div class="hp-d" style="--tc:${T.c}"><small>Level ${sel + 1} · ${['the base', 'the middle', 'the top'][sel]}</small><b>${T.n}</b><p>${T.lead}</p>${detail}</div>
   </section>`;
@@ -4731,7 +4747,7 @@ function hpItemSheet(k, kind) {
 function hpHormSheet(k) {
   const H = HP_HORM[k]; if (!H) return '';
   const tier = HP_TIER.find(T => T.h.includes(k));
-  return `<div class="tyf hpx"><span class="tyf-e">${emoRaw(H[0])}</span><h2>${H[1]}</h2><p class="tyf-s">${H[2]}</p><p class="tyf-p">${H[3]}</p>
+  return `<div class="tyf hpx"><span class="hpx-mol">${hpMol(k)}</span><h2>${H[1]}</h2><p class="tyf-s">${H[2]}</p><p class="tyf-p">${H[3]}</p>
     ${tier ? `<p class="hpx-t">Lives in <b>${tier.n}</b>, ${['the base', 'the middle', 'the top'][HP_TIER.indexOf(tier)]} of the pyramid.</p>` : ''}</div>`;
 }
 function balanceGuide(info, done) {
@@ -7122,6 +7138,8 @@ const PROT_BALL = {
   Prolactin: () => pbChain(pbRange(34, t => { const c = Math.min(3, Math.floor(t * 4)), u = t * 4 - c, x = -60 + c * 40 + Math.sin(u * Math.PI * 6) * 7, y = (c % 2 ? 1 : -1) * (-40 + u * 80); return [x, y]; }), 'a'),
   SHBG: () => `${pbChain(pbRange(15, t => { const a = Math.PI * (.62 + t * .76); return [-14 + Math.cos(a) * 46, Math.sin(a) * 40]; }), 'b')}${pbChain(pbRange(15, t => { const a = Math.PI * (-.38 + t * .76); return [14 + Math.cos(a) * 46, Math.sin(a) * 40]; }), 'b')}<circle r="12" fill="url(#pb-v)"/><circle r="12" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.5"/>`,
 };
+PROT_BALL.Oxytocin = () => { const R = pbRange(6, t => { const a = Math.PI * (.5 + t * 1.67); return [-22 + Math.cos(a) * 26, Math.sin(a) * 26]; }), T = pbRange(4, t => [R[5][0] + 12 + t * 66, R[5][1] - 6 + Math.sin(t * Math.PI) * -16]);
+  return `<line x1="${R[0][0].toFixed(1)}" y1="${R[0][1].toFixed(1)}" x2="${R[5][0].toFixed(1)}" y2="${R[5][1].toFixed(1)}" stroke="#e0b24a" stroke-width="3" stroke-dasharray="3 3" stroke-linecap="round"/>${pbChain(R, 'a', 7)}${pbChain(T, 'b', 6.4)}`; };
 const protBall = n => PROT_BALL[n] ? `<svg class="molb prot" viewBox="-100 -58 200 116" role="img">${pbDefs()}${PROT_BALL[n]()}</svg>` : '';
 // Little drawing for each study, picked from what the study is about.
 const STUDY_ART = [

@@ -16337,28 +16337,32 @@ html .tyf-e .emo { margin: 0; display: block; font-size: 36px; line-height: 1; }
 /* Nutrient › Which form (Round D): a herb shows its forms as emoji rows, the one the trials used marked */
 .nu-food .ffq b { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .nu-food .ffq-tr { font: 600 11px/1 var(--font); font-style: normal; letter-spacing: .01em; padding: 4px 8px; border-radius: 99px; background: #20301a; color: #fff; }
-/* Balance: the hormone pyramid (16 Nov 2026) */
+/* Balance: the hormone pyramid (16 Nov 2026, v2: rounded glass tiers, 3D molecules) */
 .hp { margin-top: 6px; }
-.hp-wrap { position: relative; margin: 18px -6px 0; padding: 0; }
+.hp .bgx2-head { margin-top: 4px; }
+.hp-wrap { position: relative; margin: 20px -4px 0; padding: 0; }
 .hp-svg { display: block; width: 100%; height: auto; overflow: visible; }
 .hp-t { cursor: pointer; outline: none; }
-.hp-t path { fill: rgba(255,250,251,.86); stroke: rgba(194,87,122,.55); stroke-width: 1.4; stroke-linejoin: round; transition: fill .35s, stroke-width .35s; }
-.hp-t:nth-child(1) path { fill: rgba(250,232,238,.9); } .hp-t:nth-child(2) path { fill: rgba(247,222,231,.92); } .hp-t:nth-child(3) path { fill: rgba(244,210,222,.94); }
-.hp-t.on path { stroke: #b04f6c; stroke-width: 2.6; fill: #fff; filter: drop-shadow(0 10px 16px rgba(176,79,108,.22)); }
-.hp-t:focus-visible path { stroke: #20301a; }
+.hp-t .hp-f { stroke: rgba(194,87,122,.32); stroke-width: 1.2; filter: drop-shadow(0 14px 18px rgba(150,70,100,.14)); transition: stroke .3s, stroke-width .3s; }
+.hp-t.t2 .hp-f { fill: url(#hpg2); } .hp-t.t1 .hp-f { fill: url(#hpg1); } .hp-t.t0 .hp-f { fill: url(#hpg0); }
+.hp-t .hp-sh { stroke: rgba(255,255,255,.95); stroke-width: 1.4; stroke-linecap: round; fill: none; }
+.hp-t.on .hp-f { stroke: #b04f6c; stroke-width: 2.2; filter: drop-shadow(0 16px 22px rgba(176,79,108,.26)); }
+.hp-t:focus-visible .hp-f { stroke: #20301a; }
 .hp-txt text { text-anchor: middle; font-family: var(--font); fill: #20301a; pointer-events: none; }
-.hp-n { font: 700 24px Caveat, 'Outfit', cursive; fill: #20301a; }
-.hp-s { font-size: 10.5px; font-weight: 500; fill: rgba(32,48,26,.6) !important; letter-spacing: .04em; }
+.hp-n { font: 700 25px Caveat, 'Outfit', cursive; fill: #20301a; }
+.hp-s { font-size: 10.5px; font-weight: 500; fill: rgba(32,48,26,.55) !important; letter-spacing: .06em; }
 .hp-base { font: 700 16px Caveat, 'Outfit', cursive; fill: #b04f6c !important; }
-.hp-arr { fill: none; stroke: #b04f6c; stroke-width: 1.6; stroke-dasharray: 5 6; stroke-linecap: round; opacity: .7; }
-.hp-inf { font: 700 18px Caveat, 'Outfit', cursive; fill: #b04f6c; text-anchor: middle; }
-.hp-note { position: absolute; right: 0; top: 4px; width: 27%; margin: 0; font: 700 15.5px/1.1 Caveat, 'Outfit', cursive; color: #b04f6c; text-align: right; rotate: 3deg; text-shadow: 0 0 10px rgba(255,248,244,.95); }
-.hp-b { position: absolute; translate: -50% -50%; display: grid; justify-items: center; gap: 2px; padding: 0; border: 0; background: none; cursor: pointer; animation: hpIn .6s cubic-bezier(.22,1,.36,1) both; -webkit-tap-highlight-color: transparent; }
-.hp-b > span { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; background: #fff; box-shadow: inset 0 0 0 1.5px rgba(176,79,108,.18), 0 6px 12px -6px rgba(120,40,70,.45); transition: transform .2s; }
-.hp-b:active > span { transform: scale(.92); }
-html .hp-b .emo { margin: 0; display: block; font-size: 24px; line-height: 1; }
-.hp-b small { font: 600 10px/1 var(--font); color: #20301a; white-space: nowrap; }
-@keyframes hpIn { from { opacity: 0; scale: .6; } }
+.hp-arr { fill: none; stroke: #b04f6c; stroke-width: 1.6; stroke-dasharray: 5 6; stroke-linecap: round; opacity: .6; }
+.hp-inf { font: 700 18px Caveat, 'Outfit', cursive; fill: #b04f6c; text-anchor: middle; opacity: .85; }
+.hp-note { position: absolute; right: 0; top: 2px; width: 25%; margin: 0; font: 700 15px/1.1 Caveat, 'Outfit', cursive; color: #b04f6c; text-align: right; rotate: 3deg; text-shadow: 0 0 10px rgba(255,248,244,.95); }
+.hp-m { position: absolute; display: grid; justify-items: center; gap: 3px; padding: 0; border: 0; background: none; cursor: pointer; animation: hpIn .7s cubic-bezier(.22,1,.36,1) both; animation-delay: calc(.1s + var(--i) * 60ms); -webkit-tap-highlight-color: transparent; }
+.hp-mo { display: flex; align-items: center; justify-content: center; width: 100%; height: 42px; filter: drop-shadow(0 5px 6px rgba(60,30,40,.22)); transition: transform .25s; }
+.hp-mo .molb { width: 100%; height: 100%; }
+.hp-m:active .hp-mo { transform: scale(.92); }
+.hp-m small { font: 600 9.5px/1 var(--font); color: #20301a; white-space: nowrap; }
+@keyframes hpIn { from { opacity: 0; transform: translateY(6px) scale(.8); } }
+.hpx-mol { display: flex; justify-content: center; margin: 6px auto 14px; width: 210px; height: 96px; padding: 10px; border-radius: 26px; background: #f4f6ec; }
+.hpx-mol .molb { width: 100%; height: 100%; }
 .hp-d { position: relative; margin: 16px 0 0; padding: 20px 16px 16px; border-radius: 30px; background: #fff; box-shadow: 0 18px 36px -24px rgba(60,40,30,.35); text-align: center; animation: hpUp .45s cubic-bezier(.22,1,.36,1) both; }
 @keyframes hpUp { from { opacity: 0; transform: translateY(10px); } }
 .hp-d > small { font: 600 10.5px/1 var(--font); letter-spacing: .14em; text-transform: uppercase; color: var(--tc); }
@@ -16368,11 +16372,11 @@ html .hp-b .emo { margin: 0; display: block; font-size: 24px; line-height: 1; }
 .hp-dh::after { content: ''; flex: 1; height: 1px; background: rgba(32,48,26,.1); }
 .hp-dh.off { color: #b04f6c; } .hp-dh.on { color: #6c823e; }
 .hp-grid, .hp-feel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.hp-c, .hp-f { display: grid; justify-items: center; align-content: start; gap: 6px; padding: 12px 4px 10px; border: 0; border-radius: 18px; background: #faf6f2; cursor: pointer; font: inherit; -webkit-tap-highlight-color: transparent; }
-.hp-c.off { background: #fdf0f3; } .hp-c.on { background: #f2f5e9; } .hp-f { background: #f4f6ec; cursor: default; }
-.hp-c > span, .hp-f > span { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: #fff; box-shadow: 0 4px 10px -6px rgba(32,48,26,.35); }
-html .hp-c .emo, html .hp-f .emo { margin: 0; display: block; font-size: 20px; line-height: 1; }
-.hp-c small, .hp-f small { font: 500 11.5px/1.2 var(--font); color: #20301a; text-wrap: balance; }
+.hp-c, .hp-f2 { display: grid; justify-items: center; align-content: start; gap: 6px; padding: 12px 4px 10px; border: 0; border-radius: 18px; background: #faf6f2; cursor: pointer; font: inherit; -webkit-tap-highlight-color: transparent; }
+.hp-c.off { background: #fdf0f3; } .hp-c.on { background: #f2f5e9; } .hp-f2 { background: #f4f6ec; cursor: default; }
+.hp-c > span, .hp-f2 > span { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: #fff; box-shadow: 0 4px 10px -6px rgba(32,48,26,.35); }
+html .hp-c .emo, html .hp-f2 .emo { margin: 0; display: block; font-size: 20px; line-height: 1; }
+.hp-c small, .hp-f2 small { font: 500 11.5px/1.2 var(--font); color: #20301a; text-wrap: balance; }
 .hp-c:active { transform: scale(.96); }
 .hp-go, .hp-rit { display: inline-flex; align-items: center; gap: 4px; margin-top: 16px; padding: 11px 18px; border: 0; border-radius: 99px; background: #20301a; color: #fff; font: 600 13px/1 var(--font); cursor: pointer; }
 .tyf-e.off { background: #fde9ef; } .tyf-e.on { background: #eef3e2; }
@@ -16393,3 +16397,6 @@ html .hp-pk .emo { margin: 0; display: block; font-size: 15px; line-height: 1; o
 .hs-steps li { counter-increment: hs; display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: start; font: 400 15px/1.45 var(--font); color: #20301a; }
 .hs-steps li::before { content: counter(hs); display: grid; place-items: center; width: 24px; height: 24px; margin-top: -1px; border-radius: 50%; background: #20301a; color: #fff; font: 600 11.5px/1 var(--font); }
 .ws-x { top: 20px; right: 22px; }
+/* 16 Nov 2026: nothing may touch the green frame. The scalloped top band ends 21% of the width below its start
+   (frame-top.webp, sbV + 26px), so each page's content starts just under the scallops. */
+.view:not(:has(> .rh3)) > .topbar { margin-bottom: calc(21cqw - 6px); }
