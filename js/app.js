@@ -4633,6 +4633,107 @@ const FB_WHEN = { tongue: [6.8, 'On waking'], sun: [7, 'Within an hour of waking
 const FB_LVL = [{ n: 'Foundations', c: '#6c823e', s: 'Light, steady blood sugar and calm. Your hormones build on these, so start here.' },
   { n: 'Clear & rebuild', c: '#b9862f', s: 'Help your body carry out used hormones and feed the new ones.' },
   { n: 'Extras', c: '#c2577a', s: 'Little helpers for cramps, sleep and puffy days. Use them when you need them.' }];
+// The hormone pyramid (16 Nov 2026, her reference): survival hormones at the base set the tone for the builders in the middle
+// and the sex and rhythm hormones at the top. Tap a tier for what knocks it off and what brings it back, tap a hormone for its role.
+const HP_HORM = {
+  cortisol: ['⚡', 'Cortisol', 'Your alarm', 'Wakes you in the morning and lifts you in danger. Stress, short nights and skipped meals keep it high, and then the body makes less progesterone and fewer sex hormones.'],
+  insulin: ['🍯', 'Insulin', 'The sugar keeper', 'Moves sugar from your blood into your cells. Sugar-heavy meals and constant snacking keep it high, which pushes the ovaries to make more testosterone: spots and irregular cycles.'],
+  oxytocin: ['🤍', 'Oxytocin', 'The bonding hormone', 'Released by hugs, touch, laughter, orgasm and breastfeeding. It softens cortisol and makes your body feel safe.'],
+  preg: ['🧬', 'Pregnenolone', 'The mother hormone', 'Made from cholesterol, it is the first step to progesterone, DHEA, estrogen, testosterone and cortisol. Enough fat and cholesterol in your food matter.'],
+  dhea: ['🔋', 'DHEA', 'Your reserve', 'Made by the adrenal glands and turned into estrogen and testosterone. Long stress, inflammation and age lower it.'],
+  estrogen: ['🌸', 'Estrogen', 'The bloom', 'Builds the womb lining, keeps skin plump, bones strong and mood bright. Peaks just before ovulation.'],
+  progesterone: ['🕊️', 'Progesterone', 'The calm', 'Calms, warms and helps you sleep. Made only after you ovulate, and low when stress is high.'],
+  testosterone: ['🔥', 'Testosterone', 'The drive', 'Desire, drive, muscle and confidence. A small peak around ovulation.'],
+  thyroid: ['🦋', 'Thyroid', 'The pace setter', 'Sets the speed of your metabolism, your temperature and your cycle. Needs iodine, selenium, iron and enough food.'],
+  melatonin: ['🌌', 'Melatonin', 'The night', 'Rises in the dark and falls with morning light. Sets your sleep and also shields the egg from stress.'],
+};
+const HP_ITEM = {
+  stress: ['😣', 'Stress', 'Constant stress keeps cortisol high and tells your body it is not a safe time to make sex hormones.'],
+  trauma: ['💔', 'Trauma', 'Old hurt that has not been processed keeps the nervous system on alert, so cortisol can stay raised for years.'],
+  sleep: ['🥱', 'Poor sleep', 'One short night raises cortisol the next day and makes you less sensitive to insulin.'],
+  swing: ['🎢', 'Blood sugar swings', 'Every crash after a sugar high sets off cortisol to lift your sugar again.'],
+  sugar: ['🍩', 'Sugar-heavy meals', 'Sweets and white carbs on their own spike insulin. Eat them after protein and fat, not alone.'],
+  under: ['🍽️', 'Under-eating', 'Too little food reads as famine: cortisol rises and ovulation quiets.'],
+  sit: ['🛋️', 'Sitting all day', 'Working muscles soak up sugar. Sitting leaves it in your blood. A 10 minute walk after meals helps.'],
+  dry: ['🏜️', 'Dehydration', 'Even mild dehydration raises cortisol. Water with a pinch of salt in the morning.'],
+  blue: ['📱', 'Blue light at night', 'Screens after dark hold back melatonin and push your inner clock later.'],
+  alone: ['🫥', 'Isolation', 'Loneliness raises cortisol. Connection makes oxytocin.'],
+  fast: ['⏳', 'Long fasting', 'Long fasts raise cortisol in women and can upset the cycle. Eat within an hour of waking.'],
+  talk: ['🗣️', 'Therapy or talking', 'Saying it out loud to someone safe lowers the alarm in your body.'],
+  journal: ['📓', 'Journaling', 'Ten minutes of writing at night empties the mind and helps you fall asleep.'],
+  breath: ['🌬️', 'Breathwork', 'Long, slow out-breaths switch on the calming nervous system within minutes.', 'breathe'],
+  bed: ['🛏️', 'Sleep hygiene', 'The same bedtime, a dark cool room and no screens in the last hour.', 'phone'],
+  sun: ['☀️', 'Morning sun', 'Daylight in your eyes after waking sets cortisol high in the morning and low at night, as it should be.', 'sun'],
+  coffee: ['☕', 'Food before coffee', 'Breakfast with protein first, then your coffee: steadier sugar and a calmer cortisol curve.'],
+  protein: ['🥚', 'About 100 g protein', 'Protein at every meal steadies blood sugar. Roughly 1.2 to 1.6 g per kg of body weight a day, from eggs, meat, fish and raw milk.'],
+  cold: ['🧊', 'Cool water', 'A 30 second cool rinse at the end of your shower lifts mood and energy. Skip it on your period and the 3 days before.'],
+  hug: ['🤗', 'Hugs and touch', 'A 20 second hug, a massage or a cuddle releases oxytocin and softens cortisol.'],
+  alcohol: ['🍷', 'Alcohol', 'Your liver clears alcohol before hormones, so estrogen builds up and sleep gets lighter.'],
+  processed: ['🍟', 'Processed food', 'Seed oils, additives and refined flour feed inflammation, which drains your hormone reserve.'],
+  infection: ['🦠', 'Lingering infections', 'A body fighting an infection for months puts survival before hormones.'],
+  vit: ['💊', 'Low vitamins', 'Vitamins A, B6, B12 and D are tools your glands need to make hormones.'],
+  min: ['🪨', 'Low minerals', 'Magnesium, zinc and selenium run out fast under stress, and hormones need them.'],
+  inflam: ['🌋', 'Inflammation', 'Ongoing inflammation lowers DHEA and makes cells deaf to hormones.'],
+  meds: ['🩺', 'Some long-term medicines', 'The pill and steroid tablets can lower DHEA and other builders. Never stop on your own, ask your doctor.'],
+  sauna: ['🧖‍♀️', 'Sauna', '15 to 20 minutes, 2 to 3 times a week, lowers inflammation and helps you sweat out waste. Skip it if you could be pregnant.'],
+  lymph: ['💆‍♀️', 'Lymphatic massage', 'Light strokes towards the heart move lymph and calm the nervous system.', 'brush'],
+  rebound: ['🤸‍♀️', 'Rebounding', 'Gentle bouncing on a mini trampoline, 5 to 10 minutes, pumps lymph and lifts your mood.'],
+  dense: ['🥩', 'Nutrient-dense food', 'Eggs, liver, wild fish, meat, raw milk and ripe fruit carry the vitamins and minerals your glands use.'],
+  calm: ['🫐', 'Anti-inflammatory food', 'Berries, olive oil, wild fish, ginger and turmeric cool inflammation.'],
+};
+const HP_TIER = [
+  { n: 'Survival', s: 'Cortisol · insulin · oxytocin', c: '#c2577a', h: ['cortisol', 'insulin', 'oxytocin'], lead: 'Your base. When it feels unsafe, rushed or hungry, everything above it pays.',
+    off: ['stress', 'trauma', 'sleep', 'swing', 'sugar', 'under', 'sit', 'dry', 'blue', 'alone', 'fast'], on: ['talk', 'journal', 'breath', 'bed', 'sun', 'coffee', 'protein', 'hug', 'cold'] },
+  { n: 'Builders', s: 'Pregnenolone · DHEA', c: '#b9862f', h: ['preg', 'dhea'], lead: 'The raw material your body turns into sex hormones. Drained by inflammation, filled by good food.',
+    off: ['alcohol', 'processed', 'infection', 'vit', 'min', 'inflam', 'meds'], on: ['sauna', 'lymph', 'rebound', 'cold', 'dense', 'calm'] },
+  { n: 'Sex & rhythm', s: 'Estrogen · progesterone · testosterone · thyroid · melatonin', c: '#6c823e', h: ['estrogen', 'progesterone', 'testosterone', 'thyroid', 'melatonin'], lead: 'The top is where you feel it. It follows the base, so start there.',
+    feel: [['💋', 'Libido'], ['✨', 'Energy'], ['🌀', 'Digestion'], ['💅', 'Skin, hair, nails'], ['🗓️', 'Cycle'], ['🌡️', 'Body temperature'], ['🍑', 'Body shape'], ['⚖️', 'Metabolism'], ['😴', 'Sleep and waking']] },
+];
+function hormonePyramid() {
+  const sel = ui.hpT ?? 0, T = HP_TIER[sel];
+  const hw = y => 40 + 130 * y / 640, X = (y, s) => (170 + s * hw(y)).toFixed(1);
+  const band = (k, y0, y1) => `<g class="hp-t ${k === sel ? 'on' : ''}" data-action="hpTier" data-v="${k}" role="button" tabindex="0" aria-pressed="${k === sel}" aria-label="${HP_TIER[k].n}">
+    <path d="M${X(y0, -1)} ${y0} H${X(y0, 1)} L${X(y1, 1)} ${y1} H${X(y1, -1)} Z"/></g>`;
+  // where each hormone sits, in viewBox units (340 x 470)
+  const POS = { estrogen: [138, 82], progesterone: [202, 82], testosterone: [118, 158], thyroid: [170, 158], melatonin: [222, 158],
+    preg: [138, 350], dhea: [202, 350], cortisol: [100, 540], insulin: [170, 540], oxytocin: [240, 540] };
+  const bub = Object.entries(POS).map(([k, [x, y]]) => { const H = HP_HORM[k];
+    return `<button class="hp-b" style="left:${((x + 4) / 348 * 100).toFixed(2)}%;top:${((y + 4) / 648 * 100).toFixed(2)}%" data-action="hpHorm" data-k="${k}"><span>${emoRaw(H[0])}</span><small>${H[1]}</small></button>`; }).join('');
+  const peek = (k, y) => `<span class="hp-pk" style="top:${((y + 4) / 648 * 100).toFixed(2)}%" aria-hidden="true"><small>knocked off by</small>${HP_TIER[k].off.slice(0, 5).map(i => emoRaw(HP_ITEM[i][0])).join('')}</span>`;
+  const lab = (k, y, sub) => `<text class="hp-n" x="170" y="${y}">${HP_TIER[k].n}</text>${sub ? `<text class="hp-s" x="170" y="${y + 15}">${sub}</text>` : ''}`;
+  const chip = (k, kind) => { const x = HP_ITEM[k]; return `<button class="hp-c ${kind}" data-action="hpItem" data-k="${k}" data-kind="${kind}"><span>${emoRaw(x[0])}</span><small>${x[1]}</small></button>`; };
+  const detail = T.feel ? `<h5 class="hp-dh">You feel it in</h5><div class="hp-feel">${T.feel.map(([e, n]) => `<span class="hp-f"><span>${emoRaw(e)}</span><small>${n}</small></span>`).join('')}</div>
+      <button class="hp-go" data-action="hpTier" data-v="0">Start at the base ${icon('chevR', 13)}</button>`
+    : `<h5 class="hp-dh off">Knocked off by</h5><div class="hp-grid">${T.off.map(k => chip(k, 'off')).join('')}</div>
+      <h5 class="hp-dh on">Brought back by</h5><div class="hp-grid">${T.on.map(k => chip(k, 'on')).join('')}</div>
+      ${sel === 0 ? `<button class="hp-go" data-action="hpTier" data-v="1">Then the builders ${icon('chevR', 13)}</button>` : `<button class="hp-go" data-action="hpTier" data-v="2">What you feel at the top ${icon('chevR', 13)}</button>`}`;
+  return `<section class="hp">
+    <div class="bgx2-head"><h1>Balance your <span>hormones</span></h1><p>Your hormones stack like a pyramid. The base sets the tone for everything above it. Tap a level.</p></div>
+    <div class="hp-wrap">
+      <svg class="hp-svg" viewBox="-4 -4 348 648" aria-label="The hormone pyramid">
+        ${band(2, 0, 240)}${band(1, 250, 430)}${band(0, 440, 640)}
+        <g class="hp-txt" aria-hidden="true">${lab(2, 226)}${lab(1, 282, 'the raw material')}${lab(0, 474, 'start here')}<text class="hp-base" x="170" y="629">Hormone balance starts here</text></g>
+        <path class="hp-arr" d="M16 420 L84 60" marker-end="url(#hpA)"/><defs><marker id="hpA" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1 L8 5 L1 9" fill="none" stroke="#b04f6c" stroke-width="1.6" stroke-linecap="round"/></marker></defs>
+        <text class="hp-inf" transform="translate(36 236) rotate(-79.3)">influence</text>
+      </svg>
+      <p class="hp-note" aria-hidden="true">you feel it in your skin, sleep, cycle and mood</p>
+      ${bub}${peek(1, 402)}${peek(0, 592)}
+    </div>
+    <div class="hp-d" style="--tc:${T.c}"><small>Level ${sel + 1} · ${['the base', 'the middle', 'the top'][sel]}</small><b>${T.n}</b><p>${T.lead}</p>${detail}</div>
+  </section>`;
+}
+function hpItemSheet(k, kind) {
+  const x = HP_ITEM[k]; if (!x) return '';
+  const ri = x[3] ? FB.findIndex(f => f.id === x[3]) : -1;
+  return `<div class="tyf hpx"><span class="tyf-e ${kind}">${emoRaw(x[0])}</span><h2>${x[1]}</h2><p class="tyf-s">${kind === 'on' ? 'Brings your hormones back' : 'Knocks your hormones off'}</p>
+    <p class="tyf-p">${x[2]}</p>${ri >= 0 ? `<button class="hp-rit" data-action="fbSheet" data-i="${ri}">Open the ritual ${icon('chevR', 13)}</button>` : ''}</div>`;
+}
+function hpHormSheet(k) {
+  const H = HP_HORM[k]; if (!H) return '';
+  const tier = HP_TIER.find(T => T.h.includes(k));
+  return `<div class="tyf hpx"><span class="tyf-e">${emoRaw(H[0])}</span><h2>${H[1]}</h2><p class="tyf-s">${H[2]}</p><p class="tyf-p">${H[3]}</p>
+    ${tier ? `<p class="hpx-t">Lives in <b>${tier.n}</b>, ${['the base', 'the middle', 'the top'][HP_TIER.indexOf(tier)]} of the pyramid.</p>` : ''}</div>`;
+}
 function balanceGuide(info, done) {
   const S = fbSteps(info), lv = Math.min(2, Math.max(0, ui.fbLvl ?? 0)), L = FB_LVL[lv], list = S[lv][2];
   const cnt = k => { const hb = S[k][2].filter(([x]) => x.hb); return [hb.filter(([x]) => done.includes(x.hb)).length, hb.length]; };
@@ -4652,8 +4753,9 @@ function balanceGuide(info, done) {
       <span class="bgd-t"><b>${x.t}</b><small>${(FB_WHEN[x.id] || [, ''])[1]} · ${x.s}</small></span>${x.hb ? '' : `<span class="bgd-go">${icon('chevR', 14)}</span>`}</button>
       ${x.hb ? `<button class="bgd-tick ${on ? 'on' : ''}" data-action="fbTick" data-id="${x.hb}" aria-pressed="${!!on}" aria-label="${on ? 'Done today' : 'Mark done today'}">${icon('check', 14, 2.6)}</button>` : ''}</li>`; }).join('');
   return `<section class="bgx2" style="--lc:${L.c}">
-    <div class="bgx2-head"><h1>Balance your <span>hormones</span></h1><p>Three levels. Start at the bottom, climb when it feels easy.</p></div>
-    <div class="bgx2-pyr">${pyr}</div>
+    ${sectionTitle('Your daily plan')}
+    <p class="bgx2-sub">Three steps. Start with the first, add the next when it feels easy.</p>
+    <div class="bgx2-pills" role="tablist">${FB_LVL.map((L2, k) => { const [d, n] = cnt(k); return `<button class="bgx2-pl ${k === lv ? 'on' : ''}" style="--c:${L2.c}" data-action="fbLvl" data-v="${k}" role="tab" aria-selected="${k === lv}"><b class="dotnum">${k + 1}</b><span>${L2.n}${n ? `<small>${d} of ${n} today</small>` : ''}</span></button>`; }).join('')}</div>
     <div class="bgd"><div class="bgd-top"><small>Level ${lv + 1}</small><b>${L.n}</b><p>${L.s}</p></div>
       <ol class="bgd-list">${rows}</ol>
       ${lv < 2 ? `<button class="bgd-next" data-action="fbLvl" data-v="${lv + 1}">Next: ${FB_LVL[lv + 1].n} ${icon('chevR', 13)}</button>` : ''}</div>
@@ -4685,6 +4787,7 @@ function viewReliefIndex() {
   const done = habitsDone(todayISO()), H = habitsBlock();
   return `${topbar('Balance', { back: true })}
   <div class="pad hg fb">
+    ${hormonePyramid()}
     ${balanceGuide(info, done)}
     ${seasonRituals(apoSeason())}
     ${H.fert.length ? `${sectionTitle('Fertility & feminine flow')}<div class="hg-list">${H.fert.map(H.row).join('')}</div>` : ''}
@@ -10808,11 +10911,14 @@ const actions = {
   hidePartner: () => { state.hidePartner = true; save(); render(); toast('Hidden. Turn it back on in Profile, Partner mode.'); },
   partnerToday: () => { state.hidePartner = !state.hidePartner; save(); render(); },
   fbLvl: d => { ui.fbLvl = +d.v; const b = document.querySelector('.bgx2'); if (!b) return render(); const info = M.info, t = document.createElement('div'); t.innerHTML = balanceGuide(info, habitsDone(todayISO())); b.replaceWith(t.firstElementChild); },
+  hpTier: d => { ui.hpT = +d.v; const s = document.querySelector('.hp'); if (!s) return render(); const y = window.scrollY; s.outerHTML = hormonePyramid(); window.scrollTo(0, y); },
+  hpHorm: d => wsOpen(hpHormSheet(d.k), 'ws-ty'),
+  hpItem: d => wsOpen(hpItemSheet(d.k, d.kind), 'ws-ty'),
   tyFound: d => wsOpen(tyFoundSheet(d.k), 'ws-ty'),
   fbSheet: d => wsOpen(`<div class="fbp-det fbs">${fbDetail(+d.i)}</div>`, 'ws-fb'),
   fbTick: (d, el) => { const k = todayISO(), H = state.habits = state.habits || {}; const a = H[k] = H[k] || []; a.includes(d.id) ? a.splice(a.indexOf(d.id), 1) : a.push(d.id); save();
     const on = a.includes(d.id); el.classList.toggle('on', on); el.setAttribute('aria-pressed', on); el.closest('.bgd-r').classList.toggle('ok', on);
-    document.querySelectorAll('.bgp-t').forEach(g => { const k2 = +g.dataset.v, S = fbSteps(M.info)[k2][2].filter(([x]) => x.hb), c = g.querySelector('.bgp-c'); if (c) c.textContent = `${S.filter(([x]) => a.includes(x.hb)).length} of ${S.length} today`; });
+    document.querySelectorAll('.bgx2-pl').forEach(g => { const k2 = +g.dataset.v, S = fbSteps(M.info)[k2][2].filter(([x]) => x.hb), c = g.querySelector('small'); if (c) c.textContent = `${S.filter(([x]) => a.includes(x.hb)).length} of ${S.length} today`; });
     if (on && navigator.vibrate) navigator.vibrate(8); },
   pillarSheet: d => { const i = +d.i; wsOpen(i >= 0 ? pillarHtml(HB_PILLARS[i]) : `<h2 class="pls-h">The seven pillars of balance</h2><p class="pls-sub">What protects a woman’s hormones. Tap one.</p><div class="pls-list">${HB_PILLARS.map((P, k) => `<button class="pls-r" data-action="pillarSheet" data-i="${k}"><span>${emoRaw(HB_PIL_EMO[P.t] || '🌿')}</span><b>${P.t}<small>${P.s}</small></b>${icon('chevR', 14)}</button>`).join('')}</div>`, 'ws-fb'); },
   fbPick: (d, el) => {
