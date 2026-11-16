@@ -2236,11 +2236,12 @@ export const NUTRIENTS = [
   { id: 'inositol', n: 'Myo-inositol', g: '🌾', for: 'PCOS, irregular cycles', ev: 'some', p: ['follicular', 'ovulatory', 'luteal', 'menstrual'],
     d: [['2 g', 'twice a day'], ['+ 200 µg', 'folate'], ['3 months', 'to see change']],
     why: 'Helps your cells hear insulin again. With PCOS that can lower testosterone and bring back ovulation.',
-    f: [['Citrus fruit', 'orange, grapefruit'], ['Beans', 'cooked'], ['Buckwheat', ''], ['Cantaloupe', '']],
+    f: [['Citrus fruit', 'fresh orange or grapefruit'], ['Beans', 'cooked'], ['Buckwheat', 'cooked'], ['Cantaloupe', 'fresh and ripe']],
+    note: 'Whole food gives about 1 g a day, and fresh fruit carries more than tinned or frozen (Clements and Darnell, 1980). The PCOS trials used 4 g, so food supports it but a capsule makes up the dose.',
     low: 'Irregular cycles, acne and hair growth from PCOS.', test: 'For PCOS: fasting insulin, testosterone, LH/FSH and an ultrasound.',
-    study: 'A review of trials in women with PCOS found myo-inositol improved insulin, hormone levels and ovulation, with very few side effects.',
-    cite: 'Unfer 2017 (meta-analysis)',
-    caution: 'Mild nausea or loose stools at higher doses.' },
+    study: 'A review of trials in women with PCOS found myo-inositol lowered fasting insulin and improved hormone levels, with very few side effects. Pooling the trials with ovulation as the goal, 362 women on inositol were 2.3 times as likely to ovulate as those on placebo, and periods came back far more often, though an effect on pregnancy has not been shown yet.',
+    cite: 'Unfer 2017 (meta-analysis) · Pundir 2018 (BJOG)',
+    caution: 'Mild nausea, wind or loose stools appeared only at about 12 g a day, three times the usual dose. If you take metformin or another blood-sugar medicine, ask your doctor first, since both lower insulin.' },
   { id: 'vitex', n: 'Chasteberry', g: '🫐', for: 'PMS, breast tenderness', ev: 'strong', p: ['follicular', 'ovulatory', 'luteal', 'menstrual'],
     d: [['20 mg', 'extract a day'], ['Morning', 'every day'], ['3 cycles', 'to judge it']],
     why: 'Vitex agnus-castus gently lowers prolactin and supports progesterone in the second half of the cycle.',
@@ -2685,6 +2686,7 @@ export const LOSS_PARTNER = [['Say it out loud', 'Say “I’m so sorry” and n
 // What each study measured, as a graphic on its card: [outcome, 'down' | 'up', what it was compared with].
 // Taken from the finding's own sentence and the trial's design; keyed by first author and year.
 export const STUDY_KEY = {
+  'Unfer 2017': ['Fasting insulin', 'down', 'vs placebo'],
   'Facchinetti 1991': ['PMS mood', 'down', 'vs placebo'], 'Proctor 2001': ['Period pain', 'down', 'vs placebo'],
   'Stoffel 2017': ['Iron absorbed', 'up', 'every other day'], 'Vaucher 2012': ['Tiredness', 'down', 'vs placebo'],
   'Harel 1996': ['Period pain', 'down', 'vs placebo'], 'Rahbar 2012': ['Period pain', 'down', 'like ibuprofen'],

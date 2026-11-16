@@ -5109,6 +5109,7 @@ const SAFE_STUDIED = {
   ashwagandha: [300, 600, 600, 'mg', 'for 8 to 12 weeks', 'Trials gave 250 to 600 mg of root extract a day for 8 to 12 weeks (Chandrasekhar, 2012; Salve, 2019). Longer use is barely studied, so take a break after 8 weeks. Some European countries restrict it, and it is not for pregnancy.'],
   ginger: [1000, 1000, 2000, 'mg', 'on period days', 'Period pain trials gave 750 to 2000 mg of ginger powder a day for the first 3 to 4 days of the period (Daily et al., 2015). Your 250 mg four times a day sits in the middle.'],
   creatine: [3, 5, 5, 'g', 'for years', 'Long studies in women and men used 3 to 5 g a day for months to years without harm to the kidneys or liver (Kreider et al., 2017). Big loading doses are not needed.'],
+  inositol: [4, 4, 12, 'g', 'in reviews', 'PCOS trials gave 2 g twice a day, usually with 200 µg folic acid, for 3 to 6 months. A safety review found only mild stomach upset, and only at 12 g a day (Carlomagno and Unfer, 2011).'],
   coq10: [100, 200, 1200, 'mg', 'in reviews', 'A safety review found up to 1200 mg a day well tolerated (Hathcock and Shao, 2006). Egg quality trials used 200 to 600 mg a day for about 3 months.'],
 };
 function suppSafe(id) {
@@ -5238,6 +5239,7 @@ const STUDY_NUM = {
   'Chocano-Bedoya 2011': { cap: 'PMS risk with the most riboflavin from food', b: [[35, 'Lower']] },
   'Gokhale 1996': { cap: 'Girls whose period pain was gone', b: [[87, 'Pain free']] },
   'Wyatt 1999': { c: ['2.3×', 'the odds of feeling better vs placebo'] },
+  'Pundir 2018': { c: ['2.3×', 'as likely to ovulate as on placebo'] },
   'Czeizel 1992': { c: ['0 vs 6', 'babies with a spine defect'] },
   'Reid 2003': { cap: 'Back to a healthy flora at 60 days', b: [[37, 'Probiotic'], [13, 'Placebo']] },
   'Harel 1996': { cap: 'Drop in period symptom score on fish oil', b: [[37, 'Lower']] },
@@ -6265,7 +6267,7 @@ function viewNutrient(id) {
     <section class="card glass tea-fit"><div class="tf-k">When it helps most</div>${phaseFit(x.p, ph)}</section>
     ${suppSafe(x.id)}
     ${sectionTitle('Food first')}
-    <section class="card glass nu-food">${nuFood(x)}${warmWindow(M.info) ? '<small class="tf-all">You\u2019re in your warm window: pick the cooked and warm ones until your period ends.</small>' : ''}</section>
+    <section class="card glass nu-food">${nuFood(x)}${x.note ? `<p class="ff-note">${x.note}</p>` : ''}${warmWindow(M.info) ? '<small class="tf-all">You\u2019re in your warm window: pick the cooked and warm ones until your period ends.</small>' : ''}</section>
     ${sectionTitle('Are you low?')}
     <section class="card glass nu-low"><div class="nl-i"><span>${icon('search', 18)}</span><div><small>Signs</small><p>${x.low}</p></div></div><div class="nl-i"><span>${icon('flask', 18)}</span><div><small>Test to ask for</small><p>${x.test}</p></div></div></section>
     ${sectionTitle('What studies found')}
