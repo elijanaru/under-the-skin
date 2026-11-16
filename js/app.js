@@ -1838,7 +1838,7 @@ function viewToday() {
       <span class="al2-t" ${x.to ? `data-action="nav" data-to="${x.to}" role="button"` : ''}><b>${esc(x.title)}</b><small>${esc(x.body)}</small></span>
       <button class="bn-x" data-action="dismissRem" data-id="${x.id}" aria-label="Dismiss">${icon('close', 14)}</button></div>`);
   upcomingPatterns(patterns()).forEach(x => { const rk = reliefKey(x.name); alerts.push(`<${rk ? `button data-action="nav" data-to="relief/${encodeURIComponent(rk)}"` : 'div'} class="al2-r ${QUICK_FIX[x.name] ? 'hfx' : ''}">
-      <span class="al2-e emo" aria-hidden="true">${LOG_EMOJI[x.name] || '🌿'}</span><span class="al2-t"><b>${x.name}</b><small>Your pattern · ${x.from === x.to ? `day ${x.from}` : `days ${x.from} to ${x.to}`}</small></span>${alWhen(x.inDays)}${QUICK_FIX[x.name] ? fixChips(QUICK_FIX[x.name]) : ''}</${rk ? 'button' : 'div'}>`); });
+      <span class="al2-e emo" aria-hidden="true">${LOG_EMOJI[x.name] || '🌿'}</span><span class="al2-t"><b>${x.name}</b><small>Your pattern · ${x.from === x.to ? `day ${x.from}` : `days ${x.from} to ${x.to}`}</small></span>${alWhen(x.inDays)}${QUICK_FIX[x.name] ? fixChips(QUICK_FIX[x.name], LOG_EMOJI[x.name]) : ''}</${rk ? 'button' : 'div'}>`); });
 
   // 7-day energy bars for the tile
   let bars = '';
@@ -2594,7 +2594,7 @@ function viewBrain(id) {
   </section>
   <div class="pad br br2b">
     ${body}
-    ${R && isToday && R.up.length ? `${sectionTitle('Get ahead of it')}${[...R.up].sort((a, b) => a.inDays - b.inDays).map(x => { const rk = reliefKey(x.name), tag = rk ? `button data-action="nav" data-to="relief/${encodeURIComponent(rk)}"` : 'section'; return `<${tag} class="br-up ${rk ? 'go' : ''}"><span class="hu-when ${x.inDays > 1 ? 'n' : ''}">${x.inDays === 0 ? 'Today' : x.inDays === 1 ? 'Tomorrow' : `<small>in</small><b class="dotnum">${x.inDays}</b><small>days</small>`}</span><div><b>${x.name}</b> usually on ${dayRange(x)}${QUICK_FIX[x.name] ? fixChips(QUICK_FIX[x.name]) : ''}</div>${rk ? icon('chevR', 15) : ''}</${rk ? 'button' : 'section'}>`; }).join('')}` : ''}
+    ${R && isToday && R.up.length ? `${sectionTitle('Get ahead of it')}${[...R.up].sort((a, b) => a.inDays - b.inDays).map(x => { const rk = reliefKey(x.name), tag = rk ? `button data-action="nav" data-to="relief/${encodeURIComponent(rk)}"` : 'section'; return `<${tag} class="br-up ${rk ? 'go' : ''}"><span class="hu-when ${x.inDays > 1 ? 'n' : ''}">${x.inDays === 0 ? 'Today' : x.inDays === 1 ? 'Tomorrow' : `<small>in</small><b class="dotnum">${x.inDays}</b><small>days</small>`}</span><div><b>${x.name}</b> usually on ${dayRange(x)}${QUICK_FIX[x.name] ? fixChips(QUICK_FIX[x.name], LOG_EMOJI[x.name]) : ''}</div>${rk ? icon('chevR', 15) : ''}</${rk ? 'button' : 'section'}>`; }).join('')}` : ''}
     ${n ? `<button class="btn btn-block br2-edit" data-action="logDay" data-date="${k}">${icon('check', 16)} Edit check-in</button>` : ''}
     <p class="fine center">General information, not medical advice or contraception.</p>
   </div>`;
@@ -4241,10 +4241,17 @@ const GRO_EMO = [[/potato/i, '🍠'], [/pumpkin|squash/i, '🎃'], [/spinach|col
   [/melon/i, '🍉'], [/fig|date|prune/i, '🫐'], [/ginger|turmeric/i, '🫚'], [/herb|mint|parsley|basil|cilantro|dill/i, '🌿'], [/seaweed|kelp|nori|gim|miyeok/i, '🌊'], [/millet|rice|buckwheat|quinoa|grain/i, '🌾'], [/honey|molasses/i, '🍯'], [/cinnamon|spice|clove/i, '✨'], [/kimchi|sauerkraut|ferment/i, '🫙']];
 const groEmoji = n => (GRO_EMO.find(([r]) => r.test(n)) || [0, '🌱'])[1];
 // grocery foods as the same cut-outs the In season page uses, or a drawn emoji, on one soft tinted bubble (no busy round stock photos)
-const GRO_FIX = [[/pumpkin seed/i, 'e:pumpkin-seeds'], [/raw milk/i, '🥛'], [/^lentil/i, '🫘'], [/shellfish|shrimp|prawn/i, '🦐'], [/raspberr/i, 'd:raspberry'], [/dark chocolate|cacao/i, '🍫'], [/cashew/i, '🌰'], [/lotus seed/i, '🪷'], [/tangerine|mandarin/i, '🍊'], [/green tea|herbal tea|matcha/i, '🍵']];
+const GRO_FIX = [[/pumpkin seed/i, 'e:pumpkin-seeds'], [/raw milk/i, '🥛'], [/kefir/i, '🫙'], [/yog/i, '🥣'], [/chickpea/i, '🧆'], [/mung/i, '🫛'], [/^lentil/i, '🫘'], [/herbal tea/i, '🫖'], [/shellfish|shrimp|prawn/i, '🦐'], [/raspberr/i, 'd:raspberry'], [/dark chocolate|cacao/i, '🍫'], [/cashew/i, '🌰'], [/lotus seed/i, '🪷'], [/tangerine|mandarin/i, '🍊'], [/green tea|herbal tea|matcha/i, '🍵']];
 // one food as a cut-out ({ cut }) or a drawn emoji ({ emo }), never a round stock photo; shared by Grocery and the relief pages
-const foodArt = n => { const fx = GRO_FIX.find(([r]) => r.test(n)); if (fx) return { emo: fx[1] }; const c = RLF_CUT.find(([r]) => r.test(n)), cut = (c && c[1].startsWith('images/') ? c[1] : '') || szCut(n); return cut ? { cut } : { emo: ingEmo(n) || groEmoji(n) }; };
-const groIc = (n, cls = '') => { const fx = GRO_FIX.find(([r]) => r.test(n)), cut = !fx && szCut(n); if (fx) return `<span class="gro-ic ${cls}" aria-hidden="true">${emoRaw(fx[1])}</span>`; return `<span class="gro-ic ${cls}" aria-hidden="true">${cut ? `<img src="${cut}" alt="" loading="lazy" decoding="async">` : emoRaw(ingEmo(n) || groEmoji(n))}</span>`; };
+// a list never shows the same picture twice: when a pick is taken, try its look-alike alternates (16 Nov 2026 rule)
+const EMO_ALT = { '🐟': ['🍣', '🦪'], '🥛': ['🥣', '🫙'], '🫘': ['🫛', '🧆', '🍲'], '🍵': ['🫖', '☕'], '🥩': ['🍖'], '🌰': ['🥜'], '🥬': ['🥗', '🌿'], '🍫': ['d:cacao'],
+  '🧂': ['🫙'], '🍳': ['🥚'], '🥚': ['🍳'], 'e:pumpkin-seeds': ['e:almonds', '🥬'], '🍌': ['🥔'], '♨️': ['🔥'], '🍲': ['🥘'], '🧴': ['🫒'], '🛏️': ['🌙'] };
+const pickUniq = (cands, used) => { if (!used) return cands[0]; const all = cands.flatMap(c => [c, ...(EMO_ALT[c] || [])]); const g = all.find(x => x && !used.has(x)) || nuPick([], used); used.add(g); return g; };
+// one food as a cut-out ({ cut }) or a drawn emoji ({ emo }), never a round stock photo; shared by Grocery and the relief pages
+const foodArt = (n, used) => { const fx = GRO_FIX.find(([r]) => r.test(n)), c = !fx && RLF_CUT.find(([r]) => r.test(n)), cut = !fx && ((c && c[1].startsWith('images/') ? c[1] : '') || szCut(n));
+  if (cut && !(used && used.has(cut))) { if (used) used.add(cut); return { cut }; }
+  return { emo: pickUniq([fx ? fx[1] : ingEmo(n) || groEmoji(n)], used) }; };
+const groIc = (n, cls = '', used) => { const A = foodArt(n, used); return `<span class="gro-ic ${cls}" aria-hidden="true">${A.cut ? `<img src="${A.cut}" alt="" loading="lazy" decoding="async">` : emoRaw(A.emo)}</span>`; };
 const groPic = (n, cls = '') => groIc(n, `gsw-i ${cls}`);
 // Food page: the grocery list as a little basket of this week's real foods, how many and how many are already in
 function groceryCard() {
@@ -4294,10 +4301,10 @@ function viewGrocery() {
     ${warm ? `<p class="gro-warm">${icon('sun', 14)} Your period falls in this week: cook the produce and stew the fruit on those days.</p>` : ''}
     ${sectionTitle('Your list')}
     <div class="tea-tabs gro-tabs">${groups.map(([a, l]) => { const d = l.filter(i => got[i.name.toLowerCase()]).length; return `<button class="${a === aisle ? 'on' : ''} ${d === l.length ? 'full' : ''}" data-action="groAisle" data-v="${esc(a)}">${a} <i>${d}/${l.length}</i></button>`; }).join('')}</div>
-    ${groups.filter(([a]) => a === aisle).map(([, list]) => `
+    ${groups.filter(([a]) => a === aisle).map(([, list]) => { const used = new Set(); return `
       <section class="card glass">${list.map(it => { const k = it.name.toLowerCase(); return `<button class="check-row gro ${got[k] ? 'on' : ''}" data-action="groToggle" data-k="${esc(k)}">
-        <span class="cb">${icon('check', 14, 2.2)}</span>${groIc(it.name, 'gro-img')}<span class="gro-n">${esc(it.name)}<small>${it.why}</small></span>
-        <span class="gro-ph">${it.phases.map(p => `<i style="background:${PH_HEX[p]}" title="${PHASES[p].name}"></i>`).join('')}</span></button>`; }).join('')}</section>`).join('')}
+        <span class="cb">${icon('check', 14, 2.2)}</span>${groIc(it.name, 'gro-img', used)}<span class="gro-n">${esc(it.name)}<small>${it.why}</small></span>
+        <span class="gro-ph">${it.phases.map(p => `<i style="background:${PH_HEX[p]}" title="${PHASES[p].name}"></i>`).join('')}</span></button>`; }).join('')}</section>`; }).join('')}
     <div class="gro-key">${phases.map(p => `<span><i style="background:${PH_HEX[p]}"></i>${PHASES[p].name}</span>`).join('')}<small>the phase each food supports</small></div>
     ${swaps.length ? (() => { const sw = swaps.filter(x => x.alt), sk = swaps.filter(x => !x.alt);
       return `${sectionTitle('Swapped for the season')}<section class="card glass gro-swap gsw">
@@ -5054,11 +5061,12 @@ const RELIEF_STUDY = {
 const RLF_CUT = [[/chocolate|cacao/i, 'images/sf/cacao.webp'], [/banana/i, 'images/sz/bananas.webp'], [/dates/i, 'images/sf/medjool.webp'], [/^apple/i, 'images/sz/apples.webp'], [/kiwi/i, foodPhoto('Kiwifruit', 220)],   [/cherr/i, 'images/fb/cherry.webp'], [/honey/i, 'images/sf/raw-honey.webp'], [/chia/i, 'images/sf/chia.webp'], [/flax/i, 'images/sf/flaxseed.webp'], [/leafy greens/i, 'images/sz/kale.webp'], [/^ginger$/i, 'images/sf/ginger.webp'], [/turmeric/i, 'images/sf/turmeric.webp']];
 function reliefFood(k, L, food) {
   const teas = L.tea ? (TEA_GUIDE.find(t => t.k === L.tea) || { teas: [] }).teas.map((t, i) => ({ n: t[1], pic: teaPhoto(t[1], 220, 220), to: `tea/${L.tea}-${i}` })) : [];
-  const nus = (L.nu || []).map(id => NUTRIENTS.find(x => x.id === id)).filter(Boolean).map(n => { const h = NU_HERO[n.id] || SUPP_HERO[n.id], A = h && !h[0].startsWith('tea:') ? foodArt(h[0]) : {};
-    return { n: n.n, pic: A.cut || (!A.emo && nuHero(n).photo ? nuHero(n).photo.replace('w=800', 'w=220').replace(/h=\d+/, 'h=220') : ''), cut: !!A.cut, emo: A.emo, ic: nuIc(n.id, 26), to: `nutrients/${n.id}`, s: n.d && n.d[0] ? n.d[0][0].replace(/\s*[–-]\s*/, ' to ') : '' }; });
+  const used = new Set();
   const tn = teas.map(t => t.n.toLowerCase());
-  const foods = food ? food.foods.filter(f => !tn.includes(f.toLowerCase().replace(/ tea$/, ''))).map(f => { const c = RLF_CUT.find(([r]) => r.test(f)), tp = /tea$/i.test(f) ? teaPhoto(f.replace(/ tea$/i, '').replace('Herbal', 'Tea').replace('Peppermint', 'Peppermint').replace(/^Green$/, 'Green tea'), 220, 220) : '';
-    if (tp) return { n: f, pic: tp }; if (/water/i.test(f)) return { n: f, ic: icon('drop', 24) }; const A = foodArt(f); return { n: f, pic: A.cut || '', cut: !!A.cut, emo: A.emo }; }) : [];
+  const foods = food ? food.foods.filter(f => !tn.includes(f.toLowerCase()) && !tn.includes(f.toLowerCase().replace(/ tea$/, ''))).map(f => { const c = RLF_CUT.find(([r]) => r.test(f)), tp = /tea$/i.test(f) ? teaPhoto(f.replace(/ tea$/i, '').replace('Herbal', 'Tea').replace('Peppermint', 'Peppermint').replace(/^Green$/, 'Green tea'), 220, 220) : '';
+    if (tp) return { n: f, pic: tp }; if (/water/i.test(f)) return { n: f, ic: icon('drop', 24) }; const A = foodArt(f, used); return { n: f, pic: A.cut || '', cut: !!A.cut, emo: A.emo }; }) : [];
+  const nus = (L.nu || []).map(id => NUTRIENTS.find(x => x.id === id)).filter(Boolean).map(n => { const h = NU_HERO[n.id] || SUPP_HERO[n.id], A = n.id === 'vitamin-d' ? { emo: pickUniq(['☀️'], used) } : h && !h[0].startsWith('tea:') ? foodArt(h[0], used) : {};
+    return { n: n.n, pic: A.cut || (!A.emo && nuHero(n).photo ? nuHero(n).photo.replace('w=800', 'w=220').replace(/h=\d+/, 'h=220') : ''), cut: !!A.cut, emo: A.emo, ic: nuIc(n.id, 26), to: `nutrients/${n.id}`, s: n.d && n.d[0] ? n.d[0][0].replace(/\s*[–-]\s*/, ' to ') : '' }; });
   if (!teas.length && !nus.length && !foods.length) return '';
   const tile = x => `<${x.to ? `button data-action="nav" data-to="${x.to}"` : 'span'} class="rlf-t">${x.pic ? `<img class="${x.cut ? 'cut' : ''}" src="${x.pic}" alt="" loading="lazy" decoding="async">` : `<i class="${x.emo ? 'rlf-e' : ''}">${x.emo ? emoRaw(x.emo) : x.ic || icon('leaf', 22)}</i>`}<b>${x.n}</b>${x.s ? `<small>${x.s}</small>` : ''}</${x.to ? 'button' : 'span'}>`;
   const group = (t, l) => l.length ? `<div class="sfc-gh"><b>${t}</b></div><div class="rlf-g">${l.map(tile).join('')}</div>` : '';
@@ -5179,7 +5187,7 @@ const FIX_EMO = [[/pumpkin seed|zinc foods/i, 'e:pumpkin-seeds'], [/salt/i, '�
   [/red meat|oyster|iron/i, '🥩'], [/salmon|sardine|omega/i, '🐟'], [/turmeric/i, 'e:turmeric'], [/daylight|sunlight/i, '☀️'], [/early night|bedroom|blanket|sheets/i, '🛏️'], [/screen/i, '📵'],
   [/walk/i, '🚶‍♀️'], [/stretch|movement|move it/i, '🧘‍♀️'], [/cleanse|clay mask/i, '🧼'], [/hands off/i, '✋'], [/bra\b/i, '🤍'], [/breath/i, '🌬️'], [/bath/i, '🛁'], [/music/i, '🎵'],
   [/congee|broth|warm meals|regular meals|root veg/i, '🍲'], [/avocado|eggs/i, '🥑'], [/cream|oil/i, '🧴'], [/mung|leafy greens/i, '🥬'], [/ferritin/i, '🩸'], [/task|list/i, '📝'], [/socks/i, '🧦'], [/call to someone|company/i, '💬']];
-const fixChips = t => `<span class="al2-fx">${String(t).replace(/\.$/, '').split(/,\s(?:and\s)?|\sand\s/).slice(0, 3).map(c => { const e = (FIX_EMO.find(([r]) => r.test(c)) || [])[1]; return `<i>${e ? emoRaw(e) : ''}${c.charAt(0).toUpperCase() + c.slice(1)}</i>`; }).join('')}</span>`;
+const fixChips = (t, seed) => { const used = new Set(seed ? [seed] : []); return `<span class="al2-fx">${String(t).replace(/\.$/, '').split(/,\s(?:and\s)?|\sand\s/).slice(0, 3).map(c => { const f = (FIX_EMO.find(([r]) => r.test(c)) || [])[1], e = f && pickUniq([f], used); return `<i>${e ? emoRaw(e) : ''}${c.charAt(0).toUpperCase() + c.slice(1)}</i>`; }).join('')}</span>`; };
 const QUICK_FIX0 = {
   Cramps: 'Heat on your belly, magnesium in the evening, warm ginger tea.',
   'Ovulation pain': 'Heat on the sore side and a slow walk.',
