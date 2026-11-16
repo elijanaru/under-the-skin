@@ -1738,10 +1738,10 @@ export const DIET_GUIDE = {
     ] },
   animal: { title: 'Your animal-based guide', lead: 'Meat, organs, eggs and raw dairy cover most nutrients well. Keep an eye on these so your hormones stay balanced.',
     items: [
-      { n: 'Vitamin C and fibre', g: '🍊', tag: 'watch', why: 'Meat has little of either. Fibre carries used estrogen out of your body, and vitamin C builds collagen.', do: 'Fruit every day (berries, citrus, kiwi) and some easy veg like cucumber, squash or sprouts.', foods: 'Berries, oranges, kiwi, squash, broccoli sprouts', ph: ['follicular', 'ovulatory'] },
-      { n: 'Magnesium', g: '🍫', tag: 'watch', why: 'Low in meat and dairy, and you need more of it before your period for cramps, sleep and cravings.', do: 'Raw cacao, pumpkin seeds, avocado and mineral water. Magnesium glycinate 200 to 300 mg in the evening if you need it.', foods: 'Raw cacao, pumpkin seeds, avocado, mineral water', ph: ['luteal', 'menstrual'] },
+      { n: 'Vitamin C and fibre', g: '🍊', tag: 'watch', why: 'Meat has little of either. Fibre carries used estrogen out of your body, and vitamin C builds collagen.', do: 'Fruit every day (berries, citrus, kiwi) and the gentle plants: sweet potato, squash, peeled cucumber or courgette.', foods: 'Berries, oranges, kiwi, sweet potato, squash', ph: ['follicular', 'ovulatory'] },
+      { n: 'Magnesium', g: '🥑', tag: 'watch', why: 'Low in meat and dairy, and you need more of it before your period for cramps, sleep and cravings.', do: 'Avocado, banana, mackerel and mineral water. Magnesium glycinate 200 to 300 mg in the evening if you need it.', foods: 'Avocado, banana, mackerel, mineral water', ph: ['luteal', 'menstrual'] },
       { n: 'Vitamin A from liver', g: '🫀', tag: 'watch', why: 'Liver is a superfood, but very rich in vitamin A, which builds up.', do: 'About 100 g of liver a week is plenty. Skip liver if you are pregnant or trying to conceive.', foods: 'Beef liver, liver pancakes', ph: ['menstrual'] },
-      { n: 'Folate', g: '🥬', tag: 'watch', why: 'For your cells, mood and any future pregnancy.', do: 'Liver once a week, eggs daily, plus avocado or some greens.', foods: 'Liver, eggs, avocado, asparagus', ph: ['follicular'] },
+      { n: 'Folate', g: '🥬', tag: 'watch', why: 'For your cells, mood and any future pregnancy.', do: 'Liver once a week, eggs daily, plus avocado and oranges.', foods: 'Liver, eggs, avocado, oranges', ph: ['follicular'] },
       { n: 'Salt and water', g: '💧', tag: 'watch', why: 'Low-carb days pull water and salt out of your body, which can bring headaches and tiredness.', do: 'Salt your food to taste and drink mineral water, more in your hot, active weeks.', foods: 'Sea salt, mineral water, coconut water', ph: ['ovulatory'] },
       { n: 'Raw milk safety', g: '🥛', tag: 'watch', why: 'Raw milk is only as safe as the farm it comes from.', do: 'Buy from a tested, trusted farm and keep it cold. Choose pasteurised milk if you are pregnant.', foods: 'Raw milk, kefir, raw cheese', ph: [] },
     ],
@@ -1784,15 +1784,15 @@ export const DIET_CYCLE = {
     },
     notes: [['Planning a pregnancy?', '🌷', 'Keep to small fish and salmon, skip swordfish, shark and marlin, and start a prenatal with folate three months before.']],
     swaps: [['🥩', 'Red meat iron', 'Mussels or clams'], ['🫀', 'Liver', 'Oysters'], ['🐟', 'Big tuna', 'Sardines and salmon'], ['🍲', 'Bone broth', 'Fish bone broth']] },
-  animal: { name: 'Primal', sub: 'Meat, eggs, raw dairy and fruit.', iron: 'heme',
+  animal: { name: 'Primal', sub: 'Meat, eggs, raw dairy, fruit and sweet potato.', iron: 'heme',
     lead: 'Animal foods bring the <mark>easiest iron</mark>, B12 and protein. Add <mark>fruit and magnesium</mark> and your hormones stay balanced.',
     phases: {
       menstrual: ['Iron', '🥩', 'Red meat and liver, warm and slow-cooked', 'Meat iron is the easiest to absorb. Refill what your period takes.', [['🍲', 'Bone broth'], ['🥩', 'Slow-cooked beef'], ['🫀', 'Liver, 100 g a week']], 'warm'],
       follicular: ['Protein & fresh fruit', '🥚', 'Eggs, raw dairy and berries', 'Rising estrogen is ripening your egg. Protein builds it, fruit brings vitamin C.', [['🥚', 'Pasture eggs'], ['🥛', 'Raw milk or kefir'], ['🍓', 'Berries']], 'raw'],
-      ovulatory: ['Vitamin C & fibre', '🍊', 'Fruit every day and a little raw veg', 'Estrogen peaks now. Fibre from fruit carries the used hormones out.', [['🍊', 'Citrus'], ['🥝', 'Kiwi'], ['🐟', 'Wild salmon']], 'raw'],
-      luteal: ['Magnesium & a few more carbs', '🍯', 'Cacao, avocado, honey and sweet potato', 'Magnesium and a few more carbs calm cravings and help you sleep.', [['🍫', 'Raw cacao'], ['🥑', 'Avocado'], ['🍯', 'Raw honey']], 'late'],
+      ovulatory: ['Vitamin C & fibre', '🍊', 'Fruit every day, sweet potato and squash', 'Estrogen peaks now. Fibre from fruit carries the used hormones out.', [['🍊', 'Citrus'], ['🥝', 'Kiwi'], ['🐟', 'Wild salmon']], 'raw'],
+      luteal: ['Magnesium & a few more carbs', '🍠', 'Sweet potato, avocado and honey', 'Magnesium and a few more carbs calm cravings and help you sleep.', [['🍠', 'Sweet potato'], ['🥑', 'Avocado'], ['🍯', 'Raw honey']], 'late'],
     },
-    notes: [['Liver and pregnancy', '🫀', 'About 100 g of liver a week is plenty. Skip it when pregnant or trying to conceive: it holds a lot of vitamin A.'], ['Raw milk', '🥛', 'Only from a tested farm you trust, kept cold. Choose pasteurised milk when you are pregnant.'], ['Fruit every day', '🍓', 'Meat has no fibre, and fibre is what carries used estrogen out of your body.']],
+    notes: [['Gentle plants only', '🍠', 'No grains, beans, seeds, nuts or most vegetables. Sweet potato, squash, peeled cucumber and courgette, avocado and olives are gentle: low in oxalates and plant defence chemicals.'], ['Liver and pregnancy', '🫀', 'About 100 g of liver a week is plenty. Skip it when pregnant or trying to conceive: it holds a lot of vitamin A.'], ['Raw milk', '🥛', 'Only from a tested farm you trust, kept cold. Choose pasteurised milk when you are pregnant.'], ['Fruit every day', '🍓', 'Meat has no fibre, and fibre is what carries used estrogen out of your body.']],
     swaps: [['🍞', 'Bread', 'Sweet potato or ripe fruit'], ['🍬', 'Sugar', 'A little raw honey'], ['🌻', 'Seed oils', 'Butter, ghee or tallow'], ['🥤', 'Energy drinks', 'Mineral water with a pinch of salt']] },
 };
 
@@ -2644,7 +2644,7 @@ export const TIP_DO = {
     luteal: ['Protect your sleep', 'Same bedtime every night this week', 'One calm thing before bed: bath, book or breath', 'Tonight'],
   },
   pms: {
-    menstrual: ['Heat and magnesium for cramps', 'Hot water bottle on your belly for 20 min', 'A square of dark chocolate or a handful of pumpkin seeds', 'Now'],
+    menstrual: ['Heat and magnesium for cramps', 'Hot water bottle on your belly for 20 min', 'A square of dark chocolate, pumpkin seeds or a ripe banana', 'Now'],
     follicular: ['Build your buffer', 'Protein at every meal this week', 'Red meat or eggs twice this week for iron', 'This week'],
     ovulatory: ['Water and fibre', 'A glass of water with each meal', 'Add berries or a spoon of seeds to one meal', 'Today'],
     luteal: ['Calm evening plate', 'Salmon or eggs plus a banana at dinner', 'A handful of seeds as your night snack', 'Tonight'],
