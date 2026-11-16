@@ -3311,7 +3311,7 @@ function plateSection(current, lite) {
     <div class="pl-wheel ${ui.plAnim ? 'pl-anim' : ''}">${plateWheel(phase, season, sel, warm)}</div>
     <div class="pl-det" data-k="${sel}">
       <div class="pld-h"><b>${P.n}</b><span class="pld-p">${PLATE_SHARE[phase][sel]}%</span></div>
-      <p>${plateWhy(sel, phase, live)}${live ? ` <em>In season in ${country} now.</em>` : ''}</p>
+      <p>${plateWhy(sel, phase, live)}${live ? ` <em>In season in ${theCountry(country)} now.</em>` : ''}</p>
       <div class="pld-foods">${foods.map(x => `<div><span class="pld-emo">${emoHtml(x.n)}</span><small>${x.n}</small></div>`).join('')}</div>
     </div>
     ${lite ? '' : plRules([
@@ -5667,6 +5667,8 @@ const SUPP_FOR = { 'vitamin-c': 'Iron uptake, collagen', ginger: 'Period pain, n
 const NU_ART = { 'vitamin-d': '☀️', b6: '🍌' };
 const nuArt = (h, used, id) => { if (NU_ART[id] && !(used && used.has(NU_ART[id]))) { if (used) used.add(NU_ART[id]); return emoRaw(NU_ART[id]); } if (!h) return ''; const A = foodArt(h[0].replace(/^tea:/, ''), used); return A.cut ? `<img src="${A.cut}" alt="" loading="lazy" decoding="async">` : emoRaw(A.emo); };
 const NU_PN = { menstrual: 'Period', follicular: 'Follicular', ovulatory: 'Ovulation', luteal: 'Luteal' };
+// country names that take "the" in a sentence: in the United States, in the Netherlands
+const theCountry = n => (/^(United |Netherlands|Philippines|Maldives|Bahamas|Gambia|Dominican Republic|Czech Republic|Central African|Solomon Islands|Marshall Islands|Comoros|Seychelles)/.test(n) ? `the ${n}` : n);
 function viewSupps() {
   const now = M.info && M.info.phase, tab = ui.supTab || (now ? 'now' : 'all');
   const L = SUPP_LIB.filter(x => ttc() || !/prenatal|coq10/.test(x.id)), on = L.filter(x => now && suppPhases(x).includes(now));
