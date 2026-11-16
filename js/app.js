@@ -5421,6 +5421,7 @@ const SAFE_UL = {
 };
 // No official limit for these: her dose against the highest daily dose that trials used safely.
 // [low, high, highest studied, unit, how long it was studied, what the studies were]
+  'b-complex': [0, 12, 12, 'mg', 'EU', 'Counts the B6 in your capsule plus any B6 from food or a separate pill. Many B-complex capsules carry 25 to 50 mg of B6, two to four times this limit, which Europe lowered to 12 mg in 2023 after reports of tingling nerves (EFSA, 2023).', 'B6'],
 const SAFE_STUDIED = {
   ashwagandha: [300, 600, 600, 'mg', 'for 8 to 12 weeks', 'Trials gave 250 to 600 mg of root extract a day for 8 to 12 weeks (Chandrasekhar, 2012; Salve, 2019). Longer use is barely studied, so take a break after 8 weeks. Some European countries restrict it, and it is not for pregnancy.'],
   ginger: [1000, 1000, 2000, 'mg', 'on period days', 'Period pain trials gave 750 to 2000 mg of ginger powder a day for the first 3 to 4 days of the period (Daily et al., 2015). Your 250 mg four times a day sits in the middle.'],
@@ -5433,10 +5434,10 @@ function suppSafe(id) {
   const S = SAFE_UL[id], T = !S && SAFE_STUDIED[id]; if (!S && !T) return '';
   const [lo, hi, ul, u] = S || T, top = Math.max(ul * 1.3, hi * 1.1), pc = v => (v / top * 100).toFixed(1);
   const dose = lo === 0 ? `≤${hi}` : lo === hi ? `${hi}` : `${lo}–${hi}`, at = hi >= ul;
-  const line = S ? `${at ? 'Your dose stays at or under' : 'Your dose stays well under'} the ${S[4] === 'EU' ? 'EU' : 'US'} safe limit of <b>${ul} ${u}</b> a day.`
+  const line = S ? `${at ? 'Your dose stays at or under' : 'Your dose stays well under'} the ${S[4] === 'EU' ? 'EU' : 'US'} safe limit of <b>${ul} ${u}</b> a day${S[6] ? ` of ${S[6]}` : ''}.`
     : `There is no official limit. ${at ? 'Your dose matches' : 'Your dose stays under'} the most that trials used safely, <b>${ul} ${u}</b> a day ${T[4]}.`;
   return `<section class="card glass sf ${T ? 'sf-st' : ''}"><div class="sf-h"><div class="tf-k">How much is safe</div>
-      <span class="sf-n"><b class="dotnum">${dose}</b><small>${u} a day</small></span>
+      <span class="sf-n"><b class="dotnum">${dose}</b><small>${u} a day${S && S[6] ? ` of ${S[6]}` : ''}</small></span>
       <p>${line}</p></div>
     <div class="sf-bar" role="img" aria-label="Your dose ${dose} ${u}, ${S ? 'safe limit' : 'highest studied dose'} ${ul} ${u}">
       <i class="sf-ok" style="width:${pc(ul)}%"></i><i class="sf-over" style="left:${pc(ul)}%"></i>
