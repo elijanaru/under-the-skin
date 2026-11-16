@@ -16022,3 +16022,9 @@ html .view .section-title .link { white-space: nowrap; }
 /* Today › Explore (Round C): the name stays readable on bright photos (Balance hormones sat on a pink glow) */
 html .xb::before { background: linear-gradient(to bottom, transparent 32%, rgba(20,24,18,.66)); }
 html .xb-t { font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,.45), 0 2px 12px rgba(0,0,0,.5); }
+
+/* Stress › Calm now (Round E): Breathe with me uses a real photo row like Ground yourself (no pink glow ball);
+   the Fastest calm label reads like the Why today label beside it, not spaced capitals */
+html .st3-ft small { font-size: 13px; letter-spacing: 0; text-transform: none; color: rgba(48,64,35,.8); }
+/* Numbered steps (Round E): the gold gradient balls on the Stretch, Meditate and Ground step lists become the same solid ink circle with a Doto number as every other numbered list */
+html .gr-steps i { background: #20301a; color: #fff; font: 800 13px/1 var(--dot); box-shadow: none; }

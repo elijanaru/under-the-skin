@@ -395,7 +395,7 @@ function viewTopic(k) {
   let body = '';
   if (steps) body = `<section class="card tp-card"><p class="tp-lead">${steps[1]}</p><ol class="gr-steps">${steps[2].map((t, i) => `<li><i>${i + 1}</i><span><b>${t}</b></span></li>`).join('')}</ol>
       <div class="tp-f"><span class="dos-w">${icon('clock', 12)} Today</span>${saveBtn(regTip(`${k}-${w}`, head[0], [steps[0], steps[2][0], steps[2][1] || '', 'Today'], `do/${k}`))}</div></section>
-    <button class="bz-cta" data-action="nav" data-to="breathe"><i class="bz-mini"></i><span><b>Breathe with me</b><small>A guided breath for your phase</small></span>${icon('chevR', 16)}</button>`;
+    <button class="gr-cta" data-action="nav" data-to="breathe"><img src="images/tile-meditate.webp" alt="" loading="lazy"><span><b>Breathe with me</b><small>A guided breath for your phase</small></span>${icon('chevR', 16)}</button>`;
   else if (k === 'friends') { const F = FRIENDS[ph];
     body = `<section class="card tp-card"><div class="tp-k">${icon('heart', 14)} Ideas for today</div>
       <div class="tp-ideas">${F.ideas.map((t, i) => `<span><i>${i + 1}</i>${t}</span>`).join('')}</div>
@@ -7519,7 +7519,7 @@ function viewStress() {
     ? routineCard('meditate', 'Meditate today', md)
     : tab === 'stretch'
       ? routineCard('stretch', 'Stretch today', st)
-      : `<button class="bz-cta" data-action="nav" data-to="breathe"><i class="bz-mini"></i><span><b>Breathe with me</b><small>${((info && BREATHS[BREATH_FOR[info.phase]]) || BREATHS.sigh).name}${info ? " · for your phase" : ""}</small></span>${icon('chevR', 16)}</button>${groundCta()}
+      : `<button class="gr-cta" data-action="nav" data-to="breathe"><img src="images/tile-meditate.webp" alt="" loading="lazy"><span><b>Breathe with me</b><small>${((info && BREATHS[BREATH_FOR[info.phase]]) || BREATHS.sigh).name}${info ? " · for your phase" : ""}</small></span>${icon('chevR', 16)}</button>${groundCta()}
         <section class="st2-why"><span class="st2-wi" aria-hidden="true">🌿</span><span><span class="eyebrow">Why today</span><p>${sp[0]}</p></span></section>
         <button class="st3-fast" data-action="nav" data-to="breathe"><span class="st3-orb" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="trk" cx="50" cy="50" r="40"/><circle class="arc-in" cx="50" cy="50" r="40" pathLength="100" stroke-dasharray="39 61" transform="rotate(-90 50 50)"/><circle class="arc-out" cx="50" cy="50" r="40" pathLength="100" stroke-dasharray="59 41" stroke-dashoffset="-40" transform="rotate(-90 50 50)"/><g class="dot"><circle cx="50" cy="10" r="6.5"/></g></svg><i></i><b class="in">In</b><b class="out">Out</b></span>
           <span class="st3-ft"><small>Fastest calm</small><b>Breathe out longer than in</b>
