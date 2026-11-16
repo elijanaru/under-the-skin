@@ -5059,7 +5059,13 @@ function patterns() {
 }
 // One-line fix shown under every heads-up, so a warning always comes with what to do.
 // A quick fix as up to three small complete chips (no sentence cut off with an ellipsis).
-const fixChips = t => `<span class="al2-fx">${String(t).replace(/\.$/, '').split(/,\s(?:and\s)?|\sand\s/).slice(0, 3).map(c => `<i>${c.charAt(0).toUpperCase() + c.slice(1)}</i>`).join('')}</span>`;
+// each quick fix gets a small picture so the chips read at a glance (first match wins; no match stays text only)
+const FIX_EMO = [[/pumpkin seed|zinc foods/i, 'e:pumpkin-seeds'], [/salt/i, '🧂'], [/banana|potato/i, '🍌'], [/tea\b|chamomile/i, '🍵'], [/glass of water|warm water|cool water/i, '💧'],
+  [/chocolate/i, '🍫'], [/honey/i, '🍯'], [/fibre/i, '🥦'], [/protein|eat on time|eat something/i, '🍳'], [/heat|compress|foot soak/i, '♨️'], [/magnesium/i, 'e:pumpkin-seeds'],
+  [/red meat|oyster|iron/i, '🥩'], [/salmon|sardine|omega/i, '🐟'], [/turmeric/i, 'e:turmeric'], [/daylight|sunlight/i, '☀️'], [/early night|bedroom|blanket|sheets/i, '🛏️'], [/screen/i, '📵'],
+  [/walk/i, '🚶‍♀️'], [/stretch|movement|move it/i, '🧘‍♀️'], [/cleanse|clay mask/i, '🧼'], [/hands off/i, '✋'], [/bra\b/i, '🤍'], [/breath/i, '🌬️'], [/bath/i, '🛁'], [/music/i, '🎵'],
+  [/congee|broth|warm meals|regular meals|root veg/i, '🍲'], [/avocado|eggs/i, '🥑'], [/cream|oil/i, '🧴'], [/mung|leafy greens/i, '🥬'], [/ferritin/i, '🩸'], [/task|list/i, '📝'], [/socks/i, '🧦'], [/call to someone|company/i, '💬']];
+const fixChips = t => `<span class="al2-fx">${String(t).replace(/\.$/, '').split(/,\s(?:and\s)?|\sand\s/).slice(0, 3).map(c => { const e = (FIX_EMO.find(([r]) => r.test(c)) || [])[1]; return `<i>${e ? emoRaw(e) : ''}${c.charAt(0).toUpperCase() + c.slice(1)}</i>`; }).join('')}</span>`;
 const QUICK_FIX0 = {
   Cramps: 'Heat on your belly, magnesium in the evening, warm ginger tea.',
   'Ovulation pain': 'Heat on the sore side and a slow walk.',
