@@ -16388,3 +16388,8 @@ html .hp-c .emo, html .hp-f .emo { margin: 0; display: block; font-size: 20px; l
 .hp-pk { position: absolute; left: 50%; translate: -50% -50%; display: flex; align-items: center; gap: 5px; pointer-events: none; white-space: nowrap; }
 .hp-pk small { margin-right: 2px; font: 700 14px/1 Caveat, 'Outfit', cursive; color: rgba(176,79,108,.85); }
 html .hp-pk .emo { margin: 0; display: block; font-size: 15px; line-height: 1; opacity: .85; }
+/* habit sheets: the how as numbered steps (16 Nov 2026) */
+.hs-steps { margin: 2px 0 0; padding: 0; list-style: none; counter-reset: hs; display: grid; gap: 10px; }
+.hs-steps li { counter-increment: hs; display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: start; font: 400 15px/1.45 var(--font); color: #20301a; }
+.hs-steps li::before { content: counter(hs); display: grid; place-items: center; width: 24px; height: 24px; margin-top: -1px; border-radius: 50%; background: #20301a; color: #fff; font: 600 11.5px/1 var(--font); }
+.ws-x { top: 18px; right: 20px; }
