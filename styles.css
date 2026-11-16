@@ -16636,3 +16636,28 @@ html .sgx-when h3 { margin: 0 0 8px; font: 500 15px/1.2 var(--font); color: #203
 .lv-paper p { margin-top: 12px; font: 400 19px/32px 'Cedarville Cursive', Caveat, cursive; color: #2f3f86; text-indent: 1.6em; }
 .lv-paper em { margin-top: 14px; font: 400 21px/1.3 'Cedarville Cursive', Caveat, cursive; color: #2f3f86; }
 .lv-airmail .lv-stamp img { object-position: 74% 50%; }
+
+/* Tea page, her round 16 Nov 2026: what the tea does sits around the cup as tick pills, each with a hairline and a dot on the cup */
+.tpx-stage { display: block; position: relative; height: 440px; min-height: 0; padding: 0; margin: 4px 0 6px; }
+.tpx-stage::before { top: 226px; }
+.tpx-stage .tpx-cup { position: absolute; left: 50%; top: 226px; width: 176px; height: 176px; margin: -88px 0 0 -88px; z-index: 2; }
+.tpx-lines { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; overflow: visible; pointer-events: none; }
+.tpx-lines path { fill: none; stroke: rgba(108,130,62,.55); stroke-width: 1.2; vector-effect: non-scaling-stroke; stroke-dasharray: 1; stroke-dashoffset: 1;
+  animation: tpxDraw .9s cubic-bezier(.5,0,.2,1) forwards; animation-delay: calc(.35s + var(--i) * .12s); }
+@keyframes tpxDraw { to { stroke-dashoffset: 0; } }
+.tpx-dot { position: absolute; z-index: 3; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%; background: #6c823e; box-shadow: 0 0 0 3px rgba(255,255,255,.85);
+  opacity: 0; animation: tpxIn .4s ease forwards; animation-delay: calc(1.05s + var(--i) * .12s); }
+.tpx-p { position: absolute; z-index: 4; left: var(--x); top: var(--y); translate: -50% -50%; display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 12px 7px 7px; border-radius: 999px; background: rgba(255,255,255,.94); color: #20301a; font: 500 13px/1.15 Outfit, sans-serif;
+  box-shadow: 0 8px 18px -12px rgba(60,30,40,.55); opacity: 0; animation: tpxIn .5s ease forwards; animation-delay: calc(.2s + var(--i) * .12s); }
+.tpx-p.w { max-width: 47%; white-space: nowrap; }
+.tpx-p.n { width: 27%; min-width: 92px; border-radius: 18px; padding: 7px 9px 7px 6px; font-size: 12.5px; }
+.tpx-p .o3-x { flex: none; width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50% 44% 52% 46%; background: #edf3e2 !important; }
+.tpx-p .o3-x svg { width: 14px; height: 14px; fill: none; stroke: #6c823e; stroke-width: 2.6; stroke-linecap: round; }
+@keyframes tpxIn { to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .tpx-lines path { animation: none; stroke-dashoffset: 0; } .tpx-dot, .tpx-p { animation: none; opacity: 1; } }
+/* Bisous, redrawn 16 Nov 2026 (the stacked caps and huge script were unreadable): blush envelope, a lipstick kiss, one clear script word */
+.lv-bisous .lv-env { --paper: #fbe8ee; --flap: #fdf0f4; }
+.lv-kiss { position: absolute; z-index: 3; right: 9%; top: 22%; width: 30%; transform: rotate(-14deg); mix-blend-mode: multiply; }
+.lv-bisous .lv-type.t3 { left: 8%; right: auto; top: 11%; color: #8a4a5c; }
+.lv-w.bis { left: 8%; bottom: 13%; font-size: 68px; color: #8c1f3e; transform: rotate(-4deg); }

@@ -4468,6 +4468,8 @@ function lvDoily(r = 46) {
   return `<g fill="#fbfaf6" stroke="rgba(120,110,95,.25)" stroke-width=".6">${sc}<circle r="${r}"/></g>${holes}<circle r="${(r * .66).toFixed(1)}" fill="none" stroke="rgba(120,110,95,.2)" stroke-dasharray="1.5 2"/>`;
 }
 const LV_SEAL = '<path d="M30 4c6 1 9-2 14 2s3 8 7 12 1 9 3 14-4 8-6 12-7 4-12 7-9 0-14 0-9-4-12-8-6-6-6-11 1-9 2-13 4-8 8-10 10-4 16-5z" fill="#8c1f2e"/><circle cx="30" cy="30" r="17" fill="none" stroke="#6d1220" stroke-width="2.4" opacity=".7"/><path d="M30 39s-10-6-10-12a5.5 5.5 0 0 1 10-3 5.5 5.5 0 0 1 10 3c0 6-10 12-10 12z" fill="#6d1220"/><path d="M24 22c3-4 9-5 13-2" stroke="#c45464" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".7"/>';
+// a lipstick kiss print for the Bisous envelope: two soft lips with the little creases a real kiss leaves
+const LV_KISS = '<g fill="#c4385e"><path d="M8 34c10-12 22-22 36-20 6 1 11 5 16 9 5-4 10-8 16-9 14-2 26 8 36 20-14 2-30 3-52 3S22 36 8 34z" opacity=".92"/><path d="M8 37c18 2 34 3 52 3s34-1 52-3c-10 14-28 24-52 24S18 51 8 37z" opacity=".88"/></g><g fill="none" stroke="#fbe9ee" stroke-width="1.1" stroke-linecap="round" opacity=".55"><path d="M30 22l2 8M40 18l1 10M52 20l1 9M68 20l-1 9M80 18l-1 10M90 22l-2 8M28 44l3 9M42 46l1 10M56 47v10M66 47v10M78 46l-1 10M92 44l-3 9"/></g>';
 const LV_KINDS = ['cherub', 'daylight', 'bisous', 'airmail', 'thanks', 'heart', 'wine'];
 function letterEnv(title, body, o = {}) {
   const nm = (state.profile.name || '').trim().split(/\s+/)[0] || 'You', info = M && M.info, kind = LV_KINDS[((dayNum(new Date()) + (o.shift || 0)) % LV_KINDS.length + LV_KINDS.length) % LV_KINDS.length];
@@ -4477,7 +4479,7 @@ function letterEnv(title, body, o = {}) {
   const deco = {
     cherub: `<img class="lv-angel" src="images/letters/cherubs.webp" alt=""><span class="lv-type t1">${type}<br>${date}<br>open me slowly</span><b class="lv-w f-ballet">Miss you</b>`,
     daylight: `<svg class="lv-doily" viewBox="-60 -60 120 120" aria-hidden="true">${lvDoily()}<ellipse rx="22" ry="17" fill="#a9c1d3"/><ellipse rx="22" ry="17" fill="none" stroke="#fff" stroke-width="1.6"/><g transform="translate(-28 -26) scale(1.05)">${LV_DOVE}</g></svg><b class="lv-w f-doul emb">Daylight</b><span class="lv-type t2">${type}</span>`,
-    bisous: `<b class="lv-caps">BISOUS</b><b class="lv-w f-vibes big">Bisous</b><span class="lv-type t3">${date}</span>`,
+    bisous: `<svg class="lv-kiss" viewBox="0 0 120 70" aria-hidden="true">${LV_KISS}</svg><span class="lv-type t3">${date}<br>a kiss from your body</span><b class="lv-w f-paris bis">Bisous</b>`,
     airmail: `<span class="lv-stamp"><img src="images/purpose-after.jpg" alt=""><i>${info ? info.cd : '01'}</i></span><span class="lv-post" aria-hidden="true"></span><span class="lv-type t4">par avion · ${type}<br>to ${esc(nm.toLowerCase())}, with love</span><b class="lv-w f-paris">For you</b>`,
     thanks: `<span class="lv-win"><img src="images/welcome-forest.jpg" alt=""></span><span class="lv-type t5">a small note to say thank you for all that you carry</span><b class="lv-w f-doul">Thank you</b>`,
     heart: `<img class="lv-angel r" src="images/letters/cherubs.webp" alt=""><svg class="lv-seal" viewBox="0 0 60 60" aria-hidden="true">${LV_SEAL}</svg><b class="lv-w f-mrs">Into my heart</b><span class="lv-type t6">${date}</span>`,
@@ -6452,15 +6454,20 @@ function teaBubbles(w, info) {
 }
 // Tea for today in the unlock page structure (16 Nov 2026, her call: clearer, same fundamentals): the turning cup on a
 // sparkled stage, a day pill, the taped note with the name, why and brew, what it does as ticked pills, then steep and when.
+// What the tea does, as pills around the cup with a hairline to it: [pill x %, pill y px, line end x %, line end y px, width class]
+const TPX_POS = [[25, 34, 40, 150, 'w'], [75, 62, 61, 152, 'w'], [13, 214, 31, 218, 'n'], [86, 244, 69, 236, 'n'], [25, 392, 41, 300, 'w'], [72, 420, 60, 302, 'w']];
 function teaPage(info, w) {
   const td = TEA_DAY[w], [stp, when] = TEA_STEEP[w] || ['', ''], near = w === 'flow-start' || w === 'flow-end' || w === 'premenstrual';
   const swirl = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';
   const [a, b] = td[1].includes(' & ') ? td[1].split(' & ') : [td[1].split(' ').slice(0, -1).join(' '), td[1].split(' ').slice(-1)[0]];
+  const does = (TEA_WHEEL[w] || []).slice(0, 6);
   const fit = /matcha/i.test(td[1]) ? 0.92 : /green tea/i.test(td[1]) ? 1.1 : 1.3;
   return `<div class="ul3 ul4 tpx">
     <div class="ul4-stage tpx-stage">
-      <svg class="ul4-sp" viewBox="0 0 360 250" aria-hidden="true">${o3Spark('#f1d58a', 26, 34, 0)}${o3Spark('#fff', 334, 22, 1.1)}${o3Spark('#c9d6a8', 344, 214, 2)}${o3Spark('#f6c6d4', 14, 222, 1.6)}</svg>
+      <svg class="ul4-sp" viewBox="0 0 360 440" aria-hidden="true">${o3Spark('#f1d58a', 26, 34, 0)}${o3Spark('#fff', 334, 22, 1.1)}${o3Spark('#c9d6a8', 344, 214, 2)}${o3Spark('#f6c6d4', 14, 222, 1.6)}</svg>
+      <svg class="tpx-lines" viewBox="0 0 100 440" preserveAspectRatio="none" aria-hidden="true">${does.map((t, i) => { const [x, y, ex, ey] = TPX_POS[i]; return `<path pathLength="1" style="--i:${i}" d="M${x} ${y} L${ex} ${ey}"/>`; }).join('')}</svg>
       <span class="cup3d-w tpx-cup"><img src="${teaCupImg(td[1])}" alt="" decoding="async">${teaCupAttr(td[1]) ? `<canvas class="teacup3d"${teaCupAttr(td[1])} data-fit="${fit}" aria-label="${td[1]}, turning slowly"></canvas>` : ''}</span>
+      ${does.map((t, i) => { const [x, y, ex, ey, cls] = TPX_POS[i]; return `<i class="tpx-dot" style="left:${ex}%;top:${ey}px;--i:${i}"></i><span class="tpx-p ${cls}" style="--x:${x}%;--y:${y}px;--i:${i}"><span class="o3-x tpx-ok">${O3_TICK}</span>${t}</span>`; }).join('')}
     </div>
     <span class="ul3-days">${icon('cup', 13)} Day ${info.cd} · ${PHASES[info.phase].name}${near ? ' · warm only' : ''}</span>
     <section class="o3-note ul3-note ul4-note tpx-note">
@@ -6468,10 +6475,8 @@ function teaPage(info, w) {
       <h2 class="ul4-h">${a}${a && b ? ' &amp;' : ''}<br><em>${b}${swirl}</em></h2>
       <p class="o3-lead">${td[2].replace(/^(\S+(?: \S+)?)/, '<mark>$1</mark>')}</p>
       <p class="sgx-st"><b>Brew</b>${td[3].replace(/(\d+–\d+\s\S+)/g, '<span class="nw">$1</span>')}</p>
-      <button class="ul3-cta" data-action="nav" data-to="tea/day-${w}">How to brew it</button>
       <p class="o3-sign">a warm cup, a softer day <i>♡</i></p>
     </section>
-    <ul class="ul3-no tpx-does">${(TEA_WHEEL[w] || []).map((t, i) => `<li style="--r:${[-2, 1.5, -1, 1, -1.5, 2][i % 6]}deg"><span class="o3-x tpx-ok">${O3_TICK}</span>${t}</li>`).join('')}</ul>
     <section class="card ul3-keep tpx-keep"><h3>Steep &amp; when</h3>
       <div class="ul3-r"><span class="ul3-ic">${icon('clock', 18)}</span><span><b>Steep</b><small>${stp || td[3]}</small></span></div>
       <div class="ul3-r"><span class="ul3-ic">${icon('sun', 18)}</span><span><b>When</b><small>${when || 'Any time'}</small></span></div>
