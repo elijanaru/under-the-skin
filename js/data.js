@@ -2471,7 +2471,7 @@ export const SUPP_LIB = [
 export const SUPP_FOOD = {
   magnesium: [['Pumpkin seeds', 'Soaked or lightly roasted'], ['Dark chocolate (85%)', 'After a meal, with your tea or coffee'], ['Black and white beans', 'Soaked and slow-cooked'], ['Almonds and cashews', 'Soaked overnight']],
   iron: [['Red meat and liver', 'The best-absorbed iron'], ['Egg yolks', 'From pasture-raised hens'], ['Lentils and beans', 'With lemon or peppers for vitamin C'], ['Blackstrap molasses', 'A spoon in warm milk']],
-  'omega-3': [['Wild salmon, sardines, mackerel', 'Two or three times a week'], ['Pasture-raised eggs', 'Richer in omega-3 than caged'], ['Walnuts', 'A handful'], ['Flax and chia seeds', 'Ground, so the body can use them']],
+  'omega-3': [['Wild salmon, sardines, mackerel', 'Two or three times a week'], ['Pasture-raised eggs', 'Richer in omega-3 than caged'], ['Walnuts', 'A handful'], ['Flax and chia seeds', 'Ground. Young women turn about a fifth of this plant omega-3 into EPA']],
   'vitamin-c': [['Peppers', 'Raw in salads, cooked on warm days'], ['Kiwi and citrus', 'Whole fruit, not juice'], ['Berries', 'Fresh or frozen'], ['Sauerkraut', 'Raw and unpasteurised']],
   ginger: [['Fresh ginger tea', 'Sliced root steeped in hot water'], ['Ginger in soups and stews', 'Warming for your period'], ['Grated into honey', 'A spoon in hot water']],
   creatine: [['Red meat', 'About 1 g per 250 g'], ['Herring and salmon', 'Also rich in omega-3']],
@@ -2496,6 +2496,10 @@ export const SUPP_FOOD_AMT = {
   calcium: { need: [1000, 'mg'], rows: [['1 glass of milk, 250 ml', 300], ['1 small tin, 90 g', 350], ['1 cup cooked bok choy', 160], ['1 tablespoon tahini', 65]] },
   'vitamin-c': { need: [75, 'mg'], rows: [['1 red pepper', 150], ['1 kiwi', 64], ['1 cup strawberries', 85], ['½ cup', 10]] },
   'vitamin-d': { need: [600, 'IU'], rows: [null, ['100 g salmon', 500], ['2 yolks', 80], null] },
+  // EPA + DHA (EFSA 250 mg); 100 g cooked sardines carry about 1 g, salmon and mackerel more. Eggs, walnuts and seeds give plant ALA, not EPA + DHA
+  'omega-3': { need: [250, 'mg'], rows: [['100 g, cooked', 1000], null, null, null] },
+  b6: { need: [1.3, 'mg'], rows: [['100 g salmon, cooked', 0.9], ['100 g chicken breast', 0.6], ['1 medium banana', 0.4], ['1 medium potato, baked', 0.5]] },
+  'vitamin-e': { need: [15, 'mg'], rows: [['30 g', 10], ['30 g almonds', 7.7], ['100 g', 2.1], ['1 tablespoon', 1.9]] },
 };
 
 // Autumn rituals: warm, replenish and protect as the season turns. [name, how, why, evidence]
