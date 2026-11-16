@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, DIET_CYCLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HORMONE_SIMPLE, HORMONE_RELAY, BODY_NOTES, AFTER_STAGES, AFTER_TOPICS, TTC_TRY, TTC_STAGE, TTC_CHANCE, TTC_DOCTOR, TTC_BOTH, TTC_FOUND, HB_HOW, LOSS_HELP, LOSS_STEPS, LOSS_WARN, LOSS_TOPICS, LOSS_REPEAT, LOSS_NOTES, LOSS_JOURNAL, LOSS_PARTNER, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS, STUDY_KEY,
+  PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, DIET_CYCLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HORMONE_SIMPLE, HORMONE_RELAY, BODY_NOTES, AFTER_STAGES, AFTER_TOPICS, TTC_TRY, TTC_STAGE, TTC_CHANCE, TTC_DOCTOR, TTC_BOTH, TTC_FOUND, HB_HOW, HB_HOW_DIET, LOSS_HELP, LOSS_STEPS, LOSS_WARN, LOSS_TOPICS, LOSS_REPEAT, LOSS_NOTES, LOSS_JOURNAL, LOSS_PARTNER, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS, STUDY_KEY,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -1910,10 +1910,12 @@ const HB_SHORT = { 'morning-sun': ['sun', 'Morning sun'], lemon: ['drop', 'Warm 
 const HB_ORDER = ['morning-sun', 'lemon', 'phone-free', 'walk', 'calm', 'ground'];
 function habitsHome(info) { return hhCard(info); }
 // Short names for the habits circle.
-const HB_LABEL = { 'heat-belly': 'Warm belly', lemon: 'Lemon water', 'golden-milk': 'Golden milk', 'mag-night': 'Magnesium', calm: 'Slow breaths', walk: 'Walk after meals',
+const HB_LABEL = { 'heat-belly': 'Warm belly', lemon: 'Lemon water', 'golden-milk': 'Golden milk', 'red-date-tea': 'Red date tea', 'mag-night': 'Magnesium', calm: 'Slow breaths', walk: 'Walk after meals',
   'morning-sun': 'Morning sun', 'seed-cycle': 'Seed cycling', 'phone-free': 'Slow mornings', ground: 'Bare feet', 'carrot-salad': 'Raw carrot', 'chamomile-eve': 'Chamomile',
   'protein-bfast': 'Protein breakfast', 'bitter-greens': 'Bitter greens', 'dry-brush': 'Dry brushing', 'early-night': 'Early nights', 'foot-bath': 'Warm foot bath' };
-const hbImg = img => `images/${img.includes('/') ? img : `fb/${img}`}.webp`;
+// a habit's picture for her diet: no eggs on a vegan breakfast
+const HB_IMG_DIET = { 'protein-bfast': { vegan: 'sf/pumpkin-seeds' } };
+const hbImg = (img, id) => { const v = id && (HB_IMG_DIET[id] || {})[myDiet()]; img = v || img; return `images/${img.includes('/') ? img : `fb/${img}`}.webp`; };
 const hbFind = id => (PHASE_FUNDAMENTALS[(M.info || {}).phase || 'follicular'] || PHASE_FUNDAMENTALS.follicular).list.find(x => x[0] === id);
 // "habits for Hormone Balance": her phase's habits as cut-out objects on a thin ring, title in the middle (her moodboard).
 // Each object opens a sheet with why + how and a done button; done ones wear a little green tick.
@@ -1924,7 +1926,7 @@ function hhCard(info) {
   const items = F.list.map(([id, img, t], i) => {
     const a = -Math.PI / 2 + i * 2 * Math.PI / N, x = 50 + RX * Math.cos(a), y = 50 + RY * Math.sin(a), on = done.includes(id);
     return `<button class="hbc-i ${on ? 'on' : ''}" style="left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;--i:${i}" data-action="hbcOpen" data-id="${id}" aria-label="${t}${on ? ', done today' : ''}">
-      <span class="hbc-p"><img src="${hbImg(img)}" alt="" decoding="async">${on ? `<i class="hbc-ok">${icon('check', 11, 3)}</i>` : ''}</span><em>${HB_LABEL[id] || t}</em></button>`;
+      <span class="hbc-p"><img src="${hbImg(img, id)}" alt="" decoding="async">${on ? `<i class="hbc-ok">${icon('check', 11, 3)}</i>` : ''}</span><em>${HB_LABEL[id] || t}</em></button>`;
   }).join('');
   return `<section class="card hbc ${first ? 'first' : ''}" data-ph="${phase}">
     <div class="hbc-o">
@@ -1942,11 +1944,11 @@ function hbcSheet(id) {
   return `<div class="hs hs1 sfs hbs">
     <div class="hs-hero">
       <svg class="o3-dood" viewBox="0 0 340 250" aria-hidden="true">${o3Spark('#f6c6d4', 46, 52, 0)}${o3Spark('#f1d58a', 296, 40, 1.1)}${o3Spark('#c9d6a8', 300, 200, 2)}${o3Spark('#f6c6d4', 34, 190, 1.5)}</svg>
-      <span class="tsh-glow" aria-hidden="true"></span><img class="hs-plant sf" src="${hbImg(img)}" alt="">
+      <span class="tsh-glow" aria-hidden="true"></span><img class="hs-plant sf" src="${hbImg(img, id)}" alt="">
     </div>
     <header class="hs-h"><small>${when} · ${ph} phase</small><h2>${t}</h2></header>
     <section class="o3-note hs-note"><p class="o3-lead">${does}.</p><p class="rls-why">${why}</p></section>
-    <section class="hs-card"><h3><span class="hs-ic">${icon('leaf', 16, 2)}</span>How</h3>${(HB_HOW[t] || HB_HOW[id]) ? `<ol class="hs-steps">${(HB_HOW[t] || HB_HOW[id]).map(dietProse).filter(Boolean).map(x => `<li>${x}</li>`).join('')}</ol>` : `<p>${dietProse(how)}</p>`}</section>
+    <section class="hs-card"><h3><span class="hs-ic">${icon('leaf', 16, 2)}</span>How</h3>${(HB_HOW[t] || HB_HOW[id]) ? `<ol class="hs-steps">${((HB_HOW_DIET[id] || {})[myDiet()] || HB_HOW[t] || HB_HOW[id]).map(dietProse).filter(x => x && !/^[A-Z][\w -]{0,18}$/.test(x)).map(x => `<li>${x}</li>`).join('')}</ol>` : `<p>${dietProse(how)}</p>`}</section>
     <button class="hs-done hbs-done ${on ? 'on' : ''}" data-action="hbcTick" data-id="${id}" aria-pressed="${on}">${icon('check', 16, 2.4)} ${on ? 'Done today' : 'Mark as done today'}</button>
   </div>`;
 }
@@ -2697,8 +2699,7 @@ function foodExplore(phase, info) {
     body = `<div class="fx-g">${L.map(([, n]) => { if (k === 'supps') { const x = suppOf(n), sym = x ? x.sym : /B12/.test(n) ? 'B12' : /omega/i.test(n) ? 'Ω3' : n.slice(0, 2);
       return `<button class="fx-t" data-action="nav" data-to="plan/supps"><span class="fx-ti sym"><span>${sym}</span></span><b>${n.replace(/\s+[\d.,–-]+\s*(g|mg|µg|mcg|IU)$/i, '')}</b></button>`; }
       // teas show the cut-out cup on the white tile, no photo background (16 Nov 2026, her call)
-      if (/\btea\b|matcha|hibiscus|chamomile|nettle|raspberry leaf|rooibos|infusion|tisane/i.test(n) && !/milk|broth|coffee|kombucha/i.test(n)) return tile(teaCupImg(n), n, 'data-action="nav" data-to="plan/drinks"').replace('class="fx-ti ', 'class="fx-ti cup ');
-      const pic = (EB_PIC.find(([r]) => r.test(n)) || [])[1]?.(); return tile(pic, n, 'data-action="nav" data-to="plan/drinks"', pic && !pic.startsWith('images/')); }).join('')}</div>`;
+      return tile(teaCupImg(n), n, 'data-action="nav" data-to="plan/drinks"').replace('class="fx-ti ', 'class="fx-ti cup '); }).join('')}</div>`;
   } else {
     // blood sugar: one simple curve graphic and three steps, the full page behind See all
     lead = { menstrual: 'Cravings are normal now. Three steps keep the curve gentle.', follicular: 'Your body handles carbs well now. Three steps keep the curve gentle.',
@@ -2901,10 +2902,10 @@ const EB_WHY = [[/B12/i, 'Plants have none. 25 to 100 µg a day, or 1,000 µg tw
   [/matcha|green tea/i, 'Calm focus: caffeine with L-theanine.'], [/cacao/i, 'Magnesium for cravings, cramps and calm.'], [/ginger/i, 'Warms the belly and eases cramps.'], [/red date/i, 'Builds blood in Chinese medicine, gently sweet.'],
   [/raspberry leaf/i, 'A classic tea for the womb, mild and earthy.'], [/broth/i, 'Minerals, collagen and warmth.'], [/nettle/i, 'Iron and minerals after bleeding.'], [/chamomile/i, 'Helps you wind down before sleep.'],
   [/hibiscus/i, 'Tart, cooling and full of antioxidants.'], [/coconut water/i, 'Potassium for hot, sweaty days.'], [/lemon/i, 'A fresh start with vitamin C.'], [/mineral water/i, 'Magnesium and calcium you can drink.'], [/juice/i, 'Greens in a glass for your liver.']];
-const EB_PIC = [[/matcha/i, () => teaPhoto('Matcha', 240, 240)], [/coffee/i, () => teaPhoto('Your coffee', 240, 240)], [/cacao/i, () => foodPhoto('Raw cacao', 240)], [/raspberry leaf/i, () => teaPhoto('Red raspberry leaf', 240, 240)],
-  [/broth/i, () => teaPhoto('Healing broth', 240, 240)], [/lemon water/i, () => teaPhoto('Morning lemon & ginger', 240, 240)], [/hibiscus/i, () => teaPhoto('Hibiscus', 240, 240)], [/coconut water/i, () => 'images/sz/coconut.webp'],
+const EB_PIC = [[/matcha/i, () => teaCupImg('Matcha')], [/coffee/i, () => teaCupImg('Your coffee')], [/cacao/i, () => foodPhoto('Raw cacao', 240)], [/raspberry leaf/i, () => teaCupImg('Red raspberry leaf')],
+  [/broth/i, () => teaCupImg('Healing broth')], [/lemon water/i, () => teaCupImg('Morning lemon & ginger')], [/hibiscus/i, () => teaCupImg('Hibiscus')], [/coconut water/i, () => 'images/sz/coconut.webp'],
   [/mineral water/i, () => 'images/fb/lemon.webp'], [/green juice/i, () => 'images/sz/kale.webp'], [/kefir/i, () => foodPhoto('Kefir', 240)], [/yoghurt/i, () => foodPhoto('Greek yoghurt', 240)], [/milk/i, () => foodPhoto('Grass-fed raw milk & butter', 240)], [/butter|ghee/i, () => 'https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=240&h=240&fit=crop&auto=format&q=72'], [/cheese/i, () => foodPhoto('Fresh sheep & goat cheese', 240)],
-  [/red date/i, () => teaPhoto('Ginger & red dates', 240, 240)], [/ginger/i, () => teaPhoto('Ginger', 240, 240)], [/chamomile/i, () => teaPhoto('Chamomile', 240, 240)], [/nettle/i, () => teaPhoto('Nettle leaf', 240, 240)]];
+  [/red date/i, () => teaCupImg('Ginger & red dates')], [/ginger/i, () => teaCupImg('Ginger')], [/chamomile/i, () => teaCupImg('Chamomile')], [/nettle/i, () => teaCupImg('Nettle leaf')]];
 const EB_TINT = { dairy: ['#fbf3e6', '#f3e2c4'], drinks: ['#f0f4e6', '#dce7c8'], supps: ['#f3edf8', '#e2d6f0'] };
 const sfPic = f => f[4] ? (f[4][0] === 'tea' ? teaPhoto(f[4][1], 240, 240) : foodPhoto(f[4][1], 240)) : null;
 // Superfoods as a white poster of real cut-out photos, one set per phase. Tap a food for what it does and how much.
@@ -3014,7 +3015,7 @@ function drinksInner(phase) {
       <div class="drt" role="list">
         <span class="drt-end">${icon('sun', 14)} Wake up</span>
         ${drinkList(phase).map((n, i) => [n, i, drSlot(n)]).sort((x, y) => x[2][0] - y[2][0]).map(([n, i, sl]) => { const sp = DRINK_SPEC.find(([r]) => r.test(n)), pic = (EB_PIC.find(([r]) => r.test(n)) || [])[1]?.();
-        const art = drinkArt(n), img = art || pic;
+        const art = true, img = teaCupImg(n); // every drink is one of the app's own 3D models (16 Nov 2026)
         return `<button class="sfc-i drt-r" role="listitem" style="--i:${i}" data-action="drPick" data-i="${i}" aria-expanded="false"><span class="drt-t"><b class="dotnum ${sl[1].length > 4 ? 'drt-tl' : ''}">${sl[1]}</b><small>${sl[2]}</small></span><span class="drt-c">${img ? `<img class="${art ? 'drw' : img.startsWith('images/') ? '' : 'rd'}" src="${img}" alt="" loading="lazy" decoding="async">` : ''}</span><span class="drt-n"><b>${n}</b><small>${sp ? `${sp[1]} · ` : ''}${sl[3]}</small></span>${icon('chevD', 15)}</button>`; }).join('')}
         <span class="drt-end">${icon('moon', 14)} Sleep</span>
       </div>
@@ -3323,10 +3324,14 @@ function plateSection(current, lite) {
 // The floating cup for a tea: matcha and green tea have their own 3D matcha bowl, the warm spice teas a chai cup, the rest a glass cup.
 const CHAI_RE = /ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i;
 const MATCHA_RE = /matcha|green tea/i;
-// Every tea turns as the 3D cup that looks most like it: matcha, green tea, a mint cup for the green leafy teas,
-// the floral chamomile cup for the golden and red infusions. Milky drinks (chai, cacao, turmeric milk) keep their photo.
-const TEA_CUP = [[/matcha/i, 'matcha', 'cup-matcha'], [/green tea/i, 'greentea', 'cup-matcha'], [/chai|cacao|turmeric/i, '', 'cup-chai'], [/hibiscus|bissap|roselle/i, 'hibiscus', 'cup-hibiscus'],
-  [/mint|lemon balm|nettle|lemongrass|jasmine|tulsi|moringa/i, 'mint-tea', 'cup-mint'], [/./, 'chamomile', 'cup-chamomile']];
+// Every drink shows the 3D model that looks most like it (16 Nov 2026, her call: only the app's own 3D models, and
+// no two different drinks in the same cup): the glass latte for coffee and milky drinks, matcha, green tea, the blue
+// mint cup for green leafy teas, the red hibiscus cup, the amber teacup for ginger, red dates and spiced teas, the pho
+// bowl for broth and the floral chamomile cup for the pale golden infusions.
+const TEA_CUP = [[/matcha/i, 'matcha', 'cup3d/matcha'], [/green tea|green juice/i, 'greentea', 'cup3d/greentea'], [/coffee|latte|chai|cacao|cocoa|turmeric|golden milk|\bmilk\b|kefir|coconut/i, 'latte', 'cup3d/latte'],
+  [/hibiscus|bissap|roselle|rosehip/i, 'hibiscus', 'cup3d/hibiscus'], [/broth/i, 'pho', 'cup3d/pho'],
+  [/mint|lemon balm|nettle|lemongrass|jasmine|tulsi|moringa|raspberry leaf|dandelion/i, 'mint-tea', 'cup3d/mint-tea'],
+  [/ginger|red date|cinnamon|rooibos|black tea|cardamom|clove|fire cider/i, 'teacup', 'cup3d/teacup'], [/./, 'chamomile', 'cup3d/chamomile']];
 const teaCup = n => TEA_CUP.find(([re]) => re.test(n || ''));
 const teaCupImg = n => `images/${teaCup(n)[2]}.webp`;
 const teaCupAttr = n => teaCup(n)[1] ? ` data-model="models/${teaCup(n)[1]}.glb"` : '';
@@ -3416,24 +3421,38 @@ function sugarSpec(on) {
     <div><dt>Tricks you use</dt><dd>${n ? `<span class="dotnum">${n}</span> of <span class="dotnum">${SUGAR_TRICKS.length}</span>` : 'None yet'}</dd></div>
     ${next ? `<div><dt>Biggest next step</dt><dd>${next.n}</dd></div>` : ''}`;
 }
+// Blood sugar (16 Nov 2026, her call): laid out like the unlock page. The curve on a white card over sparkles, a taped
+// paper note with one big promise, three little "no" pills, then the tricks as one tick list she can tap.
 function sugarSection(phase) {
-  const on = sugarDone(), pat = M.info ? patterns().list.filter(x => SUGAR_SYMPTOMS.includes(x.name)) : [];
-  const luteal = phase === 'luteal';
-  return `<div class="sb-free sb2">
-      <div class="sb-top"><div><small><i></i>Your next meal</small><b>Watch the spike shrink</b><p>Tap the tricks you use below. The curve redraws for your meal.</p></div>
-        <div class="sb-score" id="sg-score">${sugarScore(on)}</div></div>
-      <div id="sg-chart" class="sb-chart">${sugarCurve(on)}</div>
-      <dl class="sb-spec" id="sg-spec">${sugarSpec(on)}</dl>
-      <p class="sb-st"><small>What studies found</small>Eating vegetables and protein before the carbs made the sugar rise after a meal about a third smaller. <i>Shukla et al. 2015</i></p>
-      ${luteal ? `<p class="sb-note">${icon('spark', 13)} Second half of your cycle: you’re a little less insulin-sensitive, so these help most now.</p>` : ''}
-      ${pat.length ? `<div class="sb-when"><small>When your body asks for them most</small>${pat.slice(0, 2).map(x => { const now = M.info && M.info.cd >= x.from && M.info.cd <= x.to;
-        return `<div class="sbw-r"><span class="sbw-e emo" aria-hidden="true">${LOG_EMOJI[x.name] || '🌿'}</span><b>${x.name}</b><span class="sbw-d">${now ? '<em>Now</em>' : ''}${x.from === x.to ? `Day <i class="dotnum">${x.from}</i>` : `Days <i class="dotnum">${x.from}</i> to <i class="dotnum">${x.to}</i>`}</span></div>`; }).join('')}</div>` : ''}
+  const on = sugarDone(), pat = M.info ? patterns().list.filter(x => SUGAR_SYMPTOMS.includes(x.name)) : [], luteal = phase === 'luteal';
+  const swirl = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';
+  const sub = x => x.k === 'berberine' ? 'A capsule with a meal, ask your doctor first' : x.k === 'minerals' ? dietFoods(x.t, 'zinc') : x.t;
+  const row = (x, i) => `<button class="sgx-r ${on.includes(x.k) ? 'on' : ''}" style="--i:${i}" data-action="sugarTrick" data-v="${x.k}"><span class="sgx-e emo" aria-hidden="true">${x.g}</span><span class="sgx-t"><b>${x.n}</b><small>${sub(x)}</small></span><i class="sgx-k">${O3_TICK}</i></button>`;
+  return `<div class="sgx">
+    <div class="ul4-stage sgx-stage">
+      <svg class="ul4-sp" viewBox="0 0 360 250" aria-hidden="true">${o3Spark('#f1d58a', 20, 20, 0)}${o3Spark('#fff', 338, 16, 1.1)}${o3Spark('#c9d6a8', 346, 226, 2)}${o3Spark('#f6c6d4', 10, 232, 1.6)}</svg>
+      <section class="card sb2 sgx-cmp">
+        <div class="sgx-top"><small><i></i>Your next meal</small><div class="sb-score" id="sg-score">${sugarScore(on)}</div></div>
+        <div id="sg-chart" class="sb-chart">${sugarCurve(on)}</div>
+        <dl class="sb-spec" id="sg-spec">${sugarSpec(on)}</dl>
+      </section>
     </div>
-    ${sectionTitle('Blood sugar tricks', ['How they work', 'sugar'])}
-    <section class="card sugar-big">
-      ${[['before', '1', 'Before you eat'], ['with', '2', 'With your meal'], ['daily', '3', 'Every day']].map(([w, n, t]) => `<div class="sb-step"><div class="sb-sh"><span>${n}</span>${t}</div>
-        <div class="sb-grid">${SUGAR_TRICKS.filter(x => x.w === w).map(x => `<button class="sb-t sb-pic ${on.includes(x.k) ? 'on' : ''}" data-action="sugarTrick" data-v="${x.k}"><span class="sb-ph">${SB_PIC[x.k] ? `<img src="${SB_PIC[x.k]()}" alt="" loading="lazy">` : ''}<em>${icon(x.ic, 15, 1.9)}</em></span><b>${x.n}</b><small>${x.k === 'berberine' ? 'A capsule with a meal, ask your doctor first' : x.k === 'minerals' ? dietFoods(x.t, 'zinc') : x.t}</small>${(([n, u]) => `<span class="sfc-am sb-am">${n ? `<b class="dotnum">${n}</b>` : ''}${u}</span>`)(SG_DOSE[x.k] || [0, ''])}<i class="sb-ck">${icon('check', 14, 2.6)}</i></button>`).join('')}</div></div>`).join('')}
-    </section>`;
+    <span class="ul3-days sgx-pill">${luteal ? `${icon('spark', 13)} Second half of your cycle: these help most now` : `${icon('spark', 13)} Tap the tricks you use, the curve redraws`}</span>
+    <section class="o3-note ul3-note ul4-note sgx-note">
+      <small class="ul4-eye">Steady energy, calmer cravings</small>
+      <h2 class="ul4-h">Watch the spike<br><em>shrink${swirl}</em></h2>
+      <p class="o3-lead">A <mark>gentle curve</mark> after every meal keeps your hormones calm, your skin clear and the 4 pm crash away.</p>
+      <p class="sgx-st"><b>What studies found</b>Eating vegetables and protein before the carbs made the rise about a third smaller. <i>Shukla et al. 2015</i></p>
+      <button class="ul3-cta" data-action="nav" data-to="sugar">How each trick works</button>
+      <p class="o3-sign">small steps, a calmer you <i>♡</i></p>
+    </section>
+    <ul class="ul3-no">${['No sugar crash', 'No 4 pm slump', 'No hangry moods'].map((t, i) => `<li style="--r:${[-2, 1.5, -1][i]}deg"><span class="o3-x">${O3_X}</span>${t}</li>`).join('')}</ul>
+    <section class="card ul3-keep sgx-keep"><h3>Your tricks</h3>
+      ${[['before', 'Before you eat'], ['with', 'With your meal'], ['daily', 'Every day']].map(([w, t], g) => `<div class="sgx-g"><span class="sgx-gh"><i class="dotnum">${g + 1}</i>${t}</span>${SUGAR_TRICKS.filter(x => x.w === w).map(row).join('')}</div>`).join('')}
+    </section>
+    ${pat.length ? `<section class="card sgx-when sb-when sb2"><h3>When your body asks for them most</h3>${pat.slice(0, 2).map(x => { const now = M.info && M.info.cd >= x.from && M.info.cd <= x.to;
+      return `<div class="sbw-r"><span class="sbw-e emo" aria-hidden="true">${LOG_EMOJI[x.name] || '🌿'}</span><b>${x.name}</b><span class="sbw-d">${now ? '<em>Now</em>' : ''}${x.from === x.to ? `Day <i class="dotnum">${x.from}</i>` : `Days <i class="dotnum">${x.from}</i> to <i class="dotnum">${x.to}</i>`}</span></div>`; }).join('')}</section>` : ''}
+  </div>`;
 }
 // Tricks overlap, so they don't simply add up: combined, the illustration caps the spike reduction at 50%.
 // animal-based: the fibre-first trick becomes protein and fat first (16 Nov 2026)
