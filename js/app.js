@@ -2800,7 +2800,7 @@ function viewPlan() {
         <div class="grid2 pv-rec">${recGrid(recs, cur)}</div>`;
     } else if (sub === 'foods') {
       const recent = recentSymptoms().filter(s => SYMPTOM_FOODS[s]).slice(0, 2);
-      body = `${recent.length ? `<div class="ff-top">${feelFoods(recent, warmWindow(info))}</div>` : ''}<div class="eat-cat eb eb-free sf-top" data-phase="${phase}">${superInner(phase)}</div><div class="eat-cat eb eb-free sf-top apo-top">${apoInner()}</div>${dietGuideCard(phase)}`;
+      body = `${superIntro()}${recent.length ? `<div class="ff-top">${feelFoods(recent, warmWindow(info))}</div>` : ''}<div class="eat-cat eb eb-free sf-top" data-phase="${phase}">${superInner(phase)}</div><div class="eat-cat eb eb-free sf-top apo-top">${apoInner()}</div>${dietGuideCard(phase)}`;
     } else if (sub === 'super') { location.replace('#/plan/foods'); return '';
     } else if (sub === 'drinks' || sub === 'supps') {
       body = `${sub === 'drinks' ? `${plTea()}<div class="eat-cat eb eb-free sf-top" data-phase="${phase}">${drinksInner(phase)}</div>${cafCard()}` : `<section class="card eat-cat eb" data-phase="${phase}">${eatCatInner(phase, sub)}</section>`}
@@ -3427,6 +3427,18 @@ function sugarSpec(on) {
 }
 // Blood sugar (16 Nov 2026, her call): laid out like the unlock page. The curve on a white card over sparkles, a taped
 // paper note with one big promise, three little "no" pills, then the tricks as one tick list she can tap.
+// Superfoods › intro note in the style of the unlock page (16 Nov 2026, her call): why a spoon of the right food matters
+function superIntro() {
+  const swirl = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';
+  return `<div class="sfi"><section class="o3-note ul3-note ul4-note sfi-note">
+      <small class="ul4-eye">Why superfoods</small>
+      <h2 class="ul4-h">Small foods,<br><em>big work${swirl}</em></h2>
+      <p class="o3-lead">Your body builds every hormone from what you eat. A spoon of the <mark>right food</mark> for your phase brings the iron, zinc and good fats it needs.</p>
+      <p class="sgx-st"><b>Why so little</b>They carry the most nutrients per spoon, so a thumb of ginger or a tablespoon of seeds already counts.</p>
+      <p class="o3-sign">a spoon a day, a softer cycle <i>♡</i></p>
+    </section>
+    <ul class="ul3-no">${['No pills needed', 'No big changes', 'No guesswork'].map((t, i) => `<li style="--r:${[-2, 1.5, -1][i]}deg"><span class="o3-x">${O3_X}</span>${t}</li>`).join('')}</ul></div>`;
+}
 function sugarSection(phase) {
   const on = sugarDone(), pat = M.info ? patterns().list.filter(x => SUGAR_SYMPTOMS.includes(x.name)) : [], luteal = phase === 'luteal';
   const swirl = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';

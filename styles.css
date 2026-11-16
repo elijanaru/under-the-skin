@@ -16576,3 +16576,6 @@ html .sgx-when h3 { margin: 0 0 8px; font: 500 15px/1.2 var(--font); color: #203
 @media (prefers-reduced-motion: reduce) { .pdk-c, .pdk-r { animation: none; } .pdk-p, .pdk-k { transition: none; } }
 /* habit ring: tall cut-outs (walking woman, lotus) stay inside their 64px box so nothing covers a neighbour */
 .hbc-p img { width: 64px; height: 64px; max-width: none; max-height: none; object-fit: contain; }
+/* Superfoods › intro note, unlock-page style */
+.sfi { margin: 18px 0 18px; display: grid; gap: 14px; }
+.sfi .ul3-no { margin-top: 0; }
