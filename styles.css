@@ -15810,13 +15810,6 @@ html .view .fx-p.fx-guide { padding: 0; background: transparent; box-shadow: non
 .gd-h .gd-hl { color: #b04f6c; }
 .gd-card .gd-h { display: block; margin: 0 0 12px; padding: 0; background: none; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; text-align: center; font-size: 27px; }
 /* she eats everything: peek at a guide */
-.gd-pick { margin: 6px 0 0; padding: 14px; border-radius: 26px; background: rgba(255,255,255,.86); text-align: center; }
-.gd-pick p { margin: 0 0 10px; font: 400 13.5px/1.4 var(--font); color: rgba(32,48,26,.8); }
-.gd-pick > div { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-.gd-pk { display: grid; justify-items: center; gap: 4px; padding: 8px 2px 7px; border: 0; border-radius: 18px; background: #f7f2f1; font: inherit; color: #20301a; cursor: pointer; }
-.gd-pk img { width: 44px; height: 44px; object-fit: contain; }
-.gd-pk b { font: 500 12px/1 var(--font); }
-.gd-pk.on { background: #20301a; color: #fff; }
 /* the tickets: one per phase, hers first, swipe sideways */
 .gd-tks { display: flex; gap: 14px; overflow-x: auto; margin: 0 -18px; padding: 8px 18px 24px; scroll-snap-type: x mandatory; scroll-padding-inline: 18px; scrollbar-width: none;
   filter: drop-shadow(0 16px 16px rgba(70,30,45,.22)) drop-shadow(0 3px 5px rgba(70,30,45,.1)); }

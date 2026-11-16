@@ -2670,7 +2670,7 @@ const PLAN_TITLE = { recipes: 'Recipes', foods: 'Superfoods', drinks: 'Drinks & 
 // tab pictures are trimmed, square and centred copies (images/fx) so every tile sits the same
 const FX_CATS = [['recipes', 'Recipes'], ['season', 'In season'], ['foods', 'Superfoods'], ['drinks', 'Drinks'], ['sugar', 'Blood sugar']].map(([k, t]) => [k, t, `images/fx/${k}.webp`]);
 // her diet guide sits right after Superfoods: Vegan guide, Veggie guide, Pesci guide, Primal guide, or Diet guides when she eats everything
-const FX_GUIDE = { vegan: 'Vegan guide', veg: 'Veggie guide', pesc: 'Pesci guide', animal: 'Primal guide' };
+const FX_GUIDE = { vegan: 'Vegan guide', veg: 'Veggie guide', pesc: 'Pesci guide', animal: 'Primal guide', all: 'Your food guide' };
 function fxCats() { const d = myDiet(), L = [...FX_CATS], sn = apoSeason(); L.splice(3, 0, ['guide', FX_GUIDE[d] || 'Diet guides', `images/fx/guide-${FX_GUIDE[d] ? d : 'all'}.webp`]);
   // the cold-season rituals sit right next to her diet guide (16 Nov 2026, her call)
   if (['Autumn', 'Winter'].includes(sn)) { const r = ritList()[0]; if (r) L.splice(4, 0, ['rituals', `${sn} rituals`, teaPhoto(r.r[0], 160, 160)]); }
@@ -2722,12 +2722,13 @@ function foodExplore(phase, info) {
 // ---------- Diet guides on the Food page (16 Nov 2026, her call) ----------
 // In the style of the onboarding note and the unlock ticket: a taped paper note, one ticket per phase (what to load up on, the best
 // kind, three foods and a warm or raw stamp), her kind of iron as two little jars, the daily take, the nutrients to look after,
-// easy swaps and sticky-note watch-outs. She eats everything? She can peek at any of the four guides.
+// easy swaps and sticky-note watch-outs. It always follows the diet she chose in onboarding.
 const DG_TEMP = { warm: 'Warm & cooked', raw: 'Raw welcome', late: 'Warm before your period' };
 const DG_SWIRL = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';
 const DG_ARROW = '<svg viewBox="0 0 40 20" aria-hidden="true"><path d="M3 11 C 12 6, 22 14, 33 9 M27 4 C 30 6, 33 8, 35 9 C 32 11, 30 13, 28 16"/></svg>';
 function dietGuidePanel(phase) {
-  const my = myDiet(), d = DIET_CYCLE[my] ? my : (DIET_CYCLE[ui.dgPick] ? ui.dgPick : 'vegan'), C = DIET_CYCLE[d], G = DIET_GUIDE[d], mine = d === my;
+  // Her guide follows the diet she picked in onboarding (or Profile); no picker.
+  const d = DIET_CYCLE[myDiet()] ? myDiet() : 'all', C = DIET_CYCLE[d], G = DIET_GUIDE[d] || C.guide;
   const ord = [...PHASE_ORDER.slice(PHASE_ORDER.indexOf(phase)), ...PHASE_ORDER.slice(0, PHASE_ORDER.indexOf(phase))];
   const take = G.items.filter(x => x.tag === 'take'), look = G.items.map((x, i) => ({ x, i })).filter(o => o.x.tag !== 'take'), plant = C.iron === 'plant';
   const tk = k => { const [t, g, kind, why, foods, temp] = C.phases[k];
@@ -2740,9 +2741,7 @@ function dietGuidePanel(phase) {
     : [[d === 'pesc' ? '🦪' : '🥩', 'The easy kind first', d === 'pesc' ? 'Mussels, clams and sardines' : 'Red meat, liver and bone marrow'], ['🍋', 'Vitamin C on the side', 'Helps the plant iron in the same meal'], ['🍳', 'Cook in a cast-iron pan', 'A little iron moves into your food'], ['☕', 'Coffee and tea, an hour apart', 'Enjoy them, just not with iron meals']];
   const jar = (lo, hi, label, on) => `<div class="gd-jar ${on ? 'mine' : ''}"><span class="gd-jb" aria-hidden="true"><i style="height:${lo / 40 * 100}%"></i><i class="r" style="bottom:${lo / 40 * 100}%;height:${(hi - lo) / 40 * 100}%"></i></span>
     <b class="dotnum">${lo}–${hi}%</b><small>${label}</small>${on ? '<span class="gd-yours">yours</span>' : ''}</div>`;
-  return `${mine ? '' : `<div class="gd-pick"><p>You eat everything, so every recipe fits you. Peek at a guide:</p>
-      <div>${['vegan', 'veg', 'pesc', 'animal'].map(k => `<button class="gd-pk ${k === d ? 'on' : ''}" data-action="dgPick" data-v="${k}" aria-pressed="${k === d}"><img src="images/fx/guide-${k}.webp" alt="" loading="lazy"><b>${DIET_CYCLE[k].name}</b></button>`).join('')}</div></div>`}
-    <section class="o3-note gd-note"><h2><span>${mine ? 'Your' : 'The'}</span> <em>${C.name.toLowerCase()} guide${DG_SWIRL}</em></h2>
+  return `<section class="o3-note gd-note"><h2><span>Your</span> <em>${C.name.toLowerCase()} guide${DG_SWIRL}</em></h2>
       <p class="o3-sub">${C.sub}</p><p class="o3-lead">${C.lead}</p><p class="o3-sign">with love, from our little team <i>♡</i></p></section>
 
     <h4 class="gd-h">Your cycle, <span class="gd-hl">ticket by ticket</span></h4>
@@ -11273,7 +11272,6 @@ const actions = {
     const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
   },
   // swap only the picks panel: the plate, the scroll and the tab row stay as they are
-  dgPick: d => { ui.dgPick = d.v; actions.fxCat({ v: 'guide' }); },
   fxCat: d => {
     ui.fxCat = d.v;
     const old = document.querySelector('#view .fx-p');

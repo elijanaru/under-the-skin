@@ -1794,6 +1794,28 @@ export const DIET_CYCLE = {
     },
     notes: [['Planning a pregnancy?', '🌷', 'Keep to small fish and salmon, skip swordfish, shark and marlin, and start a prenatal with folate three months before.']],
     swaps: [['🥩', 'Red meat iron', 'Mussels or clams'], ['🫀', 'Liver', 'Oysters'], ['🐟', 'Big tuna', 'Sardines and salmon'], ['🍲', 'Bone broth', 'Fish bone broth']] },
+  all: { name: 'Everything', sub: 'Meat, fish, eggs, dairy and plants.', iron: 'heme',
+    lead: 'You can eat it all, so the art is <mark>variety</mark>: a little of everything, in tune with <mark>your phase</mark>.',
+    phases: {
+      menstrual: ['Iron', '🩸', 'Red meat, mussels and lentils, warm and cooked', 'Your period takes iron every month. Refill it while you bleed.', [['🍲', 'Bone broth'], ['🥩', 'Slow-cooked beef'], ['🦪', 'Steamed mussels']], 'warm'],
+      follicular: ['Protein & zinc', '🥚', 'Eggs, raw dairy, sprouts and pumpkin seeds', 'Rising estrogen is ripening your egg. Zinc and protein help build it.', [['🥚', 'Pasture eggs'], ['🥛', 'Raw milk kefir'], ['🎃', 'Pumpkin seeds']], 'raw'],
+      ovulatory: ['Omega-3 & fibre', '🐟', 'Wild salmon, berries and raw greens', 'Estrogen peaks now. Fibre carries the used hormones out, omega-3 keeps your skin glowing.', [['🐟', 'Wild salmon'], ['🫐', 'Berries'], ['🥗', 'A big raw salad']], 'raw'],
+      luteal: ['Magnesium, then iron', '🍫', 'Cacao and avocado now, red meat or lentils the week before your period', 'Magnesium calms cramps and cravings. Start refilling iron before you bleed.', [['🍫', 'Raw cacao'], ['🥑', 'Avocado'], ['🍠', 'Baked sweet potato']], 'late'],
+    },
+    notes: [['Colour every day', '🌈', 'Five colours of plants a day. Fibre is what carries used estrogen out of your body.'], ['Liver and pregnancy', '🫀', 'About 100 g of liver a week is plenty. Skip it when pregnant or trying to conceive: it holds a lot of vitamin A.']],
+    swaps: [['🍞', 'White bread', 'Sweet potato or ripe fruit'], ['🌻', 'Seed oils', 'Butter, ghee or olive oil'], ['🍬', 'Sugar', 'A little raw honey'], ['🐟', 'Big tuna', 'Sardines and salmon']],
+    // Her guide when she eats everything (DIET_GUIDE has no 'all' entry, so onboarding and Profile stay as they are).
+    guide: { items: [
+      { n: 'Iron', cov: 2, g: '🩸', tag: 'watch', why: 'Your period takes iron every month. Red meat and shellfish bring the easiest kind.', do: 'Red meat or mussels once or twice a week, plus lentils and greens with vitamin C. Enjoy coffee and tea an hour away from those meals. Test ferritin before taking iron.', foods: 'Beef, lamb, mussels, sardines, lentils, cooked spinach', ph: ['menstrual'] },
+      { n: 'Omega-3', cov: 2, g: '🐟', tag: 'watch', why: 'DHA and EPA ease cramps and support mood and skin. Oily fish is the best source.', do: 'Oily fish twice a week: salmon, sardines, mackerel or anchovies.', foods: 'Salmon, sardines, mackerel, anchovies, walnuts', ph: ['menstrual', 'luteal'] },
+      { n: 'Magnesium', cov: 1, g: '🥑', tag: 'watch', why: 'You need more of it before your period for cramps, sleep and cravings, and most of us eat too little.', do: 'Cacao, avocado, pumpkin seeds and greens every day. Magnesium glycinate 200 to 300 mg in the evening if you need it.', foods: 'Raw cacao, avocado, pumpkin seeds, spinach, banana', ph: ['luteal', 'menstrual'] },
+      { n: 'Vitamin D', dose: ['10-20', 'µg D3', 'October to March'], cov: 1, g: '☀️', tag: 'take', why: 'Few foods have enough, and low levels go with PMS and low mood.', do: '10 to 20 µg (400 to 800 IU) of D3 a day from October to March, plus oily fish and daylight.', foods: 'Salmon, sardines, egg yolks', ph: ['luteal'] },
+      { n: 'Fibre', cov: 1, g: '🥦', tag: 'watch', why: 'Fibre carries used estrogen out of your body. Low fibre can mean heavier PMS.', do: 'Vegetables, fruit, seeds and a few beans every day, raw in your follicular and ovulatory weeks.', foods: 'Broccoli, berries, ground flax, lentils, apples', ph: ['follicular', 'ovulatory'] },
+      { n: 'Protein', cov: 2, g: '🥚', tag: 'watch', why: 'Steady blood sugar and strong hormones need protein at every meal.', do: 'Eggs, meat, fish, raw dairy or lentils: a palm-sized portion each meal.', foods: 'Eggs, beef, salmon, Greek yoghurt, lentils', ph: ['follicular', 'ovulatory'] },
+    ], warn: [
+      ['Test once a year', '🧪', 'Ferritin and vitamin D.'],
+      ['Planning a pregnancy?', '🌷', 'Start a prenatal with folate three months before, and keep big fish like swordfish and shark off your plate.'],
+    ] } },
   animal: { name: 'Primal', sub: 'Meat, eggs, raw dairy, fruit and sweet potato.', iron: 'heme',
     lead: 'Animal foods bring the <mark>easiest iron</mark>, B12 and protein. Add <mark>fruit and magnesium</mark> and your hormones stay balanced.',
     phases: {
