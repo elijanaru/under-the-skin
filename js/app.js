@@ -4663,15 +4663,18 @@ function viewRelief(id) {
   const food = SYMPTOM_FOODS[k] || (k === 'PMS mood' ? SYMPTOM_FOODS.Cravings : null), L = RELIEF_LINKS[k] || {};
   const help = (state.reliefHelp || {})[k] || [], order = R.steps.map((_, i) => i).sort((a, b) => help.includes(b) - help.includes(a));
   const [w0, ...wr] = splitSentences(R.why), [ph, whenT] = RELIEF_WHEN[k] || [[], ''], me = M.info && M.info.phase;
+  // her own pattern for this symptom from her check-ins: when it comes for her, and why in that phase
+  const mine = M.info && M.stats.periods.length ? patterns().list.find(x => reliefKey(x.name) === k) : null;
+  const myWhy = mine && SYMPTOM_WHY[mine.name] ? SYMPTOM_WHY[mine.name][mine.phase] : '';
   // each step shows its photo once; a photo another step already used gives way to the step's number
   const seen = new Set(), pics = R.steps.map(x => { const p = reliefStepPic(x.t); if (!p || seen.has(p)) return ''; seen.add(p); return p; });
   const studies = [RELIEF_STUDY[k], RELIEF_STUDY2[k]].filter(Boolean);
   const know = (ic, label, text) => { const [a, ...r] = splitSentences(text); return `<details class="rl-k"><summary><span class="rl-ki">${ic}</span><span class="rl-kt"><small>${label}</small><b>${a}</b></span>${r.length ? icon('chevD', 14) : ''}</summary>${r.length ? `<p>${r.join(' ')}</p>` : ''}</details>`; };
   return `${topbar('Relief', { back: true })}
   <div class="pad">
-    <section class="rl-hero"><img src="${reliefPhoto(k, 640)}" alt="" decoding="async"><div><small>${RELIEF_IC[k] ? icon(RELIEF_IC[k], 13, 2) : ''} Relief</small><h1 class="page-h">${k}</h1><p class="rl-sub">${w0}</p>
-      ${whenT ? `<div class="rl-at"><div class="rl-strip" aria-hidden="true">${PHASE_ORDER.map(p => `<i class="${ph.includes(p) ? 'on' : ''} ${p === me ? 'me' : ''}" style="--c:${PH_HEX[p]}"></i>`).join('')}</div><div class="rl-lab" aria-hidden="true">${PHASE_ORDER.map(p => `<small class="${ph.includes(p) ? 'on' : ''}">${p === me ? 'You' : HS_PH[p]}</small>`).join('')}</div>
-        <div class="rl-spec"><div><dt>When it shows</dt><dd>${whenT}</dd></div><div><dt>Try first</dt><dd>${R.steps[0].t}</dd></div><div><dt>Ways that help</dt><dd><span class="dotnum">${R.steps.length}</span></dd></div></div></div>` : ''}
+    <section class="rl-hero"><img src="${reliefPhoto(k, 640)}" alt="" decoding="async"><div><small>${RELIEF_IC[k] ? icon(RELIEF_IC[k], 13, 2) : ''} Relief</small><h1 class="page-h">${k}</h1><p class="rl-sub">${myWhy || w0}</p>
+      ${whenT ? `<div class="rl-at"><div class="rl-strip" aria-hidden="true">${PHASE_ORDER.map(p => `<i class="${ph.includes(p) || (mine && mine.phase === p) ? 'on' : ''} ${p === me ? 'me' : ''}" style="--c:${PH_HEX[p]}"></i>`).join('')}</div><div class="rl-lab" aria-hidden="true">${PHASE_ORDER.map(p => `<small class="${ph.includes(p) || (mine && mine.phase === p) ? 'on' : ''}">${p === me ? 'You' : HS_PH[p]}</small>`).join('')}</div>
+        <div class="rl-spec">${mine ? `<div class="rl-me"><dt>For you</dt><dd><span>${mine.from === mine.to ? `Day <b class="dotnum">${mine.from}</b>` : `Days <b class="dotnum">${mine.from}</b> to <b class="dotnum">${mine.to}</b>`}</span><small>seen in ${mine.cyclesN} cycles</small></dd></div>` : ''}<div><dt>${mine ? 'For most women' : 'When it shows'}</dt><dd>${whenT}</dd></div><div><dt>Try first</dt><dd>${R.steps[0].t}</dd></div><div><dt>Ways that help</dt><dd><span class="dotnum">${R.steps.length}</span></dd></div></div></div>` : ''}
       ${wr.length ? `<details class="rl-why rl-why2"><summary>Why it happens ${icon('chevD', 13)}</summary><p>${wr.join(' ')}</p></details>` : ''}</div></section>
     ${sectionTitle('What helps')}
     <section class="card rs2-list"><p class="rl-hint rl-hint2">${help.length ? `${icon('heart', 12)} ${help.length} of ${R.steps.length} work for you, so they’re at the top.` : `Tap ${icon('heart', 12)} on what helps you. Next time it moves to the top.`}</p>${order.map(i => { const x = R.steps[i], [d0, ...dr] = splitSentences(x.d), go = x.to ? `<button class="link rs-go" data-action="nav" data-to="${x.to}">Open ${icon('chevR', 12)}</button>` : '';

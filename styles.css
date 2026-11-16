@@ -16028,3 +16028,10 @@ html .xb-t { font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,.45), 0 2px 12p
 html .st3-ft small { font-size: 13px; letter-spacing: 0; text-transform: none; color: rgba(48,64,35,.8); }
 /* Numbered steps (Round E): the gold gradient balls on the Stretch, Meditate and Ground step lists become the same solid ink circle with a Doto number as every other numbered list */
 html .gr-steps i { background: #20301a; color: #fff; font: 800 13px/1 var(--dot); box-shadow: none; }
+
+/* Relief (Round B): her own pattern leads the spec sheet, the day in Doto and how many cycles it was seen in */
+.rl-spec .rl-me dd { display: grid; justify-items: end; gap: 3px; font-weight: 500; color: #20301a; }
+.rl-spec .rl-me dd > span { display: inline-flex; align-items: baseline; gap: 5px; white-space: nowrap; }
+.rl-spec .rl-me dd b { font: 900 18px/1 var(--dot); color: #20301a; }
+.rl-spec .rl-me dd small { font: 400 12px/1.2 var(--font); color: #5d6a50; }
+.rl-spec .rl-me dt { color: #304023; font-weight: 600; }
