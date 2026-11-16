@@ -407,10 +407,10 @@ function viewTopic(k) {
       <div class="en-r no tp-skip">${icon('close', 12, 2.4)}<span><em>Skip</em>${F.skip}</span></div>
       <div class="tp-f"><span class="dos-w">${icon('clock', 12)} This week</span>${saveBtn(regTip(`friends-${ph}`, 'Friends', [PEOPLE_PLAN[ph][0], F.ideas[0], F.ideas[1], 'This week'], 'do/friends'))}</div>
       <details class="gr-why"><summary>Why in this phase ${icon('chevD', 13)}</summary><p>${F.why}</p></details></section>`; }
-  else body = `<section class="card tp-card tp-wrap tp-${k}">${todayTiles(info, k)}</section>`;
+  else if (k !== 'tea') body = `<section class="card tp-card tp-wrap tp-${k}">${todayTiles(info, k)}</section>`;
   return `${topbar(head[0], { back: true })}
   <div class="pad tp">
-    ${k === 'tea' ? (() => { const td = TEA_DAY[w], st = (td[3].match(/\d+(?:–\d+)?\s*min/) || [''])[0]; return teaWheel(info, w, td, st, w === 'flow-start' || w === 'flow-end' || w === 'premenstrual', true); })() : `<section class="tp-hero"><img src="${(k === 'eat' && photoUrl(eatHero(ph), 900)) || TOPIC_PIC[k]}" alt=""></section><div class="tp-name"><span class="eyebrow">Day ${Math.min(info.cd, info.L)} · ${P.name}</span><h1>${head[1]}</h1></div>`}
+    ${k === 'tea' ? teaPage(info, w) : `<section class="tp-hero"><img src="${(k === 'eat' && photoUrl(eatHero(ph), 900)) || TOPIC_PIC[k]}" alt=""></section><div class="tp-name"><span class="eyebrow">Day ${Math.min(info.cd, info.L)} · ${P.name}</span><h1>${head[1]}</h1></div>`}
     ${body}
   </div>`;
 }
@@ -6450,6 +6450,35 @@ function teaBubbles(w, info) {
   const ring = f => `<svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="34" fill="none" stroke="rgba(32,48,26,.1)" stroke-width="5"/><circle cx="40" cy="40" r="34" fill="none" stroke="${pc}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${(C * f).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 40 40)"/></svg>`;
   const B = [[b[0] / 100, b[0], '°C', 'Water'], [b[2] / 15, b[1], 'min', b[6] || 'Steep'], [Math.min(1, +b[3] / 4), b[3], b[4], b[5]]];
   return `<div class="tgb">${B.map(([f, v, u, l], i) => `<span class="tgb-b" style="--i:${i}">${ring(f)}<b><em class="dotnum">${v}</em>${u ? `<small>${u}</small>` : ''}</b><i>${l}</i></span>`).join('')}</div>`;
+}
+// Tea for today in the unlock page structure (16 Nov 2026, her call: clearer, same fundamentals): the turning cup on a
+// sparkled stage, a day pill, the taped note with the name, why and brew, what it does as ticked pills, then steep and when.
+function teaPage(info, w) {
+  const td = TEA_DAY[w], [stp, when] = TEA_STEEP[w] || ['', ''], near = w === 'flow-start' || w === 'flow-end' || w === 'premenstrual';
+  const swirl = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';
+  const [a, b] = td[1].includes(' & ') ? td[1].split(' & ') : [td[1].split(' ').slice(0, -1).join(' '), td[1].split(' ').slice(-1)[0]];
+  const fit = /matcha/i.test(td[1]) ? 0.92 : /green tea/i.test(td[1]) ? 1.1 : 1.3;
+  return `<div class="ul3 ul4 tpx">
+    <div class="ul4-stage tpx-stage">
+      <svg class="ul4-sp" viewBox="0 0 360 250" aria-hidden="true">${o3Spark('#f1d58a', 26, 34, 0)}${o3Spark('#fff', 334, 22, 1.1)}${o3Spark('#c9d6a8', 344, 214, 2)}${o3Spark('#f6c6d4', 14, 222, 1.6)}</svg>
+      <span class="cup3d-w tpx-cup"><img src="${teaCupImg(td[1])}" alt="" decoding="async">${teaCupAttr(td[1]) ? `<canvas class="teacup3d"${teaCupAttr(td[1])} data-fit="${fit}" aria-label="${td[1]}, turning slowly"></canvas>` : ''}</span>
+    </div>
+    <span class="ul3-days">${icon('cup', 13)} Day ${info.cd} · ${PHASES[info.phase].name}${near ? ' · warm only' : ''}</span>
+    <section class="o3-note ul3-note ul4-note tpx-note">
+      <small class="ul4-eye">Your tea today</small>
+      <h2 class="ul4-h">${a}${a && b ? ' &amp;' : ''}<br><em>${b}${swirl}</em></h2>
+      <p class="o3-lead">${td[2].replace(/^(\S+(?: \S+)?)/, '<mark>$1</mark>')}</p>
+      <p class="sgx-st"><b>Brew</b>${td[3].replace(/(\d+–\d+\s\S+)/g, '<span class="nw">$1</span>')}</p>
+      <button class="ul3-cta" data-action="nav" data-to="tea/day-${w}">How to brew it</button>
+      <p class="o3-sign">a warm cup, a softer day <i>♡</i></p>
+    </section>
+    <ul class="ul3-no tpx-does">${(TEA_WHEEL[w] || []).map((t, i) => `<li style="--r:${[-2, 1.5, -1, 1, -1.5, 2][i % 6]}deg"><span class="o3-x tpx-ok">${O3_TICK}</span>${t}</li>`).join('')}</ul>
+    <section class="card ul3-keep tpx-keep"><h3>Steep &amp; when</h3>
+      <div class="ul3-r"><span class="ul3-ic">${icon('clock', 18)}</span><span><b>Steep</b><small>${stp || td[3]}</small></span></div>
+      <div class="ul3-r"><span class="ul3-ic">${icon('sun', 18)}</span><span><b>When</b><small>${when || 'Any time'}</small></span></div>
+      <button class="ul3-r tpx-go" data-action="nav" data-to="tea"><span class="ul3-ic">${icon('leaf', 18)}</span><span><b>Full tea guide</b><small>Every tea for every phase</small></span><i class="tpx-ch">${icon('chevL', 16)}</i></button>
+    </section>
+  </div>`;
 }
 function teaWheel(info, w, td, steep, near, inPage) {
   const R = inPage ? 96 : 86, A = [0, 60, 120, 180, 240, 300];
