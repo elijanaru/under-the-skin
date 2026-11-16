@@ -16044,3 +16044,6 @@ html .gr-steps i { background: #20301a; color: #fff; font: 800 13px/1 var(--dot)
 .cdl-ch span { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px 5px 7px; border-radius: 99px; background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(30% * var(--hs)) 94%); font: 500 12.5px/1 var(--font); color: #304023; }
 .cdl-ch span .emo { margin: 0; font-size: 14px; line-height: 1; font-style: normal; }
 .cdl-ch span.m { padding: 5px 10px; color: #5d6a50; }
+
+/* Supplement › Food first (Round D): for CoQ10 and creatine food is set against the trial dose, with one short note under the bars */
+.nu-food .ff-note { margin: 10px 0 2px; padding: 10px 12px; border-radius: 14px; background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(30% * var(--hs)) 95%); font: 400 13px/1.45 var(--font); color: #304023; }

@@ -2474,7 +2474,7 @@ export const SUPP_FOOD = {
   'omega-3': [['Wild salmon, sardines, mackerel', 'Two or three times a week'], ['Pasture-raised eggs', 'Richer in omega-3 than caged'], ['Walnuts', 'A handful'], ['Flax and chia seeds', 'Ground. Young women turn about a fifth of this plant omega-3 into EPA']],
   'vitamin-c': [['Peppers', 'Raw in salads, cooked on warm days'], ['Kiwi and citrus', 'Whole fruit, not juice'], ['Berries', 'Fresh or frozen'], ['Sauerkraut', 'Raw and unpasteurised']],
   ginger: [['Fresh ginger tea', 'Sliced root steeped in hot water'], ['Ginger in soups and stews', 'Warming for your period'], ['Grated into honey', 'A spoon in hot water']],
-  creatine: [['Red meat', 'About 1 g per 250 g'], ['Herring and salmon', 'Also rich in omega-3']],
+  creatine: [['Red meat', 'Your body makes about 1 g a day on top'], ['Herring and salmon', 'Also rich in omega-3']],
   'vitamin-d': [['Midday sun', '15–20 minutes on bare skin in summer'], ['Oily fish', 'Salmon, sardines, herring'], ['Egg yolks', 'From hens raised outdoors'], ['Butter from grass-fed cows', 'Also carries K2']],
   'b-complex': [['Eggs', 'B12, B2 and folate in one'], ['Liver', 'Once a week covers most B vitamins'], ['Avocado and asparagus', 'Gentle folate, low in oxalate'], ['Raw milk and cheese', 'B2 and B12']],
   probiotic: [['Raw sauerkraut and kimchi', 'Unpasteurised, from the fridge'], ['Kefir and raw-milk yoghurt', 'A small glass a day'], ['Aged cheese', 'Live cultures'], ['Kombucha', 'Low in sugar']],
@@ -2484,7 +2484,7 @@ export const SUPP_FOOD = {
   b6: [['Salmon and tuna', 'Rich in B6'], ['Chicken and turkey', 'Light and easy'], ['Bananas', 'Ripe ones'], ['Potatoes and chickpeas', 'Cooked, with skin']],
   calcium: [['Raw milk, yoghurt and cheese', 'The easiest source'], ['Sardines with bones', 'Calcium and omega-3'], ['Broccoli and bok choy', 'Lightly cooked, easy to absorb'], ['Sesame seeds and tahini', 'A spoon a day']],
   prenatal: [['Avocado and asparagus', 'Natural folate'], ['Liver', 'Vitamin A and B12, a small portion weekly'], ['Eggs', 'Choline for the baby\'s brain'], ['Oily fish', 'Omega-3, low-mercury kinds']],
-  coq10: [['Heart and liver', 'Organ meats are richest'], ['Sardines and mackerel', 'Oily fish'], ['Beef', 'Grass-fed'], ['Broccoli and cauliflower', 'Smaller amounts']],
+  coq10: [['Heart and liver', 'Organ meats are richest'], ['Sardines and mackerel', 'Oily fish, baked or steamed'], ['Beef', 'Grass-fed'], ['Broccoli and cauliflower', 'Smaller amounts']],
 };
 
 // How much one serving gives, against a woman's daily need (USDA food tables, rounded down).
@@ -2500,6 +2500,13 @@ export const SUPP_FOOD_AMT = {
   'omega-3': { need: [250, 'mg'], rows: [['100 g, cooked', 1000], null, null, null] },
   b6: { need: [1.3, 'mg'], rows: [['100 g salmon, cooked', 0.9], ['100 g chicken breast', 0.6], ['1 medium banana', 0.4], ['1 medium potato, baked', 0.5]] },
   'vitamin-e': { need: [15, 'mg'], rows: [['30 g', 10], ['30 g almonds', 7.7], ['100 g', 2.1], ['1 tablespoon', 1.9]] },
+  // No daily need for these two, so food is set against the dose the trials used (third item = header label, fourth = a short note).
+  // Creatine: beef about 4.5 g and herring 6.5 to 10 g per kg raw (Balestrino & Adriano 2019). Food gives 1 to 2 g a day.
+  creatine: { need: [3, 'g', 'Trials used'], rows: [['200 g steak, raw weight', 0.9], ['100 g herring', 0.7]],
+    note: 'A meat-eater gets 1 to 2 g a day from food; trials topped that up with 3 to 5 g.' },
+  // CoQ10 per 100 g (Pravst, Žmitek & Žmitek 2010): beef heart 11.3 mg, mackerel 4.3 to 6.7, beef 3.1, broccoli 0.6 to 0.9; low ends used
+  coq10: { need: [100, 'mg', 'Trials used'], rows: [['100 g beef heart', 11.3], ['100 g mackerel', 4.3], ['100 g beef', 3.1], ['1 cup broccoli, 90 g', 0.6]],
+    note: 'Food gives about 3 to 6 mg a day, so the 100 to 200 mg used in fertility trials only comes from a capsule. Frying loses about a fifth.' },
 };
 
 // Autumn rituals: warm, replenish and protect as the season turns. [name, how, why, evidence]

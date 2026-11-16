@@ -5124,14 +5124,14 @@ function suppSafe(id) {
 const fmtAmt = v => v < 10 && v % 1 ? String(v) : String(Math.round(v));
 function suppFoodHead(id) {
   const A = SUPP_FOOD_AMT[id]; if (!A) return '<div class="ffq-h">Where you find it</div>';
-  return `<div class="ff-h"><span>One serving gives</span><span>You need <b class="dotnum">${A.need[0]}</b> ${A.need[1]} a day</span></div>`;
+  return `<div class="ff-h"><span>One serving gives</span><span>${A.need[2] || 'You need'} <b class="dotnum">${A.need[0]}</b> ${A.need[1]} a day</span></div>`;
 }
 function suppFoodRow(id, [f, tip], i) {
   const A = SUPP_FOOD_AMT[id], r = A && A.rows[i];
   if (!r) { const e = ingEmo(f) || (/meat|beef|lamb/i.test(f) ? '🥩' : '🌿'); return `<div class="ffq"><span class="ffq-e">${emoRaw(e)}</span><div><b>${f}</b><small>${tip}</small></div></div>`; }
   const [serv, v] = r, pc = Math.round(v / A.need[0] * 100), over = pc > 100;
   return `<div class="ff-r"><div class="ff-t"><b>${f}</b><span class="ff-v"><b class="dotnum">${fmtAmt(v)}</b>${A.need[1]}</span></div>
-    <div class="ff-bar ${over ? 'over' : ''}" role="img" aria-label="About ${pc}% of your day"><span><i style="width:${Math.min(100, Math.max(3, pc))}%"></i></span><em>${over ? `${+(v / A.need[0]).toFixed(v / A.need[0] < 2 ? 1 : 0)}× your day` : `${pc}%`}</em></div>
+    <div class="ff-bar ${over ? 'over' : ''}" role="img" aria-label="About ${pc}% of ${A.need[2] ? 'the trial dose' : 'your day'}"><span><i style="width:${Math.min(100, Math.max(3, pc))}%"></i></span><em>${over ? `${+(v / A.need[0]).toFixed(v / A.need[0] < 2 ? 1 : 0)}× your day` : `${pc}%`}</em></div>
     <small>${serv} · ${tip}</small></div>`;
 }
 // Supplement heroes: a real photo of the food that carries the most of it, with the capsule beside it.
@@ -5156,7 +5156,7 @@ function viewSupp(id) {
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit(ph, now)}${ph.length === 4 ? '<small class="tf-all">Useful every day of your cycle</small>' : now && !ph.includes(now) ? `<small class="tf-all">Not a focus in your ${PHASES[now].name.toLowerCase()} phase</small>` : ''}</section>
     ${suppSafe(x.id)}
     ${suppDay(x.when)}
-    ${(SUPP_FOOD[x.id] || []).length ? `${sectionTitle('Food first')}<section class="card glass nu-food">${suppFoodHead(x.id)}${SUPP_FOOD[x.id].map((r, i) => suppFoodRow(x.id, r, i)).join('')}${warmWindow(M.info) ? '<small class="tf-all">You\u2019re in your warm window: pick the cooked and warm ones until your period ends.</small>' : ''}</section>` : ''}
+    ${(SUPP_FOOD[x.id] || []).length ? `${sectionTitle('Food first')}<section class="card glass nu-food">${suppFoodHead(x.id)}${SUPP_FOOD[x.id].map((r, i) => suppFoodRow(x.id, r, i)).join('')}${SUPP_FOOD_AMT[x.id]?.note ? `<p class="ff-note">${SUPP_FOOD_AMT[x.id].note}</p>` : ''}${warmWindow(M.info) ? '<small class="tf-all">You\u2019re in your warm window: pick the cooked and warm ones until your period ends.</small>' : ''}</section>` : ''}
     ${remedyScience(x, { [x.id]: x })}
     ${(() => { const L = SUPP_LIB.filter(y => ttc() || !/prenatal|coq10/.test(y.id)), nx = L[(L.indexOf(x) + 1) % L.length]; return `<button class="card glass nu-next" data-action="nav" data-to="supp/${nx.id}"><small>Next</small><b>${nx.name}</b>${icon('chevR', 16)}</button>`; })()}
     <p class="fine center">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}${state.profile.bf ? ' or are breastfeeding' : ''}. Food first, supplements to fill the gaps.</p>
