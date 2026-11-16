@@ -7771,7 +7771,8 @@ const BZ_IC = {
 };
 const bzIc = id => (BZ_IC[id] ? BZ_IC[id]() : '');
 // What each breath does: one card per practice, her phase's breath first
-const BZ_BEST = { still: ['🫧', 'A head that won’t go quiet'], sigh: ['😮‍💨', 'Calm in 30 seconds'], belly: ['🌸', 'Period cramps'], box: ['🎤', 'Before a big talk'], even: ['💗', 'A racing heart'], 478: ['🌙', 'Falling asleep'] };
+// each practice: a clear emoji (no faint bubbles on white) and when to reach for it, all phrased the same way
+const BZ_BEST = { still: ['🕯️', 'When your head won’t go quiet'], sigh: ['😮‍💨', 'When you need calm in 30 seconds'], belly: ['🌸', 'When period cramps come'], box: ['🎤', 'Before a big talk'], even: ['💗', 'When your heart races'], 478: ['🌙', 'When you can’t fall asleep'] };
 const BZ_DOES = { still: 'Notice a thought, let it go.', sigh: 'Calms you within seconds.', belly: 'Softens cramps and tension.', box: 'Steady and clear under pressure.', even: 'Heart and breath in step.', 478: 'Helps you fall asleep.' };
 const BZ_COL = { still: '#6c823e', sigh: '#5f93a8', belly: '#d9768f', box: '#6c823e', even: '#c99327', 478: '#8f79bd' };
 // three spec rows on each breath card: when it helps most, the counts of one breath, and how long a full session takes

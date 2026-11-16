@@ -16804,3 +16804,6 @@ html .eat-row .rcard.has-photo .rc-k, html .pv-rec .rcard.has-photo .rc-k, html 
 html .tf2-e, html .lt2-tag, html .mg4-w figcaption small, html .tf2-s { color: rgba(32,48,26,.7) !important; }
 html .view .pl-head .mv2-eyebrow { color: rgba(32,48,26,.78); }
 html .view .pl-head p { color: rgba(32,48,26,.84); font-weight: 400; }
+/* Breathe picker: titles line up across cards (content starts at the top, not centred) */
+html .bzp-o { align-content: start; grid-template-rows: auto auto 1fr; }
+html .bzp-o .bzp-g { margin-bottom: 14px; }
