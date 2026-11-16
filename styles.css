@@ -16057,3 +16057,24 @@ html .tp .tp-name h1 { margin: 6px 0 0; font: 600 30px/1.1 var(--font); letter-s
 /* Eat: the title already sits above the card, so the card opens on the Today line instead of repeating it */
 html .tp .tp-eat .ht-head .ht-g, html .tp .tp-eat .ht-head > div > b { display: none; }
 html .tp .tp-eat .ht-head p { margin: 0; font-size: 15px; line-height: 1.4; color: #304023; }
+
+/* Eat › Meal ideas and What your body needs (Round A): emoji instead of thin line icons, clean rows with hairlines instead of boxed paragraphs; each need shows its name and foods, the why opens on tap */
+html .hub-tip-in .fm2 { gap: 0; margin-bottom: 16px; }
+html .hub-tip-in .fm2 .fmeal { background: none; border: 0; border-bottom: 1px solid rgba(48,64,35,.12); border-radius: 0; padding: 12px 2px; box-shadow: none; gap: 12px; }
+html .hub-tip-in .fm2 .fmeal:last-child { border-bottom: 0; }
+html .hub-tip-in .fm2 .fmeal > span { width: 42px; height: 42px; border-radius: 50%; margin: 0; font-size: 22px; font-style: normal; background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(30% * var(--hs)) 94%); box-shadow: none; }
+html .hub-tip-in .fm2 .fmeal small { color: #6c823e; font-weight: 500; }
+html .hub-tip-in .fm2 .fmeal b { color: #20301a; font-weight: 600; }
+html .hub-tip-in .fm2 .fmeal p { color: #4a5a3c; }
+html .hub-tip-in .fn2 { gap: 0; margin: 2px 0 10px; }
+html .hub-tip-in .fn2 .fn { padding: 0; border-radius: 0; background: none; border-bottom: 1px solid rgba(48,64,35,.12); }
+html .hub-tip-in .fn2 .fn:last-child { border-bottom: 0; }
+html .hub-tip-in .fn2 summary { list-style: none; display: grid; grid-template-columns: 42px 1fr auto; align-items: center; gap: 12px; padding: 11px 2px; cursor: pointer; color: #5d6a50; }
+html .hub-tip-in .fn2 summary::-webkit-details-marker { display: none; }
+html .hub-tip-in .fn2 .fn-e { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; margin: 0; font-size: 21px; font-style: normal; background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(30% * var(--hs)) 94%); }
+html .hub-tip-in .fn2 .fn-t { display: grid; gap: 2px; min-width: 0; }
+html .hub-tip-in .fn2 .fn-t b { font-size: 15px; font-weight: 600; color: #20301a; }
+html .hub-tip-in .fn2 .fn-t small { font-size: 13px; line-height: 1.35; color: #5d6a50; }
+html .hub-tip-in .fn2 summary .ic { transition: transform .3s ease; }
+html .hub-tip-in .fn2 .fn[open] summary .ic { transform: rotate(180deg); }
+html .hub-tip-in .fn2 .fn > p { margin: -2px 0 12px 56px !important; font-size: 13.5px !important; line-height: 1.45; color: #304023; }

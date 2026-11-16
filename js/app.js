@@ -5521,6 +5521,9 @@ const PEOPLE_G = { menstrual: '🫶', follicular: '👯', ovulatory: '💃', lut
 const FOOD_DOT = { '🔴': '#a8362e', '⚫': '#151515', '🟢': '#5d8a48', '🟠': '#cf7a2e', '🟣': '#6a3d78', '🟡': '#d9b84a', '🟤': '#76523a' };
 const colDots = c => [...c].filter(x => FOOD_DOT[x]).map(x => `<i class="cdot" style="background:${FOOD_DOT[x]}"></i>`).join('');
 const noEmoji = t => String(t).replace(/^[\p{Extended_Pictographic}\uFE0F\u200D]+\s*/u, '');
+// the nutrient's own emoji from its name; plain circles and the moon become a food that carries it
+const needEmo = n => { const t = noEmoji(n), e = String(n).slice(0, String(n).length - t.length).trim();
+  return /^Zinc/.test(t) ? '🦪' : /^Magnesium/.test(t) && (!e || e === '🌙') ? '🎃' : e || '🌿'; };
 // Today's best things to do, as big tiles. Stress, stretch and meditate open in place with the how-to.
 const picSrc = p => p.includes('/') ? p : `images/${p.replace('move-', 'tile-')}.webp`;
 // One relief move for today: from what she logged in the last two days, else what is common in this part of her cycle.
@@ -5628,9 +5631,9 @@ function todayTiles(info, only) {
     if (k === 'eat') return `<div class="hub-tip-in stack"><div class="ht-head"><span class="ht-g">${icon('bowl', 22)}</span><div><b>${fn[0]}</b><p>${warm ? `${icon('thermo', 13)} Today: warm & cooked only. No raw or cold food.` : `${icon('leaf', 13)} Today: raw and fresh food is welcome, with some warm meals.`}</p></div></div><div>
       <div class="fcol"><span class="fcol-dots">${colDots(fm.col[0])}</span><div><small>Colour of the day</small><b>${fm.col[1]} foods</b><p>${fm.col[2]}</p><span>${fm.col[3]}</span></div></div>
       ${w === 'flow-start' || w === 'flow-end' ? phaseFoodPic('menstrual') : ''}<small class="fk">Meal ideas</small>
-      <div class="fmeals">${[[icon('bowl', 18), 'Broth & soup', fm.broth], warm || !fm.raw ? [icon('thermo', 18), 'Warm instead of raw', fm.warmAlt] : [icon('leaf', 18), 'Raw', fm.raw], [icon('fish', 18), 'Meat & fish', fm.meat]].map(([g_, k_, [t, d]]) => `<div class="fmeal"><span>${g_}</span><div><small>${k_}</small><b>${t}</b><p>${d}</p></div></div>`).join('')}</div>
+      <div class="fmeals fm2">${[['🍲', 'Broth & soup', fm.broth], warm || !fm.raw ? ['🥘', 'Warm instead of raw', fm.warmAlt] : ['🥗', 'Raw', fm.raw], ['🐟', 'Meat & fish', fm.meat]].map(([g_, k_, [t, d]]) => `<div class="fmeal"><span class="emo" aria-hidden="true">${g_}</span><div><small>${k_}</small><b>${t}</b><p>${d}</p></div></div>`).join('')}</div>
       <small class="fk">What your body needs</small>
-      <div class="fneeds">${fn[1].map(([n, why, foods, ev]) => `<div class="fn"><div class="fn-h"><b>${noEmoji(n)}</b>${evBadge(ev)}</div><p>${why}</p><span>${foods}</span></div>`).join('')}</div>
+      <div class="fneeds fn2">${fn[1].map(([n, why, foods]) => { const e = needEmo(n); return `<details class="fn"><summary><span class="fn-e emo" aria-hidden="true">${e}</span><span class="fn-t"><b>${noEmoji(n)}</b><small>${foods}</small></span>${icon('chevD', 14)}</summary><p>${why}</p></details>`; }).join('')}</div>
       <button class="link fn-more" data-action="nav" data-to="plan">Full food guide ${icon('chevR', 12)}</button></div></div>`;
     const x = tips[k]; if (!x) return '';
     return `<div class="hub-tip-in"><span class="ht-g">${x[0]}</span><div><b>${x[1]}</b><p>${x[2]}</p>${x[3] ? `<ol>${x[3].map(t => `<li>${t}</li>`).join('')}</ol>` : ''}
