@@ -16661,3 +16661,6 @@ html .sgx-when h3 { margin: 0 0 8px; font: 500 15px/1.2 var(--font); color: #203
 .lv-kiss { position: absolute; z-index: 3; right: 9%; top: 22%; width: 30%; transform: rotate(-14deg); mix-blend-mode: multiply; }
 .lv-bisous .lv-type.t3 { left: 8%; right: auto; top: 11%; color: #8a4a5c; }
 .lv-w.bis { left: 8%; bottom: 13%; font-size: 68px; color: #8c1f3e; transform: rotate(-4deg); }
+/* no ticks on the tea pills (her call): plain text pills, centred */
+.tpx-p { padding: 8px 14px; justify-content: center; text-align: center; }
+.tpx-p.n { padding: 8px 10px; }

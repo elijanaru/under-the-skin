@@ -6467,7 +6467,7 @@ function teaPage(info, w) {
       <svg class="ul4-sp" viewBox="0 0 360 440" aria-hidden="true">${o3Spark('#f1d58a', 26, 34, 0)}${o3Spark('#fff', 334, 22, 1.1)}${o3Spark('#c9d6a8', 344, 214, 2)}${o3Spark('#f6c6d4', 14, 222, 1.6)}</svg>
       <svg class="tpx-lines" viewBox="0 0 100 440" preserveAspectRatio="none" aria-hidden="true">${does.map((t, i) => { const [x, y, ex, ey] = TPX_POS[i]; return `<path pathLength="1" style="--i:${i}" d="M${x} ${y} L${ex} ${ey}"/>`; }).join('')}</svg>
       <span class="cup3d-w tpx-cup"><img src="${teaCupImg(td[1])}" alt="" decoding="async">${teaCupAttr(td[1]) ? `<canvas class="teacup3d"${teaCupAttr(td[1])} data-fit="${fit}" aria-label="${td[1]}, turning slowly"></canvas>` : ''}</span>
-      ${does.map((t, i) => { const [x, y, ex, ey, cls] = TPX_POS[i]; return `<i class="tpx-dot" style="left:${ex}%;top:${ey}px;--i:${i}"></i><span class="tpx-p ${cls}" style="--x:${x}%;--y:${y}px;--i:${i}"><span class="o3-x tpx-ok">${O3_TICK}</span>${t}</span>`; }).join('')}
+      ${does.map((t, i) => { const [x, y, ex, ey, cls] = TPX_POS[i]; return `<i class="tpx-dot" style="left:${ex}%;top:${ey}px;--i:${i}"></i><span class="tpx-p ${cls}" style="--x:${x}%;--y:${y}px;--i:${i}">${t}</span>`; }).join('')}
     </div>
     <span class="ul3-days">${icon('cup', 13)} Day ${info.cd} · ${PHASES[info.phase].name}${near ? ' · warm only' : ''}</span>
     <section class="o3-note ul3-note ul4-note tpx-note">
