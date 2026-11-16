@@ -784,29 +784,62 @@ function viewLoss() {
       <p>Low or anxious for more than 2 weeks, or the moment keeps coming back? Tell your doctor or midwife. Pregnancy loss charities in your country also listen, for free. Thoughts of harming yourself: call your local emergency number now.</p></section>
   </div>`;
 }
+// Trying for a baby (16 Nov 2026, her call): the handmade world of the onboarding promise. A paper note says where she is,
+// sticker steps pick how long she has been trying, her fertile window is an admit-one ticket, the chances are a little bar
+// chart on taped paper, the doctor rule is three stamped tickets and the "for both of you" facts are sticky notes.
 function viewTrying() {
-  const p = state.profile, st = ttcStage(), m = ttcMonths(), mo = st && st !== 'tx' && st !== 'new' ? Math.min(12, Math.floor(m) + 1) : 0;
-  const W = 300, H = 110, bw = W / 12;
-  const chart = `<svg viewBox="0 -16 ${W} ${H + 34}" width="100%" class="tr-chart" role="img" aria-label="Chance of pregnancy by month">
-    ${TTC_CHANCE.map((v, i) => { const h = v / 100 * H; return `<rect x="${(i * bw + 3).toFixed(1)}" y="${(H - h).toFixed(1)}" width="${(bw - 6).toFixed(1)}" height="${h.toFixed(1)}" rx="4" class="${i + 1 === mo ? 'on' : i + 1 < mo ? 'past' : ''}"/>${[0, 2, 5, 11].includes(i) ? `<text x="${(i * bw + bw / 2).toFixed(1)}" y="${(H - h - 5).toFixed(1)}" text-anchor="middle" class="tr-v">${v}%</text>` : ''}`; }).join('')}
-    ${[1, 3, 6, 12].map(n => `<text x="${((n - 1) * bw + bw / 2).toFixed(1)}" y="${H + 14}" text-anchor="middle" class="tr-x">${n}${n === 12 ? ' months' : ''}</text>`).join('')}</svg>`;
+  const p = state.profile, st = ttcStage(), m = ttcMonths(), mo = st && st !== 'tx' && st !== 'new' ? Math.min(12, Math.floor(m) + 1) : 0, info = M.info;
+  const W = 300, H = 104, bw = W / 12;
+  const chart = `<svg viewBox="0 -18 ${W} ${H + 36}" width="100%" class="tr-chart ty-chart" role="img" aria-label="Chance of pregnancy by month">
+    ${TTC_CHANCE.map((v, i) => { const h = v / 100 * H; return `<rect style="--i:${i}" x="${(i * bw + 3).toFixed(1)}" y="${(H - h).toFixed(1)}" width="${(bw - 6).toFixed(1)}" height="${h.toFixed(1)}" rx="5" class="${i + 1 === mo ? 'on' : i + 1 < mo ? 'past' : ''}"/>${[0, 2, 5, 11].includes(i) || i + 1 === mo ? `<text x="${(i * bw + bw / 2).toFixed(1)}" y="${(H - h - 6).toFixed(1)}" text-anchor="middle" class="tr-v">${v}%</text>` : ''}`; }).join('')}
+    ${[1, 3, 6, 12].map(n => `<text x="${((n - 1) * bw + bw / 2).toFixed(1)}" y="${H + 15}" text-anchor="middle" class="tr-x">${n}${n === 12 ? ' months' : ''}</text>`).join('')}</svg>`;
+  const head = st ? TTC_STAGE[st] : ['Tell us where you are', 'Pick how long you have been trying, and this page follows you month by month.'];
+  // the stage stickers on a doodled trail
+  const steps = `<section class="op-card o3-path ty-path">${TTC_TRY.map(([k, e, t]) => `<button class="o3-st ty-st ${p.ttc === k ? 'now' : ''}" data-action="ttcSet" data-v="${k}" data-scope="profile" aria-pressed="${p.ttc === k}"><span>${emoRaw(e)}</span><small>${t}</small></button>`).join('')}
+    <svg class="o3-trail" viewBox="0 0 300 30" preserveAspectRatio="none" aria-hidden="true"><path d="M20 18 C 60 4, 100 28, 150 15 S 240 6, 280 18"/></svg></section>`;
+  // her fertile window as an admit-one ticket
+  let ticket = '';
+  if (info) {
+    const today = C.startOfDay(new Date()), past = info.cd > info.ov && !info.fertile, base = past ? C.addDays(info.cycleStart, info.L) : info.cycleStart;
+    const start = C.addDays(base, info.ov - 6), peak1 = C.addDays(base, info.ov - 3), ovd = C.addDays(base, info.ov - 1), d2 = C.diffDays(start, today);
+    const inWin = !past && (info.fertile || (info.cd >= info.ov - 5 && info.cd <= info.ov));
+    const day = d => fmt(d, { month: 'short', day: 'numeric' });
+    const cells = Array.from({ length: 6 }, (_, k) => { const d = C.addDays(start, k), now = C.iso(d) === C.iso(today), pk = k >= 3;
+      return `<span class="ty-d ${pk ? 'pk' : ''} ${now ? 'now' : ''}"><i style="--h:${[34, 46, 60, 82, 100, 92][k]}%"></i><b class="dotnum">${d.getDate()}</b>${now ? '<em>today</em>' : ''}</span>`; }).join('');
+    ticket = `<h4 class="gd-h">Your <span class="gd-hl">fertile window</span></h4>
+    <article class="gd-tk ty-tk now" style="--c:#c2577a">
+      <div class="gd-stub" aria-hidden="true"><span class="gd-sg">🥚</span><b class="gd-ph">Fertile</b><small>admit two</small></div>
+      <div class="gd-main"><small class="gd-lo">${inWin ? 'Open now' : d2 > 0 ? `Opens in ${plural(d2, 'day')}` : 'Next cycle'}</small>
+        <b class="gd-t">${day(start)} to ${day(ovd)}</b>
+        <div class="ty-days">${cells}</div>
+        <p class="gd-k"><span>Best days: ${day(peak1)} to ${day(ovd)}</span></p>
+        <p class="gd-why">Sex every 1 to 2 days in this window gives the best chance. These are estimates: an ovulation test confirms your real day.</p>
+        <span class="gd-stamp late">${inWin ? 'Now' : 'Save the date'}</span></div></article>`;
+  }
+  const docE = ['🌿', '🌷', '🌹'];
+  const doc = TTC_DOCTOR.slice(0, 3).map(([a, b], k) => `<div class="ty-dt" style="--r:${[-1.6, 1.2, -.8][k]}deg"><span class="ty-de">${emoRaw(docE[k])}</span><small>${a}</small><b>${b.replace('After ', '').replace(' of trying', '')}</b><em>${k === 2 ? 'see a doctor' : 'of trying, then a check'}</em></div>`).join('');
+  const anyAge = TTC_DOCTOR[3][1].replace(/^Now, if /, '');
+  const bothE = { Her: '👩', Him: '👨', Timing: '⏱️', Lube: '💧' };
   return `${topbar('Trying for a baby', { back: true })}
-  <div class="pad tr">
-    <h1 class="page-h">Trying for <span>a baby</span></h1>
-    <p class="hs-sub">Where you are, what your chances look like, and when it’s time to ask for help.</p>
-    <section class="card card-light af-now"><div class="eyebrow dark">${!st ? 'How long have you been trying?' : st === 'tx' ? 'In fertility treatment' : st === 'new' ? 'Just starting' : `Month ${Math.floor(m) + 1} of trying`}</div>
-      ${st ? `<h3>${TTC_STAGE[st][0]}</h3><p>${TTC_STAGE[st][1]}</p>` : ''}
-      <div class="af-age">${TTC_TRY.map(([k, , t]) => `<button class="${p.ttc === k ? 'on' : ''}" data-action="ttcSet" data-v="${k}" data-scope="profile">${t}</button>`).join('')}</div></section>
-    <section class="card glass tr-ch"><div class="eyebrow">Your chances add up</div>
-      <h3>9 in 10 within a year</h3><p class="tr-sub">Out of couples who timed sex to the fertile days, this many were pregnant by each month.</p>
-      ${chart}<small class="tr-cite">Gnoth et al. 2003 · Human Reproduction. Chances per cycle drop slowly after 35.</small></section>
-    <section class="card glass tr-spec"><div class="eyebrow">When to see a doctor</div>
-      ${TTC_DOCTOR.map(([a, b]) => `<div class="tr-r"><span>${a}</span><b>${b}</b></div>`).join('')}</section>
-    <section class="card glass af-t ${ui.trOpen ? 'open' : ''}">
-      <button class="af-th tr-th" data-action="trOpen" aria-expanded="${!!ui.trOpen}"><span class="af-tt"><span class="eyebrow">For both of you</span><b>Folate, sperm, timing</b></span>${icon('chevD', 16)}</button>
-      ${ui.trOpen ? `<div class="tr-spec2">${TTC_BOTH.map(([a, b]) => `<div class="tr-r"><span>${a}</span><b>${b}</b></div>`).join('')}</div>` : `<button class="af-read" data-action="trOpen">Read more</button>`}</section>
-    <section class="card af-help"><b>${icon('heart', 15)} It’s okay if this is hard</b>
-      <p>The two weeks of waiting and every period that comes can feel like a loss. Tell someone you trust, and be as kind to yourself as you would be to a friend.</p></section>
+  <div class="pad tr ty">
+    <section class="o3-note ty-note"><h2><span>Trying for</span> <em>a baby${DG_SWIRL}</em></h2>
+      <p class="o3-sub">${st ? (st === 'tx' ? 'In fertility treatment' : st === 'new' ? 'Just starting' : `Month ${Math.floor(m) + 1} of trying`) + ' · ' : ''}${head[0]}</p>
+      <p class="o3-lead">${head[1]}</p><p class="o3-sign">with love, from our little team <i>♡</i></p></section>
+    <h4 class="gd-h">How long have you <span class="gd-hl">been trying?</span></h4>
+    ${steps}
+    ${ticket}
+    <section class="gd-card ty-ch"><h4 class="gd-h">Your chances <span class="gd-hl">add up</span></h4>
+      <p class="ty-big"><b class="dotnum">9</b> in <b class="dotnum">10</b> <span>within a year</span></p>
+      ${chart}<p class="gd-jl">Couples who timed sex to the fertile days, pregnant by each month${mo ? `. You are in month ${mo}` : ''}.</p>
+      <small class="tr-cite">Gnoth et al. 2003 · Human Reproduction. Chances per cycle drop slowly after 35.</small></section>
+    <h4 class="gd-h">When to see <span class="gd-hl">a doctor</span></h4>
+    <div class="ty-doc">${doc}</div>
+    <div class="gd-notes ty-any"><div class="gd-n n1"><span>🩺</span><b>Any age, go now if</b><p>${anyAge.charAt(0).toUpperCase() + anyAge.slice(1)}.</p></div></div>
+    <h4 class="gd-h">For both <span class="gd-hl">of you</span></h4>
+    <div class="gd-notes ty-both">${TTC_BOTH.map(([t, x], i) => `<div class="gd-n n${i % 3}"><span>${emoRaw(bothE[t] || '🌿')}</span><b>${t}</b><p>${x}</p></div>`).join('')}</div>
+    <section class="o3-note ty-end"><p class="o3-sub">It’s okay if this is hard</p>
+      <p class="o3-lead ty-endl">The two weeks of waiting and every period that comes can feel like a loss. Tell someone you trust, and be as kind to yourself as you would be to a friend.</p>
+      <p class="o3-sign">you are not alone <i>♡</i></p></section>
   </div>`;
 }
 function viewAfter() {
@@ -1799,7 +1832,6 @@ function viewToday() {
         return `<button class="rcard sf-card ${pic ? 'has-photo' : ''}" data-action="superGo">${pic ? `<img class="rc-photo" src="${pic}" alt="" loading="lazy"><span class="rc-shade"></span>` : `${glowArt('orb', 7)}<span class="sf-e" aria-hidden="true">${f[0]}</span>`}<div class="rc-top"><span class="rc-k">Superfood</span><span class="rc-go">${icon('chevR', 16)}</span></div><div class="rc-t">${f[1]}</div><div class="rc-m">${f[3].split(/[,.:]/)[0]}</div></button>`; })()}
     </div>
 
-    ${dietGuideCard(info.phase, true)}
     ${habitsHome(info)}
 
     ${partnersCard(info)}

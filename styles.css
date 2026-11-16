@@ -16196,3 +16196,54 @@ html .lf2 .lf-ic .emo { font-size: 17px; } html .bgd-e .emo { font-size: 22px; }
 .em-l.lf.lf2 { max-width: 134px; } .em-l.lf2 .lf-tx b { font-size: 11.5px; }
 .bgx2-head h1 { color: #20301a; text-shadow: 0 0 18px rgba(255,248,244,.9); } .bgx2-head h1 span { color: #6c823e; }
 .bgx2-head p { color: #304023; text-shadow: 0 0 10px rgba(255,248,244,.95); font-weight: 500; }
+/* habits card labels in Outfit, upright (16 Nov 2026, her call) */
+.hbc-i em { font: 500 13px/1.1 var(--font); font-style: normal; letter-spacing: -.005em; }
+.hbc-c > i { font: 500 15px/1 var(--font); font-style: normal; letter-spacing: .01em; color: rgba(32,48,26,.7); }
+
+/* Trying for a baby, handmade (16 Nov 2026): paper note, sticker steps, admit-one ticket, taped chart, stamped doctor tickets, sticky notes */
+.ty .o3-note { margin: 22px 4px 0; }
+.ty-note h2 em { font-size: 50px; }
+.ty-note h2 em svg { position: absolute; left: -4%; top: 78%; width: 108%; height: 18px; overflow: visible; }
+.ty-note h2 em path { fill: none; stroke: #b04f6c; stroke-width: 2.6; stroke-linecap: round; stroke-dasharray: none; stroke-dashoffset: 0; animation: none; opacity: .55; }
+.ty-path { grid-template-columns: repeat(5, 1fr) !important; padding: 16px 4px 14px !important; border-radius: 26px; background: rgba(255,255,255,.92); }
+.ty-st { border: 0; background: none; font: inherit; cursor: pointer; padding: 0 1px; }
+.ty-st > span { width: 46px !important; height: 46px !important; }
+.ty-st > span .emo { margin: 0; display: block; font-size: 22px; line-height: 1; }
+.ty-st.now > span { background: #fde9ef !important; border-color: #b04f6c !important; box-shadow: 0 0 0 4px rgba(176,79,108,.14), 0 6px 12px -6px rgba(32,48,26,.45) !important; }
+.ty-st small { font-size: 11px !important; line-height: 1.2 !important; color: #20301a !important; text-wrap: balance; }
+.ty-st.now small { font-weight: 700 !important; color: #b04f6c !important; }
+.ty-path .o3-trail { top: 30px; }
+.ty-tk { margin: 0 2px; transform: rotate(-.6deg) !important; }
+.ty-tk .gd-stub { min-height: 250px; }
+.ty-days { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin: 6px 0 2px; }
+.ty-d { position: relative; display: grid; justify-items: center; gap: 4px; }
+.ty-d i { display: block; width: 100%; height: 46px; border-radius: 8px; background: #f6eef0; position: relative; overflow: hidden; }
+.ty-d i::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: var(--h); border-radius: 8px; background: #efc3d2; transform-origin: bottom; animation: gdFill 1s cubic-bezier(.22,1,.36,1) .3s both; }
+.ty-d.pk i::after { background: #c2577a; }
+.ty-d b { font-size: 13px; color: #20301a; }
+.ty-d.now i { box-shadow: 0 0 0 2px #20301a; }
+.ty-d em { position: absolute; top: -16px; font: 700 15px/1 Caveat, cursive; font-style: normal; color: #b04f6c; white-space: nowrap; }
+.ty-ch { transform: rotate(.6deg); }
+.ty-big { margin: -4px 0 4px; text-align: center; font: 600 22px/1 Caveat, 'Outfit', cursive; color: #304023; }
+.ty-big b { font-size: 40px; color: #b04f6c; vertical-align: -4px; }
+.ty-big span { display: block; margin-top: 4px; font-size: 20px; color: #6c823e; }
+.ty-chart rect { fill: #f2dde4; transform-box: fill-box; transform-origin: bottom; animation: gdFill .9s cubic-bezier(.22,1,.36,1) both; animation-delay: calc(.2s + var(--i) * 50ms); }
+.ty-chart rect.past { fill: #e6aabd; } .ty-chart rect.on { fill: #b04f6c; }
+.ty-chart .tr-v { font: 600 10px var(--font); fill: #7a3148; } .ty-chart .tr-x { font: 500 10px var(--font); fill: rgba(32,48,26,.6); }
+.ty-ch .tr-cite { display: block; text-align: center; font-size: 11px; color: rgba(32,48,26,.55); }
+.ty-doc { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.ty-dt { position: relative; display: grid; justify-items: center; text-align: center; gap: 2px; padding: 14px 6px 12px; border-radius: 6px; background: #fffdf9; rotate: var(--r);
+  box-shadow: 0 14px 24px -16px rgba(60,30,40,.45), 0 2px 5px rgba(60,30,40,.06);
+  -webkit-mask: radial-gradient(circle 6px at 0 50%, transparent 98%, #000) , radial-gradient(circle 6px at 100% 50%, transparent 98%, #000); -webkit-mask-composite: source-in; mask-composite: intersect; }
+.ty-dt::after { content: ''; position: absolute; left: 10px; right: 10px; top: 50px; border-top: 1.6px dashed rgba(176,79,108,.3); }
+.ty-de { width: 34px; height: 34px; display: grid; place-items: center; margin-bottom: 12px; } .ty-de .emo { margin: 0; display: block; font-size: 24px; line-height: 1; }
+.ty-dt small { font: 500 11.5px/1.2 var(--font); color: rgba(32,48,26,.65); }
+.ty-dt b { font: 700 24px/1.05 Caveat, 'Outfit', cursive; color: #b04f6c; }
+.ty-dt em { font: 400 10.5px/1.25 var(--font); font-style: normal; color: rgba(32,48,26,.6); }
+.ty-any { margin-top: 16px; }
+.ty-both { padding-top: 4px; }
+.gd-n > span .emo { margin: 0; display: block; font-size: 24px; line-height: 1.1; }
+.ty-end { margin-top: 30px !important; transform: rotate(.8deg); padding-top: 26px; }
+.ty-end .o3-sub { font-size: 27px !important; color: #b04f6c !important; }
+.ty-endl { font-size: 15.5px !important; font-weight: 400 !important; }
+@media (prefers-reduced-motion: reduce) { .ty-chart rect, .ty-d i::after { animation: none; } }
