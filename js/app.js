@@ -9424,6 +9424,12 @@ const ING_PH = [[/egg/, 'Pasture eggs'], [/broccoli/, 'Broccoli'], [/kimchi/, 'A
 const NU_EMO = { Iron: 'd:iron-ore', 'Heme iron': 'd:iron-ore', Fibre: '🫘', 'Vitamin C': '🍋', Magnesium: 'e:pumpkin-seeds', Potassium: '🍌', Protein: '🍗', Probiotics: '🫙', 'B vitamins': '🍄',
   B12: '🥩', 'Omega-3': '🐟', 'Plant omega-3': 'e:flaxseed', Antioxidants: '🫐', Sulforaphane: '🥦', Zinc: '🦪', 'Complex carbs': '🍠', 'Slow carbs': '🍠', 'Vitamin B6': 'e:sunflower-seeds',
   Folate: '🥬', Collagen: '🍲', Minerals: 'e:black-sesame', 'Healthy fats': '🥑', Choline: '🥚', Calcium: '🥛', 'Vitamin A': '🥕', Electrolytes: '🥥', 'Fat-soluble vitamins': '🧈' };
+// Her rule (16 Nov 2026): never the same icon twice in a list, always change them up. Each row takes the first of its
+// candidates (the ingredient it comes from, the nutrient's own emoji, then alternates) that the list hasn't shown yet.
+const NU_ALT = { Fibre: ['🌾', '🥦', '🫛'], Potassium: ['🍌', '🥑', '🍠'], 'Vitamin C': ['🫑', '🍓', '🥝'], Magnesium: ['🥬', '🫘', 'e:almonds'], Protein: ['🥚', '🐟'],
+  'B vitamins': ['🥚', '🥬'], Folate: ['🥦', '🫛'], 'Healthy fats': ['🫒', '🥥'], 'Vitamin A': ['🍠', '🥭'], Antioxidants: ['🍓', '🍇'], Zinc: ['e:pumpkin-seeds', '🥩'],
+  'Complex carbs': ['🥔', '🎃'], 'Slow carbs': ['🥔', '🎃'], Minerals: ['🧂', '🥬'], Calcium: ['🧀', '🥬'], Iron: ['🥩', '🥬'], 'Heme iron': ['🥩'], Choline: ['🥩'], Collagen: ['🦴'] };
+const nuPick = (cands, used) => { const g = [...cands, '🌿', '🌱', '🍃', '✨'].find(x => x && !used.has(x)) || '🌿'; used.add(g); return g; };
 // Ingredients that match a nutrient's keyword but carry little of it: an oil is only a fat source (toasted sesame oil has
 // no real zinc, the seeds do), mayonnaise is not a vitamin A source, and almond or coconut milk is not a magnesium one.
 const nuNot = (n, x) => (n !== 'Healthy fats' && /\boil\b|mayonnaise/.test(x)) || (n === 'Magnesium' && /milk/.test(x));
@@ -9452,8 +9458,8 @@ function viewRecipe(id) {
       ${r.raw && warmWindow(M.info) ? `<p class="tea-warn">${icon('yinyang', 14)} Raw and cold: Chinese medicine says save it for after your period.</p>` : ''}</section>
     ${recMicro(r)}
     ${sectionTitle('Why it’s good for you')}
-    <section class="card rn-list rn2">${r.nutrients.map(n => { const [line, to] = NUTRIENT_ROLE[n] || [''], src = nuSource(n, r);
-      return `<${to ? `button data-action="nav" data-to="nutrients/${to}"` : 'div'} class="rn">${(() => { const e = src && ingEmo(src.name); return /iron/i.test(n) ? `<span class="rn-ic rn-emo rn-ore">${emoRaw('d:iron-ore')}</span>` : `<span class="rn-ic rn-emo">${emoRaw(e || NU_EMO[n] || '🌿')}</span>`; })()}<span class="rn-t"><b>${n}</b><p>${line}</p>${src ? `<small>From the ${src.name.toLowerCase()}</small>` : ''}</span>${to ? icon('chevR', 15) : ''}</${to ? 'button' : 'div'}>`; }).join('')}</section>
+    <section class="card rn-list rn2">${(() => { const used = new Set(); return r.nutrients.map(n => { const [line, to] = NUTRIENT_ROLE[n] || [''], src = nuSource(n, r);
+      return `<${to ? `button data-action="nav" data-to="nutrients/${to}"` : 'div'} class="rn">${(() => { const g = nuPick([/iron/i.test(n) ? 'd:iron-ore' : src && ingEmo(src.name), NU_EMO[n], ...(NU_ALT[n] || [])], used); return `<span class="rn-ic rn-emo${g === 'd:iron-ore' ? ' rn-ore' : ''}">${emoRaw(g)}</span>`; })()}<span class="rn-t"><b>${n}</b><p>${line}</p>${src ? `<small>From the ${src.name.toLowerCase()}</small>` : ''}</span>${to ? icon('chevR', 15) : ''}</${to ? 'button' : 'div'}>`; }).join(''); })()}</section>
     ${sectionTitle('Ingredients')}
     ${(() => { const d = myDiet(), D = DIETS.find(x => x.k === d); return d === 'all' ? '' : !fitsDiet(r) ? `<p class="rci-diet no">${icon('close', 12, 2.4)} Not ${D.t.toLowerCase()}: this one doesn't fit how you eat.</p>` : dietChanged(r) ? `<p class="rci-diet">${D.g} Made ${D.t.toLowerCase()} for you with simple swaps.</p>` : ''; })()}
     <section class="card rci-c"><div class="rci-top"><b><span class="dotnum">${r.ingredients.map(x => dietLine(x)).filter(Boolean).length}</span> ingredients</b><small>For ${serves === 1 ? '1 serving' : `${serves} ${serves > 6 ? 'pieces' : 'servings'}`} · tap to tick off</small></div>${recIngs(r)}</section>
