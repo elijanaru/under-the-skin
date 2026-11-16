@@ -16810,3 +16810,7 @@ html .bzp-o .bzp-g { margin-bottom: 14px; }
 /* Calendar: the small dot on logged days gets a key, and the tapped day shows its cycle day */
 .cal2-legend .lg-l { width: 6px !important; height: 6px !important; border-radius: 50%; background: var(--sage); align-self: center; }
 .cdl.day-panel > span > small b.dotnum { font-size: 1.08em; color: #20301a; font-weight: 400; }
+/* Supplements, Your stack today: an empty time slot says so in words instead of a lone faint dot */
+html .sd-none { display: block; margin-top: 4px; font: 400 11px/1.25 var(--font); color: rgba(255,255,255,.55); text-align: center; }
+html .sd-c.empty b, html .sd-c.empty > small { opacity: .6; }
+html .sd .sd-line { margin-top: 30px; } /* the 'picks' ring no longer touches the Night icon */
