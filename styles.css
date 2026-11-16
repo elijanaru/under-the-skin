@@ -11364,7 +11364,7 @@ html .gro2 { display: flex; align-items: center; gap: 14px; width: 100%; margin-
 .gro2-t small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* v902 Today bubble: the bud and the opening lotus now carry their stems, which grow up from the bottom of the bubble */
 html .hub .bubble.menstrual img, html .hub .bubble.follicular img { top: 50% !important; height: 82% !important; width: 82% !important; object-fit: contain; object-position: 50% 50%; transform: translateY(-50%) !important; }
-html .hub .bubble.ovulatory img { width: 84% !important; height: 84% !important; }
+html .hub .bubble.luteal img { width: 84% !important; height: 84% !important; }
 
 /* v902 unusual cycle card: two bars to compare (this cycle vs your usual) over the shaded healthy range */
 html .fl6-cmp { display: grid; grid-template-columns: 74px 1fr 46px; column-gap: 10px; row-gap: 10px; align-items: center; padding-top: 2px; }
@@ -14806,7 +14806,7 @@ html .tg .tgw { margin-top: 40px; }
 .ws-bg { position: absolute; inset: 0; background: rgba(48,38,44,.28); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); opacity: 0; transition: opacity .45s ease; pointer-events: auto; }
 .ws-sh { position: absolute; left: 0; right: 0; bottom: 0; top: 44px; display: flex; flex-direction: column; pointer-events: auto;
   border-radius: 32px 32px 0 0; overflow: hidden; color: #20301a;
-  background: radial-gradient(rgba(176,79,108,.06) 1px, transparent 1.3px) 0 0 / 15px 15px, linear-gradient(180deg, #fff6f7 0%, #fbecf0 46%, #f1f1e3 100%);
+  background: radial-gradient(rgba(90,120,60,.07) 1px, transparent 1.3px) 0 0 / 15px 15px, linear-gradient(180deg, #f7fbf3 0%, #ebf2e3 50%, #eef1e5 100%); /* sage mint, her pick 16 Nov 2026 */
   box-shadow: 0 -18px 50px -20px rgba(60,30,40,.45), inset 0 1px 0 #fff;
   transform: translateY(104%); transition: transform .62s cubic-bezier(.22,1,.36,1); will-change: transform; }
 .ws.up .ws-bg { opacity: 1; } .ws.up .ws-sh { transform: translateY(0); }
@@ -16579,3 +16579,31 @@ html .sgx-when h3 { margin: 0 0 8px; font: 500 15px/1.2 var(--font); color: #203
 /* Superfoods › intro note, unlock-page style */
 .sfi { margin: 18px 0 18px; display: grid; gap: 14px; }
 .sfi .ul3-no { margin-top: 0; }
+
+/* habit ring: every picture paints above every label, so a neighbour's label never cuts a cup or plant */
+.hbc-i { z-index: auto; }
+.hbc-i .hbc-p { z-index: 3; }
+.hbc-i em { z-index: 2; }
+.hbc.first .hbc-i { animation-fill-mode: backwards; }
+/* Your daily plan, round 2 (her call): glassy panels with a picture and just text; tap a card behind to bring it forward */
+.pdk-c { background: rgba(255,255,255,.66); -webkit-backdrop-filter: blur(18px) saturate(1.15); backdrop-filter: blur(18px) saturate(1.15); box-shadow: 0 24px 44px -26px rgba(80,30,50,.42), inset 0 0 0 1px rgba(255,255,255,.9); }
+.pdk-b { padding: 8px 14px; border: 1px solid rgba(255,255,255,.95); align-items: center; font: 500 13px/1.2 var(--font); color: rgba(32,48,26,.62); text-align: left; cursor: pointer; pointer-events: auto; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); align-items: flex-start; }
+.pdk-b.b1 { background: rgba(255,255,255,.55); } .pdk-b.b2 { background: rgba(255,255,255,.34); }
+.pdk-bav { flex: none; width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center; background: rgba(255,255,255,.8); overflow: hidden; }
+.pdk-bav img { width: 18px; height: 18px; object-fit: contain; }
+.pdk-b small { margin-left: auto; font-size: 11px; opacity: .7; }
+.pdk-b:active { transform: translateY(-2px); }
+.pdk-c .pdk-lead { margin: 0; font-size: 15px; line-height: 1.6; color: rgba(32,48,26,.78); }
+.pdk-t { display: inline; padding: 0 1px; border: 0; border-radius: 3px; background: linear-gradient(transparent 58%, color-mix(in srgb, var(--lc) 26%, transparent) 58% 92%, transparent 92%); font: inherit; font-weight: 500; color: #20301a; cursor: pointer; }
+.pdk-t svg { vertical-align: -1px; color: var(--lc); }
+.pdk-t.ok { color: color-mix(in srgb, var(--lc) 70%, #20301a); }
+.pdk-pic { position: relative; height: 176px; margin: 8px -18px 4px; display: grid; place-items: center; background: radial-gradient(48% 52% at 50% 54%, rgba(239,190,206,.5), rgba(239,212,221,.18) 60%, transparent 72%); }
+.pdk-pic img { max-width: 62%; max-height: 156px; object-fit: contain; filter: drop-shadow(0 14px 16px rgba(70,40,40,.2)); animation: pdkFloat 7s ease-in-out infinite; }
+@keyframes pdkFloat { 50% { transform: translateY(-5px); } }
+@media (prefers-reduced-motion: reduce) { .pdk-pic img { animation: none; } }
+/* the cards behind only draw their peeking strip, so nothing shows through the glass panel */
+.pdk-b.b1 { clip-path: inset(0 0 calc(100% - 30px) 0); }
+.pdk-b.b2 { clip-path: inset(0 0 calc(100% - 26px) 0); }
+.pdk-nw { white-space: nowrap; }
+.pdk-f span { white-space: nowrap; }
+.pdk-go { padding: 0 18px; font-size: 14px; }

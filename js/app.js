@@ -4831,10 +4831,10 @@ function balanceGuide(info, done) {
   const cnt = k => { const hb = S[k][2].filter(([x]) => x.hb); return [hb.filter(([x]) => done.includes(x.hb)).length, hb.length]; };
   const items = list.map(([x, i]) => ({ x, i, h: (FB_WHEN[x.id] || [12])[0] })).sort((a, b) => a.h - b.h), [d, n] = cnt(lv);
   const next = items.find(({ x }) => !(x.hb && done.includes(x.hb))) || items[0], hero = list.some(([x]) => x.id === L.img) || !list[0] ? L.img : list[0][0].id;
-  const back = k => { const B = FB_LVL[(lv + k) % N]; return `<span class="pdk-b b${k}" aria-hidden="true"><i>${emoRaw(B.e)}</i><b>${B.n}</b></span>`; };
-  const rows = items.map(({ x, i }, k) => { const on = x.hb && done.includes(x.hb);
-    return `<li class="pdk-r ${on ? 'ok' : ''}" style="--i:${k}"><button class="pdk-o" data-action="fbSheet" data-i="${i}"><small>${(FB_WHEN[x.id] || [, 'Any time'])[1]}</small><b>${x.t}</b><span>${x.s}</span></button>
-      ${x.hb ? `<button class="pdk-k ${on ? 'on' : ''}" data-action="fbTick" data-id="${x.hb}" aria-pressed="${!!on}" aria-label="${on ? 'Done today' : 'Mark done today'}">${icon('check', 13, 2.6)}</button>` : ''}</li>`; }).join('');
+  const back = k => { const v = (lv + k) % N, B = FB_LVL[v]; return `<button class="pdk-b b${k}" data-action="fbLvl" data-v="${v}" aria-label="Open ${B.n}"><span class="pdk-bav"><img src="images/fb/${B.img}.webp" alt=""></span><b>${B.n}</b><small>Level ${v + 1}</small></button>`; };
+  // just text: her habits for this level as one sentence, each name opens its ritual (and its done button)
+  const link = ({ x, i }) => `<button class="pdk-t ${x.hb && done.includes(x.hb) ? 'ok' : ''}" data-action="fbSheet" data-i="${i}">${x.t.toLowerCase()}${x.hb && done.includes(x.hb) ? ` ${icon('check', 11, 3)}` : ''}</button>`;
+  const words = items.map(link), last = words.length - 1, sentence = words.map((w, k) => `<span class="pdk-nw">${w}${k < last - 1 ? ',' : k === last ? '.' : ''}</span>`).map((w, k) => k === last && last > 0 ? `and ${w}` : w).join(' ');
   return `<section class="bgx2 pdk-w" style="--lc:${L.c}">
     ${sectionTitle('Your daily plan')}
     <p class="bgx2-sub">Four steps. Start with the first, add the next when it feels easy.</p>
@@ -4843,13 +4843,14 @@ function balanceGuide(info, done) {
       <article class="pdk-c">
         <header class="pdk-h"><span class="pdk-av"><img src="images/fb/${hero}.webp" alt=""></span><span class="pdk-m"><b>Level ${lv + 1} · ${L.n}</b><small>${items.length} habits · morning to evening</small></span>
           ${n ? `<span class="pdk-cnt" aria-label="${d} of ${n} done today"><b class="dotnum">${d}</b>/${n}</span>` : ''}</header>
-        <h3>${title}</h3><p class="pdk-lead">${lead}</p>
-        <ol class="pdk-l">${rows}</ol>
-        <footer class="pdk-f"><span>${icon('check', 14, 2.2)} <em class="pdk-dn">${n ? `${d} of ${n} done today` : 'Tap one to read how'}</em></span><span>${icon('sun', 14)} ${items.length} rituals</span></footer>
+        <h3>${title}</h3>
+        <p class="pdk-lead">${lead} Today: ${sentence}</p>
+        <figure class="pdk-pic" aria-hidden="true"><img src="images/fb/${hero}.webp" alt=""></figure>
+        <footer class="pdk-f"><span>${icon('check', 14, 2.2)} ${n ? `${d} of ${n} done today` : `${items.length} rituals`}</span><span>${icon('leaf', 14)} Tap one to read how</span></footer>
       </article>
     </div>
     <nav class="pdk-nav"><button class="pdk-arr" data-action="fbLvl" data-v="${(lv + N - 1) % N}" aria-label="Previous: ${FB_LVL[(lv + N - 1) % N].n}">${icon('chevL', 20, 1.8)}</button>
-      <button class="pdk-go" data-action="fbSheet" data-i="${next.i}">${icon('leaf', 15, 1.8)} Begin with ${next.x.t.toLowerCase()}</button>
+      <button class="pdk-go" data-action="fbSheet" data-i="${next.i}">${icon('leaf', 15, 1.8)} ${next.x.t}</button>
       <button class="pdk-arr" data-action="fbLvl" data-v="${(lv + 1) % N}" aria-label="Next: ${FB_LVL[(lv + 1) % N].n}">${icon('chevR', 20, 1.8)}</button></nav>
   </section>`;
 }
@@ -4857,8 +4858,6 @@ function balanceGuide(info, done) {
 const BG_PROOF = [{ v: 37, t: 'smaller sugar rise', w: 'Vegetables and protein before the carbs', by: 'Shukla, 2015', p: 1 },
   { v: 45, t: 'fewer hormone disruptors', w: 'Free-from make-up and shampoo, after only 3 days', by: 'Harley, 2016', p: 5 },
   { v: 58, t: 'lower risk of a cycle without ovulation', w: 'More omega-3 fats (DPA) in the blood', by: 'Mumford, 2016', p: 6 }];
-// Fertility & feminine flow (16 Nov 2026): the twelve fertile habits as three small groups of tappable emoji chips,
-// one short line per group, a count for today. Tap a chip to mark it done.
 // Fertility & feminine flow as calm reading text, no tick boxes (16 Nov 2026, her call)
 function feminineFlow() {
   const d = myDiet(), fats = d === 'vegan' ? 'good fats like avocado and olive oil' : d === 'veg' || d === 'pesc' ? 'egg yolks and good fats' : 'egg yolks, liver and good fats';
