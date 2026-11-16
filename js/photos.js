@@ -17,6 +17,7 @@ export const RECIPE_PHOTOS = {
  },
  "citrus-salmon-salad": {
   "src": "https://images.unsplash.com/photo-1475332363216-323c9b7f1e81",
+  "rect": "0.52,0.27,0.48,0.6",
   "by": "Ive Erhard",
   "page": "https://unsplash.com/photos/serving-of-salad-and-fish-on-white-plate-LxC1Qx1qulc"
  },
@@ -27,6 +28,7 @@ export const RECIPE_PHOTOS = {
  },
  "cruciferous-stir-fry": {
   "src": "https://images.unsplash.com/photo-1762631882592-25bc08678af6",
+  "rect": "0.08,0.42,0.92,0.58",
   "by": "joe boshra",
   "page": "https://unsplash.com/photos/close-up-of-cooked-shrimp-with-vegetables-on-a-plate-eddhX4ydTrQ"
  },
@@ -84,6 +86,7 @@ export const RECIPE_PHOTOS = {
  },
  "baked-apple": {
   "src": "https://images.unsplash.com/photo-1703876087705-818f2af21c65",
+  "rect": "0.27,0.3,0.68,0.7",
   "by": "Terry Granger",
   "page": "https://unsplash.com/photos/a-plate-of-food-with-apples-and-cinnamon-on-a-table-Shx9Cj122TA"
  },
@@ -99,6 +102,7 @@ export const RECIPE_PHOTOS = {
  },
  "bone-marrow": {
   "src": "https://images.unsplash.com/photo-1625604087024-7fb428fc4626",
+  "rect": "0.02,0.22,0.96,0.78",
   "by": "James Kern",
   "page": "https://unsplash.com/photos/grilled-meat-on-stainless-steel-tray-2BR2hPpq0yA"
  },
@@ -109,6 +113,7 @@ export const RECIPE_PHOTOS = {
  },
  "brazilian-lemonade": {
   "src": "https://images.unsplash.com/photo-1583578449206-ac0980dd77b7",
+  "rect": "0.22,0.3,0.66,0.58",
   "by": "Dhiren maru",
   "page": "https://unsplash.com/photos/-oSeTXBGt58"
  },
@@ -153,7 +158,7 @@ export const RECIPE_PHOTOS = {
  "chickpea-tray-bake": {"src": "https://images.unsplash.com/photo-1568747244129-86a6c6541414", "by": "dimitri.photography", "page": "https://unsplash.com/photos/a-pan-filled-with-chickpeas-and-a-wooden-spoon-LKKl3WFcwzQ"},
  "lentil-tahini-salad": {"src": "https://images.unsplash.com/photo-1667390034698-c2369cd1668b", "by": "Tadeja Pavšič", "page": "https://unsplash.com/photos/a-bowl-of-food-jOF2dcSclwY"},
  "warm-quinoa-porridge": {"src": "https://images.unsplash.com/photo-1673292636579-2343673a945d", "by": "Anto Meneghini", "page": "https://unsplash.com/photos/a-bowl-filled-with-fruit-and-nuts-on-top-of-a-table-qBq2bc5iLyQ"},
- "pesto-white-beans": {"src": "https://images.unsplash.com/photo-1606791496080-69a6e309f42c", "by": "Christina Rumpf", "page": "https://unsplash.com/photos/soup-in-black-ceramic-bowl-qjh-BCHbHis"},
+ "pesto-white-beans": {"src": "https://images.unsplash.com/photo-1606791496080-69a6e309f42c", "rect": "0.02,0.31,0.64,0.44", "by": "Christina Rumpf", "page": "https://unsplash.com/photos/soup-in-black-ceramic-bowl-qjh-BCHbHis"},
  "spinach-shakshuka": {"src": "https://images.unsplash.com/photo-1489391013510-49401c8a3b6c", "by": "Cathal Mac an Bheatha", "page": "https://unsplash.com/photos/TC-hOoD6EOY"}
 };
 export function photoUrl(id, w = 600) {
