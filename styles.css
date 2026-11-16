@@ -16786,3 +16786,11 @@ html .sgx-when h3 { margin: 0 0 8px; font: 500 15px/1.2 var(--font); color: #203
 .big-chart .ro-row { grid-template-columns: 104px minmax(20px, 1fr) auto 14px; cursor: pointer; border-radius: 12px; margin: 0 -6px; padding: 3px 6px; transition: background .2s; }
 .big-chart .ro-row:active { background: rgba(48,64,35,.06); }
 .big-chart .ro-go { display: grid; place-items: center; color: rgba(32,48,26,.45); font-style: normal; }
+
+/* v1255: Supplements and Nutrients lists, the food as a cut-out or drawn emoji on a white bubble */
+.nu2-p.art { background: #fff; display: grid; place-items: center; box-shadow: 0 0 0 1px rgba(48,64,35,.10), 0 4px 10px -6px rgba(32,48,26,.25); }
+.nu2-p.art img { width: 100%; height: 100%; object-fit: contain; padding: 7px; box-sizing: border-box; }
+.nu2-p.art .emo { font-size: 27px; line-height: 1; }
+.nu2-p.art img.emo { width: 32px; height: 32px; padding: 0; }
+.sup2-r { flex-wrap: wrap; row-gap: 0; }
+.sup2-r > .nu2-when { flex: 1 0 calc(100% - 64px); margin: 2px 0 0 64px; }
