@@ -9684,11 +9684,10 @@ function viewArticle(id) {
   return `<section class="art2-hero"><div class="art2-pic">${u ? `<img src="${u}" alt="">` : glowArt('wave', 4)}<button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button></div>
     <div class="art2-h"><span class="art2-tag">${a.month ? `The Underskin letter · ${MONTHS[a.month - 1]}` : `${ph ? `<i style="background:${PH_HEX[a.phase]}"></i>${ph.name} phase · ` : ''}<b class="dotnum">${a.mins}</b> min read`}</span><h1>${a.title}</h1>${a.lead ? `<p>${a.lead}</p>` : ''}</div></section>
   <div class="pad article art2">
-    ${a.id === 'seed-cycling' ? seedGuide(a) : `${a.keys ? `<section class="card art2-keys"><small class="art2-k">Key numbers</small>${a.keys.map(([b, t]) => `<div class="a2k"><span>${t}</span><b class="${/^[<>~±≈]?\s*\d/.test(b) ? 'dotnum' : ''}">${b}</b></div>`).join('')}</section>` : ''}
+    ${a.keys ? `<section class="card art2-keys"><small class="art2-k">Key numbers</small>${a.keys.map(([b, t]) => `<div class="a2k"><span>${t}</span><b class="${/^[<>~±≈]?\s*\d/.test(b) ? 'dotnum' : ''}">${b}</b></div>`).join('')}</section>` : ''}
     ${artGraph(a)}
     <section class="card art2-body">${a.body.map((p, k) => `<p>${p}</p>${k === 1 && ARTICLE_PIC[a.id] ? `<figure class="art-fig"><img src="${ARTICLE_PIC[a.id][0]}" alt="" loading="lazy"><figcaption>${ARTICLE_PIC[a.id][1]}</figcaption></figure>` : ''}`).join('')}</section>
     ${ARTICLE_STUDIES[a.id] ? `${sectionTitle('What studies found')}<section class="card gr-card gr-st art-st">${ARTICLE_STUDIES[a.id].map(([w, y, j, f, d], k) => `<details${k === 0 ? ' open' : ''}><summary class="gr-s"><span class="gr-y">${y}</span><span class="gr-s-t"><b>${f}</b><small>${w} · ${j}</small></span>${icon('chevD', 14)}</summary><p class="gr-s-d">${d}</p></details>`).join('')}</section>` : ''}
-    `}
     ${a.to ? `<button class="card glass art-do" data-action="nav" data-to="${a.to}"><span>Try it in the app</span>${icon('chevR', 16)}</button>` : ''}
     ${a.src ? `<p class="art2-src">Sources: ${a.src}</p>` : ''}
     ${n ? `<button class="card nu-next art-next" data-action="nav" data-to="article/${n.id}">${readPic(n, 300) ? `<img src="${readPic(n, 300)}" alt="">` : ''}<span><small>Next read</small><b>${n.title}</b></span>${icon('chevR', 16)}</button>` : ''}
