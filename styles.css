@@ -16533,3 +16533,46 @@ html .sgx-when h3 { margin: 0 0 8px; font: 500 15px/1.2 var(--font); color: #203
 .al2-fx i { display: inline-flex; align-items: center; gap: 5px; }
 .al2-fx i .emo { margin: 0; font-size: 13.5px; line-height: 1; font-style: normal; }
 .al2-fx i img.emo { width: 15px; height: 15px; object-fit: contain; }
+
+/* Your daily plan as a stack of panels (16 Nov 2026, her reference: the memories app, left phone) */
+.pdk-pills { display: flex; justify-content: center; gap: 6px; margin: 0 0 6px; }
+.pdk-p { display: inline-flex; align-items: center; gap: 5px; height: 34px; padding: 0 11px; border-radius: 99px; border: 1px solid rgba(255,255,255,.9); background: rgba(255,255,255,.52); color: #304023; font: 500 12.5px/1 var(--font); white-space: nowrap; cursor: pointer; transition: background .3s ease, box-shadow .3s ease; }
+.pdk-p .dotnum { font-size: 12px; color: rgba(32,48,26,.45); }
+.pdk-p.on { background: #fff; color: #20301a; box-shadow: 0 8px 18px -10px rgba(90,40,60,.45); }
+.pdk-p.on .dotnum { color: var(--lc); }
+.pdk { position: relative; margin-top: 46px; }
+.pdk-b { position: absolute; z-index: 0; display: flex; align-items: flex-start; gap: 8px; height: 90px; padding: 9px 16px; border-radius: 26px; border: 1px solid rgba(255,255,255,.9); font: 500 13px/1.2 var(--font); color: rgba(32,48,26,.5); pointer-events: none; }
+.pdk-b i { font-style: normal; } .pdk-b .emo { font-size: 14px; } .pdk-b img.emo { width: 15px; height: 15px; }
+.pdk-b.b1 { top: -24px; left: 14px; right: 14px; background: rgba(255,255,255,.7); }
+.pdk-b.b2 { top: -44px; left: 32px; right: 32px; background: rgba(255,255,255,.42); color: rgba(32,48,26,.36); font-size: 12px; }
+.pdk-c { position: relative; z-index: 1; padding: 18px 18px 40px; border-radius: 30px; background: #fff; color: #20301a; box-shadow: 0 24px 44px -26px rgba(80,30,50,.42), inset 0 0 0 1px rgba(32,48,26,.05); animation: pdkIn .5s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes pdkIn { from { opacity: 0; transform: translateY(14px) scale(.985); } }
+.pdk-h { display: flex; align-items: center; gap: 12px; }
+.pdk-av { flex: none; width: 48px; height: 48px; border-radius: 16px; display: grid; place-items: center; background: hsl(calc(var(--hb) + 20 * var(--hk)) calc(30% * var(--hs)) 94%); overflow: hidden; }
+.pdk-av img { width: 40px; height: 40px; object-fit: contain; }
+.pdk-m { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.pdk-m b { font-size: 15px; font-weight: 500; color: #20301a; }
+.pdk-m small { font-size: 12.5px; color: rgba(32,48,26,.55); }
+.pdk-cnt { flex: none; display: inline-flex; align-items: baseline; justify-content: center; min-width: 46px; height: 46px; padding: 0 8px; border-radius: 99px; background: #fff; box-shadow: 0 6px 16px -8px rgba(32,48,26,.35), inset 0 0 0 1px rgba(32,48,26,.06); font: 500 12px/46px var(--font); color: rgba(32,48,26,.55); }
+.pdk-cnt .dotnum { font-size: 18px; color: #20301a; margin-right: 1px; }
+.pdk-c h3 { margin: 18px 0 6px; font-size: 23px; font-weight: 600; letter-spacing: -.02em; line-height: 1.15; color: #20301a; }
+.pdk-lead { margin: 0 0 8px; font-size: 14px; line-height: 1.5; color: rgba(32,48,26,.68); }
+.pdk-l { list-style: none; margin: 0; padding: 0; }
+.pdk-r { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-top: 1px solid rgba(32,48,26,.08); animation: rise .5s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i) * 40ms); }
+.pdk-o { flex: 1; min-width: 0; display: grid; gap: 2px; padding: 0; border: 0; background: none; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+.pdk-o small { font-size: 10.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: color-mix(in srgb, var(--lc) 85%, #20301a); }
+.pdk-o b { font-size: 15.5px; font-weight: 500; color: #20301a; }
+.pdk-o span { font-size: 13px; line-height: 1.4; color: rgba(32,48,26,.62); }
+.pdk-k { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; border: 1.5px solid rgba(32,48,26,.2); background: #fff; color: transparent; cursor: pointer; transition: background .3s ease, color .3s ease, border-color .3s ease; }
+.pdk-k.on { background: var(--lc); border-color: var(--lc); color: #fff; }
+.pdk-r.ok .pdk-o b { color: color-mix(in srgb, var(--lc) 70%, #20301a); }
+.pdk-f { display: flex; gap: 16px; padding-top: 12px; border-top: 1px solid rgba(32,48,26,.08); font-size: 12.5px; color: rgba(32,48,26,.55); }
+.pdk-f span { display: inline-flex; align-items: center; gap: 5px; } .pdk-f em { font-style: normal; } .pdk-f svg { color: var(--lc); }
+.pdk-nav { position: relative; z-index: 2; display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: -26px; }
+.pdk-arr { flex: none; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; border: 0; background: #fff; color: #20301a; box-shadow: 0 10px 22px -12px rgba(80,30,50,.5), inset 0 0 0 1px rgba(32,48,26,.05); cursor: pointer; }
+.pdk-go { display: inline-flex; align-items: center; gap: 7px; max-width: calc(100% - 128px); height: 52px; padding: 0 22px; border-radius: 99px; border: 1px solid #fff; background: linear-gradient(180deg, #fdf4f7, #efd4dd); color: #20301a; font: 500 14.5px/1 var(--font); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 0 12px 24px -14px rgba(150,70,100,.6); cursor: pointer; }
+.pdk-go svg { flex: none; color: #6c823e; }
+.pdk-arr:active, .pdk-go:active, .pdk-k:active { transform: scale(.95); }
+@media (prefers-reduced-motion: reduce) { .pdk-c, .pdk-r { animation: none; } .pdk-p, .pdk-k { transition: none; } }
+/* habit ring: tall cut-outs (walking woman, lotus) stay inside their 64px box so nothing covers a neighbour */
+.hbc-p img { width: 64px; height: 64px; max-width: none; max-height: none; object-fit: contain; }

@@ -4555,7 +4555,8 @@ const FB_WARM_SWAP = { carrot: 'heat', castor: 'golden' };
 // Step by step, fundamentals first: light, blood sugar and stress, then helping her body clear used hormones, then extras.
 const FB_STEPS = [
   ['Start with the fundamentals', 'Light, steady blood sugar and calm. Everything else builds on these.', ['sun', 'lemon', 'phone', 'walk', 'breathe', 'ground']],
-  ['Then help your body clear and rebuild', 'Food and rituals that carry out used hormones and feed new ones.', ['carrot', 'seeds', 'golden', 'tongue', 'castor', 'magnesium']],
+  ['Help your body clear', 'Little rituals that carry out used hormones, so they don’t circle back.', ['carrot', 'tongue', 'castor']],
+  ['Feed the rebuild', 'The raw material your body makes new hormones from, overnight and every day.', ['seeds', 'golden', 'magnesium']],
   ['Extras when you need them', 'For cramps, sleep, puffiness and slow days.', ['heat', 'chamomile', 'cherry', 'fascia', 'brush', 'salt']],
 ];
 function fbSteps(info) {
@@ -4680,9 +4681,10 @@ const FB_EMO = { sun: '☀️', lemon: '🍋', phone: '📵', walk: '🚶‍♀�
 const FB_WHEN = { tongue: [6.8, 'On waking'], sun: [7, 'Within an hour of waking'], lemon: [7.1, 'Before coffee'], brush: [7.3, 'Before your shower'], fascia: [7.5, 'Morning'], phone: [7.6, 'The first hour'],
   seeds: [8.5, 'With breakfast'], carrot: [11, 'Between meals'], walk: [13.5, 'After lunch or dinner'], heat: [15, 'At the first cramp'], breathe: [17, 'Whenever you feel tense'], ground: [18.5, 'Late afternoon'],
   castor: [20, 'Evening'], chamomile: [20, 'Evening'], golden: [20.5, 'Evening'], salt: [21, 'Before bed'], cherry: [21, '1 to 2 h before bed'], magnesium: [22, 'Before bed'] };
-const FB_LVL = [{ n: 'Foundations', c: '#6c823e', s: 'Light, steady blood sugar and calm. Your hormones build on these, so start here.' },
-  { n: 'Clear & rebuild', c: '#b9862f', s: 'Help your body carry out used hormones and feed the new ones.' },
-  { n: 'Extras', c: '#c2577a', s: 'Little helpers for cramps, sleep and puffy days. Use them when you need them.' }];
+const FB_LVL = [{ n: 'Foundations', c: '#6c823e', e: '🌿', img: 'sun', s: 'Light, steady blood sugar and calm. Your hormones build on these, so start here.' },
+  { n: 'Clear', c: '#b9862f', e: '🍃', img: 'carrot', s: 'Help your body carry out used hormones.' },
+  { n: 'Rebuild', c: '#a0705a', e: '🌱', img: 'seeds', s: 'Feed the new hormones.' },
+  { n: 'Extras', c: '#c2577a', e: '🌸', img: 'chamomile', s: 'Little helpers for cramps, sleep and puffy days. Use them when you need them.' }];
 // The hormone pyramid (16 Nov 2026, her reference): survival hormones at the base set the tone for the builders in the middle
 // and the sex and rhythm hormones at the top. Tap a tier for what knocks it off and what brings it back, tap a hormone for its role.
 const HP_HORM = {
@@ -4810,31 +4812,33 @@ function hpHormSheet(k) {
   return `<div class="tyf hpx"><span class="tyf-e hm">${emoRaw(H[0])}</span><h2>${H[1]}</h2><p class="tyf-s">${H[2]}</p><p class="tyf-p">${H[3]}</p>
     ${tier ? `<p class="hpx-t">Lives in <b>${tier.n}</b>, ${['the base', 'the middle', 'the top'][HP_TIER.indexOf(tier)]} of the pyramid.</p>` : ''}</div>`;
 }
+// Your daily plan as a stack of panels (16 Nov 2026, her reference: the left phone of the memories app): glass pills on top,
+// the panel for this level in front with the next ones peeking out behind, round arrows and a soft pill to begin.
 function balanceGuide(info, done) {
-  const S = fbSteps(info), lv = Math.min(2, Math.max(0, ui.fbLvl ?? 0)), L = FB_LVL[lv], list = S[lv][2];
+  const S = fbSteps(info), N = FB_LVL.length, lv = Math.min(N - 1, Math.max(0, ui.fbLvl ?? 0)), L = FB_LVL[lv], [title, lead, list] = S[lv];
   const cnt = k => { const hb = S[k][2].filter(([x]) => x.hb); return [hb.filter(([x]) => done.includes(x.hb)).length, hb.length]; };
-  // the pyramid: level 1 is the wide base, level 3 the small top
-  const tier = (k, pts, tx, ty) => { const [d, n] = cnt(k), on = k === lv;
-    return `<g class="bgp-t ${on ? 'on' : ''}" style="--c:${FB_LVL[k].c}" data-action="fbLvl" data-v="${k}" role="button" tabindex="0" aria-pressed="${on}" aria-label="Level ${k + 1}, ${FB_LVL[k].n}">
-      <path d="${pts}"/><text class="bgp-n" x="${tx}" y="${ty}">${k + 1}</text><text class="bgp-l" x="${tx}" y="${ty + 17}">${FB_LVL[k].n}</text>
-      ${n ? `<text class="bgp-c" x="${tx}" y="${ty + 31}">${d} of ${n} today</text>` : ''}</g>`; };
-  const pyr = `<svg class="bgp" viewBox="0 0 320 214" aria-label="Three levels, start at the bottom">
-    ${tier(2, 'M160 6 L214 74 H106 Z', 160, 46)}${tier(1, 'M102 80 H218 L264 138 H56 Z', 160, 104)}${tier(0, 'M52 144 H268 L312 208 H8 Z', 160, 170)}</svg>`;
-  // her day for this level, morning to night, on one line
-  const items = list.map(([x, i]) => ({ x, i, h: (FB_WHEN[x.id] || [12])[0] })).sort((a, b) => a.h - b.h);
-  const part = h => h < 12 ? 'Morning' : h < 18 ? 'Afternoon' : 'Evening';
-  let last = '';
-  const rows = items.map(({ x, i, h }, k) => { const on = x.hb && done.includes(x.hb), p = part(h), head = p !== last ? `<li class="bgd-h"><span>${p}</span></li>` : ''; last = p;
-    return `${head}<li class="bgd-r ${on ? 'ok' : ''}" style="--i:${k}"><button class="bgd-o" data-action="fbSheet" data-i="${i}"><span class="bgd-e">${emoRaw(FB_EMO[x.id] || '🌿')}</span>
-      <span class="bgd-t"><b>${x.t}</b><small>${(FB_WHEN[x.id] || [, ''])[1]} · ${x.s}</small></span>${x.hb ? '' : `<span class="bgd-go">${icon('chevR', 14)}</span>`}</button>
-      ${x.hb ? `<button class="bgd-tick ${on ? 'on' : ''}" data-action="fbTick" data-id="${x.hb}" aria-pressed="${!!on}" aria-label="${on ? 'Done today' : 'Mark done today'}">${icon('check', 14, 2.6)}</button>` : ''}</li>`; }).join('');
-  return `<section class="bgx2" style="--lc:${L.c}">
+  const items = list.map(([x, i]) => ({ x, i, h: (FB_WHEN[x.id] || [12])[0] })).sort((a, b) => a.h - b.h), [d, n] = cnt(lv);
+  const next = items.find(({ x }) => !(x.hb && done.includes(x.hb))) || items[0], hero = list.some(([x]) => x.id === L.img) || !list[0] ? L.img : list[0][0].id;
+  const back = k => { const B = FB_LVL[(lv + k) % N]; return `<span class="pdk-b b${k}" aria-hidden="true"><i>${emoRaw(B.e)}</i><b>${B.n}</b></span>`; };
+  const rows = items.map(({ x, i }, k) => { const on = x.hb && done.includes(x.hb);
+    return `<li class="pdk-r ${on ? 'ok' : ''}" style="--i:${k}"><button class="pdk-o" data-action="fbSheet" data-i="${i}"><small>${(FB_WHEN[x.id] || [, 'Any time'])[1]}</small><b>${x.t}</b><span>${x.s}</span></button>
+      ${x.hb ? `<button class="pdk-k ${on ? 'on' : ''}" data-action="fbTick" data-id="${x.hb}" aria-pressed="${!!on}" aria-label="${on ? 'Done today' : 'Mark done today'}">${icon('check', 13, 2.6)}</button>` : ''}</li>`; }).join('');
+  return `<section class="bgx2 pdk-w" style="--lc:${L.c}">
     ${sectionTitle('Your daily plan')}
-    <p class="bgx2-sub">Three steps. Start with the first, add the next when it feels easy.</p>
-    <div class="bgx2-pills" role="tablist">${FB_LVL.map((L2, k) => { const [d, n] = cnt(k); return `<button class="bgx2-pl ${k === lv ? 'on' : ''}" style="--c:${L2.c}" data-action="fbLvl" data-v="${k}" role="tab" aria-selected="${k === lv}"><b class="dotnum">${k + 1}</b><span>${L2.n}${n ? `<small>${d} of ${n} today</small>` : ''}</span></button>`; }).join('')}</div>
-    <div class="bgd"><div class="bgd-top"><small>Level ${lv + 1}</small><b>${L.n}</b><p>${L.s}</p></div>
-      <ol class="bgd-list">${rows}</ol>
-      ${lv < 2 ? `<button class="bgd-next" data-action="fbLvl" data-v="${lv + 1}">Next: ${FB_LVL[lv + 1].n} ${icon('chevR', 13)}</button>` : ''}</div>
+    <p class="bgx2-sub">Four steps. Start with the first, add the next when it feels easy.</p>
+    <div class="pdk-pills" role="tablist">${FB_LVL.map((L2, k) => `<button class="pdk-p ${k === lv ? 'on' : ''}" data-action="fbLvl" data-v="${k}" role="tab" aria-selected="${k === lv}"><b class="dotnum">${k + 1}</b>${L2.n}</button>`).join('')}</div>
+    <div class="pdk" data-lv="${lv}">${back(2)}${back(1)}
+      <article class="pdk-c">
+        <header class="pdk-h"><span class="pdk-av"><img src="images/fb/${hero}.webp" alt=""></span><span class="pdk-m"><b>Level ${lv + 1} · ${L.n}</b><small>${items.length} habits · morning to evening</small></span>
+          ${n ? `<span class="pdk-cnt" aria-label="${d} of ${n} done today"><b class="dotnum">${d}</b>/${n}</span>` : ''}</header>
+        <h3>${title}</h3><p class="pdk-lead">${lead}</p>
+        <ol class="pdk-l">${rows}</ol>
+        <footer class="pdk-f"><span>${icon('check', 14, 2.2)} <em class="pdk-dn">${n ? `${d} of ${n} done today` : 'Tap one to read how'}</em></span><span>${icon('sun', 14)} ${items.length} rituals</span></footer>
+      </article>
+    </div>
+    <nav class="pdk-nav"><button class="pdk-arr" data-action="fbLvl" data-v="${(lv + N - 1) % N}" aria-label="Previous: ${FB_LVL[(lv + N - 1) % N].n}">${icon('chevL', 20, 1.8)}</button>
+      <button class="pdk-go" data-action="fbSheet" data-i="${next.i}">${icon('leaf', 15, 1.8)} Begin with ${next.x.t.toLowerCase()}</button>
+      <button class="pdk-arr" data-action="fbLvl" data-v="${(lv + 1) % N}" aria-label="Next: ${FB_LVL[(lv + 1) % N].n}">${icon('chevR', 20, 1.8)}</button></nav>
   </section>`;
 }
 // Why it works: three study numbers as bars, the seven pillars behind a tap
@@ -5417,11 +5421,11 @@ const SAFE_UL = {
   calcium: [1000, 1200, 2500, 'mg', 'EU', 'Counts calcium from food and supplements together, so your raw milk and cheese count too.'],
   'omega-3': [1, 2, 5, 'g', 'EU', 'EPA and DHA together. Up to this amount did not raise bleeding risk in healthy adults.'],
   'vitamin-c': [250, 500, 2000, 'mg', 'US', 'Europe set no limit. Above the US limit, loose stools and stomach upset are common.'],
+  'b-complex': [0, 12, 12, 'mg', 'EU', 'Counts the B6 in your capsule plus any B6 from food or a separate pill. Many B-complex capsules carry 25 to 50 mg of B6, two to four times this limit, which Europe lowered to 12 mg in 2023 after reports of tingling nerves (EFSA, 2023).', 'B6'],
   prenatal: [400, 400, 1000, 'µg', 'EU', 'Counts folic acid and methylfolate from pills. Folate from greens and liver does not count.'],
 };
 // No official limit for these: her dose against the highest daily dose that trials used safely.
 // [low, high, highest studied, unit, how long it was studied, what the studies were]
-  'b-complex': [0, 12, 12, 'mg', 'EU', 'Counts the B6 in your capsule plus any B6 from food or a separate pill. Many B-complex capsules carry 25 to 50 mg of B6, two to four times this limit, which Europe lowered to 12 mg in 2023 after reports of tingling nerves (EFSA, 2023).', 'B6'],
 const SAFE_STUDIED = {
   ashwagandha: [300, 600, 600, 'mg', 'for 8 to 12 weeks', 'Trials gave 250 to 600 mg of root extract a day for 8 to 12 weeks (Chandrasekhar, 2012; Salve, 2019). Longer use is barely studied, so take a break after 8 weeks. Some European countries restrict it, and it is not for pregnancy.'],
   ginger: [1000, 1000, 2000, 'mg', 'on period days', 'Period pain trials gave 750 to 2000 mg of ginger powder a day for the first 3 to 4 days of the period (Daily et al., 2015). Your 250 mg four times a day sits in the middle.'],
@@ -11139,8 +11143,8 @@ const actions = {
   tyFound: d => wsOpen(tyFoundSheet(d.k), 'ws-ty'),
   fbSheet: d => wsOpen(`<div class="fbp-det fbs">${fbDetail(+d.i)}</div>`, 'ws-fb'),
   fbTick: (d, el) => { const k = todayISO(), H = state.habits = state.habits || {}; const a = H[k] = H[k] || []; a.includes(d.id) ? a.splice(a.indexOf(d.id), 1) : a.push(d.id); save();
-    const on = a.includes(d.id); el.classList.toggle('on', on); el.setAttribute('aria-pressed', on); el.closest('.bgd-r').classList.toggle('ok', on);
-    document.querySelectorAll('.bgx2-pl').forEach(g => { const k2 = +g.dataset.v, S = fbSteps(M.info)[k2][2].filter(([x]) => x.hb), c = g.querySelector('small'); if (c) c.textContent = `${S.filter(([x]) => a.includes(x.hb)).length} of ${S.length} today`; });
+    const on = a.includes(d.id); el.classList.toggle('on', on); el.setAttribute('aria-pressed', on); el.closest('.bgd-r, .pdk-r')?.classList.toggle('ok', on);
+    const pk = document.querySelector('.pdk'); if (pk) { const S = fbSteps(M.info)[+pk.dataset.lv][2].filter(([x]) => x.hb), dn = S.filter(([x]) => a.includes(x.hb)).length, c = pk.querySelector('.pdk-cnt .dotnum'), t = pk.querySelector('.pdk-dn'); if (c) c.textContent = dn; if (t) t.textContent = `${dn} of ${S.length} done today`; }
     if (on && navigator.vibrate) navigator.vibrate(8); },
   pillarSheet: d => { const i = +d.i; wsOpen(i >= 0 ? pillarHtml(HB_PILLARS[i]) : `<h2 class="pls-h">The seven pillars of balance</h2><p class="pls-sub">What protects a woman’s hormones. Tap one.</p><div class="pls-list">${HB_PILLARS.map((P, k) => `<button class="pls-r" data-action="pillarSheet" data-i="${k}"><span>${emoRaw(HB_PIL_EMO[P.t] || '🌿')}</span><b>${P.t}<small>${P.s}</small></b>${icon('chevR', 14)}</button>`).join('')}</div>`, 'ws-fb'); },
   fbPick: (d, el) => {
@@ -11504,6 +11508,10 @@ function calRefresh(parts, data) {
 }
 // Swipe left/right on the calendar to change month.
 let calSwipe = null;
+let pdkSwipe = null; // Your daily plan: swipe the panel stack left or right for the next level
+document.addEventListener('touchstart', e => { const c = e.target.closest?.('.pdk'); pdkSwipe = c && e.touches.length === 1 ? { x: e.touches[0].clientX, y: e.touches[0].clientY } : null; }, { passive: true });
+document.addEventListener('touchend', e => { if (!pdkSwipe) return; const t = e.changedTouches[0], dx = t.clientX - pdkSwipe.x, dy = t.clientY - pdkSwipe.y; pdkSwipe = null;
+  if (Math.abs(dx) > 56 && Math.abs(dx) > Math.abs(dy) * 1.4) { const N = FB_LVL.length, lv = Math.min(N - 1, Math.max(0, ui.fbLvl ?? 0)); actions.fbLvl({ v: (lv + (dx < 0 ? 1 : N - 1)) % N }); } }, { passive: true });
 document.addEventListener('touchstart', e => { const c = e.target.closest?.('.cal'); calSwipe = c && e.touches.length === 1 ? { x: e.touches[0].clientX, y: e.touches[0].clientY } : null; }, { passive: true });
 document.addEventListener('touchend', e => {
   if (!calSwipe) return; const t = e.changedTouches[0], dx = t.clientX - calSwipe.x, dy = t.clientY - calSwipe.y; calSwipe = null;
