@@ -5226,6 +5226,7 @@ const SAFE_STUDIED = {
   ginger: [1000, 1000, 2000, 'mg', 'on period days', 'Period pain trials gave 750 to 2000 mg of ginger powder a day for the first 3 to 4 days of the period (Daily et al., 2015). Your 250 mg four times a day sits in the middle.'],
   creatine: [3, 5, 5, 'g', 'for years', 'Long studies in women and men used 3 to 5 g a day for months to years without harm to the kidneys or liver (Kreider et al., 2017). Big loading doses are not needed.'],
   inositol: [4, 4, 12, 'g', 'in reviews', 'PCOS trials gave 2 g twice a day, usually with 200 µg folic acid, for 3 to 6 months. A safety review found only mild stomach upset, and only at 12 g a day (Carlomagno and Unfer, 2011).'],
+  vitex: [20, 20, 30, 'mg', 'in a dose trial', 'A dose trial in 162 women gave 8, 20 or 30 mg a day for 3 cycles: 20 mg worked and 30 mg added nothing (Schellenberg et al., 2012). A review of all the trials found side effects rare and mild, such as an upset stomach, headache, itch or a rash, gone after stopping (Daniele et al., 2005).'],
   coq10: [100, 200, 1200, 'mg', 'in reviews', 'A safety review found up to 1200 mg a day well tolerated (Hathcock and Shao, 2006). Egg quality trials used 200 to 600 mg a day for about 3 months.'],
 };
 function suppSafe(id) {
@@ -5356,6 +5357,8 @@ const STUDY_NUM = {
   'Gokhale 1996': { cap: 'Girls whose period pain was gone', b: [[87, 'Pain free']] },
   'Wyatt 1999': { c: ['2.3×', 'the odds of feeling better vs placebo'] },
   'Pundir 2018': { c: ['2.3×', 'as likely to ovulate as on placebo'] },
+  'Schellenberg 2001': { cap: 'Halved their PMS after 3 cycles', b: [[52, 'Chasteberry'], [24, 'Placebo']] },
+  'Schellenberg 2012': { c: ['20', 'mg a day worked; 8 mg did no better than placebo'] },
   'Czeizel 1992': { c: ['0 vs 6', 'babies with a spine defect'] },
   'Reid 2003': { cap: 'Back to a healthy flora at 60 days', b: [[37, 'Probiotic'], [13, 'Placebo']] },
   'Harel 1996': { cap: 'Drop in period symptom score on fish oil', b: [[37, 'Lower']] },
@@ -6394,8 +6397,8 @@ function viewNutrient(id) {
     ${specHero({ stack: true, ...nuHero(x), glyph: nuIc(x.id, 64), eyebrow: `For ${/^[A-Z]{2}/.test(x.for) ? x.for : x.for.charAt(0).toLowerCase() + x.for.slice(1)}`, name: x.n, label: 'Key facts', rows: x.d, lead: 'Why it helps', desc: x.why })}
     <section class="card glass tea-fit"><div class="tf-k">When it helps most</div>${phaseFit(x.p, ph)}</section>
     ${suppSafe(x.id)}
-    ${sectionTitle('Food first')}
-    <section class="card glass nu-food">${nuFood(x)}${x.note ? `<p class="ff-note">${x.note}</p>` : ''}${warmWindow(M.info) ? '<small class="tf-all">You\u2019re in your warm window: pick the cooked and warm ones until your period ends.</small>' : ''}</section>
+    ${sectionTitle(x.ft || 'Food first')}
+    <section class="card glass nu-food">${x.forms ? x.forms.map(([e, n, t, tr]) => `<div class="ffq"><span class="ffq-e">${emoRaw(e)}</span><div><b>${n}${tr ? '<em class="ffq-tr">In the trials</em>' : ''}</b><small>${t}</small></div></div>`).join('') : nuFood(x)}${x.note ? `<p class="ff-note">${x.note}</p>` : ''}${!x.forms && warmWindow(M.info) ? '<small class="tf-all">You\u2019re in your warm window: pick the cooked and warm ones until your period ends.</small>' : ''}</section>
     ${sectionTitle('Are you low?')}
     <section class="card glass nu-low"><div class="nl-i"><span>${icon('search', 18)}</span><div><small>Signs</small><p>${x.low}</p></div></div><div class="nl-i"><span>${icon('flask', 18)}</span><div><small>Test to ask for</small><p>${x.test}</p></div></div></section>
     ${sectionTitle('What studies found')}

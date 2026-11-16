@@ -16333,3 +16333,7 @@ html .tyf-e .emo { margin: 0; display: block; font-size: 36px; line-height: 1; }
 .tyf-c b { font: 600 12.5px/1 var(--font); color: #8a5a12; } .tyf-c p { margin: 4px 0 0; font: 400 13.5px/1.45 var(--font); color: #3d3212; }
 .tyf-cite { display: block; margin-top: 14px; text-align: left; font: 400 11.5px/1.4 var(--font); color: rgba(32,48,26,.55); }
 @media (prefers-reduced-motion: reduce) { .ty-egg-bar span::after { animation: none; } }
+
+/* Nutrient › Which form (Round D): a herb shows its forms as emoji rows, the one the trials used marked */
+.nu-food .ffq b { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.nu-food .ffq-tr { font: 600 11px/1 var(--font); font-style: normal; letter-spacing: .01em; padding: 4px 8px; border-radius: 99px; background: #20301a; color: #fff; }

@@ -2290,10 +2290,12 @@ export const NUTRIENTS = [
     d: [['20 mg', 'extract a day'], ['Morning', 'every day'], ['3 cycles', 'to judge it']],
     why: 'Vitex agnus-castus gently lowers prolactin and supports progesterone in the second half of the cycle.',
     f: [['A herb, not a food', 'take a standardised extract']],
+    ft: 'Which form', forms: [['💊', 'Standardised extract', '20 mg a day, the form the trials used', 1], ['🫐', 'Dried berries', 'peppery, and how much they carry varies'], ['🍵', 'Tea or tincture', 'gentle, but hard to dose']],
+    note: 'Chasteberry is the small dried fruit of the monk\u2019s pepper shrub and tastes like pepper. Its strength changes from harvest to harvest, which is why the studies used an extract with the same amount in every tablet.',
     low: 'PMS with tender breasts, irritability and a short luteal phase.', test: 'Prolactin and progesterone (day 21 of a 28-day cycle) if you want to check.',
-    study: 'In a trial with 170 women, 52% had their PMS halved after 3 cycles, against 24% on placebo. Irritability, mood, anger, headache and breast fullness all improved.',
-    cite: 'Schellenberg 2001 (BMJ)',
-    caution: 'Not with the pill or other hormonal birth control, in pregnancy or breastfeeding, during IVF or with dopamine medicines.' },
+    study: 'In a trial with 170 women, 52% had their PMS halved after 3 cycles, against 24% on placebo, with irritability, mood, anger, headache and breast fullness all easing. A dose trial in 162 women compared 8, 20 and 30 mg a day: 8 mg did no better than placebo, 20 mg worked, and 30 mg added nothing more.',
+    cite: 'Schellenberg 2001 (BMJ) · Schellenberg 2012 (Phytomedicine)',
+    caution: 'Not with the pill or other hormonal birth control, in pregnancy or breastfeeding, during IVF or with dopamine medicines. Side effects are rare and mild: an upset stomach, a headache, itchy skin or a rash, gone once you stop.' },
 ];
 
 // The science behind each home remedy: active compounds, what studies found, who should be careful.
