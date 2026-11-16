@@ -392,12 +392,13 @@ function socialBattery(info) {
 function viewTopic(k) {
   const info = M.info; if (!info || !TOPIC_PIC[k]) return viewMissing();
   const w = dayWindow(info), ph = info.phase, P = PHASES[ph];
-  const head = { eat: ['Eat', FOOD_NEEDS[w][0]], friends: ['Friends', PEOPLE_PLAN[ph][0]], stretch: ['Stretch', STRETCH[w][0]], meditate: ['Meditate', MEDITATE[w][0]], tea: ['Tea', TEA_DAY[w][1]] }[k];
+  const head = { eat: ['Eat', FOOD_NEEDS[w][0]], friends: ['Friends', PEOPLE_PLAN[ph][0]], stretch: ['Stretch', STRETCH[w][0]], meditate: ['Meditate', MEDITATE[w][0].replace(/\s*·\s*\d+\s*min$/, '')], tea: ['Tea', TEA_DAY[w][1]] }[k];
   const steps = k === 'stretch' ? STRETCH[w] : k === 'meditate' ? MEDITATE[w] : null;
   let body = '';
-  if (steps) body = `<section class="card tp-card"><p class="tp-lead">${steps[1]}</p><ol class="gr-steps">${steps[2].map((t, i) => `<li><i>${i + 1}</i><span><b>${t}</b></span></li>`).join('')}</ol>
-      <div class="tp-f"><span class="dos-w">${icon('clock', 12)} Today</span>${saveBtn(regTip(`${k}-${w}`, head[0], [steps[0], steps[2][0], steps[2][1] || '', 'Today'], `do/${k}`))}</div></section>
-    <button class="gr-cta" data-action="nav" data-to="breathe"><img src="images/tile-meditate.webp" alt="" loading="lazy"><span><b>Breathe with me</b><small>A guided breath for your phase</small></span>${icon('chevR', 16)}</button>`;
+  // the same guided routine as Stress › Stretch and Meditate: a pose drawing or number per step, its time in Doto, Start runs the countdown
+  if (steps) { const rc = routineCard(k, k === 'stretch' ? 'Stretch today' : 'Meditate today', steps), cut = rc.lastIndexOf('</div></section>');
+    body = rc.slice(0, cut) + saveBtn(regTip(`${k}-${w}`, head[0], [steps[0], steps[2][0], steps[2][1] || '', 'Today'], `do/${k}`)) + rc.slice(cut);
+    body += `<button class="gr-cta" data-action="nav" data-to="breathe"><img src="images/tile-meditate.webp" alt="" loading="lazy"><span><b>Breathe with me</b><small>A guided breath for your phase</small></span>${icon('chevR', 16)}</button>`; }
   else if (k === 'friends') { const F = FRIENDS[ph];
     body = `<section class="card tp-card"><div class="tp-k">${icon('heart', 14)} Ideas for today</div>
       <div class="tp-ideas">${F.ideas.map((t, i) => `<span><i>${i + 1}</i>${t}</span>`).join('')}</div>

@@ -16247,3 +16247,12 @@ html .lf2 .lf-ic .emo { font-size: 17px; } html .bgd-e .emo { font-size: 22px; }
 .ty-end .o3-sub { font-size: 27px !important; color: #b04f6c !important; }
 .ty-endl { font-size: 15.5px !important; font-weight: 400 !important; }
 @media (prefers-reduced-motion: reduce) { .ty-chart rect, .ty-d i::after { animation: none; } }
+
+/* Stretch and Meditate pages (Round B): the guided routine card from Stress, under the photo and title (its own title hidden so it isn't said twice), with the save button beside Start */
+html .tp .rt > .eyebrow, html .tp .rt > h3 { display: none; }
+html .tp .rt { margin-bottom: 14px; }
+html .tp .rt .rt-ctl { display: flex; align-items: center; gap: 10px; }
+html .tp .rt .rt-ctl .rt-go { flex: 1; }
+html .tp .rt .rt-ctl .sv-btn { flex: none; }
+html .rt .rt-p:has(> i.dotnum) { background: none; box-shadow: none; }
+html .rt .rt-p > i.dotnum { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: #20301a; color: #fff; font: 800 13px/1 var(--dot); font-style: normal; }
