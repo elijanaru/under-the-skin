@@ -16807,3 +16807,6 @@ html .view .pl-head p { color: rgba(32,48,26,.84); font-weight: 400; }
 /* Breathe picker: titles line up across cards (content starts at the top, not centred) */
 html .bzp-o { align-content: start; grid-template-rows: auto auto 1fr; }
 html .bzp-o .bzp-g { margin-bottom: 14px; }
+/* Calendar: the small dot on logged days gets a key, and the tapped day shows its cycle day */
+.cal2-legend .lg-l { width: 6px !important; height: 6px !important; border-radius: 50%; background: var(--sage); align-self: center; }
+.cdl.day-panel > span > small b.dotnum { font-size: 1.08em; color: #20301a; font-weight: 400; }

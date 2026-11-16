@@ -2114,7 +2114,7 @@ function viewCalendar() {
       : `<div class="cal-grid ${slide}">${cells}</div>`}
       ${ui.calStart ? `<div class="cal-editbar"><span>Tap the day your period started. We set the rest for you.</span><button class="btn btn-light cal-done" data-action="calStartCancel">Cancel</button></div>`
         : ui.calEdit ? `<div class="cal-editbar"><span>${ui.calFix ? `Tap a day to add or remove bleeding. The ringed day is ${fmt(C.parseISO(ui.calFix), { month: 'short', day: 'numeric' })}.` : 'Tap each day you bled'}</span><button class="btn btn-light cal-done" data-action="calEdit">Done</button></div>`
-        : `<div class="cal2-legend"><span><i class="lg-p"></i>Period</span><span><i class="lg-f"></i>Fertile</span><span><i class="lg-o"></i>Egg release</span></div>
+        : `<div class="cal2-legend"><span><i class="lg-p"></i>Period</span><span><i class="lg-f"></i>Fertile</span><span><i class="lg-o"></i>Egg release</span><span><i class="lg-l"></i>Logged</span></div>
       ${calDayLine(sd, si, slog, selLine, isFuture)}
       <button class="cal-editbtn" data-action="calEdit">${icon('drop', 15)} Edit period days</button>`}
     </section>
@@ -2210,7 +2210,7 @@ function calDayLine(sd, si, slog, selLine, isFuture) {
   const isToday = C.iso(sd) === C.iso(M.today), ahead = isFuture || (isToday && !chips.length);
   if (ahead && si && M.stats.periods.length) patterns().list.filter(x => si.cd >= x.from && si.cd <= x.to).forEach(x => chips.push([LOG_EMOJI[x.name] || '🌿', x.name, reliefKey(x.name)]));
   const more = chips.length > 6 ? chips.length - 5 : 0, show = more ? chips.slice(0, 5) : chips;
-  return `<div class="cdl day-panel"><i style="background:${c}"></i><span><small>${fmt(sd, { weekday: 'short', month: 'short', day: 'numeric' })}</small><b>${selLine || 'No cycle data yet'}</b></span>
+  return `<div class="cdl day-panel"><i style="background:${c}"></i><span><small>${fmt(sd, { weekday: 'short', month: 'short', day: 'numeric' })}${si && si.cd ? ` · Day <b class="dotnum">${si.cd}</b>` : ''}</small><b>${selLine || 'No cycle data yet'}</b></span>
     ${isFuture ? '' : `<button class="cdl-go" data-action="logDay" data-date="${C.iso(sd)}">${icon(logged ? 'check' : 'plus', 14)} ${logged ? 'Edit' : 'Log'}</button>`}
     ${chips.length ? `<div class="cdl-ch">${ahead ? `<small>${isToday ? 'Your pattern today' : 'Your pattern on this day'}</small>` : ''}<div>${show.map(([e, t, rk]) => rk ? `<button data-action="nav" data-to="relief/${encodeURIComponent(rk)}"><i class="emo" aria-hidden="true">${e}</i>${esc(t)}${icon('chevR', 11)}</button>` : `<span><i class="emo" aria-hidden="true">${e}</i>${esc(t)}</span>`).join('')}${more ? `<span class="m">+${more}</span>` : ''}</div></div>` : ''}</div>`;
 }
