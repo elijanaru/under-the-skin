@@ -1236,7 +1236,7 @@ export const PHASE_FUNDAMENTALS = {
     ['lemon', 'lemon', 'Warm lemon water', 'Morning', 'Helps iron in', 'Vitamin C helps you take up the iron you lose with bleeding.', 'Half a lemon in a big glass of warm water. Warm, never iced, this week.'],
     ['walk', 'walk', 'Slow walk outside', 'Daytime', 'Lifts your mood', 'Gentle movement and daylight ease cramps and lift a low mood. No need to push.', '10 to 20 minutes at an easy pace.'],
     HF.calm,
-    ['red-date-tea', 'cup3d/teacup', 'Ginger & red date tea', 'Afternoon', 'Warms and rebuilds', 'In Chinese medicine red dates build Blood and ginger warms the womb, so it eases period aches and the tired days after.', '1 cup warm milk, ½ tsp turmeric, a slice of ginger, a pinch of pepper.'],
+    ['red-date-tea', 'cup3d/hibiscus', 'Ginger & red date tea', 'Afternoon', 'Warms and rebuilds', 'In Chinese medicine red dates build Blood and ginger warms the womb, so it eases period aches and the tired days after.', '4 red dates and 3 slices of ginger, simmered 15 minutes.'],
     HF.foot, HF.mag, HF.sleep, HF.phone,
   ] },
   follicular: { t: 'Build and rise', s: 'Oestrogen is climbing. Morning light and fresh food help it rise smoothly.', list: [

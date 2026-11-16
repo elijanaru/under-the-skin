@@ -3327,13 +3327,15 @@ function plateSection(current, lite) {
 const CHAI_RE = /ginger|cinnamon|chai|cacao|red date|turmeric|dandelion/i;
 const MATCHA_RE = /matcha|green tea/i;
 // Every drink shows the 3D model that looks most like it (16 Nov 2026, her call: only the app's own 3D models, and
-// no two different drinks in the same cup): the glass latte for coffee and milky drinks, matcha, green tea, the blue
-// mint cup for green leafy teas, the red hibiscus cup, the amber teacup for ginger, red dates and spiced teas, the pho
-// bowl for broth and the floral chamomile cup for the pale golden infusions.
-const TEA_CUP = [[/matcha/i, 'matcha', 'cup3d/matcha'], [/green tea|green juice/i, 'greentea', 'cup3d/greentea'], [/coffee|latte|chai|cacao|cocoa|turmeric|golden milk|\bmilk\b|kefir|coconut/i, 'latte', 'cup3d/latte'],
-  [/hibiscus|bissap|roselle|rosehip/i, 'hibiscus', 'cup3d/hibiscus'], [/broth/i, 'pho', 'cup3d/pho'],
-  [/mint|lemon balm|nettle|lemongrass|jasmine|tulsi|moringa|raspberry leaf|dandelion/i, 'mint-tea', 'cup3d/mint-tea'],
-  [/ginger|red date|cinnamon|rooibos|black tea|cardamom|clove|fire cider/i, 'teacup', 'cup3d/teacup'], [/./, 'chamomile', 'cup3d/chamomile']];
+// no two drinks in one list share a cup; 16 Nov 2026 her coffee mug added): the white mug for coffee, the glass latte for cacao and milky drinks, matcha, green tea, the blue
+// mint cup for leafy teas and water, the red hibiscus cup for hibiscus and red dates, the amber teacup for ginger and spiced teas, the pho
+// bowl for broth and the floral chamomile cup for chamomile, lemon and coconut water.
+const TEA_CUP = [[/matcha/i, 'matcha', 'cup3d/matcha'], [/coffee|espresso/i, 'coffee', 'cup3d/coffee'], [/green tea|green juice/i, 'greentea', 'cup3d/greentea'],
+  [/chai|cacao|cocoa|latte|turmeric|golden milk|\bmilk\b|kefir/i, 'latte', 'cup3d/latte'],
+  [/hibiscus|bissap|roselle|rosehip|red date/i, 'hibiscus', 'cup3d/hibiscus'], [/broth/i, 'pho', 'cup3d/pho'],
+  [/mint|lemon balm|nettle|lemongrass|jasmine|tulsi|moringa|raspberry leaf|dandelion|mineral water/i, 'mint-tea', 'cup3d/mint-tea'],
+  [/chamomile|lemon water|coconut water/i, 'chamomile', 'cup3d/chamomile'],
+  [/ginger|cinnamon|rooibos|black tea|cardamom|clove|fire cider/i, 'teacup', 'cup3d/teacup'], [/./, 'chamomile', 'cup3d/chamomile']];
 const teaCup = n => TEA_CUP.find(([re]) => re.test(n || ''));
 const teaCupImg = n => `images/${teaCup(n)[2]}.webp`;
 const teaCupAttr = n => teaCup(n)[1] ? ` data-model="models/${teaCup(n)[1]}.glb"` : '';
