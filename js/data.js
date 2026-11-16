@@ -586,7 +586,7 @@ export const SUPPS = [['Magnesium', '🌰'], ['Iron', '🩸'], ['Omega-3', '🐟
 export const DISRUPTORS = [['Alcohol', '🍷'], ['Illness', '🤒'], ['Travel', '✈️'], ['Big stress', '⚡'], ['Late night', '🌃'], ['Hard training', '🏋️'], ['Drugs', '🌿'], ['Shock or loss', '💔']];
 export const SYMPTOMS = BODY_GROUPS.flatMap(([, l]) => l.map(([n]) => n));
 export const MOODS = MOOD_LIST.map(([n]) => n);
-export const LOG_EMOJI = Object.fromEntries([...BODY_GROUPS.flatMap(([, l]) => l), ...MOOD_LIST, ...DISCHARGE, ...DOWN_EXTRA, ...INTIMACY, ...INTAKE, ...SUPPS, ...DISRUPTORS, ['Spotting', '🔸']]);
+export const LOG_EMOJI = Object.fromEntries([...BODY_GROUPS.flatMap(([, l]) => l), ...MOOD_LIST, ...DISCHARGE, ...DOWN_EXTRA, ...INTIMACY, ...INTAKE, ...SUPPS, ...DISRUPTORS, ['Spotting', '🔸'], ['Insomnia', '🌙']]);
 
 // The check-in "brain": why a symptom shows up, phase by phase. ev = evidence label.
 export const SYMPTOM_WHY = {

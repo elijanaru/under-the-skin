@@ -16035,3 +16035,12 @@ html .gr-steps i { background: #20301a; color: #fff; font: 800 13px/1 var(--dot)
 .rl-spec .rl-me dd b { font: 900 18px/1 var(--dot); color: #20301a; }
 .rl-spec .rl-me dd small { font: 400 12px/1.2 var(--font); color: #5d6a50; }
 .rl-spec .rl-me dt { color: #304023; font-weight: 600; }
+
+/* Calendar › tapped day (Round C): what she logged that day as emoji chips, on a coming day what her pattern says shows up */
+.cdl { flex-wrap: wrap; }
+.cdl-ch { flex-basis: 100%; margin: 2px 0 2px 24px; display: grid; gap: 6px; }
+.cdl-ch > small { font: 500 12px/1.2 var(--font); color: #5d6a50; }
+.cdl-ch > div { display: flex; flex-wrap: wrap; gap: 5px; }
+.cdl-ch span { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px 5px 7px; border-radius: 99px; background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(30% * var(--hs)) 94%); font: 500 12.5px/1 var(--font); color: #304023; }
+.cdl-ch span .emo { margin: 0; font-size: 14px; line-height: 1; font-style: normal; }
+.cdl-ch span.m { padding: 5px 10px; color: #5d6a50; }

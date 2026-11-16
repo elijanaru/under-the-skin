@@ -2115,8 +2115,17 @@ function moonWidget() {
 function calDayLine(sd, si, slog, selLine, isFuture) {
   const c = si ? (si.periodActual || si.periodPredicted ? '#d42a40' : si.isOvulation ? '#d6a443' : si.fertile ? '#c9b98a' : PH_HEX[si.phase]) : '#c9c9c9';
   const logged = !!(slog.symptoms?.length || slog.moods?.length || slog.flow || slog.notes);
+  // what she logged that day as small emoji chips; on a coming day, what her own pattern says usually shows up
+  const chips = [];
+  if (!isFuture) {
+    if (PERIOD_FLOWS.includes(slog.flow)) chips.push(['🩸', `${slog.flow.charAt(0).toUpperCase() + slog.flow.slice(1)} flow`]);
+    [...(slog.symptoms || []), ...(slog.moods || [])].forEach(n => chips.push([LOG_EMOJI[n] || '🌿', n]));
+    if (slog.energy) chips.push(['⚡', `${['Drained', 'Low', 'Okay', 'Good', 'Radiant'][slog.energy - 1]} energy`]);
+  } else if (si && M.stats.periods.length) patterns().list.filter(x => si.cd >= x.from && si.cd <= x.to).forEach(x => chips.push([LOG_EMOJI[x.name] || '🌿', x.name]));
+  const more = chips.length > 6 ? chips.length - 5 : 0, show = more ? chips.slice(0, 5) : chips;
   return `<div class="cdl day-panel"><i style="background:${c}"></i><span><small>${fmt(sd, { weekday: 'short', month: 'short', day: 'numeric' })}</small><b>${selLine || 'No cycle data yet'}</b></span>
-    ${isFuture ? '' : `<button class="cdl-go" data-action="logDay" data-date="${C.iso(sd)}">${icon(logged ? 'check' : 'plus', 14)} ${logged ? 'Edit' : 'Log'}</button>`}</div>`;
+    ${isFuture ? '' : `<button class="cdl-go" data-action="logDay" data-date="${C.iso(sd)}">${icon(logged ? 'check' : 'plus', 14)} ${logged ? 'Edit' : 'Log'}</button>`}
+    ${chips.length ? `<div class="cdl-ch">${isFuture ? '<small>Your pattern on this day</small>' : ''}<div>${show.map(([e, t]) => `<span><i class="emo" aria-hidden="true">${e}</i>${esc(t)}</span>`).join('')}${more ? `<span class="m">+${more}</span>` : ''}</div></div>` : ''}</div>`;
 }
 // The tapped day as a glass card: hormone and energy rings, her mode for the day, what she logged.
 function calDayCard(sd, si, slog, selLine, isFuture, hasFlow) {
