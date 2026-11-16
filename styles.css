@@ -16664,3 +16664,39 @@ html .sgx-when h3 { margin: 0 0 8px; font: 500 15px/1.2 var(--font); color: #203
 /* no ticks on the tea pills (her call): plain text pills, centred */
 .tpx-p { padding: 8px 14px; justify-content: center; text-align: center; }
 .tpx-p.n { padding: 8px 10px; }
+
+/* Seed cycling sheet (16 Nov 2026): simple on top, complete underneath */
+.ssh { position: relative; display: grid; gap: 14px; text-align: left; }
+.ssh .fbd-emo { justify-self: center; }
+.ssh-t { margin: 0; text-align: center; font: 500 30px/1.1 var(--font); letter-spacing: -.02em; color: #20301a; }
+.ssh-lead { text-wrap: balance; margin: -6px 6px 0; text-align: center; font: 300 15px/1.45 var(--font); color: #4b5741; }
+.ssh-now { padding: 16px 16px 14px; border-radius: 26px; background: #fff; border: 1px solid rgba(255,255,255,.9); box-shadow: 0 14px 30px -18px rgba(60,45,20,.35); }
+.ssh-k { display: block; text-align: center; font: 600 11px/1 var(--font); letter-spacing: .12em; text-transform: uppercase; color: #8a7a4a; }
+.ssh-pics { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 14px 0 16px; }
+.ssh-pics figure { margin: 0; display: grid; justify-items: center; gap: 8px; }
+.ssh-pics img { width: 92px; height: 92px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 4px #fff, 0 10px 20px -10px rgba(60,40,20,.5); }
+.ssh-pics figcaption { font: 600 15px/1.1 var(--font); color: #20301a; text-align: center; }
+.ssh-pics figcaption em { display: block; margin-top: 3px; font: 400 12.5px/1 var(--font); font-style: normal; color: #6b7560; }
+.ssh-plus { font: 300 26px/1 var(--font); color: #a39a7c; margin-bottom: 30px; }
+.ssh-bar { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.ssh-h { padding: 9px 11px; border-radius: 14px; background: #f4f1e8; opacity: .7; }
+.ssh-h small { display: block; font: 500 11px/1.2 var(--font); color: #7b7a66; }
+.ssh-h b { display: block; margin-top: 2px; font: 600 13px/1.2 var(--font); color: #20301a; }
+.ssh-h.on { opacity: 1; }
+.ssh-h.a.on { background: #e8efd8; } .ssh-h.b.on { background: #f3e3ea; }
+.ssh-me { position: absolute; top: -7px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: #20301a; box-shadow: 0 0 0 3px #fff; }
+.ssh-s { margin: 6px 2px -4px; font: 600 17px/1.2 var(--font); color: #20301a; }
+.ssh-why { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ssh-w { display: flex; align-items: center; gap: 9px; padding: 9px; border-radius: 18px; background: rgba(255,255,255,.7); border: 1px solid rgba(255,255,255,.9); }
+.ssh-w.on { background: #fff; box-shadow: 0 8px 18px -14px rgba(60,40,20,.5); }
+.ssh-w img { flex: none; width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+.ssh-w b { display: block; font: 600 13.5px/1.2 var(--font); color: #20301a; }
+.ssh-w small { display: block; margin-top: 2px; font: 400 11.5px/1.3 var(--font); color: #5b6450; }
+.ssh-how { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; counter-reset: s; }
+.ssh-how li { counter-increment: s; display: grid; grid-template-columns: 28px 1fr; column-gap: 10px; padding: 11px 12px; border-radius: 18px; background: rgba(255,255,255,.7); }
+.ssh-how li::before { content: counter(s); grid-row: span 2; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; background: #20301a; color: #fff; font: 900 12px/1 var(--dot); }
+.ssh-how b { font: 600 14px/1.25 var(--font); color: #20301a; }
+.ssh-how span { font: 400 13px/1.4 var(--font); color: #4b5741; }
+.ssh-safe { display: flex; gap: 8px; margin: 0; padding: 11px 13px; border-radius: 16px; background: #f8e9ee; color: #7a3d52; font: 400 12.5px/1.45 var(--font); }
+.ssh-safe .ic { flex: none; margin-top: 2px; }
+.ssh .fbd-acts { justify-content: center; }

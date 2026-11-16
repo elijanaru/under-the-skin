@@ -4603,7 +4603,38 @@ function seedHalves() {
   const row = (on, days, a, b, txt) => `<div class="sdh-r ${on ? 'on' : ''}"><span class="sdh-ph">${[a, b].map(k => `<img src="${foodPhoto(k, 120)}" alt="" loading="lazy">`).join('')}</span><span><b>${days}</b><small>${txt}</small></span>${on && info ? '<em>Now</em>' : ''}</div>`;
   return `<div class="sdh2">${row(first, `Day 1 to ${h}`, 'Ground flaxseed', 'Pumpkin seeds', 'Flax and pumpkin, 1 tbsp each')}${row(!first, `Day ${h + 1} to ${L}`, 'Sesame seeds', 'Sunflower seeds', 'Sesame and sunflower, 1 tbsp each')}</div>`;
 }
+// Seed cycling sheet, her round 16 Nov 2026 ("simple but comprehensive"): your seeds now with a cycle bar, why each seed,
+// three how-to steps and the safe-use note. One look tells her what to eat today; the detail sits right under it.
+const SEED_WHY = [['Ground flaxseed', 'Flax', 'Lignans help your liver clear extra oestrogen'], ['Pumpkin seeds', 'Pumpkin', 'Zinc helps you build up to ovulation'],
+  ['Sesame seeds', 'Sesame', 'Lignans and zinc for a calmer second half'], ['Sunflower seeds', 'Sunflower', 'Vitamin E and selenium help progesterone']];
+function seedSheet(i) {
+  const x = FB[i], on = x.hb && habitsDone(todayISO()).includes(x.hb), info = M.info, L = info ? info.L : 28, h = Math.round(L / 2), cd = info ? info.cd : 0, first = !info || cd <= h;
+  const now = first ? SEED_WHY.slice(0, 2) : SEED_WHY.slice(2), warm = info && warmWindow(info);
+  const half = (k, on2, days, list) => `<div class="ssh-h ${k} ${on2 ? 'on' : ''}"><small>${days}</small><b>${list.map(s => s[1]).join(' + ')}</b></div>`;
+  return `<div class="ssh">
+    <span class="fbd-emo">${emoRaw(FB_EMO[x.id] || '🌻')}</span>
+    <h2 class="ssh-t">Seed cycling</h2>
+    <p class="ssh-lead">Two spoons of seeds a day, switched halfway through your cycle, to feed each half what it needs.</p>
+    <section class="ssh-now">
+      <small class="ssh-k">${info ? `Day ${cd} · your seeds now` : 'Your seeds now'}</small>
+      <div class="ssh-pics">${now.map(([k, n]) => `<figure><img src="${foodPhoto(k, 240)}" alt="" loading="lazy"><figcaption>${n}<em>1 tbsp</em></figcaption></figure>`).join('<span class="ssh-plus">+</span>')}</div>
+      <div class="ssh-bar" aria-label="${first ? 'First' : 'Second'} half of your cycle">${half('a', first, `Day 1 to ${h}`, SEED_WHY.slice(0, 2))}${half('b', !first, `Day ${h + 1} to ${L}`, SEED_WHY.slice(2))}
+        ${info ? `<i class="ssh-me" style="left:${Math.min(98, Math.max(2, cd / L * 100)).toFixed(1)}%"></i>` : ''}</div>
+    </section>
+    <h3 class="ssh-s">Why each seed</h3>
+    <div class="ssh-why">${SEED_WHY.map(([k, n, w], j) => `<div class="ssh-w ${(j < 2) === first ? 'on' : ''}"><img src="${foodPhoto(k, 120)}" alt="" loading="lazy"><span><b>${n}</b><small>${w}</small></span></div>`).join('')}</div>
+    <h3 class="ssh-s">How to</h3>
+    <ol class="ssh-how">
+      <li><b>Grind them fresh</b><span>A small grinder, a few days at a time. Keep the jar in the fridge.</span></li>
+      <li><b>Stir into food</b><span>${warm ? 'On your period days, into warm soup, stew or cooked fruit.' : 'Into yoghurt, kefir, salads, soup or a smoothie.'}</span></li>
+      <li><b>Give it three cycles</b><span>Seeds work slowly, like any food. Notice how your cycle feels.</span></li>
+    </ol>
+    <p class="ssh-safe">${icon('heart', 13)}<span>Flax is rich in fibre: start with 1 tsp and drink water with it. With a hormone-sensitive condition or blood thinners, ask your doctor first. Research is still early, so enjoy it as good food, not a cure.</span></p>
+    <div class="fbd-acts">${x.hb ? `<button class="fbd-hb ${on ? 'on' : ''}" data-action="fbHabit" data-id="${x.hb}" data-i="${i}" aria-pressed="${!!on}">${icon('check', 13, 2.6)} ${on ? 'Done today' : 'Add to my daily habits'}</button>` : ''}${x.to ? `<button class="fbd-go" data-action="nav" data-to="${x.to[0]}">${x.to[1]} ${icon('chevR', 13)}</button>` : ''}</div>
+    <button class="fbd-x" data-action="fbClose" aria-label="Close">${icon('close', 14)}</button></div>`;
+}
 function fbDetail(i) {
+  if (FB[i] && FB[i].id === 'seeds') return seedSheet(i);
   const x = FB[i], on = x.hb && habitsDone(todayISO()).includes(x.hb);
   let [when, takes, st] = FB_SPEC[x.id] || [];
   if (x.id === 'seeds') when = 'Every day';
