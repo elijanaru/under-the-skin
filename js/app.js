@@ -5478,7 +5478,7 @@ const FOOD_MEALS = {
     broth: ['Carrot & ginger soup', 'Carrots, onion and ginger blended with bone broth and a splash of cream.'],
     raw: ['Raw carrot & apple slaw', 'Grated carrot and apple with lemon, raw cream or yoghurt and pumpkin seeds.'], warmAlt: ['Roasted carrots', 'Honey-roasted carrots with thyme.'],
     meat: ['Beef with sweet potato', 'Grilled steak or burger patty with baked sweet potato: protein plus fuel.'] },
-  peak: { col: ['🔴🟣', 'Red & purple', 'Red and purple foods are full of antioxidants that may help protect the egg as it is released.', 'Berries, cherries, pomegranate, tomatoes, red cabbage, beetroot'],
+  peak: { col: ['🔴🟣', 'Red & purple', 'Red and purple foods are full of antioxidants that may help protect the egg as it is released.', 'Berries, cherries, pomegranate, tomatoes, red grapes, beetroot'],
     broth: ['Light tomato & fish broth', 'Fresh tomatoes, garlic and white fish in a light broth. Hydrating and fresh.'],
     raw: ['Berry bowl with raw yoghurt', 'Berries, pomegranate and raw yoghurt or kefir. Or a tomato & red onion salad.'], warmAlt: ['Warm berry compote', 'Berries cooked briefly with a little honey.'],
     meat: ['Oysters or seafood', 'Oysters, prawns or mussels for zinc. Or lamb with pomegranate.'] },
@@ -5527,6 +5527,8 @@ const PEOPLE_G = { menstrual: '🫶', follicular: '👯', ovulatory: '💃', lut
 // Food colour of the day as drawn dots (the data keeps the emoji as a compact code).
 const FOOD_DOT = { '🔴': '#a8362e', '⚫': '#151515', '🟢': '#5d8a48', '🟠': '#cf7a2e', '🟣': '#6a3d78', '🟡': '#d9b84a', '🟤': '#76523a' };
 const colDots = c => [...c].filter(x => FOOD_DOT[x]).map(x => `<i class="cdot" style="background:${FOOD_DOT[x]}"></i>`).join('');
+// Colour of the day: foods the emoji finder misses, and a red pepper instead of the green one
+const COL_EMO = { 'Red meat': '🥩', 'Root veg': '🥕', Nuts: '🌰', 'Dark chocolate': '🍫', 'Red peppers': '🌶️', 'Red grapes': '🍇' };
 const noEmoji = t => String(t).replace(/^[\p{Extended_Pictographic}\uFE0F\u200D]+\s*/u, '');
 // the nutrient's own emoji from its name; plain circles and the moon become a food that carries it
 const needEmo = n => { const t = noEmoji(n), e = String(n).slice(0, String(n).length - t.length).trim();
@@ -5636,7 +5638,8 @@ function todayTiles(info, only) {
       return `<dl class="tst"><div><dt>${icon('clock', 16)} Steep</dt><dd>${stp}</dd></div><div><dt>${icon('sun', 16)} When</dt><dd>${when}</dd></div></dl>
       <button class="tst-go" data-action="nav" data-to="tea">Full tea guide ${icon('chevR', 14)}</button>`; }
     if (k === 'eat') return `<div class="hub-tip-in stack"><div class="ht-head"><span class="ht-g">${icon('bowl', 22)}</span><div><b>${fn[0]}</b><p>${warm ? `${icon('thermo', 13)} Today: warm & cooked only. No raw or cold food.` : `${icon('leaf', 13)} Today: raw and fresh food is welcome, with some warm meals.`}</p></div></div><div>
-      <div class="fcol"><span class="fcol-dots">${colDots(fm.col[0])}</span><div><small>Colour of the day</small><b>${fm.col[1]} foods</b><p>${fm.col[2]}</p><span>${fm.col[3]}</span></div></div>
+      <div class="fcol fcol2"><div class="fcol-h"><span class="fcol-dots">${colDots(fm.col[0])}</span><div><small>Colour of the day</small><b>${fm.col[1]} foods</b></div></div><p>${fm.col[2]}</p>
+        <div class="fcol-g">${fm.col[3].split(', ').map(f => { const n = f.charAt(0).toUpperCase() + f.slice(1); return `<span>${emoRaw(COL_EMO[n] || ingEmo(n) || '🌿')}<small>${n}</small></span>`; }).join('')}</div></div>
       ${w === 'flow-start' || w === 'flow-end' ? phaseFoodPic('menstrual') : ''}<small class="fk">Meal ideas</small>
       <div class="fmeals fm2">${[['🍲', 'Broth & soup', fm.broth], warm || !fm.raw ? ['🥘', 'Warm instead of raw', fm.warmAlt] : ['🥗', 'Raw', fm.raw], ['🐟', 'Meat & fish', fm.meat]].map(([g_, k_, [t, d]]) => `<div class="fmeal"><span class="emo" aria-hidden="true">${g_}</span><div><small>${k_}</small><b>${t}</b><p>${d}</p></div></div>`).join('')}</div>
       <small class="fk">What your body needs</small>
