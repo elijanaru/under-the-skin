@@ -4641,8 +4641,7 @@ function seedSheet(i) {
     <div class="fbd-acts">${x.hb ? `<button class="fbd-hb ${on ? 'on' : ''}" data-action="fbHabit" data-id="${x.hb}" data-i="${i}" aria-pressed="${!!on}">${icon('check', 13, 2.6)} ${on ? 'Done today' : 'Add to my daily habits'}</button>` : ''}${x.to ? `<button class="fbd-go" data-action="nav" data-to="${x.to[0]}">${x.to[1]} ${icon('chevR', 13)}</button>` : ''}</div>
     <button class="fbd-x" data-action="fbClose" aria-label="Close">${icon('close', 14)}</button></div>`;
 }
-// The seed cycling guide (article), same language as the sheet (16 Nov 2026): in short, a hormone graphic with the two
-// seed halves under it, your seeds now, what one spoon of each seed brings (tap for more), how to, studies, safe use.
+// Seed cycling: what one spoon of each seed brings (tap a row for more) and the two-halves hormone graphic.
 const SEED_MORE = {
   Flax: ['About 1.6 g plant omega 3 and 2 g fibre', 'Its lignans bind extra oestrogen in the gut so it leaves the body instead of circulating again. The one study close to seed cycling used 10 g of ground flax a day.'],
   Pumpkin: ['About 0.7 mg zinc and 50 mg magnesium', 'Zinc helps the follicle mature and the egg release. Magnesium calms muscles and nerves, useful from the first days of your cycle.'],
@@ -4663,22 +4662,42 @@ function seedGraph() {
     <figcaption><span><i class="e"></i>Oestrogen</span><span><i class="p"></i>Progesterone</span>${info ? '<span><i class="me"></i>You</span>' : ''}</figcaption>
     <div class="sgd-halves">${[SEED_WHY.slice(0, 2), SEED_WHY.slice(2)].map((g, j) => `<div class="sgd-hf ${j ? 'b' : 'a'}">${g.map(([k]) => `<img src="${foodPhoto(k, 120)}" alt="" loading="lazy">`).join('')}<small>${j ? 'Help progesterone' : 'Help oestrogen'}</small><b>${g.map(s => s[1]).join(' + ')}</b></div>`).join('')}</div></figure>`;
 }
-function seedGuide(a) {
-  const st = ARTICLE_STUDIES[a.id] || [], first = !M.info || M.info.cd <= Math.round(M.info.L / 2);
-  return `<section class="card sgd-short"><small class="art2-k">In short</small>
-      <ul><li><b>What</b><span>1 tbsp each of two seeds a day, switched halfway through your cycle.</span></li>
-        <li><b>Why</b><span>Each pair brings the zinc, lignans, omega 3 and vitamin E that half of your cycle uses most.</span></li>
-        <li><b>Honestly</b><span>No trial has tested seed cycling itself yet. The seeds are good food either way.</span></li></ul></section>
-    ${sectionTitle('Your month, in two halves')}
-    <section class="card sgd-gc">${seedGraph()}</section>
-    ${sectionTitle('Your seeds now')}
-    <div class="ssh sgd-now">${seedNow()}</div>
-    ${sectionTitle('What one spoon brings')}
-    <section class="card sgd-seeds">${SEED_WHY.map(([k, n, w], j) => { const [amt, more] = SEED_MORE[n]; return `<details class="sgd-s ${(j < 2) === first ? 'on' : ''}"><summary><img src="${foodPhoto(k, 120)}" alt="" loading="lazy"><span><b>${n}</b><small>${w}</small><em>${amt}</em></span>${icon('chevD', 16)}</summary><p>${more}</p></details>`; }).join('')}</section>
-    ${sectionTitle('How to')}
-    <div class="ssh sgd-how">${seedHow()}</div>
-    ${st.length ? `${sectionTitle('What studies found')}<section class="card gr-card gr-st art-st">${st.map(([w, y, j, f, d], k) => `<details${k === 0 ? ' open' : ''}><summary class="gr-s"><span class="gr-y">${y}</span><span class="gr-s-t"><b>${f}</b><small>${w} · ${j}</small></span>${icon('chevD', 16)}</summary><p>${d}</p></details>`).join('')}</section>` : ''}
-    <p class="ssh-safe sgd-safe">${icon('heart', 13)}<span>${SEED_SAFE}</span></p>`;
+// The seed cycling guide in the Unlock page structure (16 Nov 2026, her rule for every redesign): the photo as a taped
+// polaroid on a sparkled stage, a day pill, the taped note, three pills, then white cards for the halves graphic,
+// your seeds now, what one spoon brings (tap a row for more), how to, the study and the safe note.
+function seedGuidePage(a, n) {
+  const info = M.info, L = info ? info.L : 28, h = Math.round(L / 2), first = !info || info.cd <= h, u = readPic(a, 900), st = ARTICLE_STUDIES[a.id] || [];
+  const swirl = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';
+  const pair = first ? 'flax + pumpkin' : 'sesame + sunflower';
+  return `${topbar('Seed cycling', { back: true })}
+  <div class="pad ul3 ul4 sgu">
+    <div class="ul4-stage sgu-stage">
+      <svg class="ul4-sp" viewBox="0 0 360 250" aria-hidden="true">${o3Spark('#f1d58a', 26, 34, 0)}${o3Spark('#fff', 334, 22, 1.1)}${o3Spark('#c9d6a8', 344, 214, 2)}${o3Spark('#f6c6d4', 14, 222, 1.6)}</svg>
+      <figure class="sgu-pol">${u ? `<img src="${u}" alt="">` : ''}<figcaption>flax · pumpkin · sesame · sunflower</figcaption></figure>
+    </div>
+    <span class="ul3-days">${icon('leaf', 13)} ${info ? `Day ${info.cd} · ${pair} now` : `<b class="dotnum">${a.mins}</b> min read`}</span>
+    <section class="o3-note ul3-note ul4-note">
+      <small class="ul4-eye">Seed cycling, what we know</small>
+      <h2 class="ul4-h">Two spoons,<br><em>two halves${swirl}</em></h2>
+      <p class="o3-lead">1 tbsp each of two seeds a day, <mark>switched halfway</mark> through your cycle, to feed each half what it uses most.</p>
+      <p class="sgx-st"><b>Honestly</b>No trial has tested seed cycling itself yet. One flax study looks promising, and the seeds are good food either way.</p>
+      <button class="ul3-cta" data-action="nav" data-to="habits">Add it to my daily plan</button>
+      <p class="o3-sign">a spoon a day, a softer cycle <i>♡</i></p>
+    </section>
+    <ul class="ul3-no">${['No supplements', 'No strict rules', 'No guesswork'].map((t, i) => `<li style="--r:${[-2, 1.5, -1][i]}deg"><span class="o3-x">${O3_X}</span>${t}</li>`).join('')}</ul>
+    <section class="card ul3-keep sgu-c"><h3>Your month, in two halves</h3>${seedGraph()}</section>
+    <section class="card ul3-keep sgu-c sgu-nowc"><h3>Your seeds now</h3><div class="ssh">${seedNow()}</div></section>
+    <section class="card ul3-keep sgu-c"><h3>What one spoon brings</h3>
+      ${SEED_WHY.map(([k, nm, w], i) => { const [amt, more] = SEED_MORE[nm], on = (i < 2) === first;
+        return `<details class="sgu-d" style="--i:${i}"><summary class="ul3-r"><span class="ul3-ic sgu-ph"><img src="${foodPhoto(k, 120)}" alt="" loading="lazy"></span><span><b>${nm}${on ? ' <em class="sgu-now">now</em>' : ''}</b><small>${w}</small><small class="sgu-amt">${amt}</small></span><i class="sgu-more">${icon('chevD', 16)}</i></summary><p>${more}</p></details>`; }).join('')}</section>
+    <section class="card ul3-keep sgu-c"><h3>How to</h3>
+      ${[['🫙', 'Grind them fresh', 'A small grinder, a few days at a time. Keep the jar in the fridge.'],
+         [M.info && warmWindow(M.info) ? '🍲' : '🥣', 'Stir into food', M.info && warmWindow(M.info) ? 'On your period days, into warm soup, stew or cooked fruit.' : 'Into yoghurt, kefir, salads, soup or a smoothie.'],
+         ['🗓️', 'Give it three cycles', 'Seeds work slowly, like any food. Notice how your cycle feels.']].map(([e, t, d], i) => `<div class="ul3-r" style="--i:${i}"><span class="ul3-ic emo" aria-hidden="true">${e}</span><span><b>${t}</b><small>${d}</small></span><i class="ul3-tick">${O3_TICK}</i></div>`).join('')}</section>
+    ${st.length ? `<section class="card ul3-keep sgu-c"><h3>What studies found</h3>${st.map(([w, y, j, f, d]) => `<div class="sgu-st"><b class="dotnum">${y}</b><span><b>${f}</b><small>${d}</small><em>${w} · ${j}</em></span></div>`).join('')}</section>` : ''}
+    <p class="ssh-safe sgd-safe">${icon('heart', 13)}<span>${SEED_SAFE}</span></p>
+    ${n ? `<button class="card nu-next art-next" data-action="nav" data-to="article/${n.id}">${readPic(n, 300) ? `<img src="${readPic(n, 300)}" alt="">` : ''}<span><small>Next read</small><b>${n.title}</b></span>${icon('chevR', 16)}</button>` : ''}
+  </div>`;
 }
 function fbDetail(i) {
   if (FB[i] && FB[i].id === 'seeds') return seedSheet(i);
@@ -9661,6 +9680,7 @@ function viewArticle(id) {
   const u = readPic(a, 1100), i = all.indexOf(a), m = new Date().getMonth() + 1;
   const nexts = all.filter(x => x !== a && (!x.month || x.month <= m)), n = nexts.find(x => !(state.read || {})[x.id]) || nexts[(i) % nexts.length];
   const ph = a.phase ? PHASES[a.phase] : null;
+  if (a.id === 'seed-cycling') return seedGuidePage(a, n);
   return `<section class="art2-hero"><div class="art2-pic">${u ? `<img src="${u}" alt="">` : glowArt('wave', 4)}<button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button></div>
     <div class="art2-h"><span class="art2-tag">${a.month ? `The Underskin letter · ${MONTHS[a.month - 1]}` : `${ph ? `<i style="background:${PH_HEX[a.phase]}"></i>${ph.name} phase · ` : ''}<b class="dotnum">${a.mins}</b> min read`}</span><h1>${a.title}</h1>${a.lead ? `<p>${a.lead}</p>` : ''}</div></section>
   <div class="pad article art2">

@@ -16743,3 +16743,34 @@ html .sgx-when h3 { margin: 0 0 8px; font: 500 15px/1.2 var(--font); color: #203
 .sgd-hf { padding: 9px 10px 9px 9px; }
 .sgd-hf img { width: 30px; height: 30px; }
 .sgd-hf small { white-space: nowrap; }
+
+/* Seed cycling guide in the Unlock structure (16 Nov 2026) */
+.sgu-stage { display: grid; place-items: center; padding: 22px 0 30px; }
+.sgu-pol { position: relative; z-index: 2; margin: 0; width: 76%; max-width: 290px; padding: 10px 10px 0; background: #fff; border-radius: 6px; transform: rotate(-3deg);
+  box-shadow: 0 22px 40px -22px rgba(60,40,30,.55), 0 2px 6px rgba(60,40,30,.12); animation: pdkFloat 7s ease-in-out infinite; }
+.sgu-pol::before { content: ''; position: absolute; left: 50%; top: -12px; width: 92px; height: 24px; translate: -50% 0; rotate: 2deg;
+  background: repeating-linear-gradient(90deg, rgba(240,190,206,.85) 0 9px, rgba(250,220,230,.85) 9px 18px); }
+.sgu-pol img { display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 2px; }
+.sgu-pol figcaption { padding: 10px 0 12px; text-align: center; font: 600 17px/1 Caveat, 'Outfit', cursive; color: #5b4a3a; }
+.sgu-c { margin-top: 4px; }
+.sgu-c .sgd-g { margin-top: 4px; }
+.sgu-nowc .ssh-now { padding: 4px 0 6px; border: 0; box-shadow: none; background: none; }
+.sgu-nowc .ssh-k { display: none; }
+.sgu-d { border-top: 1px dashed rgba(48,64,35,.14); }
+.sgu-d:first-of-type { border-top: 0; }
+.sgu-d > summary { list-style: none; cursor: pointer; border-top: 0 !important; }
+.sgu-d > summary::-webkit-details-marker { display: none; }
+.sgu-ph { overflow: hidden; padding: 0; }
+.sgu-ph img { width: 100%; height: 100%; object-fit: cover; }
+.sgu-now { display: inline-block; margin-left: 4px; padding: 2px 7px; border-radius: 99px; background: #e8efd8; color: #4f6a2a; font: 600 10.5px/1.3 var(--font); font-style: normal; vertical-align: 2px; }
+.sgu-amt { margin-top: 5px !important; color: #8a6a3a !important; font-weight: 500 !important; }
+.sgu-more { display: grid; place-items: center; color: #8a947c; transition: transform .3s ease; }
+.sgu-d[open] .sgu-more { transform: rotate(180deg); }
+.sgu-d > p { margin: -2px 2px 12px 52px; font: 400 13.5px/1.5 var(--font); color: #3d4733; }
+.sgu-st { display: grid; grid-template-columns: 52px 1fr; gap: 12px; padding: 10px 2px 12px; text-align: left; }
+.sgu-st > b { align-self: start; padding: 6px 0; border-radius: 10px; background: #20301a; color: #fff; text-align: center; font-size: 13px; }
+.sgu-st b + span b { display: block; font: 600 15px/1.25 var(--font); color: #20301a; }
+.sgu-st small { display: block; margin-top: 4px; font: 400 13.5px/1.45 var(--font); color: #3d4733; }
+.sgu-st em { display: block; margin-top: 6px; font: 500 11.5px/1.2 var(--font); font-style: normal; color: #8a947c; }
+.sgu .sgd-safe { margin: 4px 4px 14px; }
+@media (prefers-reduced-motion: reduce) { .sgu-pol { animation: none; } }
