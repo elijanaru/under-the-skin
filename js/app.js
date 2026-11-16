@@ -4474,7 +4474,7 @@ function fbDetail(i) {
   let [when, takes, st] = FB_SPEC[x.id] || [];
   if (x.id === 'seeds') when = 'Every day';
   if (x.id === 'carrot') { const L = M.info ? M.info.L : 28, P = M.info ? M.info.P : 5; when = `Day ${P + 1} to ${L - 3} of your cycle`; }
-  return `<img src="images/fb/${x.id}.webp" alt=""><div class="fbd-b"><b>${x.t}</b><p>${x.why}</p>
+  return `<span class="fbd-emo">${emoRaw(FB_EMO[x.id] || '🌿')}</span><div class="fbd-b"><b>${x.t}</b><p>${x.why}</p>
     ${when ? `<div class="fbd-spec"><p><span>${icon('clock', 13)} When</span><b>${when}</b></p><p><span>${icon('drop', 13)} Takes</span><b>${takes}</b></p></div>` : ''}
     ${x.id === 'seeds' ? seedHalves() : ''}
     <ul>${(x.id === 'seeds' ? x.do.slice(2) : x.do).map(d => `<li>${icon('check', 11, 2.6)}<span>${d}</span></li>`).join('')}</ul>
@@ -4552,6 +4552,59 @@ function el5(ph, k) {
       <details class="el5-why"><summary>Why ${E.n.toLowerCase()} helps ${icon('chevD', 13)}</summary><p>${E.why}</p></details></div>
   </section>`;
 }
+// Balance your hormones as a simple guide (16 Nov 2026, her call: the 18 photo tiles were too much):
+// a three-level pyramid says the order, the chosen level is one short day from morning to night (emoji, no photos),
+// and three study numbers show why it works. Each ritual opens a sheet with what to do, how much and why.
+const FB_EMO = { sun: '☀️', lemon: '🍋', phone: '📵', walk: '🚶‍♀️', breathe: '🧘‍♀️', ground: '🦶', tongue: '👅', seeds: '🌻', carrot: '🥕', golden: '🥛', castor: '🫙', magnesium: '💊',
+  heat: '♨️', chamomile: '🌼', cherry: '🍒', fascia: '💆‍♀️', brush: '🪥', salt: '🛁' };
+const FB_WHEN = { tongue: [6.8, 'On waking'], sun: [7, 'Within an hour of waking'], lemon: [7.1, 'Before coffee'], brush: [7.3, 'Before your shower'], fascia: [7.5, 'Morning'], phone: [7.6, 'The first hour'],
+  seeds: [8.5, 'With breakfast'], carrot: [11, 'Between meals'], walk: [13.5, 'After lunch or dinner'], heat: [15, 'At the first cramp'], breathe: [17, 'Whenever you feel tense'], ground: [18.5, 'Late afternoon'],
+  castor: [20, 'Evening'], chamomile: [20, 'Evening'], golden: [20.5, 'Evening'], salt: [21, 'Before bed'], cherry: [21, '1 to 2 h before bed'], magnesium: [22, 'Before bed'] };
+const FB_LVL = [{ n: 'Foundations', c: '#6c823e', s: 'Light, steady blood sugar and calm. Your hormones build on these, so start here.' },
+  { n: 'Clear & rebuild', c: '#b9862f', s: 'Help your body carry out used hormones and feed the new ones.' },
+  { n: 'Extras', c: '#c2577a', s: 'Little helpers for cramps, sleep and puffy days. Use them when you need them.' }];
+function balanceGuide(info, done) {
+  const S = fbSteps(info), lv = Math.min(2, Math.max(0, ui.fbLvl ?? 0)), L = FB_LVL[lv], list = S[lv][2];
+  const cnt = k => { const hb = S[k][2].filter(([x]) => x.hb); return [hb.filter(([x]) => done.includes(x.hb)).length, hb.length]; };
+  // the pyramid: level 1 is the wide base, level 3 the small top
+  const tier = (k, pts, tx, ty) => { const [d, n] = cnt(k), on = k === lv;
+    return `<g class="bgp-t ${on ? 'on' : ''}" style="--c:${FB_LVL[k].c}" data-action="fbLvl" data-v="${k}" role="button" tabindex="0" aria-pressed="${on}" aria-label="Level ${k + 1}, ${FB_LVL[k].n}">
+      <path d="${pts}"/><text class="bgp-n" x="${tx}" y="${ty}">${k + 1}</text><text class="bgp-l" x="${tx}" y="${ty + 17}">${FB_LVL[k].n}</text>
+      ${n ? `<text class="bgp-c" x="${tx}" y="${ty + 31}">${d} of ${n} today</text>` : ''}</g>`; };
+  const pyr = `<svg class="bgp" viewBox="0 0 320 214" aria-label="Three levels, start at the bottom">
+    ${tier(2, 'M160 6 L214 74 H106 Z', 160, 46)}${tier(1, 'M102 80 H218 L264 138 H56 Z', 160, 104)}${tier(0, 'M52 144 H268 L312 208 H8 Z', 160, 170)}</svg>`;
+  // her day for this level, morning to night, on one line
+  const items = list.map(([x, i]) => ({ x, i, h: (FB_WHEN[x.id] || [12])[0] })).sort((a, b) => a.h - b.h);
+  const part = h => h < 12 ? 'Morning' : h < 18 ? 'Afternoon' : 'Evening';
+  let last = '';
+  const rows = items.map(({ x, i, h }, k) => { const on = x.hb && done.includes(x.hb), p = part(h), head = p !== last ? `<li class="bgd-h"><span>${p}</span></li>` : ''; last = p;
+    return `${head}<li class="bgd-r ${on ? 'ok' : ''}" style="--i:${k}"><button class="bgd-o" data-action="fbSheet" data-i="${i}"><span class="bgd-e">${emoRaw(FB_EMO[x.id] || '🌿')}</span>
+      <span class="bgd-t"><b>${x.t}</b><small>${(FB_WHEN[x.id] || [, ''])[1]} · ${x.s}</small></span>${x.hb ? '' : `<span class="bgd-go">${icon('chevR', 14)}</span>`}</button>
+      ${x.hb ? `<button class="bgd-tick ${on ? 'on' : ''}" data-action="fbTick" data-id="${x.hb}" aria-pressed="${!!on}" aria-label="${on ? 'Done today' : 'Mark done today'}">${icon('check', 14, 2.6)}</button>` : ''}</li>`; }).join('');
+  return `<section class="bgx2" style="--lc:${L.c}">
+    <div class="bgx2-head"><h1>Balance your <span>hormones</span></h1><p>Three levels. Start at the bottom, climb when it feels easy.</p></div>
+    <div class="bgx2-pyr">${pyr}</div>
+    <div class="bgd"><div class="bgd-top"><small>Level ${lv + 1}</small><b>${L.n}</b><p>${L.s}</p></div>
+      <ol class="bgd-list">${rows}</ol>
+      ${lv < 2 ? `<button class="bgd-next" data-action="fbLvl" data-v="${lv + 1}">Next: ${FB_LVL[lv + 1].n} ${icon('chevR', 13)}</button>` : ''}</div>
+  </section>`;
+}
+// Why it works: three study numbers as bars, the seven pillars behind a tap
+const BG_PROOF = [{ v: 37, t: 'smaller sugar rise', w: 'Vegetables and protein before the carbs', by: 'Shukla, 2015', p: 1 },
+  { v: 45, t: 'fewer hormone disruptors', w: 'Free-from make-up and shampoo, after only 3 days', by: 'Harley, 2016', p: 5 },
+  { v: 58, t: 'lower risk of a cycle without ovulation', w: 'More omega-3 fats (DPA) in the blood', by: 'Mumford, 2016', p: 6 }];
+function balanceProof() {
+  return `<section class="bgw"><small class="bgw-k">Why it works</small><h3>Small habits, measurable change</h3>
+    ${BG_PROOF.map((b, k) => `<button class="bgw-r" style="--v:${b.v}%;--i:${k}" data-action="pillarSheet" data-i="${b.p}"><span class="bgw-n"><b class="dotnum">−${b.v}%</b><em>${b.t}</em></span>
+      <span class="bgw-bar"><i></i></span><small>${b.w} · ${b.by}</small></button>`).join('')}
+    <div class="bgw-clock"><span>${emoRaw('🌅')}</span><p><b>2 hours earlier.</b> A week of natural light moved the inner clock that times your hormones. <small>Wright, 2013</small></p></div>
+    <button class="bgw-all" data-action="pillarSheet" data-i="-1">The seven pillars of balance ${icon('chevR', 13)}</button></section>`;
+}
+function pillarHtml(P) {
+  return `<div class="pls"><span class="pls-e">${emoRaw(HB_PIL_EMO[P.t] || '🌿')}</span><h3>${P.t}</h3><p class="pls-s">${P.s}</p>
+    <ul>${P.do.map(x => `<li>${icon('check', 12, 2.6)}<span>${x}</span></li>`).join('')}</ul><p><b>Why it works.</b> ${P.why}</p>
+    ${P.st ? `<div class="sgt-st"><b class="dotnum">${P.st[2]}</b><span><em>${P.st[1]}</em>${P.st[0]}<small>${P.st[3]}</small></span></div>` : ''}</div>`;
+}
 function viewReliefIndex() {
   const recent = new Set();
   for (let i = 0; i < 4; i++) { const l = getLog(C.iso(C.addDays(new Date(), -i))); [...(l.symptoms || []), ...(l.moods || [])].forEach(s => { const k = reliefKey(s); if (k) recent.add(k); }); }
@@ -4560,23 +4613,12 @@ function viewReliefIndex() {
   const likely = [...new Set([...recent, ...(w ? RELIEF_WINDOW[w] : [])])].filter(k => RELIEF[k]).slice(0, 3);
   const chip = k => `<button class="rx2-chip" data-action="nav" data-to="relief/${encodeURIComponent(k)}"><img src="${reliefPhoto(k, 120)}" alt="">${k}${recent.has(k) ? '<i>logged</i>' : ''}</button>`;
   const done = habitsDone(todayISO()), H = habitsBlock();
-  const pillar = (P, i) => `<details class="hg-p" style="--c:${P.c};--i:${i}"><summary><span class="hg-pi">${emoRaw(HB_PIL_EMO[P.t] || '🌿')}</span><span class="hg-pt"><b>${P.t}</b><small>${P.s}</small></span>${(HB_PIL_X[P.t] || [])[1] ? `<span class="hg-k"><b class="dotnum">${HB_PIL_X[P.t][1]}</b><small>${HB_PIL_X[P.t][2]}</small></span>` : ''}<span class="hg-pc">${icon('chevD', 16)}</span></summary>
-      <div class="hg-pin"><ul>${P.do.map(x => `<li>${icon('check', 12, 2.6)}<span>${x}</span></li>`).join('')}</ul><p><b>Why it works</b>${P.why}</p>${P.st ? `<div class="hg-st"><small>What studies found</small><div class="sgt-st"><b class="dotnum">${P.st[2]}</b><span><em>${P.st[1]}</em>${P.st[0]}<small>${P.st[3]}</small></span></div></div>` : ''}</div></details>`;
   return `${topbar('Balance', { back: true })}
   <div class="pad hg fb">
-    <section class="fbp" aria-label="Balance your hormones, step by step">
-      ${(() => { const S = fbSteps(info), all = S.reduce((a, x) => a + x[2].length, 0);
-        return `<div class="fbp-title"><h1>Balance your <span>hormones</span></h1><p>${all} small habits in three steps. When one step feels easy, add the next.</p></div>`; })()}
-      ${(() => { let n = 0; return fbSteps(info).map(([t, sub, list], k) => { const hb = list.filter(([x]) => x.hb), dn = hb.filter(([x]) => done.includes(x.hb)).length;
-        return `<div class="fbp-step"><span class="dotnum">${k + 1}</span><div><b>${t}</b><small>${sub}</small></div>${hb.length ? `<span class="fbp-c ${dn === hb.length ? 'full' : ''}" aria-label="${dn} of ${hb.length} done today">${dn ? `${icon('check', 11, 3)}<b class="dotnum">${dn}/${hb.length}</b>` : `<b class="dotnum">${hb.length}</b><em class="fbp-to">today</em>`}</span>` : ''}</div>
-      <div class="fbp-g">${list.map(([x, i], pos) => fbItem(x, i, done, pos, ++n)).join('')}</div>`; }).join(''); })()}
-      <div class="fbp-det" hidden></div>
-    </section>
+    ${balanceGuide(info, done)}
     ${seasonRituals(apoSeason())}
     ${H.fert.length ? `${sectionTitle('Fertility & feminine flow')}<div class="hg-list">${H.fert.map(H.row).join('')}</div>` : ''}
-    ${sectionTitle('Seven pillars of balance')}
-    <p class="hg-sub">What protects and balances a woman’s hormones. Tap one for what to do and why.</p>
-    <section class="hg-pl">${HB_PILLARS.map(pillar).join('')}</section>
+    ${balanceProof()}
     <section class="hg-end"><b>You are not the problem.</b><p>The modern world runs against your rhythm. Start with one ritual, and let the rest follow.</p></section>
     <p class="fine center">General information, not medical advice. Check with a doctor or pharmacist before starting supplements.</p>
   </div>`;
@@ -5743,7 +5785,7 @@ function energyCard(info, energy) {
   const w = dayWindow(info), c = heal ? { ...COMPASS['flow-start'], mode: 'Heal gently' } : COMPASS[w], parts = lifeParts(heal ? 'menstrual' : info.phase), open = parts.find(p => p.k === ui.enPart);
   const pin = p => BODY_PIN[LIFE_PIN[p.k]];
   const lines = parts.map(p => { const [lx, ly, sd, bx, by] = pin(p), x0 = sd === 'l' ? 96 : 244; return `<path class="${open && open.k === p.k ? 'on' : ''}" d="M${x0} ${ly + 16} H${sd === 'l' ? x0 + 14 : x0 - 14} L${bx} ${by}"/><circle class="em-dot ${open && open.k === p.k ? 'on' : ''}" cx="${bx}" cy="${by}" r="3.6"/>`; }).join('');
-  const labels = parts.map((p, i) => { const [lx, ly, sd] = pin(p); return `<button class="em-l lf ${sd} ${open && open.k === p.k ? 'on' : ''}" style="top:${ly}px;--i:${i}" data-action="enPart" data-k="${p.k}" aria-expanded="${open && open.k === p.k ? 'true' : 'false'}"><small><span class="emo" aria-hidden="true">${p.e}</span> ${p.label}</small><b>${p.d}</b></button>`; }).join('');
+  const labels = parts.map((p, i) => { const [lx, ly, sd] = pin(p); return `<button class="em-l lf lf2 lf-${p.k} ${sd} ${open && open.k === p.k ? 'on' : ''}" style="top:${ly}px;--i:${i}" data-action="enPart" data-k="${p.k}" aria-expanded="${open && open.k === p.k ? 'true' : 'false'}"><span class="lf-ic" aria-hidden="true">${emoRaw(p.e)}</span><span class="lf-tx"><small>${p.label}</small><b>${p.d}</b></span></button>`; }).join('');
   return `<section class="en en2 lvl-${c.lvl}">
     <div class="em-head"><b>${c.mode}</b></div>
     <div class="em-map"><svg class="em-svg" viewBox="0 0 340 300" aria-hidden="true">${lines}</svg>
@@ -5841,7 +5883,7 @@ function todayHub(info, energy, head = '') {
   const D = dayMoments(info), m = momentAt(D, nowH());
   return `<section class="hub"><div class="hub-life" aria-hidden="true">${SPORES}</div>${head}
     ${stageHero(info, energy)}
-    <div class="stage-after">${ttcOn() && info.fertile ? `<span class="fh-badge">${icon('spark', 13)} Fertile</span>` : ''}
+    <div class="stage-after">
       ${periodPill(info)}
       ${energyCard(info, energy)}</div>
     <div class="hub-sec hub-plan">
@@ -10679,6 +10721,13 @@ const actions = {
   },
   hidePartner: () => { state.hidePartner = true; save(); render(); toast('Hidden. Turn it back on in Profile, Partner mode.'); },
   partnerToday: () => { state.hidePartner = !state.hidePartner; save(); render(); },
+  fbLvl: d => { ui.fbLvl = +d.v; const b = document.querySelector('.bgx2'); if (!b) return render(); const info = M.info, t = document.createElement('div'); t.innerHTML = balanceGuide(info, habitsDone(todayISO())); b.replaceWith(t.firstElementChild); },
+  fbSheet: d => wsOpen(`<div class="fbp-det fbs">${fbDetail(+d.i)}</div>`, 'ws-fb'),
+  fbTick: (d, el) => { const k = todayISO(), H = state.habits = state.habits || {}; const a = H[k] = H[k] || []; a.includes(d.id) ? a.splice(a.indexOf(d.id), 1) : a.push(d.id); save();
+    const on = a.includes(d.id); el.classList.toggle('on', on); el.setAttribute('aria-pressed', on); el.closest('.bgd-r').classList.toggle('ok', on);
+    document.querySelectorAll('.bgp-t').forEach(g => { const k2 = +g.dataset.v, S = fbSteps(M.info)[k2][2].filter(([x]) => x.hb), c = g.querySelector('.bgp-c'); if (c) c.textContent = `${S.filter(([x]) => a.includes(x.hb)).length} of ${S.length} today`; });
+    if (on && navigator.vibrate) navigator.vibrate(8); },
+  pillarSheet: d => { const i = +d.i; wsOpen(i >= 0 ? pillarHtml(HB_PILLARS[i]) : `<h2 class="pls-h">The seven pillars of balance</h2><p class="pls-sub">What protects a woman’s hormones. Tap one.</p><div class="pls-list">${HB_PILLARS.map((P, k) => `<button class="pls-r" data-action="pillarSheet" data-i="${k}"><span>${emoRaw(HB_PIL_EMO[P.t] || '🌿')}</span><b>${P.t}<small>${P.s}</small></b>${icon('chevR', 14)}</button>`).join('')}</div>`, 'ws-fb'); },
   fbPick: (d, el) => {
     const box = el.closest('.fbp'), det = box.querySelector('.fbp-det'), was = el.classList.contains('on');
     box.querySelectorAll('.fbp-i').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); });
@@ -10690,10 +10739,10 @@ const actions = {
     const r = det.getBoundingClientRect(); if (r.bottom > innerHeight - 90) det.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
   },
   el5: (d, el) => { const b = el.closest('.el5'), t = document.createElement('div'); t.innerHTML = el5(d.ph, d.k); b.replaceWith(t.firstElementChild); },
-  fbClose: (d, el) => { const box = el.closest('.fbp'); box.querySelector('.fbp-det').hidden = true; box.querySelectorAll('.fbp-i.on').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); }); },
+  fbClose: (d, el) => { if (el.closest('.ws')) return wsClose(); const box = el.closest('.fbp'); box.querySelector('.fbp-det').hidden = true; box.querySelectorAll('.fbp-i.on').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); }); },
   fbHabit: d => { const k = todayISO(), H = state.habits = state.habits || {}; const a = H[k] = H[k] || []; a.includes(d.id) ? a.splice(a.indexOf(d.id), 1) : a.push(d.id); save();
     const v = document.getElementById('view'), y = v ? v.scrollTop : 0; render();
-    requestAnimationFrame(() => { if (v) v.scrollTop = y; const b = document.querySelector(`.fbp-i[data-i="${d.i}"]`); b && actions.fbPick({ i: d.i }, b); }); },
+    requestAnimationFrame(() => { if (v) v.scrollTop = y; const sh = document.querySelector('.ws .fbs'); if (sh) { sh.innerHTML = fbDetail(+d.i); return; } const b = document.querySelector(`.fbp-i[data-i="${d.i}"]`); b && actions.fbPick({ i: d.i }, b); }); },
   sfClose: (d, el) => { const box = el.closest('.sfc'); box.querySelector('.sfc-det').hidden = true; box.querySelectorAll('.sfc-i.on').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); }); },
   sfPhase: (d, el) => { const box = el.closest('.sfc'); const t = document.createElement('div'); t.innerHTML = superInner(d.v); box.replaceWith(t.firstElementChild); },
   suPick: (d, el) => {
