@@ -16823,3 +16823,23 @@ html .mvp-l.r { right: -17%; }
 html .hbc-n { display: grid; justify-items: center; gap: 5px; }
 html .hbc-n > span { display: inline-flex; align-items: center; gap: 6px; }
 html .hbc-o { aspect-ratio: 340 / 570; } /* a taller, wider ring: ten objects get about 105px each, so labels never touch the next picture */
+/* Raw remedies: day-by-day strip of raw and warm days (one accent green, warm days rose) */
+.rws { display: grid; gap: 8px; }
+.rws-top { display: flex; align-items: baseline; gap: 6px; color: #20301a; }
+.rws-top > b { font: 600 30px/1 var(--dot); letter-spacing: .02em; }
+.rws-top > span { font: 400 13px/1.2 var(--font); color: rgba(32,48,26,.75); }
+.rws-top > span b { font: 600 14px/1 var(--dot); color: #20301a; }
+.rws-top em { margin-left: auto; font: 500 11.5px/1 var(--font); font-style: normal; padding: 6px 10px; border-radius: 99px; background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 34%); color: #fff; }
+.rws-top em.w { background: #c45a7a; }
+.rws-d { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 2px; }
+.rws-d i { height: 22px; border-radius: 4px; }
+.rws-d i.r { background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(45% * var(--hs)) 48%); }
+.rws-d i.w { background: #ecc3cf; }
+.rws-d i.now { box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px #20301a; position: relative; z-index: 1; }
+.rws-ax { display: flex; justify-content: space-between; font: 400 11px/1 var(--font); color: rgba(32,48,26,.7); }
+.rws-ax b { font: 600 11.5px/1 var(--dot); color: #20301a; }
+.rws-k { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 400 12px/1.25 var(--font); color: #304023; }
+.rws-k span { display: inline-flex; align-items: center; gap: 6px; }
+.rws-k i { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.rws-k i.r { background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(45% * var(--hs)) 48%); }
+.rws-k i.w { background: #ecc3cf; }

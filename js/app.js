@@ -2843,6 +2843,17 @@ function viewPlan() {
 }
 
 // TCM warm window: during the period and the last 2–3 days before it, no raw/cold food.
+// Raw remedies: her cycle as one cell per day, raw days in green and warm days (period and the days before it,
+// the same days as warmWindow) in rose, today ringed. The phase bar ticked all of Luteal while the sheet said to pause.
+function rawStrip(info) {
+  const L = info.L || 28, P = info.P || 5, cd = info.cd, warmD = d => d <= P || d > L - 4;
+  const n = Array.from({ length: L }, (_, i) => i + 1).filter(d => !warmD(d)).length, wn = L - n;
+  return `<div class="rws" role="img" aria-label="Raw on ${n} of ${L} days, warm on ${wn}">
+    <div class="rws-top"><b class="dotnum">${n}</b><span>raw days of <b class="dotnum">${L}</b></span><em class="${warmD(cd) ? 'w' : ''}">${warmD(cd) ? 'Warm today' : 'Raw today'}</em></div>
+    <div class="rws-d" style="--n:${L}">${Array.from({ length: L }, (_, i) => { const d = i + 1; return `<i class="${warmD(d) ? 'w' : 'r'}${d === cd ? ' now' : ''}"></i>`; }).join('')}</div>
+    <div class="rws-ax"><span>Day <b class="dotnum">1</b></span><span>Day <b class="dotnum">${cd}</b> · today</span><span>Day <b class="dotnum">${L}</b></span></div>
+    <div class="rws-k"><span><i class="r"></i>Raw</span><span><i class="w"></i>Warm: your period and the days before it</span></div></div>`;
+}
 function warmWindow(info) { return !!info && (info.phase === 'menstrual' || info.cd > info.L - 4); } // same days as the premenstrual window
 // How many of a recipe's ingredients are in season this month where she lives.
 const seasonKey = f => f.toLowerCase().replace(/\(.*\)/, '').split(/ & | and |,/)[0].trim().replace(/s$/, '');
@@ -5508,7 +5519,7 @@ function viewRemedy(id) {
   return `${topbar('Remedy', { back: true })}<div class="pad sp2 sp2t">
     ${specHero({ stack: true, photo: carePhoto(r.id, 1000), glyph: r.glyph, han: true, eyebrow: `${r.nature} · ${r.element} · ${r.organ}`, name: r.name,
       label: r.take ? 'How to take it' : 'Key ingredients', rows: r.take ? [['Dose', r.take.dose], ['How often', r.take.often], ['When', r.take.when]] : r.ingredients.map(ingRow), desc: r.why })}
-    <section class="card glass tea-fit"><div class="tf-k">Best in your cycle${r.raw ? ' · raw days' : ''}</div>${phaseFit(r.phases, M.info && M.info.phase)}${r.phases.length === 4 ? '<small class="tf-all">Good every day of your cycle</small>' : ''}
+    <section class="card glass tea-fit"><div class="tf-k">Best in your cycle${r.raw ? ' · raw days' : ''}</div>${r.raw && M.info ? rawStrip(M.info) : phaseFit(r.phases, M.info && M.info.phase)}${r.phases.length === 4 ? '<small class="tf-all">Good every day of your cycle</small>' : ''}
       ${r.take && r.take.more ? (() => { const [ic, k, v] = r.take.more, now = k === 'Pause' && r.raw && warm; return `<div class="rx-row ${now ? 'now' : ''}"><span>${icon(ic, 14)} ${now ? 'Paused right now' : k}</span><b>${v}</b></div>`; })() : ''}
       ${organPhase ? `<div class="rx-row"><span><i class="rx-han">${Z.FIVE[r.element].han}</i> Organ in Chinese medicine</span><b>${r.organ}, ${PHASES[organPhase].name.toLowerCase()}</b></div>` : ''}</section>
     ${r.raw && warm ? `<section class="card flag"><span class="bn-ic">${icon('yinyang', 18)}</span><div class="bn-t"><b>Not today</b><p>You’re in your warm window. Chinese medicine keeps raw and cold food away during your period and the days before. Save this for your follicular phase.</p></div></section>` : ''}
