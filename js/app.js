@@ -4474,12 +4474,11 @@ function letterEnv(title, body, o = {}) {
   const d = new Date(), date = `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
   const type = info ? `day ${info.cd} · ${PHASES[info.phase].name.toLowerCase()} phase` : 'from your body';
   const flap = `<svg class="lv-flap" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path class="lv-fl" d="M0 0H100L54 52Q50 55 46 52Z"/></svg><svg class="lv-sides" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 100L44 56M100 100L56 56"/></svg>`;
-  const ph = info ? `images/lotus-${info.phase}.webp` : 'images/lotus-follicular.webp';
   const deco = {
     cherub: `<img class="lv-angel" src="images/letters/cherubs.webp" alt=""><span class="lv-type t1">${type}<br>${date}<br>open me slowly</span><b class="lv-w f-ballet">Miss you</b>`,
     daylight: `<svg class="lv-doily" viewBox="-60 -60 120 120" aria-hidden="true">${lvDoily()}<ellipse rx="22" ry="17" fill="#a9c1d3"/><ellipse rx="22" ry="17" fill="none" stroke="#fff" stroke-width="1.6"/><g transform="translate(-28 -26) scale(1.05)">${LV_DOVE}</g></svg><b class="lv-w f-doul emb">Daylight</b><span class="lv-type t2">${type}</span>`,
     bisous: `<b class="lv-caps">BISOUS</b><b class="lv-w f-vibes big">Bisous</b><span class="lv-type t3">${date}</span>`,
-    airmail: `<span class="lv-stamp"><img src="${ph}" alt=""><i>${info ? info.cd : '01'}</i></span><span class="lv-post" aria-hidden="true"></span><span class="lv-type t4">par avion · ${type}<br>to ${esc(nm.toLowerCase())}, with love</span><b class="lv-w f-paris">For you</b>`,
+    airmail: `<span class="lv-stamp"><img src="images/purpose-after.jpg" alt=""><i>${info ? info.cd : '01'}</i></span><span class="lv-post" aria-hidden="true"></span><span class="lv-type t4">par avion · ${type}<br>to ${esc(nm.toLowerCase())}, with love</span><b class="lv-w f-paris">For you</b>`,
     thanks: `<span class="lv-win"><img src="images/welcome-forest.jpg" alt=""></span><span class="lv-type t5">a small note to say thank you for all that you carry</span><b class="lv-w f-doul">Thank you</b>`,
     heart: `<img class="lv-angel r" src="images/letters/cherubs.webp" alt=""><svg class="lv-seal" viewBox="0 0 60 60" aria-hidden="true">${LV_SEAL}</svg><b class="lv-w f-mrs">Into my heart</b><span class="lv-type t6">${date}</span>`,
     wine: `<span class="lv-type t7">a letter from your body</span><b class="lv-w f-doul silver">${esc(nm)}</b>`,
