@@ -5542,7 +5542,7 @@ const DISH_MATCH = [
   [/\bdal\b|curry|chili/i, 'curry'], [/sweet-potato-bowl|tray-bake|tray bake|wedges/i, 'sweetPotato'],
   [/salmon-salad|salmon salad/i, 'salmonSalad'], [/living-green-salad|green salad|crunch club|spring-green|lentil-tahini|lentil salad/i, 'greenSalad'],
   [/oxtail|stew|iron-lentil-soup|lentil soup|squash.*soup|goulash/i, 'stew'],
-  [/stir-fry|courgette-pesto|pesto noodles|white-beans|rainbow|wraps|fajita/i, 'veg'],
+  [/stir-fry|courgette-pesto|pesto noodles|white-beans|fajita/i, 'veg'],
   [/miso/i, 'miso'], [/ramen/i, 'ramen'], [/pho|bone-broth|bone broth/i, 'pho'],
 ];
 // matched on the recipe id as well as its name, so a dish keeps its model when it gets a new name

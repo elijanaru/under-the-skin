@@ -72,9 +72,10 @@ export const RECIPE_PHOTOS = {
   "page": "https://unsplash.com/photos/zucchini-noodles-with-pine-nuts-L1laCLuxW9o"
  },
  "rainbow-wraps": {
-  "src": "https://images.unsplash.com/photo-1752095809096-f09d22c466c5",
-  "by": "Giorgio Trovato",
-  "page": "https://unsplash.com/photos/a-wrap-and-salad-on-a-white-plate--KLZWBqfq6c"
+  "src": "https://images.unsplash.com/photo-1670427254801-0e06ecdf57fd",
+  "rect": "0,0.15,1,0.5",
+  "by": "To Uyen",
+  "page": "https://unsplash.com/photos/a-plate-of-vegetables-zfHHDYq9mg8"
  },
  "squash-walnut-soup": {
   "src": "https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a",
@@ -157,7 +158,7 @@ export const RECIPE_PHOTOS = {
 };
 export function photoUrl(id, w = 600) {
   const p = RECIPE_PHOTOS[id];
-  return p ? (p.src.includes('pexels') ? `${p.src}?auto=compress&cs=tinysrgb&w=${w}` : `${p.src}?w=${w}&q=70&auto=format&fit=crop`) : null;
+  return p ? (p.src.includes('pexels') ? `${p.src}?auto=compress&cs=tinysrgb&w=${w}` : `${p.src}?${p.rect ? `rect=${p.rect}&` : ''}w=${w}&q=70&auto=format&fit=crop`) : null;
 }
 
 // Seasonal dish photos, keyed by dish name.
