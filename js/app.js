@@ -471,8 +471,8 @@ function tsViz(k) {
 }
 // An accent colour per Train safe check, so each card reads at a glance.
 // A real photo for each Train safe check, so each row reads at a glance.
-const TS_PIC = { fuel: () => photoUrl('sweet-potato-bowl', 300), iron: () => foodPhoto('Red meat', 300), bone: () => foodPhoto('Sardines', 300), knee: () => 'images/mv/squat.webp', heat: () => teaPhoto('Peppermint', 300, 300), protein: () => foodPhoto('Pasture eggs', 300) };
-const TS_TINT = { fuel: '#c9822e', iron: '#b5485d', bone: '#5f7fa8', knee: '#7f9a4c', heat: '#d2693c', protein: '#8a6fb8' };
+// One picture per row that shows the row itself: the drawn figures for movement, cut-outs for food, all on the same white tile.
+const TS_PIC = { fuel: 'images/sz/sweet-potato.webp', iron: 'images/sz/mussels.webp', bone: 'images/mv/lift.webp', knee: 'images/mv/squat.webp', heat: 'images/mv/hiit.webp', protein: 'images/sz/eggs.webp' };
 function trainSafe() {
   const open = ui.tsOpen, x = TRAIN_SAFE.find(t => t[0] === open), ph = M.info && M.info.phase;
   const strip = k => `<div class="ts-when"><small>When it matters most</small><div>${PHASE_ORDER.map(p => `<span class="${TRAIN_WHEN[k].includes(p) ? 'on' : ''} ${p === ph ? 'now' : ''}" style="--c:${PH_HEX[p]}"><i></i>${PHASES[p].name}${p === ph ? '<em>now</em>' : ''}</span>`).join('')}</div></div>`;
@@ -490,9 +490,9 @@ function trainSafe() {
   const list = [...TRAIN_SAFE].sort((a, b) => focus(b[0]) - focus(a[0]));
   return `${sectionTitle('Train safe')}
     <p class="ts4-sub">Six things every woman who trains should know. Tap one for the why.</p>
-    <div class="ts4">${list.map(t => { const [k, g, ti, , dos] = t, C = TS_TINT[k] || '#6c823e', pic = TS_PIC[k] ? TS_PIC[k]() : '';
-      return `<button class="ts4-r ${k === open ? 'on' : ''}" style="--c:${C}" data-action="tsOpen" data-k="${k}" aria-expanded="${k === open}">
-        <span class="ts4-pic">${pic ? `<img${pic.includes('/mv/') ? ' class="art"' : ''} src="${pic}" alt="" loading="lazy">` : ''}<i>${icon(g, 13)}</i></span>
+    <div class="ts4">${list.map(t => { const [k, g, ti, , dos] = t, pic = TS_PIC[k] || '';
+      return `<button class="ts4-r ${k === open ? 'on' : ''}" data-action="tsOpen" data-k="${k}" aria-expanded="${k === open}">
+        <span class="ts4-pic ${pic.includes('/mv/') ? 'fig' : 'cut'}">${pic ? `<img src="${pic}" alt="" loading="lazy">` : `<i>${icon(g, 18)}</i>`}</span>
         <span class="ts4-t"><b>${ti}</b><small>${dos[0]}</small>${focus(k) ? `<em class="now">${icon('spark', 11)} Matters now</em>` : always(k) ? '<em>Every phase</em>' : `<em class="later">${TRAIN_WHEN[k].map(p => PHASES[p].name).join(' & ')}</em>`}</span>
         <span class="ts4-go">${icon(k === open ? 'chevD' : 'chevR', 15)}</span></button>${k === open ? more(t) : ''}`; }).join('')}</div>
     <p class="ts-credit">${TRAIN_SAFE_CREDIT}</p>`;

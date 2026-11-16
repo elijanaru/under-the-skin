@@ -11838,7 +11838,12 @@ html .tf-phases.pf3 span i { position: static !important; transform: none !impor
 .rn2 .rn-ic svg { grid-column: auto; grid-row: auto; color: #6c823e; }
 /* v940: photos that fail to load (offline, blocked host) never leave a blank white hole */
 img.img-off { opacity: 0 !important; }
-.ts4-pic { border-radius: 20px; background: color-mix(in srgb, var(--c) 16%, #fff); }
+.ts4 { --c: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 34%); }
+.ts4-pic { border-radius: 20px; background: #fff; box-shadow: 0 0 0 1px rgba(48,64,35,.10); overflow: hidden; }
+.ts4-pic img { object-fit: contain; background: #fff; box-shadow: none; }
+.ts4-pic.cut img { padding: 6px; }
+.ts4-pic.fig img { padding: 3px 0 0; object-position: 50% 30%; }
+.ts4-pic.cut img, .ts4-pic.fig img { box-sizing: border-box; }
 .ts4-pic:has(img.img-off) i, .ts4-pic:not(:has(img)) i { inset: 0; margin: auto; width: 34px; height: 34px; right: auto; bottom: auto; border: 0; }
 .rn2 .rn-ph { background: #eef1e6; }
 .ts4-pic img.art { object-fit: cover; object-position: 40% 42%; background: #fff; box-shadow: 0 0 0 1px rgba(48,64,35,.10); }
