@@ -1922,9 +1922,14 @@ const hbFind = id => (PHASE_FUNDAMENTALS[(M.info || {}).phase || 'follicular'] |
 function hhCard(info) {
   const phase = info ? info.phase : 'follicular', F0 = PHASE_FUNDAMENTALS[phase], F = { ...F0, list: F0.list.filter(x => forAnimal(x[2])) }, done = habitsDone(todayISO());
   const N = F.list.length, n = F.list.filter(x => done.includes(x[0])).length, first = !ui.hbcSeen; ui.hbcSeen = true;
-  const RX = 33, RY = 36;
+  const RX = 35, RY = 38;
+  // spaced by equal distance along the ring (in the card's 340 x 510 shape), not equal angle: equal angles packed
+  // the top and bottom objects so close that their labels overlapped while the sides had gaps
+  const S = 720, pt = k => { const a = -Math.PI / 2 + k * 2 * Math.PI / S; return [RX * 3.4 * Math.cos(a), RY * 5.1 * Math.sin(a)]; };
+  const cum = [0]; for (let k = 1; k <= S; k++) { const [x0, y0] = pt(k - 1), [x1, y1] = pt(k); cum.push(cum[k - 1] + Math.hypot(x1 - x0, y1 - y0)); }
+  const at = i => { const goal = cum[S] * i / N; let k = 0; while (cum[k + 1] < goal) k++; return -Math.PI / 2 + (k + (goal - cum[k]) / (cum[k + 1] - cum[k] || 1)) * 2 * Math.PI / S; };
   const items = F.list.map(([id, img, t], i) => {
-    const a = -Math.PI / 2 + i * 2 * Math.PI / N, x = 50 + RX * Math.cos(a), y = 50 + RY * Math.sin(a), on = done.includes(id);
+    const a = at(i), x = 50 + RX * Math.cos(a), y = 50 + RY * Math.sin(a), on = done.includes(id);
     return `<button class="hbc-i ${on ? 'on' : ''}" style="left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;--i:${i}" data-action="hbcOpen" data-id="${id}" aria-label="${t}${on ? ', done today' : ''}">
       <span class="hbc-p"><img src="${hbImg(img, id)}" alt="" decoding="async">${on ? `<i class="hbc-ok">${icon('check', 11, 3)}</i>` : ''}</span><em>${HB_LABEL[id] || t}</em></button>`;
   }).join('');
@@ -1932,7 +1937,7 @@ function hhCard(info) {
     <div class="hbc-o">
       <svg class="hbc-ring" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><ellipse cx="50" cy="50" rx="${RX}" ry="${RY}"/></svg>
       <div class="hbc-c"><b>Hormone<br>balance</b>
-        <span class="hbc-n"><span class="hbc-dot"></span>${PHASES[phase].name} · <b class="doto">${n}/${N}</b> today</span>
+        <span class="hbc-n"><span><span class="hbc-dot"></span>${PHASES[phase].name}</span><span><b class="doto">${n}/${N}</b> today</span></span>
         <button class="hbc-why" data-action="nav" data-to="relief">Why these ${icon('chevR', 11, 2.2)}</button></div>
       ${items}
     </div>

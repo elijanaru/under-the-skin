@@ -16819,3 +16819,7 @@ html .fx-c:not(.on) { background: rgba(255,255,255,.74); box-shadow: inset 0 0 0
 /* Move hero: leader lines ended in the card's padding (22% past the figure); they now stop at the content edge */
 html .mvp-l.l { left: -17%; width: calc(var(--x) + 17%); }
 html .mvp-l.r { right: -17%; }
+/* Hormone balance circle: phase and count stack in two short lines so the middle stays clear of the side labels */
+html .hbc-n { display: grid; justify-items: center; gap: 5px; }
+html .hbc-n > span { display: inline-flex; align-items: center; gap: 6px; }
+html .hbc-o { aspect-ratio: 340 / 570; } /* a taller, wider ring: ten objects get about 105px each, so labels never touch the next picture */
