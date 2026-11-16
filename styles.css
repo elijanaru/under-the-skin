@@ -16418,3 +16418,18 @@ html .hp-mo .emo { margin: 0; display: block; font-size: 24px; line-height: 1; }
 .ws-mini .ws-x { top: 14px; right: 14px; width: 34px; height: 34px; }
 .ws-mini .tyf-e { width: 64px; height: 64px; margin-top: 0; }
 html .ws-mini .tyf-e .emo { font-size: 31px; }
+
+/* Tea page: a bigger cup, benefits pulled up around it (16 Nov 2026) */
+html .tgw.in-page { padding: 18px 10px 14px; }
+html .tgw.in-page .tgw-t { margin-top: 10px; }
+html .tgw.in-page .tgw-stage { height: 290px; margin: 16px -12px 0; }
+html .tgw.in-page .tgw-stage::before { content: ''; position: absolute; left: 50%; top: 50%; width: 236px; height: 236px; transform: translate(-50%, -50%); border-radius: 50%;
+  background: radial-gradient(closest-side, #fdeef2 0%, #fbf3ef 62%, rgba(255,255,255,0) 100%); }
+html .tgw.in-page .tgw-ring { width: 192px; height: 192px; border: 1px solid rgba(32,48,26,.28); }
+html .tgw.in-page .tgw-ring::after { content: ''; position: absolute; inset: -9px; border-radius: 50%; border: 1px dashed rgba(176,79,108,.22); }
+html .tgw.in-page .tgw-dot { width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; background: #fff; box-shadow: inset 0 0 0 2px #b04f6c, 0 0 0 4px rgba(230,177,196,.3); z-index: 2; }
+html .tgw.in-page .tgw-cup { width: 214px !important; height: 214px !important; z-index: 1; }
+html .tgw.in-page .tgw-cup img { inset: 4%; width: 92%; height: 92%; filter: drop-shadow(0 14px 16px rgba(80,40,50,.18)); }
+html .tgw.in-page .tgw-l { z-index: 3; max-width: calc(50% - 114px); font-size: 12.5px !important; line-height: 1.25; font-weight: 500; color: #20301a; }
+html .tgw.in-page .tgw-l.t, html .tgw.in-page .tgw-l.b { max-width: 220px; }
+html .tgw.in-page .tgw-l { max-width: 74px; }

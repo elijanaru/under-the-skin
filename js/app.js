@@ -6321,11 +6321,11 @@ function teaBubbles(w, info) {
   return `<div class="tgb">${B.map(([f, v, u, l], i) => `<span class="tgb-b" style="--i:${i}">${ring(f)}<b><em class="dotnum">${v}</em>${u ? `<small>${u}</small>` : ''}</b><i>${l}</i></span>`).join('')}</div>`;
 }
 function teaWheel(info, w, td, steep, near, inPage) {
-  const R = 86, A = [0, 60, 120, 180, 240, 300];
+  const R = inPage ? 96 : 86, A = [0, 60, 120, 180, 240, 300];
   const labels = (TEA_WHEEL[w] || []).map((t, i) => {
     const a = A[i] * Math.PI / 180, x = Math.round(R * Math.sin(a)), y = Math.round(-R * Math.cos(a)), side = Math.abs(x) < 4 ? (y < 0 ? 't' : 'b') : x > 0 ? 'r' : 'l';
     const pos = side === 't' || side === 'b' ? `left:50%;top:calc(50% + ${y + (side === 't' ? -12 : 12)}px)` : side === 'r' ? `left:calc(50% + ${x + 10}px);top:calc(50% + ${y}px)` : `right:calc(50% + ${-x + 10}px);top:calc(50% + ${y}px)`;
-    return `<i class="tgw-dot" style="left:calc(50% + ${x}px);top:calc(50% + ${y}px)"></i><span class="tgw-l ${side}" style="${pos};--i:${i}">${t}</span>`;
+    return `<i class="tgw-dot" style="left:calc(50% + ${x}px);top:calc(50% + ${y}px)"></i><span class="tgw-l ${side}" style="${pos};--i:${i}">${t.replace(/(\S)-(\S)/g, '$1\u2011$2')}</span>`;
   }).join('');
   return `<section class="tgw${inPage ? ' in-page' : ''}">
       <small class="tgw-k">${info ? `Day ${info.cd} · ${PHASES[info.phase].name}` : 'Your tea today'}</small>
