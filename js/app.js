@@ -1948,7 +1948,9 @@ function hbcSheet(id) {
     </div>
     <header class="hs-h"><small>${when} · ${ph} phase</small><h2>${t}</h2></header>
     <section class="o3-note hs-note"><p class="o3-lead">${does}.</p><p class="rls-why">${why}</p></section>
-    <section class="hs-card"><h3><span class="hs-ic">${icon('leaf', 16, 2)}</span>How</h3>${(HB_HOW[t] || HB_HOW[id]) ? `<ol class="hs-steps">${((HB_HOW_DIET[id] || {})[myDiet()] || HB_HOW[t] || HB_HOW[id]).map(dietProse).filter(x => x && !/^[A-Z][\w -]{0,18}$/.test(x)).map(x => `<li>${x}</li>`).join('')}</ol>` : `<p>${dietProse(how)}</p>`}</section>
+    ${id === 'calm' ? `<section class="hs-card hs-br"><div class="hs-br3"><span><b class="dotnum">4</b><small>in</small></span><span><b class="dotnum">6</b><small>out</small></span><span><b class="dotnum">5</b><small>min</small></span></div>
+      <button class="hs-brgo" data-action="nav" data-to="breathe">${icon('leaf', 16, 2)} Breathe with me</button></section>` :
+    `<section class="hs-card"><h3><span class="hs-ic">${icon('leaf', 16, 2)}</span>How</h3>${(HB_HOW[t] || HB_HOW[id]) ? `<ol class="hs-steps">${((HB_HOW_DIET[id] || {})[myDiet()] || HB_HOW[t] || HB_HOW[id]).map(dietProse).filter(x => x && !/^[A-Z][\w -]{0,18}$/.test(x)).map(x => `<li>${x}</li>`).join('')}</ol>` : `<p>${dietProse(how)}</p>`}</section>`}
     <button class="hs-done hbs-done ${on ? 'on' : ''}" data-action="hbcTick" data-id="${id}" aria-pressed="${on}">${icon('check', 16, 2.4)} ${on ? 'Done today' : 'Mark as done today'}</button>
   </div>`;
 }

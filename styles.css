@@ -16535,3 +16535,11 @@ html .sgx-top .sb-score { width: 92px; height: 92px; }
 html .sgx-when { padding: 16px; border-radius: 26px; background: rgba(255,255,255,.92) !important; }
 html .sgx-when h3 { margin: 0 0 8px; font: 500 15px/1.2 var(--font); color: #20301a; }
 @media (prefers-reduced-motion: reduce) { .sgx-k, .sgx-k svg { transition: none; } }
+/* breathe habit: no step list, three numbers and one button to the breathing page (16 Nov 2026) */
+.hs-br { text-align: center; }
+.hs-br3 { display: flex; justify-content: center; gap: 10px; }
+.hs-br3 span { flex: 1; max-width: 92px; padding: 12px 0 10px; border-radius: 20px; background: #f6f2ea; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.hs-br3 b { font-size: 30px; line-height: 1; color: #20301a; }
+.hs-br3 small { font: 500 12px/1 var(--font); letter-spacing: .08em; text-transform: uppercase; color: rgba(32,48,26,.6); }
+.hs-brgo { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 52px; margin-top: 14px; border: 0; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1.5px #20301a; font: 600 16px/1 var(--font); color: #20301a; cursor: pointer; }
+.hs-brgo:active { transform: scale(.97); }
