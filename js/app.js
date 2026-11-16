@@ -1063,9 +1063,9 @@ function readout(cdRaw, L, P, isYou) {
   const nx = C.hormonesRel(cd >= L ? 1 : cd + 1, L, P);
   const pv = C.hormonesRel(cd <= 1 ? L : cd - 1, L, P);
   const rows = HORMONES.map(x => {
-    return `<div class="ro-row"><span class="ro-name"><svg width="16" height="8"><line x1="1" y1="4" x2="15" y2="4" stroke="${x.color}" stroke-width="2.2" stroke-linecap="round" ${x.dash ? `stroke-dasharray="${x.dash}"` : ''}/></svg>${x.name}</span>
+    return `<div class="ro-row" data-action="roHx" data-n="${x.key === 'estrogen' ? 'Oestrogen' : x.name}"><span class="ro-name"><svg width="16" height="8"><line x1="1" y1="4" x2="15" y2="4" stroke="${x.color}" stroke-width="2.2" stroke-linecap="round" ${x.dash ? `stroke-dasharray="${x.dash}"` : ''}/></svg>${x.name}</span>
       <span class="ro-bar ro-sp">${roSpark(x, cd, L, P)}</span>
-      <span class="ro-lvl">${(() => { const d = C.trendOf(pv[x.key], h[x.key], nx[x.key]), lv = trLevel(C.hormoneLevel(h[x.key]), d); return `${lv} <em class="tr ${d}" aria-hidden="true">${trArrow(d)}</em>`; })()}</span></div>`;
+      <span class="ro-lvl">${(() => { const d = C.trendOf(pv[x.key], h[x.key], nx[x.key]), lv = trLevel(C.hormoneLevel(h[x.key]), d); return `${lv} <em class="tr ${d}" aria-hidden="true">${trArrow(d)}</em>`; })()}</span><i class="ro-go" aria-hidden="true">${icon('chevR', 13)}</i></div>`;
   }).join('');
   return `<div class="ro-head"><div class="ro-phase">Day ${cdRaw} · ${PHASES[ph].name}</div></div>
     <div class="ro-rows">${rows}</div>
@@ -7486,8 +7486,8 @@ const hsMeter = v => `<span class="hs-m" aria-label="${['Very low', 'Low', 'Medi
 // The hormone itself: its skeletal formula (small molecules) or its size (protein hormones).
 const PROTEIN_AA = { FSH: 'two chains of 92 and 111', LH: 'two chains of 92 and 121', Prolactin: 'one chain of 199', SHBG: 'two chains of 373', Insulin: 'two chains with 51 in total' };
 // Today: every hormone we can draw, as a swipe row of 3D models with what it does and where it is today.
-function moleculeRow(info) {
-  const list = HORMONE_LIBRARY.map((x, i) => [x, i]).filter(([x]) => MOL_BALL[x.n]);
+function moleculeRow(info, skip = []) {
+  const list = HORMONE_LIBRARY.map((x, i) => [x, i]).filter(([x]) => MOL_BALL[x.n] && !skip.includes(x.n));
   return `<div class="mr-row" role="list">${list.map(([x, i]) => { const n = hxNow(x, info);
     return `<button class="mr-c" role="listitem" data-action="nav" data-to="hormones/${i}"><span class="mr-art" aria-hidden="true">${MOL_BALL[x.n]}</span>
       <b>${x.n === 'Oestrogen' ? 'Estrogen' : x.n}</b><small>${x.s}</small><em>${typeof n.r === 'number' ? `<span class="mr-lv" aria-hidden="true">${[1, 2, 3, 4].map(j => `<i class="${Math.max(1, Math.ceil(n.r * 4)) >= j ? 'on' : ''}" style="height:${3 + j * 2}px"></i>`).join('')}</span>` : ''}${n.word}</em></button>`; }).join('')}</div>`;
@@ -9248,8 +9248,8 @@ function viewInsights() {
   if (tab === 'cycle') body = `
     <section class="card glass big-chart">${cycleChart(info, { id: 'ins' })}
       <button class="cc-pill" data-action="insHx">${icon('chart', 16)} Explore your hormones ${icon('chevR', 15)}</button></section>
-    ${sectionTitle('Your hormones today', ['All', 'hormones'])}
-    ${moleculeRow(info)}
+    ${sectionTitle('Also at work today', ['All', 'hormones'])}
+    ${moleculeRow(info, ['Oestrogen', 'Progesterone', 'Testosterone'])}
     <button class="card gro-cta" data-action="nav" data-to="guide"><span class="art-ic cyc"><svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true"><g fill="none" stroke-width="5" stroke-linecap="round" transform="rotate(-90 20 20)"><circle cx="20" cy="20" r="13" stroke="#e58b9f" stroke-dasharray="13 69"/><circle cx="20" cy="20" r="13" stroke="#9cc27a" stroke-dasharray="19 63" stroke-dashoffset="-16"/><circle cx="20" cy="20" r="13" stroke="#f1c96a" stroke-dasharray="8 74" stroke-dashoffset="-38"/><circle cx="20" cy="20" r="13" stroke="#b9a2e8" stroke-dasharray="33 49" stroke-dashoffset="-49"/></g><circle cx="20" cy="20" r="4.5" fill="#fff" stroke="#f1c96a" stroke-width="1.5"/></svg></span><span class="art-t">How your cycle works<small>Slide through every day: ovary, lining, hormones</small></span>${icon('chevR', 18)}</button>
 `;
   else if (tab === 'patterns') body = `
@@ -11471,6 +11471,8 @@ const actions = {
   seasonMonth: d => { const m = (ui.seasonMonth || new Date().getMonth() + 1) + +d.d; ui.seasonMonth = ((m - 1 + 12) % 12) + 1; render(); },
   insTab: d => { ui.insTab = d.v; render(); },
   rmTab: d => { ui.rmTab = d.v; render(); },
+  // on the Insights chart each hormone row opens that hormone's page (other charts keep the rows as a plain readout)
+  roHx: (d, el) => { if (!el.closest('.big-chart')) return; const i = HORMONE_LIBRARY.findIndex(x => x.n === d.n); if (i >= 0) go(`hormones/${i}`); },
   insHx: () => { ui.insTab = 'learn'; render(); const v = document.getElementById('view'), a = document.getElementById('ins-hx'); if (v && a) v.scrollTo({ top: v.scrollTop + a.getBoundingClientRect().top - 70, behavior: 'smooth' }); },
   hxJump: d => { document.getElementById('hx-' + d.i)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
   groToggle: (d, el) => {
