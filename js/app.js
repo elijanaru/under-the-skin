@@ -7573,6 +7573,9 @@ function viewHormone(i) {
 function windowAt(cd, L, P) { return dayWindow({ cd, L, P, ov: C.ovulationDay(L, P) }); }
 function moveDots(n) { return `<span class="mv-dots">${[1, 2, 3].map(i => `<i class="${n >= i ? 'on' : ''}"></i>`).join('')}</span>`; }
 const MV_WORD = ['Rest instead', 'Go lighter', 'Good', 'Best time'];
+// how hard, 1 to 5, from the talk-test words in MOVE_DOSE (the hero's five bars and the month rows share it)
+const mvLvl = int => { const w = int.split(':')[0]; return /^Medium to hard/.test(w) ? 4 : /^Hard/.test(w) ? 5 : /^Medium/.test(w) ? 3 : /^(Light|Steady)/.test(w) ? 2 : 1; };
+const MV_SHORT = { lift: 'Lifting', hiit: 'Sprints', sport: 'Cardio', pilates: 'Pilates', yoga: 'Yoga', meditate: 'Meditation', walk: 'Walks' };
 const MOVE_PHOTO = { 'flow-start': 'Melatonin', 'premenstrual': 'Melatonin', 'flow-end': 'Cortisol', 'settle': 'Cortisol', 'focus': 'Cortisol', rising: 'Adrenaline', building: 'Testosterone', peak: 'Testosterone' };
 function moveCard(info) {
   const k = dayWindow(info), g = MOVE_GUIDE[k], best = MOVES.filter(m => g.r[m.k] === 3).map(m => m.n), u = hormonePhoto(MOVE_PHOTO[k], 700);
@@ -7663,7 +7666,9 @@ function viewMove() {
       <div class="mvm-key">${PHASE_ORDER.map(p => `<span class="${p === info.phase ? 'on' : ''}"><i style="--c:${PH_HEX[p]}"></i>${PHASES[p].name}</span>`).join('')}</div>
       <p class="mvm-why"><b>Why today</b>${g.tip}</p>
       <details class="mvm-more"${tab === 'month' ? ' open' : ''}><summary>Every part of your month ${icon('chevD', 14)}</summary>
-        <div class="mv2-month">${Object.entries(MOVE_GUIDE).filter(([k]) => days.includes(k)).map(([k, x]) => { const idx = days.map((w, i) => w === k ? i + 1 : 0).filter(Boolean); return `<div class="mv2-w ${k === key ? 'on' : ''}"><span class="mv2-d">${idx[0] === idx[idx.length - 1] ? idx[0] : `${idx[0]}–${idx[idx.length - 1]}`}</span><div><b>${x.title}${k === key ? ' <em>· now</em>' : ''}</b><p>${x.tip}</p></div></div>`; }).join('')}</div></details>
+        <div class="mv2-month mvx">${Object.entries(MOVE_GUIDE).filter(([k]) => days.includes(k)).map(([k, x]) => { const idx = days.map((w, i) => w === k ? i + 1 : 0).filter(Boolean), Dk = MOVE_DOSE[k], lv = mvLvl(Dk.int), best = MOVES.filter(m => x.r[m.k] === 3).map(m => MV_SHORT[m.k]);
+          return `<details class="mv2-w mvx-r ${k === key ? 'on' : ''}"${k === key ? ' open' : ''}><summary><span class="mv2-d">${idx[0] === idx[idx.length - 1] ? idx[0] : `${idx[0]}–${idx[idx.length - 1]}`}</span><span class="mvx-t"><b>${x.title}${k === key ? ' <em>· now</em>' : ''}</b><small>${best.join(', ')}</small></span><span class="mvp-int" role="img" aria-label="Intensity ${lv} of 5">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= lv ? 'on' : ''}"></i>`).join('')}</span>${icon('chevD', 13)}</summary>
+            <div class="mvx-b"><p>${x.tip}</p><div class="mvx-spec"><span>${icon('clock', 12)} ${Dk.len.replace('–', ' to ')}</span><span>Warm up ${Dk.warm.split(',')[0]}</span></div></div></details>`; }).join('')}</div></details>
     </section>`;
   const card = m => { const X = MV_PLATE[m.k], on = ui.mvOpen === m.k;
     return `<article class="mvc ${on ? 'on' : ''}"><button class="mvc-h" data-action="mvOpen" data-k="${m.k}" aria-expanded="${on}">${mvFig(m.k)}
@@ -7677,7 +7682,7 @@ function viewMove() {
       ${mvFig(top.k, true)}
       <p class="mvp-works"><i></i>Working now: ${T.works}</p>
       ${(() => { const num = v => { const m = String(v).match(/^([\d–]+)\s*(.*)$/); return m ? `<b class="dotnum">${m[1]}</b><span>${m[2]}</span>` : `<b>${v}</b>`; };
-        const word = D.int.split(':')[0], lvl = /^Medium to hard/.test(word) ? 4 : /^Hard/.test(word) ? 5 : /^Medium/.test(word) ? 3 : /^(Light|Steady)/.test(word) ? 2 : 1;
+        const word = D.int.split(':')[0], lvl = mvLvl(D.int);
         return `<dl class="mvp-spec">
           <div><dt>How long</dt><dd>${num(T.long.replace(/ to /, '–'))}<small>${T.freq}</small></dd></div>
           <div><dt>How hard</dt><dd><span class="mvp-int" role="img" aria-label="Intensity ${lvl} of 5">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</span><b class="mvp-w">${word.replace(/ if you feel strong/, '')}</b><small>${/if you feel strong/.test(word) ? 'If you feel strong · ' : ''}${(D.int.split(':')[1] || '').trim()}</small></dd></div>
