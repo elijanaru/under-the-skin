@@ -16700,3 +16700,46 @@ html .sgx-when h3 { margin: 0 0 8px; font: 500 15px/1.2 var(--font); color: #203
 .ssh-safe { display: flex; gap: 8px; margin: 0; padding: 11px 13px; border-radius: 16px; background: #f8e9ee; color: #7a3d52; font: 400 12.5px/1.45 var(--font); }
 .ssh-safe .ic { flex: none; margin-top: 2px; }
 .ssh .fbd-acts { justify-content: center; }
+
+/* Seed cycling guide (article), 16 Nov 2026: in short, the two-halves graphic, your seeds now, what one spoon brings */
+.sgd-short { padding: 16px 18px 8px; margin: 8px 0 6px; }
+.sgd-short ul { list-style: none; margin: 6px 0 0; padding: 0; }
+.sgd-short li { display: grid; grid-template-columns: 74px 1fr; gap: 10px; padding: 10px 0; border-top: 1px solid rgba(48,64,35,.08); }
+.sgd-short li:first-child { border-top: 0; }
+.sgd-short li b { font: 600 13px/1.4 var(--font); color: #6c823e; }
+.sgd-short li span { font: 400 14.5px/1.45 var(--font); color: #20301a; }
+.sgd-gc { padding: 16px 14px 14px; }
+.sgd-g { margin: 0; }
+.sgd-g svg { display: block; width: 100%; height: auto; overflow: visible; }
+.sgd-g text { font: 500 9px var(--font); fill: #6b7560; }
+.sgd-g figcaption { display: flex; justify-content: center; gap: 14px; margin-top: 8px; font: 500 11.5px/1 var(--font); color: #4b5741; }
+.sgd-g figcaption span { display: inline-flex; align-items: center; gap: 5px; }
+.sgd-g figcaption i { width: 14px; height: 3px; border-radius: 2px; background: #6c823e; }
+.sgd-g figcaption i.p { background: #b05a7a; } .sgd-g figcaption i.me { width: 8px; height: 8px; border-radius: 50%; background: #20301a; }
+.sgd-halves { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.sgd-hf { display: grid; grid-template-columns: auto auto 1fr; align-items: center; column-gap: 0; padding: 10px; border-radius: 18px; background: #eef3e2; }
+.sgd-hf.b { background: #f6e8ee; }
+.sgd-hf img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 2px #fff; grid-row: span 2; }
+.sgd-hf img + img { margin-left: -10px; }
+.sgd-hf small { grid-column: 3; padding-left: 8px; font: 500 10.5px/1.2 var(--font); color: #6b7560; }
+.sgd-hf b { grid-column: 3; padding-left: 8px; font: 600 12.5px/1.2 var(--font); color: #20301a; }
+.sgd-now, .sgd-how { margin-bottom: 6px; }
+.sgd-seeds { padding: 6px 14px; }
+.sgd-s { border-top: 1px solid rgba(48,64,35,.08); }
+.sgd-s:first-child { border-top: 0; }
+.sgd-s summary { list-style: none; display: grid; grid-template-columns: 46px 1fr 18px; align-items: center; gap: 12px; padding: 12px 0; cursor: pointer; }
+.sgd-s summary::-webkit-details-marker { display: none; }
+.sgd-s summary img { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; }
+.sgd-s summary b { display: block; font: 600 15px/1.2 var(--font); color: #20301a; }
+.sgd-s summary small { display: block; margin-top: 2px; font: 400 12.5px/1.35 var(--font); color: #4b5741; }
+.sgd-s summary em { display: inline-block; margin-top: 6px; padding: 4px 9px; border-radius: 99px; background: #f3efe2; font: 500 11px/1.2 var(--font); font-style: normal; color: #6a5a2e; }
+.sgd-s.on summary em { background: #e8efd8; color: #4f6a2a; }
+.sgd-s summary .ic { color: #8a947c; transition: transform .3s ease; }
+.sgd-s[open] summary .ic { transform: rotate(180deg); }
+.sgd-s p { margin: 0 0 14px 58px; font: 400 13.5px/1.5 var(--font); color: #3d4733; }
+.sgd-safe { margin: 4px 0 14px; }
+.sgd-short, .sgd-gc, .sgd-seeds { background: rgba(255,255,255,.93) !important; border: 1px solid #fff !important; border-radius: 26px !important; box-shadow: 0 14px 30px -20px rgba(60,40,30,.4) !important;
+  -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+.sgd-hf { padding: 9px 10px 9px 9px; }
+.sgd-hf img { width: 30px; height: 30px; }
+.sgd-hf small { white-space: nowrap; }

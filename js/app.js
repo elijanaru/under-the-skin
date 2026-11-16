@@ -4555,6 +4555,7 @@ const FB = [
   { id: 'heat', t: 'Heat on your belly', s: 'Eases cramps as well as a painkiller.', why: 'Warmth relaxes the womb muscle and improves blood flow. In studies heat eased period pain about as well as ibuprofen.', do: ['A hot water bottle or heat pad on your lower belly', '20 minutes at a time, as often as you like', 'Warm socks and warm drinks too'], safe: 'Warm, not hot. Wrap it in a cloth to protect your skin.', to: ['relief/Cramps', 'All cramp relief'] },
   { id: 'fascia', t: 'Face fascia', s: 'A gua sha stone, upward and out.', why: 'Gentle strokes release tight facial fascia, move lymph and soften puffiness, especially in the days before your period.', do: ['A drop of oil on clean skin', 'Stroke from the centre outwards and up, 5 times each', 'Finish down the neck to drain'], safe: 'Light pressure. Skip active spots and broken skin.', to: ['relief/Face%20fascia', 'The full face routine'] },
   { id: 'magnesium', t: 'Magnesium glycinate', s: 'Before bed for calm and cramps.', why: 'Magnesium relaxes muscles and nerves. It is linked with fewer cramps, calmer PMS and deeper sleep.', do: ['200 to 300 mg in the evening', 'Food first: pumpkin seeds, cacao, leafy greens', 'Most helpful in the week before your period'], safe: 'Not above 350 mg a day from supplements. Ask a doctor if you have kidney problems or take medication.', to: ['supp/magnesium', 'Doses and studies'] },
+  { id: 'organs', t: 'Organ meats', s: 'A little liver once a week, heart any day.', why: 'Liver and heart are the most nutrient-dense foods there are: iron, B12, folate, zinc, copper and vitamin A, the raw material for your hormones and for new blood after your period.', do: ['Liver: 50 to 100 g once a week, gently cooked', 'Heart: any day, sliced and seared like a steak', 'Around your period, always cooked and warm'], safe: 'Liver is very rich in vitamin A, so keep it to once a week. Pregnant or trying for a baby: skip liver and choose heart.', to: ['nutrients/iron', 'Why iron matters'] },
   { id: 'seeds', t: 'Seed cycling', s: 'Pumpkin, flax, sesame, sunflower.', why: 'A gentle ritual of seeds rich in zinc, omega 3, lignans and vitamin E that support your hormones through the month.', do: ['Day 1 to 14: 1 tbsp ground flax and 1 tbsp pumpkin seeds', 'Day 15 to 28: 1 tbsp sesame and 1 tbsp sunflower seeds', 'Grind them fresh, stir into food'], safe: 'Research is still early. Enjoy it as good food, not a cure.', to: ['article/seed-cycling', 'What the research says'] },
   { id: 'cherry', t: 'Tart cherry juice', s: 'Natural melatonin before sleep.', why: 'Tart cherries contain melatonin and tryptophan, which can help you fall asleep and sleep longer.', do: ['30 ml concentrate in a glass of water', '1 to 2 hours before bed', 'At room temperature or slightly warmed'], safe: 'Pure juice with no added sugar. It is acidic, so rinse your mouth after.' },
   { id: 'chamomile', t: 'Chamomile tea', s: 'Softens anxiety and cramps.', why: 'Chamomile gently relaxes the nervous system and the womb. A warm cup is also a signal to wind down.', do: ['1 to 2 tsp dried flowers per cup', 'Steep covered for 5 to 10 minutes', 'Up to 3 cups a day'], safe: 'Avoid it if you are allergic to ragweed or daisies.', to: ['tea', 'Open the tea guide'] },
@@ -4574,7 +4575,8 @@ const FB_STEPS = [
 ];
 function fbSteps(info) {
   const idx = Object.fromEntries(FB.map((x, i) => [x.id, i])), warm = warmWindow(info), moved = new Set(warm ? Object.values(FB_WARM_SWAP) : []);
-  return FB_STEPS.map(([t, s, ids]) => [t, s, ids.filter(id => !moved.has(id)).map(id => (warm && FB_WARM_SWAP[id]) || id).filter(id => idx[id] != null).map(id => [FB[idx[id]], idx[id]])]);
+  const animal = myDiet() === 'animal';
+  return FB_STEPS.map(([t, s, ids]) => [t, s, ids.map(id => animal && id === 'seeds' ? 'organs' : id).filter(id => !moved.has(id)).map(id => (warm && FB_WARM_SWAP[id]) || id).filter(id => idx[id] != null).map(id => [FB[idx[id]], idx[id]])]);
 }
 function fbItem(x, i, done, pos = i, n = 0) {
   const on = x.hb && done.includes(x.hb);
@@ -4596,6 +4598,7 @@ const FB_SPEC = {
   fascia: ['The days before your period', '3 to 5 minutes'],
   magnesium: ['Evening, the week before your period', '200 to 300 mg', ['1998', 'Walker', '200 mg magnesium a day eased bloating, swelling and breast tenderness in the second cycle.', 'Journal of Women’s Health']],
   seeds: ['Every day, the seeds switch on day 15', '2 tbsp a day'],
+  organs: ['Liver once a week, heart any day', '50 to 100 g of liver'],
 };
 // Seed cycling, made plain: two simple rows, which seeds in which half, a Now tag on hers.
 function seedHalves() {
@@ -4607,31 +4610,75 @@ function seedHalves() {
 // three how-to steps and the safe-use note. One look tells her what to eat today; the detail sits right under it.
 const SEED_WHY = [['Ground flaxseed', 'Flax', 'Lignans help your liver clear extra oestrogen'], ['Pumpkin seeds', 'Pumpkin', 'Zinc helps you build up to ovulation'],
   ['Sesame seeds', 'Sesame', 'Lignans and zinc for a calmer second half'], ['Sunflower seeds', 'Sunflower', 'Vitamin E and selenium help progesterone']];
-function seedSheet(i) {
-  const x = FB[i], on = x.hb && habitsDone(todayISO()).includes(x.hb), info = M.info, L = info ? info.L : 28, h = Math.round(L / 2), cd = info ? info.cd : 0, first = !info || cd <= h;
-  const now = first ? SEED_WHY.slice(0, 2) : SEED_WHY.slice(2), warm = info && warmWindow(info);
+function seedNow() {
+  const info = M.info, L = info ? info.L : 28, h = Math.round(L / 2), cd = info ? info.cd : 0, first = !info || cd <= h, now = first ? SEED_WHY.slice(0, 2) : SEED_WHY.slice(2);
   const half = (k, on2, days, list) => `<div class="ssh-h ${k} ${on2 ? 'on' : ''}"><small>${days}</small><b>${list.map(s => s[1]).join(' + ')}</b></div>`;
-  return `<div class="ssh">
-    <span class="fbd-emo">${emoRaw(FB_EMO[x.id] || '🌻')}</span>
-    <h2 class="ssh-t">Seed cycling</h2>
-    <p class="ssh-lead">Two spoons of seeds a day, switched halfway through your cycle, to feed each half what it needs.</p>
-    <section class="ssh-now">
+  return `<section class="ssh-now">
       <small class="ssh-k">${info ? `Day ${cd} · your seeds now` : 'Your seeds now'}</small>
       <div class="ssh-pics">${now.map(([k, n]) => `<figure><img src="${foodPhoto(k, 240)}" alt="" loading="lazy"><figcaption>${n}<em>1 tbsp</em></figcaption></figure>`).join('<span class="ssh-plus">+</span>')}</div>
       <div class="ssh-bar" aria-label="${first ? 'First' : 'Second'} half of your cycle">${half('a', first, `Day 1 to ${h}`, SEED_WHY.slice(0, 2))}${half('b', !first, `Day ${h + 1} to ${L}`, SEED_WHY.slice(2))}
         ${info ? `<i class="ssh-me" style="left:${Math.min(98, Math.max(2, cd / L * 100)).toFixed(1)}%"></i>` : ''}</div>
-    </section>
-    <h3 class="ssh-s">Why each seed</h3>
-    <div class="ssh-why">${SEED_WHY.map(([k, n, w], j) => `<div class="ssh-w ${(j < 2) === first ? 'on' : ''}"><img src="${foodPhoto(k, 120)}" alt="" loading="lazy"><span><b>${n}</b><small>${w}</small></span></div>`).join('')}</div>
-    <h3 class="ssh-s">How to</h3>
-    <ol class="ssh-how">
+    </section>`;
+}
+const seedHow = () => { const warm = M.info && warmWindow(M.info); return `<ol class="ssh-how">
       <li><b>Grind them fresh</b><span>A small grinder, a few days at a time. Keep the jar in the fridge.</span></li>
       <li><b>Stir into food</b><span>${warm ? 'On your period days, into warm soup, stew or cooked fruit.' : 'Into yoghurt, kefir, salads, soup or a smoothie.'}</span></li>
       <li><b>Give it three cycles</b><span>Seeds work slowly, like any food. Notice how your cycle feels.</span></li>
-    </ol>
-    <p class="ssh-safe">${icon('heart', 13)}<span>Flax is rich in fibre: start with 1 tsp and drink water with it. With a hormone-sensitive condition or blood thinners, ask your doctor first. Research is still early, so enjoy it as good food, not a cure.</span></p>
+    </ol>`; };
+const SEED_SAFE = 'Flax is rich in fibre: start with 1 tsp and drink water with it. With a hormone-sensitive condition or blood thinners, ask your doctor first. Research is still early, so enjoy it as good food, not a cure.';
+function seedSheet(i) {
+  const x = FB[i], on = x.hb && habitsDone(todayISO()).includes(x.hb), first = !M.info || M.info.cd <= Math.round(M.info.L / 2);
+  return `<div class="ssh">
+    <span class="fbd-emo">${emoRaw(FB_EMO[x.id] || '🌻')}</span>
+    <h2 class="ssh-t">Seed cycling</h2>
+    <p class="ssh-lead">Two spoons of seeds a day, switched halfway through your cycle, to feed each half what it needs.</p>
+    ${seedNow()}
+    <h3 class="ssh-s">Why each seed</h3>
+    <div class="ssh-why">${SEED_WHY.map(([k, n, w], j) => `<div class="ssh-w ${(j < 2) === first ? 'on' : ''}"><img src="${foodPhoto(k, 120)}" alt="" loading="lazy"><span><b>${n}</b><small>${w}</small></span></div>`).join('')}</div>
+    <h3 class="ssh-s">How to</h3>
+    ${seedHow()}
+    <p class="ssh-safe">${icon('heart', 13)}<span>${SEED_SAFE}</span></p>
     <div class="fbd-acts">${x.hb ? `<button class="fbd-hb ${on ? 'on' : ''}" data-action="fbHabit" data-id="${x.hb}" data-i="${i}" aria-pressed="${!!on}">${icon('check', 13, 2.6)} ${on ? 'Done today' : 'Add to my daily habits'}</button>` : ''}${x.to ? `<button class="fbd-go" data-action="nav" data-to="${x.to[0]}">${x.to[1]} ${icon('chevR', 13)}</button>` : ''}</div>
     <button class="fbd-x" data-action="fbClose" aria-label="Close">${icon('close', 14)}</button></div>`;
+}
+// The seed cycling guide (article), same language as the sheet (16 Nov 2026): in short, a hormone graphic with the two
+// seed halves under it, your seeds now, what one spoon of each seed brings (tap for more), how to, studies, safe use.
+const SEED_MORE = {
+  Flax: ['About 1.6 g plant omega 3 and 2 g fibre', 'Its lignans bind extra oestrogen in the gut so it leaves the body instead of circulating again. The one study close to seed cycling used 10 g of ground flax a day.'],
+  Pumpkin: ['About 0.7 mg zinc and 50 mg magnesium', 'Zinc helps the follicle mature and the egg release. Magnesium calms muscles and nerves, useful from the first days of your cycle.'],
+  Sesame: ['About 0.7 mg zinc and 90 mg calcium', 'Sesame lignans and zinc support the corpus luteum, the small gland that makes progesterone after ovulation.'],
+  Sunflower: ['About 3 mg vitamin E and 5 µg selenium', 'Vitamin E has eased breast tenderness and cramps in small studies, and selenium protects the corpus luteum while it works.'],
+};
+function seedGraph() {
+  const info = M.info, L = info ? info.L : 28, cd = info ? info.cd : 0, W = 320, H = 120, x = d => 10 + (d - 1) / (L - 1) * (W - 20), mid = x(Math.round(L / 2) + .5);
+  let e = '', pg = '';
+  for (let d = 1; d <= L; d++) { const t = (d - 1) / (L - 1);
+    const ev = .18 + .7 * Math.exp(-Math.pow((t - .46) / .1, 2)) + .3 * Math.exp(-Math.pow((t - .74) / .13, 2)), pv = .06 + .78 * Math.exp(-Math.pow((t - .74) / .14, 2));
+    e += `${d === 1 ? 'M' : 'L'}${x(d).toFixed(1)} ${(H - 14 - ev * 90).toFixed(1)}`; pg += `${d === 1 ? 'M' : 'L'}${x(d).toFixed(1)} ${(H - 14 - pv * 90).toFixed(1)}`; }
+  return `<figure class="sgd-g"><svg viewBox="0 0 ${W} ${H}" aria-label="Oestrogen rises in the first half, progesterone in the second">
+      <rect x="10" y="4" width="${(mid - 10).toFixed(1)}" height="${H - 18}" rx="12" fill="#eef3e2"/><rect x="${mid.toFixed(1)}" y="4" width="${(W - 10 - mid).toFixed(1)}" height="${H - 18}" rx="12" fill="#f6e8ee"/>
+      <path d="${e}" fill="none" stroke="#6c823e" stroke-width="2.4" stroke-linecap="round"/><path d="${pg}" fill="none" stroke="#b05a7a" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="1 0"/>
+      ${info ? `<line x1="${x(cd).toFixed(1)}" x2="${x(cd).toFixed(1)}" y1="6" y2="${H - 16}" stroke="#20301a" stroke-width="1" stroke-dasharray="2 3"/><circle cx="${x(cd).toFixed(1)}" cy="${H - 16}" r="4" fill="#20301a"/>` : ''}
+      <text x="${x(Math.round(L / 2)) - 4}" y="${H - 2}" text-anchor="end">Day 1 to ${Math.round(L / 2)}</text><text x="${mid + 4}" y="${H - 2}">Day ${Math.round(L / 2) + 1} to ${L}</text></svg>
+    <figcaption><span><i class="e"></i>Oestrogen</span><span><i class="p"></i>Progesterone</span>${info ? '<span><i class="me"></i>You</span>' : ''}</figcaption>
+    <div class="sgd-halves">${[SEED_WHY.slice(0, 2), SEED_WHY.slice(2)].map((g, j) => `<div class="sgd-hf ${j ? 'b' : 'a'}">${g.map(([k]) => `<img src="${foodPhoto(k, 120)}" alt="" loading="lazy">`).join('')}<small>${j ? 'Help progesterone' : 'Help oestrogen'}</small><b>${g.map(s => s[1]).join(' + ')}</b></div>`).join('')}</div></figure>`;
+}
+function seedGuide(a) {
+  const st = ARTICLE_STUDIES[a.id] || [], first = !M.info || M.info.cd <= Math.round(M.info.L / 2);
+  return `<section class="card sgd-short"><small class="art2-k">In short</small>
+      <ul><li><b>What</b><span>1 tbsp each of two seeds a day, switched halfway through your cycle.</span></li>
+        <li><b>Why</b><span>Each pair brings the zinc, lignans, omega 3 and vitamin E that half of your cycle uses most.</span></li>
+        <li><b>Honestly</b><span>No trial has tested seed cycling itself yet. The seeds are good food either way.</span></li></ul></section>
+    ${sectionTitle('Your month, in two halves')}
+    <section class="card sgd-gc">${seedGraph()}</section>
+    ${sectionTitle('Your seeds now')}
+    <div class="ssh sgd-now">${seedNow()}</div>
+    ${sectionTitle('What one spoon brings')}
+    <section class="card sgd-seeds">${SEED_WHY.map(([k, n, w], j) => { const [amt, more] = SEED_MORE[n]; return `<details class="sgd-s ${(j < 2) === first ? 'on' : ''}"><summary><img src="${foodPhoto(k, 120)}" alt="" loading="lazy"><span><b>${n}</b><small>${w}</small><em>${amt}</em></span>${icon('chevD', 16)}</summary><p>${more}</p></details>`; }).join('')}</section>
+    ${sectionTitle('How to')}
+    <div class="ssh sgd-how">${seedHow()}</div>
+    ${st.length ? `${sectionTitle('What studies found')}<section class="card gr-card gr-st art-st">${st.map(([w, y, j, f, d], k) => `<details${k === 0 ? ' open' : ''}><summary class="gr-s"><span class="gr-y">${y}</span><span class="gr-s-t"><b>${f}</b><small>${w} · ${j}</small></span>${icon('chevD', 16)}</summary><p>${d}</p></details>`).join('')}</section>` : ''}
+    <p class="ssh-safe sgd-safe">${icon('heart', 13)}<span>${SEED_SAFE}</span></p>`;
 }
 function fbDetail(i) {
   if (FB[i] && FB[i].id === 'seeds') return seedSheet(i);
@@ -4720,11 +4767,13 @@ function el5(ph, k) {
 // Balance your hormones as a simple guide (16 Nov 2026, her call: the 18 photo tiles were too much):
 // a three-level pyramid says the order, the chosen level is one short day from morning to night (emoji, no photos),
 // and three study numbers show why it works. Each ritual opens a sheet with what to do, how much and why.
-const FB_EMO = { sun: '☀️', lemon: '🍋', phone: '📵', walk: '🚶‍♀️', breathe: '🧘‍♀️', ground: '🦶', tongue: '👅', seeds: '🌻', carrot: '🥕', golden: '🥛', castor: '🫙', magnesium: '💊',
+const FB_EMO = { organs: 'e:liver', sun: '☀️', lemon: '🍋', phone: '📵', walk: '🚶‍♀️', breathe: '🧘‍♀️', ground: '🦶', tongue: '👅', seeds: '🌻', carrot: '🥕', golden: '🥛', castor: '🫙', magnesium: '💊',
   heat: '♨️', chamomile: '🌼', cherry: '🍒', fascia: '💆‍♀️', brush: '🪥', salt: '🛁' };
 const FB_WHEN = { tongue: [6.8, 'On waking'], sun: [7, 'Within an hour of waking'], lemon: [7.1, 'Before coffee'], brush: [7.3, 'Before your shower'], fascia: [7.5, 'Morning'], phone: [7.6, 'The first hour'],
   seeds: [8.5, 'With breakfast'], carrot: [11, 'Between meals'], walk: [13.5, 'After lunch or dinner'], heat: [15, 'At the first cramp'], breathe: [17, 'Whenever you feel tense'], ground: [18.5, 'Late afternoon'],
   castor: [20, 'Evening'], chamomile: [20, 'Evening'], golden: [20.5, 'Evening'], salt: [21, 'Before bed'], cherry: [21, '1 to 2 h before bed'], magnesium: [22, 'Before bed'] };
+// the level picture follows her diet: on the animal-based diet Rebuild shows organ meats, not seeds
+const fbImg = k => k === 'seeds' && myDiet() === 'animal' ? 'organs' : k;
 const FB_LVL = [{ n: 'Foundations', c: '#6c823e', e: '🌿', img: 'sun', s: 'Light, steady blood sugar and calm. Your hormones build on these, so start here.' },
   { n: 'Clear', c: '#b9862f', e: '🍃', img: 'carrot', s: 'Help your body carry out used hormones.' },
   { n: 'Rebuild', c: '#a0705a', e: '🌱', img: 'seeds', s: 'Feed the new hormones.' },
@@ -4862,8 +4911,8 @@ function balanceGuide(info, done) {
   const S = fbSteps(info), N = FB_LVL.length, lv = Math.min(N - 1, Math.max(0, ui.fbLvl ?? 0)), L = FB_LVL[lv], [title, lead, list] = S[lv];
   const cnt = k => { const hb = S[k][2].filter(([x]) => x.hb); return [hb.filter(([x]) => done.includes(x.hb)).length, hb.length]; };
   const items = list.map(([x, i]) => ({ x, i, h: (FB_WHEN[x.id] || [12])[0] })).sort((a, b) => a.h - b.h), [d, n] = cnt(lv);
-  const next = items.find(({ x }) => !(x.hb && done.includes(x.hb))) || items[0], hero = list.some(([x]) => x.id === L.img) || !list[0] ? L.img : list[0][0].id;
-  const back = k => { const v = (lv + k) % N, B = FB_LVL[v]; return `<button class="pdk-b b${k}" data-action="fbLvl" data-v="${v}" aria-label="Open ${B.n}"><span class="pdk-bav"><img src="images/fb/${B.img}.webp" alt=""></span><b>${B.n}</b><small>Level ${v + 1}</small></button>`; };
+  const next = items.find(({ x }) => !(x.hb && done.includes(x.hb))) || items[0], hero = list.some(([x]) => x.id === fbImg(L.img)) || !list[0] ? fbImg(L.img) : list[0][0].id;
+  const back = k => { const v = (lv + k) % N, B = FB_LVL[v]; return `<button class="pdk-b b${k}" data-action="fbLvl" data-v="${v}" aria-label="Open ${B.n}"><span class="pdk-bav"><img src="images/fb/${fbImg(B.img)}.webp" alt=""></span><b>${B.n}</b><small>Level ${v + 1}</small></button>`; };
   // just text: her habits for this level as one sentence, each name opens its ritual (and its done button)
   const link = ({ x, i }) => `<button class="pdk-t ${x.hb && done.includes(x.hb) ? 'ok' : ''}" data-action="fbSheet" data-i="${i}">${x.t.toLowerCase()}${x.hb && done.includes(x.hb) ? ` ${icon('check', 11, 3)}` : ''}</button>`;
   const words = items.map(link), last = words.length - 1, sentence = words.map((w, k) => `<span class="pdk-nw">${w}${k < last - 1 ? ',' : k === last ? '.' : ''}</span>`).map((w, k) => k === last && last > 0 ? `and ${w}` : w).join(' ');
@@ -9615,11 +9664,11 @@ function viewArticle(id) {
   return `<section class="art2-hero"><div class="art2-pic">${u ? `<img src="${u}" alt="">` : glowArt('wave', 4)}<button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button></div>
     <div class="art2-h"><span class="art2-tag">${a.month ? `The Underskin letter · ${MONTHS[a.month - 1]}` : `${ph ? `<i style="background:${PH_HEX[a.phase]}"></i>${ph.name} phase · ` : ''}<b class="dotnum">${a.mins}</b> min read`}</span><h1>${a.title}</h1>${a.lead ? `<p>${a.lead}</p>` : ''}</div></section>
   <div class="pad article art2">
-    ${a.keys ? `<section class="card art2-keys"><small class="art2-k">Key numbers</small>${a.keys.map(([b, t]) => `<div class="a2k"><span>${t}</span><b class="${/^[<>~±≈]?\s*\d/.test(b) ? 'dotnum' : ''}">${b}</b></div>`).join('')}</section>` : ''}
-    ${a.id === 'seed-cycling' ? `<section class="card art2-do"><small class="art2-k">How to do it</small>${seedHalves()}</section>` : ''}
+    ${a.id === 'seed-cycling' ? seedGuide(a) : `${a.keys ? `<section class="card art2-keys"><small class="art2-k">Key numbers</small>${a.keys.map(([b, t]) => `<div class="a2k"><span>${t}</span><b class="${/^[<>~±≈]?\s*\d/.test(b) ? 'dotnum' : ''}">${b}</b></div>`).join('')}</section>` : ''}
     ${artGraph(a)}
     <section class="card art2-body">${a.body.map((p, k) => `<p>${p}</p>${k === 1 && ARTICLE_PIC[a.id] ? `<figure class="art-fig"><img src="${ARTICLE_PIC[a.id][0]}" alt="" loading="lazy"><figcaption>${ARTICLE_PIC[a.id][1]}</figcaption></figure>` : ''}`).join('')}</section>
     ${ARTICLE_STUDIES[a.id] ? `${sectionTitle('What studies found')}<section class="card gr-card gr-st art-st">${ARTICLE_STUDIES[a.id].map(([w, y, j, f, d], k) => `<details${k === 0 ? ' open' : ''}><summary class="gr-s"><span class="gr-y">${y}</span><span class="gr-s-t"><b>${f}</b><small>${w} · ${j}</small></span>${icon('chevD', 14)}</summary><p class="gr-s-d">${d}</p></details>`).join('')}</section>` : ''}
+    `}
     ${a.to ? `<button class="card glass art-do" data-action="nav" data-to="${a.to}"><span>Try it in the app</span>${icon('chevR', 16)}</button>` : ''}
     ${a.src ? `<p class="art2-src">Sources: ${a.src}</p>` : ''}
     ${n ? `<button class="card nu-next art-next" data-action="nav" data-to="article/${n.id}">${readPic(n, 300) ? `<img src="${readPic(n, 300)}" alt="">` : ''}<span><small>Next read</small><b>${n.title}</b></span>${icon('chevR', 16)}</button>` : ''}
