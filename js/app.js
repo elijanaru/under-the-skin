@@ -4245,8 +4245,8 @@ const GRO_FIX = [[/pumpkin seed/i, 'e:pumpkin-seeds'], [/raw milk/i, '🥛'], [/
 // one food as a cut-out ({ cut }) or a drawn emoji ({ emo }), never a round stock photo; shared by Grocery and the relief pages
 // a list never shows the same picture twice: when a pick is taken, try its look-alike alternates (16 Nov 2026 rule)
 const EMO_ALT = { '🐟': ['🍣', '🦪'], '🥛': ['🥣', '🫙'], '🫘': ['🫛', '🧆', '🍲'], '🍵': ['🫖', '☕'], '🥩': ['🍖'], '🌰': ['🥜'], '🥬': ['🥗', '🌿'], '🍫': ['d:cacao'],
-  '🧂': ['🫙'], '🍳': ['🥚'], '🥚': ['🍳'], 'e:pumpkin-seeds': ['e:almonds', '🥬'], '🍌': ['🥔'], '♨️': ['🔥'], '🍲': ['🥘'], '🧴': ['🫒'], '🛏️': ['🌙'] };
-const pickUniq = (cands, used) => { if (!used) return cands[0]; const all = cands.flatMap(c => [c, ...(EMO_ALT[c] || [])]); const g = all.find(x => x && !used.has(x)) || nuPick([], used); used.add(g); return g; };
+  '🧂': ['🫙'], '🍳': ['🥚'], '🥚': ['🍳'], 'e:pumpkin-seeds': ['e:almonds', '🥬'], '🍌': ['🥔'], '♨️': ['🔥'], '🍲': ['🥘'], '🧴': ['🫒'], '🛏️': ['🌙'], '🧈': ['🫙'], '🫒': ['d:black-seed-oil'], '🥒': ['🫙'], '🌿': ['🍃'] };
+const pickUniq = (cands, used, soft) => { if (!used) return cands[0]; const all = cands.flatMap(c => [c, ...(EMO_ALT[c] || [])]); const g = all.find(x => x && !used.has(x)) || (soft ? cands[0] : nuPick([], used)); used.add(g); return g; };
 // one food as a cut-out ({ cut }) or a drawn emoji ({ emo }), never a round stock photo; shared by Grocery and the relief pages
 const foodArt = (n, used) => { const fx = GRO_FIX.find(([r]) => r.test(n)), c = !fx && RLF_CUT.find(([r]) => r.test(n)), cut = !fx && ((c && c[1].startsWith('images/') ? c[1] : '') || szCut(n));
   if (cut && !(used && used.has(cut))) { if (used) used.add(cut); return { cut }; }
@@ -9484,11 +9484,11 @@ const dietChanged = r => { const d = myDiet(); return d !== 'all' && (r.ingredie
 const DAY_NEED = { Iron: [16, 'mg'], Zinc: [10, 'mg'], Magnesium: [300, 'mg'], Calcium: [950, 'mg'], Potassium: [3500, 'mg'], 'Vitamin C': [95, 'mg'], 'Vitamin A': [650, 'µg'], Folate: [330, 'µg'], 'Vitamin B12': [4, 'µg'], 'Vitamin B6': [1.6, 'mg'], Selenium: [70, 'µg'], Iodine: [150, 'µg'], 'Vitamin E': [11, 'mg'], 'Vitamin K': [70, 'µg'], 'Vitamin D': [15, 'µg'], Choline: [400, 'mg'], Copper: [1.3, 'mg'], 'Omega-3': [0.25, 'g'], 'Plant omega-3': [1.1, 'g'], Fibre: [25, 'g'], Riboflavin: [1.6, 'mg'], Sodium: [2000, 'mg'] };
 const ING_Q = /^((?:juice of\s+)?(?:\d+(?:[.,]\d+)?|[½¼¾⅓⅔])(?:\s*(?:to|-)\s*\d+)?\s*(?:[½¼¾])?\s*(?:(?:small |big )?handfuls?|g|kg|ml|l|cups?|tbsp|tsp|cloves?|slices?|pinch|thumb)?\b|(?:1\s+)?(?:small |big )?handful|1 pinch|a pinch)\s*/i;
 // Ingredient emoji: checked before FOOD_EMO so words inside other words never pick the wrong food (butter lettuce, yellow onion slivers, rosemary); '' = no emoji rather than a look-alike.
-const ING_EMO = [[/goji/i, 'e:goji'], [/ground beef/i, '🥩'], [/red dates|jujube/i, 'e:red-dates'], [/strawberr/i, '🍓'], [/(red|yellow|green|bell) pepper/i, '🫑'], [/cardamom/i, 'e:cardamom'], [/spring onion/i, 'd:spring-onion'], [/\bonions?\b|shallot/i, '🧅'], [/\bsalt\b/i, '🧂'],
+const ING_EMO = [[/red pepper|red bell/i, '🌶️'], [/^coconut oil/i, 'd:black-seed-oil'], [/bay lea/i, '🍃'], [/almond milk/i, '🥛'], [/almond butter|nut butter/i, 'e:tahini'], [/goji/i, 'e:goji'], [/ground beef/i, '🥩'], [/red dates|jujube/i, 'e:red-dates'], [/strawberr/i, '🍓'], [/(red|yellow|green|bell) pepper/i, '🫑'], [/cardamom/i, 'e:cardamom'], [/spring onion/i, 'd:spring-onion'], [/\bonions?\b|shallot/i, '🧅'], [/\bsalt\b/i, '🧂'],
   [/rosemary|thyme|oregano|bay lea/i, '🌿'], [/prawn|shrimp/i, '🦐'], [/parmesan|cheddar|feta|cheese/i, '🧀'], [/squash|pumpkin(?! seed)/i, '🎃'],
   [/lettuce|rocket|mixed leaves|bok choy/i, '🥬'], [/kimchi|sauerkraut/i, '🥬'], [/berries/i, '🫐'], [/bacon/i, '🥓'], [/hummus/i, '🫘'], [/\bcream\b/i, '🥛'],
   [/mayonnaise/i, 'd:mayonnaise'], [/black pepper|peppercorn/i, 'd:black-pepper'], [/cumin/i, 'd:cumin'], [/paprika/i, 'd:paprika'], [/curry/i, 'd:curry'], [/nutmeg/i, 'd:nutmeg'],
-  [/vanilla/i, 'd:vanilla'], [/nutritional yeast/i, 'd:nutritional-yeast'], [/tamari|soy sauce/i, 'd:tamari'], [/mustard/i, 'd:mustard'], [/toothpick/i, 'd:toothpick'], [/pickle|gherkin/i, '🥒'], [/maple/i, 'd:maple-syrup'], [/\bdates\b/i, 'd:dates']];
+  [/vanilla/i, 'd:vanilla'], [/nutritional yeast/i, 'd:nutritional-yeast'], [/sesame oil/i, 'd:black-seed-oil'], [/tamari|soy sauce/i, 'd:tamari'], [/mustard/i, 'd:mustard'], [/toothpick/i, 'd:toothpick'], [/pickle|gherkin/i, '🥒'], [/maple/i, 'd:maple-syrup'], [/\bdates\b/i, 'd:dates']];
 const ingEmo = n => { const nm = String(n).replace(/\s*\(.*?\)/g, '').split(',')[0], pre = ING_EMO.find(([re]) => re.test(nm)); return pre ? pre[1] : ((FOOD_EMO.find(([re]) => re.test(nm)) || [, ''])[1]); };
 function recIngs(r) {
   const groups = [];
@@ -9496,8 +9496,9 @@ function recIngs(r) {
     let G = groups[groups.length - 1]; if (!G || G.head !== head) groups.push(G = { head, items: [] });
     const q = t.match(ING_Q), qty = q ? q[1].trim() : '', rest = q ? t.slice(q[0].length) : t;
     G.items.push({ i, qty: qty.charAt(0).toUpperCase() + qty.slice(1), name: qty ? rest : rest.charAt(0).toUpperCase() + rest.slice(1) }); });
+  const used = new Set(); // no ingredient picture twice in one recipe; keep the true one when no look-alike exists
   return groups.map(G => `${G.head ? `<div class="rci-h">${/^(Optional|To serve)$/i.test(G.head) ? G.head : `For the ${G.head.toLowerCase()}`}</div>` : ''}${G.items.map(x => { const k = r.id + x.i;
-    return `<button class="check-row rci ${ui.checked[k] ? 'on' : ''}" data-action="check" data-k="${k}"><span class="cb">${icon('check', 14, 2.2)}</span><span class="rci-e">${(e => e ? emoRaw(e) : '')(ingEmo(x.name))}</span><b class="rci-q">${x.qty}</b><span class="rci-n">${x.name}</span></button>`; }).join('')}`).join('');
+    return `<button class="check-row rci ${ui.checked[k] ? 'on' : ''}" data-action="check" data-k="${k}"><span class="cb">${icon('check', 14, 2.2)}</span><span class="rci-e">${(e => e ? emoRaw(pickUniq([e], used, true)) : '')(ingEmo(x.name))}</span><b class="rci-q">${x.qty}</b><span class="rci-n">${x.name}</span></button>`; }).join('')}`).join('');
 }
 function recMicro(r) {
   if (!r.micro) return '';
