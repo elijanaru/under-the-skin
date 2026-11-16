@@ -16794,3 +16794,13 @@ html .sgx-when h3 { margin: 0 0 8px; font: 500 15px/1.2 var(--font); color: #203
 .nu2-p.art img.emo { width: 32px; height: 32px; padding: 0; }
 .sup2-r { flex-wrap: wrap; row-gap: 0; }
 .sup2-r > .nu2-when { flex: 1 0 calc(100% - 64px); margin: 2px 0 0 64px; }
+/* the weekly supplements card on Nutrients uses the same white bubbles as the lists */
+.nw2-p.art { background: #fff; box-shadow: 0 0 0 1px rgba(48,64,35,.10), 0 3px 8px -5px rgba(32,48,26,.25); }
+.nw2-p.art img { object-fit: contain; padding: 5px; box-sizing: border-box; }
+.nw2-p.art .emo { font-size: 21px; line-height: 1; }
+.nw2-p.art img.emo { width: 24px; height: 24px; padding: 0; }
+/* contrast sweep: small grey labels on white cards up to 4.5:1 (were 3.95:1) */
+html .eat-row .rcard.has-photo .rc-k, html .pv-rec .rcard.has-photo .rc-k, html .eat-row .rcard.has-photo .rc-m, html .pv-rec .rcard.has-photo .rc-m,
+html .tf2-e, html .lt2-tag, html .mg4-w figcaption small, html .tf2-s { color: rgba(32,48,26,.7) !important; }
+html .view .pl-head .mv2-eyebrow { color: rgba(32,48,26,.78); }
+html .view .pl-head p { color: rgba(32,48,26,.84); font-weight: 400; }

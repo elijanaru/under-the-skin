@@ -6743,7 +6743,7 @@ function suppWeek() {
   const today = C.startOfDay(new Date()), ds = Array.from({ length: 7 }, (_, k) => C.addDays(today, k - 6));
   const days = ds.map(d => getLog(C.iso(d)).supp || []), any = days.some(d => d.length);
   const pc = PH_HEX[(M.info && M.info.phase) || 'follicular'];
-  const pic = x => { const h = NU_HERO[x.id] || suppHero(x.id); return h ? (h[0].startsWith('tea:') ? teaPhoto(h[0].slice(4), 160, 160) : foodPhoto(h[0], 160)) : ''; };
+  const used = new Set(), art = x => nuArt(NU_HERO[x.id] || suppHero(x.id), used, x.id) || nuIc(x.id, 18);
   const items = SUPPS.map(([n]) => NUTRIENTS.find(x => x.n === n)).filter(Boolean).map(x => [x, days.map(d => d.includes(x.n))]);
   const total = items.reduce((a, [, t]) => a + t.filter(Boolean).length, 0);
   return `<section class="card nw2" style="--pc:${pc}">
@@ -6751,7 +6751,7 @@ function suppWeek() {
       <button class="nw2-log" data-action="nav" data-to="log">${icon('plus', 14)} Log</button></div>
     <div class="nw2-days"><span></span><span class="nw2-dl">${ds.map((d, k) => `<i class="${k === 6 ? 'td' : ''}">${k === 6 ? 'T' : fmt(d, { weekday: 'narrow' })}</i>`).join('')}</span><span></span></div>
     ${items.map(([x, t]) => { const c = t.filter(Boolean).length; return `<button class="nw2-r" data-action="nav" data-to="nutrients/${x.id}">
-      <span class="nw2-p">${pic(x) ? `<img src="${pic(x)}" alt="" loading="lazy" decoding="async">` : nuIc(x.id, 18)}</span>
+      <span class="nw2-p art">${art(x)}</span>
       <span class="nw2-t"><b>${x.n}</b><small>${esc(x.d[0][0])}${/test/i.test(x.d[0][1]) ? ` · ${esc(x.d[0][1])}` : ""}</small></span>
       <span class="nw2-dl">${t.map((on, k) => `<i class="${on ? 'on' : ''} ${k === 6 ? 'td' : ''}"></i>`).join('')}</span>
       <em class="dotnum ${c ? '' : 'z'}">${c || ''}</em></button>`; }).join('')}
