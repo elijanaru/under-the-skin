@@ -4900,6 +4900,10 @@ function symptomTrend() {
     return { start: p.start, now, days, logged: days.some(l => (l.moods || []).length || (l.symptoms || []).length) }; });
   if (cyc.filter(c => c.logged).length < 2) return '';
   const rows = BA_METRICS.map(([n, f]) => [({ 'PMS mood days': 'PMS moods', 'Cramp days': 'Cramps', 'Breakout days': 'Breakouts', 'Bloated days': 'Bloating', 'Tired days': 'Tiredness' })[n] || n, cyc.map(c => c.days.filter(f).length)]).filter(([, v]) => v.some(Boolean));
+  // her own recurring symptoms the five fixed rows don't cover (a headache that comes every cycle), up to two more rows
+  const covered = n => BA_METRICS.some(([, f]) => f({ symptoms: [n], moods: [n] }));
+  patterns().list.filter(x => !covered(x.name)).sort((a, b) => b.cyclesN - a.cyclesN).slice(0, 2)
+    .forEach(x => { const v = cyc.map(c => c.days.filter(l => (l.symptoms || []).includes(x.name) || (l.moods || []).includes(x.name)).length); if (v.some(Boolean)) rows.push([x.name, v]); });
   if (!rows.length) return '';
   const full = cyc.map((c, i) => i).filter(i => !cyc[i].now), max = Math.max(4, ...rows.flatMap(([, v]) => v));
   const trend = v => { if (full.length < 2) return '<span class="st2-tr">·</span>'; const d = v[full[full.length - 1]] - v[full[full.length - 2]];
