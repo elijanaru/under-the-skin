@@ -368,7 +368,9 @@ const FRIENDS = {
 };
 // the Today tile in a few words: [title, do, skip]
 const FRIENDS_TILE = { menstrual: ['Film night at home', 'A slow walk', 'Big parties'], follicular: ['A new class together', 'Meet someone new', 'Cancelling plans'], ovulatory: ['Dinner or dancing', 'The big talk', 'Hiding at home'], luteal: ['Tea with one friend', 'Cook together', 'Late arguments'] };
-const TOPIC_PIC = { eat: 'images/season-veg.webp', friends: 'images/partner-hands.jpg', stretch: 'images/move-walk.webp', meditate: 'images/move-meditate.webp', tea: 'images/tea-ginger.webp' };
+// Eat opens on a dish for her phase: warm broth on the period, a green bowl with egg rising, red and purple berries at the peak, warm squash soup after (warm before the period)
+const EAT_HERO = { menstrual: 'ginger-bone-broth', follicular: 'spring-green-bowl', ovulatory: 'chia-berry-pudding', luteal: 'squash-walnut-soup' };
+const TOPIC_PIC = { eat: 'images/season-veg.webp', friends: 'images/partner-hands.jpg', stretch: 'images/tile-yoga.webp', meditate: 'images/forest-calm.jpg', tea: 'images/tea-ginger.webp' };
 // Friends tile: how full her social battery typically is today, as a ring (from MIND_GUIDE's social level 0–3).
 // Social battery by cycle day: a smoothed average of how sociable women tend to feel (Pierson 2021 Clue data, Hromatko 2023,
 // Romans 2012 review). Low while bleeding, rising with estrogen, highest near ovulation, a steady second half, a dip before the period.
@@ -402,10 +404,10 @@ function viewTopic(k) {
       <div class="en-r no tp-skip">${icon('close', 12, 2.4)}<span><em>Skip</em>${F.skip}</span></div>
       <div class="tp-f"><span class="dos-w">${icon('clock', 12)} This week</span>${saveBtn(regTip(`friends-${ph}`, 'Friends', [PEOPLE_PLAN[ph][0], F.ideas[0], F.ideas[1], 'This week'], 'do/friends'))}</div>
       <details class="gr-why"><summary>Why in this phase ${icon('chevD', 13)}</summary><p>${F.why}</p></details></section>`; }
-  else body = `<section class="card tp-card tp-wrap">${todayTiles(info, k)}</section>`;
+  else body = `<section class="card tp-card tp-wrap tp-${k}">${todayTiles(info, k)}</section>`;
   return `${topbar(head[0], { back: true })}
   <div class="pad tp">
-    ${k === 'tea' ? (() => { const td = TEA_DAY[w], st = (td[3].match(/\d+(?:–\d+)?\s*min/) || [''])[0]; return teaWheel(info, w, td, st, w === 'flow-start' || w === 'flow-end' || w === 'premenstrual', true); })() : `<section class="tp-hero"><img src="${TOPIC_PIC[k]}" alt=""><span class="tp-hero-t"><small>Day ${Math.min(info.cd, info.L)} · ${P.name}</small><b>${head[1]}</b></span></section>`}
+    ${k === 'tea' ? (() => { const td = TEA_DAY[w], st = (td[3].match(/\d+(?:–\d+)?\s*min/) || [''])[0]; return teaWheel(info, w, td, st, w === 'flow-start' || w === 'flow-end' || w === 'premenstrual', true); })() : `<section class="tp-hero"><img src="${(k === 'eat' && photoUrl(EAT_HERO[ph], 900)) || TOPIC_PIC[k]}" alt=""></section><div class="tp-name"><span class="eyebrow">Day ${Math.min(info.cd, info.L)} · ${P.name}</span><h1>${head[1]}</h1></div>`}
     ${body}
   </div>`;
 }
