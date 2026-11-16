@@ -4843,18 +4843,15 @@ const BG_PROOF = [{ v: 37, t: 'smaller sugar rise', w: 'Vegetables and protein b
   { v: 58, t: 'lower risk of a cycle without ovulation', w: 'More omega-3 fats (DPA) in the blood', by: 'Mumford, 2016', p: 6 }];
 // Fertility & feminine flow (16 Nov 2026): the twelve fertile habits as three small groups of tappable emoji chips,
 // one short line per group, a count for today. Tap a chip to mark it done.
-const FF_GROUPS = [['Warm & slow', 'Warmth and rest feed your womb.', 'warm', [['warm-feet', '🧦', 'Warm feet'], ['warm-soup', '🍲', 'A warm soup'], ['magnesium-bath', '🛁', 'Magnesium bath'], ['slow', '🐢', 'Slow down']]],
-  ['Nourish & protect', 'The building blocks of your hormones.', 'feed', [['egg-yolks', '🥚', ''], ['phone-away', '📵', 'Phone off your lap'], ['track', '🗓️', 'Track your cycle']]],
-  ['Feel & connect', 'Pleasure and calm lower stress.', 'feel', [['dance', '💃', 'Dance'], ['snuggle', '🤗', 'Snuggles & touch'], ['beauty', '🌸', 'Beauty around you'], ['intuition', '✨', 'Listen inward'], ['pray', '🕊️', 'Prayer or intention']]]];
+// Fertility & feminine flow as calm reading text, no tick boxes (16 Nov 2026, her call)
 function feminineFlow() {
-  const done = habitsDone(todayISO()), d = myDiet(), all = FF_GROUPS.flatMap(g => g[3]), n = all.filter(x => done.includes(x[0])).length;
-  const yolk = d === 'vegan' ? ['🥑', 'Good fats today'] : d === 'veg' || d === 'pesc' ? ['🥚', 'Egg yolks today'] : ['🥚', 'Yolks or liver'];
-  const chip = ([id, e, t]) => { const on = done.includes(id), [em, lb] = id === 'egg-yolks' ? yolk : [e, t];
-    return `<button class="ff-c ${on ? 'on' : ''}" data-action="habitTick" data-id="${id}" aria-pressed="${on}"><span class="ff-e">${emoRaw(em)}</span><b>${lb}</b><i class="ff-k">${icon('check', 12, 2.8)}</i></button>`; };
+  const d = myDiet(), fats = d === 'vegan' ? 'good fats like avocado and olive oil' : d === 'veg' || d === 'pesc' ? 'egg yolks and good fats' : 'egg yolks, liver and good fats';
+  const P = [['🌷', 'Warm & slow', 'Keep your feet warm and have a warm soup. Take a magnesium bath in the evening and slow your pace when you can. Warmth and rest feed your womb.'],
+    ['🥚', 'Nourish & protect', `Eat ${fats} every day, they are the building blocks of your hormones. Keep your phone off your lap and track your cycle, so you learn your own rhythm.`],
+    ['🕊️', 'Feel & connect', 'Dance, snuggle and let yourself be touched. Put beauty around you, listen inward and take a quiet moment for prayer or an intention. Pleasure and calm lower stress.']];
   return `${sectionTitle('Fertility & feminine flow')}
-    <section class="ff">
-      <header class="ff-h"><span class="ff-n"><b class="dotnum">${n}</b><small>of ${all.length}<br>today</small></span><p>${n ? n === all.length ? 'All of them. Your body feels safe and nourished.' : 'Lovely. Add one more when it feels easy.' : 'Small, gentle things that tell your body it is safe to bloom.'}</p></header>
-      ${FF_GROUPS.map(([t, why, k, L]) => `<div class="ff-g ${k}"><div class="ff-gh"><b>${t}</b><small>${why}</small></div><div class="ff-cs">${L.map(chip).join('')}</div></div>`).join('')}
+    <section class="fft"><p class="fft-l">Small, gentle things that tell your body it is safe to bloom.</p>
+      ${P.map(([e, t, x]) => `<div class="fft-p"><h4><span>${emoRaw(e)}</span>${t}</h4><p>${x}</p></div>`).join('')}
     </section>`;
 }
 function balanceProof() {

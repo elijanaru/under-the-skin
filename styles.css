@@ -16472,29 +16472,14 @@ html .fx-ti.cup img { max-height: 70px; max-width: 80%; filter: drop-shadow(0 8p
 /* Food explore: the season's rituals next to the diet guide */
 html .fx-rit .sr-wrap { margin: 0; }
 html .fx-c span img[src*="unsplash"], html .fx-c span img[src*="tea"] { object-fit: cover; }
-/* Fertility & feminine flow: three groups of emoji chips */
-.ff { margin-top: 10px; padding: 18px 16px 16px; border-radius: 30px; background: #fff; box-shadow: 0 14px 34px -18px rgba(32,48,26,.3), inset 0 0 0 1px rgba(32,48,26,.05); }
-.ff-h { display: flex; align-items: center; gap: 14px; padding: 0 2px 14px; border-bottom: 1px solid rgba(32,48,26,.08); }
-.ff-n { flex: none; display: flex; align-items: center; gap: 7px; }
-.ff-n b { font-size: 34px; line-height: 1; color: #20301a; }
-.ff-n small { font-size: 11px; line-height: 1.2; color: rgba(32,48,26,.6); }
-.ff-h p { margin: 0; font-size: 13.5px; line-height: 1.4; color: #304023; }
-.ff-g { margin-top: 14px; padding: 12px; border-radius: 22px; }
-.ff-g.warm { background: #fbeef0; } .ff-g.feed { background: #fbf4e4; } .ff-g.feel { background: #f2eef8; }
-.ff-gh { display: flex; flex-direction: column; gap: 1px; padding: 0 4px 10px; }
-.ff-gh b { font-size: 15px; font-weight: 500; color: #20301a; }
-.ff-gh small { font-size: 12.5px; color: rgba(32,48,26,.66); }
-.ff-cs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.ff-c { position: relative; display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 7px 34px 7px 7px; border: 0; border-radius: 16px; background: #fff; box-shadow: 0 4px 12px -8px rgba(32,48,26,.35); text-align: left; font: inherit; color: #20301a; cursor: pointer; transition: transform .2s ease, background .3s ease; }
-.ff-c:active { transform: scale(.97); }
-.ff-e { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.9); box-shadow: inset 0 0 0 1px rgba(32,48,26,.07); }
-.ff-e .emo { font-size: 19px; } .ff-e img.emo { width: 20px; height: 20px; }
-.ff-c b { font-size: 13px; font-weight: 500; line-height: 1.2; }
-.ff-k { position: absolute; right: 8px; top: 50%; width: 18px; height: 18px; margin-top: -9px; border-radius: 50%; display: grid; place-items: center; box-shadow: inset 0 0 0 1.5px rgba(32,48,26,.2); color: transparent; transition: background .3s ease, color .3s ease, box-shadow .3s ease; }
-.ff-c.on { background: #20301a; color: #fff; }
-.ff-c.on .ff-e { background: rgba(255,255,255,.14); box-shadow: none; }
-.ff-c.on .ff-k { background: #fff; color: #20301a; box-shadow: none; }
-@media (prefers-reduced-motion: reduce) { .ff-c, .ff-k { transition: none; } }
+/* Fertility & feminine flow: calm reading text (16 Nov 2026, her call: text, not boxes) */
+.fft { margin-top: 10px; padding: 20px 20px 8px; border-radius: 30px; background: #fff; box-shadow: 0 14px 34px -18px rgba(32,48,26,.3), inset 0 0 0 1px rgba(32,48,26,.05); color: #20301a; }
+.fft-l { margin: 0 0 4px; font-size: 15px; line-height: 1.45; color: #304023; }
+.fft-p { padding: 14px 0; border-top: 1px solid rgba(32,48,26,.08); }
+.fft-p:first-of-type { border-top: 0; }
+.fft-p h4 { display: flex; align-items: center; gap: 8px; margin: 0 0 5px; font-size: 16px; font-weight: 500; color: #20301a; }
+.fft-p h4 span .emo { font-size: 17px; }
+.fft-p p { margin: 0; font-size: 14px; line-height: 1.55; color: rgba(32,48,26,.74); }
 
 /* Relief › Eat & drink (Round B): foods and nutrients as cut-outs or drawn emoji on the soft tinted bubble, like Grocery; teas keep their cup photos */
 .rlf-t img.cut, .rlf-t > i.rlf-e { background: hsl(calc(var(--hb) + 20 * var(--hk)) calc(30% * var(--hs)) 94%); box-shadow: 0 6px 14px rgba(48,64,35,0.10); }
