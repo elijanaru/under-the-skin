@@ -16874,3 +16874,4 @@ html .mvm-more .mvx-r > summary { display: grid; grid-template-columns: 56px 1fr
 html .mvm-more .mvx-r .mv2-d { min-width: 0; font-size: 16px; white-space: nowrap; }
 html .mvm-more .mvx-r > summary > svg { transform: none; } html .mvm-more .mvx-r[open] > summary > svg { transform: rotate(180deg); }
 html .mvx-b { padding-left: 66px; }
+html .sz-food .sz-b small.sz-nut { color: rgba(32,48,26,.78) !important; font-size: 12px; line-height: 1.25; } /* Today, In season: the two main nutrients */
