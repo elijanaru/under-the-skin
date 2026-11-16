@@ -1391,7 +1391,51 @@ export const TTC_STAGE = {
 // Cumulative chance of pregnancy by cycle for couples who time sex to the fertile days (Gnoth 2003), month 1 to 12.
 export const TTC_CHANCE = [38, 55, 68, 74, 78, 81, 84, 86, 88, 90, 91, 92];
 export const TTC_DOCTOR = [['Under 35', 'After 12 months of trying'], ['35 to 39', 'After 6 months'], ['40 or older', 'Straight away'], ['Any age', 'Now, if periods are missing or very irregular, with endometriosis or PCOS, after a pelvic infection, or after 2 or more miscarriages']];
-export const TTC_BOTH = [['Her', 'Folate 400 µg a day, from 3 months before. Vitamin D 10 µg in winter. Iodine from fish or eggs.'], ['Him', 'Sperm take about 2.5 months to mature. Zinc foods, no laptop on the lap, no long hot baths.'], ['Timing', 'Sex every 2 to 3 days all month covers the fertile days without stress.'], ['Lube', 'Most lubricants slow sperm. Use a sperm-friendly one, or none.']];
+export const TTC_BOTH = [['Her', 'Folate 400 µg a day, from 3 months before, and iodine from fish or eggs. CoQ10 and vitamin D are in your foundations above.'], ['Him', 'Sperm take about 2.5 months to mature. Zinc foods, no laptop on the lap, no long hot baths.'], ['Timing', 'Sex every 2 to 3 days all month covers the fertile days without stress.'], ['Lube', 'Most lubricants slow sperm. Use a sperm-friendly one, or none.']];
+// Trying for a baby, her foundations (16 Nov 2026, her list): CoQ10, high vitamin D, wild fatty fish, food the way nature
+// made it, never starving, hidden hormone disruptors, soft movement, nature and sun. Each opens a sheet: why, how, care, study.
+export const TTC_FOUND = {
+  coq10: { e: '💊', t: 'CoQ10', s: 'Fuel for your eggs', n: '90', u: 'days for an egg to mature',
+    why: 'An egg needs more energy than almost any cell in your body to mature and divide cleanly. CoQ10 helps the mitochondria, the little power plants inside each egg, make that energy. Your own levels fall with age, faster from the mid 30s. The egg you release in 3 months is growing right now, so this is the time to feed it.',
+    how: ['200 to 300 mg a day, with a meal that has fat', 'Ubiquinol is the form the body takes up most easily', 'Take it for at least 3 months, the time an egg needs', 'Food has it too: heart, liver, sardines, mackerel, beef'],
+    care: 'It can lower blood pressure and blood sugar a little. Ask your doctor first if you take blood thinners (warfarin) or blood pressure medicine. Once you are pregnant, ask your doctor or midwife before you go on.',
+    cite: 'Xu et al. 2018 · Reproductive Biology and Endocrinology. Women given CoQ10 for 60 days before IVF had more eggs and more good quality embryos.' },
+  vitd: { e: '☀️', t: 'Vitamin D', s: 'High, not just enough', n: '+33%', u: 'more live births with enough vitamin D',
+    why: 'Your ovaries, your womb lining and the egg itself all carry vitamin D receptors. Women with good levels get pregnant and carry to birth more often than women who are low. Most women in the north are low from October to April, so test, then keep it in the upper half of normal.',
+    how: ['Ask for a blood test: aim for 40 to 60 ng/ml (100 to 150 nmol/l)', 'Sun on bare skin, 10 to 20 minutes around midday in summer, then sunscreen. Sunscreen and window glass block most of the rays that make vitamin D', 'Wild salmon, sardines, egg yolks and butter from grass-fed cows', 'Winter or a low test: D3, 1,000 to 2,000 IU a day with a fatty meal'],
+    care: 'Stay at or under 4,000 IU a day unless a test and your doctor say more. Too much raises calcium in the blood. Never let the sun burn you.',
+    cite: 'Chu et al. 2018 · Human Reproduction. Across 11 studies, women with enough vitamin D had a 33% higher chance of a live birth after fertility treatment.' },
+  fish: { e: '🐟', t: 'Wild fatty fish', s: '2 to 3 times a week', n: '92%', u: 'pregnant within a year, eating seafood often',
+    why: 'Wild fatty fish brings omega 3 fats, vitamin D, iodine and selenium in one plate. Omega 3 calms inflammation, supports the egg and builds the baby’s brain and eyes from the very first weeks. Couples who ate seafood often got pregnant faster.',
+    how: ['Wild salmon, sardines, Atlantic mackerel, herring, anchovies, trout', '2 to 3 portions a week, cooked', 'Small fish carry the least mercury', 'The skin and the roe are the richest parts'],
+    care: 'Skip swordfish, shark, marlin, king mackerel and bigeye tuna, they are high in mercury. Eat fish cooked while you are trying, raw fish can carry listeria.',
+    cite: 'Gaskins et al. 2018 · Journal of Clinical Endocrinology & Metabolism. Couples eating seafood 8 or more times per cycle: 92% pregnant within a year, against 79% for those eating little.' },
+  nature: { e: '🥩', t: 'Eat what nature made', s: 'Meat, fish, eggs, fruit', n: '3', u: 'eggs cover a day of choline',
+    why: 'Your body builds its hormones from cholesterol and protein, and needs iron, zinc, choline, B12 and vitamin A to ovulate and to grow a baby. High quality animal foods carry all of these in the form the body takes up best. Ripe fruit adds vitamin C, folate and gentle carbs that keep your cycle steady.',
+    how: ['Pasture-raised meat a few times a week, a small portion of liver once a week', '2 to 3 eggs a day, the yolk is where the choline is', 'Wild fatty fish 2 to 3 times a week', 'Ripe fruit every day: berries, citrus, kiwi, figs', 'Butter, ghee, olive oil and raw honey, few grains'],
+    care: 'Cook meat and eggs through while you are trying. Once you are pregnant, skip liver: it holds a lot of vitamin A.',
+    cite: 'Choline: Institute of Medicine. One egg yolk holds about 147 mg, a woman needs about 425 mg a day, 450 mg in pregnancy.' },
+  starve: { e: '🍽️', t: 'Never starve yourself', s: 'Your body needs to feel safe', n: '5', u: 'days of under-eating quiet ovulation signals',
+    why: 'When food runs low, your brain turns down GnRH, the signal that starts ovulation. Strict diets, fasting and skipped meals can stop ovulation, even at a normal weight. Your body only plans a baby when it knows there is enough.',
+    how: ['Three real meals a day, protein in each', 'Breakfast within an hour of waking', 'Fat at every meal: butter, egg yolk, olive oil, fatty fish', 'No calorie counting and no fasting while you are trying'],
+    care: 'No periods, or cycles longer than 35 days? See a doctor. It can be a sign that your body is not getting enough.',
+    cite: 'Loucks & Thuma 2003 · Journal of Clinical Endocrinology & Metabolism. Ovulation signals (LH pulses) dropped within 5 days once women ate too little for what they burned.' },
+  disrupt: { e: '🧴', t: 'Hidden threats', s: 'Fake hormones in everyday things', n: '4', u: 'easy swaps lower the load',
+    why: 'Endocrine disruptors are chemicals that act like hormones in your body: BPA, phthalates, parabens and PFAS. They hide in plastic boxes and bottles, paper receipts, perfume, scented lotions and non-stick pans. In women having fertility treatment, higher levels came with fewer eggs and fewer births.',
+    how: ['Glass or steel instead of plastic, never heat food in plastic', 'Fragrance-free soap, lotion and washing powder, no perfume on skin', 'Say no to paper receipts, the shiny coating is BPA', 'Cast iron or steel pans instead of non-stick', 'Filter your tap water, choose fresh food over tins and packets'],
+    care: 'You cannot avoid all of it, and you do not need to. Every swap lowers the load a little.',
+    cite: 'Hauser et al. 2016 · Environmental Health Perspectives (EARTH study). Women with the highest levels of the phthalate DEHP had fewer eggs and fewer live births in IVF.' },
+  move: { e: '🚶‍♀️', t: 'Move softly', s: 'Walks, yoga, meditation', n: '30', u: 'minutes of walking a day',
+    why: 'Gentle movement lowers stress hormones and brings blood to your womb and ovaries. Very hard training pulls energy away from reproduction. Now is the season for soft movement and stillness.',
+    how: ['Walk 30 to 60 minutes a day, outside if you can', 'Yoga 2 to 3 times a week, slow and stretching', 'Meditate or breathe slowly for 10 minutes a day', 'Keep hard sport under 5 hours a week while trying'],
+    care: 'If you love hard training, you do not have to stop. Lower the dose, and eat more on those days.',
+    cite: 'Wise et al. 2012 · Fertility and Sterility. Women at a normal weight doing 5 or more hours a week of hard exercise took longer to conceive. Walking and gentle exercise did not slow them.' },
+  outside: { e: '🌳', t: 'Nature and sun', s: 'As much as you can', n: '12%', u: 'lower cortisol after a forest walk',
+    why: 'Daylight sets your inner clock, and that clock times the hormones of ovulation. Sun on bare skin makes vitamin D. Time among trees lowers cortisol and calms your nervous system.',
+    how: ['Morning light in your eyes within an hour of waking, 10 minutes', 'Sunbathe 10 to 20 minutes around midday in warm months', 'Barefoot on grass, sand or earth when you can', 'A park or forest walk a few times a week', 'Dim the lights and screens after sunset'],
+    care: 'Burn easily? Start with 5 minutes and cover up long before your skin turns pink.',
+    cite: 'Park et al. 2010 · Environmental Health and Preventive Medicine. A forest walk lowered cortisol by about 12% compared with a city walk.' },
+};
 
 // Hormones made simple: a nickname, one plain sentence, the month in four steps (level 0 to 3 for
 // period, follicular, ovulation, luteal, with what she may feel) and what high or low can feel like.

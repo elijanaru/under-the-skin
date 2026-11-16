@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, DIET_CYCLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HORMONE_SIMPLE, HORMONE_RELAY, BODY_NOTES, AFTER_STAGES, AFTER_TOPICS, TTC_TRY, TTC_STAGE, TTC_CHANCE, TTC_DOCTOR, TTC_BOTH, LOSS_HELP, LOSS_STEPS, LOSS_WARN, LOSS_TOPICS, LOSS_REPEAT, LOSS_NOTES, LOSS_JOURNAL, LOSS_PARTNER, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS, STUDY_KEY,
+  PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, DIET_CYCLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HORMONE_SIMPLE, HORMONE_RELAY, BODY_NOTES, AFTER_STAGES, AFTER_TOPICS, TTC_TRY, TTC_STAGE, TTC_CHANCE, TTC_DOCTOR, TTC_BOTH, TTC_FOUND, LOSS_HELP, LOSS_STEPS, LOSS_WARN, LOSS_TOPICS, LOSS_REPEAT, LOSS_NOTES, LOSS_JOURNAL, LOSS_PARTNER, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS, STUDY_KEY,
 } from './data.js';
 import * as C from './cycle.js';
 import { icon } from './icons.js';
@@ -788,6 +788,42 @@ function viewLoss() {
 // Trying for a baby (16 Nov 2026, her call): the handmade world of the onboarding promise. A paper note says where she is,
 // sticker steps pick how long she has been trying, her fertile window is an admit-one ticket, the chances are a little bar
 // chart on taped paper, the doctor rule is three stamped tickets and the "for both of you" facts are sticky notes.
+// Her fertile foundations: the 90 day egg strip, two supplement bottles, the nature plate with the seafood graph, the
+// never-starve sticky note, the hidden threats swaps and the soft life notes. Every piece opens its sheet (tyFound).
+function tyFoundations() {
+  const F = TTC_FOUND, go = k => `data-action="tyFound" data-k="${k}"`;
+  const bottle = (k, dose, unit) => `<button class="ty-btl" ${go(k)}><span class="ty-cap" aria-hidden="true"></span>
+    <span class="ty-lab"><span class="ty-le">${emoRaw(F[k].e)}</span><b>${F[k].t}</b><span class="ty-dose"><b class="dotnum">${dose}</b><small>${unit}</small></span><em>${F[k].s}</em></span><i>Why ${icon('chevR', 11, 2.4)}</i></button>`;
+  const plate = [['🥩', 'Meat', 'nature'], ['🐟', 'Wild fish', 'fish'], ['🥚', 'Eggs', 'nature'], ['🍓', 'Fruit', 'nature']];
+  const swaps = [['🥡', 'Plastic box', '🫙', 'Glass jar'], ['🌸', 'Perfume', '🧼', 'Fragrance-free'], ['🧾', 'Paper receipt', '🙅‍♀️', 'No, thanks'], ['🍳', 'Non-stick pan', '🥘', 'Cast iron']];
+  return `<h4 class="gd-h">Your fertile <span class="gd-hl">foundations</span></h4>
+    <section class="gd-card ty-egg"><p class="ty-egg-t">An egg takes <b class="dotnum">90</b> days to mature</p>
+      <div class="ty-egg-bar" aria-hidden="true">${['Month 1', 'Month 2', 'Month 3'].map((m, i) => `<span style="--i:${i}"><small>${m}</small></span>`).join('')}<i>${emoRaw('🥚')}</i></div>
+      <p class="gd-jl">What you do today feeds the egg you release in 3 months. Start now, both of you.</p></section>
+    <div class="ty-btls">${bottle('coq10', '200', 'mg a day')}${bottle('vitd', '40+', 'ng/ml in blood')}</div>
+    <section class="gd-card gd-take ty-plate"><h5 class="ty-h5">Eat what <span>nature made</span></h5>
+      <div class="ty-pl">${plate.map(([e, n, k]) => `<button class="ty-pi" ${go(k)}><span>${emoRaw(e)}</span><small>${n}</small></button>`).join('')}</div>
+      <button class="ty-fish" ${go('fish')}><span class="ty-fh">Seafood and getting pregnant within a year</span>
+        <span class="ty-fr"><small>Little</small><i style="--w:79%"></i><b class="dotnum">79%</b></span>
+        <span class="ty-fr on"><small>2+ a week</small><i style="--w:92%"></i><b class="dotnum">92%</b></span>
+        <em>Wild salmon, sardines, mackerel, herring ${icon('chevR', 11, 2.4)}</em></button></section>
+    <div class="gd-notes ty-fnotes"><button class="gd-n n1 ty-fn" ${go('starve')}><span>${emoRaw(F.starve.e)}</span><b>${F.starve.t}</b><p>When food runs low, your brain switches off ovulation. Three real meals, fat at each, no fasting.</p></button></div>
+    <button class="ty-warn" ${go('disrupt')}><span class="ty-wt"><b>Hidden threats</b><small>Plastics and scents that act like fake hormones</small></span>
+      <span class="ty-sw">${swaps.map(([a, an, b, bn]) => `<span class="ty-sr"><span class="ty-so">${emoRaw(a)}<small>${an}</small></span><i aria-hidden="true">→</i><span class="ty-sn">${emoRaw(b)}<small>${bn}</small></span></span>`).join('')}</span>
+      <em>Why it matters ${icon('chevR', 11, 2.4)}</em></button>
+    <div class="gd-notes ty-soft">
+      <button class="gd-n n2 ty-fn" ${go('move')}><span>${emoRaw(F.move.e)}</span><b>${F.move.t}</b><p>Walks, yoga and 10 quiet minutes a day. Hard sport under 5 hours a week.</p><span class="ty-row">${['🚶‍♀️', '🧘‍♀️', '🕯️'].map(emoRaw).join('')}</span></button>
+      <button class="gd-n n0 ty-fn" ${go('outside')}><span>${emoRaw(F.outside.e)}</span><b>${F.outside.t}</b><p>Morning light, 10 to 20 minutes of sun on skin, barefoot on the earth, as often as you can.</p><span class="ty-row">${['☀️', '🌿', '🦶'].map(emoRaw).join('')}</span></button></div>`;
+}
+function tyFoundSheet(k) {
+  const x = TTC_FOUND[k]; if (!x) return '';
+  return `<div class="tyf"><span class="tyf-e">${emoRaw(x.e)}</span><h2>${x.t}</h2><p class="tyf-s">${x.s}</p>
+    <div class="tyf-stat"><b class="dotnum">${x.n}</b><small>${x.u}</small></div>
+    <h5>Why it matters</h5><p class="tyf-p">${x.why}</p>
+    <h5>How</h5><ul class="tyf-l">${x.how.map(h => `<li>${O3_TICK}<span>${h}</span></li>`).join('')}</ul>
+    <div class="tyf-c"><b>Good to know</b><p>${x.care}</p></div>
+    <small class="tyf-cite">${x.cite}</small></div>`;
+}
 function viewTrying() {
   const p = state.profile, st = ttcStage(), m = ttcMonths(), mo = st && st !== 'tx' && st !== 'new' ? Math.min(12, Math.floor(m) + 1) : 0, info = M.info;
   const W = 300, H = 104, bw = W / 12;
@@ -833,6 +869,7 @@ function viewTrying() {
       <p class="ty-big"><b class="dotnum">9</b> in <b class="dotnum">10</b> <span>within a year</span></p>
       ${chart}<p class="gd-jl">Couples who timed sex to the fertile days, pregnant by each month${mo ? `. You are in month ${mo}` : ''}.</p>
       <small class="tr-cite">Gnoth et al. 2003 · Human Reproduction. Chances per cycle drop slowly after 35.</small></section>
+    ${tyFoundations()}
     <h4 class="gd-h">When to see <span class="gd-hl">a doctor</span></h4>
     <div class="ty-doc">${doc}</div>
     <div class="gd-notes ty-any"><div class="gd-n n1"><span>🩺</span><b>Any age, go now if</b><p>${anyAge.charAt(0).toUpperCase() + anyAge.slice(1)}.</p></div></div>
@@ -10759,6 +10796,7 @@ const actions = {
   hidePartner: () => { state.hidePartner = true; save(); render(); toast('Hidden. Turn it back on in Profile, Partner mode.'); },
   partnerToday: () => { state.hidePartner = !state.hidePartner; save(); render(); },
   fbLvl: d => { ui.fbLvl = +d.v; const b = document.querySelector('.bgx2'); if (!b) return render(); const info = M.info, t = document.createElement('div'); t.innerHTML = balanceGuide(info, habitsDone(todayISO())); b.replaceWith(t.firstElementChild); },
+  tyFound: d => wsOpen(tyFoundSheet(d.k), 'ws-ty'),
   fbSheet: d => wsOpen(`<div class="fbp-det fbs">${fbDetail(+d.i)}</div>`, 'ws-fb'),
   fbTick: (d, el) => { const k = todayISO(), H = state.habits = state.habits || {}; const a = H[k] = H[k] || []; a.includes(d.id) ? a.splice(a.indexOf(d.id), 1) : a.push(d.id); save();
     const on = a.includes(d.id); el.classList.toggle('on', on); el.setAttribute('aria-pressed', on); el.closest('.bgd-r').classList.toggle('ok', on);

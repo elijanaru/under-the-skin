@@ -16256,3 +16256,80 @@ html .tp .rt .rt-ctl .rt-go { flex: 1; }
 html .tp .rt .rt-ctl .sv-btn { flex: none; }
 html .rt .rt-p:has(> i.dotnum) { background: none; box-shadow: none; }
 html .rt .rt-p > i.dotnum { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: #20301a; color: #fff; font: 800 13px/1 var(--dot); font-style: normal; }
+/* Trying for a baby: her fertile foundations (16 Nov 2026) */
+.ty button { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.ty-egg { transform: rotate(-.5deg); padding-top: 22px; }
+.ty-egg-t { margin: 0 0 12px; text-align: center; font: 700 22px/1.1 Caveat, 'Outfit', cursive; color: #304023; }
+.ty-egg-t b { font-size: 30px; color: #b04f6c; vertical-align: -3px; }
+.ty-egg-bar { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding-right: 40px; }
+.ty-egg-bar span { position: relative; height: 26px; border-radius: 8px; background: #f6eef0; overflow: hidden; }
+.ty-egg-bar span::after { content: ''; position: absolute; inset: 0; border-radius: 8px; background: hsl(340 calc(46% + var(--i) * 6%) calc(84% - var(--i) * 13%)); transform-origin: left; animation: tyGrow .8s cubic-bezier(.22,1,.36,1) both; animation-delay: calc(.2s + var(--i) * .25s); }
+.ty-egg-bar small { position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; font: 600 10.5px/1 var(--font); color: #20301a; }
+.ty-egg-bar span:last-of-type small { color: #fff; }
+.ty-egg-bar > i { position: absolute; right: 0; top: 50%; translate: 0 -50%; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: #fff; box-shadow: 0 4px 10px -4px rgba(60,30,40,.35); }
+.ty-egg-bar > i .emo { margin: 0; display: block; font-size: 20px; line-height: 1; }
+.ty-egg .gd-jl { margin: 12px 0 2px; }
+@keyframes tyGrow { from { transform: scaleX(0); } }
+.ty-btls { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 26px 6px 0; }
+.ty-btl { position: relative; display: grid; justify-items: center; padding: 0 0 12px; border: 0; background: none; text-align: center; }
+.ty-btl:nth-child(1) { rotate: -1.4deg; } .ty-btl:nth-child(2) { rotate: 1.2deg; }
+.ty-cap { width: 58%; height: 22px; border-radius: 8px 8px 3px 3px; background: repeating-linear-gradient(90deg, #304023 0 4px, #3d522d 4px 8px); box-shadow: 0 2px 0 rgba(0,0,0,.08); }
+.ty-lab { display: grid; justify-items: center; gap: 3px; width: 100%; margin-top: -2px; padding: 14px 10px 14px; border-radius: 14px 14px 22px 22px; background: #fffdf9;
+  box-shadow: inset 0 0 0 1.5px rgba(32,48,26,.12), 0 16px 26px -16px rgba(60,30,40,.5); }
+.ty-le { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: #fde9ef; }
+.ty-btl:nth-child(2) .ty-le { background: #fdf0cf; }
+html .ty-le .emo { margin: 0; display: block; font-size: 21px; line-height: 1; }
+.ty-lab > b { font: 700 22px/1 Caveat, 'Outfit', cursive; color: #20301a; }
+.ty-dose { display: grid; justify-items: center; padding: 6px 0 4px; border-block: 1.5px dashed rgba(176,79,108,.3); width: 86%; }
+.ty-dose b { font-size: 26px; line-height: 1; color: #b04f6c; } .ty-dose small { font: 500 10.5px/1.2 var(--font); color: rgba(32,48,26,.65); }
+.ty-lab em { font: 400 12px/1.3 var(--font); font-style: normal; color: rgba(32,48,26,.75); }
+.ty-btl > i, .ty-warn > em, .ty-fish > em { display: inline-flex; align-items: center; gap: 3px; margin-top: 8px; padding: 5px 12px; border-radius: 99px; background: #fff; font: 600 11.5px/1 var(--font); font-style: normal; color: #20301a; box-shadow: 0 4px 10px -6px rgba(32,48,26,.4); }
+.ty-plate { padding-top: 24px; }
+.ty-h5 { margin: 0 0 12px; text-align: center; font: 700 24px/1 Caveat, 'Outfit', cursive; color: #304023; } .ty-h5 span { color: #b04f6c; }
+.ty-pl { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.ty-pi { display: grid; justify-items: center; gap: 5px; border: 0; background: none; padding: 0; }
+.ty-pi > span { width: 54px; height: 54px; display: grid; place-items: center; border-radius: 50%; background: #fff; box-shadow: inset 0 0 0 1.5px rgba(32,48,26,.1), 0 6px 12px -8px rgba(60,30,40,.45); }
+html .ty-pi .emo { margin: 0; display: block; font-size: 27px; line-height: 1; }
+.ty-pi small { font: 500 11.5px/1.1 var(--font); color: #20301a; }
+.ty-fish { display: grid; gap: 7px; width: 100%; margin-top: 16px; padding: 14px 12px 12px; border: 0; border-radius: 16px; background: #f4f6ec; text-align: left; justify-items: stretch; }
+.ty-fh { font: 600 12.5px/1.3 var(--font); color: #20301a; }
+.ty-fr { display: grid; grid-template-columns: 62px 1fr 44px; align-items: center; gap: 8px; }
+.ty-fr small { font: 500 11px/1 var(--font); color: rgba(32,48,26,.65); }
+.ty-fr i { height: 14px; border-radius: 7px; background: linear-gradient(90deg, #c9d2b2 var(--w), rgba(32,48,26,.06) var(--w)); }
+.ty-fr.on i { background: linear-gradient(90deg, #6c823e var(--w), rgba(32,48,26,.06) var(--w)); }
+.ty-fr b { font-size: 15px; color: #304023; text-align: right; } .ty-fr.on b { color: #6c823e; }
+.ty-fish > em { justify-self: start; margin-top: 2px; }
+.ty-fnotes { margin-top: 18px; }
+.ty-fn { border: 0; text-align: left; width: 100%; }
+.ty-warn { display: grid; gap: 10px; width: calc(100% - 8px); margin: 26px 4px 0; padding: 16px 14px 14px; border: 0; border-radius: 18px; text-align: center; justify-items: center; rotate: -.6deg;
+  background: repeating-linear-gradient(135deg, #fff6d6 0 14px, #fdf0c4 14px 28px); box-shadow: inset 0 0 0 2px #e8c76a, 0 16px 28px -18px rgba(60,40,10,.5); }
+.ty-wt { display: grid; gap: 2px; } .ty-wt b { font: 700 24px/1 Caveat, 'Outfit', cursive; color: #8a5a12; } .ty-wt small { font: 500 12px/1.3 var(--font); color: #5e4a1c; }
+.ty-sw { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
+.ty-sr { display: grid; grid-template-columns: 1fr 12px 1fr; align-items: center; padding: 8px 6px; border-radius: 12px; background: rgba(255,255,255,.9); }
+.ty-sr > i { font: 600 12px/1 var(--font); font-style: normal; color: #b9862f; }
+.ty-so, .ty-sn { display: grid; justify-items: center; gap: 3px; }
+html .ty-sr .emo { margin: 0; display: block; font-size: 20px; line-height: 1; }
+.ty-so small, .ty-sn small { font: 500 9.5px/1.15 var(--font); color: #20301a; }
+.ty-so { opacity: .6; } .ty-so small { text-decoration: line-through; text-decoration-color: rgba(176,79,108,.7); }
+.ty-soft { grid-template-columns: 1fr 1fr; margin-top: 22px; }
+.ty-soft .gd-n { grid-template-columns: 1fr; text-align: left; }
+.ty-soft .gd-n > span:first-child { grid-row: auto; }
+.ty-soft .gd-n p { font-size: 12.5px; }
+.ty-row { display: flex; gap: 6px; margin-top: 8px; } html .ty-row .emo { margin: 0; display: block; font-size: 18px; line-height: 1; }
+/* her foundation sheet */
+.tyf { text-align: center; padding-bottom: 8px; }
+.tyf-e { display: grid; place-items: center; width: 74px; height: 74px; margin: 4px auto 10px; border-radius: 50%; background: #fde9ef; }
+html .tyf-e .emo { margin: 0; display: block; font-size: 36px; line-height: 1; }
+.tyf h2 { margin: 0; font: 400 26px/1.1 var(--font); color: #20301a; letter-spacing: -.01em; }
+.tyf-s { margin: 4px 0 14px; font: 700 20px/1.1 Caveat, 'Outfit', cursive; color: #b04f6c; }
+.tyf-stat { display: grid; justify-items: center; gap: 4px; margin: 0 auto 18px; padding: 14px 18px; max-width: 260px; border-radius: 20px; background: #f4f6ec; }
+.tyf-stat b { font-size: 40px; line-height: 1; color: #6c823e; } .tyf-stat small { font: 500 12.5px/1.3 var(--font); color: #304023; }
+.tyf h5 { margin: 16px 0 6px; text-align: left; font: 600 11px/1 var(--font); letter-spacing: .14em; text-transform: uppercase; color: rgba(32,48,26,.6); }
+.tyf-p { margin: 0; text-align: left; font: 400 14.5px/1.55 var(--font); color: #20301a; }
+.tyf-l { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; text-align: left; }
+.tyf-l li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; font: 400 14px/1.45 var(--font); color: #20301a; }
+.tyf-l svg { width: 20px; height: 20px; margin-top: 1px; fill: none; stroke: #6c823e; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.tyf-c { margin-top: 16px; padding: 12px 14px; border-radius: 14px; background: #fff6d6; text-align: left; }
+.tyf-c b { font: 600 12.5px/1 var(--font); color: #8a5a12; } .tyf-c p { margin: 4px 0 0; font: 400 13.5px/1.45 var(--font); color: #3d3212; }
+.tyf-cite { display: block; margin-top: 14px; text-align: left; font: 400 11.5px/1.4 var(--font); color: rgba(32,48,26,.55); }
+@media (prefers-reduced-motion: reduce) { .ty-egg-bar span::after { animation: none; } }
