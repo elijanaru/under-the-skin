@@ -3429,7 +3429,10 @@ function sugarSpec(on) {
 // Superfoods › intro note in the style of the unlock page (16 Nov 2026, her call): why a spoon of the right food matters
 function superIntro() {
   const swirl = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';
-  return `<div class="sfi"><section class="o3-note ul3-note ul4-note sfi-note">
+  return `<div class="sfi"><div class="ul4-stage sfi-stage">
+      <svg class="ul4-sp" viewBox="0 0 360 220" aria-hidden="true">${o3Spark('#f1d58a', 30, 30, 0)}${o3Spark('#fff', 330, 26, 1.1)}${o3Spark('#c9d6a8', 340, 190, 2)}${o3Spark('#f6c6d4', 18, 196, 1.6)}</svg>
+      <img class="sfi-hero" src="images/fx/super-honey.webp" alt="A bee sipping a drop of raw honey"></div>
+    <section class="o3-note ul3-note ul4-note sfi-note">
       <small class="ul4-eye">Why superfoods</small>
       <h2 class="ul4-h">Small foods,<br><em>big work${swirl}</em></h2>
       <p class="o3-lead">Your body builds every hormone from what you eat. A spoon of the <mark>right food</mark> for your phase brings the iron, zinc and good fats it needs.</p>
