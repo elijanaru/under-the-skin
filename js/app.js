@@ -36,7 +36,7 @@ function load() { try { return JSON.parse(localStorage.getItem(KEY)); } catch { 
 function save(quiet) {
   if (state && !quiet) state.updatedAt = Date.now();
   try { localStorage.setItem(KEY, JSON.stringify(state)); } catch { /* storage unavailable */ }
-  if (!quiet) { cloudSoon(); calSoon(); }
+  if (!quiet) { cloudSoon(); calSoon(); clearTimeout(save.lt); save.lt = setTimeout(() => scheduleLettersNative(), 2500); } // letters for the next days follow a newly logged period
 }
 
 // ---------- account sync ----------
@@ -370,6 +370,8 @@ const FRIENDS = {
 const FRIENDS_TILE = { menstrual: ['Film night at home', 'A slow walk', 'Big parties'], follicular: ['A new class together', 'Meet someone new', 'Cancelling plans'], ovulatory: ['Dinner or dancing', 'The big talk', 'Hiding at home'], luteal: ['Tea with one friend', 'Cook together', 'Late arguments'] };
 // Eat opens on a dish for her phase: warm broth on the period, a green bowl with egg rising, red and purple berries at the peak, warm squash soup after (warm before the period)
 const EAT_HERO = { menstrual: 'ginger-bone-broth', follicular: 'spring-green-bowl', ovulatory: 'chia-berry-pudding', luteal: 'squash-walnut-soup' };
+// the Eat page photo: her phase's dish, or the first dish for this phase that fits how she eats
+const eatHero = ph => { const r = RECIPES.find(x => x.id === EAT_HERO[ph]); return !r || fitsDiet(r) ? EAT_HERO[ph] : (myRecipes().find(x => x.phases.includes(ph) && photoUrl(x.id)) || myRecipes().find(x => photoUrl(x.id)) || r).id; };
 const TOPIC_PIC = { eat: 'images/season-veg.webp', friends: 'images/partner-hands.jpg', stretch: 'images/tile-yoga.webp', meditate: 'images/forest-calm.jpg', tea: 'images/tea-ginger.webp' };
 // Friends tile: how full her social battery typically is today, as a ring (from MIND_GUIDE's social level 0–3).
 // Social battery by cycle day: a smoothed average of how sociable women tend to feel (Pierson 2021 Clue data, Hromatko 2023,
@@ -408,7 +410,7 @@ function viewTopic(k) {
   else body = `<section class="card tp-card tp-wrap tp-${k}">${todayTiles(info, k)}</section>`;
   return `${topbar(head[0], { back: true })}
   <div class="pad tp">
-    ${k === 'tea' ? (() => { const td = TEA_DAY[w], st = (td[3].match(/\d+(?:–\d+)?\s*min/) || [''])[0]; return teaWheel(info, w, td, st, w === 'flow-start' || w === 'flow-end' || w === 'premenstrual', true); })() : `<section class="tp-hero"><img src="${(k === 'eat' && photoUrl(EAT_HERO[ph], 900)) || TOPIC_PIC[k]}" alt=""></section><div class="tp-name"><span class="eyebrow">Day ${Math.min(info.cd, info.L)} · ${P.name}</span><h1>${head[1]}</h1></div>`}
+    ${k === 'tea' ? (() => { const td = TEA_DAY[w], st = (td[3].match(/\d+(?:–\d+)?\s*min/) || [''])[0]; return teaWheel(info, w, td, st, w === 'flow-start' || w === 'flow-end' || w === 'premenstrual', true); })() : `<section class="tp-hero"><img src="${(k === 'eat' && photoUrl(eatHero(ph), 900)) || TOPIC_PIC[k]}" alt=""></section><div class="tp-name"><span class="eyebrow">Day ${Math.min(info.cd, info.L)} · ${P.name}</span><h1>${head[1]}</h1></div>`}
     ${body}
   </div>`;
 }
@@ -794,7 +796,11 @@ function tyFoundations() {
   const F = TTC_FOUND, go = k => `data-action="tyFound" data-k="${k}"`;
   const bottle = (k, dose, unit) => `<button class="ty-btl" ${go(k)}><span class="ty-cap" aria-hidden="true"></span>
     <span class="ty-lab"><span class="ty-le">${emoRaw(F[k].e)}</span><b>${F[k].t}</b><span class="ty-dose"><b class="dotnum">${dose}</b><small>${unit}</small></span><em>${F[k].s}</em></span><i>Why ${icon('chevR', 11, 2.4)}</i></button>`;
-  const plate = [['🥩', 'Meat', 'nature'], ['🐟', 'Wild fish', 'fish'], ['🥚', 'Eggs', 'nature'], ['🍓', 'Fruit', 'nature']];
+  const dt = myDiet(), noFish = dt === 'veg' || dt === 'vegan';
+  const plate = { pesc: [['🐟', 'Wild fish', 'fish'], ['🥚', 'Eggs', 'nature'], ['🥛', 'Raw dairy', 'nature'], ['🍓', 'Fruit', 'nature']],
+    veg: [['🥚', 'Eggs', 'nature'], ['🥛', 'Raw dairy', 'nature'], ['🫘', 'Beans & lentils', 'nature'], ['🍓', 'Fruit', 'nature']],
+    vegan: [['🫘', 'Beans & lentils', 'nature'], ['🥑', 'Avocado & seeds', 'nature'], ['🥬', 'Greens', 'nature'], ['🍓', 'Fruit', 'nature']] }[dt]
+    || [['🥩', 'Meat', 'nature'], ['🐟', 'Wild fish', 'fish'], ['🥚', 'Eggs', 'nature'], ['🍓', 'Fruit', 'nature']];
   const swaps = [['🥡', 'Plastic box', '🫙', 'Glass jar'], ['🌸', 'Perfume', '🧼', 'Fragrance-free'], ['🧾', 'Paper receipt', '🙅‍♀️', 'No, thanks'], ['🍳', 'Non-stick pan', '🥘', 'Cast iron']];
   return `<h4 class="gd-h">Your fertile <span class="gd-hl">foundations</span></h4>
     <section class="gd-card ty-egg"><p class="ty-egg-t">An egg takes <b class="dotnum">90</b> days to mature</p>
@@ -803,10 +809,10 @@ function tyFoundations() {
     <div class="ty-btls">${bottle('coq10', '200', 'mg a day')}${bottle('vitd', '40+', 'ng/ml in blood')}</div>
     <section class="gd-card gd-take ty-plate"><h5 class="ty-h5">Eat what <span>nature made</span></h5>
       <div class="ty-pl">${plate.map(([e, n, k]) => `<button class="ty-pi" ${go(k)}><span>${emoRaw(e)}</span><small>${n}</small></button>`).join('')}</div>
-      <button class="ty-fish" ${go('fish')}><span class="ty-fh">Seafood and getting pregnant within a year</span>
+      ${noFish ? `<p class="ty-nofish">${emoRaw('🌿')}<span><b>Omega-3 without fish</b>Algae oil gives the same DHA as fish: 200 to 300 mg a day, plus ground flax and walnuts.</span></p>` : `<button class="ty-fish" ${go('fish')}><span class="ty-fh">Seafood and getting pregnant within a year</span>
         <span class="ty-fr"><small>Little</small><i style="--w:79%"></i><b class="dotnum">79%</b></span>
         <span class="ty-fr on"><small>2+ a week</small><i style="--w:92%"></i><b class="dotnum">92%</b></span>
-        <em>Wild salmon, sardines, mackerel, herring ${icon('chevR', 11, 2.4)}</em></button></section>
+        <em>Wild salmon, sardines, mackerel, herring ${icon('chevR', 11, 2.4)}</em></button>`}</section>
     <div class="gd-notes ty-fnotes"><button class="gd-n n1 ty-fn" ${go('starve')}><span>${emoRaw(F.starve.e)}</span><b>${F.starve.t}</b><p>When food runs low, your brain switches off ovulation. Three real meals, fat at each, no fasting.</p></button></div>
     <button class="ty-warn" ${go('disrupt')}><span class="ty-wt"><b>Hidden threats</b><small>Plastics and scents that act like fake hormones</small></span>
       <span class="ty-sw">${swaps.map(([a, an, b, bn]) => `<span class="ty-sr"><span class="ty-so">${emoRaw(a)}<small>${an}</small></span><i aria-hidden="true">→</i><span class="ty-sn">${emoRaw(b)}<small>${bn}</small></span></span>`).join('')}</span>
@@ -819,8 +825,8 @@ function tyFoundSheet(k) {
   const x = TTC_FOUND[k]; if (!x) return '';
   return `<div class="tyf"><span class="tyf-e">${emoRaw(x.e)}</span><h2>${x.t}</h2><p class="tyf-s">${x.s}</p>
     <div class="tyf-stat"><b class="dotnum">${x.n}</b><small>${x.u}</small></div>
-    <h5>Why it matters</h5><p class="tyf-p">${x.why}</p>
-    <h5>How</h5><ul class="tyf-l">${x.how.map(h => `<li>${O3_TICK}<span>${h}</span></li>`).join('')}</ul>
+    <h5>Why it matters</h5><p class="tyf-p">${dietProse(x.why)}</p>
+    <h5>How</h5><ul class="tyf-l">${x.how.map(dietProse).filter(Boolean).map(h => `<li>${O3_TICK}<span>${h}</span></li>`).join('')}</ul>
     <div class="tyf-c"><b>Good to know</b><p>${x.care}</p></div>
     <small class="tyf-cite">${x.cite}</small></div>`;
 }
@@ -1586,7 +1592,7 @@ const TEA4_MORE = {
 };
 function teaSheet(ph, i) {
   const [n, f] = PHASE_TEAS[ph][i], [why, amt, water, steep, when, warn] = PHASE_TEA_SPEC[ph][i], good = TEA4_GOOD[ph][i];
-  const steps = [['bowl', 'You need', amt], ['thermo', 'Water', water], ['clock', 'Steep', steep], ['sun', 'When', when]];
+  const steps = [['bowl', 'You need', dietProse(amt)], ['thermo', 'Water', water], ['clock', 'Steep', steep], ['sun', 'When', when]];
   return `<div class="tsh" style="--c:${PH_HEX[ph]}">
     <header class="tsh-h"><small>made for ${f.toLowerCase()}</small>
       <h2>${n}<svg viewBox="0 0 200 18" preserveAspectRatio="none" aria-hidden="true"><path d="M4 11 C 40 5, 72 14, 106 8 S 170 6, 196 10"/></svg></h2></header>
@@ -1940,7 +1946,7 @@ function hbcSheet(id) {
     </div>
     <header class="hs-h"><small>${when} · ${ph} phase</small><h2>${t}</h2></header>
     <section class="o3-note hs-note"><p class="o3-lead">${does}.</p><p class="rls-why">${why}</p></section>
-    <section class="hs-card"><h3><span class="hs-ic">${icon('leaf', 16, 2)}</span>How</h3>${(HB_HOW[t] || HB_HOW[id]) ? `<ol class="hs-steps">${(HB_HOW[t] || HB_HOW[id]).map(x => `<li>${x}</li>`).join('')}</ol>` : `<p>${how}</p>`}</section>
+    <section class="hs-card"><h3><span class="hs-ic">${icon('leaf', 16, 2)}</span>How</h3>${(HB_HOW[t] || HB_HOW[id]) ? `<ol class="hs-steps">${(HB_HOW[t] || HB_HOW[id]).map(dietProse).filter(Boolean).map(x => `<li>${x}</li>`).join('')}</ol>` : `<p>${dietProse(how)}</p>`}</section>
     <button class="hs-done hbs-done ${on ? 'on' : ''}" data-action="hbcTick" data-id="${id}" aria-pressed="${on}">${icon('check', 16, 2.4)} ${on ? 'Done today' : 'Mark as done today'}</button>
   </div>`;
 }
@@ -2641,7 +2647,7 @@ function petCat(mood = 'awake') {
 function whatsGoingOn(text) { return `<section class="card wgo"><div class="eyebrow">What’s going on</div><p>${text}</p></section>`; }
 // The food tab: one calm home (plate + option cards); each option opens its own simple page at #/plan/<key>.
 function planOpts(phase) {
-  const recs = myRecipes().filter(r => r.phases.includes(phase)), m = new Date().getMonth() + 1, sz = SZ.seasonal(myCountry(), m), sn = SZ.seasonName(myCountry(), m);
+  const recs = myRecipes().filter(r => r.phases.includes(phase)), m = new Date().getMonth() + 1, sz = szMine(myCountry(), m), sn = SZ.seasonName(myCountry(), m);
   const fits = M.info ? sz.filter(i => i.ph.includes(phase)).length : 0, cf = cycFoods(phase), tea = TCM[phase].tea.name;
   const recPic = recs.map(r => photoUrl(r.id)).find(Boolean);
   return [
@@ -2671,7 +2677,7 @@ function foodExplore(phase, info) {
     lead = warm ? 'Your period is close, so warm and cooked dishes come first.' : `Dishes that fit your ${name.toLowerCase()} phase and the season.`;
     body = `<div class="fx-big">${recs.map(r => `<button class="fx-b" data-action="nav" data-to="recipe/${r.id}"><img src="${photoUrl(r.id, 520)}" alt="" loading="lazy" decoding="async"><b>${r.name}</b><small>${icon('clock', 13)}<i class="dotnum">${r.time}</i> min${r.raw ? '<em>Raw</em>' : r.warm ? '<em class="w">Warm</em>' : ''}</small></button>`).join('')}</div>`;
   } else if (k === 'season') {
-    const m = new Date().getMonth() + 1, sz = SZ.seasonal(myCountry(), m), seen = new Set(), its = sz.filter(x => x.ph.includes(phase) && szCut(x.f)).concat(sz.filter(x => !x.ph.includes(phase) && szCut(x.f))).filter(x => { const c = szCut(x.f); if (seen.has(c)) return false; seen.add(c); return true; }).slice(0, 9); // one tile per picture, no repeats
+    const m = new Date().getMonth() + 1, sz = szMine(myCountry(), m), seen = new Set(), its = sz.filter(x => x.ph.includes(phase) && szCut(x.f)).concat(sz.filter(x => !x.ph.includes(phase) && szCut(x.f))).filter(x => { const c = szCut(x.f); if (seen.has(c)) return false; seen.add(c); return true; }).slice(0, 9); // one tile per picture, no repeats
     lead = `${SZ.seasonName(myCountry(), m)} foods where you live, the ones for your phase first.`;
     body = `<div class="fx-g">${its.map(x => tile(szCut(x.f), x.f.charAt(0).toUpperCase() + x.f.slice(1), `data-action="seasonGo" data-f="${esc(x.f)}"`)).join('')}</div>`;
   } else if (k === 'guide') {
@@ -2827,7 +2833,7 @@ function warmWindow(info) { return !!info && (info.phase === 'menstrual' || info
 // How many of a recipe's ingredients are in season this month where she lives.
 const seasonKey = f => f.toLowerCase().replace(/\(.*\)/, '').split(/ & | and |,/)[0].trim().replace(/s$/, '');
 function seasonHits(r) {
-  const now = SZ.seasonal(myCountry(), new Date().getMonth() + 1).map(i => seasonKey(i.f)).filter(k => k.length > 2);
+  const now = szMine(myCountry(), new Date().getMonth() + 1).map(i => seasonKey(i.f)).filter(k => k.length > 2);
   return r.ingredients.filter(x => now.some(k => String(x).toLowerCase().includes(k))).length;
 }
 function recipesFor(phase, info) {
@@ -3044,7 +3050,7 @@ function cafCard() {
 }
 // Supplements as a spec sheet: label left, value right, the study with author and year, the caution, the full sheet behind one tap.
 function suppSpec(x) {
-  const rows = [['Dose', x.dose], ['Form', x.form], ['When', x.when], ['Feel it', SUPP_TIME[x.id]], ['Food first', SUPP_HERO[x.id] && SUPP_HERO[x.id][1]]].filter(r => r[1]);
+  const rows = [['Dose', x.dose], ['Form', x.form], ['When', x.when], ['Feel it', SUPP_TIME[x.id]], ['Food first', suppHero(x.id) && suppHero(x.id)[1]]].filter(r => r[1]);
   return `<dl class="sup-spec">${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v.charAt(0).toUpperCase() + v.slice(1)}</dd></div>`).join('')}</dl>
     ${x.study ? `<span class="sr-st sup-st"><small>What studies found</small>${x.study.split('. ')[0].replace(/\.$/, '')}. <i>${x.cite.split(' · ').filter((c, i, A) => i === 0 || !/\b(19|20)\d\d\b/.test(c) && !A.slice(1, i).some(d => /\b(19|20)\d\d\b/.test(d))).join(' · ')}</i></span>` : ''}
     ${x.caution ? `<span class="sfc-care sup-care"><small>Before you try</small>${x.caution}</span>` : ''}
@@ -3061,7 +3067,7 @@ function eatCatInner(phase, cat) {
   const items = warmChips(C0[1], cat, warm).map(([g, n]) => {
     const x = cat === 'supps' && !/algae|B12/i.test(n) && suppOf(n), why = x ? x.desc.split('. ')[0] + '.' : (EB_WHY.find(([r]) => r.test(n)) || [0, C0[0]])[1], pic = cat === 'supps' ? null : (EB_PIC.find(([r]) => r.test(n)) || [])[1]?.();
     const sym = cat === 'supps' ? (x ? x.sym : /B12/.test(n) ? 'B12' : /omega/i.test(n) ? 'Ω3' : n.slice(0, 2)) : '';
-    const sh = x && SUPP_HERO[x.id], sp = sh ? (sh[0].startsWith('tea:') ? teaPhoto(sh[0].slice(4), 240, 240) : foodPhoto(sh[0], 240)) : '';
+    const sh = x && suppHero(x.id), sp = sh ? (sh[0].startsWith('tea:') ? teaPhoto(sh[0].slice(4), 240, 240) : foodPhoto(sh[0], 240)) : '';
     const face = sp ? `<img class="eb-ph" src="${sp}" alt="" loading="lazy" decoding="async">` : x && x.han ? `<img class="cut" src="images/sf/ginger.webp" alt="" loading="lazy">` : pic ? `<img class="${pic.startsWith('images/') ? 'cut' : ''}" src="${pic}" alt="" loading="lazy">` : sym ? `<span class="eb-sym ${x && x.han ? 'han' : ''}">${sym}</span>` : `<em>${g}</em>`;
     return { n, face, panel: `<span class="ebp-f">${face}</span><span class="ebp-t"><b>${cat === 'supps' ? n.replace(/\s+\d[\d–.\s]*(g|mg|IU|µg)$/, '') : n}</b><small>${why}</small>${/raw milk|milk, warmed|warm raw/i.test(n) && cat !== 'supps' ? `<span class="ebp-w">${icon('thermo', 13)} Warm raw milk very gently on low heat, only until it feels warm on your lip. Never boil it, or the good enzymes and bacteria are lost.</span>` : ''}</span>${x ? `<div class="sup-full">${suppSpec(x)}</div>` : ''}${cat === 'drinks' && /coffee/i.test(n) ? `<span class="sgt-st ebp-st"><b class="dotnum">1983</b><span><em>Morck</em>Coffee with a meal cut the iron absorbed from it by about 39%. Drunk an hour before the meal, it made no difference.<small>American Journal of Clinical Nutrition</small></span></span>` : ''}` };
   });
@@ -3079,8 +3085,11 @@ const PHASE_DISHES = {
   ovulatory: { d: [['raspberries', 'antioxidants and fibre for your brightest days', 'Raspberries'], ['asparagus', 'folate and fibre that help estrogen leave the body', 'Asparagus']] },
   luteal: { d: [['sweet potatoes', 'slow carbs and B6 keep blood sugar and mood steady', 'Sweet potatoes'], ['almonds', 'magnesium for calmer PMS and fewer cravings', 'Almonds']] },
 };
+// her period foods when she eats no red meat: mussels for pescetarians, beetroot and spinach for vegetarians and vegans
+const PHASE_DISHES_ALT = { pesc: { d: [['mussels', 'iron and zinc to replenish what you lose', 'Mussels'], ['beetroot', 'cooked, blood-building folate for heavy days', 'Beetroot']] },
+  plant: { d: [['beetroot', 'cooked, blood-building folate for heavy days', 'Beetroot'], ['spinach', 'cooked, iron and magnesium for cramps', 'Spinach']] } };
 function phaseFoodPic(phase, full) {
-  const X = PHASE_DISHES[phase], info = M.info;
+  const dt = myDiet(), X = phase === 'menstrual' && ['pesc', 'veg', 'vegan'].includes(dt) ? PHASE_DISHES_ALT[dt === 'pesc' ? 'pesc' : 'plant'] : PHASE_DISHES[phase], info = M.info;
   let day = '';
   if (info && info.phase === phase) day = `Day ${info.cd}`;
   else if (M.stats) { const r = C.phaseRanges(M.stats.avgCycle, M.stats.avgPeriod).find(x => x.key === phase); if (r) day = r.from === r.to ? `Day ${r.from}` : `Days ${r.from}–${r.to}`; }
@@ -3124,7 +3133,7 @@ function plateSeasonal(kind, phase, season, warm) {
   const isNow = season === SZ.seasonName(myCountry(), new Date().getMonth() + 1);
   if (!isNow) return PLATE_SEASON[season][kind].map(x => { const n = x.slice(x.indexOf(' ') + 1); return { n, g: x.slice(0, x.indexOf(' ')), photo: findFoodPhoto(n) }; });
   const kinds = kind === 'veg' ? ['veg', 'wild', 'fungi'] : ['fruit'];
-  const items = SZ.seasonal(myCountry(), new Date().getMonth() + 1).filter(i => kinds.includes(i.kind));
+  const items = szMine(myCountry(), new Date().getMonth() + 1).filter(i => kinds.includes(i.kind));
   const score = i => (i.ph.includes(phase) ? 2 : 0) + (warm ? (i.nature === 'cool' ? -2 : i.nature === 'warm' ? 1 : 0) : phase === 'luteal' ? (i.nature === 'warm' ? 1 : i.nature === 'cool' ? -1 : 0) : (season === 'Summer' && i.nature === 'cool' ? .5 : 0)) + (foodPhoto(i.f) ? .3 : 0);
   const out = items.map(i => ({ i, s: score(i) })).sort((a, b) => b.s - a.s).slice(0, 4).map(({ i }) => ({ n: i.f, photo: foodPhoto(i.f, 300) }));
   return out.length ? out : plateSeasonal(kind, phase, season === 'Winter' ? 'Autumn' : season, warm);
@@ -3391,7 +3400,7 @@ function nourishBody(current) {
 const SUGAR_SYMPTOMS = ['Cravings', 'Fatigue', 'Dizziness'];
 // A real photo for each blood-sugar trick, with its emoji as a little badge.
 const SB_PIC = { fibre: () => foodPhoto('Aged kimchi (mugeunji)', 360), move: () => 'images/fb/walk.webp', acv: () => foodPhoto('Apples', 360), tea: () => teaPhoto('Green tea', 360, 240),
-  berberine: () => 'images/fb/magnesium.webp', d3mg: () => 'images/rhythm-sun.webp', minerals: () => foodPhoto('Oysters', 360), spices: () => teaPhoto('Cinnamon', 360, 240) };
+  berberine: () => 'images/fb/magnesium.webp', d3mg: () => 'images/rhythm-sun.webp', minerals: () => foodPhoto(['veg', 'vegan'].includes(myDiet()) ? 'Pumpkin seeds' : 'Oysters', 360), spices: () => teaPhoto('Cinnamon', 360, 240) };
 // Blood sugar card: three label-left value-right rows that follow her taps.
 function sugarSpec(on) {
   const keep = sugarKeep(on), n = SUGAR_TRICKS.filter(t => on.includes(t.k)).length, next = SUGAR_TRICKS.filter(t => !on.includes(t.k) && t.k !== 'berberine').sort((a, b) => b.eff - a.eff)[0];
@@ -3415,7 +3424,7 @@ function sugarSection(phase) {
     ${sectionTitle('Blood sugar tricks', ['How they work', 'sugar'])}
     <section class="card sugar-big">
       ${[['before', '1', 'Before you eat'], ['with', '2', 'With your meal'], ['daily', '3', 'Every day']].map(([w, n, t]) => `<div class="sb-step"><div class="sb-sh"><span>${n}</span>${t}</div>
-        <div class="sb-grid">${SUGAR_TRICKS.filter(x => x.w === w).map(x => `<button class="sb-t sb-pic ${on.includes(x.k) ? 'on' : ''}" data-action="sugarTrick" data-v="${x.k}"><span class="sb-ph">${SB_PIC[x.k] ? `<img src="${SB_PIC[x.k]()}" alt="" loading="lazy">` : ''}<em>${icon(x.ic, 15, 1.9)}</em></span><b>${x.n}</b><small>${x.k === 'berberine' ? 'A capsule with a meal, ask your doctor first' : x.t}</small>${(([n, u]) => `<span class="sfc-am sb-am">${n ? `<b class="dotnum">${n}</b>` : ''}${u}</span>`)(SG_DOSE[x.k] || [0, ''])}<i class="sb-ck">${icon('check', 14, 2.6)}</i></button>`).join('')}</div></div>`).join('')}
+        <div class="sb-grid">${SUGAR_TRICKS.filter(x => x.w === w).map(x => `<button class="sb-t sb-pic ${on.includes(x.k) ? 'on' : ''}" data-action="sugarTrick" data-v="${x.k}"><span class="sb-ph">${SB_PIC[x.k] ? `<img src="${SB_PIC[x.k]()}" alt="" loading="lazy">` : ''}<em>${icon(x.ic, 15, 1.9)}</em></span><b>${x.n}</b><small>${x.k === 'berberine' ? 'A capsule with a meal, ask your doctor first' : x.k === 'minerals' ? dietFoods(x.t, 'zinc') : x.t}</small>${(([n, u]) => `<span class="sfc-am sb-am">${n ? `<b class="dotnum">${n}</b>` : ''}${u}</span>`)(SG_DOSE[x.k] || [0, ''])}<i class="sb-ck">${icon('check', 14, 2.6)}</i></button>`).join('')}</div></div>`).join('')}
     </section>`;
 }
 // Tricks overlap, so they don't simply add up: combined, the illustration caps the spike reduction at 50%.
@@ -4145,7 +4154,7 @@ function groceryItems() {
     }
   }
   // Out of season locally? Leave it out and offer an in-season swap with the same nutrient.
-  const m = new Date().getMonth() + 1, table = SZ.yearTable(myCountry()), nowSeason = SZ.seasonal(myCountry(), m);
+  const m = new Date().getMonth() + 1, table = SZ.yearTable(myCountry()), nowSeason = szMine(myCountry(), m);
   const ALIAS = { berries: /berr/i, 'leafy greens': /kale|spinach|chard|greens|lettuce/i, citrus: /citrus|orange|lemon|mandarin/i };
   const seasonOf = n => { const re = ALIAS[n]; const hits = table.filter(t => re ? re.test(t.f) : t.f.toLowerCase() === n); return hits.length ? hits.some(t => t.months.includes(m)) : null; };
   const swaps = [];
@@ -4169,7 +4178,7 @@ function groceryItems() {
   }
   // local seasonal foods that suit the coming week's phases go first
   const ph = weekPhases(), taken = new Set(Object.keys(items));
-  const season = SZ.seasonal(myCountry(), new Date().getMonth() + 1)
+  const season = szMine(myCountry(), new Date().getMonth() + 1)
     .filter(i => i.ph.some(p => ph.includes(p)) && !taken.has(i.f.toLowerCase()) && i.kind !== 'wild')
     .slice(0, 10).map(i => ({ name: i.f, phases: i.ph.filter(p => ph.includes(p)), why: `In season · ${{ warm: 'warming', cool: 'cooling', neutral: 'neutral' }[i.nature]}` }));
   return [['In season now', season], ...groups, other].filter(([, l]) => l.length);
@@ -4180,8 +4189,9 @@ const GRO_EMO = [[/potato/i, '🍠'], [/pumpkin|squash/i, '🎃'], [/spinach|col
   [/egg/i, '🥚'], [/beef|lamb|meat|liver|organ/i, '🥩'], [/chicken|duck|turkey/i, '🍗'], [/milk|kefir|yog|cheese|butter|ghee/i, '🥛'], [/lentil|bean|pea|chickpea/i, '🫘'], [/mushroom|shiitake/i, '🍄'], [/avocado/i, '🥑'], [/tomato/i, '🍅'], [/pepper/i, '🫑'],
   [/melon/i, '🍉'], [/fig|date|prune/i, '🫐'], [/ginger|turmeric/i, '🫚'], [/herb|mint|parsley|basil|cilantro|dill/i, '🌿'], [/seaweed|kelp|nori|gim|miyeok/i, '🌊'], [/millet|rice|buckwheat|quinoa|grain/i, '🌾'], [/honey|molasses/i, '🍯'], [/cinnamon|spice|clove/i, '✨'], [/kimchi|sauerkraut|ferment/i, '🫙']];
 const groEmoji = n => (GRO_EMO.find(([r]) => r.test(n)) || [0, '🌱'])[1];
-// a small round food photo for the grocery page, or its emoji tile when there is no photo
-const groPic = (n, cls = '') => { const ph = foodPhoto(n, 120); return ph ? `<img class="gsw-i ${cls}" src="${ph}" alt="" loading="lazy">` : `<span class="gsw-i gsw-e ${cls}" aria-hidden="true">${groEmoji(n)}</span>`; };
+// grocery foods as the same cut-outs the In season page uses, or a drawn emoji, on one soft tinted bubble (no busy round stock photos)
+const groIc = (n, cls = '') => { const cut = szCut(n); return `<span class="gro-ic ${cls}" aria-hidden="true">${cut ? `<img src="${cut}" alt="" loading="lazy" decoding="async">` : emoRaw(ingEmo(n) || groEmoji(n))}</span>`; };
+const groPic = (n, cls = '') => groIc(n, `gsw-i ${cls}`);
 // Food page: the grocery list as a little basket of this week's real foods, how many and how many are already in
 function groceryCard() {
   const flat = groceryItems().flatMap(([, l]) => l), got = state.grocery || {}, total = flat.length, done = flat.filter(i => got[i.name.toLowerCase()]).length;
@@ -4231,8 +4241,8 @@ function viewGrocery() {
     ${sectionTitle('Your list')}
     <div class="tea-tabs gro-tabs">${groups.map(([a, l]) => { const d = l.filter(i => got[i.name.toLowerCase()]).length; return `<button class="${a === aisle ? 'on' : ''} ${d === l.length ? 'full' : ''}" data-action="groAisle" data-v="${esc(a)}">${a} <i>${d}/${l.length}</i></button>`; }).join('')}</div>
     ${groups.filter(([a]) => a === aisle).map(([, list]) => `
-      <section class="card glass">${list.map(it => { const k = it.name.toLowerCase(), ph = foodPhoto(it.name, 120); return `<button class="check-row gro ${got[k] ? 'on' : ''}" data-action="groToggle" data-k="${esc(k)}">
-        <span class="cb">${icon('check', 14, 2.2)}</span>${ph ? `<img class="gro-img" src="${ph}" alt="" loading="lazy">` : `<span class="gro-img gro-emo" aria-hidden="true">${groEmoji(it.name)}</span>`}<span class="gro-n">${esc(it.name)}<small>${it.why}</small></span>
+      <section class="card glass">${list.map(it => { const k = it.name.toLowerCase(); return `<button class="check-row gro ${got[k] ? 'on' : ''}" data-action="groToggle" data-k="${esc(k)}">
+        <span class="cb">${icon('check', 14, 2.2)}</span>${groIc(it.name, 'gro-img')}<span class="gro-n">${esc(it.name)}<small>${it.why}</small></span>
         <span class="gro-ph">${it.phases.map(p => `<i style="background:${PH_HEX[p]}" title="${PHASES[p].name}"></i>`).join('')}</span></button>`; }).join('')}</section>`).join('')}
     <div class="gro-key">${phases.map(p => `<span><i style="background:${PH_HEX[p]}"></i>${PHASES[p].name}</span>`).join('')}<small>the phase each food supports</small></div>
     ${swaps.length ? (() => { const sw = swaps.filter(x => x.alt), sk = swaps.filter(x => !x.alt);
@@ -4360,7 +4370,7 @@ function dueReminders() {
     if (!info.isPeriod && info.daysToPeriod === 3) out.push({ id: 'cy-mag', icon: 'spark', title: 'Magnesium from today', body: '3 days to your period. Magnesium in the evening can ease cramps, bloating and PMS.', to: 'relief' });
     if (tm && !warmWindow(info) && warmWindow(tm)) out.push({ id: 'cy-warm', icon: 'bowl', title: 'Warm food from tomorrow', body: 'No raw or cold food until your period ends. Plan a soup or stew and keep ginger at home.', to: 'plan' });
     if ((w === 'premenstrual' || w === 'flow-start') && hNow >= 19) out.push({ id: 'cy-sleep', icon: 'moon', title: 'An early night tonight', body: 'Your hormones are low now. Extra sleep helps mood and cramps.' });
-    if (w === 'flow-end' && info.cd === info.P) out.push({ id: 'cy-iron', icon: 'drop', title: 'Rebuild your iron', body: 'Red meat or liver with peppers or citrus today. Nettle tea between meals.', to: 'tea' });
+    if (w === 'flow-end' && info.cd === info.P) out.push({ id: 'cy-iron', icon: 'drop', title: 'Rebuild your iron', body: `${{ pesc: 'Mussels or sardines', veg: 'Lentils, eggs or cooked spinach', vegan: 'Lentils or cooked spinach' }[myDiet()] || 'Red meat or liver'} with peppers or citrus today. Nettle tea between meals.`, to: 'tea' });
     if (info.daysToOv === 1) out.push({ id: 'cy-ov', icon: 'sun', title: 'High-energy days start tomorrow', body: 'Energy often peaks around ovulation: a good time for a harder workout or a night out.' });
     events().filter(e => e.date === C.iso(C.addDays(new Date(), 1))).forEach(e => { const x = evInfo(e); out.push({ id: 'ev-' + e.id, icon: 'calendar', title: `Tomorrow: ${evName(e)}`, body: x ? x.prep : 'Get ready tonight.', to: 'calendar' }); });
   }
@@ -4752,7 +4762,7 @@ function hpItemSheet(k, kind) {
   const x = HP_ITEM[k]; if (!x) return '';
   const ri = x[3] ? FB.findIndex(f => f.id === x[3]) : -1;
   return `<div class="tyf hpx"><span class="tyf-e ${kind}">${emoRaw(x[0])}</span><h2>${x[1]}</h2><p class="tyf-s">${kind === 'on' ? 'Brings your hormones back' : 'Knocks your hormones off'}</p>
-    <p class="tyf-p">${x[2]}</p>${ri >= 0 ? `<button class="hp-rit" data-action="fbSheet" data-i="${ri}">Open the ritual ${icon('chevR', 13)}</button>` : ''}</div>`;
+    <p class="tyf-p">${dietProse(x[2])}</p>${ri >= 0 ? `<button class="hp-rit" data-action="fbSheet" data-i="${ri}">Open the ritual ${icon('chevR', 13)}</button>` : ''}</div>`;
 }
 function hpHormSheet(k) {
   const H = HP_HORM[k]; if (!H) return '';
@@ -4800,7 +4810,7 @@ function balanceProof() {
 }
 function pillarHtml(P) {
   return `<div class="pls"><span class="pls-e">${emoRaw(HB_PIL_EMO[P.t] || '🌿')}</span><h3>${P.t}</h3><p class="pls-s">${P.s}</p>
-    <ul>${P.do.map(x => `<li>${icon('check', 12, 2.6)}<span>${x}</span></li>`).join('')}</ul><p><b>Why it works.</b> ${P.why}</p>
+    <ul>${P.do.map(dietProse).filter(Boolean).map(x => `<li>${icon('check', 12, 2.6)}<span>${x}</span></li>`).join('')}</ul><p><b>Why it works.</b> ${P.why}</p>
     ${P.st ? `<div class="sgt-st"><b class="dotnum">${P.st[2]}</b><span><em>${P.st[1]}</em>${P.st[0]}<small>${P.st[3]}</small></span></div>` : ''}</div>`;
 }
 function viewReliefIndex() {
@@ -5395,7 +5405,20 @@ const SUPP_HERO = {
   probiotic: ['Sauerkraut', 'raw sauerkraut'], zinc: ['Oysters', 'oysters'], 'vitamin-e': ['Sunflower seeds', 'sunflower seeds'], ashwagandha: ['tea:Warm milk with cinnamon', 'warm spiced milk'],
   b6: ['Salmon', 'salmon'], calcium: ['Grass-fed raw milk & butter', 'raw milk'], prenatal: ['Avocado', 'avocado'], coq10: ['Mackerel', 'mackerel'],
 };
-const suppPhoto = id => { const h = SUPP_HERO[id]; if (!h) return ''; return h[0].startsWith('tea:') ? teaPhoto(h[0].slice(4), 800, 900) : foodPhoto(h[0], 800); };
+// the food a supplement is richest in, for her diet: plant (or egg and dairy, or fish) foods when she doesn't eat the usual one
+const PLANT_HERO = { iron: ['Pumpkin seeds', 'pumpkin seeds and lentils'], 'omega-3': ['Ground flaxseed', 'flax, chia and walnuts'], creatine: ['Pumpkin seeds', 'hardly any plant food, so a supplement fills it'],
+  'vitamin-d': ['Mushrooms', 'sun-dried mushrooms'], zinc: ['Pumpkin seeds', 'pumpkin seeds'], b6: ['Sunflower seeds', 'sunflower seeds'], calcium: ['Sesame seeds', 'sesame and tahini'],
+  coq10: ['Broccoli', 'broccoli and sesame'], 'b-complex': ['Sunflower seeds', 'seeds and greens (B12 only from a supplement)'] };
+const VEG_HERO = { 'vitamin-d': ['Pasture eggs', 'egg yolks'], creatine: ['Pasture eggs', 'very little in eggs or dairy, so a supplement fills it'] };
+const PESC_HERO = { iron: ['Mussels', 'mussels'], creatine: ['Salmon', 'fish'] };
+function suppHero(id) {
+  const h = SUPP_HERO[id], d = myDiet(); if (!h || d === 'all' || lineFits(h[1], d)) return h;
+  if (h[0].startsWith('tea:')) return [h[0], swapText(h[1], d)];
+  return (d === 'pesc' && PESC_HERO[id]) || (d === 'veg' && VEG_HERO[id]) || PLANT_HERO[id] || null;
+}
+// "Food first" rows for her diet, keeping each row's place so its amount still lines up
+const suppFoods = id => (SUPP_FOOD[id] || []).map((r, i) => [r, i]).filter(([r]) => { const d = myDiet(); return d === 'all' || lineFits(r[0], d) || lineFits(swapText(r[0], d), d); });
+const suppPhoto = id => { const h = suppHero(id); if (!h) return ''; return h[0].startsWith('tea:') ? teaPhoto(h[0].slice(4), 800, 900) : foodPhoto(h[0], 800); };
 // how long each one takes before she can judge it (conservative, from the trials behind each sheet)
 const SUPP_TIME = { magnesium: '2 to 3 cycles for PMS', iron: '2 to 3 months to refill stores', 'omega-3': '2 to 3 months', 'vitamin-c': 'Works at the same meal', ginger: 'Within hours on period days',
   creatine: '3 to 4 weeks to fill your muscles', 'vitamin-d': '2 to 3 months', 'b-complex': 'A few weeks', probiotic: 'About 4 weeks', zinc: '1 to 2 cycles', 'vitamin-e': '2 to 3 cycles',
@@ -5405,12 +5428,12 @@ function viewSupp(id) {
   const ph = suppPhases(x), now = M.info && M.info.phase;
   return `${topbar('Supplement', { back: true })}<div class="pad sp2 sp2t">
     ${specHero({ stack: true, photo: suppPhoto(x.id), glyph: x.sym, han: x.han, eyebrow: 'Supplement', sym: !x.han, name: x.name, label: 'How to take it', max: 4,
-      extra: SUPP_HERO[x.id] ? `<span class="sp-capchip"><span class="sd-cap ${x.han ? 'han cutf' : ''}">${x.han ? '<img src="images/sf/ginger.webp" alt="">' : x.sym}</span><small>Richest in<b>${SUPP_HERO[x.id][1]}</b></small></span>` : '',
+      extra: suppHero(x.id) ? `<span class="sp-capchip"><span class="sd-cap ${x.han ? 'han cutf' : ''}">${x.han ? '<img src="images/sf/ginger.webp" alt="">' : x.sym}</span><small>Richest in<b>${suppHero(x.id)[1]}</b></small></span>` : '',
       rows: [['Dose', x.dose], ['Form', x.form], ['When', x.when], ...(SUPP_TIME[x.id] ? [['Give it', SUPP_TIME[x.id]]] : [])], desc: x.desc })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit(ph, now)}${ph.length === 4 ? '<small class="tf-all">Useful every day of your cycle</small>' : now && !ph.includes(now) ? `<small class="tf-all">Not a focus in your ${PHASES[now].name.toLowerCase()} phase</small>` : ''}</section>
     ${suppSafe(x.id)}
     ${suppDay(x.when)}
-    ${(SUPP_FOOD[x.id] || []).length ? `${sectionTitle('Food first')}<section class="card glass nu-food">${suppFoodHead(x.id)}${SUPP_FOOD[x.id].map((r, i) => suppFoodRow(x.id, r, i)).join('')}${SUPP_FOOD_AMT[x.id]?.note ? `<p class="ff-note">${SUPP_FOOD_AMT[x.id].note}</p>` : ''}${warmWindow(M.info) ? '<small class="tf-all">You\u2019re in your warm window: pick the cooked and warm ones until your period ends.</small>' : ''}</section>` : ''}
+    ${suppFoods(x.id).length ? `${sectionTitle('Food first')}<section class="card glass nu-food">${suppFoodHead(x.id)}${suppFoods(x.id).map(([r, i]) => suppFoodRow(x.id, r, i)).join('')}${SUPP_FOOD_AMT[x.id]?.note ? `<p class="ff-note">${SUPP_FOOD_AMT[x.id].note}</p>` : ''}${warmWindow(M.info) ? '<small class="tf-all">You\u2019re in your warm window: pick the cooked and warm ones until your period ends.</small>' : ''}</section>` : ''}
     ${remedyScience(x, { [x.id]: x })}
     ${(() => { const L = SUPP_LIB.filter(y => ttc() || !/prenatal|coq10/.test(y.id)), nx = L[(L.indexOf(x) + 1) % L.length]; return `<button class="card glass nu-next" data-action="nav" data-to="supp/${nx.id}"><small>Next</small><b>${nx.name}</b>${icon('chevR', 16)}</button>`; })()}
     <p class="fine center">Check with your doctor or pharmacist if you take medication${ttc() ? ' or might be pregnant' : ''}${state.profile.bf ? ' or are breastfeeding' : ''}. Food first, supplements to fill the gaps.</p>
@@ -5456,7 +5479,7 @@ function viewSupps() {
   const now = M.info && M.info.phase, tab = ui.supTab || (now ? 'now' : 'all');
   const L = SUPP_LIB.filter(x => ttc() || !/prenatal|coq10/.test(x.id)), on = L.filter(x => now && suppPhases(x).includes(now));
   // spec rows like the Nutrients list: a round photo of the food richest in it, what it's for, phase bars, the dose on the right in Doto
-  const pic = x => { const h = SUPP_HERO[x.id]; return h ? (h[0].startsWith('tea:') ? teaPhoto(h[0].slice(4), 300, 300) : foodPhoto(h[0], 300)) : ''; };
+  const pic = x => { const h = suppHero(x.id); return h ? (h[0].startsWith('tea:') ? teaPhoto(h[0].slice(4), 300, 300) : foodPhoto(h[0], 300)) : ''; };
   const forTxt = x => SUPP_FOR[x.id] || (NUTRIENTS.find(n => n.id === x.id) || {}).for || x.c.slice(0, 2).map(c => c[0]).join(', ');
   const dose = x => { const m = x.dose.match(/^(Up to )?([\d.,–]+)\s*(mg|g|IU|µg|capsule)?/); return m ? `${m[1] ? '<small>up to</small>' : ''}<b class="dotnum">${m[2]}</b><small>${m[3] || ''}</small>` : `<b class="nu2-w">${x.dose}</b>`; };
   const when = x => x.when.split(/,\s*/)[0].replace(/^Daily$/, 'Any time');
@@ -5743,6 +5766,36 @@ const FOOD_MEALS = {
     raw: null, warmAlt: ['Warm golden milk', 'Warm raw milk with turmeric, cinnamon and honey. No cold or raw food now.'],
     meat: ['Salmon or beef stew', 'Baked salmon for B6 and omega-3, or a slow beef stew with root veg.'] },
 };
+// The same meal ideas for other ways of eating. fish: pescetarian; plant: [vegetarian title, text, vegan title, text].
+const MEAL_ALT = {
+  fish: {
+    'flow-start': { broth: ['Fish broth with ginger', 'Simmer fish bones and heads 1 h with ginger and a few red dates. Sip a warm mug with every meal.'], meat: ['Mussels in a warm broth', 'Steamed mussels with garlic and parsley: one of the richest sources of iron.'] },
+    'flow-end': { broth: ['Fish soup with root veg', 'White fish, carrots, celery and parsley, simmered slowly. Rebuilds after bleeding.'], meat: ['Sardines with peppers', 'Pan-fried sardines with roasted peppers: iron plus vitamin C on one plate.'] },
+    rising: { broth: ['Green herb & fish broth', 'Light fish broth with parsley, coriander and spring onion stirred in at the end.'] },
+    building: { meat: ['Salmon with sweet potato', 'Baked wild salmon with sweet potato: protein plus fuel.'] },
+    peak: { meat: ['Oysters or seafood', 'Oysters, prawns or mussels for zinc.'] },
+    settle: { meat: ['Roast salmon with root veg', 'Salmon roasted on carrots, squash and potatoes.'] },
+    focus: { broth: ['Mushroom & fish broth', 'Fish broth with mushrooms and thyme. Deep, savoury and calming.'], meat: ['Eggs and baked fish', 'Eggs for breakfast; baked white fish with roast potatoes later.'] },
+    premenstrual: { broth: ['Ginger fish stew', 'White fish, sweet potato and carrots slow-cooked with ginger and cinnamon.'], meat: ['Baked salmon with root veg', 'Baked salmon for B6 and omega-3, with carrots and sweet potato.'] },
+  },
+  plant: {
+    'flow-start': { broth: ['Red lentil & ginger soup', 'Red lentils, carrot and ginger simmered soft with a few red dates. Warm iron for heavy days.'],
+      meat: ['Eggs with cooked spinach', 'Soft eggs on spinach wilted with garlic, black sesame on top: protein plus iron.', 'Black bean & beetroot stew', 'Black beans, beetroot and spinach slow-cooked with cumin: plant iron for heavy days.'] },
+    'flow-end': { broth: ['Root veg & lentil soup', 'Carrots, celery, parsley and lentils, simmered slowly. Rebuilds after bleeding.'],
+      meat: ['Eggs with peppers', 'Eggs baked in peppers and tomatoes with herbs: protein plus vitamin C.', 'Lentils with peppers', 'Warm lentils with roasted peppers and lemon: plant iron plus the vitamin C to absorb it.'] },
+    rising: { broth: ['Green herb broth', 'Light vegetable broth with parsley, coriander and spring onion stirred in at the end.'],
+      meat: ['Eggs with greens', 'Soft eggs on a bed of greens with lemon and herbs.', 'Chickpeas with greens', 'Warm chickpeas on a bed of greens with lemon, herbs and hemp seeds.'] },
+    building: { meat: ['Eggs with sweet potato', 'Eggs and baked sweet potato with raw cheese: protein plus fuel.', 'Beans with sweet potato', 'Baked sweet potato filled with black beans, avocado and pumpkin seeds.'] },
+    peak: { broth: ['Light tomato & white bean broth', 'Fresh tomatoes, garlic and white beans in a light broth. Hydrating and fresh.'],
+      meat: ['Halloumi with pomegranate', 'Grilled halloumi with pomegranate and pumpkin seeds for zinc.', 'Edamame bowl with pumpkin seeds', 'Edamame, pumpkin seeds and pomegranate with herbs: zinc for ovulation.'] },
+    settle: { meat: ['Roast root veg with eggs', 'Carrots, squash and potatoes roasted, with soft eggs on top.', 'Roast root veg with chickpeas', 'Carrots, squash, potatoes and chickpeas roasted with olive oil and herbs.'] },
+    focus: { broth: ['Mushroom & thyme broth', 'Vegetable broth with mushrooms and thyme. Deep, savoury and calming.'],
+      raw: ['Nut & apple plate', 'Walnuts, almonds and a few dates or apple slices. Stops the sweet crash.'], warmAlt: ['Baked potato with tahini', 'With olive oil, herbs and a spoon of tahini.'],
+      meat: ['Eggs and a bean stew', 'Eggs for breakfast; a slow bean and root veg stew later.', 'Bean stew with roast potatoes', 'A slow black bean and root veg stew with roast potatoes.'] },
+    premenstrual: { broth: ['Ginger sweet potato stew', 'Sweet potato, carrots and chickpeas slow-cooked with ginger and cinnamon.'],
+      meat: ['Shakshuka with greens', 'Eggs baked in a warm tomato and pepper sauce, with cooked greens.', 'Lentil & root veg stew', 'A slow lentil stew with carrots and sweet potato: B6 and magnesium.'] },
+  },
+};
 // Best tea for each part of the cycle: [emoji, tea, short benefit for the cycle, how, evidence, guide key].
 const TEA_DAY = {
   'flow-start': ['🫚', 'Ginger & cinnamon', 'Eases cramps and warms your belly.', '4 slices ginger + 1 cinnamon stick, 10 min. 2–3 cups.', 'some', 'cramps'],
@@ -5886,12 +5939,13 @@ function todayTiles(info, only) {
       return `<dl class="tst"><div><dt>${icon('clock', 16)} Steep</dt><dd>${stp}</dd></div><div><dt>${icon('sun', 16)} When</dt><dd>${when}</dd></div></dl>
       <button class="tst-go" data-action="nav" data-to="tea">Full tea guide ${icon('chevR', 14)}</button>`; }
     if (k === 'eat') return `<div class="hub-tip-in stack"><div class="ht-head"><span class="ht-g">${icon('bowl', 22)}</span><div><b>${fn[0]}</b><p>${warm ? `${icon('thermo', 13)} Today: warm & cooked only. No raw or cold food.` : `${icon('leaf', 13)} Today: raw and fresh food is welcome, with some warm meals.`}</p></div></div><div>
-      <div class="fcol fcol2"><div class="fcol-h"><span class="fcol-dots">${colDots(fm.col[0])}</span><div><small>Colour of the day</small><b>${fm.col[1]} foods</b></div></div><p>${fm.col[2]}</p>
-        <div class="fcol-g">${fm.col[3].split(', ').map(f => { const n = f.charAt(0).toUpperCase() + f.slice(1); return `<span>${emoRaw(COL_EMO[n] || ingEmo(n) || '🌿')}<small>${n}</small></span>`; }).join('')}</div></div>
+      <div class="fcol fcol2"><div class="fcol-h"><span class="fcol-dots">${colDots(fm.col[0])}</span><div><small>Colour of the day</small><b>${fm.col[1]} foods</b></div></div><p>${dietProse(fm.col[2])}</p>
+        <div class="fcol-g">${dietFoods(fm.col[3], 'colour').split(', ').map(f => { const n = f.charAt(0).toUpperCase() + f.slice(1); return `<span>${emoRaw(COL_EMO[n] || ingEmo(n) || '🌿')}<small>${n}</small></span>`; }).join('')}</div></div>
       ${w === 'flow-start' || w === 'flow-end' ? phaseFoodPic('menstrual') : ''}<small class="fk">Meal ideas</small>
-      <div class="fmeals fm2">${[['🍲', 'Broth & soup', fm.broth], warm || !fm.raw ? ['🥘', 'Warm instead of raw', fm.warmAlt] : ['🥗', 'Raw', fm.raw], ['🐟', 'Meat & fish', fm.meat]].map(([g_, k_, [t, d]]) => `<div class="fmeal"><span class="emo" aria-hidden="true">${g_}</span><div><small>${k_}</small><b>${t}</b><p>${d}</p></div></div>`).join('')}</div>
+      <div class="fmeals fm2">${(dt => [['🍲', 'Broth & soup', dietMeal(w, 'broth', fm.broth)], warm || !fm.raw ? ['🥘', 'Warm instead of raw', dietMeal(w, 'warmAlt', fm.warmAlt)] : ['🥗', 'Raw', dietMeal(w, 'raw', fm.raw)],
+        dt === 'pesc' ? ['🐟', 'Fish & seafood', dietMeal(w, 'meat', fm.meat)] : dt === 'veg' ? ['🥚', 'Protein', dietMeal(w, 'meat', fm.meat)] : dt === 'vegan' ? ['🫘', 'Protein', dietMeal(w, 'meat', fm.meat)] : ['🐟', 'Meat & fish', fm.meat]])(myDiet()).filter(x => x[2]).map(([g_, k_, [t, d]]) => `<div class="fmeal"><span class="emo" aria-hidden="true">${g_}</span><div><small>${k_}</small><b>${t}</b><p>${d}</p></div></div>`).join('')}</div>
       <small class="fk">What your body needs</small>
-      <div class="fneeds fn2">${fn[1].map(([n, why, foods]) => { const e = needEmo(n); return `<details class="fn"><summary><span class="fn-e emo" aria-hidden="true">${e}</span><span class="fn-t"><b>${noEmoji(n)}</b><small>${foods}</small></span>${icon('chevD', 14)}</summary><p>${why}</p></details>`; }).join('')}</div>
+      <div class="fneeds fn2">${fn[1].map(([n, why, foods0]) => { const foods = dietFoods(foods0, n), dt = myDiet(); const e0 = needEmo(n), e = (dt === 'veg' || dt === 'vegan') && /🦪|🥩|🐟|🍗/.test(e0) ? '🎃' : dt === 'vegan' && /🥚|🥛|🧀/.test(e0) ? '🌱' : dt === 'pesc' && /🥩|🍗/.test(e0) ? '🐟' : e0; return `<details class="fn"><summary><span class="fn-e emo" aria-hidden="true">${e}</span><span class="fn-t"><b>${noEmoji(n)}</b><small>${foods}</small></span>${icon('chevD', 14)}</summary><p>${why}</p></details>`; }).join('')}</div>
       <button class="link fn-more" data-action="nav" data-to="plan">Full food guide ${icon('chevR', 12)}</button></div></div>`;
     const x = tips[k]; if (!x) return '';
     return `<div class="hub-tip-in"><span class="ht-g">${x[0]}</span><div><b>${x[1]}</b><p>${x[2]}</p>${x[3] ? `<ol>${x[3].map(t => `<li>${t}</li>`).join('')}</ol>` : ''}
@@ -6286,7 +6340,7 @@ function t4Detail(ph, i) {
   const [n, f] = PHASE_TEAS[ph][i], [why, amt, water, steep, when, warn] = PHASE_TEA_SPEC[ph][i];
   return `<div class="t4-dh"><img src="images/tea4/${ph}-${i}.webp" alt=""><div><small>Made for ${f.toLowerCase()}</small><b>${n}</b></div></div>
     <p class="t4-why">${why}</p>
-    <dl class="t4-spec">${[['bowl', 'You need', amt], ['thermo', 'Water', water], ['clock', 'Steep', steep], ['sun', 'When', when]].map(([ic, k, v]) => `<div><dt>${icon(ic, 15)}${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+    <dl class="t4-spec">${[['bowl', 'You need', dietProse(amt)], ['thermo', 'Water', water], ['clock', 'Steep', steep], ['sun', 'When', when]].map(([ic, k, v]) => `<div><dt>${icon(ic, 15)}${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
     ${warn ? `<p class="t4-warn">${icon('heart', 13)} ${warn}</p>` : ''}`;
 }
 function cycleTeas(info) {
@@ -6464,7 +6518,7 @@ function suppWeek() {
   const today = C.startOfDay(new Date()), ds = Array.from({ length: 7 }, (_, k) => C.addDays(today, k - 6));
   const days = ds.map(d => getLog(C.iso(d)).supp || []), any = days.some(d => d.length);
   const pc = PH_HEX[(M.info && M.info.phase) || 'follicular'];
-  const pic = x => { const h = NU_HERO[x.id] || SUPP_HERO[x.id]; return h ? (h[0].startsWith('tea:') ? teaPhoto(h[0].slice(4), 160, 160) : foodPhoto(h[0], 160)) : ''; };
+  const pic = x => { const h = NU_HERO[x.id] || suppHero(x.id); return h ? (h[0].startsWith('tea:') ? teaPhoto(h[0].slice(4), 160, 160) : foodPhoto(h[0], 160)) : ''; };
   const items = SUPPS.map(([n]) => NUTRIENTS.find(x => x.n === n)).filter(Boolean).map(x => [x, days.map(d => d.includes(x.n))]);
   const total = items.reduce((a, [, t]) => a + t.filter(Boolean).length, 0);
   return `<section class="card nw2" style="--pc:${pc}">
@@ -6480,7 +6534,7 @@ function suppWeek() {
 }
 function viewNutrients() {
   const ph = M.info && M.info.phase, now = ph ? NUTRIENTS.filter(x => x.p.includes(ph) && x.p.length < 4) : [];
-  const pic = x => { const h = NU_HERO[x.id] || SUPP_HERO[x.id]; return h ? (h[0].startsWith('tea:') ? teaPhoto(h[0].slice(4), 300, 300) : foodPhoto(h[0], 300)) : ''; };
+  const pic = x => { const h = NU_HERO[x.id] || suppHero(x.id); return h ? (h[0].startsWith('tea:') ? teaPhoto(h[0].slice(4), 300, 300) : foodPhoto(h[0], 300)) : ''; };
   const dose = x => { const m = x.d[0][0].match(/^(Up to )?([\d.,–]+)\s*(.*)$/); return m ? `${m[1] ? '<small>up to</small>' : ''}<b class="dotnum">${m[2]}</b><small>${m[3]}</small>` : `<b class="nu2-w">${x.d[0][0]}</b>`; };
   // when it helps, as named phase pills (her phase in ink) instead of four unexplained dashes
   const PN = { menstrual: 'Period', follicular: 'Follicular', ovulatory: 'Ovulation', luteal: 'Luteal' };
@@ -6502,9 +6556,13 @@ function viewNutrients() {
 }
 // Nutrient page › Food first: each food as a bar against her daily need, read from "30 g ≈ 150 mg".
 const NU_NEED = { magnesium: [310, 'mg'], b6: [1.3, 'mg'], iron: [18, 'mg'], 'vitamin-d': [600, 'IU'], 'omega-3': [0.25, 'g', 'EPA + DHA'], zinc: [8, 'mg'], calcium: [1000, 'mg'] };
+// a nutrient's foods for her diet
+const nuF = x => (d => d === 'all' ? x.f : x.f.filter(([f]) => lineFits(f, d) || lineFits(swapText(f, d), d)).map(([f, a]) => [lineFits(f, d) ? f : swapText(f, d), a]))(myDiet());
+// key facts: a food she doesn't eat becomes the first one she does ("Raw milk, easiest source" → "Tahini" for vegans)
+const nuFacts = x => (d => d === 'all' ? x.d : x.d.map(r => lineFits(r[0], d) ? r : /fish oil/i.test(r[0]) ? ['Algae oil', 'the same DHA as fish'] : nuF(x)[0] ? [nuF(x)[0][0], r[1]] : r))(myDiet());
 function nuFood(x) {
   const N = NU_NEED[x.id];
-  const rows = x.f.map(([f, a]) => {
+  const rows = nuF(x).map(([f, a]) => {
     const m = N && String(a).match(/^(.*?)\s*≈\s*([\d.]+)(?:–([\d.]+))?\s*(mg|IU|g)\b/);
     if (!m || m[4] !== N[1]) return `<div class="spec-row"><b>${f}</b>${a ? `<span>${a}</span>` : ''}</div>`;
     const v = m[3] ? (+m[2] + +m[3]) / 2 : +m[2], val = m[3] ? `${m[2]}–${m[3]}` : m[2], k = v / N[0], pc = Math.round(k * 100);
@@ -6517,7 +6575,7 @@ function nuFood(x) {
 // Nutrient spec sheets open on a real photo of the food richest in it (same as the supplement sheets); chip label, then food.
 const NU_HERO = { inositol: ['Oranges & mandarins', 'citrus fruit'], vitex: ['tea:Overnight herbal infusion', 'herbal extract', 'Taken as'] };
 function nuHero(x) {
-  const h = NU_HERO[x.id] || SUPP_HERO[x.id]; if (!h) return {};
+  const h = NU_HERO[x.id] || suppHero(x.id); if (!h) return {};
   return { photo: h[0].startsWith('tea:') ? teaPhoto(h[0].slice(4), 800, 900) : foodPhoto(h[0], 800),
     extra: `<span class="sp-capchip"><span class="sd-cap nu-cap">${nuIc(x.id, 18)}</span><small>${h[2] || 'Richest in'}<b>${h[1]}</b></small></span>` };
 }
@@ -6525,7 +6583,7 @@ function viewNutrient(id) {
   const x = NUTRIENTS.find(n => n.id === id); if (!x) return viewNutrients();
   const ph = M.info && M.info.phase, i = NUTRIENTS.indexOf(x);
   return `${topbar('Nutrient', { back: true })}<div class="pad sp2 sp2t">
-    ${specHero({ stack: true, ...nuHero(x), glyph: nuIc(x.id, 64), eyebrow: `For ${/^[A-Z]{2}/.test(x.for) ? x.for : x.for.charAt(0).toLowerCase() + x.for.slice(1)}`, name: x.n, label: 'Key facts', rows: x.d, lead: 'Why it helps', desc: x.why })}
+    ${specHero({ stack: true, ...nuHero(x), glyph: nuIc(x.id, 64), eyebrow: `For ${/^[A-Z]{2}/.test(x.for) ? x.for : x.for.charAt(0).toLowerCase() + x.for.slice(1)}`, name: x.n, label: 'Key facts', rows: nuFacts(x), lead: 'Why it helps', desc: x.why })}
     <section class="card glass tea-fit"><div class="tf-k">When it helps most</div>${phaseFit(x.p, ph)}</section>
     ${suppSafe(x.id)}
     ${sectionTitle(x.ft || 'Food first')}
@@ -6547,7 +6605,7 @@ function sugarTrickList(on) {
     const x = SUGAR_SCIENCE[t.k], d = SG_DOSE[t.k] || [0, ''], pic = SB_PIC[t.k] ? SB_PIC[t.k]() : '';
     const yr = x ? (x.c.match(/(19|20)\d{2}/) || [''])[0] : '', who = x && yr ? x.c.slice(0, x.c.indexOf(yr)).replace(/[\s,]+$/, '') : '';
     return `<details class="sgt ${on.includes(t.k) ? 'on' : ''}"><summary><span class="sgt-ph">${pic ? `<img src="${pic}" alt="" loading="lazy">` : ''}<i>${icon('check', 11, 3)}</i></span>
-      <span class="sgt-t"><b>${t.n}</b><small>${t.t}</small></span><span class="sgt-v">${d[0] ? `<b class="dotnum">${d[0]}</b> ` : ''}${d[1]}</span>${icon('chevR', 14)}</summary>
+      <span class="sgt-t"><b>${t.n}</b><small>${t.k === 'minerals' ? dietFoods(t.t, 'zinc') : t.t}</small></span><span class="sgt-v">${d[0] ? `<b class="dotnum">${d[0]}</b> ` : ''}${d[1]}</span>${icon('chevR', 14)}</summary>
       <div class="sgt-d"><p>${t.d}</p>
       ${x ? `<div class="sgt-st">${yr ? `<b class="dotnum">${yr}</b>` : ''}<span><em>${who}</em>${x.s}<small>${yr ? x.c.slice(x.c.indexOf(yr) + 4).replace(/^[\s,]+/, '') : x.c}</small></span></div>` : ''}
       ${x && x.care ? `<div class="ck-first sgt-ck"><span class="ck-i">!</span><div><small>Before you try it</small>${cautionHTML(x.care)}</div></div>` : ''}</div></details>`;
@@ -8297,7 +8355,7 @@ function viewPartner(p) {
 // ---------- seasonal foods ----------
 // best seasonal dishes for today: in season, warm/raw rule, then those fitting the current phase
 function seasonalDishesToday(info, n = 2) {
-  const items = SZ.seasonal(myCountry(), new Date().getMonth() + 1);
+  const items = szMine(myCountry(), new Date().getMonth() + 1);
   let ds = SZ.dishesFor(items, SZ.countryRegion(myCountry()));
   if (info && warmWindow(info)) ds = ds.filter(d => d.warm);
   const fit = d => info && d.used.some(i => i.ph.includes(info.phase)) ? 1 : 0;
@@ -8337,7 +8395,7 @@ function seasonMatches(items, phase) {
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 // Home: the main foods in season right now as photo cards, best for her phase first, plus a way into the full page.
 function seasonBento(info) {
-  const m = new Date().getMonth() + 1, items = SZ.seasonal(myCountry(), m).filter(i => foodPhoto(i.f));
+  const m = new Date().getMonth() + 1, items = szMine(myCountry(), m).filter(i => foodPhoto(i.f));
   if (!items.length) return '';
   const rank = i => (info && i.ph.includes(info.phase) ? 2 : 0) + (i.kind === 'veg' || i.kind === 'fruit' ? 1 : 0);
   const top = [...items].sort((a, b) => rank(b) - rank(a)).slice(0, 8);
@@ -8350,7 +8408,7 @@ function seasonBento(info) {
       <span class="szm-t"><b>See all ${items.length} foods</b><small>and what to cook with them</small></span><span class="szm-go">${icon('chevR', 18)}</span></button>`;
 }
 function seasonCard() {
-  const c = myCountry(), m = new Date().getMonth() + 1, items = SZ.seasonal(c, m), name = SZ.COUNTRIES.find(x => x[0] === c)?.[1];
+  const c = myCountry(), m = new Date().getMonth() + 1, items = szMine(c, m), name = SZ.COUNTRIES.find(x => x[0] === c)?.[1];
   const match = M.info ? items.filter(i => i.ph.includes(M.info.phase)) : [];
   const show = [...match, ...items.filter(i => !match.includes(i))].slice(0, 7);
   return `<button class="card glass season-card" data-action="nav" data-to="season">
@@ -8438,7 +8496,7 @@ const RIT_HOW = {
 };
 // Only the best ones for her phase: the rituals made for it (most specific first), topped up with an all-cycle one to fill the row, four at most.
 const ritList = () => {
-  const ph = M.info ? M.info.phase[0] : '', all = AUTUMN_RITUALS.map((r, i) => ({ r, i, m: RIT_META[r[0]] || ['', '', 'mfol', '', ''] }));
+  const ph = M.info ? M.info.phase[0] : '', all = AUTUMN_RITUALS.map((r, i) => ({ r, i, m: RIT_META[r[0]] || ['', '', 'mfol', '', ''] })).filter(({ r }) => (d => d === 'all' || r[0] === 'Healing broth' || (d === 'vegan' ? !/honey/i.test(r[0]) : lineFits(r[0], d)))(myDiet()));
   if (!ph) return all;
   const mine = all.filter(x => x.m[2].includes(ph) && x.m[2].length < 4).sort((a, b) => a.m[2].length - b.m[2].length), any = all.filter(x => x.m[2].length >= 4);
   const out = mine.slice(0, 4); while ((out.length < 2 || out.length % 2) && any.length) out.push(any.shift());
@@ -8635,7 +8693,7 @@ function herbChapters(x, b) {
   const row = (ic, k, v) => `<div class="hs-row"><span>${icon(ic, 18, 1.9)}</span><div><b>${k}</b><small>${v}</small></div></div>`;
   C.push(['leaf', `Meet ${b[1].toLowerCase()}`, `<p class="hs-nat ${x.nat === 'warm' ? 'w' : 'n'}"><i></i>${x.nat === 'warm' ? 'Warming' : 'Neutral'} in Chinese medicine</p>
     <p class="o3-lead">${x.why}</p><div class="hs-good">${(b[3] || []).map((t, k) => `<span style="--k:${k}">${t}</span>`).join('')}</div>`]);
-  C.push(['cup', 'How to take it', `<div class="hs-rows">${H.dose ? row('bowl', 'How much', H.dose) : ''}${row('cup', 'How', x.how)}</div>`]);
+  C.push(['cup', 'How to take it', `<div class="hs-rows">${H.dose ? row('bowl', 'How much', dietProse(H.dose)) : ''}${row('cup', 'How', dietProse(x.how))}</div>`]);
   if (Y.ok) C.push(['search', 'Buy the best', `<div class="hb-bg">${[['ok', 'check', 'Look for'], ['no', 'close', 'Skip'], ['at', 'pin', 'Where'], ['kp', 'clock', 'Keeps']].map(([k, ic, t]) => `<div class="hb-b ${k}"><i>${icon(ic, 13, 2.2)}</i><b>${t}</b><span>${Y[k]}</span></div>`).join('')}</div>`]);
   if (Y.test) C.push(['flask', 'A quick test', `<p class="o3-lead">${Y.test}</p>`]);
   if (Y.glow) C.push(['spark', 'For your glow', `<p class="o3-lead">${Y.glow}</p>`]);
@@ -8735,7 +8793,7 @@ function herbSheet(x, i) {
     ${looksCard(b[1])}
     <section class="o3-note hs-note"><p class="hs-nat ${x.nat === 'warm' ? 'w' : 'n'}"><i></i>${x.nat === 'warm' ? 'Warming' : 'Neutral'} in Chinese medicine</p>
       <p class="o3-lead">${x.why}</p><div class="hs-good">${(b[3] || []).map((t, k) => `<span style="--k:${k}">${t}</span>`).join('')}</div></section>
-    <section class="hs-card">${head('cup', 'How to take it')}<div class="hs-rows">${H.dose ? row('bowl', 'How much', H.dose) : ''}${row('cup', 'How', x.how)}</div></section>
+    <section class="hs-card">${head('cup', 'How to take it')}<div class="hs-rows">${H.dose ? row('bowl', 'How much', dietProse(H.dose)) : ''}${row('cup', 'How', dietProse(x.how))}</div></section>
     ${Y.ok ? `<section class="hs-card">${head('search', 'Buy the best')}<div class="hb-bg">${[['ok', 'check', 'Look for'], ['no', 'close', 'Skip'], ['at', 'pin', 'Where'], ['kp', 'clock', 'Keeps']].map(([k, ic, t]) => `<div class="hb-b ${k}"><i>${icon(ic, 13, 2.2)}</i><b>${t}</b><span>${Y[k]}</span></div>`).join('')}</div></section>` : ''}
     ${duo.length ? `<div class="hs-duo ${duo.length === 1 ? 'one' : ''}">${duo.map(([ic, t, v, c]) => `<section class="hs-mini ${c}">${head(ic, t)}<p>${v}</p></section>`).join('')}</div>` : ''}
     ${S ? `<section class="hs-card hs-study">${head('book', 'What a study found')}<p>${S[0]}</p><p class="hs-cite">${S[1]}</p></section>` : ''}
@@ -8750,7 +8808,7 @@ const SF_PHOTO_CREDIT = { elderberries: 'Photo: “2023 08 Reifezeit Holunder”
 function sfSheetData(f, ph, gem) {
   const [file, tag] = SF_CUT[f[1]] || [], st = SF_STUDY[f[1]], P = PHASES[ph] ? PHASES[ph].name : '';
   return { src: file ? `images/sf/${file}.webp` : '', emoji: f[0], name: f[1], eyebrow: gem ? `Hidden gem · ${f[6]}` : `${P} phase superfood`, tag: gem ? '' : tag, why: f[2],
-    rows: [['bowl', 'How much', f[3]], ['leaf', 'Best in', `Your ${P.toLowerCase()} phase`]], study: st ? [st[2], `${st[0]} ${st[1]}`] : null, care: SF_CARE[f[1]] || '', file };
+    rows: [['bowl', 'How much', dietProse(f[3])], ['leaf', 'Best in', `Your ${P.toLowerCase()} phase`]], study: st ? [st[2], `${st[0]} ${st[1]}`] : null, care: SF_CARE[f[1]] || '', file };
 }
 function apoSheetData(x) {
   const p = apoPic(x), a = SEASON_AMT[x.n], file = APO_CUT[x.n];
@@ -8838,8 +8896,8 @@ const SZ_POSTER = { Winter: ['Winter, deeply nourished', 'Build blood, warm dige
 const szPic = f => { const fp = SZ.fungiPic(f); if (fp) return { src: `images/fungi/${fp[1]}.webp`, round: true, fp }; const cut = szCut(f); if (cut) return { src: cut }; const ph = foodPhoto(f, 300); return ph ? { src: ph, round: true } : null; };
 function szList() {
   const c = myCountry(), m = new Date().getMonth() + 1, phase = M.info ? M.info.phase : null;
-  const all = SZ.seasonal(c, m), fits = i => !!phase && i.ph.includes(phase);
-  return KINDS.map(([k, n, e]) => [k, n, e, all.filter(i => i.kind === k).sort((x, y) => fits(y) - fits(x))]).filter(g => g[3].length);
+  const all = szMine(c, m), fits = i => !!phase && i.ph.includes(phase);
+  return KINDS.map(([k, n, e]) => [k, k === 'animal' ? ({ pesc: 'Fish & seafood', veg: 'Eggs & dairy' }[myDiet()] || n) : n, k === 'animal' && myDiet() === 'veg' ? '🥚' : e, all.filter(i => i.kind === k).sort((x, y) => fits(y) - fits(x))]).filter(g => g[3].length);
 }
 function viewSeason() {
   const c = myCountry(), m = new Date().getMonth() + 1, country = SZ.COUNTRIES.find(x => x[0] === c)?.[1] || '';
@@ -9081,8 +9139,8 @@ function viewDiet() {
 }
 // ---------- How she eats: everything, animal-based, vegetarian or vegan ----------
 const myDiet = () => (state && state.profile && state.profile.diet) || 'all';
-const LAND = /\b(meat|healing broth|bone broth|beef|chicken|lamb(?![’']s)|pork|bacon|turkey|duck|liver|oxtails?|marrow|bones?|gelatin|collagen|organs?|steak|mince|ham|sausage|venison|heart)\b/i;
-const DX = { meat: /\b(meat|seafood|shellfish|healing broth|beef|chicken|lamb(?![’']s)|pork|bacon|turkey|duck|liver|oxtails?|marrow|bones?|prawns?|shrimp|salmon|fish|sardines?|mussels?|oysters?|anchov\w*|tuna|cod|mackerel|gelatin|collagen|organs?|steak|mince|ham|sausage|venison|heart)\b/i,
+const LAND = /\b(meat|healing broth|bone broth|beef|chicken|lamb(?![’']s)|pork|bacon|turkey|duck|goose|boar|veal|rabbit|liver|oxtails?|marrow|bones?|gelatin|collagen|organs?|steak|mince|ham|sausage|venison|heart)\b/i;
+const DX = { meat: /\b(meat|seafood|shellfish|healing broth|beef|chicken|lamb(?![’']s)|pork|bacon|turkey|duck|goose|boar|veal|rabbit|liver|oxtails?|marrow|bones?|prawns?|shrimp|salmon|trout|char|carp|herring|halibut|snapper|pollock|mullet|crabs?|lobsters?|langoustines?|clams?|scallops?|squid|octopus|cuttlefish|abalone|hairtail|fish|sardines?|mussels?|oysters?|anchov\w*|tuna|cod|mackerel|gelatin|collagen|organs?|steak|mince|ham|sausage|venison|heart)\b/i,
   egg: /\beggs?\b|yolks?|mayonnaise/i, dairy: /\b(milk|cheese|cheddar|butter|ghee|cream|yoghurt|yogurt|kefir|feta|parmesan|ricotta|halloumi|whey|labneh|quark)\b/i, honey: /\bhoney(comb)?\b/i,
   plant: /\b(lentils?|chickpeas?|beans?|quinoa|buckwheat|rice|tofu|tempeh|oats?|pasta|seitan|soy|edamame|hummus)\b/i };
 const PLANT_WORDS = /\b(coconut|almond|oat|plant|soy|rice|cashew|hemp|nut)\s+(condensed\s+)?(milk|cream|yoghurt|yogurt)|\b(almond|peanut|nut|cashew|cacao|cocoa|seed|sunflower)\s+butter|butter lettuce|bean sprouts?|broad beans?|green beans?|vanilla beans?|vegetable broth/gi;
@@ -9119,6 +9177,61 @@ function fitsDiet(r, d = myDiet()) {
   return (_dietFit[key] = ok);
 }
 const myRecipes = () => RECIPES.filter(r => fitsDiet(r));
+// seasonal foods for her diet: no fish or meat for vegetarians, nothing animal for vegans, no grains for animal-based
+const SZ_DAIRY = /egg|milk|butter|cheese|cream|yoghurt/i, SZ_LAND = /lamb|venison|boar|goose|duck|turkey|chicken|beef|pork|veal|rabbit/i;
+function szFits(i) {
+  const d = myDiet(); if (d === 'all') return true;
+  if (d === 'animal') return !DX.plant.test(i.f);
+  if (/honey/i.test(i.f)) return d !== 'vegan';
+  if (i.kind !== 'animal') return true;
+  return d === 'vegan' ? false : d === 'veg' ? SZ_DAIRY.test(i.f) : !SZ_LAND.test(i.f);
+}
+const szMine = (c, m) => SZ.seasonal(c, m).filter(szFits);
+// a food list for her diet ("Red meat, liver, cooked spinach"): items that don't fit are swapped or dropped,
+// and when too few are left, plant (or animal) foods that bring the same nutrient fill in
+const NEED_FILL = [[/iron/i, 'Lentils, black beans, cooked spinach, pumpkin seeds, red meat'], [/omega/i, 'Ground flaxseed, chia seeds, walnuts, algae oil, wild salmon'],
+  [/protein|b12/i, 'Eggs, raw cheese, lentils, chickpeas, hemp seeds, beef'], [/zinc/i, 'Pumpkin seeds, sesame, cashews, beef'], [/b6/i, 'Banana, potatoes, chickpeas, sunflower seeds'],
+  [/calcium/i, 'Sesame, tahini, kale, almonds, raw cheese'], [/magnesium/i, 'Pumpkin seeds, cacao, cooked greens'], [/warm/i, 'Ginger, stews, cinnamon, vegetable broth'],
+  [/ferment/i, 'Sauerkraut, kimchi, raw yoghurt'], [/./, 'Seasonal vegetables, fruit, seeds']];
+function dietFoods(list, need = '') {
+  const d = myDiet(); if (d === 'all') return list;
+  const fit = x => lineFits(x, d) ? x : null; // a swap (milk → almond milk) cooks the same but doesn't bring the same nutrient
+  const keep = list.split(/,\s*/).map(x => { const o = x.split(/\s+or\s+/i); return o.length > 1 ? (o.map(fit).filter(Boolean).join(' or ') || null) : fit(x); }).filter(Boolean);
+  if (keep.length < 2) { const fill = NEED_FILL.find(([re]) => re.test(need))[1].split(', ').filter(x => lineFits(x, d)); for (const f of fill) if (keep.length < 4 && !keep.some(k => k.toLowerCase() === f.toLowerCase())) keep.push(f); }
+  return keep.map((x, i) => i ? x.charAt(0).toLowerCase() + x.slice(1) : x.charAt(0).toUpperCase() + x.slice(1)).join(', ');
+}
+// a sentence or two for her diet: sentences that name foods she doesn't eat are swapped or left out
+function dietProse(t) {
+  const d = myDiet(); if (d === 'all' || !t) return t;
+  return String(t).split(/(?<=\.)\s+/).map(x => dietSentence(x, d)).filter(Boolean).join(' ');
+}
+// one sentence: as written, with safe swaps, or with the foods she doesn't eat taken out of its list
+// ("Zinc and iron from red meat, liver and seeds" → "Zinc and iron from seeds"); '' when nothing sensible is left
+function dietSentence(x, d) {
+  if (lineFits(x, d)) return x;
+  const sw = swapText(x, d); if (lineFits(sw, d)) return sw;
+  const end = (sw.match(/[.!?]+$/) || [''])[0], body = sw.slice(0, sw.length - end.length);
+  const colon = body.match(/^([^:]+):\s*(.+)$/), head = colon ? colon[1] : '', listTxt = colon ? colon[2] : body;
+  const lastAnd = listTxt.match(/^(.*)\s+(and|or)\s+([^,]+)$/), conj = lastAnd ? lastAnd[2] : 'and';
+  const items = lastAnd ? [...lastAnd[1].split(/,\s+/), lastAnd[3]] : listTxt.split(/,\s+/);
+  let lead = ''; const m0 = items[0].match(/^(.*?\b(?:from|with|like|such as)\s+)(.+)$/i);
+  if (m0 && !lineFits(items[0], d)) { lead = m0[1]; items[0] = m0[2]; }
+  const keep = items.filter(t => lineFits(t, d)); if (keep.length === items.length) return '';
+  const list = keep.length ? lead + (keep.length > 1 ? keep.slice(0, -1).join(', ') + ` ${conj} ` + keep[keep.length - 1] : keep[0]) : '';
+  let out = head ? (list ? `${head}: ${list}` : head) : list; if (!out) return '';
+  out = out.charAt(0).toUpperCase() + out.slice(1) + end;
+  return lineFits(out, d) ? out : '';
+}
+// a meal idea for her diet: as written, with safe swaps, or a fish or plant version of the same idea
+function dietMeal(w, slot, base) {
+  const d = myDiet(); if (!base || d === 'all') return base;
+  const fit = x => x && lineFits(x[0] + '. ' + x[1], d);
+  if (fit(base)) return base;
+  const sw = [swapText(base[0], d), swapText(base[1], d)]; if (fit(sw)) return sw;
+  const f = MEAL_ALT.fish[w]?.[slot]; if (d === 'pesc' && fit(f)) return f;
+  const p = MEAL_ALT.plant[w]?.[slot]; if (p) { const x = d === 'vegan' && p.length > 2 ? p.slice(2) : p.slice(0, 2); if (fit(x)) return x; }
+  return null;
+}
 // plant foods that take the place of meat and fish for vegetarians and vegans, per phase
 const PLANT_PROTEIN = { menstrual: ['🫘 Red lentils', '🫘 Black beans', '🎃 Pumpkin seeds', '🥚 Eggs'], follicular: ['🫘 Chickpeas', '🌱 Hemp seeds', '🫛 Peas', '🥚 Eggs'],
   ovulatory: ['🫘 White beans', '🫛 Edamame', '🥣 Chia seeds', '🥚 Eggs'], luteal: ['🫘 Black beans', '🥄 Tahini', '🌻 Sunflower seeds', '🥣 Greek yoghurt'] };
@@ -11004,7 +11117,7 @@ const actions = {
   togglePeriod: () => {
     const k = ui.calSelected, l = getLog(k);
     setLog(k, { flow: PERIOD_FLOWS.includes(l.flow) ? null : 'medium' });
-    toast(PERIOD_FLOWS.includes(getLog(k).flow) ? 'Period day added' : 'Period day removed'); calRefresh();
+    toast(PERIOD_FLOWS.includes(getLog(k).flow) ? 'Period day added' : 'Period day removed'); calRefresh(null, true);
   },
   logDay: d => { ui.logDate = d.date; go('log'); },
   logMove: d => {

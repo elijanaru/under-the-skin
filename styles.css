@@ -16443,3 +16443,16 @@ html .tgw.in-page .tgw-l { max-width: 74px; }
 .nu2-when > span.all { padding: 3px 8px; background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(30% * var(--hs)) 93%); color: #304023; }
 .home .hub-k > .hub-day { font-family: var(--font); font-weight: 500; }
 .home .hub-k > .hub-day b { font: 900 13px/1 var(--dot); }
+.ty-nofish { display: flex; gap: 10px; align-items: flex-start; margin: 12px 0 0; padding: 12px 14px; border-radius: 18px; background: #f4f6ec; text-align: left; font: 400 13px/1.4 var(--font); color: #304023; }
+.ty-nofish b { display: block; font-weight: 600; color: #20301a; margin-bottom: 2px; }
+html .ty-nofish .emo { margin: 0; display: block; font-size: 20px; line-height: 1.2; }
+
+/* Grocery (Round A): foods as the In season cut-outs or drawn emoji on one soft tinted bubble, never busy round stock photos */
+.gro-ic { flex: none; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: hsl(calc(var(--hb) + 20 * var(--hk)) calc(30% * var(--hs)) 94%); overflow: hidden; }
+.gro-ic img { width: 84%; height: 84%; object-fit: contain; filter: drop-shadow(0 2px 3px rgba(32,48,26,.16)); }
+.gro-ic .emo { margin: 0; font-size: 22px; line-height: 1; font-style: normal; }
+.check-row .gro-ic.gro-img { width: 42px; height: 42px; border-radius: 50%; object-fit: initial; }
+.gro-ic.gsw-i.off { width: 32px; height: 32px; }
+.gro-ic.gsw-i.off .emo { font-size: 16px; }
+.gsw-chips .gro-ic.gsw-i.off { width: 26px; height: 26px; }
+.gsw-chips .gro-ic.gsw-i.off .emo { font-size: 14px; }
