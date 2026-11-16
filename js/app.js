@@ -5845,18 +5845,27 @@ const COMPASS_SHORT = {
 // Under the period button: the pixel aura woman floating in the middle, with five sticky notes about her life today
 // (16 Nov 2026, her call: food and moves were repeating the cards below): her superpower, work, people, self-care and a line to
 // say to herself. Tap a note and a little card opens under her with the whole thing.
-const LIFE_PIN = { super: 'mind', work: 'gut', social: 'heart', care: 'womb', say: 'legs' };
-function lifeParts(phase) {
-  const ph = PHASES[phase], P = PLAIN[phase] || {};
+const LIFE_PIN = { super: 'mind', work: 'gut', social: 'heart', skin: 'womb', move: 'legs' };
+// Skin across her month (16 Nov 2026, replaces the mantra): how her skin behaves this phase and what it likes.
+const SKIN_PHASE = {
+  menstrual: ['Dry & sensitive', 'Estrogen and progesterone are at their lowest, so skin is drier, thinner and quicker to redden. A gentle cleanser, a rich cream or facial oil, and no peels or new products this week.'],
+  follicular: ['Clear & bright', 'Rising estrogen brings collagen and moisture back: often your clearest, smoothest skin of the month. A good week for a facial or for trying something new.'],
+  ovulatory: ['Glowing', 'Estrogen peaks and skin looks plump and lit from within. Testosterone rises too, so the T-zone can get oilier. Light textures, and keep your pores clean.'],
+  luteal: ['Breakout watch', 'Progesterone and testosterone make more oil and swell the pores, so spots often come in the week before your period, around the chin and jaw. Cleanse morning and night, zinc foods, hands off your face.'],
+};
+const MOVE_NAME = { lift: 'strength', hiit: 'HIIT', sport: 'sport', pilates: 'pilates', yoga: 'yoga', meditate: 'meditation', walk: 'walks' };
+function lifeParts(phase, w) {
+  const ph = PHASES[phase], P = PLAIN[phase] || {}, mv = MOVE_GUIDE[w] || MOVE_GUIDE['flow-start'], sk = SKIN_PHASE[phase] || SKIN_PHASE.follicular;
+  const top = Object.entries(mv.r || {}).filter(([, v]) => v === 3).map(([k]) => MOVE_NAME[k] || k), best = top.length ? (top.join(', ').charAt(0).toUpperCase() + top.join(', ').slice(1)) : '';
   return [{ k: 'super', e: '✨', label: 'Superpower', d: ph.superpower.title, what: ph.superpower.text, more: P.mind },
     { k: 'social', e: '💞', label: 'People', d: ph.social.title, what: ph.social.text },
     { k: 'work', e: '💼', label: 'Work', d: ph.mind.title, what: ph.mind.text },
-    { k: 'care', e: '🛁', label: 'Self-care', d: ph.selfcare.title, what: ph.selfcare.text },
-    { k: 'say', e: '🌸', label: 'Mantra', d: 'A kind line', what: `“${ph.affirmation}”` }];
+    { k: 'move', e: '🏋️‍♀️', label: 'Workout', d: mv.title, what: mv.tip, more: best ? `Best today: ${best}.` : '' },
+    { k: 'skin', e: '🪞', label: 'Skin', d: sk[0], what: sk[1] }];
 }
 function energyCard(info, energy) {
   const heal = lossCare() && lossStep() >= 0 && lossStep() < 2; // the first weeks after a loss: a slow, warm day whatever the phase says
-  const w = dayWindow(info), c = heal ? { ...COMPASS['flow-start'], mode: 'Heal gently' } : COMPASS[w], parts = lifeParts(heal ? 'menstrual' : info.phase), open = parts.find(p => p.k === ui.enPart);
+  const w = dayWindow(info), c = heal ? { ...COMPASS['flow-start'], mode: 'Heal gently' } : COMPASS[w], parts = lifeParts(heal ? 'menstrual' : info.phase, heal ? 'flow-start' : w), open = parts.find(p => p.k === ui.enPart);
   const pin = p => BODY_PIN[LIFE_PIN[p.k]];
   const lines = parts.map(p => { const [lx, ly, sd, bx, by] = pin(p), x0 = sd === 'l' ? 96 : 244; return `<path class="${open && open.k === p.k ? 'on' : ''}" d="M${x0} ${ly + 16} H${sd === 'l' ? x0 + 14 : x0 - 14} L${bx} ${by}"/><circle class="em-dot ${open && open.k === p.k ? 'on' : ''}" cx="${bx}" cy="${by}" r="3.6"/>`; }).join('');
   const labels = parts.map((p, i) => { const [lx, ly, sd] = pin(p); return `<button class="em-l lf lf2 lf-${p.k} ${sd} ${open && open.k === p.k ? 'on' : ''}" style="top:${ly}px;--i:${i}" data-action="enPart" data-k="${p.k}" aria-expanded="${open && open.k === p.k ? 'true' : 'false'}"><span class="lf-ic" aria-hidden="true">${emoRaw(p.e)}</span><span class="lf-tx"><small>${p.label}</small><b>${p.d}</b></span></button>`; }).join('');

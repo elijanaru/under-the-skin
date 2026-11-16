@@ -16114,7 +16114,7 @@ html .hub-tip-in .fcol2 .fcol-g small { letter-spacing: 0; text-transform: none;
 .em-l.lf2.r { right: 0; left: auto; }
 .lf2 .lf-ic { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--lt, #f3ecd8); }
 .lf2 .lf-ic .emo { font-size: 16px; line-height: 1; } .lf2 .lf-ic img.emo { width: 18px; height: 18px; }
-.lf2.lf-super { --lt: #fde8b4; } .lf2.lf-social { --lt: #fbd6e1; } .lf2.lf-work { --lt: #dfe8c8; } .lf2.lf-care { --lt: #e7dcf4; } .lf2.lf-say { --lt: #fde0d3; }
+.lf2.lf-super { --lt: #fde8b4; } .lf2.lf-social { --lt: #fbd6e1; } .lf2.lf-work { --lt: #dfe8c8; } .lf2.lf-skin { --lt: #fde0d3; } .lf2.lf-move { --lt: #e7dcf4; }
 .em-l.lf2 .lf-tx { min-width: 0; }
 .em-l.lf2 .lf-tx small { display: block; margin: 0; font-size: 9px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: rgba(32,48,26,.5); white-space: nowrap; line-height: 1.15; }
 .em-l.lf2 .lf-tx b { display: block; margin-top: 1px; font-size: 12px; font-weight: 600; line-height: 1.15; color: #20301a; }
