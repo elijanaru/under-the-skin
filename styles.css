@@ -16851,3 +16851,6 @@ html .hbc-o { aspect-ratio: 340 / 570; } /* a taller, wider ring: ten objects ge
 .spd-s > span.on { background: #20301a; color: #e9f0dc; box-shadow: 0 8px 18px -10px rgba(32,48,26,.6); }
 .spd-s > span.on b { color: #fff; }
 .spd-s > span.on small { color: rgba(255,255,255,.75); }
+/* Tea, Brew it right: the small lines in the four gauges were 62% ink at 12px and hard to read on white */
+html .bg4-t p { font-size: 12.5px; color: rgba(32,48,26,.8); }
+html .bg4-t .bg-lb { fill: rgba(32,48,26,.72); }

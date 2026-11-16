@@ -6652,10 +6652,11 @@ function teaMoods(sel) {
 // Brew it right as four small gauges: the water heat on a 60 to 100 °C scale, the covered cup, the steep times on a 15 minute line, the warm days around her period.
 function brewGrid(info) {
   const pc = (info && PH_HEX[info.phase]) || '#6c823e', ink = '#20301a', mute = 'rgba(32,48,26,.18)';
-  const heat = `<svg viewBox="0 0 150 46" aria-hidden="true"><rect x="6" y="20" width="138" height="6" rx="3" fill="${mute}"/><rect x="6" y="20" width="138" height="6" rx="3" fill="url(#bgh)"/>
-    <defs><linearGradient id="bgh"><stop offset="0" stop-color="#9cc0d6"/><stop offset=".55" stop-color="#e9b45a"/><stop offset="1" stop-color="#d9603f"/></linearGradient></defs>
-    ${[[75.5, 'Green'], [144, 'Herbs']].map(([x, l]) => `<circle cx="${x - (x > 140 ? 3 : 0)}" cy="23" r="7" fill="#fff" stroke="${ink}" stroke-width="2"/><text x="${x - (x > 140 ? 3 : 0)}" y="44" text-anchor="${x > 140 ? 'end' : 'middle'}" class="bg-lb">${l}</text>`).join('')}
-    <text x="6" y="11" class="bg-lb">60°</text><text x="144" y="11" text-anchor="end" class="bg-lb">100°</text></svg>`;
+  // water heat drawn like the steep gauge below it: a 60 to 100 °C line with a bar for each kind of tea (was a blue-to-red gradient)
+  const hx = c => 6 + (c - 60) / 40 * 138;
+  const heat = `<svg viewBox="0 0 150 46" aria-hidden="true"><line x1="6" y1="30" x2="144" y2="30" stroke="${mute}" stroke-width="2"/>${[60, 70, 80, 90, 100].map(c => `<line x1="${hx(c)}" y1="27" x2="${hx(c)}" y2="33" stroke="rgba(32,48,26,.35)" stroke-width="1.5"/>${c % 20 === 0 ? `<text x="${hx(c)}" y="44" text-anchor="${c === 60 ? 'start' : c === 100 ? 'end' : 'middle'}" class="bg-lb">${c}°</text>` : ''}`).join('')}
+    <rect x="${hx(70)}" y="8" width="${hx(80) - hx(70)}" height="9" rx="4.5" fill="${pc}"/><rect x="${hx(95)}" y="19" width="${hx(100) - hx(95)}" height="9" rx="4.5" fill="#c98a4a"/>
+    <text x="${hx(70) - 4}" y="16" text-anchor="end" class="bg-lb">Green</text><text x="${hx(95) - 4}" y="27" text-anchor="end" class="bg-lb">Herbs</text></svg>`;
   const x = m => 6 + m / 15 * 138;
   const steep = `<svg viewBox="0 0 150 46" aria-hidden="true"><line x1="6" y1="30" x2="144" y2="30" stroke="${mute}" stroke-width="2"/>${[0, 5, 10, 15].map(m => `<line x1="${x(m)}" y1="27" x2="${x(m)}" y2="33" stroke="rgba(32,48,26,.35)" stroke-width="1.5"/><text x="${x(m)}" y="44" text-anchor="${m ? m === 15 ? 'end' : 'middle' : 'start'}" class="bg-lb">${m}</text>`).join('')}
     <rect x="${x(5)}" y="8" width="${x(10) - x(5)}" height="9" rx="4.5" fill="${pc}"/><rect x="${x(10)}" y="19" width="${x(15) - x(10)}" height="9" rx="4.5" fill="#c98a4a"/>
