@@ -3074,11 +3074,12 @@ function cafCard() {
     </details>
   </section>`;
 }
-// Supplements as a spec sheet: label left, value right, the study with author and year, the caution, the full sheet behind one tap.
+// Supplements as a spec sheet: label left, value right, the first study as on the full sheet (year in Doto, author, its key
+// number as bars or a chip, one line), the caution, the full sheet behind one tap.
 function suppSpec(x) {
   const rows = [['Dose', x.dose], ['Form', x.form], ['When', x.when], ['Feel it', SUPP_TIME[x.id]], ['Food first', suppHero(x.id) && suppHero(x.id)[1]]].filter(r => r[1]);
   return `<dl class="sup-spec">${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v.charAt(0).toUpperCase() + v.slice(1)}</dd></div>`).join('')}</dl>
-    ${x.study ? `<span class="sr-st sup-st"><small>What studies found</small>${x.study.split('. ')[0].replace(/\.$/, '')}. <i>${x.cite.split(' · ').filter((c, i, A) => i === 0 || !/\b(19|20)\d\d\b/.test(c) && !A.slice(1, i).some(d => /\b(19|20)\d\d\b/.test(d))).join(' · ')}</i></span>` : ''}
+    ${x.study ? `<div class="sup-st2"><small>What studies found</small>${studyCards(x.study.split(/(?<=\.)\s+(?=[A-Z])/)[0], x.cite.split(' · ')[0])}</div>` : ''}
     ${x.caution ? `<span class="sfc-care sup-care"><small>Before you try</small>${x.caution}</span>` : ''}
     <button class="ebp-go" data-action="nav" data-to="supp/${x.id}">Full sheet ${icon('chevR', 13)}</button>`;
 }

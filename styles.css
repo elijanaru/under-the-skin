@@ -16875,3 +16875,14 @@ html .mvm-more .mvx-r .mv2-d { min-width: 0; font-size: 16px; white-space: nowra
 html .mvm-more .mvx-r > summary > svg { transform: none; } html .mvm-more .mvx-r[open] > summary > svg { transform: rotate(180deg); }
 html .mvx-b { padding-left: 66px; }
 html .sz-food .sz-b small.sz-nut { color: rgba(32,48,26,.78) !important; font-size: 12px; line-height: 1.25; } /* Today, In season: the two main nutrients */
+/* Phase supplements panel: the first study as a small card with its number drawn (was a plain paragraph) */
+.sup-st2 { display: block; margin-top: 8px; padding: 10px 12px 12px; border-radius: 16px; background: #fff; }
+.sup-st2 > small { display: block; margin-bottom: 6px; font: 600 11px/14px Outfit, sans-serif; color: #6c823e; }
+.sup-st2 .stc { margin: 0; }
+.sup-st2 .stc-c { padding: 0; background: none !important; border: 0 !important; box-shadow: none !important; }
+html .sup-st2 .stc { margin: 0; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; }
+html .sup-st2 .stc-c { grid-template-columns: 50px 1fr; column-gap: 10px; padding: 2px 0 0; border-top: 0; }
+html .sup-st2 .stc-c p { font-size: 13px; line-height: 1.4; }
+/* bubble pickers (supplements, drinks): a short last row sits in the middle instead of hanging left */
+html .eb-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 8px; }
+html .eb-grid > .eb-i { flex: 0 0 calc((100% - 16px) / 3); min-width: 0; }
