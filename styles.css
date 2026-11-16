@@ -16086,3 +16086,7 @@ html .grp .grp-hero h3 { margin: 0 0 3px; font-weight: 600; color: #20301a; }
 html .grp .grp-spec dd { color: #20301a; font-weight: 600; }
 html .grp .grp-spec dd .dotnum { font: 900 18px/1 var(--dot); color: #20301a; }
 html .grp-ol i, html .grp-ol i .dotnum { background: #20301a !important; color: #fff !important; font: 800 13px/1 var(--dot) !important; }
+/* Calendar › tapped day: pattern chips open that symptom's relief page */
+.cdl-ch button { display: inline-flex; align-items: center; gap: 5px; padding: 5px 8px 5px 7px; border: 0; border-radius: 99px; background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(30% * var(--hs)) 94%); font: 500 12.5px/1 var(--font); color: #304023; cursor: pointer; }
+.cdl-ch button .emo { margin: 0; font-size: 14px; line-height: 1; font-style: normal; }
+.cdl-ch button .ic { opacity: .5; }
