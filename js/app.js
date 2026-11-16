@@ -4190,7 +4190,8 @@ const GRO_EMO = [[/potato/i, '🍠'], [/pumpkin|squash/i, '🎃'], [/spinach|col
   [/melon/i, '🍉'], [/fig|date|prune/i, '🫐'], [/ginger|turmeric/i, '🫚'], [/herb|mint|parsley|basil|cilantro|dill/i, '🌿'], [/seaweed|kelp|nori|gim|miyeok/i, '🌊'], [/millet|rice|buckwheat|quinoa|grain/i, '🌾'], [/honey|molasses/i, '🍯'], [/cinnamon|spice|clove/i, '✨'], [/kimchi|sauerkraut|ferment/i, '🫙']];
 const groEmoji = n => (GRO_EMO.find(([r]) => r.test(n)) || [0, '🌱'])[1];
 // grocery foods as the same cut-outs the In season page uses, or a drawn emoji, on one soft tinted bubble (no busy round stock photos)
-const groIc = (n, cls = '') => { const cut = szCut(n); return `<span class="gro-ic ${cls}" aria-hidden="true">${cut ? `<img src="${cut}" alt="" loading="lazy" decoding="async">` : emoRaw(ingEmo(n) || groEmoji(n))}</span>`; };
+const GRO_FIX = [[/pumpkin seed/i, 'e:pumpkin-seeds'], [/shellfish|shrimp|prawn/i, '🦐'], [/raspberr/i, 'd:raspberry'], [/dark chocolate|cacao/i, '🍫'], [/cashew/i, '🌰'], [/lotus seed/i, '🪷'], [/tangerine|mandarin/i, '🍊'], [/green tea|herbal tea|matcha/i, '🍵']];
+const groIc = (n, cls = '') => { const fx = GRO_FIX.find(([r]) => r.test(n)), cut = !fx && szCut(n); if (fx) return `<span class="gro-ic ${cls}" aria-hidden="true">${emoRaw(fx[1])}</span>`; return `<span class="gro-ic ${cls}" aria-hidden="true">${cut ? `<img src="${cut}" alt="" loading="lazy" decoding="async">` : emoRaw(ingEmo(n) || groEmoji(n))}</span>`; };
 const groPic = (n, cls = '') => groIc(n, `gsw-i ${cls}`);
 // Food page: the grocery list as a little basket of this week's real foods, how many and how many are already in
 function groceryCard() {

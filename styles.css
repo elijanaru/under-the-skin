@@ -16456,3 +16456,4 @@ html .ty-nofish .emo { margin: 0; display: block; font-size: 20px; line-height: 
 .gro-ic.gsw-i.off .emo { font-size: 16px; }
 .gsw-chips .gro-ic.gsw-i.off { width: 26px; height: 26px; }
 .gsw-chips .gro-ic.gsw-i.off .emo { font-size: 14px; }
+.gro-ic.gsw-i.off { filter: saturate(.35); opacity: .8; }
