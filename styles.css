@@ -16090,3 +16090,9 @@ html .grp-ol i, html .grp-ol i .dotnum { background: #20301a !important; color: 
 .cdl-ch button { display: inline-flex; align-items: center; gap: 5px; padding: 5px 8px 5px 7px; border: 0; border-radius: 99px; background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(30% * var(--hs)) 94%); font: 500 12.5px/1 var(--font); color: #304023; cursor: pointer; }
 .cdl-ch button .emo { margin: 0; font-size: 14px; line-height: 1; font-style: normal; }
 .cdl-ch button .ic { opacity: .5; }
+
+/* Consistency sweep (Round E): every numbered step is the same solid ink circle with a white Doto number.
+   Move "How to do it" was small moss dots, Manifest's four steps near-black purple with gold, Golden roots and Friends ideas used Outfit numbers */
+html .mvp-how li i { width: 22px; height: 22px; margin-top: -1px; background: #20301a; color: #fff; font: 800 11.5px/1 var(--dot); }
+html .mm-flow span { background: #20301a; color: #fff; font: 800 13px/1 var(--dot); }
+html .grr-s i, html .tp-ideas i { font: 800 13px/1 var(--dot); }
