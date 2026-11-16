@@ -317,14 +317,16 @@ const logRead = n => `article/${LOG_READ[n] || 'progesterone-pms'}`;
 const TIP_DECK = { pms: ['drop', 'Cramps creeping in?', 'Ease my PMS'], skin: ['spark', 'Skin acting up?', 'Skin relief'], sleep: ['moon', 'Trouble winding down?', 'Sleep better'], mood: ['sun', 'Feeling up and down?', 'Mood & your brain'], energy: ['bolt', 'Running low?', 'Get my energy back'], eat: ['bowl', 'What should I eat today?', 'Open my plan'], tcm: ['yinyang', 'What is your inner season?', 'Yin & yang'], hormones: ['chart', 'What is my body doing?', 'See my hormones'], body: ['leaf', 'Want a strong, toned body?', 'Best training times'], bloat: ['cup', 'Feeling bloated?', 'Bloating relief'], regular: ['calendar', 'Want a steadier cycle?', 'The four phases'], ttc: ['heart', 'Trying for a baby?', 'Signs of egg release'] };
 // A tip from her own check-ins: a pattern due today or tomorrow, a hard symptom from the last two days, or her fertile sign.
 function checkinTip(info) {
-  const tip = (t, deck, to) => ({ k: 'mine', t: 'From your check-ins', photo: 'Progesterone', tip: t, deck, to });
+  const tip = (t, deck, to, sym) => { const rk = sym && reliefKey(sym); return { k: 'mine', t: 'From your check-ins', photo: 'Progesterone', img: rk ? reliefPhoto(rk, 900) : '', tip: t, deck, to }; };
+  // the Heads-up card already lists the quick fixes for a coming symptom, so this tip says why it happens
+  const why = n => { const W = SYMPTOM_WHY[n]; return W ? W[info.phase] || W.why : ''; };
   const rel = logRead;
   const up = M.stats.periods.length ? upcomingPatterns(patterns()).find(x => x.inDays <= 1 && QUICK_FIX[x.name]) : null;
-  if (up) return tip(`${up.name} usually comes on ${dayRange(up)} for you. Get ahead of it: ${QUICK_FIX[up.name]}`, ['spark', `${up.name} ${up.inDays ? 'tomorrow' : 'today'}?`, 'Get ahead of it'], rel(up.name));
+  if (up) return tip(why(up.name) ? `${why(up.name)} For you it usually comes on ${dayRange(up)}.` : `${up.name} usually comes on ${dayRange(up)} for you. Get ahead of it: ${QUICK_FIX[up.name].charAt(0).toLowerCase() + QUICK_FIX[up.name].slice(1)}`, ['spark', `${up.name} ${up.inDays ? 'tomorrow' : 'today'}?`, 'Why it happens'], rel(up.name), up.name);
   for (const d of [0, -1]) {
     const l = state.logs[C.iso(C.addDays(new Date(), d))] || {};
     const s = [...(l.symptoms || []), ...(l.moods || [])].find(x => QUICK_FIX[x] && !GOOD_FEELINGS.includes(x));
-    if (s) return tip(`You logged ${s.toLowerCase()} ${d ? 'yesterday' : 'today'}. ${QUICK_FIX[s]}`, ['spark', `Still feeling ${s.toLowerCase()}?`, 'What helps'], rel(s));
+    if (s) return tip(`You logged ${s.toLowerCase()} ${d ? 'yesterday' : 'today'}. ${QUICK_FIX[s]}`, ['spark', `Still feeling ${s.toLowerCase()}?`, 'What helps'], rel(s), s);
     if (l.fluid === 'Egg white') return tip(`Your egg-white sign moved your egg release to day ${info.ov}. Energy, confidence and desire peak around now.`, ['heart', 'Your fertile days are here', 'See my hormones'], 'article/ovulation-signs');
   }
   return null;
@@ -343,7 +345,7 @@ function tipsCard(info) {
   focusKeys().forEach(k => { const f = FOCUS.find(x => x.k === k); if (f) list.push({ k, t: f.t, photo: f.photo, tip: TIPS[k][ph], d: TIP_DO[k] && TIP_DO[k][ph], id: `${k}-${ph}` }); });
   if (!list.length) return '';
   const [lead] = list, D = x => x.deck || TIP_DECK[x.k] || ['spark', x.t, 'Show me'];
-  const [lic, lq] = D(lead), lu = hormonePhoto(lead.photo, 900), to = x => x.to || (x.k === 'hormones' ? `article/${HORMONE_READ[ph]}` : TIP_TO[x.k]) || 'article/four-phases';
+  const [lic, lq] = D(lead), lu = lead.img || hormonePhoto(lead.photo, 900), to = x => x.to || (x.k === 'hormones' ? `article/${HORMONE_READ[ph]}` : TIP_TO[x.k]) || 'article/four-phases';
   const la = ARTICLES.find(a => `article/${a.id}` === to(lead)), lcta = `${icon('book', 14)} Read the article${la ? ` · ${la.mins} min` : ''}`;
   if (lead.d) regTip(lead.id, lead.t, lead.d, to(lead));
   const n = (state.savedTips || []).length;

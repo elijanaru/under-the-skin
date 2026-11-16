@@ -597,7 +597,7 @@ export const SYMPTOM_WHY = {
   'Back pain': { ev: 'some', why: 'The same prostaglandins behind cramps can radiate into the lower back.' },
   'Joint pain': { ev: 'emerging', why: 'Estrogen is anti-inflammatory. When it is low, before and during your period, joints can feel stiffer.' },
   'Tender breasts': { ev: 'some', why: 'Progesterone and estrogen make breast tissue hold fluid in the second half of your cycle.' },
-  Bloating: { ev: 'some', why: 'Hormone shifts make you hold more water and slow digestion, most of all in the days before your period.' },
+  Bloating: { ev: 'some', why: 'Hormone shifts make you hold more water and slow digestion, most of all in the days before your period.', ovulatory: 'Around egg release the estrogen peak makes you hold a little extra water, so you can feel puffy for a day or two.' },
   Nausea: { ev: 'some', why: 'Prostaglandins don’t only affect the womb; they can upset the stomach on the first days of your period.' },
   Constipation: { ev: 'strong', why: 'Progesterone relaxes smooth muscle, including your gut, so things slow down in the luteal phase.' },
   Diarrhea: { ev: 'strong', why: 'When your period starts, prostaglandins speed up the gut as well as the womb. Very common on day 1–2.' },
