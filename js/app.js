@@ -5535,15 +5535,14 @@ function viewRemedy(id) {
 // the supplement named first wins, so 'Vitamin C with iron' is vitamin C, not iron
 const suppOf = name => (SUPP_LIB.map(x => [x, String(name).search(x.m)]).filter(([, i]) => i >= 0).sort((a, b) => a[1] - b[1])[0] || [])[0];
 const suppPhases = x => { const ph = PHASE_ORDER.filter(p => EAT_GUIDE[p].cats.supps[1].some(([, n]) => x.m.test(n))); return ph.length ? ph : PHASE_ORDER; };
-// Supplement page: when in her day to take it, as a sunrise-to-night line with a pin.
+// Supplement page: when in her day to take it, as three time slots (the one to use filled in ink).
+// Was a yellow-pink-lilac gradient bar with a pin that looked draggable and sat off its label.
 function suppDay(when) {
   const w = when.toLowerCase();
-  const at = /evening|dinner/.test(w) ? 76 : /morning|breakfast/.test(w) && /lunch/.test(w) ? 36 : /morning|breakfast/.test(w) ? 18 : /spread/.test(w) ? -1 : /meal/.test(w) ? 50 : -1;
-  const pins = at < 0 ? [18, 50, 76] : [at];
+  const on = /evening|dinner/.test(w) ? ['e'] : /morning|breakfast/.test(w) && /lunch/.test(w) ? ['m', 'd'] : /morning|breakfast/.test(w) ? ['m'] : ['m', 'd', 'e'];
+  const S = [['m', 'sun', 'Morning', '6 to 11'], ['d', 'bowl', 'Midday', '11 to 5'], ['e', 'moon', 'Evening', '5 to 10']];
   return `<section class="sp-day"><div class="tf-k">When in your day</div>
-    <div class="spd-line"><span class="spd-ic s">${icon('sun', 16)}</span><i class="spd-bar"></i><span class="spd-ic m">${icon('moon', 16)}</span>
-      ${pins.map(x => `<b class="spd-pin" style="--x:${x / 100}"></b>`).join('')}</div>
-    <div class="spd-lab"><span>Morning</span><span>Midday</span><span>Evening</span></div>
+    <div class="spd-s">${S.map(([k, ic, t, h]) => `<span class="${on.includes(k) ? 'on' : ''}">${icon(ic, 16)}<b>${t}</b><small>${h}</small></span>`).join('')}</div>
     <p>${when}</p></section>`;
 }
 // How much is safe: her dose against the official daily limit, as one bar (EFSA where Europe set one).

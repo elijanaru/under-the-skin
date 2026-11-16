@@ -16843,3 +16843,11 @@ html .hbc-o { aspect-ratio: 340 / 570; } /* a taller, wider ring: ten objects ge
 .rws-k i { width: 10px; height: 10px; border-radius: 3px; flex: none; }
 .rws-k i.r { background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(45% * var(--hs)) 48%); }
 .rws-k i.w { background: #ecc3cf; }
+/* Supplement sheet, When in your day: three time slots instead of a gradient bar with a pin; the slot to use is ink */
+.spd-s { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0 2px; }
+.spd-s > span { display: grid; justify-items: center; gap: 3px; padding: 12px 4px 10px; border-radius: 18px; background: #f4f1ec; color: rgba(32,48,26,.55); }
+.spd-s > span b { font: 500 13.5px/1.1 var(--font); color: rgba(32,48,26,.7); }
+.spd-s > span small { font: 400 11px/1 var(--font); }
+.spd-s > span.on { background: #20301a; color: #e9f0dc; box-shadow: 0 8px 18px -10px rgba(32,48,26,.6); }
+.spd-s > span.on b { color: #fff; }
+.spd-s > span.on small { color: rgba(255,255,255,.75); }
