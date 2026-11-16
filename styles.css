@@ -16814,3 +16814,5 @@ html .bzp-o .bzp-g { margin-bottom: 14px; }
 html .sd-none { display: block; margin-top: 4px; font: 400 11px/1.25 var(--font); color: rgba(255,255,255,.55); text-align: center; }
 html .sd-c.empty b, html .sd-c.empty > small { opacity: .6; }
 html .sd .sd-line { margin-top: 30px; } /* the 'picks' ring no longer touches the Night icon */
+/* Food tabs: the tiles not picked were 42% white and read as pink smudges on the blush page; now frosted white with a hairline, the picked one keeps its ink ring */
+html .fx-c:not(.on) { background: rgba(255,255,255,.74); box-shadow: inset 0 0 0 1px rgba(48,64,35,.10), 0 6px 16px -12px rgba(32,48,26,.35); }
