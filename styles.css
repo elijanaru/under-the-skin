@@ -16433,3 +16433,13 @@ html .tgw.in-page .tgw-cup img { inset: 4%; width: 92%; height: 92%; filter: dro
 html .tgw.in-page .tgw-l { z-index: 3; max-width: calc(50% - 114px); font-size: 12.5px !important; line-height: 1.25; font-weight: 500; color: #20301a; }
 html .tgw.in-page .tgw-l.t, html .tgw.in-page .tgw-l.b { max-width: 220px; }
 html .tgw.in-page .tgw-l { max-width: 74px; }
+
+/* Consistency sweep (Round E): Nutrients list says when each one helps as named phase pills, her phase in ink; Today's "Day" in Outfit with only the number in Doto */
+.nu2-k { color: #5d6a50; letter-spacing: .01em; font-size: 11.5px; }
+.nu2-when { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.nu2-when > span { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px 3px 6px; border-radius: 99px; background: color-mix(in srgb, var(--c) 16%, #fff); font: 500 11px/1.1 var(--font); color: #304023; }
+.nu2-when > span i { width: 6px; height: 6px; border-radius: 50%; background: var(--c); }
+.nu2-when > span.now { background: #20301a; color: #fff; }
+.nu2-when > span.all { padding: 3px 8px; background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(30% * var(--hs)) 93%); color: #304023; }
+.home .hub-k > .hub-day { font-family: var(--font); font-weight: 500; }
+.home .hub-k > .hub-day b { font: 900 13px/1 var(--dot); }

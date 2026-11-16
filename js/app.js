@@ -6102,7 +6102,7 @@ function todayHub(info, energy, head = '') {
       ${periodPill(info)}
       ${energyCard(info, energy)}</div>
     <div class="hub-sec hub-plan">
-      <div class="hub-k"><span>Best things to do today</span><span class="hub-day">Day ${Math.min(info.cd, info.L)}</span></div>
+      <div class="hub-k"><span>Best things to do today</span><span class="hub-day">Day <b class="dotnum">${Math.min(info.cd, info.L)}</b></span></div>
       ${todayTiles(info)}
     </div>
   </section>`;
@@ -6482,19 +6482,21 @@ function viewNutrients() {
   const ph = M.info && M.info.phase, now = ph ? NUTRIENTS.filter(x => x.p.includes(ph) && x.p.length < 4) : [];
   const pic = x => { const h = NU_HERO[x.id] || SUPP_HERO[x.id]; return h ? (h[0].startsWith('tea:') ? teaPhoto(h[0].slice(4), 300, 300) : foodPhoto(h[0], 300)) : ''; };
   const dose = x => { const m = x.d[0][0].match(/^(Up to )?([\d.,–]+)\s*(.*)$/); return m ? `${m[1] ? '<small>up to</small>' : ''}<b class="dotnum">${m[2]}</b><small>${m[3]}</small>` : `<b class="nu2-w">${x.d[0][0]}</b>`; };
-  const dots = x => x.p.length === 4 ? '<em class="nu2-all">All month</em>' : `<span class="nu2-ph">${PHASE_ORDER.map(p => `<i class="${x.p.includes(p) ? 'on' : ''}" style="--c:${PH_HEX[p]}" title="${PHASES[p].name}"></i>`).join('')}</span>`;
+  // when it helps, as named phase pills (her phase in ink) instead of four unexplained dashes
+  const PN = { menstrual: 'Period', follicular: 'Follicular', ovulatory: 'Ovulation', luteal: 'Luteal' };
+  const dots = x => `<span class="nu2-when">${x.p.length === 4 ? '<span class="all">All month</span>' : PHASE_ORDER.filter(p => x.p.includes(p)).map(p => `<span class="${p === ph ? 'now' : ''}" style="--c:${PH_HEX[p]}"><i></i>${PN[p]}</span>`).join('')}</span>`;
   const card = x => `<button class="nu2-r" data-action="nav" data-to="nutrients/${x.id}"><span class="nu2-p"><img src="${pic(x)}" alt="" loading="lazy" decoding="async"></span>
     <span class="nu2-t"><b>${x.n}</b><small>${x.for}</small>${dots(x)}</span><span class="nu2-d"><span>${dose(x)}</span><small>${x.d[0][1]}</small></span></button>`;
   const tile = x => `<button class="nu2-tile" data-action="nav" data-to="nutrients/${x.id}"><img src="${pic(x)}" alt="" loading="lazy" decoding="async">
     <span class="nu2-tt"><b>${x.n}</b><small>${x.for}</small><span class="nu2-d">${dose(x)}</span><small class="nu2-ds">${x.d[0][1]}</small></span></button>`;
   return `${topbar('Nutrients', { back: true })}
   <div class="pad">
-    <header class="t4-h sp-h"><small>Nutrients</small><h1>Food first, then a boost.</h1><p>Food covers most of what your cycle needs. Add a supplement when you have the signs, a test shows you’re low, or a study dose clearly helps.</p></header>
+    <header class="t4-h sp-h"><small>Nutrients</small><h1>Food first, then a boost.</h1><p>Food covers most of what your cycle needs. A supplement helps when a test or your signs say you’re low.</p></header>
     <button class="tmo-go nu-go" data-action="nav" data-to="supp">Supplement guide: doses and studies ${icon('chevR', 14)}</button>
     ${suppWeek()}
     ${now.length ? `${sectionTitle(`For your ${PHASES[ph].name.toLowerCase()} phase`)}<div class="nu2-tiles">${now.map(tile).join('')}</div>` : ''}
     ${sectionTitle(now.length ? 'All nutrients' : 'Nutrients')}
-    <section class="nu2-list"><p class="nu2-k"><span>Dots: the phases it helps most</span><span>Daily dose</span></p>${NUTRIENTS.filter(x => !now.includes(x)).map(card).join('')}</section>
+    <section class="nu2-list"><p class="nu2-k"><span>When it helps</span><span>Daily dose</span></p>${NUTRIENTS.filter(x => !now.includes(x)).map(card).join('')}</section>
     <p class="fine center">General information, not medical advice. Pregnant, on medication or unsure? Ask your doctor or pharmacist first.</p>
   </div>`;
 }
