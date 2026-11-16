@@ -16400,3 +16400,21 @@ html .hp-pk .emo { margin: 0; display: block; font-size: 15px; line-height: 1; o
 /* 16 Nov 2026: nothing may touch the green frame. The scalloped top band ends 21% of the width below its start
    (frame-top.webp, sbV + 26px), so each page's content starts just under the scallops. */
 .view:not(:has(> .rh3)) > .topbar { margin-bottom: calc(21cqw - 6px); }
+
+/* Hormone pyramid: emoji bubbles (16 Nov 2026) */
+.hp-mo { width: 46px; height: 46px; border-radius: 50%; filter: none;
+  background: radial-gradient(circle at 34% 28%, #fff 0 38%, #fdf3f5 100%);
+  box-shadow: 0 8px 16px -8px rgba(120,50,70,.45), inset 0 0 0 1px rgba(255,255,255,.9), 0 0 0 1px rgba(176,79,108,.1); }
+html .hp-mo .emo { margin: 0; display: block; font-size: 24px; line-height: 1; }
+.hp-m small { margin-top: 2px; }
+.tyf-e.hm { background: #fff; box-shadow: 0 10px 22px -12px rgba(120,50,70,.5), 0 0 0 1px rgba(176,79,108,.1); }
+
+/* Small sheet: a floating card for short notes */
+.ws-mini .ws-sh { top: auto; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); max-height: 72vh; border-radius: 30px; }
+.ws-mini.down .ws-sh { transform: translateY(calc(104% + 24px)); }
+.ws-mini .ws-sh { transform: translateY(calc(104% + 24px)); }
+.ws-mini.up .ws-sh { transform: translateY(0); }
+.ws-mini .ws-in { flex: 0 1 auto; padding-bottom: 22px; }
+.ws-mini .ws-x { top: 14px; right: 14px; width: 34px; height: 34px; }
+.ws-mini .tyf-e { width: 64px; height: 64px; margin-top: 0; }
+html .ws-mini .tyf-e .emo { font-size: 31px; }

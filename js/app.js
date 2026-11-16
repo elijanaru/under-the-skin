@@ -4645,7 +4645,7 @@ const HP_HORM = {
   progesterone: ['🕊️', 'Progesterone', 'The calm', 'Calms, warms and helps you sleep. Made only after you ovulate, and low when stress is high.'],
   testosterone: ['🔥', 'Testosterone', 'The drive', 'Desire, drive, muscle and confidence. A small peak around ovulation.'],
   thyroid: ['🦋', 'Thyroid', 'The pace setter', 'Sets the speed of your metabolism, your temperature and your cycle. Needs iodine, selenium, iron and enough food.'],
-  melatonin: ['🌌', 'Melatonin', 'The night', 'Rises in the dark and falls with morning light. Sets your sleep and also shields the egg from stress.'],
+  melatonin: ['💤', 'Melatonin', 'The night', 'Rises in the dark and falls with morning light. Sets your sleep and also shields the egg from stress.'],
 };
 const HP_ITEM = {
   stress: ['😣', 'Stress', 'Constant stress keeps cortisol high and tells your body it is not a safe time to make sex hormones.'],
@@ -4680,6 +4680,18 @@ const HP_ITEM = {
   rebound: ['🤸‍♀️', 'Rebounding', 'Gentle bouncing on a mini trampoline, 5 to 10 minutes, pumps lymph and lifts your mood.'],
   dense: ['🥩', 'Nutrient-dense food', 'Eggs, liver, wild fish, meat, raw milk and ripe fruit carry the vitamins and minerals your glands use.'],
   calm: ['🫐', 'Anti-inflammatory food', 'Berries, olive oil, wild fish, ginger and turmeric cool inflammation.'],
+  plastic: ['🧴', 'Plastics and fragrance', 'BPA and phthalates in plastic, perfume and scented products act like weak estrogen and confuse your own signals.'],
+  lowfat: ['🥗', 'Low-fat dieting', 'Sex hormones are built from cholesterol and fat. Too little fat leaves too little raw material.'],
+  overtrain: ['🏋️‍♀️', 'Training too hard', 'Hard workouts every day with too little food or rest can quiet ovulation and lower progesterone.'],
+  slowgut: ['🐢', 'Slow digestion', 'When you do not go every day, used estrogen is taken back up from the gut instead of leaving.'],
+  lowiod: ['🧂', 'Low iodine and selenium', 'Your thyroid needs both to make its hormones. Little fish, eggs or seafood can leave you short.'],
+  latenight: ['🌃', 'Late nights', 'Bright light and staying up late push melatonin back and blur your whole daily rhythm.'],
+  fats: ['🧈', 'Good fats', 'Butter, egg yolks, raw milk cream, olive oil and avocado give your body the cholesterol it builds hormones from.'],
+  greens: ['🥦', 'Broccoli and greens', 'Broccoli, cabbage and rocket help your liver clear used estrogen. Eat them lightly cooked around your period.'],
+  gutmove: ['🍐', 'A daily bowel movement', 'Fibre from fruit and vegetables and enough water, so used estrogen leaves your body every day.'],
+  seafood: ['🐟', 'Wild fish and seafood', 'Iodine, selenium and omega-3 for your thyroid and egg quality. One or two Brazil nuts a day also cover selenium.'],
+  glass: ['🫙', 'Glass instead of plastic', 'Store and heat food in glass or steel, and choose unscented soaps and creams.'],
+  dark: ['🕯️', 'Dim evenings', 'Soft warm light after sunset and a dark bedroom let melatonin rise on time.'],
 };
 const HP_TIER = [
   { n: 'Survival', s: 'Cortisol · insulin · oxytocin', c: '#c2577a', h: ['cortisol', 'insulin', 'oxytocin'], lead: 'Your base. When it feels unsafe, rushed or hungry, everything above it pays.',
@@ -4687,10 +4699,9 @@ const HP_TIER = [
   { n: 'Builders', s: 'Pregnenolone · DHEA', c: '#b9862f', h: ['preg', 'dhea'], lead: 'The raw material your body turns into sex hormones. Drained by inflammation, filled by good food.',
     off: ['alcohol', 'processed', 'infection', 'vit', 'min', 'inflam', 'meds'], on: ['sauna', 'lymph', 'rebound', 'cold', 'dense', 'calm'] },
   { n: 'Sex & rhythm', s: 'Estrogen · progesterone · testosterone · thyroid · melatonin', c: '#6c823e', h: ['estrogen', 'progesterone', 'testosterone', 'thyroid', 'melatonin'], lead: 'The top is where you feel it. It follows the base, so start there.',
+    off: ['plastic', 'lowfat', 'overtrain', 'slowgut', 'lowiod', 'latenight', 'alcohol', 'stress', 'under'], on: ['fats', 'greens', 'gutmove', 'seafood', 'glass', 'dark', 'sun', 'hug', 'bed'],
     feel: [['💋', 'Libido'], ['✨', 'Energy'], ['🌀', 'Digestion'], ['💅', 'Skin, hair, nails'], ['🗓️', 'Cycle'], ['🌡️', 'Body temperature'], ['🍑', 'Body shape'], ['⚖️', 'Metabolism'], ['😴', 'Sleep and waking']] },
 ];
-const HP_MOL = { estrogen: 'Oestrogen', progesterone: 'Progesterone', testosterone: 'Testosterone', thyroid: 'Thyroid hormones', melatonin: 'Melatonin', cortisol: 'Cortisol', preg: 'Pregnenolone', dhea: 'DHEA' };
-const hpMol = k => k === 'insulin' ? protBall('Insulin') : k === 'oxytocin' ? protBall('Oxytocin') : (MOL_BALL[HP_MOL[k]] || '');
 // a trapezoid with softly rounded corners
 function hpBand(x0t, x1t, y0, x1b, x0b, y1, r = 16) {
   const P = [[x0t, y0], [x1t, y0], [x1b, y1], [x0b, y1]], n = P.length;
@@ -4706,20 +4717,19 @@ function hormonePyramid() {
   const TIERS = [[2, 0, 252], [1, 264, 444], [0, 456, 660]];
   const band = (k, y0, y1) => `<g class="hp-t t${k} ${k === sel ? 'on' : ''}" data-action="hpTier" data-v="${k}" role="button" tabindex="0" aria-pressed="${k === sel}" aria-label="${HP_TIER[k].n}">
     <path class="hp-f" d="${hpBand(X(y0, -1), X(y0, 1), y0, X(y1, 1), X(y1, -1), y1)}"/><path class="hp-sh" d="M${X(y0, -1) + 18} ${y0 + 2.5} H${X(y0, 1) - 18}"/></g>`;
-  // each molecule: centre x, centre y, width (viewBox units)
-  const POS = { estrogen: [134, 78, 62], progesterone: [206, 78, 62], testosterone: [113, 166, 52], thyroid: [170, 166, 50], melatonin: [227, 166, 52],
-    preg: [128, 370, 76], dhea: [212, 370, 76], cortisol: [98, 566, 64], insulin: [170, 566, 64], oxytocin: [242, 566, 64] };
+  // each hormone bubble: centre x, centre y (viewBox units)
+  const POS = { estrogen: [138, 62], progesterone: [202, 62], testosterone: [112, 136], thyroid: [170, 136], melatonin: [228, 136],
+    preg: [132, 366], dhea: [208, 366], cortisol: [100, 562], insulin: [170, 562], oxytocin: [240, 562] };
   const pc = (v, of) => (v / of * 100).toFixed(2) + '%';
-  const mols = Object.entries(POS).map(([k, [x, y, w]], i) => { const H = HP_HORM[k];
-    return `<button class="hp-m" style="left:${pc(x - w / 2, VW)};top:${pc(y - 30, VH)};width:${pc(w, VW)};--i:${i}" data-action="hpHorm" data-k="${k}" aria-label="${H[1]}"><span class="hp-mo">${hpMol(k)}</span><small>${H[1]}</small></button>`; }).join('');
-  const peek = (k, y) => `<span class="hp-pk" style="top:${pc(y, VH)}" aria-hidden="true"><small>knocked off by</small>${HP_TIER[k].off.slice(0, 5).map(i => emoRaw(HP_ITEM[i][0])).join('')}</span>`;
+  const mols = Object.entries(POS).map(([k, [x, y]], i) => { const H = HP_HORM[k], w = 66;
+    return `<button class="hp-m" style="left:${pc(x - w / 2, VW)};top:${pc(y - 24, VH)};width:${pc(w, VW)};--i:${i}" data-action="hpHorm" data-k="${k}" aria-label="${H[1]}"><span class="hp-mo">${emoRaw(H[0])}</span><small>${H[1]}</small></button>`; }).join('');
+  const peek = (k, y, n = 5) => `<span class="hp-pk" style="top:${pc(y, VH)}" aria-hidden="true"><small>knocked off by</small>${HP_TIER[k].off.slice(0, n).map(i => emoRaw(HP_ITEM[i][0])).join('')}</span>`;
   const lab = (y, n, sub) => `<text class="hp-n" x="170" y="${y}">${n}</text>${sub ? `<text class="hp-s" x="170" y="${y + 16}">${sub}</text>` : ''}`;
   const chip = (k, kind) => { const x = HP_ITEM[k]; return `<button class="hp-c ${kind}" data-action="hpItem" data-k="${k}" data-kind="${kind}"><span>${emoRaw(x[0])}</span><small>${x[1]}</small></button>`; };
-  const detail = T.feel ? `<h5 class="hp-dh">You feel it in</h5><div class="hp-feel">${T.feel.map(([e, n]) => `<span class="hp-f2"><span>${emoRaw(e)}</span><small>${n}</small></span>`).join('')}</div>
-      <button class="hp-go" data-action="hpTier" data-v="0">Start at the base ${icon('chevR', 13)}</button>`
-    : `<h5 class="hp-dh off">Knocked off by</h5><div class="hp-grid">${T.off.map(k => chip(k, 'off')).join('')}</div>
+  const detail = `<h5 class="hp-dh off">Knocked off by</h5><div class="hp-grid">${T.off.map(k => chip(k, 'off')).join('')}</div>
       <h5 class="hp-dh on">Brought back by</h5><div class="hp-grid">${T.on.map(k => chip(k, 'on')).join('')}</div>
-      ${sel === 0 ? `<button class="hp-go" data-action="hpTier" data-v="1">Then the builders ${icon('chevR', 13)}</button>` : `<button class="hp-go" data-action="hpTier" data-v="2">What you feel at the top ${icon('chevR', 13)}</button>`}`;
+      ${T.feel ? `<h5 class="hp-dh">You feel it in</h5><div class="hp-feel">${T.feel.map(([e, n]) => `<span class="hp-f2"><span>${emoRaw(e)}</span><small>${n}</small></span>`).join('')}</div>
+      <button class="hp-go" data-action="hpTier" data-v="0">Start at the base ${icon('chevR', 13)}</button>` : sel === 0 ? `<button class="hp-go" data-action="hpTier" data-v="1">Then the builders ${icon('chevR', 13)}</button>` : `<button class="hp-go" data-action="hpTier" data-v="2">What you feel at the top ${icon('chevR', 13)}</button>`}`;
   return `<section class="hp">
     <div class="bgx2-head"><h1>Balance your <span>hormones</span></h1><p>Your hormones stack like a pyramid. The base sets the tone for everything above it. Tap a level.</p></div>
     <div class="hp-wrap">
@@ -4733,7 +4743,7 @@ function hormonePyramid() {
         <g class="hp-txt" aria-hidden="true">${lab(236, HP_TIER[2].n)}${lab(296, HP_TIER[1].n, 'the raw material')}${lab(490, HP_TIER[0].n, 'start here')}<text class="hp-base" x="170" y="646">Hormone balance starts here</text></g>
       </svg>
       <p class="hp-note" aria-hidden="true">you feel it in your skin, sleep, cycle and mood</p>
-      ${mols}${peek(1, 424)}${peek(0, 618)}
+      ${mols}${peek(2, 196, 4)}${peek(1, 424)}${peek(0, 618)}
     </div>
     <div class="hp-d" style="--tc:${T.c}"><small>Level ${sel + 1} · ${['the base', 'the middle', 'the top'][sel]}</small><b>${T.n}</b><p>${T.lead}</p>${detail}</div>
   </section>`;
@@ -4747,7 +4757,7 @@ function hpItemSheet(k, kind) {
 function hpHormSheet(k) {
   const H = HP_HORM[k]; if (!H) return '';
   const tier = HP_TIER.find(T => T.h.includes(k));
-  return `<div class="tyf hpx"><span class="hpx-mol">${hpMol(k)}</span><h2>${H[1]}</h2><p class="tyf-s">${H[2]}</p><p class="tyf-p">${H[3]}</p>
+  return `<div class="tyf hpx"><span class="tyf-e hm">${emoRaw(H[0])}</span><h2>${H[1]}</h2><p class="tyf-s">${H[2]}</p><p class="tyf-p">${H[3]}</p>
     ${tier ? `<p class="hpx-t">Lives in <b>${tier.n}</b>, ${['the base', 'the middle', 'the top'][HP_TIER.indexOf(tier)]} of the pyramid.</p>` : ''}</div>`;
 }
 function balanceGuide(info, done) {
@@ -10930,8 +10940,8 @@ const actions = {
   partnerToday: () => { state.hidePartner = !state.hidePartner; save(); render(); },
   fbLvl: d => { ui.fbLvl = +d.v; const b = document.querySelector('.bgx2'); if (!b) return render(); const info = M.info, t = document.createElement('div'); t.innerHTML = balanceGuide(info, habitsDone(todayISO())); b.replaceWith(t.firstElementChild); },
   hpTier: d => { ui.hpT = +d.v; const s = document.querySelector('.hp'); if (!s) return render(); const y = window.scrollY; s.outerHTML = hormonePyramid(); window.scrollTo(0, y); },
-  hpHorm: d => wsOpen(hpHormSheet(d.k), 'ws-ty'),
-  hpItem: d => wsOpen(hpItemSheet(d.k, d.kind), 'ws-ty'),
+  hpHorm: d => wsOpen(hpHormSheet(d.k), 'ws-ty ws-mini'),
+  hpItem: d => wsOpen(hpItemSheet(d.k, d.kind), 'ws-ty ws-mini'),
   tyFound: d => wsOpen(tyFoundSheet(d.k), 'ws-ty'),
   fbSheet: d => wsOpen(`<div class="fbp-det fbs">${fbDetail(+d.i)}</div>`, 'ws-fb'),
   fbTick: (d, el) => { const k = todayISO(), H = state.habits = state.habits || {}; const a = H[k] = H[k] || []; a.includes(d.id) ? a.splice(a.indexOf(d.id), 1) : a.push(d.id); save();
