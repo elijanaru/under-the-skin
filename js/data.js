@@ -1189,8 +1189,8 @@ const HF = {
   eggs: ['protein-bfast', 'sz/eggs', 'Protein breakfast', 'Within an hour of waking', 'Steadies blood sugar', 'Protein and fat first thing keep blood sugar and cortisol steady all morning, so cravings stay quiet later.', '2 eggs, or yoghurt with seeds, before anything sweet.'],
   greens: ['bitter-greens', 'sf/dandelion', 'Bitter greens', 'Lunch', 'Helps your liver', 'Bitter leaves get bile flowing, and your liver uses bile to clear used oestrogen.', 'A handful of dandelion, rocket or chicory with lunch.'],
   brush: ['dry-brush', 'brush', 'Dry brushing', 'Before your shower', 'Wakes you up', 'A brisk brush wakes your skin and circulation. A small ritual that makes the morning feel like a fresh start.', '2 minutes, long soft strokes toward your heart.'],
-  sleep: ['early-night', 'bed', 'Early nights', 'Bed by 10:30', 'Resets your hormones', 'Your first deep sleep of the night is when repair hormones peak and cortisol is lowest. Short nights raise cortisol and cravings.', 'Lights low after 9, in bed by 10:30. A small glass of tart cherry juice at room temperature adds a little natural melatonin.'],
-  foot: ['foot-bath', 'salt', 'Warm foot bath', 'Evening', 'Warms you through', 'In Chinese medicine warm feet keep the womb warm and the blood moving. It also simply relaxes you before bed.', '10 minutes in warm water with a handful of magnesium salt.'],
+  sleep: ['early-night', 'bed-night', 'Early nights', 'Bed by 10:30', 'Resets your hormones', 'Your first deep sleep of the night is when repair hormones peak and cortisol is lowest. Short nights raise cortisol and cravings.', 'Lights low after 9, in bed by 10:30. A small glass of tart cherry juice at room temperature adds a little natural melatonin.'],
+  foot: ['foot-bath', 'salt', 'Keep your feet warm', 'All day, most in the evening', 'Keeps your womb warm', 'In Chinese medicine the kidney channel begins in the sole of your foot, and cold that comes in through cold feet travels up to the womb, where it can mean more cramps. Warm feet keep the blood moving.', 'Socks or slippers on cold floors, and a 10 minute warm foot soak in the evening.'],
   phone: ['phone-free', 'phone', 'No phone first hour', 'Morning', 'Calms stress hormones', 'Starting the day without scrolling keeps cortisol from spiking early.', 'Phone stays in another room until after breakfast. Coffee or tea first, slowly.'],
   sun: ['morning-sun', 'sun', 'Morning sun', 'First hour', 'Sets your body clock', 'Daylight soon after waking sets your cortisol rhythm, so energy comes in the morning and sleep at night.', '10 minutes outside, no sunglasses, even when it is cloudy.'],
   ground: ['ground', 'ground', 'Barefoot on the ground', 'Any time', 'Calms your nerves', 'Time barefoot outside calms your nervous system and gets you out of your head.', '10 minutes on grass, sand or soil.'],
@@ -1215,7 +1215,7 @@ export const HB_HOW = {
   'bitter-greens': ['A handful of dandelion, rocket, chicory, radicchio or endive', 'Eat them first, at the start of lunch, so bile is flowing before the meal', 'Dress with olive oil and lemon or apple cider vinegar', 'Raw in the first half of your cycle, lightly wilted in a warm pan before your period', 'Too bitter? Mix them with sweeter leaves and a little fruit'],
   'dry-brush': ['Use a natural bristle brush on dry skin, just before your shower', 'Start at your feet and brush up your legs in long, soft strokes', 'Then from your hands up your arms, always toward your heart', 'Small, gentle clockwise circles on your belly', 'Light pressure: pink skin is good, red or scratched is too much', 'Skip broken skin, rashes and your breasts. Shower and oil your skin after'],
   'early-night': ['Dim lights and screens after 9 pm, lamps instead of ceiling lights', 'Go to bed at the same time every night, aim for 10 to 10:30', 'Keep the bedroom dark, cool and quiet, the phone out of the room', 'A warm shower or foot bath an hour before bed helps you drift off', 'Tart cherry juice: 30 ml of concentrate in a little water at room temperature, an hour before bed. Cherries hold natural melatonin, and in small studies it added to sleep time', 'Awake after 20 minutes? Get up, keep the light low, read, then try again', 'Wake at the same time every day, weekends too'],
-  'foot-bath': ['A bowl of warm water, as hot as feels good, up to your ankles', 'Add a handful of magnesium flakes or Epsom salt', 'A few slices of fresh ginger add extra warmth', 'Sit quietly for 10 to 15 minutes in the evening', 'Dry your feet well and put on warm socks straight away', 'With diabetes or numb feet, test the heat with your hand first'],
+  'foot-bath': ['Socks or slippers indoors, no bare feet on cold tiles or stone', 'Keep your ankles covered when it is cold outside', 'In the evening, soak your feet in warm water up to the ankles for 10 minutes. A handful of magnesium flakes and a few ginger slices add warmth', 'Dry them well and put warm socks on straight away', 'Most important in the days before and during your period', 'With diabetes or numb feet, test the heat with your hand first'],
   'phone-free': ['Charge your phone outside the bedroom', 'Wake up with a simple alarm clock instead', 'First water, daylight and breakfast, then the phone', 'Coffee or tea slowly, at the window or outside', 'Need it for work? Turn on focus mode until after breakfast'],
   'morning-sun': ['Step outside within an hour of waking', '10 minutes on a clear day, 20 to 30 minutes when it is cloudy', 'No sunglasses, and not through a window: glass blocks the light that matters', 'Look toward the sky, never straight into the sun', 'Pair it: coffee on the balcony, or walk part of the way to work'],
   ground: ['Shoes and socks off, on grass, sand, soil or stone', '10 minutes, standing, walking slowly or sitting', 'Breathe slowly and feel the ground under your feet', 'Damp grass or the edge of the sea grounds you the most', 'Do it in the morning sun and you get both at once'],
@@ -1716,7 +1716,7 @@ export const DIET_GUIDE = {
     warn: [
       ['Eat enough', '🍽️', 'Too few calories or too little fat can stop ovulation and your period. A missing period is a sign to eat more, not less.'],
       ['Test once a year', '🧪', 'B12, ferritin (your iron stores), vitamin D and, if you feel tired or cold, your thyroid.'],
-      ['Planning a pregnancy?', '🌷', 'Start a prenatal with folate, B12, iodine, choline and algae DHA three months before.'],
+      ['Sweetened plant milks', '🧃', 'Many plant milks and yoghurts are full of added sugar. Pick unsweetened ones with added calcium.'],
     ] },
   veg: { title: 'Your vegetarian guide', lead: 'Eggs and dairy cover a lot. A few nutrients still run low without meat and fish, and they matter for your cycle.',
     items: [
@@ -1773,7 +1773,7 @@ export const DIET_CYCLE = {
       luteal: ['Magnesium, then iron', '🍫', 'Cacao and tahini now, lentils with lemon the week before your period', 'Magnesium calms cramps and cravings. Start refilling iron before you bleed.', [['🍫', 'Raw cacao'], ['🥄', 'Tahini'], ['🍠', 'Baked sweet potato']], 'late'],
     },
     notes: [['No kelp tablets', '🌊', 'Their iodine dose swings far too high. Iodised salt or 150 µg a day is the safe way.'], ['Soak and sprout', '🫘', 'Soak beans, lentils, nuts and seeds overnight: it frees more iron and zinc and makes them easier to digest.']],
-    swaps: [['🥛', 'Milk', 'Almond milk with added calcium'], ['🧈', 'Butter', 'Olive oil or coconut oil'], ['🍯', 'Honey', 'Maple syrup'], ['🥚', 'Egg in baking', '1 tbsp ground flax + 3 tbsp water']] },
+    swaps: [['🥛', 'Milk', 'Almond milk with added calcium', '🌰'], ['🧈', 'Butter', 'Olive oil or coconut oil', '🫒'], ['🍯', 'Honey', 'Maple syrup', '🍁'], ['🥚', 'Egg in baking', '1 tbsp ground flax + 3 tbsp water', '🌱']] },
   veg: { name: 'Vegetarian', sub: 'Eggs, dairy and plants.', iron: 'plant',
     lead: 'Eggs and dairy cover a lot. Plan your <mark>iron and omega-3</mark> and your cycle has all it needs.',
     phases: {
@@ -1782,8 +1782,8 @@ export const DIET_CYCLE = {
       ovulatory: ['Fibre & antioxidants', '🫐', 'Raw veg, berries and ground flax', 'Estrogen peaks now. Fibre carries the used hormones out.', [['🫐', 'Berries with yoghurt'], ['🥗', 'A big raw salad'], ['🥄', 'Ground flaxseed']], 'raw'],
       luteal: ['Magnesium, then iron', '🧀', 'Cacao and raw cheese now, eggs and lentils the week before your period', 'Magnesium and calcium ease PMS. Start refilling iron before you bleed.', [['🍫', 'Raw cacao'], ['🧀', 'Raw cheese'], ['🍠', 'Baked sweet potato']], 'late'],
     },
-    notes: [['Planning a pregnancy?', '🌷', 'Start a prenatal with folate, iodine, choline and algae DHA three months before.'], ['Eggs every day', '🥚', 'Eggs bring choline, B12 and protein in one go. Two a day is a lovely habit.']],
-    swaps: [['🥩', 'Meat iron', 'Lentils with a squeeze of lemon'], ['🐟', 'Fish omega-3', 'Algae oil'], ['🍲', 'Bone broth', 'Mushroom and seaweed broth'], ['🍮', 'Gelatin', 'Agar']] },
+    notes: [['Easy on bread and pasta', '🍝', 'Without meat it is easy to fill up on grains. Make eggs, dairy or lentils the centre of your plate, so your blood sugar stays steady.'], ['Eggs every day', '🥚', 'Eggs bring choline, B12 and protein in one go. Two a day is a lovely habit.']],
+    swaps: [['🥩', 'Meat iron', 'Lentils with a squeeze of lemon', '🫘'], ['🐟', 'Fish omega-3', 'Algae oil', '🌿'], ['🍲', 'Bone broth', 'Mushroom and seaweed broth', '🍄'], ['🍮', 'Gelatin', 'Agar', '🌊']] },
   pesc: { name: 'Pescetarian', sub: 'The sea, eggs and dairy.', iron: 'heme',
     lead: 'Fish and shellfish bring the <mark>easy kind of iron</mark> and omega-3. Choose <mark>small fish</mark> for less mercury.',
     phases: {
@@ -1792,8 +1792,8 @@ export const DIET_CYCLE = {
       ovulatory: ['Omega-3 & antioxidants', '🐟', 'Wild salmon, berries and raw greens', 'Estrogen peaks now. Omega-3 and colour keep your skin glowing.', [['🐟', 'Wild salmon'], ['🫐', 'Berries'], ['🥗', 'A big raw salad']], 'raw'],
       luteal: ['Magnesium, then iron', '🍫', 'Cacao and seeds now, mussels or sardines the week before your period', 'Magnesium calms cramps and cravings. Start refilling iron before you bleed.', [['🍫', 'Raw cacao'], ['🐟', 'Sardines'], ['🍠', 'Baked sweet potato']], 'late'],
     },
-    notes: [['Planning a pregnancy?', '🌷', 'Keep to small fish and salmon, skip swordfish, shark and marlin, and start a prenatal with folate three months before.']],
-    swaps: [['🥩', 'Red meat iron', 'Mussels or clams'], ['🫀', 'Liver', 'Oysters'], ['🐟', 'Big tuna', 'Sardines and salmon'], ['🍲', 'Bone broth', 'Fish bone broth']] },
+    notes: [['Big fish, more mercury', '🦈', 'Swordfish, shark, marlin and big tuna hold the most mercury. Choose sardines, anchovies, mackerel and salmon.']],
+    swaps: [['🥩', 'Red meat iron', 'Mussels or clams', '🐚'], ['🫀', 'Liver', 'Oysters', '🦪'], ['🐟', 'Big tuna', 'Sardines and salmon', '🐠'], ['🍲', 'Bone broth', 'Fish bone broth', '🍜']] },
   all: { name: 'Everything', sub: 'Meat, fish, eggs, dairy and plants.', iron: 'heme',
     lead: 'You can eat it all, so the art is <mark>variety</mark>: a little of everything, in tune with <mark>your phase</mark>.',
     phases: {
@@ -1802,8 +1802,8 @@ export const DIET_CYCLE = {
       ovulatory: ['Omega-3 & fibre', '🐟', 'Wild salmon, berries and raw greens', 'Estrogen peaks now. Fibre carries the used hormones out, omega-3 keeps your skin glowing.', [['🐟', 'Wild salmon'], ['🫐', 'Berries'], ['🥗', 'A big raw salad']], 'raw'],
       luteal: ['Magnesium, then iron', '🍫', 'Cacao and avocado now, red meat or lentils the week before your period', 'Magnesium calms cramps and cravings. Start refilling iron before you bleed.', [['🍫', 'Raw cacao'], ['🥑', 'Avocado'], ['🍠', 'Baked sweet potato']], 'late'],
     },
-    notes: [['Colour every day', '🌈', 'Five colours of plants a day. Fibre is what carries used estrogen out of your body.'], ['Liver and pregnancy', '🫀', 'About 100 g of liver a week is plenty. Skip it when pregnant or trying to conceive: it holds a lot of vitamin A.']],
-    swaps: [['🍞', 'White bread', 'Sweet potato or ripe fruit'], ['🌻', 'Seed oils', 'Butter, ghee or olive oil'], ['🍬', 'Sugar', 'A little raw honey'], ['🐟', 'Big tuna', 'Sardines and salmon']],
+    notes: [['Colour every day', '🌈', 'Five colours of plants a day. Fibre is what carries used estrogen out of your body.', ['5', 'handfuls a day', 'One colour in each handful', '🍅🥕🌽🥦🫐']], ['Liver, a little goes far', '🫀', 'The richest food there is for iron, B12, folate and vitamin A. Vitamin A adds up, so a small piece is all you need.', ['15', 'g a day', 'About the top half of your thumb, or one 100 g slice a week', '👍']]],
+    swaps: [['🍞', 'White bread', 'Sweet potato or ripe fruit', '🍠'], ['🌻', 'Seed oils', 'Butter, ghee, tallow or olive oil', '🧈'], ['🍬', 'Sugar', 'A little raw honey', '🍯'], ['🐟', 'Big tuna', 'Sardines and salmon', '🐠']],
     // Her guide when she eats everything (DIET_GUIDE has no 'all' entry, so onboarding and Profile stay as they are).
     guide: { items: [
       { n: 'Iron', cov: 2, g: '🩸', tag: 'watch', why: 'Your period takes iron every month. Red meat and shellfish bring the easiest kind.', do: 'Red meat or mussels once or twice a week, plus lentils and greens with vitamin C. Enjoy coffee and tea an hour away from those meals. Test ferritin before taking iron.', foods: 'Beef, lamb, mussels, sardines, lentils, cooked spinach', ph: ['menstrual'] },
@@ -1814,7 +1814,7 @@ export const DIET_CYCLE = {
       { n: 'Protein', cov: 2, g: '🥚', tag: 'watch', why: 'Steady blood sugar and strong hormones need protein at every meal.', do: 'Eggs, meat, fish, raw dairy or lentils: a palm-sized portion each meal.', foods: 'Eggs, beef, salmon, Greek yoghurt, lentils', ph: ['follicular', 'ovulatory'] },
     ], warn: [
       ['Test once a year', '🧪', 'Ferritin and vitamin D.'],
-      ['Planning a pregnancy?', '🌷', 'Start a prenatal with folate three months before, and keep big fish like swordfish and shark off your plate.'],
+      ['Plastic and your hormones', '🧴', 'Some plastics release chemicals that act like estrogen, more so when hot. Warm and store your food in glass or steel.'],
     ] } },
   animal: { name: 'Primal', sub: 'Meat, eggs, raw dairy, fruit and sweet potato.', iron: 'heme',
     lead: 'Animal foods bring the <mark>easiest iron</mark>, B12 and protein. Add <mark>fruit and magnesium</mark> and your hormones stay balanced.',
@@ -1824,8 +1824,8 @@ export const DIET_CYCLE = {
       ovulatory: ['Vitamin C & fibre', '🍊', 'Fruit every day, sweet potato and squash', 'Estrogen peaks now. Fibre from fruit carries the used hormones out.', [['🍊', 'Citrus'], ['🥝', 'Kiwi'], ['🐟', 'Wild salmon']], 'raw'],
       luteal: ['Magnesium & a few more carbs', '🍠', 'Sweet potato, avocado and honey', 'Magnesium and a few more carbs calm cravings and help you sleep.', [['🍠', 'Sweet potato'], ['🥑', 'Avocado'], ['🍯', 'Raw honey']], 'late'],
     },
-    notes: [['Gentle plants only', '🍠', 'No grains, beans, seeds, nuts or most vegetables. Sweet potato, squash, peeled cucumber and courgette, avocado and olives are gentle: low in oxalates and plant defence chemicals.'], ['Liver and pregnancy', '🫀', 'About 100 g of liver a week is plenty. Skip it when pregnant or trying to conceive: it holds a lot of vitamin A.'], ['Raw milk', '🥛', 'Only from a tested farm you trust, kept cold. Choose pasteurised milk when you are pregnant.'], ['Fruit every day', '🍓', 'Meat has no fibre, and fibre is what carries used estrogen out of your body.']],
-    swaps: [['🍞', 'Bread', 'Sweet potato or ripe fruit'], ['🍬', 'Sugar', 'A little raw honey'], ['🌻', 'Seed oils', 'Butter, ghee or tallow'], ['🥤', 'Energy drinks', 'Mineral water with a pinch of salt']] },
+    notes: [['Gentle plants only', '🍠', 'No grains, beans, seeds, nuts or most vegetables. Sweet potato, squash, peeled cucumber and courgette, avocado and olives are gentle: low in oxalates and plant defence chemicals.'], ['Liver, a little goes far', '🫀', 'The richest food there is for iron, B12, folate and vitamin A. Vitamin A adds up, so a small piece is all you need.', ['15', 'g a day', 'About the top half of your thumb, or one 100 g slice a week', '👍']], ['Raw milk', '🥛', 'Only from a tested farm you trust, kept cold. Choose pasteurised milk when you are pregnant.'], ['Fruit every day', '🍓', 'Meat has no fibre, and fibre is what carries used estrogen out of your body.']],
+    swaps: [['🍞', 'Bread', 'Sweet potato or ripe fruit', '🍠'], ['🍬', 'Sugar', 'A little raw honey', '🍯'], ['🌻', 'Seed oils', 'Butter, ghee or tallow', '🧈'], ['🥤', 'Energy drinks', 'Mineral water with a pinch of salt', '💧']] },
 };
 
 // The best spices and superfoods for each phase: [emoji, name, why, how much, photo ['tea'|'food', name] or null, not vegan].

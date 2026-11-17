@@ -1596,6 +1596,25 @@ const TEA4_MORE = {
      ['🔥', 'Warming', 'Warming in Chinese medicine, just what the days before your period need.'],
      ['🤢', 'Settles nausea', 'Ginger is one of the best-studied natural remedies for nausea.']]],
 };
+// A little "Good to know" for each phase tea: a true, fun bit of history or botany (17 Nov 2026, in place of the warnings).
+const PHASE_TEA_FACT = {
+  menstrual: ['Cinnamon is the inner bark of a tree. It curls itself into those little quills as it dries in the sun.',
+    'In China red dates are given at weddings: their name sounds like "early", a wish for a sweet life and a baby soon.',
+    'Midwives have brewed raspberry leaf for centuries. It is the leaf they use, not the berry.',
+    'The town of Marathon was named after fennel, which grew all over its fields. Marathon simply means "fennel place".'],
+  follicular: ['Nettle loses its sting the moment it is dried or steeped in hot water, so your cup is all goodness.',
+    'Jasmine tea is scented by layering the leaves with fresh jasmine buds that open at night, sometimes up to seven times.',
+    'Roasted dandelion root was brewed as a coffee in wartime, when real coffee ran out.',
+    'Mint feels cool because menthol switches on your cold sensors. The tea is not colder at all, it just feels that way.'],
+  ovulatory: ['Hibiscus is so deeply red it has been used to dye fabric. A squeeze of lemon makes your cup an even brighter ruby.',
+    'Matcha bushes are shaded for about three weeks before picking, which makes the leaves greener and sweeter.',
+    'Spearmint is named after its leaves, which are pointed like the tip of a spear.',
+    'Lemongrass smells of lemon because it holds citral, the same scent that is in lemon peel.'],
+  luteal: ['Lavender comes from the Latin "lavare", to wash. The Romans scented their baths with it.',
+    'Lemon balm was the heart of Carmelite water, a calming tonic nuns in Paris made from 1611.',
+    'Vanilla is the fruit of an orchid, and on most farms each flower is still pollinated by hand.',
+    'Ginger, turmeric and cardamom are cousins: they all belong to the same plant family.'],
+};
 function teaSheet(ph, i) {
   const [n, f] = PHASE_TEAS[ph][i], [why, amt, water, steep, when, warn] = PHASE_TEA_SPEC[ph][i], good = TEA4_GOOD[ph][i];
   const steps = [['bowl', 'You need', dietProse(amt)], ['thermo', 'Water', water], ['clock', 'Steep', steep], ['sun', 'When', when]];
@@ -1613,7 +1632,7 @@ function teaSheet(ph, i) {
     <section class="o3-note tsh-note"><p class="o3-lead">${why}</p></section>
     ${(TEA4_MORE[ph] || [])[i] ? `<section class="tsh-more"><h3>What it does</h3>${TEA4_MORE[ph][i].map(([e, t, x], j) => `<div class="tsh-m" style="--j:${j}"><span class="emo">${e}</span><div><b>${t}</b><small>${x}</small></div></div>`).join('')}</section>` : ''}
     <div class="tsh-steps">${steps.map(([ic, k, v], j) => `<div class="tsh-st" style="--k:${j}"><span>${icon(ic, 19, 1.9)}</span><b>${k}</b><small>${v}</small></div>`).join('')}</div>
-    ${warn ? `<p class="tsh-warn"><i>${icon('heart', 14, 2)}</i>${warn}</p>` : ''}
+    <div class="tsh-fact"><span class="emo">${['📖', '💡', '✨'].find(e => !((TEA4_MORE[ph] || [])[i] || []).some(m => m[0] === e))}</span><div><b>Good to know</b><p>${PHASE_TEA_FACT[ph][i]}</p></div></div>
     <p class="o3-sign">sip it slowly, it’s your moment <i>♡</i></p>
   </div>`;
 }
@@ -1624,6 +1643,20 @@ function o3Hero() {
         <circle class="o3-sp" style="--d:.6s" cx="78" cy="24" r="2.6" fill="#fff"/><circle class="o3-sp" style="--d:1.9s" cx="262" cy="178" r="2.4" fill="#fff"/></svg>
       <img class="o3-lotus" src="images/pay/lotus-free.webp" alt="">
     </section>`;
+}
+// Last onboarding step (17 Nov 2026, her ask): the two permissions, asked in context with a cute, honest why.
+// Each yes opens the real system prompt right here; what she allows is carried into her profile when she starts.
+function onbAsk(o) {
+  const card = (k, e, t, d, yes, done, off) => `<div class="pa-c ${done ? 'on' : ''} ${off ? 'off' : ''}"><span class="pa-e">${e}</span><div><b>${t}</b><p>${d}</p>
+    <button class="pa-b" data-action="onbAsk" data-v="${k}" ${done || off ? 'disabled' : ''}>${done ? `${icon('check', 14, 2.6)} ${done}` : off ? 'Maybe later, in Profile' : yes}</button></div></div>`;
+  return `<div class="op op2 op3 pa">
+    <section class="o3-note pa-note"><h2><span>Two tiny</span> <em>favours<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 15 C 40 9, 70 17, 104 11 S 170 8, 196 12"/></svg></em></h2>
+      <p class="o3-sub">So your app can feel made just for you.</p>
+      ${card('n', '💌', 'Letters from your body', 'A little note now and then: when to rest, when to shine, when your period is on its way. Never spammy, pinky promise.', 'Yes, send me letters', o.askN === 'granted' && 'Letters on', o.askN === 'denied')}
+      ${card('g', '☀️', 'Your patch of sky', 'Roughly where you are, so we can show your UV, sunrise and sunset. Only your area, never your street.', 'Yes, use my area', o.askG === 'granted' && 'Sunshine on', o.askG === 'denied')}
+      <p class="pa-promise">We don’t sell your data. We sweaaar 🤞<br>We just want to make it personal.</p>
+      <p class="o3-sign">with love, from our little team <i>♡</i></p></section>
+  </div>`;
 }
 function onbPromise() {
   const no = [['subscriptions', 'One payment, yours for good'], ['ads', 'Never, not even small ones'], ['hidden fees', 'The price you see is all'], ['selling your data', 'It stays yours, always'], ['popups', 'No nagging to upgrade']];
@@ -1680,7 +1713,7 @@ function onbCycleRing(L, P) {
 }
 function viewOnboarding() {
   const s = ui.onbStep, o = ui.onb;
-  const dots = `<div class="onb-dots">${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => `<i class="${i < s ? 'on' : i === s ? 'now' : ''}"></i>`).join('')}</div>`;
+  const dots = `<div class="onb-dots">${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(i => `<i class="${i < s ? 'on' : i === s ? 'now' : ''}"></i>`).join('')}</div>`;
   if (s === 0) {
     return `<div class="onb onb-welcome full dark beyond">
       <canvas class="welcome3d"></canvas>
@@ -1761,6 +1794,7 @@ function viewOnboarding() {
         ${focusTiles(o.focus || [], 'onbFocus')}`,
     9: onbPlanHTML(planKeys(o), o.name.trim()),
     10: onbPromise(),
+    11: onbAsk(o),
   }[s];
 
   const flash = ui.flashOut ? '<div class="flash-out"></div>' : ''; ui.flashOut = false;
@@ -1770,7 +1804,7 @@ function viewOnboarding() {
     <div class="onb-top"><button class="icon-btn dark" data-action="onbBack" aria-label="Back">${icon('chevL', 22)}</button>${dots}${sndBtn()}</div>
     <div class="onb-body">${body}</div>
     <div class="onb-foot">
-      <button class="pearl-btn wide" data-action="onbNext" ${s === 1 && !ui.onbWhere && !o.name.trim() ? 'disabled' : ''}><span>${s === 10 ? 'Start free until my period' : s === 8 ? 'See my plan' : 'Continue'}</span></button>
+      <button class="pearl-btn wide" data-action="onbNext" ${s === 1 && !ui.onbWhere && !o.name.trim() ? 'disabled' : ''}><span>${s === 11 ? 'Open my app ✦' : s === 10 ? 'Start free until my period' : s === 8 ? 'See my plan' : 'Continue'}</span></button>
       ${s === 10 ? '<p class="fine rm2-note">Underskin is a wellness app, not medical advice.</p>' : ''}
     </div>
   </div>`;
@@ -1918,7 +1952,7 @@ function habitsHome(info) { return hhCard(info); }
 // Short names for the habits circle.
 const HB_LABEL = { 'heat-belly': 'Warm belly', lemon: 'Lemon water', 'golden-milk': 'Golden milk', 'red-date-tea': 'Red date tea', 'mag-night': 'Magnesium', calm: 'Slow breaths', walk: 'Walk after meals',
   'morning-sun': 'Morning sun', 'seed-cycle': 'Seed cycling', 'phone-free': 'Slow mornings', ground: 'Bare feet', 'carrot-salad': 'Raw carrot', 'chamomile-eve': 'Chamomile',
-  'protein-bfast': 'Protein breakfast', 'bitter-greens': 'Bitter greens', 'dry-brush': 'Dry brushing', 'early-night': 'Early nights', 'foot-bath': 'Warm foot bath' };
+  'protein-bfast': 'Protein breakfast', 'bitter-greens': 'Bitter greens', 'dry-brush': 'Dry brushing', 'early-night': 'Early nights', 'foot-bath': 'Warm feet' };
 // a habit's picture for her diet: no eggs on a vegan breakfast
 const HB_IMG_DIET = { 'protein-bfast': { vegan: 'sf/pumpkin-seeds' } };
 const hbImg = (img, id) => { const v = id && (HB_IMG_DIET[id] || {})[myDiet()]; img = v || img; return `images/${img.includes('/') ? img : `fb/${img}`}.webp`; };
@@ -2799,8 +2833,8 @@ function dietGuidePanel(phase) {
   return `<section class="o3-note gd-note"><h2><span>Your</span> <em>${C.name.toLowerCase()} guide${DG_SWIRL}</em></h2>
       <p class="o3-sub">${C.sub}</p><p class="o3-lead">${C.lead}</p><p class="o3-sign">with love, from our little team <i>♡</i></p></section>
 
-    <h4 class="gd-h">What to eat in <span class="gd-hl">each phase</span></h4>
-    <div class="gd-tks" tabindex="0" aria-label="What to load up on in each phase">${ord.map(tk).join('')}</div>
+    <h4 class="gd-h">What to eat <span class="gd-hl">right now</span></h4>
+    <div class="gd-tks one" aria-label="What to load up on in your ${PHASES[phase].name.toLowerCase()} phase">${tk(phase)}</div>
 
     <section class="gd-card gd-iron"><h4 class="gd-h">Your kind of <span class="gd-hl">iron</span></h4>
       <div class="gd-jars">${jar(2, 20, 'Plant iron', plant)}${jar(15, 35, 'Meat & fish iron', !plant)}</div>
@@ -2817,10 +2851,10 @@ function dietGuidePanel(phase) {
       <span class="dv-g">${x.g}</span><b>${x.n}</b>${dvMeter(x.cov, d)}<span class="dv-more">${icon('chevD', 13)}</span></button>`).join('')}</div>
 
     <h4 class="gd-h">Easy <span class="gd-hl">swaps</span></h4>
-    <div class="gd-sw">${C.swaps.map(([e, a, b], i) => `<div class="gd-s" style="--r:${[-1.4, 1.1, -.7, 1.3][i % 4]}deg"><i>${e}</i><s>${a}</s><span class="gd-ar">${DG_ARROW}</span><b>${b}</b></div>`).join('')}</div>
+    <div class="gd-sw">${C.swaps.map(([e, a, b, e2], i) => `<div class="gd-s" style="--r:${[-1.4, 1.1, -.7, 1.3][i % 4]}deg"><i>${e}</i><s>${a}</s><span class="gd-ar">${DG_ARROW}</span><b>${e2 ? `<span class="gd-se">${emoRaw(e2)}</span>` : ''}${b}</b></div>`).join('')}</div>
 
     <h4 class="gd-h">Little <span class="gd-hl">watch-outs</span></h4>
-    <div class="gd-notes">${[...G.warn, ...(C.notes || [])].map(([t, g, x], i) => `<div class="gd-n n${i % 3}"><span>${g}</span><b>${t}</b><p>${x}</p></div>`).join('')}</div>
+    <div class="gd-notes">${[...G.warn, ...(C.notes || [])].map(([t, g, x, z], i) => `<div class="gd-n n${i % 3}"><span>${g}</span><b>${t}</b><p>${x}</p>${z ? `<div class="gd-z"><b class="dotnum">${z[0]}</b><span><em>${z[1]}</em><small>${z[2]}</small></span><i class="gd-ze ${[...z[3]].length > 2 ? 'row' : ''}">${z[3]}</i></div>` : ''}</div>`).join('')}</div>
     <button class="fx-all" data-action="fxCat" data-v="recipes">Recipes for how you eat ${icon('chevR', 14)}</button>`;
 }
 // Recipes page: her phase's dishes (no raw ones in the warm window), filtered by meal in place.
@@ -5123,7 +5157,11 @@ function viewReliefIndex() {
   return `${topbar('Balance', { back: true })}
   <div class="pad hg fb">
     ${hormonePyramid()}
-    ${balanceGuide(info, done)}
+    <section class="bgx2 dp-w dp-hbc">
+      ${sectionTitle('Your daily plan')}
+      <p class="bgx2-sub">Your habits for hormone balance today. Tap one for how and why.</p>
+      ${hhCard(info)}
+    </section>
     ${H.fert.length ? feminineFlow() : ''}
     <section class="hg-end"><b>You are not the problem.</b><p>The modern world runs against your rhythm. Start with one ritual, and let the rest follow.</p></section>
     <p class="fine center">General information, not medical advice. Check with a doctor or pharmacist before starting supplements.</p>
@@ -6663,7 +6701,7 @@ function t4Detail(ph, i) {
   return `<div class="t4-dh"><img src="images/tea4/${ph}-${i}.webp" alt=""><div><small>Made for ${f.toLowerCase()}</small><b>${n}</b></div></div>
     <p class="t4-why">${why}</p>
     <dl class="t4-spec">${[['bowl', 'You need', dietProse(amt)], ['thermo', 'Water', water], ['clock', 'Steep', steep], ['sun', 'When', when]].map(([ic, k, v]) => `<div><dt>${icon(ic, 15)}${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
-    ${warn ? `<p class="t4-warn">${icon('heart', 13)} ${warn}</p>` : ''}`;
+    <p class="t4-warn t4-fact"><b>Good to know</b> ${PHASE_TEA_FACT[ph][i]}</p>`;
 }
 function cycleTeas(info) {
   const ph = (info && info.phase) || 'follicular', T = PHASE_TEAS[ph], sel = -1;
@@ -11174,6 +11212,26 @@ const actions = {
     try { localStorage.setItem('uts.sound', off ? 'off' : 'on'); } catch (e) {}
     document.querySelectorAll('.snd-btn').forEach(b => { b.innerHTML = sndIcon(off); b.setAttribute('aria-pressed', off); b.setAttribute('aria-label', off ? 'Sound on' : 'Sound off'); });
   },
+  onbAsk: async d => {
+    const o = ui.onb, LN = NATIVE && CAP?.Plugins?.LocalNotifications, G = NATIVE && CAP?.Plugins?.Geolocation;
+    try {
+      if (d.v === 'n') {
+        let st = 'denied';
+        if (LN) { const p = await LN.requestPermissions(); st = p.display === 'granted' ? 'granted' : 'denied'; }
+        else if ('Notification' in window) st = (await Notification.requestPermission()) === 'granted' ? 'granted' : 'denied';
+        o.askN = st;
+      } else {
+        let st = 'denied';
+        if (G) { const p = await G.requestPermissions({ permissions: ['coarseLocation'] }); st = (p.coarseLocation || p.location) === 'granted' ? 'granted' : 'denied'; }
+        else if (navigator.geolocation) {
+          const pos = await new Promise(r => navigator.geolocation.getCurrentPosition(r, () => r(null), { enableHighAccuracy: false, timeout: 15000, maximumAge: 36e5 }));
+          if (pos && pos.coords) { st = 'granted'; o.geo = { lat: +pos.coords.latitude.toFixed(2), lng: +pos.coords.longitude.toFixed(2), day: todayISO() }; }
+        }
+        o.askG = st;
+      }
+    } catch { if (d.v === 'n') o.askN = 'denied'; else o.askG = 'denied'; }
+    ui.onbStill = true; render();
+  },
   onbNext: () => {
     if (ui.onbStep === 1 && !ui.onbWhere) { ui.onbWhere = true; ui.onbAnim = 'fwd'; render(); window.scrollTo(0, 0); return; } // name → where she lives
     if (ui.onbStep === 1) { ui.onb.country = ui.onb.country || myCountry(); ui.onbWhere = false; }
@@ -11183,7 +11241,7 @@ const actions = {
     if (ui.onbStep === 6) { ui.onbPreg = false; ui.onbLoss = false; }
     if (ui.onbStep === 7 && ui.onb.purpose === 'conceive' && !ui.onbTry) { ui.onbTry = true; ui.onbAnim = 'fwd'; render(); window.scrollTo(0, 0); return; } // trying → for how long
     if (ui.onbStep === 7) ui.onbTry = false;
-    if (ui.onbStep < 10) { ui.onbStep += ui.onbStep === 4 && ui.onb.noPeriod ? 2 : 1; ui.onbAnim = 'fwd'; render(); window.scrollTo(0, 0); return; }
+    if (ui.onbStep < 11) { ui.onbStep += ui.onbStep === 4 && ui.onb.noPeriod ? 2 : 1; ui.onbAnim = 'fwd'; render(); window.scrollTo(0, 0); return; }
     if (!o_ok()) { toast('Pick the day your last period started'); ui.onbStep = 4; render(); return; }
     const o = ui.onb, logs = {}, s = C.parseISO(o.last);
     if (!o.noPeriod) for (let i = 0; i < o.periodLength; i++) { const d = C.addDays(s, i); if (d <= new Date()) logs[C.iso(d)] = { flow: i === 0 || i === 1 ? 'medium' : 'light' }; }
@@ -11191,8 +11249,10 @@ const actions = {
     let pend = null; try { pend = b64d(localStorage.getItem('uts.pendingPartner') || ''); localStorage.removeItem('uts.pendingPartner'); } catch {}
     state = { onboarded: true, profile: { name: o.name.trim(), country: o.country || myCountry(), diet: o.diet || 'all', cycleLength: o.unsure || o.noPeriod ? 28 : o.cycleLength, cycleUnsure: !!(o.unsure || o.noPeriod), noPeriod: !!o.noPeriod || undefined, preg: o.preg || (o.purpose === 'after' ? 'kids' : undefined), ttc: o.purpose === 'conceive' && o.ttc || undefined, ttcSince: o.purpose === 'conceive' && o.ttcSince || undefined, ppAt: o.ppAt || undefined, ppOld: o.ppOld || undefined, lossAt: o.preg === 'loss' && o.lossAt || undefined, lossOld: o.preg === 'loss' && o.lossOld || undefined, lossN: o.preg === 'loss' && o.lossN || undefined, lossHelp: o.preg === 'loss' && o.lossHelp?.length ? o.lossHelp : undefined, bf: o.bf || undefined, bc: o.bc || 'none', bcPlan: hormonalBC(o.bc) ? o.bcPlan || 'think' : undefined, bcStop: o.bcPlan === 'stop' ? todayISO() : undefined, planStart: todayISO(), periodLength: o.periodLength, goals: o.goals, purpose: o.purpose || 'know', focus: (o.focus && o.focus.length) ? o.focus : ['hormones', 'energy', 'eat'], birthday: o.birthday || undefined, birthTime: o.birthday && o.birthTime || undefined, birthPlace: o.birthday && o.birthPlace || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
     if (pend && pend.s && pend.c) state.partners = [{ ...pend, id: Date.now().toString(36), added: Date.now() }];
+    if (o.geo) state.profile.geo = o.geo; if (o.askG) state.profile.geoAsked = true; // asked on the last onboarding page
     ui.scrollMem = {}; ui.navStack = []; save(); go('today'); render(); toTop(); requestAnimationFrame(toTop); setTimeout(toTop, 400); // she lands at the very top of Today
     if (state.partners?.length) { M = model(); syncTo(state.partners[0]); startSignals(); }
+    if (o.askG === 'granted' && !o.geo) geoLocate(false).then(() => scheduleSunNative()); else if (o.askN === 'granted') setTimeout(() => scheduleSunNative(), 600);
   },
   gateSkip: () => { if (!termsTick()) return; ui.onbGateDone = true; ui.onbAnim = 'fwd'; render(); },
   termsAgree: () => { const at = Date.now(); state.termsAt = at; try { localStorage.setItem('uts.termsAt', String(at)); } catch {} save(); render(); },
