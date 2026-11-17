@@ -7640,10 +7640,15 @@ function moveWave(days, info, L, P) {
   const lab = (i, t) => `<span style="left:${(x(i) / W * 100).toFixed(1)}%">${t}</span>`;
   return `<div class="mv3-wave"><div class="mvw-plot"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
       <defs><linearGradient id="mvw-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="mvw-s1"/><stop offset="1" class="mvw-s2"/></linearGradient></defs>
-      <path d="${d} L${W - 6} ${H} L6 ${H} Z" fill="url(#mvw-f)"/><path class="mvw-l" d="${d}"/>
+      <clipPath id="mvw-c"><path d="${d} L${W - 6} ${H} L6 ${H} Z"/></clipPath>
+      <g clip-path="url(#mvw-c)">${(() => { const W2P = { 'flow-start': 'menstrual', 'flow-end': 'menstrual', rising: 'follicular', building: 'follicular', peak: 'ovulatory', settle: 'luteal', focus: 'luteal', premenstrual: 'luteal' }, out = [];
+        let s0 = 0; const edge = i => i < 0 ? 0 : i >= days.length - 1 ? W : (x(i) + x(i + 1)) / 2; // each day owns the space up to halfway to its neighbour
+        days.forEach((w, i) => { const ph = W2P[w]; if (W2P[days[i + 1]] !== ph) { const a0 = edge(s0 - 1), a1 = edge(i);
+          out.push(`<rect x="${a0.toFixed(1)}" y="0" width="${(a1 - a0).toFixed(1)}" height="${H}" fill="${PH_HEX[ph]}" fill-opacity="${ph === info.phase ? '.72' : '.42'}"/>`); s0 = i + 1; } });
+        return out.join(''); })()}<rect width="${W}" height="${H}" fill="url(#mvw-f)"/></g><path class="mvw-l" d="${d}"/>
       <line class="mvw-now" x1="${tx.toFixed(1)}" y1="${(ty + 6).toFixed(1)}" x2="${tx.toFixed(1)}" y2="${H}"/></svg>
-    <i class="mvw-dot" style="left:${(tx / W * 100).toFixed(1)}%;top:${(ty / H * 100).toFixed(1)}%"></i></div>
-    <div class="mvw-lab">${lab(0, 'Period')}${lab(ov - 1, 'Peak')}${lab(L - 1, 'Slow')}</div>
+    <i class="mvw-dot" style="left:${(tx / W * 100).toFixed(1)}%;top:${(ty / H * 100).toFixed(1)}%;--c:${PH_INK[info.phase]}"></i></div>
+    <div class="mvw-lab">${lab(0, 'Gentle')}${lab(ov - 1, 'Peak')}${lab(L - 1, 'Ease off')}</div>
     <small class="mvw-k">How hard your body wants to train</small></div>`;
 }
 // Today's training as a traffic light: Go for it, Go lighter, Skip today; each move a photo chip, tap for what it is.
@@ -7707,10 +7712,9 @@ function viewMove() {
   const W2P = { 'flow-start': 'menstrual', 'flow-end': 'menstrual', rising: 'follicular', building: 'follicular', peak: 'ovulatory', settle: 'luteal', focus: 'luteal', premenstrual: 'luteal' };
   const segs = []; days.forEach((w, i) => { const ph = W2P[w], l = segs[segs.length - 1]; l && l.ph === ph ? l.n++ : segs.push({ ph, n: 1 }); });
   const month = `<section class="mvm">
-      <div class="mvm-h"><div><small>Your training month</small><b>${g.title}</b></div><div class="mvm-st"><b class="dotnum">${MOVE_STEPS[key] || '8,000'}</b><small>step goal today</small></div></div>
+      <div class="mvm-h"><div><small>Your training month</small><b>${g.title}</b></div><div class="mvm-st"><b class="dotnum">${MOVE_STEPS[key] || '8,000'}</b><small>steps today</small></div></div>
       ${moveWave(days, info, L, P)}
-      <div class="mvm-band" aria-hidden="true">${segs.map(x => `<i style="flex:${x.n};--c:${PH_HEX[x.ph]}"></i>`).join('')}</div>
-      <div class="mvm-key">${PHASE_ORDER.map(p => `<span class="${p === info.phase ? 'on' : ''}"><i style="--c:${PH_HEX[p]}"></i>${PHASES[p].name}</span>`).join('')}</div>
+      <div class="mvm-key">${PH4.map(([p, l]) => `<span class="${p === info.phase ? 'on' : ''}"><i style="--c:${PH_HEX[p]}"></i>${l}</span>`).join('')}</div>
       <p class="mvm-why"><b>Why today</b>${g.tip}</p>
       <details class="mvm-more"${tab === 'month' ? ' open' : ''}><summary>Every part of your month ${icon('chevD', 14)}</summary>
         <div class="mv2-month mvx">${Object.entries(MOVE_GUIDE).filter(([k]) => days.includes(k)).map(([k, x]) => { const idx = days.map((w, i) => w === k ? i + 1 : 0).filter(Boolean), Dk = MOVE_DOSE[k], lv = mvLvl(Dk.int), best = MOVES.filter(m => x.r[m.k] === 3).map(m => MV_SHORT[m.k]);

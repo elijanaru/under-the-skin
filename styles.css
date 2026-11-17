@@ -16957,3 +16957,7 @@ html .rm-st li > div p { margin-top: 2px; }
 /* Recipe grids: full dish names (up to three lines, never cut off with "..."), and an odd last card sits in the middle */
 html .pv-rec .rcard.has-photo .rc-t, html .eat-row .rcard.has-photo .rc-t { -webkit-line-clamp: 3; font-size: 15.5px; min-height: 2.44em; }
 html .pv-rec > .rcard:nth-child(odd):last-child { grid-column: 1 / -1; justify-self: center; width: calc(50% - 5px); }
+/* Move, your training month: the curve's fill takes the colour of each phase (today's phase a little stronger), the today dot rings in today's phase ink */
+html .mvm .mvw-s1 { stop-color: #fff; stop-opacity: 0; } html .mvm .mvw-s2 { stop-color: #fff; stop-opacity: .45; }
+html .mvm .mvw-dot { border-color: var(--c, #20301a); box-shadow: 0 0 0 5px color-mix(in srgb, var(--c, #20301a) 18%, transparent); }
+html .mvm .mvw-lab span { color: #304023; font-weight: 500; }
