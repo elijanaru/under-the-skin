@@ -16961,3 +16961,6 @@ html .pv-rec > .rcard:nth-child(odd):last-child { grid-column: 1 / -1; justify-s
 html .mvm .mvw-s1 { stop-color: #fff; stop-opacity: 0; } html .mvm .mvw-s2 { stop-color: #fff; stop-opacity: .45; }
 html .mvm .mvw-dot { border-color: var(--c, #20301a); box-shadow: 0 0 0 5px color-mix(in srgb, var(--c, #20301a) 18%, transparent); }
 html .mvm .mvw-lab span { color: #304023; font-weight: 500; }
+html .cdl-hm b { display: flex; align-items: center; gap: 4px; }
+html .cdl-hm b .tr { font-style: normal; display: inline-grid; place-items: center; }
+html .cdl-hm b .tr svg { width: 11px; height: 11px; }

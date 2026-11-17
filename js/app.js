@@ -2224,9 +2224,10 @@ function calDayLine(sd, si, slog, selLine, isFuture) {
   if (ahead && si && M.stats.periods.length) patterns().list.filter(x => si.cd >= x.from && si.cd <= x.to).forEach(x => chips.push([LOG_EMOJI[x.name] || '🌿', x.name, reliefKey(x.name)]));
   const more = chips.length > 6 ? chips.length - 5 : 0, show = more ? chips.slice(0, 5) : chips;
   // the three cycle hormones on that day from the model, as a level word and three small bars each
-  const hm = si && si.cd && M.info ? (() => { const v = C.hormonesAt(si.cd, M.info.L, M.info.P);
-    return `<div class="cdl-hm">${HORMONES.map(h => { const lv = C.hormoneLevel(v[h.key]), n = /High|Peak/.test(lv) ? 3 : lv === 'Moderate' ? 2 : 1;
-      return `<span style="--c:${h.color}"><small>${h.name}</small><b>${lv}</b><em aria-hidden="true">${[1, 2, 3].map(i => `<i class="${i <= n ? 'on' : ''}"></i>`).join('')}</em></span>`; }).join('')}</div>`; })() : '';
+  const hm = si && si.cd && M.info ? (() => { const { L, P } = M.info, cd = Math.min(si.cd, L), v = C.hormonesRel(cd, L, P), nx = C.hormonesRel(cd >= L ? 1 : cd + 1, L, P), pv = C.hormonesRel(cd <= 1 ? L : cd - 1, L, P);
+    // same words as the Insights readout for that day: relative level, adjusted for where it is heading
+    return `<div class="cdl-hm">${HORMONES.map(h => { const d = C.trendOf(pv[h.key], v[h.key], nx[h.key]), lv = trLevel(C.hormoneLevel(v[h.key]), d), n = /High|Peak/.test(lv) ? 3 : /Moderate|Rising|Falling/.test(lv) ? 2 : 1;
+      return `<span style="--c:${h.color}"><small>${h.name}</small><b>${lv} <em class="tr ${d}" aria-hidden="true">${trArrow(d)}</em></b><em aria-hidden="true">${[1, 2, 3].map(i => `<i class="${i <= n ? 'on' : ''}"></i>`).join('')}</em></span>`; }).join('')}</div>`; })() : '';
   return `<div class="cdl day-panel"><i style="background:${c}"></i><span><small>${fmt(sd, { weekday: 'short', month: 'short', day: 'numeric' })}${si && si.cd ? ` · Day <b class="dotnum">${si.cd}</b>` : ''}</small><b>${selLine || 'No cycle data yet'}</b></span>
     ${isFuture ? '' : `<button class="cdl-go" data-action="logDay" data-date="${C.iso(sd)}">${icon(logged ? 'check' : 'plus', 14)} ${logged ? 'Edit' : 'Log'}</button>`}
     ${hm}
