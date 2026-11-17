@@ -2990,7 +2990,7 @@ function superInner(phase) {
   const S = SUPERFOODS[phase], warm = warmWindow(M.info);
   const list = S.list.filter(f => !(f[5] && myDiet() === 'vegan') && forAnimal(f[1]));
   const pic = (f, e) => { const [file] = SF_CUT[f] || []; return file ? `<img src="images/sf/${file}.webp" alt="" loading="lazy" decoding="async">` : `<em>${e}</em>`; };
-  const item = (f, i) => `<button class="sfc-i" style="--i:${i}" data-action="sfPick" data-i="${i}" aria-expanded="false">${pic(f[1], f[0])}<b>${f[1]}</b>${(SF_CUT[f[1]] || [])[1] ? `<small>${SF_CUT[f[1]][1]}</small>` : ''}${sfAmtHTML(f[3])}</button>`;
+  const item = (f, i) => `<button class="sfc-i" style="--i:${i}" data-action="sfPick" data-i="${i}" aria-expanded="false">${pic(f[1], f[0])}<b>${f[1]}</b>${(t => t ? `<small>${t}</small>` : '')(SF_DOES[f[1]] || (SF_CUT[f[1]] || [])[1])}${sfAmtHTML(f[3])}</button>`;
   const gem = (g, i) => `<button class="sfc-i gem" style="--i:${i + list.length}" data-action="sfPick" data-g="${i}" aria-expanded="false">${pic(g[1], g[0])}<b>${g[1]}</b><small>${g[2]}</small>${sfAmtHTML(g[4])}</button>`;
   return `<section class="sfc" data-phase="${phase}">
       <header class="sfc-h"><small><i style="background:${PH_HEX[phase]}"></i>${PHASES[phase].name} phase</small><h3>${SF_TITLE[phase]}</h3><p>${S.lead}</p></header>

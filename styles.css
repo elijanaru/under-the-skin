@@ -16915,3 +16915,9 @@ html .sp2 > p.rx-fine { margin: 14px auto 0; font-size: 11.5px; }
 /* Small hormone charts (Hormones page, partner, Today): full phase names at a readable size, today's phase in its own dark colour, never cut to "Ovu" */
 html .cchart.compact .cchart-svg .band-days { font-size: 14px; font-weight: 500; fill: rgba(32,48,26,.74); }
 html .cchart.compact .cchart-svg .band-days.on { font-weight: 600; }
+/* Superfoods page: a lone last tile in the two-column grid sits in the middle (Royal jelly), even while a detail panel is open */
+html .sfc-grid > .sfc-i:nth-child(odd of .sfc-i):nth-last-child(1 of .sfc-i) { grid-column: 1 / -1; justify-self: center; width: 50%; }
+/* Every closing care note that sits straight on the page background (tea, supplements, insights, remedies...) gets the same frosted strip in readable ink */
+html .pad > p.fine.center { display: block; width: fit-content; max-width: 100%; box-sizing: border-box; margin: 14px auto 0; padding: 8px 14px; border-radius: 16px;
+  background: rgba(255,255,255,.58); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.75);
+  color: rgba(32,48,26,.8) !important; -webkit-text-fill-color: rgba(32,48,26,.8) !important; text-shadow: none !important; font-size: 11.5px; line-height: 1.45; }
