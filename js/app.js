@@ -6949,6 +6949,44 @@ function myGeo() {
   // a capital far from the phone's time zone (travelling, or a guessed country) would put sunrise at noon
   return Math.abs(c[1] - tz) < 30 ? c : [c[0], tz];
 }
+// Her real location for the UV index, vitamin D and sun times: asked once when the UV card first shows,
+// then refreshed quietly once a day (only if she already allowed it) so it follows her when she travels.
+// Approximate location is plenty: the UV forecast is read for a ~10 km area anyway.
+async function geoLocate(ask) {
+  const G = NATIVE && CAP?.Plugins?.Geolocation, opt = { enableHighAccuracy: false, timeout: 15000, maximumAge: 36e5 };
+  let pos = null;
+  try {
+    if (G) {
+      let p = await G.checkPermissions(), st = p.coarseLocation || p.location;
+      if (st !== 'granted') {
+        if (!ask || st === 'denied') return st === 'denied' ? 'denied' : null;
+        p = await G.requestPermissions({ permissions: ['coarseLocation'] }); st = p.coarseLocation || p.location;
+        if (st !== 'granted') return 'denied';
+      }
+      pos = await G.getCurrentPosition(opt);
+    } else {
+      if (!navigator.geolocation) return null;
+      if (!ask) { const q = await navigator.permissions?.query({ name: 'geolocation' }).catch(() => null); if (!q || q.state !== 'granted') return null; }
+      pos = await new Promise(r => navigator.geolocation.getCurrentPosition(r, e => r(e && e.code === 1 ? 'denied' : null), opt));
+      if (pos === 'denied') return 'denied';
+    }
+  } catch (e) { return null; }
+  if (!pos || !pos.coords) return null;
+  const old = state.profile.geo, g = { lat: +pos.coords.latitude.toFixed(2), lng: +pos.coords.longitude.toFixed(2), day: todayISO() };
+  const moved = !old || Math.abs(old.lat - g.lat) > .05 || Math.abs(old.lng - g.lng) > .05;
+  state.profile.geo = g; save();
+  return moved ? 'moved' : 'same';
+}
+// First sight of the UV card: ask once. After that, once a day, a quiet refresh that never shows a prompt.
+function geoAuto(card) {
+  if (!state?.onboarded || ui.geoBusy) return;
+  const g = state.profile.geo, ask = !!card && !g && !state.profile.geoAsked;
+  if (!ask && (!g || g.day === todayISO())) return;
+  if (ask) { state.profile.geoAsked = true; save(); }
+  ui.geoBusy = true;
+  geoLocate(ask).then(r => { if (r === 'moved') { if (ask) render(); else uvRefresh(); scheduleSunNative(); } })
+    .finally(() => { ui.geoBusy = false; });
+}
 function sunToday(d = new Date()) { const [la, ln] = myGeo(); return sunTimes(d, la, ln); }
 const hm = d => d ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '·';
 // The day in moments, placed on today's real sun times — what to do at each point of the day.
@@ -7150,8 +7188,10 @@ function uvData() {
   return { hours: live ? live.hours : uvModel(la, ln), next: live && Array.isArray(live.next) ? live.next : uvModel(la, ln), live: !!live };
 }
 function uvFetch(key, la, ln) {
-  if (ui.uvBusy || (ui.uvTry && Date.now() - ui.uvTry < 6e5) || !navigator.onLine) return;
-  ui.uvBusy = true; ui.uvTry = Date.now();
+  // one try per place every 10 minutes; a new place (she moved) fetches straight away, after any fetch already running
+  if (ui.uvBusy) { ui.uvAgain = ui.uvKey !== key; return; }
+  if ((ui.uvKey === key && Date.now() - ui.uvTry < 6e5) || !navigator.onLine) return;
+  ui.uvBusy = true; ui.uvTry = Date.now(); ui.uvKey = key;
   const q = `latitude=${(+la).toFixed(1)}&longitude=${(+ln).toFixed(1)}&hourly=uv_index&timezone=${encodeURIComponent((Intl.DateTimeFormat().resolvedOptions().timeZone) || 'auto')}&forecast_days=2`;
   const get = u => fetch(u).then(r => (r.ok ? r.json() : Promise.reject(r.status))).then(j => {
     const v = j && j.hourly && j.hourly.uv_index; if (!v || !v.some(x => x != null)) return Promise.reject('empty');
@@ -7162,7 +7202,7 @@ function uvFetch(key, la, ln) {
     .then(([{ hours, next }, src]) => {
       try { localStorage.setItem('uts.uv', JSON.stringify({ key, at: Date.now(), hours, next, src })); } catch { /* storage full */ }
       uvRefresh();
-    }).catch(() => {}).finally(() => { ui.uvBusy = false; });
+    }).catch(() => {}).finally(() => { ui.uvBusy = false; if (ui.uvAgain) { ui.uvAgain = false; uvRefresh(); } });
 }
 const uvAt = (hours, t) => { const x = t.getHours() + t.getMinutes() / 60, a = Math.floor(x), f = x - a; return hours[a] * (1 - f) + (hours[Math.min(23, a + 1)] ?? 0) * f; };
 function sunDay() { const L = state.sunlog = state.sunlog || {}; return L[todayISO()] = L[todayISO()] || { m: 0, iu: 0 }; }
@@ -7242,6 +7282,7 @@ function uvCurve(hours) {
 // The hours that make the most vitamin D (UV 3 and up), joined into one window.
 function dWindow(hours) { const hs = hours.map((u, h) => (u >= 3 ? h : -1)).filter(h => h >= 0); return hs.length ? [hs[0], hs[hs.length - 1] + 1] : null; }
 function uvWidget() {
+  setTimeout(() => geoAuto(true), 700);
   const { hours, next, live } = uvData(), D = dayMoments(M.info), now = new Date(), u = uvAt(hours, now), lv = uvLevel(u);
   const day = sunDay(), run = sunRun(hours), on = !!state.sunOn, iu = Math.round(day.iu + run.iu), mins = Math.round(day.m + run.m);
   const burn = burnMin(u), left = burn - run.m, dMin = dRate(u) > 0 ? Math.max(1, Math.round(Math.max(0, D_GOAL - iu) / dRate(u))) : null, win = dWindow(hours), sk = SKIN[mySkin() - 1];
@@ -10839,6 +10880,7 @@ function viewPrivacy() {
     <p><b>If you create an account</b> (with Apple, Google or email), a copy of your data is kept on our account server in the EU so you can sign in on a new phone and never lose it. It is locked to your login: only you can read it. We never sell it, never share it with advertisers and never use it for anything else.</p>
     <p><b>Delete your account anytime.</b> Profile → Account → “Delete account” erases your account and every copy of your data on our server straight away.</p>
     <p><b>Partner signals.</b> When you send love or a care nudge, only the signal type, your first name and a private inbox code pass through a free relay (ntfy.sh) to your partner’s app. When you connect with a partner, the same relay carries what your link already holds (first name, cycle start and length, star sign, fertile days and today's mood if you share them) so you see each other without sending a second link. Symptoms and notes are never sent.</p>
+    <p><b>Your location.</b> The first time you see the UV card, the app asks for your approximate location so the UV index, vitamin D and sun times fit where you are. Once a day it quietly checks again, so it follows you when you travel. Your location stays on your phone; only a rounded area (about 10 km) is sent to Open-Meteo to get the UV forecast. Say no and the app uses your country instead. You can change this anytime in your phone’s Settings.</p>
     <p><b>No tracking.</b> No analytics, no advertising, no cookies for tracking.</p>
     <p><b>Birth chart.</b> Your birth time and birth place are optional and stay with the rest of your data. Your chart is calculated on your phone. When you tap Find, only the city name you typed is sent to the Open-Meteo place search to get its coordinates and time zone.</p>
     <p><b>Partner links.</b> When you share your cycle, the link contains your first name, cycle estimates (last period start, average cycle and period length, fertile days only if you turn them on) and a private code so love signals reach you. If you added them, it also holds your profile photo and the day and month of your birthday, for your star sign, and today's mood if you log one and leave mood sharing on. Symptoms and notes are never included. Anyone with the link can view it, so share it only with people you trust.</p>
@@ -11172,7 +11214,10 @@ const actions = {
     document.querySelectorAll('.rh-ring').forEach(svg => { svg.outerHTML = rhythmRing(done.length, RH_GOAL); });
     if (i < 0) { plusOne(el); if (done.length === RH_GOAL) toast('🌕 Full rhythm today. Beautiful'); }
   },
-  useGeo: () => { if (!navigator.geolocation) return toast('Location isn’t available'); navigator.geolocation.getCurrentPosition(p => { state.profile.geo = { lat: +p.coords.latitude.toFixed(2), lng: +p.coords.longitude.toFixed(2) }; save(); toast('Sun times set for where you are'); render(); scheduleSunNative(); }, () => toast('Location not allowed, using your country')); },
+  useGeo: () => { state.profile.geoAsked = true; geoLocate(true).then(r => {
+    if (r === 'moved' || r === 'same') { toast('UV and sun times set for where you are'); render(); scheduleSunNative(); }
+    else toast(r === 'denied' ? (NATIVE ? 'Location is off. Turn it on in Settings → Underskin → Location' : 'Location not allowed, using your country') : 'Couldn’t find your location, using your country');
+  }); },
   teaK: d => { ui.teaK = d.v || null; render(); if (d.v) setTimeout(() => document.getElementById('tg-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60); },
   shade: d => { const v = document.querySelector('.view'), y = v ? v.scrollTop : 0; ui.shade = ui.shade === +d.i ? -1 : +d.i; render(); const w = document.querySelector('.view'); if (w) w.scrollTop = y; },
   reliefHelp: (d, el) => {
@@ -12094,7 +12139,7 @@ function render() {
   if (wk) { const on = wk.querySelector('.on'); if (on) wk.scrollLeft = on.offsetLeft - wk.clientWidth / 2 + on.clientWidth / 2; }
 }
 
-setTimeout(() => { startSignals(); scheduleSunNative(); scheduleLettersNative(); }, 800);
+setTimeout(() => { startSignals(); scheduleSunNative(); scheduleLettersNative(); geoAuto(); }, 800);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { startSignals(); calSoon(); } });
 if ('serviceWorker' in navigator) {
   // pick up new versions right away: check on open and whenever the app comes back to the foreground,

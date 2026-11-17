@@ -43,6 +43,10 @@
 	<string>Underskin adds your cycle phases and plans to a “My cycle” calendar.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Take a profile photo. It stays on your phone unless you sync it to your account.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Your location sets the UV index, vitamin D and sunrise times for where you are. It stays on your phone; only a rounded area (about 10 km) is sent to get the UV forecast.</string>
+	<key>NSLocationDefaultAccuracyReduced</key>
+	<true/>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Save images you export from Underskin.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
