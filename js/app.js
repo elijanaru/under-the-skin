@@ -4278,7 +4278,7 @@ function groceryItems() {
   const ph = weekPhases(), taken = new Set(Object.keys(items));
   const season = szMine(myCountry(), new Date().getMonth() + 1)
     .filter(i => i.ph.some(p => ph.includes(p)) && !taken.has(i.f.toLowerCase()) && i.kind !== 'wild')
-    .slice(0, 10).map(i => ({ name: i.f, phases: i.ph.filter(p => ph.includes(p)), why: `In season · ${{ warm: 'warming', cool: 'cooling', neutral: 'neutral' }[i.nature]}` }));
+    .slice(0, 10).map(i => ({ name: i.f, phases: i.ph.filter(p => ph.includes(p)), why: (i.nut || []).slice(0, 2).join(' · ') || 'In season', season: true }));
   return [['In season now', season], ...groups, other].filter(([, l]) => l.length);
 }
 // A grocery item without a photo gets a calm emoji tile so every row lines up.
@@ -4321,8 +4321,8 @@ const groWhy = w => { const [a, ...r] = String(w).split(' · '); return [GRO_PLA
 function grocerySum() {
   const got = state.grocery || {}, flat = groceryItems().flatMap(([, l]) => l), total = flat.length, done = flat.filter(i => got[i.name.toLowerCase()]).length;
   const nut = {};
-  for (const it of flat) { const n = it.why.replace(/ · in season$/, ''); if (/^in season/i.test(n)) continue; (nut[n] = nut[n] || []).push(it); }
-  const seas = flat.filter(it => /in season/i.test(it.why)), nuts = [...(seas.length ? [['In season', seas]] : []), ...Object.entries(nut).sort((x, y) => y[1].length - x[1].length)].slice(0, 8);
+  for (const it of flat) { const n = it.why.replace(/ · in season$/, ''); if (it.season || /^in season/i.test(n)) continue; (nut[n] = nut[n] || []).push(it); }
+  const seas = flat.filter(it => it.season || /in season/i.test(it.why)), nuts = [...(seas.length ? [['In season', seas]] : []), ...Object.entries(nut).sort((x, y) => y[1].length - x[1].length)].slice(0, 8);
   const arc = (r, w, pct) => { const C0 = 2 * Math.PI * r, c = r + w / 2; return `<svg viewBox="0 0 ${2 * c} ${2 * c}" aria-hidden="true"><circle cx="${c}" cy="${c}" r="${r}" class="gs2-bg" stroke-width="${w}"/>${pct > 0 ? `<circle cx="${c}" cy="${c}" r="${r}" class="gs2-fg" stroke-width="${w}" stroke-dasharray="${(pct * C0).toFixed(1)} ${C0.toFixed(1)}" transform="rotate(-90 ${c} ${c})"/>` : ''}</svg>`; };
   const cnt = l => l.filter(i => got[i.name.toLowerCase()]).length;
   const head = done === total && total ? 'Your week is stocked' : done ? `${total - done} to go` : 'Ready to shop';
