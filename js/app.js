@@ -9290,19 +9290,25 @@ function seasonChips(sn) {
     </div>`;
 }
 // Season foods as an editorial poster: real cut-out photos where we have them, round photo stickers for the rest.
-const SZ_CUT = [[/pineapple/i, 'pineapple'], [/custard apple/i, ''], [/mushroom|shiitake|enoki|maitake|chanterelle|porcini|morel|matsutake|songi|neutari|paengi|slippery|milk caps/i, 'mushrooms'], [/carrot/i, 'carrots'], [/root vegetables/i, 'parsnips'], [/leek/i, 'leeks'],
+const SZ_CUT = [[/pineapple/i, 'pineapple'], [/custard apple/i, ''], [/mushroom|shiitake|enoki|maitake|chanterelle|porcini|morel|matsutake|songi|neutari|paengi|slippery|milk caps/i, 'mushrooms'], [/carrot/i, 'carrots'], [/root vegetables/i, 'celeriac'], [/leek/i, 'leeks'],
   [/pumpkin|squash|kabocha|danhobak/i, 'pumpkin'], [/beet/i, 'beetroot'], [/spinach|silverbeet|sigeumchi|palak/i, 'spinach'], [/eggs/i, 'eggs'], [/mussel/i, 'mussels'], [/aubergine|eggplant/i, 'aubergine'], [/avocado/i, 'avocado'],
   [/fennel/i, 'fennel'], [/broccoli/i, 'broccoli'], [/rosemary|oregano|thyme|sage/i, 'rosemary'], [/cauliflower/i, 'cauliflower'], [/apple/i, 'apples'], [/tomato/i, 'tomatoes'], [/oyster/i, 'oysters'], [/cucumber/i, 'cucumber'],
   [/sweet potato|goguma|shakarkandi/i, 'sweet-potato'], [/basil/i, 'basil'], [/banana/i, 'bananas'], [/papaya/i, 'papaya'], [/strawberr/i, 'strawberries'], [/courgette|zucchini|aehobak/i, 'courgette'], [/collard|mustard green/i, 'collards'], [/kale/i, 'kale'],
   [/pear/i, 'pears'], [/cabbage/i, 'cabbage'], [/celeriac/i, 'celeriac'], [/parsnip/i, 'parsnips'], [/brussels/i, 'brussels'], [/chard/i, 'chard'], [/jerusalem/i, ''], [/artichoke/i, 'artichokes'], [/^peppers|bell pepper|gochu/i, 'peppers'],
-  [/green beans|long beans/i, 'green-beans'], [/asparagus/i, 'asparagus'], [/lemon(?!grass)/i, 'lemons'], [/lime/i, 'limes'], [/coconut/i, 'coconut'], [/okra|bhindi/i, 'okra'], [/mango/i, 'mango'], [/plantain/i, 'plantains'],
-  [/walnut|pecan/i, 'walnuts'], [/chestnut/i, 'chestnuts'], [/quince/i, 'quince'], [/pomegranate/i, 'pomegranate'], [/persimmon/i, 'persimmon'], [/orange|mandarin|citrus|kinnow|gamgyul|hallabong|yuzu/i, 'oranges'],
+  [/green beans|long beans/i, 'green-beans'], [/asparagus/i, 'asparagus'], [/lemon(?!grass)/i, 'lemons'], [/lime/i, 'limes'], [/coconut/i, 'coconut'], [/okra|bhindi/i, 'okra'], [/mangosteen/i, ''], [/mango/i, 'mango'], [/plantain/i, 'plantains'],
+  [/walnut|pecan/i, 'walnuts'], [/chestnut/i, 'chestnuts'], [/quince/i, 'quince'], [/pomegranate/i, 'pomegranate'], [/persimmon/i, 'persimmon'], [/orange|mandarin|citrus|kinnow|gamgyul|hallabong/i, 'oranges'],
   [/nettle/i, 'sf/nettle'], [/parsley/i, 'sf/parsley'], [/coriander|cilantro/i, 'sf/coriander'], [/mint/i, 'sf/mint'], [/ginger/i, 'sf/ginger'], [/honey/i, 'sf/raw-honey'], [/blueberr|bilberr/i, 'sf/blueberries'], [/broccoli sprouts/i, 'sf/broccoli-sprouts']];
 const szCut = f => { const hit = SZ_CUT.find(([r]) => r.test(f)); return hit && hit[1] ? `images/${hit[1].includes('/') ? hit[1] : 'sz/' + hit[1]}.webp` : null; };
 const SZ_POSTER = { Winter: ['Winter, deeply nourished', 'Build blood, warm digestion, mineralise deeply'], Spring: ['Spring, fresh and green', 'Wake up the liver, lighten up, add a little sour'], Summer: ['Summer, light and juicy', 'Hydrate, cool down, eat the rainbow raw'],
   'Late summer': ['Late summer harvest', 'Sweet, golden and grounding, at regular times'], Autumn: ['Autumn, slow and warm', 'Cook more, moisten, warm the belly'] };
 // In season: one calm page like Superfoods. Every food fresh where she lives right now, grouped and scrollable; tap one for the details.
-const szPic = f => { const fp = SZ.fungiPic(f); if (fp) return { src: `images/fungi/${fp[1]}.webp`, round: true, fp }; const cut = szCut(f); if (cut) return { src: cut }; const ph = foodPhoto(f, 300); return ph ? { src: ph, round: true } : null; };
+// with a `used` set (one per In season tab) a picture never shows twice in one list: a second food that would reuse
+// a cut-out gets its own photo or its drawn emoji instead (17 Nov 2026)
+const szPic = (f, used) => { const free = s => !used || !used.has(s), take = s => (used && used.add(s), s);
+  const fp = SZ.fungiPic(f); if (fp && free(`images/fungi/${fp[1]}.webp`)) return { src: take(`images/fungi/${fp[1]}.webp`), round: true, fp };
+  const cut = szCut(f); if (cut && free(cut)) return { src: take(cut) };
+  const ph = foodPhoto(f, 300); if (ph) return { src: ph, round: true };
+  const e = foodEmo(f); return /^[de]:/.test(e) ? { src: `images/emoji/${e.slice(2)}.${e[0] === 'd' ? 'svg' : 'webp'}`, drawn: true } : null; };
 function szList() {
   const c = myCountry(), m = new Date().getMonth() + 1, phase = M.info ? M.info.phase : null;
   const all = szMine(c, m), fits = i => !!phase && i.ph.includes(phase);
@@ -9312,15 +9318,15 @@ function viewSeason() {
   const c = myCountry(), m = new Date().getMonth() + 1, country = SZ.COUNTRIES.find(x => x[0] === c)?.[1] || '';
   const sn = SZ.seasonName(c, m), phase = M.info ? M.info.phase : null, warm = M.info && warmWindow(M.info);
   const groups = szList(), n = groups.reduce((t, g) => t + g[3].length, 0);
-  const item = (i, e) => { const p = szPic(i.f), fit = phase && i.ph.includes(phase);
-    return `<button class="sfc-i szi" data-action="szPick" data-f="${esc(i.f)}" aria-expanded="false">${p ? `<img class="${p.round ? 'rd' : ''}" src="${p.src}" alt="" loading="lazy" decoding="async">` : `<em>${e}</em>`}<b>${i.f}</b><small>${warm && i.nature === 'cool' ? 'Cook it' : fit ? 'Your phase' : NATURE[i.nature][0]}</small></button>`; };
+  const item = (i, e, used) => { const p = szPic(i.f, used), fit = phase && i.ph.includes(phase);
+    return `<button class="sfc-i szi" data-action="szPick" data-f="${esc(i.f)}" aria-expanded="false">${p ? `<img class="${p.round ? 'rd' : p.drawn ? 'dr' : ''}" src="${p.src}" alt="" loading="lazy" decoding="async">` : `<em>${e}</em>`}<b>${i.f}</b><small>${warm && i.nature === 'cool' ? 'Cook it' : fit ? 'Your phase' : NATURE[i.nature][0]}</small></button>`; };
   return `${topbar('In season', { back: true })}<div class="pad pv-sub sz3">
     <section class="sfc szc" data-phase="${phase || ''}">
       <header class="sfc-h"><small><i style="background:${phase ? PH_HEX[phase] : '#6c823e'}"></i>${country ? `${country} · ` : ''}${MONTHS[m - 1]}</small><h3>${sn} foods</h3><p>${n} foods are fresh where you live right now.${phase ? ` Picks for your ${PHASES[phase].name.toLowerCase()} phase come first.` : ''}</p></header>
       ${(() => { const cur = groups.some(g => g[0] === ui.szTab) ? ui.szTab : groups[0][0];
         return `<div class="szt" role="tablist">${groups.map(([k, name, e, list]) => { const p = k === 'fungi' ? { src: 'images/fungi/icon-porcini.webp' } : szPic(list[0].f), mine = phase ? list.filter(i => i.ph.includes(phase)).length : 0;
           return `<button class="szt-b ${k === cur ? 'on' : ''}" role="tab" aria-selected="${k === cur}" data-action="szTab" data-v="${k}"><span class="szt-i">${p ? `<img src="${p.src}" alt="">` : emoRaw(e)}</span><b>${name}</b><small><span class="dotnum">${list.length}</span>${mine ? ` · ${mine} for you` : ''}</small></button>`; }).join('')}</div>
-        ${groups.map(([k, name, e, list]) => `<div class="sfc-grid szt-p" data-k="${k}" role="tabpanel" ${k === cur ? '' : 'hidden'}>${list.map(i => item(i, e)).join('')}</div>`).join('')}`; })()}
+        ${groups.map(([k, name, e, list]) => `<div class="sfc-grid szt-p" data-k="${k}" role="tabpanel" ${k === cur ? '' : 'hidden'}>${(used => list.map(i => item(i, e, used)).join(''))(new Set())}</div>`).join('')}`; })()}
       <div class="sfc-det" aria-live="polite" hidden></div>
       ${warm ? `<p class="sfc-warm">${icon('sun', 13)} Your period is close: cook everything, nothing raw or iced.</p>` : ''}
       <footer class="sfc-f"><span>Changes by itself as the season turns</span><span>Wild mushrooms only from a market or a trained forager</span></footer>

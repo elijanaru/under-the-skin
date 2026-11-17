@@ -195,8 +195,9 @@ const FUNGI = {
 // A real photo per mushroom (Wikimedia Commons): [file in images/fungi, author, licence, source page]
 const WM = 'https://commons.wikimedia.org/wiki/File:';
 export const FUNGI_PIC = [
-  [/oyster mushrooms|neutari/i, 'oyster', 'Jean-Pol Grandmont', 'CC BY 3.0', WM + 'Pleurotus_ostreatus_JPG7.jpg'],
+  // king oyster first, or "King oyster mushrooms" matches the plain oyster mushroom photo
   [/king oyster/i, 'king-oyster', 'Diego Delso', 'CC BY-SA 3.0', WM + 'Seta_de_cardo_(Pleurotus_eryngii),_2012-10-03,_DD_01.JPG'],
+  [/oyster mushrooms|neutari/i, 'oyster', 'Jean-Pol Grandmont', 'CC BY 3.0', WM + 'Pleurotus_ostreatus_JPG7.jpg'],
   [/shiitake/i, 'shiitake', 'frankenstoen', 'CC BY 2.0', WM + 'Shiitakegrowing.jpg'],
   [/button/i, 'button', 'Chris 73', 'CC BY-SA 3.0', WM + 'ChampignonMushroom.jpg'],
   [/lion/i, 'lions-mane', 'Alison Northup', 'CC BY 4.0', WM + 'Lion%27s-mane_mushroom_imported_from_iNaturalist_photo_29576097_on_21_March_2024.jpg'],

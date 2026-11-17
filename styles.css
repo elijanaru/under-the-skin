@@ -17048,3 +17048,6 @@ html .hxt.lo .hxt-now em { color: rgba(32,48,26,.62); }
 html .hbc-why, html button.lg, html .cdl-ch button { position: relative; }
 html .hbc-why::after, html button.lg::after, html .cdl-ch button::after { content: ''; position: absolute; inset: -8px -3px; }
 html .ro-row { min-height: 32px; }
+
+/* In season: a drawn emoji stands in when a food has no cut-out or photo of its own (17 Nov 2026) */
+html .sfc-i img.dr { padding: 18px 0; box-sizing: border-box; filter: drop-shadow(0 6px 8px rgba(32,48,26,.10)); }
