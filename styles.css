@@ -16954,3 +16954,6 @@ html .cdl-hm em i.on { background: var(--c); }
 html .rm-st li > div { display: flex; flex-direction: column; min-width: 0; }
 html .rm-st .rm-when { margin-top: 5px; font: 600 11px/1.2 Outfit, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 34%); }
 html .rm-st li > div p { margin-top: 2px; }
+/* Recipe grids: full dish names (up to three lines, never cut off with "..."), and an odd last card sits in the middle */
+html .pv-rec .rcard.has-photo .rc-t, html .eat-row .rcard.has-photo .rc-t { -webkit-line-clamp: 3; font-size: 15.5px; min-height: 2.44em; }
+html .pv-rec > .rcard:nth-child(odd):last-child { grid-column: 1 / -1; justify-self: center; width: calc(50% - 5px); }

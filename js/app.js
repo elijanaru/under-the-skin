@@ -2792,7 +2792,7 @@ const REC_MEALS = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Drink'];
 function recList(phase, warm) { return myRecipes().filter(r => r.phases.includes(phase) && !(warm && r.raw)).sort((a, b) => warm ? (!!b.warm - !!a.warm) : (!!b.raw - !!a.raw)); }
 function recGrid(recs, meal) {
   return recs.filter(r => meal === 'All' || r.meal === meal).map((r, i) => `<button class="rcard tall ${photoUrl(r.id) ? 'has-photo' : ''}" data-action="nav" data-to="recipe/${r.id}">${recipeArt(r, ['wave', 'orb', 'drop', 'hill'][i % 4], 20 + i)}
-          <div class="rc-top"><span class="rc-k">${r.raw ? 'Raw' : r.warm ? `Warm · ${r.meal}` : r.meal}</span></div><div class="rc-t">${r.name}</div><div class="rc-m">${r.time} min · ${r.kcal} kcal</div></button>`).join('');
+          <div class="rc-top"><span class="rc-k">${r.meal}${r.raw ? ' · Raw' : r.warm ? ' · Warm' : ''}</span></div><div class="rc-t">${r.name}</div><div class="rc-m">${r.time} min · ${r.kcal} kcal</div></button>`).join('');
 }
 // Rituals: the acupressure point as a small hand-drawn diagram (side of the foot, belly or top of the foot) and the phase tea as a real photo.
 const PT_TEA_WHY = { menstrual: 'Warms you and replaces what you lose', follicular: 'Light and clear while you rebuild', ovulatory: 'Lifts your mood, keeps blood flowing', luteal: 'Eases bloating and tension' };
@@ -3447,7 +3447,7 @@ function nourishBody(current) {
 
     <span id="pl-recipes"></span>${sectionTitle('Recipes for you')}
     <div class="hscroll">${recs.map((r, i) => `<button class="rcard ${photoUrl(r.id) ? 'has-photo' : ''}" data-action="nav" data-to="recipe/${r.id}">${recipeArt(r, ['wave', 'orb', 'drop', 'hill'][i % 4], 20 + i)}
-      <div class="rc-top"><span class="rc-k">${r.raw ? 'Raw' : r.warm ? 'Warm' : r.meal}</span><span class="rc-go">${icon('chevR', 16)}</span></div>
+      <div class="rc-top"><span class="rc-k">${r.meal}${r.raw ? ' · Raw' : r.warm ? ' · Warm' : ''}</span><span class="rc-go">${icon('chevR', 16)}</span></div>
       <div class="rc-t">${r.name}</div><div class="rc-m">${r.time} min</div></button>`).join('')}</div>
 
     ${feelFoods(recent, warm)}
