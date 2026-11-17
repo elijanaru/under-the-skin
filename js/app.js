@@ -5537,17 +5537,17 @@ function viewRemedy(id) {
   }
   return `${topbar('Remedy', { back: true })}<div class="pad sp2 sp2t">
     ${specHero({ stack: true, photo: carePhoto(r.id, 1000), glyph: r.glyph, han: true, eyebrow: `${r.nature} · ${r.element} · ${r.organ}`, name: r.name,
-      label: r.take ? 'How to take it' : 'Key ingredients', rows: r.take ? [['Dose', r.take.dose], ['How often', r.take.often], ['When', r.take.when]] : r.ingredients.map(ingRow), desc: r.why })}
+      label: r.take ? 'How to take it' : 'Key ingredients', rows: r.take ? [['Dose', r.take.dose], ['How often', r.take.often], ['When', r.take.when]] : r.ingredients.map(ingRow), desc: r.why.split(/(?<=\.)\s+/)[0], more: r.why.split(/(?<=\.)\s+/).slice(1).join(' ') })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle${r.raw ? ' · raw days' : ''}</div>${r.raw && M.info ? rawStrip(M.info) : phaseFit(r.phases, M.info && M.info.phase)}${r.phases.length === 4 ? '<small class="tf-all">Good every day of your cycle</small>' : ''}
       ${r.take && r.take.more ? (() => { const [ic, k, v] = r.take.more, now = k === 'Pause' && r.raw && warm; return `<div class="rx-row ${now ? 'now' : ''}"><span>${icon(ic, 14)} ${now ? 'Paused right now' : k}</span><b>${v}</b></div>`; })() : ''}
-      ${organPhase ? `<div class="rx-row"><span><i class="rx-han">${Z.FIVE[r.element].han}</i> Organ in Chinese medicine</span><b>${r.organ}, ${PHASES[organPhase].name.toLowerCase()}</b></div>` : ''}</section>
+      ${organPhase ? `<div class="rx-row"><span><i class="rx-han">${Z.FIVE[r.element].han}</i> In Chinese medicine</span><b class="rx-org">${r.organ}<small>${PHASES[organPhase].name} phase</small></b></div>` : ''}</section>
     ${r.raw && warm ? `<section class="card flag"><span class="bn-ic">${icon('yinyang', 18)}</span><div class="bn-t"><b>Not today</b><p>You’re in your warm window. Chinese medicine keeps raw and cold food away during your period and the days before. Save this for your follicular phase.</p></div></section>` : ''}
     ${tracker}
     ${remedyMake(r)}
     ${remedyScience(r)}
-    ${r.weeks ? sectionTitle('Week by week') + `<p class="wk2-lead">Add one thing each week, so your glass grows with you.</p>` + wkCard(r) : ''}
+    ${r.weeks ? sectionTitle('Week by week') + `<p class="wk2-lead">One new thing each week, so your glass grows.</p>` + wkCard(r) : ''}
     ${(() => { const nx = REMEDIES[(REMEDIES.indexOf(r) + 1) % REMEDIES.length]; return `<button class="card glass nu-next" data-action="nav" data-to="remedy/${nx.id}"><small>Next remedy</small><b>${nx.name}</b>${icon('chevR', 16)}</button>`; })()}
-    <p class="fine center">Traditional home remedies, not a replacement for medical care.</p>
+    <p class="fine center rx-fine">Traditional home remedies, not a replacement for medical care.</p>
   </div>`;
 }
 // Supplement spec sheet: dose, form and timing on the glass sheet, then the phases it helps, studies and cautions.
@@ -5802,13 +5802,13 @@ function liquidArt(glyph, han, sym) {
   return `<div class="spec-liquid"><i></i><i></i><i></i></div>${glyph ? `<span class="spec-glyph ${han ? 'han' : ''} ${sym ? 'sym' : ''}">${glyph}</span>` : ''}`;
 }
 // stack: photo as its own rounded tile, the name below it in ink, then the sheet (nothing written over the photo)
-function specHero({ photo, glyph, han, sym, eyebrow, name, label = 'Key ingredients', rows = [], lead, desc, extra = '', media = '', block = '', stack = false, max = 3 }) {
+function specHero({ photo, glyph, han, sym, eyebrow, name, label = 'Key ingredients', rows = [], lead, desc, more = '', extra = '', media = '', block = '', stack = false, max = 3 }) {
   const nm = `<div class="spec-name">${eyebrow ? `<div class="eyebrow">${eyebrow}</div>` : ''}<h1>${name}</h1></div>`;
   if (stack) return `<section class="spec stack"><div class="spec-media ${photo ? '' : 'liquid'}">${photo ? `<img src="${photo}" alt="" onload="this.classList.add('in')" onerror="this.closest('.spec-media').classList.add('noimg')">` : liquidArt(glyph, han, sym)}
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>${extra}</div>${nm}
     <div class="spec-sheet"><div class="spec-k">${label}</div>
       ${block}${rows.slice(0, max).map(([t, v]) => `<div class="spec-row"><b>${t}</b>${v ? `<span>${v}</span>` : ''}</div>`).join('')}
-      ${lead ? `<p class="spec-lead">${lead}</p>` : ''}${desc ? `<p class="spec-desc">${desc}</p>` : ''}</div></section>`;
+      ${lead ? `<p class="spec-lead">${lead}</p>` : ''}${desc ? `<p class="spec-desc">${desc}</p>` : ''}${more ? `<details class="spec-more"><summary>Why it works ${icon('chevD', 14)}</summary><p>${more}</p></details>` : ''}</div></section>`;
   return `<section class="spec"><div class="spec-media ${media ? 'm3d' : photo ? '' : 'liquid'}">${media || (photo ? `<img src="${photo}" alt="" onload="this.classList.add('in')" onerror="this.closest('.spec-media').classList.add('noimg')">` : liquidArt(glyph, han, sym))}<span class="spec-shade"></span>
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>${extra}
     <div class="spec-name">${eyebrow ? `<div class="eyebrow">${eyebrow}</div>` : ''}<h1>${name}</h1></div></div>

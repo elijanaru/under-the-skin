@@ -16898,3 +16898,17 @@ html .ts-credit { margin: 10px 0 0; padding: 8px 14px; border-radius: 14px; back
 html .cchart:not(.compact) .cchart-svg .band-name { font-size: 13.5px; font-weight: 500; fill: rgba(32,48,26,.86); }
 html .cchart:not(.compact) .cchart-svg .band-name.on { font-weight: 600; }
 html .cchart:not(.compact) .cchart-svg .band-days { font-size: 12px; font-weight: 500; fill: rgba(32,48,26,.7); }
+/* Remedy spec sheets: the "why" paragraph shows its first sentence, the rest (the Chinese-medicine detail) sits behind "Why it works" */
+html .spec.stack .spec-more { margin-top: 10px; border-top: 1px solid rgba(48,64,35,.09); }
+html .spec.stack .spec-more summary { list-style: none; display: flex; align-items: center; justify-content: space-between; padding: 12px 0 2px; font: 500 14px/1.3 var(--font); color: #20301a; cursor: pointer; }
+html .spec.stack .spec-more summary::-webkit-details-marker { display: none; }
+html .spec.stack .spec-more summary svg { transition: transform .3s ease; color: rgba(32,48,26,.6); }
+html .spec.stack .spec-more[open] summary svg { transform: rotate(180deg); }
+html .spec.stack .spec-more p { margin: 8px 0 0; font: 300 14.5px/1.55 var(--font); color: #3c4a2e; text-wrap: pretty; }
+html .rx-row b.rx-org { display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
+html .rx-row b.rx-org small { font: 400 12px/1.3 var(--font); color: rgba(32,48,26,.62); margin-top: 2px; }
+/* Week by week lead and the closing note sat as faint type on the page background; both now sit on frosted strips */
+html .sp2 .wk2-lead, html .sp2 > p.rx-fine { display: block; width: fit-content; max-width: 100%; box-sizing: border-box; padding: 8px 14px; border-radius: 16px;
+  background: rgba(255,255,255,.58); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.75); color: rgba(32,48,26,.82); text-shadow: none; }
+html .sp2 .wk2-lead { margin: -4px 0 12px; font-size: 13.5px; }
+html .sp2 > p.rx-fine { margin: 14px auto 0; font-size: 11.5px; }
