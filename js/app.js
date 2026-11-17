@@ -6673,6 +6673,17 @@ function teaBubbles(w, info) {
 // What the tea does, as pills around the cup with a hairline to it: [pill x %, pill y px, line end x %, line end y px, width class]
 // pill x %, pill y px, dot x %, dot y px on the cup's edge: short lines, the cup sits at y 180 in a 356 px stage
 const TPX_POS = [[25, 50, 40, 104, 'w'], [75, 72, 61, 106, 'w'], [13, 166, 31, 172, 'n'], [87, 198, 69, 190, 'n'], [26, 300, 41, 254, 'w'], [73, 322, 60, 256, 'w']];
+// Good to know: one historical or fun fact per tea
+const TEA_FACT = {
+  'flow-start': 'In ancient times cinnamon was so precious that Arab traders hid where it grew. They told the Greeks it was pulled from the nests of giant birds.',
+  'flow-end': 'People have woven cloth from nettle fibres for thousands of years. When cotton ran short in the First World War, Germany made army uniforms from nettle.',
+  rising: 'Chinese legend says tea was found around 2737 BC, when a few leaves blew into Emperor Shennong’s pot of boiling water and he liked the taste.',
+  building: 'Zen monks brought powdered green tea from China to Japan in the 12th century and drank it to stay alert yet calm through long hours of meditation.',
+  peak: 'In Egypt hibiscus tea is called karkadé and is served to toast weddings, in Mexico it is cold agua de Jamaica, and in the Caribbean it is a Christmas drink called sorrel.',
+  settle: 'Lemon balm’s Latin name, Melissa, is the Greek word for honeybee. Beekeepers used to rub it on their hives to welcome a new swarm.',
+  focus: 'Mint is named after Minthe, a nymph in Greek myth who was turned into a sweet-smelling plant. Ancient Greeks rubbed mint on the table to welcome guests.',
+  premenstrual: 'The ancient Egyptians dedicated chamomile to their sun god Ra, and its name comes from the Greek for “earth apple”, after the soft apple scent of its flowers.',
+};
 // Why exactly this tea today, and what to keep in mind (safe amount + cautions), per part of the cycle
 const TEA_WHY = {
   'flow-start': ['On the first days of your period, prostaglandins make your womb squeeze, and that is what cramps are. Ginger lowers them, and in small trials it eased period pain about as well as ibuprofen. Cinnamon adds warmth and keeps your blood sugar steady when cravings hit.', 'Up to 3 cups a day. Ask your doctor first if you take blood thinners.'],
@@ -6708,7 +6719,8 @@ function teaPage(info, w) {
     </section>
     <section class="card ul3-keep tpx-keep tpx-ben"><h3>What it does for you</h3>
       ${(TEA_REASONS[w] || []).map(([ic, t, x]) => `<div class="ul3-r"><span class="ul3-ic">${icon(ic, 18)}</span><span><b>${t}</b><small>${x}</small></span></div>`).join('')}
-      ${safe ? `<div class="ul3-r tpx-safe"><span class="ul3-ic">${icon(['flask', 'leaf', 'spark', 'heart'].find(k => !(TEA_REASONS[w] || []).some(r => r[0] === k)), 18)}</span><span><b>Good to know</b><small>${safe}</small></span></div>` : ''}
+      ${TEA_FACT[w] ? `<div class="ul3-r tpx-fact"><span class="ul3-ic">${icon(['book', 'star', 'spark'].find(k => !(TEA_REASONS[w] || []).some(r => r[0] === k)), 18)}</span><span><b>Good to know</b><small>${TEA_FACT[w]}</small></span></div>` : ''}
+      ${safe ? `<div class="ul3-r tpx-safe"><span class="ul3-ic">${icon(['flask', 'heart', 'leaf'].find(k => !(TEA_REASONS[w] || []).some(r => r[0] === k)), 18)}</span><span><b>Safe amount</b><small>${safe}</small></span></div>` : ''}
     </section>
     <section class="card ul3-keep tpx-keep"><h3>Steep &amp; when</h3>
       <div class="ul3-r"><span class="ul3-ic">${icon('clock', 18)}</span><span><b>Steep</b><small>${stp || td[3]}</small></span></div>
