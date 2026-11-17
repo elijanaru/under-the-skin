@@ -7584,6 +7584,8 @@ function viewHormone(i) {
 function windowAt(cd, L, P) { return dayWindow({ cd, L, P, ov: C.ovulationDay(L, P) }); }
 function moveDots(n) { return `<span class="mv-dots">${[1, 2, 3].map(i => `<i class="${n >= i ? 'on' : ''}"></i>`).join('')}</span>`; }
 const MV_WORD = ['Rest instead', 'Go lighter', 'Good', 'Best time'];
+// Calm moves never strain the body: when they rank low it means she needs them less today, not that they are hard on her
+const MV_CALM = new Set(['yoga', 'meditate', 'walk']);
 // how hard, 1 to 5, from the talk-test words in MOVE_DOSE (the hero's five bars and the month rows share it)
 const mvLvl = int => { const w = int.split(':')[0]; return /^Medium to hard/.test(w) ? 4 : /^Hard/.test(w) ? 5 : /^Medium/.test(w) ? 3 : /^(Light|Steady)/.test(w) ? 2 : 1; };
 const MV_SHORT = { lift: 'Lifting', hiit: 'Sprints', sport: 'Cardio', pilates: 'Pilates', yoga: 'Yoga', meditate: 'Meditation', walk: 'Walks' };
@@ -7683,7 +7685,7 @@ function viewMove() {
     </section>`;
   const card = m => { const X = MV_PLATE[m.k], on = ui.mvOpen === m.k;
     return `<article class="mvc ${on ? 'on' : ''}"><button class="mvc-h" data-action="mvOpen" data-k="${m.k}" aria-expanded="${on}">${mvFig(m.k)}
-      <span class="mvc-t"><em class="r${g.r[m.k]}">${MV_WORD[g.r[m.k]]}</em><b>${m.n}</b><small>${X.works}</small><span class="mvc-n">${icon('clock', 12)} ${X.long} · ${X.freq}</span></span>${icon(on ? 'chevD' : 'chevR', 15)}</button>
+      <span class="mvc-t"><em class="r${g.r[m.k]}${MV_CALM.has(m.k) && g.r[m.k] < 2 ? ' calm' : ''}">${MV_CALM.has(m.k) && g.r[m.k] < 2 ? 'Less needed' : MV_WORD[g.r[m.k]]}</em><b>${m.n}</b><small>${X.works}</small><span class="mvc-n">${icon('clock', 12)} ${X.long} · ${X.freq}</span></span>${icon(on ? 'chevD' : 'chevR', 15)}</button>
       ${on ? `<div class="mvc-b">${mvInfo(m.k, D)}</div>` : ''}</article>`; };
   return `${topbar('Move', { back: true })}
   <div class="pad mvp-page">
@@ -7702,7 +7704,9 @@ function viewMove() {
     </section>
     ${month}
     ${also.length ? `${sectionTitle("Also good now")}<p class="mvc-sub">These suit your body today too.</p><div class="mvc-l">${also.map(card).join('')}</div>` : ''}
-    ${later.length ? `${sectionTitle('Go lighter or rest')}<p class="mvc-sub">Not banned, just harder on your body today. Tap one for the gentle way or what to do instead.</p><div class="mvc-l soft">${later.map(card).join('')}</div>` : ''}
+    ${later.length ? (later.every(m => MV_CALM.has(m.k))
+      ? `${sectionTitle('Save for slower days')}<p class="mvc-sub">Your energy is up, so you need these less right now. A few minutes still feel good, and they come first again before your period.</p><div class="mvc-l soft calm">${later.map(card).join('')}</div>`
+      : `${sectionTitle('Go lighter or rest')}<p class="mvc-sub">Not banned, just harder on your body today. Tap one for the gentle way or what to do instead.</p><div class="mvc-l soft">${later.map(card).join('')}</div>`) : ''}
     ${trainSafe()}
   </div>`;
 }

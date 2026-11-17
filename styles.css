@@ -16890,3 +16890,7 @@ html .eb-grid > .eb-i { flex: 0 0 calc((100% - 16px) / 3); min-width: 0; }
 html .fx-sfg .fx-t small { display: block; margin-top: 2px; font: 400 11px/1.2 var(--font); color: rgba(32,48,26,.7); text-align: center; }
 html .fx-g.fx-sfg { display: flex; flex-wrap: wrap; justify-content: center; }
 html .fx-g.fx-sfg > .fx-t { flex: 0 0 calc((100% - 20px) / 3); min-width: 0; }
+/* Move: calm moves that rank low on high-energy days read as "Less needed", in a quiet neutral chip, not the amber warning */
+html .mvc-t em.calm { background: #ecefe6; color: #4a5a3c; }
+/* Move, Train safe: the source line sat as faint grey type straight on the page background; it now sits on a frosted strip in readable ink */
+html .ts-credit { margin: 10px 0 0; padding: 8px 14px; border-radius: 14px; background: rgba(255,255,255,.6); box-shadow: inset 0 0 0 1px rgba(48,64,35,.08); color: rgba(32,48,26,.72); font: 400 11px/1.4 var(--font); text-shadow: none; }
