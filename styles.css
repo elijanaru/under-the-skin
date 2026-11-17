@@ -16966,3 +16966,8 @@ html .cdl-hm b .tr { font-style: normal; display: inline-grid; place-items: cent
 html .cdl-hm b .tr svg { width: 11px; height: 11px; }
 /* Move, how to do it: a step that names its exercise ("Glute bridge: ...") leads with the name in ink */
 html .mvp-how li > span b { font-weight: 600; color: #20301a; margin-right: 2px; }
+/* Hormone tiles (Insights > Learn, Hormones page): every name in crisp ink, no glow; the level word carries the colour in the darker house accent so "Moderate" and "High" read at a glance */
+html .hxt.hi b, html .hxt b { color: #20301a; text-shadow: none; }
+html .hxt-now em { color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 30%); font-weight: 600; }
+html .hxt.lo { opacity: 1; }
+html .hxt.lo .hxt-now em { color: rgba(32,48,26,.62); }
