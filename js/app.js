@@ -493,7 +493,7 @@ function trainSafe() {
     <div class="ts4">${list.map(t => { const [k, g, ti, , dos] = t, pic = TS_PIC[k] || '';
       return `<button class="ts4-r ${k === open ? 'on' : ''}" data-action="tsOpen" data-k="${k}" aria-expanded="${k === open}">
         <span class="ts4-pic ${pic.includes('/mv/') ? 'fig' : 'cut'}">${pic ? `<img src="${pic}" alt="" loading="lazy">` : `<i>${icon(g, 18)}</i>`}</span>
-        <span class="ts4-t"><b>${ti}</b><small>${dos[0]}</small>${focus(k) ? `<em class="now">${icon('spark', 11)} Matters now</em>` : always(k) ? '<em>Every phase</em>' : `<em class="later">${TRAIN_WHEN[k].map(p => PHASES[p].name).join(' & ')}</em>`}</span>
+        <span class="ts4-t"><b>${ti}</b><small>${dos[0]}</small>${focus(k) ? `<em class="now">${icon('spark', 11)} Matters now</em>` : always(k) ? `<em class="all"><span class="ts4-dots">${PHASE_ORDER.map(p => `<i style="--c:${PH_HEX[p]}"></i>`).join('')}</span>Every phase</em>` : `<em class="later">${TRAIN_WHEN[k].map(p => `<i style="--c:${PH_HEX[p]}"></i>${PHASES[p].name}`).join(' & ')}</em>`}</span>
         <span class="ts4-go">${icon(k === open ? 'chevD' : 'chevR', 15)}</span></button>${k === open ? more(t) : ''}`; }).join('')}</div>
     <p class="ts-credit">${TRAIN_SAFE_CREDIT}</p>`;
 }

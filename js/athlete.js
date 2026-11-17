@@ -18,7 +18,7 @@ export const TRAIN_SAFE = [
     ['Watson et al. 2018', 'In the LIFTMOR trial, women with low bone density who lifted heavy twice a week gained bone in the spine and hip.'],
     'Your strength does not change across the cycle, so you can lift in every phase.'],
   ['knee', 'leaf', 'Protect your knees', 'Women tear the ACL far more often',
-    ['10 minutes of warm-up: lunges, single-leg balance, soft landings', 'Land with knees over your toes, not caving in'],
+    ['A 20 minute warm-up: lunges, single-leg balance, soft landings', 'Land with knees over your toes, not caving in'],
     'Women injure the ACL several times more often than men in the same sports, from hip shape, landing style and hormones. A short warm-up that trains balance and landing is the best prevention.',
     ['Soligard et al. 2008', 'A 20-minute warm-up programme cut injuries by about a third in over 1,800 young female footballers.'],
     'Ligaments may be a little looser around ovulation, so take extra care with jumps and quick turns that week.'],
