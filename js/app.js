@@ -2711,10 +2711,11 @@ function foodExplore(phase, info) {
   } else if (k === 'drinks' || k === 'supps') {
     const C0 = EAT_GUIDE[phase].cats[k], L = warmChips(C0[1], k, warm && phase === (info && info.phase)).slice(0, 9);
     lead = C0[0].split('. ')[0].replace(/\.?$/, '.');
-    body = `<div class="fx-g">${L.map(([, n]) => { if (k === 'supps') { const x = suppOf(n), sym = x ? x.sym : /B12/.test(n) ? 'B12' : /omega/i.test(n) ? 'Ω3' : n.slice(0, 2);
-      return `<button class="fx-t" data-action="nav" data-to="plan/supps"><span class="fx-ti sym"><span>${sym}</span></span><b>${n.replace(/\s+[\d.,–-]+\s*(g|mg|µg|mcg|IU)$/i, '')}</b></button>`; }
+    const does = t => t ? `<small>${t}</small>` : '';
+    body = `<div class="fx-g fx-sfg">${L.map(([, n]) => { if (k === 'supps') { const x = suppOf(n), sym = x ? x.sym : /B12/.test(n) ? 'B12' : /omega/i.test(n) ? 'Ω3' : n.slice(0, 2);
+      return `<button class="fx-t" data-action="nav" data-to="plan/supps"><span class="fx-ti sym"><span>${sym}</span></span><b>${n.replace(/\s+[\d.,–-]+\s*(g|mg|µg|mcg|IU)$/i, '').replace(/\s*\(.*\)$/, '')}</b>${does(x && SUPP_DOES[x.id])}</button>`; }
       // teas show the cut-out cup on the white tile, no photo background (16 Nov 2026, her call)
-      return tile(teaCupImg(n), n, 'data-action="nav" data-to="plan/drinks"').replace('class="fx-ti ', 'class="fx-ti cup '); }).join('')}</div>`;
+      return tile(teaCupImg(n), n, 'data-action="nav" data-to="plan/drinks"').replace('class="fx-ti ', 'class="fx-ti cup ').replace('</b></button>', `</b>${does((DRINK_DOES.find(([re]) => re.test(n)) || [])[1])}</button>`); }).join('')}</div>`;
   } else {
     // blood sugar: one simple curve graphic and three steps, the full page behind See all
     lead = { menstrual: 'Cravings are normal now. Three steps keep the curve gentle.', follicular: 'Your body handles carbs well now. Three steps keep the curve gentle.',
@@ -2979,6 +2980,13 @@ function sfAmt(t) {
   return [m[1].replace(' to ', '–'), m[2].split(' ').find(w => !STOP.test(w)) || ''];
 }
 const sfAmtHTML = t => { const [n, u] = sfAmt(t); return `<span class="sfc-am">${n ? `<b class="dotnum">${n}</b>` : ''}${u}</span>`; };
+// What each drink and supplement does, in two or three words, under its name on the Food page tiles
+const DRINK_DOES = [[/matcha latte/i, 'Calm energy & calcium'], [/matcha/i, 'Calm, steady energy'], [/coffee/i, 'Focus, best with food'], [/ginger/i, 'Eases cramps'], [/red date/i, 'Builds blood'],
+  [/cacao/i, 'Magnesium'], [/raspberry leaf/i, 'Tones the womb'], [/broth/i, 'Minerals & warmth'], [/lemon/i, 'Vitamin C start'], [/nettle/i, 'Iron & minerals'], [/green juice/i, 'Folate & greens'],
+  [/coconut/i, 'Natural electrolytes'], [/mineral water/i, 'Magnesium & calcium'], [/hibiscus/i, 'Cooling antioxidants'], [/chamomile/i, 'Calmer sleep']];
+const SUPP_DOES = { magnesium: 'Cramps & sleep', iron: 'After heavy periods', 'omega-3': 'Less period pain', 'vitamin-c': 'Absorbs your iron', ginger: 'Eases cramps', creatine: 'Strength & mood',
+  'vitamin-d': 'Mood & bones', 'b-complex': 'Energy & mood', probiotic: 'Gut & flora', zinc: 'Skin & PMS', 'vitamin-e': 'Softer periods', ashwagandha: 'Lower stress', b6: 'Steadier PMS mood',
+  calcium: 'Fewer PMS symptoms', prenatal: 'Folate for a baby', coq10: 'Egg quality' };
 // What each superfood does, in two or three words, under its name on the Food page tiles (the tiles showed names only)
 const SF_DOES = { Ginger: 'Eases cramps', 'Goji berries': 'Builds blood', 'Blackstrap molasses': 'Iron in a spoon', 'Turmeric with black pepper': 'Calms period pain', Cinnamon: 'Steadies blood sugar',
   Nettle: 'Iron & calcium', 'Broccoli sprouts': 'Clears used estrogen', 'Ground flaxseed': 'Estrogen balance', 'Pumpkin seeds': 'Zinc for your egg', Sauerkraut: 'Gut that clears estrogen',
