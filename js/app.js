@@ -4241,7 +4241,9 @@ function groceryItems() {
   const other = ['Other', []];
   for (const it of Object.values(items)) {
     const pantry = AISLES.findIndex(([a]) => a.startsWith('Seeds'));
-    const g = /tea$/i.test(it.name) ? AISLES.length - 1 : AISLES[pantry][1].test(it.name) && !/^(ginger|lemon)/i.test(it.name) ? pantry : AISLES.findIndex(([, re]) => re.test(it.name));
+    let g = /tea$/i.test(it.name) ? AISLES.length - 1 : AISLES[pantry][1].test(it.name) && !/^(ginger|lemon)/i.test(it.name) ? pantry : AISLES.findIndex(([, re]) => re.test(it.name));
+    // an in-season swap the patterns don't know (Root vegetables, Peas, Mackerel, Chestnuts): its own kind picks the aisle
+    if (g < 0) { const kd = (table.find(t => t.f.toLowerCase() === it.name.toLowerCase()) || {}).kind; g = AISLES.findIndex(([a]) => a === ({ veg: 'Produce', fruit: 'Produce', herb: 'Produce', fungi: 'Produce', animal: 'Protein', other: 'Seeds, nuts & pantry' })[kd]); }
     (g >= 0 ? groups[g][1] : other[1]).push(it);
   }
   // local seasonal foods that suit the coming week's phases go first
@@ -4283,7 +4285,9 @@ function groceryCard() {
     </button>`;
 }
 // Plain words for the Chinese-medicine goals in the grocery summary.
-const GRO_PLAIN = { 'Move Liver Qi': 'Liver flow', 'Nourish Yin & Blood': 'Blood builders', 'Cruciferous veg': 'Cabbage family', 'Slow carbs': 'Slow carbs' };
+const GRO_PLAIN = { 'Move Liver Qi': 'Ease PMS', 'Nourish Yin & Blood': 'Blood builders', 'Cruciferous veg': 'Cabbage family', 'Slow carbs': 'Slow carbs' };
+// the rows use the same plain words as the bubbles (they showed 'Move Liver Qi' and 'Nourish Yin & Blood')
+const groWhy = w => { const [a, ...r] = String(w).split(' · '); return [GRO_PLAIN[a] || a, ...r].join(' · '); };
 // Grocery basket (Opal style): one ring with how much is in the basket, three nutrient bubbles that fill as she ticks,
 // the full what-it-covers grid behind one tap. Ticking redraws only this card and the row, never the page.
 function grocerySum() {
@@ -4320,12 +4324,12 @@ function viewGrocery() {
     <div class="tea-tabs gro-tabs">${groups.map(([a, l]) => { const d = l.filter(i => got[i.name.toLowerCase()]).length; return `<button class="${a === aisle ? 'on' : ''} ${d === l.length ? 'full' : ''}" data-action="groAisle" data-v="${esc(a)}">${a} <i>${d}/${l.length}</i></button>`; }).join('')}</div>
     ${groups.filter(([a]) => a === aisle).map(([, list]) => { const used = new Set(); return `
       <section class="card glass">${list.map(it => { const k = it.name.toLowerCase(); return `<button class="check-row gro ${got[k] ? 'on' : ''}" data-action="groToggle" data-k="${esc(k)}">
-        <span class="cb">${icon('check', 14, 2.2)}</span>${groIc(it.name, 'gro-img', used)}<span class="gro-n">${esc(it.name)}<small>${it.why}</small></span>
+        <span class="cb">${icon('check', 14, 2.2)}</span>${groIc(it.name, 'gro-img', used)}<span class="gro-n">${esc(it.name)}<small>${groWhy(it.why)}</small></span>
         <span class="gro-ph">${it.phases.map(p => `<i style="background:${PH_HEX[p]}" title="${PHASES[p].name}"></i>`).join('')}</span></button>`; }).join('')}</section>`; }).join('')}
     <div class="gro-key">${phases.map(p => `<span><i style="background:${PH_HEX[p]}"></i>${PHASES[p].name}</span>`).join('')}<small>the phase each food supports</small></div>
     ${swaps.length ? (() => { const sw = swaps.filter(x => x.alt), sk = swaps.filter(x => !x.alt);
       return `${sectionTitle('Swapped for the season')}<section class="card glass gro-swap gsw">
-      ${sw.map(x => `<div class="gsw-r"><span class="gsw-pair">${groPic(x.out, 'off')}${icon('chevR', 13)}${groPic(x.alt)}</span><span class="gsw-n"><b>${esc(x.alt)}</b><small>Same ${esc(x.why.toLowerCase())} as ${esc(x.out.toLowerCase())}</small></span></div>`).join('')}
+      ${sw.map(x => `<div class="gsw-r"><span class="gsw-pair">${groPic(x.out, 'off')}${icon('chevR', 13)}${groPic(x.alt)}</span><span class="gsw-n"><b>${esc(x.alt)}</b><small>Same ${esc(groWhy(x.why).toLowerCase())} as ${esc(x.out.toLowerCase())}</small></span></div>`).join('')}
       ${sk.length ? `<div class="gsw-sk"><span class="gsw-k">Left off this month</span><div class="gsw-chips">${sk.map(x => `<span>${groPic(x.out, 'off')}${esc(x.out)}</span>`).join('')}</div></div>` : ''}
       <p class="gsw-f">Not in season where you live this month${sw.length ? ', so swapped for a local food with the same nutrient' : ''}. They come back in their season.</p></section>`; })() : ''}
     <section class="card glass gro-share"><div><b>Shopping with someone?</b><small>Send the list as text</small></div><button class="pill-cta" data-action="groShare">${icon('download', 15)} Share list</button></section>
