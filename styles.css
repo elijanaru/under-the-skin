@@ -16964,3 +16964,5 @@ html .mvm .mvw-lab span { color: #304023; font-weight: 500; }
 html .cdl-hm b { display: flex; align-items: center; gap: 4px; }
 html .cdl-hm b .tr { font-style: normal; display: inline-grid; place-items: center; }
 html .cdl-hm b .tr svg { width: 11px; height: 11px; }
+/* Move, how to do it: a step that names its exercise ("Glute bridge: ...") leads with the name in ink */
+html .mvp-how li > span b { font-weight: 600; color: #20301a; margin-right: 2px; }

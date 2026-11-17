@@ -7673,7 +7673,7 @@ const MV_PLATE = {
   sport: { ex: 'Running', works: 'Calves, thighs, glutes, heart', ben: 'Steady cardio strengthens your heart and lungs and lifts your mood with endorphins.', long: '30 to 60 min', freq: '2 to 4 times a week',
     how: ['Start slow enough to talk', 'Short, light steps, shoulders soft', 'Walk the last 5 minutes'], safe: ['Drink more in the second half of your cycle', 'Add no more than about 10 percent distance a week', 'Iron-rich food after heavy periods'], L: [['Heart & lungs', 64, 23, 'r'], ['Glutes', 43, 47, 'l'], ['Quadriceps', 65, 51, 'r'], ['Calves', 29, 68, 'l'], ['Shins', 65, 77, 'r']] },
   pilates: { ex: 'Lunges', works: 'Glutes, thighs, deep core', ben: 'Controlled strength builds a strong core and pelvic floor and protects your joints without spiking stress hormones.', long: '30 to 45 min', freq: '2 to 3 times a week',
-    how: ['A long step forward, both knees bend to about 90 degrees', 'Front knee stays over your ankle', '3 sets of 10 each side, slow on the way down'], safe: ['Light to moderate weights', 'Breathe out as you rise', 'Longer rests when you run warmer after ovulation'], L: [['Deep core', 50, 33, 'l'], ['Obliques', 61, 40, 'r'], ['Quadriceps', 30, 57, 'l'], ['Glutes & hamstrings', 60, 69, 'r']] },
+    how: ['Lunge: a long step forward, both knees bend to about 90 degrees, front knee over your ankle. 10 each side', 'Glute bridge: on your back, lift your hips, squeeze, lower slowly. 12 times', 'Dead bug: lower the opposite arm and leg while your low back stays pressed down. 8 each side', 'Rest a minute, then go round twice more, slow on the way down'], safe: ['Light to moderate weights', 'Breathe out as you rise', 'Longer rests when you run warmer after ovulation'], L: [['Deep core', 50, 33, 'l'], ['Obliques', 61, 40, 'r'], ['Quadriceps', 30, 57, 'l'], ['Glutes & hamstrings', 60, 69, 'r']] },
   yoga: { ex: 'Tree pose', works: 'Hips, side waist, shoulders, spine', ben: 'Balance, flexibility and a calmer nervous system. Gentle poses ease cramps, tension and low back pain.', long: '20 to 45 min', freq: 'Most days',
     how: ['Root through one foot, the other on your inner calf or thigh, never on the knee', 'Palms together, grow tall through your spine', 'Hold 5 slow breaths, then switch'], safe: ['On your period choose gentle, restorative poses', 'Never force a stretch', 'Use a wall for balance'], L: [['Shoulders', 34, 29, 'l'], ['Spine muscles', 50, 36, 'r'], ['Side waist', 38, 47, 'l'], ['Outer hip', 60, 58, 'r']] },
   meditate: { ex: 'Meditation', works: 'Diaphragm, vagus nerve, heart', ben: 'Slow breathing lowers cortisol and calms your heart, which gives progesterone room to rise. Ten minutes a day is enough to feel it.', long: '10 to 20 min', freq: 'Daily',
@@ -7699,11 +7699,11 @@ function mvInfo(k, D, fold) {
   const P = MV_PLATE[k];
   if (fold) return `<p class="mvp-ben">${P.ben}</p>${k === 'hiit' ? hiitStrip() : ''}
     <details class="mvp-fold"><summary><span class="mvf-ic">${icon('book', 15)}</span><span class="mvf-t"><b>How to do it</b><small><span class="dotnum">${P.how.length}</span> steps · train safe</small></span>${icon('chevD', 15)}</summary>
-    <div class="mvp-how"><small>How to do it</small><ol>${P.how.map((t, i) => `<li><i>${i + 1}</i>${t}</li>`).join('')}</ol></div>
+    <div class="mvp-how"><small>How to do it</small><ol>${P.how.map((t, i) => `<li><i>${i + 1}</i><span>${t.replace(/^([A-Z][A-Za-z ]{2,18}):\s/, '<b>$1:</b> ')}</span></li>`).join('')}</ol></div>
     <div class="mvp-safe"><small>${icon('heart', 12)} Train safe</small><ul>${P.safe.map(t => `<li>${t}</li>`).join('')}</ul></div></details>
     ${P.to ? `<button class="mvp-go" data-action="nav" data-to="${P.to}">Open Breathe ${icon('chevR', 13)}</button>` : ''}`;
   return `<p class="mvp-ben">${P.ben}</p>${k === 'hiit' ? hiitStrip() : ''}
-    <div class="mvp-how"><small>How to do it</small><ol>${P.how.map((t, i) => `<li><i>${i + 1}</i>${t}</li>`).join('')}</ol></div>
+    <div class="mvp-how"><small>How to do it</small><ol>${P.how.map((t, i) => `<li><i>${i + 1}</i><span>${t.replace(/^([A-Z][A-Za-z ]{2,18}):\s/, '<b>$1:</b> ')}</span></li>`).join('')}</ol></div>
     <div class="mvp-safe"><small>${icon('heart', 12)} Train safe</small><ul>${P.safe.map(t => `<li>${t}</li>`).join('')}</ul></div>
     ${P.to ? `<button class="mvp-go" data-action="nav" data-to="${P.to}">Open Breathe ${icon('chevR', 13)}</button>` : ''}`;
 }
