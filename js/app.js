@@ -9680,8 +9680,8 @@ function viewRitual(id) {
   const r = RITUALS.find(x => x.id === id); if (!r) return viewMissing();
   return `${topbar('Ritual', { back: true })}<div class="pad sp2 sp2t">
     ${specHero({ stack: true, photo: carePhoto(r.id, 1000), glyph: r.glyph, han: true, eyebrow: 'TCM ritual', name: r.name, label: 'At a glance',
-      rows: [['Time', `${r.mins} min`], ['Your cycle', !M.info ? `${r.phases.length} phases` : r.phases.includes(M.info.phase) ? 'Good today' : `From ${PHASES[r.phases.find(p => PHASE_ORDER.indexOf(p) > PHASE_ORDER.indexOf(M.info.phase)) || r.phases[0]].name.toLowerCase()}`], ['Steps', `${r.steps.length}`]],
-      lead: 'Why it helps', desc: r.why })}
+      rows: [['Time', `${r.mins} min`], ['Your cycle', !M.info ? `${r.phases.length} phases` : r.phases.includes(M.info.phase) ? 'Good today' : `Best in ${PHASES[r.phases.find(p => PHASE_ORDER.indexOf(p) > PHASE_ORDER.indexOf(M.info.phase)) || r.phases[0]].name.toLowerCase()}`], ['Steps', `${r.steps.length}`]],
+      desc: r.why.split(/(?<=\.)\s+/)[0], more: r.why.split(/(?<=\.)\s+/).slice(1).join(' ') })}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit(r.phases, M.info && M.info.phase)}</section>
     ${ritualDo(r)}
     ${remedyScience(r, RITUAL_SCIENCE, false)}
