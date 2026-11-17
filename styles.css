@@ -16886,3 +16886,7 @@ html .sup-st2 .stc-c p { font-size: 13px; line-height: 1.4; }
 /* bubble pickers (supplements, drinks): a short last row sits in the middle instead of hanging left */
 html .eb-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 8px; }
 html .eb-grid > .eb-i { flex: 0 0 calc((100% - 16px) / 3); min-width: 0; }
+/* Food page, Superfoods tiles: what each one does under its name; a short last row sits in the middle */
+html .fx-sfg .fx-t small { display: block; margin-top: 2px; font: 400 11px/1.2 var(--font); color: rgba(32,48,26,.7); text-align: center; }
+html .fx-g.fx-sfg { display: flex; flex-wrap: wrap; justify-content: center; }
+html .fx-g.fx-sfg > .fx-t { flex: 0 0 calc((100% - 20px) / 3); min-width: 0; }

@@ -2699,7 +2699,7 @@ function foodExplore(phase, info) {
   } else if (k === 'foods') {
     const S = SUPERFOODS[phase], L = S.list.filter(f => !(f[5] && myDiet() === 'vegan') && (myDiet() !== 'animal' || lineFits(f[1], 'animal')) && SF_CUT[f[1]]).slice(0, 9);
     lead = S.lead;
-    body = `<div class="fx-g">${L.map(f => tile(`images/sf/${SF_CUT[f[1]][0]}.webp`, f[1], 'data-action="superGo"')).join('')}</div>`;
+    body = `<div class="fx-g fx-sfg">${L.map(f => tile(`images/sf/${SF_CUT[f[1]][0]}.webp`, f[1], 'data-action="superGo"').replace('</b></button>', `</b><small>${SF_DOES[f[1]] || SF_CUT[f[1]][1] || ''}</small></button>`)).join('')}</div>`;
   } else if (k === 'drinks' || k === 'supps') {
     const C0 = EAT_GUIDE[phase].cats[k], L = warmChips(C0[1], k, warm && phase === (info && info.phase)).slice(0, 9);
     lead = C0[0].split('. ')[0].replace(/\.?$/, '.');
@@ -2971,6 +2971,12 @@ function sfAmt(t) {
   return [m[1].replace(' to ', '–'), m[2].split(' ').find(w => !STOP.test(w)) || ''];
 }
 const sfAmtHTML = t => { const [n, u] = sfAmt(t); return `<span class="sfc-am">${n ? `<b class="dotnum">${n}</b>` : ''}${u}</span>`; };
+// What each superfood does, in two or three words, under its name on the Food page tiles (the tiles showed names only)
+const SF_DOES = { Ginger: 'Eases cramps', 'Goji berries': 'Builds blood', 'Blackstrap molasses': 'Iron in a spoon', 'Turmeric with black pepper': 'Calms period pain', Cinnamon: 'Steadies blood sugar',
+  Nettle: 'Iron & calcium', 'Broccoli sprouts': 'Clears used estrogen', 'Ground flaxseed': 'Estrogen balance', 'Pumpkin seeds': 'Zinc for your egg', Sauerkraut: 'Gut that clears estrogen',
+  Parsley: 'Vitamin C & folate', 'Raw honey': 'Gentle energy', 'Bee bread': 'Protein & iron', 'Wild blueberries': 'Protects your egg', 'Chia seeds': 'Fibre & omega‑3',
+  'Brazil nuts': 'For your thyroid', 'Fresh mint': 'Cools & settles', Coriander: 'Easy digestion', 'Royal jelly': 'Milder PMS', 'Raw cacao': 'Magnesium for cravings',
+  'Sesame seeds and tahini': 'Progesterone days', 'Sunflower seeds': 'Calmer PMS', 'Fennel seeds': 'Eases bloating' };
 const SF_TITLE = { menstrual: 'Warm & rebuild', follicular: 'Fresh & clear', ovulatory: 'Light & bright', luteal: 'Calm & steady' };
 function superInner(phase) {
   const S = SUPERFOODS[phase], warm = warmWindow(M.info);
