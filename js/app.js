@@ -11743,6 +11743,8 @@ const actions = {
   remToggle: d => { const r = rem(); r[d.k] = !r[d.k]; save(); render(); if (d.k === 'sunAm' || d.k === 'sunPm') scheduleSunNative(r[d.k]); if (d.k === 'letters') scheduleLettersNative(r[d.k]); },
   buyUnlock: () => buyUnlock(),
   restoreUnlock: () => restoreUnlock(),
+  creatorCode: () => creatorCode(),
+  testCode: () => testCode(),
   remLettersN: d => { const r = rem(); r.lettersN = +d.v; save(); render(); scheduleLettersNative(); },
   remHour: d => { const r = rem(); r.checkinHour = (r.checkinHour + +d.d + 24) % 24; save(); render(); },
   remCalmHour: d => { const r = rem(); r.calmHour = (r.calmHour + +d.d + 24) % 24; save(); render(); },
@@ -11929,6 +11931,7 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => { if (e.key !== 'Enter' || (e.target.id !== 'ac-mail' && e.target.id !== 'ac-code')) return; e.preventDefault(); e.target.closest('.ph-auth')?.querySelector(e.target.id === 'ac-code' ? '[data-action="acCode"]' : '.ph-s1 [data-action="acMailCode"]')?.click(); });
 document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.id === 'ulCode') { e.preventDefault(); return testCode(); }
   if (e.key === 'Enter' && e.target.matches?.('[data-cpq]')) { e.preventDefault(); const r = [...e.target.closest('.cpick').querySelectorAll('.cp-row:not(.cp-cur)')].find(x => !x.hidden); if (r) r.click(); else e.target.blur(); return; }
   const f = e.target.dataset?.input; if (e.key !== 'Enter' || !/placeQ$/.test(f || '')) return;
   e.preventDefault(); placeFind(f.startsWith('onb') ? 'onb' : 'profile');
@@ -12091,7 +12094,7 @@ if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 // Free until her next period starts (from her first day in the app), then one payment of €24.99 unlocks everything for good.
 // The first day of that period stays free; the gate shows from day 2. If she logs no new period, it ends a week after the
 // period we predicted, and never later than 45 days after she started.
-// Store apps: an in-app purchase (non-consumable, id below) through the NativePurchases plugin once it is installed.
+// Store apps: an in-app purchase (non-consumable, id below) through StoreKit 2 (UTSStore plugin in ios/App/App/SceneDelegate.swift).
 // Website: a payment link (PAY_LINK in js/config.js). On the local dev server the gate stays off (add ?paywall=1 to see it).
 const TRIAL_MAX = 45, PRICE = '24.99', UNLOCK_ID = 'underskin_unlock';
 function trialStart() { if (!state.trialStart) { state.trialStart = todayISO(); save(true); } return state.trialStart; }
@@ -12109,11 +12112,19 @@ function locked() {
   if (DEV_HOST && !/[?&]paywall=1/.test(location.search)) return false;
   return trialLeft() === 0;
 }
+const UTSS = NATIVE && CAP?.registerPlugin && /iOS/i.test(CAP.getPlatform?.() || '') ? CAP.registerPlugin('UTSStore') : null;
+let TEST_BUILD = DEV_HOST; // TestFlight, Xcode or the dev server
+if (UTSS) {
+  UTSS.isTestFlight().then(r => { TEST_BUILD = !!r?.value; }).catch(() => {});
+  // a code redeemed in Apple's sheet (or a purchase approved later) arrives here
+  UTSS.addListener('unlocked', d => { if (d?.productId === UNLOCK_ID && !state.paid) unlocked(d.transactionId); });
+  // bought on another device or reinstalled: unlock quietly
+  UTSS.owned({ productId: UNLOCK_ID }).then(r => { if (r?.owned && !state.paid) { state.paid = { at: todayISO(), ref: String(r.transactionId || 'owned') }; save(true); render(); } }).catch(() => {});
+}
 async function buyUnlock() {
-  const NP = NATIVE && CAP?.Plugins?.NativePurchases;
-  if (NP) {
-    try { ui.paying = true; render(); const r = await NP.purchaseProduct({ productIdentifier: UNLOCK_ID, productType: 'inapp', quantity: 1 }); if (r && (r.transactionId || r.purchaseToken)) return unlocked(r.transactionId || r.purchaseToken); }
-    catch (e) { toast(/cancel/i.test(String(e?.message || e)) ? 'Payment cancelled' : 'The payment didn’t go through. Please try again.'); }
+  if (UTSS) {
+    try { ui.paying = true; render(); const r = await UTSS.buy({ productId: UNLOCK_ID }); return unlocked(r?.transactionId); }
+    catch (e) { const c = e?.code || ''; toast(c === 'cancelled' ? 'Payment cancelled' : c === 'notfound' ? 'Payments open very soon. Everything stays free until then.' : c === 'pending' ? 'Waiting for approval. It unlocks as soon as it goes through.' : 'The payment didn’t go through. Please try again.'); }
     ui.paying = false; render(); return;
   }
   let link = ''; try { link = (await import('./config.js')).PAY_LINK || ''; } catch {}
@@ -12121,12 +12132,28 @@ async function buyUnlock() {
   toast('Payments open very soon. Everything stays free until then.');
 }
 async function restoreUnlock() {
-  const NP = NATIVE && CAP?.Plugins?.NativePurchases;
-  if (!NP) return toast(A.currentUser() ? 'No purchase found on this account yet' : 'Sign in with the account you paid with to restore it');
-  try { const r = await NP.restorePurchases(); const list = (r && (r.purchases || r.transactions)) || [];
-    const hit = list.find(x => (x.productIdentifier || x.productId) === UNLOCK_ID); if (hit) return unlocked(hit.transactionId || hit.purchaseToken || 'restored');
-    toast('No purchase found for this Apple or Google account'); }
+  if (!UTSS) return toast(A.currentUser() ? 'No purchase found on this account yet' : 'Sign in with the account you paid with to restore it');
+  try { const r = await UTSS.restore({ productId: UNLOCK_ID }); if (r?.owned) return unlocked(r.transactionId || 'restored');
+    toast('No purchase found for this Apple account'); }
   catch { toast('Couldn’t reach the store. Please try again.'); }
+}
+// Creator codes. In the App Store build "Have a creator code?" opens Apple's offer-code sheet: codes like GEMMA are made in
+// App Store Connect (the in-app purchase, then Offer Codes) and arrive as a normal purchase through the 'unlocked' listener.
+// TESTFLIGHT ONLY: Apple's codes can't be redeemed in test builds, so TestFlight and the dev server show our own code box.
+// Before the App Store release remove CREATOR_CODES, testCode, the ul-code box and the TEST_BUILD branch in creatorCode.
+const CREATOR_CODES = ['GEMMA'];
+function creatorCode() {
+  if (UTSS && !TEST_BUILD) return UTSS.redeemCode()
+    .then(() => UTSS.owned({ productId: UNLOCK_ID })).then(r => { if (r?.owned && !state.paid) unlocked(r.transactionId); })
+    .catch(() => toast('Couldn’t open the code sheet. Please try again.'));
+  ui.codeOpen = !ui.codeOpen; render();
+  if (ui.codeOpen) setTimeout(() => document.getElementById('ulCode')?.focus(), 80);
+}
+function testCode() {
+  const v = (document.getElementById('ulCode')?.value || '').trim().toUpperCase();
+  if (!v) return document.getElementById('ulCode')?.focus();
+  if (CREATOR_CODES.includes(v)) { ui.codeOpen = false; return unlocked('creator-' + v); }
+  toast('That code doesn’t work. Check the spelling?');
 }
 function unlocked(ref) { state.paid = { at: todayISO(), ref: String(ref || '').slice(0, 80) }; ui.paying = false; save(true); toast('Unlocked. It’s yours for good'); location.hash = '#/today'; render(); }
 const UNLOCK_KEEP = [['🗓️', 'Your cycle & predictions', 'Learns your rhythm with every period'], ['🧬', 'Hormones made simple', 'What they do, day by day'], ['🥗', 'Food & recipes for each phase', 'Warm, raw-first, real food'], ['🌿', 'Breathe, ground & move', 'Matched to how you feel'], ['💌', 'Letters from your body', 'Gentle check-ins every day'], ['💞', 'Partner view', 'They learn your cycle too']];
@@ -12220,7 +12247,8 @@ function viewUnlock() {
     ${paid ? '' : `<ul class="ul3-no">${['No subscription', 'No ads', 'Data stays yours'].map((t, i) => `<li style="--r:${[-2, 1.5, -1][i]}deg"><span class="o3-x">${O3_X}</span>${t}</li>`).join('')}</ul>`}
     <section class="card ul3-keep"><h3>Everything is included</h3>
       ${UNLOCK_KEEP.map(([ic, t, sub], i) => `<div class="ul3-r" style="--i:${i}"><span class="ul3-ic emo" aria-hidden="true">${ic}</span><span><b>${t}</b><small>${sub}</small></span><i class="ul3-tick">${O3_TICK}</i></div>`).join('')}</section>
-    ${paid ? '' : `<div class="ul-links"><button data-action="restoreUnlock">Restore purchase</button>${A.configured() ? `<button data-action="nav" data-to="account">${A.currentUser() ? 'Your account' : 'Sign in'}</button>` : ''}</div>
+    ${paid ? '' : `<div class="ul-links"><button data-action="creatorCode">Have a creator code?</button><button data-action="restoreUnlock">Restore purchase</button>${A.configured() ? `<button data-action="nav" data-to="account">${A.currentUser() ? 'Your account' : 'Sign in'}</button>` : ''}</div>
+    ${ui.codeOpen ? `<div class="ul-code"><input id="ulCode" placeholder="Your creator code" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="go" maxlength="24"><button data-action="testCode">Unlock</button></div>` : ''}
     <p class="fine center ul-fine">One-time payment of €${PRICE}, VAT included. No renewal and nothing charged automatically. Your logs are never deleted, even if you wait.</p>`}
   </div>`;
 }

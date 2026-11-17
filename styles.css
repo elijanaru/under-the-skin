@@ -17130,3 +17130,10 @@ html .cdl .cdl-warm svg { flex: none; color: hsl(calc(var(--hb) + 30 * var(--hk)
   font: 500 12px/1.2 var(--font); font-style: normal; color: #20301a; }
 .hs-ph em i { width: 7px; height: 7px; border-radius: 50%; background: var(--c); }
 .apo-spec .hs-ph { margin: 0 0 4px; }
+/* creator code box on the unlock page (TestFlight and dev only) */
+.ul-links { flex-wrap: wrap; row-gap: 10px; }
+.ul-code { display: flex; gap: 8px; margin: 10px auto 4px; max-width: 320px; padding: 6px; border-radius: 999px; background: rgba(255,255,255,.82); border: 1px solid rgba(48,64,35,.12); box-shadow: 0 6px 20px rgba(48,64,35,.08); animation: rise .5s ease both; }
+.ul-code input { flex: 1; min-width: 0; border: 0; background: transparent; padding: 0 14px; font: 500 15px var(--font); letter-spacing: .12em; text-transform: uppercase; color: #304023; outline: none; }
+.ul-code input::placeholder { letter-spacing: .02em; text-transform: none; color: rgba(48,64,35,.45); font-weight: 400; }
+.ul-code button { padding: 10px 18px; border-radius: 999px; background: #304023; color: #fff; font: 500 14px var(--font); }
+@media (prefers-reduced-motion: reduce) { .ul-code { animation: none; } }
