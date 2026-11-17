@@ -990,7 +990,7 @@ function cycleChart(info, { id = 'cc', compact = false, who = 'You' } = {}) {
     for (let i = o.length - 1; i >= 0; i--) { const max = i === o.length - 1 ? W - o[i].w / 2 - 2 : o[i + 1].x - o[i + 1].w / 2 - 6 - o[i].w / 2; if (o[i].x > max) o[i].x = max; }
     return o.map(v => v.x.toFixed(1)); };
   const mid = r => X(r.from) + (X(r.to + 1) - X(r.from)) / 2;
-  const nX = spread(ranges.map(r => [mid(r), PHASES[r.key].name]), 7.1), dX = spread(ranges.map(r => [mid(r), r.from === r.to ? `Day ${r.from}` : `Day ${r.from}–${r.to}`]), 6.3);
+  const nX = spread(ranges.map(r => [mid(r), PHASES[r.key].name]), compact ? 7.4 : 7.1), dX = spread(ranges.map(r => [mid(r), r.from === r.to ? `Day ${r.from}` : `Day ${r.from}–${r.to}`]), 6.3);
   const bands = ranges.map((r, ri) => {
     const active = r.key === info.phase;
     const x = X(r.from) + 1.5, w = X(r.to + 1) - X(r.from) - 3;
@@ -998,7 +998,7 @@ function cycleChart(info, { id = 'cc', compact = false, who = 'You' } = {}) {
     const days = r.from === r.to ? `Day ${r.from}` : `Day ${r.from}–${r.to}`;
     return `<g class="band ${active ? 'active' : ''}">
       <rect x="${x.toFixed(1)}" y="${top}" width="${w.toFixed(1)}" height="${bot - top}" rx="${compact ? 10 : 14}" fill="${BAND[r.key]}" ${active ? `stroke="${PHASE_COLOR.dark[r.key]}" stroke-opacity=".45" stroke-width="1"` : ''}/>
-      ${compact ? `<text x="${(x + w / 2).toFixed(1)}" y="${bot + 16}" text-anchor="middle" class="band-days ${active ? 'on' : ''}">${label.slice(0, w < 40 ? 3 : 20)}</text>`
+      ${compact ? `<text x="${nX[ri]}" y="${bot + 17}" text-anchor="middle" class="band-days ${active ? 'on' : ''}" ${active ? `style="fill:${PH_INK[r.key]}"` : ''}>${label}</text>`
       : `<text x="${nX[ri]}" y="${top - 12}" text-anchor="middle" class="band-name ${active ? 'on' : ''}" ${active ? `style="fill:${PH_INK[r.key]}"` : ''}>${label}</text>
          <text x="${dX[ri]}" y="${bot + 21}" text-anchor="middle" class="band-days ${active ? 'on' : ''}">${days}</text>`}
     </g>`;
