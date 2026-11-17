@@ -9040,18 +9040,21 @@ const SEASON_SUPER = {
     ['Pumpkin seeds', 'Pumpkin seeds', 'Zinc & magnesium', 'For calm nerves, clear skin and softer PMS.', 'A toasted handful on soups or salads.', ''],
     ['Pumpkin & squash', 'Squash', 'Beta-carotene', 'Golden flesh for skin and easy digestion.', 'Roasted with olive oil and cinnamon.', '']],
 };
-// Herb spec sheet extras: a conservative daily amount, an extra caution where the list had none, and a study where there is one.
+// Herb spec sheet extras: a conservative daily amount, an extra caution where the list had none, when in the cycle (ph + when)
+// and what a study found, with author and year; where there are no human trials it says so plainly (17 Nov 2026)
 const HERB_SPEC = {
-  'Astragalus': { dose: '9–15 g dried root a day' },
-  'Red dates': { dose: '3–5 dates a day', care: 'Naturally sweet and high in sugar. Count them if you watch your blood sugar.' },
-  'Ginger root': { dose: 'Up to 4 g fresh a day, about a thumb', care: 'Ask first if you take blood thinners or have surgery coming up.', study: ['Ginger taken in the first days of the period eased period pain more than placebo in a pooled analysis of trials.', 'Daily 2015 (Pain Medicine)'] },
-  'Clove': { dose: '2–3 whole cloves in a drink', care: 'Never take clove oil by mouth. Ask first if you take blood thinners.' },
-  'Cinnamon bark': { dose: 'Up to 1 tsp (2 g) Ceylon a day', care: 'Cassia cinnamon is high in coumarin, which strains the liver in large amounts.', study: ['In people with type 2 diabetes, a review of 10 trials found cinnamon lowered fasting blood sugar.', 'Allen 2013 (Annals of Family Medicine)'] },
-  'Goji berries': { dose: '10–15 g, a small handful a day' },
-  'Reishi': { dose: '1–1.5 g powder or a few slices a day' },
-  'Chaga': { dose: 'One cup of the tea a day at most' },
-  'He shou wu': { dose: 'Only as a practitioner prescribes' },
+  'Astragalus': { dose: '9–15 g dried root a day', ph: ['follicular', 'luteal'], when: 'Between periods, never while you have a fever', study: ['Most of what we know comes from lab and animal work: a review found its compounds support immune cells, while human trials are still few and small.', 'Fu 2014 (Phytotherapy Research)'] },
+  'Red dates': { dose: '3–5 dates a day', care: 'Naturally sweet and high in sugar. Count them if you watch your blood sugar.', ph: ['menstrual', 'follicular'], when: 'On your period and the week after', study: ['In a small controlled trial, a jujube extract eased long-term constipation better than placebo over 4 weeks.', 'Naftali 2008 (Digestion)'] },
+  'Ginger root': { dose: 'Up to 4 g fresh a day, about a thumb', care: 'Ask first if you take blood thinners or have surgery coming up.', study: ['Ginger taken in the first days of the period eased period pain more than placebo in a pooled analysis of trials.', 'Daily 2015 (Pain Medicine)'] , ph: ['luteal', 'menstrual'], when: 'The 3 days before and the first days of your period' },
+  'Clove': { dose: '2–3 whole cloves in a drink', care: 'Never take clove oil by mouth. Ask first if you take blood thinners.', ph: ['luteal', 'menstrual'], when: 'Cold days, before and during your period', study: ['No human trials for cramps or warmth yet: this one is kitchen tradition.', 'Tradition, not tested'] },
+  'Cinnamon bark': { dose: 'Up to 1 tsp (2 g) Ceylon a day', care: 'Cassia cinnamon is high in coumarin, which strains the liver in large amounts.', study: ['In people with type 2 diabetes, a review of 10 trials found cinnamon lowered fasting blood sugar.', 'Allen 2013 (Annals of Family Medicine)'] , ph: ['luteal'], when: 'The second half, when sweet cravings rise' },
+  'Goji berries': { dose: '10–15 g, a small handful a day', ph: ['follicular', 'ovulatory'], when: 'After your period, as you rebuild', study: ['34 healthy adults drank goji juice for 14 days and reported more energy, better sleep and calmer mood than those on placebo.', 'Amagase 2008 (Journal of Alternative and Complementary Medicine)'] },
+  'Reishi': { dose: '1–1.5 g powder or a few slices a day', ph: ['luteal'], when: 'Evenings in the second half, for sleep', study: ['In 132 people with long-lasting fatigue, a reishi extract taken for 8 weeks eased tiredness and lifted well-being more than placebo.', 'Tang 2005 (Journal of Medicinal Food)'] },
+  'Chaga': { dose: 'One cup of the tea a day at most', ph: ['follicular', 'ovulatory', 'luteal'], when: 'Any time outside your period, one cup', study: ['No human trials yet: the antioxidant findings come from lab studies.', 'Lab research only'] },
+  'He shou wu': { dose: 'Only as a practitioner prescribes', ph: [], when: 'Only when a practitioner prescribes it', study: ['A review of reported cases found it can, rarely, injure the liver, most often with the raw root or high doses.', 'Lin 2015 (Journal of Ethnopharmacology)'] },
 };
+// when in the cycle as small named phase chips and a short line
+const herbWhen = H => H.when ? `${(H.ph || []).length ? `<span class="hs-ph">${PH4.filter(([k]) => H.ph.includes(k)).map(([k, n]) => `<em style="--c:${PH_HEX[k]}"><i></i>${n}</em>`).join('')}</span>` : ''}${H.when}` : '';
 const apoHerbs = sn => (['Autumn', 'Winter'].includes(sn) ? WINTER_HERBS : []);
 const apoSeason = () => SZ.seasonName(myCountry(), new Date().getMonth() + 1);
 // The widget on the season page: three round photos, the name and a dark pill that opens the page.
@@ -9077,7 +9080,7 @@ function viewApothecary() {
       <button class="bn-x" data-action="apoSel" data-v="${esc(sel.n)}" aria-label="Close">${icon('close', 16)}</button>
       <div class="apo-d-b"><small>${sel.sub}</small><h3>${sel.n}</h3><p>${sel.why}</p>
         ${(() => { const H = (tab === 'herbs' && HERB_SPEC[sel.n]) || {}, cares = [sel.warn, H.care].filter(Boolean), S = H.study, yr = S ? (S[1].match(/(19|20)\d{2}/) || [''])[0] : '';
-          return `<div class="apo-spec">${tab === 'herbs' ? `<div><span>Nature</span><b><i class="nat ${sel.warm ? 'warm' : 'neutral'}"></i>${sel.tag}</b></div>` : ''}${H.dose ? `<div><span>How much</span><b>${H.dose}</b></div>` : ''}<div><span>How</span><b>${sel.how}</b></div></div>
+          return `<div class="apo-spec">${tab === 'herbs' ? `<div><span>Nature</span><b><i class="nat ${sel.warm ? 'warm' : 'neutral'}"></i>${sel.tag}</b></div>` : ''}${H.dose ? `<div><span>How much</span><b>${H.dose}</b></div>` : ''}<div><span>How</span><b>${sel.how}</b></div>${H.when ? `<div><span>When</span><b>${herbWhen(H)}</b></div>` : ''}</div>
           ${S ? `<div class="apo-st"><small>What studies found</small><div class="sgt-st">${yr ? `<b class="dotnum">${yr}</b>` : ''}<span><em>${yr ? S[1].slice(0, S[1].indexOf(yr)).trim() : S[1]}</em>${S[0]}<small>${(S[1].match(/\(([^)]+)\)/) || [])[1] || ''}</small></span></div></div>` : ''}
           ${cares.length ? `<div class="apo-d-r care">${icon('spark', 16)}<span><small>Before you try it</small>${cares.join(' ')}</span></div>` : ''}`; })()}</div></section>` : '';
   return `<div class="pad sp2 apo">
@@ -9186,7 +9189,7 @@ function herbChapters(x, b) {
   const row = (ic, k, v) => `<div class="hs-row"><span>${icon(ic, 18, 1.9)}</span><div><b>${k}</b><small>${v}</small></div></div>`;
   C.push(['leaf', `Meet ${b[1].toLowerCase()}`, `<p class="hs-nat ${x.nat === 'warm' ? 'w' : 'n'}"><i></i>${x.nat === 'warm' ? 'Warming' : 'Neutral'} in Chinese medicine</p>
     <p class="o3-lead">${x.why}</p><div class="hs-good">${(b[3] || []).map((t, k) => `<span style="--k:${k}">${t}</span>`).join('')}</div>`]);
-  C.push(['cup', 'How to take it', `<div class="hs-rows">${H.dose ? row('bowl', 'How much', dietProse(H.dose)) : ''}${row('cup', 'How', dietProse(x.how))}</div>`]);
+  C.push(['cup', 'How to take it', `<div class="hs-rows">${H.dose ? row('bowl', 'How much', dietProse(H.dose)) : ''}${row('cup', 'How', dietProse(x.how))}${H.when ? row('clock', 'When in your cycle', herbWhen(H)) : ''}</div>`]);
   if (Y.ok) C.push(['search', 'Buy the best', `<div class="hb-bg">${[['ok', 'check', 'Look for'], ['no', 'close', 'Skip'], ['at', 'pin', 'Where'], ['kp', 'clock', 'Keeps']].map(([k, ic, t]) => `<div class="hb-b ${k}"><i>${icon(ic, 13, 2.2)}</i><b>${t}</b><span>${Y[k]}</span></div>`).join('')}</div>`]);
   if (Y.test) C.push(['flask', 'A quick test', `<p class="o3-lead">${Y.test}</p>`]);
   if (Y.glow) C.push(['spark', 'For your glow', `<p class="o3-lead">${Y.glow}</p>`]);
@@ -9286,7 +9289,7 @@ function herbSheet(x, i) {
     ${looksCard(b[1])}
     <section class="o3-note hs-note"><p class="hs-nat ${x.nat === 'warm' ? 'w' : 'n'}"><i></i>${x.nat === 'warm' ? 'Warming' : 'Neutral'} in Chinese medicine</p>
       <p class="o3-lead">${x.why}</p><div class="hs-good">${(b[3] || []).map((t, k) => `<span style="--k:${k}">${t}</span>`).join('')}</div></section>
-    <section class="hs-card">${head('cup', 'How to take it')}<div class="hs-rows">${H.dose ? row('bowl', 'How much', dietProse(H.dose)) : ''}${row('cup', 'How', dietProse(x.how))}</div></section>
+    <section class="hs-card">${head('cup', 'How to take it')}<div class="hs-rows">${H.dose ? row('bowl', 'How much', dietProse(H.dose)) : ''}${row('cup', 'How', dietProse(x.how))}${H.when ? row('clock', 'When in your cycle', herbWhen(H)) : ''}</div></section>
     ${Y.ok ? `<section class="hs-card">${head('search', 'Buy the best')}<div class="hb-bg">${[['ok', 'check', 'Look for'], ['no', 'close', 'Skip'], ['at', 'pin', 'Where'], ['kp', 'clock', 'Keeps']].map(([k, ic, t]) => `<div class="hb-b ${k}"><i>${icon(ic, 13, 2.2)}</i><b>${t}</b><span>${Y[k]}</span></div>`).join('')}</div></section>` : ''}
     ${duo.length ? `<div class="hs-duo ${duo.length === 1 ? 'one' : ''}">${duo.map(([ic, t, v, c]) => `<section class="hs-mini ${c}">${head(ic, t)}<p>${v}</p></section>`).join('')}</div>` : ''}
     ${S ? `<section class="hs-card hs-study">${head('book', 'What a study found')}<p>${S[0]}</p><p class="hs-cite">${S[1]}</p></section>` : ''}

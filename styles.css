@@ -17123,3 +17123,10 @@ html .spec.stack .spec-media.m-art .pt-hero > svg.pt-art { position: static; ins
 html .cdl .cdl-warm { grid-column: 1 / -1; flex-basis: 100%; display: flex; align-items: center; gap: 7px; margin: 10px 0 0; padding: 9px 12px; border-radius: 14px;
   background: hsl(calc(var(--hb) + 30 * var(--hk)) calc(70% * var(--hs)) 94%); font: 500 12.5px/1.35 var(--font); color: #20301a; white-space: nowrap; }
 html .cdl .cdl-warm svg { flex: none; color: hsl(calc(var(--hb) + 30 * var(--hk)) calc(75% * var(--hs)) 30%); stroke-width: 2.2; }
+
+/* Herb sheets: when in the cycle as small named phase chips above the line (17 Nov 2026) */
+.hs-ph { display: flex; flex-wrap: wrap; gap: 5px; margin: 3px 0 5px; }
+.hs-ph em { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px 3px 7px; border-radius: 99px; background: color-mix(in srgb, var(--c) 16%, #fff);
+  font: 500 12px/1.2 var(--font); font-style: normal; color: #20301a; }
+.hs-ph em i { width: 7px; height: 7px; border-radius: 50%; background: var(--c); }
+.apo-spec .hs-ph { margin: 0 0 4px; }
