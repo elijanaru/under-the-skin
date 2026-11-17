@@ -2262,9 +2262,15 @@ function calDayLine(sd, si, slog, selLine, isFuture) {
     // same words as the Insights readout for that day: relative level, adjusted for where it is heading
     return `<div class="cdl-hm">${HORMONES.map(h => { const d = C.trendOf(pv[h.key], v[h.key], nx[h.key]), lv = trLevel(C.hormoneLevel(v[h.key]), d), n = /High|Peak/.test(lv) ? 3 : /Moderate|Rising|Falling/.test(lv) ? 2 : 1;
       return `<span style="--c:${h.color}"><small>${h.name}</small><b>${lv} <em class="tr ${d}" aria-hidden="true">${trArrow(d)}</em></b><em aria-hidden="true">${[1, 2, 3].map(i => `<i class="${i <= n ? 'on' : ''}"></i>`).join('')}</em></span>`; }).join('')}</div>`; })() : '';
-  return `<div class="cdl day-panel"><i style="background:${c}"></i><span><small>${fmt(sd, { weekday: 'short', month: 'short', day: 'numeric' })}${si && si.cd ? ` · Day <b class="dotnum">${si.cd}</b>` : ''}</small><b>${selLine || 'No cycle data yet'}</b></span>
+  // the day number already sits in the small line, so the title names the phase and that day's mode instead of repeating it
+  // ("Period · day 2" became "Period · Slow down"), and a day in the warm window says so (17 Nov 2026)
+  let title = selLine || 'No cycle data yet';
+  if (si && si.cd && si.L && / · day \d+/.test(title)) { const exp = / · expected$/.test(title), mode = (COMPASS[dayWindow(si)] || {}).mode;
+    title = title.replace(/ · expected$/, '').replace(/ · day \d+/, ''); title = `${exp ? `Expected ${title.toLowerCase()}` : title}${mode ? ` · ${mode}` : ''}`; }
+  const warm = si && si.cd && si.L && warmWindow(si) ? `<p class="cdl-warm">${icon('sun', 13)} Warm days: cooked food, no raw or iced</p>` : '';
+  return `<div class="cdl day-panel"><i style="background:${c}"></i><span><small>${fmt(sd, { weekday: 'short', month: 'short', day: 'numeric' })}${si && si.cd ? ` · Day <b class="dotnum">${si.cd}</b>` : ''}</small><b>${title}</b></span>
     ${isFuture ? '' : `<button class="cdl-go" data-action="logDay" data-date="${C.iso(sd)}">${icon(logged ? 'check' : 'plus', 14)} ${logged ? 'Edit' : 'Log'}</button>`}
-    ${hm}
+    ${hm}${warm}
     ${chips.length ? `<div class="cdl-ch">${ahead ? `<small>${isToday ? 'Your pattern today' : 'Your pattern on this day'}</small>` : ''}<div>${show.map(([e, t, rk]) => rk ? `<button data-action="nav" data-to="relief/${encodeURIComponent(rk)}"><i class="emo" aria-hidden="true">${e}</i>${esc(t)}${icon('chevR', 11)}</button>` : `<span><i class="emo" aria-hidden="true">${e}</i>${esc(t)}</span>`).join('')}${more ? `<span class="m">+${more}</span>` : ''}</div></div>` : ''}</div>`;
 }
 // The tapped day as a glass card: hormone and energy rings, her mode for the day, what she logged.
