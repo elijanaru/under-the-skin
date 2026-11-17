@@ -7673,14 +7673,23 @@ function mvFig(k, big) {
   return `<div class="mvp-fig ${big ? 'big' : ''}"><img src="images/mv/${k}.webp" alt="Drawing of a woman doing ${P.ex.toLowerCase()}" loading="${big ? 'eager' : 'lazy'}" decoding="async">
     ${big ? P.L.map(([n, x, y, sd]) => `<span class="mvp-l ${sd}" style="--x:${x}%;--y:${y}%"><em>${n}</em></span>`).join('') : ''}</div>`;
 }
+// HIIT drawn to scale: the 5 minute warm-up, 7 sprints of 20 seconds and the 90 second walks between them, so the session reads at a glance
+function hiitStrip() {
+  const warm = 300, run = 20, walk = 90, n = 7, tot = warm + n * run + (n - 1) * walk, g = 2, u = (296 - n * 4 - 2 * n * g) / tot;
+  let x = 2, bars = `<rect class="hs-w" x="${x}" y="40" width="${(warm * u).toFixed(1)}" height="18" rx="5"/>`; x += warm * u + g;
+  for (let i = 0; i < n; i++) { bars += `<rect class="hs-s" x="${x.toFixed(1)}" y="8" width="${(run * u + 4).toFixed(1)}" height="50" rx="3"/>`; x += run * u + 4 + g;
+    if (i < n - 1) { bars += `<rect class="hs-wk" x="${x.toFixed(1)}" y="46" width="${(walk * u).toFixed(1)}" height="12" rx="4"/>`; x += walk * u + g; } }
+  return `<figure class="hiit-s"><svg viewBox="0 0 300 62" role="img" aria-label="5 minutes easy, then 7 sprints of 20 seconds with 90 seconds of walking in between, about 16 minutes">${bars}</svg>
+    <figcaption><span><i class="w"></i>5 min easy</span><span><i class="s"></i>20 s sprint</span><span><i class="wk"></i>90 s walk</span><b><em class="dotnum">16</em> min</b></figcaption></figure>`;
+}
 function mvInfo(k, D, fold) {
   const P = MV_PLATE[k];
-  if (fold) return `<p class="mvp-ben">${P.ben}</p>
+  if (fold) return `<p class="mvp-ben">${P.ben}</p>${k === 'hiit' ? hiitStrip() : ''}
     <details class="mvp-fold"><summary><span class="mvf-ic">${icon('book', 15)}</span><span class="mvf-t"><b>How to do it</b><small><span class="dotnum">${P.how.length}</span> steps · train safe</small></span>${icon('chevD', 15)}</summary>
     <div class="mvp-how"><small>How to do it</small><ol>${P.how.map((t, i) => `<li><i>${i + 1}</i>${t}</li>`).join('')}</ol></div>
     <div class="mvp-safe"><small>${icon('heart', 12)} Train safe</small><ul>${P.safe.map(t => `<li>${t}</li>`).join('')}</ul></div></details>
     ${P.to ? `<button class="mvp-go" data-action="nav" data-to="${P.to}">Open Breathe ${icon('chevR', 13)}</button>` : ''}`;
-  return `<p class="mvp-ben">${P.ben}</p>
+  return `<p class="mvp-ben">${P.ben}</p>${k === 'hiit' ? hiitStrip() : ''}
     <div class="mvp-how"><small>How to do it</small><ol>${P.how.map((t, i) => `<li><i>${i + 1}</i>${t}</li>`).join('')}</ol></div>
     <div class="mvp-safe"><small>${icon('heart', 12)} Train safe</small><ul>${P.safe.map(t => `<li>${t}</li>`).join('')}</ul></div>
     ${P.to ? `<button class="mvp-go" data-action="nav" data-to="${P.to}">Open Breathe ${icon('chevR', 13)}</button>` : ''}`;

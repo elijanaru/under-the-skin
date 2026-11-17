@@ -16930,3 +16930,15 @@ html .ts4-dots > i { width: 6px; height: 6px; }
 html .lm-svg .lm-ax { font: 500 11.5px var(--font); fill: #4b5741; }
 html .lm-svg .lm-lab { font: 600 11.5px var(--font); letter-spacing: 0; fill: #20301a; }
 html .lm-svg .lm-pn { font: 600 12px var(--font); fill: #20301a; }
+/* Move, HIIT & sprints: the session as a to-scale strip (warm-up, sprints in the phase accent, walks between) above the steps */
+html .hiit-s { margin: 10px 0 12px; padding: 12px 12px 10px; border-radius: 18px; background: #f6f4ef; }
+html .hiit-s svg { display: block; width: 100%; height: auto; }
+html .hiit-s .hs-s { fill: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 34%); }
+html .hiit-s .hs-w { fill: rgba(32,48,26,.22); } html .hiit-s .hs-wk { fill: rgba(32,48,26,.14); }
+html .hiit-s figcaption { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px; margin-top: 8px; font: 400 11.5px/1.3 var(--font); color: rgba(32,48,26,.72); }
+html .hiit-s figcaption span { display: inline-flex; align-items: center; gap: 5px; }
+html .hiit-s figcaption i { width: 10px; height: 10px; border-radius: 3px; }
+html .hiit-s figcaption i.s { background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 34%); } html .hiit-s figcaption i.w { background: rgba(32,48,26,.22); } html .hiit-s figcaption i.wk { background: rgba(32,48,26,.14); }
+html .hiit-s figcaption b { margin-left: auto; font: 500 12px var(--font); color: #20301a; } html .hiit-s figcaption b em { font-style: normal; font-size: 18px; }
+html .hiit-s figcaption { flex-wrap: nowrap; gap: 8px; font-size: 11px; white-space: nowrap; }
+html .hiit-s figcaption span { gap: 4px; }
