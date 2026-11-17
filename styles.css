@@ -16894,3 +16894,7 @@ html .fx-g.fx-sfg > .fx-t { flex: 0 0 calc((100% - 20px) / 3); min-width: 0; }
 html .mvc-t em.calm { background: #ecefe6; color: #4a5a3c; }
 /* Move, Train safe: the source line sat as faint grey type straight on the page background; it now sits on a frosted strip in readable ink */
 html .ts-credit { margin: 10px 0 0; padding: 8px 14px; border-radius: 14px; background: rgba(255,255,255,.6); box-shadow: inset 0 0 0 1px rgba(48,64,35,.08); color: rgba(32,48,26,.72); font: 400 11px/1.4 var(--font); text-shadow: none; }
+/* Insights, hormone chart: one line per phase name in dark ink (today's phase in its own colour), day ranges larger and darker */
+html .cchart:not(.compact) .cchart-svg .band-name { font-size: 13.5px; font-weight: 500; fill: rgba(32,48,26,.86); }
+html .cchart:not(.compact) .cchart-svg .band-name.on { font-weight: 600; }
+html .cchart:not(.compact) .cchart-svg .band-days { font-size: 12px; font-weight: 500; fill: rgba(32,48,26,.7); }

@@ -973,7 +973,7 @@ const BAND = { menstrual: 'rgba(224,69,123,.1)', follicular: 'rgba(63,138,46,.08
 
 function chartGeom(L, compact) {
   const W = 360, H = compact ? 200 : 290;
-  const top = compact ? 10 : 52, bot = H - (compact ? 24 : 44);
+  const top = compact ? 10 : 36, bot = H - (compact ? 24 : 44);
   const x0 = 4, x1 = W - 4;
   const X = t => x0 + (t - 1) / L * (x1 - x0);
   const Y = v => bot - 10 - v * (bot - top - 34);
@@ -984,7 +984,14 @@ function cycleChart(info, { id = 'cc', compact = false, who = 'You' } = {}) {
   const cd = Math.min(info.cd, L);
   const { W, H, top, bot, X, Y } = chartGeom(L, compact);
   const ranges = C.phaseRanges(L, P);
-  const bands = ranges.map(r => {
+  // One readable line per band (name above, days below); labels wider than a short band are nudged apart so they never touch
+  const spread = (items, cw) => { const o = items.map(([cx, t]) => { const w = t.length * cw; return { w, x: Math.max(w / 2 + 2, Math.min(W - w / 2 - 2, cx)) }; });
+    for (let i = 1; i < o.length; i++) { const min = o[i - 1].x + o[i - 1].w / 2 + 6 + o[i].w / 2; if (o[i].x < min) o[i].x = min; }
+    for (let i = o.length - 1; i >= 0; i--) { const max = i === o.length - 1 ? W - o[i].w / 2 - 2 : o[i + 1].x - o[i + 1].w / 2 - 6 - o[i].w / 2; if (o[i].x > max) o[i].x = max; }
+    return o.map(v => v.x.toFixed(1)); };
+  const mid = r => X(r.from) + (X(r.to + 1) - X(r.from)) / 2;
+  const nX = spread(ranges.map(r => [mid(r), PHASES[r.key].name]), 7.1), dX = spread(ranges.map(r => [mid(r), r.from === r.to ? `Day ${r.from}` : `Day ${r.from}–${r.to}`]), 6.3);
+  const bands = ranges.map((r, ri) => {
     const active = r.key === info.phase;
     const x = X(r.from) + 1.5, w = X(r.to + 1) - X(r.from) - 3;
     const label = PHASES[r.key].name;
@@ -992,9 +999,8 @@ function cycleChart(info, { id = 'cc', compact = false, who = 'You' } = {}) {
     return `<g class="band ${active ? 'active' : ''}">
       <rect x="${x.toFixed(1)}" y="${top}" width="${w.toFixed(1)}" height="${bot - top}" rx="${compact ? 10 : 14}" fill="${BAND[r.key]}" ${active ? `stroke="${PHASE_COLOR.dark[r.key]}" stroke-opacity=".45" stroke-width="1"` : ''}/>
       ${compact ? `<text x="${(x + w / 2).toFixed(1)}" y="${bot + 16}" text-anchor="middle" class="band-days ${active ? 'on' : ''}">${label.slice(0, w < 40 ? 3 : 20)}</text>`
-      : `<text x="${(x + w / 2).toFixed(1)}" y="${top - 26}" text-anchor="middle" class="band-name ${active ? 'on' : ''}">${label}</text>
-         <text x="${(x + w / 2).toFixed(1)}" y="${top - 12}" text-anchor="middle" class="band-sub">phase</text>
-         <text x="${(x + w / 2).toFixed(1)}" y="${bot + 20}" text-anchor="middle" class="band-days ${active ? 'on' : ''}">${days}</text>`}
+      : `<text x="${nX[ri]}" y="${top - 12}" text-anchor="middle" class="band-name ${active ? 'on' : ''}" ${active ? `style="fill:${PH_INK[r.key]}"` : ''}>${label}</text>
+         <text x="${dX[ri]}" y="${bot + 21}" text-anchor="middle" class="band-days ${active ? 'on' : ''}">${days}</text>`}
     </g>`;
   }).join('');
   const curves = HORMONES.map(h => {
@@ -2012,6 +2018,8 @@ function upcomingEvents() {
 }
 // Calendar top: one dial of her cycle with today's marker, the big number, and three bubbles.
 const PH_HEX = { menstrual: '#d9768f', follicular: '#6c823e', ovulatory: '#d6a443', luteal: '#9b87c4' };
+// The same four phase colours, dark enough to read as text on white
+const PH_INK = { menstrual: '#a23c5a', follicular: '#4f6a2a', ovulatory: '#8a6212', luteal: '#6a52a0' };
 function calDial(inf, size = 132) {
   const L = inf.L, cx = size / 2, r = size / 2 - 10, gap = 1.2, runs = [];
   for (let d = 1; d <= L; d++) { const p = C.phaseFor(d, L, inf.P); if (runs.length && runs[runs.length - 1].p === p) runs[runs.length - 1].b = d; else runs.push({ p, a: d, b: d }); }
