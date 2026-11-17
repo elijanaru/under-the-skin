@@ -28,6 +28,11 @@
         "twitter": false
       },
       "logLevel": 1
+    },
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_swirl",
+      "iconColor": "#c2577a",
+      "sound": "uts_chime.wav"
     }
   }
 }

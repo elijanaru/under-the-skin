@@ -2799,7 +2799,7 @@ function dietGuidePanel(phase) {
   return `<section class="o3-note gd-note"><h2><span>Your</span> <em>${C.name.toLowerCase()} guide${DG_SWIRL}</em></h2>
       <p class="o3-sub">${C.sub}</p><p class="o3-lead">${C.lead}</p><p class="o3-sign">with love, from our little team <i>♡</i></p></section>
 
-    <h4 class="gd-h">Your cycle, <span class="gd-hl">ticket by ticket</span></h4>
+    <h4 class="gd-h">What to eat in <span class="gd-hl">each phase</span></h4>
     <div class="gd-tks" tabindex="0" aria-label="What to load up on in each phase">${ord.map(tk).join('')}</div>
 
     <section class="gd-card gd-iron"><h4 class="gd-h">Your kind of <span class="gd-hl">iron</span></h4>
@@ -4425,6 +4425,33 @@ const SUN_REM = {
   pm: ['The sun is setting', 'Step out and watch the evening light for a few minutes. Then dim the lights at home so your body can make melatonin.'],
 };
 // In the store apps: real phone notifications for the next 7 mornings and sunsets (20 min after sunrise, 30 min before sunset).
+// Notifications that look and sound like the app (17 Nov 2026): a picture (iPhone: on the right, big on a long press;
+// Android: the large icon), her own soft two-note chime, one tidy stack per kind ("Letters from your body", "Sun rhythm"),
+// short titles with one emoji, the pink swirl as the Android status-bar icon. Letters carry the LETTER category, which
+// the iPhone's letter view (ios/App/LetterView) draws as a handwritten letter on paper.
+const NOTIF_TITLE = { am: '💌 A letter from your body', mid: '🌿 A midday letter from your body', pm: '🕯️ A letter for tonight', sunAm: '☀️ Morning light is here', sunPm: '🌅 The sun is setting' };
+const NOTIF_KIND = { letters: ['letters', 'Letters from your body', 'A few gentle words a day, matched to your cycle'], sun: ['sun', 'Sun rhythm', 'Morning light and sunset, timed to your sun'] };
+function notifLook(kind, pic, extra) {
+  const ios = CAP?.getPlatform?.() === 'ios', [ch, name] = NOTIF_KIND[kind];
+  return { sound: 'uts_chime.wav', threadIdentifier: ch, summaryArgument: name, group: ch, channelId: ch, smallIcon: 'ic_stat_swirl', iconColor: '#c2577a',
+    ...(ios ? { attachments: [{ id: pic, url: `res:///images/notif/${pic}.jpg` }] } : { largeIcon: 'notif_' + pic.replace(/-/g, '_') }),
+    ...(kind === 'letters' ? { actionTypeId: 'LETTER' } : {}), extra: { kind, ...(extra || {}) } };
+}
+let notifReady = null;
+function notifSetup(LN) {
+  return notifReady = notifReady || (async () => {
+    let ok = true;
+    if (CAP?.getPlatform?.() === 'android') for (const k of Object.keys(NOTIF_KIND)) { const [id, name, description] = NOTIF_KIND[k]; await LN.createChannel({ id, name, description, importance: 3, sound: 'uts_chime.wav', vibration: true, visibility: 1 }).catch(() => { ok = false; }); }
+    await LN.registerActionTypes({ types: [{ id: 'LETTER', actions: [{ id: 'read', title: 'Read in the app', foreground: true }] }] }).catch(() => {});
+    return ok;
+  })();
+}
+// If a picture or the sound cannot be attached, still send the words: never lose a notification over its looks.
+async function notifSchedule(LN, list) {
+  if (!(await notifSetup(LN))) list = list.map(({ channelId, ...n }) => n); // no channel: Android's default one still delivers
+  try { await LN.schedule({ notifications: list }); }
+  catch (e) { await LN.schedule({ notifications: list.map(({ attachments, sound, largeIcon, ...n }) => n) }); }
+}
 async function scheduleSunNative(ask) {
   const LN = NATIVE && CAP?.Plugins?.LocalNotifications; if (!LN || !state?.onboarded) return;
   try {
@@ -4437,10 +4464,10 @@ async function scheduleSunNative(ask) {
     const [la, ln] = myGeo(), now = Date.now(), list = [];
     for (let i = 0; i < 7; i++) {
       const d = C.addDays(new Date(), i), t = sunTimes(d, la, ln);
-      if (r.sunAm && t.rise) { const at = new Date(t.rise.getTime() + 20 * 6e4); if (at > now) list.push({ id: 7100 + i * 2, title: SUN_REM.am[0], body: SUN_REM.am[1], schedule: { at } }); }
-      if (r.sunPm && t.set) { const at = new Date(t.set.getTime() - 30 * 6e4); if (at > now) list.push({ id: 7101 + i * 2, title: SUN_REM.pm[0], body: SUN_REM.pm[1], schedule: { at } }); }
+      if (r.sunAm && t.rise) { const at = new Date(t.rise.getTime() + 20 * 6e4); if (at > now) list.push({ id: 7100 + i * 2, title: NOTIF_TITLE.sunAm, body: SUN_REM.am[1], largeBody: SUN_REM.am[1], schedule: { at }, ...notifLook('sun', 'sunrise') }); }
+      if (r.sunPm && t.set) { const at = new Date(t.set.getTime() - 30 * 6e4); if (at > now) list.push({ id: 7101 + i * 2, title: NOTIF_TITLE.sunPm, body: SUN_REM.pm[1], largeBody: SUN_REM.pm[1], schedule: { at }, ...notifLook('sun', 'sunset') }); }
     }
-    if (list.length) await LN.schedule({ notifications: list });
+    if (list.length) await notifSchedule(LN, list);
   } catch { /* notifications not available */ }
 }
 // Letters from your body: 1 to 3 short check-ins a day, matched to her phase and, when she has logged
@@ -4471,10 +4498,11 @@ async function scheduleLettersNative(ask) {
       const d = C.addDays(new Date(), i), di = C.dayInfo(d, M.stats);
       (LETTER_SLOTS[1]).forEach(([h, mi, slot], j) => {
         const at = new Date(d.getFullYear(), d.getMonth(), d.getDate(), h, mi), body = bodyNote(d, slot, di, pats);
-        if (at > now && body) list.push({ id: 7300 + i * 3 + j, title: LETTER_TITLE[slot], body, schedule: { at } });
+        if (at > now && body) list.push({ id: 7300 + i * 3 + j, title: NOTIF_TITLE[slot], body, largeBody: body, schedule: { at },
+          ...notifLook('letters', `letter-${di.phase}`, { phase: di.phase, name: (state.profile.name || '').trim().split(/\s+/)[0] || '', slot }) });
       });
     }
-    if (list.length) await LN.schedule({ notifications: list });
+    if (list.length) await notifSchedule(LN, list);
   } catch { /* notifications not available */ }
 }
 function rem() { const o = state.reminders || {}, off = o.rhythm === false && !('sunAm' in o) ? { sunAm: false, sunPm: false } : {}; return state.reminders = { ...REM_DEFAULT, dismissed: {}, fired: {}, ...off, ...o }; }
