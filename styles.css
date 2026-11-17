@@ -17137,3 +17137,6 @@ html .cdl .cdl-warm svg { flex: none; color: hsl(calc(var(--hb) + 30 * var(--hk)
 .ul-code input::placeholder { letter-spacing: .02em; text-transform: none; color: rgba(48,64,35,.45); font-weight: 400; }
 .ul-code button { padding: 10px 18px; border-radius: 999px; background: #304023; color: #fff; font: 500 14px var(--font); }
 @media (prefers-reduced-motion: reduce) { .ul-code { animation: none; } }
+/* Golden roots: her painted panel in place of the drawn diagram */
+.grr-art img { display: block; width: 100%; height: auto; aspect-ratio: 2 / 1; object-fit: cover; }
+.grr-art { border-color: rgba(60,30,40,.18); }

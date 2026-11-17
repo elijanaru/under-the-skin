@@ -579,29 +579,7 @@ function viewGround() {
 
     <section class="grr">
       <div class="grr-h"><small>${icon('clock', 12)} ${GROUND_ROOTS.mins} minute practice</small><b>Golden roots</b><p>Sit on the earth and feel held. An old visualisation from many traditions.</p></div>
-      <div class="grr-art" aria-hidden="true"><svg viewBox="0 0 320 176">
-        <defs><pattern id="grr-dots" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r=".9" fill="#7a6a55" opacity=".35"/><circle cx="5.5" cy="5.5" r=".6" fill="#7a6a55" opacity=".25"/></pattern>
-          <linearGradient id="grr-soil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9e1d1"/><stop offset="1" stop-color="#d9cdb6"/></linearGradient></defs>
-        <rect width="320" height="106" fill="#f7f4ec"/><rect y="106" width="320" height="70" fill="url(#grr-soil)"/><rect y="106" width="320" height="70" fill="url(#grr-dots)"/>
-        <g fill="none" stroke="#5c6e3a" stroke-width="1.2" stroke-linecap="round">${Array.from({ length: 40 }, (_, i) => { const x = 4 + i * 8 + (i % 3) * 1.5, h = 4 + (i * 7) % 6; return `<path d="M${x} 106c${i % 2 ? 1 : -1}-${h / 2} ${i % 2 ? 0 : 1}-${h} ${i % 2 ? 2 : -2}-${h}"/>`; }).join('')}</g>
-        <path d="M0 106h320" stroke="#2a2620" stroke-width="1.2"/>
-        <g class="grr-rt" fill="none" stroke="#d9a441" stroke-linecap="round">
-          <path pathLength="1" stroke-width="2.6" d="M160 104c0 18 1 36-1 66"/>
-          <path pathLength="1" stroke-width="2" d="M160 116c-12 6-26 10-46 26c-10 8-16 16-20 26"/><path pathLength="1" stroke-width="2" d="M160 118c14 6 28 12 44 28c8 8 12 14 16 22"/>
-          <path pathLength="1" stroke-width="1.5" d="M130 132c-16 2-34 2-56 12"/><path pathLength="1" stroke-width="1.5" d="M192 138c18 0 36 2 58 12"/>
-          <path pathLength="1" stroke-width="1.2" d="M114 142c-6 10-8 18-8 28"/><path pathLength="1" stroke-width="1.2" d="M206 148c4 8 6 14 6 22"/><path pathLength="1" stroke-width="1.2" d="M159 140c-8 10-12 18-12 30"/><path pathLength="1" stroke-width="1.2" d="M160 150c6 6 10 12 10 20"/>
-        </g>
-        <g class="grr-up" fill="#d9a441">${[0, 1, 2, 3].map(i => `<circle cx="160" cy="${100 - i * 9}" r="1.6" style="--d:${i * .4}s"/>`).join('')}</g>
-        <g fill="#f7f4ec" stroke="#2a2620" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M118 104c4-10 18-14 42-14s38 4 42 14c-14 3-28 4-42 4s-28-1-42-4z"/>
-          <path d="M146 52c-6 2-9 8-10 16l-6 22M174 52c6 2 9 8 10 16l6 22" fill="none"/>
-          <path d="M146 51c4-3 24-3 28 0c3 12 2 26-2 40h-24c-4-14-5-28-2-40z"/>
-          <path d="M130 90c-2 3-1 6 3 6M190 90c2 3 1 6-3 6" fill="none"/>
-          <path d="M156 44v7M164 44v7" fill="none"/>
-          <ellipse cx="160" cy="33" rx="9.5" ry="11"/>
-          <path d="M150.6 31c0-9 4.4-13.6 9.4-13.6s9.4 4.6 9.4 13.6c-3-5-6-7-9.4-7s-6.4 2-9.4 7z" fill="#2a2620"/><circle cx="160" cy="16" r="5" fill="#2a2620"/>
-        </g>
-      </svg></div>
+      <div class="grr-art" aria-hidden="true"><img src="images/ground/golden-roots.webp" alt="" loading="lazy" width="1400" height="549"></div>
       <ol class="grr-s">
         <li><i>1</i><b>Sit</b><small>Cross-legged on the ground, spine tall</small></li>
         <li><i>2</i><b>Feel the base</b><small>Notice where you touch the earth</small></li>
