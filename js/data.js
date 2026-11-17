@@ -1094,10 +1094,10 @@ export const REMEDIES = [
     ingredients: ['1 raw carrot, grated or peeled into ribbons', '1 tsp coconut oil or olive oil', '1 tsp apple cider vinegar', 'Pinch of sea salt'],
     steps: ['Grate or ribbon the carrot.', 'Toss with oil, vinegar and salt.', 'Eat between meals, daily. Pause during your period and the 3 days before (warm days) and have cooked carrots instead.'] },
   { id: 'heart-foods', name: 'Heart Support', glyph: '紅', organ: 'Heart', element: 'Fire', nature: 'Daily foods', phases: ['ovulatory', 'luteal', 'menstrual', 'follicular'],
-    take: { dose: '1 or 2 of these foods', often: 'Every day', when: 'Spread over your meals', more: ['clock', 'Easy start', '1 tbsp raw cacao or ½ pomegranate a day'] },
-    why: 'Foods and nutrients for heart and circulation: magnesium, omega-3, CoQ10, vitamin D3 + K2, selenium and B vitamins.',
+    take: { dose: '1 or 2 of these foods', often: 'Every day', when: 'Spread over your meals', more: ['clock', 'Easy start', '1 tbsp cacao or ½ pomegranate'] },
+    why: 'Five everyday foods that each eased blood pressure or the vessel walls in trials. Cacao, garlic, pomegranate, extra-virgin olive oil and wild fish, in small amounts folded into the meals you already eat. Together they bring flavanols, allicin, polyphenols and omega-3, plus magnesium from the cacao.',
     ingredients: ['100 g pomegranate seeds', '1 tbsp raw cacao', '1 clove raw garlic, crushed', '½ tsp turmeric with black pepper', '2 tbsp extra-virgin olive oil', '1 tsp black seed oil', '120 g wild fish, twice a week'],
-    steps: ['Add one or two of these foods to your day.', 'Pomegranate and cacao support the heart every day.', 'Talk to your doctor before adding supplements, especially with heart conditions or medication.'] },
+    steps: ['Morning: 1 tsp black seed oil, then 1 tbsp raw cacao in warm milk or ½ pomegranate on yoghurt.', 'Lunch or dinner: 1 crushed garlic clove and 2 tbsp olive oil over the cooked plate, with ½ tsp turmeric and a pinch of pepper.', 'Twice a week: about 120 g wild fish, such as salmon, sardines or mackerel.', 'Warm days: on your period and the 3 days before, cacao as a hot drink, garlic cooked into soup, nothing straight from the fridge.'] },
 ];
 
 // Daily focus: 8 windows across the cycle (scaled to each woman's cycle).

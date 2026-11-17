@@ -16950,3 +16950,7 @@ html .cdl-hm b { font: 600 13px/1.2 var(--font); color: #20301a; }
 html .cdl-hm em { display: flex; gap: 3px; margin-top: 3px; }
 html .cdl-hm em i { flex: 1; height: 4px; border-radius: 2px; background: rgba(32,48,26,.12); }
 html .cdl-hm em i.on { background: var(--c); }
+/* Remedy steps that start with a time of day ("Morning: ...") show it as a small label over the step */
+html .rm-st li > div { display: flex; flex-direction: column; min-width: 0; }
+html .rm-st .rm-when { margin-top: 5px; font: 600 11px/1.2 Outfit, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 34%); }
+html .rm-st li > div p { margin-top: 2px; }

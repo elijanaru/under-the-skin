@@ -5495,7 +5495,7 @@ function remedyMake(r) {
   return `<section class="card glass rm-make">
     <div class="rm-h"><h3>${r.days ? 'Each morning' : 'Make it'}</h3><span><b class="dotnum">${r.ingredients.length}</b> things <b class="dotnum">${r.steps.length}</b> steps</span></div>
     <div class="rm-is">${tiles}</div>
-    <ol class="rm-st">${r.steps.map(x => `<li><p>${x}</p></li>`).join('')}</ol></section>`;
+    <ol class="rm-st">${r.steps.map(x => { const m = x.match(/^([A-Z][A-Za-z ]{2,24}):\s(.+)$/); return m ? `<li><div><small class="rm-when">${m[1]}</small><p>${m[2].charAt(0).toUpperCase() + m[2].slice(1)}</p></div></li>` : `<li><p>${x}</p></li>`; }).join('')}</ol></section>`;
 }
 // A caution with several warnings reads as a short list, one per row, instead of one bold paragraph.
 function cautionHTML(t) {
