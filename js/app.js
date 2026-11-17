@@ -5554,6 +5554,10 @@ function viewRemedy(id) {
 // the supplement named first wins, so 'Vitamin C with iron' is vitamin C, not iron
 const suppOf = name => (SUPP_LIB.map(x => [x, String(name).search(x.m)]).filter(([, i]) => i >= 0).sort((a, b) => a[1] - b[1])[0] || [])[0];
 const suppPhases = x => { const ph = PHASE_ORDER.filter(p => EAT_GUIDE[p].cats.supps[1].some(([, n]) => x.m.test(n))); return ph.length ? ph : PHASE_ORDER; };
+// Phases the studies on each sheet point to, beyond the phase stacks above (which stay short and curated):
+// zinc and vitamin C were trialled for PMS and a short luteal phase, B1 for period pain and PMS; vitamin D and probiotics work as a daily habit
+const SUPP_STUDY_PH = { zinc: ['luteal'], 'vitamin-c': ['luteal'], 'b-complex': ['menstrual', 'luteal'], 'vitamin-d': PHASE_ORDER, probiotic: PHASE_ORDER };
+const suppPhasesFull = x => { const a = suppPhases(x), b = SUPP_STUDY_PH[x.id] || []; return PHASE_ORDER.filter(p => a.includes(p) || b.includes(p)); };
 // Supplement page: when in her day to take it, as three time slots (the one to use filled in ink).
 // Was a yellow-pink-lilac gradient bar with a pin that looked draggable and sat off its label.
 function suppDay(when) {
@@ -5646,7 +5650,7 @@ const SUPP_TIME = { magnesium: '2 to 3 cycles for PMS', iron: '2 to 3 months to 
   ashwagandha: '6 to 8 weeks', b6: '2 to 3 cycles', calcium: '2 to 3 cycles', prenatal: 'Start 3 months before trying', coq10: 'About 3 months, one egg’s growth' };
 function viewSupp(id) {
   const x = SUPP_LIB.find(s => s.id === id); if (!x) return viewMissing();
-  const ph = suppPhases(x), now = M.info && M.info.phase;
+  const ph = suppPhasesFull(x), now = M.info && M.info.phase;
   return `${topbar('Supplement', { back: true })}<div class="pad sp2 sp2t">
     ${specHero({ stack: true, photo: suppPhoto(x.id), glyph: x.sym, han: x.han, eyebrow: 'Supplement', sym: !x.han, name: x.name, label: 'How to take it', max: 4,
       extra: suppHero(x.id) ? `<span class="sp-capchip"><span class="sd-cap ${x.han ? 'han cutf' : ''}">${x.han ? '<img src="images/sf/ginger.webp" alt="">' : x.sym}</span><small>Richest in<b>${suppHero(x.id)[1]}</b></small></span>` : '',
@@ -5711,7 +5715,7 @@ function viewSupps() {
   const dose = x => { const m = x.dose.match(/^(Up to )?([\d.,–]+)\s*(mg|g|IU|µg|capsule)?/); return m ? `${m[1] ? '<small>up to</small>' : ''}<b class="dotnum">${m[2]}</b><small>${m[3] || ''}</small>` : `<b class="nu2-w">${x.dose}</b>`; };
   const when = x => x.when.split(/,\s*/)[0].replace(/^Daily$/, 'Any time');
   // when it helps as named phase pills, her phase in ink (same as the Nutrients list)
-  const dots = x => { const ph = suppPhases(x); return `<span class="nu2-when">${ph.length >= 4 ? '<span class="all">All month</span>' : PHASE_ORDER.filter(p => ph.includes(p)).map(p => `<span class="${p === now ? 'now' : ''}" style="--c:${PH_HEX[p]}"><i></i>${NU_PN[p]}</span>`).join('')}</span>`; };
+  const dots = x => { const ph = suppPhasesFull(x); return `<span class="nu2-when">${ph.length >= 4 ? '<span class="all">All month</span>' : PHASE_ORDER.filter(p => ph.includes(p)).map(p => `<span class="${p === now ? 'now' : ''}" style="--c:${PH_HEX[p]}"><i></i>${NU_PN[p]}</span>`).join('')}</span>`; };
   const used = new Set();
   const row = x => `<button class="nu2-r sup2-r" data-action="nav" data-to="supp/${x.id}"><span class="nu2-p art">${nuArt(suppHero(x.id), used, x.id)}</span>
     <span class="nu2-t"><b>${x.name.replace(/\s*\(.*?\)/, '')}</b><small>${forTxt(x)}</small></span><span class="nu2-d"><span>${dose(x)}</span><small>${when(x)}</small></span>${dots(x)}</button>`;
