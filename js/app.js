@@ -5571,7 +5571,9 @@ const suppPhases = x => { const ph = PHASE_ORDER.filter(p => EAT_GUIDE[p].cats.s
 // Phases the studies on each sheet point to, beyond the phase stacks above (which stay short and curated):
 // zinc and vitamin C were trialled for PMS and a short luteal phase, B1 for period pain and PMS; vitamin D and probiotics work as a daily habit
 const SUPP_STUDY_PH = { zinc: ['luteal'], 'vitamin-c': ['luteal'], 'b-complex': ['menstrual', 'luteal'], 'vitamin-d': PHASE_ORDER, probiotic: PHASE_ORDER };
-const suppPhasesFull = x => { const a = suppPhases(x), b = SUPP_STUDY_PH[x.id] || []; return PHASE_ORDER.filter(p => a.includes(p) || b.includes(p)); };
+const suppPhasesFull = x => { const a = suppPhases(x), b = SUPP_STUDY_PH[x.id] || [], c = (NUTRIENTS.find(n => n.id === x.id) || {}).p || []; return PHASE_ORDER.filter(p => a.includes(p) || b.includes(p) || c.includes(p)); };
+// a nutrient that is also in the supplement guide shows the same phases on both pages
+const nuPhases = x => { const sp = SUPP_LIB.find(y => y.id === x.id); return sp ? suppPhasesFull(sp) : x.p; };
 // Supplement page: when in her day to take it, as three time slots (the one to use filled in ink).
 // Was a yellow-pink-lilac gradient bar with a pin that looked draggable and sat off its label.
 function suppDay(when) {
@@ -6813,11 +6815,11 @@ function suppWeek() {
   </section>`;
 }
 function viewNutrients() {
-  const ph = M.info && M.info.phase, now = ph ? NUTRIENTS.filter(x => x.p.includes(ph) && x.p.length < 4) : [];
+  const ph = M.info && M.info.phase, now = ph ? NUTRIENTS.filter(x => nuPhases(x).includes(ph) && nuPhases(x).length < 4) : [];
   const pic = x => { const h = NU_HERO[x.id] || suppHero(x.id); return h ? (h[0].startsWith('tea:') ? teaPhoto(h[0].slice(4), 300, 300) : foodPhoto(h[0], 300)) : ''; };
   const dose = x => { const m = x.d[0][0].match(/^(Up to )?([\d.,–]+)\s*(.*)$/); return m ? `${m[1] ? '<small>up to</small>' : ''}<b class="dotnum">${m[2]}</b><small>${m[3]}</small>` : `<b class="nu2-w">${x.d[0][0]}</b>`; };
   // when it helps, as named phase pills (her phase in ink) instead of four unexplained dashes
-  const dots = x => `<span class="nu2-when">${x.p.length === 4 ? '<span class="all">All month</span>' : PHASE_ORDER.filter(p => x.p.includes(p)).map(p => `<span class="${p === ph ? 'now' : ''}" style="--c:${PH_HEX[p]}"><i></i>${NU_PN[p]}</span>`).join('')}</span>`;
+  const dots = x => `<span class="nu2-when">${nuPhases(x).length === 4 ? '<span class="all">All month</span>' : PHASE_ORDER.filter(p => nuPhases(x).includes(p)).map(p => `<span class="${p === ph ? 'now' : ''}" style="--c:${PH_HEX[p]}"><i></i>${NU_PN[p]}</span>`).join('')}</span>`;
   const used = new Set();
   const card = x => `<button class="nu2-r" data-action="nav" data-to="nutrients/${x.id}"><span class="nu2-p art">${nuArt(NU_HERO[x.id] || suppHero(x.id), used, x.id)}</span>
     <span class="nu2-t"><b>${x.n}</b><small>${x.for}</small>${dots(x)}</span><span class="nu2-d"><span>${dose(x)}</span><small>${x.d[0][1]}</small></span></button>`;
@@ -6864,7 +6866,7 @@ function viewNutrient(id) {
   const ph = M.info && M.info.phase, i = NUTRIENTS.indexOf(x);
   return `${topbar('Nutrient', { back: true })}<div class="pad sp2 sp2t">
     ${specHero({ stack: true, ...nuHero(x), glyph: nuIc(x.id, 64), eyebrow: `For ${/^[A-Z]{2}/.test(x.for) ? x.for : x.for.charAt(0).toLowerCase() + x.for.slice(1)}`, name: x.n, label: 'Key facts', rows: nuFacts(x), lead: 'Why it helps', desc: x.why })}
-    <section class="card glass tea-fit"><div class="tf-k">When it helps most</div>${phaseFit(x.p, ph)}</section>
+    <section class="card glass tea-fit"><div class="tf-k">When it helps most</div>${phaseFit(nuPhases(x), ph)}</section>
     ${suppSafe(x.id)}
     ${sectionTitle(x.ft || 'Food first')}
     <section class="card glass nu-food">${x.forms ? x.forms.map(([e, n, t, tr]) => `<div class="ffq"><span class="ffq-e">${emoRaw(e)}</span><div><b>${n}${tr ? '<em class="ffq-tr">In the trials</em>' : ''}</b><small>${t}</small></div></div>`).join('') : nuFood(x)}${x.note ? `<p class="ff-note">${x.note}</p>` : ''}${!x.forms && warmWindow(M.info) ? '<small class="tf-all">You\u2019re in your warm window: pick the cooked and warm ones until your period ends.</small>' : ''}</section>

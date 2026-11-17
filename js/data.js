@@ -2452,7 +2452,7 @@ export const RITUAL_SCIENCE = {
   'early-sleep': { ev: 'some', c: [['Dim light', 'Lets melatonin rise on time'], ['Before 11 pm', 'Liver and Gallbladder hours in TCM'], ['Warm tea', 'A calming signal for your body']],
     study: 'Ordinary room light before bed held melatonin back and cut its night-time run by about 90 minutes. Dim the lights and your body clock catches up.',
     cite: 'Gooley 2011', caution: '' },
-  congee: { ev: 'tcm', c: [['Warm, cooked fruit', 'Easy to digest in TCM, builds Qi'], ['Pectin', 'From apples and pears, feeds good gut bacteria'], ['Red dates & goji', 'Classic herbs to build Blood']],
+  congee: { ev: 'tcm', c: [['Warm, cooked fruit', 'Easy to digest, and in Chinese medicine it builds your energy'], ['Pectin', 'From apples and pears, feeds good gut bacteria'], ['Red dates & goji', 'Classic herbs to build Blood']],
     study: 'Chinese food therapy has favoured warm, cooked breakfasts for centuries, especially around the period. Pectin from stewed apples feeds the gut bacteria that make calming butyrate.',
     cite: 'Classic TCM dietetics', caution: 'No honey for babies under 1.' },
   'heart-breath': { ev: 'some', c: [['4 in, 6 out', 'About 6 breaths a minute, the calmest rhythm'], ['Heart-rate variability', 'Rises with slow breathing, a sign of calm'], ['“Haaa” sound', 'The Heart healing sound in Qigong']],
