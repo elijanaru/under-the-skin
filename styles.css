@@ -17044,3 +17044,7 @@ html .hxt.lo .hxt-now em { color: rgba(32,48,26,.62); }
 .cps-tip p { margin: 6px 0 0; font-size: 13px; line-height: 1.5; color: rgba(32,48,26,.72); }
 .cps-tip p b { display: inline; font-size: 13px; font-weight: 600; }
 .cs-acts { display: flex; justify-content: center; gap: 22px; margin-top: 6px; }
+/* Small controls keep their look but get a finger-sized tap area (at least about 40px tall): Why these on Today, the hormone legend on Insights, the symptom chips on a tapped calendar day; readout rows get a 32px minimum */
+html .hbc-why, html button.lg, html .cdl-ch button { position: relative; }
+html .hbc-why::after, html button.lg::after, html .cdl-ch button::after { content: ''; position: absolute; inset: -8px -3px; }
+html .ro-row { min-height: 32px; }
