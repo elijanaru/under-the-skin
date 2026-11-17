@@ -2223,8 +2223,13 @@ function calDayLine(sd, si, slog, selLine, isFuture) {
   const isToday = C.iso(sd) === C.iso(M.today), ahead = isFuture || (isToday && !chips.length);
   if (ahead && si && M.stats.periods.length) patterns().list.filter(x => si.cd >= x.from && si.cd <= x.to).forEach(x => chips.push([LOG_EMOJI[x.name] || '🌿', x.name, reliefKey(x.name)]));
   const more = chips.length > 6 ? chips.length - 5 : 0, show = more ? chips.slice(0, 5) : chips;
+  // the three cycle hormones on that day from the model, as a level word and three small bars each
+  const hm = si && si.cd && M.info ? (() => { const v = C.hormonesAt(si.cd, M.info.L, M.info.P);
+    return `<div class="cdl-hm">${HORMONES.map(h => { const lv = C.hormoneLevel(v[h.key]), n = /High|Peak/.test(lv) ? 3 : lv === 'Moderate' ? 2 : 1;
+      return `<span style="--c:${h.color}"><small>${h.name}</small><b>${lv}</b><em aria-hidden="true">${[1, 2, 3].map(i => `<i class="${i <= n ? 'on' : ''}"></i>`).join('')}</em></span>`; }).join('')}</div>`; })() : '';
   return `<div class="cdl day-panel"><i style="background:${c}"></i><span><small>${fmt(sd, { weekday: 'short', month: 'short', day: 'numeric' })}${si && si.cd ? ` · Day <b class="dotnum">${si.cd}</b>` : ''}</small><b>${selLine || 'No cycle data yet'}</b></span>
     ${isFuture ? '' : `<button class="cdl-go" data-action="logDay" data-date="${C.iso(sd)}">${icon(logged ? 'check' : 'plus', 14)} ${logged ? 'Edit' : 'Log'}</button>`}
+    ${hm}
     ${chips.length ? `<div class="cdl-ch">${ahead ? `<small>${isToday ? 'Your pattern today' : 'Your pattern on this day'}</small>` : ''}<div>${show.map(([e, t, rk]) => rk ? `<button data-action="nav" data-to="relief/${encodeURIComponent(rk)}"><i class="emo" aria-hidden="true">${e}</i>${esc(t)}${icon('chevR', 11)}</button>` : `<span><i class="emo" aria-hidden="true">${e}</i>${esc(t)}</span>`).join('')}${more ? `<span class="m">+${more}</span>` : ''}</div></div>` : ''}</div>`;
 }
 // The tapped day as a glass card: hormone and energy rings, her mode for the day, what she logged.
