@@ -17058,3 +17058,10 @@ html .sfc-i img.dr { padding: 18px 0; box-sizing: border-box; filter: drop-shado
 .tpx-top h1, .tpx-top p { text-shadow: none; }
 .tpx-top p { color: rgba(32,48,26,.72); }
 .tpx-top + .tpx-stage { margin-top: -22px; }
+
+/* Acupressure: the hand-drawn press map is the hero, on clean white paper with the where-line under it (17 Nov 2026) */
+html .spec.stack .spec-media.m-art { height: auto; min-height: 0; padding: 22px 18px 18px; background: #fff !important; display: block; }
+html .spec.stack .spec-media.m-art .pt-hero { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+html .spec.stack .spec-media.m-art .pt-art { max-width: 280px; }
+html .spec.stack .spec-media.m-art .pt-hero p { margin: 0; padding: 12px 6px 0; width: 100%; border-top: 1px solid rgba(48,64,35,.09); font: 400 15px/1.45 var(--font); color: #20301a; text-align: center; }
+html .spec.stack .spec-media.m-art .pt-hero > svg.pt-art { position: static; inset: auto; width: 100%; height: auto; transform: none; opacity: 1; }

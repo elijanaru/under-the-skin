@@ -5897,7 +5897,7 @@ function liquidArt(glyph, han, sym) {
 // stack: photo as its own rounded tile, the name below it in ink, then the sheet (nothing written over the photo)
 function specHero({ photo, glyph, han, sym, eyebrow, name, label = 'Key ingredients', rows = [], lead, desc, more = '', extra = '', media = '', block = '', stack = false, max = 3 }) {
   const nm = `<div class="spec-name">${eyebrow ? `<div class="eyebrow">${eyebrow}</div>` : ''}<h1>${name}</h1></div>`;
-  if (stack) return `<section class="spec stack"><div class="spec-media ${photo ? '' : 'liquid'}">${photo ? `<img src="${photo}" alt="" onload="this.classList.add('in')" onerror="this.closest('.spec-media').classList.add('noimg')">` : liquidArt(glyph, han, sym)}
+  if (stack) return `<section class="spec stack"><div class="spec-media ${media ? 'm-art' : photo ? '' : 'liquid'}">${media || (photo ? `<img src="${photo}" alt="" onload="this.classList.add('in')" onerror="this.closest('.spec-media').classList.add('noimg')">` : liquidArt(glyph, han, sym))}
     <button class="spec-btn" data-action="back" aria-label="Back">${icon('chevL', 22)}</button>${extra}</div>${nm}
     <div class="spec-sheet"><div class="spec-k">${label}</div>
       ${block}${rows.slice(0, max).map(([t, v]) => `<div class="spec-row"><b>${t}</b>${v ? `<span>${v}</span>` : ''}</div>`).join('')}
@@ -9844,6 +9844,17 @@ function viewRitual(id) {
     ${(() => { const nx = RITUALS[(RITUALS.indexOf(r) + 1) % RITUALS.length]; return `<button class="card glass nu-next" data-action="nav" data-to="ritual/${nx.id}"><small>Next ritual</small><b>${nx.name}</b>${icon('chevR', 16)}</button>`; })()}
   </div>`;
 }
+// Each point in plain words (17 Nov 2026): the body area, what it helps with and what it does, the Chinese medicine idea behind a tap
+const PT_PLAIN = {
+  menstrual: { area: 'Inner ankle', helps: 'Period cramps', does: 'Eases period cramps and relaxes the lower belly.',
+    more: 'Its name means "three yin meeting": in Chinese medicine three channels that run up the inner leg to the womb cross here, which is why it is the classic point for cramps.' },
+  follicular: { area: 'Inner ankle hollow', helps: 'Low energy', does: 'Steadies you when you feel drained after your period.',
+    more: 'Chinese medicine treats it as the source point of the kidneys, the deep reserve of energy your body rebuilds after bleeding.' },
+  ovulatory: { area: 'Lower belly', helps: 'A settled belly', does: 'Warms and settles the lower belly, right over your womb.',
+    more: 'Its name means "gate of origin". It sits over the womb and has been warmed and pressed for fertility and period pain for centuries.' },
+  luteal: { area: 'Top of the foot', helps: 'PMS and tension', does: 'The go-to point for PMS, irritability and a tight, tense feeling.',
+    more: 'Chinese medicine says tension before a period comes from stuck liver energy, and this point is used to get it moving again.' },
+};
 function viewPoint(phase) {
   const t = TCM[phase]; if (!t) return viewMissing();
   const p = t.point;
@@ -9869,11 +9880,11 @@ function viewPoint(phase) {
   };
   const foot = `<svg viewBox="0 0 200 150" class="foot pt-art" role="img" aria-label="Where to press ${p.code}">${art[phase]}</svg>`;
   return `${topbar('Acupressure', { back: true })}<div class="pad sp2 sp2t">
-    ${specHero({ stack: true, glyph: '穴', han: true, eyebrow: `Acupressure · ${PHASES[phase].name} phase`, name: `${p.code} · ${p.name}`, label: 'Key facts',
-      rows: [['Press time', `${p.secs} s`], ['Where', phase === 'ovulatory' ? 'One point' : 'Both sides'], ['Organ', t.organ]], lead: `${p.name} · what it does`, desc: p.does })}
+    ${(() => { const X = PT_PLAIN[phase] || {}, one = phase === 'ovulatory';
+      // the hand-drawn press map is the hero: where to press first, then the facts and what it does in plain words
+      return specHero({ stack: true, media: `<div class="pt-hero">${foot}<p>${p.where}</p></div>`, eyebrow: `Acupressure · ${PHASES[phase].name} phase`, name: `${p.code} · ${p.name}`, label: 'Key facts',
+        rows: [['Where', X.area || ''], ['Press', `${p.secs} s${one ? '' : ' each side'}`], ['Helps with', X.helps || '']], desc: X.does || p.does, more: X.more || '' }); })()}
     <section class="card glass tea-fit"><div class="tf-k">Best in your cycle</div>${phaseFit([phase], M.info && M.info.phase)}</section>
-    ${sectionTitle('Where to press')}
-    <section class="card card-light pt-where"><div class="pt-foot">${foot}</div><p class="dp-text">${p.where}</p></section>
     ${sectionTitle('How to press')}
     <section class="card glass"><div class="step"><span class="step-n">1</span><p>Find the point. It often feels a little tender.</p></div>
       <div class="step"><span class="step-n">2</span><p>${phase === 'ovulatory' ? 'Rest two fingertips on it and make slow small circles.' : 'Press firmly with your thumb, making slow small circles.'}</p></div>
