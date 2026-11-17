@@ -16971,3 +16971,76 @@ html .hxt.hi b, html .hxt b { color: #20301a; text-shadow: none; }
 html .hxt-now em { color: hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 30%); font-weight: 600; }
 html .hxt.lo { opacity: 1; }
 html .hxt.lo .hxt-now em { color: rgba(32,48,26,.62); }
+
+/* Your daily plan as a clear protocol (17 Nov 2026): step track, then one paper card read like a schedule */
+.dp-steps { list-style: none; position: relative; display: grid; grid-template-columns: repeat(4, 1fr); margin: 4px 0 0; padding: 12px 6px 10px; border-radius: 26px; background: rgba(255,255,255,.62); border: 1px solid rgba(255,255,255,.95); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: 0 14px 30px -22px rgba(80,30,50,.45); }
+.dp-steps::before { content: ''; position: absolute; left: 12.5%; right: 12.5%; top: 30px; height: 1.5px; background: rgba(32,48,26,.14); }
+.dp-steps li { position: relative; display: flex; justify-content: center; }
+.dp-s { display: grid; justify-items: center; gap: 6px; padding: 0; border: 0; background: none; color: rgba(32,48,26,.6); font: 500 12px/1.1 var(--font); cursor: pointer; }
+.dp-s i { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: #fff; box-shadow: inset 0 0 0 1.5px rgba(32,48,26,.16); font-style: normal; font-size: 16px; color: rgba(32,48,26,.55); transition: background .35s ease, color .35s ease, box-shadow .35s ease, transform .35s ease; }
+.dp-s.past i { box-shadow: inset 0 0 0 1.5px var(--sc); color: var(--sc); }
+.dp-s.on { color: #20301a; font-weight: 600; }
+.dp-s.on i { background: var(--sc); color: #fff; box-shadow: 0 8px 16px -8px var(--sc); transform: scale(1.06); }
+.pdk.dp { margin-top: 12px; }
+.dp-c { position: relative; padding: 20px 18px 16px; border-radius: 30px; background: #fff; color: #20301a; box-shadow: 0 24px 44px -26px rgba(80,30,50,.42), inset 0 0 0 1px rgba(32,48,26,.05); animation: pdkIn .5s cubic-bezier(.2,.8,.2,1) both; }
+.dp-h { display: flex; align-items: flex-start; gap: 12px; padding-bottom: 6px; }
+.dp-h > div { flex: 1; min-width: 0; }
+.dp-h small { display: block; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: color-mix(in srgb, var(--lc) 80%, #20301a); }
+.dp-h h3 { margin: 6px 0 6px; font-size: 24px; font-weight: 600; letter-spacing: -.02em; line-height: 1.12; color: #20301a; }
+.dp-h p { margin: 0; font-size: 13.5px; line-height: 1.45; color: rgba(32,48,26,.66); }
+.dp-cnt { margin-top: 2px; }
+.dp-g { display: flex; align-items: center; gap: 7px; margin: 18px 0 4px; font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: #20301a; }
+.dp-g svg { color: color-mix(in srgb, var(--lc) 85%, #20301a); }
+.dp-g::after { content: ''; flex: 1; height: 1.5px; background: #20301a; opacity: .85; }
+.dp-r { display: flex; align-items: center; gap: 8px; padding: 9px 0; border-top: 0; border-bottom: 1px solid rgba(32,48,26,.07); }
+.dp-r:last-of-type { border-bottom: 0; }
+.dp-o { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 0; border: 0; background: none; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+.dp-ph { flex: none; width: 54px; height: 54px; border-radius: 18px; display: grid; place-items: center; background: color-mix(in srgb, var(--lc) 9%, #fbf7f5); }
+.dp-ph img { width: 46px; height: 46px; object-fit: contain; filter: drop-shadow(0 4px 5px rgba(60,30,20,.18)); }
+.dp-t { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.dp-t b { font-size: 15.5px; font-weight: 500; color: #20301a; }
+.dp-t small { font-size: 12.5px; line-height: 1.35; color: rgba(32,48,26,.6); }
+.dp-a { flex: none; display: grid; justify-items: end; font-style: normal; font-size: 10.5px; line-height: 1.1; color: rgba(32,48,26,.5); }
+.dp-a .dotnum { font-size: 18px; color: #20301a; }
+.dp-k, .dp-k0 { flex: none; width: 30px; height: 30px; }
+.dp-r.ok .dp-t b { color: color-mix(in srgb, var(--lc) 70%, #20301a); }
+.dp-f { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(32,48,26,.08); }
+.dp-f > span { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: rgba(32,48,26,.55); }
+.dp-f > span svg { color: var(--lc); }
+.dp-next { flex: none; display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 16px; border-radius: 99px; border: 0; background: #20301a; color: #fff; font: 500 13px/1 var(--font); cursor: pointer; }
+.dp-next:active, .dp-s:active i { transform: scale(.95); }
+@media (prefers-reduced-motion: reduce) { .dp-c { animation: none; } .dp-s i { transition: none; } }
+
+/* Tea of the day (17 Nov 2026): the name on top, shorter lines around the cup, why + benefits below */
+.tpx-top { display: grid; justify-items: center; gap: 6px; padding: 6px 8px 0; text-align: center; }
+.tpx-top small { padding: 5px 12px; border-radius: 99px; background: rgba(255,255,255,.78); font: 500 12px/1 var(--font); color: #304023; }
+.tpx-top h1 { margin: 0; font: 600 36px/1.04 var(--font); letter-spacing: -.025em; color: #20301a; text-shadow: 0 0 18px rgba(255,248,244,.95); }
+.tpx-top h1 em { position: relative; display: inline-block; font-style: normal; color: #b04f6c; }
+.tpx-top h1 em svg { position: absolute; left: 0; right: 0; bottom: -8px; width: 100%; height: 10px; fill: none; stroke: #e6b1c4; stroke-width: 4; stroke-linecap: round; }
+.tpx-top p { margin: 4px 0 0; max-width: 30ch; font: 500 14px/1.4 var(--font); color: #304023; text-shadow: 0 0 12px rgba(255,248,244,.95); }
+.tpx-stage { height: 356px; margin: -6px 0 4px; }
+.tpx-stage::before { top: 180px; }
+.tpx-stage .tpx-cup { top: 180px; }
+.tpx-note .o3-lead.tpx-why { text-align: left; font: 400 15px/1.55 var(--font) !important; color: #304023 !important; }
+.tpx-ben .ul3-r:not(:first-of-type) { border-top: 1px dashed rgba(48,64,35,.14); }
+.tpx-ben .ul3-r small { line-height: 1.45; }
+.tpx-safe .ul3-ic { color: #b04f6c; }
+
+/* Calendar picker (17 Nov 2026): her Google calendars first, then the rest, then a separate "My cycle" calendar */
+.cps h2 { margin: 0 0 4px; font: 600 22px/1.2 var(--font); color: #20301a; }
+.cps-s { margin: 0 0 6px; font-size: 13.5px; line-height: 1.45; color: rgba(32,48,26,.66); }
+.cps h5 { display: flex; align-items: center; gap: 6px; margin: 16px 0 6px; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgba(32,48,26,.6); overflow-wrap: anywhere; }
+.cps-g { display: grid; border-radius: 20px; background: #fff; box-shadow: inset 0 0 0 1px rgba(32,48,26,.07); overflow: hidden; }
+.cps-r { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 10px 14px; border: 0; border-top: 1px solid rgba(32,48,26,.07); background: none; text-align: left; font: inherit; color: #20301a; cursor: pointer; flex-wrap: wrap; }
+.cps-r:first-child { border-top: 0; }
+.cps-r i { flex: none; width: 12px; height: 12px; border-radius: 50%; background: var(--c); }
+.cps-r b { flex: 1; min-width: 0; font-size: 15px; font-weight: 500; }
+.cps-r small { flex-basis: 100%; padding-left: 22px; margin-top: -4px; font-size: 12px; color: rgba(32,48,26,.55); }
+.cps-r em { font-style: normal; padding: 3px 8px; border-radius: 99px; background: #eef3e4; font-size: 11px; font-weight: 500; color: #4d6a2a; }
+.cps-r svg { color: #6c823e; }
+.cps-r.on { background: #f6f9f0; }
+.cps-tip { margin-top: 16px; padding: 14px 16px; border-radius: 20px; background: #fbf3f5; }
+.cps-tip b { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: #20301a; }
+.cps-tip p { margin: 6px 0 0; font-size: 13px; line-height: 1.5; color: rgba(32,48,26,.72); }
+.cps-tip p b { display: inline; font-size: 13px; font-weight: 600; }
+.cs-acts { display: flex; justify-content: center; gap: 22px; margin-top: 6px; }

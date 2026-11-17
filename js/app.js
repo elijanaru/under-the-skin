@@ -2302,7 +2302,11 @@ async function calWrite(ask) {
   try {
     if (ask && (await P.requestFullCalendarAccess())?.result !== 'granted') { toast('Allow calendar access in your phone settings to sync'); return false; }
     const cals = (await P.listCalendars())?.result || [];
-    if (!pr.calId || !cals.some(c => c.id === pr.calId)) { pr.calId = (await P.createCalendar({ title: 'My cycle', color: '#9fcf8c', accountName: 'Underskin' })).id; pr.calEv = []; }
+    if (!pr.calId || !cals.some(c => c.id === pr.calId)) {
+      // a calendar she picked herself (Google, iCloud...) that is gone now: stop instead of quietly making a new one
+      if (pr.calOwn === false) { Object.assign(pr, { calSync: false, calId: null, calEv: [], calKey: null, calName: null }); save(true); toast('Your cycle calendar is gone. Tap Sync to pick one again'); render(); return false; }
+      pr.calId = (await P.createCalendar({ title: 'My cycle', color: '#9fcf8c', accountName: 'Underskin' })).id; pr.calEv = []; pr.calOwn = true; pr.calName = 'My cycle';
+    }
     if (pr.calEv?.length) await P.deleteEventsById({ ids: pr.calEv, commit: false }).catch(() => {});
     const ids = [];
     for (const x of items) { const r = await P.createEvent({ calendarId: pr.calId, title: x.t, description: x.d, isAllDay: true, startDate: +x.from, endDate: +x.to, commit: false }); if (r?.id) ids.push(r.id); }
@@ -2312,20 +2316,51 @@ async function calWrite(ask) {
   } catch { if (ask) toast('Couldn’t reach your calendar. Try again.'); return false; }
   finally { calBusy = false; }
 }
+// Take her cycle out of the calendar: our own "My cycle" calendar goes completely; in a calendar she picked
+// (her Google or iCloud calendar) only the events we wrote are removed, never her own.
+async function calClear() {
+  const P = calPlugin(), pr = state.profile; if (!P) return;
+  if (pr.calOwn === false) { if (pr.calEv?.length) { await P.deleteEventsById({ ids: pr.calEv, commit: false }).catch(() => {}); if (CAP.getPlatform?.() === 'ios') await P.commit().catch(() => {}); } }
+  else if (pr.calId) await P.deleteCalendar({ id: pr.calId }).catch(() => {});
+}
 async function calStop() {
-  const P = calPlugin(), pr = state.profile;
-  if (P && pr.calId) await P.deleteCalendar({ id: pr.calId }).catch(() => {});
-  Object.assign(pr, { calSync: false, calId: null, calEv: [], calKey: null }); save(true); toast('Removed from your calendar'); render();
+  const pr = state.profile; await calClear();
+  Object.assign(pr, { calSync: false, calId: null, calEv: [], calKey: null, calName: null }); save(true); toast('Removed from your calendar'); render();
+}
+// Google Calendar on the phone: once her Google account is added to the phone's calendar, its calendars show up here
+// and we write straight into the one she picks, so her cycle appears in Google Calendar everywhere.
+const calIsGoogle = c => /gmail|google/i.test([c.source?.title, c.accountName, c.ownerAccount].filter(Boolean).join(' '));
+const calAcct = c => c.source?.title || c.accountName || 'On this phone';
+async function calPicker() {
+  const P = calPlugin(); if (!P) return;
+  if ((await P.requestFullCalendarAccess().catch(() => null))?.result !== 'granted') return toast('Allow calendar access in your phone settings to sync');
+  const all = ((await P.listCalendars().catch(() => null))?.result || []).filter(c => c.allowsContentModifications !== false && !c.isImmutable && !c.isSubscribed && c.id !== (state.profile.calOwn !== false ? state.profile.calId : ''));
+  const groups = {}; all.forEach(c => { (groups[calAcct(c)] = groups[calAcct(c)] || []).push(c); });
+  const keys = Object.keys(groups).sort((a, b) => calIsGoogle(groups[b][0]) - calIsGoogle(groups[a][0]) || a.localeCompare(b)), anyG = all.some(calIsGoogle), ios = CAP.getPlatform?.() === 'ios';
+  const row = c => `<button class="cps-r ${state.profile.calId === c.id ? 'on' : ''}" data-action="calPick" data-v="${esc(c.id)}" data-n="${esc(c.title || 'Calendar')}"><i style="--c:${/^#[0-9a-f]{6}/i.test(c.color || '') ? c.color.slice(0, 7) : '#9fcf8c'}"></i><b>${esc(c.title || 'Calendar')}</b>${calIsGoogle(c) ? '<em>Google</em>' : ''}${state.profile.calId === c.id ? icon('check', 15, 2.4) : ''}</button>`;
+  wsOpen(`<div class="cps"><h2>Which calendar?</h2><p class="cps-s">Pick where your cycle shows up. A Google calendar carries it on to Google Calendar on every device.</p>
+    ${keys.map(k => `<h5>${calIsGoogle(groups[k][0]) ? `${icon('calendar', 13)} ` : ''}${esc(k)}</h5><div class="cps-g">${groups[k].map(row).join('')}</div>`).join('')}
+    <h5>Kept apart</h5><div class="cps-g"><button class="cps-r ${state.profile.calSync && state.profile.calOwn !== false ? 'on' : ''}" data-action="calPick" data-v="own" data-n="My cycle"><i style="--c:#9fcf8c"></i><b>A new “My cycle” calendar</b><small>On this phone, easy to hide or remove</small>${state.profile.calSync && state.profile.calOwn !== false ? icon('check', 15, 2.4) : ''}</button></div>
+    ${anyG ? '' : `<div class="cps-tip"><b>${icon('calendar', 14)} Want it in Google Calendar?</b><p>${ios ? 'On your iPhone open <b>Settings → Apps → Calendar → Calendar Accounts → Add Account → Google</b> (on older iPhones: Settings → Calendar → Accounts), sign in and turn on Calendars.' : 'Add your Google account in your phone’s <b>Settings → Accounts</b> and turn on Calendar sync.'} Then come back and tap Sync again: your Google calendars will be listed here.</p></div>`}
+  </div>`, 'ws-mini');
+}
+async function calPick(id, name) {
+  const pr = state.profile, P = calPlugin(); if (!P) return;
+  const own = id === 'own', same = own ? pr.calSync && pr.calOwn !== false : pr.calId === id;
+  if (!same && pr.calSync) await calClear(); // move: take it out of the old calendar first
+  if (!same) Object.assign(pr, own ? { calOwn: true, calId: null, calName: 'My cycle' } : { calOwn: false, calId: id, calName: name }, { calEv: [], calKey: null });
+  wsClose();
+  if (await calWrite(true)) { toast(`Added to “${pr.calName || 'My cycle'}” ✓`); render(); }
 }
 function calSyncCard() {
   const next = calStretches(40).slice(0, 4), added = state.profile.calAdded, stale = added && M.stats.periods.length && +M.stats.periods[M.stats.periods.length - 1].start > added;
   return `${sectionTitle('In your calendar')}
     <section class="card glass cal-sync">
       <div class="cs-ev">${next.map((x, i) => { const [g, ph, word] = CAL_WORD[x.w]; return `<div class="${i === 0 ? 'now' : ''}"><span class="cs-d">${i === 0 ? 'Now' : fmt(x.from, { month: 'short', day: 'numeric' })}</span><span class="cs-t">${g} ${ph} <b>${word}</b></span></div>`; }).join('')}</div>
-      <p class="body sm">Your next 6 months in Apple or Google Calendar: one word for each part of your cycle, plus the plans you add here, so you see it all at a glance.</p>
+      <p class="body sm">Your next 6 months in Google or Apple Calendar: one word for each part of your cycle, plus the plans you add here, so you see it all at a glance.</p>
       ${calPlugin() ? (state.profile.calSync
-        ? `<div class="cs-on">${icon('check', 14, 2.4)} Syncing to your “My cycle” calendar. It updates by itself.</div>
-           <button class="link center-link" data-action="calStop">Stop syncing</button>`
+        ? `<div class="cs-on">${icon('check', 14, 2.4)} Syncing to “${esc(state.profile.calName || 'My cycle')}”. It updates by itself.</div>
+           <div class="cs-acts"><button class="link" data-action="calSync">Change calendar</button><button class="link" data-action="calStop">Stop syncing</button></div>`
         : `<button class="btn btn-light btn-block" data-action="calSync">${icon('calendar', 16)} Sync with my calendar</button>`)
       : `<button class="btn btn-light btn-block" data-action="calSync">${icon('calendar', 16)} ${stale ? 'Update my calendar' : added ? 'Add again' : 'Add to my calendar'}</button>
       ${stale ? '<p class="fine" style="margin:8px 0 0">You logged a new period since you added it. Add it again so the dates match.</p>' : ''}`}
@@ -4982,34 +5017,44 @@ function hpHormSheet(k) {
   return `<div class="tyf hpx"><span class="tyf-e hm">${emoRaw(H[0])}</span><h2>${H[1]}</h2><p class="tyf-s">${H[2]}</p><p class="tyf-p">${H[3]}</p>
     ${tier ? `<p class="hpx-t">Lives in <b>${tier.n}</b>, ${['the base', 'the middle', 'the top'][HP_TIER.indexOf(tier)]} of the pyramid.</p>` : ''}</div>`;
 }
-// Your daily plan as a stack of panels (16 Nov 2026, her reference: the left phone of the memories app): glass pills on top,
-// the panel for this level in front with the next ones peeking out behind, round arrows and a soft pill to begin.
+// Your daily plan (17 Nov 2026 redesign, her "knowledge is power" moodboard): a clear protocol, not a stack of panels.
+// Four numbered steps on one track, each named by the hormones it works on, then one paper card that reads like a schedule:
+// morning, daytime, evening, each ritual as a cut-out with what it does for her hormones and how much, ticked off in place.
+const DP_GOAL = [['Calm cortisol, steady insulin', 'The base of your pyramid. Get these two calm and the hormones above them follow.'],
+  ['Clear used estrogen', 'Your liver and gut carry out hormones you have used, so they don’t circle back.'],
+  ['Feed your new hormones', 'Good fats, zinc and magnesium are the raw material your body builds hormones from.'],
+  ['Ease cramps, sleep & puffy days', 'Little helpers for the days you need them. Pick what fits today.']];
+const DP_DOES = { sun: 'Sets your cortisol and melatonin clock', lemon: 'Rehydrates and wakes up digestion', tongue: 'Clears the coating on your tongue', phone: 'Keeps morning cortisol calm',
+  walk: 'Softens the sugar rise after food', breathe: 'Lowers cortisol within minutes', ground: 'Calms your nervous system', carrot: 'Binds used estrogen in your gut', castor: 'Warms and supports your liver',
+  seeds: 'Zinc, omega-3 and vitamin E', organs: 'Iron, B12, zinc and vitamin A', golden: 'Calms inflammation', magnesium: 'Calmer PMS, deeper sleep', heat: 'Eases cramps as well as ibuprofen',
+  chamomile: 'Softens anxiety and cramps', cherry: 'Natural melatonin for sleep', fascia: 'Moves lymph, less puffiness', brush: 'Wakes up circulation and lymph', salt: 'Relaxes muscles before sleep' };
+const DP_AMT = { sun: [10, 'min'], lemon: [1, 'glass'], tongue: [7, 'strokes'], phone: [1, 'hour'], walk: [10, 'min'], breathe: [5, 'min'], ground: [10, 'min'], carrot: [1, 'carrot'], castor: [20, 'min'],
+  seeds: [2, 'tbsp'], organs: [1, '× a week'], golden: [1, 'cup'], magnesium: [200, 'mg'], heat: [20, 'min'], chamomile: [1, 'cup'], cherry: [30, 'ml'], fascia: [3, 'min'], brush: [3, 'min'], salt: [15, 'min'] };
 function balanceGuide(info, done) {
-  const S = fbSteps(info), N = FB_LVL.length, lv = Math.min(N - 1, Math.max(0, ui.fbLvl ?? 0)), L = FB_LVL[lv], [title, lead, list] = S[lv];
-  const cnt = k => { const hb = S[k][2].filter(([x]) => x.hb); return [hb.filter(([x]) => done.includes(x.hb)).length, hb.length]; };
-  const items = list.map(([x, i]) => ({ x, i, h: (FB_WHEN[x.id] || [12])[0] })).sort((a, b) => a.h - b.h), [d, n] = cnt(lv);
-  const next = items.find(({ x }) => !(x.hb && done.includes(x.hb))) || items[0], hero = list.some(([x]) => x.id === fbImg(L.img)) || !list[0] ? fbImg(L.img) : list[0][0].id;
-  const back = k => { const v = (lv + k) % N, B = FB_LVL[v]; return `<button class="pdk-b b${k}" data-action="fbLvl" data-v="${v}" aria-label="Open ${B.n}"><span class="pdk-bav"><img src="images/fb/${fbImg(B.img)}.webp" alt=""></span><b>${B.n}</b><small>Level ${v + 1}</small></button>`; };
-  // just text: her habits for this level as one sentence, each name opens its ritual (and its done button)
-  const link = ({ x, i }) => `<button class="pdk-t ${x.hb && done.includes(x.hb) ? 'ok' : ''}" data-action="fbSheet" data-i="${i}">${x.t.toLowerCase()}${x.hb && done.includes(x.hb) ? ` ${icon('check', 11, 3)}` : ''}</button>`;
-  const words = items.map(link), last = words.length - 1, sentence = words.map((w, k) => `<span class="pdk-nw">${w}${k < last - 1 ? ',' : k === last ? '.' : ''}</span>`).map((w, k) => k === last && last > 0 ? `and ${w}` : w).join(' ');
-  return `<section class="bgx2 pdk-w" style="--lc:${L.c}">
+  const S = fbSteps(info), N = FB_LVL.length, lv = Math.min(N - 1, Math.max(0, ui.fbLvl ?? 0)), L = FB_LVL[lv], list = S[lv][2], [goal, why] = DP_GOAL[lv];
+  const items = list.map(([x, i]) => ({ x, i, h: (FB_WHEN[x.id] || [12])[0] })).sort((a, b) => a.h - b.h);
+  const hb = items.filter(({ x }) => x.hb), d = hb.filter(({ x }) => done.includes(x.hb)).length, n = hb.length;
+  const parts = [['Morning', 'sun', h => h < 11], ['Daytime', 'leaf', h => h >= 11 && h < 18], ['Evening', 'moon', h => h >= 18]];
+  const row = ({ x, i }, k) => { const on = x.hb && done.includes(x.hb), a = DP_AMT[x.id];
+    return `<div class="pdk-r dp-r ${on ? 'ok' : ''}" style="--i:${k}"><button class="dp-o" data-action="fbSheet" data-i="${i}"><span class="dp-ph"><img src="images/fb/${x.id}.webp" alt="" loading="lazy" decoding="async"></span>
+      <span class="dp-t"><b>${x.t}</b><small>${DP_DOES[x.id] || x.s}</small></span>${a ? `<em class="dp-a"><b class="dotnum">${a[0]}</b>${a[1]}</em>` : ''}</button>
+      ${x.hb ? `<button class="pdk-k dp-k ${on ? 'on' : ''}" data-action="fbTick" data-id="${x.hb}" aria-pressed="${!!on}" aria-label="${x.t}, done today">${icon('check', 14, 2.6)}</button>` : '<span class="dp-k0" aria-hidden="true"></span>'}</div>`; };
+  let k = 0;
+  const groups = parts.map(([t, ic, f]) => { const g = items.filter(it => f(it.h)); return g.length ? `<h4 class="dp-g">${icon(ic, 13)}<span>${t}</span></h4>${g.map(it => row(it, k++)).join('')}` : ''; }).join('');
+  const nx = (lv + 1) % N;
+  return `<section class="bgx2 dp-w" style="--lc:${L.c}">
     ${sectionTitle('Your daily plan')}
-    <p class="bgx2-sub">Four steps. Start with the first, add the next when it feels easy.</p>
-    <div class="pdk-pills" role="tablist">${FB_LVL.map((L2, k) => `<button class="pdk-p ${k === lv ? 'on' : ''}" data-action="fbLvl" data-v="${k}" role="tab" aria-selected="${k === lv}"><b class="dotnum">${k + 1}</b>${L2.n}</button>`).join('')}</div>
-    <div class="pdk" data-lv="${lv}">${back(2)}${back(1)}
-      <article class="pdk-c">
-        <header class="pdk-h"><span class="pdk-av"><img src="images/fb/${hero}.webp" alt=""></span><span class="pdk-m"><b>Level ${lv + 1} · ${L.n}</b><small>${items.length} habits · morning to evening</small></span>
-          ${n ? `<span class="pdk-cnt" aria-label="${d} of ${n} done today"><b class="dotnum">${d}</b>/${n}</span>` : ''}</header>
-        <h3>${title}</h3>
-        <p class="pdk-lead">${lead} Today: ${sentence}</p>
-        <figure class="pdk-pic" aria-hidden="true"><img src="images/fb/${hero}.webp" alt=""></figure>
-        <footer class="pdk-f"><span>${icon('check', 14, 2.2)} ${n ? `${d} of ${n} done today` : `${items.length} rituals`}</span><span>${icon('leaf', 14)} Tap one to read how</span></footer>
+    <p class="bgx2-sub">Four steps to balance your hormones. Make one easy, then add the next.</p>
+    <ol class="dp-steps" role="tablist">${FB_LVL.map((B, j) => `<li><button class="dp-s ${j === lv ? 'on' : ''} ${j < lv ? 'past' : ''}" style="--sc:${B.c}" data-action="fbLvl" data-v="${j}" role="tab" aria-selected="${j === lv}"><i class="dotnum">${j + 1}</i><span>${B.n}</span></button></li>`).join('')}</ol>
+    <div class="pdk dp" data-lv="${lv}">
+      <article class="dp-c">
+        <header class="dp-h"><div><small>Step ${lv + 1} of ${N} · ${L.n}</small><h3>${goal}</h3><p>${why}</p></div>
+          ${n ? `<span class="pdk-cnt dp-cnt" aria-label="${d} of ${n} done today"><b class="dotnum">${d}</b>/${n}</span>` : ''}</header>
+        ${groups}
+        <footer class="dp-f"><span>${icon('leaf', 13)} Tap a ritual for how and why</span>
+          <button class="dp-next" data-action="fbLvl" data-v="${nx}">${nx ? `Step ${nx + 1} · ${FB_LVL[nx].n}` : 'Back to step 1'} ${icon('chevR', 14, 2)}</button></footer>
       </article>
     </div>
-    <nav class="pdk-nav"><button class="pdk-arr" data-action="fbLvl" data-v="${(lv + N - 1) % N}" aria-label="Previous: ${FB_LVL[(lv + N - 1) % N].n}">${icon('chevL', 20, 1.8)}</button>
-      <button class="pdk-go" data-action="fbSheet" data-i="${next.i}">${icon('leaf', 15, 1.8)} ${next.x.t}</button>
-      <button class="pdk-arr" data-action="fbLvl" data-v="${(lv + 1) % N}" aria-label="Next: ${FB_LVL[(lv + 1) % N].n}">${icon('chevR', 20, 1.8)}</button></nav>
   </section>`;
 }
 // Why it works: three study numbers as bars, the seven pillars behind a tap
@@ -6626,27 +6671,44 @@ function teaBubbles(w, info) {
 // Tea for today in the unlock page structure (16 Nov 2026, her call: clearer, same fundamentals): the turning cup on a
 // sparkled stage, a day pill, the taped note with the name, why and brew, what it does as ticked pills, then steep and when.
 // What the tea does, as pills around the cup with a hairline to it: [pill x %, pill y px, line end x %, line end y px, width class]
-const TPX_POS = [[25, 34, 40, 150, 'w'], [75, 62, 61, 152, 'w'], [13, 214, 31, 218, 'n'], [86, 244, 69, 236, 'n'], [25, 392, 41, 300, 'w'], [72, 420, 60, 302, 'w']];
+// pill x %, pill y px, dot x %, dot y px on the cup's edge: short lines, the cup sits at y 180 in a 356 px stage
+const TPX_POS = [[25, 50, 40, 104, 'w'], [75, 72, 61, 106, 'w'], [13, 166, 31, 172, 'n'], [87, 198, 69, 190, 'n'], [26, 300, 41, 254, 'w'], [73, 322, 60, 256, 'w']];
+// Why exactly this tea today, and what to keep in mind (safe amount + cautions), per part of the cycle
+const TEA_WHY = {
+  'flow-start': ['On the first days of your period, prostaglandins make your womb squeeze, and that is what cramps are. Ginger lowers them, and in small trials it eased period pain about as well as ibuprofen. Cinnamon adds warmth and keeps your blood sugar steady when cravings hit.', 'Up to 3 cups a day. Ask your doctor first if you take blood thinners.'],
+  'flow-end': ['After bleeding, your body rebuilds the iron and minerals it lost. Nettle is one of the most mineral-rich leaves there is, with iron, calcium, magnesium and vitamin K, and it is mild enough to sip every day.', '1 to 3 cups a day, between meals. Skip it when pregnant. Ask your doctor if you take blood thinners, water tablets or blood-pressure medicine.'],
+  rising: ['Estrogen is rising and your energy comes back. Green tea gives a gentle lift: its L-theanine turns the caffeine into calm focus instead of jitters, and its catechins are some of the strongest antioxidants in food.', 'Up to 3 cups a day, before noon. Have it between meals, because tea with food takes up less iron.'],
+  building: ['These are your strongest days for work and training. Matcha is the whole leaf ground to powder, so you get more L-theanine and antioxidants than from steeped tea and an even energy that lasts all morning.', '1 to 2 cups a day, before noon. A cup has about as much caffeine as a small coffee.'],
+  peak: ['Around ovulation you run warm and full of energy. Hibiscus is tart, cooling and caffeine free, rich in vitamin C and deep red antioxidants, and studies link it with healthier blood pressure.', '1 to 2 cups a day. Skip it when pregnant. Ask your doctor if you take blood-pressure medicine.'],
+  settle: ['After ovulation progesterone rises, and many women feel restless or sleep more lightly. Lemon balm is a calming herb from the mint family that eases nervous tension and helps you unwind, with no caffeine.', 'Up to 3 cups a day. Ask your doctor first if you take thyroid medicine or sleeping pills.'],
+  focus: ['In the second half of your cycle, androgens can bring breakouts and oily skin. In small studies, two cups of spearmint a day lowered free testosterone in women, and it also eases the bloating that starts now.', '2 cups a day, as in the studies. Skip it if you have reflux.'],
+  premenstrual: ['In the days before your period, your mood can dip and cramps can begin. Chamomile calms your nerves and relaxes the womb muscle, and ginger works best against cramps when you start it a day or two early. Keep it warm now.', 'Up to 3 cups a day. Skip it if you are allergic to ragweed or daisies. Ask your doctor if you take blood thinners.'],
+};
 function teaPage(info, w) {
   const td = TEA_DAY[w], [stp, when] = TEA_STEEP[w] || ['', ''], near = w === 'flow-start' || w === 'flow-end' || w === 'premenstrual';
   const swirl = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';
   const [a, b] = td[1].includes(' & ') ? td[1].split(' & ') : [td[1].split(' ').slice(0, -1).join(' '), td[1].split(' ').slice(-1)[0]];
   const does = (TEA_WHEEL[w] || []).slice(0, 6);
   const fit = /matcha/i.test(td[1]) ? 0.92 : /green tea/i.test(td[1]) ? 1.1 : 1.3;
+  const [why, safe] = TEA_WHY[w] || [td[2], ''];
   return `<div class="ul3 ul4 tpx">
+    <header class="tpx-top"><small>Your tea today</small><h1>${a}${a && b ? ' &amp;' : ''} <em>${b}${swirl}</em></h1><p>${td[2]}</p></header>
     <div class="ul4-stage tpx-stage">
-      <svg class="ul4-sp" viewBox="0 0 360 440" aria-hidden="true">${o3Spark('#f1d58a', 26, 34, 0)}${o3Spark('#fff', 334, 22, 1.1)}${o3Spark('#c9d6a8', 344, 214, 2)}${o3Spark('#f6c6d4', 14, 222, 1.6)}</svg>
-      <svg class="tpx-lines" viewBox="0 0 100 440" preserveAspectRatio="none" aria-hidden="true">${does.map((t, i) => { const [x, y, ex, ey] = TPX_POS[i]; return `<path pathLength="1" style="--i:${i}" d="M${x} ${y} L${ex} ${ey}"/>`; }).join('')}</svg>
+      <svg class="ul4-sp" viewBox="0 0 360 356" aria-hidden="true">${o3Spark('#f1d58a', 26, 40, 0)}${o3Spark('#fff', 334, 30, 1.1)}${o3Spark('#c9d6a8', 344, 250, 2)}${o3Spark('#f6c6d4', 14, 236, 1.6)}</svg>
+      <svg class="tpx-lines" viewBox="0 0 100 356" preserveAspectRatio="none" aria-hidden="true">${does.map((t, i) => { const [x, y, ex, ey] = TPX_POS[i]; return `<path pathLength="1" style="--i:${i}" d="M${x} ${y} L${ex} ${ey}"/>`; }).join('')}</svg>
       <span class="cup3d-w tpx-cup"><img src="${teaCupImg(td[1])}" alt="" decoding="async">${teaCupAttr(td[1]) ? `<canvas class="teacup3d"${teaCupAttr(td[1])} data-fit="${fit}" aria-label="${td[1]}, turning slowly"></canvas>` : ''}</span>
       ${does.map((t, i) => { const [x, y, ex, ey, cls] = TPX_POS[i]; return `<i class="tpx-dot" style="left:${ex}%;top:${ey}px;--i:${i}"></i><span class="tpx-p ${cls}" style="--x:${x}%;--y:${y}px;--i:${i}">${t}</span>`; }).join('')}
     </div>
     <span class="ul3-days">${icon('cup', 13)} Day ${info.cd} · ${PHASES[info.phase].name}${near ? ' · warm only' : ''}</span>
     <section class="o3-note ul3-note ul4-note tpx-note">
-      <small class="ul4-eye">Your tea today</small>
-      <h2 class="ul4-h">${a}${a && b ? ' &amp;' : ''}<br><em>${b}${swirl}</em></h2>
-      <p class="o3-lead">${td[2].replace(/^(\S+(?: \S+)?)/, '<mark>$1</mark>')}</p>
+      <small class="ul4-eye">Why this tea today</small>
+      <p class="o3-lead tpx-why">${why}</p>
       <p class="sgx-st"><b>Brew</b>${td[3].replace(/(\d+–\d+\s\S+)/g, '<span class="nw">$1</span>')}</p>
       <p class="o3-sign">a warm cup, a softer day <i>♡</i></p>
+    </section>
+    <section class="card ul3-keep tpx-keep tpx-ben"><h3>What it does for you</h3>
+      ${(TEA_REASONS[w] || []).map(([ic, t, x]) => `<div class="ul3-r"><span class="ul3-ic">${icon(ic, 18)}</span><span><b>${t}</b><small>${x}</small></span></div>`).join('')}
+      ${safe ? `<div class="ul3-r tpx-safe"><span class="ul3-ic">${icon(['flask', 'leaf', 'spark', 'heart'].find(k => !(TEA_REASONS[w] || []).some(r => r[0] === k)), 18)}</span><span><b>Good to know</b><small>${safe}</small></span></div>` : ''}
     </section>
     <section class="card ul3-keep tpx-keep"><h3>Steep &amp; when</h3>
       <div class="ul3-r"><span class="ul3-ic">${icon('clock', 18)}</span><span><b>Steep</b><small>${stp || td[3]}</small></span></div>
@@ -11476,12 +11538,13 @@ const actions = {
   },
   calSync: async () => {
     if (!M.info) return toast('Log a period first');
-    if (calPlugin()) { if (await calWrite(true)) { toast('Added to your “My cycle” calendar ✓'); render(); } return; }
+    if (calPlugin()) return calPicker();
     await saveFile('my-cycle.ics', calICS(), 'text/calendar');
     state.profile.calAdded = Date.now(); save();
     if (!NATIVE) toast('Open the file to add it to your calendar'); if (route().name === 'calendar') render();
   },
   calStop: () => calStop(),
+  calPick: d => calPick(d.v, d.n),
   periodStart: () => {
     if (state.profile.noPeriod) delete state.profile.noPeriod;
     const before = C.cycleStats(state), k = todayISO(); setLog(k, { flow: 'medium' });
