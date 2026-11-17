@@ -16926,3 +16926,7 @@ html .ts4-t em.later, html .ts4-t em.all { display: inline-flex; align-items: ce
 html .ts4-t em.later > i, html .ts4-dots > i { width: 7px; height: 7px; border-radius: 50%; background: var(--c); flex: none; }
 html .ts4-dots { display: inline-flex; gap: 2px; }
 html .ts4-dots > i { width: 6px; height: 6px; }
+/* Insights, Your cycle, mapped: each symptom pin names its symptom (Headache, Bloating, Cravings) above its day; labels at a readable size */
+html .lm-svg .lm-ax { font: 500 11.5px var(--font); fill: #4b5741; }
+html .lm-svg .lm-lab { font: 600 11.5px var(--font); letter-spacing: 0; fill: #20301a; }
+html .lm-svg .lm-pn { font: 600 12px var(--font); fill: #20301a; }
