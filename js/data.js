@@ -1655,7 +1655,7 @@ export const EAT_GUIDE = {
     fruit: ['Stewed, warm fruit is easy on your belly.', F('🍎 Stewed apple | 🍐 Baked pear | 🔴 Red dates | 🍒 Warm cherry compote | 🟤 Dried figs')],
     dairy: ['Warm raw milk soothes and brings calcium and magnesium.', F('🥛 Warm raw milk | 🧈 Raw butter | 🧀 Raw cheese | 🍶 Kefir at room temperature')],
     drinks: ['Coffee is fine. Enjoy it after breakfast rather than with your iron-rich meals, as it can slow iron absorption. Hot drinks move blood and ease cramps.', F('☕ Coffee with breakfast | 🫚 Ginger tea | 🍵 Red date tea | 🍫 Hot cacao | 🌿 Raspberry leaf tea | 🍲 Warm broth')],
-    supps: ['Replace what bleeding takes and ease cramps.', F('🩸 Iron bisglycinate (if periods are heavy) | 🌙 Magnesium glycinate | 🐟 Omega-3 | 🍊 Vitamin C with iron | 🫚 Ginger capsules | 💪 Creatine 3–5 g')],
+    supps: ['Replace what bleeding takes and ease cramps.', F('🩸 Iron bisglycinate (if periods are heavy) | 🌙 Magnesium glycinate | 🐟 Omega-3 | 🍊 Vitamin C with iron | 🫚 Ginger capsules | 🌻 Vitamin E | 💪 Creatine 3–5 g')],
   } },
   follicular: { goal: 'Support rising estrogen', why: 'Estrogen climbs steadily toward ovulation, which is why your energy and mood lift now. Fresh produce, quality protein and fermented foods fuel the rise.', cats: {
     protein: ['Protein builds the follicle that becomes your egg.', F('🥚 Eggs | 🐟 Wild fish | 🍗 Chicken | 🥩 Lean beef | 🦐 Prawns | 🐑 Lamb | 🧀 Cottage cheese')],
@@ -1675,7 +1675,7 @@ export const EAT_GUIDE = {
     fruit: ['Raw and hydrating.', F('🍓 Strawberries | 🫐 Blueberries | 🍉 Watermelon | 🥭 Mango | 🍒 Cherries | 🍇 Grapes')],
     dairy: ['Light and cooling.', F('🥣 Raw yoghurt | 🍶 Kefir | 🧀 Fresh goat cheese | 🥛 Raw milk smoothie')],
     drinks: ['Peak energy: an iced matcha or coffee is perfect. Hydrate well.', F('🧊 Iced matcha | ☕ Coffee | 🥥 Coconut water | 💧 Mineral water | 🌺 Hibiscus tea')],
-    supps: ['Support your peak and help clear extra estrogen.', F('💪 Creatine 3–5 g | 🐟 Omega-3 | ⚪ Zinc | 🍊 Vitamin C | 🌻 Vitamin E')],
+    supps: ['Support your peak and help clear extra estrogen.', F('💪 Creatine 3–5 g | 🐟 Omega-3 | ⚪ Zinc | 🍊 Vitamin C')],
   } },
   luteal: { goal: 'Steady & ground', why: 'Progesterone rises and your body burns a little more energy. Grounding cooked food, complex carbs and magnesium keep your blood sugar and mood steady.', cats: {
     protein: ['Steady protein keeps cravings calm.', F('🥩 Beef | 🦃 Turkey | 🐟 Wild salmon | 🥚 Eggs | 🐑 Lamb | 🍗 Chicken')],
@@ -1685,7 +1685,7 @@ export const EAT_GUIDE = {
     fruit: ['Sweet but steady.', F('🍐 Pears | 🍎 Apples | 🫐 Berries | 🍌 Bananas | 🟤 Dates | 🍊 Oranges')],
     dairy: ['Calcium eases PMS.', F('🥛 Raw milk | 🧀 Raw cheese | 🥣 Raw yoghurt | 🧈 Raw butter')],
     drinks: ['Keep your coffee and pair it with food to steady blood sugar. A warm matcha latte with raw milk is a calm alternative.', F('☕ Coffee with food | 🍵 Matcha latte with raw milk | 🍫 Raw cacao | 🌼 Chamomile | 🫚 Ginger tea')],
-    supps: ['Calm PMS, stress and sleep.', F('🌙 Magnesium glycinate | 🌿 Ashwagandha (skip if trying to conceive) | 🧬 Vitamin B6 | 🥛 Calcium | 💪 Creatine 3–5 g | 🐟 Omega-3')],
+    supps: ['Calm PMS, stress and sleep.', F('🌙 Magnesium glycinate | 🌿 Ashwagandha (skip if trying to conceive) | 🧬 Vitamin B6 | 🥛 Calcium | 🌻 Vitamin E | 💪 Creatine 3–5 g | 🐟 Omega-3')],
   } },
 };
 
@@ -2532,7 +2532,7 @@ export const SUPP_LIB = [
     study: 'In a 12-week trial, women with PMS who took zinc had fewer physical and mood symptoms than those on placebo. Zinc taken for three months cleared many inflammatory acne spots, though a little less than the antibiotic minocycline.',
     cite: 'Jafari 2020 · Dréno 2001', caution: 'Take with food or it can cause nausea. Stay at 25 mg a day or less: more over months lowers copper.' },
   { id: 'vitamin-e', m: /vitamin e/i, name: 'Vitamin E', sym: 'E', ev: 'emerging',
-    dose: '200 IU', form: 'Mixed tocopherols', when: 'With a meal that has fat',
+    dose: '200 IU', form: 'Mixed tocopherols', when: 'From 2 days before your period to day 3, with a meal that has fat',
     desc: 'A fat-soluble antioxidant that protects cell membranes, including in the ovary. Sunflower seeds and almonds are rich in it.',
     c: [['Antioxidant', 'Protects cell walls from damage'], ['Prostaglandins', 'May lower the cramp-causing kind'], ['Skin', 'Supports the skin barrier']],
     study: 'Teenage girls who took vitamin E around their period had less pain and less bleeding than those on placebo. Women with PMS who took vitamin E had less tension, fewer cravings and lifted mood compared with placebo.',
