@@ -8153,14 +8153,11 @@ function dayQuote() {
   const [t, by] = list[((n % list.length) + list.length) % list.length], lab = (TEA_WIN.find(x => x[0] === w) || [, ''])[1];
   return `<figure class="bz-quote">${lab ? `<small class="bzq-k">Today’s words · ${lab}</small>` : ''}<span>“</span><blockquote>${t}</blockquote><figcaption>${by}</figcaption></figure>`;
 }
-function viewBreathe(from) {
-  const phase = M.info && M.info.phase, rec = BREATH_FOR[phase] || 'sigh', k = BREATHS[ui.bzK] ? ui.bzK : rec, B = BREATHS[k];
-  return `${topbar('Breathe', { back: true })}
-  <div class="pad bz-pad">
-    <header class="t4-h bz-h"><small>A minute for you</small><h1>Come back to your breath.</h1><p>Pick a practice. One minute is enough.</p></header>
-    <div class="bzp" role="tablist" aria-label="Choose a breathing practice">${[rec, ...BREATH_ORDER.filter(x => x !== rec)].map(x => `<button class="bzp-o ${x === k ? 'on' : ''}" role="tab" aria-selected="${x === k}" data-action="bzPick" data-v="${x}">
-      ${x === rec ? `<em>${phase ? 'For your phase' : 'Start here'}</em>` : ''}<span class="bzp-g emo" aria-hidden="true">${(BZ_BEST[x] || ['🌿'])[0]}</span><b>${BREATHS[x].name}</b><small>${(BZ_BEST[x] || [, BREATHS[x].when])[1]}</small></button>`).join('')}</div>
-    <section class="bz" data-pat="${k}">
+// The practice itself plays full screen: the page dims and blurs away behind it, a soft glow breathes behind the lotus,
+// white words, one white pill. Close with the cross or Escape; leaving the page closes it too.
+function bzSection(k) {
+  const phase = M.info && M.info.phase, rec = BREATH_FOR[phase] || 'sigh', B = BREATHS[k];
+  return `<section class="bz" data-pat="${k}">
       <div class="bz-stage"><div class="bz-card-h"><span><small>${k === rec ? (phase ? 'For your phase' : 'Start here') : B.when}</small><b>${B.name}</b></span><span class="bz-n"></span></div>
         <svg class="bz-lotus" viewBox="-110 -120 220 170" aria-hidden="true">
           <defs><linearGradient id="lpA" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#efd4dd"/><stop offset="1" stop-color="#fff"/></linearGradient>
@@ -8191,7 +8188,38 @@ function viewBreathe(from) {
           <path class="bz-z" d="M100 14 h8 l-8 8 h8" fill="none" stroke="#8c9768" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <p class="bz-say">Stay in the present.</p>
       </div>
-    </section>
+    </section>`;
+}
+function bzOpen(k) {
+  if (!BREATHS[k]) return; bzClose(true); ui.bzK = k;
+  const phase = M.info && M.info.phase, rec = BREATH_FOR[phase] || 'sigh', B = BREATHS[k], app = document.getElementById('app'); if (!app) return;
+  document.querySelectorAll('.bzp-o').forEach(b => b.classList.toggle('on', b.dataset.v === k));
+  const el = document.createElement('div');
+  el.className = 'bzx'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', B.name);
+  el.innerHTML = `<div class="bzx-dim" aria-hidden="true"></div><div class="bzx-in">
+    <div class="bzx-top"><span class="bzx-k">${k === rec ? (phase ? 'For your phase' : 'Start here') : esc(B.when || '')}</span><button class="bzx-x" data-action="bzClose" aria-label="Close">${icon('close', 18, 2)}</button></div>
+    <h2 class="bzx-h">${B.name}</h2>${bzSection(k)}</div>`;
+  app.parentElement.appendChild(el);
+  const z = el.querySelector('.bz'); el.style.setProperty('--b', 0);
+  const un = mountBreath(z);
+  // the glow behind the lotus follows the breath
+  const mo = new MutationObserver(() => el.style.setProperty('--b', z.style.getPropertyValue('--b') || 0)); mo.observe(z, { attributes: true, attributeFilter: ['style'] });
+  const key = e => { if (e.key === 'Escape') bzClose(); };
+  document.addEventListener('keydown', key);
+  bzOpen.un = () => { try { un && un(); } catch {} mo.disconnect(); document.removeEventListener('keydown', key); };
+  requestAnimationFrame(() => requestAnimationFrame(() => { el.classList.add('up'); el.querySelector('.bzx-x').focus({ preventScroll: true }); }));
+}
+function bzClose(now) {
+  bzOpen.un?.(); bzOpen.un = null;
+  document.querySelectorAll('.bzx').forEach(el => { if (now || matchMedia('(prefers-reduced-motion: reduce)').matches) return el.remove(); el.classList.remove('up'); el.classList.add('out'); setTimeout(() => el.remove(), 700); });
+}
+function viewBreathe(from) {
+  const phase = M.info && M.info.phase, rec = BREATH_FOR[phase] || 'sigh', k = BREATHS[ui.bzK] ? ui.bzK : rec, B = BREATHS[k];
+  return `${topbar('Breathe', { back: true })}
+  <div class="pad bz-pad">
+    <header class="t4-h bz-h"><small>A minute for you</small><h1>Come back to your breath.</h1><p>Pick a practice. One minute is enough.</p></header>
+    <div class="bzp" role="list" aria-label="Choose a breathing practice">${[rec, ...BREATH_ORDER.filter(x => x !== rec)].map(x => `<button class="bzp-o ${x === k ? 'on' : ''}" role="listitem" data-action="bzPick" data-v="${x}" aria-label="${BREATHS[x].name}. Opens full screen.">
+      ${x === rec ? `<em>${phase ? 'For your phase' : 'Start here'}</em>` : ''}<span class="bzp-g emo" aria-hidden="true">${(BZ_BEST[x] || ['🌿'])[0]}</span><b>${BREATHS[x].name}</b><small>${(BZ_BEST[x] || [, BREATHS[x].when])[1]}</small></button>`).join('')}</div>
     ${calmRemCard()}
     ${dayQuote()}
   </div>`;
@@ -11430,8 +11458,9 @@ const actions = {
   pfTab: d => { ui.pfTab = d.v; softProfile(); },
   groAisle: d => { ui.groAisle = d.v; render(); const t = document.querySelector('.gro-tabs'), on = t && t.querySelector('.on'); if (on) t.scrollLeft = on.offsetLeft - (t.clientWidth - on.offsetWidth) / 2; },
   czTab: d => { ui.czTab = d.v; render(); },
-  bzPick: d => { ui.bzK = d.v; render(); },
-  bzPhase: d => { ui.bzK = d.v; render(); setTimeout(() => { const v = document.getElementById('view'), z = document.querySelector('.bz'); if (v && z) v.scrollTo({ top: v.scrollTop + z.getBoundingClientRect().top - 90, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }, 60); },
+  bzPick: d => bzOpen(d.v),
+  bzClose: () => bzClose(),
+  bzPhase: d => bzOpen(d.v),
   cyFact: d => { const j = +d.v; ui.cyFact = ui.cyFact === j ? null : j; render(); },
   plRule: d => { ui.plRule = ui.plRule === d.v ? null : d.v; render(); },
   maniK: d => { ui.maniK = d.v; render(); setTimeout(() => { const v = document.getElementById('view'); if (v) v.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }, 60); },
@@ -11508,7 +11537,7 @@ const actions = {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return go();
     el.classList.add('pull'); setTimeout(go, 760);
   },
-  bzTop: () => { const b = document.querySelector('#view .bz'); b && b.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); },
+  bzTop: () => { const phase = M.info && M.info.phase; bzOpen(BREATHS[ui.bzK] ? ui.bzK : BREATH_FOR[phase] || 'sigh'); },
   hsGo: d => { const el = document.querySelector('.ws .hs'); if (el) hsGo(d.to != null ? +d.to : +el.dataset.c + +d.d); },
 
   wkPick: (d, el) => { ui.wkSel = +d.w; const card = el.closest('.wk3'), r = REMEDIES.find(x => x.weeks); if (!card || !r) return render(); card.outerHTML = wkCard(r); },
@@ -12278,6 +12307,7 @@ function render() {
   const prev = document.getElementById('view');
   let keep = prev && ui.lastRoute === r.key ? prev.scrollTop : 0;
   const fresh = ui.lastRoute !== r.key;
+  if (fresh) bzClose(true);
   // Going back returns to the same spot on the page you came from.
   if (prev && ui.lastRoute) (ui.scrollMem = ui.scrollMem || {})[ui.lastRoute] = prev.scrollTop;
   if (fresh) {
