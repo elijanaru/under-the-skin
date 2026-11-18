@@ -11071,7 +11071,7 @@ function termsSheet() {
     <a class="tm-link" href="#/privacy">Read the full terms</a></section></div>`;
 }
 // Legal details for the Impressum (§ 5 DDG) and the copyright line. Fill in owner and address before the App Store release.
-const LEGAL = { owner: '', address: [], email: '', vat: '' };
+const LEGAL = { owner: 'Elija Naruseviciute', address: [], email: 'elumiebusiness@gmail.com', vat: '' };
 function legalFoot() { const o = LEGAL.owner || 'Underskin';
   return `<p class="fine legal-foot">© ${new Date().getFullYear()} ${esc(o)}. underskin™, Under the Skin™ and the swirl logo are trademarks of ${esc(o)}. <a href="#/imprint">Imprint</a> · <a href="#/privacy">Privacy &amp; terms</a></p>`; }
 function viewImprint() {
