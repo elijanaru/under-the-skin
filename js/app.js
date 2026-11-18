@@ -2,6 +2,7 @@ import {
   PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, DIET_CYCLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HORMONE_SIMPLE, HORMONE_RELAY, BODY_NOTES, AFTER_STAGES, AFTER_TOPICS, TTC_TRY, TTC_STAGE, TTC_CHANCE, TTC_DOCTOR, TTC_BOTH, TTC_FOUND, HB_HOW, HB_HOW_DIET, LOSS_HELP, LOSS_STEPS, LOSS_WARN, LOSS_TOPICS, LOSS_REPEAT, LOSS_NOTES, LOSS_JOURNAL, LOSS_PARTNER, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS, STUDY_KEY,
 } from './data.js';
 import * as C from './cycle.js';
+import { LEGAL_EMAIL } from './legal.js';
 import { icon } from './icons.js';
 import * as Z from './cosmic.js';
 import * as AS from './astro.js';
@@ -4500,14 +4501,11 @@ const LETTER_TITLE = { am: 'A letter from your body', mid: 'A midday letter from
 function bodyNote(date, slot, di, pats) {
   if (!di) return null;
   const nm = (state.profile.name || '').trim().split(/\s+/)[0], n = nm || 'love', k = dayNum(date) + (slot === 'mid' ? 1 : slot === 'pm' ? 2 : 0);
-  // her own pattern, on about every other morning it applies
   if (lossCare()) return lossQuiet() ? null : LOSS_NOTES[slot][k % LOSS_NOTES[slot].length].replace(/\{n\}/g, n);
-  const p = slot === 'am' && k % 2 === 0 && !afterBirth() && (pats || []).find(x => di.cd >= x.from - 1 && di.cd <= x.to && x.cyclesN >= 2);
-  if (p) return `Last cycles you often noted ${p.name.toLowerCase()} around now. If it shows up again, be gentle with yourself. If it doesn’t, notice that too.`;
-  const list = (afterBirth() && (afterMonths() == null || afterMonths() < 24) ? BODY_NOTES.after : BODY_NOTES[di.phase])[slot];
-  // her own letter opens each phase: the morning of its first day
-  if (slot === 'am' && list === BODY_NOTES[di.phase].am && M?.stats) { const y = C.dayInfo(C.addDays(date, -1), M.stats); if (y && y.phase !== di.phase) return list[0].replace(/\{n\}/g, n);
-    if (k % list.length === 0) { const y2 = C.dayInfo(C.addDays(date, -2), M.stats); if (y2 && y2.phase !== y.phase) return list[list.length - 1].replace(/\{n\}/g, n); } } // never the same letter two mornings running
+  const after = afterBirth() && (afterMonths() == null || afterMonths() < 24);
+  // 18 Nov 2026: only her own four letters, one each morning, the letter of the phase she is in (BODY_NOTES[phase].am[0])
+  if (!after) return slot === 'am' && BODY_NOTES[di.phase] ? BODY_NOTES[di.phase].am[0].replace(/\{n\}/g, n) : null;
+  const list = BODY_NOTES.after[slot];
   return list[k % list.length].replace(/\{n\}/g, n);
 }
 function letterSlotNow(r) { const now = new Date(), m = now.getHours() * 60 + now.getMinutes(); return [...(LETTER_SLOTS[1])].reverse().find(([h, mi]) => m >= h * 60 + mi); }
@@ -11071,7 +11069,7 @@ function termsSheet() {
     <a class="tm-link" href="#/privacy">Read the full terms</a></section></div>`;
 }
 // Legal details for the Impressum (§ 5 DDG) and the copyright line. Fill in owner and address before the App Store release.
-const LEGAL = { owner: 'Elija Naruseviciute', address: [], email: 'elumiebusiness@gmail.com', vat: '' };
+const LEGAL = { owner: 'Elija Naruseviciute', address: [], email: LEGAL_EMAIL, vat: '' };
 function legalFoot() { const o = LEGAL.owner || 'Underskin';
   return `<p class="fine legal-foot">© ${new Date().getFullYear()} ${esc(o)}. underskin™, Under the Skin™ and the swirl logo are trademarks of ${esc(o)}. <a href="#/imprint">Imprint</a> · <a href="#/privacy">Privacy &amp; terms</a></p>`; }
 function viewImprint() {
