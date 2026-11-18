@@ -4505,6 +4505,9 @@ function bodyNote(date, slot, di, pats) {
   const p = slot === 'am' && k % 2 === 0 && !afterBirth() && (pats || []).find(x => di.cd >= x.from - 1 && di.cd <= x.to && x.cyclesN >= 2);
   if (p) return `Last cycles you often noted ${p.name.toLowerCase()} around now. If it shows up again, be gentle with yourself. If it doesn’t, notice that too.`;
   const list = (afterBirth() && (afterMonths() == null || afterMonths() < 24) ? BODY_NOTES.after : BODY_NOTES[di.phase])[slot];
+  // her own letter opens each phase: the morning of its first day
+  if (slot === 'am' && list === BODY_NOTES[di.phase].am && M?.stats) { const y = C.dayInfo(C.addDays(date, -1), M.stats); if (y && y.phase !== di.phase) return list[0].replace(/\{n\}/g, n);
+    if (k % list.length === 0) { const y2 = C.dayInfo(C.addDays(date, -2), M.stats); if (y2 && y2.phase !== y.phase) return list[list.length - 1].replace(/\{n\}/g, n); } } // never the same letter two mornings running
   return list[k % list.length].replace(/\{n\}/g, n);
 }
 function letterSlotNow(r) { const now = new Date(), m = now.getHours() * 60 + now.getMinutes(); return [...(LETTER_SLOTS[1])].reverse().find(([h, mi]) => m >= h * 60 + mi); }
@@ -10110,9 +10113,11 @@ function viewProfile() {
       <button class="list-btn" data-action="export"><span class="pf-ic">${icon('download', 16)}</span><span class="pf-lt">Export my data<small>A JSON file of everything you logged</small></span></button>
       ${A.currentUser() ? '' : `<button class="list-btn" data-action="demo"><span class="pf-ic">${icon('spark', 16)}</span><span class="pf-lt">Load sample cycles<small>See the app with example data</small></span></button>`}
       <button class="list-btn" data-action="nav" data-to="privacy"><span class="pf-ic">${icon('save', 16)}</span><span class="pf-lt">Privacy<small>How your data is kept</small></span>${icon('chevR', 15)}</button>
+      <button class="list-btn" data-action="nav" data-to="imprint"><span class="pf-ic">${icon('leaf', 16)}</span><span class="pf-lt">Imprint<small>Who makes Underskin</small></span>${icon('chevR', 15)}</button>
       <button class="list-btn danger" data-action="reset"><span class="pf-ic">${icon('trash', 16)}</span><span class="pf-lt">Delete all data<small>Can't be undone</small></span></button>
     </section>
-    <p class="fine">${A.currentUser() ? 'Stored on this device and privately in your account.' : 'Everything is stored privately on this device.'} Underskin gives wellbeing estimates based on your logs and on Traditional Chinese Medicine concepts; it is not medical advice and must not be used as contraception.</p>`;
+    <p class="fine">${A.currentUser() ? 'Stored on this device and privately in your account.' : 'Everything is stored privately on this device.'} Underskin gives wellbeing estimates based on your logs and on Traditional Chinese Medicine concepts; it is not medical advice and must not be used as contraception.</p>
+    ${legalFoot()}`;
   else body = `${state.paid ? '' : `<button class="card ul-pf" data-action="nav" data-to="unlock"><span class="ul-pf-n dotnum">${trialLeft()}</span><b>${trialLeft() === 1 ? 'free day left' : 'free days left'}<small>Free until your next period, then one payment of €${PRICE}, yours for good</small></b><em>Unlock</em></button>`}
     ${sectionTitle('Why you’re here')}
     ${purposePicker(purpose(), 'setPurpose')}
@@ -11065,26 +11070,46 @@ function termsSheet() {
     <button class="btn btn-dark btn-block" data-action="termsAgree">I understand and agree</button>
     <a class="tm-link" href="#/privacy">Read the full terms</a></section></div>`;
 }
+// Legal details for the Impressum (§ 5 DDG) and the copyright line. Fill in owner and address before the App Store release.
+const LEGAL = { owner: '', address: [], email: '', vat: '' };
+function legalFoot() { const o = LEGAL.owner || 'Underskin';
+  return `<p class="fine legal-foot">© ${new Date().getFullYear()} ${esc(o)}. underskin™, Under the Skin™ and the swirl logo are trademarks of ${esc(o)}. <a href="#/imprint">Imprint</a> · <a href="#/privacy">Privacy &amp; terms</a></p>`; }
+function viewImprint() {
+  return `${topbar('Imprint', { back: true })}
+  <div class="pad article imprint">
+    <div class="eyebrow">Underskin™</div>
+    <h1>Imprint</h1>
+    <p><b>Information according to § 5 DDG</b><br>${LEGAL.owner ? esc(LEGAL.owner) : 'Name to follow'}${LEGAL.address.length ? '<br>' + LEGAL.address.map(esc).join('<br>') : '<br>Address to follow'}</p>
+    <p><b>Contact</b><br>${LEGAL.email ? `Email: <a href="mailto:${LEGAL.email}">${esc(LEGAL.email)}</a>` : 'Email to follow'}</p>
+    ${LEGAL.vat ? `<p><b>VAT ID</b><br>${esc(LEGAL.vat)}</p>` : ''}
+    <p><b>Responsible for the content</b><br>${LEGAL.owner ? esc(LEGAL.owner) : 'Name to follow'}, address as above.</p>
+    <p><b>Trademarks and copyright</b><br>underskin™, Under the Skin™ and the swirl logo are trademarks of ${esc(LEGAL.owner || 'the makers of Underskin')}. All texts, letters, recipes, illustrations, photos, animations and the design of this app are protected by copyright. Copying, republishing or selling them needs written permission.</p>
+    <p><b>Not medical advice</b><br>Underskin gives general wellbeing information. It is not a medical device, not a contraceptive, and does not diagnose or treat any condition.</p>
+    <p><b>Online dispute resolution</b><br>We are neither obliged nor willing to take part in dispute resolution proceedings before a consumer arbitration board.</p>
+    ${legalFoot()}
+  </div>`;
+}
 function viewPrivacy() {
   return `${topbar('Privacy', { back: true })}
   <div class="pad article">
     <div class="eyebrow">Underskin</div>
     <h1>Your data stays with you</h1>
-    <p><b>No account needed.</b> Without an account, everything you log (cycle, symptoms, moods, notes, habits, birthday) stays only in this app on your phone.</p>
+    <p><b>No account needed.</b> Without an account, everything you log (cycle, symptoms, moods, notes, habits) stays only in this app on your phone.</p>
     <p><b>If you create an account</b> (with Apple, Google or email), a copy of your data is kept on our account server in the EU so you can sign in on a new phone and never lose it. It is locked to your login: only you can read it. We never sell it, never share it with advertisers and never use it for anything else.</p>
     <p><b>Delete your account anytime.</b> Profile → Account → “Delete account” erases your account and every copy of your data on our server straight away.</p>
     <p><b>Partner signals.</b> When you send love or a care nudge, only the signal type, your first name and a private inbox code pass through a free relay (ntfy.sh) to your partner’s app. When you connect with a partner, the same relay carries what your link already holds (first name, cycle start and length, star sign, fertile days and today's mood if you share them) so you see each other without sending a second link. Symptoms and notes are never sent.</p>
     <p><b>Your location.</b> The first time you see the UV card, the app asks for your approximate location so the UV index, vitamin D and sun times fit where you are. Once a day it quietly checks again, so it follows you when you travel. Your location stays on your phone; only a rounded area (about 10 km) is sent to Open-Meteo to get the UV forecast. Say no and the app uses your country instead. You can change this anytime in your phone’s Settings.</p>
     <p><b>No tracking.</b> No analytics, no advertising, no cookies for tracking.</p>
-    <p><b>Birth chart.</b> Your birth time and birth place are optional and stay with the rest of your data. Your chart is calculated on your phone. When you tap Find, only the city name you typed is sent to the Open-Meteo place search to get its coordinates and time zone.</p>
-    <p><b>Partner links.</b> When you share your cycle, the link contains your first name, cycle estimates (last period start, average cycle and period length, fertile days only if you turn them on) and a private code so love signals reach you. If you added them, it also holds your profile photo and the day and month of your birthday, for your star sign, and today's mood if you log one and leave mood sharing on. Symptoms and notes are never included. Anyone with the link can view it, so share it only with people you trust.</p>
+    <p><b>Partner links.</b> When you share your cycle, the link contains your first name, cycle estimates (last period start, average cycle and period length, fertile days only if you turn them on) and a private code so love signals reach you. If you added one, it also holds your profile photo, and today's mood if you log one and leave mood sharing on. Symptoms and notes are never included. Anyone with the link can view it, so share it only with people you trust.</p>
     <p><b>Images and fonts.</b> Food photos load from Unsplash and Pexels, fonts from Google Fonts, and the sign-in library from jsDelivr. These services receive standard web requests (like your IP address) but none of your health data.</p>
     <p><b>Delete anytime.</b> Profile → “Delete all data” erases everything from this device. Deleting the app or clearing your browser data does the same. So export a backup first if you want to keep it.</p>
     <p><b>Not medical advice.</b> Predictions are estimates based on your logs and traditional knowledge. Underskin is not a contraceptive and does not diagnose or treat any condition.</p>
     <p><b>Allergies and medicines are yours to check.</b> Teas, herbs, spices, foods, supplements, acupressure and movement ideas in the app are general wellness information. Before you try any of them, check every ingredient for allergies and intolerances, and for clashes with medicines you take. If you are pregnant, breastfeeding, on medication or have a health condition, ask your doctor or pharmacist first. You decide what to try, and you do so at your own responsibility.</p>
     <p><b>Your own responsibility.</b> Everything in the app is general information: food, drinks, teas, herbs, supplements, remedies, acupressure, training, breathing, grounding, manifesting, cycle and fertile-day predictions and every other idea. You decide what to try and how, and you do it at your own risk and your own responsibility. Listen to your body and stop if something feels wrong.</p>
     <p><b>Liability.</b> To the fullest extent the law allows, Underskin and its makers are not liable for any injury, illness, allergic reaction, side effect, pregnancy, loss or other harm that comes from using the app or acting on its information. This does not limit rights you have by law that cannot be limited.</p>
+    <p><b>Our content.</b> Underskin is for your own personal use. Its texts, letters, recipes, guides, illustrations, photos, animations and design are protected by copyright and belong to ${LEGAL.owner || 'the makers of Underskin'}. Please don’t copy, republish or sell them, or build another app or product from them.</p>
     <p><b>Your agreement.</b> When you tick the box at sign-up, or tap “I understand and agree”, you confirm you have read this. The app stores the date you agreed.</p>
+    ${legalFoot()}
   </div>`;
 }
 
@@ -12353,8 +12378,8 @@ function render() {
     $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewLove(r.q)}</div>`;
     return;
   }
-  if (r.name === 'account' || (r.name === 'privacy' && !(state && state.onboarded))) {
-    $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${r.name === 'account' ? viewAccount() : viewPrivacy()}</div>`;
+  if (r.name === 'account' || ((r.name === 'privacy' || r.name === 'imprint') && !(state && state.onboarded))) {
+    $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${r.name === 'account' ? viewAccount() : r.name === 'imprint' ? viewImprint() : viewPrivacy()}</div>`;
     return;
   }
   if (r.name === 'with') {
@@ -12388,14 +12413,14 @@ function render() {
   if (ui.ambOn !== false) { ui.ambOn = false; ambience(false); } // fades out as she arrives in the app
   M = model();
   const ph = (ui.phasePreview || M.info?.phase) || '';
-  if (locked() && !['account', 'privacy', 'terms'].includes(r.name)) { // trial over: the unlock page is the whole app
+  if (locked() && !['account', 'privacy', 'terms', 'imprint'].includes(r.name)) { // trial over: the unlock page is the whole app
     if (document.documentElement.dataset.phase !== ph) document.documentElement.dataset.phase = ph;
     $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewUnlock()}</div>`;
     return;
   } // the whole app takes the colour of her phase
   if (document.documentElement.dataset.phase !== ph) document.documentElement.dataset.phase = ph;
   const views = {
-    today: viewToday, saved: viewSaved, ground: viewGround, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: () => viewBreathe(r.id), do: () => viewTopic(r.id), plan: viewPlan, diet: viewDiet, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: viewCalendar, manifest: viewManifest, moon: viewCalendar, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewReliefIndex, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), apothecary: () => { location.replace('#/plan/foods'); return ''; }, world: () => viewWorld(r.id), privacy: viewPrivacy, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
+    today: viewToday, saved: viewSaved, ground: viewGround, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: () => viewBreathe(r.id), do: () => viewTopic(r.id), plan: viewPlan, diet: viewDiet, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: viewCalendar, manifest: viewManifest, moon: viewCalendar, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewReliefIndex, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), apothecary: () => { location.replace('#/plan/foods'); return ''; }, world: () => viewWorld(r.id), privacy: viewPrivacy, imprint: viewImprint, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
     unlock: viewUnlock,
     after: viewAfter,
     trying: viewTrying,

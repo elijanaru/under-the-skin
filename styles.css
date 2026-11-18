@@ -17302,3 +17302,7 @@ html .gr2 .gr2-h small { color: #16230f; }
 .gr2-pol { width: min(84vw, 326px); padding: 12px 12px 44px; }
 .gr2-pol img { filter: contrast(1.14) saturate(1.12) brightness(.97); }
 .gr2-pol figcaption { font-size: 15px; font-weight: 500; color: #4e6326; }
+/* copyright and trademark line (18 Nov) */
+.legal-foot { margin: 18px 4px 6px; font-size: 11.5px; line-height: 1.5; color: #5d6b52; text-align: center; }
+.legal-foot a { color: #4e6326; text-decoration: underline; text-underline-offset: 2px; }
+.imprint p { margin: 0 0 14px; }

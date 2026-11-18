@@ -1336,21 +1336,21 @@ export const MIND_GUIDE = {
   peak: { energy: 3, mood: 3, social: 3, rest: 1 }, settle: { energy: 2, mood: 2, social: 2, rest: 2 },
   focus: { energy: 2, mood: 2, social: 1, rest: 2 }, premenstrual: { energy: 1, mood: 1, social: 1, rest: 3 },
 };
-// Letters from your body: short loving check-ins, by phase and time of day. {n} = her first name, or "love".
+// Letters from your body: short loving check-ins. The first am line of a phase is her own letter (18 Nov 2026), sent on the first day of that phase, by phase and time of day. {n} = her first name, or "love".
 // Written as invitations, never as a guess at how she feels.
 export const BODY_NOTES = {
   menstrual: {
-    am: ['Hey {n}, your body is doing a lot right now. You don’t have to earn your rest today.', 'Good morning, {n}. Slow is allowed today. What would feel kind to you this morning?', 'Your body is renewing itself. Before the day starts, ask it what it needs.'],
+    am: ['hey {n}… i know there’s a lot you need to do and you want to get work done, but your body is resetting right now. it needs warmth and love. take your time, read something, chill. enjoy the present moment and your body, just for one day ♡', 'Hey {n}, your body is doing a lot right now. You don’t have to earn your rest today.', 'Good morning, {n}. Slow is allowed today. What would feel kind to you this morning?', 'Your body is renewing itself. Before the day starts, ask it what it needs.'],
     mid: ['A small pause, {n}. How does your body feel right now, honestly?', 'Warm drink, deep breath, shoulders down. Just checking in with you.', 'Some period days feel heavy, some feel fine. How is today for you?'],
     pm: ['You made it through today. Is there anything your body wants to tell you before sleep?', 'A warm blanket and an early night count as self-care. You deserve both.', 'Let go of what didn’t get done today, {n}. Rest is part of the work.'],
   },
   follicular: {
-    am: ['A new phase of your cycle is beginning. How are you feeling today?', 'Good morning, {n}. Is there something new you want to start? Your energy may be on your side.', 'Notice what you feel like doing today, not only what you should.'],
+    am: ['hey {n}, can you feel it? the fog is lifting. i’m building you up again, a little more every day. start the thing you’ve been thinking about. plant the seed, i’ve got your back ♡', 'A new phase of your cycle is beginning. How are you feeling today?', 'Good morning, {n}. Is there something new you want to start? Your energy may be on your side.', 'Notice what you feel like doing today, not only what you should.'],
     mid: ['Quick check-in: how is your energy today, compared with last week?', 'Let’s see what patterns we can discover together. Ten seconds is enough.', 'What made you smile today, {n}?'],
     pm: ['What did your body enjoy today? Movement, food, people? Notice it.', 'One small thing you’re proud of today. Hold on to it.', 'Sleep well tonight, {n}. Rising energy needs good rest too.'],
   },
   ovulatory: {
-    am: ['Good morning, {n}. Many women feel bright and social around now. How about you?', 'Your body is at its most fertile now. Whatever that means for you, check in with how you feel.', 'Say yes to something that lights you up today, if you feel like it.'],
+    am: ['{n}, you are in your prime. i’m glowing for you right now, so go be seen. say the thing, wear the thing, call the person. this is your moment, let them feel your warmth ♡', 'Good morning, {n}. Many women feel bright and social around now. How about you?', 'Your body is at its most fertile now. Whatever that means for you, check in with how you feel.', 'Say yes to something that lights you up today, if you feel like it.'],
     mid: ['How do you feel in your body today? Confident, tired, somewhere in between? All of it is fine.', 'One deep breath, {n}. What do you feel right now?', 'Your body might be sending little signs today. Take a moment to listen.'],
     pm: ['Who did you connect with today? Notice who gives you energy.', 'You don’t have to use every high-energy day. Resting tonight is a choice too.', 'Before sleep: what felt good today, {n}?'],
   },
@@ -1360,7 +1360,7 @@ export const BODY_NOTES = {
     pm: ['You don’t have to love every moment to be a good mother.', 'What did you miss today, and what surprised you? Both are allowed.', 'Rest when you can tonight, {n}. If the low feelings stay, tell someone you trust.'],
   },
   luteal: {
-    am: ['Your hormones are shifting. Have you noticed any changes in your sleep, appetite or mood?', 'Good morning, {n}. If you feel slower, that’s your body turning inward. If you don’t, that’s fine too.', 'Plan a softer day if you can. Fewer things, done well.'],
+    am: ['hey {n}, i’m turning inward now. you might feel more, cry easier, want more food and more sleep. try to ease into it, eat warm foods, finish what’s open, be gentle with yourself this week ♡', 'Your hormones are shifting. Have you noticed any changes in your sleep, appetite or mood?', 'Good morning, {n}. If you feel slower, that’s your body turning inward. If you don’t, that’s fine too.', 'Plan a softer day if you can. Fewer things, done well.'],
     mid: ['Hungrier than usual? Your body uses a little more energy now. A warm, real meal is enough.', 'Check in with yourself, {n}. What is one thing you need today?', 'If little things feel big today, you’re not too much. Breathe out slowly.'],
     pm: ['What has your body been trying to tell you lately?', 'What would you like to say no to this week, {n}? Your boundaries are allowed to be clear.', 'Wind down early tonight. Warm tea, dim lights, a soft evening.'],
   },
