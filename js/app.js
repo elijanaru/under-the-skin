@@ -513,15 +513,6 @@ const GROUND_ART = [
 ];
 const groundCta = () => `<button class="gr-cta" data-action="nav" data-to="ground"><img src="images/ground-roots.jpg" alt="" loading="lazy"><span><b>Ground yourself</b><small>Bare feet on the earth · 15 min</small></span>${icon('chevR', 16)}</button>`;
 const habitsCta = () => `<button class="gr-cta" data-action="nav" data-to="habits"><img src="${carePhoto('lemon-water', 300) || 'images/tea-ginger.webp'}" alt="" loading="lazy"><span><b>Daily habits that help</b><small>Your checklist · small things, every day</small></span>${icon('chevR', 16)}</button>`;
-// Energy takers and givers on a paper card, laid over a collage of spirals found in nature. Tap what drained you and what you gave yourself today.
-const EN_TAKE = ['Focusing on the past', 'Inconsistent sleep', 'Mess and clutter', 'Sitting all day', 'Social media', 'Overworking', 'Dehydration', 'Screen time', 'Resentment', 'Negativity', 'Junk food', 'The news', 'Alcohol', 'Stress', 'Fear'];
-const EN_GIVE = ['Nature', 'Resting', 'Sunlight', 'Courage', 'Kind thoughts', 'Gratitude', 'Hydration', 'Meditation', 'Movement', 'Breathwork', 'Community', 'Decluttering', 'Consistent sleep', 'Whole food', 'Learning new things'];
-function groundEnergy() {
-  const col = L => `<ul>${L.map(x => `<li>${x}</li>`).join('')}</ul>`;
-  const ring = w => `<svg class="en-ring" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true"><path d="M8 34 C 10 10, 190 6, 192 28 C 194 50, 30 56, 14 40 C 6 30, 40 14, 70 12"/></svg>`;
-  return `<section class="en">${[0, 1, 2, 3, 4, 5].map(i => `<span class="en-sp s${i}" aria-hidden="true"></span>`).join('')}
-    <div class="en-paper"><div class="en-cols"><div class="en-t"><h3>Energy takers${ring()}</h3>${col(EN_TAKE)}</div><div class="en-g"><h3>Energy givers${ring()}</h3>${col(EN_GIVE)}</div></div></div></section>`;
-}
 // Ground with a tree: a guided ten minutes. One big ink drawing for the step she is on (its full words under it),
 // four short rows with the time in Doto; Start runs the shared routine countdown, a tap on a row previews it.
 const TREE_STEPS = [
@@ -553,12 +544,11 @@ function rtNow(el, row) {
 // Ground (18 Nov 2026, redesign in the Unlock style): the title first, then the redwood as a taped polaroid among sparkles,
 // a day pill, the paper note with today's ground for her phase, sticker rules, and four sub-tabs instead of one long scroll:
 // Practices (tree + golden roots), Where to stand, Energy, Studies. A tab tap swaps only the panel.
-const GR_TABS = [['do', 'Practices'], ['where', 'Where'], ['energy', 'Energy'], ['studies', 'Studies']];
+const GR_TABS = [['do', 'Practices'], ['where', 'Where'], ['studies', 'Studies']];
 function groundPanel(tab) {
   if (tab === 'where') return `<section class="card ul3-keep gr2-where"><h3>Where to stand</h3><p class="gr2-sub">How well each surface connects you to the earth.</p>
     ${GROUND_WHERE.map(([n, v, t], i) => `<div class="ul3-r gr2-w ${v ? '' : 'no'}" style="--i:${i}"><span class="ul3-ic gr2-pic"><img src="images/ground/${GROUND_PIC[i]}.webp" alt="" loading="lazy"></span><span><b>${n}</b><small>${t}</small></span>
       ${v ? `<span class="gw-d" role="img" aria-label="Connects ${v} of 3">${[1, 2, 3].map(j => `<i class="${j <= v ? 'on' : ''}"></i>`).join('')}</span>` : `<span class="o3-x gr2-no" role="img" aria-label="Blocks it">${O3_X}</span>`}</div>`).join('')}</section>`;
-  if (tab === 'energy') return `<p class="gr2-lead">What drains you and what fills you back up.</p>${groundEnergy()}`;
   if (tab === 'studies') return `<p class="gr2-lead">Five small studies, ${GROUND_STUDIES[0][1]} to ${GROUND_STUDIES[GROUND_STUDIES.length - 1][1]}. Tap one for the chart.</p>
     <section class="grs" style="--pc:${PH_HEX[(M.info || {}).phase] || '#6c823e'}">
       ${GROUND_STUDIES.map(([a, y, j, f, d, n, t], i) => `<details class="grs-r"><summary><b class="dotnum grs-y">${y}</b><span class="grs-t"><b>${f}</b>
@@ -595,7 +585,6 @@ function viewGround() {
       <figure class="gr2-pol"><img src="images/ground-tree.webp" alt="A hand resting on a giant redwood, light circling up into the sky" decoding="async"><figcaption>palms on the bark</figcaption></figure>
       <span class="gr2-min"><b class="dotnum">15</b><small>min a day</small></span>
     </div>
-    <span class="ul3-days">${info ? `Day <b class="dotnum">${info.cd}</b> · ${PHASES[ph].name}${warm ? ` · keep warm` : ''}` : `<b class="dotnum">15</b> min a day`}</span>
     <section class="o3-note ul3-note ul4-note gr2-note">
       <small class="ul4-eye">Your ground today</small>
       <h2 class="ul4-h">${P ? `Today,<br><em>${P.t.toLowerCase()}${swirl}</em>` : `Shoes off,<br><em>feet down${swirl}</em>`}</h2>

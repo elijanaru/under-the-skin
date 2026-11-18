@@ -17295,3 +17295,10 @@ html.pc-still .pc-cl, html.pc-still .pc-pl { animation: none !important; }
 /* Profile hero sits a little higher on the page (18 Nov 2026), with the pets a touch closer to the name */
 html .pf2 .pf-hero.pf3 { margin-top: -34px; }
 .pf3 .pet-pick { margin: 10px 0 12px; }
+/* Ground: a big, high-contrast title and a larger, crisper polaroid (18 Nov) */
+html .gr2 .gr2-h h1 { font-size: 46px !important; line-height: 1.02 !important; font-weight: 400 !important; letter-spacing: -.025em; color: #16230f !important; -webkit-text-fill-color: #16230f !important; text-shadow: 0 0 2px rgba(255,255,255,.9), 0 0 22px rgba(255,248,246,.95) !important; }
+html .gr2 .gr2-h p { font-size: 16px; line-height: 1.45; font-weight: 400; color: #1c2a15; text-shadow: 0 0 14px rgba(255,248,246,.95); max-width: 33ch; }
+html .gr2 .gr2-h small { color: #16230f; }
+.gr2-pol { width: min(84vw, 326px); padding: 12px 12px 44px; }
+.gr2-pol img { filter: contrast(1.14) saturate(1.12) brightness(.97); }
+.gr2-pol figcaption { font-size: 15px; font-weight: 500; color: #4e6326; }
