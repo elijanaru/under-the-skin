@@ -11999,7 +11999,7 @@ function mountFigures() {
   document.querySelectorAll('svg.dot-word').forEach(dotWord);
   document.querySelectorAll('canvas.welcome3d').forEach(c => {
     const wrap = c.closest('.onb-welcome');
-    const fail = () => { if (!c.isConnected) return; const f = document.createElement('img'); f.className = 'welcome-still'; f.src = 'images/welcome-forest.jpg'; f.alt = ''; c.replaceWith(f); wrap?.classList.add('arrived', 'no3d'); }; // no WebGL: the misty forest still, never a dark screen
+    const fail = () => { if (!c.isConnected) return; const f = document.createElement('img'); f.className = 'welcome-still'; f.src = 'images/welcome-forest-bare.jpg'; f.alt = ''; c.replaceWith(f); wrap?.classList.add('arrived', 'no3d'); }; // no WebGL: the misty forest still, never a dark screen
     c.addEventListener('welcome-fail', fail);
     import('./welcome3d.js').then(m => {
       if (!c.isConnected) return; if (!m.webglOK()) throw new Error('no webgl');

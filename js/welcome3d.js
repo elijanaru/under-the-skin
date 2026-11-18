@@ -30,7 +30,7 @@ export function mountWelcome3D(canvas, { onReady } = {}) {
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0xf1ece6, 0.035);
   // misty forest with pink silk behind her, cover-fitted to the screen in resize()
-  const bg = new THREE.TextureLoader().load('images/welcome-forest.jpg', () => resize());
+  const bg = new THREE.TextureLoader().load('images/welcome-forest-bare.jpg', () => resize());
   bg.colorSpace = THREE.SRGBColorSpace; scene.background = bg;
   const pmrem = new THREE.PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
