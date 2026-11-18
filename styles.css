@@ -17292,3 +17292,6 @@ html .gx2-note h2.ul4-h em { font-size: 37px; }
 @media (prefers-reduced-motion: reduce) { .pet { animation: none; transition: none; } }
 .pf3 .pet-pick { margin: 16px 0 14px; }
 html.pc-still .pc-cl, html.pc-still .pc-pl { animation: none !important; }
+/* Profile hero sits a little higher on the page (18 Nov 2026), with the pets a touch closer to the name */
+html .pf2 .pf-hero.pf3 { margin-top: -34px; }
+.pf3 .pet-pick { margin: 10px 0 12px; }
