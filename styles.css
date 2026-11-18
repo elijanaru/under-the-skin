@@ -17154,3 +17154,36 @@ input[type="date"].field::-webkit-date-and-time-value { flex: 1; margin: 0; text
 /* Emoji glyphs (emoRaw) never take the old .emo list margin, so they sit dead centre in their bubbles */
 span.emo:not(:has(span)), img.emo { margin: 0; gap: 0; }
 .hs-looks .lk i .emo { display: block; width: 100%; font-size: 18px; line-height: 1; text-align: center; }
+
+/* Sign-up page (18 Nov 2026, redesign in the Unlock style): the rose floats among sparkles over the misty forest, a white day pill,
+   the taped paper note carries the title and the sign-in itself, sticker promises, then one white card with what the account does. */
+.onb.gx2 { padding-left: 18px; padding-right: 18px; }
+.gx2-body { padding-top: 0; }
+.gx2-stage { margin: -18px 2px -6px; padding: 6px 0 18px; }
+.gx2-rose { width: min(58vw, 228px); margin: 0 auto; }
+.gx2-rose img { display: block; width: 100%; height: auto; filter: drop-shadow(0 18px 26px rgba(40,22,30,.35)) drop-shadow(0 2px 4px rgba(40,22,30,.25)); animation: roseFloat 9s ease-in-out infinite alternate; }
+.gx2 .ul3-days { margin-top: -10px; }
+.gx2-note { transform: rotate(-.6deg); padding: 28px 18px 18px; }
+html .gx2-note h2.ul4-h { font-size: 33px !important; }
+html .gx2-note h2.ul4-h em { font-size: 37px; }
+.gx2-note .o3-lead { margin: 16px 0 0 !important; font-size: 16.5px !important; }
+.onb.gx .gx2-auth { margin: 18px 0 0; padding: 0; background: none; border: 0; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; animation: none; text-align: left; }
+.gx2-auth .gx-auth .gate-checks { background: #f6f2ea; border-radius: 18px; }
+.gx2-auth .gx-auth .ac-consent.gx-sw + .ac-consent.gx-sw { border-top: 1px dashed rgba(48,64,35,.16); }
+.onb.gx .gx2-auth .gx-auth input.field { background: #fff !important; border: 1px solid rgba(48,64,35,.14) !important; }
+.onb.gx .gx2-auth .gx-auth .ac-btn { height: 54px; border-radius: 999px !important; box-shadow: 0 14px 24px -14px rgba(32,48,26,.8), inset 0 1px 0 rgba(255,255,255,.18) !important; }
+.onb.gx .gx2-auth .gx-auth [data-action="acProvider"] { border-radius: 999px !important; }
+.gx2-auth .ac-msg:empty { display: none; }
+.gx2-note .o3-sign { margin-top: 14px !important; }
+.gx2 .ul3-keep h3 { text-align: center; }
+.gx2 .gx-later { margin-top: 4px; display: grid; justify-items: center; gap: 8px; }
+.onb.gx2 .gx-skip { padding: 12px 22px; border-radius: 999px; background: rgba(255,255,255,.88); color: #20301a; text-shadow: none; font-weight: 500; box-shadow: 0 10px 20px -14px rgba(40,24,30,.55); }
+.onb.gx2 .gx-note { margin: 0 8px; }
+@media (prefers-reduced-motion: reduce) { .gx2-rose img { animation: none; } }
+.gx2-note .o3-lead mark { white-space: nowrap; }
+.onb.gx .gx2-auth .gx-auth input.field::placeholder { color: #7d8574 !important; opacity: 1; }
+.onb.gx2 .ul3-keep { background: #fffdf9 !important; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.gx2-note .ph-sent, .gx2-note .ph-tip, .gx2-note .ph-links .link, .gx2-note .ac-msg { font-family: var(--font) !important; text-align: center; }
+.gx2-note .ph-sent { font-weight: 400; color: #304023; }
+.gx2-note .ph-sent b { font-weight: 600; }
+.gx2-note .ph-tip { color: #4b5741; }

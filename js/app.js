@@ -10923,24 +10923,36 @@ const GX_IC = {
   cam: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.6l1.4-2h5l1.4 2h1.6A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5Z"/><circle cx="12" cy="12.5" r="3.4"/></svg>',
   shield: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5 5.5 6v5.2c0 4.1 2.8 7.6 6.5 9.3 3.7-1.7 6.5-5.2 6.5-9.3V6Z"/><path d="m9.2 12 2 2 3.8-4"/></svg>',
 };
+// Redesigned 18 Nov 2026 in the Unlock style: the floating rose with sparkles, a day pill, the taped paper note that holds
+// the title and the sign-in, sticker promises, then one white card with what the account does. Going on without one stays below.
+const GATE_KEEP = [['📲', 'Back on any phone', 'Sign in and every log comes back.'], ['🔐', 'Only you can see it', 'Locked to your own login.'], ['🗑️', 'Yours to delete', 'Erase your account and logs anytime.']];
 function viewGate() {
   const flash = ui.flashOut ? '<div class="flash-out"></div>' : ''; ui.flashOut = false;
   const anim = ui.onbAnim || ''; ui.onbAnim = '';
-  const feats = [['cloud', 't1', 'Back on any phone', 'Sign in and every log comes back.'],
-    ['lock', 't2', 'Only you can see it', 'Locked to your login, never sold.'],
-    ['erase', 't3', 'Yours to delete', 'Erase your account and logs anytime.']];
-  return `<div class="onb no-fig gx ${anim}">${flash}
+  const nm = esc(((ui.onb && ui.onb.name) || '').trim());
+  const swirl = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';
+  return `<div class="onb no-fig gx gx2 ${anim}">${flash}
     <div class="gx-nav"><button class="gx-ib" data-action="onbBack" aria-label="Back">${icon('chevL', 20)}</button>${sndBtn()}</div>
-    <header class="gx-hero">
-      <div class="gx-art" aria-hidden="true"><img src="images/gate-rose.webp" alt="" decoding="async"></div>
-      <h1 class="gx-title">Keep your cycle<span>safe with you</span></h1>
-      <p class="gx-lead">A free account keeps your logs safe, on any phone.</p>
-    </header>
-    <ul class="gx-feats">${feats.map(([ic, t, b, sm], i) => `<li style="--i:${i}"><span class="gx-fi ${t}">${GX_IC[ic]}</span><div><b>${b}</b><small>${sm}</small></div></li>`).join('')}</ul>
-    <div class="gx-card">${socialAuth(true)}</div>
-    <div class="gx-later">
-      <button class="gx-skip" data-action="gateSkip">Use without an account</button>
-      <p class="gx-note">${GX_IC.info}<span>Without one, your logs stay on this phone only. Add one anytime in Profile.</span></p>
+    <div class="ul3 ul4 gx2-body">
+      <div class="ul4-stage gx2-stage">
+        <svg class="ul4-sp" viewBox="0 0 360 250" aria-hidden="true">${o3Spark('#f1d58a', 40, 40, 0)}${o3Spark('#fff', 322, 30, 1.1)}${o3Spark('#c9d6a8', 330, 206, 2)}${o3Spark('#fff', 26, 196, 1.6)}<circle class="o3-sp" style="--d:.6s" cx="292" cy="232" r="2.4" fill="#fff"/><circle class="o3-sp" style="--d:1.8s" cx="70" cy="12" r="2" fill="#fff"/></svg>
+        <div class="gx2-rose" aria-hidden="true"><img src="images/gate-rose.webp" alt="" decoding="async"></div>
+      </div>
+      <span class="ul3-days">Free · ready in <b class="dotnum">1</b> minute</span>
+      <section class="o3-note ul3-note ul4-note gx2-note">
+        <small class="ul4-eye">${nm ? `${nm}, before you start` : 'Before you start'}</small>
+        <h2 class="ul4-h">Keep your cycle<br><em>safe with you${swirl}</em></h2>
+        <p class="o3-lead">A free account keeps your logs <mark>safe on any phone</mark>.</p>
+        <div class="gx-card gx2-auth">${socialAuth(true)}</div>
+        <p class="o3-sign">locked to you, always <i>♡</i></p>
+      </section>
+      <ul class="ul3-no">${['No password', 'No spam', 'Never sold'].map((t, i) => `<li style="--r:${[-2, 1.5, -1][i]}deg"><span class="o3-x">${O3_X}</span>${t}</li>`).join('')}</ul>
+      <section class="card ul3-keep"><h3>What your account does</h3>
+        ${GATE_KEEP.map(([ic, t, sub], i) => `<div class="ul3-r" style="--i:${i}"><span class="ul3-ic emo" aria-hidden="true">${ic}</span><span><b>${t}</b><small>${sub}</small></span><i class="ul3-tick">${O3_TICK}</i></div>`).join('')}</section>
+      <div class="gx-later">
+        <button class="gx-skip" data-action="gateSkip">Use without an account</button>
+        <p class="gx-note">${GX_IC.info}<span>Without one, your logs stay on this phone only. Add one anytime in Profile.</span></p>
+      </div>
     </div>
   </div>`;
 }
@@ -10988,7 +11000,7 @@ function socialAuth(gx) {
   return `<div class="ph-auth ${gx ? 'gx-auth' : ''}" data-step="${ui.acStep === 'code' ? 'code' : 'phone'}">
     <div class="ph-s1">
       <div class="gate-checks">
-        ${gx ? `<div class="gx-k">Before you start</div>
+        ${gx ? `
         <label class="ac-consent gx-sw"><span class="gx-sw-t"><b>Save my logs in a private account</b><small>Only I can see my periods, symptoms and notes. I can delete them anytime. <a href="#/privacy">Privacy</a></small></span><input type="checkbox" id="ac-consent" role="switch"><i class="gx-tr" aria-hidden="true"></i></label>
         <label class="ac-consent ac-terms gx-sw"><span class="gx-sw-t"><b>Wellness, not medical advice</b><small>I choose what I try and ask a doctor when unsure. <a href="#/privacy">Terms</a></small></span><input type="checkbox" id="ac-terms" role="switch" ${termsOK() ? 'checked' : ''}><i class="gx-tr" aria-hidden="true"></i></label>`
         : `<label class="ac-consent"><input type="checkbox" id="ac-consent"><span>Save my periods, symptoms and notes in my own private account. Only I can see them, and I can delete them anytime. <a href="#/privacy">Privacy</a></span></label>
