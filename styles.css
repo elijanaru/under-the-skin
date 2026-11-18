@@ -17291,3 +17291,4 @@ html .gx2-note h2.ul4-h em { font-size: 37px; }
 .onb .pet-pick { margin: 18px 0 6px; }
 @media (prefers-reduced-motion: reduce) { .pet { animation: none; transition: none; } }
 .pf3 .pet-pick { margin: 16px 0 14px; }
+html.pc-still .pc-cl, html.pc-still .pc-pl { animation: none !important; }

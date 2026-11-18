@@ -10079,6 +10079,7 @@ function softPatch(a, b) {
   if (!same) { a.replaceWith(b); return; }
   const ac = [...a.children], bc = [...b.children]; ac.forEach((c, i) => softPatch(c, bc[i]));
 }
+document.addEventListener('animationend', e => { if (e.animationName === 'pcLockDrop' || e.animationName === 'pcChainB') document.documentElement.classList.add('pc-still'); });
 function softProfile() {
   const pad = document.querySelector('#view > .pad.pf2');
   if (!pad) return render();
@@ -12348,6 +12349,8 @@ function render() {
   let keep = prev && ui.lastRoute === r.key ? prev.scrollTop : 0;
   const fresh = ui.lastRoute !== r.key;
   if (fresh) bzClose(true);
+  // the locked cards' chains and padlock play once when she arrives on a page; after that they stay put through redraws and tab swaps
+  if (fresh) document.documentElement.classList.remove('pc-still');
   // Going back returns to the same spot on the page you came from.
   if (prev && ui.lastRoute) (ui.scrollMem = ui.scrollMem || {})[ui.lastRoute] = prev.scrollTop;
   if (fresh) {
