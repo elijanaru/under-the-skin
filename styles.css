@@ -17185,3 +17185,7 @@ html .gx2-note h2.ul4-h em { font-size: 37px; }
 .gx2-note .ph-sent { font-weight: 400; color: #304023; }
 .gx2-note .ph-sent b { font-weight: 600; }
 .gx2-note .ph-tip { color: #4b5741; }
+
+/* Anything that bleeds past the page edge (the 3D dish canvas on recipes) is clipped at the page, so it never widens the scroll area.
+   The frame scrolls with the page (background-attachment: local), and a wider scroll area pushed its right band off-screen. */
+#view > .pad { overflow-x: clip; }
