@@ -1695,6 +1695,7 @@ function viewOnboarding() {
   if (s === 0) {
     return `<div class="onb onb-welcome full dark beyond">
       <canvas class="welcome3d"></canvas>
+      <img class="bw-leaves" src="images/welcome-leaves.webp" alt="" aria-hidden="true">
       <div class="bw-vignette"></div>${sndBtn('float')}
       <div class="welcome-ui">
         <div class="bw-title-wrap"><span class="orn-l"><svg class="orn" viewBox="0 0 120 90" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">

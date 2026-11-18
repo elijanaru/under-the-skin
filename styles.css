@@ -17140,3 +17140,5 @@ html .cdl .cdl-warm svg { flex: none; color: hsl(calc(var(--hb) + 30 * var(--hk)
 /* Golden roots: her painted panel in place of the drawn diagram */
 .grr-art img { display: block; width: 100%; height: auto; aspect-ratio: 2 / 1; object-fit: cover; }
 .grr-art { border-color: rgba(60,30,40,.18); }
+/* welcome: the photo's own front branches, cut out and laid over the 3D woman (same cover fit as the scene background) */
+.bw-leaves { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; pointer-events: none; z-index: 0; }
