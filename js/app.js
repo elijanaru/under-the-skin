@@ -11479,9 +11479,21 @@ const actions = {
   groAisle: d => { ui.groAisle = d.v; render(); const t = document.querySelector('.gro-tabs'), on = t && t.querySelector('.on'); if (on) t.scrollLeft = on.offsetLeft - (t.clientWidth - on.offsetWidth) / 2; },
   czTab: d => { ui.czTab = d.v; render(); },
   bzPick: d => bzOpen(d.v),
-  pickPet: d => { const src = petSrc(d.v); if (!PETS.some(x => x[0] === d.v)) return;
-    if (d.s === 'onb') { ui.onb.photo = src; ui.onb.thumb = src; ui.onbStill = true; } else { state.profile.photo = src; state.profile.thumb = src; save(); toast(`Hello, little ${(PETS.find(x => x[0] === d.v) || [, 'friend'])[1].toLowerCase()} ♡`); }
-    render(); },
+  pickPet: d => { const src = petSrc(d.v), pet = PETS.find(x => x[0] === d.v); if (!pet) return;
+    if (d.s === 'onb') { ui.onb.photo = src; ui.onb.thumb = src; } else { state.profile.photo = src; state.profile.thumb = src; save(); }
+    // only the picture and the pick change: nothing else on the page redraws or replays
+    document.querySelectorAll(`.pet[data-s="${d.s}"]`).forEach(b => { const on = b.dataset.v === d.v; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+    if (d.s === 'onb') {
+      const box = document.querySelector('.gxp-img'), lab = document.querySelector('.gxp'), cam = document.querySelector('.gxp-cam'), btn = document.querySelector('.gxp-btn');
+      if (!box) return render();
+      box.innerHTML = `<img src="${src}" alt="Your picture">`; lab?.classList.add('has'); if (cam) cam.innerHTML = icon('check', 18, 2.6);
+      if (btn?.firstChild?.nodeType === 3) btn.firstChild.textContent = 'Choose a photo';
+      document.querySelector('.onb [data-action="onbNext"].gx-skip')?.remove();
+    } else {
+      const av = document.querySelectorAll('.avatar'); if (!av.length) return render();
+      av.forEach(a => { a.classList.add('has-photo'); const img = a.querySelector('img'); if (img) img.src = src; else { const t = [...a.childNodes].find(n => n.nodeType === 3 && n.textContent.trim()); const im = document.createElement('img'); im.src = src; im.alt = ''; t ? t.replaceWith(im) : a.prepend(im); } });
+      toast(`Hello, little ${pet[1].toLowerCase()} ♡`);
+    } },
   grTab: d => { ui.grTab = d.v; const pn = document.querySelector('#view .gr2-panel'); if (!pn) return render();
     document.querySelectorAll('#view .gr2-seg button').forEach(b => { const on = b.dataset.v === d.v; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
     pn.innerHTML = groundPanel(d.v); pn.classList.remove('sw'); void pn.offsetWidth; pn.classList.add('sw'); decorateStudies?.(pn); },
