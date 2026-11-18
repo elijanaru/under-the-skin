@@ -53,6 +53,7 @@ public class UTSStorePlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "buy", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "restore", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "redeemCode", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "openSettings", returnType: CAPPluginReturnPromise),
     ]
     private var updates: Task<Void, Never>?
 
@@ -116,6 +117,14 @@ public class UTSStorePlugin: CAPPlugin, CAPBridgedPlugin {
             try? await AppStore.sync()
             if let t = await entitlement(id) { call.resolve(["owned": true, "transactionId": String(t.id)]) }
             else { call.resolve(["owned": false]) }
+        }
+    }
+
+    // Underskin's page in the iPhone Settings app (notifications, location), for a permission she said no to earlier
+    @objc func openSettings(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
+            call.resolve()
         }
     }
 

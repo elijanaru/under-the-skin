@@ -1625,13 +1625,15 @@ function o3Hero() {
 // Last onboarding step (17 Nov 2026, her ask): the two permissions, asked in context with a cute, honest why.
 // Each yes opens the real system prompt right here; what she allows is carried into her profile when she starts.
 function onbAsk(o) {
-  const card = (k, e, t, d, yes, done, off) => `<div class="pa-c ${done ? 'on' : ''} ${off ? 'off' : ''}"><span class="pa-e">${e}</span><div><b>${t}</b><p>${d}</p>
-    <button class="pa-b" data-action="onbAsk" data-v="${k}" ${done || off ? 'disabled' : ''}>${done ? `${icon('check', 14, 2.6)} ${done}` : off ? 'Maybe later, in Profile' : yes}</button></div></div>`;
+  // blocked: she said no on an earlier install, so iOS won't ask again; the button opens Underskin in the Settings app instead
+  const card = (k, e, t, d, yes, done, off, blocked) => `<div class="pa-c ${done ? 'on' : ''} ${off ? 'off' : ''}"><span class="pa-e">${e}</span><div><b>${t}</b><p>${d}</p>
+    ${blocked ? `<button class="pa-b" data-action="onbAsk" data-v="${k}s">Turn on in Settings</button><small class="pa-hint">Your iPhone remembers an earlier no. Switch it on there, then come back.</small>`
+      : `<button class="pa-b" data-action="onbAsk" data-v="${k}" ${done || off ? 'disabled' : ''}>${done ? `${icon('check', 14, 2.6)} ${done}` : off ? 'Maybe later, in Profile' : yes}</button>`}</div></div>`;
   return `<div class="op op2 op3 pa">
     <section class="o3-note pa-note"><h2><span>Two tiny</span> <em>favours<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 15 C 40 9, 70 17, 104 11 S 170 8, 196 12"/></svg></em></h2>
       <p class="o3-sub">So your app can feel made just for you.</p>
-      ${card('n', '💌', 'Letters from your body', 'A little note now and then: when to rest, when to shine, when your period is on its way. Never spammy, pinky promise.', 'Yes, send me letters', o.askN === 'granted' && 'Letters on', o.askN === 'denied')}
-      ${card('g', '☀️', 'Your patch of sky', 'Roughly where you are, so we can show your UV, sunrise and sunset. Only your area, never your street.', 'Yes, use my area', o.askG === 'granted' && 'Sunshine on', o.askG === 'denied')}
+      ${card('n', '💌', 'Letters from your body', 'A little note now and then: when to rest, when to shine, when your period is on its way. Never spammy, pinky promise.', 'Yes, send me letters', o.askN === 'granted' && 'Letters on', o.askN === 'denied', o.askN === 'blocked')}
+      ${card('g', '☀️', 'Your patch of sky', 'Roughly where you are, so we can show your UV, sunrise and sunset. Only your area, never your street.', 'Yes, use my area', o.askG === 'granted' && 'Sunshine on', o.askG === 'denied', o.askG === 'blocked')}
       <p class="pa-promise">We don’t sell your data. We sweaaar 🤞<br>We just want to make it personal.</p>
       <p class="o3-sign">with love, from our little team <i>♡</i></p></section>
   </div>`;
@@ -11202,7 +11204,11 @@ const actions = {
   },
   onbAsk: async d => {
     const o = ui.onb, LN = NATIVE && CAP?.Plugins?.LocalNotifications, G = NATIVE && CAP?.Plugins?.Geolocation;
+    if (d.v === 'ns' || d.v === 'gs') { ui.onbSettings = true; UTSS?.openSettings?.(); return; }
     try {
+      // already refused on an earlier install: iOS stays silent, so offer the Settings app instead of a dead button
+      if (d.v === 'n' && LN && (await LN.checkPermissions()).display === 'denied') { o.askN = 'blocked'; ui.onbStill = true; return render(); }
+      if (d.v === 'g' && G) { const c = await G.checkPermissions(); if ((c.coarseLocation || c.location) === 'denied') { o.askG = 'blocked'; ui.onbStill = true; return render(); } }
       if (d.v === 'n') {
         let st = 'denied';
         if (LN) { const p = await LN.requestPermissions(); st = p.display === 'granted' ? 'granted' : 'denied'; }
@@ -12091,7 +12097,8 @@ function locked() {
   if (DEV_HOST && !/[?&]paywall=1/.test(location.search)) return false;
   return trialLeft() === 0;
 }
-const UTSS = NATIVE && CAP?.registerPlugin && /iOS/i.test(CAP.getPlatform?.() || '') ? CAP.registerPlugin('UTSStore') : null;
+// the native bridge exposes our StoreKit plugin as Capacitor.Plugins.UTSStore (there is no registerPlugin without @capacitor/core)
+const UTSS = NATIVE && /iOS/i.test(CAP?.getPlatform?.() || '') ? (CAP.Plugins?.UTSStore || (CAP.registerPlugin ? CAP.registerPlugin('UTSStore') : null)) : null;
 let TEST_BUILD = DEV_HOST; // TestFlight, Xcode or the dev server
 if (UTSS) {
   UTSS.isTestFlight().then(r => { TEST_BUILD = !!r?.value; }).catch(() => {});
@@ -12100,6 +12107,16 @@ if (UTSS) {
   // bought on another device or reinstalled: unlock quietly
   UTSS.owned({ productId: UNLOCK_ID }).then(r => { if (r?.owned && !state.paid) { state.paid = { at: todayISO(), ref: String(r.transactionId || 'owned') }; save(true); render(); } }).catch(() => {});
 }
+// back from the Settings app on the "Two tiny favours" page: pick up what she switched on
+document.addEventListener('visibilitychange', async () => {
+  if (document.hidden || !ui.onbSettings) return; ui.onbSettings = false;
+  const o = ui.onb, LN = NATIVE && CAP?.Plugins?.LocalNotifications, G = NATIVE && CAP?.Plugins?.Geolocation;
+  try {
+    if (o.askN === 'blocked' && LN && (await LN.checkPermissions()).display === 'granted') o.askN = 'granted';
+    if (o.askG === 'blocked' && G) { const c = await G.checkPermissions(); if ((c.coarseLocation || c.location) === 'granted') o.askG = 'granted'; }
+  } catch {}
+  ui.onbStill = true; render();
+});
 async function buyUnlock() {
   if (UTSS) {
     try { ui.paying = true; render(); const r = await UTSS.buy({ productId: UNLOCK_ID }); return unlocked(r?.transactionId); }

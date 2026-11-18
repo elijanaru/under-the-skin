@@ -17145,3 +17145,12 @@ html .cdl .cdl-warm svg { flex: none; color: hsl(calc(var(--hb) + 30 * var(--hk)
 /* iPhone draws the date value at the top of a tall field: centre it both ways (the onboarding "exact day" and every date field) */
 input[type="date"].field { display: flex !important; align-items: center; justify-content: center; line-height: 1.2; }
 input[type="date"].field::-webkit-date-and-time-value { flex: 1; margin: 0; text-align: center; line-height: 1.2; }
+/* "We hate subscriptions" step: the frosted footer reaches under the home bar (no raw photo strip at the very bottom),
+   and the pinned forest has no blur filter so scrolling stays smooth on iPhone */
+.onb.step-10 .onb-foot { padding-bottom: calc(22px + env(safe-area-inset-bottom, 0px)) !important; margin-bottom: calc(-30px - env(safe-area-inset-bottom, 0px)) !important; }
+.onb.no-fig.step-10::before { filter: none !important; transform: translateZ(0) !important; will-change: transform; }
+.pa-hint { display: block; margin-top: 8px; font-size: 12px; line-height: 1.35; color: #6c4a58; }
+
+/* Emoji glyphs (emoRaw) never take the old .emo list margin, so they sit dead centre in their bubbles */
+span.emo:not(:has(span)), img.emo { margin: 0; gap: 0; }
+.hs-looks .lk i .emo { display: block; width: 100%; font-size: 18px; line-height: 1; text-align: center; }
