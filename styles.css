@@ -17175,14 +17175,12 @@ html .gx2-note h2.ul4-h em { font-size: 37px; }
 .onb.gx .gx2-auth .gx-auth [data-action="acProvider"] { border-radius: 999px !important; }
 .gx2-auth .ac-msg:empty { display: none; }
 .gx2-note .o3-sign { margin-top: 14px !important; }
-.gx2 .ul3-keep h3 { text-align: center; }
 .gx2 .gx-later { margin-top: 4px; display: grid; justify-items: center; gap: 8px; }
 .onb.gx2 .gx-skip { padding: 12px 22px; border-radius: 999px; background: rgba(255,255,255,.88); color: #20301a; text-shadow: none; font-weight: 500; box-shadow: 0 10px 20px -14px rgba(40,24,30,.55); }
 .onb.gx2 .gx-note { margin: 0 8px; }
 @media (prefers-reduced-motion: reduce) { .gx2-rose img { animation: none; } }
 .gx2-note .o3-lead mark { white-space: nowrap; }
 .onb.gx .gx2-auth .gx-auth input.field::placeholder { color: #7d8574 !important; opacity: 1; }
-.onb.gx2 .ul3-keep { background: #fffdf9 !important; -webkit-backdrop-filter: none; backdrop-filter: none; }
 .gx2-note .ph-sent, .gx2-note .ph-tip, .gx2-note .ph-links .link, .gx2-note .ac-msg { font-family: var(--font) !important; text-align: center; }
 .gx2-note .ph-sent { font-weight: 400; color: #304023; }
 .gx2-note .ph-sent b { font-weight: 600; }

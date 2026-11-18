@@ -10924,8 +10924,7 @@ const GX_IC = {
   shield: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5 5.5 6v5.2c0 4.1 2.8 7.6 6.5 9.3 3.7-1.7 6.5-5.2 6.5-9.3V6Z"/><path d="m9.2 12 2 2 3.8-4"/></svg>',
 };
 // Redesigned 18 Nov 2026 in the Unlock style: the floating rose with sparkles, a day pill, the taped paper note that holds
-// the title and the sign-in, sticker promises, then one white card with what the account does. Going on without one stays below.
-const GATE_KEEP = [['📲', 'Back on any phone', 'Sign in and every log comes back.'], ['🔐', 'Only you can see it', 'Locked to your own login.'], ['🗑️', 'Yours to delete', 'Erase your account and logs anytime.']];
+// the title and the sign-in, then sticker promises. Going on without one stays below.
 function viewGate() {
   const flash = ui.flashOut ? '<div class="flash-out"></div>' : ''; ui.flashOut = false;
   const anim = ui.onbAnim || ''; ui.onbAnim = '';
@@ -10947,8 +10946,6 @@ function viewGate() {
         <p class="o3-sign">locked to you, always <i>♡</i></p>
       </section>
       <ul class="ul3-no">${['No password', 'No spam', 'Never sold'].map((t, i) => `<li style="--r:${[-2, 1.5, -1][i]}deg"><span class="o3-x">${O3_X}</span>${t}</li>`).join('')}</ul>
-      <section class="card ul3-keep"><h3>What your account does</h3>
-        ${GATE_KEEP.map(([ic, t, sub], i) => `<div class="ul3-r" style="--i:${i}"><span class="ul3-ic emo" aria-hidden="true">${ic}</span><span><b>${t}</b><small>${sub}</small></span><i class="ul3-tick">${O3_TICK}</i></div>`).join('')}</section>
       <div class="gx-later">
         <button class="gx-skip" data-action="gateSkip">Use without an account</button>
         <p class="gx-note">${GX_IC.info}<span>Without one, your logs stay on this phone only. Add one anytime in Profile.</span></p>
