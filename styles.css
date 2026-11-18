@@ -17276,3 +17276,18 @@ html .gx2-note h2.ul4-h em { font-size: 37px; }
 .gr2-no { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; background: #fde4eb; }
 .gr2-no svg { width: 14px; height: 14px; fill: none; stroke: #c4566f; stroke-width: 2.6; stroke-linecap: round; }
 @media (prefers-reduced-motion: reduce) { .gr2-pol { animation: none; } .gr2-panel.sw > * { animation: none; } }
+
+/* Little friends (18 Nov 2026): hand-drawn pets she can pick as her profile picture, two rows of four soft round tiles */
+.pet-pick { display: grid; justify-items: center; gap: 10px; margin: 16px 0 0; }
+.pet-pick small { font: 500 13.5px/1.2 var(--font); color: #6c823e; }
+.pet-row { display: grid; grid-template-columns: repeat(4, 54px); gap: 12px 14px; justify-content: center; }
+.pet { width: 54px; height: 54px; padding: 0; border-radius: 50%; overflow: hidden; border: 2.5px solid #fff; background: #fff; cursor: pointer;
+  box-shadow: 0 8px 16px -10px rgba(60,30,40,.5); transition: transform .35s cubic-bezier(.3,1.5,.5,1), box-shadow .3s; animation: o3In .7s cubic-bezier(.22,1,.36,1) both; animation-delay: calc(var(--i) * 45ms); }
+.pet img { display: block; width: 100%; height: 100%; }
+.pet:active { transform: scale(.9); }
+.pet.on { border-color: #b04f6c; box-shadow: 0 0 0 3px rgba(230,177,196,.6), 0 8px 16px -10px rgba(60,30,40,.5); transform: scale(1.06); }
+.pet:focus-visible { outline: 2px solid #20301a; outline-offset: 2px; }
+.onb .pet-pick small { color: #fff; text-shadow: 0 1px 8px rgba(30,36,20,.6); }
+.onb .pet-pick { margin: 18px 0 6px; }
+@media (prefers-reduced-motion: reduce) { .pet { animation: none; transition: none; } }
+.pf3 .pet-pick { margin: 16px 0 14px; }

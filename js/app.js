@@ -1753,7 +1753,8 @@ function viewOnboarding() {
         <label class="gxp ${o.photo ? 'has' : ''}"><span class="gxp-ring"><span class="gxp-img">${o.photo ? `<img src="${o.photo}" alt="Your photo">` : AVATAR_SVG}</span></span>
           <span class="gxp-cam">${o.photo ? icon('check', 18, 2.6) : GX_IC.cam}</span><input type="file" accept="image/*" data-photo="onb" hidden></label>
         <p class="gxp-name">${esc(o.name.trim() || 'You')}</p>
-        <label class="gxp-btn">${o.photo ? 'Choose another photo' : 'Choose a photo'}<input type="file" accept="image/*" data-photo="onb" hidden></label>
+        <label class="gxp-btn">${o.photo && !o.photo.startsWith('images/pets/') ? 'Choose another photo' : 'Choose a photo'}<input type="file" accept="image/*" data-photo="onb" hidden></label>
+        ${petRow('onb', o.photo)}
         ${o.photo ? '' : '<button class="gx-skip" data-action="onbNext">Skip for now</button>'}`,
     3: `<h2 class="onb-title">How do <span>you eat?</span></h2>
         <p class="muted">Your recipes, food guide and supplements follow this. Change it anytime in Profile.</p>
@@ -10019,6 +10020,12 @@ function viewArticle(id) {
     ${n ? `<button class="card nu-next art-next" data-action="nav" data-to="article/${n.id}">${readPic(n, 300) ? `<img src="${readPic(n, 300)}" alt="">` : ''}<span><small>Next read</small><b>${n.title}</b></span>${icon('chevR', 16)}</button>` : ''}
   </div>`;
 }
+// Little friends she can pick in place of a photo (hand-drawn, images/pets/)
+const PETS = [['bunny', 'Bunny'], ['kitty', 'Kitty'], ['bear', 'Bear'], ['panda', 'Panda'], ['fox', 'Fox'], ['frog', 'Frog'], ['chick', 'Chick'], ['hamster', 'Hamster']];
+const petSrc = k => `images/pets/${k}.svg`;
+function petRow(scope, cur) {
+  return `<div class="pet-pick"><small>Or pick a little friend</small><div class="pet-row" role="list">${PETS.map(([k, n], i) => `<button class="pet ${cur === petSrc(k) ? 'on' : ''}" role="listitem" style="--i:${i}" data-action="pickPet" data-v="${k}" data-s="${scope}" aria-label="${n}" aria-pressed="${cur === petSrc(k)}"><img src="${petSrc(k)}" alt="" loading="lazy"></button>`).join('')}</div></div>`;
+}
 function avatarInner(p) { return p.photo ? `<img src="${esc(p.photo)}" alt="">` : esc((p.name || 'R')[0].toUpperCase()); }
 // Downscale a chosen photo to a 320px square JPEG data URL so it fits comfortably in local storage.
 function readPhoto(file) {
@@ -10131,6 +10138,7 @@ function viewProfile() {
       <svg class="o3-dood pf3-dood" viewBox="0 0 340 220" aria-hidden="true">${o3Spark('#f6c6d4', 40, 46, 0)}${o3Spark('#f1d58a', 298, 36, 1.2)}${o3Spark('#c9d6a8', 306, 150, 2)}${o3Spark('#f6c6d4', 30, 160, 1.6)}</svg>
       <div class="profile-head"><label class="avatar xl ${p.photo ? 'has-photo' : ''}">${avatarInner(p)}<svg class="pf3-ring" viewBox="0 0 120 120" aria-hidden="true"><path d="M60 6 C 92 5, 115 28, 113 61 C 111 93, 88 114, 58 113 C 27 112, 6 90, 7 59 C 8 30, 30 8, 63 9"/></svg><span class="av-edit">${icon('plus', 14, 2.4)}</span><input type="file" accept="image/*" data-photo="profile" hidden></label>
         <span class="pf3-name"><input class="field name-field" data-input="profile.name" value="${esc(p.name)}" placeholder="Your name" maxlength="24" aria-label="Your name"></span></div>
+      ${petRow('profile', p.photo)}
       <p class="pf-learn">${learn}</p>
       ${signedOut ? `<button class="pill-cta pf-cta" data-action="pfTab" data-v="data"${tab === 'data' ? ' hidden' : ''}>${icon('heart', 15)} Save my cycle to an account</button>` : ''}
     </section>
@@ -11471,6 +11479,9 @@ const actions = {
   groAisle: d => { ui.groAisle = d.v; render(); const t = document.querySelector('.gro-tabs'), on = t && t.querySelector('.on'); if (on) t.scrollLeft = on.offsetLeft - (t.clientWidth - on.offsetWidth) / 2; },
   czTab: d => { ui.czTab = d.v; render(); },
   bzPick: d => bzOpen(d.v),
+  pickPet: d => { const src = petSrc(d.v); if (!PETS.some(x => x[0] === d.v)) return;
+    if (d.s === 'onb') { ui.onb.photo = src; ui.onb.thumb = src; ui.onbStill = true; } else { state.profile.photo = src; state.profile.thumb = src; save(); toast(`Hello, little ${(PETS.find(x => x[0] === d.v) || [, 'friend'])[1].toLowerCase()} ♡`); }
+    render(); },
   grTab: d => { ui.grTab = d.v; const pn = document.querySelector('#view .gr2-panel'); if (!pn) return render();
     document.querySelectorAll('#view .gr2-seg button').forEach(b => { const on = b.dataset.v === d.v; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
     pn.innerHTML = groundPanel(d.v); pn.classList.remove('sw'); void pn.offsetWidth; pn.classList.add('sw'); decorateStudies?.(pn); },
