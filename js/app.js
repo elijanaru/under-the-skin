@@ -550,33 +550,24 @@ function rtNow(el, row) {
   img.src = `images/tree-ink-${i}.webp`;
   cap.innerHTML = `<b><i class="dotnum">${i + 1}</i> ${esc(row.querySelector('.rt-t b').textContent)}</b><span>${esc(row.dataset.x)}</span>`;
 }
-function viewGround() {
-  const info = M.info, ph = info && info.phase, P = ph && GROUND_PHASE[ph];
-  const late = info && info.daysToPeriod <= 3 && !info.isPeriod, phd = P && (late && ph === 'luteal' ? P.d : P.d);
-  const card = (id, title, d) => `<div class="gr-do"><div class="gr-do-h"><span class="dos-w">${icon('clock', 12)} ${d[3]}</span>${saveBtn(regTip(id, title, d, 'ground'))}</div><b>${d[0]}</b><ol><li>${d[1]}</li><li>${d[2]}</li></ol></div>`;
-  const open = ui.grStudy;
-  return `${topbar('Grounding', { back: true })}
-  <div class="pad gr">
-    <header class="t4-h sp-h gr-h"><small>Earthing</small><h1>Ground yourself.</h1><p>Bare skin on the earth. Your body takes on the ground’s calm, steady charge.</p></header>
-    <section class="gr-hero gr-tree"><img class="gr-tree-img" src="images/ground-tree.webp" alt="A hand resting on a giant redwood, light circling up into the sky" decoding="async">
-      <span class="gr-hero-n"><b class="dotnum">15</b><small>min a day</small></span></section>
-
-    ${groundEnergy()}
-    ${groundTree()}
-
-
-    ${P ? `${sectionTitle(`For your ${PHASES[ph].name.toLowerCase()} phase`)}
-    <section class="grp" style="--c:${PH_HEX[ph]}">
-      <div class="grp-top"><small><i></i>${PHASES[ph].name} phase${ph === 'menstrual' || late ? ` · ${icon('thermo', 12)} Keep warm` : ''}</small>${saveBtn(regTip(`ground-${ph}`, `Grounding · ${PHASES[ph].name}`, phd, 'ground'))}</div>
-      <div class="grp-hero"><img src="images/ground/${GROUND_SPOT[ph][0]}.webp" alt="" loading="lazy"><div><h3>${P.t}</h3><p class="grp-sub">${phd[0]}</p></div></div>
-      <dl class="grp-spec"><div><dt>Where</dt><dd>${GROUND_SPOT[ph][1]}</dd></div>${(phd[1].match(/(\d+) minutes/) || [])[1] ? `<div><dt>How long</dt><dd><b class="dotnum">${phd[1].match(/(\d+) minutes/)[1]}</b> min</dd></div>` : ''}<div><dt>When</dt><dd>${phd[3]}</dd></div></dl>
-      <ol class="tf2-ol grp-ol"><li><i class="dotnum">1</i>${phd[1].replace(/^\d+ minutes (\w)/, (m, c) => c.toUpperCase())}</li><li><i class="dotnum">2</i>${phd[2]}</li></ol>
-      <details class="grp-why"><summary>Why in this phase ${icon('chevD', 13)}</summary><p>${P.why}</p></details>
-    </section>` : ''}
-
-    ${sectionTitle('Where to stand')}
-    <section class="card gr-card"><p class="gr-wh-sub">How well each surface connects you to the earth.</p><div class="gr-where">${GROUND_WHERE.map(([n, v, t], i) => `<div class="gw ${v ? '' : 'no'}"><img class="gw-pic" src="images/ground/${GROUND_PIC[i]}.webp" alt="" loading="lazy"><span class="gw-n"><b>${n}</b>${v ? `<span class="gw-d" role="img" aria-label="Connects ${v} of 3">${[1, 2, 3].map(i => `<i class="${i <= v ? 'on' : ''}"></i>`).join('')}</span>` : ''}</span>${v ? '' : '<em class="gw-no">Blocks it</em>'}<small>${t}</small></div>`).join('')}</div></section>
-
+// Ground (18 Nov 2026, redesign in the Unlock style): the title first, then the redwood as a taped polaroid among sparkles,
+// a day pill, the paper note with today's ground for her phase, sticker rules, and four sub-tabs instead of one long scroll:
+// Practices (tree + golden roots), Where to stand, Energy, Studies. A tab tap swaps only the panel.
+const GR_TABS = [['do', 'Practices'], ['where', 'Where'], ['energy', 'Energy'], ['studies', 'Studies']];
+function groundPanel(tab) {
+  if (tab === 'where') return `<section class="card ul3-keep gr2-where"><h3>Where to stand</h3><p class="gr2-sub">How well each surface connects you to the earth.</p>
+    ${GROUND_WHERE.map(([n, v, t], i) => `<div class="ul3-r gr2-w ${v ? '' : 'no'}" style="--i:${i}"><span class="ul3-ic gr2-pic"><img src="images/ground/${GROUND_PIC[i]}.webp" alt="" loading="lazy"></span><span><b>${n}</b><small>${t}</small></span>
+      ${v ? `<span class="gw-d" role="img" aria-label="Connects ${v} of 3">${[1, 2, 3].map(j => `<i class="${j <= v ? 'on' : ''}"></i>`).join('')}</span>` : `<span class="o3-x gr2-no" role="img" aria-label="Blocks it">${O3_X}</span>`}</div>`).join('')}</section>`;
+  if (tab === 'energy') return `<p class="gr2-lead">What drains you and what fills you back up.</p>${groundEnergy()}`;
+  if (tab === 'studies') return `<p class="gr2-lead">Five small studies, ${GROUND_STUDIES[0][1]} to ${GROUND_STUDIES[GROUND_STUDIES.length - 1][1]}. Tap one for the chart.</p>
+    <section class="grs" style="--pc:${PH_HEX[(M.info || {}).phase] || '#6c823e'}">
+      ${GROUND_STUDIES.map(([a, y, j, f, d, n, t], i) => `<details class="grs-r"><summary><b class="dotnum grs-y">${y}</b><span class="grs-t"><b>${f}</b>
+        <span class="grs-p" aria-label="${n ? `${n} people` : 'A review'}">${n ? `<i class="grs-dots">${'<i></i>'.repeat(n)}</i><small><em class="grs-a">${a.split(/[ ,&]/)[0]}</em> · ${n} people · ${t}</small>` : `<small><em class="grs-a">${a.split(/[ ,&]/)[0]}</em> · reviews the earlier work</small>`}</span></span>${icon('chevD', 15)}</summary>
+        <div class="grs-d"><figure class="msd-g">${groundArt(i)}</figure><p>${d}</p><small><b>${a}</b> · ${j}</small></div></details>`).join('')}
+      <dl class="grs-care"><div><dt>${icon('heart', 14)} How to read it</dt><dd>Small studies: a calm habit, not a treatment</dd></div>
+        <div><dt>${icon('bolt', 14)} Outdoors</dt><dd>Never in a thunderstorm</dd></div><div><dt>${icon('home', 14)} Indoor mats</dt><dd>Only properly wired and tested ones</dd></div></dl>
+    </section>`;
+  return `${groundTree()}
     <section class="grr">
       <div class="grr-h"><small>${icon('clock', 12)} ${GROUND_ROOTS.mins} minute practice</small><b>Golden roots</b><p>Sit on the earth and feel held. An old visualisation from many traditions.</p></div>
       <div class="grr-art" aria-hidden="true"><img src="images/ground/golden-roots.webp" alt="" loading="lazy" width="1400" height="549"></div>
@@ -587,16 +578,37 @@ function viewGround() {
         <li class="in"><i>${icon('chevD', 13, 2.4)}</i><b>Breathe in</b><small>Warmth rises back up into your belly</small></li>
       </ol>
       <div class="grr-f"><span>Repeat for ${GROUND_ROOTS.mins} minutes</span>${saveBtn(regTip('ground-roots', 'Grounding · roots', GROUND_ROOTS.d, 'ground'))}</div>
+    </section>`;
+}
+function viewGround() {
+  const info = M.info, ph = info && info.phase, P = ph && GROUND_PHASE[ph];
+  const late = info && info.daysToPeriod <= 3 && !info.isPeriod, d = P ? P.d : GROUND_NOW, warm = ph === 'menstrual' || late;
+  const tab = GR_TABS.some(t => t[0] === ui.grTab) ? ui.grTab : 'do';
+  const swirl = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';
+  const mins = (d[1].match(/(\d+) minutes/) || [])[1];
+  const rules = [[O3_TICK, 'Bare skin', 'ok'], [O3_TICK, 'Phone away', 'ok'], [O3_X, 'No storms', '']];
+  return `${topbar('Grounding', { back: true })}
+  <div class="pad ul3 ul4 gr2">
+    <header class="t4-h gr2-h"><small>Earthing</small><h1>Ground yourself.</h1><p>Bare skin on the earth. Your body takes on the ground’s calm, steady charge.</p></header>
+    <div class="ul4-stage gr2-stage">
+      <svg class="ul4-sp" viewBox="0 0 360 250" aria-hidden="true">${o3Spark('#f1d58a', 30, 30, 0)}${o3Spark('#fff', 330, 40, 1.1)}${o3Spark('#c9d6a8', 338, 222, 2)}${o3Spark('#f6c6d4', 20, 214, 1.6)}<circle class="o3-sp" style="--d:.6s" cx="296" cy="8" r="2.4" fill="#fff"/><circle class="o3-sp" style="--d:1.8s" cx="52" cy="240" r="2" fill="#fff"/></svg>
+      <figure class="gr2-pol"><img src="images/ground-tree.webp" alt="A hand resting on a giant redwood, light circling up into the sky" decoding="async"><figcaption>palms on the bark</figcaption></figure>
+      <span class="gr2-min"><b class="dotnum">15</b><small>min a day</small></span>
+    </div>
+    <span class="ul3-days">${info ? `Day <b class="dotnum">${info.cd}</b> · ${PHASES[ph].name}${warm ? ` · keep warm` : ''}` : `<b class="dotnum">15</b> min a day`}</span>
+    <section class="o3-note ul3-note ul4-note gr2-note">
+      <small class="ul4-eye">Your ground today</small>
+      <h2 class="ul4-h">${P ? `Today,<br><em>${P.t.toLowerCase()}${swirl}</em>` : `Shoes off,<br><em>feet down${swirl}</em>`}</h2>
+      <p class="o3-lead">${P ? `${d[0]}${mins ? ` for <mark>${mins} minutes</mark>` : ''}.` : 'Grass, sand or soil for <mark>10 to 20 minutes</mark>.'}</p>
+      ${P ? `<div class="gr2-spot"><img src="images/ground/${GROUND_SPOT[ph][0]}.webp" alt="" loading="lazy"><span><b>${GROUND_SPOT[ph][1]}</b><small>${({ Morning: 'Best in the morning', Midday: 'Best at midday', Evening: 'Best in the evening' })[d[3]] || `Best ${d[3].toLowerCase()}`}</small></span>${saveBtn(regTip(`ground-${ph}`, `Grounding · ${PHASES[ph].name}`, d, 'ground'))}</div>` : ''}
+      <div class="sgx-st"><b>How</b><ol class="gr2-ol"><li>${d[1].replace(/^\d+ minutes (\w)/, (m, c) => c.toUpperCase())}</li><li>${d[2]}</li></ol></div>
+      ${P ? `<details class="gr2-why"><summary>Why in this phase ${icon('chevD', 13)}</summary><p>${P.why}</p></details>` : ''}
+      <button class="ul3-cta" data-action="grGo">Start the tree practice</button>
+      <p class="o3-sign">the earth has you <i>♡</i></p>
     </section>
-
-    ${sectionTitle('What studies found')}<p class="hg-sub gr-st-sub">Five small studies, ${GROUND_STUDIES[0][1]} to ${GROUND_STUDIES[GROUND_STUDIES.length - 1][1]}. Tap one for the chart.</p>
-    <section class="grs" style="--pc:${PH_HEX[(M.info || {}).phase] || '#6c823e'}">
-      ${GROUND_STUDIES.map(([a, y, j, f, d, n, t], i) => `<details class="grs-r"><summary><b class="dotnum grs-y">${y}</b><span class="grs-t"><b>${f}</b>
-        <span class="grs-p" aria-label="${n ? `${n} people` : 'A review'}">${n ? `<i class="grs-dots">${'<i></i>'.repeat(n)}</i><small><em class="grs-a">${a.split(/[ ,&]/)[0]}</em> · ${n} people · ${t}</small>` : `<small><em class="grs-a">${a.split(/[ ,&]/)[0]}</em> · reviews the earlier work</small>`}</span></span>${icon('chevD', 15)}</summary>
-        <div class="grs-d"><figure class="msd-g">${groundArt(i)}</figure><p>${d}</p><small><b>${a}</b> · ${j}</small></div></details>`).join('')}
-      <dl class="grs-care"><div><dt>${icon('heart', 14)} How to read it</dt><dd>Small studies: a calm habit, not a treatment</dd></div>
-        <div><dt>${icon('bolt', 14)} Outdoors</dt><dd>Never in a thunderstorm</dd></div><div><dt>${icon('home', 14)} Indoor mats</dt><dd>Only properly wired and tested ones</dd></div></dl>
-    </section>
+    <ul class="ul3-no gr2-rules">${rules.map(([ic, t, c], i) => `<li style="--r:${[-2, 1.5, -1][i]}deg"><span class="o3-x ${c}">${ic}</span>${t}</li>`).join('')}</ul>
+    <div class="seg gr2-seg" role="tablist" aria-label="Grounding">${GR_TABS.map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" role="tab" aria-selected="${tab === k}" data-action="grTab" data-v="${k}">${l}</button>`).join('')}</div>
+    <div class="gr2-panel" role="tabpanel">${groundPanel(tab)}</div>
   </div>`;
 }
 // Ideas she can save straight from this page: today's tip for each of her focus areas first, then the rest.
@@ -11459,6 +11471,11 @@ const actions = {
   groAisle: d => { ui.groAisle = d.v; render(); const t = document.querySelector('.gro-tabs'), on = t && t.querySelector('.on'); if (on) t.scrollLeft = on.offsetLeft - (t.clientWidth - on.offsetWidth) / 2; },
   czTab: d => { ui.czTab = d.v; render(); },
   bzPick: d => bzOpen(d.v),
+  grTab: d => { ui.grTab = d.v; const pn = document.querySelector('#view .gr2-panel'); if (!pn) return render();
+    document.querySelectorAll('#view .gr2-seg button').forEach(b => { const on = b.dataset.v === d.v; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+    pn.innerHTML = groundPanel(d.v); pn.classList.remove('sw'); void pn.offsetWidth; pn.classList.add('sw'); decorateStudies?.(pn); },
+  grGo: () => { const go = () => { const t = document.querySelector('#view .gtr2'); t && t.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); };
+    if ((ui.grTab || 'do') !== 'do') { actions.grTab({ v: 'do' }); setTimeout(go, 60); } else go(); },
   bzClose: () => bzClose(),
   bzPhase: d => bzOpen(d.v),
   cyFact: d => { const j = +d.v; ui.cyFact = ui.cyFact === j ? null : j; render(); },

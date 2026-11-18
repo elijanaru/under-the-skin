@@ -17230,3 +17230,49 @@ html .gx2-note h2.ul4-h em { font-size: 37px; }
 .bzx .bz-pal { display: none; }
 .bzx .md-bar { background: rgba(255,255,255,.12); }
 @media (prefers-reduced-motion: reduce) { .bzx-dim, .bzx-in, .bzx-dim::after { transition: none; } .bzx-in { transform: none; } }
+
+/* Ground (18 Nov 2026, redesign in the Unlock style): title first, the redwood as a taped polaroid among sparkles, a day pill,
+   the paper note with today's ground, sticker rules, then sub-tabs (Practices, Where, Energy, Studies). */
+.gr2 { padding-top: 6px; }
+.gr2-h { margin-bottom: -2px; }
+.gr2-stage { margin: 0 2px; padding: 14px 0 22px; display: grid; justify-items: center; }
+.gr2-pol { position: relative; width: min(72vw, 270px); margin: 0; padding: 10px 10px 40px; background: #fffdf9; border-radius: 6px; transform: rotate(-3deg);
+  box-shadow: 0 22px 40px -18px rgba(60,30,40,.5), 0 3px 8px rgba(60,30,40,.1); animation: gr2Sway 9s ease-in-out infinite alternate; }
+.gr2-pol::before { content: ''; position: absolute; left: 50%; top: -12px; width: 92px; height: 26px; transform: translateX(-50%) rotate(-4deg);
+  background: repeating-linear-gradient(90deg, rgba(201,214,168,.85) 0 10px, rgba(222,231,201,.85) 10px 20px); box-shadow: 0 2px 4px rgba(60,30,40,.1); }
+.gr2-pol img { display: block; width: 100%; aspect-ratio: 4 / 4.6; object-fit: cover; border-radius: 3px; }
+.gr2-pol figcaption { position: absolute; left: 0; right: 0; bottom: 11px; text-align: center; font: 400 14px/1 var(--font); color: #6c823e; }
+@keyframes gr2Sway { from { transform: rotate(-3deg) translateY(0); } to { transform: rotate(-1.5deg) translateY(-6px); } }
+.gr2-min { position: absolute; right: 10%; top: 30px; width: 84px; height: 84px; border-radius: 50%; display: grid; place-content: center; justify-items: center; gap: 2px;
+  background: #fff; color: #20301a; transform: rotate(8deg); box-shadow: 0 12px 24px -12px rgba(60,30,40,.5); }
+.gr2-min b { font-size: 30px; line-height: 1; } .gr2-min small { font: 500 11.5px/1 var(--font); color: #4b5741; }
+.gr2 .ul3-days { margin-top: -12px; }
+.gr2-note .o3-lead { margin: 16px 0 0 !important; font-size: 16.5px !important; }
+.gr2-spot { display: grid; grid-template-columns: 52px 1fr auto; align-items: center; gap: 12px; margin: 16px 0 0; padding: 8px 8px 8px 8px; border-radius: 18px; background: #fff; text-align: left; box-shadow: 0 0 0 1px rgba(48,64,35,.08); }
+.gr2-spot img { width: 52px; height: 52px; border-radius: 14px; object-fit: cover; }
+.gr2-spot b { display: block; font: 600 15px/1.25 var(--font); color: #20301a; } .gr2-spot small { display: block; margin-top: 2px; font: 400 13px/1.3 var(--font); color: #4b5741; }
+.gr2-note .sgx-st { margin-top: 12px; }
+.gr2-ol { margin: 0; padding-left: 18px; display: grid; gap: 4px; } .gr2-ol li { padding-left: 2px; }
+.gr2-why { margin: 10px 0 0; text-align: left; }
+.gr2-why summary { display: inline-flex; align-items: center; gap: 4px; list-style: none; cursor: pointer; font: 500 13.5px/1 var(--font); color: #6c823e; padding: 6px 2px; }
+.gr2-why summary::-webkit-details-marker { display: none; }
+.gr2-why[open] summary .ic { transform: rotate(180deg); }
+.gr2-why p { margin: 4px 0 0; font: 300 14px/1.5 var(--font); color: #304023; }
+.gr2-note .ul3-cta { margin-top: 16px; }
+.ul3-no .o3-x.ok { background: #eef2e4 !important; } .ul3-no .o3-x.ok svg { stroke: #6c823e; }
+.gr2-seg { margin: 6px 0 0 !important; background: rgba(255,255,255,.62) !important; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.gr2-seg button { height: 40px; font-size: 14px; }
+.gr2-panel { display: grid; gap: 14px; }
+.gr2-panel.sw > * { animation: o3In .6s cubic-bezier(.22,1,.36,1) both; }
+.gr2-lead { margin: 0 4px; font: 400 14.5px/1.45 var(--font); color: #304023; text-align: center; }
+.gr2-where { padding-bottom: 10px; }
+.gr2-sub { margin: -2px 0 6px; text-align: center; font: 400 13.5px/1.4 var(--font); color: #4b5741; }
+.gr2-pic { overflow: hidden; padding: 0; } .gr2-pic img { width: 100%; height: 100%; object-fit: cover; }
+.gr2-w { grid-template-columns: 44px 1fr auto; } .gr2-w .ul3-ic { width: 44px; height: 44px; border-radius: 14px; }
+.gr2-w .gw-d { display: inline-flex; gap: 4px; }
+.gr2-w .gw-d i { width: 9px; height: 9px; border-radius: 50%; background: #e6e9dc; }
+.gr2-w .gw-d i.on { background: #6c823e; }
+.gr2-w.no b { color: #8a6070; }
+.gr2-no { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; background: #fde4eb; }
+.gr2-no svg { width: 14px; height: 14px; fill: none; stroke: #c4566f; stroke-width: 2.6; stroke-linecap: round; }
+@media (prefers-reduced-motion: reduce) { .gr2-pol { animation: none; } .gr2-panel.sw > * { animation: none; } }
