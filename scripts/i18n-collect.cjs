@@ -85,6 +85,9 @@ const NO = /^(nav|back|ac[A-Z]|sound|openLove|sendLove|useGeo|calPick|calSync|ca
         [`s.profile.bc = 'pill'; s.profile.bcPlan = 'keep'; s.profile.pillKind = '21'; s.profile.pillStart = '${iso(10)}';`, ['today', 'calendar', 'profile', 'with', 'pill']],
         [`s.profile.bc = 'pill'; s.profile.bcPlan = 'keep'; s.profile.pillKind = 'cont';`, ['today', 'profile', 'pill']],
         [`s.profile.bc = 'pill'; s.profile.bcPlan = 'keep';`, ['today']],
+        [`s.paid = false;`, ['unlock', 'today', 'profile']], // the unlock page as she sees it before paying
+        [`s.paid = false; s.trialStart = '${iso(40)}'; s.logs = { '${iso(0)}': { flow: 'medium' } };`, ['unlock', 'today']], // last free day
+        [`s.paid = false; s.trialStart = '${iso(40)}'; s.logs = { '${iso(2)}': { flow: 'medium' } };`, ['unlock']], // free cycle over
         [`s.logs = { '${iso(45)}': { flow: 'medium' }, '${iso(44)}': { flow: 'medium' }, '${iso(17)}': { intim: ['Sex, protected'] } };`, ['today', 'calendar', 'brain/${iso(17)}']],
       ];
       for (const [pre, hs] of VARIANTS) {

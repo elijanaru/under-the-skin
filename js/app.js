@@ -1776,7 +1776,11 @@ function onbAsk(o) {
 }
 function onbPromise() {
   const no = [['subscriptions', 'One payment, yours for good'], ['ads', 'Never, not even small ones'], ['hidden fees', 'The price you see is all'], ['selling your data', 'It stays yours, always'], ['popups', 'No nagging to upgrade']];
-  const steps = [['gift', 'Today', 'Full app, free'], ['calendar', 'Day 3', 'Decide, no charge before'], ['heart', 'Forever', 'One payment']];
+  const o = ui.onb || {}, day = C.startOfDay(new Date()), cap = C.addDays(day, TRIAL_MAX);
+  let nx = null; // her next period from what she told us, so the middle step is a real date, never a made-up "Day 3"
+  if (!o.noPeriod && (o.last || o.ago != null)) { const L = o.unsure ? 28 : (+o.cycleLength || 28); nx = o.last ? C.parseISO(o.last) : C.addDays(day, -(+o.ago || 0)); while (nx <= day) nx = C.addDays(nx, L); }
+  const due = nx && nx < cap ? nx : cap;
+  const steps = [['gift', 'Today', 'Full app, free'], ['calendar', fmt(due, { month: 'short', day: 'numeric' }), nx && nx < cap ? 'Your period · decide, no charge' : 'Decide, no charge before'], ['heart', 'Forever', 'One payment']];
   const x = O3_X;
   return `<div class="op op2 op3">
     ${o3Hero()}
@@ -12500,6 +12504,16 @@ function tkPlay(el) {
 }
 // Unlock price comparison (16 Nov 2026, her wording): what each costs over five years. Other apps climb a pink step every
 // year (€40 to €90 a year, so €200 to €450 by year five); Under the Skin is one flat moss line at the price, paid once.
+// How the free cycle works, with her own dates (the trial timeline top apps use, but nothing renews or charges by itself).
+function ulHow() {
+  const end = trialEnd(), last = C.addDays(end, -1), today = C.startOfDay(new Date()), d = x => fmt(x, { month: 'short', day: 'numeric' });
+  const started = !!trialNextPeriod(), lastToday = C.diffDays(last, today) <= 0;
+  const rows = [['gift', 'Today', lastToday ? 'Your last free day, everything is still open' : 'Everything is open, nothing to pay'],
+    ...(lastToday ? [] : [['bell', d(last), `${started ? 'Your last free day' : 'Your period comes, your last free day'}. A gentle heads-up in the app.`]]),
+    ['heart', lastToday ? 'Tomorrow' : d(end), `Unlock once for €${PRICE}, or wait. Nothing is charged by itself and your logs stay.`]];
+  return `<section class="card ul-how"><h3>How your free cycle works</h3><ol>${rows.map(([ic, t, s], i) =>
+    `<li class="${i === 0 ? 'now' : ''}"><span class="ul-how-ic">${icon(ic, 15, 2)}</span><div><b>${t}</b><small>${s}</small></div></li>`).join('')}</ol></section>`;
+}
 function ulCompare() {
   const X0 = 16, YW = 58, B = 128, k = 112 / 450, y = v => +(B - v * k).toFixed(1), x = t => X0 + t * YW, n = 5, p = +PRICE;
   const stepUp = c => { let d = `M${x(0)} ${B}`; for (let t = 0; t < n; t++) d += ` V${y(c * (t + 1))} H${x(t + 1)}`; return d; };
@@ -12530,7 +12544,6 @@ function viewUnlock() {
       ${ulTicket()}
     </div>
     <span class="ul3-days">${paid ? `${icon('heart', 13)} Unlocked` : lock ? 'Your free cycle is over' : trialNextPeriod() ? 'Your period started · last free day' : `Free until your next period · <b class="dotnum">${left}</b> ${left === 1 ? 'day' : 'days'}`}</span>
-    ${paid ? '' : ulCompare()}
     <section class="o3-note ul3-note ul4-note">
       <small class="ul4-eye">${paid ? `Welcome home${nm ? `, ${nm}` : ''}` : `${nm ? `${nm}, your` : 'Your'} ticket is ready`}</small>
       <h2 class="ul4-h">${paid ? `It’s yours,<br><em>for good${swirl}</em>` : `One ticket,<br><em>yours forever${swirl}</em>`}</h2>
@@ -12538,6 +12551,8 @@ function viewUnlock() {
       ${paid ? '' : `<button class="ul3-cta" data-action="buyUnlock" ${ui.paying ? 'disabled' : ''}>${ui.paying ? 'Opening payment…' : `Unlock for €${PRICE}`}</button>`}
       <p class="o3-sign">with love, from our little team <i>♡</i></p>
     </section>
+    ${paid || lock ? '' : ulHow()}
+    ${paid ? '' : ulCompare()}
     ${paid ? '' : `<ul class="ul3-no">${['No subscription', 'No ads', 'Data stays yours'].map((t, i) => `<li style="--r:${[-2, 1.5, -1][i]}deg"><span class="o3-x">${O3_X}</span>${t}</li>`).join('')}</ul>`}
     <section class="card ul3-keep"><h3>Everything is included</h3>
       ${UNLOCK_KEEP.map(([ic, t, sub], i) => `<div class="ul3-r" style="--i:${i}"><span class="ul3-ic emo" aria-hidden="true">${ic}</span><span><b>${t}</b><small>${sub}</small></span><i class="ul3-tick">${O3_TICK}</i></div>`).join('')}</section>
