@@ -50,7 +50,9 @@ export function cycleStats(state) {
   const pill = onPill && /^\d{4}-\d\d-\d\d$/.test(pr.pillStart || '') && pr.pillKind !== 'cont'
     ? { start: parseISO(pr.pillStart), kind: pr.pillKind === '24' ? '24' : '21', from: pr.pillKind === '24' ? 26 : 23, to: pr.pillKind === '24' ? 28 : 27 } : null;
   const noOv = onPill || (pr.bc === 'other' && pr.bcPlan !== 'stop');
-  return { logs, periods, lengths, avgCycle: pill ? 28 : avgCycle, avgPeriod: pill ? pill.to - pill.from + 1 : avgPeriod, variation, ovSeen, pill, noOv };
+  // on a no-break or mini pill, or before her pack is set, there is no bleed the app can honestly predict
+  const noPred = onPill && !pill;
+  return { logs, periods, lengths, avgCycle: pill ? 28 : avgCycle, avgPeriod: pill ? pill.to - pill.from + 1 : avgPeriod, variation, ovSeen, pill, noOv, noPred };
 }
 
 // Egg-white discharge is the peak fertile sign: the last egg-white day of a cycle is taken as her egg release.
@@ -115,18 +117,27 @@ export function dayInfo(date, stats) {
     start = addDays(anchor, k * L);
     predicted = true;
   }
-  const cd = diffDays(d, start) + 1;
+  let cd = diffDays(d, start) + 1;
   // a finished cycle is placed by when her next period really came, not by the average: egg release sits a luteal
   // length before that bleed. Under 21 days was most likely spotting or an early bleed, so no fertile days are drawn.
   const nextP = predicted ? null : periods[periods.indexOf(startP) + 1];
   const Lc = nextP ? diffDays(nextP.start, startP.start) : 0;
   const Lx = Lc >= 21 && Lc <= 60 ? Lc : L, tooShort = Lc > 0 && Lc < 21;
   const ov = ovulationDay(Lx, P);
-  const phase = cd > Lx ? 'luteal' : tooShort && cd > P ? 'follicular' : phaseFor(cd, Lx, P);
+  let phase = cd > Lx ? 'luteal' : tooShort && cd > P ? 'follicular' : phaseFor(cd, Lx, P);
+  // on the pill her "cycle day" counts from the start of the last pill-break bleed (pack day `from`), so the ring,
+  // the phase and the countdown to the next bleed always add up to her 28-day pack
+  const pk0 = stats.pill;
+  if (pk0 && d >= addDays(pk0.start, -28)) {
+    const pdd = ((diffDays(d, pk0.start) % 28) + 28) % 28 + 1;
+    cd = ((pdd - pk0.from) % 28 + 28) % 28 + 1; start = addDays(d, 1 - cd);
+    // no egg release on the pill, so no ovulatory days: bleed, then a rising half, then a quieter half before the break
+    phase = cd <= pk0.to - pk0.from + 1 ? 'menstrual' : cd <= 14 ? 'follicular' : 'luteal';
+  }
   const log = logs[iso(d)] || {};
   const periodActual = PERIOD_FLOWS.includes(log.flow);
   // today counts too: on day 2 of her period before she has logged today, she is still on her period
-  const periodPredicted = !periodActual && d >= today && cd <= P;
+  const periodPredicted = !stats.noPred && !periodActual && d >= today && cd <= P;
   const nextStart = (startP === last && !predicted) ? anchor : nextP ? nextP.start : addDays(start, L);
   const isToday = d.getTime() === today.getTime();
   // pill: the next bleed is the next pill break she hasn't bled in yet
@@ -136,7 +147,8 @@ export function dayInfo(date, stats) {
     let nb = addDays(today, pk.from - pt); if (pt > pk.to) nb = addDays(nb, 28);
     if (nb <= today && last.start >= addDays(nb, -3)) nb = addDays(nb, 28); // this break's bleed is already logged
     pillDay = pd(d); const ws = addDays(d, pk.from - pillDay);
-    pillPred = !periodActual && d >= today && pillDay >= pk.from && pillDay <= pk.to && ws >= nb;
+    // a break that is still to come, or the one she is bleeding in now (its first day already logged)
+    pillPred = !periodActual && d >= today && pillDay >= pk.from && pillDay <= pk.to && (ws >= nb || last.start >= addDays(ws, -3));
     pillNext = nb;
   }
   const noOv = !!stats.noOv;
@@ -145,11 +157,11 @@ export function dayInfo(date, stats) {
     fertile: !noOv && !tooShort && cd >= ov - 5 && cd <= ov + 1,
     isOvulation: !noOv && !tooShort && cd === ov,
     isPeriod: periodActual || (pk ? pillPred : periodPredicted), periodActual, periodPredicted: pk ? pillPred : periodPredicted,
-    late: !pk && !noOv && isToday && startP === last && lateBy > 0 ? lateBy : 0,
+    late: !pk && !noOv && !stats.noPred && isToday && startP === last && lateBy > 0 ? lateBy : 0,
     dueToday: !pk && isToday && startP === last && lateBy === 0,
     daysToPeriod: Math.max(0, diffDays(pk ? pillNext : nextStart, d)),
     daysToOv: noOv ? 999 : cd < ov ? ov - cd : cd === ov ? 0 : (L - cd) + ov,
-    cycleStart: start, nextStart: pk ? pillNext : nextStart, noOv, pillDay,
+    cycleStart: start, nextStart: pk ? pillNext : nextStart, noOv, pillDay, noPred: !!stats.noPred,
   };
 }
 

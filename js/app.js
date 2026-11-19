@@ -1225,14 +1225,31 @@ function onbArt(k) { return `<div class="onb-art"><svg viewBox="0 0 220 200" ari
 const hormonalBC = k => !!BIRTH_CONTROL.find(b => b.k === k && b.h);
 // On the pill (19 Nov 2026): which pack she takes and the day she started it, so her bleed is predicted from the pill break
 const onPill = () => state?.profile?.bc === 'pill' && state.profile.bcPlan !== 'stop';
-const PILL_KINDS = [['21', '21 pills, 7-day break'], ['24', '24 pills, 4-day break'], ['cont', 'No break, or the mini pill']];
+const PILL_KINDS = [['21', '21 + 7', 'Then 7 days off', 21], ['24', '24 + 4', 'Then 4 days off', 24], ['cont', 'No break', 'Every day, or the mini pill', 28]];
+// a little blister pack: 4 rows of 7, active pills filled, break days hollow
+const blister = (act, cls = '') => `<span class="bl ${cls}" aria-hidden="true">${Array.from({ length: 28 }, (_, i) => `<i class="${i < act ? 'a' : 'b'}"></i>`).join('')}</span>`;
+// which pill she takes today, from the first pill of this pack
+// redraw only the pill question, so the page around it stays still
+function pillRedraw(scope) {
+  if (scope !== 'onb') { save(); M = model(); }
+  const q = document.querySelector('.pill-q'); if (q) { const t = document.createElement('template'); t.innerHTML = pillQ(scope === 'onb' ? ui.onb : state.profile, scope === 'onb'); I18N.tr(t.content); q.replaceWith(t.content); }
+  if (scope !== 'onb') render();
+}
+const pillNow = o => o.pillStart && /^\d{4}-\d\d-\d\d$/.test(o.pillStart) ? ((C.diffDays(C.parseISO(todayISO()), C.parseISO(o.pillStart)) % 28) + 28) % 28 + 1 : null;
 function pillQ(o, onb) {
-  const k = o.pillKind || '21';
-  return `<div class="pill-q"><p class="muted sm">Which pill do you take?</p>
-    <div class="chips">${PILL_KINDS.map(([v, t]) => `<button class="chip ${k === v ? 'on' : ''}" data-action="${onb ? 'onbPill' : 'setPill'}" data-v="${v}">${t}</button>`).join('')}</div>
-    ${k === 'cont' ? '<p class="fine">Without a break there is usually no regular bleed, so the app doesn’t predict one. Log any bleeding and it shows on your calendar.</p>'
-      : `<label class="pill-date"><span>First pill of this pack</span><input type="date" class="field" data-input="${onb ? 'onb' : 'profile'}.pillStart" value="${esc(o.pillStart || '')}" max="${todayISO()}"></label>
-      <p class="fine">The pill stops egg release, so there are no fertile days to show. The bleed in your break comes from the pill pause, and the app predicts it from your pack.</p>`}
+  const k = o.pillKind || '', kd = PILL_KINDS.find(x => x[0] === k), n = pillNow(o), sc = onb ? 'onb' : 'profile';
+  const act = kd ? kd[3] : 21, from = k === '24' ? 26 : 23;
+  const next = n && kd && k !== 'cont' ? C.addDays(C.parseISO(todayISO()), (n <= (k === '24' ? 28 : 27) && n >= from ? 0 : ((from - n) % 28 + 28) % 28)) : null;
+  return `<div class="pill-q">
+    <p class="pq-h"><b>1</b>Which pack looks like yours?</p>
+    <div class="pq-kinds">${PILL_KINDS.map(([v, t, sub, a]) => `<button class="pq-k ${k === v ? 'on' : ''}" data-action="pillKind" data-scope="${sc}" data-v="${v}" aria-pressed="${k === v}">${blister(a)}<b>${t}</b><small>${sub}</small></button>`).join('')}</div>
+    ${!kd ? '' : k === 'cont' ? '<p class="fine">Without a break there is usually no regular bleed, so the app doesn’t predict one. Spotting is common at first: log any bleeding and it shows on your calendar.</p>'
+      : `<p class="pq-h"><b>2</b>Which pill do you take today?</p>
+      <p class="fine pq-sub">Look at your pack and tap that pill. Taking a break today? Tap the break day you’re on.</p>
+      <div class="pq-pack" role="group" aria-label="Your pack">${Array.from({ length: 28 }, (_, i) => `<button class="pq-p ${i < act ? 'a' : 'b'} ${n === i + 1 ? 'on' : ''}" data-action="pillToday" data-scope="${sc}" data-v="${i + 1}" aria-pressed="${n === i + 1}" aria-label="${i < act ? `Pill ${i + 1}` : `Break day ${i + 1 - act}`}">${i < act ? i + 1 : ''}</button>`).join('')}</div>
+      <p class="pq-key"><span><i class="a"></i>Pills</span><span><i class="b"></i>Break</span></p>
+      ${n ? `<p class="pq-ok">${icon('check', 14, 2.4)}<span>${n <= act ? `Pill ${n} today` : `Break day ${n - act} today`}. ${next ? (C.diffDays(next, C.parseISO(todayISO())) === 0 ? 'Your break bleed is due now.' : `Next bleed around <b>${fmt(next, { weekday: 'short', month: 'short', day: 'numeric' })}</b>.`) : ''}</span></p>` : ''}
+      <p class="fine">The pill stops egg release, so there are no fertile days to show. The bleed in your break comes from the pause in hormones.</p>`}
     ${onb ? '' : `<button class="pl-link" data-action="nav" data-to="pill">How your pill works ${icon('chevR', 13)}</button>`}</div>`;
 }
 // which issues the 90-day plan covers, from the onboarding answers or the saved profile
@@ -1966,7 +1983,8 @@ function viewToday() {
   const energy = Math.round(myEnergy(info) * 100);
   const seed = dayNum(today);
   const chips = [];
-  if (M.stats.pill) { // on the pill: her pack day and the bleed in her next break
+  if (M.stats.noPred) chips.push('<span class="hchip">💊 On the pill · no bleed to predict</span>');
+  else if (M.stats.pill) { // on the pill: her pack day and the bleed in her next break
     chips.push(`<span class="hchip">💊 Pill day ${info.pillDay} of 28</span>`);
     chips.push(`<span class="hchip">${icon('drop', 14)} ${info.isPeriod ? 'Pill-break bleed' : `Bleed in ${plural(info.daysToPeriod, 'day')}`}</span>`);
   } else {
@@ -2177,6 +2195,9 @@ function calDial(inf, size = 132) {
     <span class="cdial-c"><small>Day</small><b>${inf.cd}</b><em>of ${L}</em></span>`;
 }
 function calTop(inf, fStart, nextOv, short) {
+  if (inf.noPred && !inf.isPeriod) return `<section class="cal3"><div class="cal3-row"><div class="cal3-num"><span class="eyebrow">On the pill</span>
+      <p class="cal3-np">No bleed to predict</p><small>${state.profile.pillKind === 'cont' ? 'Without a break there is usually no regular bleed. Log any spotting and it shows here.' : 'Add your pill pack in Profile and the app shows your next bleed.'}</small></div>
+      <div class="cal3-bl">${blister(state.profile.pillKind === 'cont' ? 28 : 21, 'lg')}</div></div></section>`;
   const fertileNow = inf.fertile && !inf.isPeriod, dOv = inf.daysToOv, ph = PHASES[inf.phase];
   // on her period the dial already shows the cycle day, so the big number says how many period days are likely left (from her usual length)
   const left = inf.isPeriod ? (inf.P || 5) - inf.cd : 0;
@@ -2275,7 +2296,7 @@ function viewCalendar() {
       : `<div class="cal-grid ${slide}">${cells}</div>`}
       ${ui.calStart ? `<div class="cal-editbar"><span>Tap the day your period started. We set the rest for you.</span><button class="btn btn-light cal-done" data-action="calStartCancel">Cancel</button></div>`
         : ui.calEdit ? `<div class="cal-editbar"><span>${ui.calFix ? `Tap a day to add or remove bleeding. The ringed day is ${fmt(C.parseISO(ui.calFix), { month: 'short', day: 'numeric' })}.` : 'Tap each day you bled'}</span><button class="btn btn-light cal-done" data-action="calEdit">Done</button></div>`
-        : `<div class="cal2-legend"><span><i class="lg-p"></i>${M.stats.pill ? 'Bleed' : 'Period'}</span>${M.stats.noOv ? '' : '<span><i class="lg-f"></i>Fertile</span><span><i class="lg-o"></i>Egg release</span>'}<span><i class="lg-l"></i>Logged</span>${Object.keys(state.logs).some(k => k.startsWith(C.iso(first).slice(0, 7)) && hadSex(state.logs[k])) ? '<span><i class="lg-x">🔥</i>Sex</span>' : ''}</div>
+        : `<div class="cal2-legend"><span><i class="lg-p"></i>${M.stats.pill || M.stats.noPred ? 'Bleed' : 'Period'}</span>${M.stats.noOv ? '' : '<span><i class="lg-f"></i>Fertile</span><span><i class="lg-o"></i>Egg release</span>'}<span><i class="lg-l"></i>Logged</span>${Object.keys(state.logs).some(k => k.startsWith(C.iso(first).slice(0, 7)) && hadSex(state.logs[k])) ? '<span><i class="lg-x">🔥</i>Sex</span>' : ''}</div>
       ${calDayLine(sd, si, slog, selLine, isFuture)}
       <button class="cal-editbtn" data-action="calEdit">${icon('drop', 15)} Edit period days</button>`}
     </section>
@@ -4700,7 +4721,7 @@ function dueReminders() {
   }
   if (r.cycle) { // small nudges timed to the cycle
     const tm = C.dayInfo(C.addDays(new Date(), 1), M.stats), w = dayWindow(info), hNow = new Date().getHours();
-    if (!info.isPeriod && info.daysToPeriod === 3) out.push({ id: 'cy-mag', icon: 'spark', title: 'Magnesium from today', body: '3 days to your period. Magnesium in the evening can ease cramps, bloating and PMS.', to: 'relief' });
+    if (!info.isPeriod && !info.noPred && info.daysToPeriod === 3) out.push({ id: 'cy-mag', icon: 'spark', title: 'Magnesium from today', body: '3 days to your period. Magnesium in the evening can ease cramps, bloating and PMS.', to: 'relief' });
     if (tm && !warmWindow(info) && warmWindow(tm)) out.push({ id: 'cy-warm', icon: 'bowl', title: 'Warm food from tomorrow', body: 'No raw or cold food until your period ends. Plan a soup or stew and keep ginger at home.', to: 'plan' });
     if ((w === 'premenstrual' || w === 'flow-start') && hNow >= 19) out.push({ id: 'cy-sleep', icon: 'moon', title: 'An early night tonight', body: 'Your hormones are low now. Extra sleep helps mood and cramps.' });
     if (w === 'flow-end' && info.cd === info.P) out.push({ id: 'cy-iron', icon: 'drop', title: 'Rebuild your iron', body: `${{ pesc: 'Mussels or sardines', veg: 'Lentils, eggs or cooked spinach', vegan: 'Lentils or cooked spinach' }[myDiet()] || 'Red meat or liver'} with peppers or citrus today. Nettle tea between meals.`, to: 'tea' });
@@ -6608,6 +6629,7 @@ function stageHero(info, energy, o = {}) {
   const cap = (ic, v, pct, k, to) => `<${nav ? 'button' : 'div'} class="cap" ${nav ? `data-action="nav" data-to="${to}"` : ''}><span class="cap-pill"><svg class="cap-o" viewBox="0 0 120 52" preserveAspectRatio="none" aria-hidden="true"><rect class="cap-t" x="1.5" y="1.5" width="117" height="49" rx="24.5"/><rect class="cap-p" x="1.5" y="1.5" width="117" height="49" rx="24.5" pathLength="100" stroke-dasharray="${Math.max(2, Math.round(pct))} 100"/></svg>${icon(ic, 15)}<b class="${/\d/.test(v) ? '' : 'word'}">${v}</b></span><small>${k}</small></${nav ? 'button' : 'div'}>`;
   const nextP = Math.max(0, info.daysToPeriod);
   const perCap = cap('drop', nextP === 0 ? 'Today' : `${nextP}d`, nextP === 0 ? 100 : (1 - nextP / L) * 100, info.pillDay ? 'Next bleed' : 'Next period', 'calendar');
+  const perCapX = info.noPred ? cap('drop', 'Pill', 0, 'No bleed due', nav ? 'pill' : 'calendar') : perCap;
   const lw = nav && lossCare() ? lossDays() : null; // in recovery after a loss: her week of healing instead of fertile yes/no
   const fertCap = lw != null ? cap('heart', `${Math.floor(lw / 7) + 1}w`, Math.min(100, lw / 42 * 100), 'Healing', 'loss') : cap('heart', info.fertile ? 'Yes' : 'No', info.fertile ? 100 : 0, 'Fertile', 'guide');
   return `<div class="opal">
@@ -6619,7 +6641,7 @@ function stageHero(info, energy, o = {}) {
       <div class="stage-stats">
         <div class="stage-day"><small>Day</small> ${cd}</div>
         <svg class="stage-br" viewBox="0 0 300 30" preserveAspectRatio="none" aria-hidden="true"><path d="M150 0 V12 M150 12 C150 18 140 18 130 18 H62 C52 18 50 22 50 30 M150 12 C150 18 160 18 170 18 H238 C248 18 250 22 250 30" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
-        <div class="caps">${cap('bolt', `${energy}%`, energy, 'Energy', 'rhythm')}${perCap}${o.fert === false ? '' : fertCap}</div>
+        <div class="caps">${cap('bolt', `${energy}%`, energy, 'Energy', 'rhythm')}${perCapX}${o.fert === false ? '' : fertCap}</div>
       </div>
     </div>
   </div>`;
@@ -10231,8 +10253,8 @@ function viewProfile() {
     <section class="card glass pg-prof">${pregPicker(p, 'profile')}</section>
     ${sectionTitle('Birth control')}
     <section class="card glass"><div class="chips">${BIRTH_CONTROL.map(b => `<button class="chip ${(p.bc || 'none') === b.k ? 'on' : ''}" data-action="setBc" data-v="${b.k}">${b.t}</button>`).join('')}</div>
-      ${p.bc === 'pill' && p.bcPlan !== 'stop' ? pillQ(p) : ''}
-      ${hormonalBC(p.bc) ? `<p class="muted sm" style="margin:12px 0 8px">Coming off it?</p><div class="chips">${BC_PLAN.map(b => `<button class="chip ${p.bcPlan === b.k ? 'on' : ''}" data-action="setBcPlan" data-v="${b.k}">${b.t}</button>`).join('')}</div>` : ''}</section>
+      ${hormonalBC(p.bc) ? `<p class="muted sm" style="margin:12px 0 8px">Coming off it?</p><div class="chips">${BC_PLAN.map(b => `<button class="chip ${p.bcPlan === b.k ? 'on' : ''}" data-action="setBcPlan" data-v="${b.k}">${b.t}</button>`).join('')}</div>` : ''}
+      ${p.bc === 'pill' && p.bcPlan !== 'stop' ? pillQ(p) : ''}</section>
     ${M.info ? `<button class="card glass pf-link" data-action="nav" data-to="insights"><span>${icon('chart', 18)}</span><b>Your hormones & patterns<small>What the app has learned about you</small></b>${icon('chevR', 16)}</button>` : ''}`;
   else if (tab === 'alerts') body = `${remindersSection()}
     ${M.info ? calSyncCard() : ''}
@@ -11470,7 +11492,7 @@ const actions = {
     if (!o.noPeriod) for (let i = 0; i < o.periodLength; i++) { const d = C.addDays(s, i); if (d <= new Date()) logs[C.iso(d)] = { flow: i === 0 || i === 1 ? 'medium' : 'light' }; }
     ui.arrive = true;
     let pend = null; try { pend = b64d(localStorage.getItem('uts.pendingPartner') || ''); localStorage.removeItem('uts.pendingPartner'); } catch {}
-    state = { onboarded: true, profile: { name: o.name.trim(), country: o.country || myCountry(), diet: o.diet || 'all', cycleLength: o.unsure || o.noPeriod ? 28 : o.cycleLength, cycleUnsure: !!(o.unsure || o.noPeriod), noPeriod: !!o.noPeriod || undefined, npWhy: o.noPeriod && o.npWhy?.length ? o.npWhy : undefined, npSince: o.noPeriod ? todayISO() : undefined, preg: o.preg || (o.purpose === 'after' ? 'kids' : undefined), ttc: o.purpose === 'conceive' && o.ttc || undefined, ttcSince: o.purpose === 'conceive' && o.ttcSince || undefined, ppAt: o.ppAt || undefined, ppOld: o.ppOld || undefined, lossAt: o.preg === 'loss' && o.lossAt || undefined, lossOld: o.preg === 'loss' && o.lossOld || undefined, lossN: o.preg === 'loss' && o.lossN || undefined, lossHelp: o.preg === 'loss' && o.lossHelp?.length ? o.lossHelp : undefined, bf: o.bf || undefined, bc: o.bc || 'none', bcPlan: hormonalBC(o.bc) ? o.bcPlan || 'think' : undefined, pillKind: o.bc === 'pill' ? o.pillKind || '21' : undefined, pillStart: o.bc === 'pill' && o.pillStart || undefined, bcStop: o.bcPlan === 'stop' ? todayISO() : undefined, planStart: todayISO(), periodLength: o.periodLength, goals: o.goals, purpose: o.purpose || 'know', focus: (o.focus && o.focus.length) ? o.focus : ['hormones', 'energy', 'eat'], birthday: o.birthday || undefined, birthTime: o.birthday && o.birthTime || undefined, birthPlace: o.birthday && o.birthPlace || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
+    state = { onboarded: true, profile: { name: o.name.trim(), country: o.country || myCountry(), diet: o.diet || 'all', cycleLength: o.unsure || o.noPeriod ? 28 : o.cycleLength, cycleUnsure: !!(o.unsure || o.noPeriod), noPeriod: !!o.noPeriod || undefined, npWhy: o.noPeriod && o.npWhy?.length ? o.npWhy : undefined, npSince: o.noPeriod ? todayISO() : undefined, preg: o.preg || (o.purpose === 'after' ? 'kids' : undefined), ttc: o.purpose === 'conceive' && o.ttc || undefined, ttcSince: o.purpose === 'conceive' && o.ttcSince || undefined, ppAt: o.ppAt || undefined, ppOld: o.ppOld || undefined, lossAt: o.preg === 'loss' && o.lossAt || undefined, lossOld: o.preg === 'loss' && o.lossOld || undefined, lossN: o.preg === 'loss' && o.lossN || undefined, lossHelp: o.preg === 'loss' && o.lossHelp?.length ? o.lossHelp : undefined, bf: o.bf || undefined, bc: o.bc || 'none', bcPlan: hormonalBC(o.bc) ? o.bcPlan || 'think' : undefined, pillKind: o.bc === 'pill' && o.pillKind || undefined, pillStart: o.bc === 'pill' && o.pillStart || undefined, bcStop: o.bcPlan === 'stop' ? todayISO() : undefined, planStart: todayISO(), periodLength: o.periodLength, goals: o.goals, purpose: o.purpose || 'know', focus: (o.focus && o.focus.length) ? o.focus : ['hormones', 'energy', 'eat'], birthday: o.birthday || undefined, birthTime: o.birthday && o.birthTime || undefined, birthPlace: o.birthday && o.birthPlace || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
     if (pend && pend.s && pend.c) state.partners = [{ ...pend, id: Date.now().toString(36), added: Date.now() }];
     if (o.geo) state.profile.geo = o.geo; if (o.askG) state.profile.geoAsked = true; // asked on the last onboarding page
     ui.scrollMem = {}; ui.navStack = []; save(); go('today'); render(); toTop(); requestAnimationFrame(toTop); setTimeout(toTop, 400); // she lands at the very top of Today
@@ -11544,8 +11566,9 @@ const actions = {
     save(); render(); },
   trOpen: () => { ui.trOpen = !ui.trOpen; render(); },
   afterOpen: d => { ui.afOpen = ui.afOpen === d.v ? null : d.v; render(); },
-  setPill: d => { state.profile.pillKind = d.v; save(); render(); },
-  onbPill: d => { ui.onb.pillKind = d.v; const q = document.querySelector('.bc-q'); if (q) q.outerHTML = bcQHTML(ui.onb); else render(); },
+  // pill pack: kind, then which pill she takes today (stored as the first day of this pack)
+  pillKind: d => { const src = d.scope === 'onb' ? ui.onb : state.profile; src.pillKind = d.v; pillRedraw(d.scope); },
+  pillToday: d => { const src = d.scope === 'onb' ? ui.onb : state.profile; src.pillStart = C.iso(C.addDays(C.parseISO(todayISO()), 1 - +d.v)); pillRedraw(d.scope); },
   pillSetup: () => { ui.pfTab = 'cycle'; go('profile'); },
   setBc: d => { const p = state.profile; p.bc = d.v; if (!hormonalBC(d.v)) delete p.bcPlan; else p.bcPlan = p.bcPlan || 'think'; save(); render(); },
   setBcPlan: d => { const p = state.profile; p.bcPlan = d.v; if (d.v === 'stop' && !p.bcStop) p.bcStop = todayISO(); save(); render(); },
