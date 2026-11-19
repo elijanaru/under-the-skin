@@ -2192,7 +2192,7 @@ function calDial(inf, size = 132) {
   const [mx, my] = polar(cx, cx, r, ang(cd + .5));
   return `<svg class="cdial" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" aria-hidden="true">${arcs}
     <circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="8.5" fill="#fff" stroke="#20301a" stroke-width="2.5"/></svg>
-    <span class="cdial-c"><small>Day</small><b>${inf.cd}</b><em>of ${L}</em></span>`;
+    <span class="cdial-c"><small>Cycle day</small><b>${inf.cd}</b><em>of ${L} days</em></span>`;
 }
 function calTop(inf, fStart, nextOv, short) {
   if (inf.noPred && !inf.isPeriod) return `<section class="cal3"><div class="cal3-row"><div class="cal3-num"><span class="eyebrow">On the pill</span>
@@ -2411,7 +2411,7 @@ function calDayLine(sd, si, slog, selLine, isFuture) {
   if (si && si.cd && si.L && / · day \d+/.test(title)) { const exp = / · expected$/.test(title), mode = (COMPASS[dayWindow(si)] || {}).mode;
     title = title.replace(/ · expected$/, '').replace(/ · day \d+/, ''); title = `${exp ? `Expected ${title.toLowerCase()}` : title}${mode ? ` · ${mode}` : ''}`; }
   const warm = si && si.cd && si.L && warmWindow(si) ? `<p class="cdl-warm">${icon('sun', 13)} Warm days: cooked food, no raw or iced</p>` : '';
-  return `<div class="cdl day-panel"><i style="background:${c}"></i><span><small>${fmt(sd, { weekday: 'short', month: 'short', day: 'numeric' })}${si && si.cd ? ` · Day <b class="dotnum">${si.cd}</b>` : ''}</small><b>${title}</b></span>
+  return `<div class="cdl day-panel"><i style="background:${c}"></i><span><small>${fmt(sd, { weekday: 'short', month: 'short', day: 'numeric' })}${si && si.cd ? ` · Cycle day <b class="dotnum">${si.cd}</b>` : ''}</small><b>${title}</b></span>
     ${isFuture ? '' : `<button class="cdl-go" data-action="logDay" data-date="${C.iso(sd)}">${icon(logged ? 'check' : 'plus', 14)} ${logged ? 'Edit' : 'Log'}</button>`}
     ${hm}${warm}
     ${chips.length ? `<div class="cdl-ch">${ahead ? `<small>${isToday ? 'Your pattern today' : 'Your pattern on this day'}</small>` : ''}<div>${show.map(([e, t, rk]) => rk ? `<button data-action="nav" data-to="relief/${encodeURIComponent(rk)}"><i class="emo" aria-hidden="true">${e}</i>${esc(t)}${icon('chevR', 11)}</button>` : `<span><i class="emo" aria-hidden="true">${e}</i>${esc(t)}</span>`).join('')}${more ? `<span class="m">+${more}</span>` : ''}</div></div>` : ''}</div>`;
@@ -2444,7 +2444,7 @@ const CAL_WORD = { // one word per stretch of the cycle, shown as the calendar e
   'flow-start': ['🩸', 'Period', 'Rest'], 'flow-end': ['🩸', 'Period', 'Plan'],
   rising: ['🌱', 'Follicular', 'Gym'], building: ['🌱', 'Follicular', 'Create'],
   peak: ['✨', 'Ovulation', 'Party'], settle: ['🍂', 'Luteal', 'Focus'],
-  focus: ['🍂', 'Luteal', 'Finish'], premenstrual: ['🌙', 'Pre-period', 'Cosy'],
+  focus: ['🍂', 'Luteal', 'Wrap up'], premenstrual: ['🌙', 'Pre-period', 'Cosy'],
 };
 function calStretches(days = 182, start = M.today) {
   const out = [];
@@ -6491,7 +6491,7 @@ const COMPASS = {
   building: { mode: 'Push', lvl: 3, why: 'Estrogen climbs to its peak and testosterone rises. For many women energy is at its highest now.', work: 'Your big tasks, hard decisions and important conversations.', ease: 'Skipping meals and sleep because you’re flying.', body: 'Strength, intervals, your hardest sessions, if you feel like it.' },
   peak: { mode: 'Push', lvl: 3, why: 'Around ovulation energy, confidence and social drive are often at their peak.', work: 'Pitch, present, network, ask for what you want.', ease: 'Saying yes to everything. Protect next week.', body: 'High-energy training, dancing, sprints if you feel good.' },
   settle: { mode: 'Steady', lvl: 2, why: 'Progesterone rises and energy turns calmer and steadier.', work: 'Finish what you started, deep work, admin.', ease: 'Starting five new things at once.', body: 'Moderate strength, longer steady sessions, eat a little more.' },
-  focus: { mode: 'Finish', lvl: 1, why: 'Progesterone is high. Many women feel more inward and enjoy order.', work: 'Wrap up, organise, edit, tie loose ends.', ease: 'Late nights and back-to-back plans.', body: 'Pilates, yoga, walks, moderate weights.' },
+  focus: { mode: 'Wrap up', lvl: 1, why: 'Progesterone is high. Many women feel more inward and enjoy order.', work: 'Wrap up, organise, edit, tie loose ends.', ease: 'Late nights and back-to-back plans.', body: 'Pilates, yoga, walks, moderate weights.' },
   premenstrual: { mode: 'Slow down', lvl: 0, why: 'Hormones fall before your period. Energy dips and stress can feel bigger.', work: 'A lighter schedule: finish only what’s due and say no more often.', ease: 'Harsh self-talk, and comparing yourself with your best week.', body: 'Gentle movement, warm food, early nights.' },
 };
 const COMPASS_LINE = [
@@ -6647,7 +6647,7 @@ function stageHero(info, energy, o = {}) {
         <span class="bubble ${info.phase}" title="${FLOWER[info.phase].n}">${flowerImg(info.phase)}<i class="bubble-glass"></i></span></div>
       <span class="stage-base"></span>
       <div class="stage-stats">
-        <div class="stage-day"><small>Day</small> ${cd}</div>
+        <div class="stage-day"><small>Cycle day</small> ${cd}</div>
         <svg class="stage-br" viewBox="0 0 300 30" preserveAspectRatio="none" aria-hidden="true"><path d="M150 0 V12 M150 12 C150 18 140 18 130 18 H62 C52 18 50 22 50 30 M150 12 C150 18 160 18 170 18 H238 C248 18 250 22 250 30" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
         <div class="caps">${cap('bolt', `${energy}%`, energy, 'Energy', 'rhythm')}${perCapX}${o.fert === false ? '' : fertCap}</div>
       </div>
