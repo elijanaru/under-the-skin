@@ -8908,7 +8908,12 @@ function syRefresh() {
   const v = document.getElementById('view'), old = v && v.querySelector('.sy-flow'); if (!old) return false;
   const t = document.createElement('div'); t.innerHTML = viewPartners();
   const nf = t.querySelector('.sy-flow'), nh = t.querySelector('.sy-head'), oh = v.querySelector('.sy-head'); if (!nf) return false;
-  nf.classList.add('sy-soft'); old.replaceWith(nf); if (oh && nh) oh.replaceWith(nh);
+  // keep the woman/man question she just tapped (only its state changes), so iOS never loses its place
+  const y = v.scrollTop, wy = window.scrollY, oq = old.querySelector('.sy-who-q'), nq = nf.querySelector('.sy-who-q');
+  if (oq && nq) { oq.querySelectorAll('[data-action=ptWho]').forEach(b => { const on = b.dataset.v === state.profile.ptWho; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); }); nq.replaceWith(oq); }
+  old.replaceWith(nf); if (oh && nh) oh.replaceWith(nh);
+  v.scrollTop = y; if (window.scrollY !== wy) window.scrollTo(0, wy);
+  requestAnimationFrame(() => { if (v.scrollTop !== y) v.scrollTop = y; });
   return true;
 }
 // Typical mood (0–1): follows estrogen up, dips in the late premenstrual days and the first bleeding days.
