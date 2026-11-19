@@ -23,6 +23,9 @@ const on = () => DICT || collect;
 export async function ready() {
   document.documentElement.lang = LANG;
   if (LANG === 'en') return;
+  // Korean gets its own soft, rounded fonts (19 Nov 2026, her ask): Gowun Dodum for text, Jua for big titles
+  if (LANG === 'ko' && !document.getElementById('ko-font')) { const l = document.createElement('link'); l.id = 'ko-font'; l.rel = 'stylesheet';
+    l.href = 'https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&display=swap'; document.head.appendChild(l); }
   try { DICT = new Map(Object.entries((await import(`./lang/${LANG}.js`)).default)); } catch { DICT = null; }
 }
 export function setLang(l) { if (l === 'auto') store('uts.lang', null); else store('uts.lang', l); location.reload(); }

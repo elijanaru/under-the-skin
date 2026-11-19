@@ -1,0 +1,10 @@
+{
+ "Good morning, <t0>{0}</t0>": "Buenos días, <t0>{0}</t0>",
+ "Good morning,<x0/><t1>{0}</t1>": "Buenos días,<x0/><t1>{0}</t1>",
+ "Good afternoon, <t0>{0}</t0>": "Buenas tardes, <t0>{0}</t0>",
+ "Good afternoon,<x0/><t1>{0}</t1>": "Buenas tardes,<x0/><t1>{0}</t1>",
+ "Good evening, <t0>{0}</t0>": "Buenas noches, <t0>{0}</t0>",
+ "Good evening,<x0/><t1>{0}</t1>": "Buenas noches,<x0/><t1>{0}</t1>",
+ "Good night, <t0>{0}</t0>": "Buenas noches, <t0>{0}</t0>",
+ "Good night,<x0/><t1>{0}</t1>": "Buenas noches,<x0/><t1>{0}</t1>"
+}

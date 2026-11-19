@@ -17310,7 +17310,12 @@ html .gr2 .gr2-h small { color: #16230f; }
 /* Spanish and Korean (19 Nov 2026). Korean breaks between words, never inside one; Outfit has no Hangul, so the phone's
    own Korean face (Apple SD Gothic Neo / Noto Sans KR) draws it at the same weights. Spanish runs longer: long words hyphenate in body text. */
 html[lang="ko"] body { word-break: keep-all; overflow-wrap: anywhere; }
-html[lang="ko"] { --font: 'Outfit', 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, -apple-system, sans-serif; }
+html[lang="ko"] { --font: 'Outfit', 'Gowun Dodum', 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, -apple-system, sans-serif;
+  --font-ko-title: 'Outfit', 'Jua', 'Gowun Dodum', 'Apple SD Gothic Neo', sans-serif; }
+/* Korean: Hangul in the cute rounded fonts, Latin letters stay Outfit, numbers stay Doto */
+html[lang="ko"] :is(.gate-hud, .aura-orb.big b, .sup-sym, .spec-glyph.sym, .ax-chip, .sp-b, .ct-g text, .ag-you, .bzm-t, .cyf-t > b small, .uvw-st b.w,
+  .dpt-fr.dpt-sun, .dsun-l, .uvc text, .af-big b em, .pg-tile, .pg-sw, .cyf-t > b .cyf-w, .pq-p) { font-family: var(--font); }
+html[lang="ko"] :is(h1, h2, .page-h, .onb-title, .em-head b, .stage-phase b, .cp-mode, .hello, .stage-day small, .top-title, .topbar h1, .sec-t) { font-family: var(--font-ko-title); font-weight: 400; letter-spacing: 0; }
 html[lang="es"] p, html[lang="es"] small { hyphens: auto; -webkit-hyphens: auto; }
 /* a small flame on the days she logged sex */
 .cal-d .sxdot { position: absolute; left: 3px; bottom: 1px; font-size: 9px; line-height: 1; font-style: normal; pointer-events: none; }

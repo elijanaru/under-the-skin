@@ -1,0 +1,8 @@
+{
+ "<t0>Partner signals.</t0> When you send love or a care nudge, only the signal type, your first name and a private inbox code pass through a free relay (ntfy.sh) to your partner’s app. When you connect with a partner, the same relay carries what your link already holds (first name, cycle start and length, star sign, fertile days and today's mood if you share them) so you see each other without sending a second link. Symptoms and notes are never sent.": "<t0>Señales de pareja.</t0> Cuando envías cariño o un recordatorio de cuidado, solo el tipo de señal, tu nombre y un código privado de buzón pasan por un relé gratuito (ntfy.sh) hasta la app de tu pareja. Cuando te conectas con tu pareja, el mismo relé lleva lo que ya contiene tu enlace (nombre, inicio y duración del ciclo, signo zodiacal, días fértiles y estado de ánimo de hoy si los compartes) para que cada uno vea el ritmo del otro sin enviar un segundo enlace. Los síntomas y las notas nunca se envían.",
+ "Brainstorm plans or projects together": "Una lluvia de ideas juntos: planes o proyectos",
+ "Cycle day": "Día del ciclo",
+ "of {0} days": "de {0} días",
+ "<t0>Cycle day</t0> {0}": "<t0>Día del ciclo</t0> {0}",
+ "Wrap up": "Cierra pendientes"
+}
