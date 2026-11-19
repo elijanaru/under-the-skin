@@ -43,7 +43,14 @@ export function cycleStats(state) {
   const avgPeriod = plens.length ? Math.round(mean(plens)) : state.profile.periodLength;
   const variation = recent.length > 1 ? Math.max(...recent) - Math.min(...recent) : 0;
   const ovSeen = learnLuteal(logs, periods, avgCycle);
-  return { logs, periods, lengths, avgCycle, avgPeriod, variation, ovSeen };
+  // On the pill (19 Nov 2026): the pill stops egg release, and the bleed comes in the pill break, so it is predicted from
+  // her pack (21 + 7: bleed about day 23 to 27; 24 + 4: about day 26 to 28), not from her past cycles. Implant, shot,
+  // ring and patch also stop egg release. A hormonal IUD usually doesn't, and coming off the pill brings it back.
+  const pr = state.profile || {}, onPill = pr.bc === 'pill' && pr.bcPlan !== 'stop';
+  const pill = onPill && /^\d{4}-\d\d-\d\d$/.test(pr.pillStart || '') && pr.pillKind !== 'cont'
+    ? { start: parseISO(pr.pillStart), kind: pr.pillKind === '24' ? '24' : '21', from: pr.pillKind === '24' ? 26 : 23, to: pr.pillKind === '24' ? 28 : 27 } : null;
+  const noOv = onPill || (pr.bc === 'other' && pr.bcPlan !== 'stop');
+  return { logs, periods, lengths, avgCycle: pill ? 28 : avgCycle, avgPeriod: pill ? pill.to - pill.from + 1 : avgPeriod, variation, ovSeen, pill, noOv };
 }
 
 // Egg-white discharge is the peak fertile sign: the last egg-white day of a cycle is taken as her egg release.
@@ -122,16 +129,27 @@ export function dayInfo(date, stats) {
   const periodPredicted = !periodActual && d >= today && cd <= P;
   const nextStart = (startP === last && !predicted) ? anchor : nextP ? nextP.start : addDays(start, L);
   const isToday = d.getTime() === today.getTime();
+  // pill: the next bleed is the next pill break she hasn't bled in yet
+  const pk = stats.pill; let pillDay = null, pillPred = periodPredicted, pillNext = nextStart;
+  if (pk) {
+    const pd = x => ((diffDays(x, pk.start) % 28) + 28) % 28 + 1, pt = pd(today);
+    let nb = addDays(today, pk.from - pt); if (pt > pk.to) nb = addDays(nb, 28);
+    if (nb <= today && last.start >= addDays(nb, -3)) nb = addDays(nb, 28); // this break's bleed is already logged
+    pillDay = pd(d); const ws = addDays(d, pk.from - pillDay);
+    pillPred = !periodActual && d >= today && pillDay >= pk.from && pillDay <= pk.to && ws >= nb;
+    pillNext = nb;
+  }
+  const noOv = !!stats.noOv;
   return {
     date: d, cd, L: Lx, P, ov, phase, predicted,
-    fertile: !tooShort && cd >= ov - 5 && cd <= ov + 1,
-    isOvulation: !tooShort && cd === ov,
-    isPeriod: periodActual || periodPredicted, periodActual, periodPredicted,
-    late: isToday && startP === last && lateBy > 0 ? lateBy : 0,
-    dueToday: isToday && startP === last && lateBy === 0,
-    daysToPeriod: Math.max(0, diffDays(nextStart, d)),
-    daysToOv: cd < ov ? ov - cd : cd === ov ? 0 : (L - cd) + ov,
-    cycleStart: start, nextStart,
+    fertile: !noOv && !tooShort && cd >= ov - 5 && cd <= ov + 1,
+    isOvulation: !noOv && !tooShort && cd === ov,
+    isPeriod: periodActual || (pk ? pillPred : periodPredicted), periodActual, periodPredicted: pk ? pillPred : periodPredicted,
+    late: !pk && !noOv && isToday && startP === last && lateBy > 0 ? lateBy : 0,
+    dueToday: !pk && isToday && startP === last && lateBy === 0,
+    daysToPeriod: Math.max(0, diffDays(pk ? pillNext : nextStart, d)),
+    daysToOv: noOv ? 999 : cd < ov ? ov - cd : cd === ov ? 0 : (L - cd) + ov,
+    cycleStart: start, nextStart: pk ? pillNext : nextStart, noOv, pillDay,
   };
 }
 

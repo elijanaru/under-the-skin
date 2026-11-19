@@ -2806,3 +2806,57 @@ export const STUDY_KEY = {
   'Abuelgasim 2021': ['Cough and cold', 'down', 'vs usual care'], 'Vuksan 2007': ['Blood pressure', 'down', '12 weeks'],
   'Gaskins 2009': ['Estrogen', 'down', 'more fibre'], 'Goldin 1982': ['Blood estrogen', 'down', 'more in the stool'],
 };
+// Getting her period back (19 Nov 2026): why it stopped (asked in onboarding), the topics of her guide, the daily habits
+// she ticks and when to see a doctor. Topics with `why` only show when she picked that reason.
+export const NP_WHY = [['pill', 'Came off the pill', '💊'], ['train', 'I train a lot', '🏃‍♀️'], ['food', 'I eat less or lost weight', '🍽️'],
+  ['stress', 'Stress or little sleep', '🌀'], ['pcos', 'PCOS or always irregular', '🧬'], ['baby', 'Had a baby or breastfeeding', '🍼'], ['unsure', 'Not sure', '🤍']];
+export const NP_HABITS = [['meals', '3 real meals', '🍳'], ['soft', 'Gentle movement only', '🚶‍♀️'], ['bed', 'In bed by 11', '🌙'], ['light', 'Morning daylight', '☀️']];
+export const NP_SIGNS = [['💧', 'Clear, stretchy discharge', 'Like raw egg white: estrogen is rising'], ['🍑', 'Tender breasts', 'Progesterone after an egg release'],
+  ['🌙', 'A low, heavy belly', 'Often a few days before the bleed']];
+export const NP_WARN = [['No period for 3 months (6 if you were always irregular)', 'Check-up'], ['Milky fluid from your nipples', 'Prolactin'],
+  ['Headaches or changes in your vision', 'Today'], ['New hair on your face or body, or sudden acne', 'Hormones'], ['Hot flushes or night sweats before 40', 'Ovaries']];
+export const NP_TESTS = [['Pregnancy test', 'First, always'], ['TSH', 'Thyroid'], ['Prolactin', 'Pituitary'], ['FSH, LH, estradiol', 'Brain and ovaries'], ['Testosterone, AMH', 'PCOS']];
+export const NP_TOPICS = [
+  { k: 'test', ic: 'drop', t: 'Step one', big: '1 test', bigS: 'before anything else', s: 'Rule out pregnancy',
+    short: ['A pregnancy test is the first step, even if it feels unlikely.', 'Morning pee gives the clearest result.', 'Negative and still no period? The rest of this guide is for you.'] ,
+    more: ['A missed period is the most common first sign of pregnancy, so every doctor starts here too. A test from the pharmacy is reliable from the day your period would have been due.',
+      'If the test is negative and your period still doesn’t come, your body has paused the cycle for a reason. Most of these reasons are things you can change: food, training, sleep and stress.'] },
+  { k: 'fuel', ic: 'bowl', t: 'Feed the signal', big: '3 meals', bigS: 'plus snacks, every day', s: 'Your brain needs to feel fed',
+    short: ['Your brain pauses the cycle when it senses too little energy.', 'Carbs and fat at every meal: they tell it food is safe and plenty.', 'No skipped breakfast, no long fasts for now.'],
+    more: ['The cycle starts in the brain (the hypothalamus). When energy runs low from eating too little, training hard, or both, it turns the signal to the ovaries down. Doctors call it hypothalamic amenorrhea, and it is the most common reason for a missing period in young women.',
+      'What brings it back is simple and not always easy: more food, every day, for months. Eggs, raw milk and butter, potatoes, rice, fruit, honey, meat or fish, nuts. Weight gain can be part of it, and that is the body healing, not failing.',
+      'Fasting, very low carb and calorie counting all read as “not safe” to the brain. Put them on pause until your period is back.'],
+    study: ['Gordon et al.', 2017, 'Endocrine Society guideline', 'The guideline for hypothalamic amenorrhea puts eating enough and easing exercise first, before any hormones, because fixing the energy gap is what restarts the cycle.'],
+    why: ['food', 'train', 'unsure', 'stress'] },
+  { k: 'move', ic: 'dumbbell', t: 'Train softer', big: '2 days', bigS: 'of full rest a week', s: 'Less intensity, for now',
+    short: ['Swap runs, HIIT and long cardio for walks, yoga and light strength.', 'Two full rest days a week.', 'Strong is still the goal. Your cycle comes first for a few months.'],
+    more: ['Hard training uses a lot of energy and raises stress hormones, and both quiet the cycle. Athletes call it RED-S. You don’t have to stop moving: slow walks, stretching, Pilates and short strength sessions are fine.',
+      'When your period has been back for 3 cycles in a row, add intensity slowly and keep eating more on training days.'],
+    why: ['train', 'unsure'] },
+  { k: 'rest', ic: 'moon', t: 'Feel safe', big: '8 hrs', bigS: 'of sleep a night', s: 'Sleep, light and less stress',
+    short: ['Bed by 11, the same time every night.', 'Daylight on your face within an hour of waking.', 'One calm thing a day: a walk, a bath, slow breathing.'],
+    more: ['Long stress keeps cortisol high, and the brain treats that like a time of danger: not a time to make a baby, so it pauses the cycle. Sleep and calm are not extras here, they are part of the treatment.',
+      'Talking therapy helps too. In a small trial, women with a stress-related missing period who had a few months of CBT were much more likely to start ovulating again than those who didn’t.'],
+    study: ['Berga et al.', 2003, 'Fertility and Sterility', 'Women with a stress-related missing period had 20 weeks of cognitive behavioural therapy or no treatment. Most in the therapy group started ovulating again, few in the other group did.'] },
+  { k: 'pill', ic: 'spark', t: 'After the pill', big: '3 mo', bigS: 'for most cycles to return', s: 'Your own rhythm restarts',
+    short: ['The bleed on the pill was a pill break, not a period.', 'Your own cycle can take a few months to restart.', 'Folate, B6, zinc and magnesium foods help: eggs, liver, greens, seeds.'],
+    more: ['The pill switches egg release off. When you stop, your brain and ovaries need to find their own rhythm again, and most women have a natural period within 3 months.',
+      'Sometimes the pill was hiding something that was already there, like PCOS or a low-energy cycle. If nothing comes after 3 months, see your doctor: it is not the pill’s “fault” anymore, and it is worth checking.'],
+    why: ['pill'] },
+  { k: 'pcos', ic: 'chart', t: 'Steady blood sugar', big: '10 min', bigS: 'walk after meals', s: 'Gentle help for PCOS',
+    short: ['Protein and fat with every carb, and carbs after veg.', 'Strength training 2 to 3 times a week.', 'A short walk after meals.'],
+    more: ['With PCOS, insulin often runs high, which pushes the ovaries to make more testosterone and stops eggs from maturing. Steady blood sugar lowers that push.',
+      'Myo-inositol is a gentle supplement many women with PCOS use: 2 g twice a day is the usual dose. Talk to your doctor first, especially if you take other medication.',
+      'PCOS is diagnosed by a doctor with blood tests and often an ultrasound. If you only think you have it, get it checked so you know what you’re working with.'],
+    study: ['Unfer et al.', 2017, 'Gynecological Endocrinology', 'A review of trials in women with PCOS: myo-inositol helped ovulation and cycles become more regular.'],
+    why: ['pcos'] },
+  { k: 'baby', ic: 'heart', t: 'After a baby', big: '6+ mo', bigS: 'often no period while you breastfeed', s: 'This is normal',
+    short: ['Breastfeeding keeps the cycle paused: that is by design.', 'It often comes back when feeds get fewer or the baby eats food.', 'You can ovulate before your first period, so use protection if you want to wait.'],
+    more: ['The hormone that makes milk (prolactin) also holds the cycle back. Nothing needs fixing: eat well, rest when you can, and let your body take its time.',
+      'If you are not breastfeeding, your period usually returns within about 6 to 8 weeks after birth. Not back by 3 months after you stop feeding? See your doctor.'],
+    why: ['baby'] },
+  { k: 'warm', ic: 'thermo', t: 'Chinese medicine', big: 'warm', bigS: 'food, belly and feet', s: 'Build the blood back',
+    short: ['A missing period is seen as blood running low or not flowing.', 'Warm, cooked meals and bone broth.', 'Red dates, goji and black sesame, and a warm belly.'],
+    more: ['In Chinese medicine the period is built from blood, which comes from food the spleen can digest well. Cold, raw and iced food is said to weaken that fire, so warm, cooked meals come first for now.',
+      'Bone broth, slow stews, eggs, red dates, goji berries and black sesame are the classic blood builders. A warm hot water bottle on the low belly in the evening is part of it too.'] },
+];

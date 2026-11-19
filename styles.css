@@ -17306,3 +17306,54 @@ html .gr2 .gr2-h small { color: #16230f; }
 .legal-foot { margin: 18px 4px 6px; font-size: 11.5px; line-height: 1.5; color: #5d6b52; text-align: center; }
 .legal-foot a { color: #4e6326; text-decoration: underline; text-underline-offset: 2px; }
 .imprint p { margin: 0 0 14px; }
+
+/* Spanish and Korean (19 Nov 2026). Korean breaks between words, never inside one; Outfit has no Hangul, so the phone's
+   own Korean face (Apple SD Gothic Neo / Noto Sans KR) draws it at the same weights. Spanish runs longer: long words hyphenate in body text. */
+html[lang="ko"] body { word-break: keep-all; overflow-wrap: anywhere; }
+html[lang="ko"] { --font: 'Outfit', 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, -apple-system, sans-serif; }
+html[lang="es"] p, html[lang="es"] small { hyphens: auto; -webkit-hyphens: auto; }
+/* a small flame on the days she logged sex */
+.cal-d .sxdot { position: absolute; left: 3px; bottom: 1px; font-size: 9px; line-height: 1; font-style: normal; pointer-events: none; }
+.cal2-legend .lg-x { font-style: normal; font-size: 10px; width: auto !important; height: auto !important; background: none !important; box-shadow: none !important; }
+
+/* Getting her period back (19 Nov 2026): bead strip to the 3-month check, four habit tiles, signs, flame on sex days */
+.np-card { padding: 20px 20px 16px; }
+.np-card h3 { margin: 6px 0 4px; font-size: 22px; font-weight: 400; letter-spacing: -.01em; color: #20301a; }
+.np-card > p { margin: 0; font-size: 14px; line-height: 1.5; color: #304023; }
+.np-wk { margin: 16px 0 4px; }
+.np-beads { display: grid; grid-template-columns: repeat(13, 1fr); gap: 5px; align-items: center; }
+.np-beads i { height: 8px; border-radius: 99px; background: rgba(32,48,26,.08); }
+.np-beads i.on { background: #8c9768; }
+.np-beads i.now { height: 12px; background: #6c823e; box-shadow: 0 0 0 3px rgba(108,130,62,.18); }
+.np-wk p { display: flex; justify-content: space-between; align-items: baseline; margin: 8px 0 0; font-size: 13px; color: #304023; }
+.np-wk p small { font-size: 12px; color: #6b7462; }
+.np-today { display: flex; justify-content: space-between; align-items: baseline; margin: 16px 0 8px; font-size: 13px; font-weight: 500; color: #20301a; }
+.np-today > b { font-weight: 400; color: #6b7462; }
+.np-hb { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.np-h { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 4px 10px; border-radius: 18px;
+  background: #f6f3ef; color: #304023; transition: background .3s, box-shadow .3s; }
+.np-h .emo { font-size: 22px; line-height: 1; }
+.np-h small { font-size: 11.5px; line-height: 1.25; text-align: center; }
+.np-h i { position: absolute; top: 6px; right: 6px; display: grid; place-items: center; width: 16px; height: 16px; border-radius: 50%;
+  background: #6c823e; color: #fff; opacity: 0; transform: scale(.6); transition: opacity .25s, transform .25s; }
+.np-h.on { background: #eef2e4; box-shadow: inset 0 0 0 1.5px rgba(108,130,62,.55); }
+.np-h.on i { opacity: 1; transform: none; }
+.np-go { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-top: 14px; padding: 12px; border-radius: 999px;
+  background: #20301a; color: #fff; font-size: 14px; font-weight: 500; }
+.np-now .ls-words { margin-top: 16px; }
+.np-why { margin-top: 8px; }
+.np-why { display: flex; flex-wrap: wrap; gap: 6px; }
+.np-why .chip { padding: 8px 12px; font-size: 12.5px; min-height: 0; }
+.np-q { margin: 16px 0 0; }
+.np-signs { padding: 18px; }
+.np-s { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; padding: 10px 0; border-top: 1px solid rgba(32,48,26,.08); }
+.np-s:first-of-type { border-top: 0; }
+.np-s .emo { font-size: 22px; text-align: center; }
+.np-s b { display: block; font-size: 14.5px; font-weight: 500; color: #20301a; }
+.np-s small { font-size: 12.5px; color: #6b7462; }
+.np .ls-warn > p { margin: 14px 0 0; font-size: 13px; font-weight: 500; color: #20301a; }
+.pill-q { margin-top: 14px; }
+.pill-q .chips { margin: 8px 0 4px; }
+.pill-date { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 12px 0 6px; font-size: 14px; color: #304023; }
+.pill-date .field { max-width: 170px; }
+@media (prefers-reduced-motion: reduce) { .np-h, .np-h i { transition: none; } }
