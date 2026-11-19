@@ -57,7 +57,19 @@ const dtf = {};
 const fmtName = (type, i, long) => { const k = type + long; dtf[k] = dtf[k] || new Intl.DateTimeFormat(LOC, type === 'm' ? { month: long ? 'long' : 'short' } : { weekday: long ? 'long' : 'short' });
   return dtf[k].format(type === 'm' ? new Date(2026, i, 15) : new Date(2026, 10, 15 + i)); }; // 15 Nov 2026 is a Sunday
 function valOf(x) { return !x ? '' : x.v != null ? x.v : x.n != null ? x.n : x.m != null ? fmtName('m', x.m, x.long) : fmtName('d', x.d, x.long); }
-const fill = (t, vals) => t.replace(/\{(\d+)\}/g, (m, i) => (vals[i] ? valOf(vals[i]) : m));
+// dates read the local way: Korean "12월 6일 (일)", Spanish "dom, 6 dic" (the English templates say "Sun, Dec 6")
+const KO_WD = '일|월|화|수|목|금|토';
+function dates(s) {
+  if (LANG === 'ko') return s.replace(new RegExp(`(${KO_WD})(?:요일)?, (\\d{1,2}월) (\\d{1,2})(?![\\d일])`, 'g'), '$2 $3일 ($1)')
+    .replace(/(\d{1,2}월) (\d{1,2})(?![\d일시분])/g, '$1 $2일').replace(/(\d{1,2})일 (\d{1,2}월)/g, '$2 $1일');
+  if (LANG === 'es') return s.replace(/\b(ene|feb|mar|abr|may|jun|jul|ago|sept?|oct|nov|dic)\.? (\d{1,2})\b(?!:)/g, '$2 $1')
+    .replace(/\b(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre) (\d{1,2})\b(?!:)/g, '$2 de $1');
+  return s;
+}
+const hasDate = vals => vals.some(x => x && (x.m != null || x.d != null));
+const fill = (t, vals) => { const o = t.replace(/\{(\d+)\}/g, (m, i) => (vals[i] ? valOf(vals[i]) : m)); return hasDate(vals) ? dates(o) : o; };
+// short pieces with no words of their own: "17d" on Today's capsules
+const BARE = { ko: { '{0}d': '{0}일', '{0}h': '{0}시간' }, es: {} };
 const WORD = /\p{L}{2}/u;
 function look(key) { if (collect) collect.add(key); return DICT ? DICT.get(key) : undefined; }
 
@@ -65,7 +77,9 @@ function look(key) { if (collect) collect.add(key); return DICT ? DICT.get(key) 
 export function T(s) {
   if (s == null || !on()) return s; const str = String(s); if (!WORD.test(str)) return s;
   const lead = str.match(/^\s*/)[0], tail = str.match(/\s*$/)[0], core = str.trim().replace(/\s+/g, ' '), vals = [];
-  const t = look(keyText(core, vals)); return t == null ? s : lead + fill(t, vals) + tail;
+  const key = keyText(core, vals);
+  if (!WORD.test(key.replace(/\{\d+\}/g, ''))) { const b = (BARE[LANG] || {})[key] ?? (hasDate(vals) ? key : null); return b == null ? s : lead + fill(b, vals) + tail; }
+  const t = look(key); return t == null ? s : lead + fill(t, vals) + tail;
 }
 
 // ---------- the DOM: whole sentences with their inline pieces ----------
@@ -97,7 +111,10 @@ function rebuild(el, t, shells, vals) {
 }
 function block(el) {
   const shells = [], vals = [], raw = ser(el, shells, vals), key = raw.replace(/\s+/g, ' ').trim();
-  if (!WORD.test(key.replace(/<\/?[tx]\d+\/?>|\{\d+\}/g, ''))) { for (const c of el.children) if (!ATOM.has(c.nodeName) && !noTr(c)) walk(c); return; }
+  if (!WORD.test(key.replace(/<\/?[tx]\d+\/?>|\{\d+\}/g, ''))) {
+    const b = (BARE[LANG] || {})[key] ?? (hasDate(vals) ? key : null); // a bare date or "17d": names and units in her language
+    if (b != null) return rebuild(el, b, shells, vals);
+    for (const c of el.children) if (!ATOM.has(c.nodeName) && !noTr(c)) walk(c); return; }
   const t = look(key); if (t != null) rebuild(el, t, shells, vals);
 }
 function attrs(el) { for (const a of ATTRS) { const v = el.getAttribute(a); if (v && WORD.test(v)) { const t = T(v); if (t !== v) el.setAttribute(a, t); } } }

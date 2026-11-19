@@ -2244,6 +2244,14 @@ function mindSection(phase, noFine) {
 }
 // a flame on the calendar for the days she logged sex (19 Nov 2026, her call)
 const hadSex = lg => !!lg && (lg.intim || []).some(v => v.startsWith('Sex,'));
+// the weekday letters and month title in her language (Korean: 월 화 수…, "2026년 11월"; Spanish: L M X…, "Noviembre 2026")
+const wdLetters = () => I18N.LANG === 'en' ? ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+  : Array.from({ length: 7 }, (_, i) => new Intl.DateTimeFormat(I18N.LOC, { weekday: 'narrow' }).format(new Date(2026, 10, 16 + i)));
+function calTitle(m) {
+  if (I18N.LANG === 'en') return `${fmt(m, { month: 'long' })} <span>${m.getFullYear()}</span>`;
+  const mn = new Intl.DateTimeFormat(I18N.LOC, { month: 'long' }).format(m), cap = mn.charAt(0).toUpperCase() + mn.slice(1);
+  return I18N.LANG === 'ko' ? `<span>${m.getFullYear()}년</span> ${mn}` : `${cap} <span>${m.getFullYear()}</span>`;
+}
 function viewCalendar() {
   const { stats, today } = M;
   const m = ui.calMonth ? C.parseISO(ui.calMonth) : new Date(today.getFullYear(), today.getMonth(), 1);
@@ -2287,10 +2295,10 @@ function viewCalendar() {
   <div class="pad">
     ${answer}
     <div class="cal-head"><button class="icon-btn" data-action="calMove" data-d="-1" aria-label="Previous month">${icon('chevL', 20)}</button>
-      <h2><button class="cal-title" data-action="calPick">${fmt(m, { month: 'long' })} <span>${m.getFullYear()}</span>${icon('chevD', 16)}</button>${thisMonth ? '' : '<button class="cal-today" data-action="calToday">Today</button>'}</h2>
+      <h2><button class="cal-title" data-action="calPick" translate="no">${calTitle(m)}${icon('chevD', 16)}</button>${thisMonth ? '' : '<button class="cal-today" data-action="calToday">Today</button>'}</h2>
       <button class="icon-btn" data-action="calMove" data-d="1" aria-label="Next month">${icon('chevR', 20)}</button></div>
     <section class="card glass cal cal2 ${ui.calEdit || ui.calStart ? 'editing' : ''}">
-      <div class="cal-w">${['M', 'T', 'W', 'T', 'F', 'S', 'S'].map(x => `<span>${x}</span>`).join('')}</div>
+      <div class="cal-w">${wdLetters().map(x => `<span>${x}</span>`).join('')}</div>
       ${ui.calPick ? `<div class="cal-pick"><div class="cp-y"><button class="icon-btn" data-action="calYear" data-d="-1" aria-label="Previous year">${icon('chevL', 18)}</button><b>${ui.calPick}</b><button class="icon-btn" data-action="calYear" data-d="1" aria-label="Next year">${icon('chevR', 18)}</button></div>
         <div class="cp-m">${Array.from({ length: 12 }, (_, i) => `<button class="${ui.calPick === m.getFullYear() && i === m.getMonth() ? 'on' : ''} ${ui.calPick === today.getFullYear() && i === today.getMonth() ? 'now' : ''}" data-action="calSetMonth" data-m="${i}">${fmt(new Date(2000, i, 1), { month: 'short' })}</button>`).join('')}</div></div>`
       : `<div class="cal-grid ${slide}">${cells}</div>`}
@@ -10446,7 +10454,7 @@ function ptCalendar(snap, showF) {
     cells.push(`<div class="pc-d ${di.phase} ${past ? 'past' : ''} ${isT ? 'today' : ''} ${di.isPeriod ? 'per' : ''} ${showF && di.fertile ? 'fert' : ''}" style="--pc:${PHASE_COLOR.dark[di.phase]}">
       <b>${d.getDate()}</b>${di.isPeriod ? icon('drop', 11, 2) : showF && di.isOvulation ? '<i class="pc-egg"></i>' : showF && di.fertile ? '<i class="pc-dot"></i>' : '<i class="pc-none"></i>'}</div>`);
   }
-  const wd = ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map(x => `<span>${x}</span>`).join('');
+  const wd = wdLetters().map(x => `<span>${x}</span>`).join('');
   return `<section class="card pt-cal"><div class="pc-h"><b>${fmt(start, { month: 'long' })}${start.getMonth() !== C.addDays(start, 13).getMonth() ? ` / ${fmt(C.addDays(start, 13), { month: 'long' })}` : ''}</b><small>This week and next</small></div>
     <div class="pc-wd">${wd}</div><div class="pc-grid">${cells.join('')}</div>
     <div class="pc-leg">${PHASE_ORDER.map(k => `<span><b style="background:${PHASE_COLOR.dark[k]}"></b>${PHASES[k].name}</span>`).join('')}<span>${icon('drop', 11, 2)} Period</span>${showF ? '<span><i class="pc-egg"></i> Egg release</span>' : ''}</div></section>`;
