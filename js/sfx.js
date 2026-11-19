@@ -2,8 +2,14 @@
 let ctx = null;
 function ac() {
   if (!ctx) { const A = window.AudioContext || window.webkitAudioContext; if (!A) return null; ctx = new A(); }
-  if (ctx.state === 'suspended') ctx.resume();
+  if (ctx.state !== 'running') ctx.resume().catch(() => {}); // 'suspended', or 'interrupted' on iOS after a call or the app was in the background
   return ctx;
+}
+// iOS can leave audio stuck after the app comes back: wake it on return and on the next touch
+if (typeof document !== 'undefined') {
+  const wake = () => { if (ctx && ctx.state !== 'running') ctx.resume().catch(() => {}); };
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) wake(); });
+  document.addEventListener('pointerdown', wake, true);
 }
 // One master volume for every sound, so a single tap mutes them all (remembered on this phone).
 let master = null, muted = (() => { try { return localStorage.getItem('uts.sound') === 'off'; } catch { return false; } })();

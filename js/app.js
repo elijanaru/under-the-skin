@@ -8402,7 +8402,7 @@ const PET_SAY = { in: 'Breathe in, slowly.', top: 'A little more…', hold: 'Hol
 // A soft singing-bowl bell, made in the browser (no sound file): a few bowl-like partials, each a slightly
 // detuned pair so it shimmers, struck twice and left to fade. Returns the oscillators so a pause can cancel it.
 let _bell = null;
-function bellCtx() { try { _bell = _bell || new (window.AudioContext || window.webkitAudioContext)(); if (_bell.state === 'suspended') _bell.resume(); return _bell; } catch { return null; } }
+function bellCtx() { try { _bell = _bell || new (window.AudioContext || window.webkitAudioContext)(); if (_bell.state !== 'running') _bell.resume().catch(() => {}); return _bell; } catch { return null; } }
 function ringBell(ctx, t, vol = 1, once = false) {
   const out = [], f0 = 220, P = [[1, 1, 9], [2.71, .45, 6], [5.15, .2, 3.5], [8.4, .08, 2.2]];
   (once ? [[0, 1]] : [[0, 1], [5, .55]]).forEach(([dt, m]) => P.forEach(([r, a, dec]) => [1, 1.004].forEach(det => {
