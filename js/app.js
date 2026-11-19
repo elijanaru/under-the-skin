@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, DIET_CYCLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HORMONE_SIMPLE, HORMONE_RELAY, BODY_NOTES, AFTER_STAGES, AFTER_TOPICS, TTC_TRY, TTC_STAGE, TTC_CHANCE, TTC_DOCTOR, TTC_BOTH, TTC_FOUND, HB_HOW, HB_HOW_DIET, LOSS_HELP, LOSS_STEPS, LOSS_WARN, LOSS_TOPICS, LOSS_REPEAT, NP_WHY, NP_HABITS, NP_SIGNS, NP_WARN, NP_TESTS, NP_TOPICS, LOSS_NOTES, LOSS_JOURNAL, LOSS_PARTNER, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS, STUDY_KEY,
+  PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, DIET_CYCLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HORMONE_SIMPLE, HORMONE_RELAY, BODY_NOTES, AFTER_STAGES, AFTER_TOPICS, TTC_TRY, TTC_STAGE, TTC_CHANCE, TTC_DOCTOR, TTC_BOTH, TTC_FOUND, HB_HOW, HB_HOW_DIET, LOSS_HELP, LOSS_STEPS, LOSS_WARN, LOSS_TOPICS, LOSS_REPEAT, NP_WHY, NP_HABITS, NP_SIGNS, NP_WARN, NP_TESTS, NP_TOPICS, PILL_TOPICS, PILL_WARN, LOSS_NOTES, LOSS_JOURNAL, LOSS_PARTNER, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS, STUDY_KEY,
 } from './data.js';
 import * as C from './cycle.js';
 import { LEGAL_EMAIL } from './legal.js';
@@ -795,6 +795,40 @@ function viewComeback() {
       <button class="btn btn-dark" data-action="periodStart">My period started today</button></section>
   </div>`;
 }
+// Your pill (19 Nov 2026): her pack as a strip of 28 pills (today ringed, break days hollow), then how it works,
+// what's normal, what to refill, missed pills, and the signs to act on. Short lines first, more behind a tap.
+function pillPack(day, kind) {
+  const act = kind === 'cont' ? 28 : kind === '24' ? 24 : 21;
+  return `<div class="pl-pack" role="img" aria-label="Pill ${day || ''} of 28">${Array.from({ length: 28 }, (_, i) => `<i class="${i < act ? 'a' : 'b'}${day && i < day - 1 ? ' done' : ''}${day === i + 1 ? ' now' : ''}"></i>`).join('')}</div>
+    <p class="pl-key"><span><i class="a"></i>Active pills</span>${act < 28 ? '<span><i class="b"></i>Break, your bleed</span>' : ''}</p>`;
+}
+function viewPill() {
+  const p = state.profile, info = M.info, open = ui.plOpen, set = p.pillStart && p.pillKind !== 'cont';
+  const day = set && info ? info.pillDay : null;
+  return `${topbar('Your pill', { back: true })}
+  <div class="pad af pl">
+    <h1 class="page-h">How your <span>pill works</span></h1>
+    <p class="hs-sub">What it does, what’s normal, and the signs to act on.</p>
+    <section class="card card-light af-now pl-now"><div class="eyebrow dark">${day ? `Pill day ${day} of 28` : p.pillKind === 'cont' ? 'No break' : 'Your pack'}</div>
+      <h3>${day ? (info.isPeriod ? 'Your break bleed' : `Next bleed around ${fmt(info.nextStart, { month: 'short', day: 'numeric' })}`) : p.pillKind === 'cont' ? 'No regular bleed to expect' : 'Add your pack'}</h3>
+      <p>${day ? (info.isPeriod ? 'Bleeding in your break is normal. Start your next pack on time, even if it hasn’t stopped.' : `In ${plural(info.daysToPeriod, 'day')}, in your pill break.`) : p.pillKind === 'cont' ? 'Spotting can happen, especially in the first months. Log it and it shows on your calendar.' : 'Tell us which pill and the day you started this pack.'}</p>
+      ${pillPack(day, p.pillKind)}
+      <button class="np-go" data-action="pillSetup">${set ? 'Change my pack' : 'Set up my pack'} ${icon('chevR', 14)}</button></section>
+    ${PILL_TOPICS.map(x => `<section class="card glass af-t ${open === x.k ? 'open' : ''}">
+      <button class="af-th" data-action="plOpen" data-v="${x.k}" aria-expanded="${open === x.k}">
+        <span class="af-big"><b class="dotnum">${x.big.replace(/ ?([a-z]+)$/, '<em>$1</em>')}</b><small>${x.bigS}</small></span>
+        <span class="af-tt"><span class="eyebrow">${x.t}</span><b>${x.s}</b></span>${icon('chevD', 16)}</button>
+      <ul class="af-short">${x.short.map(li => dietProse(li)).filter(Boolean).map(li => `<li>${li}</li>`).join('')}</ul>
+      ${open === x.k ? `<div class="af-more">${x.more.map(m => dietProse(m)).filter(Boolean).map(m => `<p>${m}</p>`).join('')}
+        ${x.study ? `<div class="af-study"><span class="dotnum">${x.study[1]}</span><div><b>${x.study[0]}</b><small>${x.study[2]}</small><p>${x.study[3]}</p></div></div>` : ''}</div>` : `<button class="af-read" data-action="plOpen" data-v="${x.k}">Read more</button>`}
+    </section>`).join('')}
+    <section class="card ls-warn"><div class="eyebrow">Get help straight away if</div>
+      ${PILL_WARN.map(([a, b]) => `<div class="tr-r"><span>${b}</span><b>${a}</b></div>`).join('')}
+      <p>Clots are rare: about 2 in 10,000 women a year without the pill, about 5 to 12 in 10,000 on the combined pill, depending on the type. Smoking over 35, migraine with aura or a past clot mean the combined pill isn’t for you.</p></section>
+    <section class="card af-help"><b>${icon('heart', 15)} Every pill is a little different</b>
+      <p>The leaflet in your pack has the exact rules for yours. Your pharmacist can answer most questions in a minute.</p></section>
+  </div>`;
+}
 function viewLoss() {
   const p = state.profile, d = lossDays(), on = lossCare(), st = lossStep(), open = ui.lsOpen, word = lossWord(), help = p.lossHelp || [];
   const head = st === 0 ? ['Bleeding eases', 'Rest, warmth and pads. Bleeding should get lighter day by day, and stop within about 2 weeks.'] : st === 1 ? ['Waiting for your first period', 'It usually comes 4 to 6 weeks after. Your predictions stay rough until then.'] : ['Your rhythm is coming back', 'Your first period came. From here your predictions find your rhythm again.'];
@@ -1198,7 +1232,8 @@ function pillQ(o, onb) {
     <div class="chips">${PILL_KINDS.map(([v, t]) => `<button class="chip ${k === v ? 'on' : ''}" data-action="${onb ? 'onbPill' : 'setPill'}" data-v="${v}">${t}</button>`).join('')}</div>
     ${k === 'cont' ? '<p class="fine">Without a break there is usually no regular bleed, so the app doesn’t predict one. Log any bleeding and it shows on your calendar.</p>'
       : `<label class="pill-date"><span>First pill of this pack</span><input type="date" class="field" data-input="${onb ? 'onb' : 'profile'}.pillStart" value="${esc(o.pillStart || '')}" max="${todayISO()}"></label>
-      <p class="fine">The pill stops egg release, so there are no fertile days to show. The bleed in your break comes from the pill pause, and the app predicts it from your pack.</p>`}</div>`;
+      <p class="fine">The pill stops egg release, so there are no fertile days to show. The bleed in your break comes from the pill pause, and the app predicts it from your pack.</p>`}
+    ${onb ? '' : `<button class="pl-link" data-action="nav" data-to="pill">How your pill works ${icon('chevR', 13)}</button>`}</div>`;
 }
 // which issues the 90-day plan covers, from the onboarding answers or the saved profile
 function planKeys(p) {
@@ -1952,7 +1987,7 @@ function viewToday() {
       <button class="bn-x" data-action="dismissRem" data-id="${x.id}" aria-label="Dismiss">${icon('close', 14)}</button></div>`);
   if (info.late >= 7 && !hormonalBC(state.profile.bc)) alerts.unshift(`<button class="al2-r" data-action="nav" data-to="comeback"><span class="al2-e emo" aria-hidden="true">🩸</span><span class="al2-t"><b>Your period is ${plural(info.late, 'day')} late</b><small>What helps, and when to see a doctor</small></span>${icon('chevR', 15)}</button>`);
   if (onPill()) alerts.unshift(state.profile.pillStart && state.profile.pillKind !== 'cont'
-    ? `<button class="al2-r" data-action="pillSetup"><span class="al2-e emo" aria-hidden="true">💊</span><span class="al2-t"><b>Your next bleed</b><small>In your pill break, around ${fmt(info.nextStart, { month: 'short', day: 'numeric' })}</small></span>${alWhen(info.daysToPeriod)}</button>`
+    ? `<button class="al2-r" data-action="nav" data-to="pill"><span class="al2-e emo" aria-hidden="true">💊</span><span class="al2-t"><b>Your next bleed</b><small>In your pill break, around ${fmt(info.nextStart, { month: 'short', day: 'numeric' })}</small></span>${alWhen(info.daysToPeriod)}</button>`
     : state.profile.pillKind === 'cont' ? '' : `<button class="al2-r" data-action="pillSetup"><span class="al2-e emo" aria-hidden="true">💊</span><span class="al2-t"><b>Add your pill pack</b><small>So the app can show when your next bleed comes</small></span>${icon('chevR', 15)}</button>`);
   upcomingPatterns(patterns()).forEach(x => { const rk = reliefKey(x.name); alerts.push(`<${rk ? `button data-action="nav" data-to="relief/${encodeURIComponent(rk)}"` : 'div'} class="al2-r ${QUICK_FIX[x.name] ? 'hfx' : ''}">
       <span class="al2-e emo" aria-hidden="true">${LOG_EMOJI[x.name] || '🌿'}</span><span class="al2-t"><b>${x.name}</b><small>Your pattern · ${x.from === x.to ? `day ${x.from}` : `days ${x.from} to ${x.to}`}</small></span>${alWhen(x.inDays)}${QUICK_FIX[x.name] ? fixChips(QUICK_FIX[x.name], LOG_EMOJI[x.name]) : ''}</${rk ? 'button' : 'div'}>`); });
@@ -11876,6 +11911,7 @@ const actions = {
   calStop: () => calStop(),
   calPick: d => calPick(d.v, d.n),
   npTick: d => { const k = todayISO(), cur = getLog(k).np || []; setLog(k, { np: cur.includes(d.v) ? cur.filter(x => x !== d.v) : [...cur, d.v] }); render(); },
+  plOpen: d => { ui.plOpen = ui.plOpen === d.v ? null : d.v; render(); },
   npOpen: d => { ui.npOpen = ui.npOpen === d.v ? null : d.v; render(); },
   npWhy: d => { const src = d.scope === 'onb' ? ui.onb : state.profile; let w = [...(src.npWhy || [])];
     w = w.includes(d.v) ? w.filter(x => x !== d.v) : d.v === 'unsure' ? ['unsure'] : [...w.filter(x => x !== 'unsure'), d.v];
@@ -12580,6 +12616,7 @@ function render() {
     trying: viewTrying,
     loss: viewLoss,
     comeback: viewComeback,
+    pill: viewPill,
     recipe: () => viewRecipe(r.id), ritual: () => viewRitual(r.id), point: () => viewPoint(r.id), article: () => viewArticle(r.id), learn: viewLearn,
   };
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];

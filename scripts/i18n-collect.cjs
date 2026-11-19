@@ -77,6 +77,30 @@ const NO = /^(nav|back|ac[A-Z]|sound|openLove|sendLove|useGeo|calPick|calSync|ca
       navs.forEach(add);
       if (done.size % 25 === 0) console.log(`day+${shift}: ${done.size} pages, ${queue.length} queued, ${Math.round((Date.now() - t0) / 1000)}s`);
     }
+    if (shift === 0) { // states the sample data never reaches: no period, on the pill, a very late period
+      const iso = n => new Date(Date.now() - n * 864e5).toISOString().slice(0, 10);
+      const VARIANTS = [
+        [`s.profile.noPeriod = true; s.profile.npWhy = ['pill','train','food','stress','pcos','baby']; s.profile.npSince = '${iso(20)}'; s.logs = {};`, ['today', 'comeback']],
+        [`s.profile.noPeriod = true; s.profile.npSince = '${iso(100)}'; s.logs = {};`, ['today', 'comeback']],
+        [`s.profile.bc = 'pill'; s.profile.bcPlan = 'keep'; s.profile.pillKind = '21'; s.profile.pillStart = '${iso(10)}';`, ['today', 'calendar', 'profile', 'with', 'pill']],
+        [`s.profile.bc = 'pill'; s.profile.bcPlan = 'keep'; s.profile.pillKind = 'cont';`, ['today', 'profile', 'pill']],
+        [`s.profile.bc = 'pill'; s.profile.bcPlan = 'keep';`, ['today']],
+        [`s.logs = { '${iso(45)}': { flow: 'medium' }, '${iso(44)}': { flow: 'medium' }, '${iso(17)}': { intim: ['Sex, protected'] } };`, ['today', 'calendar', 'brain/${iso(17)}']],
+      ];
+      for (const [pre, hs] of VARIANTS) {
+        await p.evaluate(pre => { const a = window.__app; const s = a.demoState('Mia'); s.onboarded = true; s.paid = true; new Function('s', pre)(s); a.setState(s); a.ui.pfTab = 'cycle'; a.render(); }, pre); await w(300);
+        for (const h of hs) await p.evaluate(async (h, no) => {
+          const sleep = ms => new Promise(r => setTimeout(r, ms)), re = new RegExp(no);
+          location.hash = '#/' + h; await sleep(260);
+          const list = [...new Set([...document.querySelectorAll('#view [data-action]')].filter(e => !re.test(e.dataset.action)).map(e => JSON.stringify(e.dataset)))];
+          for (const k of list.slice(0, 40)) { const e = [...document.querySelectorAll('#view [data-action]')].find(x => JSON.stringify(x.dataset) === k);
+            try { e?.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true })); } catch {} await sleep(80); if (location.hash !== '#/' + h) { location.hash = '#/' + h; await sleep(200); } }
+        }, h, NO.source).catch(e => console.log('variant', h, e.message));
+      }
+      // onboarding with no period and with the pill
+      for (let st = 0; st <= 12; st++) await p.evaluate(st => { const a = window.__app, u = a.ui; a.setState({ onboarded: false }); u.onbStep = st; u.onbGateDone = true; Object.assign(u.onb, { name: 'Mia', noPeriod: st === 4, npWhy: ['stress'], bc: 'pill', bcPlan: 'keep', pillKind: st % 2 ? 'cont' : '21' }); a.render(); }, st).catch(() => {});
+      await w(300); console.log('variants done');
+    }
     const keys = await p.evaluate(() => [...window.__i18nKeys]);
     keys.forEach(k => all.add(k)); console.log(`day+${shift}: ${done.size} pages, ${all.size} sentences so far`);
     await p.close();

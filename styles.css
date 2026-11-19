@@ -17357,3 +17357,15 @@ html[lang="es"] p, html[lang="es"] small { hyphens: auto; -webkit-hyphens: auto;
 .pill-date { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 12px 0 6px; font-size: 14px; color: #304023; }
 .pill-date .field { max-width: 170px; }
 @media (prefers-reduced-motion: reduce) { .np-h, .np-h i { transition: none; } }
+/* Your pill: the pack as a strip of 28 pills */
+.pl-pack { display: grid; grid-template-columns: repeat(14, 1fr); gap: 6px 5px; margin: 16px 0 8px; }
+.pl-pack i { aspect-ratio: 1; border-radius: 50%; background: #e6b1c4; }
+.pl-pack i.b { background: transparent; box-shadow: inset 0 0 0 1.5px rgba(217,118,143,.55); }
+.pl-pack i.done { opacity: .35; }
+.pl-pack i.now { opacity: 1; box-shadow: 0 0 0 2.5px #fff, 0 0 0 4.5px #20301a; }
+.pl-key { display: flex; gap: 14px; margin: 0; font-size: 12px; color: #6b7462; }
+.pl-key span { display: inline-flex; align-items: center; gap: 6px; }
+.pl-key i { width: 10px; height: 10px; border-radius: 50%; background: #e6b1c4; }
+.pl-key i.b { background: transparent; box-shadow: inset 0 0 0 1.5px rgba(217,118,143,.55); }
+.pl .ls-warn > p { margin: 12px 0 0; font-size: 13px; line-height: 1.5; color: #304023; }
+.pl-link { display: inline-flex; align-items: center; gap: 4px; margin-top: 10px; font-size: 13.5px; font-weight: 500; color: #20301a; text-decoration: underline; text-underline-offset: 3px; }
