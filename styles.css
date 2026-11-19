@@ -13418,7 +13418,7 @@ html .fbp-ph:has(img[src$="fb/breathe.webp"]) { background: radial-gradient(circ
 html .grp-ol i, html .grp-ol i .dotnum { background: color-mix(in srgb, var(--c) 34%, #fff) !important; color: #20301a !important; box-shadow: none; }
 
 /* Calendar (15 Nov 2026): the next-period card opens below the four scallops like Tea, so the arch window is never sliced under the title */
-.pad:has(> .cal3:first-child) { padding-top: 38px; }
+.pad:has(> .cal3:first-child) { padding-top: 14px; } /* 19 Nov: she asked for the widgets a little higher */
 /* Check-in: the date sits on the arched background, so it is white with a soft shadow like every page title; its arrows are the white round buttons of the top bar */
 html .lg .log-date h2, html .lg .log-date .eyebrow { color: #fff !important; -webkit-text-fill-color: #fff !important; text-shadow: 0 1px 2px rgba(70,30,38,.58), 0 2px 16px rgba(70,30,38,.46) !important; }
 html .lg .log-date .icon-btn { background: rgba(255,255,255,.9) !important; color: #20301a !important; border: 0 !important; box-shadow: 0 6px 16px -8px rgba(60,30,25,.45) !important; }
