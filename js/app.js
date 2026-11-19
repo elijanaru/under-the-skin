@@ -12357,6 +12357,26 @@ function softWith() {
   softWith.parts = html;
 }
 softWith.keep = () => { const pg = document.querySelector('#view .pv-page'); softWith.parts = pg ? [...pg.children].map(c => c.outerHTML) : null; };
+// A tap on the same page updates only what changed instead of rebuilding it, so pictures don't reload and
+// cards don't replay their rise-in (19 Nov 2026, her call). Pieces that JS wires up after drawing (charts,
+// canvases, the breath lotus, the day sky...) are swapped whole so they get wired fresh, never twice.
+const MORPH_FRESH = '.cchart,.guide[data-l],.sky,#rh-orb,canvas,.bz,svg.uts-hand,svg.dot-word,.tkp';
+function morphNode(o, n) {
+  if (o.nodeType !== n.nodeType || o.nodeName !== n.nodeName) return o.replaceWith(n);
+  if (o.nodeType !== 1) { if (o.nodeValue !== n.nodeValue) o.nodeValue = n.nodeValue; return; }
+  if (o.matches(MORPH_FRESH) || n.matches(MORPH_FRESH)) return o.replaceWith(n);
+  for (const a of [...o.attributes]) if (!n.hasAttribute(a.name)) o.removeAttribute(a.name);
+  for (const a of n.attributes) if (o.getAttribute(a.name) !== a.value) o.setAttribute(a.name, a.value);
+  morphKids(o, n.nodeName === 'TEMPLATE' ? n.content : n);
+  if ('value' in n && (o.nodeName === 'INPUT' || o.nodeName === 'TEXTAREA' || o.nodeName === 'SELECT') && o.value !== n.value) o.value = n.value;
+  if (o.nodeName === 'INPUT' && o.checked !== n.checked) o.checked = n.checked;
+}
+function morphKids(from, to) {
+  const a = [...from.childNodes], b = [...to.childNodes];
+  b.forEach((n, i) => (a[i] ? morphNode(a[i], n) : from.appendChild(n)));
+  for (let i = b.length; i < a.length; i++) a[i].remove();
+}
+function morphInto(el, html) { const t = document.createElement('template'); t.innerHTML = html; morphKids(el, t.content); }
 function render() {
   const r = route(); secN = 0;
   unmountFigs.forEach(f => f()); unmountFigs = []; // stop 3D/particle loops even on views that mount none (account, love, with)
@@ -12431,7 +12451,8 @@ function render() {
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];
   const html = (views[r.name] || viewToday)();
   const arriving = $app.querySelector('.arrive');
-  $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''} ${arriving ? 'arrive-in' : ''}" id="view">${html}</div>${tabs.includes(r.name) || !views[r.name] ? tabbar(r.name in views ? r.name : 'today') : ''}${!termsOK() && r.name !== 'privacy' ? termsSheet() : ''}`;
+  const page = `${statusbar()}<div class="view ${fresh ? 'enter' : ''} ${arriving ? 'arrive-in' : ''}" id="view">${html}</div>${tabs.includes(r.name) || !views[r.name] ? tabbar(r.name in views ? r.name : 'today') : ''}${!termsOK() && r.name !== 'privacy' ? termsSheet() : ''}`;
+  if (fresh || arriving || !prev) $app.innerHTML = page; else morphInto($app, page);
   if (arriving) $app.appendChild(arriving);
   if (ui.loveFor) $app.insertAdjacentHTML('beforeend', loveSheet());
   const v = document.getElementById('view');
