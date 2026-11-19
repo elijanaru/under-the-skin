@@ -2192,7 +2192,7 @@ function calDial(inf, size = 132) {
   const [mx, my] = polar(cx, cx, r, ang(cd + .5));
   return `<svg class="cdial" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" aria-hidden="true">${arcs}
     <circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="8.5" fill="#fff" stroke="#20301a" stroke-width="2.5"/></svg>
-    <span class="cdial-c"><small>Cycle day</small><b>${inf.cd}</b><em>of ${L} days</em></span>`;
+    <span class="cdial-c"><small>Day</small><b>${inf.cd}</b><em>of ${L} days</em></span>`;
 }
 function calTop(inf, fStart, nextOv, short) {
   if (inf.noPred && !inf.isPeriod) return `<section class="cal3"><div class="cal3-row"><div class="cal3-num"><span class="eyebrow">On the pill</span>
@@ -2411,7 +2411,7 @@ function calDayLine(sd, si, slog, selLine, isFuture) {
   if (si && si.cd && si.L && / · day \d+/.test(title)) { const exp = / · expected$/.test(title), mode = (COMPASS[dayWindow(si)] || {}).mode;
     title = title.replace(/ · expected$/, '').replace(/ · day \d+/, ''); title = `${exp ? `Expected ${title.toLowerCase()}` : title}${mode ? ` · ${mode}` : ''}`; }
   const warm = si && si.cd && si.L && warmWindow(si) ? `<p class="cdl-warm">${icon('sun', 13)} Warm days: cooked food, no raw or iced</p>` : '';
-  return `<div class="cdl day-panel"><i style="background:${c}"></i><span><small>${fmt(sd, { weekday: 'short', month: 'short', day: 'numeric' })}${si && si.cd ? ` · Cycle day <b class="dotnum">${si.cd}</b>` : ''}</small><b>${title}</b></span>
+  return `<div class="cdl day-panel"><i style="background:${c}"></i><span><small>${fmt(sd, { weekday: 'short', month: 'short', day: 'numeric' })}${si && si.cd ? ` · Day <b class="dotnum">${si.cd}</b>` : ''}</small><b>${title}</b></span>
     ${isFuture ? '' : `<button class="cdl-go" data-action="logDay" data-date="${C.iso(sd)}">${icon(logged ? 'check' : 'plus', 14)} ${logged ? 'Edit' : 'Log'}</button>`}
     ${hm}${warm}
     ${chips.length ? `<div class="cdl-ch">${ahead ? `<small>${isToday ? 'Your pattern today' : 'Your pattern on this day'}</small>` : ''}<div>${show.map(([e, t, rk]) => rk ? `<button data-action="nav" data-to="relief/${encodeURIComponent(rk)}"><i class="emo" aria-hidden="true">${e}</i>${esc(t)}${icon('chevR', 11)}</button>` : `<span><i class="emo" aria-hidden="true">${e}</i>${esc(t)}</span>`).join('')}${more ? `<span class="m">+${more}</span>` : ''}</div></div>` : ''}</div>`;
@@ -6647,7 +6647,7 @@ function stageHero(info, energy, o = {}) {
         <span class="bubble ${info.phase}" title="${FLOWER[info.phase].n}">${flowerImg(info.phase)}<i class="bubble-glass"></i></span></div>
       <span class="stage-base"></span>
       <div class="stage-stats">
-        <div class="stage-day"><small>Cycle day</small> ${cd}</div>
+        <div class="stage-day"><small>Day</small> ${cd}</div>
         <svg class="stage-br" viewBox="0 0 300 30" preserveAspectRatio="none" aria-hidden="true"><path d="M150 0 V12 M150 12 C150 18 140 18 130 18 H62 C52 18 50 22 50 30 M150 12 C150 18 160 18 170 18 H238 C248 18 250 22 250 30" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
         <div class="caps">${cap('bolt', `${energy}%`, energy, 'Energy', 'rhythm')}${perCapX}${o.fert === false ? '' : fertCap}</div>
       </div>
