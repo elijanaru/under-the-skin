@@ -4793,7 +4793,7 @@ function letterEnv(title, body, o = {}) {
     airmail: `<span class="lv-stamp"><img src="images/purpose-after.jpg" alt=""><i>${info ? info.cd : '01'}</i></span><span class="lv-post" aria-hidden="true"></span><span class="lv-type t4">par avion · ${type}<br>to ${esc(nm.toLowerCase())}, with love</span><b class="lv-w f-paris">For you</b>`,
     thanks: `<span class="lv-win"><img src="images/welcome-forest.jpg" alt=""></span><span class="lv-type t5">a small note to say thank you for all that you carry</span><b class="lv-w f-doul">Thank you</b>`,
     heart: `<img class="lv-angel r" src="images/letters/cherubs.webp" alt=""><svg class="lv-seal" viewBox="0 0 60 60" aria-hidden="true">${LV_SEAL}</svg><b class="lv-w f-mrs">Into my heart</b><span class="lv-type t6">${date}</span>`,
-    wine: `<span class="lv-type t7">a letter from your body</span><b class="lv-w f-doul silver">${esc(nm)}</b>`,
+    wine: `<span class="lv-type t7">a letter from your body</span><b class="lv-w f-doul silver" style="font-size:${Math.min(84, Math.round(520 / Math.max(1, nm.length)))}px">${esc(nm)}</b>`,
   }[kind];
   return `<section class="lv lv-${kind}" data-action="letterOpen" role="button" tabindex="0" aria-expanded="false" aria-label="${esc(title)}. Tap to open">
     ${o.dismiss ? `<button class="bn-x lv-x" data-action="dismissRem" data-id="${o.dismiss}" aria-label="Put the letter away">${icon('close', 14)}</button>` : ''}

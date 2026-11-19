@@ -15603,7 +15603,8 @@ html .pf2 .pf3 .pf-learn { margin-top: 4px; }
 /* wine: burgundy with her name in silver */
 .lv-wine .lv-env { --paper: #6d1a2b; --flap: #7a2335; color: #fff; background: radial-gradient(120% 90% at 30% 10%, rgba(255,255,255,.08), transparent 60%), var(--paper); }
 .lv-wine .lv-sides { stroke: rgba(0,0,0,.2); }
-.lv-w.silver { left: 50%; bottom: 10%; transform: translateX(-50%) rotate(-4deg); font-size: 84px; color: #e9e6e6;
+/* padding gives the gradient room: script swashes and descenders reach outside the glyph box and were cut off */
+.lv-w.silver { left: 50%; bottom: calc(10% - .32em); padding: .22em .5em .32em; line-height: 1.1; transform: translateX(-50%) rotate(-4deg); font-size: 84px; color: #e9e6e6;
   background: linear-gradient(180deg, #ffffff 10%, #b9b6b8 55%, #f2f0f0 80%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 1px 1px rgba(0,0,0,.35)); }
 .lv-type.t7 { left: 0; right: 0; top: 10%; text-align: center; color: rgba(255,255,255,.55); letter-spacing: .2em; }
 /* Profile: the envelope sits inside the letters card */
