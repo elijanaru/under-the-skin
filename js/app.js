@@ -2361,11 +2361,14 @@ async function calPicker() {
   const all = ((await P.listCalendars().catch(() => null))?.result || []).filter(c => c.allowsContentModifications !== false && !c.isImmutable && !c.isSubscribed && c.id !== (state.profile.calOwn !== false ? state.profile.calId : ''));
   const groups = {}; all.forEach(c => { (groups[calAcct(c)] = groups[calAcct(c)] || []).push(c); });
   const keys = Object.keys(groups).sort((a, b) => calIsGoogle(groups[b][0]) - calIsGoogle(groups[a][0]) || a.localeCompare(b)), anyG = all.some(calIsGoogle), ios = CAP.getPlatform?.() === 'ios';
+  const addG = ios ? '<b>Settings → Apps → Calendar → Calendar Accounts → Add Account → Google</b> (on older iPhones: Settings → Calendar → Accounts)' : 'your phone’s <b>Settings → Accounts → Add account → Google</b>';
   const row = c => `<button class="cps-r ${state.profile.calId === c.id ? 'on' : ''}" data-action="calPick" data-v="${esc(c.id)}" data-n="${esc(c.title || 'Calendar')}"><i style="--c:${/^#[0-9a-f]{6}/i.test(c.color || '') ? c.color.slice(0, 7) : '#9fcf8c'}"></i><b>${esc(c.title || 'Calendar')}</b>${calIsGoogle(c) ? '<em>Google</em>' : ''}${state.profile.calId === c.id ? icon('check', 15, 2.4) : ''}</button>`;
   wsOpen(`<div class="cps"><h2>Which calendar?</h2><p class="cps-s">Pick where your cycle shows up. A Google calendar carries it on to Google Calendar on every device.</p>
     ${keys.map(k => `<h5>${calIsGoogle(groups[k][0]) ? `${icon('calendar', 13)} ` : ''}${esc(k)}</h5><div class="cps-g">${groups[k].map(row).join('')}</div>`).join('')}
     <h5>Kept apart</h5><div class="cps-g"><button class="cps-r ${state.profile.calSync && state.profile.calOwn !== false ? 'on' : ''}" data-action="calPick" data-v="own" data-n="My cycle"><i style="--c:#9fcf8c"></i><b>A new “My cycle” calendar</b><small>On this phone, easy to hide or remove</small>${state.profile.calSync && state.profile.calOwn !== false ? icon('check', 15, 2.4) : ''}</button></div>
-    ${anyG ? '' : `<div class="cps-tip"><b>${icon('calendar', 14)} Want it in Google Calendar?</b><p>${ios ? 'On your iPhone open <b>Settings → Apps → Calendar → Calendar Accounts → Add Account → Google</b> (on older iPhones: Settings → Calendar → Accounts), sign in and turn on Calendars.' : 'Add your Google account in your phone’s <b>Settings → Accounts</b> and turn on Calendar sync.'} Then come back and tap Sync again: your Google calendars will be listed here.</p></div>`}
+    ${anyG
+      ? `<div class="cps-tip"><b>${icon('calendar', 14)} A different Google account?</b><p>The app sees the Google accounts on your phone. Add another one in ${addG}, sign in and turn on Calendars. Then come back and tap Change calendar: it will be listed here too.</p></div>`
+      : `<div class="cps-tip"><b>${icon('calendar', 14)} Want it in Google Calendar?</b><p>Add your Google account in ${addG}, sign in and turn on Calendars. Then come back and tap Sync again: your Google calendars will be listed here.</p></div>`}
   </div>`, 'ws-mini');
 }
 async function calPick(id, name) {
