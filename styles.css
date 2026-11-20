@@ -17424,3 +17424,23 @@ html[lang="es"] p, html[lang="es"] small { hyphens: auto; -webkit-hyphens: auto;
 .onb .dt-grid .dt-c[data-v="all"]:first-child:nth-last-child(n) { aspect-ratio: 2.55 / 1; }
 .onb .dt-grid .dt-c[data-v="all"] img { transform: scale(1); filter: none; }
 .onb .dt-grid .dt-c[data-v="all"].on img { transform: scale(1.03); }
+
+/* One drink on its own page: turning cup on the background, name and why, a white spec card */
+.dk-hero { text-align: center; padding: 4px 6px 18px; }
+.dk-cup { width: 190px !important; height: 190px !important; margin: 0 auto 6px; filter: drop-shadow(0 18px 20px rgba(60,40,50,.16)); }
+.dk-cup > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.dk-cup canvas.teacup3d { inset: -14% !important; width: 128% !important; height: 128% !important; }
+.dk-eb { display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: 999px; background: rgba(255,255,255,.88); font: 500 12.5px/1 Outfit, sans-serif; color: #304023; }
+.dk-eb i { width: 7px; height: 7px; border-radius: 50%; }
+.dk-hero h1 { margin: 12px 0 6px; font: 600 32px/1.08 Outfit, sans-serif; letter-spacing: -.025em; color: #20301a; }
+.dk-hero p { margin: 0 auto; max-width: 320px; font: 400 15.5px/1.5 Outfit, sans-serif; color: #3a4a2e; }
+.dk-spec { padding: 6px 20px; margin: 0 0 18px; border-radius: 28px; background: #fff; border: 1px solid rgba(32,48,26,.06); box-shadow: 0 10px 28px rgba(60,40,50,.08); }
+.dk-spec dl { margin: 0; }
+.dk-spec dl > div { display: flex; justify-content: space-between; gap: 16px; padding: 13px 0; border-bottom: 1px solid rgba(32,48,26,.08); }
+.dk-spec dl > div:last-child { border-bottom: 0; }
+.dk-spec dt { font: 400 14px/1.4 Outfit, sans-serif; color: #6a7560; }
+.dk-spec dd { margin: 0; text-align: right; font: 500 14.5px/1.4 Outfit, sans-serif; color: #20301a; max-width: 62%; }
+.dk-more { display: flex; gap: 10px; overflow-x: auto; padding: 2px 2px 14px; scrollbar-width: none; }
+.dk-more::-webkit-scrollbar { display: none; }
+.dk-more button { text-align: center; flex: 0 0 104px; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 8px; border: 1px solid rgba(32,48,26,.07); border-radius: 22px; background: rgba(255,255,255,.9); font: 500 13px/1.25 Outfit, sans-serif; color: #20301a; }
+.dk-more img { width: 64px; height: 64px; object-fit: contain; }

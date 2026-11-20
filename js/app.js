@@ -2948,10 +2948,10 @@ function foodExplore(phase, info) {
     const C0 = EAT_GUIDE[phase].cats[k], L = warmChips(C0[1], k, warm && phase === (info && info.phase)).slice(0, 9);
     lead = C0[0].split('. ')[0].replace(/\.?$/, '.');
     const does = t => t ? `<small>${t}</small>` : '';
-    body = `<div class="fx-g fx-sfg">${L.map(([, n]) => { if (k === 'supps') { const x = suppOf(n), sym = x ? x.sym : /B12/.test(n) ? 'B12' : /omega/i.test(n) ? 'Ω3' : n.slice(0, 2);
+    body = `<div class="fx-g fx-sfg">${L.map(([, n], i) => { if (k === 'supps') { const x = suppOf(n), sym = x ? x.sym : /B12/.test(n) ? 'B12' : /omega/i.test(n) ? 'Ω3' : n.slice(0, 2);
       return `<button class="fx-t" data-action="nav" data-to="plan/supps"><span class="fx-ti sym"><span>${sym}</span></span><b>${n.replace(/\s+[\d.,–-]+\s*(g|mg|µg|mcg|IU)$/i, '').replace(/\s*\(.*\)$/, '')}</b>${does(x && SUPP_DOES[x.id])}</button>`; }
       // teas show the cut-out cup on the white tile, no photo background (16 Nov 2026, her call)
-      return tile(teaCupImg(n), n, 'data-action="nav" data-to="plan/drinks"').replace('class="fx-ti ', 'class="fx-ti cup ').replace('</b></button>', `</b>${does((DRINK_DOES.find(([re]) => re.test(n)) || [])[1])}</button>`); }).join('')}</div>`;
+      return tile(teaCupImg(n), n, `data-action="nav" data-to="drink/${phase}-${i}"`).replace('class="fx-ti ', 'class="fx-ti cup ').replace('</b></button>', `</b>${does((DRINK_DOES.find(([re]) => re.test(n)) || [])[1])}</button>`); }).join('')}</div>`;
   } else {
     // blood sugar: one simple curve graphic and three steps, the full page behind See all
     lead = { menstrual: 'Cravings are normal now. Three steps keep the curve gentle.', follicular: 'Your body handles carbs well now. Three steps keep the curve gentle.',
@@ -3267,6 +3267,29 @@ const DR_SUB = { menstrual: 'Hot drinks move blood and ease cramps. Keep your co
   ovulatory: 'Your peak days. Drink plenty, and a cool matcha or coconut water is perfect.', luteal: 'Steady blood sugar and calm evenings. Coffee with food, cacao and chamomile.' };
 const DR_TITLE = { menstrual: 'Warm cups', follicular: 'Fresh & light', ovulatory: 'Cool & hydrating', luteal: 'Calm & steady' };
 const drinkList = phase => warmChips(EAT_GUIDE[phase].cats.drinks[1], 'drinks', warmWindow(M.info) && phase === (M.info && M.info.phase)).map(([, n]) => n);
+// One drink on its own page (tapped from the Drinks tiles on Food): the turning cup, what it does, when and how much, the study.
+function viewDrink(id) {
+  const m = String(id || '').match(/^(menstrual|follicular|ovulatory|luteal)-(\d+)$/), phase = m && m[1], n = m && drinkList(phase)[+m[2]];
+  if (!n) { location.replace('#/plan/drinks'); return ''; }
+  const sp = DRINK_SPEC.find(([r]) => r.test(n)) || [], why = (EB_WHY.find(([r]) => r.test(n)) || [0, ''])[1], does = (DRINK_DOES.find(([re]) => re.test(n)) || [])[1];
+  const info = M.info, nearBleed = info && (info.phase === 'menstrual' || dayWindow(info) === 'premenstrual');
+  const serve = /iced/i.test(n) ? (nearBleed ? 'Warm these days, not iced' : 'Iced') : /water|juice/i.test(n) ? 'Room temperature' : /warm|tea|broth|cacao|coffee|latte|matcha/i.test(n) ? 'Hot or warm' : 'Room temperature';
+  const rows = [['When', sp[2]], ['How much', sp[3]], ['Caffeine', sp[4]], ['Serve', serve]].filter(r => r[1]);
+  const st = sp[5], care = [sp[6], /raw milk/i.test(n) ? 'Warm raw milk gently, only until it feels warm on your lip. Never boil it.' : ''].filter(Boolean);
+  const others = drinkList(phase).map((x, i) => [x, i]).filter(([x]) => x !== n);
+  return `${topbar('Drinks', { back: true })}<div class="pad dk">
+    <section class="dk-hero">
+      <span class="cup3d-w dk-cup"><img src="${teaCupImg(n)}" alt="" decoding="async">${teaCupAttr(n) ? `<canvas class="teacup3d"${teaCupAttr(n)} data-fit="${/iced/i.test(n) ? 0.72 : 1.3}" data-steam="${/iced|water|juice/i.test(n) ? 0 : 1}" aria-label="${esc(n)}, turning slowly"></canvas>` : ''}</span>
+      <small class="dk-eb"><i style="background:${PH_HEX[phase]}"></i>For your ${PHASES[phase].name.toLowerCase()} phase</small>
+      <h1>${n}</h1>
+      ${why ? `<p>${why}</p>` : does ? `<p>${does}.</p>` : ''}
+    </section>
+    ${rows.length ? `<section class="card dk-spec"><dl>${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl></section>` : ''}
+    ${st ? `${sectionTitle('What studies found')}<section class="card tea-study2"><div class="sgt-st"><b class="dotnum">${st[1]}</b><span><em>${st[0]}</em>${st[2]}</span></div></section>` : ''}
+    ${care.length ? `<section class="ck-first"><span class="ck-i">!</span><div><small>Before you try it</small>${care.map(c => `<p>${c}</p>`).join('')}</div></section>` : ''}
+    ${others.length ? `${sectionTitle('More for your phase')}<div class="dk-more">${others.map(([x, i]) => `<button data-action="nav" data-to="drink/${phase}-${i}"><img src="${teaCupImg(x)}" alt="" loading="lazy" decoding="async"><b>${x}</b></button>`).join('')}</div>` : ''}
+  </div>`;
+}
 // Every drink drawn in its own cup, glass or bowl (one hand-drawn set, same style as the food emoji).
 const DRINK_ART = [[/iced matcha/i, 'iced-matcha'], [/matcha latte/i, 'matcha-latte'], [/matcha/i, 'matcha'], [/coffee/i, 'coffee'], [/cacao/i, 'cacao'],
   [/red date/i, 'red-date-tea'], [/raspberry leaf/i, 'raspberry-leaf-tea'], [/ginger/i, 'ginger-tea'], [/broth/i, 'broth'], [/lemon water/i, 'lemon-water'],
@@ -12665,7 +12688,7 @@ function render() {
   } // the whole app takes the colour of her phase
   if (document.documentElement.dataset.phase !== ph) document.documentElement.dataset.phase = ph;
   const views = {
-    today: viewToday, saved: viewSaved, ground: viewGround, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: () => viewBreathe(r.id), do: () => viewTopic(r.id), plan: viewPlan, diet: viewDiet, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: viewCalendar, manifest: viewManifest, moon: viewCalendar, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewReliefIndex, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), apothecary: () => { location.replace('#/plan/foods'); return ''; }, world: () => viewWorld(r.id), privacy: viewPrivacy, imprint: viewImprint, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
+    today: viewToday, saved: viewSaved, ground: viewGround, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: () => viewBreathe(r.id), do: () => viewTopic(r.id), plan: viewPlan, diet: viewDiet, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: viewCalendar, manifest: viewManifest, moon: viewCalendar, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewReliefIndex, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), drink: () => viewDrink(r.id), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), apothecary: () => { location.replace('#/plan/foods'); return ''; }, world: () => viewWorld(r.id), privacy: viewPrivacy, imprint: viewImprint, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
     unlock: viewUnlock,
     after: viewAfter,
     trying: viewTrying,
