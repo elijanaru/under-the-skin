@@ -17416,3 +17416,7 @@ html[lang="es"] p, html[lang="es"] small { hyphens: auto; -webkit-hyphens: auto;
 .ul-how li.now .ul-how-ic { background: #6c823e; color: #fff; box-shadow: none; }
 .ul-how b { display: block; font-size: 15px; font-weight: 500; color: #20301a; line-height: 1.3; padding-top: 6px; }
 .ul-how small { display: block; font-size: 13.5px; line-height: 1.4; color: rgba(32,48,26,.72); margin-top: 2px; }
+/* "Everything" diet card: her painted food row, shown whole (no side crop) */
+.onb .dt-grid .dt-c[data-v="all"]:first-child:nth-last-child(n) { aspect-ratio: 2.55 / 1; }
+.onb .dt-grid .dt-c[data-v="all"] img { transform: scale(1); filter: none; }
+.onb .dt-grid .dt-c[data-v="all"].on img { transform: scale(1.03); }

@@ -1887,7 +1887,7 @@ function viewOnboarding() {
         ${o.photo ? '' : '<button class="gx-skip" data-action="onbNext">Skip for now</button>'}`,
     3: `<h2 class="onb-title">How do <span>you eat?</span></h2>
         <p class="muted">Your recipes, food guide and supplements follow this. Change it anytime in Profile.</p>
-        <div class="dt-grid">${DIETS.map((x, i) => `<button class="dt-c ${(o.diet || 'all') === x.k ? 'on' : ''}" data-action="onbDiet" data-v="${x.k}" style="--i:${i}" aria-pressed="${(o.diet || 'all') === x.k}"><img src="${DIET_PIC[x.k]()}" alt="" loading="eager"><span class="dt-shade"></span><span class="dt-ok">${icon('check', 14, 2.6)}</span><span class="dt-tx"><b>${x.t}</b><small>${x.s}</small></span></button>`).join('')}</div>
+        <div class="dt-grid">${DIETS.map((x, i) => `<button class="dt-c ${(o.diet || 'all') === x.k ? 'on' : ''}" data-action="onbDiet" data-v="${x.k}" style="--i:${i}" aria-pressed="${(o.diet || 'all') === x.k}"><img src="${x.k === 'all' ? 'images/diet-all.webp' : DIET_PIC[x.k]()}" alt="" loading="eager"><span class="dt-shade"></span><span class="dt-ok">${icon('check', 14, 2.6)}</span><span class="dt-tx"><b>${x.t}</b><small>${x.s}</small></span></button>`).join('')}</div>
         <div class="dt-peek" aria-live="polite">${dvPeek(o.diet || 'all')}</div>`,
     4: `<div class="onb-cut"><img src="images/period.png" alt=""></div><h2 class="onb-title">When did your last <span>period start?</span></h2>
         <div class="ago">${[[7, 'About 1 week ago'], [14, '2 weeks ago'], [21, '3 weeks ago'], [30, 'About 1 month ago'], ['none', 'I don’t have a period right now']].map(([v, t]) =>
