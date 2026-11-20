@@ -8388,7 +8388,7 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .xb:last-child:nth-child(odd) { grid-column: 1 / -1; }
 .xb-o { position: relative; width: min(152px, 84%); aspect-ratio: 1; animation: xbFloat 7s ease-in-out infinite; transition: transform .45s cubic-bezier(.2,.8,.2,1); }
 .xb:last-child:nth-child(odd) .xb-o { width: min(152px, calc(42% - 6px)); }
-.xb-o img, .xb-o video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; filter: saturate(1.15) contrast(1.05) drop-shadow(0 16px 18px rgba(60,40,50,.22)); }
+.xb-o img, .xb-o video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; filter: saturate(1.12) contrast(1.04) drop-shadow(0 0 14px color-mix(in srgb, var(--glow) 55%, transparent)) drop-shadow(0 16px 18px rgba(60,40,50,.2)); }
 .xb-t { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; padding: 10px 17px 10px 14px; border-radius: 999px;
   background: rgba(255,255,255,.9); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: #20301a; font: 500 15px/1 Outfit, sans-serif; letter-spacing: .005em;
   box-shadow: 0 0 0 1px rgba(32,48,26,.07), 0 8px 18px -10px rgba(32,48,26,.4); transition: transform .45s cubic-bezier(.2,.8,.2,1); }
