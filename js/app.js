@@ -2948,10 +2948,15 @@ function foodExplore(phase, info) {
     const C0 = EAT_GUIDE[phase].cats[k], L = warmChips(C0[1], k, warm && phase === (info && info.phase)).slice(0, 9);
     lead = C0[0].split('. ')[0].replace(/\.?$/, '.');
     const does = t => t ? `<small>${t}</small>` : '';
-    body = `<div class="fx-g fx-sfg">${L.map(([, n], i) => { if (k === 'supps') { const x = suppOf(n), sym = x ? x.sym : /B12/.test(n) ? 'B12' : /omega/i.test(n) ? 'Ω3' : n.slice(0, 2);
+    body = `<div class="fx-g fx-sfg${k === 'drinks' ? ' drc2-g' : ''}">${L.map(([, n], i) => { if (k === 'supps') { const x = suppOf(n), sym = x ? x.sym : /B12/.test(n) ? 'B12' : /omega/i.test(n) ? 'Ω3' : n.slice(0, 2);
       return `<button class="fx-t" data-action="nav" data-to="plan/supps"><span class="fx-ti sym"><span>${sym}</span></span><b>${n.replace(/\s+[\d.,–-]+\s*(g|mg|µg|mcg|IU)$/i, '').replace(/\s*\(.*\)$/, '')}</b>${does(x && SUPP_DOES[x.id])}</button>`; }
       // teas show the cut-out cup on the white tile, no photo background (16 Nov 2026, her call)
-      return tile(teaCupImg(n), n, `data-action="nav" data-to="drink/${phase}-${i}"`).replace('class="fx-ti ', 'class="fx-ti cup ').replace('</b></button>', `</b>${does((DRINK_DOES.find(([re]) => re.test(n)) || [])[1])}</button>`); }).join('')}</div>`;
+      // drinks as little café coasters: tinted in the drink's own colour, the cup floating, steam on the hot ones (21 Nov 2026)
+      const hot = !/iced|water|juice|cold/i.test(n), dc = (DRINK_TINT.find(([re]) => re.test(n)) || [0, '#c9b48a'])[1];
+      return `<button class="drc2" data-action="nav" data-to="drink/${phase}-${i}" style="--dc:${dc};--i:${i}" aria-label="${esc(n)}"><span class="drc2-glow" aria-hidden="true"></span>
+        <span class="drc2-go" aria-hidden="true">${icon('chevR', 13, 2.4)}</span>
+        <span class="drc2-cup" aria-hidden="true">${hot ? '<i class="drc2-st"></i><i class="drc2-st"></i><i class="drc2-st"></i>' : '<i class="drc2-sp"></i><i class="drc2-sp"></i>'}<img src="${teaCupImg(n)}" alt="" loading="lazy" decoding="async"></span><span class="drc2-co" aria-hidden="true"></span>
+        <b>${n}</b>${(t => t ? `<small>${t}</small>` : '')((DRINK_DOES.find(([re]) => re.test(n)) || [])[1])}</button>`; }).join('')}</div>`;
   } else {
     // blood sugar: one simple curve graphic and three steps, the full page behind See all
     lead = { menstrual: 'Cravings are normal now. Three steps keep the curve gentle.', follicular: 'Your body handles carbs well now. Three steps keep the curve gentle.',
@@ -3266,6 +3271,9 @@ const DRINK_SPEC = [
 const DR_SUB = { menstrual: 'Hot drinks move blood and ease cramps. Keep your coffee, just away from iron-rich meals.', follicular: 'Energy is rising. Coffee or matcha both fit, with fresh greens and lemon.',
   ovulatory: 'Your peak days. Drink plenty, and a cool matcha or coconut water is perfect.', luteal: 'Steady blood sugar and calm evenings. Coffee with food, cacao and chamomile.' };
 const DR_TITLE = { menstrual: 'Warm cups', follicular: 'Fresh & light', ovulatory: 'Cool & hydrating', luteal: 'Calm & steady' };
+// each drink's own colour, for its coaster glow
+const DRINK_TINT = [[/matcha|green juice|green tea|nettle|mint|moringa/i, '#a3c75e'], [/coffee/i, '#c9926a'], [/cacao|cocoa/i, '#b07a62'], [/hibiscus|rosehip|red date|beet/i, '#ee6f8f'],
+  [/coconut|chamomile|lemon|golden|turmeric/i, '#f2cf6e'], [/water/i, '#86c6d8'], [/ginger|chai|rooibos|cinnamon|broth/i, '#f0a85a'], [/milk|latte|kefir/i, '#e7c9a6'], [/raspberry/i, '#e8879b']];
 const drinkList = phase => warmChips(EAT_GUIDE[phase].cats.drinks[1], 'drinks', warmWindow(M.info) && phase === (M.info && M.info.phase)).map(([, n]) => n);
 // One drink on its own page (tapped from the Drinks tiles on Food): the turning cup, what it does, when and how much, the study.
 function viewDrink(id) {
