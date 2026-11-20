@@ -62,6 +62,16 @@ function nice(m = '') {
   return m || 'Something went wrong. Try again.';
 }
 
+// What went wrong in the Apple/Google sheet, in her words (null = she closed it herself, say nothing)
+function loginWhy(provider, e) {
+  const m = String(e?.message || ''), code = String(e?.code || ''), n = (m.match(/error (-?\d+)/) || [])[1] || '';
+  if (/cancel/i.test(m + code) || n === '1001' || n === '-5') return null;
+  if (provider === 'apple') {
+    if (n === '1000' || n === '1004') return `Apple couldn’t sign you in on this iPhone. Open Settings, check you’re signed in with your Apple Account and two-factor is on, then try again. Or use your email below. (Apple ${n})`;
+    if (n) return `Apple sign-in didn’t finish. Try again, or use your email below. (Apple ${n})`;
+  }
+  return `Sign-in didn’t finish. Try again, or use your email below.${n ? ` (${n})` : ''}`;
+}
 const hex = b => [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
 let slReady = null;
 async function nativeProvider(provider) {
@@ -75,13 +85,17 @@ async function nativeProvider(provider) {
   const raw = hex(crypto.getRandomValues(new Uint8Array(16)));
   const nonce = hex(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw)));
   let res;
-  try { res = await P.login({ provider, options: { scopes: provider === 'apple' ? ['email', 'name'] : ['email', 'profile'], nonce } }); }
-  catch (e) { if (/cancel/i.test(e?.message || '') || e?.code === '1001') return; throw new Error('Sign-in didn’t finish. Try again.'); }
+  // Apple: no scopes passed, so the plugin asks for Apple's own full name + email (a made-up 'name' scope can break a first sign-in)
+  try { res = await P.login({ provider, options: provider === 'apple' ? { nonce } : { scopes: ['email', 'profile'], nonce } }); }
+  catch (e) { const why = loginWhy(provider, e); if (!why) return; throw new Error(why); }
   const token = res?.result?.idToken;
-  if (!token) throw new Error('Sign-in didn’t finish. Try again.');
+  if (!token) throw new Error(`${provider === 'apple' ? 'Apple' : 'Google'} didn’t send a sign-in back. Try again, or use your email below.`);
   const c = await client();
   const { error } = await c.auth.signInWithIdToken({ provider, token, nonce: raw });
-  fail(error);
+  if (error) {
+    try { localStorage.setItem('uts.authErr', `${new Date().toISOString()} ${provider} ${error.status || ''} ${error.code || ''} ${error.message || ''}`.slice(0, 300)); } catch {}
+    const m = nice(error.message); throw new Error(m !== error.message ? m : `Sign-in didn’t go through. Try again, or use your email below.${error.status ? ` (${error.status})` : ''}`);
+  }
 }
 
 export async function withProvider(provider) {

@@ -5183,4 +5183,12 @@ export default {"+ Cayenne":"+ Cayena",
 "½ tsp chewed after a meal":"½ cdta masticada después de comer",
 "🍂 Luteal <t0>Wrap up</t0>":"🍂 Lútea <t0>Cierra pendientes</t0>",
 "🍂 Luteal · Wrap up":"🍂 Lútea · Cierra pendientes",
-"Your last free day, everything is still open":"Tu último día gratis, todo sigue abierto"};
+"Your last free day, everything is still open":"Tu último día gratis, todo sigue abierto",
+"Apple couldn’t sign you in on this iPhone. Open Settings, check you’re signed in with your Apple Account and two-factor is on, then try again. Or use your email below. (Apple {0})":"Apple no pudo iniciar tu sesión en este iPhone. Abre Ajustes, mira que tengas tu cuenta de Apple iniciada y la verificación en dos pasos activada, y vuelve a intentarlo. O usa tu email abajo. (Apple {0})",
+"Apple sign-in didn’t finish. Try again, or use your email below. (Apple {0})":"El inicio con Apple no terminó. Inténtalo otra vez o usa tu email abajo. (Apple {0})",
+"Sign-in didn’t finish. Try again, or use your email below.":"El inicio de sesión no terminó. Inténtalo otra vez o usa tu email abajo.",
+"Sign-in didn’t finish. Try again, or use your email below. ({0})":"El inicio de sesión no terminó. Inténtalo otra vez o usa tu email abajo. ({0})",
+"Apple didn’t send a sign-in back. Try again, or use your email below.":"Apple no devolvió el inicio de sesión. Inténtalo otra vez o usa tu email abajo.",
+"Google didn’t send a sign-in back. Try again, or use your email below.":"Google no devolvió el inicio de sesión. Inténtalo otra vez o usa tu email abajo.",
+"Sign-in didn’t go through. Try again, or use your email below.":"No se pudo iniciar sesión. Inténtalo otra vez o usa tu email abajo.",
+"Sign-in didn’t go through. Try again, or use your email below. ({0})":"No se pudo iniciar sesión. Inténtalo otra vez o usa tu email abajo. ({0})"};

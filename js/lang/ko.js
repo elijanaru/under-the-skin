@@ -5183,4 +5183,12 @@ export default {"+ Cayenne":"+ 카옌페퍼",
 "½ tsp chewed after a meal":"식후 ½작은술, 꼭꼭 씹어서",
 "🍂 Luteal <t0>Wrap up</t0>":"🍂 황체기 <t0>마무리</t0>",
 "🍂 Luteal · Wrap up":"🍂 황체기 · 마무리",
-"Your last free day, everything is still open":"마지막 무료일이에요, 아직 모두 열려 있어요"};
+"Your last free day, everything is still open":"마지막 무료일이에요, 아직 모두 열려 있어요",
+"Apple couldn’t sign you in on this iPhone. Open Settings, check you’re signed in with your Apple Account and two-factor is on, then try again. Or use your email below. (Apple {0})":"이 iPhone에서 Apple 로그인이 안 됐어요. 설정에서 Apple 계정에 로그인되어 있는지, 이중 인증이 켜져 있는지 확인하고 다시 해 보세요. 아래 이메일로 해도 돼요. (Apple {0})",
+"Apple sign-in didn’t finish. Try again, or use your email below. (Apple {0})":"Apple 로그인이 끝나지 않았어요. 다시 해 보거나 아래 이메일로 해 주세요. (Apple {0})",
+"Sign-in didn’t finish. Try again, or use your email below.":"로그인이 끝나지 않았어요. 다시 해 보거나 아래 이메일로 해 주세요.",
+"Sign-in didn’t finish. Try again, or use your email below. ({0})":"로그인이 끝나지 않았어요. 다시 해 보거나 아래 이메일로 해 주세요. ({0})",
+"Apple didn’t send a sign-in back. Try again, or use your email below.":"Apple에서 로그인 정보가 오지 않았어요. 다시 해 보거나 아래 이메일로 해 주세요.",
+"Google didn’t send a sign-in back. Try again, or use your email below.":"Google에서 로그인 정보가 오지 않았어요. 다시 해 보거나 아래 이메일로 해 주세요.",
+"Sign-in didn’t go through. Try again, or use your email below.":"로그인이 되지 않았어요. 다시 해 보거나 아래 이메일로 해 주세요.",
+"Sign-in didn’t go through. Try again, or use your email below. ({0})":"로그인이 되지 않았어요. 다시 해 보거나 아래 이메일로 해 주세요. ({0})"};
