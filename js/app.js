@@ -2068,7 +2068,7 @@ function viewToday() {
 }
 // Explore: every button a full photo with a frosted label.
 function exploreGrid(info) {
-  // her own painted orbs (from Canva) with a little airbrushed motif: bee, cycle ring, balanced stones, breath
+  // her own painted orbs (from Canva) with a little airbrushed motif: bee, ring of 28 days, two orbs balanced on her heart, a dandelion breathing out
   const tiles = [['super', 'leaf', 'Superfoods', 'Spices & superfoods for your phase', 'images/xb/super.webp'], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/xb/guide.webp'],
     ['relief', 'heart', 'Balance hormones', 'Step by step, fundamentals first', 'images/xb/relief.webp'],
     ['tea', 'cup', 'Tea guide', 'For every need', 'images/tea-ginger.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/xb/breathe.webp']];
