@@ -2068,7 +2068,7 @@ function viewToday() {
 }
 // Explore: every button a full photo with a frosted label.
 function exploreGrid(info) {
-  // her own painted orbs (from Canva) with a little airbrushed motif: bee, ring of 28 days, a soft yin-yang for balance, soft lungs on a calm lilac orb, a steaming cup
+  // her own painted orbs (from Canva) with a little airbrushed motif: bee, ring of 28 days, a soft yin-yang on her heart orb, soft lungs on her starburst orb, a steaming cup
   const tiles = [['super', 'leaf', 'Superfoods', 'Spices & superfoods for your phase', 'images/xb/super.webp'], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/xb/guide.webp'],
     ['relief', 'heart', 'Balance hormones', 'Step by step, fundamentals first', 'images/xb/relief.webp'],
     ['tea', 'cup', 'Tea guide', 'For every need', 'images/xb/tea.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/xb/breathe.webp']];
