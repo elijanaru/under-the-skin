@@ -59,7 +59,7 @@ export function mountTeaCup(canvas, { onReady, onFail, model = MODEL_URL, elev: 
       if (!alive) return;
       const m = gl.scene.clone(true);
       const box = new THREE.Box3().setFromObject(m), size = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());
-      const s = fit / Math.max(size.x, size.z);
+      const s = Math.min(fit / Math.max(size.x, size.z), 1.3 / size.y); // tall drinks (an iced cup) never grow past the frame
       m.scale.setScalar(s); m.position.set(-c.x * s, -box.min.y * s, -c.z * s);
       cup.add(m); top = size.y * s;
       ready = true; onReady && onReady();
