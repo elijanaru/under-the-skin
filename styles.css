@@ -10600,6 +10600,10 @@ section.ct .ct-tx { text-align: center; padding: 0 20%; }
 /* Supplements: Apple-style header, no caption over the hand photo */
 .sp-h { --c: var(--accent, #6c823e); margin: 6px 2px 16px; }
 .sp-h h1 { margin: 6px 0 0; font: 600 30px/1.08 Outfit, sans-serif; letter-spacing: -.025em; color: #20301a; }
+/* her 3D plate of pills turns slowly beside the Supplements title */
+.sp-3d { float: right; width: 128px; height: 128px; margin: -14px -8px 0 6px; shape-outside: circle(50%); filter: drop-shadow(0 14px 16px rgba(60,40,50,.16)); }
+.sp-3d img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.sp-3d canvas.teacup3d { inset: -10%; width: 120%; height: 120%; }
 /* Consistency: every page headline in the Apple style (bold ink, one colour, tight) */
 .page-h { font: 600 30px/1.08 Outfit, sans-serif !important; letter-spacing: -.025em !important; color: #20301a !important; margin: 6px 2px 10px; }
 html .pad > .page-h span, html .page-h span, html .gro-page .page-h span { color: inherit !important; -webkit-text-fill-color: currentColor !important; background: none !important; font-weight: inherit !important; }

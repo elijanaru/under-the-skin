@@ -3164,7 +3164,7 @@ const EB_WHY = [[/B12/i, 'Plants have none. 25 to 100 µg a day, or 1,000 µg tw
   [/matcha|green tea/i, 'Calm focus: caffeine with L-theanine.'], [/cacao/i, 'Magnesium for cravings, cramps and calm.'], [/ginger/i, 'Warms the belly and eases cramps.'], [/red date/i, 'Builds blood in Chinese medicine, gently sweet.'],
   [/raspberry leaf/i, 'A classic tea for the womb, mild and earthy.'], [/broth/i, 'Minerals, collagen and warmth.'], [/nettle/i, 'Iron and minerals after bleeding.'], [/chamomile/i, 'Helps you wind down before sleep.'],
   [/hibiscus/i, 'Tart, cooling and full of antioxidants.'], [/coconut water/i, 'Potassium for hot, sweaty days.'], [/lemon/i, 'A fresh start with vitamin C.'], [/mineral water/i, 'Magnesium and calcium you can drink.'], [/juice/i, 'Greens in a glass for your liver.']];
-const EB_PIC = [[/matcha/i, () => teaCupImg('Matcha')], [/coffee/i, () => teaCupImg('Your coffee')], [/cacao/i, () => foodPhoto('Raw cacao', 240)], [/raspberry leaf/i, () => teaCupImg('Red raspberry leaf')],
+const EB_PIC = [[/iced matcha/i, () => teaCupImg('Iced matcha')], [/matcha/i, () => teaCupImg('Matcha')], [/coffee/i, () => teaCupImg('Your coffee')], [/cacao/i, () => foodPhoto('Raw cacao', 240)], [/raspberry leaf/i, () => teaCupImg('Red raspberry leaf')],
   [/broth/i, () => teaCupImg('Healing broth')], [/lemon water/i, () => teaCupImg('Morning lemon & ginger')], [/hibiscus/i, () => teaCupImg('Hibiscus')], [/coconut water/i, () => 'images/sz/coconut.webp'],
   [/mineral water/i, () => 'images/fb/lemon.webp'], [/green juice/i, () => 'images/sz/kale.webp'], [/kefir/i, () => foodPhoto('Kefir', 240)], [/yoghurt/i, () => foodPhoto('Greek yoghurt', 240)], [/milk/i, () => foodPhoto('Grass-fed raw milk & butter', 240)], [/butter|ghee/i, () => 'https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=240&h=240&fit=crop&auto=format&q=72'], [/cheese/i, () => foodPhoto('Fresh sheep & goat cheese', 240)],
   [/red date/i, () => teaCupImg('Ginger & red dates')], [/ginger/i, () => teaCupImg('Ginger')], [/chamomile/i, () => teaCupImg('Chamomile')], [/nettle/i, () => teaCupImg('Nettle leaf')]];
@@ -3604,7 +3604,7 @@ const MATCHA_RE = /matcha|green tea/i;
 // no two drinks in one list share a cup; 16 Nov 2026 her coffee mug added): the white mug for coffee, the glass latte for cacao and milky drinks, matcha, green tea, the blue
 // mint cup for leafy teas and water, the red hibiscus cup for hibiscus and red dates, the amber teacup for ginger and spiced teas,
 // her blue and white broth bowl for broth and the floral chamomile cup for chamomile, lemon and coconut water.
-const TEA_CUP = [[/matcha/i, 'matcha', 'cup3d/matcha'], [/coffee|espresso/i, 'coffee', 'cup3d/coffee'], [/green tea|green juice/i, 'greentea', 'cup3d/greentea'],
+const TEA_CUP = [[/iced matcha/i, 'iced-matcha', 'cup3d/iced-matcha'], [/matcha/i, 'matcha', 'cup3d/matcha'], [/coffee|espresso/i, 'coffee', 'cup3d/coffee'], [/green tea|green juice/i, 'greentea', 'cup3d/greentea'],
   [/chai|cacao|cocoa|latte|turmeric|golden milk|\bmilk\b|kefir/i, 'latte', 'cup3d/latte'],
   [/hibiscus|bissap|roselle|rosehip|red date/i, 'hibiscus', 'cup3d/hibiscus'], [/broth/i, 'broth', 'cup3d/broth'],
   [/mint|lemon balm|nettle|lemongrass|jasmine|tulsi|moringa|raspberry leaf|dandelion|mineral water/i, 'mint-tea', 'cup3d/mint-tea'],
@@ -6009,7 +6009,7 @@ function viewSupps() {
   const row = x => `<button class="nu2-r sup2-r" data-action="nav" data-to="supp/${x.id}"><span class="nu2-p art">${nuArt(suppHero(x.id), used, x.id)}</span>
     <span class="nu2-t"><b>${x.name.replace(/\s*\(.*?\)/, '')}</b><small>${forTxt(x)}</small></span><span class="nu2-d"><span>${dose(x)}</span><small>${when(x)}</small></span>${dots(x)}</button>`;
   return `${topbar('Supplements', { back: true })}<div class="pad sp2">
-    <header class="t4-h sp-h"><small>Supplements</small><h1>Fill the gaps food can’t.</h1><p>Food comes first. Tap a pill to see what it does and when in your cycle it helps.</p></header>
+    <header class="t4-h sp-h"><span class="cup3d-w sp-3d" aria-hidden="true"><img src="images/supp-plate.webp" alt="" decoding="async"><canvas class="teacup3d" data-model="models/supp-plate.glb" data-elev="1" data-fit="1.25" data-steam="0" data-shadow="0"></canvas></span><small>Supplements</small><h1>Fill the gaps food can’t.</h1><p>Food comes first. Tap a pill to see what it does and when in your cycle it helps.</p></header>
     ${suppHand(now)}
     ${now && on.length ? suppStack(on, now) : ''}
     <div class="seg">${(now ? [['now', 'For now'], ['all', 'All']] : [['all', 'All']]).map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" data-action="supTab" data-v="${k}">${l}</button>`).join('')}</div>
@@ -6382,12 +6382,13 @@ const DISH_3D = {
   curry: { model: 'models/curry.glb', img: 'images/dish-curry.webp', fit: 1.4, heroFit: 1.3, elev: 0.9, hero: true },
   steak: { model: 'models/steak.glb', img: 'images/dish-steak.webp', fit: 1.4, heroFit: 1.35, elev: 0.8, steam: 0, hero: true },
   sweetPotato: { model: 'models/sweet-potato.glb', img: 'images/dish-sweet-potato.webp', fit: 1.4, heroFit: 1.3, elev: 0.85, steam: 0, hero: true },
+  wraps: { model: 'models/lettuce-wraps.glb', img: 'images/dish-lettuce-wraps.webp', fit: 1.4, heroFit: 1.35, elev: 0.9, steam: 0, hero: true },
 };
 // every dish model also turns at the top of its recipe page
 for (const k in DISH_3D) DISH_3D[k].hero = true;
 // Which 3D model looks most like today's recipe; no close match keeps the recipe's own photo.
 const DISH_MATCH = [
-  [/taco/i, 'taco'], [/gyro/i, 'gyro'], [/marrow/i, 'marrow'], [/burger|steak/i, 'steak'],
+  [/lettuce wrap|rainbow-wraps/i, 'wraps'], [/taco/i, 'taco'], [/gyro/i, 'gyro'], [/marrow/i, 'marrow'], [/burger|steak/i, 'steak'],
   [/\bdal\b|curry|chili/i, 'curry'], [/sweet-potato-bowl|tray-bake|tray bake|wedges/i, 'sweetPotato'],
   [/salmon-salad|salmon salad/i, 'salmonSalad'], [/living-green-salad|green salad|crunch club|spring-green|lentil-tahini|lentil salad/i, 'greenSalad'],
   [/oxtail|stew|iron-lentil-soup|lentil soup|squash.*soup|goulash/i, 'stew'],
