@@ -2068,13 +2068,12 @@ function viewToday() {
 }
 // Explore: every button a full photo with a frosted label.
 function exploreGrid(info) {
-  // her own painted orbs (from Canva) with a little airbrushed motif: bee, ring of 28 days, two orbs balanced on her heart, a dandelion breathing out, a steaming cup
+  // her own painted orbs (from Canva) with a little airbrushed motif: bee, ring of 28 days, a soft yin-yang for balance, soft lungs on a calm lilac orb, a steaming cup
   const tiles = [['super', 'leaf', 'Superfoods', 'Spices & superfoods for your phase', 'images/xb/super.webp'], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/xb/guide.webp'],
     ['relief', 'heart', 'Balance hormones', 'Step by step, fundamentals first', 'images/xb/relief.webp'],
     ['tea', 'cup', 'Tea guide', 'For every need', 'images/xb/tea.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/xb/breathe.webp']];
-  // round photo bubbles in a 3-2 honeycomb, each with its own coloured rim and the name on the photo
-  const rim = ['#a98bd0', '#7f9a4c', '#e08aa5', '#c98a52', '#6fa49a'];
-  const bub = ([to, ic, t, sub, img, vid], i) => `<button class="xb" data-action="${to === 'super' ? 'superGo' : 'nav'}" data-to="${to}" style="--i:${i};--rim:${rim[i]}" aria-label="${t}: ${sub}">${vid ? `<video class="dpt-vid" src="${vid}" poster="${img}" muted loop playsinline preload="none" aria-hidden="true"></video>` : `<img src="${img}" alt="" loading="lazy">`}<span class="xb-t">${t}</span></button>`;
+  // her painted orbs in a 3-2 row, clean art with the name underneath
+  const bub = ([to, ic, t, sub, img, vid], i) => `<button class="xb" data-action="${to === 'super' ? 'superGo' : 'nav'}" data-to="${to}" style="--i:${i}" aria-label="${t}: ${sub}"><span class="xb-o">${vid ? `<video class="dpt-vid" src="${vid}" poster="${img}" muted loop playsinline preload="none" aria-hidden="true"></video>` : `<img src="${img}" alt="" loading="lazy">`}</span><span class="xb-t">${t}</span></button>`;
   const rows = [tiles.slice(0, 3), tiles.slice(3)];
   let k = 0;
   return `<div class="xp3">${rows.map(r => `<div class="xp3-r">${r.map(x => bub(x, k++)).join('')}</div>`).join('')}</div>`;
