@@ -345,6 +345,8 @@ const isSaved = id => (state.savedTips || []).some(x => x.id === id);
 function regTip(id, t, d, to) { if (d) TIPREG[id] = { id, t, a: d[0], s: [d[1], d[2]], w: d[3], to }; return id; }
 const saveBtn = (id, cls = '') => `<button class="sv-btn ${cls} ${isSaved(id) ? 'on' : ''}" data-action="saveTip" data-id="${id}" aria-pressed="${isSaved(id)}" aria-label="${isSaved(id) ? 'Saved' : 'Save this tip'}">${icon('save', 17, 1.8)}</button>`;
 const doSteps = d => `<span class="dos"><span class="dos-w">${icon('clock', 12)} ${d[3]}</span><b>${d[0]}</b><ol><li>${d[1]}</li><li>${d[2]}</li></ol></span>`;
+// 'Your tip today' on Today is parked for Underskin v2 (her call, 21 Nov 2026): flip to true to bring it back
+const V2_TIP_TODAY = false;
 function tipsCard(info) {
   const ph = info.phase, list = [], mine = checkinTip(info);
   if (mine) list.push(mine);
@@ -2057,7 +2059,7 @@ function viewToday() {
     ${logged ? `${sectionTitle('Today’s log', ['Edit', 'log'])}<section class="card glass"><div class="chips">${logChips(tlog)}</div><button class="br-cta" data-action="nav" data-to="brain">${icon('spark', 15)} What your body is saying ${icon('chevR', 15)}</button></section>`
     : ''}
 
-    ${tipsCard(info)}
+    ${V2_TIP_TODAY ? tipsCard(info) : ''}
 
     ${sectionTitle('Explore')}
     ${exploreGrid(info)}
@@ -2072,11 +2074,11 @@ function exploreGrid(info) {
   const tiles = [['super', 'leaf', 'Superfoods', 'Spices & superfoods for your phase', 'images/xb/super.webp'], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/xb/guide.webp'],
     ['relief', 'heart', 'Balance hormones', 'Step by step, fundamentals first', 'images/xb/relief.webp'],
     ['tea', 'cup', 'Tea guide', 'For every need', 'images/xb/tea.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/xb/breathe.webp']];
-  // her painted orbs, frameless, in an even 3-2 honeycomb with the name on a white sticker
-  const spot = [[.31, .02, 0, 0], [.31, .345, 0, 0], [.31, .67, 0, 0], [.31, .1825, .37, 0], [.31, .5075, .37, 0]];
-  // each sticker: a soft tint from its orb and a little emoji charm peeking over its corner
-  const charm = [['🍯', '#ffe6b3'], ['🌸', '#ffd9e6'], ['🦋', '#e7dcff'], ['🍵', '#e2f1cc'], ['🍃', '#d8e6ff']];
-  const bub = ([to, ic, t, sub, img, vid], i) => { const [d, x, y, r] = spot[i]; return `<button class="xb" data-action="${to === 'super' ? 'superGo' : 'nav'}" data-to="${to}" style="--i:${i};--d:${d};--x:${x};--y:${y};--r:${r}deg;--tint:${charm[i][1]}" aria-label="${t}: ${sub}"><span class="xb-o">${vid ? `<video class="dpt-vid" src="${vid}" poster="${img}" muted loop playsinline preload="none" aria-hidden="true"></video>` : `<img src="${img}" alt="" loading="lazy">`}</span><span class="xb-t"><i class="xb-e" aria-hidden="true">${charm[i][0]}</i>${t}</span></button>`; };
+  // her painted orbs, frameless, in a symmetrical 2-1-2 cluster with the name on a big tinted sticker
+  const spot = [[.40, .06, 0, 0], [.40, .54, 0, 0], [.40, .30, .39, 0], [.40, .06, .78, 0], [.40, .54, .78, 0]];
+  // each sticker takes a soft tint from its orb
+  const tint = ['#ffe6b3', '#ffd9e6', '#e7dcff', '#e2f1cc', '#d8e6ff'];
+  const bub = ([to, ic, t, sub, img, vid], i) => { const [d, x, y, r] = spot[i]; return `<button class="xb" data-action="${to === 'super' ? 'superGo' : 'nav'}" data-to="${to}" style="--i:${i};--d:${d};--x:${x};--y:${y};--r:${r}deg;--tint:${tint[i]}" aria-label="${t}: ${sub}"><span class="xb-o">${vid ? `<video class="dpt-vid" src="${vid}" poster="${img}" muted loop playsinline preload="none" aria-hidden="true"></video>` : `<img src="${img}" alt="" loading="lazy">`}</span><span class="xb-t">${t}</span></button>`; };
   return `<div class="xp3">${tiles.map(bub).join('')}</div>`;
 }
 // Home: today's habits as a cute tick list; her phase's habits first, a little sprout that grows leaves as she ticks.
