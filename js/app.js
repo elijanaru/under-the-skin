@@ -2072,11 +2072,10 @@ function exploreGrid(info) {
   const tiles = [['super', 'leaf', 'Superfoods', 'Spices & superfoods for your phase', 'images/xb/super.webp'], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/xb/guide.webp'],
     ['relief', 'heart', 'Balance hormones', 'Step by step, fundamentals first', 'images/xb/relief.webp'],
     ['tea', 'cup', 'Tea guide', 'For every need', 'images/xb/tea.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/xb/breathe.webp']];
-  // her painted orbs in a 3-2 row, clean art with the name underneath
-  const bub = ([to, ic, t, sub, img, vid], i) => `<button class="xb" data-action="${to === 'super' ? 'superGo' : 'nav'}" data-to="${to}" style="--i:${i}" aria-label="${t}: ${sub}"><span class="xb-o">${vid ? `<video class="dpt-vid" src="${vid}" poster="${img}" muted loop playsinline preload="none" aria-hidden="true"></video>` : `<img src="${img}" alt="" loading="lazy">`}</span><span class="xb-t">${t}</span></button>`;
-  const rows = [tiles.slice(0, 3), tiles.slice(3)];
-  let k = 0;
-  return `<div class="xp3">${rows.map(r => `<div class="xp3-r">${r.map(x => bub(x, k++)).join('')}</div>`).join('')}</div>`;
+  // her painted orbs floating in a loose cluster, each a different size, the name on a little tilted sticker
+  const spot = [[.36, .02, .04, -4], [.30, .385, 0, 3], [.31, .64, .06, -2], [.32, .12, .52, 3], [.35, .50, .49, -3]];
+  const bub = ([to, ic, t, sub, img, vid], i) => { const [d, x, y, r] = spot[i]; return `<button class="xb" data-action="${to === 'super' ? 'superGo' : 'nav'}" data-to="${to}" style="--i:${i};--d:${d};--x:${x};--y:${y};--r:${r}deg" aria-label="${t}: ${sub}"><span class="xb-o">${vid ? `<video class="dpt-vid" src="${vid}" poster="${img}" muted loop playsinline preload="none" aria-hidden="true"></video>` : `<img src="${img}" alt="" loading="lazy">`}</span><span class="xb-t">${t}</span></button>`; };
+  return `<div class="xp3">${tiles.map(bub).join('')}</div>`;
 }
 // Home: today's habits as a cute tick list; her phase's habits first, a little sprout that grows leaves as she ticks.
 const HB_SHORT = { 'morning-sun': ['sun', 'Morning sun'], lemon: ['drop', 'Warm lemon water'], 'phone-free': ['mind', 'No phone first hour'], walk: ['leaf', 'Walk after meals'], calm: ['heart', 'Breathe 5 minutes'], ground: ['seed', 'Barefoot on the ground'] };
