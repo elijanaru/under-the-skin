@@ -17484,3 +17484,5 @@ html .fx-g.drc2-g > .drc2:last-child:nth-child(odd) { grid-column: 1 / -1; justi
 @keyframes drc2Steam { 0% { opacity: 0; transform: translateY(6px) scaleX(.8); } 35% { opacity: .85; } 100% { opacity: 0; transform: translateY(-22px) scaleX(1.3) skewX(10deg); } }
 @keyframes drc2Tw { 0%, 70%, 100% { opacity: 0; transform: scale(.4) rotate(0); } 82% { opacity: 1; transform: scale(1) rotate(45deg); } }
 @media (prefers-reduced-motion: reduce) { .drc2, .drc2-cup, .drc2-co, .drc2-st, .drc2-sp { animation: none !important; } .drc2-st, .drc2-sp { opacity: 0; } }
+/* category labels never spill out of their tile: long ones ("Your food guide", "Autumn rituals") wrap onto two centred lines */
+html .fx-c b { white-space: normal; text-wrap: balance; text-align: center; line-height: 1.15; min-height: 2.3em; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
