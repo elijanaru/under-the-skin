@@ -8383,16 +8383,12 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 
 /* Today › Explore: round photo bubbles in a 2-3-2 honeycomb (from the user's bubble reference); a coloured rim glows softly inside each, the name sits on the photo, and the bubbles float very slowly */
 /* Explore: her painted orbs floating in a loose, whimsical cluster (sizes and spots from js), each name on a little tilted white sticker */
-.xp3 { position: relative; width: 100%; aspect-ratio: 1 / .92; margin: 10px 0 30px; }
-.xb { position: absolute; left: calc(var(--x) * 100%); top: calc(var(--y) / .92 * 100%); width: calc(var(--d) * 100%); aspect-ratio: 1; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent;
-  animation: xbFloat 7s ease-in-out infinite; animation-delay: calc(var(--i) * -1.4s); }
-.xb-o { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; isolation: isolate; background: #efe6ea;
-  box-shadow: 0 0 0 2.5px #fff, 0 18px 30px -14px rgba(32,48,26,.55), 0 6px 12px -6px rgba(32,48,26,.3);
-  transition: transform .4s cubic-bezier(.2,.8,.2,1); }
-.xb-o img, .xb-o video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(1.22) contrast(1.08); }
-/* pearl sheen from the top left, like glass over the painting */
-.xb-o::after { content: ''; position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
-  background: radial-gradient(48% 34% at 30% 17%, rgba(255,255,255,.5), rgba(255,255,255,0) 72%); }
+.xp3 { position: relative; width: 100%; aspect-ratio: 1 / .72; margin: 10px 0 30px; }
+.xb { position: absolute; left: calc(var(--x) * 100%); top: calc(var(--y) / .72 * 100%); width: calc(var(--d) * 100%); aspect-ratio: 1; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  animation: xbFloat 7s ease-in-out infinite; }
+/* the painting itself, whole with its own grainy round edge, no frame: it sits on the page like the background art, with a shadow that follows it */
+.xb-o { position: absolute; inset: 0; transition: transform .4s cubic-bezier(.2,.8,.2,1); }
+.xb-o img, .xb-o video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; filter: saturate(1.18) contrast(1.06) drop-shadow(0 14px 16px rgba(60,40,50,.22)); }
 .xb-t { position: absolute; left: 50%; bottom: -4px; translate: -50% 0; rotate: var(--r); white-space: nowrap;
   padding: 6px 12px 7px; border-radius: 999px; background: #fff; color: #20301a; font: 500 13px/1 Outfit, sans-serif; letter-spacing: .005em;
   box-shadow: 0 6px 14px -6px rgba(32,48,26,.45), 0 0 0 1px rgba(32,48,26,.06); transition: rotate .4s cubic-bezier(.2,.8,.2,1); }

@@ -2072,8 +2072,8 @@ function exploreGrid(info) {
   const tiles = [['super', 'leaf', 'Superfoods', 'Spices & superfoods for your phase', 'images/xb/super.webp'], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/xb/guide.webp'],
     ['relief', 'heart', 'Balance hormones', 'Step by step, fundamentals first', 'images/xb/relief.webp'],
     ['tea', 'cup', 'Tea guide', 'For every need', 'images/xb/tea.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/xb/breathe.webp']];
-  // her painted orbs floating in a loose cluster, each a different size, the name on a little tilted sticker
-  const spot = [[.36, .02, .04, -4], [.30, .385, 0, 3], [.31, .64, .06, -2], [.32, .12, .52, 3], [.35, .50, .49, -3]];
+  // her painted orbs, frameless, in an even 3-2 honeycomb with the name on a white sticker
+  const spot = [[.31, .02, 0, 0], [.31, .345, 0, 0], [.31, .67, 0, 0], [.31, .1825, .37, 0], [.31, .5075, .37, 0]];
   const bub = ([to, ic, t, sub, img, vid], i) => { const [d, x, y, r] = spot[i]; return `<button class="xb" data-action="${to === 'super' ? 'superGo' : 'nav'}" data-to="${to}" style="--i:${i};--d:${d};--x:${x};--y:${y};--r:${r}deg" aria-label="${t}: ${sub}"><span class="xb-o">${vid ? `<video class="dpt-vid" src="${vid}" poster="${img}" muted loop playsinline preload="none" aria-hidden="true"></video>` : `<img src="${img}" alt="" loading="lazy">`}</span><span class="xb-t">${t}</span></button>`; };
   return `<div class="xp3">${tiles.map(bub).join('')}</div>`;
 }
