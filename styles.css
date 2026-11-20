@@ -8390,12 +8390,17 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .xb-o { position: absolute; inset: 0; transition: transform .4s cubic-bezier(.2,.8,.2,1); }
 .xb-o img, .xb-o video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; filter: saturate(1.18) contrast(1.06) drop-shadow(0 14px 16px rgba(60,40,50,.22)); }
 .xb-t { position: absolute; left: 50%; bottom: -4px; translate: -50% 0; rotate: var(--r); white-space: nowrap;
-  padding: 6px 12px 7px; border-radius: 999px; background: #fff; color: #20301a; font: 500 13px/1 Outfit, sans-serif; letter-spacing: .005em;
-  box-shadow: 0 6px 14px -6px rgba(32,48,26,.45), 0 0 0 1px rgba(32,48,26,.06); transition: rotate .4s cubic-bezier(.2,.8,.2,1); }
-.xb:active .xb-o { transform: scale(.94); }
-.xb:active .xb-t { rotate: 0deg; }
+  padding: 6px 10px 7px; border-radius: 999px; background: var(--tint, #fff); color: #20301a; font: 500 12px/1 Outfit, sans-serif; letter-spacing: .005em;
+  border: 2px solid #fff; box-shadow: 0 7px 14px -6px rgba(32,48,26,.45), 0 0 0 1px rgba(32,48,26,.05); }
+/* the little charm: an emoji peeking over the sticker's corner, tilted like it was stuck on by hand */
+.xb-e { position: absolute; left: -9px; top: -13px; font-style: normal; font-size: 19px; line-height: 1; rotate: -14deg; filter: drop-shadow(0 2px 3px rgba(32,48,26,.3));
+  transition: rotate .5s cubic-bezier(.3,1.6,.5,1), scale .5s cubic-bezier(.3,1.6,.5,1); }
+.xb:active .xb-o { transform: scale(.93); }
+.xb:active .xb-t { animation: xbSquish .45s cubic-bezier(.3,1.6,.5,1); }
+.xb:active .xb-e { rotate: 12deg; scale: 1.25; }
+@keyframes xbSquish { 0% { scale: 1; } 35% { scale: 1.08 .9; } 70% { scale: .96 1.05; } 100% { scale: 1; } }
 @keyframes xbFloat { 0%, 100% { translate: 0 0; } 50% { translate: 0 -5px; } }
-@media (prefers-reduced-motion: reduce) { .xb { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .xb, .xb:active .xb-t { animation: none; } .xb-e { transition: none; } }
 
 /* Breathe › Daily calm reminder: a white card with a bell, her time in Doto with − and +, a stress pill and a switch */
 .crm { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; margin: 12px 0 18px; padding: 14px 14px 14px 12px; border-radius: 24px; background: rgba(255,255,255,.88); border: 1px solid rgba(48,64,35,.1); box-shadow: 0 10px 26px -14px rgba(32,48,26,.3); }

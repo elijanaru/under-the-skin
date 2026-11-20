@@ -2074,7 +2074,9 @@ function exploreGrid(info) {
     ['tea', 'cup', 'Tea guide', 'For every need', 'images/xb/tea.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/xb/breathe.webp']];
   // her painted orbs, frameless, in an even 3-2 honeycomb with the name on a white sticker
   const spot = [[.31, .02, 0, 0], [.31, .345, 0, 0], [.31, .67, 0, 0], [.31, .1825, .37, 0], [.31, .5075, .37, 0]];
-  const bub = ([to, ic, t, sub, img, vid], i) => { const [d, x, y, r] = spot[i]; return `<button class="xb" data-action="${to === 'super' ? 'superGo' : 'nav'}" data-to="${to}" style="--i:${i};--d:${d};--x:${x};--y:${y};--r:${r}deg" aria-label="${t}: ${sub}"><span class="xb-o">${vid ? `<video class="dpt-vid" src="${vid}" poster="${img}" muted loop playsinline preload="none" aria-hidden="true"></video>` : `<img src="${img}" alt="" loading="lazy">`}</span><span class="xb-t">${t}</span></button>`; };
+  // each sticker: a soft tint from its orb and a little emoji charm peeking over its corner
+  const charm = [['🍯', '#ffe6b3'], ['🌸', '#ffd9e6'], ['🦋', '#e7dcff'], ['🍵', '#e2f1cc'], ['🍃', '#d8e6ff']];
+  const bub = ([to, ic, t, sub, img, vid], i) => { const [d, x, y, r] = spot[i]; return `<button class="xb" data-action="${to === 'super' ? 'superGo' : 'nav'}" data-to="${to}" style="--i:${i};--d:${d};--x:${x};--y:${y};--r:${r}deg;--tint:${charm[i][1]}" aria-label="${t}: ${sub}"><span class="xb-o">${vid ? `<video class="dpt-vid" src="${vid}" poster="${img}" muted loop playsinline preload="none" aria-hidden="true"></video>` : `<img src="${img}" alt="" loading="lazy">`}</span><span class="xb-t"><i class="xb-e" aria-hidden="true">${charm[i][0]}</i>${t}</span></button>`; };
   return `<div class="xp3">${tiles.map(bub).join('')}</div>`;
 }
 // Home: today's habits as a cute tick list; her phase's habits first, a little sprout that grows leaves as she ticks.
