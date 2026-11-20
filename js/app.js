@@ -2075,9 +2075,9 @@ function exploreGrid(info) {
     ['relief', 'heart', 'Balance hormones', 'Step by step, fundamentals first', 'images/xb/relief.webp'],
     ['tea', 'cup', 'Tea guide', 'For every need', 'images/xb/tea.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/xb/breathe.webp']];
   // her painted orbs, whole and frameless, in an aligned two-column grid (the fifth centred); the name sits under each in a white pill with a colour dot
-  const dot = ['#f2552c', '#e01e5f', '#f0185a', '#ea7a14', '#6a3ee0'];
+  const dot = ['#f2552c', '#e01e5f', '#f0185a', '#ea7a14', '#b393f7'];
   // each orb's painted rim colour, which also glows softly around it
-  const glow = ['#ff8a3d', '#f2477a', '#f0185a', '#f6a12e', '#8a5cf0'];
+  const glow = ['#ff8a3d', '#f2477a', '#f0185a', '#f6a12e', '#c9b0ff'];
   const bub = ([to, ic, t, sub, img, vid], i) => `<button class="xb" data-action="${to === 'super' ? 'superGo' : 'nav'}" data-to="${to}" style="--i:${i};--dot:${dot[i]};--glow:${glow[i]}" aria-label="${t}: ${sub}"><span class="xb-o">${vid ? `<video class="dpt-vid" src="${vid}" poster="${img}" muted loop playsinline preload="none" aria-hidden="true"></video>` : `<img src="${img}" alt="" loading="lazy">`}</span><span class="xb-t">${t}</span></button>`;
   return `<div class="xp3">${tiles.map(bub).join('')}</div>`;
 }
