@@ -2074,11 +2074,9 @@ function exploreGrid(info) {
   const tiles = [['super', 'leaf', 'Superfoods', 'Spices & superfoods for your phase', 'images/xb/super.webp'], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/xb/guide.webp'],
     ['relief', 'heart', 'Balance hormones', 'Step by step, fundamentals first', 'images/xb/relief.webp'],
     ['tea', 'cup', 'Tea guide', 'For every need', 'images/xb/tea.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/xb/breathe.webp']];
-  // her painted orbs, frameless, in a symmetrical 2-1-2 cluster with the name on a big tinted sticker
-  const spot = [[.40, .06, 0, 0], [.40, .54, 0, 0], [.40, .30, .39, 0], [.40, .06, .78, 0], [.40, .54, .78, 0]];
-  // each sticker takes a soft tint from its orb
-  const tint = ['#ffe6b3', '#ffd9e6', '#e7dcff', '#e2f1cc', '#d8e6ff'];
-  const bub = ([to, ic, t, sub, img, vid], i) => { const [d, x, y, r] = spot[i]; return `<button class="xb" data-action="${to === 'super' ? 'superGo' : 'nav'}" data-to="${to}" style="--i:${i};--d:${d};--x:${x};--y:${y};--r:${r}deg;--tint:${tint[i]}" aria-label="${t}: ${sub}"><span class="xb-o">${vid ? `<video class="dpt-vid" src="${vid}" poster="${img}" muted loop playsinline preload="none" aria-hidden="true"></video>` : `<img src="${img}" alt="" loading="lazy">`}</span><span class="xb-t">${t}</span></button>`; };
+  // her painted orbs, whole and frameless, in an aligned two-column grid (the fifth centred); the name sits under each in a white pill with a colour dot
+  const dot = ['#e9a23a', '#e6567d', '#a88ad8', '#8db35a', '#7a8fe0'];
+  const bub = ([to, ic, t, sub, img, vid], i) => `<button class="xb" data-action="${to === 'super' ? 'superGo' : 'nav'}" data-to="${to}" style="--i:${i};--dot:${dot[i]}" aria-label="${t}: ${sub}"><span class="xb-o">${vid ? `<video class="dpt-vid" src="${vid}" poster="${img}" muted loop playsinline preload="none" aria-hidden="true"></video>` : `<img src="${img}" alt="" loading="lazy">`}</span><span class="xb-t">${t}</span></button>`;
   return `<div class="xp3">${tiles.map(bub).join('')}</div>`;
 }
 // Home: today's habits as a cute tick list; her phase's habits first, a little sprout that grows leaves as she ticks.

@@ -8382,21 +8382,21 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .hub .dpt.t-dish .dpt-g:has(.dish-ph) { height: 126px; display: grid; place-items: center; }
 
 /* Today › Explore: round photo bubbles in a 2-3-2 honeycomb (from the user's bubble reference); a coloured rim glows softly inside each, the name sits on the photo, and the bubbles float very slowly */
-/* Explore: her painted orbs floating in a loose, whimsical cluster (sizes and spots from js), each name on a little tilted white sticker */
-.xp3 { position: relative; width: 100%; aspect-ratio: 1 / 1.22; margin: 12px 0 26px; }
-.xb { position: absolute; left: calc(var(--x) * 100%); top: calc(var(--y) / 1.22 * 100%); width: calc(var(--d) * 100%); aspect-ratio: 1; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent;
-  animation: xbFloat 7s ease-in-out infinite; }
-/* the painting itself, whole with its own grainy round edge, no frame: it sits on the page like the background art, with a shadow that follows it */
-.xb-o { position: absolute; inset: 0; transition: transform .4s cubic-bezier(.2,.8,.2,1); }
-.xb-o img, .xb-o video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; filter: saturate(1.18) contrast(1.06) drop-shadow(0 14px 16px rgba(60,40,50,.22)); }
-.xb-t { position: absolute; left: 50%; bottom: -5%; translate: -50% 0; rotate: var(--r); white-space: nowrap;
-  padding: 11px 20px 12px; border-radius: 999px; background: var(--tint, #fff); color: #20301a; font: 500 15.5px/1 Outfit, sans-serif; letter-spacing: .005em;
-  border: 2.5px solid #fff; box-shadow: 0 10px 20px -8px rgba(32,48,26,.45), 0 0 0 1px rgba(32,48,26,.05); }
-.xb:active .xb-o { transform: scale(.93); }
-.xb:active .xb-t { animation: xbSquish .45s cubic-bezier(.3,1.6,.5,1); }
-@keyframes xbSquish { 0% { scale: 1; } 35% { scale: 1.08 .9; } 70% { scale: .96 1.05; } 100% { scale: 1; } }
-@keyframes xbFloat { 0%, 100% { translate: 0 0; } 50% { translate: 0 -5px; } }
-@media (prefers-reduced-motion: reduce) { .xb, .xb:active .xb-t { animation: none; } }
+/* Explore: her painted orbs, whole and frameless, in an aligned two-column grid; the name sits below in a white pill with a colour dot */
+.xp3 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px 12px; margin: 14px 0 30px; }
+.xb { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.xb:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.xb-o { position: relative; width: min(152px, 84%); aspect-ratio: 1; animation: xbFloat 7s ease-in-out infinite; transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+.xb:last-child:nth-child(odd) .xb-o { width: min(152px, calc(42% - 6px)); }
+.xb-o img, .xb-o video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; filter: saturate(1.15) contrast(1.05) drop-shadow(0 16px 18px rgba(60,40,50,.22)); }
+.xb-t { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; padding: 10px 17px 10px 14px; border-radius: 999px;
+  background: rgba(255,255,255,.9); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: #20301a; font: 500 15px/1 Outfit, sans-serif; letter-spacing: .005em;
+  box-shadow: 0 0 0 1px rgba(32,48,26,.07), 0 8px 18px -10px rgba(32,48,26,.4); transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+.xb-t::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--dot); flex: none; }
+.xb:active .xb-o { transform: scale(.95); }
+.xb:active .xb-t { transform: scale(.97); }
+@keyframes xbFloat { 0%, 100% { translate: 0 0; } 50% { translate: 0 -4px; } }
+@media (prefers-reduced-motion: reduce) { .xb-o { animation: none; } }
 
 /* Breathe › Daily calm reminder: a white card with a bell, her time in Doto with − and +, a stress pill and a switch */
 .crm { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; margin: 12px 0 18px; padding: 14px 14px 14px 12px; border-radius: 24px; background: rgba(255,255,255,.88); border: 1px solid rgba(48,64,35,.1); box-shadow: 0 10px 26px -14px rgba(32,48,26,.3); }
