@@ -17555,5 +17555,9 @@ html .fx-c b { white-space: normal; text-wrap: balance; text-align: center; line
 .qp-t { width: 88px; height: 34px; padding: 0 8px; border: 1px solid rgba(48,64,35,.14); border-radius: 12px; background: #fff; color: #20301a; font: 500 14px/1 var(--font); }
 .qp-when { display: inline-block; margin-top: 8px; padding: 5px 10px; border-radius: 99px; background: #fbecf1; color: #b04f6c; font: 600 12.5px/1.2 var(--font); }
 .qp-r .toggle { margin-top: 4px; justify-self: end; }
-@media (prefers-reduced-motion: reduce) { .qp-ph, .qp-z { animation: none; } }
+/* Taeri, the pixel snow leopard kitty, sits against the phone's lower right corner (sleepy while apps are paused) */
+.qp-duo { position: relative; z-index: 1; display: grid; place-items: center; }
+.qp-cat { position: absolute; z-index: 2; right: -92px; bottom: -26px; width: 128px; height: auto; image-rendering: pixelated; filter: drop-shadow(0 10px 12px rgba(31,43,22,.14)); animation: qpCat 6s ease-in-out infinite; transform-origin: 50% 100%; }
+@keyframes qpCat { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-2deg) translateY(-2px); } }
+@media (prefers-reduced-motion: reduce) { .qp-ph, .qp-z, .qp-cat { animation: none; } }
 .qp-sub b, .qp .ul3-days b { margin-left: 3px; }

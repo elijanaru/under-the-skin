@@ -12706,7 +12706,7 @@ function viewQuiet() {
   <div class="pad ul3 ul4 qp">
     <div class="ul4-stage qp-stage">
       <svg class="ul4-sp" viewBox="0 0 360 250" aria-hidden="true">${o3Spark('#f1d58a', 30, 40, 0)}${o3Spark('#fff', 330, 30, 1.1)}${o3Spark('#c9d6a8', 336, 210, 2)}${o3Spark('#f6c6d4', 22, 214, 1.6)}</svg>
-      ${phone}
+      <div class="qp-duo">${phone}<img class="qp-cat" src="images/taeri/taeri-${now ? 'sleepy' : 'open'}.webp" alt="" aria-hidden="true"></div>
     </div>
     <span class="ul3-days">${now ? `${icon('moon', 13)} Paused${until ? ` until <b class="dotnum">${hm(until)}</b>` : ''}` : n ? `<b class="dotnum">${n}</b> ${n === 1 ? 'app or group' : 'apps and groups'} chosen` : 'Nothing paused yet'}</span>
     <section class="o3-note ul3-note ul4-note qp-note">
