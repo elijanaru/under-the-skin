@@ -2108,12 +2108,13 @@ function exploreGrid(info) {
   // her own painted orbs (from Canva) with a little airbrushed motif: bee, ring of 28 days, a soft yin-yang on her heart orb, soft lungs on her starburst orb, a steaming cup
   const tiles = [['super', 'leaf', 'Superfoods', 'Spices & superfoods for your phase', 'images/xb/aura-super.webp'], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/xb/aura-guide.webp'],
     ['relief', 'heart', 'Balance hormones', 'Step by step, fundamentals first', 'images/xb/aura-relief.webp'],
-    ['tea', 'cup', 'Tea guide', 'For every need', 'images/xb/aura-tea.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/xb/aura-breathe.webp']];
+    ['tea', 'cup', 'Tea guide', 'For every need', 'images/xb/aura-tea.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/xb/aura-breathe.webp'],
+    ['quiet', 'moon', 'Quiet phone', 'Pause the apps that pull you in', 'images/xb/aura-quiet.webp']];
   // her painted orbs, whole and frameless, in an aligned two-column grid (the fifth centred); the name sits under each in a white pill with a colour dot
-  const dot = ['#f2852c', '#e0407a', '#9a5fe0', '#e6a23a', '#3d93df'];
+  const dot = ['#f2852c', '#e0407a', '#9a5fe0', '#e6a23a', '#3d93df', '#7f9f55'];
   // each orb's painted rim colour, which also glows softly around it
-  const glow = ['#ffc25a', '#f6a7c3', '#ffb245', '#f3c3d8', '#9fd2f4'];
-  const bub = ([to, ic, t, sub, img, vid], i) => `<button class="xb" data-action="${to === 'super' ? 'superGo' : 'nav'}" data-to="${to}" style="--i:${i};--dot:${dot[i]};--glow:${glow[i]}" aria-label="${t}: ${sub}"><span class="xb-o">${vid ? `<video class="dpt-vid" src="${vid}" poster="${img}" muted loop playsinline preload="none" aria-hidden="true"></video>` : `<img src="${img}" alt="" loading="lazy">`}</span><span class="xb-t">${t}</span></button>`;
+  const glow = ['#ffc25a', '#f6a7c3', '#ffb245', '#f3c3d8', '#9fd2f4', '#c9b8f0'];
+  const bub = ([to, ic, t, sub, img, vid], i) => `<button class="xb" data-action="${to === 'super' ? 'superGo' : to === 'quiet' ? 'quietGo' : 'nav'}" data-to="${to}" style="--i:${i};--dot:${dot[i]};--glow:${glow[i]}" aria-label="${t}: ${sub}"><span class="xb-o">${vid ? `<video class="dpt-vid" src="${vid}" poster="${img}" muted loop playsinline preload="none" aria-hidden="true"></video>` : `<img src="${img}" alt="" loading="lazy">`}</span><span class="xb-t">${t}</span></button>`;
   return `<div class="xp3">${tiles.map(bub).join('')}</div>`;
 }
 // Home: today's habits as a cute tick list; her phase's habits first, a little sprout that grows leaves as she ticks.
@@ -12036,6 +12037,8 @@ const actions = {
     const p = box.querySelector('.ebp-in'); p.innerHTML = el.querySelector('template').innerHTML; p.classList.remove('pop'); void p.offsetWidth; p.classList.add('pop');
   },
   superGo: () => go('plan/foods'),
+  // Quiet phone needs Apple's Screen Time permission; until the app has it, the orb says so kindly
+  quietGo: () => qpOK() ? go('quiet') : toast('Quiet phone is coming soon to the iPhone app'),
   eatCat: (d, el) => {
     ui.eatCat = d.v; const card = document.querySelector('.eat-cat'); if (!card) return render();
     document.querySelectorAll('[data-action="eatCat"]').forEach(b => b.classList.toggle('on', b === el));

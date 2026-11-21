@@ -5431,4 +5431,6 @@ export default {"+ Cayenne":"+ Cayena",
 "Too short. A quiet time needs at least {0} minutes.":"Demasiado corto. Un rato tranquilo necesita al menos {0} minutos.",
 "Notifications are off. Turn them on in Settings, Underskin, Notifications.":"Las notificaciones están desactivadas. Actívalas en Ajustes, Underskin, Notificaciones.",
 "<x0/> Paused until <t1>{0} AM</t1>":"<x0/> En pausa hasta las <t1>{0} AM</t1>",
-"Your apps open again at <t0>{0} AM</t0>.":"Tus apps se abren de nuevo a las <t0>{0} AM</t0>."};
+"Your apps open again at <t0>{0} AM</t0>.":"Tus apps se abren de nuevo a las <t0>{0} AM</t0>.",
+"Quiet phone: Pause the apps that pull you in":"Teléfono en calma: pausa las apps que te atrapan",
+"Quiet phone is coming soon to the iPhone app":"Teléfono en calma llega pronto a la app de iPhone"};

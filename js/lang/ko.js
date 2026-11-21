@@ -5431,4 +5431,6 @@ export default {"+ Cayenne":"+ 카옌페퍼",
 "Too short. A quiet time needs at least {0} minutes.":"너무 짧아요. 쉬는 시간은 최소 {0}분이 필요해요.",
 "Notifications are off. Turn them on in Settings, Underskin, Notifications.":"알림이 꺼져 있어요. 설정, Underskin, 알림에서 켜 주세요.",
 "<x0/> Paused until <t1>{0} AM</t1>":"<x0/> <t1>오전 {0}</t1>까지 쉬는 중",
-"Your apps open again at <t0>{0} AM</t0>.":"앱은 <t0>오전 {0}</t0>에 다시 열려요."};
+"Your apps open again at <t0>{0} AM</t0>.":"앱은 <t0>오전 {0}</t0>에 다시 열려요.",
+"Quiet phone: Pause the apps that pull you in":"조용한 폰: 자꾸 손이 가는 앱을 잠시 멈춰요",
+"Quiet phone is coming soon to the iPhone app":"조용한 폰은 곧 아이폰 앱에서 만나요"};
