@@ -17486,3 +17486,46 @@ html .fx-g.drc2-g > .drc2:last-child:nth-child(odd) { grid-column: 1 / -1; justi
 @media (prefers-reduced-motion: reduce) { .drc2, .drc2-cup, .drc2-co, .drc2-st, .drc2-sp { animation: none !important; } .drc2-st, .drc2-sp { opacity: 0; } }
 /* category labels never spill out of their tile: long ones ("Your food guide", "Autumn rituals") wrap onto two centred lines */
 html .fx-c b { white-space: normal; text-wrap: balance; text-align: center; line-height: 1.15; min-height: 2.3em; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+
+/* Hormone page, 21 Nov 2026: Unlock-style. One big floating molecule, a day pill, a taped note signed by the gland,
+   feel pills, then white cards: Did you know, Help it along, Your month, How it feels. The science stays behind a tap. */
+.hz-stage { display: grid; justify-items: center; align-content: center; min-height: 236px; padding: 24px 0 40px; }
+.hz-mol { position: relative; z-index: 1; width: min(88%, 330px); animation: hzFloat 6.5s ease-in-out infinite; filter: drop-shadow(0 16px 18px rgba(31,43,22,.16)); }
+.hz-mol svg { display: block; width: 100% !important; height: auto !important; max-width: none !important; max-height: 210px; margin: 0 auto; }
+.hz-floor { width: 54%; height: 18px; margin-top: 8px; border-radius: 50%; background: radial-gradient(closest-side, rgba(31,43,22,.2), transparent); animation: hzFloor 6.5s ease-in-out infinite; }
+.hz-tag { position: absolute; right: 12px; bottom: 26px; z-index: 2; display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px 7px 10px; border-radius: 6px 999px 999px 6px; background: #fff; color: #20301a;
+  font: 500 13px/1 var(--font); transform: rotate(-4deg); box-shadow: 0 6px 16px rgba(31,43,22,.12); }
+.hz-tag::before { content: ''; width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid #8c9768; background: #f6eef0; }
+@keyframes hzFloat { 0%, 100% { transform: translateY(0) rotate(-2.5deg); } 50% { transform: translateY(-12px) rotate(2.5deg); } }
+@keyframes hzFloor { 0%, 100% { transform: scaleX(1); opacity: 1; } 50% { transform: scaleX(.8); opacity: .65; } }
+.hz .ul3-days { margin-top: -14px; align-items: center; }
+.hz .ul3-days b { color: #20301a; }
+.hz .ul3-days svg { color: #6c823e; }
+.hz-note .o3-lead { margin: 16px 0 0 !important; font-size: 16.5px !important; }
+.hz-now { display: flex; align-items: center; gap: 14px; margin-top: 16px; }
+.hz-nt { min-width: 0; }
+.hz-nt small { display: block; font: 600 12px/1.2 var(--font); color: #5b7a2e; }
+.hz-nt strong { display: flex; align-items: center; gap: 4px; margin-top: 3px; font: 600 19px/1.15 var(--font); color: #20301a; }
+.hz-nt strong svg { color: #6c823e; }
+.hz-nt p { margin: 3px 0 0 !important; font: 400 13.5px/1.4 var(--font) !important; color: #4b5741 !important; }
+.hz-pc { flex: 0 0 auto; display: grid; place-content: center; justify-items: center; gap: 3px; width: 68px; height: 68px; border-radius: 50%; background: #fff; box-shadow: inset 0 0 0 3px var(--hc); }
+.hz-pc b { margin: 0 !important; font-size: 17px !important; line-height: 1; color: #20301a !important; }
+.hz-pc small { font: 500 9.5px/1 var(--font); color: #4b5741; }
+.hz-k { margin: 4px 0 -4px !important; text-align: center; font: 500 14px/1.2 var(--font); color: #fff; text-shadow: 0 1px 8px rgba(31,43,22,.35); }
+.hz-feel li { font-weight: 500; }
+.hz-fact .ul3-r { grid-template-columns: 40px 1fr 0; }
+.hz-fact .ul3-r b { font: 400 15px/1.45 var(--font); }
+.hz-n { font-size: 19px; color: #20301a !important; background: #f3eedf !important; }
+.hz-fact .ul3-r:nth-of-type(2) .hz-n { background: #fbecf1 !important; } .hz-fact .ul3-r:nth-of-type(3) .hz-n { background: #eef2e4 !important; }
+.hz-month .hs-curve { margin: 4px 0 6px; }
+.hz-ph { grid-template-columns: 40px 1fr 0; border-radius: 16px; }
+.hz-ph.on { margin: 4px -8px; padding: 11px 10px; border-top-color: transparent; background: color-mix(in srgb, var(--c) 14%, #fff); }
+.hz-ph.on + .hz-ph { border-top-color: transparent; }
+.hz-ph b em { margin-left: 7px; padding: 2px 8px; border-radius: 99px; background: var(--c); color: #fff; font: 600 11px/1.4 var(--font); font-style: normal; vertical-align: 2px; }
+.hz-lv { background: color-mix(in srgb, var(--c) 16%, #fff) !important; }
+.hz-lv .hs-m i.on { background: var(--c); }
+.hz-cyc { margin: 0 0 12px; font: 400 15px/1.5 var(--font); color: #304023; }
+.hz-hl .ul3-r { grid-template-columns: 40px 1fr 0; }
+.hz-up { color: #6c823e !important; background: #eef2e4 !important; } .hz-dn { color: #b04f6c !important; background: #fbecf1 !important; }
+.hz .hs-sci { margin-top: 2px; }
+@media (prefers-reduced-motion: reduce) { .hz-mol, .hz-floor { animation: none; } }

@@ -1,5 +1,5 @@
 import {
-  PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, DIET_CYCLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HORMONE_SIMPLE, HORMONE_RELAY, BODY_NOTES, AFTER_STAGES, AFTER_TOPICS, TTC_TRY, TTC_STAGE, TTC_CHANCE, TTC_DOCTOR, TTC_BOTH, TTC_FOUND, HB_HOW, HB_HOW_DIET, LOSS_HELP, LOSS_STEPS, LOSS_WARN, LOSS_TOPICS, LOSS_REPEAT, NP_WHY, NP_HABITS, NP_SIGNS, NP_WARN, NP_TESTS, NP_TOPICS, PILL_TOPICS, PILL_WARN, LOSS_NOTES, LOSS_JOURNAL, LOSS_PARTNER, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS, STUDY_KEY,
+  PHASES, PHASE_ORDER, SYMPTOM_FOOD_INFO, PHASE_COLOR, BLOOD_COL, RECIPES, ARTICLES, ARTICLE_STUDIES, ARTICLE_PIC, LETTERS, FLOWS, PERIOD_FLOWS, SYMPTOMS, MOODS, PLAN_METHOD, GLOW_RESULTS, RESEARCH_WALL, STUDY_BA, SHADES, BODY_GROUPS, MOOD_LIST, GOOD_FEELINGS, DISCHARGE, DOWN_EXTRA, INTIMACY, INTAKE, SUPPS, DISRUPTORS, LOG_EMOJI, SYMPTOM_WHY, FLUIDS, SEX, LIBIDO, GOALS, TCM, RITUALS, SUPPORT, NUTRITION, SYMPTOM_FOODS, EVIDENCE, RELIEF, REMEDIES, SUGAR_TRICKS, TEA_GUIDE, TEA_PROFILES, NUTRIENTS, REMEDY_SCIENCE, SUPP_LIB, SUPP_FOOD, SUPP_FOOD_AMT, RELIEF_LINKS, PLATE_PETALS, PLATE_SHARE, PLATE_EV, PLATE_SPICE_WHY, PLATE_SEASON, PLATE_GRID, PLATE_MEAL, SUGAR_SCIENCE, SUGAR_CYCLE, HABIT_FOCUS, CALM_SCIENCE, NUTRIENT_ROLE, SUPP_PAIR, SUPERFOODS, DIETS, DIET_GUIDE, DIET_CYCLE, RITUAL_SCIENCE, POINT_SCIENCE, EAT_CATS, EAT_GUIDE, PURPOSES, FOCUS, TIPS, BIRTH_CONTROL, BC_PLAN, ROADMAP, TTC_TIPS, TIP_DO, TTC_DO, DAY_GUIDE, MOVES, MOVE_GUIDE, MOVE_DOSE, MOVE_SCIENCE, MIND_GUIDE, MIND_SCIENCE, CYCLE_SCIENCE, HORMONE_SCIENCE, HORMONE_LIBRARY, HORMONE_SIMPLE, HORMONE_FUN, HORMONE_RELAY, BODY_NOTES, AFTER_STAGES, AFTER_TOPICS, TTC_TRY, TTC_STAGE, TTC_CHANCE, TTC_DOCTOR, TTC_BOTH, TTC_FOUND, HB_HOW, HB_HOW_DIET, LOSS_HELP, LOSS_STEPS, LOSS_WARN, LOSS_TOPICS, LOSS_REPEAT, NP_WHY, NP_HABITS, NP_SIGNS, NP_WARN, NP_TESTS, NP_TOPICS, PILL_TOPICS, PILL_WARN, LOSS_NOTES, LOSS_JOURNAL, LOSS_PARTNER, HABITS, PHASE_FUNDAMENTALS, FERTILITY_FOODS, AUTUMN_RITUALS, WINTER_HERBS, STUDY_KEY,
 } from './data.js';
 import * as C from './cycle.js';
 import { LEGAL_EMAIL } from './legal.js';
@@ -102,6 +102,41 @@ A.boot();
 const CAP = window.Capacitor, NATIVE = !!CAP?.isNativePlatform?.();
 const PUBLIC_URL = 'https://elijanaru.github.io/under-the-skin/';
 if (NATIVE) document.documentElement.classList.add('native-' + CAP.getPlatform());
+// Little vibrations (21 Nov 2026, her ask): a soft tap on every button, a tick for each card or day a swipe row or
+// slider passes, a firmer tap or a double pulse for things she completes. iPhone ignores navigator.vibrate, so the
+// app uses the Capacitor Haptics plugin and falls back to vibrate on Android web. It follows the phone's own
+// haptics switch; quick repeats are dropped so a fast swipe never turns into a buzz.
+const HAP = NATIVE ? CAP.Plugins?.Haptics : null;
+let buzzAt = 0;
+function buzz(kind = 'tap') {
+  const now = performance.now(), soft = kind === 'tick' || kind === 'tap'; if (soft && now - buzzAt < (kind === 'tick' ? 45 : 70)) return; buzzAt = now;
+  try {
+    if (HAP) {
+      if (kind === 'tick') return HAP.selectionChanged?.() ?? HAP.impact({ style: 'LIGHT' });
+      if (kind === 'done') return HAP.notification({ type: 'SUCCESS' });
+      if (kind === 'long') return HAP.notification({ type: 'WARNING' });
+      return HAP.impact({ style: kind === 'firm' ? 'MEDIUM' : 'LIGHT' });
+    }
+    navigator.vibrate?.({ tick: 4, tap: 8, firm: 14, done: [12, 60, 12], long: [180, 120, 180] }[kind] || 8);
+  } catch {}
+}
+if (HAP) HAP.selectionStart?.().catch?.(() => {});
+// a soft tap on anything she presses
+document.addEventListener('click', e => {
+  const t = e.target.closest?.('button, a[href], summary, [data-action], [role=button], [role=tab], label, select');
+  if (t && !t.disabled && t.getAttribute('aria-disabled') !== 'true') buzz('tap');
+}, true);
+// a tick for every card, tile or day a sideways row passes under her thumb
+const rowAt = new WeakMap();
+document.addEventListener('scroll', e => {
+  const el = e.target; if (!(el instanceof Element) || el.scrollWidth <= el.clientWidth + 4) return;
+  let m = rowAt.get(el);
+  if (!m) { const c = el.firstElementChild; if (!c) return; const step = c.getBoundingClientRect().width + (parseFloat(getComputedStyle(el).columnGap) || 0); m = { step, i: null }; rowAt.set(el, m); }
+  if (m.step < 24) return;
+  const i = Math.round(el.scrollLeft / m.step); if (m.i !== null && i !== m.i) buzz('tick'); m.i = i;
+}, { capture: true, passive: true });
+// and for each step of a slider
+document.addEventListener('input', e => { if (e.target.type === 'range') buzz('tick'); }, true);
 const appBase = () => (NATIVE ? PUBLIC_URL : location.origin + location.pathname);
 // true when a share sheet was shown (shared or cancelled), false when there is none
 async function shareOut(o) {
@@ -6822,7 +6857,7 @@ function guideRead(d, L, P, ov, cd) {
 }
 // ---------- blood sugar: interactive "with / without tricks" curve ----------
 function sugarDone() { return doneToday().filter(k => k.startsWith('sg-')).map(k => k.slice(3)); }
-function plusOne(el) { const r = el.getBoundingClientRect(), p = document.createElement('span'); p.className = 'plus1'; p.textContent = '+1'; p.style.left = (r.left + r.width / 2) + 'px'; p.style.top = r.top + 'px'; document.body.appendChild(p); setTimeout(() => p.remove(), 900); if (navigator.vibrate) navigator.vibrate(8); }
+function plusOne(el) { const r = el.getBoundingClientRect(), p = document.createElement('span'); p.className = 'plus1'; p.textContent = '+1'; p.style.left = (r.left + r.width / 2) + 'px'; p.style.top = r.top + 'px'; document.body.appendChild(p); setTimeout(() => p.remove(), 900); buzz('firm'); }
 function sugarCurve(on) {
   const W = 340, H = 170, x0 = 34, x1 = W - 8, y0 = H - 26, yTop = 14, X = m => x0 + m / 120 * (x1 - x0), Y = v => y0 - v / 60 * (y0 - yTop);
   const keep = sugarKeep(on);
@@ -7453,7 +7488,7 @@ function bindSky() {
     mark.innerHTML = skyMarker(skyD, h);
     const m = momentAt(skyD, h);
     svg.querySelectorAll('.sky-band').forEach(b => b.classList.toggle('on', b.dataset.m === m.id));
-    if (panel && (m.id !== lastM || live !== panel.dataset.live)) { panel.innerHTML = momentPanel(m, h, live); panel.dataset.live = live; lastM = m.id; if (navigator.vibrate && !live) navigator.vibrate(4); }
+    if (panel && (m.id !== lastM || live !== panel.dataset.live)) { panel.innerHTML = momentPanel(m, h, live); panel.dataset.live = live; lastM = m.id; if (!live) buzz('tick'); }
     else if (panel) { const s = panel.querySelector('.mp-head small'); if (s) s.textContent = live ? `Right now · ${hLabel(h)}` : `At ${hLabel(h)}`; }
     document.querySelectorAll('.dm').forEach(d => d.classList.toggle('on', d.dataset.m === m.id));
   };
@@ -7805,7 +7840,7 @@ function bindGuide() {
       lbl.textContent = d === cd ? `Today · day ${d}` : `Day ${d}`; lbl.setAttribute('text-anchor', d < L * .2 ? 'start' : d > L * .8 ? 'end' : 'middle');
       read.innerHTML = guideRead(d, L, P, ov, cd);
       document.querySelectorAll('.fcg-st').forEach(st => st.classList.toggle('on', d >= +st.dataset.from && d <= +st.dataset.to));
-      if (navigator.vibrate) navigator.vibrate(4);
+      buzz('tick');
     };
     const at = e => { const r = svg.getBoundingClientRect(); return Math.max(1, Math.min(L, Math.floor(((e.clientX - r.left) / r.width * W - x0) / (x1 - x0) * L) + 1)); };
     hit.addEventListener('pointerdown', e => { hit.setPointerCapture(e.pointerId); show(at(e)); });
@@ -7955,27 +7990,45 @@ function viewHormone(i) {
         <text x="${Math.min(W - 22, Math.max(22, X(cd)))}" y="9" text-anchor="middle" class="pat-ax hxd-today">Today</text>
         <text x="6" y="${H}" class="pat-ax">Day 1</text><text x="${W - 6}" y="${H}" text-anchor="end" class="pat-ax">Day ${L}</text></svg></div>`;
   }
+  const fun = HORMONE_FUN[x.n] || {}, col = (HORMONES.find(h => h.key === k) || FULL_H.find(h => h.key === k) || {}).color || '#8c9768';
+  const swirl = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';
+  const like = (sm.like || x.s).split(' '), last = like.pop();
+  let pct = null; if (k) { let pk = 0; for (let d = 1; d <= L; d++) pk = Math.max(pk, hAmtV(k, d, L, P)); pct = Math.max(1, Math.round(100 * Math.min(1, hAmtV(k, cd, L, P) / (pk || 1)))); }
+  const feel = fun.feel || [];
+  const mol = MOL_BALL[x.n] || protBall(x.n), nm = x.n === 'Thyroid hormones' ? 'your thyroid' : /^[A-Z]{2}/.test(name) ? name : name[0].toLowerCase() + name.slice(1);
   return `${topbar(name, { back: true })}
-  <div class="pad hxd">
-    <div class="hxd-top"><div class="hxd-in"><span class="hx-gland">${x.g}</span><h1>${name}</h1><p>${x.s}</p></div>
-      ${MOL_BALL[x.n] || PROT_BALL[x.n] ? `<span class="hxd-mol" aria-hidden="true">${MOL_BALL[x.n] || protBall(x.n)}</span>` : ''}</div>
-    <section class="card card-light hxd-now"><div class="hxd-nl"><div class="eyebrow dark">You, right now · day ${cd}</div>
-      <div class="hxd-row"><b>${n.word}${hxArrow(n.tr)}</b></div><span class="hxd-amt">${hxAmt(n.amt)}</span>
-      <p>${n.note}</p></div><span class="hxd-ring">${k ? (() => { let pk = 0; for (let d = 1; d <= L; d++) pk = Math.max(pk, hAmtV(k, d, L, P)); const f = Math.min(1, hAmtV(k, cd, L, P) / (pk || 1)); return `${hxRing(f, 0)}<span class="hxd-pct"><b>${Math.max(1, Math.round(100 * f))}%</b><small>of peak</small></span>`; })() : `${hxRing(n.r, 0)}<small>level</small>`}</span></section>
-    <section class="card card-light hs-simple"><div class="eyebrow dark">In simple words</div><h3>${sm.like || x.s}</h3><p>${sm.one || x.role}</p></section>
-    ${sm.month ? `<section class="card glass hs-month"><div class="eyebrow">Across your month</div>${curve}
-      ${PHASE_ORDER.map((ph, j) => `<div class="hs-mr ${info.phase === ph ? 'on' : ''}" style="--c:${PH_HEX[ph]}"><span class="hs-mn"><i></i>${HS_PH[ph]}</span>${hsMeter(sm.month[j][0])}<p>${sm.month[j][1]}</p></div>`).join('')}</section>`
-      : `<section class="card glass hs-month"><div class="eyebrow">In your cycle</div><p class="hs-cyc">${x.cycle}</p></section>`}
-    ${sm.high ? `<section class="card glass hs-feel"><div class="eyebrow">What you may notice</div>
-      <div class="hs-f"><span class="hs-fi up"><svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5"/></svg></span><div><b>When it’s high</b><p>${sm.high}</p></div></div>
-      <div class="hs-f"><span class="hs-fi"><svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v10M3.5 8.5 8 13l4.5-4.5"/></svg></span><div><b>When it’s low</b><p>${sm.low}</p></div></div></section>` : ''}
-    <section class="card glass hs-help"><div class="eyebrow">Help it along</div><p>${x.support}</p></section>
+  <div class="pad ul3 ul4 hz" style="--hc:${col}">
+    <div class="ul4-stage hz-stage">
+      <svg class="ul4-sp" viewBox="0 0 360 250" aria-hidden="true">${o3Spark('#f1d58a', 26, 40, 0)}${o3Spark('#fff', 332, 26, 1.1)}${o3Spark('#c9d6a8', 340, 206, 2)}${o3Spark('#f6c6d4', 18, 214, 1.6)}<circle class="o3-sp" style="--d:.6s" cx="296" cy="232" r="2.4" fill="#fff"/><circle class="o3-sp" style="--d:1.8s" cx="70" cy="12" r="2" fill="#fff"/></svg>
+      <div class="hz-mol" aria-hidden="true">${mol}</div><span class="hz-floor" aria-hidden="true"></span>
+      <span class="hz-tag">made by ${fun.from || x.g.toLowerCase()}</span>
+    </div>
+    <span class="ul3-days">Day <b class="dotnum">${cd}</b> · ${HS_PH[info.phase]}</span>
+    <section class="o3-note ul3-note ul4-note hz-note">
+      <small class="ul4-eye">Meet ${x.n === 'Thyroid hormones' ? 'your thyroid hormones' : nm}</small>
+      <h2 class="ul4-h">${like.join(' ')}${like.length ? '<br>' : ''}<em>${last}${swirl}</em></h2>
+      <p class="o3-lead">${sm.one || x.role}</p>
+      <div class="sgx-st hz-now">${pct != null ? `<span class="hz-pc"><b class="dotnum">${pct}%</b><small>of peak</small></span>` : ''}<div class="hz-nt"><small>You, right now</small><strong>${n.word}${hxArrow(n.tr)}</strong><p>${n.note}</p></div></div>
+      <p class="o3-sign">with love, ${fun.from || 'your body'} <i>♡</i></p>
+    </section>
+    ${feel.length ? `<p class="hz-k">When it’s high, you may feel</p><ul class="ul3-no hz-feel">${feel.map((t, j) => `<li style="--r:${[-2, 1.5, -1, 2][j]}deg"><span class="o3-x ok">${O3_TICK}</span>${t}</li>`).join('')}</ul>` : ''}
+    ${fun.facts ? `<section class="card ul3-keep hz-fact"><h3>Did you know?</h3>
+      ${fun.facts.map((t, j) => `<div class="ul3-r" style="--i:${j}"><span class="ul3-ic hz-n dotnum" aria-hidden="true">${j + 1}</span><span><b>${t}</b></span><i></i></div>`).join('')}</section>` : ''}
+    ${fun.help ? `<section class="card ul3-keep hz-help"><h3>Help it along</h3>
+      ${fun.help.map(([e, b, t], j) => { const tt = dietProse(t); return tt ? `<div class="ul3-r" style="--i:${j}"><span class="ul3-ic emo" aria-hidden="true">${e}</span><span><b>${b}</b><small>${tt}</small></span><i class="ul3-tick">${O3_TICK}</i></div>` : ''; }).join('')}</section>` : ''}
+    <section class="card ul3-keep hz-month"><h3>${sm.month ? `Your month with ${nm}` : 'In your cycle'}</h3>
+      ${sm.month ? `${curve}${PHASE_ORDER.map((ph, j) => `<div class="ul3-r hz-ph ${info.phase === ph ? 'on' : ''}" style="--c:${PH_HEX[ph]}"><span class="ul3-ic hz-lv" aria-hidden="true">${hsMeter(sm.month[j][0])}</span><span><b>${HS_PH[ph]}${info.phase === ph ? '<em>You</em>' : ''}</b><small>${sm.month[j][1]}</small></span><i></i></div>`).join('')}`
+        : `<p class="hz-cyc">${x.cycle}</p>`}</section>
+    ${sm.high ? `<section class="card ul3-keep hz-hl"><h3>How it feels</h3>
+      <div class="ul3-r"><span class="ul3-ic hz-up" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5"/></svg></span><span><b>When it’s high</b><small>${sm.high}</small></span><i></i></div>
+      <div class="ul3-r"><span class="ul3-ic hz-dn" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v10M3.5 8.5 8 13l4.5-4.5"/></svg></span><span><b>When it’s low</b><small>${sm.low}</small></span><i></i></div></section>` : ''}
     <details class="hs-sci"><summary><span><b>The science</b><small>${MOL_BALL[x.n] || PROTEIN_AA[x.n] ? 'The molecule, lab values and studies' : 'Lab values and studies'}</small></span>${icon('chevD', 16)}</summary>
       ${moleculeCard(x.n)}
       <section class="card glass hxd-b">
         <div class="hx-row first"><span class="eyebrow">In detail</span><p>${x.role}</p></div>
         <div class="hx-row"><span class="eyebrow">Through the cycle</span><p>${x.cycle}</p></div>
         <div class="hx-row"><span class="eyebrow">How much is normal</span><p>${x.range}</p></div>
+        <div class="hx-row"><span class="eyebrow">Today’s amount</span><p>${hxAmt(n.amt)}</p></div>
       </section>
       ${HORMONE_SCIENCE[x.n] ? `${sectionTitle('What studies found')}<section class="card glass tea-study">${HORMONE_SCIENCE[x.n].map(y => `<div class="ts-i"><div class="ts-h"><b>${y.t}</b>${evBadge(y.ev)}</div><p>${y.s}</p><small>${y.c}</small></div>`).join('')}</section>` : ''}
     </details>
@@ -8458,7 +8511,7 @@ function mountMeditate(el) {
   const show = () => { big.textContent = fmt(left); bar.style.width = `${((1 - left / TOTAL) * 100).toFixed(2)}%`; };
   const unring = () => { nodes.forEach(n => { try { n.stop(); } catch {} }); nodes = []; };
   const release = () => { try { lock && lock.release(); } catch {} lock = null; };
-  function finish() { clearInterval(iv); st = 'done'; breathDone(); left = 0; show(); navigator.vibrate?.([180, 120, 180]); btn.textContent = 'Again'; word.textContent = 'Well done. Notice how you feel.'; if (say) say.textContent = 'You did so well.'; el.dataset.ph = ''; release(); }
+  function finish() { clearInterval(iv); st = 'done'; breathDone(); left = 0; show(); buzz('long'); btn.textContent = 'Again'; word.textContent = 'Well done. Notice how you feel.'; if (say) say.textContent = 'You did so well.'; el.dataset.ph = ''; release(); }
   const tick = () => { left = Math.max(0, endAt - performance.now()); show(); if (left <= 0) finish(); };
   function start() {
     if (st === 'done') left = TOTAL;
@@ -11370,7 +11423,7 @@ function startTick() {
     const t = ui.timer; if (!t) { clearInterval(tick); return; }
     if (!t.running || t.done) return;
     t.remaining--;
-    if (t.remaining <= 0) { t.remaining = 0; t.done = true; t.running = false; navigator.vibrate?.(200); const c = bellCtx(); if (c) ringBell(c, c.currentTime + .05); }
+    if (t.remaining <= 0) { t.remaining = 0; t.done = true; t.running = false; buzz('long'); const c = bellCtx(); if (c) ringBell(c, c.currentTime + .05); }
     renderOverlay();
   }, 1000);
 }
@@ -11654,7 +11707,7 @@ const actions = {
     if (ui.calEdit) {
       if (C.parseISO(d.date) > M.today) return toast('You can mark days up to today');
       const l = getLog(d.date), on = !PERIOD_FLOWS.includes(l.flow); setLog(d.date, { flow: on ? 'medium' : null });
-      el?.classList.toggle('period', on); if (navigator.vibrate) navigator.vibrate(8); // instant feedback, details next frame
+      el?.classList.toggle('period', on); buzz('firm'); // instant feedback, details next frame
       ui.calSelected = d.date; return nextFrame(() => calRefresh(['.cal'], true));
     }
     if (ui.calSelected === d.date) return;
@@ -11938,7 +11991,7 @@ const actions = {
   fbTick: (d, el) => { const k = todayISO(), H = state.habits = state.habits || {}; const a = H[k] = H[k] || []; a.includes(d.id) ? a.splice(a.indexOf(d.id), 1) : a.push(d.id); save();
     const on = a.includes(d.id); el.classList.toggle('on', on); el.setAttribute('aria-pressed', on); el.closest('.bgd-r, .pdk-r')?.classList.toggle('ok', on);
     const pk = document.querySelector('.pdk'); if (pk) { const S = fbSteps(M.info)[+pk.dataset.lv][2].filter(([x]) => x.hb), dn = S.filter(([x]) => a.includes(x.hb)).length, c = pk.querySelector('.pdk-cnt .dotnum'), t = pk.querySelector('.pdk-dn'); if (c) c.textContent = dn; if (t) t.textContent = `${dn} of ${S.length} done today`; }
-    if (on && navigator.vibrate) navigator.vibrate(8); },
+    if (on) buzz('done'); },
   pillarSheet: d => { const i = +d.i; wsOpen(i >= 0 ? pillarHtml(HB_PILLARS[i]) : `<h2 class="pls-h">The seven pillars of balance</h2><p class="pls-sub">What protects a woman’s hormones. Tap one.</p><div class="pls-list">${HB_PILLARS.map((P, k) => `<button class="pls-r" data-action="pillarSheet" data-i="${k}"><span>${emoRaw(HB_PIL_EMO[P.t] || '🌿')}</span><b>${P.t}<small>${P.s}</small></b>${icon('chevR', 14)}</button>`).join('')}</div>`, 'ws-fb'); },
   fbPick: (d, el) => {
     const box = el.closest('.fbp'), det = box.querySelector('.fbp-det'), was = el.classList.contains('on');
@@ -12043,7 +12096,7 @@ const actions = {
   grStudy: d => { ui.grStudy = ui.grStudy === +d.i ? null : +d.i; render(); },
   saveTip: d => {
     const L = state.savedTips = state.savedTips || [], i = L.findIndex(x => x.id === d.id);
-    if (i >= 0) { L.splice(i, 1); toast('Removed from Saved'); } else { const t = TIPREG[d.id]; if (!t) return; L.push({ ...t, at: todayISO() }); toast('Saved · find it in Saved tips'); if (navigator.vibrate) navigator.vibrate(8); }
+    if (i >= 0) { L.splice(i, 1); toast('Removed from Saved'); } else { const t = TIPREG[d.id]; if (!t) return; L.push({ ...t, at: todayISO() }); toast('Saved · find it in Saved tips'); buzz('done'); }
     save(); render();
   },
   fav: d => { const f = state.favorites = state.favorites || []; const i = f.indexOf(d.id); i < 0 ? f.push(d.id) : f.splice(i, 1); save(); render(); },
