@@ -4887,7 +4887,10 @@ function lettersCard() {
     </section>`;
 }
 function remindersSection() {
-  const r = rem(), perm = 'Notification' in window ? Notification.permission : 'unsupported';
+  const r = rem(), LNP = NATIVE && CAP?.Plugins?.LocalNotifications;
+  // On iPhone the web Notification API doesn't exist; ask the native plugin instead (once, then re-render).
+  if (LNP && ui.lnPerm === undefined) { ui.lnPerm = null; LNP.checkPermissions().then(c => { ui.lnPerm = c.display === 'granted' ? 'granted' : c.display === 'denied' ? 'denied' : 'default'; render(); }).catch(() => {}); }
+  const perm = LNP ? (ui.lnPerm || 'default') : 'Notification' in window ? Notification.permission : 'unsupported';
   const RIC = { letters: 'mail', period: 'drop', phase: 'leaf', cycle: 'spark', sunAm: 'sun', sunPm: 'sun', calm: 'mind', checkin: 'check' };
   const tg = (k, label, sub) => `<div class="stepper-row"><span class="pf-ic ${k === 'sunPm' ? 'dusk' : ''}">${icon(RIC[k], 16)}</span><span>${label}<small>${sub}</small></span><button class="toggle ${r[k] ? 'on' : ''}" data-action="remToggle" data-k="${k}" role="switch" aria-checked="${!!r[k]}" aria-label="${label}"><i></i></button></div>`;
   const hr = hr12;
@@ -4903,7 +4906,7 @@ function remindersSection() {
       ${tg('checkin', 'Daily check-in', 'If you haven’t logged yet')}
       ${r.checkin ? `<div class="stepper-row sub"><span>From</span><div class="stepper"><button data-action="remHour" data-d="-1">−</button><span class="num">${hr(r.checkinHour)}</span><button data-action="remHour" data-d="1">+</button></div></div>` : ''}
       ${perm === 'granted' ? `<p class="fine" style="margin:8px 0 0">${icon('check', 13)} Phone notifications on</p>`
-        : perm === 'denied' ? '<p class="fine" style="margin:8px 0 0">Notifications are blocked in your browser settings. Reminders show inside the app.</p>'
+        : perm === 'denied' ? `<p class="fine" style="margin:8px 0 0">${LNP ? 'Notifications are off. Turn them on in Settings, Underskin, Notifications.' : 'Notifications are blocked in your browser settings. Reminders show inside the app.'}</p>`
         : perm === 'unsupported' ? '<p class="fine" style="margin:8px 0 0">Reminders show inside the app. Add Underskin to your home screen for notifications.</p>'
         : `<button class="btn btn-light btn-block" data-action="remPermission">${icon('spark', 16)} Turn on notifications</button>`}
     </section>`;
@@ -12132,7 +12135,7 @@ const actions = {
   remHour: d => { const r = rem(); r.checkinHour = (r.checkinHour + +d.d + 24) % 24; save(); render(); },
   remCalmHour: d => { const r = rem(); r.calmHour = (r.calmHour + +d.d + 24) % 24; save(); render(); },
   calmRem: async () => { const r = rem(); r.calm = !r.calm; save(); if (r.calm && 'Notification' in window && Notification.permission === 'default') { try { await Notification.requestPermission(); } catch { /* unsupported */ } } render(); fireNotifications(); },
-  remPermission: async () => { try { await Notification.requestPermission(); } catch { /* unsupported */ } render(); fireNotifications(); },
+  remPermission: async () => { const LNP = NATIVE && CAP?.Plugins?.LocalNotifications; try { if (LNP) { const p = await LNP.requestPermissions(); ui.lnPerm = p.display === 'granted' ? 'granted' : 'denied'; } else await Notification.requestPermission(); } catch { /* unsupported */ } render(); fireNotifications(); },
   flagDismiss: d => { state.flagDismissed = d.k; save(); render(); },
   // straight into the calendar, already in "edit period days" mode, scrolled to the grid
   flagEdit: d => { ui.calSelected = d.date; const x = C.parseISO(d.date); ui.calMonth = C.iso(new Date(x.getFullYear(), x.getMonth(), 1)); ui.calEdit = false; ui.calStart = d.date; go('calendar');
@@ -12652,7 +12655,7 @@ const qpSet = () => (state.quiet = state.quiet || { morning: { on: false, s: '07
 const qpHM = t => { const [h, m] = String(t || '0:0').split(':').map(Number); return [h || 0, m || 0]; };
 // two days before her next period until it ends (or from today while she bleeds), as local midnights
 function qpWindow() {
-  const i = M.info; if (!i) return null;
+  const i = M?.info; if (!i) return null;
   const day = n => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + n); return d; };
   return i.isPeriod ? [day(0), day(Math.max(1, (i.P || 5) - i.cd + 1))] : [day(Math.max(0, i.daysToPeriod - 2)), day(i.daysToPeriod + (i.P || 5))];
 }
@@ -12665,7 +12668,7 @@ const QP_TEXT = () => ({ now: ['Your phone is resting', 'You asked for this paus
 let qpKey = '';
 async function qpSync(force) {
   const api = qpApi(); if (!api || !state?.onboarded) return;
-  const q = qpSet(), w = qpWindow(), key = JSON.stringify([q, w && w.map(d => +d), LANG]);
+  const q = qpSet(), w = qpWindow(), key = JSON.stringify([q, w && w.map(d => +d), I18N.LANG]);
   if (!force && key === qpKey) return; qpKey = key;
   try {
     const tx = QP_TEXT(); for (const k in tx) tx[k] = tx[k].map(t => T(t));
