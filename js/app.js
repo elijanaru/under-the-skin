@@ -10277,8 +10277,9 @@ function viewArticle(id) {
   </div>`;
 }
 // Little friends she can pick in place of a photo (hand-drawn, images/pets/)
-const PETS = [['bunny', 'Bunny'], ['kitty', 'Kitty'], ['bear', 'Bear'], ['panda', 'Panda'], ['fox', 'Fox'], ['frog', 'Frog'], ['chick', 'Chick'], ['hamster', 'Hamster']];
-const petSrc = k => `images/pets/${k}.svg`;
+// 21 Nov 2026: her own four drawings (bunny, frog, smiley, panda). The older .svg friends stay on disk so a pick made before still shows.
+const PETS = [['bunny', 'Bunny'], ['frog', 'Frog'], ['hehe', 'Smiley'], ['panda', 'Panda']];
+const petSrc = k => `images/pets/${k}.webp`;
 function petRow(scope, cur) {
   return `<div class="pet-pick"><small>Or pick a little friend</small><div class="pet-row" role="list">${PETS.map(([k, n], i) => `<button class="pet ${cur === petSrc(k) ? 'on' : ''}" role="listitem" style="--i:${i}" data-action="pickPet" data-v="${k}" data-s="${scope}" aria-label="${n}" aria-pressed="${cur === petSrc(k)}"><img src="${petSrc(k)}" alt="" loading="lazy"></button>`).join('')}</div></div>`;
 }
