@@ -2106,13 +2106,13 @@ function viewToday() {
 // Explore: every button a full photo with a frosted label.
 function exploreGrid(info) {
   // her own painted orbs (from Canva) with a little airbrushed motif: bee, ring of 28 days, a soft yin-yang on her heart orb, soft lungs on her starburst orb, a steaming cup
-  const tiles = [['super', 'leaf', 'Superfoods', 'Spices & superfoods for your phase', 'images/xb/super.webp'], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/xb/guide.webp'],
-    ['relief', 'heart', 'Balance hormones', 'Step by step, fundamentals first', 'images/xb/relief.webp'],
-    ['tea', 'cup', 'Tea guide', 'For every need', 'images/xb/tea.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/xb/breathe.webp']];
+  const tiles = [['super', 'leaf', 'Superfoods', 'Spices & superfoods for your phase', 'images/xb/aura-super.webp'], ['guide', 'chart', 'Cycle guide', `Day ${info.cd}, day by day`, 'images/xb/aura-guide.webp'],
+    ['relief', 'heart', 'Balance hormones', 'Step by step, fundamentals first', 'images/xb/aura-relief.webp'],
+    ['tea', 'cup', 'Tea guide', 'For every need', 'images/xb/aura-tea.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/xb/aura-breathe.webp']];
   // her painted orbs, whole and frameless, in an aligned two-column grid (the fifth centred); the name sits under each in a white pill with a colour dot
-  const dot = ['#f2552c', '#e01e5f', '#f0185a', '#ea7a14', '#b393f7'];
+  const dot = ['#f2852c', '#e0407a', '#9a5fe0', '#e6a23a', '#3d93df'];
   // each orb's painted rim colour, which also glows softly around it
-  const glow = ['#ff8a3d', '#f2477a', '#f0185a', '#f6a12e', '#c9b0ff'];
+  const glow = ['#ffc25a', '#f6a7c3', '#ffb245', '#f3c3d8', '#9fd2f4'];
   const bub = ([to, ic, t, sub, img, vid], i) => `<button class="xb" data-action="${to === 'super' ? 'superGo' : 'nav'}" data-to="${to}" style="--i:${i};--dot:${dot[i]};--glow:${glow[i]}" aria-label="${t}: ${sub}"><span class="xb-o">${vid ? `<video class="dpt-vid" src="${vid}" poster="${img}" muted loop playsinline preload="none" aria-hidden="true"></video>` : `<img src="${img}" alt="" loading="lazy">`}</span><span class="xb-t">${t}</span></button>`;
   return `<div class="xp3">${tiles.map(bub).join('')}</div>`;
 }
