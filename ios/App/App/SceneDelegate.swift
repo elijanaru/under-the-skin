@@ -33,6 +33,9 @@ class UTSBridgeViewController: CAPBridgeViewController {
     }
     override open func capacitorDidLoad() {
         bridge?.registerPluginInstance(UTSStorePlugin())
+        #if SCREEN_TIME
+        bridge?.registerPluginInstance(UTSBlockPlugin())
+        #endif
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)

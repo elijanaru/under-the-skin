@@ -10364,6 +10364,7 @@ function viewProfile() {
   else if (tab === 'alerts') body = `${remindersSection()}
     ${M.info ? calSyncCard() : ''}
     <button class="card glass pf-link" data-action="nav" data-to="saved"><span>${icon('save', 18)}</span><b>Saved tips<small>${(state.savedTips || []).length} saved, ready to use</small></b>${icon('chevR', 16)}</button>
+    ${qpOK() ? `<button class="card glass pf-link" data-action="nav" data-to="quiet"><span>${icon('moon', 18)}</span><b>Quiet phone<small>Pause the apps that pull you in</small></b>${icon('chevR', 16)}</button>` : ''}
     ${sectionTitle('Partner mode')}
     <section class="card glass"><div class="stepper-row"><span class="pf-ic">${icon('users', 16)}</span><span>Show on Today<small>The partner card on your home screen</small></span><button class="toggle ${state.hidePartner ? '' : 'on'}" data-action="partnerToday" role="switch" aria-checked="${!state.hidePartner}" aria-label="Show the partner card on Today"><i></i></button></div>
       <button class="list-btn" data-action="nav" data-to="share"><span class="pf-ic">${icon('heart', 16)}</span><span class="pf-lt">Share my cycle with partner & friends</span>${icon('chevR', 15)}</button>
@@ -11552,6 +11553,13 @@ const actions = {
     w.enter(1.05).then(() => { ui.flashOut = true; actions.onbNext(d); });
   },
   onbUnsure: () => { ui.onb.unsure = !ui.onb.unsure; if (ui.onb.unsure) ui.onb.cycleLength = 28; render(); },
+  qpAllow: async () => { const api = qpApi(); if (!api) return; try { ui.qp = await api.authorize(); if (ui.qp.status === 'approved') { await qpSync(true); ui.qp = await api.pick(); } } catch { toast('Screen Time wasn’t allowed. You can try again any time'); try { ui.qp = await api.info(); } catch {} } render(); },
+  qpPick: async () => { const api = qpApi(); if (!api) return; try { ui.qp = await api.pick(); } catch {} render(); },
+  qpNow: async d => { const api = qpApi(); if (!api) return; try { ui.qp = await api.blockNow({ minutes: +d.m || 0 }); buzz('done'); toast(+d.m ? 'Paused. Enjoy the quiet' : 'Paused until you lift it'); } catch {} render(); },
+  qpLift: async () => { const api = qpApi(); if (!api) return; try { ui.qp = await api.unblock({ mode: 'now' }); } catch {} render(); },
+  qpToggle: async d => { const q = qpSet()[d.k]; q.on = !q.on; save(); render();
+    if (d.k === 'period') await qpSync(true); else await qpDaily(d.k);
+    if (q.on) buzz('done'); render(); },
   sound: (d, el) => {
     const off = !sndMuted();
     import('./sfx.js').then(S => S.setMuted(off)).catch(() => {});
@@ -12312,6 +12320,7 @@ document.addEventListener('keydown', e => {
   e.preventDefault(); placeFind(f.startsWith('onb') ? 'onb' : 'profile');
 });
 document.addEventListener('change', e => { if (e.target.type === 'time' && /birthTime$/.test(e.target.dataset?.input || '')) render(); });
+document.addEventListener('change', e => { const f = e.target.dataset?.qp; if (!f || !e.target.value) return; const [k, w] = f.split('.'); qpSet()[k][w] = e.target.value; save(); if (qpSet()[k].on) qpDaily(k).then(render); });
 document.addEventListener('focusout', e => {
   const t = e.target; if (t.type !== 'date' || !t.dataset?.input || !t.value || +t.value.slice(0, 4) < 1900) return;
   render();
@@ -12622,6 +12631,96 @@ function ulCompare() {
     </svg>
   </section>`;
 }
+// ---------- Quiet phone (21 Nov 2026, her ask) ----------
+// Pauses the apps she picks with Apple's Screen Time: Pause now, a phone-free first hour, an evening wind-down and a
+// softer pause around her period (she can open them for 15 minutes). Apple's picker keeps her list private; we only
+// get counts. The native side is ios/App/App/QuietPhone.swift plus three small extensions. Until Apple approves the
+// Family Controls permission it only exists in Xcode (Debug) builds, so the page and its Profile row stay hidden in
+// TestFlight. In a browser, localStorage 'uts.qpDemo' = 1 turns on a pretend version for previews.
+const QP = NATIVE ? (CAP.Plugins?.UTSBlock || null) : null;
+const qpDemo = () => { try { return !NATIVE && localStorage.getItem('uts.qpDemo') === '1'; } catch { return false; } };
+const QP_MOCK = { s: { supported: true, status: 'notDetermined', apps: 0, categories: 0, sites: 0, active: [], nowUntil: 0 },
+  async state() { return { ...this.s }; }, async authorize() { this.s.status = 'approved'; return this.state(); },
+  async pick() { this.s.apps = 4; this.s.categories = 1; return this.state(); }, async setTexts() {},
+  async daily({ mode }) { this.s.active = this.s.active.filter(x => x !== mode); return this.state(); },
+  async period() { return this.state(); },
+  async blockNow({ minutes }) { this.s.active = [...new Set([...this.s.active, 'now'])]; this.s.nowUntil = minutes ? Date.now() / 1000 + minutes * 60 : 0; return this.state(); },
+  async unblock({ mode }) { this.s.active = this.s.active.filter(x => x !== mode); this.s.nowUntil = 0; return this.state(); } };
+const qpApi = () => QP || (qpDemo() ? QP_MOCK : null);
+const qpOK = () => !!qpApi();
+const qpSet = () => (state.quiet = state.quiet || { morning: { on: false, s: '07:00', e: '08:00' }, evening: { on: false, s: '21:30', e: '23:30' }, period: { on: false } });
+const qpHM = t => { const [h, m] = String(t || '0:0').split(':').map(Number); return [h || 0, m || 0]; };
+// two days before her next period until it ends (or from today while she bleeds), as local midnights
+function qpWindow() {
+  const i = M.info; if (!i) return null;
+  const day = n => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + n); return d; };
+  return i.isPeriod ? [day(0), day(Math.max(1, (i.P || 5) - i.cd + 1))] : [day(Math.max(0, i.daysToPeriod - 2)), day(i.daysToPeriod + (i.P || 5))];
+}
+const QP_TEXT = () => ({ now: ['Your phone is resting', 'You asked for this pause. Your body says thank you.'],
+  morning: ['Your morning is yours', 'Light, water and a few slow breaths first. The world can wait an hour.'],
+  evening: ['Time to wind down', 'Melatonin rises when the screen goes dark. Sleep is on its way.'],
+  period: ['Your body asked for rest', 'Your period is close. Stay soft with yourself, or open it for 15 minutes.'],
+  buttons: ['Back to me', 'Open for 15 minutes'] });
+// keeps the native side in step with her settings and her cycle; only talks to it when something changed
+let qpKey = '';
+async function qpSync(force) {
+  const api = qpApi(); if (!api || !state?.onboarded) return;
+  const q = qpSet(), w = qpWindow(), key = JSON.stringify([q, w && w.map(d => +d), LANG]);
+  if (!force && key === qpKey) return; qpKey = key;
+  try {
+    const tx = QP_TEXT(); for (const k in tx) tx[k] = tx[k].map(t => T(t));
+    await api.setTexts({ texts: tx });
+    if (q.period.on && w) await api.period({ on: true, start: +w[0], end: +w[1] }); else await api.period({ on: false, start: 0, end: 0 });
+    ui.qp = await api.state();
+  } catch {}
+}
+async function qpDaily(k) {
+  const api = qpApi(), q = qpSet()[k]; if (!api) return;
+  const [sh, sm] = qpHM(q.s), [eh, em] = qpHM(q.e);
+  try { ui.qp = await api.daily({ mode: k, on: !!q.on, sh, sm, eh, em }); }
+  catch (e) { q.on = false; save(); toast(e?.message || 'A quiet time needs at least 15 minutes'); }
+}
+const QP_MODES = [['morning', '🌅', 'Phone-free morning', 'Light, water and breath before the scroll'], ['evening', '🌙', 'Evening wind-down', 'Melatonin rises when the screen goes dark'],
+  ['period', '🌸', 'Softer around your period', 'Two days before and while you bleed. You can always open them for 15 minutes']];
+function viewQuiet() {
+  if (!qpOK()) return viewProfile();
+  const api = qpApi(), q = qpSet(), st = ui.qp;
+  if (!st) { api.state().then(r => { ui.qp = r; render(); }).catch(() => {}); }
+  const s = st || { status: 'notDetermined', apps: 0, categories: 0, sites: 0, active: [] }, ok = s.status === 'approved', n = (s.apps || 0) + (s.categories || 0) + (s.sites || 0);
+  const now = (s.active || []).includes('now'), until = s.nowUntil > 0 ? new Date(s.nowUntil * 1000) : null, w = qpWindow();
+  const fd = d => fmt(d, { weekday: 'short', day: 'numeric', month: 'short' });
+  const swirl = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';
+  const phone = `<svg class="qp-ph" viewBox="0 0 160 230" aria-hidden="true"><defs><linearGradient id="qpS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7dbe5"/><stop offset=".55" stop-color="#f3e6d6"/><stop offset="1" stop-color="#dfe6c9"/></linearGradient></defs>
+    <rect x="14" y="8" width="132" height="214" rx="30" fill="#fff" stroke="rgba(48,64,35,.14)"/><rect x="22" y="16" width="116" height="198" rx="23" fill="url(#qpS)"/><rect x="62" y="22" width="36" height="9" rx="4.5" fill="#20301a" opacity=".85"/>
+    <path class="qp-moon" d="M92 82a28 28 0 1 1-26-38 22 22 0 0 0 26 38z" fill="#fff"/><text class="qp-z" x="98" y="58">z</text><text class="qp-z z2" x="110" y="44">z</text>
+    <rect x="44" y="150" width="72" height="14" rx="7" fill="#fff" opacity=".9"/><rect x="54" y="174" width="52" height="10" rx="5" fill="#fff" opacity=".6"/></svg>`;
+  const cta = !ok ? `<button class="ul3-cta" data-action="qpAllow">Allow Screen Time</button>` : `<button class="ul3-cta" data-action="qpPick">${n ? 'Change my apps' : 'Choose apps to pause'}</button>`;
+  return `${topbar('Quiet phone', { back: true })}
+  <div class="pad ul3 ul4 qp">
+    <div class="ul4-stage qp-stage">
+      <svg class="ul4-sp" viewBox="0 0 360 250" aria-hidden="true">${o3Spark('#f1d58a', 30, 40, 0)}${o3Spark('#fff', 330, 30, 1.1)}${o3Spark('#c9d6a8', 336, 210, 2)}${o3Spark('#f6c6d4', 22, 214, 1.6)}</svg>
+      ${phone}
+    </div>
+    <span class="ul3-days">${now ? `${icon('moon', 13)} Paused${until ? ` until <b class="dotnum">${hm(until)}</b>` : ''}` : n ? `<b class="dotnum">${n}</b> ${n === 1 ? 'app or group' : 'apps and groups'} chosen` : 'Nothing paused yet'}</span>
+    <section class="o3-note ul3-note ul4-note qp-note">
+      <small class="ul4-eye">Quiet phone</small>
+      <h2 class="ul4-h">Give your mind<br><em>a pause${swirl}</em></h2>
+      <p class="o3-lead">Pick the apps that pull you in. We’ll <mark>gently pause them</mark> when your body needs you more.</p>
+      ${cta}
+      <p class="o3-sign">Apple keeps your list private. We never see it <i>♡</i></p>
+    </section>
+    ${ok && n ? `<section class="card ul3-keep qp-now"><h3>${now ? 'Your phone is resting' : 'Pause now'}</h3>
+      ${now ? `<p class="qp-sub">${until ? `Your apps open again at <b class="dotnum">${hm(until)}</b>.` : 'Until you lift it.'}</p><button class="qp-lift" data-action="qpLift">Lift the pause</button>`
+        : `<div class="qp-pills">${[[30, '30 min'], [60, '1 hour'], [120, '2 hours'], [0, 'Until I stop']].map(([m, t]) => `<button class="qp-pill" data-action="qpNow" data-m="${m}">${t}</button>`).join('')}</div>`}</section>
+    <section class="card ul3-keep qp-modes"><h3>Every day</h3>
+      ${QP_MODES.map(([k, e, t, sub], i) => { const on = !!q[k].on, act = (s.active || []).includes(k);
+        return `<div class="ul3-r qp-r ${on ? 'on' : ''}" style="--i:${i}"><span class="ul3-ic emo" aria-hidden="true">${e}</span><span><b>${t}${act ? '<em>On now</em>' : ''}</b><small>${sub}</small>
+          ${k === 'period' ? (w ? `<span class="qp-when">${fd(w[0])} to ${fd(new Date(+w[1] - 1))}</span>` : '') : `<span class="qp-times"><input type="time" class="qp-t" data-qp="${k}.s" value="${q[k].s}" aria-label="${t} starts"><i>to</i><input type="time" class="qp-t" data-qp="${k}.e" value="${q[k].e}" aria-label="${t} ends"></span>`}</span>
+          <button class="toggle ${on ? 'on' : ''}" data-action="qpToggle" data-k="${k}" role="switch" aria-checked="${on}" aria-label="${t}"><i></i></button></div>`; }).join('')}</section>` : ''}
+    ${s.status === 'denied' ? `<p class="fine center">Screen Time is off for Underskin. Turn it on in Settings, Screen Time, then come back.</p>` : ''}
+    <p class="fine center">Works with Apple Screen Time. Change or stop it here any time.</p>
+  </div>`;
+}
 function viewUnlock() {
   const left = trialLeft(), lock = locked(), paid = !!state.paid, nm = esc((state.profile.name || '').trim());
   const swirl = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';
@@ -12687,6 +12786,7 @@ function morphInto(el, html) { const t = document.createElement('template'); t.i
 function pageInto(el, html) { const t = document.createElement('template'); t.innerHTML = html; I18N.tr(t.content); el.replaceChildren(t.content); }
 function render() {
   const r = route(); secN = 0;
+  if (qpOK()) qpSync();
   unmountFigs.forEach(f => f()); unmountFigs = []; // stop 3D/particle loops even on views that mount none (account, love, with)
   const prev = document.getElementById('view');
   let keep = prev && ui.lastRoute === r.key ? prev.scrollTop : 0;
@@ -12749,7 +12849,7 @@ function render() {
   } // the whole app takes the colour of her phase
   if (document.documentElement.dataset.phase !== ph) document.documentElement.dataset.phase = ph;
   const views = {
-    today: viewToday, saved: viewSaved, ground: viewGround, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: () => viewBreathe(r.id), do: () => viewTopic(r.id), plan: viewPlan, diet: viewDiet, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: viewCalendar, manifest: viewManifest, moon: viewCalendar, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewReliefIndex, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), drink: () => viewDrink(r.id), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), apothecary: () => { location.replace('#/plan/foods'); return ''; }, world: () => viewWorld(r.id), privacy: viewPrivacy, imprint: viewImprint, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
+    today: viewToday, saved: viewSaved, ground: viewGround, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: () => viewBreathe(r.id), do: () => viewTopic(r.id), plan: viewPlan, diet: viewDiet, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: viewCalendar, manifest: viewManifest, moon: viewCalendar, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewReliefIndex, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), drink: () => viewDrink(r.id), quiet: () => viewQuiet(), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), apothecary: () => { location.replace('#/plan/foods'); return ''; }, world: () => viewWorld(r.id), privacy: viewPrivacy, imprint: viewImprint, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
     unlock: viewUnlock,
     after: viewAfter,
     trying: viewTrying,
