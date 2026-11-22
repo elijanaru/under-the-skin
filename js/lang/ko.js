@@ -5814,4 +5814,6 @@ export default {"+ Cayenne":"+ 카옌페퍼",
 "Warm belly breath, {0} min. Opens full screen.":"따뜻한 배 호흡, {0}분. 전체 화면으로 열려요.",
 "par avion · day {0} · menstrual phase<x0/>to mia, with love":"par avion · {0}일째 · 월경기<x0/>사랑을 담아, mia에게",
 "{0} min meditation, {1} min. Opens full screen.":"{0}분 명상, {1}분. 전체 화면으로 열려요.",
-"{0}-{1}-{2} breathing, {3} min. Opens full screen.":"{0}-{1}-{2} 호흡, {3}분. 전체 화면으로 열려요."};
+"{0}-{1}-{2} breathing, {3} min. Opens full screen.":"{0}-{1}-{2} 호흡, {3}분. 전체 화면으로 열려요.",
+"The pill keeps your own estrogen and progesterone low and steady, so there is no egg release. Your bleed comes in the pill break.":"피임약은 몸에서 만드는 에스트로겐과 프로게스테론을 낮고 일정하게 유지해서 배란이 일어나지 않아요. 출혈은 휴약 기간에 와요.",
+"Your birth control keeps your own hormones low and steady, so there is no egg release this cycle.":"지금 쓰는 피임법이 몸의 호르몬을 낮고 일정하게 유지해서 이번 주기에는 배란이 없어요."};

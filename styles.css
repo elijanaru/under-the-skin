@@ -17609,3 +17609,4 @@ html .sfc-i em { display: grid; place-items: center; height: 118px; font-size: 6
 .bzi-t { color: #20301a !important; font-weight: 400 !important; text-shadow: 0 0 16px rgba(255,255,255,.85), 0 0 4px rgba(255,255,255,.6) !important; }
 .bzi-s { color: #3d4a33 !important; text-shadow: 0 0 10px rgba(255,255,255,.9) !important; }
 @media (prefers-reduced-motion: reduce) { .bzi-rip, .bzi-lotus, .bzi-dot, .bzl-g { animation: none; } .bzi-rip.r1 { opacity: .5; } }
+.ro-flat { margin: 8px 0 2px; font: 400 13.5px/1.45 Outfit, sans-serif; color: #4b5a40; }

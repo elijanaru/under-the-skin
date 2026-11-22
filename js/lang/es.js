@@ -5814,4 +5814,6 @@ export default {"+ Cayenne":"+ Cayena",
 "Warm belly breath, {0} min. Opens full screen.":"Respiración del vientre cálido, {0} min. Se abre a pantalla completa.",
 "par avion · day {0} · menstrual phase<x0/>to mia, with love":"par avion · día {0} · fase menstrual<x0/>para mia, con cariño",
 "{0} min meditation, {1} min. Opens full screen.":"Meditación de {0} min, {1} min. Se abre a pantalla completa.",
-"{0}-{1}-{2} breathing, {3} min. Opens full screen.":"Respiración {0}-{1}-{2}, {3} min. Se abre a pantalla completa."};
+"{0}-{1}-{2} breathing, {3} min. Opens full screen.":"Respiración {0}-{1}-{2}, {3} min. Se abre a pantalla completa.",
+"The pill keeps your own estrogen and progesterone low and steady, so there is no egg release. Your bleed comes in the pill break.":"La píldora mantiene tu propio estrógeno y tu progesterona bajos y estables, así que no hay ovulación. El sangrado llega en la pausa de la píldora.",
+"Your birth control keeps your own hormones low and steady, so there is no egg release this cycle.":"Tu anticonceptivo mantiene tus propias hormonas bajas y estables, así que este ciclo no hay ovulación."};

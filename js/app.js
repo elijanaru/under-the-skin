@@ -1118,11 +1118,19 @@ function chartGeom(L, compact) {
   const Y = v => bot - 10 - v * (bot - top - 34);
   return { W, H, top, bot, X, Y };
 }
+// The chart must show the same stage the app calculates (23 Nov 2026). On the pill there is no egg release: her bleed,
+// a rising half to day 14, a quieter half to the break (as dayInfo counts it). On any hormonal method that stops egg
+// release (pill, implant, ring, patch, shot) her own hormones stay low and steady, so the curves lie flat and there is no egg.
+const chartPill = (L, P) => [{ key: 'menstrual', from: 1, to: P }, { key: 'follicular', from: P + 1, to: 14 }, { key: 'luteal', from: 15, to: L }].filter(r => r.to >= r.from);
+const chartRanges = (L, P, pill) => pill ? chartPill(L, P) : C.phaseRanges(L, P);
+const chartPhase = (cd, L, P, pill) => (chartRanges(L, P, pill).find(r => cd >= r.from && cd <= r.to) || { key: 'luteal' }).key;
+const FLAT = { estrogen: .2, progesterone: .1, lh: .12, fsh: .14, testosterone: .08 };
+const chartH = (t, L, P, flat) => flat ? FLAT : C.hormonesAt(t, L, P);
 function cycleChart(info, { id = 'cc', compact = false, who = 'You' } = {}) {
-  const { L, P } = info;
+  const { L, P } = info, flat = !!info.noOv, pill = info.pillDay != null && info.pillDay !== undefined;
   const cd = Math.min(info.cd, L);
   const { W, H, top, bot, X, Y } = chartGeom(L, compact);
-  const ranges = C.phaseRanges(L, P);
+  const ranges = chartRanges(L, P, pill);
   // One readable line per band (name above, days below); labels wider than a short band are nudged apart so they never touch
   const spread = (items, cw) => { const o = items.map(([cx, t]) => { const w = t.length * cw; return { w, x: Math.max(w / 2 + 2, Math.min(W - w / 2 - 2, cx)) }; });
     for (let i = 1; i < o.length; i++) { const min = o[i - 1].x + o[i - 1].w / 2 + 6 + o[i].w / 2; if (o[i].x < min) o[i].x = min; }
@@ -1145,18 +1153,18 @@ function cycleChart(info, { id = 'cc', compact = false, who = 'You' } = {}) {
   const curves = HORMONES.map(h => {
     let d = '';
     for (let t = 1; t <= L + 1.001; t += 0.2) {
-      const v = C.hormonesAt(t - 0.5, L, P)[h.key];
+      const v = chartH(t - 0.5, L, P, flat)[h.key];
       d += `${d ? 'L' : 'M'}${X(t).toFixed(1)} ${Y(v).toFixed(1)}`;
     }
     return `<path class="curve ${ui.hidden[h.key] ? 'off' : ''}" data-h="${h.key}" d="${d}" pathLength="1" stroke="${h.color}" stroke-width="${h.w}" fill="none" stroke-linecap="round" ${h.dash ? `stroke-dasharray="${h.dash}"` : ''}/>`;
   }).join('');
   // estrogen area wash
   let area = `M${X(1)} ${bot}`;
-  for (let t = 1; t <= L + 1.001; t += 0.25) area += `L${X(t).toFixed(1)} ${Y(C.hormonesAt(t - 0.5, L, P).estrogen).toFixed(1)}`;
+  for (let t = 1; t <= L + 1.001; t += 0.25) area += `L${X(t).toFixed(1)} ${Y(chartH(t - 0.5, L, P, flat).estrogen).toFixed(1)}`;
   area += `L${X(L + 1)} ${bot}Z`;
   const mx = X(cd + 0.5);
-  const my = Y(C.hormonesAt(cd, L, P).estrogen);
-  return `<div class="cchart ${compact ? 'compact' : ''}" data-chart="${id}" data-l="${L}" data-p="${P}" data-cd="${cd}" data-compact="${compact ? 1 : ''}">
+  const my = Y(chartH(cd, L, P, flat).estrogen);
+  return `<div class="cchart ${compact ? 'compact' : ''}" data-chart="${id}" data-l="${L}" data-p="${P}" data-cd="${cd}" data-cdraw="${info.cd}" data-flat="${flat ? 1 : ''}" data-pill="${pill ? 1 : ''}" data-compact="${compact ? 1 : ''}">
     <svg viewBox="0 0 ${W} ${H}" width="100%" class="cchart-svg">
       <defs>
         <filter id="${id}-glow" x="-10%" y="-30%" width="120%" height="160%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -1165,7 +1173,7 @@ function cycleChart(info, { id = 'cc', compact = false, who = 'You' } = {}) {
       ${bands}
       <path d="${area}" fill="url(#${id}-area)" class="area ${ui.hidden.estrogen ? 'off' : ''}"/>
       ${curves}
-      ${(() => { const ov = C.ovulationDay(L, P), ex = X(ov + 0.5), t = `Egg release · day ${ov}`, pw = t.length * 5.3 + 18, near = Math.abs(cd - ov) <= 4, px = Math.max(pw / 2 + 2, Math.min(W - pw / 2 - 2, near ? (cd >= ov ? ex - pw / 2 - 18 : ex + pw / 2 + 18) : ex)), py = top + 11, ey = bot - 12;
+      ${flat ? '' : (() => { const ov = C.ovulationDay(L, P), ex = X(ov + 0.5), t = `Egg release · day ${ov}`, pw = t.length * 5.3 + 18, near = Math.abs(cd - ov) <= 4, px = Math.max(pw / 2 + 2, Math.min(W - pw / 2 - 2, near ? (cd >= ov ? ex - pw / 2 - 18 : ex + pw / 2 + 18) : ex)), py = top + 11, ey = bot - 12;
         return `<g class="egg-mark"><title>LH surge → egg release · day ${ov}</title>
         <line class="egg-line" x1="${ex.toFixed(1)}" y1="${top + 4}" x2="${ex.toFixed(1)}" y2="${ey - 8}"/>
         <g transform="translate(${ex.toFixed(1)} ${ey})"><circle class="egg-halo" r="10"/><ellipse class="egg-shell" rx="5" ry="6.4" cy="-.4"/><circle class="egg-yolk" r="2.3" cy=".6"/></g></g>`; })()}
@@ -1175,7 +1183,7 @@ function cycleChart(info, { id = 'cc', compact = false, who = 'You' } = {}) {
         <circle cx="${mx}" cy="${my}" r="5.5" fill="#fff" stroke="#20301a" stroke-width="2.2"/>
         <g transform="translate(${Math.min(Math.max(mx, 34), W - 34)} ${top + 16})">
           <rect x="-30" y="-11" width="60" height="22" rx="11" fill="#20301a"/>
-          <text y="4" text-anchor="middle" class="here-label">${who.toUpperCase()} · ${cd}</text>
+          <text y="4" text-anchor="middle" class="here-label">${who.toUpperCase()} · ${info.cd}</text>
         </g>
       </g>
       <g class="scrub" style="opacity:0">
@@ -1184,8 +1192,8 @@ function cycleChart(info, { id = 'cc', compact = false, who = 'You' } = {}) {
       </g>
       <rect class="hit" x="0" y="${top}" width="${W}" height="${bot - top}" fill="transparent"/>
     </svg>
-    <div class="legend ${compact ? 'static' : ''}">${HORMONES.map(h => `<${compact ? 'span' : `button data-action="toggleHormone" data-h="${h.key}"`} class="lg ${ui.hidden[h.key] ? 'off' : ''}"><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="${h.color}" stroke-width="${h.w}" stroke-linecap="round" ${h.dash ? `stroke-dasharray="${h.dash}"` : ''}/></svg>${h.name}</${compact ? 'span' : 'button'}>`).join('')}<span class="lg egg-lg"><svg class="egg-ic" viewBox="-7 -8 14 16" width="12" height="14" aria-hidden="true"><ellipse rx="5" ry="6.4" cy="-.4" fill="#fff" stroke="#c9961a" stroke-width="1.6"/><circle r="2.3" cy=".6" fill="#e8b52c"/></svg>Egg release</span></div>
-    <div class="readout" id="${id}-read">${readout(info.cd, L, P, info.cd === cd ? true : false)}</div>
+    <div class="legend ${compact ? 'static' : ''}">${HORMONES.map(h => `<${compact ? 'span' : `button data-action="toggleHormone" data-h="${h.key}"`} class="lg ${ui.hidden[h.key] ? 'off' : ''}"><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="${h.color}" stroke-width="${h.w}" stroke-linecap="round" ${h.dash ? `stroke-dasharray="${h.dash}"` : ''}/></svg>${h.name}</${compact ? 'span' : 'button'}>`).join('')}${flat ? '' : `<span class="lg egg-lg"><svg class="egg-ic" viewBox="-7 -8 14 16" width="12" height="14" aria-hidden="true"><ellipse rx="5" ry="6.4" cy="-.4" fill="#fff" stroke="#c9961a" stroke-width="1.6"/><circle r="2.3" cy=".6" fill="#e8b52c"/></svg>Egg release</span>`}</div>
+    <div class="readout" id="${id}-read">${readout(info.cd, L, P, true, flat, pill)}</div>
   </div>`;
 }
 // One drawn arrow per hormone: where it is heading tomorrow (up, flat or down).
@@ -1201,9 +1209,10 @@ function roSpark(x, cd, L, P) {
   const [tx, ty] = pts[Math.min(cd, L) - 1], line = pts.map(([px, py], i) => `${i ? 'L' : 'M'}${px.toFixed(1)} ${py.toFixed(1)}`).join('');
   return `<svg viewBox="-4 0 ${W + 8} ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${line}L${W} ${H}L0 ${H}Z" fill="${x.color}" opacity=".1"/><path d="${line}" fill="none" stroke="${x.color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" opacity=".85" ${x.dash ? `stroke-dasharray="${x.dash}"` : ''}/></svg><i style="left:${((tx + 4) / (W + 8) * 100).toFixed(1)}%;top:${(ty / H * 100).toFixed(1)}%;background:${x.color}"></i>`;
 }
-function readout(cdRaw, L, P, isYou) {
+function readout(cdRaw, L, P, isYou, flat = false, pill = false) {
   const cd = Math.min(cdRaw, L);
-  const ph = C.phaseFor(cd, L, P), h = C.hormonesRel(cd, L, P), tcm = TCM[ph];
+  const ph = chartPhase(cd, L, P, pill), h = C.hormonesRel(cd, L, P), tcm = TCM[ph];
+  if (flat) return `<div class="ro-head"><div class="ro-phase">Day ${cdRaw} · ${PHASES[ph].name}</div></div><p class="ro-flat">${pill ? 'The pill keeps your own estrogen and progesterone low and steady, so there is no egg release. Your bleed comes in the pill break.' : 'Your birth control keeps your own hormones low and steady, so there is no egg release this cycle.'}</p>`;
   // which way each hormone is heading: today against tomorrow in the model (after the last day the next cycle starts)
   const nx = C.hormonesRel(cd >= L ? 1 : cd + 1, L, P);
   const pv = C.hormonesRel(cd <= 1 ? L : cd - 1, L, P);
@@ -1218,7 +1227,7 @@ function readout(cdRaw, L, P, isYou) {
 }
 function bindCharts() {
   document.querySelectorAll('.cchart').forEach(el => {
-    const L = +el.dataset.l, P = +el.dataset.p, cdYou = +el.dataset.cd, compact = !!el.dataset.compact;
+    const L = +el.dataset.l, P = +el.dataset.p, cdYou = +el.dataset.cd, cdRaw = +el.dataset.cdraw || cdYou, compact = !!el.dataset.compact, flat = !!el.dataset.flat, pill = !!el.dataset.pill;
     const svg = el.querySelector('svg'), hit = el.querySelector('.hit'), scrub = el.querySelector('.scrub');
     const line = scrub.querySelector('.s-line'), dot = scrub.querySelector('.s-dot');
     const read = el.querySelector('.readout');
@@ -1229,15 +1238,15 @@ function bindCharts() {
       const vx = (e.clientX - r.left) / r.width * W;
       const cd = Math.max(1, Math.min(L, Math.floor((vx - 4) / (W - 8) * L) + 1));
       if (cd === last) return; last = cd;
-      const x = X(cd + 0.5), y = Y(C.hormonesAt(cd, L, P).estrogen);
+      const x = X(cd + 0.5), y = Y(chartH(cd, L, P, flat).estrogen);
       line.setAttribute('x1', x); line.setAttribute('x2', x); dot.setAttribute('cx', x); dot.setAttribute('cy', y);
       scrub.style.opacity = cd === cdYou ? 0 : 1;
-      read.innerHTML = readout(cd, L, P, cd === cdYou);
+      read.innerHTML = cd === cdYou ? readout(cdRaw, L, P, true, flat, pill) : readout(cd, L, P, false, flat, pill);
       el.classList.toggle('scrubbing', cd !== cdYou);
     };
     hit.addEventListener('pointerdown', e => { hit.setPointerCapture(e.pointerId); move(e); });
     hit.addEventListener('pointermove', e => { if (e.buttons || e.pointerType === 'mouse') move(e); });
-    const reset = () => { last = null; scrub.style.opacity = 0; el.classList.remove('scrubbing'); read.innerHTML = readout(cdYou, L, P, true); };
+    const reset = () => { last = null; scrub.style.opacity = 0; el.classList.remove('scrubbing'); read.innerHTML = readout(cdRaw, L, P, true, flat, pill); };
     hit.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') reset(); });
     hit.addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') { clearTimeout(el._t); el._t = setTimeout(reset, 3500); } });
     hit.addEventListener('pointercancel', () => { clearTimeout(el._t); el._t = setTimeout(reset, 3500); });
