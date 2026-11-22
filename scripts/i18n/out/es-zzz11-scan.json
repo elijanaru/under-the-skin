@@ -1,0 +1,19 @@
+{
+"<t0><x1/></t0>Pomegranate": "<t0><x1/></t0>Granada",
+"<x0/> Heme iron · Zinc · B{0}": "<x0/> Hierro hemo · Zinc · B{0}",
+"<x0/> Vitamin B{0} · Tryptophan": "<x0/> Vitamina B{0} · Triptófano",
+"<x0/> Vitamin C · Anthocyanins": "<x0/> Vitamina C · Antocianinas",
+"<x0/> Zinc · Vitamin B{0} · Selenium": "<x0/> Zinc · Vitamina B{0} · Selenio",
+"Blood oranges<t0>Vitamin C · Anthocyanins</t0>": "Naranjas sanguinas<t0>Vitamina C · Antocianinas</t0>",
+"Grapefruit<t0>Vitamin C · Lycopene</t0>": "Pomelo<t0>Vitamina C · Licopeno</t0>",
+"Kiwifruit<t0>Fibre · in season</t0>": "Kiwi<t0>Fibra · de temporada</t0>",
+"Kumquats<t0>Vitamin C · Fibre</t0>": "Kumquats<t0>Vitamina C · Fibra</t0>",
+"Meyer lemons<t0>Vitamin C</t0>": "Limones Meyer<t0>Vitamina C</t0>",
+"Oysters<t0>Zinc · B{0}</t0>": "Ostras<t0>Zinc · B{0}</t0>",
+"Persimmon<t0>Fibre · in season</t0>": "Caqui<t0>Fibra · de temporada</t0>",
+"Same fibre as apples": "La misma fibra que las manzanas",
+"Same fibre as berries": "La misma fibra que los frutos rojos",
+"Same fibre as pears": "La misma fibra que las peras",
+"Turnips & rutabaga<t0>Fibre · in season</t0>": "Nabos y colinabo<t0>Fibra · de temporada</t0>",
+"Vitamin D · B vitamins": "Vitamina D · Vitaminas B"
+}

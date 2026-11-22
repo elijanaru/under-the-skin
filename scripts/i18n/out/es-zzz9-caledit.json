@@ -1,0 +1,11 @@
+{
+ "Done": "Listo",
+ "Cancel": "Cancelar",
+ "<x0/> Wrong start day? Move the whole period": "<x0/> ¿Día de inicio equivocado? Mueve toda la regla",
+ "Tap the day your period started. We set the rest for you.": "Toca el día en que empezó tu regla. La app ajusta el resto.",
+ "Saved · predictions updated": "Guardado · predicciones actualizadas",
+ "Period moved · predictions updated": "Regla movida · predicciones actualizadas",
+ "You can mark days up to today": "Puedes marcar días hasta hoy",
+ "Pick a day up to today": "Elige un día hasta hoy",
+ "In season · <x0/> · {0}": "De temporada · <x0/> · {0}"
+}

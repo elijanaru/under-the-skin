@@ -1828,18 +1828,15 @@ function onbAsk(o) {
 }
 function onbPromise() {
   const no = [['subscriptions', 'One payment, yours for good'], ['ads', 'Never, not even small ones'], ['hidden fees', 'The price you see is all'], ['selling your data', 'It stays yours, always'], ['popups', 'No nagging to upgrade']];
-  const o = ui.onb || {}, day = C.startOfDay(new Date()), cap = C.addDays(day, TRIAL_MAX);
-  let nx = null; // her next period from what she told us, so the middle step is a real date, never a made-up "Day 3"
-  if (!o.noPeriod && (o.last || o.ago != null)) { const L = o.unsure ? 28 : (+o.cycleLength || 28); nx = o.last ? C.parseISO(o.last) : C.addDays(day, -(+o.ago || 0)); while (nx <= day) nx = C.addDays(nx, L); }
-  const due = nx && nx < cap ? nx : cap;
-  const steps = [['gift', 'Today', 'Full app, free'], ['calendar', fmt(due, { month: 'short', day: 'numeric' }), nx && nx < cap ? 'Your period · decide, no charge' : 'Decide, no charge before'], ['heart', 'Forever', 'One payment']];
+  const due = C.addDays(C.startOfDay(new Date()), TRIAL_DAYS); // always a full 30 days, whatever period date she enters
+  const steps = [['gift', 'Today', 'Full app, free'], ['calendar', fmt(due, { month: 'short', day: 'numeric' }), 'Decide, no charge before'], ['heart', 'Forever', 'One payment']];
   const x = O3_X;
   return `<div class="op op2 op3">
     ${o3Hero()}
     <section class="o3-note" aria-label="We hate subscriptions">
       <h2><span>We hate</span> <em>subscriptions<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 15 C 40 9, 70 17, 104 11 S 170 8, 196 12"/></svg></em></h2>
       <p class="o3-sub">One payment, yours for good.</p>
-      <p class="o3-lead">We’re a <mark>small team</mark> and this is our <mark>passion project</mark>. Try everything free <mark>until your next period starts</mark>, so you see your whole cycle first. If you love it, unlock the full app with one payment.</p>
+      <p class="o3-lead">We’re a <mark>small team</mark> and this is our <mark>passion project</mark>. Try everything free <mark>for 30 days</mark>, a whole cycle, so you see it all first. If you love it, unlock the full app with one payment.</p>
       <p class="o3-sign">with love, from our little team <i>♡</i></p>
     </section>
     <section class="op-card o3-path">${steps.map(([ic, t, d], i) => `<div class="o3-st ${i === 0 ? 'now' : ''}"><span>${icon(ic, 18)}</span><b>${t}</b><small>${d}</small></div>`).join('')}
@@ -2126,9 +2123,9 @@ function exploreGrid(info) {
     ['tea', 'cup', 'Tea guide', 'For every need', 'images/xb/aura-tea.webp'], ['breathe', 'leaf', 'Breathe', 'Meditate & breathe', 'images/xb/aura-breathe.webp'],
     ['quiet', 'moon', 'Quiet phone', 'Pause the apps that pull you in', 'images/xb/aura-quiet.webp']];
   // her painted orbs, whole and frameless, in an aligned two-column grid (the fifth centred); the name sits under each in a white pill with a colour dot
-  const dot = ['#f2852c', '#e0407a', '#9a5fe0', '#e6a23a', '#3d93df', '#7f9f55'];
+  const dot = ['#f2552c', '#e01e5f', '#f0185a', '#ea7a14', '#b393f7', '#7f9f55']; // Glass aura orbs (23 Nov 2026, her pick)
   // each orb's painted rim colour, which also glows softly around it
-  const glow = ['#ffc25a', '#f6a7c3', '#ffb245', '#f3c3d8', '#9fd2f4', '#c9b8f0'];
+  const glow = ['#ff8a3d', '#f2477a', '#f0185a', '#f6a12e', '#c9b0ff', '#c9b8f0'];
   const bub = ([to, ic, t, sub, img, vid], i) => `<button class="xb" data-action="${to === 'super' ? 'superGo' : to === 'quiet' ? 'quietGo' : 'nav'}" data-to="${to}" style="--i:${i};--dot:${dot[i]};--glow:${glow[i]}" aria-label="${t}: ${sub}"><span class="xb-o">${vid ? `<video class="dpt-vid" src="${vid}" poster="${img}" muted loop playsinline preload="none" aria-hidden="true"></video>` : `<img src="${img}" alt="" loading="lazy">`}</span><span class="xb-t">${t}</span></button>`;
   return `<div class="xp3">${tiles.map(bub).join('')}</div>`;
 }
@@ -2361,10 +2358,11 @@ function viewCalendar() {
         <div class="cp-m">${Array.from({ length: 12 }, (_, i) => `<button class="${ui.calPick === m.getFullYear() && i === m.getMonth() ? 'on' : ''} ${ui.calPick === today.getFullYear() && i === today.getMonth() ? 'now' : ''}" data-action="calSetMonth" data-m="${i}">${fmt(new Date(2000, i, 1), { month: 'short' })}</button>`).join('')}</div></div>`
       : `<div class="cal-grid ${slide}">${cells}</div>`}
       ${ui.calStart ? `<div class="cal-editbar"><span>Tap the day your period started. We set the rest for you.</span><button class="btn btn-light cal-done" data-action="calStartCancel">Cancel</button></div>`
-        : ui.calEdit ? `<div class="cal-editbar"><span>${ui.calFix ? `Tap a day to add or remove bleeding. The ringed day is ${fmt(C.parseISO(ui.calFix), { month: 'short', day: 'numeric' })}.` : 'Tap each day you bled'}</span><button class="btn btn-light cal-done" data-action="calEdit">Done</button></div>`
-        : `<div class="cal2-legend"><span><i class="lg-p"></i>${M.stats.pill || M.stats.noPred ? 'Bleed' : 'Period'}</span>${M.stats.noOv ? '' : '<span><i class="lg-f"></i>Fertile</span><span><i class="lg-o"></i>Egg release</span>'}<span><i class="lg-l"></i>Logged</span>${Object.keys(state.logs).some(k => k.startsWith(C.iso(first).slice(0, 7)) && hadSex(state.logs[k])) ? '<span><i class="lg-x">🔥</i>Sex</span>' : ''}</div>
-      ${calDayLine(sd, si, slog, selLine, isFuture)}
-      <button class="cal-editbtn" data-action="calEdit">${icon('drop', 15)} Edit period days</button>`}
+        : ui.calEdit ? `<div class="cal-editbar"><span>Tap a day to add or remove bleeding</span><button class="btn btn-light cal-done" data-action="calEdit">Done</button></div>
+          ${M.stats.periods.length ? `<button class="cal-movebtn" data-action="calMoveStart">${icon('calendar', 14)} Wrong start day? Move the whole period</button>` : ''}`
+        : `<button class="cal-editbtn" data-action="calEdit">${icon('drop', 15)} Edit period days</button>
+      <div class="cal2-legend"><span><i class="lg-p"></i>${M.stats.pill || M.stats.noPred ? 'Bleed' : 'Period'}</span>${M.stats.noOv ? '' : '<span><i class="lg-f"></i>Fertile</span><span><i class="lg-o"></i>Egg release</span>'}<span><i class="lg-l"></i>Logged</span>${Object.keys(state.logs).some(k => k.startsWith(C.iso(first).slice(0, 7)) && hadSex(state.logs[k])) ? '<span><i class="lg-x">🔥</i>Sex</span>' : ''}</div>
+      ${calDayLine(sd, si, slog, selLine, isFuture)}`}
     </section>
     ${events().some(e => e.date >= todayISO()) ? upcomingEvents() : ''}
   </div>
@@ -3670,7 +3668,7 @@ function plateSection(current, lite) {
   const season = nowSeason, sel = ui.plPetal || 'veg', warm = plateWarm(phase);
   const T = SZ.SEASON_TCM[season], PSn = PLATE_SEASON[season], tcm = TCM[phase], P = PLATE_PETALS.find(x => x.k === sel);
   const foods = plateFoods(sel, phase, season, warm), live = (sel === 'veg' || sel === 'fruit') && season === nowSeason;
-  const country = SZ.COUNTRIES.find(x => x[0] === myCountry())?.[1] || '';
+  const country = ctryName(myCountry()) || '';
   const cook = warm ? `Warm and cooked, even in ${season === 'Summer' || season === 'Late summer' ? 'the heat' : season.toLowerCase()}. No iced drinks during your period and the 2–3 days before it.` : phase === 'luteal' ? `${PSn.cook} Lean warmer as your period gets close.` : PSn.cook;
   return `<section class="pl">
     <div class="pl-head"><div class="mv2-eyebrow">Your plate today</div><h2>${PHASES[phase].name} × ${season.toLowerCase()}</h2><p>${PSn.aim} · ${(D => D ? `${D.t} <span class="pl-han pl-dg">${D.g}</span>` : `${T.el} season <span class="pl-han">${T.han}</span>`)(myDiet() !== 'all' && DIETS.find(d => d.k === myDiet()))}</p></div>
@@ -4806,7 +4804,7 @@ function dueReminders() {
     if (sl) { const pats = (() => { try { return patterns().list; } catch { return []; } })(), body = bodyNote(new Date(), sl[2], info, pats);
       if (body) out.push({ id: 'letter-' + sl[2], icon: 'mail', title: LETTER_TITLE[sl[2]], body, to: 'log' }); }
   }
-  if (!state.paid && trialLeft() === 1) out.push({ id: 'trial-last', icon: 'gift', title: 'Your last free day', body: `${trialNextPeriod() ? 'Your period has started, so your free cycle ends today. ' : ''}From tomorrow Under the Skin asks for one payment of €${PRICE}. No subscription, and everything you logged stays.`, to: 'unlock' });
+  if (!state.paid && trialLeft() === 1) out.push({ id: 'trial-last', icon: 'gift', title: 'Your last free day', body: `From tomorrow Under the Skin asks for one payment of €${PRICE}. No subscription, and everything you logged stays.`, to: 'unlock' });
   if (postpartum()) out.push({ id: 'postpartum', icon: 'heart', title: 'Your cycle after birth', body: state.profile.bf
     ? 'While breastfeeding, periods can pause or come irregularly, and you can ovulate before your first period returns. Predictions stay rough until your cycle settles.'
     : 'In the first year after birth, cycles often run irregular. Your predictions sharpen with every period you log.' });
@@ -9157,21 +9155,25 @@ function seasonalDishesToday(info, n = 2) {
   ds.sort((a, b) => (b.local - a.local) || fit(b) - fit(a) || (info && !warmWindow(info) ? (!!a.warm - !!b.warm) : 0) || b.score - a.score);
   return ds.slice(0, n);
 }
+// country names: English here, the dictionary turns them into her language on screen (so "South Korea · November" stays one sentence)
+const ctryName = c => SZ.COUNTRIES.find(x => x[0] === c)?.[1];
+// inside a longer line ("South Korea · November") the name is translated on its own and the rest stays a date the app can translate
+const ctryTag = c => { const n = ctryName(c) || c; return `<span translate="no">${esc(I18N.LANG === 'en' ? n : I18N.T(n))}</span>`; };
 function myCountry() { return state?.profile?.country || SZ.guessCountry(); }
 // Country picker: a search field over the A to Z list (112 countries), the current one pinned on top. Filters in place, no re-render.
 const CP_ALIAS = { US: 'usa america united states', GB: 'uk england britain scotland wales great britain', NL: 'holland', DE: 'deutschland', AT: 'osterreich', CH: 'schweiz suisse svizzera', ES: 'espana', IT: 'italia', FR: 'francais', AE: 'uae emirates dubai abu dhabi', KR: 'korea seoul', CZ: 'czechia', HK: 'hongkong', SA: 'ksa', TW: 'taiwan', MX: 'mejico', BR: 'brasil', PL: 'polska', GR: 'hellas', TR: 'turkiye', NZ: 'aotearoa', IE: 'eire', PH: 'pilipinas', IN: 'bharat', JP: 'nippon', CN: 'zhongguo', RU: 'rossiya', UA: 'ukraina', SE: 'sverige', NO: 'norge', DK: 'danmark', FI: 'suomi', HR: 'hrvatska', HU: 'magyarorszag', LT: 'lietuva', LV: 'latvija', EE: 'eesti', MK: 'north macedonia', BA: 'bosnia herzegovina', CI: 'ivory coast' };
 const cpNorm = t => String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]/g, ' ');
 function flagOf(c) { return /^[A-Z]{2}$/.test(c) ? String.fromCodePoint(...[...c].map(ch => 127397 + ch.charCodeAt(0))) : '🌍'; }
 function countryPicker(scope, cur, cls = '') {
-  const name = SZ.COUNTRIES.find(x => x[0] === cur)?.[1] || cur;
-  const row = (c, n, extra = '') => `<button type="button" role="option" class="cp-row ${c === cur ? 'on' : ''} ${extra}" aria-selected="${c === cur}" data-action="pickCountry" data-scope="${scope}" data-v="${c}" data-k="${esc(cpNorm(n + ' ' + c + ' ' + (CP_ALIAS[c] || '')))}"><span class="cp-f" aria-hidden="true">${flagOf(c)}</span><span class="cp-n">${n}</span><span class="cp-ok" aria-hidden="true">${icon('check', 15, 2.6)}</span></button>`;
+  const name = ctryName(cur) || cur;
+  const row = (c, n, extra = '') => `<button type="button" role="option" class="cp-row ${c === cur ? 'on' : ''} ${extra}" aria-selected="${c === cur}" data-action="pickCountry" data-scope="${scope}" data-v="${c}" data-k="${esc(cpNorm(n + ' ' + c + ' ' + (CP_ALIAS[c] || '')))} ${esc(String(I18N.LANG === 'en' ? '' : I18N.T(n)).toLowerCase())}"><span class="cp-f" aria-hidden="true">${flagOf(c)}</span><span class="cp-n">${n}</span><span class="cp-ok" aria-hidden="true">${icon('check', 15, 2.6)}</span></button>`;
   return `<div class="cpick ${cls}">
     <label class="cp-q">${icon('search', 18)}<input type="search" data-cpq placeholder="Search your country" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" aria-label="Search your country"></label>
-    <div class="cp-list" role="listbox" aria-label="Countries">${row(cur, name, 'cp-cur')}<span class="cp-sep">A to Z</span>${SZ.COUNTRIES.map(([c, n]) => row(c, n)).join('')}<p class="cp-none" hidden>No match. Try the name in English.</p></div>
+    <div class="cp-list" role="listbox" aria-label="Countries">${row(cur, name, 'cp-cur')}<span class="cp-sep">A to Z</span>${SZ.COUNTRIES.map(([c, n]) => [c, n, I18N.LANG === 'en' ? n : I18N.T(n)]).sort((a, b) => I18N.LANG === 'en' ? 0 : a[2].localeCompare(b[2], I18N.LOC)).map(([c, n]) => row(c, n)).join('')}<p class="cp-none" hidden>No match. Try the name in English.</p></div>
   </div>`;
 }
 function cpFilter(inp) {
-  const box = inp.closest('.cpick'), q = cpNorm(inp.value).trim(), words = q.split(/\s+/).filter(Boolean);
+  const box = inp.closest('.cpick'), raw = inp.value.toLowerCase().trim(), q = /[^\x00-\x7f]/.test(raw) && !cpNorm(raw).trim() ? raw : cpNorm(inp.value).trim(), words = q.split(/\s+/).filter(Boolean);
   let n = 0;
   box.querySelectorAll('.cp-row:not(.cp-cur)').forEach(r => { const k = ' ' + r.dataset.k, hit = !words.length || words.every(w => k.includes(' ' + w)); r.hidden = !hit; if (hit) n++; });
   box.querySelector('.cp-cur').hidden = !!words.length; box.querySelector('.cp-sep').hidden = !!words.length;
@@ -9204,11 +9206,11 @@ function seasonBento(info) {
       <span class="szm-t"><b>See all ${items.length} foods</b><small>and what to cook with them</small></span><span class="szm-go">${icon('chevR', 18)}</span></button>`;
 }
 function seasonCard() {
-  const c = myCountry(), m = new Date().getMonth() + 1, items = szMine(c, m), name = SZ.COUNTRIES.find(x => x[0] === c)?.[1];
+  const c = myCountry(), m = new Date().getMonth() + 1, items = szMine(c, m), name = ctryName(c);
   const match = M.info ? items.filter(i => i.ph.includes(M.info.phase)) : [];
   const show = [...match, ...items.filter(i => !match.includes(i))].slice(0, 7);
   return `<button class="card glass season-card" data-action="nav" data-to="season">
-    <div class="sc-head"><div><div class="eyebrow">In season · ${esc(name)} · ${MONTHS[m - 1]}</div><h3>${items.length} local foods right now</h3></div>${icon('chevR', 18)}</div>
+    <div class="sc-head"><div><div class="eyebrow">In season · ${ctryTag(c)} · ${MONTHS[m - 1]}</div><h3>${items.length} local foods right now</h3></div>${icon('chevR', 18)}</div>
     <div class="foods">${show.map(i => `<span class="food ${match.includes(i) ? 'match' : ''}">${i.f}</span>`).join('')}</div>
     ${match.length ? `<p class="body sm" style="margin-top:10px">${icon('spark', 12)} Highlighted foods suit your ${PHASES[M.info.phase].name.toLowerCase()} phase.</p>` : ''}
   </button>`;
@@ -9709,14 +9711,14 @@ function szList() {
   return KINDS.map(([k, n, e]) => [k, k === 'animal' ? ({ pesc: 'Fish & seafood', veg: 'Eggs & dairy' }[myDiet()] || n) : n, k === 'animal' && myDiet() === 'veg' ? '🥚' : e, all.filter(i => i.kind === k).sort((x, y) => fits(y) - fits(x))]).filter(g => g[3].length);
 }
 function viewSeason() {
-  const c = myCountry(), m = new Date().getMonth() + 1, country = SZ.COUNTRIES.find(x => x[0] === c)?.[1] || '';
+  const c = myCountry(), m = new Date().getMonth() + 1, country = ctryName(c) || '';
   const sn = SZ.seasonName(c, m), phase = M.info ? M.info.phase : null, warm = M.info && warmWindow(M.info);
   const groups = szList(), n = groups.reduce((t, g) => t + g[3].length, 0);
   const item = (i, e, used) => { const p = szPic(i.f, used, i.kind), fit = phase && i.ph.includes(phase);
     return `<button class="sfc-i szi" data-action="szPick" data-f="${esc(i.f)}" aria-expanded="false">${p && p.src ? `<img class="${p.round ? 'rd' : p.drawn ? 'dr' : ''}" src="${p.src}" alt="" loading="lazy" decoding="async">` : `<em>${p ? p.emo : e}</em>`}<b>${i.f}</b><small>${warm && i.nature === 'cool' ? 'Cook it' : fit ? 'Your phase' : NATURE[i.nature][0]}</small></button>`; };
   return `${topbar('In season', { back: true })}<div class="pad pv-sub sz3">
     <section class="sfc szc" data-phase="${phase || ''}">
-      <header class="sfc-h"><small><i style="background:${phase ? PH_HEX[phase] : '#6c823e'}"></i>${country ? `${country} · ` : ''}${MONTHS[m - 1]}</small><h3>${sn} foods</h3><p>${n} foods are fresh where you live right now.${phase ? ` Picks for your ${PHASES[phase].name.toLowerCase()} phase come first.` : ''}</p></header>
+      <header class="sfc-h"><small><i style="background:${phase ? PH_HEX[phase] : '#6c823e'}"></i>${country ? `${ctryTag(c)} · ` : ''}${MONTHS[m - 1]}</small><h3>${sn} foods</h3><p>${n} foods are fresh where you live right now.${phase ? ` Picks for your ${PHASES[phase].name.toLowerCase()} phase come first.` : ''}</p></header>
       ${(() => { const cur = groups.some(g => g[0] === ui.szTab) ? ui.szTab : groups[0][0];
         return `<div class="szt" role="tablist">${groups.map(([k, name, e, list]) => { const p = k === 'fungi' ? { src: 'images/fungi/icon-porcini.webp' } : szPic(list[0].f, null, list[0].kind), mine = phase ? list.filter(i => i.ph.includes(phase)).length : 0;
           return `<button class="szt-b ${k === cur ? 'on' : ''}" role="tab" aria-selected="${k === cur}" data-action="szTab" data-v="${k}"><span class="szt-i">${p && p.src ? `<img src="${p.src}" alt="">` : emoRaw(p ? p.emo : e)}</span><b>${name}</b><small><span class="dotnum">${list.length}</span>${mine ? ` · ${mine} for you` : ''}</small></button>`; }).join('')}</div>
@@ -9725,7 +9727,7 @@ function viewSeason() {
       ${warm ? `<p class="sfc-warm">${icon('sun', 13)} Your period is close: cook everything, nothing raw or iced.</p>` : ''}
       <footer class="sfc-f"><span>Changes by itself as the season turns</span><span>Wild mushrooms only from a market or a trained forager</span></footer>
     </section>
-    <details class="szn"><summary><span class="szn-f" aria-hidden="true">${flagOf(c)}</span><span class="szn-t"><small>Seasons for</small><b>${esc(SZ.COUNTRIES.find(x => x[0] === c)?.[1] || c)}</b></span><span class="szn-go">Change ${icon('chevD', 13)}</span></summary>${countryPicker('profile', c)}</details>
+    <details class="szn"><summary><span class="szn-f" aria-hidden="true">${flagOf(c)}</span><span class="szn-t"><small>Seasons for</small><b>${esc(ctryName(c) || c)}</b></span><span class="szn-go">Change ${icon('chevD', 13)}</span></summary>${countryPicker('profile', c)}</details>
   </div>`;
 }
 
@@ -10414,7 +10416,7 @@ function viewProfile() {
     </section>
     <p class="fine">${A.currentUser() ? 'Stored on this device and privately in your account.' : 'Everything is stored privately on this device.'} Underskin gives wellbeing estimates based on your logs and on Traditional Chinese Medicine concepts; it is not medical advice and must not be used as contraception.</p>
     ${legalFoot()}`;
-  else body = `${state.paid ? '' : `<button class="card ul-pf" data-action="nav" data-to="unlock"><span class="ul-pf-n dotnum">${trialLeft()}</span><b>${trialLeft() === 1 ? 'free day left' : 'free days left'}<small>Free until your next period, then one payment of €${PRICE}, yours for good</small></b><em>Unlock</em></button>`}
+  else body = `${state.paid ? '' : `<button class="card ul-pf" data-action="nav" data-to="unlock"><span class="ul-pf-n dotnum">${trialLeft()}</span><b>${trialLeft() === 1 ? 'free day left' : 'free days left'}<small>Free for 30 days, a full cycle, then one payment of €${PRICE}, yours for good</small></b><em>Unlock</em></button>`}
     ${sectionTitle('Why you’re here')}
     ${purposePicker(purpose(), 'setPurpose')}
     ${ttc() ? `${sectionTitle('How long you’ve been trying')}<section class="card glass pg-prof">${ttcPicker(state.profile, 'profile')}</section>` : ''}
@@ -11515,9 +11517,9 @@ function acMsg(t, bad) { const m = document.getElementById('ac-msg'); if (m) { m
 const actions = {
   pickCountry: (d, el) => {
     const v = d.v; if (!v) return;
-    if (d.scope === 'profile') { state.profile.country = v; save(); render(); toast(`Home set to ${SZ.COUNTRIES.find(x => x[0] === v)?.[1] || v}`); return; }
+    if (d.scope === 'profile') { state.profile.country = v; save(); render(); toast(`Home set to ${ctryName(v) || v}`); return; }
     ui.onb.country = v;
-    const box = el.closest('.cpick'), name = SZ.COUNTRIES.find(x => x[0] === v)?.[1] || v;
+    const box = el.closest('.cpick'), name = ctryName(v) || v;
     box.querySelectorAll('.cp-row').forEach(r => { const on = r.dataset.v === v && !r.classList.contains('cp-cur'); r.classList.toggle('on', on); r.setAttribute('aria-selected', on); });
     const cur = box.querySelector('.cp-cur'); cur.dataset.v = v; cur.querySelector('.cp-f').textContent = flagOf(v); cur.querySelector('.cp-n').textContent = name; cur.classList.add('on');
     const q = box.querySelector('[data-cpq]'); q.value = ''; q.blur(); cpFilter(q);
@@ -11744,11 +11746,14 @@ const actions = {
     if (ui.calStart) {
       if (C.parseISO(d.date) > M.today) return toast('Pick a day up to today');
       movePeriod(ui.calStart, d.date); ui.calStart = null; ui.calSelected = d.date;
-      toast(`Period now starts ${fmt(C.parseISO(d.date), { day: 'numeric', month: 'long' })}`); return render();
+      toast('Period moved · predictions updated'); return render();
     }
     if (ui.calEdit) {
       if (C.parseISO(d.date) > M.today) return toast('You can mark days up to today');
-      const l = getLog(d.date), on = !PERIOD_FLOWS.includes(l.flow); setLog(d.date, { flow: on ? 'medium' : null });
+      // toggle what she sees: a red day goes clear, a clear day goes red. A day that is only red because her period is still running gets "no bleeding" so it really clears
+      const x = C.parseISO(d.date), inf = M.info, run = !!(inf && inf.isPeriod && x >= C.startOfDay(inf.cycleStart) && x < C.addDays(inf.cycleStart, inf.P));
+      const on = el ? !el.classList.contains('period') : !PERIOD_FLOWS.includes(getLog(d.date).flow);
+      setLog(d.date, { flow: on ? 'medium' : run ? 'none' : null });
       el?.classList.toggle('period', on); buzz('firm'); // instant feedback, details next frame
       ui.calSelected = d.date; return nextFrame(() => calRefresh(['.cal'], true));
     }
@@ -11757,6 +11762,7 @@ const actions = {
     ui.calSelected = d.date; ui.planOpen = null;
     nextFrame(() => calRefresh(['.day-panel']));
   },
+  calMoveStart: () => { const last = M.stats.periods[M.stats.periods.length - 1]; if (!last) return; ui.calEdit = false; ui.calFix = null; ui.calStart = C.iso(last.start); const m = new Date(last.start); ui.calMonth = C.iso(new Date(m.getFullYear(), m.getMonth(), 1)); render(); },
   calEdit: () => { ui.calEdit = !ui.calEdit; if (!ui.calEdit) ui.calFix = null; if (!ui.calEdit) toast('Saved · predictions updated'); calRefresh(null, true); },
   pinPartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (!p) return; p.pin = !p.pin; save(); toast(p.pin ? `${p.n} pinned to your home screen` : 'Unpinned'); render(); },
   openLove: d => { document.querySelector('.sig-pop')?.remove(); ui.loveFor = d.id; render(); if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().catch(() => {}); },
@@ -12511,20 +12517,13 @@ function playArrival(view) {
 function toTop() { try { window.scrollTo(0, 0); document.scrollingElement && (document.scrollingElement.scrollTop = 0); const v = document.getElementById('view'); if (v) v.scrollTop = 0; } catch {} }
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 // ---------- one payment after the free trial ----------
-// Free until her next period starts (from her first day in the app), then one payment of €24.99 unlocks everything for good.
-// The first day of that period stays free; the gate shows from day 2. If she logs no new period, it ends a week after the
-// period we predicted, and never later than 45 days after she started.
+// Free for 30 days from her first day in the app (a full cycle), then one payment of €24.99 unlocks everything for good.
+// Always 30 days, never tied to the period date she enters: a wrong or old date used to cut the trial short (23 Nov 2026, her ask).
 // Store apps: an in-app purchase (non-consumable, id below) through StoreKit 2 (UTSStore plugin in ios/App/App/SceneDelegate.swift).
 // Website: a payment link (PAY_LINK in js/config.js). On the local dev server the gate stays off (add ?paywall=1 to see it).
-const TRIAL_MAX = 45, PRICE = '24.99', UNLOCK_ID = 'underskin_unlock';
+const TRIAL_DAYS = 30, PRICE = '24.99', UNLOCK_ID = 'underskin_unlock';
 function trialStart() { if (!state.trialStart) { state.trialStart = todayISO(); save(true); } return state.trialStart; }
-function trialNextPeriod() { const t0 = C.parseISO(trialStart()); return C.periodsFromLogs(state.logs || {}).find(p => C.diffDays(p.start, t0) > 0) || null; }
-function trialEnd() {
-  const t0 = C.parseISO(trialStart()), cap = C.addDays(t0, TRIAL_MAX), next = trialNextPeriod();
-  if (!next && !state.trialPred && M && M.info && M.info.nextStart && C.diffDays(M.info.nextStart, t0) > 0) { state.trialPred = C.iso(M.info.nextStart); save(true); }
-  const end = next ? C.addDays(next.start, 1) : state.trialPred ? C.addDays(C.parseISO(state.trialPred), 7) : cap;
-  return end < cap ? end : cap;
-}
+function trialEnd() { return C.addDays(C.parseISO(trialStart()), TRIAL_DAYS); }
 function trialLeft() { return Math.max(0, C.diffDays(trialEnd(), C.startOfDay(new Date()))); }
 const DEV_HOST = !NATIVE && /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
 function locked() {
@@ -12640,9 +12639,9 @@ function tkPlay(el) {
 // How the free cycle works, with her own dates (the trial timeline top apps use, but nothing renews or charges by itself).
 function ulHow() {
   const end = trialEnd(), last = C.addDays(end, -1), today = C.startOfDay(new Date()), d = x => fmt(x, { month: 'short', day: 'numeric' });
-  const started = !!trialNextPeriod(), lastToday = C.diffDays(last, today) <= 0;
+  const lastToday = C.diffDays(last, today) <= 0;
   const rows = [['gift', 'Today', lastToday ? 'Your last free day, everything is still open' : 'Everything is open, nothing to pay'],
-    ...(lastToday ? [] : [['bell', d(last), `${started ? 'Your last free day' : 'Your period comes, your last free day'}. A gentle heads-up in the app.`]]),
+    ...(lastToday ? [] : [['bell', d(last), 'Your last free day. A gentle heads-up in the app.']]),
     ['heart', lastToday ? 'Tomorrow' : d(end), `Unlock once for €${PRICE}, or wait. Nothing is charged by itself and your logs stay.`]];
   return `<section class="card ul-how"><h3>How your free cycle works</h3><ol>${rows.map(([ic, t, s], i) =>
     `<li class="${i === 0 ? 'now' : ''}"><span class="ul-how-ic">${icon(ic, 15, 2)}</span><div><b>${t}</b><small>${s}</small></div></li>`).join('')}</ol></section>`;
@@ -12766,7 +12765,7 @@ function viewUnlock() {
       <svg class="ul4-sp" viewBox="0 0 360 250" aria-hidden="true">${o3Spark('#f1d58a', 26, 34, 0)}${o3Spark('#fff', 334, 22, 1.1)}${o3Spark('#c9d6a8', 344, 214, 2)}${o3Spark('#f6c6d4', 14, 222, 1.6)}<circle class="o3-sp" style="--d:.6s" cx="300" cy="236" r="2.4" fill="#fff"/><circle class="o3-sp" style="--d:1.8s" cx="58" cy="10" r="2" fill="#fff"/></svg>
       ${ulTicket()}
     </div>
-    <span class="ul3-days">${paid ? `${icon('heart', 13)} Unlocked` : lock ? 'Your free cycle is over' : trialNextPeriod() ? 'Your period started · last free day' : `Free until your next period · <b class="dotnum">${left}</b> ${left === 1 ? 'day' : 'days'}`}</span>
+    <span class="ul3-days">${paid ? `${icon('heart', 13)} Unlocked` : lock ? 'Your free cycle is over' : `Free for a full cycle · <b class="dotnum">${left}</b> ${left === 1 ? 'day' : 'days'} left`}</span>
     <section class="o3-note ul3-note ul4-note">
       <small class="ul4-eye">${paid ? `Welcome home${nm ? `, ${nm}` : ''}` : `${nm ? `${nm}, your` : 'Your'} ticket is ready`}</small>
       <h2 class="ul4-h">${paid ? `It’s yours,<br><em>for good${swirl}</em>` : `One ticket,<br><em>yours forever${swirl}</em>`}</h2>

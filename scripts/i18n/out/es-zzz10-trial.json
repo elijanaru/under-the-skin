@@ -1,0 +1,10 @@
+{
+"We’re a <t0>small team</t0> and this is our <t1>passion project</t1>. Try everything free <t2>for {0} days</t2>, a whole cycle, so you see it all first. If you love it, unlock the full app with one payment.": "Somos un <t0>equipo pequeño</t0> y esta app es nuestro <t1>proyecto de corazón</t1>. Pruébalo todo gratis <t2>durante {0} días</t2>, un ciclo entero, para verlo todo primero. Si te encanta, desbloquea la app completa con un solo pago.",
+"Free for a full cycle · <t0>{0}</t0> days left": "Gratis durante un ciclo · quedan <t0>{0}</t0> días",
+"Free for a full cycle · <t0>{0}</t0> day left": "Gratis durante un ciclo · queda <t0>{0}</t0> día",
+"Your last free day. A gentle heads-up in the app.": "Tu último día gratis. Un aviso suave en la app.",
+"free days left<t0>Free for {0} days, a full cycle, then one payment of €{1}, yours for good</t0>": "días gratis<t0>Gratis durante {0} días, un ciclo entero, y luego un solo pago de {1} €, tuya para siempre</t0>",
+"free day left<t0>Free for {0} days, a full cycle, then one payment of €{1}, yours for good</t0>": "día gratis<t0>Gratis durante {0} días, un ciclo entero, y luego un solo pago de {1} €, tuya para siempre</t0>",
+"From tomorrow Under the Skin asks for one payment of €{0}. No subscription, and everything you logged stays.": "Desde mañana Under the Skin pide un solo pago de {0} €. Sin suscripción, y todo lo que has registrado se queda.",
+"Your free cycle is over": "Tu ciclo gratis ha terminado"
+}

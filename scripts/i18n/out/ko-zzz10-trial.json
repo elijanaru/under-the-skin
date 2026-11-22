@@ -1,0 +1,10 @@
+{
+"We’re a <t0>small team</t0> and this is our <t1>passion project</t1>. Try everything free <t2>for {0} days</t2>, a whole cycle, so you see it all first. If you love it, unlock the full app with one payment.": "저희는 <t0>작은 팀</t0>이고, 이 앱은 저희의 <t1>열정 프로젝트</t1>예요. <t2>{0}일 동안</t2> 모든 기능을 무료로 써 보세요. 한 주기를 온전히 경험해 볼 수 있어요. 마음에 들면 한 번의 결제로 앱 전체를 열 수 있어요.",
+"Free for a full cycle · <t0>{0}</t0> days left": "한 주기 무료 · <t0>{0}</t0>일 남음",
+"Free for a full cycle · <t0>{0}</t0> day left": "한 주기 무료 · <t0>{0}</t0>일 남음",
+"Your last free day. A gentle heads-up in the app.": "마지막 무료일이에요. 앱에서 살짝 알려 드려요.",
+"free days left<t0>Free for {0} days, a full cycle, then one payment of €{1}, yours for good</t0>": "남은 무료일<t0>{0}일, 한 주기 동안 무료. 그 후 €{1} 한 번 결제로 평생 내 것</t0>",
+"free day left<t0>Free for {0} days, a full cycle, then one payment of €{1}, yours for good</t0>": "남은 무료일<t0>{0}일, 한 주기 동안 무료. 그 후 €{1} 한 번 결제로 평생 내 것</t0>",
+"From tomorrow Under the Skin asks for one payment of €{0}. No subscription, and everything you logged stays.": "내일부터 Under the Skin을 계속 쓰려면 €{0} 한 번 결제가 필요해요. 구독이 아니고, 기록한 내용은 모두 그대로 남아요.",
+"Your free cycle is over": "무료 주기가 끝났어요"
+}

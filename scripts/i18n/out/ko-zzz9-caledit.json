@@ -1,0 +1,11 @@
+{
+ "Done": "완료",
+ "Cancel": "취소",
+ "<x0/> Wrong start day? Move the whole period": "<x0/> 시작일이 틀렸나요? 생리 기간 전체 옮기기",
+ "Tap the day your period started. We set the rest for you.": "생리가 시작된 날을 눌러 주세요. 나머지는 저희가 맞춰 둘게요.",
+ "Saved · predictions updated": "저장됐어요 · 예측도 새로 맞췄어요",
+ "Period moved · predictions updated": "생리 기간을 옮겼어요 · 예측도 새로 맞췄어요",
+ "You can mark days up to today": "오늘까지만 표시할 수 있어요",
+ "Pick a day up to today": "오늘까지의 날짜를 골라 주세요",
+ "In season · <x0/> · {0}": "제철 · <x0/> · {0}"
+}
