@@ -135,6 +135,12 @@ document.addEventListener('scroll', e => {
   if (m.step < 24) return;
   const i = Math.round(el.scrollLeft / m.step); if (m.i !== null && i !== m.i) buzz('tick'); m.i = i;
 }, { capture: true, passive: true });
+// sub-pages: the tab bar rises once she reaches the end of the page, so home is one tap away
+function peekTabs() {
+  const nav = document.querySelector('.tabbar.peek'), v = document.getElementById('view'); if (!nav || !v) return;
+  nav.classList.toggle('show', v.scrollTop + v.clientHeight >= v.scrollHeight - 90);
+}
+document.addEventListener('scroll', e => { if (e.target.id === 'view') peekTabs(); }, { capture: true, passive: true });
 // and for each step of a slider
 document.addEventListener('input', e => { if (e.target.type === 'range') buzz('tick'); }, true);
 const appBase = () => (NATIVE ? PUBLIC_URL : location.origin + location.pathname);
@@ -219,9 +225,9 @@ function topbar(title, { back } = {}) {
   return `<header class="topbar">${left}<div class="topbar-title">${title}</div>
     ${location.hash.startsWith('#/profile') ? '<span class="tb-spacer"></span>' : `<button class="icon-btn dark" data-action="nav" data-to="profile" aria-label="Menu">${icon('menu', 22)}</button>`}</header>`;
 }
-function tabbar(active) {
+function tabbar(active, peek) {
   const items = [['today', 'home', 'Today'], ['calendar', 'calendar', 'Calendar'], ['log', 'plus', 'Log'], ['plan', 'bowl', 'Food guide'], ['insights', 'chart', 'Insights']];
-  return `<nav class="tabbar">${items.map(([to, ic, label]) =>
+  return `<nav class="tabbar${peek ? ' peek' : ''}">${items.map(([to, ic, label]) =>
     `<button class="tab ${to === 'log' ? 'tab-main' : ''} ${active === to ? 'active' : ''}" data-action="nav" data-to="${to}" aria-label="${label}">${icon(ic, to === 'log' ? 26 : 21)}</button>`).join('')}</nav>`;
 }
 // Each section on a page gets the next tone (deep green, lime glow, black glass), so sections are easy to tell apart.
@@ -12922,13 +12928,14 @@ function render() {
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];
   const html = (views[r.name] || viewToday)();
   const arriving = $app.querySelector('.arrive');
-  const page = `${statusbar()}<div class="view ${fresh ? 'enter' : ''} ${arriving ? 'arrive-in' : ''}" id="view">${html}</div>${tabs.includes(r.name) || !views[r.name] ? tabbar(r.name in views ? r.name : 'today') : ''}${!termsOK() && r.name !== 'privacy' ? termsSheet() : ''}`;
+  const page = `${statusbar()}<div class="view ${fresh ? 'enter' : ''} ${arriving ? 'arrive-in' : ''}" id="view">${html}</div>${tabs.includes(r.name) || !views[r.name] ? tabbar(r.name in views ? r.name : 'today') : r.name !== 'unlock' ? tabbar('', true) : ''}${!termsOK() && r.name !== 'privacy' ? termsSheet() : ''}`;
   I18N.setNames([state.profile?.name, ...(state.partners || []).map(p => p.n)]);
   if (fresh || arriving || !prev) pageInto($app, page); else morphInto($app, page);
   if (arriving) $app.appendChild(arriving);
   if (ui.loveFor) $app.insertAdjacentHTML('beforeend', loveSheet());
   const v = document.getElementById('view');
   v.scrollTop = keep;
+  peekTabs(); setTimeout(peekTabs, 400);
   if (ui.arrive && r.name === 'today' && M.info) { ui.arrive = false; playArrival(v); }
   decorateStudies(v);
   if (state.profile.linkSent) publishLive();
