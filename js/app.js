@@ -3048,7 +3048,7 @@ function dietGuidePanel(phase) {
   const jar = (lo, hi, label, on) => `<div class="gd-jar ${on ? 'mine' : ''}"><span class="gd-jb" aria-hidden="true"><i style="height:${lo / 40 * 100}%"></i><i class="r" style="bottom:${lo / 40 * 100}%;height:${(hi - lo) / 40 * 100}%"></i></span>
     <b class="dotnum">${lo}–${hi}%</b><small>${label}</small>${on ? '<span class="gd-yours">yours</span>' : ''}</div>`;
   return `<section class="o3-note gd-note"><h2><span>Your</span> <em>${C.name.toLowerCase()} guide${DG_SWIRL}</em></h2>
-      <p class="o3-sub">${C.sub}</p><p class="o3-lead">${C.lead}</p><p class="o3-sign">with love, from our little team <i>♡</i></p></section>
+      <p class="o3-sub">${C.sub}</p><p class="o3-lead">${C.lead}</p></section>
 
     <h4 class="gd-h">What to eat <span class="gd-hl">right now</span></h4>
     <div class="gd-tks one" aria-label="What to load up on in your ${PHASES[phase].name.toLowerCase()} phase">${tk(phase)}</div>
