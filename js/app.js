@@ -138,6 +138,21 @@ document.addEventListener('scroll', e => {
 // and for each step of a slider
 document.addEventListener('input', e => { if (e.target.type === 'range') buzz('tick'); }, true);
 const appBase = () => (NATIVE ? PUBLIC_URL : location.origin + location.pathname);
+// Shared links (partner page, love notes) open right here in the app: tapped links to the website come in as
+// universal links, and the website's "Open in the app" button uses the underskin:// scheme. Either way the
+// part after # is the page, so the app simply goes there (23 Nov 2026).
+const APP_LINK = /^(https:\/\/elijanaru\.github\.io\/under-the-skin\/|underskin:\/\/)/;
+// On the website on an iPhone (a shared link opened in Safari or a chat app's browser): one tap opens the same page in the app
+const appPill = () => !NATIVE && /iPhone|iPad|iPod/.test(navigator.userAgent) ? `<a class="app-pill" href="underskin://open${esc(location.hash)}">Open in the Underskin app</a>` : '';
+function openShared(url) {
+  if (!url || !APP_LINK.test(url)) return;
+  const h = url.indexOf('#'); const to = h >= 0 ? url.slice(h) : '#/today';
+  if (location.hash !== to) location.hash = to; else render();
+}
+if (NATIVE && CAP.Plugins?.App) {
+  CAP.Plugins.App.addListener('appUrlOpen', e => openShared(e.url));
+  CAP.Plugins.App.getLaunchUrl?.().then(r => openShared(r?.url)).catch(() => {});
+}
 // true when a share sheet was shown (shared or cancelled), false when there is none
 async function shareOut(o) {
   o = { ...o, ...(o.title ? { title: T(o.title) } : {}), ...(o.text ? { text: T(o.text) } : {}) };
@@ -12825,7 +12840,7 @@ function render() {
   ui.lastRoute = r.key; ui.plAnim = fresh; if (r.key !== 'calendar') ui.calStart = null;
 
   if (r.name === 'love') {
-    $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewLove(r.q)}</div>`;
+    $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewLove(r.q)}</div>${appPill()}`;
     return;
   }
   if (r.name === 'account' || ((r.name === 'privacy' || r.name === 'imprint') && !(state && state.onboarded))) {
@@ -12833,7 +12848,7 @@ function render() {
     return;
   }
   if (r.name === 'with') {
-    $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewWith(r.q)}</div>`; softWith.keep();
+    $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewWith(r.q)}</div>${appPill()}`; softWith.keep();
     if (keep) document.getElementById('view').scrollTop = keep; // a tap on his page keeps his place
     decorateStudies($app); mountFigures(); if (r.q.get('d')) refreshWith(r.q.get('d')); return;
   }
