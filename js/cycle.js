@@ -24,7 +24,15 @@ export function periodsFromLogs(logs) {
     if (cur && diffDays(d, cur.end) <= 2) cur.end = d;
     else { cur = { start: d, end: d }; out.push(cur); }
   }
-  return out.map(p => ({ ...p, length: diffDays(p.end, p.start) + 1 }));
+  // one or two days of bleeding less than 21 days after a period started is spotting, not a new cycle: it stays on the
+  // calendar but doesn't restart her cycle (unless it is happening right now, when it may be an early period beginning)
+  const today = startOfDay(new Date()), kept = [];
+  for (const p of out.map(p => ({ ...p, length: diffDays(p.end, p.start) + 1 }))) {
+    const prev = kept[kept.length - 1], now = diffDays(today, p.end) <= 1;
+    if (prev && p.length <= 2 && diffDays(p.start, prev.start) < 21 && !now) continue;
+    kept.push(p);
+  }
+  return kept;
 }
 
 export function cycleStats(state) {
@@ -36,11 +44,17 @@ export function cycleStats(state) {
     // under 21 days is usually spotting or a one-off, not a cycle: keep it out of the average so one early bleed doesn't halve every prediction
     if (l >= 21 && l <= 60) lengths.push(l);
   }
-  const recent = lengths.slice(-6);
-  const avgCycle = recent.length ? Math.round(mean(recent)) : state.profile.cycleLength;
+  // a cycle about twice her usual length almost always means one period went unlogged, so with at least two
+  // other cycles to compare, it stays out of the average (her real cycles are still counted)
+  const med = a => { const b = [...a].sort((x, y) => x - y), m = b.length >> 1; return b.length % 2 ? b[m] : (b[m - 1] + b[m]) / 2; };
+  const clean = lengths.filter((l, i) => { const rest = lengths.filter((_, j) => j !== i); return rest.length < 2 || l < 1.75 * med(rest); });
+  const recent = clean.slice(-6);
+  // "I'm not sure" in onboarding: start from 28 days, and her first full logged cycle replaces it straight away
+  const avgCycle = recent.length ? Math.round(mean(recent)) : (+state.profile.cycleLength || 28);
+  const learning = !recent.length && !!state.profile.cycleUnsure;
   const plens = periods.slice(0, -1).concat(periods.slice(-1).filter(p => diffDays(new Date(), p.end) > 1))
     .filter(p => p.length <= 10).slice(-6).map(p => p.length);
-  const avgPeriod = plens.length ? Math.round(mean(plens)) : state.profile.periodLength;
+  const avgPeriod = plens.length ? Math.round(mean(plens)) : (+state.profile.periodLength || 5);
   const variation = recent.length > 1 ? Math.max(...recent) - Math.min(...recent) : 0;
   const ovSeen = learnLuteal(logs, periods, avgCycle);
   // On the pill (19 Nov 2026): the pill stops egg release, and the bleed comes in the pill break, so it is predicted from
@@ -52,7 +66,7 @@ export function cycleStats(state) {
   const noOv = onPill || (pr.bc === 'other' && pr.bcPlan !== 'stop');
   // on a no-break or mini pill, or before her pack is set, there is no bleed the app can honestly predict
   const noPred = onPill && !pill;
-  return { logs, periods, lengths, avgCycle: pill ? 28 : avgCycle, avgPeriod: pill ? pill.to - pill.from + 1 : avgPeriod, variation, ovSeen, pill, noOv, noPred };
+  return { logs, periods, lengths: clean, learning, avgCycle: pill ? 28 : avgCycle, avgPeriod: pill ? pill.to - pill.from + 1 : avgPeriod, variation, ovSeen, pill, noOv, noPred };
 }
 
 // Egg-white discharge is the peak fertile sign: the last egg-white day of a cycle is taken as her egg release.
@@ -157,7 +171,9 @@ export function dayInfo(date, stats) {
     fertile: !noOv && !tooShort && cd >= ov - 5 && cd <= ov + 1,
     isOvulation: !noOv && !tooShort && cd === ov,
     isPeriod: periodActual || (pk ? pillPred : periodPredicted), periodActual, periodPredicted: pk ? pillPred : periodPredicted,
-    late: !pk && !noOv && !stats.noPred && isToday && startP === last && lateBy > 0 ? lateBy : 0,
+    // while the app is still guessing her length ("I'm not sure"), passing day 28 is not "late": the period is simply due any day
+    late: !pk && !noOv && !stats.noPred && !stats.learning && isToday && startP === last && lateBy > 0 ? lateBy : 0,
+    anyDay: !pk && !stats.noPred && !!stats.learning && isToday && startP === last && lateBy >= 0,
     dueToday: !pk && isToday && startP === last && lateBy === 0,
     daysToPeriod: Math.max(0, diffDays(pk ? pillNext : nextStart, d)),
     daysToOv: noOv ? 999 : cd < ov ? ov - cd : cd === ov ? 0 : (L - cd) + ov,

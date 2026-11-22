@@ -256,6 +256,7 @@ function ring(info, size = 270) {
   const [mx, my] = polar(cx, cy, r, ang(m) + 180 / L);
   const sub = info.late ? `Period ${plural(info.late, 'day')} late`
     : info.dueToday ? 'Period expected today'
+    : info.anyDay ? 'Period due any day'
     : info.isPeriod ? (info.periodActual ? 'Period' : 'Period likely')
     : info.isOvulation ? 'Ovulation day'
     : info.daysToOv <= 5 && info.cd < info.ov ? `Ovulation in ${plural(info.daysToOv, 'day')}`
@@ -1051,6 +1052,7 @@ function viewAfter() {
 function ringSub(info) {
   return info.late ? `Period ${plural(info.late, 'day')} late`
     : info.dueToday ? 'Period expected today'
+    : info.anyDay ? 'Period due any day'
     : info.isPeriod || info.cd <= info.P ? `Period · day ${info.cd}`
     : info.isOvulation ? 'Egg release today'
     : info.daysToOv <= 5 && info.cd < info.ov ? `Ovulation in ${plural(info.daysToOv, 'day')}`
@@ -2256,8 +2258,8 @@ function calTop(inf, fStart, nextOv, short) {
   const fertileNow = inf.fertile && !inf.isPeriod, dOv = inf.daysToOv, ph = PHASES[inf.phase];
   // on her period the dial already shows the cycle day, so the big number says how many period days are likely left (from her usual length)
   const left = inf.isPeriod ? (inf.P || 5) - inf.cd : 0;
-  const big = inf.isPeriod ? (left > 0 ? [`${left}`, left === 1 ? 'period day to go' : 'period days to go'] : [`${inf.cd}`, left === 0 ? 'usually your last day' : 'day of your period']) : inf.late ? [`${inf.late}`, inf.late === 1 ? 'day late' : 'days late'] : inf.pillDay ? [`${inf.daysToPeriod}`, inf.daysToPeriod === 1 ? 'day to your pill-break bleed' : 'days to your pill-break bleed'] : [`${inf.daysToPeriod}`, inf.daysToPeriod === 1 ? 'day to your period' : 'days to your period'];
-  const sub = inf.isPeriod ? `Next one ${fmt(C.addDays(inf.cycleStart, inf.L), { weekday: 'short', month: 'short', day: 'numeric' })}` : inf.late ? 'A late period is common. Stress and travel can shift it.' : `Expected ${fmt(inf.nextStart, { weekday: 'short', month: 'short', day: 'numeric' })}`;
+  const big = inf.isPeriod ? (left > 0 ? [`${left}`, left === 1 ? 'period day to go' : 'period days to go'] : [`${inf.cd}`, left === 0 ? 'usually your last day' : 'day of your period']) : inf.anyDay ? [`${inf.cd}`, 'days so far, due any day'] : inf.late ? [`${inf.late}`, inf.late === 1 ? 'day late' : 'days late'] : inf.pillDay ? [`${inf.daysToPeriod}`, inf.daysToPeriod === 1 ? 'day to your pill-break bleed' : 'days to your pill-break bleed'] : [`${inf.daysToPeriod}`, inf.daysToPeriod === 1 ? 'day to your period' : 'days to your period'];
+  const sub = inf.isPeriod ? `Next one ${fmt(C.addDays(inf.cycleStart, inf.L), { weekday: 'short', month: 'short', day: 'numeric' })}` : inf.anyDay ? 'Still learning your cycle. Log the first day and it adjusts.': inf.late ? 'A late period is common. Stress and travel can shift it.' : `Expected ${fmt(inf.nextStart, { weekday: 'short', month: 'short', day: 'numeric' })}`;
   const bub = (c, k, v, s) => `<div class="cb3" style="--c:${c}"><i></i><small>${k}</small><b>${v}</b><span>${s}</span></div>`;
   return `<section class="cal3">
     <div class="cal3-row"><div class="cal3-num"><span class="eyebrow">${inf.pillDay ? (inf.isPeriod ? 'Your bleed' : 'Next bleed') : inf.isPeriod ? 'Your period' : inf.late ? 'Your period' : 'Next period'}</span>
@@ -2426,7 +2428,7 @@ function cycleBars() {
 // Under the calendar: the moon as one big black widget, the 3D moon as the hero, how lit it is, three ring bubbles, one white pill into the moon page.
 function moonWidget() {
   const mn = moonData(), pg = MG.phaseGuideAt(mn.elong), info = M.info, phase = info && info.phase;
-  const L = (M.stats && M.stats.cycleLength) || state.profile.cycleLength || 28, lit = Math.round(mn.illum * 100), plain = MG.MOON_PLAIN[pg.k] || MG.MOON_PLAIN.new;
+  const L = (M.stats && M.stats.avgCycle) || state.profile.cycleLength || 28, lit = Math.round(mn.illum * 100), plain = MG.MOON_PLAIN[pg.k] || MG.MOON_PLAIN.new;
   const next = [['New moon', mn.nextNew, 'new'], ['Full moon', mn.nextFull, 'full']].filter(x => x[1]).sort((a, b) => a[1] - b[1])[0];
   const days = next ? Math.max(0, Math.round((next[1] - Date.now()) / 864e5)) : 0;
   return `<section class="cn cn2 sw">${skyDust()}
@@ -4144,7 +4146,7 @@ function ringBub(frac, val, unit, k, sub, cls) {
 function cosmicNight(cp, c) {
   const mn = moonData(), ms = signOfK(mn.sign), info = M.info, phase = info && info.phase, sc = skyScore(c);
   const sunK = c ? c.planets[0].sign : cp.sign.k, sun = signOfK(sunK);
-  const L = (M.stats && M.stats.cycleLength) || state.profile.cycleLength || 28;
+  const L = (M.stats && M.stats.avgCycle) || state.profile.cycleLength || 28;
   const top = sc && sc.rows[0];
   const msg = top ? top.say : sc ? sc.el.say : `A day to move ${Z.SIGN_STYLE[mn.sign]}.`;
   const three = c ? `${sun.name} Sun · ${signOfK(c.planets[1].sign).name} Moon${c.asc ? ` · ${signOfK(c.asc.sign).name} rising` : ''}` : `${sun.name} Sun`;
@@ -4769,7 +4771,8 @@ function bodyNote(date, slot, di, pats) {
   const list = BODY_NOTES.after[slot];
   return list[k % list.length].replace(/\{n\}/g, n);
 }
-function letterSlotNow(r) { const now = new Date(), m = now.getHours() * 60 + now.getMinutes(); return [...(LETTER_SLOTS[1])].reverse().find(([h, mi]) => m >= h * 60 + mi); }
+// today's letter sits on Today the whole day (23 Nov 2026: before, it only showed after 10:00, so at night there was none); the phone letter still arrives at 10:00
+function letterSlotNow() { return LETTER_SLOTS[1][0]; }
 async function scheduleLettersNative(ask) {
   const LN = NATIVE && CAP?.Plugins?.LocalNotifications; if (!LN || !state?.onboarded || !M?.stats) return;
   try {
@@ -8504,9 +8507,21 @@ function viewBreathe(from) {
   const phase = M.info && M.info.phase, rec = BREATH_FOR[phase] || 'sigh', k = BREATHS[ui.bzK] ? ui.bzK : rec, B = BREATHS[k];
   return `${topbar('Breathe', { back: true })}
   <div class="pad bz-pad">
-    <header class="t4-h bz-h"><small>A minute for you</small><h1>Come back to your breath.</h1><p>Pick a practice. One minute is enough.</p></header>
-    <div class="bzp" role="list" aria-label="Choose a breathing practice">${[rec, ...BREATH_ORDER.filter(x => x !== rec)].map(x => `<button class="bzp-o ${x === k ? 'on' : ''}" role="listitem" data-action="bzPick" data-v="${x}" aria-label="${BREATHS[x].name}. Opens full screen.">
-      ${x === rec ? `<em>${phase ? 'For your phase' : 'Start here'}</em>` : ''}<span class="bzp-g emo" aria-hidden="true">${(BZ_BEST[x] || ['🌿'])[0]}</span><b>${BREATHS[x].name}</b><small>${(BZ_BEST[x] || [, BREATHS[x].when])[1]}</small></button>`).join('')}</div>
+    <section class="bz-intro" aria-label="Breathe">
+      <div class="bzi-pond" aria-hidden="true">
+        <i class="bzi-rip r1"></i><i class="bzi-rip r2"></i><i class="bzi-rip r3"></i>
+        <svg class="bzi-pads" viewBox="0 0 260 70"><path d="M58 40 C 20 34, 6 48, 22 56 C 40 64, 84 60, 92 50 L 66 46 Z" fill="#a9bf86"/><path d="M58 40 L 66 46" stroke="#f6eef0" stroke-width="2"/>
+          <path d="M196 44 C 232 38, 250 50, 236 58 C 220 66, 182 62, 174 54 L 198 50 Z" fill="#b9cb98"/><path d="M196 44 L 198 50" stroke="#f6eef0" stroke-width="2"/></svg>
+        <img class="bzi-lotus" src="images/lotus-${phase || 'ovulatory'}.webp" alt="">
+        <i class="bzi-dot d1"></i><i class="bzi-dot d2"></i><i class="bzi-dot d3"></i>
+      </div>
+      <small class="bzi-k">A minute for you</small>
+      <h1 class="bzi-t">Come back to your breath</h1>
+      <p class="bzi-s">Pick one. A minute is enough.</p>
+    </section>
+    <div class="bzl" role="list" aria-label="Choose a breathing practice">${[rec, ...BREATH_ORDER.filter(x => x !== rec)].map(x => { const Bx = BREATHS[x], min = x === 'still' ? 10 : Math.max(1, Math.round((Bx.rounds || 5) * Bx.steps.reduce((a, st) => a + st[3], 0) / 60000));
+      return `<button class="bzl-r ${x === rec ? 'rec' : ''}" role="listitem" data-action="bzPick" data-v="${x}" aria-label="${Bx.name}, ${min} min. Opens full screen.">
+      <span class="bzl-g emo" aria-hidden="true">${(BZ_BEST[x] || ['🌿'])[0]}</span><span class="bzl-t">${x === rec ? `<em>${phase ? 'For your phase' : 'Start here'}</em>` : ''}<b>${Bx.name}</b><small>${(BZ_BEST[x] || [, Bx.when])[1]}</small></span><span class="bzl-m"><b class="dotnum">${min}</b> min</span>${icon('chevR', 16)}</button>`; }).join('')}</div>
     ${calmRemCard()}
     ${dayQuote()}
   </div>`;
@@ -11729,7 +11744,9 @@ const actions = {
   step: d => {
     const lim = { cycleLength: [20, 45], periodLength: [2, 10], periodDays: [1, 7] }[d.field];
     const tgt = d.scope === 'onb' ? ui.onb : d.scope === 'rem' ? rem() : state.profile;
-    tgt[d.field] = Math.max(lim[0], Math.min(lim[1], tgt[d.field] + +d.d));
+    tgt[d.field] = Math.max(lim[0], Math.min(lim[1], (+tgt[d.field] || (d.field === 'cycleLength' ? 28 : 5)) + +d.d));
+    if (d.scope === 'onb' && d.field === 'cycleLength') tgt.unsure = false; // she picked a number, so she knows it
+    if (d.scope === 'profile' && d.field === 'cycleLength') delete tgt.cycleUnsure;
     if (d.scope !== 'onb') save();
     render();
   },
