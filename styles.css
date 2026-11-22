@@ -17561,3 +17561,6 @@ html .fx-c b { white-space: normal; text-wrap: balance; text-align: center; line
 @keyframes qpCat { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-2deg) translateY(-2px); } }
 @media (prefers-reduced-motion: reduce) { .qp-ph, .qp-z, .qp-cat { animation: none; } }
 .qp-sub b, .qp .ul3-days b { margin-left: 3px; }
+/* In season: fruit as cute glossy emoji (23 Nov 2026). Real emoji glyphs sit at the same size as the drawn ones */
+html .sfc-i em { display: grid; place-items: center; height: 118px; font-size: 62px; line-height: 1; filter: drop-shadow(0 6px 8px rgba(32,48,26,.10)); }
+.sfc-det .szd-e { flex: none; display: grid; place-items: center; width: 84px; height: 84px; font-size: 56px; font-style: normal; line-height: 1; }

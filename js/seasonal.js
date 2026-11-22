@@ -51,6 +51,8 @@ const CENTRAL = [
   ['Sea buckthorn', 'wild', r(8, 10)], ['Wild berries', 'wild', r(7, 8)], ['Chives', 'herb', r(3, 10)], ['Parsley', 'herb', r(4, 11)],
   ['Dill', 'herb', r(5, 9)], ['Basil', 'herb', r(6, 9)], ['Thyme & sage', 'herb', r(5, 10)], ['Horseradish', 'veg', r(10, 2)],
   ['Jerusalem artichoke', 'veg', r(10, 3)], ['Red & black radish', 'veg', r(9, 2)], ['Spring onions', 'veg', r(4, 9)],
+  ['Sour cherries', 'fruit', [6, 7]], ['Mirabelle plums', 'fruit', [8, 9]], ['Greengages', 'fruit', r(7, 9)], ['Vineyard peaches', 'fruit', [8, 9]],
+  ['Aronia berries', 'fruit', [8, 9]], ['Kiwi berries', 'fruit', [9, 10]], ['Wild strawberries', 'wild', [6, 7]], ['Sloes', 'wild', [10, 11]],
 ];
 const MED = [
   ['Oranges & mandarins', 'fruit', r(11, 4)], ['Lemons', 'fruit', r(11, 5)], ['Artichokes', 'veg', r(11, 5)], ['Fennel', 'veg', r(10, 4)],
@@ -66,6 +68,8 @@ const MED = [
   ['Mint', 'herb', r(4, 10)], ['Loquat', 'fruit', r(4, 5)], ['Plums', 'fruit', r(6, 8)],
   ['Cabbage', 'veg', r(11, 3)], ['Turnip greens', 'veg', r(11, 3)], ['Carrots', 'veg', r(11, 5)], ['Beetroot', 'veg', r(11, 4)],
   ['Cardoons', 'veg', r(11, 2)], ['Avocado', 'fruit', r(10, 4)], ['Kiwifruit', 'fruit', r(11, 3)],
+  ['Blood oranges', 'fruit', r(12, 3)], ['Mulberries', 'fruit', [6, 7]], ['Fresh dates', 'fruit', r(8, 11)], ['Cherimoya', 'fruit', r(10, 4)],
+  ['Blackberries', 'wild', r(7, 9)],
 ];
 const US = [
   ['Kale', 'veg', r(10, 3)], ['Brussels sprouts', 'veg', r(9, 2)], ['Cabbage', 'veg', r(10, 3)], ['Sweet potatoes', 'veg', r(9, 12)],
@@ -80,6 +84,10 @@ const US = [
   ['Collards & mustard greens', 'veg', r(11, 3)], ['Leeks', 'veg', r(9, 3)], ['Turnips & rutabaga', 'veg', r(10, 3)], ['Parsnips', 'veg', r(10, 3)],
   ['Carrots', 'veg', r(7, 3)], ['Beets', 'veg', r(7, 2)], ['Broccoli & cauliflower', 'veg', [5, 6, 9, 10, 11]], ['Pomegranate', 'fruit', r(9, 12)],
   ['Persimmon', 'fruit', r(10, 12)], ['Avocado', 'fruit', r(3, 9)], ['Maple syrup', 'other', r(2, 4)],
+  ['Blackberries', 'fruit', r(6, 8)], ['Raspberries', 'fruit', r(6, 9)], ['Apricots', 'fruit', r(5, 7)], ['Nectarines', 'fruit', r(6, 9)],
+  ['Figs', 'fruit', r(6, 10)], ['Cantaloupe & honeydew', 'fruit', r(7, 9)], ['Mulberries', 'fruit', [6, 7]], ['Kiwifruit', 'fruit', r(10, 4)],
+  ['Grapefruit', 'fruit', r(12, 4)], ['Meyer lemons', 'fruit', r(12, 3)], ['Kumquats', 'fruit', r(12, 3)], ['Blood oranges', 'fruit', r(12, 3)],
+  ['Fresh dates', 'fruit', r(9, 12)], ['Pawpaws', 'wild', [8, 9]], ['Huckleberries', 'wild', r(7, 9)],
 ];
 const AUS = [
   ['Mango', 'fruit', r(11, 3)], ['Cherries', 'fruit', r(11, 1)], ['Stone fruit', 'fruit', r(12, 3)], ['Berries', 'fruit', r(11, 3)],
@@ -93,6 +101,8 @@ const AUS = [
   ['Leeks', 'veg', r(5, 9)], ['Cabbage', 'veg', r(5, 9)], ['Spinach & silverbeet', 'veg', r(5, 10)], ['Fennel', 'veg', r(5, 9)],
   ['Sweet potatoes', 'veg', r(3, 8)], ['Jerusalem artichoke', 'veg', r(5, 8)], ['Kiwifruit', 'fruit', r(5, 9)], ['Quince', 'fruit', r(3, 6)],
   ['Persimmon', 'fruit', r(3, 6)], ['Custard apple', 'fruit', r(3, 8)], ['Chestnuts', 'other', r(3, 6)],
+  ['Lychees', 'fruit', r(12, 2)], ['Grapes', 'fruit', r(1, 4)], ['Rockmelon', 'fruit', r(11, 3)], ['Blood oranges', 'fruit', r(7, 9)],
+  ['Nashi pears', 'fruit', r(2, 5)], ['Tamarillos', 'fruit', r(4, 8)], ['Bananas', 'fruit', all],
 ];
 // seasonal animal foods (game seasons, fish runs, pasture peaks)
 CENTRAL.push(['Venison & wild boar', 'animal', r(9, 1)], ['Goose & duck', 'animal', r(11, 12)], ['Carp', 'animal', r(9, 12)],
@@ -107,7 +117,7 @@ AUS.push(['Spring lamb', 'animal', r(9, 11)], ['Oysters', 'animal', r(5, 10)], [
 
 // Northern Europe (UK, Ireland, Scandinavia): same produce as central Europe but spring/summer
 // crops arrive about a month later, plus regional specialties.
-const NORTH = CENTRAL.filter(([f]) => !['Apricots', 'Peppers', 'Sweetcorn', 'Chestnuts', 'Grapes'].includes(f)).map(([f, k, m]) => {
+const NORTH = CENTRAL.filter(([f]) => !['Apricots', 'Peppers', 'Sweetcorn', 'Chestnuts', 'Grapes', 'Mirabelle plums', 'Vineyard peaches', 'Kiwi berries'].includes(f)).map(([f, k, m]) => {
   const lo = Math.min(...m), wraps = m.includes(12) && m.includes(1);
   return [f, k, !wraps && lo >= 3 && lo <= 6 && m.length > 2 ? m.filter(x => x !== lo) : m];
 });
@@ -119,7 +129,7 @@ NORTH.push(['Samphire', 'veg', r(6, 8)], ['Watercress', 'veg', r(4, 9)], ['Purpl
 // no warm-climate California crops, plus Canadian specialties.
 const SHORT = m => { if (m.length >= 12 || (m.includes(12) && m.includes(1))) return m; const lo = Math.min(...m), hi = Math.max(...m);
   return m.length > 3 ? m.filter(x => !(lo >= 3 && lo <= 6 && x === lo) && !(hi >= 9 && hi <= 11 && x === hi)) : m; };
-const CANADA = US.filter(([f]) => !['Citrus', 'Artichokes', 'Avocado', 'Pomegranate', 'Persimmon', 'Halibut'].includes(f)).map(([f, k, m]) => [f, k, SHORT(m)]);
+const CANADA = US.filter(([f]) => !['Citrus', 'Artichokes', 'Avocado', 'Pomegranate', 'Persimmon', 'Halibut', 'Figs', 'Kiwifruit', 'Grapefruit', 'Meyer lemons', 'Kumquats', 'Blood oranges', 'Fresh dates'].includes(f)).map(([f, k, m]) => [f, k, SHORT(m)]);
 CANADA.push(['Saskatoon berries', 'fruit', r(7, 8)], ['Wild blueberries', 'wild', r(8, 9)], ['Haskap berries', 'fruit', r(6, 7)],
   ['Arctic char', 'animal', all], ['Atlantic lobster', 'animal', r(5, 7)], ['Pacific halibut', 'animal', r(4, 10)], ['Wild rice', 'other', r(9, 10)]);
 
@@ -140,6 +150,10 @@ const KOREA = [
   ['Aged kimchi (mugeunji)', 'other', all], ['Soybean sprouts (kongnamul)', 'veg', all], ['Carrots', 'veg', r(10, 3)],
   ['Young chicken (boknal season)', 'animal', [7, 8]], ['Abalone (jeonbok)', 'animal', r(6, 9)], ['New-crop rice (haepssal)', 'other', r(9, 11)], ['Garaetteok (New Year rice cakes)', 'other', [1, 2]],
   ['Blue crab (kkotge)', 'animal', [4, 5, 9, 10, 11]], ['Baby octopus (jjukkumi)', 'animal', r(3, 5)], ['Clams', 'animal', r(2, 5)], ['Pasture eggs', 'animal', r(3, 10)],
+  ['Shine Muscat grapes', 'fruit', r(8, 10)], ['Plums (jadu)', 'fruit', [7, 8]], ['Apricots (salgu)', 'fruit', [6, 7]], ['Mulberries (oddi)', 'fruit', [6]],
+  ['Bokbunja (black raspberries)', 'fruit', [6, 7]], ['Blueberries', 'fruit', r(6, 8)], ['Figs', 'fruit', r(8, 10)], ['Kiwi (chamdarae)', 'fruit', r(11, 3)],
+  ['Yuja citron', 'fruit', [11, 12]], ['Cheonhyehyang & Redhyang', 'fruit', r(1, 3)], ['Melon', 'fruit', r(6, 8)], ['Quince (mogwa)', 'fruit', [10, 11]],
+  ['Omija berries', 'wild', [8, 9]],
 ];
 
 // Fungi: wild seasons where they grow, plus farmed ones that are fresh all year.
@@ -153,6 +167,7 @@ const TROPICAL = [
   ['Chayote', 'veg', all], ['Corn', 'veg', r(6, 10)], ['Plantains', 'veg', all], ['Bamboo shoots', 'veg', r(5, 9)], ['Chillies', 'veg', all],
   ['Ginger & turmeric root', 'herb', all], ['Lemongrass', 'herb', all], ['Coriander', 'herb', all], ['Thai basil', 'herb', all],
   ['Cacao', 'other', r(10, 3)], ['Cashews', 'other', r(3, 5)],
+  ['Longan', 'fruit', r(6, 9)], ['Durian', 'fruit', r(5, 8)], ['Soursop', 'fruit', all], ['Watermelon', 'fruit', all],
 ];
 // India and its neighbours: cool winter, hot summer, monsoon
 const INDIA = [
@@ -166,6 +181,7 @@ const INDIA = [
   ['Corn (bhutta)', 'veg', r(7, 9)], ['Colocasia (arbi)', 'veg', r(8, 11)], ['Pumpkin', 'veg', r(8, 12)], ['Pomegranate', 'fruit', r(9, 2)],
   ['Custard apple (sitaphal)', 'fruit', r(9, 11)], ['Plums', 'fruit', r(6, 7)], ['Tender coconut', 'fruit', all], ['Bananas', 'fruit', all], ['Papaya', 'fruit', all],
   ['Mint', 'herb', r(3, 9)], ['Curry leaves', 'herb', all], ['Coriander', 'herb', r(10, 3)],
+  ['Grapes', 'fruit', r(1, 4)], ['Chikoo (sapota)', 'fruit', r(11, 2)],
 ];
 // East Asia (China, Japan, Taiwan): four clear seasons
 const EASTASIA = [
@@ -177,6 +193,8 @@ const EASTASIA = [
   ['Strawberries', 'fruit', r(1, 5)], ['Loquats', 'fruit', r(5, 6)], ['Cherries', 'fruit', r(5, 6)], ['Ume plums', 'fruit', [6]], ['Peaches', 'fruit', r(7, 8)],
   ['Watermelon', 'fruit', r(7, 8)], ['Grapes', 'fruit', r(8, 10)], ['Asian pears', 'fruit', r(8, 10)], ['Persimmons', 'fruit', r(10, 12)],
   ['Apples', 'fruit', r(9, 2)], ['Mandarins', 'fruit', r(11, 2)], ['Yuzu', 'fruit', r(11, 12)], ['Ginger', 'herb', all], ['Shiso', 'herb', r(6, 9)],
+  ['Kiwifruit', 'fruit', r(11, 3)], ['Figs', 'fruit', r(8, 10)], ['Melons', 'fruit', r(6, 8)], ['Blueberries', 'fruit', r(6, 8)], ['Lychee', 'fruit', r(5, 7)],
+  ['Bayberries (yangmei)', 'fruit', [6, 7]], ['Plums', 'fruit', [6, 7]], ['Pomelo', 'fruit', r(9, 12)], ['Jujubes', 'fruit', [9, 10]], ['Kumquats', 'fruit', r(12, 3)],
 ];
 // Mushrooms: farmed ones all year, wild ones in their own short season. Always cooked; wild ones from a market or a trained forager.
 const FARMED = [['Oyster mushrooms', 'fungi', all], ['Shiitake', 'fungi', all], ['Button mushrooms', 'fungi', all], ['King oyster mushrooms', 'fungi', all], ['Lion’s mane', 'fungi', all]];
@@ -344,7 +362,22 @@ export const FOOD_INFO = {
   'samphire': I('cool', ['Iodine', 'Minerals'], 'o'), 'watercress': I('cool', ['Vitamin K', 'Calcium', 'Iron'], 'f'), 'purple sprouting broccoli': I('neutral', ['Sulforaphane', 'Vitamin C'], 'f'),
   'damsons': I('cool', ['Antioxidants', 'Fibre'], 'l'), 'lingonberries': I('neutral', ['Vitamin C', 'Antioxidants'], 'f'), 'cloudberries': I('neutral', ['Vitamin C', 'Vitamin E'], 'o'),
   'bilberries': I('neutral', ['Anthocyanins', 'Vitamin C'], 'fo'), 'mackerel': I('warm', ['Omega-3', 'Vitamin D', 'B12'], 'mfol'), 'cod': I('neutral', ['Protein', 'Iodine'], 'f'),
-  'crab & langoustine': I('cool', ['Zinc', 'Iodine'], 'o'), 'snapper': I('neutral', ['Protein', 'Selenium'], 'f'), 'prawns': I('warm', ['Zinc', 'Iodine'], 'o'),
+  'crab & langoustine': I('cool', ['Zinc', 'Iodine'], 'o'),
+  'sour cherries': I('warm', ['Melatonin', 'Anthocyanins'], 'ml'), 'mirabelle plums': I('neutral', ['Vitamin A', 'Fibre'], 'fl'), 'greengages': I('neutral', ['Vitamin C', 'Fibre'], 'fo'),
+  'vineyard peaches': I('warm', ['Vitamin C', 'Polyphenols'], 'fo'), 'aronia berries': I('cool', ['Anthocyanins', 'Vitamin K'], 'ml'), 'kiwi berries': I('cool', ['Vitamin C', 'Fibre'], 'fo'),
+  'wild strawberries': I('cool', ['Vitamin C', 'Folate'], 'fo'), 'sloes': I('neutral', ['Polyphenols', 'Vitamin C'], 'l'), 'blood oranges': I('cool', ['Vitamin C', 'Anthocyanins'], 'mf'),
+  'mulberries': I('cool', ['Iron', 'Vitamin C'], 'mf'), 'mulberries (oddi)': I('cool', ['Iron', 'Vitamin C'], 'mf'), 'fresh dates': I('warm', ['Potassium', 'Magnesium', 'Natural sugar'], 'ml'),
+  'cherimoya': I('cool', ['Vitamin B6', 'Vitamin C'], 'l'), 'nectarines': I('warm', ['Vitamin C', 'Beta-carotene'], 'fo'),   'cantaloupe & honeydew': I('cool', ['Vitamin C', 'Water', 'Potassium'], 'o'), 'grapefruit': I('cool', ['Vitamin C', 'Lycopene'], 'fo'),
+  'meyer lemons': I('cool', ['Vitamin C'], 'fo'), 'kumquats': I('warm', ['Vitamin C', 'Fibre'], 'fl'), 'pawpaws': I('neutral', ['Vitamin C', 'Magnesium'], 'l'),
+  'huckleberries': I('neutral', ['Anthocyanins', 'Vitamin C'], 'fo'), 'lychees': I('warm', ['Vitamin C', 'Copper'], 'fo'), 'lychee': I('warm', ['Vitamin C', 'Copper'], 'fo'),
+  'rockmelon': I('cool', ['Vitamin C', 'Beta-carotene'], 'o'), 'nashi pears': I('cool', ['Fibre', 'Water'], 'o'), 'tamarillos': I('neutral', ['Vitamin C', 'Vitamin A'], 'fl'),
+  'shine muscat grapes': I('neutral', ['Polyphenols', 'Potassium'], 'fo'), 'plums (jadu)': I('neutral', ['Vitamin C', 'Fibre'], 'fl'), 'apricots (salgu)': I('neutral', ['Beta-carotene', 'Iron'], 'mf'),
+  'bokbunja (black raspberries)': I('warm', ['Ellagic acid', 'Anthocyanins'], 'mf'), 'kiwi (chamdarae)': I('cool', ['Vitamin C', 'Fibre'], 'fo'), 'yuja citron': I('warm', ['Vitamin C', 'Hesperidin'], 'ml'),
+  'cheonhyehyang & redhyang': I('cool', ['Vitamin C', 'Folate'], 'fo'), 'melon': I('cool', ['Vitamin C', 'Water'], 'o'), 'melons': I('cool', ['Vitamin C', 'Water'], 'o'),
+  'quince (mogwa)': I('warm', ['Pectin', 'Vitamin C'], 'ml'), 'omija berries': I('warm', ['Lignans', 'Vitamin C'], 'fl'), 'longan': I('warm', ['Vitamin C', 'Iron'], 'ml'),
+  'durian': I('warm', ['B vitamins', 'Potassium', 'Healthy fats'], 'l'), 'soursop': I('cool', ['Vitamin C', 'Fibre'], 'o'), 'chikoo (sapota)': I('warm', ['Iron', 'Fibre'], 'ml'),
+  'bayberries (yangmei)': I('warm', ['Vitamin C', 'Anthocyanins'], 'fo'), 'pomelo': I('cool', ['Vitamin C', 'Fibre'], 'fo'), 'jujubes': I('warm', ['Vitamin C', 'Iron'], 'ml'),
+    'bananas': I('cool', ['Potassium', 'Vitamin B6'], 'ml'), 'snapper': I('neutral', ['Protein', 'Selenium'], 'f'), 'prawns': I('warm', ['Zinc', 'Iodine'], 'o'),
 };
 export function foodInfo(name, kind) {
   return FOOD_INFO[name.toLowerCase()] || { nature: kind === 'fruit' ? 'cool' : kind === 'herb' ? 'warm' : 'neutral', nut: [], ph: [] };

@@ -3502,6 +3502,15 @@ function findFoodPhoto(n, w = 300) {
 // for foods that have no real emoji; the first match wins, so specific names come before families.
 const FOOD_EMO = [
   // drawn emoji (images/emoji/*.svg) so every food shows exactly itself, never a look-alike
+  // seasonal fruit added 23 Nov 2026: each its own cute drawing, so no two fruits in one season list share a picture
+  [/sour cherr/i, 'd:sour-cherries'], [/mirabelle/i, 'd:mirabelle'], [/greengage/i, 'd:greengage'], [/aronia/i, 'd:aronia'], [/kiwi berr/i, 'd:kiwi-berry'],
+  [/wild strawberr/i, 'd:wild-strawberry'], [/\bsloes?\b/i, 'd:sloe'], [/blood orange/i, 'd:blood-orange'], [/mulberr/i, 'd:mulberry'], [/nectarine/i, 'd:nectarine'],
+  [/grapefruit/i, 'd:grapefruit'], [/kumquat/i, 'd:kumquat'], [/pawpaw/i, 'd:pawpaw'], [/huckleberr/i, 'd:huckleberry'], [/shine muscat/i, 'd:shine-muscat'],
+  [/hallabong/i, 'd:hallabong'], [/cheonhyehyang|redhyang/i, 'd:cheonhyehyang'], [/omija/i, 'd:omija'], [/tamarillo/i, 'd:tamarillo'], [/longan/i, 'd:longan'],
+  [/durian/i, 'd:durian'], [/soursop/i, 'd:soursop'], [/chikoo|sapota/i, 'd:chikoo'], [/bayberr|yangmei/i, 'd:bayberry'], [/pomelo/i, 'd:pomelo'],
+  [/damson/i, 'd:damson'], [/bilberr/i, 'd:bilberry'], [/wild berr/i, 'd:wild-berries'], [/bokbunja|black raspberr/i, 'd:blackberry'], [/cherimoya/i, 'd:custard-apple'],
+  [/nashi/i, 'd:asian-pear'], [/yuja/i, 'd:yuzu'], [/fresh dates/i, 'd:dates'],
+  [/cantaloupe|honeydew|rockmelon/i, '🍈'], [/raw green mango/i, 'd:green-mango'], [/haskap/i, 'd:haskap'], [/saskatoon/i, 'd:saskatoon'],
   [/burdock & lotus|lotus root/i, 'd:lotus-root'], [/burdock/i, 'd:burdock'], [/daikon|mooli|korean radish|\(mu\)/i, 'd:daikon'], [/horseradish/i, 'd:horseradish'],
   [/parsnip/i, 'd:parsnip'], [/salsify/i, 'd:salsify'], [/turnip(?! green)|rutabaga/i, 'd:turnip'], [/celeriac/i, 'd:celeriac'], [/jerusalem/i, 'd:jerusalem-artichoke'],
   [/cassava/i, 'd:cassava'], [/taro|colocasia/i, 'd:taro'], [/^cauliflower/i, 'd:cauliflower'], [/brussels/i, 'd:brussels-sprouts'], [/kohlrabi/i, 'd:kohlrabi'],
@@ -3549,7 +3558,7 @@ const FOOD_EMO = [
   [/orange|mandarin|citrus|kinnow|hallabong|gamgyul|clementine/i, '🍊'], [/apple(?!s? \()/i, '🍎'], [/asian pear|pear/i, '🍐'],
   [/peach|nectarine|apricot|stone fruit|plum|damson|ume|maesil/i, '🍑'], [/cherr/i, '🍒'], [/strawberr/i, '🍓'], [/grape/i, '🍇'],
   [/watermelon/i, '🍉'], [/melon|chamoe/i, '🍈'], [/banana|plantain/i, '🍌'], [/mango/i, '🥭'], [/pineapple/i, '🍍'], [/kiwi|feijoa/i, '🥝'],
-  [/blueberr|bilberr|blackberr|elderberr|haskap|saskatoon|currant|jamun|^berries|wild berr|cranberr|lingonberr|raspberr|cloudberr|gooseberr|rosehip|sea buckthorn|amla/i, '🫐'],
+  [/blueberr|bilberr|blackberr|elderberr|currant|jamun|^berries|wild berr|cranberr|lingonberr|raspberr|cloudberr|gooseberr|rosehip|sea buckthorn|amla/i, '🫐'],
   [/black seed/i, 'd:black-seed-oil'], [/cacao/i, 'd:cacao'], [/cayenne/i, '🌶️'], [/sea salt|\bsalt\b/i, '🧂'], [/\bwater\b/i, 'd:water']];
 const foodEmo = n => (FOOD_EMO.find(([re]) => re.test(n || '')) || [, '🥗'])[1];
 const emoHtml = (n, cls = '') => { const e = foodEmo(n), f = e.startsWith('e:') ? `${e.slice(2)}.webp` : e.startsWith('d:') ? `${e.slice(2)}.svg` : '';
@@ -9670,7 +9679,11 @@ const SZ_POSTER = { Winter: ['Winter, deeply nourished', 'Build blood, warm dige
 // In season: one calm page like Superfoods. Every food fresh where she lives right now, grouped and scrollable; tap one for the details.
 // with a `used` set (one per In season tab) a picture never shows twice in one list: a second food that would reuse
 // a cut-out gets its own photo or its drawn emoji instead (17 Nov 2026)
-const szPic = (f, used) => { const free = s => !used || !used.has(s), take = s => (used && used.add(s), s);
+// Fruit (and wild berries) always show their cute glossy emoji picture, each fruit its own (23 Nov 2026, her ask)
+const SZ_BERRY = /berr|sloe|rosehip|buckthorn|pawpaw|omija|strawberr/i;
+const szPic = (f, used, kind) => { const free = s => !used || !used.has(s), take = s => (used && used.add(s), s);
+  if (kind === 'fruit' || (kind === 'wild' && SZ_BERRY.test(f))) { const e = foodEmo(f);
+    if (e !== '🥗' && free('emo:' + e)) { take('emo:' + e); return /^[de]:/.test(e) ? { src: `images/emoji/${e.slice(2)}.${e[0] === 'd' ? 'svg' : 'webp'}`, drawn: true } : { emo: e }; } }
   const fp = SZ.fungiPic(f); if (fp && free(`images/fungi/${fp[1]}.webp`)) return { src: take(`images/fungi/${fp[1]}.webp`), round: true, fp };
   const cut = szCut(f); if (cut && free(cut)) return { src: take(cut) };
   const ph = foodPhoto(f, 300); if (ph) return { src: ph, round: true };
@@ -9684,14 +9697,14 @@ function viewSeason() {
   const c = myCountry(), m = new Date().getMonth() + 1, country = SZ.COUNTRIES.find(x => x[0] === c)?.[1] || '';
   const sn = SZ.seasonName(c, m), phase = M.info ? M.info.phase : null, warm = M.info && warmWindow(M.info);
   const groups = szList(), n = groups.reduce((t, g) => t + g[3].length, 0);
-  const item = (i, e, used) => { const p = szPic(i.f, used), fit = phase && i.ph.includes(phase);
-    return `<button class="sfc-i szi" data-action="szPick" data-f="${esc(i.f)}" aria-expanded="false">${p ? `<img class="${p.round ? 'rd' : p.drawn ? 'dr' : ''}" src="${p.src}" alt="" loading="lazy" decoding="async">` : `<em>${e}</em>`}<b>${i.f}</b><small>${warm && i.nature === 'cool' ? 'Cook it' : fit ? 'Your phase' : NATURE[i.nature][0]}</small></button>`; };
+  const item = (i, e, used) => { const p = szPic(i.f, used, i.kind), fit = phase && i.ph.includes(phase);
+    return `<button class="sfc-i szi" data-action="szPick" data-f="${esc(i.f)}" aria-expanded="false">${p && p.src ? `<img class="${p.round ? 'rd' : p.drawn ? 'dr' : ''}" src="${p.src}" alt="" loading="lazy" decoding="async">` : `<em>${p ? p.emo : e}</em>`}<b>${i.f}</b><small>${warm && i.nature === 'cool' ? 'Cook it' : fit ? 'Your phase' : NATURE[i.nature][0]}</small></button>`; };
   return `${topbar('In season', { back: true })}<div class="pad pv-sub sz3">
     <section class="sfc szc" data-phase="${phase || ''}">
       <header class="sfc-h"><small><i style="background:${phase ? PH_HEX[phase] : '#6c823e'}"></i>${country ? `${country} · ` : ''}${MONTHS[m - 1]}</small><h3>${sn} foods</h3><p>${n} foods are fresh where you live right now.${phase ? ` Picks for your ${PHASES[phase].name.toLowerCase()} phase come first.` : ''}</p></header>
       ${(() => { const cur = groups.some(g => g[0] === ui.szTab) ? ui.szTab : groups[0][0];
-        return `<div class="szt" role="tablist">${groups.map(([k, name, e, list]) => { const p = k === 'fungi' ? { src: 'images/fungi/icon-porcini.webp' } : szPic(list[0].f), mine = phase ? list.filter(i => i.ph.includes(phase)).length : 0;
-          return `<button class="szt-b ${k === cur ? 'on' : ''}" role="tab" aria-selected="${k === cur}" data-action="szTab" data-v="${k}"><span class="szt-i">${p ? `<img src="${p.src}" alt="">` : emoRaw(e)}</span><b>${name}</b><small><span class="dotnum">${list.length}</span>${mine ? ` · ${mine} for you` : ''}</small></button>`; }).join('')}</div>
+        return `<div class="szt" role="tablist">${groups.map(([k, name, e, list]) => { const p = k === 'fungi' ? { src: 'images/fungi/icon-porcini.webp' } : szPic(list[0].f, null, list[0].kind), mine = phase ? list.filter(i => i.ph.includes(phase)).length : 0;
+          return `<button class="szt-b ${k === cur ? 'on' : ''}" role="tab" aria-selected="${k === cur}" data-action="szTab" data-v="${k}"><span class="szt-i">${p && p.src ? `<img src="${p.src}" alt="">` : emoRaw(p ? p.emo : e)}</span><b>${name}</b><small><span class="dotnum">${list.length}</span>${mine ? ` · ${mine} for you` : ''}</small></button>`; }).join('')}</div>
         ${groups.map(([k, name, e, list]) => `<div class="sfc-grid szt-p" data-k="${k}" role="tabpanel" ${k === cur ? '' : 'hidden'}>${(used => list.map(i => item(i, e, used)).join(''))(new Set())}</div>`).join('')}`; })()}
       <div class="sfc-det" aria-live="polite" hidden></div>
       ${warm ? `<p class="sfc-warm">${icon('sun', 13)} Your period is close: cook everything, nothing raw or iced.</p>` : ''}
@@ -11960,9 +11973,9 @@ const actions = {
     el.classList.add('on'); el.setAttribute('aria-expanded', 'true');
     if (el.classList.contains('drt-r')) el.after(det);
     else { const items = [...el.parentElement.querySelectorAll('.sfc-i')], k = items.indexOf(el); items[Math.min(items.length - 1, Math.floor(k / 2) * 2 + 1)].after(det); }
-    const p = szPic(i.f), phase = M.info ? M.info.phase : null, warm = M.info && warmWindow(M.info), fungi = i.kind === 'fungi';
+    const p = szPic(i.f, null, i.kind), phase = M.info ? M.info.phase : null, warm = M.info && warmWindow(M.info), fungi = i.kind === 'fungi';
     const note = i.nature === 'cool' && warm ? 'A cooling food. Your period is close, so cook it and add ginger or cinnamon.' : NATURE[i.nature][1];
-    det.innerHTML = `${p ? `<img class="${p.round ? 'rd' : ''}" src="${p.src}" alt="">` : ''}<div><small class="sfc-o">${NATURE[i.nature][0]} food</small><b>${i.f}</b><p>${fungi ? 'Earthy and grounding. Always cook it, in butter, a stew or a broth.' : note}</p>
+    det.innerHTML = `${p && p.src ? `<img class="${p.round ? 'rd' : ''}" src="${p.src}" alt="">` : p ? `<em class="szd-e" aria-hidden="true">${p.emo}</em>` : ''}<div><small class="sfc-o">${NATURE[i.nature][0]} food</small><b>${i.f}</b><p>${fungi ? 'Earthy and grounding. Always cook it, in butter, a stew or a broth.' : note}</p>
       ${i.nut.length ? `<span class="sfc-dose">${icon('drop', 12)} ${i.nut.join(' · ')}</span>` : ''}
       ${i.ph.length ? `<span class="szd-ph">Best in your ${i.ph.map(x => PHASES[x].name.toLowerCase()).join(' & ')} phase${phase && i.ph.includes(phase) ? ', which is now' : ''}</span>` : ''}
       ${fungi && !/oyster|shiitake|button|king|lion|enoki|maitake|straw|saesongi|neutari|paengi/i.test(i.f) ? `<span class="sfc-care"><small>Before you try</small>Wild mushroom: buy it from a market or a trained forager, never pick one you can’t name for sure.</span>` : ''}
