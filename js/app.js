@@ -11327,6 +11327,7 @@ function viewAccount() {
 // Sign in with Apple, Google or a 6-digit code by email (all free, no passwords). The ticks sit right above the buttons.
 const socialOK = () => A.oauthOK('apple') || A.oauthOK('google');
 function socialAuth(gx) {
+  setTimeout(A.warm, 0);
   return `<div class="ph-auth ${gx ? 'gx-auth' : ''}" data-step="${ui.acStep === 'code' ? 'code' : 'phone'}">
     <div class="ph-s1">
       <div class="gate-checks">

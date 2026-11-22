@@ -74,13 +74,23 @@ function loginWhy(provider, e) {
 }
 const hex = b => [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
 let slReady = null;
-async function nativeProvider(provider) {
+function slInit() {
   const P = SL();
   if (!slReady) slReady = P.initialize({
     ...(OS === 'ios' ? { apple: { clientId: 'com.elijanaru.undertheskin' } } : {}),
     ...(GOOGLE_WEB_CLIENT_ID ? { google: { webClientId: GOOGLE_WEB_CLIENT_ID, iOSClientId: GOOGLE_IOS_CLIENT_ID || undefined, iOSServerClientId: GOOGLE_WEB_CLIENT_ID, mode: 'online' } } : {}),
   }).catch(e => { slReady = null; throw e; });
-  await slReady;
+  return slReady;
+}
+// Get everything ready while she reads the sign-in screen, so after the Apple/Google sheet closes she is in at once
+export function warm() {
+  if (!configured()) return;
+  client().catch(() => {});
+  if (NATIVE && SL()) slInit().catch(() => {});
+}
+async function nativeProvider(provider) {
+  const P = SL();
+  await slInit();
   // the provider signs the hashed nonce into its token; the server checks it against the raw one
   const raw = hex(crypto.getRandomValues(new Uint8Array(16)));
   const nonce = hex(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw)));
