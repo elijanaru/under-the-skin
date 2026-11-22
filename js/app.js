@@ -8520,8 +8520,8 @@ function viewBreathe(from) {
       <p class="bzi-s">Pick one. A minute is enough.</p>
     </section>
     <div class="bzl" role="list" aria-label="Choose a breathing practice">${[rec, ...BREATH_ORDER.filter(x => x !== rec)].map(x => { const Bx = BREATHS[x], min = x === 'still' ? 10 : Math.max(1, Math.round((Bx.rounds || 5) * Bx.steps.reduce((a, st) => a + st[3], 0) / 60000));
-      return `<button class="bzl-r ${x === rec ? 'rec' : ''}" role="listitem" data-action="bzPick" data-v="${x}" aria-label="${Bx.name}, ${min} min. Opens full screen.">
-      <span class="bzl-g emo" aria-hidden="true">${(BZ_BEST[x] || ['🌿'])[0]}</span><span class="bzl-t">${x === rec ? `<em>${phase ? 'For your phase' : 'Start here'}</em>` : ''}<b>${Bx.name}</b><small>${(BZ_BEST[x] || [, Bx.when])[1]}</small></span><span class="bzl-m"><b class="dotnum">${min}</b> min</span>${icon('chevR', 16)}</button>`; }).join('')}</div>
+      return `<button class="bzl-r bzl-${x} ${x === rec ? 'rec' : ''}" role="listitem" data-action="bzPick" data-v="${x}" aria-label="${Bx.name}, ${min} min. Opens full screen.">
+      ${x === rec ? `<em class="bzl-rec">${phase ? 'For your phase' : 'Start here'}</em>` : ''}<span class="bzl-m"><b class="dotnum">${min}</b> min</span><span class="bzl-g emo" aria-hidden="true"><i></i>${(BZ_BEST[x] || ['🌿'])[0]}</span><b class="bzl-n">${Bx.name}</b><small class="bzl-w">${(BZ_BEST[x] || [, Bx.when])[1]}</small></button>`; }).join('')}</div>
     ${calmRemCard()}
     ${dayQuote()}
   </div>`;
