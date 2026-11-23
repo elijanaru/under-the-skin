@@ -8982,9 +8982,14 @@ function myInbox() {
   if (!state.profile.inbox) { const a = new Uint8Array(16); crypto.getRandomValues(a); state.profile.inbox = [...a].map(b => b.toString(36).padStart(2, '0')).join('').slice(0, 26); save(); }
   return state.profile.inbox;
 }
+// Profile pictures travel with every message between your two apps (23 Nov 2026), so you always see each other.
+// Only a small inline JPEG/PNG from the other phone is accepted.
+const okPic = t => typeof t === 'string' && (/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(t) && t.length < 12000 || /^images\/pets\/[\w-]+\.(webp|png|jpg)$/.test(t)) ? t : undefined;
+const picOut = () => { (state.partners || []).forEach(x => syncTo(x)); publishLive(); }; // she changed her photo: her people see it right away
+const myPic = () => okPic(state?.profile?.thumb);
 async function sendSignal(p, k) {
   if (!p.i) return false;
-  try { const r = await fetch(RELAY + p.i, { method: 'POST', body: JSON.stringify({ k, f: state.profile.name || 'Someone', fi: myInbox() }) }); return r.ok; } catch { return false; }
+  try { const r = await fetch(RELAY + p.i, { method: 'POST', body: JSON.stringify({ k, f: state.profile.name || 'Someone', fi: myInbox(), t: myPic() }) }); return r.ok; } catch { return false; }
 }
 function handleSignal(m) {
   const seen = state.sigSeen = state.sigSeen || []; if (!m || !m.id || seen.includes(m.id)) return;
@@ -8993,12 +8998,13 @@ function handleSignal(m) {
   if (d.k === 'pair') { // she added you from your link: her rhythm arrives here on its own
     const snap = b64d(d.d || ''); if (!snap || !snap.s || !snap.c) return;
     const ps = state.partners = state.partners || [], old = ps.find(x => x.i === d.fi || x.n === snap.n);
-    if (old) Object.assign(old, snap, { id: old.id, t: old.t, added: Date.now() });
-    else if (ps.length < 4) { ps.push({ ...snap, id: Date.now().toString(36), added: Date.now() }); toast(`${snap.n} is connected`); }
+    if (old) Object.assign(old, snap, { id: old.id, t: okPic(d.t) || okPic(snap.t) || old.t, added: Date.now() });
+    else if (ps.length < 4) { ps.push({ ...snap, t: okPic(d.t) || okPic(snap.t), id: Date.now().toString(36), added: Date.now() }); toast(`${snap.n} is connected`); }
     save(); if (['partners', 'today'].includes(route().name)) render(); return;
   }
   const sig = SIGNALS.find(x => x.k === d.k); if (!sig) return;
   const from = (state.partners || []).find(x => x.i === d.fi);
+  if (from && okPic(d.t) && from.t !== d.t) from.t = d.t; // their newest photo
   (state.sigLog = state.sigLog || []).unshift({ k: d.k, f: d.f, at: (m.time || Date.now() / 1000) * 1000, pid: from?.id }); state.sigLog = state.sigLog.slice(0, 30); save();
   showSignal(sig, d.f, from, d.x, d);
   if (document.hidden && 'Notification' in window && Notification.permission === 'granted') navigator.serviceWorker?.ready.then(r => r.showNotification(`${sig.g} ${d.f}`, { body: `${d.f} ${sig.s}`, icon: 'icons/icon-192.png', tag: 'sig-' + m.id })).catch(() => {});
@@ -9009,7 +9015,7 @@ function showSignal(sig, name, from, x, meta) {
   const isLove = LOVE.includes(sig);
   const hearts = Array.from({ length: 18 }, (_, i) => `<i style="left:${(i * 37) % 100}%;animation-delay:${(i * .3) % 4}s;animation-duration:${5 + (i % 4)}s;width:${14 + (i * 7) % 18}px;height:${14 + (i * 7) % 18}px">${HEART(i % 3 === 1 ? '#fff' : isLove ? '#ff2d4b' : 'hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)')}</i>`).join('');
   const el = document.createElement('div'); el.className = `sig-pop ${isLove ? 'love' : 'care'}`;
-  el.innerHTML = `<div class="lv-hearts">${hearts}</div><div class="lv-in"><div class="lv-art">${loveArt('xl')}<span class="lv-av">${from && from.t ? `<img src="${esc(from.t)}" alt="">` : esc((name || '?')[0])}</span><span class="lv-g">${sig.g}</span></div>
+  el.innerHTML = `<div class="lv-hearts">${hearts}</div><div class="lv-in"><div class="lv-art">${loveArt('xl')}<span class="lv-av">${(from && from.t) || okPic(meta?.t) ? `<img src="${esc((from && from.t) || okPic(meta.t))}" alt="">` : esc((name || '?')[0])}</span><span class="lv-g">${sig.g}</span></div>
     <h1>${esc(name)} ${sig.s}</h1>${x ? `<p class="sig-x">${esc(String(x).slice(0, 120))}</p>` : ''}<p class="muted">just now · Underskin</p>
     ${from ? `<button class="btn btn-love btn-block" data-action="openLove" data-id="${from.id}">${icon('heart', 16)} Send love back</button>` : ''}
     <button class="btn btn-ghost btn-block" data-action="sigClose">Close</button></div>`;
@@ -10493,7 +10499,7 @@ document.addEventListener('change', e => {
   readPhoto(f).then(d => {
     if (scope.startsWith('ba-')) { const ba = baGet(); ba[scope.slice(3)] = { d: Date.now(), img: d.full }; if (!baSet(ba)) return toast('Not enough space on this phone for the photo'); toast('Photo saved on this phone'); }
     else if (scope === 'him') { if (!himP().at) { ui.hobA = { ...(ui.hobA || {}), n: (document.getElementById('hob-n')?.value || ui.hobA?.n || '').trim(), ph: d.thumb }; } else { himSave({ ...himP(), ph: d.thumb }); toast('Photo saved on this phone'); } }
-    else if (scope === 'onb') { ui.onb.photo = d.full; ui.onb.thumb = d.thumb; } else { state.profile.photo = d.full; state.profile.thumb = d.thumb; save(); toast('Profile picture saved'); }
+    else if (scope === 'onb') { ui.onb.photo = d.full; ui.onb.thumb = d.thumb; } else { state.profile.photo = d.full; state.profile.thumb = d.thumb; save(); picOut(); toast('Profile picture saved'); }
     render();
   }).catch(() => toast('Couldn’t read that photo'));
 });
@@ -10633,27 +10639,28 @@ function mySnap(o = {}) {
 async function syncTo(p) {
   if (!p.i || !M?.stats?.periods?.length) return false;
   const snap = { ...mySnap({ short: true }), a: p.a, w: undefined };
-  try { const r = await fetch(RELAY + p.i, { method: 'POST', body: JSON.stringify({ k: 'pair', f: state.profile.name || 'Someone', fi: myInbox(), d: b64e(snap) }) }); return r.ok; } catch { return false; }
+  try { const r = await fetch(RELAY + p.i, { method: 'POST', body: JSON.stringify({ k: 'pair', f: state.profile.name || 'Someone', fi: myInbox(), d: b64e(snap), t: myPic() }) }); return r.ok; } catch { return false; }
 }
 // Her latest rhythm also sits on a "-live" channel, so every link she ever sent (his too) opens up to date.
 async function publishLive() {
   const last = M?.stats?.periods?.length && C.iso(M.stats.periods[M.stats.periods.length - 1].start);
   const { a, w, ...snap } = last ? mySnap({ short: true }) : {}, mk = snap.md ? snap.md + snap.m.join() : '';
-  if (!last || !state.profile.linkSent || (state.profile.liveS === last && state.profile.liveM === mk && Date.now() - (state.profile.liveAt || 0) < 6 * 36e5)) return;
+  const tk = (myPic() || '').slice(-24);
+  if (!last || !state.profile.linkSent || (state.profile.liveS === last && state.profile.liveM === mk && state.profile.liveT === tk && Date.now() - (state.profile.liveAt || 0) < 6 * 36e5)) return;
   state.profile.liveM = mk;
-  try { const r = await fetch(`${RELAY}${myInbox()}-live`, { method: 'POST', body: JSON.stringify({ d: b64e(snap) }) }); if (r.ok) { state.profile.liveS = last; state.profile.liveAt = Date.now(); save(); } } catch {}
+  try { const r = await fetch(`${RELAY}${myInbox()}-live`, { method: 'POST', body: JSON.stringify({ d: b64e(snap), t: myPic() }) }); if (r.ok) { state.profile.liveS = last; state.profile.liveT = tk; state.profile.liveAt = Date.now(); save(); } } catch {}
 }
 async function pullLive(i) {
   try {
     const txt = await (await fetch(`${RELAY}${i}-live/json?poll=1&since=all`)).text();
     const m = txt.split('\n').filter(Boolean).map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(x => x && x.event === 'message').pop();
-    const snap = m && b64d(JSON.parse(m.message).d || ''); return snap && snap.s && snap.c ? snap : null;
+    const body = m && JSON.parse(m.message), snap = body && b64d(body.d || ''); if (snap && okPic(body.t)) snap.t = body.t; return snap && snap.s && snap.c ? snap : null;
   } catch { return null; }
 }
-const fresher = (old, nw) => nw && (nw.s !== old.s || +!!nw.f !== +!!old.f || String(nw.m) + nw.md !== String(old.m) + old.md || +nw.c !== +old.c || +nw.p !== +old.p || nw.z !== old.z || nw.n !== old.n || +!!nw.l !== +!!old.l);
+const fresher = (old, nw) => nw && (nw.s !== old.s || +!!nw.f !== +!!old.f || String(nw.m) + nw.md !== String(old.m) + old.md || +nw.c !== +old.c || +nw.p !== +old.p || nw.z !== old.z || nw.n !== old.n || +!!nw.l !== +!!old.l || (!!nw.t && nw.t !== old.t));
 async function refreshPartners() {
   let changed = false;
-  for (const p of (state.partners || []).filter(x => x.i)) { const nw = await pullLive(p.i); if (fresher(p, nw)) { Object.assign(p, { n: nw.n, s: nw.s, c: nw.c, p: nw.p, z: nw.z, f: nw.f, m: nw.m, md: nw.md, l: nw.l }); changed = true; } }
+  for (const p of (state.partners || []).filter(x => x.i)) { const nw = await pullLive(p.i); if (fresher(p, nw)) { Object.assign(p, { n: nw.n, s: nw.s, c: nw.c, p: nw.p, z: nw.z, f: nw.f, m: nw.m, md: nw.md, l: nw.l }); if (nw.t) p.t = nw.t; changed = true; } }
   if (changed) { save(); if (['partners', 'today'].includes(route().name)) render(); }
 }
 // a link that is opened (or his saved view): swap in her latest rhythm if she has logged a new period since
@@ -11997,7 +12004,7 @@ const actions = {
   czTab: d => { ui.czTab = d.v; render(); },
   bzPick: d => bzOpen(d.v),
   pickPet: d => { const src = petSrc(d.v), pet = PETS.find(x => x[0] === d.v); if (!pet) return;
-    if (d.s === 'onb') { ui.onb.photo = src; ui.onb.thumb = src; } else { state.profile.photo = src; state.profile.thumb = src; save(); }
+    if (d.s === 'onb') { ui.onb.photo = src; ui.onb.thumb = src; } else { state.profile.photo = src; state.profile.thumb = src; save(); picOut(); }
     // only the picture and the pick change: nothing else on the page redraws or replays
     document.querySelectorAll(`.pet[data-s="${d.s}"]`).forEach(b => { const on = b.dataset.v === d.v; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
     if (d.s === 'onb') {
@@ -12359,9 +12366,9 @@ const actions = {
   hhOpen: d => { ui.hhOpen = ui.hhOpen === d.id ? null : d.id; hhRefresh() || render(); },
   addPartner: d => { const snap = b64d(d.d); if (!snap) return; const ps = state.partners = state.partners || [];
     const old = ps.find(x => x.n === snap.n);
-    if (old) { Object.assign(old, snap, { id: old.id, added: Date.now() }); save(); syncTo(old); toast(`${snap.n} updated`); return go('partners/' + old.id); }
+    if (old) { Object.assign(old, snap, { id: old.id, t: okPic(snap.t) || old.t, added: Date.now() }); save(); syncTo(old); toast(`${snap.n} updated`); return go('partners/' + old.id); }
     if (ps.length >= 4) { toast('You can connect up to 4 people'); return go('partners'); }
-    ps.push({ ...snap, id: Date.now().toString(36), added: Date.now() }); save(); startSignals(); syncTo(ps[ps.length - 1]).then(ok => toast(ok ? `${snap.n} added, and she now sees you too` : `${snap.n} added`)); go('partners/' + ps[ps.length - 1].id); },
+    ps.push({ ...snap, t: okPic(snap.t), id: Date.now().toString(36), added: Date.now() }); save(); startSignals(); syncTo(ps[ps.length - 1]).then(ok => toast(ok ? `${snap.n} added, and she now sees you too` : `${snap.n} added`)); go('partners/' + ps[ps.length - 1].id); },
   openPartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (p) { const { id, ...snap } = p; location.hash = '#/with?d=' + b64e(snap); } },
   removePartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (!p || !confirm(`Remove ${p.n}?`)) return; state.partners = state.partners.filter(x => x.id !== d.id); save(); if (route().name === 'partners') go('partners'); else render(); },
   seasonView: d => { ui.seasonView = d.v; render(); },
@@ -12457,7 +12464,7 @@ const actions = {
     const b = el.getBoundingClientRect(); heartBurst(b.left + b.width / 2, b.top + b.height / 2);
     if (!snap.i) { toast(`${snap.n || 'She'} needs to open her app once, then her link can receive it`); return; }
     const me = himP().n || (state && state.profile && state.profile.name) || 'Your partner';
-    let ok = false; try { ok = (await fetch(RELAY + snap.i, { method: 'POST', body: JSON.stringify({ k: l.k, f: me }) })).ok; } catch {}
+    let ok = false; try { ok = (await fetch(RELAY + snap.i, { method: 'POST', body: JSON.stringify({ k: l.k, f: me, t: okPic(himP().ph) }) })).ok; } catch {}
     if (ok) oakDo('love', true);
     setTimeout(() => { document.querySelector('.love-sheet.pv')?.remove(); toast(ok ? `${l.g} Sent to ${snap.n || 'her'}` : 'Couldn’t send: check your connection'); }, 500);
   },
