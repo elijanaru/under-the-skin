@@ -17747,3 +17747,5 @@ html .sy-head .hud { color: rgba(255,255,255,.95); text-shadow: 0 1px 6px rgba(4
 html .sy-prog i { background: rgba(255,255,255,.6); }
 html .sy-prog i.on:first-child { background: var(--pt-you-d); box-shadow: none; } html .sy-prog i.on:last-child { background: var(--pt-them-d); box-shadow: none; }
 @media (prefers-reduced-motion: reduce) { html .pc-heart { animation: none; } }
+html .fx-cats { scroll-snap-type: x proximity; }
+html .fx-c:focus { outline: none; } html .fx-c:focus-visible { outline: 2px solid #20301a; outline-offset: 2px; }

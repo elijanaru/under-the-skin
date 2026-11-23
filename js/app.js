@@ -12144,7 +12144,11 @@ const actions = {
     const info = M.info, phase = info ? info.phase : 'follicular', tmp = document.createElement('div');
     tmp.innerHTML = foodExplore(phase, info);
     document.querySelectorAll('#view .fx-c').forEach(b => { const on = b.dataset.v === d.v; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+    // keep the tab row exactly where she left it: the snap would otherwise realign it when the panel below changes
+    const row = document.querySelector('#view .fx-cats'), x = row ? row.scrollLeft : 0;
+    if (row) row.style.scrollSnapType = 'none';
     const nu = tmp.querySelector('.fx-p'); nu.classList.add('fx-in'); old.replaceWith(nu);
+    if (row) { row.scrollLeft = x; requestAnimationFrame(() => { row.scrollLeft = x; setTimeout(() => { row.scrollLeft = x; row.style.scrollSnapType = ''; }, 350); }); }
   },
   hidePartner: () => { state.hidePartner = true; save(); render(); toast('Hidden. Turn it back on in Profile, Partner mode.'); },
   partnerToday: () => { state.hidePartner = !state.hidePartner; save(); render(); },
