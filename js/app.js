@@ -8910,7 +8910,7 @@ function loveBtn(p, big) {
 }
 // You and them, two little bubbles joined by a dotted line with a heart: rose is always you, peach is always them.
 function ptPair(me, them, meLab = '', themLab = '') {
-  const mine = me && (me.photo || me.t), theirs = them && (them.photo || them.t);
+  const mine = me && (me.photo || me.thumb || me.t), theirs = them && (them.photo || them.t);
   return `<span class="pc-pair" aria-hidden="true">
     <span class="pc-av you">${mine ? `<img src="${esc(mine)}" alt="">` : catFace('w')}${meLab ? `<small>${meLab}</small>` : ''}</span>
     <svg class="pc-link" viewBox="0 0 120 40"><path d="M6 26 Q60 -4 114 26" fill="none" stroke="#e7a9be" stroke-width="2" stroke-dasharray="1 7" stroke-linecap="round"/><g transform="translate(0 -6.6)"><path class="pc-heart" d="M60 24s-7-4.3-7-9.5A3.9 3.9 0 0 1 60 12.2a3.9 3.9 0 0 1 7 2.3C67 19.7 60 24 60 24z" fill="#ec8fae" stroke="#fff" stroke-width="1.6" paint-order="stroke"/></g></svg>
@@ -9248,7 +9248,7 @@ function moodDesire(pi, p) {
 // the best day to meet marked, and a plan that fits her phase. No desire, fertility or love notes for friends.
 const FD_BAT = [['🥳', 'Full', 'Up for plans and people'], ['😊', 'Good', 'A catch-up works well'], ['🫖', 'Half', 'Keep it cosy and close'], ['🌙', 'Low', 'A kind text is enough today']];
 function friendDash(p, info, name, sup) {
-  const today = C.startOfDay(new Date()), en = Math.round(C.energyAt(info.cd, info.L, info.P) * 100);
+  const today = C.startOfDay(new Date()), logged = p.md === todayISO() && +p.e >= 1 && +p.e <= 5 ? [15, 35, 55, 75, 92][p.e - 1] : 0, en = logged || Math.round(C.energyAt(info.cd, info.L, info.P) * 100);
   const wk = Array.from({ length: 7 }, (_, i) => { const d = C.addDays(today, i), di = snapInfo(p, d); return { d, di, v: Math.max(.12, C.energyAt(di.cd, di.L, di.P) - (di.isPeriod ? .12 : 0)) }; });
   const best = wk.slice(1).reduce((a, b) => b.v > a.v ? b : a, wk[1]);
   const lv = en >= 75 ? 0 : en >= 55 ? 1 : en >= 40 ? 2 : 3, [emo, word, line] = FD_BAT[lv], col = ['#a9c27a', '#c7d07e', '#f3cd6e', '#ef9db1'][lv];
@@ -9263,6 +9263,62 @@ function friendDash(p, info, name, sup) {
         ${plan ? `<div class="fd-plan"><span class="fd-emo" aria-hidden="true">${ptDateEmo(plan)}</span><small>Good plan now</small><b>${esc(plan)}</b></div>` : ''}
       </div>
     </section>`;
+}
+// What she checked in today, each with one specific way to help (23 Nov 2026). Body, mood, energy and disruptors for
+// everyone she connected; desire and intimacy only for partners. Never her notes or journal.
+const CI_HELP = {
+  Cramps: 'A hot water bottle on her lower belly and a warm drink. Offer a slow back rub.',
+  'Pelvic pain': 'Let her lie down with something warm. Take the chores off her today.',
+  Headache: 'Dim the lights, keep it quiet and bring her water. Skip loud plans.',
+  'Back pain': 'Warm hands on her lower back, slow and gentle. Carry the heavy things.',
+  'Joint pain': 'Keep plans easy and warm. A warm bath or blanket helps.',
+  'Tender breasts': 'Gentle hugs, no squeezing. Soft and loose is the dress code.',
+  Bloating: 'Cook something warm and simple. Never comment on her belly.',
+  Nausea: 'Fresh ginger tea and plain warm food in small portions. No strong smells.',
+  Constipation: 'Warm water, cooked vegetables and a short walk together.',
+  Diarrhea: 'Warm broth and water with a pinch of salt. Keep plans close to home.',
+  Cravings: 'Bring her dark chocolate or a few dates. No judgement.',
+  Acne: 'Don’t mention it. Tell her she looks lovely, and mean it.',
+  'Hair shedding': 'Cook her something rich in iron tonight, like beef or lentils.',
+  'Glowing skin': 'Tell her she’s glowing today. She is.',
+  Energetic: 'A great day for plans, a long walk or something new together.',
+  Fatigue: 'Take one task off her plate and let her rest without guilt.',
+  'Brain fog': 'Keep plans simple, remind her of the small things, be patient.',
+  Dizziness: 'Bring water and a salty snack and make sure she eats.',
+  Calm: 'Enjoy the quiet together. A slow walk or a cosy evening.',
+  Happy: 'Match her mood and plan something fun.',
+  Confident: 'Hype her up. She’s ready for big things today.',
+  Sexy: 'Tell her she looks amazing. Flirt a little.',
+  Social: 'Make plans with people, or call her for a proper catch-up.',
+  Creative: 'Give her space to make things, or join in.',
+  Sensitive: 'Gentle words, extra patience and a long hug.',
+  Anxious: 'Stay calm and listen more than you fix. Breathe slowly with her.',
+  Irritable: 'Give her space, don’t take it personally, handle one annoying task.',
+  'Low mood': 'Sit with her and bring her favourite snack. No pressure to talk.',
+  Unmotivated: 'Lower the bar today. Suggest one small, easy thing together.',
+  Alcohol: 'Water and a warm breakfast. Keep today gentle.',
+  Illness: 'Soup, tea and rest. Check in without making her talk.',
+  Travel: 'Her cycle may run a little late. Help her settle in and sleep.',
+  'Big stress': 'Ask what you can take off her plate, then do it.',
+  'Late night': 'Let her sleep in and keep today slow.',
+  'Hard training': 'A warm, protein-rich meal and an early night.',
+  'Shock or loss': 'Just be there. Listen, hold her and keep the day soft.',
+};
+const CI_ENERGY = [['🪫', 'Very low', 'Keep today cosy and quiet'], ['🌙', 'Low', 'Small plans, early night'], ['🌤️', 'Okay', 'A calm day together'], ['☀️', 'Good', 'Up for a little plan'], ['⚡', 'High', 'Up for plans and people']];
+const CI_DRIVE = ['Cuddles with no expectations', 'Slow and affectionate', 'A little romance goes a long way', 'She’s in the mood. Make time for each other', 'Clear the evening for the two of you'];
+function herCheckin(p, fr) {
+  if (p.md !== todayISO()) return '';
+  const items = [...(p.sy || []), ...(p.m || []).filter(m => !(fr && m === 'Sexy')), ...(p.ds || [])].filter(n => CI_HELP[n]);
+  const e = +p.e >= 1 && +p.e <= 5 ? CI_ENERGY[p.e - 1] : null, dr = !fr && +p.dr >= 1 && +p.dr <= 5 ? +p.dr : 0, x = fr ? [] : (p.x || []);
+  if (!items.length && !e && !dr && !x.length) return '';
+  const emo = n => LOG_DRAWN[n] ? `<img src="images/emoji/log-${LOG_DRAWN[n]}.svg" alt="">` : (LOG_EMOJI[n] || '•');
+  return `<section class="card ci">
+    <div class="ci-h"><small class="lsw-e">${esc(p.n)} checked in today ${LSW_SPK('#f1b27c')}</small><h3>How to help, <span class="lsw-n">exactly</span></h3></div>
+    ${e || dr ? `<div class="ci-meters">${e ? `<div class="ci-m en"><b aria-hidden="true">${e[0]}</b><span><small>Energy</small><em>${e[1]}</em><i>${e[2]}</i></span><span class="ci-dots" aria-label="${p.e} of 5">${[1, 2, 3, 4, 5].map(k => `<i class="${k <= p.e ? 'on' : ''}"></i>`).join('')}</span></div>` : ''}
+      ${dr ? `<div class="ci-m dr"><b aria-hidden="true">${DRIVE[dr - 1][0]}</b><span><small>Desire</small><em>${DRIVE[dr - 1][1]}</em><i>${CI_DRIVE[dr - 1]}</i></span><span class="ci-dots" aria-label="${dr} of 5">${[1, 2, 3, 4, 5].map(k => `<i class="${k <= dr ? 'on' : ''}"></i>`).join('')}</span></div>` : ''}</div>` : ''}
+    ${items.length ? `<div class="ci-list">${items.slice(0, 8).map((n, i) => `<div class="ci-r" style="--r:${LSW_R[i % LSW_R.length] / 3}deg"><span class="ci-e">${emo(n)}</span><span><b>${esc(n)}</b><small>${CI_HELP[n]}</small></span></div>`).join('')}</div>` : ''}
+    ${x.length ? `<div class="ci-x"><small>Intimacy</small>${x.map(v => `<span>${LOG_EMOJI[v] || '💞'} ${esc(v)}</span>`).join('')}</div>` : ''}
+  </section>`;
 }
 function viewPartner(p) {
   const today = C.startOfDay(new Date()), pi = snapInfo(p, today), ph = PHASES[pi.phase], tcm = TCM[pi.phase], fr = isFr(p), fert = !!p.f && !fr;
@@ -9294,6 +9350,7 @@ function viewPartner(p) {
       const sync = /full/i.test(moon.name) ? 'Full moon: a bright night. Extra tenderness always goes a long way.' : /new/i.test(moon.name) ? 'New moon: a quiet reset. Perfect for a cosy night in together.' : waxing === building ? (waxing ? 'In sync: the moon is growing and so is her energy.' : 'In sync: the moon is waning and she’s turning inward too.') : (waxing ? 'The moon is growing while she turns inward. Let her rest.' : 'The moon is releasing while her energy rises. Great for fresh starts together.');
       const zs = p.z ? Z.sunSign(+p.z.slice(0, 2), +p.z.slice(3)) : null;
       const real = p.md === todayISO() && p.m?.length;
+      if (herCheckin(p, fr)) return herCheckin(p, fr);
       return `<section class="card glass feel-card"><div class="eyebrow">${real ? `${esc(p.n)} logged today` : 'How she’s feeling'}</div>
         <div class="feel-chips">${(real ? p.m.map(esc) : moods).map(m => `<span class="${real ? 'real' : ''}">${m}</span>`).join('')}</div>
         <p class="body sm">${partnerRead(pi, p).split('. ').slice(1, 2).join('')}.</p></section>`; })()}
@@ -9324,10 +9381,8 @@ function viewPartner(p) {
     ${sectionTitle(p.a === 'friend' ? 'How to be a good friend' : 'How to show up today')}
     <section class="card glass">${list(sup.do.slice(0, 3), 'yes')}</section>
     ${sup.gifts ? `${sectionTitle('Little gifts')}<div class="hscroll">${sup.gifts.map(g => `<div class="rcard gift g2">${giftArt(g)}<div class="rc-t">${esc(g.replace(/\s*😉/, ''))}</div></div>`).join('')}</div>` : ''}
-    <div class="ptd-two one">
-      ${!fr && (sup.date || sup.plan) ? `<div class="card glass"><span class="ptd-emo" aria-hidden="true">${ptDateEmo(sup.date || sup.plan)}</span><small>${sup.date ? 'Date idea' : 'Plan idea'}</small><b>${esc(sup.date || sup.plan)}</b></div>` : ''}
-    </div>
-    <p class="fine center">Updates on its own whenever ${esc(p.n)} logs a new period. Every body is different, so ask her too.</p>
+    ${fr ? '' : dateCards(dateIdeas(pi, 3))}
+    <p class="fine center">Updates on its own whenever ${esc(p.n)} logs a period or checks in. Every body is different, so ask her too.</p>
     <button class="tiny-link" data-action="removePartner" data-id="${p.id}">remove</button>
   </div>`;
 }
@@ -10639,19 +10694,36 @@ function shareLink(o = {}) { return `${appBase()}#/with?d=${b64e(mySnap(o))}`; }
 const b64u = t => btoa(unescape(encodeURIComponent(t))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 function packLink(x) {
   const fl = (x.f ? 1 : 0) | (x.w === 'm' ? 2 : 0) | (x.g ? 4 : 0) | (x.l ? 8 : 0);
-  return b64u([String(x.n).replace(/~/g, ''), x.s.replace(/-/g, ''), x.c, x.p, x.a === 'friend' ? 'f' : 'p', fl.toString(16), x.i].join('~'));
+  return b64u([String(x.n).replace(/~/g, ''), x.s.replace(/-/g, ''), x.c, x.p, x.a === 'friend' ? 'f' : 'p', fl.toString(16), x.i, ...(x.k ? [x.k] : [])].join('~'));
 }
 function unpackLink(code) {
   try {
-    const [n, s, c, p, a, fl, i] = decodeURIComponent(escape(atob(code.replace(/-/g, '+').replace(/_/g, '/')))).split('~'), b = parseInt(fl, 16) || 0;
+    const [n, s, c, p, a, fl, i, k] = decodeURIComponent(escape(atob(code.replace(/-/g, '+').replace(/_/g, '/')))).split('~'), b = parseInt(fl, 16) || 0;
     const o = { n, s: `${s.slice(0, 4)}-${s.slice(4, 6)}-${s.slice(6, 8)}`, c: +c, p: +p, a: a === 'f' ? 'friend' : 'partner', f: b & 1 ? 1 : 0, i };
-    if (b & 2) o.w = 'm'; if (b & 4) o.g = 1; if (b & 8) o.l = 1;
+    if (b & 2) o.w = 'm'; if (b & 4) o.g = 1; if (b & 8) o.l = 1; if (k && o.a === 'partner' && /^[a-z0-9]{6,16}$/.test(k)) o.k = k;
     return /^\d{4}-\d\d-\d\d$/.test(o.s) && o.c > 0 && i ? o : null;
   } catch { return null; }
 }
 const inviteLink = () => `${appBase()}#/w/${packLink(mySnap({ short: true }))}`;
 const INVITE_TEXT = { partner: 'Hey, here’s an invite to my cycle 💌', friend: 'Hey, here’s an invite to my cycle 🌿' };
 const myAud = () => state.profile.ptRel || ui.shareAudience || 'partner';
+// Her check-in, shared with everyone she connected (23 Nov 2026): body, mood, energy and cycle disruptors. Never notes or the journal.
+// Desire and intimacy go only to partners, on a second channel only partner links know (myPk).
+function myPk() { if (!state.profile.pk) { const a = new Uint8Array(8); crypto.getRandomValues(a); state.profile.pk = [...a].map(b => b.toString(36).padStart(2, '0')).join('').slice(0, 12); save(); } return state.profile.pk; }
+function myCheckin() {
+  if (state.profile.noMood) return {};
+  const l = getLog(todayISO()), o = {}, mo = l.moods || [], sy = l.symptoms || [], ds = (l.disrupt || []).filter(x => x !== 'Drugs');
+  if (mo.length) o.m = mo.slice(0, 6); if (sy.length) o.sy = sy.slice(0, 8); if (l.energy) o.e = +l.energy; if (ds.length) o.ds = ds.slice(0, 4);
+  if (Object.keys(o).length) o.md = todayISO();
+  return o;
+}
+function myIntimate() {
+  if (state.profile.noMood) return {};
+  const l = getLog(todayISO()), o = {};
+  if (l.drive) o.dr = +l.drive; if ((l.intim || []).length) o.x = l.intim.slice(0, 6);
+  if (Object.keys(o).length) o.md = todayISO();
+  return o;
+}
 function mySnap(o = {}) {
   const { stats } = M, last = stats.periods[stats.periods.length - 1];
   const aud = myAud();
@@ -10662,37 +10734,43 @@ function mySnap(o = {}) {
   if (ttcOn() && aud !== 'friend') snap.g = 1;
   if (lossCare() && state.profile.lossShare && aud !== 'friend') snap.l = 1; // she chose to share it: his view shows how to support her // trying for a baby: his page shows how he can help
   if (state.profile.thumb && !o.short) snap.t = state.profile.thumb;
-  const mo = getLog(todayISO()).moods || [];
-  if (!state.profile.noMood && mo.length) { snap.m = mo.slice(0, 6); snap.md = todayISO(); } // today's moods, shared as she logs them
+  if (aud !== 'friend') snap.k = myPk(); // partners also get her desire and intimacy, on their own channel
+  Object.assign(snap, myCheckin()); // today's check-in, shared as she logs it
+
   return snap;
 }
 // One link is enough: when she adds you, her app sends her own rhythm straight back to your inbox,
 // and both apps re-send after each new period so you stay in sync.
 async function syncTo(p) {
   if (!p.i || !M?.stats?.periods?.length) return false;
-  const snap = { ...mySnap({ short: true }), a: p.a, w: undefined };
+  const snap = { ...mySnap({ short: true }), a: p.a, w: undefined, k: p.a === 'friend' ? undefined : myPk() };
   try { const r = await fetch(RELAY + p.i, { method: 'POST', body: JSON.stringify({ k: 'pair', f: state.profile.name || 'Someone', fi: myInbox(), d: b64e(snap), t: myPic() }) }); return r.ok; } catch { return false; }
 }
 // Her latest rhythm also sits on a "-live" channel, so every link she ever sent (his too) opens up to date.
 async function publishLive() {
   const last = M?.stats?.periods?.length && C.iso(M.stats.periods[M.stats.periods.length - 1].start);
-  const { a, w, ...snap } = last ? mySnap({ short: true }) : {}, mk = snap.md ? snap.md + snap.m.join() : '';
+  const { a, w, k, ...snap } = last ? mySnap({ short: true }) : {}, px = myIntimate(), mk = JSON.stringify([snap.md, snap.m, snap.sy, snap.e, snap.ds, px]);
   const tk = (myPic() || '').slice(-24);
   if (!last || !state.profile.linkSent || (state.profile.liveS === last && state.profile.liveM === mk && state.profile.liveT === tk && Date.now() - (state.profile.liveAt || 0) < 6 * 36e5)) return;
   state.profile.liveM = mk;
+  fetch(`${RELAY}${myInbox()}-${myPk()}`, { method: 'POST', body: JSON.stringify(px) }).catch(() => {});
   try { const r = await fetch(`${RELAY}${myInbox()}-live`, { method: 'POST', body: JSON.stringify({ d: b64e(snap), t: myPic() }) }); if (r.ok) { state.profile.liveS = last; state.profile.liveT = tk; state.profile.liveAt = Date.now(); save(); } } catch {}
 }
-async function pullLive(i) {
+const lastMsg = async ch => { const txt = await (await fetch(`${RELAY}${ch}/json?poll=1&since=all`)).text(); const m = txt.split('\n').filter(Boolean).map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(x => x && x.event === 'message').pop(); return m && JSON.parse(m.message); };
+const LOG_KEYS = ['m', 'md', 'sy', 'e', 'ds', 'dr', 'x'];
+async function pullLive(i, k) {
   try {
-    const txt = await (await fetch(`${RELAY}${i}-live/json?poll=1&since=all`)).text();
-    const m = txt.split('\n').filter(Boolean).map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(x => x && x.event === 'message').pop();
-    const body = m && JSON.parse(m.message), snap = body && b64d(body.d || ''); if (snap && okPic(body.t)) snap.t = body.t; return snap && snap.s && snap.c ? snap : null;
+    const body = await lastMsg(`${i}-live`), snap = body && b64d(body.d || ''); if (snap && okPic(body.t)) snap.t = body.t;
+    if (!(snap && snap.s && snap.c)) return null;
+    if (k) { try { const px = await lastMsg(`${i}-${k}`); if (px && px.md && px.md === todayISO()) { if (+px.dr >= 1 && +px.dr <= 5) snap.dr = +px.dr; if (Array.isArray(px.x)) snap.x = px.x.filter(v => INTIMACY.some(([n]) => n === v)).slice(0, 6); } } catch {} }
+    return snap;
   } catch { return null; }
 }
-const fresher = (old, nw) => nw && (nw.s !== old.s || +!!nw.f !== +!!old.f || String(nw.m) + nw.md !== String(old.m) + old.md || +nw.c !== +old.c || +nw.p !== +old.p || nw.z !== old.z || nw.n !== old.n || +!!nw.l !== +!!old.l || (!!nw.t && nw.t !== old.t));
+const logSig = o => JSON.stringify(LOG_KEYS.map(k => o[k] ?? null));
+const fresher = (old, nw) => nw && (nw.s !== old.s || +!!nw.f !== +!!old.f || logSig(nw) !== logSig(old) || +nw.c !== +old.c || +nw.p !== +old.p || nw.z !== old.z || nw.n !== old.n || +!!nw.l !== +!!old.l || (!!nw.t && nw.t !== old.t));
 async function refreshPartners() {
   let changed = false;
-  for (const p of (state.partners || []).filter(x => x.i)) { const nw = await pullLive(p.i); if (fresher(p, nw)) { Object.assign(p, { n: nw.n, s: nw.s, c: nw.c, p: nw.p, z: nw.z, f: nw.f, m: nw.m, md: nw.md, l: nw.l }); if (nw.t) p.t = nw.t; changed = true; } }
+  for (const p of (state.partners || []).filter(x => x.i)) { const nw = await pullLive(p.i, p.a === 'friend' ? '' : p.k); if (fresher(p, nw)) { Object.assign(p, { n: nw.n, s: nw.s, c: nw.c, p: nw.p, z: nw.z, f: nw.f, l: nw.l }, Object.fromEntries(LOG_KEYS.map(k => [k, nw[k]]))); if (nw.t) p.t = nw.t; changed = true; } }
   if (changed) { save(); if (['partners', 'today'].includes(route().name)) render(); }
 }
 // a link that is opened (or his saved view): swap in her latest rhythm if she has logged a new period since
@@ -10700,8 +10778,8 @@ const liveChecked = new Set();
 async function refreshWith(d) {
   if (liveChecked.has(d)) return; liveChecked.add(d);
   const snap = b64d(d); if (!snap || !snap.i) return;
-  const nw = await pullLive(snap.i); if (!fresher(snap, nw)) return;
-  const nd = b64e({ ...snap, n: nw.n, s: nw.s, c: nw.c, p: nw.p, z: nw.z, f: nw.f, m: nw.m, md: nw.md }); liveChecked.add(nd);
+  const nw = await pullLive(snap.i, snap.a === 'friend' ? '' : snap.k); if (!fresher(snap, nw)) return;
+  const nd = b64e({ ...snap, n: nw.n, s: nw.s, c: nw.c, p: nw.p, z: nw.z, f: nw.f, ...Object.fromEntries(LOG_KEYS.map(k => [k, nw[k]])) }); liveChecked.add(nd);
   try { if (localStorage.getItem('uts.viewOnly') === d) localStorage.setItem('uts.viewOnly', nd); } catch {}
   if (route().name === 'with') history.replaceState(null, '', '#/with?d=' + nd);
   render();
@@ -10741,7 +10819,7 @@ function viewShare() {
       <div class="stepper-row"><span>Your name${state.profile.thumb ? ' and photo' : ''}<small>So they know it's you</small></span><span class="sh-tag">${icon('check', 13, 2.4)}Always</span></div>
       <div class="stepper-row"><span>Share period dates<small>Next period countdown</small></span><span class="sh-tag">${icon('check', 13, 2.4)}Always</span></div>
       <div class="stepper-row"><span>Share fertile window<small>Egg release and fertile days</small></span><button class="toggle ${state.profile.noFertile ? '' : 'on'}" data-action="shareFertile" role="switch" aria-checked="${!state.profile.noFertile}" aria-label="Share fertile window"><i></i></button></div>
-      <div class="stepper-row"><span>Share today's mood<small>Updates on its own as you log it</small></span><button class="toggle ${state.profile.noMood ? '' : 'on'}" data-action="shareMood" role="switch" aria-checked="${!state.profile.noMood}" aria-label="Share today's mood"><i></i></button></div>
+      <div class="stepper-row"><span>Share today's check-in<small>Body, mood and energy, plus desire for partners. Never your notes.</small></span><button class="toggle ${state.profile.noMood ? '' : 'on'}" data-action="shareMood" role="switch" aria-checked="${!state.profile.noMood}" aria-label="Share today's mood"><i></i></button></div>
       <div class="stepper-row"><span>Symptoms & notes<small>Never in the link</small></span><span class="sh-tag pv">${icon('lock', 13, 2.2)}Private</span></div>
     </section>
     <button class="btn btn-light btn-block sh-go" data-action="shareSend">${icon('heart', 18)} Share link with ${aud === 'partner' ? 'my partner' : 'friends'}</button>
@@ -10951,12 +11029,20 @@ const TKB_CORNERS = (c, flower) => { const f = flower
   return `<i class="tkb-c c1" aria-hidden="true">${f}</i><i class="tkb-c c2" aria-hidden="true">${f}</i><i class="tkb-c c3" aria-hidden="true">${f}</i><i class="tkb-c c4" aria-hidden="true">${f}</i>`; };
 // One date ticket per phase, with its own design, and a few ideas that change day to day: [emoji, title, what you'll do]
 const DATE_IDEAS = {
-  menstrual: [['🍿', 'Sofa Night', 'Sofa, blankets and her comfort film'], ['🛁', 'Slow Evening', 'A warm bath for her, then tea and a foot rub'], ['🍲', 'Soup and Stories', 'Cook a warm soup together, phones away']],
-  follicular: [['🎡', 'Something New', 'Try a new restaurant, class or day trip'], ['🎨', 'Make Something', 'A pottery or painting class for two'], ['🚲', 'Little Adventure', 'Bike or walk somewhere new to you both']],
-  ovulatory: [['🥂', 'A Night Out', 'Dinner out, dancing or an event'], ['🎶', 'Live Music', 'A gig, a jazz bar or a dance class'], ['🌅', 'Golden Hour', 'A sunset picnic somewhere with a view']],
-  luteal: [['🍲', 'Comfort Night', 'Home-cooked comfort food and an early night'], ['🕯️', 'Candle Dinner', 'Her favourite warm dish, candles, phones away'], ['🌿', 'Slow Walk', 'A slow walk in nature, then something warm']],
+  // 23 Nov 2026: more creative ones, from what couples share on TikTok and Instagram (colour hunt, alphabet date, gift challenge, date jar...)
+  menstrual: [['🍿', 'Sofa Night', 'Sofa, blankets and her comfort film'], ['🏰', 'Blanket Fort', 'Build a fort with fairy lights, her comfort film and a hot water bottle inside'], ['🛁', 'Slow Evening', 'A warm bath for her, then tea and a foot rub'], ['🧩', 'Puzzle Night', 'A big puzzle on the floor, warm tea and her favourite snacks'], ['🍲', 'Soup and Stories', 'Cook a warm soup together, phones away'], ['💆‍♀️', 'Spa at Home', 'A warm foot soak, face masks and a slow shoulder rub from you'], ['📼', 'Throwback Films', 'Each of you picks a film you loved at ten. Warm cocoa, no phones']],
+  follicular: [['🎡', 'Something New', 'Try a new restaurant, class or day trip'], ['🌈', 'Colour Hunt', 'Each picks a colour, wander town and photograph everything in it, then swap phones over coffee'], ['🎨', 'Make Something', 'A pottery or painting class for two'], ['🔤', 'Alphabet Date', 'Pick a letter and plan around it. B is a bakery, a bookshop and a bike ride'], ['🚲', 'Little Adventure', 'Bike or walk somewhere new to you both'], ['🧱', 'Build Night', 'A Lego set or a model to build together, music on'], ['🗺️', 'Mystery Day Out', 'One of you plans a day trip and keeps it a surprise until you leave']],
+  ovulatory: [['🥂', 'A Night Out', 'Dinner out, dancing or an event'], ['🛍️', 'Gift Challenge', 'Fifteen minutes and a small budget in one shop. Buy each other something that feels like them, reveal it over dinner'], ['🎶', 'Live Music', 'A gig, a jazz bar or a dance class'], ['📸', 'Photo Walk', 'A golden-hour walk taking portraits of each other'], ['🌅', 'Golden Hour', 'A sunset picnic somewhere with a view'], ['🎤', 'Karaoke Night', 'A private karaoke room or your living room. Duets are compulsory']],
+  luteal: [['🍲', 'Comfort Night', 'Home-cooked comfort food and an early night'], ['👩‍🍳', 'Cook-Off', 'Same ingredients, two dishes and a blind taste test. The loser does the dishes'], ['🕯️', 'Candle Dinner', 'Her favourite warm dish, candles, phones away'], ['🫙', 'Date Jar', 'Write twenty date ideas together, fold them into a jar and pull one each week'], ['🌿', 'Slow Walk', 'A slow walk in nature, then something warm'], ['🌌', 'Stargazing Drive', 'Blankets, a flask of warm tea and a playlist you made each other'], ['🎧', 'Playlist Swap', 'Make each other a playlist and listen to it on a slow walk']],
 };
-const dateIdea = info => { const L = DATE_IDEAS[info.phase] || DATE_IDEAS.follicular; return L[dayNum(new Date()) % L.length]; };
+const dateIdea = info => dateIdeas(info, 1)[0];
+// three different ideas for today, rotating daily (the first is the one on his ticket)
+const dateIdeas = (info, n = 3) => { const L = DATE_IDEAS[info.phase] || DATE_IDEAS.follicular, k = dayNum(new Date()) % L.length; return Array.from({ length: Math.min(n, L.length) }, (_, i) => L[(k + i) % L.length]); };
+const DTI_TINT = ['#fde9ee', '#eef3e2', '#f3ece4'];
+function dateCards(list, title = 'Date ideas', first = 'Tonight') {
+  return list.length ? `${sectionTitle(title)}
+    <div class="dti">${list.map(([e, t, d], i) => `<div class="dti-c ${i ? '' : 'big'}" style="--bg:${DTI_TINT[i % 3]};--r:${[-1.2, 1.5, -1][i % 3]}deg">${i ? '' : '<span class="fd-tape" aria-hidden="true"></span>'}<span class="dti-e" aria-hidden="true">${e}</span><span class="dti-t"><small>${i ? 'Or try' : first}</small><b>${t}</b><p>${d}</p></span></div>`).join('')}</div>` : '';
+}
 const dateSentKey = () => 'uts.dateSent', dateSentToday = () => { try { return localStorage.getItem(dateSentKey()) === todayISO(); } catch { return false; } };
 const VT_TITLE = t => [[/sofa|film|blanket/i, 'Sofa Night'], [/new|class|trip/i, 'Something New'], [/danc|event|out\b/i, 'A Night Out'], [/home|cook|comfort|early/i, 'Comfort Night']].find(([r]) => r.test(t))?.[1] || 'Us Two';
 const VT_PETAL = 'M0 0C-11-13-10-33 0-46C10-33 11-13 0 0Z';
@@ -11094,6 +11180,7 @@ function pvToday(info, name, sup, snap) {
   const when = warm ? 'Tonight, at home' : her > .7 ? `From ${hLabel(w + 7)}, your strongest hours` : `From ${hLabel(w + 11)}, when you’re calmer`;
   return `${duoBring(info)}
     ${dateSentToday() ? '' : (([, dt, dp]) => `<section class="pv2-vt" role="button" tabindex="0" data-action="pvDateSend" aria-label="Send ${name} this date">${vtTicket({ to: name, from: himP().n || 'Me', plan: dp, title: dt, ph, when: warm ? 'Tonight, at home' : `Today, ${hLabel(her > .7 ? w + 7 : w + 11)}`, note: `*Tap the ticket and it flies to ${esc(name)}’s phone.` })}</section>`)(dateIdea(info))}
+    ${(st => dateCards(dateIdeas(info, 3).slice(st ? 0 : 1), 'More date ideas', st ? 'Tonight' : 'Or try'))(dateSentToday())}
     ${snap && (snap.a || 'partner') === 'partner' ? `<button class="lb2 lbw dt-send" data-action="pvLove" aria-label="Send ${name} love">
       <span class="lb2-hearts" aria-hidden="true">${[0, 1, 2, 3].map(i => `<i style="--d:${i * .9}s;--x:${[18, 38, 62, 80][i]}%">${HEART(i % 2 ? '#f4c6d6' : '#e6809c')}</i>`).join('')}</span>
       <span class="lsw-env lbw-env">${loveBtnArt()}</span>
@@ -11455,6 +11542,7 @@ function viewWith(q) {
     <div class="pv-top">${back}${seg}</div>
     ${him && ui.hisTab === 'read' ? `${pvRead(snap, info, name)}</div>` : him && ui.hisTab === 'his' ? `<div class="pv2-title"><small>${himP().n ? `${esc(himP().n)}’s day` : 'Your day'} · ${fmt(today, { weekday: 'long', month: 'short', day: 'numeric' })}</small><h1>Your <b>24-hour drive</b></h1><p>Testosterone runs on a daily clock. Use it, and see what raises it.</p></div>${oakCard()}${snap.g ? `<section class="pv2-card pv2-warn">${icon('heart', 16)}<p><b>Trying for a baby?</b> Never take testosterone or “T boosters”. Extra testosterone shuts down your sperm. Sleep, lifting and food below are the safe way.</p></section>` : ''}${hisDay(info, name)}</div>` : `
     <section class="hub pt-stage pv-hero">${stageHero(info, Math.round(C.energyAt(info.cd, info.L, info.P) * 100), { nav: false, id: 'with', fert: !!snap.f && role === 'partner', title: `${name} is in her` })}</section>
+    ${herCheckin(snap, role === 'friend')}
     ${pvHerDay(info, S, sup)}
     ${role === 'partner' ? pvReadTeaser(info, him) : ''}
     ${snap.l && role === 'partner' ? pvLoss(name) : snap.g && role === 'partner' ? pvTTC(snap, info, name) : snap.f && role === 'partner' ? pvAvoid(snap, info, name) : ''}
