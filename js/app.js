@@ -8893,11 +8893,11 @@ function loveBtnArt() { return `<svg class="lb2-env" viewBox="0 0 64 56" aria-hi
 function loveBtn(p, big) {
   const art = loveBtnArt();
   const hearts = [0, 1, 2, 3].map(i => `<i style="--d:${i * .9}s;--x:${[18, 38, 62, 80][i]}%">${HEART(i % 2 ? '#f4c6d6' : '#e6809c')}</i>`).join('');
-  return `<button class="lb2 ${big ? 'big' : ''}" data-action="openLove" data-id="${p.id}" aria-label="Send love to ${esc(p.n)}">
+  return `<button class="lb2 lbw ${big ? 'big' : ''}" data-action="openLove" data-id="${p.id}" aria-label="Send love to ${esc(p.n)}">
     <span class="lb2-hearts" aria-hidden="true">${hearts}</span>
-    <span class="lb2-art">${art}${ptAvatar(p, 'sm')}</span>
-    <span class="lb2-t"><b>Send love to ${esc(p.n)}</b><small>A little heart lands on ${esc(p.n)}’s phone</small></span>
-    <span class="lb2-go">${icon('heart', 16, 2)}</span></button>`;
+    <span class="lsw-env lbw-env">${art}${ptAvatar(p, 'sm')}</span>
+    <span class="lb2-t"><small class="lsw-e">A little love note ${LSW_SPK('#f1b27c')}</small><b>Send love to <span class="lsw-n">${esc(p.n)}</span></b><small class="lbw-s">A little heart lands on ${esc(p.n)}’s phone</small></span>
+    <span class="lb2-go lbw-go">${icon('heart', 18, 2)}</span></button>`;
 }
 // You and them, two little bubbles joined by a dotted line with a heart: rose is always you, peach is always them.
 function ptPair(me, them, meLab = '', themLab = '') {
@@ -8972,7 +8972,7 @@ const PV_LOVE = ['kiss', 'think', 'love', 'miss']; // the only ones on his love 
 const CARE = [
   { k: 'eat', ic: 'bowl', g: '🍽️', t: 'Time to eat', s: 'says: time to eat something nourishing' },
   { k: 'water', ic: 'drop', g: '💧', t: 'Drink water', s: 'reminds you to drink some water' },
-  { k: 'rest', ic: 'moon', g: '🌙', t: 'Go to bed', s: 'says: time to rest, go to bed' },
+  { k: 'rest', ic: 'moon', g: '😴', t: 'Go to bed', s: 'says: time to rest, go to bed' },
   { k: 'walk', ic: 'leaf', g: '🌿', t: 'Fresh air', s: 'says: take a little walk outside' },
 ];
 const SIGNALS = [...LOVE, ...CARE];
@@ -9063,17 +9063,27 @@ async function startSignals() {
 // Pastel disc + ink colour for each love tile, so the sheet reads like a little box of stickers.
 const LS_TINT = { miss: ['#fde3ea', '#c0507a'], hug: ['#fbe0e8', '#b0475f'], kiss: ['#f9d3dd', '#c2385c'], tea: ['#f3ead9', '#8a6a3a'], think: ['#ece6f6', '#6d5a9c'], strong: ['#fbefcf', '#a8781a'], date: ['#e6e4f2', '#4f4a82'], choc: ['#f0e0d6', '#7a4a36'], love: ['#ffd9e1', '#e0405f'],
   eat: ['#e9f0d8', '#4f6a2a'], water: ['#dcecf0', '#2f6a7a'], rest: ['#e6e4f2', '#4f4a82'], walk: ['#e3ecc9', '#4f6a2a'] };
+// The love sheet (23 Nov 2026, her ask: whimsical like the partner card): a dotted paper sheet with a taped envelope,
+// her name underlined in peach and every message a little rotated sticker with a stitched edge and a big emoji.
+const LSW_R = [-3, 2, -1.5, 2.5, -2, 1.5, -2.5, 3, -1, 2, -2.5, 1.5, -1.5];
+const LSW_SPK = c => `<svg class="lsw-spk" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c.8 6.5 3.5 9.2 10 10-6.5.8-9.2 3.5-10 10-.8-6.5-3.5-9.2-10-10 6.5-.8 9.2-3.5 10-10z" fill="${c}"/></svg>`;
+function lswTile(l, i, action) {
+  const [bg, ink] = LS_TINT[l.k] || ['#fbe0e8', '#b0475f'];
+  return `<button class="lsw-s ${i % 4 === 1 ? 'tp' : ''}" data-action="${action}" data-k="${l.k}" style="--bg:${bg};--ink:${ink};--r:${LSW_R[i % LSW_R.length]}deg;--i:${i}"><span class="lsw-d"><b class="ls2-emo">${l.g}</b></span><small>${l.t}</small></button>`;
+}
+function lswHead(name, av, sub) {
+  return `<div class="lsw-head"><span class="lsw-env">${loveBtnArt()}${av || ''}</span><div><small class="lsw-e">A little love note ${LSW_SPK('#f1b27c')}</small><h3>Send love to <span class="lsw-n">${esc(name)}</span></h3><p>${sub}</p></div></div>`;
+}
 function loveSheet() {
   const p = (state.partners || []).find(x => x.id === ui.loveFor); if (!p) return '';
   const sent = (state.loveSent || []).filter(x => x.to === p.id).length;
-  const tile = l => { const [bg, ink] = LS_TINT[l.k] || ['#fbe0e8', '#b0475f']; return `<button class="ls2-b" data-action="sendLove" data-k="${l.k}" style="--bg:${bg};--ink:${ink}"><span class="ls2-ic">${icon(l.ic, 22, 1.9)}</span><small>${l.t}</small></button>`; };
-  return `<div class="love-sheet" data-action="loveClose"><div class="ls-card ls2" data-action="noop">
-    <div class="ls-grip"></div>
-    <div class="ls2-head"><span class="lb2-art">${loveBtnArt()}${ptAvatar(p, 'sm')}</span><div><h3>Send love to ${esc(p.n)}</h3><p>${sent ? `${sent} ${sent === 1 ? 'heart' : 'hearts'} sent so far` : 'Tap one and it lands on her phone'}</p></div></div>
-    <div class="ls2-k">${icon('heart', 13, 2)} Love</div>
-    <div class="ls2-grid love">${LOVE.map(tile).join('')}</div>
-    <div class="ls2-k care">${icon('leaf', 13, 2)} Care nudges</div>
-    <div class="ls2-grid">${CARE.map(tile).join('')}</div></div></div>`;
+  return `<div class="love-sheet" data-action="loveClose"><div class="ls-card ls2 lsw" data-action="noop">
+    <div class="ls-grip"></div>${LSW_SPK('#e7a3bb')}
+    ${lswHead(p.n, ptAvatar(p, 'sm'), sent ? `${sent} ${sent === 1 ? 'heart' : 'hearts'} sent so far` : 'Tap one and it lands on her phone')}
+    <div class="lsw-k">💌 Love</div>
+    <div class="lsw-grid">${LOVE.map((l, i) => lswTile(l, i, 'sendLove')).join('')}</div>
+    <div class="lsw-k care">🌱 Care nudges</div>
+    <div class="lsw-grid care">${CARE.map((l, i) => lswTile(l, i + LOVE.length, 'sendLove')).join('')}</div></div></div>`;
 }
 function fmtAgo(t) { const m = Math.round((Date.now() - t) / 60000); return m < 1 ? 'just now' : m < 60 ? `${m} min ago` : m < 1440 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} d ago`; }
 function heartBurst(x, y) {
@@ -10718,7 +10728,7 @@ function partnerCare(info, name) {
   return `${sectionTitle('Her stress today')}
     <section class="card pt-stress lv${lvl}"><div class="pts-top"><b>${['', 'Low', 'Medium', 'High'][lvl]}</b><span class="pts-bar">${[1, 2, 3].map(i => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</span></div><p>${PT_STRESS[w]}</p></section>
     ${sectionTitle(`Best to eat for ${name}`)}
-    <div class="hscroll pt-eat">${foods.map(([f, why]) => `<div class="pte"><img src="${foodPhoto(f, 300)}" alt="" loading="lazy"><b>${esc(f)}</b><small>For ${why.toLowerCase()}</small></div>`).join('')}</div>
+    <div class="hscroll pt-eat">${foods.map(([f, why]) => `<button class="pte" data-action="pteOpen" data-f="${esc(f)}" data-n="${esc(why)}" data-ph="${info.phase}" data-w="${warm ? 1 : ''}" data-who="${name}"><img src="${foodPhoto(f, 300)}" alt="" loading="lazy"><b>${esc(f)}</b><small>For ${why.toLowerCase()}</small></button>`).join('')}</div>
     ${warm ? `<p class="fine pt-warm">${icon('thermo', 13)} Serve it warm and cooked these days. No iced drinks or cold raw food.</p>` : ''}`;
 }
 // ---- His day: men run on a 24-hour hormone rhythm. A small page for the man she shares her link with. ----
@@ -11002,11 +11012,11 @@ function pvToday(info, name, sup, snap) {
     <section class="pv2-card pv2-bring"><div class="pv2-h"><b>Bring her</b><small>In season now · on the way home</small></div>
       <div class="pv2-snacks three">${snacks.map(([e, n, why]) => `<div class="pv2-sn">${pvEmo(e)}<b>${n}</b><small>${why}</small></div>`).join('')}</div></section>
     ${dateSentToday() ? '' : (([, dt, dp]) => `<section class="pv2-vt" role="button" tabindex="0" data-action="pvDateSend" aria-label="Send ${name} this date">${vtTicket({ to: name, from: himP().n || 'Me', plan: dp, title: dt, ph, when: warm ? 'Tonight, at home' : `Today, ${hLabel(her > .7 ? w + 7 : w + 11)}`, note: `*Tap the ticket and it flies to ${esc(name)}’s phone.` })}</section>`)(dateIdea(info))}
-    ${snap && (snap.a || 'partner') === 'partner' ? `<button class="lb2 dt-send" data-action="pvLove" aria-label="Send ${name} love">
+    ${snap && (snap.a || 'partner') === 'partner' ? `<button class="lb2 lbw dt-send" data-action="pvLove" aria-label="Send ${name} love">
       <span class="lb2-hearts" aria-hidden="true">${[0, 1, 2, 3].map(i => `<i style="--d:${i * .9}s;--x:${[18, 38, 62, 80][i]}%">${HEART(i % 2 ? '#f4c6d6' : '#e6809c')}</i>`).join('')}</span>
-      <span class="lb2-art">${loveBtnArt()}</span>
-      <span class="lb2-t"><b>Send ${name} love</b><small>Kisses, love you or I miss you</small></span>
-      <span class="lb2-go">${icon('heart', 16, 2)}</span></button>` : ''}`;
+      <span class="lsw-env lbw-env">${loveBtnArt()}</span>
+      <span class="lb2-t"><small class="lsw-e">A little love note ${LSW_SPK('#f1b27c')}</small><b>Send <span class="lsw-n">${name}</span> love</b><small class="lbw-s">Kisses, love you or I miss you</small></span>
+      <span class="lb2-go lbw-go">${icon('heart', 18, 2)}</span></button>` : ''}`;
 }
 // Trying for a baby: when she shares that goal, he gets the timing and the few things that make his part count.
 // His part when she is trying for a baby: the habits with the most research behind them, as tiles.
@@ -11687,6 +11697,14 @@ const actions = {
     const open = !lv.classList.contains('open'), pp = lv.querySelector('.lv-paper');
     lv.style.setProperty('--ph', `${pp.offsetHeight}px`);
     lv.classList.toggle('open', open); lv.setAttribute('aria-expanded', open);
+  },
+  // a food on her partner's page: the tile hops and its sheet rises with what it gives her, how much and when (23 Nov 2026)
+  pteOpen: (d, el) => {
+    const nd = (NUTRITION[d.ph]?.needs || []).find(x => x.n === d.n); if (!nd) return;
+    const [amt, tag] = SYMPTOM_FOOD_INFO[d.f] || ['', ''], who = d.who || 'her';
+    sfOpen(el, { src: foodPhoto(d.f, 600), round: true, name: d.f, eyebrow: `Good for ${who} now · ${d.n}`, tag: tag || `Rich in ${d.n.toLowerCase()}`, why: nd.why,
+      rows: [['bowl', 'How much', amt || 'A normal portion with a meal'], ['spark', 'What she needs', `${d.n}: ${nd.target}`], ['leaf', 'How to serve it', d.w ? 'Warm and cooked these days, no iced drinks or cold raw food' : 'Fresh and simple, as close to nature as it gets']],
+      study: null, care: '' });
   },
   ffPick: (d, el) => {
     const s = d.s, warm = warmWindow(M.info), x = ffList(s, warm)[+d.i]; if (!x) return;
@@ -12404,10 +12422,9 @@ const actions = {
   pvLove: () => { // the little love tiles, sent live to her phone
     const snap = pvSnap(); if (!snap) return;
     document.querySelector('.love-sheet.pv')?.remove();
-    const tile = l => { const [bg, ink] = LS_TINT[l.k] || ['#fbe0e8', '#b0475f']; return `<button class="ls2-b" data-action="pvLoveSend" data-k="${l.k}" style="--bg:${bg};--ink:${ink}"><span class="ls2-ic"><b class="ls2-emo">${l.g}</b></span><small>${l.t}</small></button>`; };
-    $app.insertAdjacentHTML('beforeend', `<div class="love-sheet pv" data-action="pvLoveClose"><div class="ls-card ls2" data-action="noop"><div class="ls-grip"></div>
-      <div class="ls2-head"><span class="lb2-art">${loveBtnArt()}</span><div><h3>Send love to ${esc(snap.n || 'her')}</h3><p>Tap one and it lands on her phone</p></div></div>
-      <div class="ls2-grid love four">${PV_LOVE.map(k => LOVE.find(l => l.k === k)).map(tile).join('')}</div></div></div>`);
+    $app.insertAdjacentHTML('beforeend', `<div class="love-sheet pv" data-action="pvLoveClose"><div class="ls-card ls2 lsw" data-action="noop"><div class="ls-grip"></div>${LSW_SPK('#e7a3bb')}
+      ${lswHead(snap.n || 'her', '', 'Tap one and it lands on her phone')}
+      <div class="lsw-grid four">${PV_LOVE.map(k => LOVE.find(l => l.k === k)).map((l, i) => lswTile(l, i, 'pvLoveSend')).join('')}</div></div></div>`);
   },
   pvLoveClose: () => document.querySelector('.love-sheet.pv')?.remove(),
   pvLoveSend: async (d, el) => {
