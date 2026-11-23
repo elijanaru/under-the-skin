@@ -13586,7 +13586,7 @@ html .rm-it > b { order: 2; flex: none; max-width: 45%; text-align: right; font:
 .fw-key i.egg { background: #fff; box-shadow: inset 0 0 0 1.5px #20301a; }
 
 /* His page duo: the 3D plate sat on a canvas wider than its tile and was cut at the sides; it now fits inside */
-html .pv2-3d.duo-v:not(.tea) .cup3d-w canvas.teacup3d { inset: 8%; width: 84%; height: 84%; }
+html .pv2-3d.duo-v:not(.tea) .cup3d-w canvas.teacup3d { inset: 0; width: 100%; height: 100%; }
 /* a card swapped in place after a tap does not replay its entrance */
 .pv-page > .soft { animation: none !important; }
 .pv-page > .soft .hd-gauge g, .pv-page > .soft .fw-col i { animation: none !important; }
