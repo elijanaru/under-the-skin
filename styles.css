@@ -18036,3 +18036,25 @@ html .sy-rel.picked { transform: none; box-shadow: none; }
 .sy-rel.picked .sy-pol { transform: rotate(0) scale(1.04); box-shadow: 0 0 0 3px #e7a3bb, 0 18px 30px -16px rgba(32,48,26,.55); }
 html .sy-rel.picked .sy-ph { transform: none; }
 @media (prefers-reduced-motion: no-preference) { html .sy-flow[data-rel=""] .sy-q1 .sy-rel { animation: syPop .55s cubic-bezier(.2,1.3,.4,1) both; } html .sy-flow[data-rel=""] .sy-q1 .sy-rel + .sy-rel { animation-delay: .1s; } }
+
+/* Woman or man (23 Nov 2026): the same paper card and taped polaroids as "Who are you adding", cats on soft colour */
+html .sy-flow .sy-st.you:not(.is-done) { grid-template-columns: 1fr; }
+html .sy-flow .sy-st.you:not(.is-done) > .sy-n, html .sy-flow .sy-st.you:not(.is-done) .sy-who, html .sy-flow .sy-st.you:not(.is-done)::before { display: none; }
+html .sy-flow .sy-st.you:not(.is-done) .sy-c { position: relative; border: 0; padding: 26px 16px 28px; border-radius: 32px; background: #fff radial-gradient(circle, rgba(236,143,166,.2) 1px, transparent 1.4px) 0 0 / 14px 14px; }
+.sy-q2 { text-align: center; }
+html .sy-q2 .sy-rel-chip { justify-self: center; margin: 0 auto 12px; }
+html .sy-q2 > b { display: block; font-size: 24px; line-height: 1.2; font-weight: 500; letter-spacing: -.01em; color: #20301a; text-wrap: balance; }
+html .sy-q2 .sy-pick { gap: 14px; margin-top: 22px; }
+html .sy-rel .sy-ph-cat { display: grid; place-items: center; background: radial-gradient(circle at 50% 42%, #fff 0 22%, #fbe3eb 70%); }
+html .sy-gen-m .sy-ph-cat { background: radial-gradient(circle at 50% 42%, #fff 0 22%, #e6eed4 70%); }
+html .sy-ph-cat .cat-f { width: 78%; height: auto; }
+.sy-gen-m .sy-pol { transform: rotate(3deg); }
+.sy-gen-m .sy-tape { background: repeating-linear-gradient(90deg, rgba(169,194,122,.65) 0 7px, rgba(255,255,255,.65) 7px 11px); transform: rotate(5deg); }
+html .sy-gen-m .sy-rel-e { background: #e9f0d8; }
+html .sy-opt.sy-gen.on { box-shadow: none; }
+.sy-gen.on .sy-pol { transform: rotate(0) scale(1.04); box-shadow: 0 0 0 3px #304023, 0 18px 30px -16px rgba(32,48,26,.55); }
+html .sy-flow .sy-st.you .sy-send { justify-content: center; margin-top: 22px; }
+@media (prefers-reduced-motion: no-preference) {
+  html .sy-flow .sy-q2:not([hidden]) .sy-gen { animation: syPop .55s cubic-bezier(.2,1.3,.4,1) both; }
+  html .sy-flow .sy-q2:not([hidden]) .sy-gen + .sy-gen { animation-delay: .1s; }
+}

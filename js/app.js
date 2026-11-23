@@ -9151,8 +9151,8 @@ function viewPartners(id) {
         <div class="sy-who-q sy-q1" ${rel ? 'hidden' : ''}>${LSW_SPK('#e7a3bb')}<b>Who are you adding?</b>
           <div class="sy-pick">${[['partner', 'My partner', '💞', 'images/partner-hands.jpg'], ['friend', 'A friend', '🌿', 'images/friends-sunset.webp']].map(([k, t, e, ph]) => `<button class="sy-opt sy-rel sy-ph-${k}" data-action="ptRel" data-v="${k}" aria-label="${t}"><span class="sy-pol"><span class="sy-tape" aria-hidden="true"></span><img class="sy-ph" src="${ph}" alt="" loading="lazy" decoding="async"><span class="sy-rel-e" aria-hidden="true">${e}</span></span><b class="sy-rel-n">${t}</b></button>`).join('')}</div></div>
         <div class="sy-who-q sy-q2" ${rel ? '' : 'hidden'}><button class="sy-rel-chip" data-action="ptRel" data-v=""><span class="sy-if-fr">🌿 A friend</span><span class="sy-if-pt">💞 My partner</span> <u>Change</u></button>
-          <b><span class="sy-if-fr">Is your friend a woman or a man?</span><span class="sy-if-pt">Is your partner a woman or a man?</span></b><small>So we send the right kind of link.</small>
-          <div class="sy-pick">${[['w', 'A woman'], ['m', 'A man']].map(([k, t]) => `<button class="sy-opt sy-cat ${who === k ? 'on' : ''}" data-action="ptWho" data-v="${k}" aria-pressed="${who === k}">${catFace(k)}<b>${t}</b></button>`).join('')}</div></div>
+          <b><span class="sy-if-fr">Is your friend a woman or a man?</span><span class="sy-if-pt">Is your partner a woman or a man?</span></b>
+          <div class="sy-pick">${[['w', 'A woman', '🌸'], ['m', 'A man', '🍃']].map(([k, t, e]) => `<button class="sy-opt sy-rel sy-gen sy-gen-${k} ${who === k ? 'on' : ''}" data-action="ptWho" data-v="${k}" aria-pressed="${who === k}" aria-label="${t}"><span class="sy-pol"><span class="sy-tape" aria-hidden="true"></span><span class="sy-ph sy-ph-cat">${catFace(k)}</span><span class="sy-rel-e" aria-hidden="true">${e}</span></span><b class="sy-rel-n">${t}</b></button>`).join('')}</div></div>
         <div class="sy-send" ${who ? '' : 'hidden'}><button class="btn btn-dark" data-action="shareSend">${icon('share', 16)} Send link</button><button class="btn btn-light" data-action="shareEmail">${icon('mail', 16)} Email it</button></div></div></li>
       <li class="sy-st them sy-him ${sent ? 'is-done' : ''}" ${who === 'm' ? '' : 'hidden'}>${sent ? done() : '<span class="sy-n">02</span>'}<div class="sy-c">
         <span class="sy-who">Him</span><b>He opens the link</b><small><span class="sy-if-fr">No account and no tracking. He sees your phase, your social battery and the best days to meet up. It updates every day.</span><span class="sy-if-pt">No account and no tracking. He sees your phase, energy and how to show up, plus My day: his own 24-hour hormone rhythm. It updates every day and he can save it to his home screen.</span></small></div></li>
@@ -9170,7 +9170,7 @@ function syApply() {
   $('.sy-q1').hidden = !!rel; $('.sy-q2').hidden = !rel; $('.sy-send').hidden = !who;
   f.querySelectorAll('.sy-rel.picked').forEach(b => b.classList.remove('picked'));
   $('.sy-him').hidden = who !== 'm'; $('.sy-her').hidden = who !== 'w';
-  f.querySelectorAll('.sy-cat').forEach(b => { const on = b.dataset.v === who; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+  f.querySelectorAll('.sy-gen').forEach(b => { const on = b.dataset.v === who; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
   document.querySelector('.sy-prog .sy-p2')?.classList.toggle('on', who === 'm' ? !!me.linkSent : got);
 }
 // Partner page: redraw only the connect steps (no full page refresh, photo and scroll stay put).
