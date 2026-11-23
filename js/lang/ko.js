@@ -6002,4 +6002,5 @@ export default {"+ Cayenne":"+ 카옌페퍼",
 "Friends, family, partners":"친구, 가족, 파트너",
 "How are you feeling today?":"오늘 기분은 어때요?",
 "Your body is under more strain today. Ten slow minutes now lowers cortisol before bed.":"오늘은 몸이 더 지쳐 있어요. 지금 천천히 10분만 쉬면 잠들기 전 코르티솔이 내려가요.",
-"Your hormones are low now. Extra sleep helps mood and cramps.":"지금은 호르몬이 낮은 시기예요. 조금 더 자면 기분과 생리통에 도움이 돼요."};
+"Your hormones are low now. Extra sleep helps mood and cramps.":"지금은 호르몬이 낮은 시기예요. 조금 더 자면 기분과 생리통에 도움이 돼요.",
+"<t0><x1/></t0>Connect with somebody <x2/>":"<t0><x1/></t0>누군가와 연결하기 <x2/>"};

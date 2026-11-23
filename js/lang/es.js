@@ -6003,4 +6003,5 @@ export default {"+ Cayenne":"+ Cayena",
 "Friends, family, partners":"Amigas, familia, pareja",
 "How are you feeling today?":"¿Cómo te sientes hoy?",
 "Your body is under more strain today. Ten slow minutes now lowers cortisol before bed.":"Hoy tu cuerpo carga con más tensión. Diez minutos con calma ahora bajan el cortisol antes de dormir.",
-"Your hormones are low now. Extra sleep helps mood and cramps.":"Tus hormonas están bajas ahora. Dormir un poco más ayuda con el ánimo y los cólicos."};
+"Your hormones are low now. Extra sleep helps mood and cramps.":"Tus hormonas están bajas ahora. Dormir un poco más ayuda con el ánimo y los cólicos.",
+"<t0><x1/></t0>Connect with somebody <x2/>":"<t0><x1/></t0>Conecta con alguien <x2/>"};
