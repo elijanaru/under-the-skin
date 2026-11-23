@@ -17676,3 +17676,74 @@ html .en .card.en-meters, html .en .card.en-parts, html .en .card.en-curve, html
   box-shadow: 0 14px 34px rgba(120,70,90,.1) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
 html .en .en-why { background: none !important; box-shadow: none !important; padding: 0 !important; border: 0 !important; }
 .en-ease b { display: block; } .en-ease p { margin: 2px 0 0; }
+
+/* Partner sharing, 23 Nov 2026: whimsical and colour-coded. Rose is always you, peach is always them. */
+:root { --pt-you: #e7a3bb; --pt-you-l: #fbe8ef; --pt-you-d: #b5577a; --pt-them: #f1b27c; --pt-them-l: #fdeedf; --pt-them-d: #b06a2c; }
+html .pc { position: relative; display: grid; width: 100%; padding: 16px 16px 18px; border: 1px solid rgba(48,64,35,.08); border-radius: 32px; overflow: hidden; text-align: left; font-family: var(--font); color: #20301a; cursor: pointer;
+  background: radial-gradient(120% 80% at 0% 0%, #fdf2f5 0%, transparent 60%), radial-gradient(120% 90% at 100% 100%, #fef3e8 0%, transparent 60%), #fff; box-shadow: 0 18px 44px rgba(120,70,90,.12); }
+html .pc::before, html .ptp-hero::before { content: ''; position: absolute; right: 18px; top: auto; bottom: 22px; width: 54px; height: 54px; pointer-events: none; opacity: .75;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 54 54' fill='none' stroke='%23e7a3bb' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M40 6v8M36 10h8M12 30v6M9 33h6'/%3E%3Ccircle cx='46' cy='34' r='1.6' fill='%23f1b27c' stroke='none'/%3E%3C/svg%3E") no-repeat center / contain; }
+html .pc-pol { position: relative; display: block; margin: 6px 6px 0; padding: 8px 8px 22px; background: #fff; border-radius: 18px; transform: rotate(-2.2deg); box-shadow: 0 10px 24px rgba(120,70,90,.16), 0 1px 0 rgba(48,64,35,.05); }
+html .pc-pol img { display: block; width: 100%; height: 160px; object-fit: cover; object-position: 50% 62%; border-radius: 12px; }
+html .pc-tape { position: absolute; z-index: 1; top: -9px; left: 50%; width: 86px; height: 22px; margin-left: -43px; transform: rotate(3deg); border-radius: 3px; background: repeating-linear-gradient(90deg, rgba(231,163,187,.55) 0 8px, rgba(251,232,239,.7) 8px 16px); box-shadow: 0 1px 2px rgba(120,70,90,.12); }
+html .pc-pair { display: flex; align-items: flex-start; justify-content: center; margin: -30px auto 0; position: relative; z-index: 2; }
+html .pc-av { position: relative; flex: none; width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; overflow: visible; font-size: 20px; font-weight: 500; }
+html .pc-av > img, html .pc-av > .cat-f { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+html .pc-av > .cat-f { width: 82%; height: 82%; border-radius: 0; }
+html .pc-av.you { background: var(--pt-you-l); box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--pt-you), 0 8px 18px rgba(181,87,122,.22); }
+html .pc-av.them { background: var(--pt-them-l); color: var(--pt-them-d); box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--pt-them), 0 8px 18px rgba(176,106,44,.2); }
+html .pc-av small { position: absolute; top: calc(100% + 10px); left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 12.5px; font-weight: 500; }
+html .pc-av.you small { color: var(--pt-you-d); } html .pc-av.them small { color: var(--pt-them-d); }
+html .pc-link { width: 92px; height: 34px; margin: 8px -4px 0; }
+html .pc-heart { transform-origin: 60px 18px; animation: pcBeat 2.6s ease-in-out infinite; }
+@keyframes pcBeat { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-3px) scale(1.1); } }
+html .pc-b { display: grid; gap: 6px; padding: 14px 6px 0; }
+html .pc-e { font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; font-weight: 500; color: var(--pt-you-d); }
+html .pc-t { font-size: 23px; font-weight: 500; letter-spacing: -.02em; line-height: 1.15; }
+html .pc-s { font-size: 14.5px; line-height: 1.45; color: rgba(32,48,26,.72); }
+html .pc-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+html .pc-tags i { font-style: normal; font-size: 12.5px; padding: 5px 11px; border-radius: 99px; }
+html .pc-tags .you { background: var(--pt-you-l); color: var(--pt-you-d); }
+html .pc-tags .them { background: var(--pt-them-l); color: var(--pt-them-d); }
+html .pc-tags .both { background: linear-gradient(90deg, var(--pt-you-l), var(--pt-them-l)); color: #6b4a52; }
+html .pc-go { justify-self: start; display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 11px 17px; border-radius: 99px; background: #20301a; color: #fff; font-size: 14px; }
+html .pcw .tf-hide { top: 22px; right: 22px; }
+html .pc:active .pc-pol { transform: rotate(-1deg) scale(.99); }
+html .pc-pol, html .pc:active .pc-pol { transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+
+/* the partner page */
+html .ptp-hero { position: relative; margin-top: 10px; padding: 16px 16px 20px; border-radius: 34px; text-align: center; background: radial-gradient(120% 70% at 0% 0%, #fdf2f5, transparent 60%), radial-gradient(120% 80% at 100% 100%, #fef3e8, transparent 60%), #fff; box-shadow: 0 18px 50px rgba(120,70,90,.13); }
+html .ptp-hero::before { bottom: 18px; }
+html .ptp-pol img { height: 190px; }
+html .ptp-hero .pc-pair { margin-top: -34px; }
+html .ptp-hero .pc-av { width: 68px; height: 68px; }
+html .ptp-hero .pc-link { width: 110px; }
+html .view .ptp-h { margin: 38px 0 6px; font-size: 29px; font-weight: 400; letter-spacing: -.03em; line-height: 1.12; color: #20301a; text-shadow: none; }
+html .view .ptp-h span { color: var(--pt-you-d); text-shadow: none; }
+html .ptp-sub { margin: 0 auto; max-width: 290px; font-size: 14.5px; line-height: 1.5; color: rgba(32,48,26,.74); }
+html .ptp-key { display: flex; justify-content: center; gap: 16px; margin-top: 14px; font-size: 12.5px; font-weight: 500; }
+html .ptp-key span { display: inline-flex; align-items: center; gap: 6px; }
+html .ptp-key i { width: 10px; height: 10px; border-radius: 50%; }
+html .ptp-key .you { color: var(--pt-you-d); } html .ptp-key .you i { background: var(--pt-you); }
+html .ptp-key .them { color: var(--pt-them-d); } html .ptp-key .them i { background: var(--pt-them); }
+html .ptp-see { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+html .ptp-see span { display: grid; justify-items: center; gap: 8px; padding: 14px 6px 13px; border-radius: 22px; text-align: center; }
+html .ptp-see b { font-size: 12.5px; font-weight: 500; line-height: 1.25; }
+html .ptp-see svg { width: 34px; height: 34px; padding: 8px; border-radius: 50%; background: #fff; }
+html .ptp-see .you { background: var(--pt-you-l); color: var(--pt-you-d); }
+html .ptp-see .them { background: var(--pt-them-l); color: var(--pt-them-d); }
+html .sy-st.you .sy-n:not(.done) { color: var(--pt-you-d); border-color: var(--pt-you); background: var(--pt-you-l); box-shadow: none; }
+html .sy-st.them .sy-n:not(.done) { color: var(--pt-them-d); border-color: var(--pt-them); background: var(--pt-them-l); box-shadow: none; }
+html .sy-st.you .sy-n.done { background: var(--pt-you-d); border-color: var(--pt-you-d); }
+html .sy-st.them .sy-n.done { background: var(--pt-them-d); border-color: var(--pt-them-d); }
+html .sy-st.you .sy-c { border-left: 4px solid var(--pt-you); }
+html .sy-st.them .sy-c { background: #fff; border: 1px solid rgba(48,64,35,.06); border-left: 4px solid var(--pt-them); color: #20301a; }
+html .sy-st.them .sy-c small { color: rgba(32,48,26,.74); }
+html .sy-st .sy-who { justify-self: start; width: max-content; padding: 3px 10px; border-radius: 99px; font-size: 10.5px; letter-spacing: .14em; font-weight: 600; }
+html .sy-st.you .sy-who { background: var(--pt-you-l); color: var(--pt-you-d); }
+html .sy-st.them .sy-who { background: var(--pt-them-l); color: var(--pt-them-d); }
+html .sy-st:not(:last-child)::before { background: linear-gradient(to bottom, var(--pt-you), var(--pt-them)); opacity: .7; }
+html .sy-head .hud { color: rgba(255,255,255,.95); text-shadow: 0 1px 6px rgba(48,64,35,.3); }
+html .sy-prog i { background: rgba(255,255,255,.6); }
+html .sy-prog i.on:first-child { background: var(--pt-you-d); box-shadow: none; } html .sy-prog i.on:last-child { background: var(--pt-them-d); box-shadow: none; }
+@media (prefers-reduced-motion: reduce) { html .pc-heart { animation: none; } }

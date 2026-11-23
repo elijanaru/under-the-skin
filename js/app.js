@@ -2990,7 +2990,7 @@ const FX_CATS = [['recipes', 'Recipes'], ['season', 'In season'], ['foods', 'Sup
 const FX_GUIDE = { vegan: 'Vegan guide', veg: 'Veggie guide', pesc: 'Pesci guide', animal: 'Primal guide', all: 'Your food guide' };
 function fxCats() { const d = myDiet(), L = [...FX_CATS], sn = apoSeason(); L.splice(3, 0, ['guide', FX_GUIDE[d] || 'Diet guides', `images/fx/guide-${FX_GUIDE[d] ? d : 'all'}.webp`]);
   // the cold-season rituals sit right next to her diet guide (16 Nov 2026, her call)
-  if (['Autumn', 'Winter'].includes(sn)) { const r = ritList()[0]; if (r) L.splice(4, 0, ['rituals', `${sn} rituals`, teaPhoto(r.r[0], 160, 160)]); }
+  if (['Autumn', 'Winter'].includes(sn)) { const r = ritList()[0]; if (r) L.splice(4, 0, ['rituals', `${sn} rituals`, 'images/autumn-candle.webp']); }
   return L; }
 function foodExplore(phase, info) {
   const CATS = fxCats(), k = CATS.some(c => c[0] === ui.fxCat) ? ui.fxCat : 'recipes', name = PHASES[phase].name, warm = warmWindow(info);
@@ -8898,16 +8898,26 @@ function loveBtn(p, big) {
     <span class="lb2-t"><b>Send love to ${esc(p.n)}</b><small>A little heart lands on ${esc(p.n)}’s phone</small></span>
     <span class="lb2-go">${icon('heart', 16, 2)}</span></button>`;
 }
+// You and them, two little bubbles joined by a dotted line with a heart: rose is always you, peach is always them.
+function ptPair(me, them, meLab = '', themLab = '') {
+  const mine = me && (me.photo || me.t), theirs = them && (them.photo || them.t);
+  return `<span class="pc-pair" aria-hidden="true">
+    <span class="pc-av you">${mine ? `<img src="${esc(mine)}" alt="">` : catFace('w')}${meLab ? `<small>${meLab}</small>` : ''}</span>
+    <svg class="pc-link" viewBox="0 0 120 40"><path d="M6 26 Q60 -4 114 26" fill="none" stroke="#e7a9be" stroke-width="2" stroke-dasharray="1 7" stroke-linecap="round"/><path class="pc-heart" d="M60 24s-7-4.3-7-9.5A3.9 3.9 0 0 1 60 12.2a3.9 3.9 0 0 1 7 2.3C67 19.7 60 24 60 24z" fill="#ec8fae"/></svg>
+    <span class="pc-av them">${theirs ? `<img src="${esc(theirs)}" alt="">` : them ? esc((them.n || '?')[0]) : icon('plus', 20)}${themLab ? `<small>${themLab}</small>` : ''}</span></span>`;
+}
 function partnersCard(info) {
   const ps = state.partners || [];
   if (state.hidePartner) return '';
   if (!ps.length) return `${sectionTitle('Your partner')}
-    <div class="tf-wrap"><button class="tf-hide" data-action="hidePartner" aria-label="Hide this from Today">${icon('close', 12, 2.2)}</button>
-    <button class="tf2" data-action="nav" data-to="partners">
-      <span class="tf2-ph"><img src="images/partner-sunset.jpg" alt="" loading="lazy" decoding="async"></span>
-      <span class="tf2-b"><small class="tf2-e">${icon('users', 13)} Friends, family, partners</small><b class="tf2-t">Partner cycle sharing</b>
-        <span class="tf2-s">Swap links and you’ll both see each other’s cycle and energy here.</span>
-        <span class="tf2-go">Connect with your partner ${icon('chevR', 14)}</span></span></button></div>`;
+    <div class="tf-wrap pcw"><button class="tf-hide" data-action="hidePartner" aria-label="Hide this from Today">${icon('close', 12, 2.2)}</button>
+    <button class="pc" data-action="nav" data-to="partners">
+      <span class="pc-pol"><span class="pc-tape" aria-hidden="true"></span><img src="images/partner-sunset.jpg" alt="" loading="lazy" decoding="async"></span>
+      ${ptPair(state.profile)}
+      <span class="pc-b"><small class="pc-e">Friends, family, partners</small><b class="pc-t">Partner cycle sharing</b>
+        <span class="pc-s">Swap links and you’ll both see each other’s cycle and energy here.</span>
+        <span class="pc-tags"><i class="you">Your phase</i><i class="them">Their energy</i><i class="both">Best days together</i></span>
+        <span class="pc-go">Connect with your partner ${icon('chevR', 14)}</span></span></button></div>`;
   if (ps.length > 1) return `${sectionTitle('Your people', ['All', 'partners'])}
     <div class="pt-split n${Math.min(4, ps.length)}">${ps.slice(0, 4).map(p => { const pi = snapInfo(p, new Date()), ph = PHASES[pi.phase], en = Math.round(C.energyAt(pi.cd, pi.L, pi.P) * 100);
       return `<button class="card glass pt-tile" data-action="nav" data-to="partners/${p.id}">${ptAvatar(p)}<b>${esc(p.n)}</b><small>${ph.name} · day ${pi.cd}</small>
@@ -9092,12 +9102,14 @@ function viewPartners(id) {
   const orb = (p, info, label) => `<div class="sy-orb"><span class="sy-av" style="--c:${info ? PHASE_COLOR.dark[info.phase] : 'rgba(255,255,255,.2)'}">${p ? (p.photo || p.t ? `<img src="${esc(p.photo || p.t)}" alt="">` : esc((p.name || p.n || '?')[0])) : icon('plus', 22)}</span><small>${label}</small></div>`;
   return `${topbar('Partner', { back: true })}
   <div class="pad">
-    <section class="sync-hero">
-      <div class="sy-photo"><img src="images/partner-sunset.jpg" alt="Two people sharing a sunset on a rocky ridge"></div>
-      <div class="sy-pair">${orb(me, mi, mi ? `You · day ${mi.cd}` : 'You')}<span class="sy-line"><i></i></span>${first ? orb(first, snapInfo(first, new Date()), `${esc(first.n)} · day ${snapInfo(first, new Date()).cd}`) : orb(null, null, 'Partner')}</div>
-      <h1 class="sy-h">See each other’s <span>rhythm</span></h1>
-      <p class="sy-sub">Send one link. Your partner sees your phase and energy every day. If she tracks too, you see each other.</p>
+    <section class="ptp-hero">
+      <span class="pc-pol ptp-pol"><span class="pc-tape" aria-hidden="true"></span><img src="images/partner-sunset.jpg" alt="Two people sharing a sunset on a rocky ridge"></span>
+      ${ptPair(me, first, mi ? `You · day ${mi.cd}` : 'You', first ? `${esc(first.n)} · day ${snapInfo(first, new Date()).cd}` : 'Them')}
+      <h1 class="ptp-h">See each other’s <span>rhythm</span></h1>
+      <p class="ptp-sub">Send one link. They see your phase and energy every day. If she tracks too, you see each other.</p>
+      <div class="ptp-key"><span class="you"><i></i>You</span><span class="them"><i></i>Them</span></div>
     </section>
+    <div class="ptp-see">${[['you', 'drop', 'Your phase'], ['you', 'bolt', 'Your energy'], ['them', 'heart', 'How to show up']].map(([c, ic, t]) => `<span class="${c}">${icon(ic, 18)}<b>${t}</b></span>`).join('')}</div>
 
     ${ps.length ? `${sectionTitle(`Your people · ${ps.length} of 4`)}
     ${ps.slice().sort((a, b) => !!b.pin - !!a.pin).map(p => { const pi = snapInfo(p, new Date()), ph = PHASES[pi.phase], zs = p.z ? Z.sunSign(+p.z.slice(0, 2), +p.z.slice(3)) : null;
@@ -9111,14 +9123,14 @@ function viewPartners(id) {
       const send = who ? `<div class="sy-send"><button class="btn btn-dark" data-action="shareSend">${icon('share', 16)} Send link</button><button class="btn btn-light" data-action="shareEmail">${icon('mail', 16)} Email it</button></div>` : '';
       if (who === 'm') return `<div class="sy-head"><span class="hud">Connect in 2 steps</span><span class="sy-prog">${[sent, sent].map(x => `<i class="${x ? 'on' : ''}"></i>`).join('')}</span></div>
     <ol class="sy-flow">
-      <li class="sy-st paper ${sent ? 'is-done' : ''}">${sent ? done() : '<span class="sy-n">01</span>'}<div class="sy-c">${ask}${send}</div></li>
-      <li class="sy-st ${sent ? 'is-done' : ''}">${sent ? done() : '<span class="sy-n">02</span>'}<div class="sy-c">
+      <li class="sy-st paper you ${sent ? 'is-done' : ''}">${sent ? done() : '<span class="sy-n">01</span>'}<div class="sy-c"><span class="sy-who">You</span>${ask}${send}</div></li>
+      <li class="sy-st them ${sent ? 'is-done' : ''}">${sent ? done() : '<span class="sy-n">02</span>'}<div class="sy-c">
         <span class="sy-who">Him</span><b>He opens the link</b><small>No account and no tracking. He sees your phase, energy and how to show up, plus My day: his own 24-hour hormone rhythm. It updates every day and he can save it to his home screen.</small></div></li>
     </ol>`;
       return `<div class="sy-head"><span class="hud">${ps.length ? 'Add someone new' : 'Connect in 2 steps'}</span><span class="sy-prog">${[sent, got].map(x => `<i class="${x ? 'on' : ''}"></i>`).join('')}</span></div>
     <ol class="sy-flow">
-      <li class="sy-st paper ${sent ? 'is-done' : ''}">${sent ? done() : '<span class="sy-n">01</span>'}<div class="sy-c">${ask}${send}</div></li>
-      ${who ? `<li class="sy-st ${got ? 'is-done' : ''}">${got ? done() : '<span class="sy-n">02</span>'}<div class="sy-c">
+      <li class="sy-st paper you ${sent ? 'is-done' : ''}">${sent ? done() : '<span class="sy-n">01</span>'}<div class="sy-c"><span class="sy-who">You</span>${ask}${send}</div></li>
+      ${who ? `<li class="sy-st them ${got ? 'is-done' : ''}">${got ? done() : '<span class="sy-n">02</span>'}<div class="sy-c">
         <span class="sy-who">Her</span><b>She opens it and you're both connected</b><small>Her Underskin adds you and sends her rhythm back to you on its own.</small></div></li>` : ''}
     </ol>`; })()}
     <button class="link center-link" data-action="nav" data-to="share">Sharing settings & preview</button>

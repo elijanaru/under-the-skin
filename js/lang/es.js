@@ -5984,4 +5984,9 @@ export default {"+ Cayenne":"+ Cayena",
 "Self-care":"Autocuidado",
 "Quiet wins":"Logros tranquilos",
 "Big decisions when you feel irritable. Sleep on them":"Decisiones grandes cuando estás irritable. Consúltalo con la almohada",
-"Estrogen and progesterone fall; PMS, sensitivity and poorer sleep are most common in these last days.":"El estrógeno y la progesterona bajan; el SPM, la sensibilidad y el peor descanso son más comunes en estos últimos días."};
+"Estrogen and progesterone fall; PMS, sensitivity and poorer sleep are most common in these last days.":"El estrógeno y la progesterona bajan; el SPM, la sensibilidad y el peor descanso son más comunes en estos últimos días.",
+"Their energy":"Su energía",
+"Best days together":"Los mejores días juntos",
+"How to show up":"Cómo estar a su lado",
+"Them":"Tu persona",
+"Send one link. They see your phase and energy every day. If she tracks too, you see each other.":"Envía un enlace. Verá tu fase y tu energía cada día. Si ella también registra su ciclo, os veréis mutuamente."};

@@ -5984,4 +5984,9 @@ export default {"+ Cayenne":"+ 카옌페퍼",
 "Self-care":"셀프 케어",
 "Quiet wins":"조용한 성취",
 "Big decisions when you feel irritable. Sleep on them":"짜증 날 때 큰 결정 내리기. 하룻밤 자고 정하기",
-"Estrogen and progesterone fall; PMS, sensitivity and poorer sleep are most common in these last days.":"에스트로겐과 프로게스테론이 떨어져요. 이 마지막 며칠은 PMS, 예민함, 얕은 잠이 가장 흔해요."};
+"Estrogen and progesterone fall; PMS, sensitivity and poorer sleep are most common in these last days.":"에스트로겐과 프로게스테론이 떨어져요. 이 마지막 며칠은 PMS, 예민함, 얕은 잠이 가장 흔해요.",
+"Their energy":"상대의 에너지",
+"Best days together":"함께하기 좋은 날",
+"How to show up":"곁에 있어 주는 법",
+"Them":"상대",
+"Send one link. They see your phase and energy every day. If she tracks too, you see each other.":"링크 하나만 보내면 돼요. 상대가 매일 나의 주기 단계와 에너지를 볼 수 있어요. 그녀도 기록한다면 서로를 볼 수 있어요."};
