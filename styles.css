@@ -17879,3 +17879,55 @@ html .ptc:active { transform: scale(.97); }
 html .pt-av.lg { padding: 0; height: 60px; align-self: center; }
 html .pt-av.pet { background: #fff; border: 1.5px solid rgba(230,128,156,.35); box-shadow: 0 4px 12px -6px rgba(48,64,35,.25); }
 html .pt-av.pet img { object-fit: contain; padding: 8%; border-radius: 50%; }
+
+/* ---- Partners & friends (23 Nov 2026): who you're adding, the friend hello, the friend dashboard ---- */
+html .sy-opt.sy-rel { justify-items: center; gap: 8px; padding: 18px 10px 14px; text-align: center; }
+.sy-rel-e { display: grid; place-items: center; width: 62px; height: 62px; border-radius: 50%; font-size: 30px; background: #fbe6ee; box-shadow: inset 0 0 0 3px #fff, 0 6px 14px -8px rgba(48,64,35,.35); }
+.sy-rel:nth-child(2) .sy-rel-e { background: #e9f0d8; }
+.sy-rel-chip { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 10px; padding: 5px 12px; border-radius: 99px; border: 0; font: inherit; font-size: 12.5px; font-weight: 500; color: #304023; background: #f3ece4; cursor: pointer; }
+.sy-rel-chip u { text-decoration: none; color: #8a6a3a; font-weight: 400; }
+.sy-who-q[data-q] > b { display: block; }
+.pc-av img.pet { object-fit: contain; padding: 10%; background: #fff; }
+
+/* the friend hello button: same paper card, willow instead of rose */
+html .lbw .lbw-go.fr { background: linear-gradient(135deg, #b9cf8c, #a9c27a 55%, #e9d58f); font-size: 22px; }
+html .lbw .lbw-go.fr b { font-weight: 400; line-height: 1; }
+@media (prefers-reduced-motion: no-preference) { html .lbw .lbw-go.fr b { display: inline-block; transform-origin: 70% 80%; animation: fdWave 2.8s ease-in-out infinite; } }
+@keyframes fdWave { 0%, 60%, 100% { transform: rotate(0); } 70% { transform: rotate(16deg); } 80% { transform: rotate(-8deg); } 90% { transform: rotate(12deg); } }
+
+/* the friend dashboard */
+html .card.fd { padding: 20px 18px 18px; border-radius: 30px; color: #20301a; background: #fff radial-gradient(circle, rgba(169,194,122,.22) 1px, transparent 1.4px) 0 0 / 14px 14px !important; border: 1px solid rgba(32,48,26,.06); box-shadow: 0 14px 34px -22px rgba(32,48,26,.35); }
+.fd-bat { display: flex; align-items: center; gap: 16px; }
+.fd-bh { flex: 1; min-width: 0; }
+.fd-bh .lsw-e { color: #6c823e; }
+.fd-bh h3 { margin: 4px 0 2px; font-size: 30px; font-weight: 500; letter-spacing: -.01em; }
+.fd-bh p { margin: 0; font-size: 14px; color: rgba(32,48,26,.68); line-height: 1.35; }
+.fd-cell { position: relative; flex: none; width: 70px; height: 104px; margin-top: 8px; border-radius: 20px; background: #fff; border: 3px solid #20301a; overflow: hidden; transform: rotate(3deg); box-shadow: 0 10px 20px -12px rgba(32,48,26,.45); }
+.fd-cell::before { content: ''; position: absolute; top: -1px; left: 50%; width: 22px; height: 7px; margin-left: -11px; border-radius: 0 0 6px 6px; background: #20301a; z-index: 2; }
+.fd-fill { position: absolute; left: 0; right: 0; bottom: 0; height: var(--v); background: var(--c); border-radius: 0 0 16px 16px; }
+.fd-fill::after { content: ''; position: absolute; left: 6px; top: 6px; width: 8px; height: calc(100% - 16px); max-height: 50px; border-radius: 6px; background: rgba(255,255,255,.55); }
+.fd-cell b { position: absolute; left: 0; right: 0; top: 26%; text-align: center; font-size: 30px; font-weight: 400; z-index: 1; }
+.fd-cell em { position: absolute; left: 0; right: 0; bottom: 8px; text-align: center; font-style: normal; font-size: 12px; color: #20301a; z-index: 1; }
+.fd-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; align-items: end; height: 96px; margin: 20px 0 16px; padding: 0 2px; }
+.fd-week span { position: relative; display: grid; grid-template-rows: 1fr auto; justify-items: center; gap: 6px; height: 100%; }
+.fd-bar { align-self: end; width: 100%; max-width: 30px; height: var(--h); min-height: 10px; border-radius: 10px; background: color-mix(in srgb, var(--c) 30%, #fff); }
+.fd-week .now .fd-bar { background: color-mix(in srgb, var(--c) 70%, #fff); }
+.fd-week .best .fd-bar { background: color-mix(in srgb, #ec8fa6 55%, #fff); box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px #ec8fa6; }
+.fd-week small { font-size: 11px; color: rgba(32,48,26,.6); }
+.fd-week .now small, .fd-week .best small { color: #20301a; font-weight: 500; }
+.fd-h { position: absolute; top: -18px; width: 16px; height: 16px; }
+.fd-h svg { width: 100%; height: 100%; }
+@media (prefers-reduced-motion: no-preference) { .fd-h { animation: fdBob 2.4s ease-in-out infinite; } }
+@keyframes fdBob { 50% { transform: translateY(-3px); } }
+.fd-two { display: grid; grid-template-columns: 1fr 1.25fr; gap: 10px; }
+.fd-meet, .fd-plan { position: relative; display: grid; align-content: start; gap: 2px; padding: 16px 14px 14px; border-radius: 22px; }
+.fd-meet { background: #fdeef2; transform: rotate(-1.5deg); text-align: center; justify-items: center; }
+.fd-tape { position: absolute; top: -8px; left: 50%; width: 46px; height: 15px; margin-left: -23px; background: repeating-linear-gradient(90deg, rgba(236,143,166,.55) 0 6px, rgba(255,255,255,.6) 6px 10px); transform: rotate(-3deg); border-radius: 2px; }
+.fd-meet small, .fd-plan small { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: rgba(32,48,26,.6); }
+.fd-meet b { font-size: 44px; line-height: 1.05; font-weight: 400; color: #b0475f; margin-top: 4px; }
+.fd-meet em { font-style: normal; font-size: 13px; color: #20301a; }
+.fd-plan { background: #eef3e2; transform: rotate(1deg); }
+.fd-emo { font-size: 30px; line-height: 1; margin-bottom: 6px; }
+.fd-plan b { font-size: 15px; font-weight: 500; line-height: 1.3; }
+html .fd-week { margin-top: 30px; }
+html .sy-rel-chip { justify-self: start; width: max-content; }

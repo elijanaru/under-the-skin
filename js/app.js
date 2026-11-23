@@ -8892,8 +8892,15 @@ function ptAvatar(p, cls = '') { return `<span class="pt-av ${cls}${p.t ? '' : '
 function loveBtnArt() { return `<svg class="lb2-env" viewBox="0 0 64 56" aria-hidden="true"><rect x="6" y="14" width="52" height="36" rx="8" fill="#fff" stroke="#304023" stroke-width="2"/><path d="M8 18l24 18 24-18" fill="none" stroke="#304023" stroke-width="2" stroke-linejoin="round"/>
     <circle cx="22" cy="40" r="3" fill="#efb6c8" opacity=".8"/><circle cx="42" cy="40" r="3" fill="#efb6c8" opacity=".8"/><path d="M28 42q4 3 8 0" fill="none" stroke="#304023" stroke-width="1.8" stroke-linecap="round"/>
     <path d="M32 33c-6-4-9-7-9-10.5a4.5 4.5 0 0 1 9-1.5 4.5 4.5 0 0 1 9 1.5c0 3.5-3 6.5-9 10.5z" fill="#e6809c" stroke="#304023" stroke-width="1.8" stroke-linejoin="round"/></svg>`; }
+// Friends and partners (23 Nov 2026): kisses and love notes are only for partners; a friend gets a little hello instead.
+const isFr = p => !!p && p.a === 'friend';
+const FR_LOVE = ['hug', 'think', 'strong', 'tea'];
 function loveBtn(p, big) {
   const art = loveBtnArt();
+  if (isFr(p)) return `<button class="lb2 lbw fr ${big ? 'big' : ''}" data-action="openLove" data-id="${p.id}" aria-label="Say hi to ${esc(p.n)}">
+    <span class="lsw-env lbw-env">${art}${ptAvatar(p, 'sm')}</span>
+    <span class="lb2-t"><small class="lsw-e">A little hello ${LSW_SPK('#a9c27a')}</small><b>Say hi to <span class="lsw-n">${esc(p.n)}</span></b><small class="lbw-s">A hug or a cheer lands on ${esc(p.n)}’s phone</small></span>
+    <span class="lb2-go lbw-go fr"><b aria-hidden="true">👋</b></span></button>`;
   const hearts = [0, 1, 2, 3].map(i => `<i style="--d:${i * .9}s;--x:${[18, 38, 62, 80][i]}%">${HEART(i % 2 ? '#f4c6d6' : '#e6809c')}</i>`).join('');
   return `<button class="lb2 lbw ${big ? 'big' : ''}" data-action="openLove" data-id="${p.id}" aria-label="Send love to ${esc(p.n)}">
     <span class="lb2-hearts" aria-hidden="true">${hearts}</span>
@@ -8907,7 +8914,7 @@ function ptPair(me, them, meLab = '', themLab = '') {
   return `<span class="pc-pair" aria-hidden="true">
     <span class="pc-av you">${mine ? `<img src="${esc(mine)}" alt="">` : catFace('w')}${meLab ? `<small>${meLab}</small>` : ''}</span>
     <svg class="pc-link" viewBox="0 0 120 40"><path d="M6 26 Q60 -4 114 26" fill="none" stroke="#e7a9be" stroke-width="2" stroke-dasharray="1 7" stroke-linecap="round"/><g transform="translate(0 -6.6)"><path class="pc-heart" d="M60 24s-7-4.3-7-9.5A3.9 3.9 0 0 1 60 12.2a3.9 3.9 0 0 1 7 2.3C67 19.7 60 24 60 24z" fill="#ec8fae" stroke="#fff" stroke-width="1.6" paint-order="stroke"/></g></svg>
-    <span class="pc-av them">${theirs ? `<img src="${esc(theirs)}" alt="">` : them ? esc((them.n || '?')[0]) : icon('plus', 20)}${themLab ? `<small>${themLab}</small>` : ''}</span></span>`;
+    <span class="pc-av them">${theirs ? `<img src="${esc(theirs)}" alt="">` : them ? `<img class="pet" src="${ptPet(them)}" alt="">` : icon('plus', 20)}${themLab ? `<small>${themLab}</small>` : ''}</span></span>`;
 }
 function partnersCard(info) {
   const ps = state.partners || [];
@@ -9079,16 +9086,16 @@ function lswTile(l, i, action) {
   const [bg, ink] = LS_TINT[l.k] || ['#fbe0e8', '#b0475f'];
   return `<button class="lsw-s ${i % 4 === 1 ? 'tp' : ''}" data-action="${action}" data-k="${l.k}" style="--bg:${bg};--ink:${ink};--r:${LSW_R[i % LSW_R.length]}deg;--i:${i}"><span class="lsw-d"><b class="ls2-emo">${l.g}</b></span><small>${l.t}</small></button>`;
 }
-function lswHead(name, av, sub) {
-  return `<div class="lsw-head"><span class="lsw-env">${loveBtnArt()}${av || ''}</span><div><small class="lsw-e">A little love note ${LSW_SPK('#f1b27c')}</small><h3>Send love to <span class="lsw-n">${esc(name)}</span></h3><p>${sub}</p></div></div>`;
+function lswHead(name, av, sub, fr) {
+  return `<div class="lsw-head"><span class="lsw-env">${loveBtnArt()}${av || ''}</span><div><small class="lsw-e">${fr ? 'A little hello' : 'A little love note'} ${LSW_SPK('#f1b27c')}</small><h3>${fr ? 'Say hi to' : 'Send love to'} <span class="lsw-n">${esc(name)}</span></h3><p>${sub}</p></div></div>`;
 }
 function loveSheet() {
   const p = (state.partners || []).find(x => x.id === ui.loveFor); if (!p) return '';
   const sent = (state.loveSent || []).filter(x => x.to === p.id).length;
   return `<div class="love-sheet" data-action="loveClose"><div class="ls-card ls2 lsw" data-action="noop">
     <div class="ls-grip"></div>${LSW_SPK('#e7a3bb')}
-    ${lswHead(p.n, ptAvatar(p, 'sm'), sent ? `${sent} ${sent === 1 ? 'heart' : 'hearts'} sent so far` : 'Tap one and it lands on her phone')}
-    <div class="lsw-grid four">${PV_LOVE.map(k => LOVE.find(l => l.k === k)).map((l, i) => lswTile(l, i, 'sendLove')).join('')}</div>
+    ${lswHead(p.n, ptAvatar(p, 'sm'), sent && !isFr(p) ? `${sent} ${sent === 1 ? 'heart' : 'hearts'} sent so far` : 'Tap one and it lands on her phone', isFr(p))}
+    <div class="lsw-grid four">${(isFr(p) ? FR_LOVE : PV_LOVE).map(k => LOVE.find(l => l.k === k)).map((l, i) => lswTile(l, i, 'sendLove')).join('')}</div>
     <div class="lsw-k care">🌱 Care nudges</div>
     <div class="lsw-grid care">${CARE.map((l, i) => lswTile(l, i + 4, 'sendLove')).join('')}</div></div></div>`;
 }
@@ -9118,7 +9125,7 @@ function viewPartners(id) {
   if (id) { const p = ps.find(x => x.id === id); return p ? viewPartner(p) : viewMissing(); }
   const me = state.profile, mi = M.info, first = ps[0];
   const orb = (p, info, label) => `<div class="sy-orb"><span class="sy-av" style="--c:${info ? PHASE_COLOR.dark[info.phase] : 'rgba(255,255,255,.2)'}">${p ? (p.photo || p.t ? `<img src="${esc(p.photo || p.t)}" alt="">` : esc((p.name || p.n || '?')[0])) : icon('plus', 22)}</span><small>${label}</small></div>`;
-  return `${topbar('Partner', { back: true })}
+  return `${topbar('Partners & friends', { back: true })}
   <div class="pad">
     <section class="ptp-hero">
       <span class="pc-pol ptp-pol"><span class="pc-tape" aria-hidden="true"></span><img src="images/partner-sunset.jpg" alt="Two people sharing a sunset on a rocky ridge"></span>
@@ -9135,15 +9142,18 @@ function viewPartners(id) {
         <span class="pt-b"><b>${esc(p.n)}</b><small>${ph.name} · day ${pi.cd} · ${partnerStatus(pi, p)}</small></span>${icon('chevR', 16)}</button></div>`; }).join('')}` : ''}
 
     ${ps.length >= 4 ? '<p class="fine center">You’re connected with 4 people, the most Underskin keeps. Remove someone to add a new person.</p>' : ''}
-    ${ps.length >= 4 ? '' : (() => { const sent = !!me.linkSent, got = ps.length > 0, who = me.ptWho, done = () => `<span class="sy-n done">${icon('check', 15, 2.4)}</span>`;
-      const ask = `<div class="sy-who-q"><b>Who is your partner?</b><small>So we send the right kind of link.</small>
+    ${ps.length >= 4 ? '' : (() => { const sent = !!me.linkSent, got = ps.length > 0, rel = me.ptRel, who = rel && me.ptWho, fr = rel === 'friend', done = () => `<span class="sy-n done">${icon('check', 15, 2.4)}</span>`;
+      // one simple question at a time (23 Nov 2026): partner or friend first, then woman or man
+      const ask = !rel ? `<div class="sy-who-q" data-q="rel"><b>Who are you adding?</b><small>Partners get love notes, friends get a friend dashboard.</small>
+        <div class="sy-pick">${[['partner', 'My partner', '💞'], ['friend', 'A friend', '🌿']].map(([k, t, e]) => `<button class="sy-opt sy-rel" data-action="ptRel" data-v="${k}" aria-pressed="false"><span class="sy-rel-e" aria-hidden="true">${e}</span><b>${t}</b></button>`).join('')}</div></div>`
+        : `<div class="sy-who-q" data-q="who"><button class="sy-rel-chip" data-action="ptRel" data-v="">${fr ? '🌿 A friend' : '💞 My partner'} <u>Change</u></button><b>${fr ? 'Is your friend' : 'Is your partner'} a woman or a man?</b><small>So we send the right kind of link.</small>
         <div class="sy-pick">${[['w', 'A woman'], ['m', 'A man']].map(([k, t]) => `<button class="sy-opt sy-cat ${who === k ? 'on' : ''}" data-action="ptWho" data-v="${k}" aria-pressed="${who === k}">${catFace(k)}<b>${t}</b></button>`).join('')}</div></div>`;
       const send = who ? `<div class="sy-send"><button class="btn btn-dark" data-action="shareSend">${icon('share', 16)} Send link</button><button class="btn btn-light" data-action="shareEmail">${icon('mail', 16)} Email it</button></div>` : '';
       if (who === 'm') return `<div class="sy-head"><span class="hud">Connect in 2 steps</span><span class="sy-prog">${[sent, sent].map(x => `<i class="${x ? 'on' : ''}"></i>`).join('')}</span></div>
     <ol class="sy-flow">
       <li class="sy-st paper you ${sent ? 'is-done' : ''}">${sent ? done() : '<span class="sy-n">01</span>'}<div class="sy-c"><span class="sy-who">You</span>${ask}${send}</div></li>
       <li class="sy-st them ${sent ? 'is-done' : ''}">${sent ? done() : '<span class="sy-n">02</span>'}<div class="sy-c">
-        <span class="sy-who">Him</span><b>He opens the link</b><small>No account and no tracking. He sees your phase, energy and how to show up, plus My day: his own 24-hour hormone rhythm. It updates every day and he can save it to his home screen.</small></div></li>
+        <span class="sy-who">Him</span><b>He opens the link</b><small>${fr ? 'No account and no tracking. He sees your phase, your social battery and the best days to meet up. It updates every day.' : 'No account and no tracking. He sees your phase, energy and how to show up, plus My day: his own 24-hour hormone rhythm. It updates every day and he can save it to his home screen.'}</small></div></li>
     </ol>`;
       return `<div class="sy-head"><span class="hud">${ps.length ? 'Add someone new' : 'Connect in 2 steps'}</span><span class="sy-prog">${[sent, got].map(x => `<i class="${x ? 'on' : ''}"></i>`).join('')}</span></div>
     <ol class="sy-flow">
@@ -9162,7 +9172,7 @@ function syRefresh() {
   const nf = t.querySelector('.sy-flow'), nh = t.querySelector('.sy-head'), oh = v.querySelector('.sy-head'); if (!nf) return false;
   // keep the woman/man question she just tapped (only its state changes), so iOS never loses its place
   const y = v.scrollTop, wy = window.scrollY, oq = old.querySelector('.sy-who-q'), nq = nf.querySelector('.sy-who-q');
-  if (oq && nq) { oq.querySelectorAll('[data-action=ptWho]').forEach(b => { const on = b.dataset.v === state.profile.ptWho; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); }); nq.replaceWith(oq); }
+  if (oq && nq && oq.dataset.q === nq.dataset.q) { oq.querySelectorAll('[data-action=ptWho]').forEach(b => { const on = b.dataset.v === state.profile.ptWho; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); }); nq.replaceWith(oq); }
   old.replaceWith(nf); if (oh && nh) oh.replaceWith(nh);
   v.scrollTop = y; if (window.scrollY !== wy) window.scrollTo(0, wy);
   requestAnimationFrame(() => { if (v.scrollTop !== y) v.scrollTop = y; });
@@ -9234,8 +9244,28 @@ function moodDesire(pi, p) {
         <p class="md-peak">${toPeak === 0 ? '💞 Desire is often at its highest around now.' : `💞 Desire usually peaks around ovulation, in about <b>${plural(toPeak, 'day')}</b>.`}</p></div>
     </section>`;
 }
+// Friend dashboard (23 Nov 2026): her social battery as a little phone battery sticker, her week as soft bars with
+// the best day to meet marked, and a plan that fits her phase. No desire, fertility or love notes for friends.
+const FD_BAT = [['🥳', 'Full', 'Up for plans and people'], ['😊', 'Good', 'A catch-up works well'], ['🫖', 'Half', 'Keep it cosy and close'], ['🌙', 'Low', 'A kind text is enough today']];
+function friendDash(p, info, name, sup) {
+  const today = C.startOfDay(new Date()), en = Math.round(C.energyAt(info.cd, info.L, info.P) * 100);
+  const wk = Array.from({ length: 7 }, (_, i) => { const d = C.addDays(today, i), di = snapInfo(p, d); return { d, di, v: Math.max(.12, C.energyAt(di.cd, di.L, di.P) - (di.isPeriod ? .12 : 0)) }; });
+  const best = wk.slice(1).reduce((a, b) => b.v > a.v ? b : a, wk[1]);
+  const lv = en >= 75 ? 0 : en >= 55 ? 1 : en >= 40 ? 2 : 3, [emo, word, line] = FD_BAT[lv], col = ['#a9c27a', '#c7d07e', '#f3cd6e', '#ef9db1'][lv];
+  const plan = sup.plan || (sup.do || [])[0] || '';
+  return `${sectionTitle('Friend dashboard')}
+    <section class="card fd">
+      <div class="fd-bat"><div class="fd-bh"><small class="lsw-e">Her social battery ${LSW_SPK('#a9c27a')}</small><h3>${word}</h3><p>${line}</p></div>
+        <span class="fd-cell" style="--v:${Math.max(12, en)}%;--c:${col}" role="img" aria-label="Social battery ${en} out of 100"><i class="fd-fill"></i><b>${emo}</b><em class="dotnum">${en}%</em></span></div>
+      <div class="fd-week" aria-label="Her week">${wk.map((x, i) => `<span class="${x === best ? 'best' : ''} ${i ? '' : 'now'}">${x === best ? `<i class="fd-h" aria-hidden="true">${HEART('#ec8fa6')}</i>` : ''}<i class="fd-bar" style="--h:${Math.round(x.v * 100)}%;--c:${PH_HEX[x.di.phase]}"></i><small>${i ? fmt(x.d, { weekday: 'narrow' }) : 'Today'}</small></span>`).join('')}</div>
+      <div class="fd-two">
+        <div class="fd-meet"><span class="fd-tape" aria-hidden="true"></span><small>Best day to meet</small><b class="dotnum">${best.d.getDate()}</b><em>${fmt(best.d, { weekday: 'long' })}</em></div>
+        ${plan ? `<div class="fd-plan"><span class="fd-emo" aria-hidden="true">${ptDateEmo(plan)}</span><small>Good plan now</small><b>${esc(plan)}</b></div>` : ''}
+      </div>
+    </section>`;
+}
 function viewPartner(p) {
-  const today = C.startOfDay(new Date()), pi = snapInfo(p, today), ph = PHASES[pi.phase], tcm = TCM[pi.phase];
+  const today = C.startOfDay(new Date()), pi = snapInfo(p, today), ph = PHASES[pi.phase], tcm = TCM[pi.phase], fr = isFr(p), fert = !!p.f && !fr;
   const S = SUPPORT[pi.phase], sup = S[p.a === 'friend' ? 'friend' : 'partner'], en = Math.round(C.energyAt(pi.cd, pi.L, pi.P) * 100);
   const mv = MOVE_GUIDE[dayWindow(pi)], rec = pick(recipesFor(pi.phase, pi), dayNum(today) + 3);
   // next 14 days for both of you; best shared day = highest combined energy
@@ -9251,13 +9281,13 @@ function viewPartner(p) {
   const events = [
     pi.isPeriod ? { t: `On her period · day ${pi.cd} of ${pi.P}`, d: 'Now', on: true, at: today } : { at: nextPeriod, t: 'Next period', d: fmt(nextPeriod, { weekday: 'short', month: 'short', day: 'numeric' }), sub: `in ${plural(pi.daysToPeriod, 'day')}` },
     !pi.isPeriod && pi.cd <= pi.L - 4 ? { at: pms, t: 'PMS window starts', d: fmt(pms, { weekday: 'short', month: 'short', day: 'numeric' }), sub: 'extra gentle from here' } : null,
-    p.f && !pi.noOv ? { at: egg, t: pi.isOvulation ? 'Egg release today' : 'Next egg release', d: pi.isOvulation ? 'Today' : fmt(egg, { weekday: 'short', month: 'short', day: 'numeric' }), sub: pi.fertile ? 'fertile window now' : '' } : null,
+    fert && !pi.noOv ? { at: egg, t: pi.isOvulation ? 'Egg release today' : 'Next egg release', d: pi.isOvulation ? 'Today' : fmt(egg, { weekday: 'short', month: 'short', day: 'numeric' }), sub: pi.fertile ? 'fertile window now' : '' } : null,
     { at: best.d, t: 'Best day together', d: fmt(best.d, { weekday: 'short', month: 'short', day: 'numeric' }), sub: 'you both have the most energy', on: true },
   ].filter(Boolean).sort((a, b) => a.at - b.at);
   const list = (arr, cls) => `<ul class="plist ${cls || ''}">${arr.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
   return `${topbar(esc(p.n), { back: true })}
   <div class="pad">
-    <section class="hub pt-stage">${stageHero(pi, en, { nav: false, id: 'pt', fert: !!p.f })}</section>
+    <section class="hub pt-stage">${stageHero(pi, en, { nav: false, id: 'pt', fert })}</section>
     ${(() => {
       const late = pi.cd > pi.L - 4, moods = { menstrual: ['Tired', 'Inward', 'Tender', 'Reflective'], follicular: ['Curious', 'Optimistic', 'Light', 'Playful'], ovulatory: ['Confident', 'Social', 'Flirty', 'Radiant'], luteal: late ? ['Sensitive', 'Bloated', 'Irritable', 'Needs comfort'] : ['Calm', 'Focused', 'Nesting', 'Cosy'] }[pi.phase];
       const moon = Z.moonPhase(new Date()), waxing = moon.age < 14.77, building = pi.phase === 'follicular' || pi.phase === 'ovulatory';
@@ -9271,14 +9301,14 @@ function viewPartner(p) {
     ${loveBtn(p, true)}
     ${p.l ? pvLoss(esc(p.n)) : ''}
 
-    ${moodDesire(pi, p)}
+    ${fr ? friendDash(p, pi, esc(p.n), sup) : moodDesire(pi, p)}
     ${partnerCare(pi, esc(p.n))}
-    ${duoBring(pi)}
+    ${fr ? '' : duoBring(pi)}
 
     ${sectionTitle('Her hormones')}
     <section class="card glass chart-card">${cycleChart(pi, { id: 'pt', compact: true, who: 'Her' })}</section>
     ${sectionTitle('Her next two weeks')}
-    ${ptCalendar(p, !!p.f)}
+    ${ptCalendar(p, fert)}
 
     ${sectionTitle('Coming up')}
     <section class="card glass ptd-ev">${events.map(e => `<div class="pe ${e.on ? 'on' : ''}"><span class="pe-d">${e.d}</span><span class="pe-t"><b>${e.t}</b>${e.sub ? `<small>${e.sub}</small>` : ''}</span></div>`).join('')}</section>
@@ -9295,7 +9325,7 @@ function viewPartner(p) {
     <section class="card glass">${list(sup.do.slice(0, 3), 'yes')}</section>
     ${sup.gifts ? `${sectionTitle('Little gifts')}<div class="hscroll">${sup.gifts.map(g => `<div class="rcard gift g2">${giftArt(g)}<div class="rc-t">${esc(g.replace(/\s*😉/, ''))}</div></div>`).join('')}</div>` : ''}
     <div class="ptd-two one">
-      ${sup.date || sup.plan ? `<div class="card glass"><span class="ptd-emo" aria-hidden="true">${ptDateEmo(sup.date || sup.plan)}</span><small>${sup.date ? 'Date idea' : 'Plan idea'}</small><b>${esc(sup.date || sup.plan)}</b></div>` : ''}
+      ${!fr && (sup.date || sup.plan) ? `<div class="card glass"><span class="ptd-emo" aria-hidden="true">${ptDateEmo(sup.date || sup.plan)}</span><small>${sup.date ? 'Date idea' : 'Plan idea'}</small><b>${esc(sup.date || sup.plan)}</b></div>` : ''}
     </div>
     <p class="fine center">Updates on its own whenever ${esc(p.n)} logs a new period. Every body is different, so ask her too.</p>
     <button class="tiny-link" data-action="removePartner" data-id="${p.id}">remove</button>
@@ -10621,14 +10651,16 @@ function unpackLink(code) {
 }
 const inviteLink = () => `${appBase()}#/w/${packLink(mySnap({ short: true }))}`;
 const INVITE_TEXT = { partner: 'Hey, here’s an invite to my cycle 💌', friend: 'Hey, here’s an invite to my cycle 🌿' };
+const myAud = () => state.profile.ptRel || ui.shareAudience || 'partner';
 function mySnap(o = {}) {
   const { stats } = M, last = stats.periods[stats.periods.length - 1];
-  const snap = { n: state.profile.name || 'Her', s: C.iso(last.start), c: stats.avgCycle, p: stats.avgPeriod, a: ui.shareAudience, f: state.profile.noFertile ? 0 : 1, i: myInbox() };
+  const aud = myAud();
+  const snap = { n: state.profile.name || 'Her', s: C.iso(last.start), c: stats.avgCycle, p: stats.avgPeriod, a: aud, f: state.profile.noFertile ? 0 : 1, i: myInbox() };
   if (stats.noOv) snap.f = 0; // on hormonal birth control: no fertile days on his side either
   if (stats.pill) { const nb = C.dayInfo(new Date(), stats)?.nextStart; if (nb) snap.s = C.iso(C.addDays(nb, -28)); } // his countdown lands on her pill-break bleed
-  if (state.profile.ptWho === 'm' && ui.shareAudience !== 'friend') snap.w = 'm'; // he only views, he never tracks
-  if (ttcOn() && ui.shareAudience !== 'friend') snap.g = 1;
-  if (lossCare() && state.profile.lossShare && ui.shareAudience !== 'friend') snap.l = 1; // she chose to share it: his view shows how to support her // trying for a baby: his page shows how he can help
+  if (state.profile.ptWho === 'm') snap.w = 'm'; // he only views, he never tracks (a male friend too)
+  if (ttcOn() && aud !== 'friend') snap.g = 1;
+  if (lossCare() && state.profile.lossShare && aud !== 'friend') snap.l = 1; // she chose to share it: his view shows how to support her // trying for a baby: his page shows how he can help
   if (state.profile.thumb && !o.short) snap.t = state.profile.thumb;
   const mo = getLog(todayISO()).moods || [];
   if (!state.profile.noMood && mo.length) { snap.m = mo.slice(0, 6); snap.md = todayISO(); } // today's moods, shared as she logs them
@@ -10693,7 +10725,7 @@ function snapInfo(snap, date) {
 }
 function viewShare() {
   if (!M.info) return `${topbar('Partner mode', { back: true })}<div class="pad"><p class="muted">Log a period first so there is something to share.</p></div>`;
-  const aud = ui.shareAudience, sup = SUPPORT[M.info.phase][aud];
+  const aud = myAud(), sup = SUPPORT[M.info.phase][aud];
   return `${topbar('Partner mode', { back: true })}
   <div class="pad">
     <h1 class="page-h">Share your <span>rhythm</span></h1>
@@ -11410,7 +11442,7 @@ function viewWith(q) {
   }
   const list = (arr, cls) => `<ul class="plist ${cls || ''}">${arr.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
   const chips = [`<span class="hchip">${icon('drop', 14)} ${info.isPeriod ? 'On her period' : `Period in ${plural(info.daysToPeriod, 'day')}`}</span>`];
-  if (snap.f) chips.push(`<span class="hchip ${info.fertile ? 'hl' : ''}">${icon('spark', 14)} ${info.fertile ? 'Fertile window' : 'Low fertility'}</span>`);
+  if (snap.f && role === 'partner') chips.push(`<span class="hchip ${info.fertile ? 'hl' : ''}">${icon('spark', 14)} ${info.fertile ? 'Fertile window' : 'Low fertility'}</span>`);
   const mine = state && state.onboarded && M?.stats?.periods?.length && snap.n === (state.profile.name || 'Her') && snap.s === C.iso(M.stats.periods[M.stats.periods.length - 1].start);
   const him = snap.w === 'm'; // a man only views her rhythm, he never tracks
   if (!(state && state.onboarded)) { try { localStorage.setItem(him ? 'uts.viewOnly' : 'uts.pendingPartner', q.get('d')); } catch {} }
@@ -11422,7 +11454,7 @@ function viewWith(q) {
   <div class="pad pv-page">
     <div class="pv-top">${back}${seg}</div>
     ${him && ui.hisTab === 'read' ? `${pvRead(snap, info, name)}</div>` : him && ui.hisTab === 'his' ? `<div class="pv2-title"><small>${himP().n ? `${esc(himP().n)}’s day` : 'Your day'} · ${fmt(today, { weekday: 'long', month: 'short', day: 'numeric' })}</small><h1>Your <b>24-hour drive</b></h1><p>Testosterone runs on a daily clock. Use it, and see what raises it.</p></div>${oakCard()}${snap.g ? `<section class="pv2-card pv2-warn">${icon('heart', 16)}<p><b>Trying for a baby?</b> Never take testosterone or “T boosters”. Extra testosterone shuts down your sperm. Sleep, lifting and food below are the safe way.</p></section>` : ''}${hisDay(info, name)}</div>` : `
-    <section class="hub pt-stage pv-hero">${stageHero(info, Math.round(C.energyAt(info.cd, info.L, info.P) * 100), { nav: false, id: 'with', fert: !!snap.f, title: `${name} is in her` })}</section>
+    <section class="hub pt-stage pv-hero">${stageHero(info, Math.round(C.energyAt(info.cd, info.L, info.P) * 100), { nav: false, id: 'with', fert: !!snap.f && role === 'partner', title: `${name} is in her` })}</section>
     ${pvHerDay(info, S, sup)}
     ${role === 'partner' ? pvReadTeaser(info, him) : ''}
     ${snap.l && role === 'partner' ? pvLoss(name) : snap.g && role === 'partner' ? pvTTC(snap, info, name) : snap.f && role === 'partner' ? pvAvoid(snap, info, name) : ''}
@@ -11431,12 +11463,13 @@ function viewWith(q) {
     ${sectionTitle('What to give her')}
     <div class="hscroll pv2-gifts">${sup.gifts.map(g => `<div class="pv2-gift">${giftArt(g)}<b>${esc(g.replace(/\s*😉/, ''))}</b></div>`).join('')}</div>
 `
-    : `${sectionTitle('How to be a good friend')}<section class="pv2-card pv2-ds"><div class="pv2-dcol"><b class="y">${icon('check', 13, 2.6)} Do</b>${sup.do.map(x => `<p>${esc(x)}</p>`).join('')}</div></section>
-    <section class="pv2-card pv2-say"><small>Plan idea</small><p>${esc(sup.plan)}</p></section>`}
+    : `${friendDash(snap, info, name, sup)}${snap.i ? `<button class="lb2 lbw fr dt-send" data-action="pvLove" aria-label="Say hi to ${name}"><span class="lsw-env lbw-env">${loveBtnArt()}</span><span class="lb2-t"><small class="lsw-e">A little hello ${LSW_SPK('#a9c27a')}</small><b>Say hi to <span class="lsw-n">${name}</span></b><small class="lbw-s">A hug or a cheer lands on her phone</small></span><span class="lb2-go lbw-go fr"><b aria-hidden="true">👋</b></span></button>` : ''}
+    ${sectionTitle('How to be a good friend')}<section class="pv2-card pv2-ds"><div class="pv2-dcol"><b class="y">${icon('check', 13, 2.6)} Do</b>${sup.do.map(x => `<p>${esc(x)}</p>`).join('')}</div></section>
+`}
     ${him ? '' : `${sectionTitle('Her hormones')}
     <section class="card glass chart-card">${cycleChart(info, { id: 'with', compact: true, who: 'Her' })}</section>`}
     ${sectionTitle('Her next two weeks')}
-    ${ptCalendar(snap, !!snap.f)}
+    ${ptCalendar(snap, !!snap.f && role === 'partner')}
     <p class="fine center">Estimates based on her cycle. Every body is different, so ask her too.</p>
     ${mine ? '' : state && state.onboarded
       ? ((state.partners || []).some(x => x.n === snap.n && x.s === snap.s)
@@ -12443,12 +12476,12 @@ const actions = {
   plRecipes: () => go('plan/recipes'),
   nourishPhase: d => { ui.nourishPhase = d.v; ui.openNeed = 0; render(); },
   openNeed: d => { ui.openNeed = ui.openNeed === +d.i ? -1 : +d.i; render(); },
-  shareAud: d => { ui.shareAudience = d.v; render(); },
+  shareAud: d => { ui.shareAudience = d.v; state.profile.ptRel = d.v; save(); render(); },
   shareMood: () => { state.profile.noMood = !state.profile.noMood; save(); publishLive(); render(); },
   shareFertile: () => { state.profile.noFertile = !state.profile.noFertile; state.profile.liveAt = 0; save(); publishLive(); render(); },
   shareSend: async () => {
     if (!M.stats.periods.length) return toast('Log a period first so there is something to share');
-    const url = inviteLink(), title = `${state.profile.name || 'My'}’s rhythm`, text = T(INVITE_TEXT[ui.shareAudience] || INVITE_TEXT.partner);
+    const url = inviteLink(), title = `${state.profile.name || 'My'}’s rhythm`, text = T(INVITE_TEXT[myAud()] || INVITE_TEXT.partner);
     const sent = () => { if (!state.profile.linkSent) { state.profile.linkSent = Date.now(); save(); startSignals(); if (route().name === 'partners') syRefresh() || render(); } publishLive(); }; // ticks step 1 on the partner page, only the steps redraw
     if (await shareOut({ title, text, url })) return sent();
     try { await navigator.clipboard.writeText(`${text} ${url}`); toast('Invite copied'); } catch { prompt('Copy this invite', `${text} ${url}`); }
@@ -12473,8 +12506,8 @@ const actions = {
     const snap = pvSnap(); if (!snap) return;
     document.querySelector('.love-sheet.pv')?.remove();
     $app.insertAdjacentHTML('beforeend', `<div class="love-sheet pv" data-action="pvLoveClose"><div class="ls-card ls2 lsw" data-action="noop"><div class="ls-grip"></div>${LSW_SPK('#e7a3bb')}
-      ${lswHead(snap.n || 'her', '', 'Tap one and it lands on her phone')}
-      <div class="lsw-grid four">${PV_LOVE.map(k => LOVE.find(l => l.k === k)).map((l, i) => lswTile(l, i, 'pvLoveSend')).join('')}</div></div></div>`);
+      ${lswHead(snap.n || 'her', '', 'Tap one and it lands on her phone', snap.a === 'friend')}
+      <div class="lsw-grid four">${(snap.a === 'friend' ? FR_LOVE : PV_LOVE).map(k => LOVE.find(l => l.k === k)).map((l, i) => lswTile(l, i, 'pvLoveSend')).join('')}</div></div></div>`);
   },
   pvLoveClose: () => document.querySelector('.love-sheet.pv')?.remove(),
   pvLoveSend: async (d, el) => {
@@ -12520,10 +12553,11 @@ const actions = {
   },
   trackMine: () => { try { localStorage.removeItem('uts.viewOnly'); } catch {} go('today'); },
   ptWho: d => { state.profile.ptWho = d.v; save(); syRefresh() || render(); },
+  ptRel: d => { state.profile.ptRel = d.v || undefined; if (d.v) ui.shareAudience = d.v; save(); syRefresh() || render(); },
   shareEmail: () => {
     if (!M.stats.periods.length) return toast('Log a period first so there is something to share');
     const me = state.profile.name || 'I', he = state.profile.ptWho === 'm';
-    const body = `Hi love,\n\nThis is my rhythm in Underskin. It shows where I am in my cycle and how to be there for me, and it updates every day on its own.\n\n${inviteLink()}\n\n${he ? 'No app or account needed, just open the link.' : 'Open it on your phone to set up your own Underskin and we will see each other.'}\n\n${me}`;
+    const body = `${myAud() === 'friend' ? 'Hi' : 'Hi love'},\n\nThis is my rhythm in Underskin. It shows where I am in my cycle and how to be there for me, and it updates every day on its own.\n\n${inviteLink()}\n\n${he ? 'No app or account needed, just open the link.' : 'Open it on your phone to set up your own Underskin and we will see each other.'}\n\n${me}`;
     location.href = `mailto:?subject=${encodeURIComponent(`${me === 'I' ? 'My' : me + '’s'} rhythm`)}&body=${encodeURIComponent(body)}`;
     if (!state.profile.linkSent) { state.profile.linkSent = Date.now(); save(); startSignals(); setTimeout(() => syRefresh() || render(), 600); } publishLive();
   },
