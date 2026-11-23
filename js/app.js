@@ -9231,7 +9231,6 @@ function moodDesire(pi, p) {
       <div class="md-month"><div class="md-mh"><b>Her month</b><span><i class="f"></i>Feeling <i class="d"></i>Desire</span></div>
         ${mdWaves(pi, peak)}
         <p class="md-peak">${toPeak === 0 ? '💞 Desire is often at its highest around now.' : `💞 Desire usually peaks around ovulation, in about <b>${plural(toPeak, 'day')}</b>.`}</p></div>
-      <div class="md-note"><span class="md-tape" aria-hidden="true"></span>Typical patterns from her cycle, not a reading of her. Every woman is different, so ask ${esc(p.n)} how she feels 💬</div>
     </section>`;
 }
 function viewPartner(p) {
@@ -9294,8 +9293,8 @@ function viewPartner(p) {
     <section class="card glass">${list(sup.do.slice(0, 3), 'yes')}</section>
     ${sup.gifts ? `${sectionTitle('Little gifts')}<div class="hscroll">${sup.gifts.map(g => `<div class="rcard gift g2">${giftArt(g)}<div class="rc-t">${esc(g.replace(/\s*😉/, ''))}</div></div>`).join('')}</div>` : ''}
     <div class="ptd-two">
-      <div class="card glass"><span class="han-big">${tcm.elementGlyph}</span><small>Make her</small><b>${tcm.tea.name}</b></div>
-      ${sup.date || sup.plan ? `<div class="card glass"><span class="han-big">${icon('heart', 22)}</span><small>${sup.date ? 'Date idea' : 'Plan idea'}</small><b>${esc(sup.date || sup.plan)}</b></div>` : ''}
+      <div class="card glass"><img class="ptd-3d" src="${teaCupImg(tcm.tea.name)}" alt="" loading="lazy"><small>Make her</small><b>${tcm.tea.name}</b></div>
+      ${sup.date || sup.plan ? `<div class="card glass"><span class="ptd-emo" aria-hidden="true">${ptDateEmo(sup.date || sup.plan)}</span><small>${sup.date ? 'Date idea' : 'Plan idea'}</small><b>${esc(sup.date || sup.plan)}</b></div>` : ''}
     </div>
     <p class="fine center">Updates on its own whenever ${esc(p.n)} logs a new period. Every body is different, so ask her too.</p>
     <button class="tiny-link" data-action="removePartner" data-id="${p.id}">remove</button>
@@ -10736,6 +10735,7 @@ const GIFT_ART = [
 // a cute emoji per gift idea (was a line drawing)
 const GIFT_EMO = [[/water bottle/i, '♨️'], [/chocolate/i, '🍫'], [/fries/i, '🍟'], [/snack/i, '🍪'], [/tea/i, '🍵'], [/sock/i, '🧦'], [/bath|salt/i, '🛁'], [/flower/i, '💐'], [/book/i, '📚'],
   [/ticket/i, '🎟️'], [/class|workshop/i, '🎨'], [/dinner|reservation/i, '🍽️'], [/wear/i, '👗'], [/night|surprise/i, '✨'], [/massage/i, '💆‍♀️']];
+const ptDateEmo = t => ([[/film|movie|sofa|blanket/i, '🍿'], [/dinner|restaurant|cook|food/i, '🍽️'], [/danc|party|event/i, '💃'], [/trip|weekend|travel/i, '🧳'], [/class|workshop/i, '🎨'], [/walk|hike|nature|picnic/i, '🧺'], [/bath|spa|massage/i, '🛁']].find(([re]) => re.test(t)) || [0, '💕'])[1];
 function giftArt(g) { return `<span class="gift-emo" aria-hidden="true">${(GIFT_EMO.find(([r]) => r.test(g)) || [0, '🎁'])[1]}</span>`; }
 // Her next two weeks as a real calendar: date, phase colour, period drops, fertile days, today ringed.
 function ptCalendar(snap, showF) {
@@ -10761,7 +10761,18 @@ function partnerCare(info, name) {
     <section class="card pt-stress lv${lvl}"><div class="pts-top"><b>${['', 'Low', 'Medium', 'High'][lvl]}</b><span class="pts-bar">${[1, 2, 3].map(i => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</span></div><p>${PT_STRESS[w]}</p></section>
     ${sectionTitle(`Best to eat for ${name}`)}
     <div class="hscroll pt-eat">${foods.map(([f, why]) => `<button class="pte" data-action="pteOpen" data-f="${esc(f)}" data-n="${esc(why)}" data-ph="${info.phase}" data-w="${warm ? 1 : ''}" data-who="${name}"><img src="${foodPhoto(f, 300)}" alt="" loading="lazy"><b>${esc(f)}</b><small>For ${why.toLowerCase()}</small></button>`).join('')}</div>
-    ${warm ? `<p class="fine pt-warm">${icon('thermo', 13)} Serve it warm and cooked these days. No iced drinks or cold raw food.</p>` : ''}`;
+    ${warm ? `<p class="fine pt-warm">${icon('thermo', 13)} Serve it warm and cooked these days. No iced drinks or cold raw food.</p>` : ''}
+    ${ptCook(info, name)}`;
+}
+// Cook for her (23 Nov 2026): the best recipe for where she is now, shown as its 3D dish floating on a paper card; tap opens the recipe.
+function ptCook(info, name) {
+  const all = recipesFor(info.phase, info), r = all.find(x => dishModel(x)) || all[0]; if (!r) return '';
+  const dm = dishModel(r), img = dm ? dm.img : photoUrl(r.id, 400);
+  return `<button class="ptc" data-action="nav" data-to="recipe/${r.id}">
+    <span class="ptc-pic ${dm ? '' : 'ph'}"><img src="${img}" alt="" loading="lazy"><i class="ptc-sh" aria-hidden="true"></i></span>
+    <span class="ptc-b"><small class="lsw-e">Cook for ${name} ${LSW_SPK('#f1b27c')}</small><b>${esc(r.name)}</b>
+      <span class="ptc-m">${icon('clock', 13)} ${r.time} min${(r.nutrients || []).slice(0, 2).map(n => ` · ${esc(n)}`).join('')}</span>
+      <span class="ptc-go">See the recipe ${icon('chevR', 13)}</span></span></button>`;
 }
 // ---- His day: men run on a 24-hour hormone rhythm. A small page for the man she shares her link with. ----
 const HIS_BLOCKS = [

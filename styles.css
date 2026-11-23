@@ -17853,3 +17853,22 @@ html .card.md2 { position: relative; padding: 18px 16px 16px; border-radius: 30p
 .md-note { position: relative; margin: 18px 6px 2px; padding: 14px 14px 12px; border-radius: 6px 18px 18px 18px; background: #fffaf0; transform: rotate(-1deg); font-size: 12.5px; line-height: 1.5; color: rgba(32,48,26,.7); box-shadow: 0 6px 14px -8px rgba(120,90,40,.35); }
 .md-tape { position: absolute; top: -8px; left: 24px; width: 46px; height: 15px; transform: rotate(-5deg); border-radius: 2px; background: repeating-linear-gradient(90deg, rgba(241,178,124,.6) 0 6px, rgba(253,238,223,.8) 6px 12px); }
 @media (prefers-reduced-motion: reduce) { .md-wave, .md-emo, .md-pk { animation: none; } }
+
+/* Cook for her: the 3D dish floats on a dotted paper card (23 Nov 2026) */
+html .ptc { position: relative; display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 12px; width: 100%; margin: 14px 0 6px; padding: 14px 16px 14px 10px; border: 1px solid rgba(230,128,156,.2); border-radius: 28px; font: inherit; text-align: left; color: #20301a; cursor: pointer;
+  background: radial-gradient(rgba(176,106,44,.09) 1px, transparent 1.3px) 0 0 / 14px 14px, linear-gradient(120deg, #fff 0%, #fdf4f0 60%, #fdf0e4 100%); box-shadow: 0 14px 30px -20px rgba(150,70,100,.45); transition: transform .35s cubic-bezier(.3,1.4,.5,1); }
+html .ptc:active { transform: scale(.97); }
+.ptc-pic { position: relative; display: grid; place-items: center; height: 110px; }
+.ptc-pic img { position: relative; z-index: 1; width: 124px; height: 110px; object-fit: contain; filter: drop-shadow(0 12px 12px rgba(80,50,30,.22)); animation: ptcFloat 5s ease-in-out infinite; }
+.ptc-pic.ph img { width: 100px; height: 100px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px #fff; filter: none; }
+.ptc-sh { position: absolute; bottom: 2px; left: 50%; width: 70px; height: 10px; margin-left: -35px; border-radius: 50%; background: rgba(80,50,30,.14); filter: blur(4px); animation: ptcSh 5s ease-in-out infinite; }
+.ptc-b { display: grid; gap: 4px; min-width: 0; }
+.ptc-b > b { font-size: 17px; font-weight: 500; line-height: 1.25; letter-spacing: -.01em; }
+.ptc-m { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: rgba(32,48,26,.6); }
+.ptc-go { justify-self: start; display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; padding: 6px 12px; border-radius: 99px; background: #20301a; color: #fff; font-size: 12.5px; }
+@keyframes ptcFloat { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-6px) rotate(2deg); } }
+@keyframes ptcSh { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(.82); opacity: .7; } }
+/* Make her / Date idea: real 3D pictures instead of the glyph and icon */
+.ptd-two .ptd-3d { width: 64px; height: 64px; object-fit: contain; margin: -4px 0 4px -4px; filter: drop-shadow(0 8px 8px rgba(80,50,30,.18)); }
+.ptd-two .ptd-emo { display: block; margin: 0 0 6px; font-size: 44px; line-height: 1.1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; filter: drop-shadow(0 6px 6px rgba(80,50,30,.16)); }
+@media (prefers-reduced-motion: reduce) { .ptc-pic img, .ptc-sh { animation: none; } }
