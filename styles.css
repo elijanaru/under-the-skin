@@ -17872,3 +17872,10 @@ html .ptc:active { transform: scale(.97); }
 .ptd-two .ptd-3d { width: 64px; height: 64px; object-fit: contain; margin: -4px 0 4px -4px; filter: drop-shadow(0 8px 8px rgba(80,50,30,.18)); }
 .ptd-two .ptd-emo { display: block; margin: 0 0 6px; font-size: 44px; line-height: 1.1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; filter: drop-shadow(0 6px 6px rgba(80,50,30,.16)); }
 @media (prefers-reduced-motion: reduce) { .ptc-pic img, .ptc-sh { animation: none; } }
+
+/* her partner page: the tea moved into Today for you two, so the date idea has the row (23 Nov 2026) */
+.ptd-two.one { grid-template-columns: 1fr; }
+/* partner avatars: always round (a page-level .lg padding stretched them into ovals), a little friend when no photo has come over yet */
+html .pt-av.lg { padding: 0; height: 60px; align-self: center; }
+html .pt-av.pet { background: #fff; border: 1.5px solid rgba(230,128,156,.35); box-shadow: 0 4px 12px -6px rgba(48,64,35,.25); }
+html .pt-av.pet img { object-fit: contain; padding: 8%; border-radius: 50%; }

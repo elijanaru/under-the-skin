@@ -8885,7 +8885,9 @@ const SYNC = {
   'follicular|ovulatory': 'Both of you have high energy. Go out, be social, make plans.',
 };
 function syncNote(a, b) { return SYNC[[a, b].sort().join('|')] || SYNC[[b, a].join('|')] || SYNC[[a, b].join('|')] || 'Different tides this week. Whoever has more energy carries a little more, and you switch next week.'; }
-function ptAvatar(p, cls = '') { return `<span class="pt-av ${cls}">${p.t ? `<img src="${esc(p.t)}" alt="">` : esc((p.n || '?')[0])}${cls.includes('sm') ? '' : `<i style="background:${PHASE_COLOR.dark[snapInfo(p, new Date()).phase]}"></i>`}</span>`; }
+// 23 Nov 2026: their real profile picture when it has come over, otherwise one of her little friends (never a bare letter)
+const ptPet = p => petSrc(PETS[[...String(p.id || p.n || '')].reduce((a, c) => a + c.charCodeAt(0), 0) % PETS.length][0]);
+function ptAvatar(p, cls = '') { return `<span class="pt-av ${cls}${p.t ? '' : ' pet'}"><img src="${esc(p.t || ptPet(p))}" alt="">${cls.includes('sm') ? '' : `<i style="background:${PHASE_COLOR.dark[snapInfo(p, new Date()).phase]}"></i>`}</span>`; }
 // The cute "send love" button: a smiling envelope with a heart seal, little hearts floating up.
 function loveBtnArt() { return `<svg class="lb2-env" viewBox="0 0 64 56" aria-hidden="true"><rect x="6" y="14" width="52" height="36" rx="8" fill="#fff" stroke="#304023" stroke-width="2"/><path d="M8 18l24 18 24-18" fill="none" stroke="#304023" stroke-width="2" stroke-linejoin="round"/>
     <circle cx="22" cy="40" r="3" fill="#efb6c8" opacity=".8"/><circle cx="42" cy="40" r="3" fill="#efb6c8" opacity=".8"/><path d="M28 42q4 3 8 0" fill="none" stroke="#304023" stroke-width="1.8" stroke-linecap="round"/>
@@ -9086,10 +9088,9 @@ function loveSheet() {
   return `<div class="love-sheet" data-action="loveClose"><div class="ls-card ls2 lsw" data-action="noop">
     <div class="ls-grip"></div>${LSW_SPK('#e7a3bb')}
     ${lswHead(p.n, ptAvatar(p, 'sm'), sent ? `${sent} ${sent === 1 ? 'heart' : 'hearts'} sent so far` : 'Tap one and it lands on her phone')}
-    <div class="lsw-k">💌 Love</div>
-    <div class="lsw-grid">${LOVE.map((l, i) => lswTile(l, i, 'sendLove')).join('')}</div>
+    <div class="lsw-grid four">${PV_LOVE.map(k => LOVE.find(l => l.k === k)).map((l, i) => lswTile(l, i, 'sendLove')).join('')}</div>
     <div class="lsw-k care">🌱 Care nudges</div>
-    <div class="lsw-grid care">${CARE.map((l, i) => lswTile(l, i + LOVE.length, 'sendLove')).join('')}</div></div></div>`;
+    <div class="lsw-grid care">${CARE.map((l, i) => lswTile(l, i + 4, 'sendLove')).join('')}</div></div></div>`;
 }
 function fmtAgo(t) { const m = Math.round((Date.now() - t) / 60000); return m < 1 ? 'just now' : m < 60 ? `${m} min ago` : m < 1440 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} d ago`; }
 function heartBurst(x, y) {
@@ -9272,6 +9273,7 @@ function viewPartner(p) {
 
     ${moodDesire(pi, p)}
     ${partnerCare(pi, esc(p.n))}
+    ${duoBring(pi)}
 
     ${sectionTitle('Her hormones')}
     <section class="card glass chart-card">${cycleChart(pi, { id: 'pt', compact: true, who: 'Her' })}</section>
@@ -9292,8 +9294,7 @@ function viewPartner(p) {
     ${sectionTitle(p.a === 'friend' ? 'How to be a good friend' : 'How to show up today')}
     <section class="card glass">${list(sup.do.slice(0, 3), 'yes')}</section>
     ${sup.gifts ? `${sectionTitle('Little gifts')}<div class="hscroll">${sup.gifts.map(g => `<div class="rcard gift g2">${giftArt(g)}<div class="rc-t">${esc(g.replace(/\s*😉/, ''))}</div></div>`).join('')}</div>` : ''}
-    <div class="ptd-two">
-      <div class="card glass"><img class="ptd-3d" src="${teaCupImg(tcm.tea.name)}" alt="" loading="lazy"><small>Make her</small><b>${tcm.tea.name}</b></div>
+    <div class="ptd-two one">
       ${sup.date || sup.plan ? `<div class="card glass"><span class="ptd-emo" aria-hidden="true">${ptDateEmo(sup.date || sup.plan)}</span><small>${sup.date ? 'Date idea' : 'Plan idea'}</small><b>${esc(sup.date || sup.plan)}</b></div>` : ''}
     </div>
     <p class="fine center">Updates on its own whenever ${esc(p.n)} logs a new period. Every body is different, so ask her too.</p>
@@ -10761,8 +10762,7 @@ function partnerCare(info, name) {
     <section class="card pt-stress lv${lvl}"><div class="pts-top"><b>${['', 'Low', 'Medium', 'High'][lvl]}</b><span class="pts-bar">${[1, 2, 3].map(i => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</span></div><p>${PT_STRESS[w]}</p></section>
     ${sectionTitle(`Best to eat for ${name}`)}
     <div class="hscroll pt-eat">${foods.map(([f, why]) => `<button class="pte" data-action="pteOpen" data-f="${esc(f)}" data-n="${esc(why)}" data-ph="${info.phase}" data-w="${warm ? 1 : ''}" data-who="${name}"><img src="${foodPhoto(f, 300)}" alt="" loading="lazy"><b>${esc(f)}</b><small>For ${why.toLowerCase()}</small></button>`).join('')}</div>
-    ${warm ? `<p class="fine pt-warm">${icon('thermo', 13)} Serve it warm and cooked these days. No iced drinks or cold raw food.</p>` : ''}
-    ${ptCook(info, name)}`;
+    ${warm ? `<p class="fine pt-warm">${icon('thermo', 13)} Serve it warm and cooked these days. No iced drinks or cold raw food.</p>` : ''}`;
 }
 // Cook for her (23 Nov 2026): the best recipe for where she is now, shown as its 3D dish floating on a paper card; tap opens the recipe.
 function ptCook(info, name) {
@@ -11033,13 +11033,13 @@ function ticketSent(el) {
 // a cute emoji for the date idea of her phase (sofa night, something new, out dancing, home comfort)
 const dateEmo = t => [[/sofa|film|blanket/i, '🍿'], [/new|class|trip/i, '🎡'], [/danc|event|out\b/i, '🥂'], [/home|cook|comfort|early/i, '🍲'], [/walk/i, '🌷'], [/dinner/i, '🍝']].find(([r]) => r.test(t))?.[1] || '💝';
 const pvEmo = e => `<span class="pv2-emo">${emoRaw(e)}</span>`;
-function pvToday(info, name, sup, snap) {
-  const warm = info.isPeriod || info.cd > info.L - 4, sn = SZ.seasonName(myCountry(), new Date().getMonth() + 1), snacks = (PV_SNACK[sn] || PV_SNACK.Autumn)[warm ? 'warm' : info.phase], ph = info.phase, w = hisWake(), dw = dayWindow(info);
-  const day = dayNum(C.startOfDay(new Date())), her = C.energyAt(info.cd, info.L, info.P);
+// Today for you two (his page and, since 23 Nov 2026, her partner page): a 3D dish and a 3D cup that open their recipe in place, then what to bring her
+function duoBring(info) {
+  const warm = info.isPeriod || info.cd > info.L - 4, sn = SZ.seasonName(myCountry(), new Date().getMonth() + 1), snacks = (PV_SNACK[sn] || PV_SNACK.Autumn)[warm ? 'warm' : info.phase], ph = info.phase, dw = dayWindow(info);
+  const day = dayNum(C.startOfDay(new Date()));
   const pool = myRecipes().filter(r => r.phases.includes(ph) && (r.meal === 'Dinner' || r.meal === 'Lunch') && (!warm || !r.raw) && dishModel(r));
   const rec = pool.length ? pick(pool, day) : (tonightRecipe(ph, warm) || pick(recipesFor(ph, info), day)), D = dishModel(rec);
   const td = TEA_DAY[dw], [steep, tWhen] = TEA_STEEP[dw] || ['', ''];
-  const when = warm ? 'Tonight, at home' : her > .7 ? `From ${hLabel(w + 7)}, your strongest hours` : `From ${hLabel(w + 11)}, when you’re calmer`;
   const cup3d = (img, attr, label) => `<span class="cup3d-w"><img class="dpt-cup" src="${img}" alt="" loading="lazy">${attr ? `<canvas class="teacup3d"${attr} aria-label="${esc(label)}, turning slowly"></canvas>` : ''}</span>`;
   return `${sectionTitle('Today for you two')}
     <p class="pv2-lead">What to cook, make and bring her. Made for her ${PHASES[ph].name.toLowerCase()} phase${warm ? ', all warm' : ''}.</p>
@@ -11054,6 +11054,13 @@ function pvToday(info, name, sup, snap) {
       <p class="hd-hint duo-hint">Tap the dish or the cup for how to make it</p></section>
     <section class="pv2-card pv2-bring"><div class="pv2-h"><b>Bring her</b><small>In season now · on the way home</small></div>
       <div class="pv2-snacks three">${snacks.map(([e, n, why]) => `<div class="pv2-sn">${pvEmo(e)}<b>${n}</b><small>${why}</small></div>`).join('')}</div></section>
+`;
+}
+function pvToday(info, name, sup, snap) {
+  const warm = info.isPeriod || info.cd > info.L - 4, sn = SZ.seasonName(myCountry(), new Date().getMonth() + 1), snacks = (PV_SNACK[sn] || PV_SNACK.Autumn)[warm ? 'warm' : info.phase], ph = info.phase, w = hisWake(), dw = dayWindow(info);
+  const day = dayNum(C.startOfDay(new Date())), her = C.energyAt(info.cd, info.L, info.P);
+  const when = warm ? 'Tonight, at home' : her > .7 ? `From ${hLabel(w + 7)}, your strongest hours` : `From ${hLabel(w + 11)}, when you’re calmer`;
+  return `${duoBring(info)}
     ${dateSentToday() ? '' : (([, dt, dp]) => `<section class="pv2-vt" role="button" tabindex="0" data-action="pvDateSend" aria-label="Send ${name} this date">${vtTicket({ to: name, from: himP().n || 'Me', plan: dp, title: dt, ph, when: warm ? 'Tonight, at home' : `Today, ${hLabel(her > .7 ? w + 7 : w + 11)}`, note: `*Tap the ticket and it flies to ${esc(name)}’s phone.` })}</section>`)(dateIdea(info))}
     ${snap && (snap.a || 'partner') === 'partner' ? `<button class="lb2 lbw dt-send" data-action="pvLove" aria-label="Send ${name} love">
       <span class="lb2-hearts" aria-hidden="true">${[0, 1, 2, 3].map(i => `<i style="--d:${i * .9}s;--x:${[18, 38, 62, 80][i]}%">${HEART(i % 2 ? '#f4c6d6' : '#e6809c')}</i>`).join('')}</span>
