@@ -12380,11 +12380,43 @@ const actions = {
 
 // A web photo that fails (offline, blocked host) gets a flag so its slot can show a tinted tile instead of a blank hole.
 document.addEventListener('error', e => { const t = e.target; if (t && t.tagName === 'IMG') t.classList.add('img-off'); }, true);
+// Keep her place: when a tab, a setting or a redraw makes the page shorter for a moment (new pictures still loading),
+// the page holds its height below her instead of snapping up. The extra room melts away as she scrolls back up.
+let holdX = 0;
+// page height from the layout itself, so a tab's slide-in animation can't fool it
+const holdSp = v => v.querySelector(':scope > .hold-sp');
+const contentH = v => { let b = 0; for (const c of v.children) if (!c.classList.contains('hold-sp')) b = Math.max(b, c.offsetTop - (c.offsetParent === v ? 0 : v.offsetTop) + c.offsetHeight); return b + (parseFloat(getComputedStyle(v).paddingBottom) || 0); };
+function holdSet(v, need) {
+  holdX = need; let sp = holdSp(v);
+  if (!need) { sp?.remove(); return; }
+  if (!sp) { sp = document.createElement('div'); sp.className = 'hold-sp'; sp.setAttribute('aria-hidden', 'true'); v.appendChild(sp); }
+  sp.style.height = `${need}px`;
+}
+function holdPlace(v, top) {
+  if (!v) return;
+  if (!(top > 0)) return holdSet(v, 0);
+  const need = Math.max(0, Math.ceil(top + v.clientHeight - contentH(v)));
+  holdSet(v, need);
+  if (Math.abs(v.scrollTop - top) > 1) v.scrollTop = top;
+}
+function holdShrink() {
+  const v = document.getElementById('view'); if (!holdX || !v) return;
+  const need = Math.max(0, Math.min(holdX, Math.ceil(v.scrollTop + v.clientHeight - contentH(v))));
+  if (need !== holdX) holdSet(v, need);
+}
+document.addEventListener('scroll', e => { if (holdX && e.target.id === 'view') holdShrink(); }, { capture: true, passive: true });
+document.addEventListener('load', e => { if (holdX && e.target.tagName === 'IMG') holdShrink(); }, true);
+const clamped = (v, top) => v && v.scrollTop < top - 1 && v.scrollTop >= v.scrollHeight - v.clientHeight - 2;
 document.addEventListener('click', e => {
   const el = e.target.closest('[data-action]');
   if (!el || el.disabled) return;
   const fn = actions[el.dataset.action];
-  if (fn) { e.preventDefault(); fn(el.dataset, el); }
+  if (!fn) return;
+  e.preventDefault();
+  const v0 = document.getElementById('view'), top = v0 ? v0.scrollTop : 0, h = location.hash;
+  const r = fn(el.dataset, el);
+  const keep = () => { const v = document.getElementById('view'); if (location.hash === h && state?.onboarded && v && (v !== v0 || clamped(v, top))) holdPlace(v, top); };
+  keep(); if (r && r.then) r.then(keep, () => {});
 });
 document.addEventListener('keydown', e => { if (e.key !== 'Enter' || (e.target.id !== 'ac-mail' && e.target.id !== 'ac-code')) return; e.preventDefault(); e.target.closest('.ph-auth')?.querySelector(e.target.id === 'ac-code' ? '[data-action="acCode"]' : '.ph-s1 [data-action="acMailCode"]')?.click(); });
 document.addEventListener('keydown', e => {
@@ -12934,7 +12966,7 @@ function render() {
   if (arriving) $app.appendChild(arriving);
   if (ui.loveFor) $app.insertAdjacentHTML('beforeend', loveSheet());
   const v = document.getElementById('view');
-  v.scrollTop = keep;
+  if (fresh) { holdSet(v, 0); v.scrollTop = keep; } else holdPlace(v, keep);
   peekTabs(); setTimeout(peekTabs, 400);
   if (ui.arrive && r.name === 'today' && M.info) { ui.arrive = false; playArrival(v); }
   decorateStudies(v);

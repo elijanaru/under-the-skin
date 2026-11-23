@@ -17615,3 +17615,4 @@ html .sfc-i em { display: grid; place-items: center; height: 118px; font-size: 6
 .tabbar.peek { opacity: 0; transform: translate(-50%, 28px); pointer-events: none; transition: opacity .45s ease, transform .6s cubic-bezier(.2,.8,.2,1); }
 .tabbar.peek.show { opacity: 1; transform: translateX(-50%); pointer-events: auto; }
 @media (prefers-reduced-motion: reduce) { .tabbar.peek, .tabbar.peek.show { transform: translateX(-50%); transition: opacity .2s; } }
+.hold-sp { pointer-events: none; }
