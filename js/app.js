@@ -9188,19 +9188,44 @@ function smiley(v) { // mouth curves up with a higher score
   const c = ((v - 55) / 45 * 7).toFixed(1);
   return `<g fill="none" stroke="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" stroke-width="2" stroke-linecap="round"><circle cx="52" cy="52" r="1.6" fill="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)"/><circle cx="68" cy="52" r="1.6" fill="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)"/><path d="M50 60 Q60 ${60 + +c} 70 60"/></g>`;
 }
+// Mood & desire (23 Nov 2026, her ask: whimsical like the love sheet). Two glass bubbles fill up like little jars
+// (feeling in honey, desire in coral) with a big emoji floating inside, then her month as two soft waves
+// with today and the desire peak marked, and a taped note to just ask her.
+const MD_FEEL = { Bright: '🥰', Good: '😊', Mixed: '😌', Tender: '🥺' }, MD_WANT = { High: '🔥', Medium: '💗', Low: '🌸' };
+function mdJar(v, emo, k, lab, col, i) {
+  const y = 100 - v; // liquid surface, 0 top 100 bottom
+  return `<div class="md-s" style="--r:${i ? 2 : -2.5}deg;--c:${col};--i:${i}">
+    <span class="md-jar"><svg viewBox="0 0 100 100" aria-hidden="true"><defs><clipPath id="mdc${i}"><circle cx="50" cy="50" r="46"/></clipPath></defs>
+      <circle cx="50" cy="50" r="46" fill="#fff"/>
+      <g clip-path="url(#mdc${i})"><path class="md-wave" d="M-50 ${y} q12.5 -6 25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0 V110 H-50z" fill="${col}" opacity=".55"/><path class="md-wave b" d="M-50 ${y + 3} q12.5 5 25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0 V110 H-50z" fill="${col}" opacity=".8"/></g>
+      <circle cx="50" cy="50" r="46" fill="none" stroke="#fff" stroke-width="3"/><ellipse cx="34" cy="26" rx="11" ry="6" fill="#fff" opacity=".7" transform="rotate(-30 34 26)"/></svg>
+      <b class="md-emo">${emo}</b></span>
+    <span class="md-n"><b>${v}</b><i>/100</i></span><small class="md-l">${k} · ${lab}</small></div>`;
+}
+function mdWaves(pi, peak) {
+  const L = pi.L, W = 300, H = 70, X = d => 6 + (d - 1) / (L - 1) * (W - 12), Y = v => H - 8 - v * (H - 20);
+  const line = f => Array.from({ length: L }, (_, k) => `${k ? 'L' : 'M'}${X(k + 1).toFixed(1)} ${Y(f(k + 1, L, pi.P)).toFixed(1)}`).join(' ');
+  const cd = Math.min(pi.cd, L), tx = X(cd), px = X(peak), py = Y(desireAt(peak, L, pi.P));
+  return `<svg class="md-wv" viewBox="0 0 ${W} ${H + 16}" aria-hidden="true">
+    <path d="${line(feelAt)}" fill="none" stroke="#efc35c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="${line(desireAt)}" fill="none" stroke="#ec8fa6" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="${tx}" y1="4" x2="${tx}" y2="${H}" stroke="#20301a" stroke-opacity=".35" stroke-width="1.2" stroke-dasharray="2 3"/>
+    <circle cx="${tx}" cy="${Y(desireAt(cd, L, pi.P))}" r="4.2" fill="#fff" stroke="#ec8fa6" stroke-width="2"/>
+    <text x="${Math.min(W - 18, Math.max(18, tx))}" y="${H + 13}" text-anchor="middle" class="md-t">Today</text>
+    ${peak !== cd ? `<g transform="translate(${px - 7} ${py - 19})"><path class="md-pk" d="M7 13s-6-3.7-6-8.1A3.3 3.3 0 0 1 7 3a3.3 3.3 0 0 1 6 1.9C13 9.3 7 13 7 13z" fill="#ec8fa6" stroke="#fff" stroke-width="1.4"/></g>` : ''}</svg>`;
+}
 function moodDesire(pi, p) {
   const fv = Math.round(feelAt(pi.cd, pi.L, pi.P) * 100), dv = Math.round(desireAt(pi.cd, pi.L, pi.P) * 100);
   const fw = fv >= 78 ? 'Bright' : fv >= 62 ? 'Good' : fv >= 50 ? 'Mixed' : 'Tender', dw = dv >= 70 ? 'High' : dv >= 45 ? 'Medium' : 'Low';
   let peak = 1; for (let d = 1; d <= pi.L; d++) if (desireAt(d, pi.L, pi.P) > desireAt(peak, pi.L, pi.P)) peak = d;
   const toPeak = (peak - pi.cd + pi.L) % pi.L;
   return `${sectionTitle('Mood & desire')}
-    <section class="card glass md-card">
-      <div class="md-two">
-        <div class="md-d">${cycleDial(pi, feelAt, smiley(fv))}<span class="md-v"><b>${fv}</b>/100</span><small>Feeling · ${fw}</small></div>
-        <div class="md-d">${cycleDial(pi, desireAt, `<g transform="translate(50 46) scale(.84)" fill="none" stroke="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" stroke-width="2.2" stroke-linejoin="round">${'<path d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/>'}</g>`)}<span class="md-v"><b>${dv}</b>/100</span><small>Sex drive · ${dw}</small></div>
-      </div>
-      <p class="body sm">${toPeak === 0 ? 'Desire is often at its highest around now.' : `Desire usually peaks around ovulation, in about ${plural(toPeak, 'day')}.`} Each ring is her whole cycle; the white bar is today. ${evBadge('some')}</p>
-      <p class="fine" style="margin:6px 0 0">Typical patterns from her cycle, not a reading of her. Every woman is different, so ask ${esc(p.n)} how she feels.</p>
+    <section class="card md2">
+      <div class="md-two2">${mdJar(fv, MD_FEEL[fw], 'Feeling', fw, '#f3cd6e', 0)}${mdJar(dv, MD_WANT[dw], 'Sex drive', dw, '#ef9db1', 1)}</div>
+      <div class="md-month"><div class="md-mh"><b>Her month</b><span><i class="f"></i>Feeling <i class="d"></i>Desire</span></div>
+        ${mdWaves(pi, peak)}
+        <p class="md-peak">${toPeak === 0 ? '💞 Desire is often at its highest around now.' : `💞 Desire usually peaks around ovulation, in about <b>${plural(toPeak, 'day')}</b>.`}</p></div>
+      <div class="md-note"><span class="md-tape" aria-hidden="true"></span>Typical patterns from her cycle, not a reading of her. Every woman is different, so ask ${esc(p.n)} how she feels 💬</div>
     </section>`;
 }
 function viewPartner(p) {

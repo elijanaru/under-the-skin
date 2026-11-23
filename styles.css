@@ -17826,3 +17826,30 @@ html .lbw .lbw-go svg { animation: pcBeatH 2.6s ease-in-out infinite; }
 @keyframes pcBeatH { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.16); } }
 html .lbw:active .lsw-env { transform: rotate(-1deg) scale(.97); }
 @media (prefers-reduced-motion: reduce) { html .lb2.lbw::after, html .lbw .lbw-go, html .lbw .lbw-go svg, .lbw-env .lb2-env { animation: none; } }
+
+/* Mood & desire on her partner's page, whimsical (23 Nov 2026): dotted paper, two tilted sticker jars, her month as two soft waves, a taped note */
+html .card.md2 { position: relative; padding: 18px 16px 16px; border-radius: 30px; border: 1px solid rgba(230,128,156,.2); color: #20301a;
+  background: radial-gradient(rgba(176,106,44,.09) 1px, transparent 1.3px) 0 0 / 14px 14px, linear-gradient(160deg, #fff 0%, #fdf4f6 60%, #fdf2e6 100%) !important; border-color: rgba(230,128,156,.2) !important; backdrop-filter: none !important; box-shadow: 0 14px 30px -20px rgba(150,70,100,.45) !important; }
+.md-two2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.md-s { position: relative; display: grid; justify-items: center; gap: 4px; padding: 14px 8px 12px; border-radius: 24px; background: #fff; transform: rotate(var(--r));
+  box-shadow: 0 1px 0 rgba(48,64,35,.05), 0 10px 20px -8px rgba(120,70,90,.25); }
+.md-s::after { content: ''; position: absolute; inset: 5px; border-radius: 19px; border: 1.5px dashed color-mix(in srgb, var(--c) 55%, transparent); pointer-events: none; }
+.md-jar { position: relative; display: grid; place-items: center; width: 104px; height: 104px; }
+.md-jar svg { position: absolute; inset: 0; width: 100%; height: 100%; filter: drop-shadow(0 6px 10px rgba(120,70,90,.16)); }
+.md-jar circle:first-of-type { }
+.md-wave { animation: mdWave 6s linear infinite; } .md-wave.b { animation-duration: 9s; animation-direction: reverse; }
+@keyframes mdWave { to { transform: translateX(50px); } }
+.md-emo { position: relative; font-size: 40px; line-height: 1; font-weight: 400; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; animation: lswBob 4.4s ease-in-out infinite; animation-delay: calc(var(--i) * -1.6s); }
+.md-n { display: flex; align-items: baseline; gap: 2px; margin-top: 4px; } .md-n b { font: 400 26px/1 var(--dot); color: #20301a; } .md-n i { font-style: normal; font-size: 12px; color: rgba(32,48,26,.5); }
+.md-l { padding: 4px 11px; border-radius: 99px; background: color-mix(in srgb, var(--c) 28%, #fff); color: #5a3a2a; font-size: 12px; font-weight: 500; }
+.md-month { margin-top: 16px; padding: 12px 12px 8px; border-radius: 22px; background: rgba(255,255,255,.8); border: 1px solid rgba(48,64,35,.06); }
+.md-mh { display: flex; align-items: center; justify-content: space-between; gap: 8px; } .md-mh b { font-size: 14px; font-weight: 500; }
+.md-mh span { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; color: rgba(32,48,26,.6); }
+.md-mh i { width: 14px; height: 4px; border-radius: 4px; } .md-mh i.f { background: #efc35c; } .md-mh i.d { background: #ec8fa6; margin-left: 6px; }
+.md-wv { display: block; width: 100%; height: auto; margin-top: 6px; overflow: visible; }
+.md-t { font: 500 10px Outfit, sans-serif; fill: rgba(32,48,26,.55); }
+.md-pk { transform-box: fill-box; transform-origin: 50% 60%; animation: pcBeatH 2.6s ease-in-out infinite; }
+.md-peak { margin: 4px 2px 2px; font-size: 13.5px; line-height: 1.45; color: rgba(32,48,26,.78); } .md-peak b { font-weight: 500; color: #b5577a; }
+.md-note { position: relative; margin: 18px 6px 2px; padding: 14px 14px 12px; border-radius: 6px 18px 18px 18px; background: #fffaf0; transform: rotate(-1deg); font-size: 12.5px; line-height: 1.5; color: rgba(32,48,26,.7); box-shadow: 0 6px 14px -8px rgba(120,90,40,.35); }
+.md-tape { position: absolute; top: -8px; left: 24px; width: 46px; height: 15px; transform: rotate(-5deg); border-radius: 2px; background: repeating-linear-gradient(90deg, rgba(241,178,124,.6) 0 6px, rgba(253,238,223,.8) 6px 12px); }
+@media (prefers-reduced-motion: reduce) { .md-wave, .md-emo, .md-pk { animation: none; } }
