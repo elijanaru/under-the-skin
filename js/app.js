@@ -9216,7 +9216,6 @@ function viewPartner(p) {
   const list = (arr, cls) => `<ul class="plist ${cls || ''}">${arr.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
   return `${topbar(esc(p.n), { back: true })}
   <div class="pad">
-    <div class="pt-stage-h">${ptAvatar(p, 'lg')}<h1 class="hello sm">${esc(p.n)} is in her <b>${ph.name} phase</b><small>${ph.season} · ${partnerStatus(pi, p)}</small></h1></div>
     <section class="hub pt-stage">${stageHero(pi, en, { nav: false, id: 'pt', fert: !!p.f })}</section>
     ${(() => {
       const late = pi.cd > pi.L - 4, moods = { menstrual: ['Tired', 'Inward', 'Tender', 'Reflective'], follicular: ['Curious', 'Optimistic', 'Light', 'Playful'], ovulatory: ['Confident', 'Social', 'Flirty', 'Radiant'], luteal: late ? ['Sensitive', 'Bloated', 'Irritable', 'Needs comfort'] : ['Calm', 'Focused', 'Nesting', 'Cosy'] }[pi.phase];

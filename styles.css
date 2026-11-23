@@ -5693,8 +5693,6 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .sy-send .btn-dark { background: #304023 !important; color: #fff !important; border-color: #304023 !important; }
 
 /* partner pages: the same flower stage as Today */
-.pt-stage-h { display: flex; align-items: center; gap: 12px; margin: 4px 2px 12px; }
-.pt-stage-h .hello { margin: 0; } .pt-stage-h .hello small { display: block; margin-top: 4px; font-size: 13px; color: #5b6b48; }
 .pt-stage { margin-bottom: 14px; }
 .pt-stage .cap { cursor: default; }
 .feel-chips span.real { background: #304023; color: #fff; border-color: #304023; }
