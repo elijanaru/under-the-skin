@@ -8903,7 +8903,7 @@ function ptPair(me, them, meLab = '', themLab = '') {
   const mine = me && (me.photo || me.t), theirs = them && (them.photo || them.t);
   return `<span class="pc-pair" aria-hidden="true">
     <span class="pc-av you">${mine ? `<img src="${esc(mine)}" alt="">` : catFace('w')}${meLab ? `<small>${meLab}</small>` : ''}</span>
-    <svg class="pc-link" viewBox="0 0 120 40"><path d="M6 26 Q60 -4 114 26" fill="none" stroke="#e7a9be" stroke-width="2" stroke-dasharray="1 7" stroke-linecap="round"/><path class="pc-heart" d="M60 24s-7-4.3-7-9.5A3.9 3.9 0 0 1 60 12.2a3.9 3.9 0 0 1 7 2.3C67 19.7 60 24 60 24z" fill="#ec8fae"/></svg>
+    <svg class="pc-link" viewBox="0 0 120 40"><path d="M6 26 Q60 -4 114 26" fill="none" stroke="#e7a9be" stroke-width="2" stroke-dasharray="1 7" stroke-linecap="round"/><g transform="translate(0 -6.6)"><path class="pc-heart" d="M60 24s-7-4.3-7-9.5A3.9 3.9 0 0 1 60 12.2a3.9 3.9 0 0 1 7 2.3C67 19.7 60 24 60 24z" fill="#ec8fae" stroke="#fff" stroke-width="1.6" paint-order="stroke"/></g></svg>
     <span class="pc-av them">${theirs ? `<img src="${esc(theirs)}" alt="">` : them ? esc((them.n || '?')[0]) : icon('plus', 20)}${themLab ? `<small>${themLab}</small>` : ''}</span></span>`;
 }
 function partnersCard(info) {
