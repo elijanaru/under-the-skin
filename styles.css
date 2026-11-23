@@ -17974,3 +17974,9 @@ html .card.ci { padding: 20px 18px 18px; border-radius: 30px; color: #20301a; ba
 .dti-t p { margin: 0; font-size: 12.5px; line-height: 1.38; color: rgba(32,48,26,.74); }
 @media (prefers-reduced-motion: no-preference) { .dti-c.big .dti-e { animation: fdBob 3.2s ease-in-out infinite; } }
 html .ci-meters > .ci-m, html .ci-list > .ci-r { margin: 0; }
+
+/* connect steps: picks show or hide parts in place (23 Nov 2026) */
+.sy-flow [hidden] { display: none !important; }
+.sy-flow[data-rel="friend"] .sy-if-pt, .sy-flow:not([data-rel="friend"]) .sy-if-fr { display: none; }
+@media (prefers-reduced-motion: no-preference) { .sy-flow .sy-q1:not([hidden]), .sy-flow .sy-q2:not([hidden]), .sy-flow .sy-send:not([hidden]), .sy-flow .sy-st.them:not([hidden]) { animation: syIn .35s cubic-bezier(.2,.8,.2,1) both; } }
+@keyframes syIn { from { opacity: 0; transform: translateY(6px); } }

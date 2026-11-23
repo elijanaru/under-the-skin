@@ -8927,7 +8927,7 @@ function partnersCard(info) {
       <span class="pc-b"><small class="pc-e">Friends, family, partners</small><b class="pc-t">Partner cycle sharing</b>
         <span class="pc-s">Swap links and you’ll both see each other’s cycle and energy here.</span>
         <span class="pc-tags"><i class="you">Your phase</i><i class="them">Their energy</i><i class="both">Best days together</i></span>
-        <span class="pc-go"><i class="pc-go-h" aria-hidden="true">${icon('heart', 14, 2)}</i>Connect with your partner ${icon('chevR', 14)}</span></span></button></div>`;
+        <span class="pc-go"><i class="pc-go-h" aria-hidden="true">${icon('heart', 14, 2)}</i>Connect with somebody ${icon('chevR', 14)}</span></span></button></div>`;
   if (ps.length > 1) return `${sectionTitle('Your people', ['All', 'partners'])}
     <div class="pt-split n${Math.min(4, ps.length)}">${ps.slice(0, 4).map(p => { const pi = snapInfo(p, new Date()), ph = PHASES[pi.phase], en = Math.round(C.energyAt(pi.cd, pi.L, pi.P) * 100);
       return `<button class="card glass pt-tile" data-action="nav" data-to="partners/${p.id}">${ptAvatar(p)}<b>${esc(p.n)}</b><small>${ph.name} · day ${pi.cd}</small>
@@ -9142,27 +9142,35 @@ function viewPartners(id) {
         <span class="pt-b"><b>${esc(p.n)}</b><small>${ph.name} · day ${pi.cd} · ${partnerStatus(pi, p)}</small></span>${icon('chevR', 16)}</button></div>`; }).join('')}` : ''}
 
     ${ps.length >= 4 ? '<p class="fine center">You’re connected with 4 people, the most Underskin keeps. Remove someone to add a new person.</p>' : ''}
-    ${ps.length >= 4 ? '' : (() => { const sent = !!me.linkSent, got = ps.length > 0, rel = me.ptRel, who = rel && me.ptWho, fr = rel === 'friend', done = () => `<span class="sy-n done">${icon('check', 15, 2.4)}</span>`;
-      // one simple question at a time (23 Nov 2026): partner or friend first, then woman or man
-      const ask = !rel ? `<div class="sy-who-q" data-q="rel"><b>Who are you adding?</b><small>Partners get love notes, friends get a friend dashboard.</small>
-        <div class="sy-pick">${[['partner', 'My partner', '💞'], ['friend', 'A friend', '🌿']].map(([k, t, e]) => `<button class="sy-opt sy-rel" data-action="ptRel" data-v="${k}" aria-pressed="false"><span class="sy-rel-e" aria-hidden="true">${e}</span><b>${t}</b></button>`).join('')}</div></div>`
-        : `<div class="sy-who-q" data-q="who"><button class="sy-rel-chip" data-action="ptRel" data-v="">${fr ? '🌿 A friend' : '💞 My partner'} <u>Change</u></button><b>${fr ? 'Is your friend' : 'Is your partner'} a woman or a man?</b><small>So we send the right kind of link.</small>
-        <div class="sy-pick">${[['w', 'A woman'], ['m', 'A man']].map(([k, t]) => `<button class="sy-opt sy-cat ${who === k ? 'on' : ''}" data-action="ptWho" data-v="${k}" aria-pressed="${who === k}">${catFace(k)}<b>${t}</b></button>`).join('')}</div></div>`;
-      const send = who ? `<div class="sy-send"><button class="btn btn-dark" data-action="shareSend">${icon('share', 16)} Send link</button><button class="btn btn-light" data-action="shareEmail">${icon('mail', 16)} Email it</button></div>` : '';
-      if (who === 'm') return `<div class="sy-head"><span class="hud">Connect in 2 steps</span><span class="sy-prog">${[sent, sent].map(x => `<i class="${x ? 'on' : ''}"></i>`).join('')}</span></div>
-    <ol class="sy-flow">
-      <li class="sy-st paper you ${sent ? 'is-done' : ''}">${sent ? done() : '<span class="sy-n">01</span>'}<div class="sy-c"><span class="sy-who">You</span>${ask}${send}</div></li>
-      <li class="sy-st them ${sent ? 'is-done' : ''}">${sent ? done() : '<span class="sy-n">02</span>'}<div class="sy-c">
-        <span class="sy-who">Him</span><b>He opens the link</b><small>${fr ? 'No account and no tracking. He sees your phase, your social battery and the best days to meet up. It updates every day.' : 'No account and no tracking. He sees your phase, energy and how to show up, plus My day: his own 24-hour hormone rhythm. It updates every day and he can save it to his home screen.'}</small></div></li>
-    </ol>`;
-      return `<div class="sy-head"><span class="hud">${ps.length ? 'Add someone new' : 'Connect in 2 steps'}</span><span class="sy-prog">${[sent, got].map(x => `<i class="${x ? 'on' : ''}"></i>`).join('')}</span></div>
-    <ol class="sy-flow">
-      <li class="sy-st paper you ${sent ? 'is-done' : ''}">${sent ? done() : '<span class="sy-n">01</span>'}<div class="sy-c"><span class="sy-who">You</span>${ask}${send}</div></li>
-      ${who ? `<li class="sy-st them ${got ? 'is-done' : ''}">${got ? done() : '<span class="sy-n">02</span>'}<div class="sy-c">
-        <span class="sy-who">Her</span><b>She opens it and you're both connected</b><small>Her Underskin adds you and sends her rhythm back to you on its own.</small></div></li>` : ''}
+    ${ps.length >= 4 ? '' : (() => { const sent = !!me.linkSent, got = ps.length > 0, rel = me.ptRel || '', who = (rel && me.ptWho) || '', done = () => `<span class="sy-n done">${icon('check', 15, 2.4)}</span>`;
+      // one simple question at a time (23 Nov 2026): partner or friend first, then woman or man. Every state is already
+      // on the page and a tap only shows or hides parts (syApply), so nothing redraws while she picks.
+      return `<div class="sy-head"><span class="hud">${ps.length ? 'Add someone new' : 'Connect in 2 steps'}</span><span class="sy-prog"><i class="${sent ? 'on' : ''}"></i><i class="sy-p2 ${(who === 'm' ? sent : got) ? 'on' : ''}"></i></span></div>
+    <ol class="sy-flow" data-rel="${rel}" data-who="${who}">
+      <li class="sy-st paper you ${sent ? 'is-done' : ''}">${sent ? done() : '<span class="sy-n">01</span>'}<div class="sy-c"><span class="sy-who">You</span>
+        <div class="sy-who-q sy-q1" ${rel ? 'hidden' : ''}><b>Who are you adding?</b><small>Partners get love notes, friends get a friend dashboard.</small>
+          <div class="sy-pick">${[['partner', 'My partner', '💞'], ['friend', 'A friend', '🌿']].map(([k, t, e]) => `<button class="sy-opt sy-rel" data-action="ptRel" data-v="${k}" aria-pressed="false"><span class="sy-rel-e" aria-hidden="true">${e}</span><b>${t}</b></button>`).join('')}</div></div>
+        <div class="sy-who-q sy-q2" ${rel ? '' : 'hidden'}><button class="sy-rel-chip" data-action="ptRel" data-v=""><span class="sy-if-fr">🌿 A friend</span><span class="sy-if-pt">💞 My partner</span> <u>Change</u></button>
+          <b><span class="sy-if-fr">Is your friend a woman or a man?</span><span class="sy-if-pt">Is your partner a woman or a man?</span></b><small>So we send the right kind of link.</small>
+          <div class="sy-pick">${[['w', 'A woman'], ['m', 'A man']].map(([k, t]) => `<button class="sy-opt sy-cat ${who === k ? 'on' : ''}" data-action="ptWho" data-v="${k}" aria-pressed="${who === k}">${catFace(k)}<b>${t}</b></button>`).join('')}</div></div>
+        <div class="sy-send" ${who ? '' : 'hidden'}><button class="btn btn-dark" data-action="shareSend">${icon('share', 16)} Send link</button><button class="btn btn-light" data-action="shareEmail">${icon('mail', 16)} Email it</button></div></div></li>
+      <li class="sy-st them sy-him ${sent ? 'is-done' : ''}" ${who === 'm' ? '' : 'hidden'}>${sent ? done() : '<span class="sy-n">02</span>'}<div class="sy-c">
+        <span class="sy-who">Him</span><b>He opens the link</b><small><span class="sy-if-fr">No account and no tracking. He sees your phase, your social battery and the best days to meet up. It updates every day.</span><span class="sy-if-pt">No account and no tracking. He sees your phase, energy and how to show up, plus My day: his own 24-hour hormone rhythm. It updates every day and he can save it to his home screen.</span></small></div></li>
+      <li class="sy-st them sy-her ${got ? 'is-done' : ''}" ${who === 'w' ? '' : 'hidden'}>${got ? done() : '<span class="sy-n">02</span>'}<div class="sy-c">
+        <span class="sy-who">Her</span><b>She opens it and you're both connected</b><small>Her Underskin adds you and sends her rhythm back to you on its own.</small></div></li>
     </ol>`; })()}
     <button class="link center-link" data-action="nav" data-to="share">Sharing settings & preview</button>
   </div>`;
+}
+// Partner page: her picks only show or hide parts of the connect steps, so nothing redraws or jumps.
+function syApply() {
+  const f = document.querySelector('.sy-flow'); if (!f) return render();
+  const me = state.profile, rel = me.ptRel || '', who = (rel && me.ptWho) || '', got = (state.partners || []).length > 0, $ = q => f.querySelector(q);
+  f.dataset.rel = rel; f.dataset.who = who;
+  $('.sy-q1').hidden = !!rel; $('.sy-q2').hidden = !rel; $('.sy-send').hidden = !who;
+  $('.sy-him').hidden = who !== 'm'; $('.sy-her').hidden = who !== 'w';
+  f.querySelectorAll('.sy-cat').forEach(b => { const on = b.dataset.v === who; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+  document.querySelector('.sy-prog .sy-p2')?.classList.toggle('on', who === 'm' ? !!me.linkSent : got);
 }
 // Partner page: redraw only the connect steps (no full page refresh, photo and scroll stay put).
 function syRefresh() {
@@ -9172,7 +9180,6 @@ function syRefresh() {
   const nf = t.querySelector('.sy-flow'), nh = t.querySelector('.sy-head'), oh = v.querySelector('.sy-head'); if (!nf) return false;
   // keep the woman/man question she just tapped (only its state changes), so iOS never loses its place
   const y = v.scrollTop, wy = window.scrollY, oq = old.querySelector('.sy-who-q'), nq = nf.querySelector('.sy-who-q');
-  if (oq && nq && oq.dataset.q === nq.dataset.q) { oq.querySelectorAll('[data-action=ptWho]').forEach(b => { const on = b.dataset.v === state.profile.ptWho; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); }); nq.replaceWith(oq); }
   old.replaceWith(nf); if (oh && nh) oh.replaceWith(nh);
   v.scrollTop = y; if (window.scrollY !== wy) window.scrollTo(0, wy);
   requestAnimationFrame(() => { if (v.scrollTop !== y) v.scrollTop = y; });
@@ -12640,8 +12647,8 @@ const actions = {
     const note = card.querySelector('#hs3-note'); note.innerHTML = `<b>${HIS_DO[i]}</b><p>${b[3]}</p>`; note.animate([{ opacity: 0, transform: 'translateY(-4px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: 'ease-out' });
   },
   trackMine: () => { try { localStorage.removeItem('uts.viewOnly'); } catch {} go('today'); },
-  ptWho: d => { state.profile.ptWho = d.v; save(); syRefresh() || render(); },
-  ptRel: d => { state.profile.ptRel = d.v || undefined; if (d.v) ui.shareAudience = d.v; save(); syRefresh() || render(); },
+  ptWho: d => { state.profile.ptWho = d.v; save(); syApply(); },
+  ptRel: d => { state.profile.ptRel = d.v || undefined; if (d.v) ui.shareAudience = d.v; save(); syApply(); },
   shareEmail: () => {
     if (!M.stats.periods.length) return toast('Log a period first so there is something to share');
     const me = state.profile.name || 'I', he = state.profile.ptWho === 'm';
