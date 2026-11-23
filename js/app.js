@@ -1998,6 +1998,7 @@ function viewOnboarding() {
     <div class="onb-foot">
       <button class="pearl-btn wide" data-action="onbNext" ${s === 1 && !ui.onbWhere && !o.name.trim() ? 'disabled' : ''}><span>${s === 11 ? 'Open my app ✦' : s === 10 ? 'Start free until my period' : s === 8 ? 'See my plan' : 'Continue'}</span></button>
       ${s === 10 ? '<p class="fine rm2-note">Underskin is a wellness app, not medical advice.</p>' : ''}
+      ${s < 10 ? '<button class="onb-skip" data-action="onbSkip">Skip setup</button>' : ''}
     </div>
   </div>`;
 }
@@ -11764,6 +11765,10 @@ const actions = {
     if (state.partners?.length) { M = model(); syncTo(state.partners[0]); startSignals(); }
     if (o.askG === 'granted' && !o.geo) geoLocate(false).then(() => scheduleSunNative()); else if (o.askN === 'granted') setTimeout(() => scheduleSunNative(), 600);
   },
+  // Skip setup (23 Nov 2026, her ask): straight into the app. Anything she didn't answer keeps its gentle default,
+  // and a cycle length she never set is marked "not sure", so the app starts at 28 days and learns from her next period.
+  onbSkip: () => { const o = ui.onb; if (ui.onbStep < 5 && !o.noPeriod) o.unsure = true; if (!o_ok()) o.last = C.iso(C.addDays(new Date(), -10));
+    ui.onbWhere = ui.onbPreg = ui.onbLoss = ui.onbTry = false; ui.onbStep = 11; actions.onbNext(); },
   gateSkip: () => { if (!termsTick()) return; ui.onbGateDone = true; ui.onbAnim = 'fwd'; render(); },
   termsAgree: () => { const at = Date.now(); state.termsAt = at; try { localStorage.setItem('uts.termsAt', String(at)); } catch {} save(); render(); },
   onbBack: () => { if (ui.onbStep === 1 && ui.onbWhere) { ui.onbWhere = false; ui.onbAnim = 'back'; render(); return; }

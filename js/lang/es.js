@@ -5989,4 +5989,5 @@ export default {"+ Cayenne":"+ Cayena",
 "Best days together":"Los mejores días juntos",
 "How to show up":"Cómo estar a su lado",
 "Them":"Tu persona",
-"Send one link. They see your phase and energy every day. If she tracks too, you see each other.":"Envía un enlace. Verá tu fase y tu energía cada día. Si ella también registra su ciclo, os veréis mutuamente."};
+"Send one link. They see your phase and energy every day. If she tracks too, you see each other.":"Envía un enlace. Verá tu fase y tu energía cada día. Si ella también registra su ciclo, os veréis mutuamente.",
+"Skip setup":"Saltar configuración"};

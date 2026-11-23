@@ -5989,4 +5989,5 @@ export default {"+ Cayenne":"+ 카옌페퍼",
 "Best days together":"함께하기 좋은 날",
 "How to show up":"곁에 있어 주는 법",
 "Them":"상대",
-"Send one link. They see your phase and energy every day. If she tracks too, you see each other.":"링크 하나만 보내면 돼요. 상대가 매일 나의 주기 단계와 에너지를 볼 수 있어요. 그녀도 기록한다면 서로를 볼 수 있어요."};
+"Send one link. They see your phase and energy every day. If she tracks too, you see each other.":"링크 하나만 보내면 돼요. 상대가 매일 나의 주기 단계와 에너지를 볼 수 있어요. 그녀도 기록한다면 서로를 볼 수 있어요.",
+"Skip setup":"설정 건너뛰기"};
