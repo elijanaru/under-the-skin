@@ -784,7 +784,7 @@ export const CARE_PHOTOS = {
   "early-sleep": { src: "https://images.unsplash.com/photo-1552858725-a19e7fcd3ac4", by: "Jp Valery", page: "https://unsplash.com/photos/F2SrBdv9swk" },
   "congee": { src: "https://images.unsplash.com/photo-1648161020664-73e6e084ef3a", by: "Solène Haillard", page: "https://unsplash.com/photos/w1wM3CMumqA" },
   "heart-breath": { src: "https://images.unsplash.com/photo-1461468611824-46457c0e11fd", by: "Artem Kovalev", page: "https://unsplash.com/photos/fk3XUcfTAvk" },
-  "lemon-water": { src: "https://images.unsplash.com/photo-1610378833220-9e374e37856b", by: "Aneta Voborilova", page: "https://unsplash.com/photos/clear-drinking-glass-with-water-and-sliced-lemon-on-brown-wooden-chopping-board-V2TubGSIf0w" },
+  "lemon-water": { src: "https://images.unsplash.com/photo-1534596292079-6ab51b3b0507", by: "Julia Zolotova", page: "https://unsplash.com/photos/slices-of-lemons-in-clear-pitcher-filled-with-water-K2yKpyLMVOg" },
   "lung-elixir": { src: "https://images.unsplash.com/photo-1785605121301-c5ab1cd740d7", by: "Le Tia", page: "https://unsplash.com/photos/YT6hO81LyP8" },
   "circulation-shot": { src: "https://images.unsplash.com/photo-1459933083533-46381576caa9", by: "Osha Key", page: "https://unsplash.com/photos/clear-drinking-glass-full-of-orange-liquid-wCml4tvK-Yg" },
   "gut-smoothie": { src: "https://images.unsplash.com/photo-1610970881699-44a5587cabec", by: "Giorgi Iremadze", page: "https://unsplash.com/photos/3OV0ft7mG_o" },

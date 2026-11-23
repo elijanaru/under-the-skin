@@ -3619,15 +3619,18 @@ const PLATE_ORDER = ['veg', 'fats', 'protein', 'spice', 'carbs', 'fruit'];
 // One calm, close-up whole-food photo per plate section, so the plate reads as one set.
 const UNS = id => `https://images.unsplash.com/photo-${id}?w=420&h=420&fit=crop&auto=format&q=70`;
 const PEX = id => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=420&h=420&fit=crop`;
+const sqFood = n => foodPhoto(n, 420).replace(/([?&])h=\d+/, '$1h=420');
 const PLATE_SET = {
-  protein: { menstrual: UNS('1783632665766-2806d10f2a03'), follicular: UNS('1641999161954-f6a92e137b84'), ovulatory: UNS('1706982272171-8ce965c1c996'), luteal: UNS('1603048297172-c92544798d5a') },
+  protein: { menstrual: UNS('1783632665766-2806d10f2a03'), follicular: UNS('1641999161954-f6a92e137b84'), ovulatory: UNS('1706982272171-8ce965c1c996'), luteal: UNS('1783632665766-2806d10f2a03') },
   // close, single-food photos so each portion is recognisable at a glance
-  spice: { menstrual: UNS('1758657996518-e67bd328854e'), follicular: UNS('1758657996518-e67bd328854e'), ovulatory: UNS('1758657996518-e67bd328854e'), luteal: UNS('1758657996518-e67bd328854e') },
-  fats: { menstrual: 'images/plate-fats.webp', follicular: 'images/plate-fats.webp', ovulatory: 'images/plate-fats.webp', luteal: 'images/plate-fats.webp' }, // halved avocado, clear at slice size
-  carbs: { menstrual: PEX(36400786), follicular: PEX(36400786), ovulatory: PEX(36400786), luteal: PEX(36400786) },
+  spice: { menstrual: UNS('1553499944-e4297a0af1bd'), follicular: UNS('1553499944-e4297a0af1bd'), ovulatory: UNS('1553499944-e4297a0af1bd'), luteal: UNS('1553499944-e4297a0af1bd') }, // cinnamon sticks, edge to edge
+  fats: { menstrual: UNS('1635843108103-9af0ea224a19'), follicular: UNS('1635843108103-9af0ea224a19'), ovulatory: UNS('1635843108103-9af0ea224a19'), luteal: UNS('1635843108103-9af0ea224a19') }, // cracked walnuts, edge to edge
+  carbs: { menstrual: sqFood('Sweet potatoes'), follicular: sqFood('Sweet potatoes'), ovulatory: sqFood('Sweet potatoes'), luteal: sqFood('Sweet potatoes') },
   veg: () => UNS('1558234608-ae0b60563965'),
-  fruit: { Winter: PEX(8639570), Autumn: UNS('1560806887-1e4cd0b6cbd6'), Spring: PEX(18018686), Summer: PEX(18018686), 'Late summer': UNS('1560806887-1e4cd0b6cbd6') },
+  fruit: { Winter: PEX(8639570), Autumn: UNS('1560806887-1e4cd0b6cbd6'), Spring: sqFood('Raspberries'), Summer: sqFood('Plums'), 'Late summer': UNS('1560806887-1e4cd0b6cbd6') },
 };
+// Where to aim inside a photo so one food fills its whole slice: focus point (fraction of the photo) and extra zoom.
+const PLATE_FOCUS = { fruit: [.42, .5, 1.15] };
 const plateSetPic = (k, phase, season) => k === 'protein' && myDiet() === 'pesc' ? foodPhoto('Salmon', 420) : k === 'protein' && (myDiet() === 'veg' || myDiet() === 'vegan') ? foodPhoto('Peas & broad beans', 420) : k === 'veg' ? PLATE_SET.veg() : k === 'fruit' ? PLATE_SET.fruit[season] : PLATE_SET[k][phase];
 // A rounded food portion: the wedge between angles a0 and a1, pulled in by h from both cut edges.
 function portionPath(cx, cy, R, a0, a1, h = 2.6, rr = 7) {
@@ -3650,7 +3653,11 @@ function plateWheel(phase, season, sel, warm) {
   PLATE_ORDER.forEach((k, i) => {
     const P = PLATE_PETALS.find(x => x.k === k), sh = S[k], a0 = a, a1 = a + tau * vis[k] / tot, mid = (a0 + a1) / 2; a = a1;
     const on = k === sel, d = portionPath(cx, cy, R, a0, a1), pic = plateSetPic(k, phase, season);
-    const [ix, iy] = at(R * .55, mid), sz = R * 1.6, [mx, my] = [Math.sin(mid), -Math.cos(mid)];
+    // the photo just covers this slice (its bounding box), so the food fills it edge to edge
+    const bx = [[cx, cy], ...Array.from({ length: 13 }, (_, j) => at(R, a0 + (a1 - a0) * j / 12))];
+    const xs = bx.map(p => p[0]), ys = bx.map(p => p[1]), bw = Math.max(...xs) - Math.min(...xs), bh = Math.max(...ys) - Math.min(...ys);
+    const [fx, fy, z] = PLATE_FOCUS[k] || [.5, .5, 1], sz = Math.max(bw, bh) * 1.06 * z;
+    const ix = (Math.max(...xs) + Math.min(...xs)) / 2 + (.5 - fx) * sz, iy = (Math.max(...ys) + Math.min(...ys)) / 2 + (.5 - fy) * sz, [mx, my] = [Math.sin(mid), -Math.cos(mid)];
     defs += `<clipPath id="pls-${k}"><path d="${d}"/></clipPath>`;
     segs += `<g transform="translate(${f(mx * 1.6)} ${f(my * 1.6)})"><g class="pls ${on ? 'on' : ''}" data-action="plPetal" data-v="${k}" role="button" aria-label="${P.n} ${sh}%" style="--d:${(.55 + i * .13).toFixed(2)}s;--lx:${f(mx * 5)}px;--ly:${f(my * 5)}px"><g class="pls-lift">
       <path d="${d}" class="pls-bg"/>${pic ? `<image href="${pic}" x="${f(ix - sz / 2)}" y="${f(iy - sz / 2)}" width="${f(sz)}" height="${f(sz)}" preserveAspectRatio="xMidYMid slice" clip-path="url(#pls-${k})"/>` : ''}
@@ -6769,7 +6776,7 @@ function stageHero(info, energy, o = {}) {
       <div class="stage-stats">
         <div class="stage-day"><small>Day</small> ${cd}</div>
         <svg class="stage-br" viewBox="0 0 300 30" preserveAspectRatio="none" aria-hidden="true"><path d="M150 0 V12 M150 12 C150 18 140 18 130 18 H62 C52 18 50 22 50 30 M150 12 C150 18 160 18 170 18 H238 C248 18 250 22 250 30" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
-        <div class="caps">${cap('bolt', `${energy}%`, energy, 'Energy', 'rhythm')}${perCapX}${o.fert === false ? '' : fertCap}</div>
+        <div class="caps">${cap('bolt', `${energy}%`, energy, 'Energy', 'energy')}${perCapX}${o.fert === false ? '' : fertCap}</div>
       </div>
     </div>
   </div>`;
@@ -7793,6 +7800,71 @@ function shadeCard() {
     <div class="sh2-b"><small>${win ? 'Get in the shade' : peak >= .5 ? 'Sun is strongest at' : 'Today'}</small><b class="dotnum">${big}</b>
       <p>${win ? 'Your skin burns in under 40 minutes in these hours. Cover up or find shade.' : peak >= .5 ? 'The sun stays gentle today. Head into the shade once your skin turns pink.' : 'No strong sun today, nothing to watch out for.'}</p>
       ${burn !== Infinity ? `<span class="sh2-now">${icon('clock', 13)} Out now? Shade in <b>${Math.round(Math.min(burn, 600))} min</b></span>` : ''}</div></section>`;
+}
+// Her energy in depth: tapped from the Energy pill on Today. How she may feel, body, mind and heart for this stretch of the cycle,
+// a month curve with her day on it, and kind ideas. Written as invitations: abilities never change, energy and mood do.
+const ENERGY_DEEP = {
+  'flow-start': { feel: 'Many women feel tender, quiet and inward on the first days. Tears or irritability can come more easily. That is your body asking for less, not something wrong with you.',
+    body: 'Your hormones are at their lowest and your body is shedding. Heavy limbs, cramps and wanting the sofa are common.', mind: 'Your mind is as sharp as ever. Reflecting may simply feel better than pushing.',
+    heart: 'Small company or none at all. One warm person, a quiet room.', care: ['Warm food and drinks, nothing cold', 'An early night or a nap', 'One easy task, then stop'] },
+  'flow-end': { feel: 'As the bleeding eases, a lighter feeling often comes back. You may notice more patience and a little hope for the weeks ahead.',
+    body: 'Estrogen starts to rise and your energy returns day by day. Gentle movement starts to feel good again.', mind: 'A clear, calm head for planning what comes next.',
+    heart: 'Open to people again, in small doses.', care: ['A walk in daylight', 'Plan the weeks ahead', 'Keep meals warm and regular'] },
+  rising: { feel: 'Rising estrogen tends to lift your mood. Curiosity, optimism and a fresh start feeling are common now.',
+    body: 'Energy builds and you recover quickly. Your body enjoys strength work and new kinds of movement.', mind: 'New ideas come easily. Learning and starting things often feels light.',
+    heart: 'Playful, more social, ready to say yes.', care: ['Start the thing you put off', 'Try something new', 'Lift, dance or train'] },
+  building: { feel: 'Often the brightest stretch of the month. Confidence and resilience run high and stress may roll off more easily.',
+    body: 'Energy is high and your body handles hard training well.', mind: 'Focused and quick. A good time for your hardest work.',
+    heart: 'Warm and outgoing, easy to connect with.', care: ['Do your hardest task first', 'Have the meeting or the call', 'Leave some room so you don’t overbook'] },
+  peak: { feel: 'Around ovulation many women feel radiant, confident and drawn to people. Desire is often at its highest.',
+    body: 'Your energy peaks. You may feel strong, warm and glowing.', mind: 'Words come easily. Great for speaking up and asking for what you want.',
+    heart: 'Social, flirty and magnetic.', care: ['Speak up or pitch', 'Plan a date or see friends', 'Save some energy for the slower weeks'] },
+  settle: { feel: 'Progesterone rises and brings a calm, settled feeling. Many women feel grounded and content.',
+    body: 'Energy is steady rather than high. Your body likes routine, warm meals and moderate training.', mind: 'Steady focus for working through things step by step.',
+    heart: 'Cosy and close, smaller circles.', care: ['Steady work in longer blocks', 'Cook at home', 'Moderate movement'] },
+  focus: { feel: 'Your mood may turn more inward and practical. Small things can bother you a little more than usual.',
+    body: 'Body temperature and appetite rise a little. You may need more food and more sleep.', mind: 'Wonderful for detail, finishing and organising.',
+    heart: 'Home, comfort and the people closest to you.', care: ['Finish what you started', 'Eat enough, with protein', 'Go to bed a little earlier'] },
+  premenstrual: { feel: 'Your hormones drop before your period. Sensitivity, irritability or a low mood can rise, and feelings can feel louder. They are real, and they pass.',
+    body: 'Energy dips, sleep can be lighter, and bloating or tender breasts are common.', mind: 'You can still do anything. It may take more effort, so choose less.',
+    heart: 'Needing more space or more comfort. Both are okay.', care: ['Only your top one or two priorities', 'Warm food, nothing cold or raw', 'Say no without explaining'] },
+};
+const EN_LVL = { energy: ['Low', 'Steady', 'High'], mood: ['Tender', 'Even', 'Bright'], social: ['Inward', 'Some people', 'Outgoing'], rest: ['A little', 'Some', 'A lot'] };
+function viewEnergy() {
+  const info = M.info;
+  if (!info) return `${topbar('Your energy', { back: true })}<div class="pad"><p class="muted">Log a period and your energy shows here.</p></div>`;
+  const w = dayWindow(info), D = ENERGY_DEEP[w], G = DAY_GUIDE[w], mg = MIND_GUIDE[w], ph = PHASES[info.phase], col = PH_HEX[info.phase];
+  const en = Math.round(myEnergy(info) * 100), flat = !!info.noOv, L = info.L, P = info.P, cd = Math.min(info.cd, L);
+  // the month as one soft curve, her day marked
+  const W = 320, H = 120, X = d => 8 + (d - 1) / Math.max(1, L - 1) * (W - 16), Y = v => H - 14 - (v - .3) / .65 * (H - 30);
+  let line = ''; for (let d = 1; d <= L; d += .5) line += `${line ? 'L' : 'M'}${X(d).toFixed(1)} ${Y(flat ? .62 : C.energyAt(d, L, P)).toFixed(1)}`;
+  const bands = flat ? '' : C.phaseRanges(L, P).map(r => `<rect x="${X(r.from).toFixed(1)}" y="0" width="${(X(Math.min(L, r.to + 1)) - X(r.from)).toFixed(1)}" height="${H - 12}" fill="${PH_HEX[r.key]}" opacity="${r.key === info.phase ? .2 : .07}"/>`).join('');
+  const yy = Y(flat ? .62 : C.energyAt(cd, L, P));
+  const meter = (k, t, v) => `<div class="en-m"><span>${t}</span><i>${[1, 2, 3].map(n => `<b class="${n <= v ? 'on' : ''}"></b>`).join('')}</i><small>${EN_LVL[k][v - 1]}</small></div>`;
+  const part = (ic, t, p) => `<div class="en-p"><span class="en-pi">${icon(ic, 17)}</span><div><b>${t}</b><p>${p}</p></div></div>`;
+  return `${topbar('Your energy', { back: true })}
+  <div class="pad ul3 en">
+    <section class="en-hero" style="--c:${col}">
+      <div class="en-ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" class="en-rt"/><circle cx="60" cy="60" r="52" class="en-rp" pathLength="100" stroke-dasharray="${en} 100" transform="rotate(-90 60 60)"/></svg>
+        <span><b class="dotnum">${en}%</b><small>energy</small></span></div>
+      <small class="en-day">Day ${info.cd} · ${ph.name}</small>
+      <h1 class="en-t">${G.title}</h1>
+      <p class="en-lead">${flat ? 'On your birth control your own hormones stay steady, so your energy follows sleep, light, food and stress more than the calendar.' : D.feel}</p>
+    </section>
+    ${sectionTitle('How you might feel')}
+    <section class="card en-meters">${meter('energy', 'Energy', mg.energy)}${meter('mood', 'Mood', mg.mood)}${meter('social', 'People', mg.social)}${meter('rest', 'Rest you need', mg.rest)}</section>
+    ${sectionTitle('Body, mind and heart')}
+    <section class="card en-parts">${part('bolt', 'Your body', D.body)}${part('spark', 'Your mind', D.mind)}${part('heart', 'Your heart', D.heart)}</section>
+    ${sectionTitle('Your month')}
+    <section class="card en-curve"><svg viewBox="0 0 ${W} ${H}" aria-hidden="true">${bands}<path d="${line} L${X(L).toFixed(1)} ${H - 12} L${X(1).toFixed(1)} ${H - 12}Z" fill="${col}" opacity=".12"/><path d="${line}" fill="none" stroke="${col}" stroke-width="2.4" stroke-linecap="round"/>
+      <line x1="${X(cd).toFixed(1)}" x2="${X(cd).toFixed(1)}" y1="${(yy + 6).toFixed(1)}" y2="${H - 12}" stroke="#20301a" stroke-width="1" stroke-dasharray="2 3" opacity=".5"/><circle cx="${X(cd).toFixed(1)}" cy="${yy.toFixed(1)}" r="5.5" fill="#fff" stroke="#20301a" stroke-width="2"/></svg>
+      <div class="en-ax"><span>Day 1</span><span>You, day ${info.cd}</span><span>Day ${L}</span></div>
+      <p class="en-why">${flat ? 'Without your own ovulation there is no monthly wave, so the line stays even.' : G.why}</p></section>
+    ${sectionTitle('Kind ideas for today')}
+    <section class="card en-care"><ul>${D.care.map(c => `<li>${icon('check', 14, 2)}<span>${c}</span></li>`).join('')}</ul>
+      <div class="en-ease"><b>Go easy on</b><p>${G.ease}</p></div></section>
+    <p class="en-note">Your abilities stay the same all month. What moves is energy and mood, and knowing that is a kindness to yourself.</p>
+  </div>`;
 }
 function viewRhythm() {
   const info = M.info, done = doneToday(), lv = rhythmLevel(), streak = rhythmStreak(), r = rem(), D = dayMoments(info), h = nowH(), cur = momentAt(D, h), moon = Z.moonPhase(new Date());
@@ -8832,8 +8904,8 @@ function partnersCard(info) {
   if (!ps.length) return `${sectionTitle('Your partner')}
     <div class="tf-wrap"><button class="tf-hide" data-action="hidePartner" aria-label="Hide this from Today">${icon('close', 12, 2.2)}</button>
     <button class="tf2" data-action="nav" data-to="partners">
-      <span class="tf2-ph"><img src="images/partner-hands.jpg" alt="" loading="lazy" decoding="async"></span>
-      <span class="tf2-b"><small class="tf2-e">${icon('users', 13)} Two phones</small><b class="tf2-t">See where your partner is</b>
+      <span class="tf2-ph"><img src="images/partner-sunset.jpg" alt="" loading="lazy" decoding="async"></span>
+      <span class="tf2-b"><small class="tf2-e">${icon('users', 13)} Friends, family, partners</small><b class="tf2-t">Partner cycle sharing</b>
         <span class="tf2-s">Swap links and you’ll both see each other’s cycle and energy here.</span>
         <span class="tf2-go">Connect with your partner ${icon('chevR', 14)}</span></span></button></div>`;
   if (ps.length > 1) return `${sectionTitle('Your people', ['All', 'partners'])}
@@ -9021,7 +9093,7 @@ function viewPartners(id) {
   return `${topbar('Partner', { back: true })}
   <div class="pad">
     <section class="sync-hero">
-      <div class="sy-photo"><img src="images/partner-hands.jpg" alt=""></div>
+      <div class="sy-photo"><img src="images/partner-sunset.jpg" alt="Two people sharing a sunset on a rocky ridge"></div>
       <div class="sy-pair">${orb(me, mi, mi ? `You · day ${mi.cd}` : 'You')}<span class="sy-line"><i></i></span>${first ? orb(first, snapInfo(first, new Date()), `${esc(first.n)} · day ${snapInfo(first, new Date()).cd}`) : orb(null, null, 'Partner')}</div>
       <h1 class="sy-h">See each other’s <span>rhythm</span></h1>
       <p class="sy-sub">Send one link. Your partner sees your phase and energy every day. If she tracks too, you see each other.</p>
@@ -12950,7 +13022,7 @@ function render() {
   } // the whole app takes the colour of her phase
   if (document.documentElement.dataset.phase !== ph) document.documentElement.dataset.phase = ph;
   const views = {
-    today: viewToday, saved: viewSaved, ground: viewGround, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: () => viewBreathe(r.id), do: () => viewTopic(r.id), plan: viewPlan, diet: viewDiet, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: viewCalendar, manifest: viewManifest, moon: viewCalendar, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewReliefIndex, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), drink: () => viewDrink(r.id), quiet: () => viewQuiet(), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), apothecary: () => { location.replace('#/plan/foods'); return ''; }, world: () => viewWorld(r.id), privacy: viewPrivacy, imprint: viewImprint, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
+    today: viewToday, saved: viewSaved, ground: viewGround, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: () => viewBreathe(r.id), do: () => viewTopic(r.id), plan: viewPlan, diet: viewDiet, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: viewCalendar, manifest: viewManifest, moon: viewCalendar, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewReliefIndex, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), drink: () => viewDrink(r.id), quiet: () => viewQuiet(), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, energy: viewEnergy, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), apothecary: () => { location.replace('#/plan/foods'); return ''; }, world: () => viewWorld(r.id), privacy: viewPrivacy, imprint: viewImprint, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
     unlock: viewUnlock,
     after: viewAfter,
     trying: viewTrying,
