@@ -9191,7 +9191,7 @@ function smiley(v) { // mouth curves up with a higher score
 // Mood & desire (23 Nov 2026, her ask: whimsical like the love sheet). Two glass bubbles fill up like little jars
 // (feeling in honey, desire in coral) with a big emoji floating inside, then her month as two soft waves
 // with today and the desire peak marked, and a taped note to just ask her.
-const MD_FEEL = { Bright: '🥰', Good: '😊', Mixed: '😌', Tender: '🥺' }, MD_WANT = { High: '🔥', Medium: '💗', Low: '🌸' };
+const MD_FEEL = { Bright: '🥰', Good: '😊', Mixed: '😌', Tender: '🥺' }, MD_WANT = { High: '🔥', Medium: '🔥', Low: '🔥' } // always a flame (her call); it just burns smaller when desire is lower;
 function mdJar(v, emo, k, lab, col, i) {
   const y = 100 - v; // liquid surface, 0 top 100 bottom
   return `<div class="md-s" style="--r:${i ? 2 : -2.5}deg;--c:${col};--i:${i}">
@@ -9199,7 +9199,7 @@ function mdJar(v, emo, k, lab, col, i) {
       <circle cx="50" cy="50" r="46" fill="#fff"/>
       <g clip-path="url(#mdc${i})"><path class="md-wave" d="M-50 ${y} q12.5 -6 25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0 V110 H-50z" fill="${col}" opacity=".55"/><path class="md-wave b" d="M-50 ${y + 3} q12.5 5 25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0 V110 H-50z" fill="${col}" opacity=".8"/></g>
       <circle cx="50" cy="50" r="46" fill="none" stroke="#fff" stroke-width="3"/><ellipse cx="34" cy="26" rx="11" ry="6" fill="#fff" opacity=".7" transform="rotate(-30 34 26)"/></svg>
-      <b class="md-emo">${emo}</b></span>
+      <b class="md-emo" style="--s:${i ? (.62 + v / 100 * .5).toFixed(2) : 1}">${emo}</b></span>
     <span class="md-n"><b>${v}</b><i>/100</i></span><small class="md-l">${k} · ${lab}</small></div>`;
 }
 function mdWaves(pi, peak) {
