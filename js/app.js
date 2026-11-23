@@ -8917,7 +8917,7 @@ function partnersCard(info) {
       <span class="pc-b"><small class="pc-e">Friends, family, partners</small><b class="pc-t">Partner cycle sharing</b>
         <span class="pc-s">Swap links and you’ll both see each other’s cycle and energy here.</span>
         <span class="pc-tags"><i class="you">Your phase</i><i class="them">Their energy</i><i class="both">Best days together</i></span>
-        <span class="pc-go">Connect with your partner ${icon('chevR', 14)}</span></span></button></div>`;
+        <span class="pc-go"><i class="pc-go-h" aria-hidden="true">${icon('heart', 14, 2)}</i>Connect with your partner ${icon('chevR', 14)}</span></span></button></div>`;
   if (ps.length > 1) return `${sectionTitle('Your people', ['All', 'partners'])}
     <div class="pt-split n${Math.min(4, ps.length)}">${ps.slice(0, 4).map(p => { const pi = snapInfo(p, new Date()), ph = PHASES[pi.phase], en = Math.round(C.energyAt(pi.cd, pi.L, pi.P) * 100);
       return `<button class="card glass pt-tile" data-action="nav" data-to="partners/${p.id}">${ptAvatar(p)}<b>${esc(p.n)}</b><small>${ph.name} · day ${pi.cd}</small>
