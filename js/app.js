@@ -9149,7 +9149,7 @@ function viewPartners(id) {
     <ol class="sy-flow" data-rel="${rel}" data-who="${who}">
       <li class="sy-st paper you ${sent ? 'is-done' : ''}">${sent ? done() : '<span class="sy-n">01</span>'}<div class="sy-c"><span class="sy-who">You</span>
         <div class="sy-who-q sy-q1" ${rel ? 'hidden' : ''}><b>Who are you adding?</b><small>Partners get love notes, friends get a friend dashboard.</small>
-          <div class="sy-pick">${[['partner', 'My partner', '💞'], ['friend', 'A friend', '🌿']].map(([k, t, e]) => `<button class="sy-opt sy-rel" data-action="ptRel" data-v="${k}" aria-pressed="false"><span class="sy-rel-e" aria-hidden="true">${e}</span><b>${t}</b></button>`).join('')}</div></div>
+          <div class="sy-pick">${[['partner', 'My partner', '💞', 'images/partner-hands.jpg', 'Love notes, dates and her desire'], ['friend', 'A friend', '🌿', 'images/friends-sunset.webp', 'Her social battery and meet-up days']].map(([k, t, e, ph, sub]) => `<button class="sy-opt sy-rel sy-ph-${k}" data-action="ptRel" data-v="${k}" aria-pressed="false"><img class="sy-ph" src="${ph}" alt="" loading="lazy" decoding="async"><span class="sy-rel-e" aria-hidden="true">${e}</span><span class="sy-rel-t"><b>${t}</b><small>${sub}</small></span></button>`).join('')}</div></div>
         <div class="sy-who-q sy-q2" ${rel ? '' : 'hidden'}><button class="sy-rel-chip" data-action="ptRel" data-v=""><span class="sy-if-fr">🌿 A friend</span><span class="sy-if-pt">💞 My partner</span> <u>Change</u></button>
           <b><span class="sy-if-fr">Is your friend a woman or a man?</span><span class="sy-if-pt">Is your partner a woman or a man?</span></b><small>So we send the right kind of link.</small>
           <div class="sy-pick">${[['w', 'A woman'], ['m', 'A man']].map(([k, t]) => `<button class="sy-opt sy-cat ${who === k ? 'on' : ''}" data-action="ptWho" data-v="${k}" aria-pressed="${who === k}">${catFace(k)}<b>${t}</b></button>`).join('')}</div></div>
@@ -9168,6 +9168,7 @@ function syApply() {
   const me = state.profile, rel = me.ptRel || '', who = (rel && me.ptWho) || '', got = (state.partners || []).length > 0, $ = q => f.querySelector(q);
   f.dataset.rel = rel; f.dataset.who = who;
   $('.sy-q1').hidden = !!rel; $('.sy-q2').hidden = !rel; $('.sy-send').hidden = !who;
+  f.querySelectorAll('.sy-rel.picked').forEach(b => b.classList.remove('picked'));
   $('.sy-him').hidden = who !== 'm'; $('.sy-her').hidden = who !== 'w';
   f.querySelectorAll('.sy-cat').forEach(b => { const on = b.dataset.v === who; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
   document.querySelector('.sy-prog .sy-p2')?.classList.toggle('on', who === 'm' ? !!me.linkSent : got);
@@ -12648,7 +12649,9 @@ const actions = {
   },
   trackMine: () => { try { localStorage.removeItem('uts.viewOnly'); } catch {} go('today'); },
   ptWho: d => { state.profile.ptWho = d.v; save(); syApply(); },
-  ptRel: d => { state.profile.ptRel = d.v || undefined; if (d.v) ui.shareAudience = d.v; save(); syApply(); },
+  ptRel: (d, el) => { // a little press on the picked card, then the next question pops up
+    state.profile.ptRel = d.v || undefined; if (d.v) ui.shareAudience = d.v; save();
+    if (d.v && el && !matchMedia('(prefers-reduced-motion: reduce)').matches) { el.classList.add('picked'); setTimeout(syApply, 280); } else syApply(); },
   shareEmail: () => {
     if (!M.stats.periods.length) return toast('Log a period first so there is something to share');
     const me = state.profile.name || 'I', he = state.profile.ptWho === 'm';
