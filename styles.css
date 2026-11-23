@@ -17762,3 +17762,6 @@ html .pc:active .pc-go { transform: scale(.97); }
 /* Skip setup: a quiet text link under Continue */
 .onb-skip { display:block; margin:10px auto 0; background:none; border:0; padding:8px 16px; font:400 14px/18px Outfit,sans-serif; color:rgba(255,255,255,.88); text-shadow:0 1px 8px rgba(40,20,30,.45); letter-spacing:.01em; border-radius:12px; }
 .onb-skip:active { background:rgba(255,255,255,.12); }
+
+/* partner page: the phase name sits a little higher, clear of the ring */
+.pt-stage:not(.pv-hero) .stage-phase { top: calc(14.2% - 4px) !important; }
