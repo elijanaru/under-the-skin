@@ -644,9 +644,11 @@ function viewGround() {
   const swirl = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';
   const mins = (d[1].match(/(\d+) minutes/) || [])[1];
   const rules = [[O3_TICK, 'Bare skin', 'ok'], [O3_TICK, 'Phone away', 'ok'], [O3_X, 'No storms', '']];
-  return `${topbar('Grounding', { back: true })}
+  return `<section class="grh">${topbar('', { back: true })}
+    <img src="images/ground-hero.webp" alt="A quiet wooden room open to a sunlit forest, one person sitting on a cushion" fetchpriority="high" decoding="async">
+    <h1 class="grh-t">Ground yourself.</h1>
+  </section>
   <div class="pad ul3 ul4 gr2">
-    <header class="t4-h gr2-h"><small>Earthing</small><h1>Ground yourself.</h1><p>Bare skin on the earth. Your body takes on the ground’s calm, steady charge.</p></header>
     <div class="ul4-stage gr2-stage">
       <svg class="ul4-sp" viewBox="0 0 360 250" aria-hidden="true">${o3Spark('#f1d58a', 30, 30, 0)}${o3Spark('#fff', 330, 40, 1.1)}${o3Spark('#c9d6a8', 338, 222, 2)}${o3Spark('#f6c6d4', 20, 214, 1.6)}<circle class="o3-sp" style="--d:.6s" cx="296" cy="8" r="2.4" fill="#fff"/><circle class="o3-sp" style="--d:1.8s" cx="52" cy="240" r="2" fill="#fff"/></svg>
       <figure class="gr2-pol"><img src="images/ground-tree.webp" alt="A hand resting on a giant redwood, light circling up into the sky" decoding="async"><figcaption>palms on the bark</figcaption></figure>
@@ -12966,6 +12968,7 @@ function render() {
   if (arriving) $app.appendChild(arriving);
   if (ui.loveFor) $app.insertAdjacentHTML('beforeend', loveSheet());
   const v = document.getElementById('view');
+  v.style.setProperty('--viewH', `${v.clientHeight}px`); // full-page photo intros fill exactly one screen
   if (fresh) { holdSet(v, 0); v.scrollTop = keep; } else holdPlace(v, keep);
   peekTabs(); setTimeout(peekTabs, 400);
   if (ui.arrive && r.name === 'today' && M.info) { ui.arrive = false; playArrival(v); }
