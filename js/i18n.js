@@ -74,7 +74,14 @@ const fill = (t, vals) => { const o = t.replace(/\{(\d+)\}/g, (m, i) => (vals[i]
 // short pieces with no words of their own: "17d" on Today's capsules
 const BARE = { ko: { '{0}d': '{0}일', '{0}h': '{0}시간' }, es: {} };
 const WORD = /\p{L}{2}/u;
-function look(key) { if (collect) collect.add(key); return DICT ? DICT.get(key) : undefined; }
+let LC = null, LC_FOR = null;
+function look(key) {
+  if (collect) collect.add(key); if (!DICT) return undefined;
+  const v = DICT.get(key); if (v !== undefined || /[A-Z]/.test(key)) return v;
+  // dish names are written in lower case (25 Nov 2026): an all-lower-case key finds its entry and stays lower case
+  if (LC_FOR !== DICT) { LC = new Map(); LC_FOR = DICT; for (const [k, x] of DICT) { const l = k.toLowerCase(); if (!LC.has(l)) LC.set(l, x); } }
+  const x = LC.get(key); return x === undefined ? undefined : x.toLowerCase();
+}
 
 // one string (toasts, notifications, calendar events, aria labels)
 export function T(s) {
@@ -82,7 +89,11 @@ export function T(s) {
   const lead = str.match(/^\s*/)[0], tail = str.match(/\s*$/)[0], core = str.trim().replace(/\s+/g, ' '), vals = [];
   const key = keyText(core, vals);
   if (!WORD.test(key.replace(/\{\d+\}/g, ''))) { const b = (BARE[LANG] || {})[key] ?? (hasDate(vals) ? key : null); return b == null ? s : lead + fill(b, vals) + tail; }
-  const t = look(key); return t == null ? s : lead + fill(t, vals) + tail;
+  const t = look(key); if (t != null) return lead + fill(t, vals) + tail;
+  // a paragraph built from several sentences: translate each sentence on its own
+  const parts = core.split(/(?<=[.!?…])\s+(?=[A-Z“"(])/);
+  if (parts.length > 1) { const out = parts.map(p => T(p)); if (out.some((x, i) => x !== parts[i])) return lead + out.join(' ') + tail; }
+  return s;
 }
 
 // ---------- the DOM: whole sentences with their inline pieces ----------
@@ -118,11 +129,17 @@ function block(el) {
     const b = (BARE[LANG] || {})[key] ?? (hasDate(vals) ? key : null); // a bare date or "17d": names and units in her language
     if (b != null) return rebuild(el, b, shells, vals);
     for (const c of el.children) if (!ATOM.has(c.nodeName) && !noTr(c)) walk(c); return; }
-  const t = look(key); if (t != null) rebuild(el, t, shells, vals);
+  const t = look(key); if (t != null) return rebuild(el, t, shells, vals);
+  // no entry for the whole block (a button with an icon, a title with a bold word): translate its pieces one by one, so no English is left
+  for (const c of [...el.childNodes]) {
+    if (c.nodeType === 3) { if (WORD.test(c.nodeValue)) { const x = T(c.nodeValue); if (x !== c.nodeValue) c.nodeValue = x; } }
+    else if (c.nodeType === 1 && !ATOM.has(c.nodeName) && !noTr(c)) walk(c);
+  }
 }
 function attrs(el) { for (const a of ATTRS) { const v = el.getAttribute(a); if (v && WORD.test(v)) { const t = T(v); if (t !== v) el.setAttribute(a, t); } } }
 function walk(el) {
-  if (SKIP.has(el.nodeName) || noTr(el)) return;
+  if (noTr(el)) return;
+  if (SKIP.has(el.nodeName)) { if (el.nodeName === 'INPUT' || el.nodeName === 'TEXTAREA') attrs(el); return; } // her typing stays hers, the hint text is translated
   attrs(el);
   if (directText(el) && phrasing(el)) return block(el);
   for (const c of [...el.childNodes]) {

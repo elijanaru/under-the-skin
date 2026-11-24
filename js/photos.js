@@ -749,8 +749,10 @@ export const DISH_PHOTOS = {
   "page": "https://unsplash.com/photos/brown-pastry-on-stainless-steel-tray-LGuTOZCfygY"
  }
 };
+let DP_LC = null; // dish names are lower case in the app now: look the photo up either way
 export function dishPhoto(name, w = 400) {
-  const p = DISH_PHOTOS[name];
+  if (!DP_LC) { DP_LC = {}; for (const k in DISH_PHOTOS) DP_LC[k.toLowerCase()] = DISH_PHOTOS[k]; }
+  const p = DISH_PHOTOS[name] || DP_LC[String(name || '').toLowerCase()];
   return p ? (p.src.includes('pexels') ? `${p.src}?auto=compress&cs=tinysrgb&w=${w}` : `${p.src}?w=${w}&q=70&auto=format&fit=crop`) : null;
 }
 

@@ -11,5 +11,19 @@
 "<t0>🔥</t0>Yes": "<t0>🔥</t0>Sí",
 "<t0>🛡️</t0>Protected": "<t0>🛡️</t0>Con protección",
 "<t0>💞</t0>Unprotected": "<t0>💞</t0>Sin protección",
-"<x0/> Notes": "<x0/> Notas"
+"<x0/> Notes": "<x0/> Notas",
+"A plan or reminder…": "Un plan o recordatorio…",
+"Anything to remember…": "Algo que recordar…",
+"Not started yet": "Aún no ha empezado",
+"It started": "Ya empezó",
+"<t0>🩸</t0> It started": "<t0>🩸</t0> Ya empezó",
+"<x0/> Not started yet": "<x0/> Aún no ha empezado",
+"Your period was expected around today.": "Tu regla tocaba más o menos hoy.",
+"Your period was expected {0} days ago.": "Tu regla tocaba hace {0} días.",
+"Your period was expected {0} day ago.": "Tu regla tocaba hace {0} día.",
+"Saved. Expected from tomorrow now, and your real cycle length is kept once it starts.": "Guardado. Ahora se espera a partir de mañana, y tu duración real del ciclo se guarda cuando empiece.",
+"Noted. Expected from tomorrow now": "Anotado. Ahora se espera a partir de mañana",
+"Undone": "Deshecho",
+"Chick": "Pollito",
+"{0}, sex": "{0}, sexo"
 }

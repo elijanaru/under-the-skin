@@ -11,5 +11,19 @@
 "<t0>🔥</t0>Yes": "<t0>🔥</t0>네",
 "<t0>🛡️</t0>Protected": "<t0>🛡️</t0>피임함",
 "<t0>💞</t0>Unprotected": "<t0>💞</t0>피임 안 함",
-"<x0/> Notes": "<x0/> 메모"
+"<x0/> Notes": "<x0/> 메모",
+"A plan or reminder…": "계획이나 할 일…",
+"Anything to remember…": "기억하고 싶은 것…",
+"Not started yet": "아직 안 시작했어요",
+"It started": "시작했어요",
+"<t0>🩸</t0> It started": "<t0>🩸</t0> 시작했어요",
+"<x0/> Not started yet": "<x0/> 아직 안 시작했어요",
+"Your period was expected around today.": "오늘쯤 생리 예정일이었어요.",
+"Your period was expected {0} days ago.": "생리 예정일이 {0}일 지났어요.",
+"Your period was expected {0} day ago.": "생리 예정일이 {0}일 지났어요.",
+"Saved. Expected from tomorrow now, and your real cycle length is kept once it starts.": "저장했어요. 이제 내일부터로 예상하고, 시작하면 실제 주기 길이를 기억해요.",
+"Noted. Expected from tomorrow now": "알겠어요. 이제 내일부터로 예상해요",
+"Undone": "되돌렸어요",
+"Chick": "병아리",
+"{0}, sex": "{0}, 관계"
 }

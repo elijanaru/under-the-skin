@@ -38,16 +38,17 @@ export function periodsFromLogs(logs) {
 export function cycleStats(state) {
   const logs = state.logs;
   const periods = periodsFromLogs(logs);
-  const lengths = [];
+  const lengths = [], sure = [];
   for (let i = 1; i < periods.length; i++) {
     const l = diffDays(periods[i].start, periods[i - 1].start);
     // under 21 days is usually spotting or a one-off, not a cycle: keep it out of the average so one early bleed doesn't halve every prediction
-    if (l >= 21 && l <= 60) lengths.push(l);
+    // a cycle where she tapped "Not started yet" really was that long (no period went unlogged), so it always counts
+    if (l >= 21 && l <= 60) { const a = iso(periods[i - 1].start), b = iso(periods[i].start); lengths.push(l); sure.push(Object.keys(logs).some(k => logs[k].ny && k > a && k < b)); }
   }
   // a cycle about twice her usual length almost always means one period went unlogged, so with at least two
   // other cycles to compare, it stays out of the average (her real cycles are still counted)
   const med = a => { const b = [...a].sort((x, y) => x - y), m = b.length >> 1; return b.length % 2 ? b[m] : (b[m - 1] + b[m]) / 2; };
-  const clean = lengths.filter((l, i) => { const rest = lengths.filter((_, j) => j !== i); return rest.length < 2 || l < 1.75 * med(rest); });
+  const clean = lengths.filter((l, i) => { const rest = lengths.filter((_, j) => j !== i); return sure[i] || rest.length < 2 || l < 1.75 * med(rest); });
   const recent = clean.slice(-6);
   // "I'm not sure" in onboarding: start from 28 days, and her first full logged cycle replaces it straight away
   const avgCycle = recent.length ? Math.round(mean(recent)) : (+state.profile.cycleLength || 28);
@@ -168,7 +169,8 @@ export function dayInfo(date, stats) {
   const noOv = !!stats.noOv;
   return {
     date: d, cd, L: Lx, P, ov, phase, predicted,
-    fertile: !noOv && !tooShort && cd >= ov - 5 && cd <= ov + 1,
+    // the fertile window: the 5 days before egg release and the day itself (sperm live up to 5 days, the egg about a day)
+    fertile: !noOv && !tooShort && cd >= ov - 5 && cd <= ov,
     isOvulation: !noOv && !tooShort && cd === ov,
     isPeriod: periodActual || (pk ? pillPred : periodPredicted), periodActual, periodPredicted: pk ? pillPred : periodPredicted,
     // while the app is still guessing her length ("I'm not sure"), passing day 28 is not "late": the period is simply due any day

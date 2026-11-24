@@ -12356,7 +12356,7 @@ html .rm-i { display: flex; align-items: center; gap: 10px; padding: 10px 12px 1
 .sb-t.sb-pic small { flex: 1; }
 html .sb2 .sb-score b, html .sb2 .sb-spec .dotnum { font-family: var(--dot); font-weight: 900 !important; color: #20301a; }
 html .sb-t.sb-pic .sb-am b.dotnum { font-family: var(--dot); font-size: 14px; font-weight: 900; margin: 0; padding: 0; color: #20301a; }
-.sb-t.sb-pic .sb-ph img[src*="fb/walk"] { object-fit: contain; background: #f4f3ef; }
+.sb-t.sb-pic .sb-ph img[src*="fb/sneakers-soft"] { object-fit: contain; background: #f4f3ef; }
 html .sugar-big .sb-sh span { font-family: var(--font); font-weight: 600; }
 
 /* Science of calm: round photos like the balance pillars */
@@ -13418,7 +13418,7 @@ html .pad.fb .fbp-step .fbp-c b { display: inline; margin: 0; font: 900 14px/1 v
 html .pad.fb .fbp-step .fbp-c.full b { color: #fff !important; -webkit-text-fill-color: #fff !important; }
 
 /* Balance › Breathe tile: the white dandelion sat on a white tile and nearly vanished; it now stands on a soft sage disc, like the moss under Ground */
-html .fbp-ph:has(img[src$="fb/breathe.webp"]) { background: radial-gradient(circle at 30% 35%, #c9d3b4 0 25px, transparent 26px); }
+html .fbp-ph:has(img[src$="fb/dandelion.webp"]) { background: radial-gradient(circle at 30% 35%, #c9d3b4 0 25px, transparent 26px); }
 /* Ground › phase practice steps: white Doto digits sat on the pale phase tint and vanished; dark ink digits on a slightly deeper tint */
 html .grp-ol i, html .grp-ol i .dotnum { background: color-mix(in srgb, var(--c) 34%, #fff) !important; color: #20301a !important; box-shadow: none; }
 
@@ -13543,8 +13543,8 @@ html .rn2 .rn-emo .emo { font-size: 24px; width: 26px; height: 26px; line-height
 /* Today › Hormone balancing habits: the count in the ring was hollow 700-weight Doto on a faint track; full 900 dots on a slightly firmer track. The Breathe row's white dandelion vanished on the cream disc, so its disc is willow like on Balance */
 html .hh2-n { font-weight: 900; font-size: 26px; }
 html .hh2-ring circle:not(.on) { stroke: rgba(48,64,35,.13); }
-html .hh2-p:has(img[src$="fb/breathe.webp"]) { background: #d3dcc0; }
-html .hh2-p img[src$="fb/breathe.webp"] { width: 48px; height: 48px; }
+html .hh2-p:has(img[src$="fb/dandelion.webp"]) { background: #d3dcc0; }
+html .hh2-p img[src$="fb/dandelion.webp"] { width: 48px; height: 48px; }
 
 /* Sweep (15 Nov 2026), Your plan and Account: lines on the arched background are white with a soft shadow; the 90-day thread labels are white pills with dark ink instead of outlined boxes; the glow, method and science sections keep white headers above white cards; the Account card opens below the scallops */
 .ph-p, .rm2-glow > .rm2-k, .rm2-how > .rm2-k, .rm2-res > .rm2-k, .rm2-glow > h3, .rm2-how > h3, .rm2-res > h3, .rm2-glow > h3 em, .rm2-glow > .rm2-sub, .rm2-res > .rm2-sub, .pad.ac > p.fine {
@@ -14054,7 +14054,7 @@ html .view .bwx-hint { display: inline-flex; align-items: center; gap: 4px; widt
 .cw-f { display: flex; justify-content: flex-end; padding: 11px 0 10px; font-size: 12.5px; font-weight: 500; color: rgba(32,48,26,.6); }
 .cw-f em { font-style: normal; font-family: var(--dot); font-weight: 700; font-size: 15px; color: #20301a; }
 @media (prefers-reduced-motion: reduce) { .cw-k { transition: none; } }
-.cw-p:has(img[src$="fb/breathe.webp"]) { background: #d3dcc0; }
+.cw-p:has(img[src$="fb/dandelion.webp"]) { background: #d3dcc0; }
 
 /* his Read card, game-stat version (rd6): her hormones as five chunky pips, one plain word, no curves or arrows */
 .rd6 { padding: 18px 16px 12px !important; }
@@ -18081,3 +18081,67 @@ html .sy-flow .sy-st.you .sy-send { justify-content: center; margin-top: 22px; }
 .cdl-nt textarea:focus { border-color: #8c9768; background: #fff; }
 /* the sex flame reads on every day, red period days too: a little white badge on the corner (25 Nov 2026) */
 .cal-d .sxdot { left: auto; right: -3px; bottom: -3px; width: 18px; height: 18px; display: grid; place-items: center; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(48,64,35,.18); font-size: 11px; z-index: 2; }
+
+/* Calendar › a day she had sex turns into a little flame with its number (25 Nov 2026, her call); on a period day the flame burns deeper red */
+.cal2 .cal-d.sx { background: none !important; box-shadow: none !important; border: 0 !important; border-radius: 0; color: #fff; font-weight: 600; text-shadow: 0 1px 3px rgba(120,24,0,.6); isolation: isolate; }
+.cal2 .cal-d.sx::before { content: ''; position: absolute; inset: -7px -2px -1px; z-index: -1; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3Cdefs%3E%3ClinearGradient id='a' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23ffc46b'/%3E%3Cstop offset='.55' stop-color='%23ff7a3d'/%3E%3Cstop offset='1' stop-color='%23e0453a'/%3E%3C/linearGradient%3E%3ClinearGradient id='b' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23ffe7a3'/%3E%3Cstop offset='1' stop-color='%23ffb15c'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath fill='url%28%23a%29' d='M50 3C60 24 87 40 87 73c0 26-17 44-37 44S13 99 13 75c0-18 9-29 16-39 2 13 8 20 15 22C40 40 43 21 50 3z'/%3E%3Cpath fill='url%28%23b%29' opacity='.85' d='M51 58c7 11 17 19 17 33 0 13-8 21-18 21s-18-8-18-20c0-12 10-20 19-34z'/%3E%3C/svg%3E") 50% 100% / contain no-repeat; filter: drop-shadow(0 4px 8px rgba(232,96,40,.38)); transform-origin: 50% 100%; animation: sxFlick 3.2s ease-in-out infinite; }
+.cal2 .cal-d.sx.period::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3Cdefs%3E%3ClinearGradient id='a' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23ff9a5c'/%3E%3Cstop offset='.55' stop-color='%23e8453f'/%3E%3Cstop offset='1' stop-color='%239e0e22'/%3E%3C/linearGradient%3E%3ClinearGradient id='b' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23ffd08a'/%3E%3Cstop offset='1' stop-color='%23ff7a4a'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath fill='url%28%23a%29' d='M50 3C60 24 87 40 87 73c0 26-17 44-37 44S13 99 13 75c0-18 9-29 16-39 2 13 8 20 15 22C40 40 43 21 50 3z'/%3E%3Cpath fill='url%28%23b%29' opacity='.85' d='M51 58c7 11 17 19 17 33 0 13-8 21-18 21s-18-8-18-20c0-12 10-20 19-34z'/%3E%3C/svg%3E"); filter: drop-shadow(0 4px 9px rgba(170,20,40,.42)); }
+.cal2 .cal-d.sx > span { position: relative; top: 5px; }
+.cal2 .cal-d.sx .logdot { background: #fff; }
+@keyframes sxFlick { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(.97, 1.035); } }
+@media (prefers-reduced-motion: reduce) { .cal2 .cal-d.sx::before { animation: none; } }
+.cal2-legend .lg-x { font-style: normal; }
+.cal2 .cal-d.sx.today { outline: 2px solid #20301a; outline-offset: 1px; border-radius: 14px; }
+/* five little friends now (the chick joined, 25 Nov 2026) */
+.pet-row { grid-template-columns: repeat(5, 50px); gap: 12px 10px; } .pet-row .pet { width: 50px; height: 50px; }
+/* Calendar › the day her period was due: "It started" or "Not started yet", right under the day (25 Nov 2026) */
+.cdl-ny { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 8px; margin: 2px 0 0 24px; }
+.cdl-ny button { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(48,64,35,.18); background: #fff; font: 500 14px var(--font); color: #20301a; cursor: pointer; transition: transform .2s, background .2s; }
+.cdl-ny button.go { background: #20301a; border-color: #20301a; color: #fff; }
+.cdl-ny button.on { background: hsl(calc(var(--hb) + 79 * var(--hk)) calc(30% * var(--hs)) 92%); border-color: transparent; }
+.cdl-ny button:active { transform: scale(.97); }
+.cdl-ny small { flex-basis: 100%; font: 400 12.5px/1.4 var(--font); color: #5d6a50; }
+@media (prefers-reduced-motion: reduce) { .cdl-ny button { transition: none; } }
+/* Korean letters: the cute round Gaegu hand and a white heart after the signature */
+html[lang="ko"] .lv-paper small, html[lang="ko"] .lv-paper p, html[lang="ko"] .lv-paper em { font-family: 'Gaegu', 'Jua', cursive; font-weight: 700; letter-spacing: 0; word-break: keep-all; }
+html[lang="ko"] .lv-paper small { font-size: 19px; }
+html[lang="ko"] .lv-paper p { font-size: 21px; line-height: 32px; }
+html[lang="ko"] .lv-paper em { font-size: 23px; }
+html[lang="ko"] .lv-paper em::after { content: "🤍"; display: inline-block; margin-left: 6px; font-size: 20px; vertical-align: 1px; filter: drop-shadow(0 1px 1.5px rgba(47,63,134,.35)); }
+html[lang="ko"] .lv-w:not(.silver) { font-family: 'Gaegu', 'Jua', cursive; font-weight: 700; font-size: 46px; white-space: nowrap; max-width: 92%; }
+.lg-sxq .sxq-p.n3 { gap: 7px; }
+.lg-sxq .sxq-p.n3 button { padding: 0 8px; font-size: 12.5px; gap: 5px; }
+/* Who do you have sex with? (onboarding birth-control step + Profile) */
+.sxw { margin-top: 18px; text-align: center; }
+.sxw > b { display: block; font: 500 15.5px/1.3 var(--font); color: #20301a; }
+.sxw-c { display: flex; gap: 8px; justify-content: center; margin-top: 10px; }
+.sxw-c button { flex: 1; max-width: 120px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 10px; border-radius: 999px; border: 1px solid rgba(48,64,35,.16); background: #fff; font: 500 14px var(--font); color: #20301a; cursor: pointer; transition: background .25s, color .25s, border-color .25s, transform .25s; }
+.sxw-c button span { font-size: 16px; line-height: 1; }
+.sxw-c button.on { background: #20301a; border-color: #20301a; color: #fff; }
+.sxw-c button:active { transform: scale(.97); }
+.sxw > small { display: block; margin-top: 8px; font: 400 12px/1.4 var(--font); color: #4a5a3a; }
+.sxw-card .sxw { margin-top: 0; }
+@media (prefers-reduced-motion: reduce) { .sxw-c button { transition: none; } }
+/* notes: a Save pill shows once she writes, turns into a tick when tapped */
+.nt-row { display: flex; align-items: flex-end; gap: 8px; }
+.nt-row textarea { flex: 1; min-width: 0; }
+.nt-wrap { position: relative; }
+.nt-sv { display: none; flex: none; align-items: center; justify-content: center; min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: #20301a; color: #fff; font: 500 13.5px var(--font); cursor: pointer; animation: rise .3s ease both; }
+.nt-sv .nt-b { display: none; align-items: center; gap: 5px; }
+.nt-wrap.dirty .nt-sv, .nt-wrap.saved .nt-sv { display: inline-flex; }
+.nt-wrap.saved .nt-sv { background: #6c823e; pointer-events: none; }
+.nt-wrap.saved .nt-a { display: none; } .nt-wrap.saved .nt-b { display: inline-flex; }
+.jr-nt .nt-sv { position: absolute; right: 10px; bottom: 10px; }
+.jr-nt .jr-ta { padding-bottom: 54px; }
+@media (prefers-reduced-motion: reduce) { .nt-sv { animation: none; } }
+/* Korean love notes: the round Gaegu hand on every love and care button (25 Nov 2026) */
+html[lang="ko"] .lsw-s small, html[lang="ko"] .lsw-head h3, html[lang="ko"] .lsw-e, html[lang="ko"] .lsw-k, html[lang="ko"] .lsw-head p, html[lang="ko"] .sig-pop h1, html[lang="ko"] .sig-pop .sig-x { font-family: 'Gaegu', 'Jua', cursive; font-weight: 700; letter-spacing: 0; word-break: keep-all; }
+html[lang="ko"] .lsw-s small { font-size: 15px; line-height: 1.15; }
+html[lang="ko"] .lsw-grid.care .lsw-s small { font-size: 14.5px; }
+html[lang="ko"] .lsw-head h3 { font-size: 25px; }
+html[lang="ko"] .lsw-head p, html[lang="ko"] .lsw-e { font-size: 15px; }
+html[lang="ko"] .sig-pop h1 { font-size: 32px; line-height: 1.2; }
+/* 3D dishes on Today stay inside their tile while they turn: the canvas no longer pokes past the card edge (25 Nov 2026) */
+.hub .dpt.t-dish .cup3d-w canvas.teacup3d, .hub .dpt.t-dish .cup3d-w img.dpt-cup { inset: 0; width: 100%; height: 100%; }
+.hub .dpt.t-dish .cup3d-w img.dpt-cup { object-fit: contain; }
+.cal2 ~ * .cdl-warm, .cdl .cdl-warm { white-space: normal; overflow-wrap: anywhere; word-break: keep-all; }

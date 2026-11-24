@@ -1976,7 +1976,7 @@ function viewOnboarding() {
         <p class="muted">Pregnancy and birth can change your cycle and what your body needs. Optional, and only you can see it.</p>
         ${pregPicker(o, 'onb')}` : `<h2 class="onb-title">Are you on <span>birth control?</span></h2>
         <div class="bc-list">${BIRTH_CONTROL.map(b => `<button class="bc-opt has-pic ${o.bc === b.k ? 'on' : ''}" data-action="onbBc" data-v="${b.k}"><span class="bc-pic">${BC_PIC[b.k] || ''}</span><span class="bc-tx"><b>${b.t}</b><small>${b.s}</small></span><i>${icon('check', 14, 2.6)}</i></button>`).join('')}</div>
-        <div class="bc-slot">${bcQHTML(o)}</div>`,
+        <div class="bc-slot">${bcQHTML(o)}</div>${sexWithRow(o.sexWith, 'onb')}`,
     7: ui.onbTry ? `${o.preg === 'loss' && lossRecent(o) ? `<h2 class="onb-title">Where are you <span>with trying?</span></h2>
         <p class="muted">There’s no rush after your loss. Pick “When I’m ready” and the app stays gentle until you tell us.</p>` : `<h2 class="onb-title">How long have you <span>been trying?</span></h2>
         <p class="muted">Your fertile window, tips and when to see a doctor follow this. Only you can see it.</p>`}
@@ -2351,8 +2351,9 @@ function viewCalendar() {
     if (k === todayISO()) cls.push('today');
     if ((ui.calEdit && k === ui.calFix) || (ui.calStart && k === ui.calStart)) cls.push('fixme');
     if (k === ui.calSelected && !ui.calEdit) cls.push('sel');
+    if (hadSex(lg) && !ui.calEdit && !ui.calStart) cls.push('sx'); // the whole day turns into a little flame with its number
     if (ui.calEdit && d > today) cls.push('locked');
-    cells += `<button class="${cls.join(' ')}" data-action="calSelect" data-date="${k}"><span>${n}</span>${lg && (lg.symptoms || lg.moods || lg.notes || lg.cn) ? '<i class="logdot"></i>' : ''}${events().some(e => e.date === k) ? '<i class="evdot"></i>' : ''}${hadSex(lg) ? '<i class="sxdot" aria-label="Sex">🔥</i>' : ''}</button>`;
+    cells += `<button class="${cls.join(' ')}" data-action="calSelect" data-date="${k}"${hadSex(lg) ? ` aria-label="${n}, sex"` : ''}><span>${n}</span>${lg && (lg.symptoms || lg.moods || lg.notes || lg.cn) ? '<i class="logdot"></i>' : ''}${events().some(e => e.date === k) ? '<i class="evdot"></i>' : ''}</button>`;
   }
   const sd = C.parseISO(ui.calSelected), si = C.dayInfo(sd, stats), slog = getLog(ui.calSelected);
   const isFuture = sd > today;
@@ -2463,6 +2464,8 @@ function moonWidget() {
   </section>`;
 }
 // The tapped day as one quiet line: the date, what it is, one pill to log it.
+// notes save as she types; the Save button shows once she writes, so she can feel it's kept (25 Nov 2026, her ask)
+const NOTE_SAVE = `<button type="button" class="nt-sv" data-action="noteSave"><span class="nt-a">Save</span><span class="nt-b">${icon('check', 13, 2.6)} Saved</span></button>`;
 function calDayLine(sd, si, slog, selLine, isFuture) {
   const c = si ? (si.periodActual || si.periodPredicted ? '#d42a40' : si.isOvulation ? '#d6a443' : si.fertile ? '#c9b98a' : PH_HEX[si.phase]) : '#c9c9c9';
   const logged = !!(slog.symptoms?.length || slog.moods?.length || slog.flow || slog.notes);
@@ -2488,10 +2491,15 @@ function calDayLine(sd, si, slog, selLine, isFuture) {
   if (si && si.cd && si.L && / · day \d+/.test(title)) { const exp = / · expected$/.test(title), mode = (COMPASS[dayWindow(si)] || {}).mode;
     title = title.replace(/ · expected$/, '').replace(/ · day \d+/, ''); title = `${exp ? `Expected ${title.toLowerCase()}` : title}${mode ? ` · ${mode}` : ''}`; }
   const warm = si && si.cd && si.L && warmWindow(si) ? `<p class="cdl-warm">${icon('sun', 13)} Warm days: cooked food, no raw or iced</p>` : '';
+  // her period was due today (or is late) and nothing is logged: one tap for "it started", one for "not started yet"
+  const due = isToday && si && (si.dueToday || si.late || si.anyDay) && !PERIOD_FLOWS.includes(slog.flow) && !M.stats.pill && !M.stats.noPred;
+  const ny = due ? `<div class="cdl-ny ${slog.ny ? 'done' : ''}">${slog.ny
+    ? `<button class="on" data-action="periodNotYet" aria-pressed="true">${icon('check', 14, 2.4)} Not started yet</button><small>Saved. Expected from tomorrow now, and your real cycle length is kept once it starts.</small>`
+    : `<button class="go" data-action="periodStart"><span aria-hidden="true">🩸</span> It started</button><button data-action="periodNotYet" aria-pressed="false">Not started yet</button><small>${si.late ? `Your period was expected ${plural(si.late, 'day')} ago.` : 'Your period was expected around today.'}</small>`}</div>` : '';
   return `<div class="cdl day-panel"><i style="background:${c}"></i><span><small>${fmt(sd, { weekday: 'short', month: 'short', day: 'numeric' })}${si && si.cd ? ` · Day <b class="dotnum">${si.cd}</b>` : ''}</small><b>${title}</b></span>
     ${isFuture ? '' : `<button class="cdl-go" data-action="logDay" data-date="${C.iso(sd)}">${icon(logged ? 'check' : 'plus', 14)} ${logged ? 'Edit' : 'Log'}</button>`}
-    ${hm}${warm}
-    <label class="cdl-nt"><span>${icon('book', 13)} Notes</span><textarea rows="${slog.cn ? 3 : 1}" maxlength="600" data-input="cal.cn" data-date="${C.iso(sd)}" placeholder="${I18N.T(isFuture ? 'A plan, a reminder…' : 'How it went, anything to remember…')}">${esc(slog.cn || '')}</textarea></label>
+    ${ny}${hm}${warm}
+    <div class="cdl-nt nt-wrap"><span>${icon('book', 13)} Notes</span><div class="nt-row"><textarea rows="${slog.cn ? 3 : 1}" maxlength="600" data-input="cal.cn" data-date="${C.iso(sd)}" aria-label="Notes" placeholder="${I18N.T(isFuture ? 'A plan or reminder…' : 'Anything to remember…')}">${esc(slog.cn || '')}</textarea>${NOTE_SAVE}</div></div>
     ${chips.length ? `<div class="cdl-ch">${ahead ? `<small>${isToday ? 'Your pattern today' : 'Your pattern on this day'}</small>` : ''}<div>${show.map(([e, t, rk]) => rk ? `<button data-action="nav" data-to="relief/${encodeURIComponent(rk)}"><i class="emo" aria-hidden="true">${e}</i>${esc(t)}${icon('chevR', 11)}</button>` : `<span><i class="emo" aria-hidden="true">${e}</i>${esc(t)}</span>`).join('')}${more ? `<span class="m">+${more}</span>` : ''}</div></div>` : ''}</div>`;
 }
 // The tapped day as a glass card: hormone and energy rings, her mode for the day, what she logged.
@@ -2658,7 +2666,7 @@ function journalCard(d, di, l, isToday) {
   return `<div class="jr" style="--jc:${PH_HEX[phase]}">
     <div class="jr-top"><small><i></i>${label}</small><button class="jr-shuf" data-action="jpNext" aria-label="Another prompt">${JR_SHUF}<span>Another</span></button></div>
     <p class="jr-q" id="jr-q">${esc(q)}</p>
-    <textarea class="lg-note jr-ta" rows="4" placeholder="Write a few honest lines…" data-input="log.notes" data-jp="${esc(q)}">${esc(l.notes || '')}</textarea>
+    <div class="nt-wrap jr-nt"><textarea class="lg-note jr-ta" rows="4" placeholder="Write a few honest lines…" data-input="log.notes" data-jp="${esc(q)}">${esc(l.notes || '')}</textarea>${NOTE_SAVE}</div>
     <p class="jr-fine">${icon('check', 12, 2.4)} Private, saved as you type. A new prompt every day.</p>
     ${past.length ? `<details class="jr-past"><summary>Your journal <small>${past.length} ${past.length === 1 ? 'entry' : 'entries'}</small>${icon('chevD', 13)}</summary>${past.map(k => { const x = state.logs[k]; return `<div class="jr-e"><small>${fmt(C.parseISO(k), { weekday: 'short', month: 'short', day: 'numeric' })}</small>${x.jp ? `<b>${esc(x.jp)}</b>` : ''}<p>${esc(x.notes)}</p></div>`; }).join('')}</details>` : ''}
   </div>`;
@@ -2766,7 +2774,7 @@ function viewLog() {
     <div class="log-date"><button class="icon-btn" data-action="logMove" data-d="-1" aria-label="Previous day">${icon('chevL', 20)}</button>
       <div><div class="eyebrow">${isToday ? 'Today' : fmt(d, { weekday: 'long' })}${di ? ` · Day ${di.cd} · ${PHASES[di.phase].name}` : ''}</div><h2>${fmt(d, { month: 'long', day: 'numeric' })}</h2></div>
       <button class="icon-btn" data-action="logMove" data-d="1" aria-label="Next day" ${isToday ? 'disabled' : ''}>${icon('chevR', 20)}</button></div>
-    ${(() => { const y = state.logs[C.iso(C.addDays(d, -1))]; return !total && y && Object.keys(y).some(f => !['notes', 'jp', 'cn', 'sex'].includes(f)) ? `<button class="lg-copy" data-action="logCopy">${icon('plus', 16)}<span><b>Same as yesterday</b><small>One tap, then change what’s different</small></span></button>` : ''; })()}
+    ${(() => { const y = state.logs[C.iso(C.addDays(d, -1))]; return !total && y && Object.keys(y).some(f => !['notes', 'jp', 'cn', 'sex', 'ny'].includes(f)) ? `<button class="lg-copy" data-action="logCopy">${icon('plus', 16)}<span><b>Same as yesterday</b><small>One tap, then change what’s different</small></span></button>` : ''; })()}
     ${LOG_SECS.map(([id, e, t], i) => `<section class="lg-sec ${open[id] ? 'open' : ''}" style="animation-delay:${i * 40}ms">
       <button class="lg-head" data-action="logSec" data-s="${id}" aria-expanded="${!!open[id]}"><span class="lg-ic">${icon(e, 18)}</span><b>${t}</b>${count[id] ? `<small>${count[id]}</small>` : ''}<span class="lg-chev">${icon('chevR', 16)}</span></button>
       ${open[id] ? `<div class="lg-in">${inner[id]}</div>` : ''}</section>`).join('')}
@@ -2777,11 +2785,17 @@ function viewLog() {
 
 // Did you have sex? A plain yes or no that is always in view (25 Nov 2026, her call). Yes puts a flame on that calendar day,
 // then one optional follow-up: protected or not. No clears any earlier answer.
+// who she sleeps with (25 Nov 2026, her ask): only women means no protected / unprotected question in the check-in
+const SEX_WITH = [['m', '👨', 'Men'], ['w', '👩', 'Women'], ['mw', '💞', 'Both']];
+function noteDirty(ta) { const w = ta.closest('.nt-wrap'); if (w) { w.classList.toggle('dirty', !!ta.value.trim()); w.classList.remove('saved'); } }
+function sexWithRow(v, scope) {
+  return `<div class="sxw"><b>Who do you have sex with?</b><div class="sxw-c">${SEX_WITH.map(([k, e, t]) => `<button class="${v === k ? 'on' : ''}" data-action="sexWith" data-v="${k}" data-s="${scope}" aria-pressed="${v === k}"><span aria-hidden="true">${e}</span>${t}</button>`).join('')}</div><small>So your check-in only asks what fits you. Only you see this.</small></div>`;
+}
 function sexAsk(l, isToday) {
   const yes = hadSex(l), no = l.sex === 'n', prot = (l.intim || []).find(v => v.startsWith('Sex,'));
   return `<section class="lg-sxq ${yes ? 'yes' : ''}"><b>${isToday ? 'Did you have sex today?' : 'Did you have sex on this day?'}</b>
     <div class="sxq-yn"><button class="${yes ? 'on' : ''}" data-action="sexYN" data-v="y" aria-pressed="${yes}"><span aria-hidden="true">🔥</span>Yes</button><button class="${no ? 'on' : ''}" data-action="sexYN" data-v="n" aria-pressed="${no}">No</button></div>
-    ${yes ? `<div class="sxq-p">${[['Sex, protected', '🛡️', 'Protected'], ['Sex, unprotected', '💞', 'Unprotected']].map(([v, e, t]) => `<button class="${prot === v ? 'on' : ''}" data-action="sexProt" data-v="${v}" aria-pressed="${prot === v}"><span aria-hidden="true">${e}</span>${t}</button>`).join('')}</div>` : ''}
+    ${yes && state.profile.sexWith !== 'w' ? `<div class="sxq-p ${state.profile.sexWith === 'mw' ? 'n3' : ''}">${[['Sex, protected', '🛡️', 'Protected'], ['Sex, unprotected', '💞', 'Unprotected'], ...(state.profile.sexWith === 'mw' ? [['Sex, with a woman', '👩', 'With a woman']] : [])].map(([v, e, t]) => `<button class="${prot === v ? 'on' : ''}" data-action="sexProt" data-v="${v}" aria-pressed="${prot === v}"><span aria-hidden="true">${e}</span>${t}</button>`).join('')}</div>` : ''}
     <p>${yes ? 'A 🔥 marks this day on your calendar. Only you see it.' : 'Only you see this.'}</p></section>`;
 }
 
@@ -2822,7 +2836,7 @@ function brainRead(k) {
   if ((l.down || []).includes('Blood clots')) note('🩸', 'About clots', 'Small clots on heavy days are normal. Clots bigger than a coin, or soaking a pad or tampon every hour, are worth checking with a doctor.', 'strong', 'warn');
   if (l.flow === 'heavy') note('🥩', 'Heavy day', 'Refill iron: red meat, lentils, dark greens with a squeeze of lemon, and keep warm.', 'strong');
   // sex and desire
-  if ((l.intim || []).includes('Sex, unprotected') && di.fertile) note('💞', 'You’re in your fertile window', 'If you’re not trying for a baby, a pharmacist can talk you through emergency contraception. Underskin is not contraception.', 'strong', 'warn');
+  if ((l.intim || []).includes('Sex, unprotected') && (di.fertile || (!di.noOv && di.cd === di.ov + 1))) note('💞', 'You’re in your fertile window', 'If you’re not trying for a baby, a pharmacist can talk you through emergency contraception. Underskin is not contraception.', 'strong', 'warn');
   // after sex, her pH (19 Nov 2026): semen is alkaline, so the vagina's mild acidity dips for a few hours
   if (hadSex(l)) note('🫧', 'After sex, your pH', 'Semen is alkaline, so your vaginal pH rises for a few hours. Pee afterwards, rinse with water only, skip douches and scented washes. Get BV or thrush often after sex? Condoms help keep the balance.', 'some');
   if (l.drive >= 4 && Math.abs(di.cd - ov) <= 3) note('🌹', 'Desire right on cue', 'Estrogen and testosterone peak around ovulation, and your sex drive is following them.', 'some', 'good');
@@ -3816,7 +3830,7 @@ function nourishBody(current) {
 // Blood-sugar tricks inside Nourish. Her own pattern shows only when her logs reveal one.
 const SUGAR_SYMPTOMS = ['Cravings', 'Fatigue', 'Dizziness'];
 // A real photo for each blood-sugar trick, with its emoji as a little badge.
-const SB_PIC = { fibre: () => foodPhoto('Aged kimchi (mugeunji)', 360), move: () => 'images/fb/walk.webp', acv: () => foodPhoto('Apples', 360), tea: () => teaPhoto('Green tea', 360, 240),
+const SB_PIC = { fibre: () => foodPhoto('Aged kimchi (mugeunji)', 360), move: () => 'images/fb/sneakers-soft.webp', acv: () => foodPhoto('Apples', 360), tea: () => teaPhoto('Green tea', 360, 240),
   berberine: () => 'images/fb/magnesium.webp', d3mg: () => 'images/rhythm-sun.webp', minerals: () => foodPhoto(['veg', 'vegan'].includes(myDiet()) ? 'Pumpkin seeds' : 'Oysters', 360), spices: () => teaPhoto('Cinnamon', 360, 240) };
 // Blood sugar card: three label-left value-right rows that follow her taps.
 function sugarSpec(on) {
@@ -5759,7 +5773,7 @@ function learnedCard() {
         ${tile('c', icon('calendar', 15, 1.9), 'Your cycle', L, `days${stats.variation ? ` ±${pm}` : ''}`, n ? `From ${plural(n, 'cycle')}` : 'Log your next period')}
         ${tile('p', icon('drop', 15, 1.9), 'Your period', Pd, 'days', stats.periods.length ? `From ${plural(stats.periods.length, 'period')}` : 'Default until you log')}
         ${tile('n', icon('bell', 15, 1.9), 'Next period', np.getDate(), '', n ? `Likely ${md(lo)} to ${md(hi)}` : (dn => dn > 1 ? `In ${dn} days` : dn === 1 ? 'Tomorrow' : 'Due now')(C.diffDays(np, M.today)), fmt(np, { month: 'short' }))}
-        ${tile('o', icon('seed', 15, 1.9), 'Egg release', ov, '', `Fertile days ${Math.max(1, ov - 5)} to ${ov + 1}${os.cd ? ', from your egg-white sign' : os.luteal ? ', from your check-ins' : ''}`, 'Day')}
+        ${tile('o', icon('seed', 15, 1.9), 'Egg release', ov, '', `Fertile days ${Math.max(1, ov - 5)} to ${ov}${os.cd ? ', from your egg-white sign' : os.luteal ? ', from your check-ins' : ''}`, 'Day')}
       </div>
       <p class="lm-foot">${icon('spark', 12)} The more you log, the more personal every prediction gets.</p></section>`;
 }
@@ -6537,6 +6551,13 @@ const DISH_DAY = {
   focus: { m: 'ramen', t: 'Chicken ramen with egg', why: 'Steady protein and carbs keep cravings calm.' },
   premenstrual: { m: 'miso', t: 'Salmon miso soup', why: 'Warm and gentle, with omega-3 for the cramps ahead.' },
 };
+// Every dish name is written in lower case (25 Nov 2026, her ask): recipes, today's dish, meal ideas and seasonal dishes
+const lcName = s => typeof s === 'string' ? s.toLowerCase() : s;
+RECIPES.forEach(r => { r.name = lcName(r.name); });
+SZ.SEASON_DISHES.forEach(d => { d.name = lcName(d.name); });
+for (const k in DISH_DAY) DISH_DAY[k].t = lcName(DISH_DAY[k].t);
+const lcMeal = x => Array.isArray(x) ? x.map((v, i) => i % 2 ? v : lcName(v)) : x;
+for (const T of [FOOD_MEALS, MEAL_ALT.fish, MEAL_ALT.plant]) for (const w in T) for (const slot of ['broth', 'raw', 'warmAlt', 'meat']) if (T[w][slot]) T[w][slot] = lcMeal(T[w][slot]);
 // One short line on what the dish gives her: "Heme iron, zinc and B12 for your period."
 const recWhy = r => { const n = (r.nutrients || []).slice(0, 3).map((x, i) => i && /^[A-Z][a-z]/.test(x) ? x.charAt(0).toLowerCase() + x.slice(1) : x), l = n.length > 1 ? `${n.slice(0, -1).join(', ')} and ${n[n.length - 1]}` : n[0];
   return l ? `${l} in one plate.` : 'Made for this part of your cycle.'; };
@@ -6606,7 +6627,7 @@ function todayTiles(info, only) {
   };
   if (only) return tipBody(only);
   return `<div class="dpt-grid">
-      ${rec ? tile(`t-tea t-cup t-dish${recD && recD.hero ? ' t-big' : ''}`, { to: `recipe/${rec.id}` }, recD ? `<span class="cup3d-w"><img class="dpt-cup" src="${recD.img}" alt="" loading="lazy"><canvas class="teacup3d" data-model="${recD.model}" data-elev="${recD.elev || 0.9}" data-fit="${recD.tileFit || recD.fit}"${recD.steam === 0 ? ' data-steam="0"' : ''} aria-label="${esc(rec.name)}, turning slowly"></canvas></span>` : `<span class="dish-ph"><img src="${photoUrl(rec.id, 400)}" alt="" loading="lazy"></span>`, 'Eat today', rec.name, `<span class="dpt-why">${recWhy(rec)}</span><span class="dpt-rule">${icon('clock', 12)} ${rec.time >= 60 ? `${Math.floor(rec.time / 60)} h${rec.time % 60 ? ` ${rec.time % 60}` : ''}` : `${rec.time} min`} · Cook it ${icon('chevR', 12)}</span>`) : tile('t-tea t-cup t-dish', { to: 'do/eat' }, `<span class="cup3d-w"><img class="dpt-cup" src="${D.img}" alt="" loading="lazy"><canvas class="teacup3d" data-model="${D.model}" data-elev="0.9" data-fit="${D.fit}" aria-label="${dish.t}, turning slowly"></canvas></span>`, 'Eat today', dish.t, `<span class="dpt-why">${dish.why}</span><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
+      ${rec ? tile(`t-tea t-cup t-dish${recD && recD.hero ? ' t-big' : ''}`, { to: `recipe/${rec.id}` }, recD ? `<span class="cup3d-w"><img class="dpt-cup" src="${recD.img}" alt="" loading="lazy"><canvas class="teacup3d" data-model="${recD.model}" data-elev="${recD.elev || 0.9}" data-fit="${+(Math.min(recD.tileFit || recD.fit, 1.45) * 0.85).toFixed(2)}"${recD.steam === 0 ? ' data-steam="0"' : ''} aria-label="${esc(rec.name)}, turning slowly"></canvas></span>` : `<span class="dish-ph"><img src="${photoUrl(rec.id, 400)}" alt="" loading="lazy"></span>`, 'Eat today', rec.name, `<span class="dpt-why">${recWhy(rec)}</span><span class="dpt-rule">${icon('clock', 12)} ${rec.time >= 60 ? `${Math.floor(rec.time / 60)} h${rec.time % 60 ? ` ${rec.time % 60}` : ''}` : `${rec.time} min`} · Cook it ${icon('chevR', 12)}</span>`) : tile('t-tea t-cup t-dish', { to: 'do/eat' }, `<span class="cup3d-w"><img class="dpt-cup" src="${D.img}" alt="" loading="lazy"><canvas class="teacup3d" data-model="${D.model}" data-elev="0.9" data-fit="${+(Math.min(D.fit, 1.45) * 0.85).toFixed(2)}" aria-label="${dish.t}, turning slowly"></canvas></span>`, 'Eat today', dish.t, `<span class="dpt-why">${dish.why}</span><span class="dpt-rule">${warm ? `${icon('thermo', 12)} Warm & cooked only` : `${icon('leaf', 12)} Fresh & raw welcome`}</span>`)}
       ${(() => { const D = dayMoments(info), h = nowH(), cur = momentAt(D, h); return tile('t-deep ph-full keep ph-fr ph-vid ph-sun', { to: 'rhythm' }, `<video class="dpt-vid" src="images/sun-moon.mp4" poster="images/sun-moon-poster.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, `<span class="dsun-badge">${icon('sun', 14, 2.2)}</span>Follow the sun`, (SUN_DO[cur.id] || SUN_DO.midday)[0], `Rise ${hLabel(D.rise)} · Set ${hLabel(D.set)}`); })()}
       ${tile('t-sage ph-full ph-vid', { to: 'relief' }, `<video class="dpt-vid" src="images/move-stardust.mp4" poster="images/move-stardust.webp" muted loop playsinline preload="none" aria-hidden="true"></video><i></i>`, 'Hormones', 'Balance step by step', 'Start with the fundamentals')}
       ${tile(`calm lv${lvl} t-cort t-mol`, { to: 'breathe/stress' }, `<span class="cup3d-w"><img class="dpt-cup" src="images/cortisol-mol.webp" alt="" loading="lazy"><canvas class="teacup3d" data-model="models/cortisol.glb" data-elev="0.3" data-fit="1.9" data-steam="0" data-shadow="0" aria-label="The cortisol molecule, turning slowly"></canvas></span>`, 'Cortisol', `${['', 'Low', 'Rising', 'High'][lvl]}<span class="cv-lv" aria-hidden="true">${[1, 2, 3].map(i => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</span>`, `${['', 'Calm and settled', 'Building up', 'Full, let it out'][lvl]}<span class="dpt-go">${icon('leaf', 13)} Breathe now</span>`)}
@@ -6861,7 +6882,7 @@ function fullCycleGuide(info) {
     { k: 'f', name: 'Building up', days: [P + 1, ov - 2], art: Math.round((P + ov) / 2), lining: Math.round((P + ov) / 2), lead: [['Estrogen', '#e0457b', 'rising']],
       text: 'One egg grows inside its follicle and makes more and more estrogen, which rebuilds the lining and lifts your energy.' },
     { k: 'o', name: 'Egg release', days: [ov - 1, ov + 1], art: ov, lining: ov, lead: [['Estrogen', '#e0457b', 'peak'], ['LH', '#b18cff', 'surge'], ['Testosterone', '#e8590c', 'small lift']],
-      text: `Peak estrogen triggers the LH surge and the egg is released around day ${ov}. ${ttc() ? `Fertile window: about days ${ov - 5}–${ov + 1}.` : ''}` },
+      text: `Peak estrogen triggers the LH surge and the egg is released around day ${ov}. ${ttc() ? `Fertile window: about days ${ov - 5}–${ov}.` : ''}` },
     { k: 'l', name: 'After ovulation', days: [ov + 2, L], art: ov + 6, lining: ov + 7, lead: [['Progesterone', '#5d8a3a', 'high'], ['Estrogen', '#e0457b', 'second rise']],
       text: `The empty follicle becomes the “yellow body” and makes progesterone, plus a second, smaller wave of estrogen. The lining thickens. ${ttc() ? 'If there’s no pregnancy, both hormones drop and your period starts.' : 'Then both hormones drop and your period starts.'}` },
   ];
@@ -8788,9 +8809,9 @@ function viewStress() {
 }
 
 // Best ways to lower it: one white card, a round photo for each action and a tick she taps when it's done (saved for today, only that row redraws).
-const CALM_WAY_PH = [[/breath/i, 'images/fb/breathe.webp'], [/yoga|stretch/i, 'images/tile-yoga.webp'], [/meditat/i, 'images/tile-meditate.webp'], [/heat|belly/i, 'images/fb/heat.webp'],
+const CALM_WAY_PH = [[/breath/i, 'images/fb/dandelion.webp'], [/yoga|stretch/i, 'images/tile-yoga.webp'], [/meditat/i, 'images/tile-meditate.webp'], [/heat|belly/i, 'images/fb/heat.webp'],
   [/morning light|daylight/i, 'images/fb/sun.webp'], [/nature|walk/i, 'images/forest-path.jpg'], [/friends|cuddle|close people/i, 'images/partner-hands.jpg'],
-  [/sleep|night|rest/i, 'images/fb/chamomile.webp'], [/protein|meal|food|eat|magnesium/i, 'images/fb/seeds.webp'], [/train|movement/i, 'images/fb/walk.webp']];
+  [/sleep|night|rest/i, 'images/fb/chamomile.webp'], [/protein|meal|food|eat|magnesium/i, 'images/fb/seeds.webp'], [/train|movement/i, 'images/fb/sneakers-soft.webp']];
 const calmDone = () => { try { const o = JSON.parse(localStorage.getItem('uts.calmWays') || '{}'); return o.d === todayISO() ? o.k || [] : []; } catch { return []; } };
 function calmWays(list) {
   const done = calmDone();
@@ -8813,7 +8834,7 @@ const CALM_IC = {
   warm: '<path d="M10 3h4v3h-4zM8.5 6h7v2.6a4 4 0 0 1 2 3.4V18a3 3 0 0 1-3 3h-5a3 3 0 0 1-3-3v-6a4 4 0 0 1 2-3.4z"/><path d="M9.5 14c1-1 2 1 3 0s2 1 3 0"/>',
 };
 const calmIc = (k, s = 18) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${CALM_IC[k] || ''}</svg>`;
-const CALM_PH = { 'Long exhales': 'images/fb/breathe.webp', Meditation: 'images/tile-meditate.webp', 'Yoga nidra': 'images/tile-yoga.webp', 'Time in nature': 'images/forest-path.jpg', Sleep: 'images/fb/chamomile.webp', 'Hugs & touch': 'images/partner-hands.jpg', 'Gentle, not maximal, training': 'images/fb/walk.webp', 'Warmth on your belly': 'images/fb/heat.webp' };
+const CALM_PH = { 'Long exhales': 'images/fb/dandelion.webp', Meditation: 'images/tile-meditate.webp', 'Yoga nidra': 'images/tile-yoga.webp', 'Time in nature': 'images/forest-path.jpg', Sleep: 'images/fb/chamomile.webp', 'Hugs & touch': 'images/partner-hands.jpg', 'Gentle, not maximal, training': 'images/fb/sneakers-soft.webp', 'Warmth on your belly': 'images/fb/heat.webp' };
 const CALM_LAB = { 'Hugs & touch': 'A long hug', 'Time in nature': 'Nature', 'Gentle, not maximal, training': 'Easy training', 'Warmth on your belly': 'Belly warmth' };
 function calmScience(info) {
   const L = CALM_SCIENCE.map((x, k) => ({ ...x, k })).sort((a, b) => a.sec - b.sec), pc = (info && PH_HEX[info.phase]) || '#6c823e';
@@ -8872,7 +8893,7 @@ const HB_PILLARS = [
 ];
 // a real photo and the study's key number for each pillar, so the list reads at a glance
 const HB_PIL_X = { 'Light & sleep': ['images/fb/sun.webp', '2 h', 'earlier clock'], 'Steady blood sugar': [() => foodPhoto('Eggs', 200), '−37%', 'sugar rise'],
-  'A calm nervous system': ['images/fb/breathe.webp', '45', 'trials'], 'Walks and strength': ['images/fb/walk.webp', '2–5', 'min walk'], 'Liver & gut': ['images/fb/carrot.webp', '250', 'women'],
+  'A calm nervous system': ['images/fb/dandelion.webp', '45', 'trials'], 'Walks and strength': ['images/fb/sneakers-soft.webp', '2–5', 'min walk'], 'Liver & gut': ['images/fb/carrot.webp', '250', 'women'],
   'Fewer hormone disruptors': ['images/fb/fascia.webp', '−45%', 'in 3 days'], 'Build your hormones': ['images/fb/seeds.webp', '−58%', 'no ovulation'] };
 function hormoneLibrary() {
   return `${sectionTitle('Your hormones, explained')}
@@ -10310,7 +10331,7 @@ function dietMeal(w, slot, base) {
   const d = myDiet(); if (!base || d === 'all') return base;
   const fit = x => x && lineFits(x[0] + '. ' + x[1], d);
   if (fit(base)) return base;
-  const sw = [swapText(base[0], d), swapText(base[1], d)]; if (fit(sw)) return sw;
+  const sw = [lcName(swapText(base[0], d)), swapText(base[1], d)]; if (fit(sw)) return sw;
   const f = MEAL_ALT.fish[w]?.[slot]; if (d === 'pesc' && fit(f)) return f;
   const p = MEAL_ALT.plant[w]?.[slot]; if (p) { const x = d === 'vegan' && p.length > 2 ? p.slice(2) : p.slice(0, 2); if (fit(x)) return x; }
   return null;
@@ -10570,7 +10591,7 @@ function viewArticle(id) {
 }
 // Little friends she can pick in place of a photo (hand-drawn, images/pets/)
 // 21 Nov 2026: her own four drawings (bunny, frog, smiley, panda). The older .svg friends stay on disk so a pick made before still shows.
-const PETS = [['bunny', 'Bunny'], ['frog', 'Frog'], ['hehe', 'Smiley'], ['panda', 'Panda']];
+const PETS = [['bunny', 'Bunny'], ['frog', 'Frog'], ['hehe', 'Smiley'], ['panda', 'Panda'], ['chick', 'Chick']];
 const petSrc = k => `images/pets/${k}.webp`;
 function petRow(scope, cur) {
   return `<div class="pet-pick"><small>Or pick a little friend</small><div class="pet-row" role="list">${PETS.map(([k, n], i) => `<button class="pet ${cur === petSrc(k) ? 'on' : ''}" role="listitem" style="--i:${i}" data-action="pickPet" data-v="${k}" data-s="${scope}" aria-label="${n}" aria-pressed="${cur === petSrc(k)}"><img src="${petSrc(k)}" alt="" loading="lazy"></button>`).join('')}</div></div>`;
@@ -10656,6 +10677,7 @@ function viewProfile() {
     <section class="card glass"><div class="chips">${BIRTH_CONTROL.map(b => `<button class="chip ${(p.bc || 'none') === b.k ? 'on' : ''}" data-action="setBc" data-v="${b.k}">${b.t}</button>`).join('')}</div>
       ${hormonalBC(p.bc) ? `<p class="muted sm" style="margin:12px 0 8px">Coming off it?</p><div class="chips">${BC_PLAN.map(b => `<button class="chip ${p.bcPlan === b.k ? 'on' : ''}" data-action="setBcPlan" data-v="${b.k}">${b.t}</button>`).join('')}</div>` : ''}
       ${p.bc === 'pill' && p.bcPlan !== 'stop' ? pillQ(p) : ''}</section>
+    <section class="card glass sxw-card">${sexWithRow(p.sexWith, 'profile')}</section>
     ${M.info ? `<button class="card glass pf-link" data-action="nav" data-to="insights"><span>${icon('chart', 18)}</span><b>Your hormones & patterns<small>What the app has learned about you</small></b>${icon('chevR', 16)}</button>` : ''}`;
   else if (tab === 'alerts') body = `${remindersSection()}
     ${M.info ? calSyncCard() : ''}
@@ -10721,6 +10743,7 @@ function cleanSnap(o) {
   if (r.a === 'partner' && typeof o.k === 'string' && /^[a-z0-9]{6,16}$/.test(o.k)) r.k = o.k;
   if (o.w === 'm') r.w = 'm'; if (o.g) r.g = 1; if (o.l) r.l = 1;
   if (typeof o.z === 'string' && /^\d\d-\d\d$/.test(o.z)) r.z = o.z;
+  const nx = ISO_D(o.nx); if (nx && nx > s) r.nx = nx;
   const t = okPic(o.t); if (t) r.t = t;
   const md = ISO_D(o.md);
   if (md) {
@@ -10776,6 +10799,7 @@ function mySnap(o = {}) {
   const snap = { n: state.profile.name || 'Her', s: C.iso(last.start), c: stats.avgCycle, p: stats.avgPeriod, a: aud, f: state.profile.noFertile ? 0 : 1, i: myInbox() };
   if (stats.noOv) snap.f = 0; // on hormonal birth control: no fertile days on his side either
   if (stats.pill) { const nb = C.dayInfo(new Date(), stats)?.nextStart; if (nb) snap.s = C.iso(C.addDays(nb, -28)); } // his countdown lands on her pill-break bleed
+  else if (M.info && M.info.nextStart && !stats.noPred) snap.nx = C.iso(M.info.nextStart); // her phone's own next date (late days, 'not started yet'), so both phones always agree
   if (state.profile.ptWho === 'm') snap.w = 'm'; // he only views, he never tracks (a male friend too)
   if (ttcOn() && aud !== 'friend') snap.g = 1;
   if (lossCare() && state.profile.lossShare && aud !== 'friend') snap.l = 1; // she chose to share it: his view shows how to support her // trying for a baby: his page shows how he can help
@@ -10794,8 +10818,8 @@ async function syncTo(p) {
 }
 // Her latest rhythm also sits on a "-live" channel, so every link she ever sent (his too) opens up to date.
 async function publishLive() {
-  const last = M?.stats?.periods?.length && C.iso(M.stats.periods[M.stats.periods.length - 1].start);
-  const { a, w, k, ...snap } = last ? mySnap({ short: true }) : {}, px = myIntimate(), mk = JSON.stringify([snap.md, snap.m, snap.sy, snap.e, snap.ds, px]);
+  const p0 = M?.stats?.periods?.length && C.iso(M.stats.periods[M.stats.periods.length - 1].start);
+  const { a, w, k, ...snap } = p0 ? mySnap({ short: true }) : {}, last = p0 && p0 + (snap.nx ? '>' + snap.nx : ''), px = myIntimate(), mk = JSON.stringify([snap.md, snap.m, snap.sy, snap.e, snap.ds, px]);
   const tk = (myPic() || '').slice(-24);
   if (!last || !state.profile.linkSent || (state.profile.liveS === last && state.profile.liveM === mk && state.profile.liveT === tk && Date.now() - (state.profile.liveAt || 0) < 6 * 36e5)) return;
   state.profile.liveM = mk;
@@ -10813,10 +10837,10 @@ async function pullLive(i, k) {
   } catch { return null; }
 }
 const logSig = o => JSON.stringify(LOG_KEYS.map(k => o[k] ?? null));
-const fresher = (old, nw) => nw && (nw.s !== old.s || +!!nw.f !== +!!old.f || logSig(nw) !== logSig(old) || +nw.c !== +old.c || +nw.p !== +old.p || nw.z !== old.z || nw.n !== old.n || +!!nw.l !== +!!old.l || (!!nw.t && nw.t !== old.t));
+const fresher = (old, nw) => nw && (nw.s !== old.s || +!!nw.f !== +!!old.f || logSig(nw) !== logSig(old) || +nw.c !== +old.c || nw.nx !== old.nx || +nw.p !== +old.p || nw.z !== old.z || nw.n !== old.n || +!!nw.l !== +!!old.l || (!!nw.t && nw.t !== old.t));
 async function refreshPartners() {
   let changed = false;
-  for (const p of (state.partners || []).filter(x => x.i)) { const nw = await pullLive(p.i, p.a === 'friend' ? '' : p.k); if (fresher(p, nw)) { Object.assign(p, { n: nw.n, s: nw.s, c: nw.c, p: nw.p, z: nw.z, f: nw.f, l: nw.l }, Object.fromEntries(LOG_KEYS.map(k => [k, nw[k]]))); if (nw.t) p.t = nw.t; changed = true; } }
+  for (const p of (state.partners || []).filter(x => x.i)) { const nw = await pullLive(p.i, p.a === 'friend' ? '' : p.k); if (fresher(p, nw)) { Object.assign(p, { n: nw.n, s: nw.s, nx: nw.nx, c: nw.c, p: nw.p, z: nw.z, f: nw.f, l: nw.l }, Object.fromEntries(LOG_KEYS.map(k => [k, nw[k]]))); if (nw.t) p.t = nw.t; changed = true; } }
   if (changed) { save(); if (['partners', 'today'].includes(route().name)) render(); }
 }
 // a link that is opened (or his saved view): swap in her latest rhythm if she has logged a new period since
@@ -10825,13 +10849,13 @@ async function refreshWith(d) {
   if (liveChecked.has(d)) return; liveChecked.add(d);
   const snap = inSnap(d); if (!snap || !snap.i) return;
   const nw = await pullLive(snap.i, snap.a === 'friend' ? '' : snap.k); if (!fresher(snap, nw)) return;
-  const nd = b64e({ ...snap, n: nw.n, s: nw.s, c: nw.c, p: nw.p, z: nw.z, f: nw.f, ...Object.fromEntries(LOG_KEYS.map(k => [k, nw[k]])) }); liveChecked.add(nd);
+  const nd = b64e({ ...snap, n: nw.n, s: nw.s, nx: nw.nx, c: nw.c, p: nw.p, z: nw.z, f: nw.f, ...Object.fromEntries(LOG_KEYS.map(k => [k, nw[k]])) }); liveChecked.add(nd);
   try { if (localStorage.getItem('uts.viewOnly') === d) localStorage.setItem('uts.viewOnly', nd); } catch {}
   if (route().name === 'with') history.replaceState(null, '', '#/with?d=' + nd);
   render();
 }
 function syncPartners() {
-  const last = M?.stats?.periods?.length && C.iso(M.stats.periods[M.stats.periods.length - 1].start);
+  const p0 = M?.stats?.periods?.length && C.iso(M.stats.periods[M.stats.periods.length - 1].start), nx = M?.info?.nextStart && !M.stats.pill && !M.stats.noPred ? C.iso(M.info.nextStart) : '', last = p0 && p0 + (nx ? '>' + nx : '');
   if (!last || state.profile.syncedS === last) return;
   const ps = (state.partners || []).filter(p => p.i); if (!ps.length) return;
   state.profile.syncedS = last; save(); ps.forEach(syncTo);
@@ -10839,11 +10863,18 @@ function syncPartners() {
 // Cycle info rebuilt from a shared snapshot (projected forward cycle by cycle).
 function snapInfo(snap, date) {
   const L = Math.round(Math.min(60, Math.max(15, +snap.c || 28))), P = Math.round(Math.min(10, Math.max(1, +snap.p || 5))), d = C.startOfDay(date), s = C.parseISO(String(snap.s));
-  const diff = Math.max(0, C.diffDays(d, s)), k = Math.floor(diff / L);
-  const start = C.addDays(s, k * L), cd = diff - k * L + 1, ov = C.ovulationDay(L, P);
+  const diff = Math.max(0, C.diffDays(d, s)), nx = snap.nx && C.parseISO(String(snap.nx)), ov = C.ovulationDay(L, P);
+  if (nx && d < nx) { // still in the cycle she is in: her own phone's next date, so a late period shows as late, never as a new cycle
+    const cd = diff + 1, Lc = Math.max(cd, C.diffDays(nx, s)), late = Math.max(0, cd - L);
+    return { cd, L, P, ov, phase: C.phaseFor(Math.min(cd, L), L, P), cycleStart: s, nextStart: nx,
+      isPeriod: cd <= P, periodActual: cd <= P, isOvulation: cd === ov, fertile: cd >= ov - 5 && cd <= ov,
+      daysToPeriod: C.diffDays(nx, d), daysToOv: cd < ov ? ov - cd : cd === ov ? 0 : (Lc - cd) + ov, late, dueToday: false };
+  }
+  const b = nx || s, db = Math.max(0, C.diffDays(d, b)), k = Math.floor(db / L);
+  const start = C.addDays(b, k * L), cd = db - k * L + 1;
   return {
     cd, L, P, ov, phase: C.phaseFor(cd, L, P), cycleStart: start, nextStart: C.addDays(start, L),
-    isPeriod: cd <= P, periodActual: cd <= P, isOvulation: cd === ov, fertile: cd >= ov - 5 && cd <= ov + 1,
+    isPeriod: cd <= P, periodActual: cd <= P, isOvulation: cd === ov, fertile: cd >= ov - 5 && cd <= ov,
     daysToPeriod: L - cd + 1, daysToOv: cd < ov ? ov - cd : cd === ov ? 0 : (L - cd) + ov, late: 0, dueToday: false,
   };
 }
@@ -11208,7 +11239,7 @@ function duoBring(info) {
   return `${sectionTitle('Today for you two')}
     <p class="pv2-lead">What to cook, make and bring her. Made for her ${PHASES[ph].name.toLowerCase()} phase${warm ? ', all warm' : ''}.</p>
     <section class="pv2-card pv2-duo">
-      <div class="duo-c" role="button" tabindex="0" data-action="pvDuo" data-v="dish" aria-expanded="false"><span class="pv2-3d duo-v">${D ? cup3d(D.img, ` data-model="${D.model}" data-elev="${D.elev || 0.9}" data-fit="${+((D.tileFit || D.fit) * 0.9).toFixed(2)}"${D.steam === 0 ? ' data-steam="0"' : ''}`, rec.name) : `<img class="pv2-mph" src="${photoUrl(rec.id, 500)}" alt="" loading="lazy">`}</span>
+      <div class="duo-c" role="button" tabindex="0" data-action="pvDuo" data-v="dish" aria-expanded="false"><span class="pv2-3d duo-v">${D ? cup3d(D.img, ` data-model="${D.model}" data-elev="${D.elev || 0.9}" data-fit="${+(Math.min(D.tileFit || D.fit, 1.45) * 0.9).toFixed(2)}"${D.steam === 0 ? ' data-steam="0"' : ''}`, rec.name) : `<img class="pv2-mph" src="${photoUrl(rec.id, 500)}" alt="" loading="lazy">`}</span>
         <small>Cook together</small><b>${rec.name}</b><p>${recWhy(rec)}</p><em>${icon('clock', 12)} ${rec.time >= 60 ? `${Math.floor(rec.time / 60)} h${rec.time % 60 ? ` ${rec.time % 60}` : ''}` : `${rec.time} min`}</em></div>
       <div class="duo-c" role="button" tabindex="0" data-action="pvDuo" data-v="tea" aria-expanded="false"><span class="pv2-3d duo-v tea">${cup3d(teaCupImg(td[1]), teaCupAttr(td[1]) + (teaCupAttr(td[1]) ? ` data-fit="${/matcha/i.test(td[1]) ? 0.92 : /green tea/i.test(td[1]) ? 1.1 : 1.3}"` : ''), td[1])}</span>
         <small>Make her a cup</small><b>${td[1]}</b><p>${td[2].replace(/\byour\b/g, 'her').replace(/\byou\b/g, 'she')}</p><em>${icon('clock', 12)} ${steep}${tWhen ? ` · ${tWhen.toLowerCase()}` : ''}</em></div>
@@ -11992,7 +12023,7 @@ const actions = {
     if (!o.noPeriod) for (let i = 0; i < o.periodLength; i++) { const d = C.addDays(s, i); if (d <= new Date()) logs[C.iso(d)] = { flow: i === 0 || i === 1 ? 'medium' : 'light' }; }
     ui.arrive = true;
     let pend = null; try { pend = inSnap(localStorage.getItem('uts.pendingPartner')); localStorage.removeItem('uts.pendingPartner'); } catch {}
-    state = { onboarded: true, profile: { name: o.name.trim(), country: o.country || myCountry(), diet: o.diet || 'all', cycleLength: o.unsure || o.noPeriod ? 28 : o.cycleLength, cycleUnsure: !!(o.unsure || o.noPeriod), noPeriod: !!o.noPeriod || undefined, npWhy: o.noPeriod && o.npWhy?.length ? o.npWhy : undefined, npSince: o.noPeriod ? todayISO() : undefined, preg: o.preg || (o.purpose === 'after' ? 'kids' : undefined), ttc: o.purpose === 'conceive' && o.ttc || undefined, ttcSince: o.purpose === 'conceive' && o.ttcSince || undefined, ppAt: o.ppAt || undefined, ppOld: o.ppOld || undefined, lossAt: o.preg === 'loss' && o.lossAt || undefined, lossOld: o.preg === 'loss' && o.lossOld || undefined, lossN: o.preg === 'loss' && o.lossN || undefined, lossHelp: o.preg === 'loss' && o.lossHelp?.length ? o.lossHelp : undefined, bf: o.bf || undefined, bc: o.bc || 'none', bcPlan: hormonalBC(o.bc) ? o.bcPlan || 'think' : undefined, pillKind: o.bc === 'pill' && o.pillKind || undefined, pillStart: o.bc === 'pill' && o.pillStart || undefined, bcStop: o.bcPlan === 'stop' ? todayISO() : undefined, planStart: todayISO(), periodLength: o.periodLength, goals: o.goals, purpose: o.purpose || 'know', focus: (o.focus && o.focus.length) ? o.focus : ['hormones', 'energy', 'eat'], birthday: o.birthday || undefined, birthTime: o.birthday && o.birthTime || undefined, birthPlace: o.birthday && o.birthPlace || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
+    state = { onboarded: true, profile: { name: o.name.trim(), country: o.country || myCountry(), diet: o.diet || 'all', cycleLength: o.unsure || o.noPeriod ? 28 : o.cycleLength, cycleUnsure: !!(o.unsure || o.noPeriod), noPeriod: !!o.noPeriod || undefined, npWhy: o.noPeriod && o.npWhy?.length ? o.npWhy : undefined, npSince: o.noPeriod ? todayISO() : undefined, preg: o.preg || (o.purpose === 'after' ? 'kids' : undefined), ttc: o.purpose === 'conceive' && o.ttc || undefined, ttcSince: o.purpose === 'conceive' && o.ttcSince || undefined, ppAt: o.ppAt || undefined, ppOld: o.ppOld || undefined, lossAt: o.preg === 'loss' && o.lossAt || undefined, lossOld: o.preg === 'loss' && o.lossOld || undefined, lossN: o.preg === 'loss' && o.lossN || undefined, lossHelp: o.preg === 'loss' && o.lossHelp?.length ? o.lossHelp : undefined, bf: o.bf || undefined, bc: o.bc || 'none', sexWith: o.sexWith || undefined, bcPlan: hormonalBC(o.bc) ? o.bcPlan || 'think' : undefined, pillKind: o.bc === 'pill' && o.pillKind || undefined, pillStart: o.bc === 'pill' && o.pillStart || undefined, bcStop: o.bcPlan === 'stop' ? todayISO() : undefined, planStart: todayISO(), periodLength: o.periodLength, goals: o.goals, purpose: o.purpose || 'know', focus: (o.focus && o.focus.length) ? o.focus : ['hormones', 'energy', 'eat'], birthday: o.birthday || undefined, birthTime: o.birthday && o.birthTime || undefined, birthPlace: o.birthday && o.birthPlace || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
     if (pend && pend.s && pend.c) state.partners = [{ ...pend, id: Date.now().toString(36), added: Date.now() }];
     if (o.geo) state.profile.geo = o.geo; if (o.askG) state.profile.geoAsked = true; // asked on the last onboarding page
     ui.scrollMem = {}; ui.navStack = []; save(); go('today'); render(); toTop(); requestAnimationFrame(toTop); setTimeout(toTop, 400); // she lands at the very top of Today
@@ -12463,6 +12494,14 @@ const actions = {
     const after = C.cycleStats(state);
     toast(back ? 'Your period is back. Your cycle map starts today' : after.lengths.length && after.avgCycle !== before.avgCycle ? `Period logged · your cycle is now ${after.avgCycle} days` : 'Period logged. Take it easy today'); render();
   },
+  // "Not started yet" on the day her period was expected (or any day after): today is saved as a dry day, the
+  // prediction moves to tomorrow, and the cycle counts at its real length once the period comes. Tap again to undo.
+  periodNotYet: () => {
+    const k = todayISO(), l = getLog(k);
+    if (l.ny) { setLog(k, { ny: null, flow: l.flow === 'none' ? null : l.flow }); toast('Undone'); }
+    else { setLog(k, { ny: 1, flow: 'none' }); buzz('tick'); toast('Noted. Expected from tomorrow now'); }
+    route().name === 'calendar' ? calRefresh(null, true) : render();
+  },
   togglePeriod: () => {
     const k = ui.calSelected, l = getLog(k);
     setLog(k, { flow: PERIOD_FLOWS.includes(l.flow) ? null : 'medium' });
@@ -12484,7 +12523,7 @@ const actions = {
     if (ta) { ta.dataset.jp = q; if (ta.value.trim()) setLog(k, { jp: q }); }
   },
   logCopy: () => {
-    const k = ui.logDate || todayISO(), y = { ...(state.logs[C.iso(C.addDays(C.parseISO(k), -1))] || {}) }; delete y.notes; delete y.jp; delete y.sex; delete y.cn; if (y.intim) y.intim = y.intim.filter(v => !v.startsWith('Sex,'));
+    const k = ui.logDate || todayISO(), y = { ...(state.logs[C.iso(C.addDays(C.parseISO(k), -1))] || {}) }; delete y.notes; delete y.jp; delete y.sex; delete y.cn; if (y.ny) { delete y.ny; if (y.flow === 'none') delete y.flow; } if (y.intim) y.intim = y.intim.filter(v => !v.startsWith('Sex,'));
     setLog(k, y); ui.logOpen = { flow: 1, body: 1, mind: 1 }; render();
   },
   sexYN: d => {
@@ -12492,6 +12531,11 @@ const actions = {
     const keep = (l.intim || []).filter(v => !v.startsWith('Sex,'));
     setLog(k, was ? { sex: null, intim: keep } : d.v === 'y' ? { sex: 'y' } : { sex: 'n', intim: keep }); buzz('tick'); render();
   },
+  noteSave: (d, el) => { const w = el.closest('.nt-wrap'); w?.querySelector('textarea')?.blur(); if (!w) return; w.classList.remove('dirty'); w.classList.add('saved'); buzz('tick');
+    clearTimeout(w._t); w._t = setTimeout(() => w.classList.remove('saved'), 1800); },
+  sexWith: d => { const v = SEX_WITH.some(x => x[0] === d.v) ? d.v : undefined;
+    if (d.s === 'onb') { ui.onb.sexWith = ui.onb.sexWith === v ? undefined : v; ui.onbStill = true; render(); }
+    else { state.profile.sexWith = state.profile.sexWith === v ? undefined : v; save(); buzz('tick'); softProfile(); } },
   sexProt: d => {
     const k = ui.logDate || todayISO(), l = getLog(k), on = (l.intim || []).includes(d.v);
     setLog(k, { sex: 'y', intim: [...(l.intim || []).filter(v => !v.startsWith('Sex,')), ...(on ? [] : [d.v])] }); render();
@@ -12803,10 +12847,10 @@ document.addEventListener('input', e => {
     const lb = document.getElementById('lv-' + key); if (lb) lb.textContent = SLIDER_WORDS[key][n - 1];
     const go = document.querySelector('.lg-go .btn'); if (go && go.disabled) { go.disabled = false; go.innerHTML = `${icon('spark', 18)} See what this means`; }
   }
-  else if (scope === 'cal' && key === 'cn') { const k = e.target.dataset.date; if (!/^\d{4}-\d\d-\d\d$/.test(k || '')) return;
+  else if (scope === 'cal' && key === 'cn') { const k = e.target.dataset.date; if (!/^\d{4}-\d\d-\d\d$/.test(k || '')) return; noteDirty(e.target);
     setLog(k, { cn: v.trim() ? v.slice(0, 600) : null }); e.target.style.height = 'auto'; e.target.style.height = e.target.scrollHeight + 'px'; const lg = state.logs[k], cell = document.querySelector(`.cal-d[data-date="${k}"]`);
     if (cell) { const dot = cell.querySelector('.logdot'), want = !!(lg && (lg.symptoms || lg.moods || lg.notes || lg.cn)); if (want && !dot) cell.querySelector('span').insertAdjacentHTML('afterend', '<i class="logdot"></i>'); else if (!want && dot) dot.remove(); } }
-  else if (scope === 'log' && key === 'notes') { setLog(ui.logDate || todayISO(), { notes: v, jp: v.trim() ? e.target.dataset.jp || null : null }); }
+  else if (scope === 'log' && key === 'notes') { noteDirty(e.target); setLog(ui.logDate || todayISO(), { notes: v, jp: v.trim() ? e.target.dataset.jp || null : null }); }
   else if (scope === 'log') { const n = key === 'temp' ? (v === '' ? null : Math.round(parseFloat(v) * 100) / 100) : v; setLog(ui.logDate || todayISO(), { [key]: Number.isNaN(n) ? null : n }); }
 });
 

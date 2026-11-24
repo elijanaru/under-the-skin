@@ -1,10 +1,12 @@
-{"<t0></t0>Them": "<t0></t0>상대",
+{
+"<t0></t0>Them": "<t0></t0>상대",
 "<t0><x1/></t0>Connect with your partner <x2/>": "<t0><x1/></t0>파트너와 연결하기 <x2/>",
 "A high-stress day in your cycle": "주기 중 스트레스가 높은 날이에요",
-"A {0}-second check-in helps Underskin learn your patterns.": "{0}초만 기록해도 Underskin이 당신의 패턴을 알아가요.",
+"A {0}-second check-in helps Underskin learn your patterns.": "{0}초 체크인으로 Underskin이 내 패턴을 알아가요.",
 "An early night tonight": "오늘은 일찍 자기",
 "Dim the lights": "조명을 낮춰요",
 "Friends, family, partners": "친구, 가족, 파트너",
 "How are you feeling today?": "오늘 기분은 어때요?",
 "Your body is under more strain today. Ten slow minutes now lowers cortisol before bed.": "오늘은 몸이 더 지쳐 있어요. 지금 천천히 10분만 쉬면 잠들기 전 코르티솔이 내려가요.",
-"Your hormones are low now. Extra sleep helps mood and cramps.": "지금은 호르몬이 낮은 시기예요. 조금 더 자면 기분과 생리통에 도움이 돼요."}
+"Your hormones are low now. Extra sleep helps mood and cramps.": "지금은 호르몬이 낮은 시기예요. 조금 더 자면 기분과 생리통에 도움이 돼요."
+}
