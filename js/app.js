@@ -81,6 +81,7 @@ async function cloudSync() {
     sync.at = Date.now(); sync.err = '';
   } catch (e) { sync.err = e.message || 'Could not sync'; }
   sync.busy = false;
+  if (changed) checkOwned(); // a cloud copy never unlocks the App Store app on its own
   M = state?.onboarded ? model() : M;
   if (!wasOn && state?.onboarded) { ui.arrive = true; go('today'); }
   // only redraw when the data changed (or on the account page): a redraw mid-typing would close the keyboard
@@ -9004,8 +9005,9 @@ function handleSignal(m) {
   const seen = state.sigSeen = state.sigSeen || []; if (!m || !m.id || seen.includes(m.id)) return;
   seen.push(m.id); state.sigSeen = seen.slice(-100); state.sigSince = Math.max(state.sigSince || 0, m.time || 0);
   let d; try { d = JSON.parse(m.message); } catch { return; }
+  if (!d || typeof d !== 'object') return; d.f = SAFE_TXT(d.f, 40) || 'Someone'; if (d.x != null) d.x = SAFE_TXT(String(d.x), 120);
   if (d.k === 'pair') { // she added you from your link: her rhythm arrives here on its own
-    const snap = b64d(d.d || ''); if (!snap || !snap.s || !snap.c) return;
+    const snap = inSnap(d.d); if (!snap || !/^[a-z0-9]{8,40}$/.test(String(d.fi || ''))) return;
     const ps = state.partners = state.partners || [], old = ps.find(x => x.i === d.fi || x.n === snap.n);
     if (old) Object.assign(old, snap, { id: old.id, t: okPic(d.t) || okPic(snap.t) || old.t, added: Date.now() });
     else if (ps.length < 4) { ps.push({ ...snap, t: okPic(d.t) || okPic(snap.t), id: Date.now().toString(36), added: Date.now() }); toast(`${snap.n} is connected`); }
@@ -9110,14 +9112,14 @@ function viewLove(q) {
   if (!l) return `<div class="pad"><h1 class="page-h" style="margin-top:80px">Link not valid</h1></div>`;
   const hearts = Array.from({ length: 24 }, (_, i) => `<i style="left:${(i * 37) % 100}%;animation-delay:${(i * .37) % 7}s;animation-duration:${6 + (i % 5)}s;width:${12 + (i * 7) % 22}px;height:${12 + (i * 7) % 22}px">${HEART(i % 3 === 1 ? '#fff' : '#ff2d4b')}</i>`).join('');
   return `<div class="love-view"><div class="lv-hearts">${hearts}</div>
-    <div class="lv-in"><div class="lv-art">${loveArt('xl')}<span class="lv-av">${d.t ? `<img src="${esc(d.t)}" alt="">` : esc((d.f || '?')[0])}</span><span class="lv-g">${icon(l.ic, 26)}</span></div><h1>${esc(d.f || 'Someone')} ${l.s}</h1>${d.x ? `<p class="sig-x">${esc(String(d.x).slice(0, 120))}</p>` : ''}
+    <div class="lv-in"><div class="lv-art">${loveArt('xl')}<span class="lv-av">${okPic(d.t) ? `<img src="${esc(okPic(d.t))}" alt="">` : esc((SAFE_TXT(d.f, 40) || '?')[0])}</span><span class="lv-g">${icon(l.ic, 26)}</span></div><h1>${esc(SAFE_TXT(d.f, 40) || 'Someone')} ${l.s}</h1>${d.x ? `<p class="sig-x">${esc(SAFE_TXT(String(d.x), 120))}</p>` : ''}
       <p class="muted">${fmt(new Date(), { weekday: 'long' })} · with love, from Underskin</p>
       ${state && state.onboarded ? `<a class="btn btn-love btn-block" href="#/partners">${icon('heart', 16)} Send love back</a>` : `<a class="btn btn-light btn-block" href="#/today">Get Underskin</a>`}</div></div>`;
 }
 function addPartnerFrom(text) {
   const m = String(text).match(/[?&]d=([A-Za-z0-9_-]+)/) || String(text).trim().match(/^([A-Za-z0-9_-]{16,})$/);
-  const snap = m && b64d(m[1]);
-  if (!snap || !snap.s || !snap.c) return toast('That doesn’t look like an Underskin link');
+  const snap = m && inSnap(m[1]);
+  if (!snap) return toast('That doesn’t look like an Underskin link');
   actions.addPartner({ d: m[1] });
 }
 function viewPartners(id) {
@@ -10695,6 +10697,33 @@ function viewProfile() {
 // ---------- partner mode ----------
 function b64e(o) { return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
 function b64d(s) { try { return JSON.parse(decodeURIComponent(escape(atob(s.replace(/-/g, '+').replace(/_/g, '/'))))); } catch { return null; } }
+// Security (24 Nov 2026): everything that arrives from another phone (an invite link, the live relay, a pair message) passes
+// through here first. Only known fields, of the right type and size, survive, so a crafted link can't slip in markup,
+// an outside image that tracks her, or a wrong type that breaks a page.
+const ISO_D = v => typeof v === 'string' && /^\d{4}-\d\d-\d\d$/.test(v) ? v : undefined;
+const NUM_IN = (v, lo, hi) => { const x = +v; return typeof v !== 'object' && Number.isFinite(x) && x >= lo && x <= hi ? x : undefined; };
+const SAFE_TXT = (v, n) => typeof v === 'string' ? v.replace(/[<>\u0000-\u001f\u007f]/g, '').trim().slice(0, n) : '';
+const SAFE_TAGS = (v, n) => Array.isArray(v) ? [...new Set(v.filter(x => typeof x === 'string' && /^[\p{L}\p{N}\p{M} '’&/()+.,-]{1,32}$/u.test(x)))].slice(0, n) : undefined;
+function cleanSnap(o) {
+  if (!o || typeof o !== 'object' || Array.isArray(o)) return null;
+  const s = ISO_D(o.s), c = NUM_IN(o.c, 10, 120); if (!s || !c) return null;
+  const r = { n: SAFE_TXT(o.n, 40) || 'Her', s, c, p: NUM_IN(o.p, 1, 20) || 5, a: o.a === 'friend' ? 'friend' : 'partner', f: o.f ? 1 : 0 };
+  if (typeof o.i === 'string' && /^[a-z0-9]{8,40}$/.test(o.i)) r.i = o.i;
+  if (r.a === 'partner' && typeof o.k === 'string' && /^[a-z0-9]{6,16}$/.test(o.k)) r.k = o.k;
+  if (o.w === 'm') r.w = 'm'; if (o.g) r.g = 1; if (o.l) r.l = 1;
+  if (typeof o.z === 'string' && /^\d\d-\d\d$/.test(o.z)) r.z = o.z;
+  const t = okPic(o.t); if (t) r.t = t;
+  const md = ISO_D(o.md);
+  if (md) {
+    r.md = md;
+    const m = SAFE_TAGS(o.m, 6), sy = SAFE_TAGS(o.sy, 8), ds = SAFE_TAGS(o.ds, 4), e = NUM_IN(o.e, 1, 5), dr = NUM_IN(o.dr, 1, 5);
+    if (m?.length) r.m = m; if (sy?.length) r.sy = sy; if (ds?.length) r.ds = ds; if (e) r.e = Math.round(e);
+    if (r.a === 'partner' && dr) r.dr = Math.round(dr);
+    if (r.a === 'partner' && Array.isArray(o.x)) { const x = o.x.filter(v => INTIMACY.some(([n]) => n === v)).slice(0, 6); if (x.length) r.x = x; }
+  }
+  return r;
+}
+const inSnap = raw => cleanSnap(b64d(raw || ''));
 function shareLink(o = {}) { return `${appBase()}#/with?d=${b64e(mySnap(o))}`; }
 // The invite she sends (19 Nov 2026): one short code instead of the whole snapshot (which held her photo and ran to
 // thousands of characters). Name, last period start, cycle and period length, who it's for and her inbox are packed
@@ -10768,8 +10797,8 @@ const lastMsg = async ch => { const txt = await (await fetch(`${RELAY}${ch}/json
 const LOG_KEYS = ['m', 'md', 'sy', 'e', 'ds', 'dr', 'x'];
 async function pullLive(i, k) {
   try {
-    const body = await lastMsg(`${i}-live`), snap = body && b64d(body.d || ''); if (snap && okPic(body.t)) snap.t = body.t;
-    if (!(snap && snap.s && snap.c)) return null;
+    const body = await lastMsg(`${i}-live`), snap = body && inSnap(body.d); if (snap && okPic(body.t)) snap.t = body.t;
+    if (!snap) return null;
     if (k) { try { const px = await lastMsg(`${i}-${k}`); if (px && px.md && px.md === todayISO()) { if (+px.dr >= 1 && +px.dr <= 5) snap.dr = +px.dr; if (Array.isArray(px.x)) snap.x = px.x.filter(v => INTIMACY.some(([n]) => n === v)).slice(0, 6); } } catch {} }
     return snap;
   } catch { return null; }
@@ -10785,7 +10814,7 @@ async function refreshPartners() {
 const liveChecked = new Set();
 async function refreshWith(d) {
   if (liveChecked.has(d)) return; liveChecked.add(d);
-  const snap = b64d(d); if (!snap || !snap.i) return;
+  const snap = inSnap(d); if (!snap || !snap.i) return;
   const nw = await pullLive(snap.i, snap.a === 'friend' ? '' : snap.k); if (!fresher(snap, nw)) return;
   const nd = b64e({ ...snap, n: nw.n, s: nw.s, c: nw.c, p: nw.p, z: nw.z, f: nw.f, ...Object.fromEntries(LOG_KEYS.map(k => [k, nw[k]])) }); liveChecked.add(nd);
   try { if (localStorage.getItem('uts.viewOnly') === d) localStorage.setItem('uts.viewOnly', nd); } catch {}
@@ -11028,7 +11057,7 @@ const PV_SKIP = {
   all: ['Fixing it when she just wants you to listen', 'Leaving dishes and laundry for her to notice', 'Blaming her mood on her hormones'],
 };
 // her snapshot on his page (from the link, or the saved view-only link)
-function pvSnap() { const r = route(); let raw = r.name === 'with' && r.q ? r.q.get('d') : null; if (!raw) { try { raw = localStorage.getItem('uts.viewOnly'); } catch {} } return raw ? b64d(raw) : null; }
+function pvSnap() { const r = route(); let raw = r.name === 'with' && r.q ? r.q.get('d') : null; if (!raw) { try { raw = localStorage.getItem('uts.viewOnly'); } catch {} } return raw ? inSnap(raw) : null; }
 // The date ticket: a vintage blush ticket (barcode stub, punched edges, typewriter lines) with a lotus collage.
 // Her ticket buttons: tiny hearts and blossoms tucked in the corners
 const TKB_CORNERS = (c, flower) => { const f = flower
@@ -11525,7 +11554,7 @@ function pvReadTeaser(info, him) {
 }
 
 function viewWith(q) {
-  const snap = b64d(q.get('d') || '');
+  const snap = inSnap(q.get('d'));
   if (!snap || !snap.s || !snap.c) return `<div class="pad"><h1 class="page-h" style="margin-top:80px">Link not valid</h1><p class="muted">Ask her to send it again.</p></div>`;
   const today = C.startOfDay(new Date()), info = snapInfo(snap, today), ph = PHASES[info.phase], tcm = TCM[info.phase];
   const S = SUPPORT[info.phase], role = snap.a === 'friend' ? 'friend' : 'partner', sup = S[role];
@@ -11953,7 +11982,7 @@ const actions = {
     const o = ui.onb, logs = {}, s = C.parseISO(o.last);
     if (!o.noPeriod) for (let i = 0; i < o.periodLength; i++) { const d = C.addDays(s, i); if (d <= new Date()) logs[C.iso(d)] = { flow: i === 0 || i === 1 ? 'medium' : 'light' }; }
     ui.arrive = true;
-    let pend = null; try { pend = b64d(localStorage.getItem('uts.pendingPartner') || ''); localStorage.removeItem('uts.pendingPartner'); } catch {}
+    let pend = null; try { pend = inSnap(localStorage.getItem('uts.pendingPartner')); localStorage.removeItem('uts.pendingPartner'); } catch {}
     state = { onboarded: true, profile: { name: o.name.trim(), country: o.country || myCountry(), diet: o.diet || 'all', cycleLength: o.unsure || o.noPeriod ? 28 : o.cycleLength, cycleUnsure: !!(o.unsure || o.noPeriod), noPeriod: !!o.noPeriod || undefined, npWhy: o.noPeriod && o.npWhy?.length ? o.npWhy : undefined, npSince: o.noPeriod ? todayISO() : undefined, preg: o.preg || (o.purpose === 'after' ? 'kids' : undefined), ttc: o.purpose === 'conceive' && o.ttc || undefined, ttcSince: o.purpose === 'conceive' && o.ttcSince || undefined, ppAt: o.ppAt || undefined, ppOld: o.ppOld || undefined, lossAt: o.preg === 'loss' && o.lossAt || undefined, lossOld: o.preg === 'loss' && o.lossOld || undefined, lossN: o.preg === 'loss' && o.lossN || undefined, lossHelp: o.preg === 'loss' && o.lossHelp?.length ? o.lossHelp : undefined, bf: o.bf || undefined, bc: o.bc || 'none', bcPlan: hormonalBC(o.bc) ? o.bcPlan || 'think' : undefined, pillKind: o.bc === 'pill' && o.pillKind || undefined, pillStart: o.bc === 'pill' && o.pillStart || undefined, bcStop: o.bcPlan === 'stop' ? todayISO() : undefined, planStart: todayISO(), periodLength: o.periodLength, goals: o.goals, purpose: o.purpose || 'know', focus: (o.focus && o.focus.length) ? o.focus : ['hormones', 'energy', 'eat'], birthday: o.birthday || undefined, birthTime: o.birthday && o.birthTime || undefined, birthPlace: o.birthday && o.birthPlace || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
     if (pend && pend.s && pend.c) state.partners = [{ ...pend, id: Date.now().toString(36), added: Date.now() }];
     if (o.geo) state.profile.geo = o.geo; if (o.askG) state.profile.geoAsked = true; // asked on the last onboarding page
@@ -12511,7 +12540,7 @@ const actions = {
   hbcOpen: d => { wsOpen(hbcSheet(d.id), 'ws-herb ws-sf ws-hb'); },
   hbcTick: (d, el) => { actions.habitTick(d); const on = habitsDone(todayISO()).includes(d.id); el.classList.toggle('on', on); el.setAttribute('aria-pressed', on); el.innerHTML = `${icon('check', 16, 2.4)} ${on ? 'Done today' : 'Mark as done today'}`; if (on) setTimeout(() => wsClose(), 650); },
   hhOpen: d => { ui.hhOpen = ui.hhOpen === d.id ? null : d.id; hhRefresh() || render(); },
-  addPartner: d => { const snap = b64d(d.d); if (!snap) return; const ps = state.partners = state.partners || [];
+  addPartner: d => { const snap = inSnap(d.d); if (!snap) return; const ps = state.partners = state.partners || [];
     const old = ps.find(x => x.n === snap.n);
     if (old) { Object.assign(old, snap, { id: old.id, t: okPic(snap.t) || old.t, added: Date.now() }); save(); syncTo(old); toast(`${snap.n} updated`); return go('partners/' + old.id); }
     if (ps.length >= 4) { toast('You can connect up to 4 people'); return go('partners'); }
@@ -12892,11 +12921,21 @@ function locked() {
 const UTSS = NATIVE && /iOS/i.test(CAP?.getPlatform?.() || '') ? (CAP.Plugins?.UTSStore || (CAP.registerPlugin ? CAP.registerPlugin('UTSStore') : null)) : null;
 let TEST_BUILD = DEV_HOST; // TestFlight, Xcode or the dev server
 if (UTSS) {
-  UTSS.isTestFlight().then(r => { TEST_BUILD = !!r?.value; }).catch(() => {});
+  const tf = UTSS.isTestFlight().then(r => { TEST_BUILD = !!r?.value; }).catch(() => {});
   // a code redeemed in Apple's sheet (or a purchase approved later) arrives here
   UTSS.addListener('unlocked', d => { if (d?.productId === UNLOCK_ID && !state.paid) unlocked(d.transactionId); });
-  // bought on another device or reinstalled: unlock quietly
-  UTSS.owned({ productId: UNLOCK_ID }).then(r => { if (r?.owned && !state.paid) { state.paid = { at: todayISO(), ref: String(r.transactionId || 'owned') }; save(true); render(); } }).catch(() => {});
+  // Apple's signed receipt is the only proof of payment in the App Store app (security, 24 Nov 2026): bought on another
+  // device or reinstalled unlocks quietly, and a "paid" flag that Apple can't confirm (typed into the cloud copy, or a
+  // refunded purchase) is taken back. TestFlight keeps its test unlocks. If StoreKit can't answer, nothing changes.
+  tf.then(checkOwned);
+}
+function checkOwned() {
+  if (!UTSS) return;
+  UTSS.owned({ productId: UNLOCK_ID }).then(r => {
+    if (!state?.onboarded || typeof r?.owned !== 'boolean') return;
+    if (r.owned && !state.paid) { state.paid = { at: todayISO(), ref: String(r.transactionId || 'owned') }; save(true); render(); }
+    else if (!r.owned && state.paid && !TEST_BUILD) { delete state.paid; save(true); render(); }
+  }).catch(() => {});
 }
 // back from the Settings app on the "Two tiny favours" page: pick up what she switched on
 document.addEventListener('visibilitychange', async () => {
@@ -12933,10 +12972,12 @@ function creatorCode() {
   if (UTSS && !TEST_BUILD) return UTSS.redeemCode()
     .then(() => UTSS.owned({ productId: UNLOCK_ID })).then(r => { if (r?.owned && !state.paid) unlocked(r.transactionId); })
     .catch(() => toast('Couldn’t open the code sheet. Please try again.'));
+  if (!TEST_BUILD) return toast('Creator codes work in the Underskin iPhone app'); // never on the public website
   ui.codeOpen = !ui.codeOpen; render();
   if (ui.codeOpen) setTimeout(() => document.getElementById('ulCode')?.focus(), 80);
 }
 function testCode() {
+  if (!TEST_BUILD) return;
   const v = (document.getElementById('ulCode')?.value || '').trim().toUpperCase();
   if (!v) return document.getElementById('ulCode')?.focus();
   if (CREATOR_CODES.includes(v)) { ui.codeOpen = false; return unlocked('creator-' + v); }
