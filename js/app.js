@@ -2319,7 +2319,7 @@ function mindSection(phase, noFine) {
       ${noFine ? '' : '<p class="fine center">Low mood that stays, or PMS that takes over your life, is worth a doctor’s visit.</p>'}`;
 }
 // a flame on the calendar for the days she logged sex (19 Nov 2026, her call)
-const hadSex = lg => !!lg && (lg.intim || []).some(v => v.startsWith('Sex,'));
+const hadSex = lg => !!lg && lg.sex !== 'n' && (lg.sex === 'y' || (lg.intim || []).some(v => v.startsWith('Sex,')));
 // the weekday letters and month title in her language (Korean: 월 화 수…, "2026년 11월"; Spanish: L M X…, "Noviembre 2026")
 const wdLetters = () => I18N.LANG === 'en' ? ['M', 'T', 'W', 'T', 'F', 'S', 'S']
   : Array.from({ length: 7 }, (_, i) => new Intl.DateTimeFormat(I18N.LOC, { weekday: 'narrow' }).format(new Date(2026, 10, 16 + i)));
@@ -2352,7 +2352,7 @@ function viewCalendar() {
     if ((ui.calEdit && k === ui.calFix) || (ui.calStart && k === ui.calStart)) cls.push('fixme');
     if (k === ui.calSelected && !ui.calEdit) cls.push('sel');
     if (ui.calEdit && d > today) cls.push('locked');
-    cells += `<button class="${cls.join(' ')}" data-action="calSelect" data-date="${k}"><span>${n}</span>${lg && (lg.symptoms || lg.moods || lg.notes) ? '<i class="logdot"></i>' : ''}${events().some(e => e.date === k) ? '<i class="evdot"></i>' : ''}${hadSex(lg) ? '<i class="sxdot" aria-label="Sex">🔥</i>' : ''}</button>`;
+    cells += `<button class="${cls.join(' ')}" data-action="calSelect" data-date="${k}"><span>${n}</span>${lg && (lg.symptoms || lg.moods || lg.notes || lg.cn) ? '<i class="logdot"></i>' : ''}${events().some(e => e.date === k) ? '<i class="evdot"></i>' : ''}${hadSex(lg) ? '<i class="sxdot" aria-label="Sex">🔥</i>' : ''}</button>`;
   }
   const sd = C.parseISO(ui.calSelected), si = C.dayInfo(sd, stats), slog = getLog(ui.calSelected);
   const isFuture = sd > today;
@@ -2491,6 +2491,7 @@ function calDayLine(sd, si, slog, selLine, isFuture) {
   return `<div class="cdl day-panel"><i style="background:${c}"></i><span><small>${fmt(sd, { weekday: 'short', month: 'short', day: 'numeric' })}${si && si.cd ? ` · Day <b class="dotnum">${si.cd}</b>` : ''}</small><b>${title}</b></span>
     ${isFuture ? '' : `<button class="cdl-go" data-action="logDay" data-date="${C.iso(sd)}">${icon(logged ? 'check' : 'plus', 14)} ${logged ? 'Edit' : 'Log'}</button>`}
     ${hm}${warm}
+    <label class="cdl-nt"><span>${icon('book', 13)} Notes</span><textarea rows="${slog.cn ? 3 : 1}" maxlength="600" data-input="cal.cn" data-date="${C.iso(sd)}" placeholder="${I18N.T(isFuture ? 'A plan, a reminder…' : 'How it went, anything to remember…')}">${esc(slog.cn || '')}</textarea></label>
     ${chips.length ? `<div class="cdl-ch">${ahead ? `<small>${isToday ? 'Your pattern today' : 'Your pattern on this day'}</small>` : ''}<div>${show.map(([e, t, rk]) => rk ? `<button data-action="nav" data-to="relief/${encodeURIComponent(rk)}"><i class="emo" aria-hidden="true">${e}</i>${esc(t)}${icon('chevR', 11)}</button>` : `<span><i class="emo" aria-hidden="true">${e}</i>${esc(t)}</span>`).join('')}${more ? `<span class="m">+${more}</span>` : ''}</div></div>` : ''}</div>`;
 }
 // The tapped day as a glass card: hormone and energy rings, her mode for the day, what she logged.
@@ -2727,7 +2728,7 @@ function viewLog() {
   const count = {
     flow: (l.flow ? 1 : 0) + (l.fluid ? 1 : 0) + (l.bcol ? 1 : 0) + has('down'),
     body: has('symptoms'), mind: has('moods'), rest: l.energy ? 1 : 0,
-    desire: (l.drive ? 1 : 0) + has('intim'), disrupt: has('disrupt'), note: l.notes ? 1 : 0,
+    desire: (l.drive ? 1 : 0) + (l.intim || []).filter(v => !v.startsWith('Sex,')).length, disrupt: has('disrupt'), note: l.notes ? 1 : 0, sex: l.sex || hadSex(l) ? 1 : 0,
   };
   const inner = {
     flow: `${bleedOn ? `<div class="lg-k">Bleeding</div><p class="lg-why">${icon('spark', 12)}<span>Sharpens your period and egg release dates.</span></p>
@@ -2754,10 +2755,7 @@ function viewLog() {
     desire: `<div class="lg-k">Sex drive</div>
       <div class="dz"><div class="dz-track">
         ${DRIVE.map(([e, w], i) => `<button class="dz-s ${l.drive >= i + 1 ? 'lit' : ''} ${l.drive === i + 1 ? 'on' : ''}" style="--i:${i}" data-action="logSet" data-field="drive" data-v="${i + 1}" aria-label="Sex drive: ${w}" aria-pressed="${l.drive === i + 1}"><span>${e}</span></button>`).join('')}</div>
-        <div class="dz-l"><span>Quiet</span><b>${l.drive ? DRIVE[l.drive - 1][1] : 'Tap your level'}</b><span>On fire</span></div></div>
-      <div class="lg-k">Did you have sex today?</div>
-      <div class="sx">${INTIMACY.filter(([n]) => n.startsWith('Sex,')).map(([v, e]) => { const on = (l.intim || []).includes(v); return `<button class="sx-c ${on ? 'on' : ''}" data-action="logSet" data-field="intim" data-v="${esc(v)}" data-multi="1" aria-pressed="${on}"><span>${e}</span><small>${v.endsWith('unprotected') ? 'Unprotected' : 'Protected'}</small></button>`; }).join('')}</div>
-      <p class="lg-fine">Only you see this.</p>`,
+        <div class="dz-l"><span>Quiet</span><b>${l.drive ? DRIVE[l.drive - 1][1] : 'Tap your level'}</b><span>On fire</span></div></div>`,
     fuel: `<div class="lg-k">Food</div>${chips('intake', INTAKE.filter(([n]) => n === 'Raw & cold food'))}<div class="lg-k">Supplements & medicine <button class="link lg-more" data-action="nav" data-to="nutrients">Doses & food first ${icon('chevR', 11)}</button></div>${chips('supp', SUPPS)}`,
     disrupt: `<p class="lg-fine top">These can shift your cycle.</p><div class="rt">${DISRUPTORS.filter(([n]) => ['Alcohol', 'Illness', 'Travel', 'Big stress', 'Shock or loss'].includes(n)).map(([v, e]) => lgPick((l.disrupt || []).includes(v), 'disrupt', v, true, 'rt-o', `<span>${logEmo(v, e)}</span><small>${v}</small>`)).join('')}</div>`,
     note: journalCard(d, di, l, isToday),
@@ -2768,12 +2766,23 @@ function viewLog() {
     <div class="log-date"><button class="icon-btn" data-action="logMove" data-d="-1" aria-label="Previous day">${icon('chevL', 20)}</button>
       <div><div class="eyebrow">${isToday ? 'Today' : fmt(d, { weekday: 'long' })}${di ? ` · Day ${di.cd} · ${PHASES[di.phase].name}` : ''}</div><h2>${fmt(d, { month: 'long', day: 'numeric' })}</h2></div>
       <button class="icon-btn" data-action="logMove" data-d="1" aria-label="Next day" ${isToday ? 'disabled' : ''}>${icon('chevR', 20)}</button></div>
-    ${(() => { const y = state.logs[C.iso(C.addDays(d, -1))]; return !total && y && Object.keys(y).some(f => f !== 'notes' && f !== 'jp') ? `<button class="lg-copy" data-action="logCopy">${icon('plus', 16)}<span><b>Same as yesterday</b><small>One tap, then change what’s different</small></span></button>` : ''; })()}
+    ${(() => { const y = state.logs[C.iso(C.addDays(d, -1))]; return !total && y && Object.keys(y).some(f => !['notes', 'jp', 'cn', 'sex'].includes(f)) ? `<button class="lg-copy" data-action="logCopy">${icon('plus', 16)}<span><b>Same as yesterday</b><small>One tap, then change what’s different</small></span></button>` : ''; })()}
     ${LOG_SECS.map(([id, e, t], i) => `<section class="lg-sec ${open[id] ? 'open' : ''}" style="animation-delay:${i * 40}ms">
       <button class="lg-head" data-action="logSec" data-s="${id}" aria-expanded="${!!open[id]}"><span class="lg-ic">${icon(e, 18)}</span><b>${t}</b>${count[id] ? `<small>${count[id]}</small>` : ''}<span class="lg-chev">${icon('chevR', 16)}</span></button>
       ${open[id] ? `<div class="lg-in">${inner[id]}</div>` : ''}</section>`).join('')}
+    ${sexAsk(l, isToday)}
     <div class="lg-go">${total ? `<button class="btn btn-light btn-block" data-action="nav" data-to="brain${isToday ? '' : '/' + k}">Continue ${icon('chevR', 18)}</button>` : `<p class="lg-hint"><span>${icon('hand', 16)}</span>Tap what fits today, then continue</p>`}</div>
   </div>`;
+}
+
+// Did you have sex? A plain yes or no that is always in view (25 Nov 2026, her call). Yes puts a flame on that calendar day,
+// then one optional follow-up: protected or not. No clears any earlier answer.
+function sexAsk(l, isToday) {
+  const yes = hadSex(l), no = l.sex === 'n', prot = (l.intim || []).find(v => v.startsWith('Sex,'));
+  return `<section class="lg-sxq ${yes ? 'yes' : ''}"><b>${isToday ? 'Did you have sex today?' : 'Did you have sex on this day?'}</b>
+    <div class="sxq-yn"><button class="${yes ? 'on' : ''}" data-action="sexYN" data-v="y" aria-pressed="${yes}"><span aria-hidden="true">🔥</span>Yes</button><button class="${no ? 'on' : ''}" data-action="sexYN" data-v="n" aria-pressed="${no}">No</button></div>
+    ${yes ? `<div class="sxq-p">${[['Sex, protected', '🛡️', 'Protected'], ['Sex, unprotected', '💞', 'Unprotected']].map(([v, e, t]) => `<button class="${prot === v ? 'on' : ''}" data-action="sexProt" data-v="${v}" aria-pressed="${prot === v}"><span aria-hidden="true">${e}</span>${t}</button>`).join('')}</div>` : ''}
+    <p>${yes ? 'A 🔥 marks this day on your calendar. Only you see it.' : 'Only you see this.'}</p></section>`;
 }
 
 // ---------- the check-in brain: reads today's log against her phase and her own history ----------
@@ -12475,8 +12484,17 @@ const actions = {
     if (ta) { ta.dataset.jp = q; if (ta.value.trim()) setLog(k, { jp: q }); }
   },
   logCopy: () => {
-    const k = ui.logDate || todayISO(), y = { ...(state.logs[C.iso(C.addDays(C.parseISO(k), -1))] || {}) }; delete y.notes; delete y.jp;
+    const k = ui.logDate || todayISO(), y = { ...(state.logs[C.iso(C.addDays(C.parseISO(k), -1))] || {}) }; delete y.notes; delete y.jp; delete y.sex; delete y.cn; if (y.intim) y.intim = y.intim.filter(v => !v.startsWith('Sex,'));
     setLog(k, y); ui.logOpen = { flow: 1, body: 1, mind: 1 }; render();
+  },
+  sexYN: d => {
+    const k = ui.logDate || todayISO(), l = getLog(k), was = d.v === 'y' ? hadSex(l) : l.sex === 'n';
+    const keep = (l.intim || []).filter(v => !v.startsWith('Sex,'));
+    setLog(k, was ? { sex: null, intim: keep } : d.v === 'y' ? { sex: 'y' } : { sex: 'n', intim: keep }); buzz('tick'); render();
+  },
+  sexProt: d => {
+    const k = ui.logDate || todayISO(), l = getLog(k), on = (l.intim || []).includes(d.v);
+    setLog(k, { sex: 'y', intim: [...(l.intim || []).filter(v => !v.startsWith('Sex,')), ...(on ? [] : [d.v])] }); render();
   },
   logSet: d => {
     const k = ui.logDate || todayISO(), l = getLog(k);
@@ -12785,6 +12803,9 @@ document.addEventListener('input', e => {
     const lb = document.getElementById('lv-' + key); if (lb) lb.textContent = SLIDER_WORDS[key][n - 1];
     const go = document.querySelector('.lg-go .btn'); if (go && go.disabled) { go.disabled = false; go.innerHTML = `${icon('spark', 18)} See what this means`; }
   }
+  else if (scope === 'cal' && key === 'cn') { const k = e.target.dataset.date; if (!/^\d{4}-\d\d-\d\d$/.test(k || '')) return;
+    setLog(k, { cn: v.trim() ? v.slice(0, 600) : null }); e.target.style.height = 'auto'; e.target.style.height = e.target.scrollHeight + 'px'; const lg = state.logs[k], cell = document.querySelector(`.cal-d[data-date="${k}"]`);
+    if (cell) { const dot = cell.querySelector('.logdot'), want = !!(lg && (lg.symptoms || lg.moods || lg.notes || lg.cn)); if (want && !dot) cell.querySelector('span').insertAdjacentHTML('afterend', '<i class="logdot"></i>'); else if (!want && dot) dot.remove(); } }
   else if (scope === 'log' && key === 'notes') { setLog(ui.logDate || todayISO(), { notes: v, jp: v.trim() ? e.target.dataset.jp || null : null }); }
   else if (scope === 'log') { const n = key === 'temp' ? (v === '' ? null : Math.round(parseFloat(v) * 100) / 100) : v; setLog(ui.logDate || todayISO(), { [key]: Number.isNaN(n) ? null : n }); }
 });
