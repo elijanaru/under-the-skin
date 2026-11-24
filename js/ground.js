@@ -47,3 +47,51 @@ export const GROUND_STUDIES = [
   ['Oschman, Chevalier & Brown', 2015, 'Journal of Inflammation Research', 'A review on inflammation', 'A review that pulls the early studies together and suggests grounding may calm inflammation and help recovery, while calling for larger trials.', 0, ''],
 ];
 export const GROUND_CAUTION = 'These are small studies, many from one research group, so think of grounding as a calm daily habit, not a treatment. Never ground outdoors in a thunderstorm, and only use indoor grounding mats that are properly wired and tested.';
+
+// Where she lives (25 Nov 2026): asked the first time she opens Ground, then her guide fits her life.
+// [key, label, short line, emoji]
+export const GROUND_PLACES = [
+  ['city', 'In a city', 'Little grass, lots of concrete', '🏙️'],
+  ['village', 'In a village', 'Grass and open land nearby', '🌾'],
+];
+// [emoji, spot, how, minutes, more, how in the cold, minutes in the cold]
+export const GROUND_GUIDE = {
+  city: {
+    t: 'Grounding in the city',
+    lead: 'No garden? The earth is still right there under the pavement. You only need the small green gaps.',
+    spots: [
+      ['🌳', 'A park lawn', 'Shoes off in the middle of the lawn, away from the paths', 15, 'Pick the same spot at the same time, like your lunch break. Check the grass for glass and dog mess first and rinse your feet after.', 'Dry grass at midday, then socks straight back on', 5],
+      ['🌲', 'A tree on your street', 'Palms on the bark, or a hand in the soil around it', 5, 'Most city trees stand in a small square of open earth. On your way home, rest a hand on the trunk and take ten slow breaths.'],
+      ['🌊', 'A river or lake shore', 'Wet sand and stones at the water connect best', 20, 'Many cities grew up by water. Find a small beach or a stony bank and walk the water line when it is warm enough.', 'Hands on a wet stone at the edge, no paddling in the cold', 3],
+      ['⛪', 'A quiet green corner', 'Botanical garden, churchyard or allotment', 15, 'These stay calm even in the middle of a big city. Many allotments welcome visitors, and someone may let you dig a little.'],
+      ['🪴', 'Soil on your windowsill', 'Hands in a big pot of garden soil', 10, 'A pot is not connected to the earth, so it does not ground you the same way. But real soil on your hands and a few slow breaths still calm you on the days you cannot get out.'],
+      ['🔌', 'A grounding mat at home', 'Only a properly wired and tested one', 30, 'An indoor mat connects to the earth wire of a socket. Use one only if the socket is properly earthed and the mat is tested, and never during a thunderstorm.'],
+    ],
+    tips: ['Concrete laid straight on the ground connects a little when it is wet. Asphalt, wood and rubber block it.', 'Make it a habit: the same spot at the same time, even if it is only 5 minutes.'],
+  },
+  village: {
+    t: 'Grounding in the countryside',
+    lead: 'You have the best spots right outside. Make one of them yours and go a little every day.',
+    spots: [
+      ['🌼', 'Your garden or a meadow', 'Barefoot on the grass in the morning dew', 20, 'Dewy grass is one of the best spots there is. Go out after sunrise, face the light and let your soles get a little wet.', 'Dry grass or soil at midday, then socks straight back on', 5],
+      ['🥕', 'Garden work, bare hands', 'Weeding, planting and digging', 20, 'Gloves off for the soft jobs. Hands in the soil ground you, and the time outside slows you down.', 'Turn the compost or cut winter herbs, gloves off for a few minutes', 5],
+      ['🍂', 'A field or forest path', 'A slow barefoot walk on soft ground', 15, 'Field paths, moss and forest floor feel lovely under bare feet. Walk slowly and look where you step.', 'Under big trees the soil stays softer and less frozen, shoes back on after', 5],
+      ['💧', 'A stream or pond', 'Feet in at the edge, or hands in the water', 10, 'Wet ground at the water connects best of all. Paddle in when it is warm enough.', 'Hands only, then dry them well', 2],
+      ['🌳', 'Your tree', 'The tree practice, palms on the bark', 10, 'An old tree near home becomes your spot. Palms on the bark first, then sit with your back to it.'],
+    ],
+    tips: ['Bare skin is what counts: feet, hands or even sitting on the grass.', 'Make it a habit: the same spot at the same time, even if it is only 5 minutes.'],
+  },
+};
+// The cold months: shorter, warmer, hands count too.
+export const GROUND_WINTER = {
+  t: 'It is cold out',
+  lead: 'Cold ground pulls the warmth out of your feet fast. Keep it short and warm, and let your hands do some of it.',
+  rules: [
+    ['✋', 'Hands count too', 'Palms on soil, bark or a wet stone, 3 to 5 minutes'],
+    ['☀️', 'Go at midday', 'The ground is warmest then, and the light lifts your mood'],
+    ['🧦', 'Short, then warm', '2 to 5 minutes barefoot on dry ground, socks on after'],
+    ['🛁', 'Warm feet after', 'A warm foot bath with a handful of salt, 10 minutes'],
+  ],
+  period: 'On your period and the 3 days before it: hands only, and keep your feet warm.',
+  care: 'Skip cold bare feet if you have Raynaud’s, diabetes or numb feet, and never stand on snow or ice.',
+};

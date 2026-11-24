@@ -14,7 +14,7 @@ import * as SZ from './seasonal.js';
 import { WORLD, worldOf, PHASE_EAT, PANTRY } from './world.js';
 import { TRAIN_SAFE, TRAIN_SAFE_CREDIT, TRAIN_WHEN, TRAIN_NUM } from './athlete.js';
 import { BODY_MAP, BODY_PIN } from './bodymap.js';
-import { GROUND_NOW, GROUND_WHERE, GROUND_PHASE, GROUND_MOON, GROUND_ROOTS, GROUND_STUDIES, GROUND_CAUTION } from './ground.js';
+import { GROUND_NOW, GROUND_WHERE, GROUND_PHASE, GROUND_MOON, GROUND_ROOTS, GROUND_STUDIES, GROUND_CAUTION, GROUND_PLACES, GROUND_GUIDE, GROUND_WINTER } from './ground.js';
 import { MOLECULES, MOL_BALL } from './molecules.js';
 import { sunTimes, sunAltitude, COUNTRY_GEO } from './sun.js';
 import * as A from './account.js';
@@ -612,8 +612,41 @@ function rtNow(el, row) {
 // Ground (18 Nov 2026, redesign in the Unlock style): the title first, then the redwood as a taped polaroid among sparkles,
 // a day pill, the paper note with today's ground for her phase, sticker rules, and four sub-tabs instead of one long scroll:
 // Practices (tree + golden roots), Where to stand, Energy, Studies. A tab tap swaps only the panel.
-const GR_TABS = [['do', 'Practices'], ['where', 'Where'], ['studies', 'Studies']];
+const GR_TABS = [['me', 'Your guide'], ['do', 'Practices'], ['where', 'Where'], ['studies', 'Studies']];
+// Her own guide (25 Nov 2026): city or village, asked the first time she opens Ground, and a winter version in the cold months.
+// The cold months follow her hemisphere; near the equator it is never cold enough to change anything.
+function groundCold(d = new Date()) {
+  const lat = myGeo()[0], m = d.getMonth();
+  if (Math.abs(lat) < 23) return false;
+  return lat >= 0 ? [10, 11, 0, 1, 2].includes(m) : [4, 5, 6, 7, 8].includes(m);
+}
+const GRQ_ART = {
+  city: '<svg viewBox="0 0 120 150" aria-hidden="true"><defs><linearGradient id="grq-cs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8dfe8"/><stop offset="1" stop-color="#fdf4ec"/></linearGradient></defs><rect width="120" height="150" fill="url(#grq-cs)"/><circle cx="92" cy="30" r="10" fill="#f6dba6"/><g fill="#dccbe0"><rect x="6" y="52" width="20" height="78"/><rect x="40" y="36" width="18" height="94"/><rect x="84" y="58" width="24" height="72"/></g><g fill="#ecc3cf"><rect x="20" y="70" width="24" height="60" rx="2"/><rect x="66" y="48" width="22" height="82" rx="2"/></g><rect x="100" y="80" width="20" height="50" fill="#c9d3ad"/><g fill="#fff" opacity=".85"><rect x="25" y="78" width="5" height="6"/><rect x="34" y="78" width="5" height="6"/><rect x="25" y="92" width="5" height="6"/><rect x="34" y="92" width="5" height="6"/><rect x="71" y="56" width="5" height="6"/><rect x="80" y="56" width="5" height="6"/><rect x="71" y="70" width="5" height="6"/><rect x="80" y="70" width="5" height="6"/><rect x="71" y="84" width="5" height="6"/><rect x="104" y="88" width="4" height="5"/><rect x="111" y="88" width="4" height="5"/></g><rect y="124" width="120" height="26" fill="#ddd6cf"/><path d="M30 150c4-14 24-18 40-14s24 6 30 14z" fill="#a9bf7f"/><path d="M58 138v-18" stroke="#9c7a5a" stroke-width="3" stroke-linecap="round"/><circle cx="58" cy="112" r="13" fill="#8c9768"/><circle cx="51" cy="116" r="8" fill="#a3ad7e"/></svg>',
+  village: '<svg viewBox="0 0 120 150" aria-hidden="true"><defs><linearGradient id="grq-vs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8f0d8"/><stop offset="1" stop-color="#fdf5ea"/></linearGradient></defs><rect width="120" height="150" fill="url(#grq-vs)"/><circle cx="30" cy="32" r="10" fill="#f6dba6"/><path d="M0 92c26-18 52-20 76-8s34 4 44-2v68H0z" fill="#cfe0b0"/><path d="M0 116c30-14 64-12 120-4v38H0z" fill="#a9c27a"/><rect x="66" y="84" width="28" height="22" fill="#fdf3ec"/><path d="M62 86l18-16 18 16z" fill="#e6a9ba"/><rect x="76" y="94" width="8" height="12" fill="#c9a37e"/><path d="M28 120v-20" stroke="#9c7a5a" stroke-width="3" stroke-linecap="round"/><circle cx="28" cy="92" r="13" fill="#8c9768"/><circle cx="36" cy="96" r="8" fill="#a3ad7e"/><g fill="#fff"><circle cx="16" cy="134" r="2"/><circle cx="52" cy="128" r="2"/><circle cx="98" cy="136" r="2"/></g><g fill="#efb5c7"><circle cx="40" cy="140" r="2"/><circle cx="74" cy="132" r="2"/><circle cx="108" cy="124" r="2"/></g></svg>',
+};
+function groundAsk() {
+  return `<section class="grq paper"><b class="grq-q">Where do you live?</b><small class="grq-s">So your grounding fits your life.</small>
+    <div class="sy-pick grq-pick">${GROUND_PLACES.map(([k, t, s, e]) => `<button class="sy-opt sy-rel grq-o grq-${k}" data-action="grPlace" data-v="${k}" aria-label="${t}"><span class="sy-pol"><span class="sy-tape" aria-hidden="true"></span><span class="sy-ph grq-art">${GRQ_ART[k]}</span><span class="sy-rel-e" aria-hidden="true">${e}</span></span><b class="sy-rel-n">${t}</b><small class="grq-l">${s}</small></button>`).join('')}</div></section>`;
+}
+function groundGuide() {
+  const pl = state.profile.groundPlace, G = GROUND_GUIDE[pl];
+  if (!G) return groundAsk();
+  const info = M.info, cold = groundCold(), W = GROUND_WINTER, P = GROUND_PLACES.find(x => x[0] === pl);
+  const warmOnly = info && (info.isPeriod || (info.daysToPeriod <= 3 && !info.isPeriod));
+  return `<section class="card ul3-keep grg">
+    <div class="grg-top"><span class="grg-pl"><i aria-hidden="true">${P[3]}</i>${P[1]}</span><button class="grg-ch" data-action="grPlace" data-v="">Change</button></div>
+    <h3>${G.t}</h3><p class="gr2-sub">${G.lead}</p>
+    ${cold ? `<div class="grg-w"><b class="grg-wt"><i aria-hidden="true">❄️</i>${W.t}</b><p>${W.lead}</p>
+      <ul class="grg-wr">${W.rules.map(([e, t, x]) => `<li><span aria-hidden="true">${e}</span><b>${t}</b><small>${x}</small></li>`).join('')}</ul>
+      ${warmOnly ? `<p class="grg-pd">${icon('heart', 13)} ${W.period}</p>` : ''}</div>` : ''}
+    <div class="grg-l">${G.spots.map(([e, n, how, min, more, cHow, cMin], i) => { const h = cold && cHow ? cHow : how, m = cold && cMin ? cMin : min;
+      return `<details class="grg-r" style="--i:${i}"><summary class="ul3-r"><span class="ul3-ic grg-e" aria-hidden="true">${e}</span><span><b>${n}</b><small>${h}</small></span><span class="grg-m"><b class="dotnum">${m}</b><small>min</small></span></summary><p>${more}</p></details>`; }).join('')}</div>
+    <ul class="grg-tips">${G.tips.map(t => `<li>${t}</li>`).join('')}</ul>
+    ${cold ? `<p class="grg-care">${W.care}</p>` : ''}
+  </section>`;
+}
 function groundPanel(tab) {
+  if (tab === 'me') return groundGuide();
   if (tab === 'where') return `<section class="card ul3-keep gr2-where"><h3>Where to stand</h3><p class="gr2-sub">How well each surface connects you to the earth.</p>
     ${GROUND_WHERE.map(([n, v, t], i) => `<div class="ul3-r gr2-w ${v ? '' : 'no'}" style="--i:${i}"><span class="ul3-ic gr2-pic"><img src="images/ground/${GROUND_PIC[i]}.webp" alt="" loading="lazy"></span><span><b>${n}</b><small>${t}</small></span>
       ${v ? `<span class="gw-d" role="img" aria-label="Connects ${v} of 3">${[1, 2, 3].map(j => `<i class="${j <= v ? 'on' : ''}"></i>`).join('')}</span>` : `<span class="o3-x gr2-no" role="img" aria-label="Blocks it">${O3_X}</span>`}</div>`).join('')}</section>`;
@@ -641,13 +674,14 @@ function groundPanel(tab) {
 function viewGround() {
   const info = M.info, ph = info && info.phase, P = ph && GROUND_PHASE[ph];
   const late = info && info.daysToPeriod <= 3 && !info.isPeriod, d = P ? P.d : GROUND_NOW, warm = ph === 'menstrual' || late;
-  const tab = GR_TABS.some(t => t[0] === ui.grTab) ? ui.grTab : 'do';
+  const ask = !GROUND_GUIDE[state.profile.groundPlace], tabs = ask ? GR_TABS.slice(1) : GR_TABS, tab = tabs.some(t => t[0] === ui.grTab) ? ui.grTab : tabs[0][0];
   const swirl = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';
   const mins = (d[1].match(/(\d+) minutes/) || [])[1];
   const rules = [[O3_TICK, 'Bare skin', 'ok'], [O3_TICK, 'Phone away', 'ok'], [O3_X, 'No storms', '']];
   return `<section class="grh">${topbar('', { back: true })}
     <img src="images/ground-hero.webp" alt="A quiet wooden room open to a sunlit forest, one person sitting on a cushion" fetchpriority="high" decoding="async">
     <h1 class="grh-t">Ground yourself.</h1>
+    ${ask ? groundAsk() : ''}
   </section>
   <div class="pad ul3 ul4 gr2">
     <div class="ul4-stage gr2-stage">
@@ -666,7 +700,7 @@ function viewGround() {
       <p class="o3-sign">the earth has you <i>♡</i></p>
     </section>
     <ul class="ul3-no gr2-rules">${rules.map(([ic, t, c], i) => `<li style="--r:${[-2, 1.5, -1][i]}deg"><span class="o3-x ${c}">${ic}</span>${t}</li>`).join('')}</ul>
-    <div class="seg gr2-seg" role="tablist" aria-label="Grounding">${GR_TABS.map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" role="tab" aria-selected="${tab === k}" data-action="grTab" data-v="${k}">${l}</button>`).join('')}</div>
+    <div class="seg gr2-seg" role="tablist" aria-label="Grounding">${tabs.map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" role="tab" aria-selected="${tab === k}" data-action="grTab" data-v="${k}">${l}</button>`).join('')}</div>
     <div class="gr2-panel" role="tabpanel">${groundPanel(tab)}</div>
   </div>`;
 }
@@ -12237,8 +12271,14 @@ const actions = {
   grTab: d => { ui.grTab = d.v; const pn = document.querySelector('#view .gr2-panel'); if (!pn) return render();
     document.querySelectorAll('#view .gr2-seg button').forEach(b => { const on = b.dataset.v === d.v; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
     pn.innerHTML = groundPanel(d.v); pn.classList.remove('sw'); void pn.offsetWidth; pn.classList.add('sw'); decorateStudies?.(pn); },
+  grPlace: d => { const v = GROUND_GUIDE[d.v] ? d.v : undefined, first = !state.profile.groundPlace;
+    state.profile.groundPlace = v; save(); buzz('tick');
+    if (!v) { render(); const q = document.querySelector('#view .grq'); q && q.scrollIntoView({ block: 'center' }); return; }
+    document.querySelectorAll('#view .grq-o').forEach(b => b.classList.toggle('picked', b.dataset.v === v));
+    setTimeout(() => { ui.grTab = 'me'; render();
+      const seg = document.querySelector('#view .gr2-seg'); if (first && seg) seg.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); }, 320); },
   grGo: () => { const go = () => { const t = document.querySelector('#view .gtr2'); t && t.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); };
-    if ((ui.grTab || 'do') !== 'do') { actions.grTab({ v: 'do' }); setTimeout(go, 60); } else go(); },
+    if (document.querySelector('#view .gr2-seg button.on')?.dataset.v !== 'do') { actions.grTab({ v: 'do' }); setTimeout(go, 60); } else go(); },
   bzClose: () => bzClose(),
   bzPhase: d => bzOpen(d.v),
   cyFact: d => { const j = +d.v; ui.cyFact = ui.cyFact === j ? null : j; render(); },
