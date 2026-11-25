@@ -13630,7 +13630,7 @@ document.addEventListener('pointermove', e => { const t = e.target.closest?.('.t
 document.addEventListener('pointerout', e => { const t = e.target.closest?.('.tk3'); if (t && !t.contains(e.relatedTarget)) { t.style.setProperty('--px', 0); t.style.setProperty('--py', 0); } });
 window.addEventListener('hashchange', () => { wsClose(true); if (route().name !== 'log') ui.logDate = null; if (route().name !== 'calendar') ui.calEdit = false; render(); });
 setInterval(() => { const sb = document.querySelector('.statusbar span'); if (sb) sb.textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(/\s?[AP]M/, ''); }, 30000);
-await I18N.ready(); I18N.watch(document.body);
-render();
+performance.mark('uts-boot'); await I18N.ready(); performance.mark('uts-i18n'); I18N.watch(document.body);
+render(); performance.mark('uts-render');
 // first screen is drawn: lift the splash (rAF never fires in a background or prewarmed webview, so a timer backs it up instead of the 7 s cut-off)
 { const ready = () => window.__appReady && window.__appReady(); requestAnimationFrame(ready); setTimeout(ready, 120); }
