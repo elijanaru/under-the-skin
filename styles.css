@@ -18405,3 +18405,6 @@ html .ls-card.lsw.fr { border-top-color: rgba(214,180,80,.35); background:
 /* battery saver hides the 3D cups and dishes: their photos stay (25 Nov, the picture went blank) */
 .saver .cup3d-w img, .saver .cup3d-w.tg-ready img { opacity: 1 !important; }
 .saver .tg-3d > img { display: block !important; }
+
+/* 25 Nov 2026: the "Her" step is gone, so the line from step 01 only runs down to "Him" */
+.sy-flow:not([data-who="m"]) .sy-st::before { display: none; }

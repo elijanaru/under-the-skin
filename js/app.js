@@ -9378,8 +9378,6 @@ function viewPartners(id) {
         <div class="sy-send" ${who ? '' : 'hidden'}><button class="btn btn-dark" data-action="shareSend">${icon('share', 16)} Send link</button><button class="btn btn-light" data-action="shareEmail">${icon('mail', 16)} Email it</button></div></div></li>
       <li class="sy-st them sy-him ${sent ? 'is-done' : ''}" ${who === 'm' ? '' : 'hidden'}>${sent ? done() : '<span class="sy-n">02</span>'}<div class="sy-c">
         <span class="sy-who">Him</span><b>He opens the link</b><small><span class="sy-if-fr">No account and no tracking. He sees your phase, your social battery and the best days to meet up. It updates every day.</span><span class="sy-if-pt">No account and no tracking. He sees your phase, energy and how to show up, plus My day: his own 24-hour hormone rhythm. It updates every day and he can save it to his home screen.</span></small></div></li>
-      <li class="sy-st them sy-her ${got ? 'is-done' : ''}" ${who === 'w' ? '' : 'hidden'}>${got ? done() : '<span class="sy-n">02</span>'}<div class="sy-c">
-        <span class="sy-who">Her</span><b>She opens it and you're both connected</b><small>Her Underskin adds you and sends her rhythm back to you on its own.</small></div></li>
     </ol>`; })()}
     <button class="link center-link" data-action="nav" data-to="share">Sharing settings & preview</button>
   </div>`;
@@ -9391,7 +9389,7 @@ function syApply() {
   f.dataset.rel = rel; f.dataset.who = who;
   $('.sy-q1').hidden = !!rel; $('.sy-q2').hidden = !rel; $('.sy-send').hidden = !who;
   f.querySelectorAll('.sy-rel.picked').forEach(b => b.classList.remove('picked'));
-  $('.sy-him').hidden = who !== 'm'; $('.sy-her').hidden = who !== 'w';
+  $('.sy-him').hidden = who !== 'm';
   f.querySelectorAll('.sy-gen').forEach(b => { const on = b.dataset.v === who; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
   document.querySelector('.sy-prog .sy-p2')?.classList.toggle('on', who === 'm' ? !!me.linkSent : got);
 }
