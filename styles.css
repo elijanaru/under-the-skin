@@ -18406,8 +18406,8 @@ html .ls-card.lsw.fr { border-top-color: rgba(214,180,80,.35); background:
 .saver .cup3d-w img, .saver .cup3d-w.tg-ready img { opacity: 1 !important; }
 .saver .tg-3d > img { display: block !important; }
 
-/* 25 Nov 2026: the "Her" step is gone, so the line from step 01 only runs down to "Him" */
-.sy-flow:not([data-who="m"]) .sy-st::before { display: none; }
+/* 25 Nov 2026: the Her and Him steps are gone, so step 01 has no line running down */
+.sy-flow .sy-st::before { display: none; }
 
 /* Ground, simpler (25 Nov 2026): why ground (benefit tiles, the X), then every way to ground as a picture card; detail in a sheet */
 .gr3 .grb-g { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
