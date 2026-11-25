@@ -585,23 +585,6 @@ const GROUND_ART = [
 const groundCta = () => `<button class="gr-cta" data-action="nav" data-to="ground"><img src="images/ground-roots.jpg" alt="" loading="lazy"><span><b>Ground yourself</b><small>Bare feet on the earth · 15 min</small></span>${icon('chevR', 16)}</button>`;
 const habitsCta = () => `<button class="gr-cta" data-action="nav" data-to="habits"><img src="${carePhoto('lemon-water', 300) || 'images/tea-ginger.webp'}" alt="" loading="lazy"><span><b>Daily habits that help</b><small>Your checklist · small things, every day</small></span>${icon('chevR', 16)}</button>`;
 // Ground with a tree: a guided ten minutes. One big ink drawing for the step she is on (its full words under it),
-// four short rows with the time in Doto; Start runs the shared routine countdown, a tap on a row previews it.
-const TREE_STEPS = [
-  ['Meet the tree', 'Palms on the bark, slow breaths', 60, 'Rest both palms on the trunk. Breathe slowly and feel the bark, cool or warm, under your hands.'],
-  ['Share one light', 'A soft glow around you both', 120, 'Picture a soft white glow around your body, then let it widen until it holds the tree as well.'],
-  ['Close the loop', 'Light up, over and down the roots', 120, 'Breathe in light through your crown, send it up over the treetop, down through the roots and back into your feet.'],
-  ['Sit and settle', 'Back to the trunk, eyes closed', 300, 'Sit with your back to the trunk and close your eyes. Let the tree hold you upright.'],
-];
-function groundTree() {
-  const sum = TREE_STEPS.reduce((a, x) => a + x[2], 0), [t0, , , x0] = TREE_STEPS[0];
-  return `<section class="rt gtr2" data-kind="tree"><span class="eyebrow">A tree practice</span><h3>Ground with a tree</h3>
-    <div class="rt-sum"><span class="rt-sub">Find a big, old tree you like.</span><b><em class="dotnum">${Math.round(sum / 60)}</em> min</b></div>
-    <figure class="rt-now"><img src="images/tree-ink-0.webp" alt="" decoding="async"><figcaption><b><i class="dotnum">1</i> ${t0}</b><span>${x0}</span></figcaption></figure>
-    <ol class="rt-l">${TREE_STEPS.map(([t, sh, sec, x], i) => `<li class="rt-r ${i ? '' : 'peek'}" data-s="${sec}" data-i="${i}" data-x="${esc(x)}" data-action="rtPeek" role="button" tabindex="0">
-      <span class="rt-p"><img src="images/tree-ink-${i}.webp" alt="" loading="lazy" decoding="async"></span>
-      <span class="rt-t"><b>${t}</b><small>${sh}</small></span><em class="rt-n dotnum">${mmss(sec)}</em><i class="rt-bar" aria-hidden="true"></i></li>`).join('')}</ol>
-    <div class="rt-ctl"><button class="rt-go" data-action="rtGo">${icon('play', 15)}<span>Start</span></button><button class="rt-skip" data-action="rtSkip" hidden>Next ${icon('chevR', 14)}</button></div></section>`;
-}
 // the big drawing and words of a tree row (also used while the countdown runs)
 function rtNow(el, row) {
   const now = el.querySelector('.rt-now'); if (!now || !row) return;
@@ -662,8 +645,7 @@ function groundPanel(tab) {
       <dl class="grs-care"><div><dt>${icon('heart', 14)} How to read it</dt><dd>Small studies: a calm habit, not a treatment</dd></div>
         <div><dt>${icon('bolt', 14)} Outdoors</dt><dd>Never in a thunderstorm</dd></div><div><dt>${icon('home', 14)} Indoor mats</dt><dd>Only properly wired and tested ones</dd></div></dl>
     </section>`;
-  return `${groundTree()}
-    <section class="grr">
+  return `<section class="grr">
       <div class="grr-h"><small>${icon('clock', 12)} ${GROUND_ROOTS.mins} minute practice</small><b>Golden roots</b><p>Sit on the earth and feel held. An old visualisation from many traditions.</p></div>
       <div class="grr-art" aria-hidden="true"><img src="images/ground/golden-roots.webp" alt="" loading="lazy" width="1400" height="549"></div>
       <ol class="grr-s">
@@ -756,7 +738,7 @@ function viewGround() {
       ${P ? `<div class="gr2-spot"><img src="images/ground/${GROUND_SPOT[ph][0]}.webp" alt="" loading="lazy"><span><b>${GROUND_SPOT[ph][1]}</b><small>${({ Morning: 'Best in the morning', Midday: 'Best at midday', Evening: 'Best in the evening' })[d[3]] || `Best ${d[3].toLowerCase()}`}</small></span>${saveBtn(regTip(`ground-${ph}`, `Grounding · ${PHASES[ph].name}`, d, 'ground'))}</div>` : ''}
       <div class="sgx-st"><b>How</b><ol class="gr2-ol"><li>${d[1].replace(/^\d+ minutes (\w)/, (m, c) => c.toUpperCase())}</li><li>${d[2]}</li></ol></div>
       ${P ? `<details class="gr2-why"><summary>Why in this phase ${icon('chevD', 13)}</summary><p>${P.why}</p></details>` : ''}
-      <button class="ul3-cta" data-action="grGo">Start the tree practice</button>
+      <button class="ul3-cta" data-action="grGo">Start the golden roots</button>
       <p class="o3-sign">the earth has you <i>♡</i></p>
     </section>
     <ul class="ul3-no gr2-rules">${rules.map(([ic, t, c], i) => `<li style="--r:${[-2, 1.5, -1][i]}deg"><span class="o3-x ${c}">${ic}</span>${t}</li>`).join('')}</ul>
@@ -12472,7 +12454,7 @@ const actions = {
     }
     groundEnter(hero, img, done);
   },
-  grGo: () => { const go = () => { const t = document.querySelector('#view .gtr2'); t && t.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); };
+  grGo: () => { const go = () => { const t = document.querySelector('#view .grr'); t && t.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); };
     if (document.querySelector('#view .gr2-seg button.on')?.dataset.v !== 'do') { actions.grTab({ v: 'do' }); setTimeout(go, 60); } else go(); },
   bzClose: () => bzClose(),
   bzPhase: d => bzOpen(d.v),
