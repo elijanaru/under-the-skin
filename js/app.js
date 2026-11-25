@@ -12998,7 +12998,10 @@ document.addEventListener('click', e => {
   const v0 = document.getElementById('view'), top = v0 ? v0.scrollTop : 0, h = location.hash;
   const r = fn(el.dataset, el);
   const keep = () => { const v = document.getElementById('view'); if (location.hash === h && state?.onboarded && v && (v !== v0 || clamped(v, top))) holdPlace(v, top); };
-  keep(); if (r && r.then) r.then(keep, () => {});
+  // also after the next frames and a beat later: many taps redraw a part one frame later (the calendar day panel),
+  // and a shorter new part must never pull the page up (25 Nov 2026: nothing goes back up when she taps)
+  keep(); requestAnimationFrame(() => requestAnimationFrame(keep)); setTimeout(keep, 160); setTimeout(keep, 420);
+  if (r && r.then) r.then(keep, () => {});
 });
 document.addEventListener('keydown', e => { if (e.key !== 'Enter' || (e.target.id !== 'ac-mail' && e.target.id !== 'ac-code')) return; e.preventDefault(); e.target.closest('.ph-auth')?.querySelector(e.target.id === 'ac-code' ? '[data-action="acCode"]' : '.ph-s1 [data-action="acMailCode"]')?.click(); });
 document.addEventListener('keydown', e => {
@@ -13061,10 +13064,12 @@ function calRefresh(parts, data) {
   const v = document.getElementById('view');
   if (!v || route().name !== 'calendar') return render();
   if (data) M = model();
-  const full = () => { const top = v.scrollTop; v.classList.remove('enter'); v.innerHTML = viewCalendar(); v.scrollTop = top; };
+  const top = v.scrollTop, hold = () => { if (clamped(v, top) || Math.abs(v.scrollTop - top) > 1) holdPlace(v, top); };
+  const full = () => { v.classList.remove('enter'); v.innerHTML = viewCalendar(); holdPlace(v, top); };
   if (!parts) return full();
   const tmp = document.createElement('div'); tmp.innerHTML = viewCalendar();
   for (const sel of parts) { const a = v.querySelector(sel), b = tmp.querySelector(sel); if (!a || !b) return full(); a.replaceWith(b); }
+  hold();
 }
 // Swipe left/right on the calendar to change month.
 let calSwipe = null;
