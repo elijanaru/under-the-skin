@@ -6491,4 +6491,6 @@ export default {"+ Cayenne":"+ Cayena",
 "A home remedy for your liver":"Un remedio casero para tu hígado",
 "A home remedy for your lung":"Un remedio casero para tus pulmones",
 "A home remedy for your spleen":"Un remedio casero para tu bazo",
-"A home remedy for your spleen & liver":"Un remedio casero para tu bazo y tu hígado"};
+"A home remedy for your spleen & liver":"Un remedio casero para tu bazo y tu hígado",
+"Why":"Por qué",
+"Careful":"Cuidado"};

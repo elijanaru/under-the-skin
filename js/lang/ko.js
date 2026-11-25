@@ -13272,4 +13272,6 @@ export default {"+ Cayenne":"+ 카옌페퍼",
 "A home remedy for your liver":"간을 돕는 홈 레시피",
 "A home remedy for your lung":"폐를 돕는 홈 레시피",
 "A home remedy for your spleen":"비장을 돕는 홈 레시피",
-"A home remedy for your spleen & liver":"비장과 간을 돕는 홈 레시피"};
+"A home remedy for your spleen & liver":"비장과 간을 돕는 홈 레시피",
+"Why":"왜",
+"Careful":"주의"};
