@@ -18470,3 +18470,5 @@ html .ls-card.lsw.fr { border-top-color: rgba(214,180,80,.35); background:
 .grw-info .grs { box-shadow: none; padding: 0; } .grw-info .gr2-lead { color: #5d6b52; margin: 0 0 6px; }
 @media (prefers-reduced-motion: reduce) { .grw-c { animation: none; transition: none; } }
 .grw-note .grw-cm { display: inline-flex; align-items: baseline; gap: 3px; margin-top: 4px; font-style: normal; font-weight: 500; color: #4f6a2a; } .grw-note .grw-cm b { display: inline; font-size: 14px; color: #4f6a2a; }
+/* 25 Nov 2026: one step left, so no number or tick circle on the left; the card takes the full width */
+.sy-flow .sy-st { grid-template-columns: 1fr; }

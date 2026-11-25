@@ -9368,7 +9368,7 @@ function viewPartners(id) {
       // on the page and a tap only shows or hides parts (syApply), so nothing redraws while she picks.
       return `<div class="sy-head"><span class="hud">${ps.length ? 'Add someone new' : 'Connect'}</span><span class="sy-prog"><i class="${sent ? 'on' : ''}"></i><i class="sy-p2 ${(who === 'm' ? sent : got) ? 'on' : ''}"></i></span></div>
     <ol class="sy-flow" data-rel="${rel}" data-who="${who}">
-      <li class="sy-st paper you ${sent ? 'is-done' : ''}">${sent ? done() : '<span class="sy-n">01</span>'}<div class="sy-c"><span class="sy-who">You</span>
+      <li class="sy-st paper you ${sent ? 'is-done' : ''}"><div class="sy-c"><span class="sy-who">You</span>
         <div class="sy-who-q sy-q1" ${rel ? 'hidden' : ''}>${LSW_SPK('#e7a3bb')}<b>Who are you adding?</b>
           <div class="sy-pick">${[['partner', 'My partner', '💞', 'images/partner-hands.jpg'], ['friend', 'A friend', '🌿', 'images/friends-sunset.webp']].map(([k, t, e, ph]) => `<button class="sy-opt sy-rel sy-ph-${k}" data-action="ptRel" data-v="${k}" aria-label="${t}"><span class="sy-pol"><span class="sy-tape" aria-hidden="true"></span><img class="sy-ph" src="${ph}" alt="" loading="lazy" decoding="async"><span class="sy-rel-e" aria-hidden="true">${e}</span></span><b class="sy-rel-n">${t}</b></button>`).join('')}</div></div>
         <div class="sy-who-q sy-q2" ${rel ? '' : 'hidden'}><button class="sy-rel-chip" data-action="ptRel" data-v=""><span class="sy-if-fr">🌿 A friend</span><span class="sy-if-pt">💞 My partner</span> <u>Change</u></button>
