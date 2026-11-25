@@ -13169,4 +13169,5 @@ export default {"+ Cayenne":"+ 카옌페퍼",
 "Your body runs on tiny electrical signals: your heart, your nerves, every muscle. Modern life keeps you insulated, with rubber soles, high floors and little time outside.":"우리 몸은 아주 작은 전기 신호로 움직여요. 심장도, 신경도, 모든 근육도요. 그런데 요즘 생활은 고무 밑창, 높은 층, 짧은 바깥 시간 때문에 땅과 떨어져 있어요.",
 "Grounding, also called earthing, simply reconnects you. Researchers think the earth’s free electrons may calm inflammation and help your nervous system shift from stress into rest. That is why many women feel steadier and sleep better.":"그라운딩, 다른 말로 어싱은 그 연결을 다시 이어 주는 거예요. 연구자들은 땅의 자유 전자가 염증을 가라앉히고 신경계가 긴장에서 쉼으로 넘어가도록 도울 수 있다고 봐요. 그래서 많은 여성들이 더 안정되고 잠도 더 잘 자요.",
 "The studies are small, so treat it as a calm daily habit, not a treatment. Never ground outdoors in a thunderstorm.":"아직 연구 규모가 작아서 치료가 아니라 편안한 하루 습관으로 생각해 주세요. 천둥번개가 칠 때는 밖에서 하지 마세요.",
-"Start the golden roots":"황금빛 뿌리 시작하기"};
+"Start the golden roots":"황금빛 뿌리 시작하기",
+"See all the ways to ground":"그라운딩 방법 모두 보기"};

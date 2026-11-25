@@ -14,7 +14,7 @@ import * as SZ from './seasonal.js';
 import { WORLD, worldOf, PHASE_EAT, PANTRY } from './world.js';
 import { TRAIN_SAFE, TRAIN_SAFE_CREDIT, TRAIN_WHEN, TRAIN_NUM } from './athlete.js';
 import { BODY_MAP, BODY_PIN } from './bodymap.js';
-import { GROUND_NOW, GROUND_WHERE, GROUND_PHASE, GROUND_MOON, GROUND_ROOTS, GROUND_STUDIES, GROUND_CAUTION, GROUND_PLACES, GROUND_GUIDE, GROUND_WINTER } from './ground.js';
+import { GROUND_NOW, GROUND_WHERE, GROUND_PHASE, GROUND_MOON, GROUND_STUDIES, GROUND_CAUTION, GROUND_PLACES, GROUND_GUIDE, GROUND_WINTER } from './ground.js';
 import { MOLECULES, MOL_BALL } from './molecules.js';
 import { sunTimes, sunAltitude, COUNTRY_GEO } from './sun.js';
 import * as A from './account.js';
@@ -598,7 +598,7 @@ function rtNow(el, row) {
 // Ground (18 Nov 2026, redesign in the Unlock style): the title first, then the redwood as a taped polaroid among sparkles,
 // a day pill, the paper note with today's ground for her phase, sticker rules, and four sub-tabs instead of one long scroll:
 // Practices (tree + golden roots), Where to stand, Energy, Studies. A tab tap swaps only the panel.
-const GR_TABS = [['me', 'Your guide'], ['do', 'Practices'], ['where', 'Where'], ['studies', 'Studies']];
+const GR_TABS = [['me', 'Your guide'], ['where', 'Where'], ['studies', 'Studies']];
 // Her own guide (25 Nov 2026): city or village, asked the first time she opens Ground, and a winter version in the cold months.
 // The cold months follow her hemisphere; near the equator it is never cold enough to change anything.
 function groundCold(d = new Date()) {
@@ -645,17 +645,7 @@ function groundPanel(tab) {
       <dl class="grs-care"><div><dt>${icon('heart', 14)} How to read it</dt><dd>Small studies: a calm habit, not a treatment</dd></div>
         <div><dt>${icon('bolt', 14)} Outdoors</dt><dd>Never in a thunderstorm</dd></div><div><dt>${icon('home', 14)} Indoor mats</dt><dd>Only properly wired and tested ones</dd></div></dl>
     </section>`;
-  return `<section class="grr">
-      <div class="grr-h"><small>${icon('clock', 12)} ${GROUND_ROOTS.mins} minute practice</small><b>Golden roots</b><p>Sit on the earth and feel held. An old visualisation from many traditions.</p></div>
-      <div class="grr-art" aria-hidden="true"><img src="images/ground/golden-roots.webp" alt="" loading="lazy" width="1400" height="549"></div>
-      <ol class="grr-s">
-        <li><i>1</i><b>Sit</b><small>Cross-legged on the ground, spine tall</small></li>
-        <li><i>2</i><b>Feel the base</b><small>Notice where you touch the earth</small></li>
-        <li class="out"><i>${icon('chevD', 13, 2.4)}</i><b>Breathe out</b><small>Golden roots grow down from your spine</small></li>
-        <li class="in"><i>${icon('chevD', 13, 2.4)}</i><b>Breathe in</b><small>Warmth rises back up into your belly</small></li>
-      </ol>
-      <div class="grr-f"><span>Repeat for ${GROUND_ROOTS.mins} minutes</span>${saveBtn(regTip('ground-roots', 'Grounding · roots', GROUND_ROOTS.d, 'ground'))}</div>
-    </section>`;
+  return groundGuide();
 }
 // Answering the question walks her into the window: the photo zooms into the forest,
 // then the page glides down to her methods and the photo quietly settles back behind her.
@@ -738,7 +728,7 @@ function viewGround() {
       ${P ? `<div class="gr2-spot"><img src="images/ground/${GROUND_SPOT[ph][0]}.webp" alt="" loading="lazy"><span><b>${GROUND_SPOT[ph][1]}</b><small>${({ Morning: 'Best in the morning', Midday: 'Best at midday', Evening: 'Best in the evening' })[d[3]] || `Best ${d[3].toLowerCase()}`}</small></span>${saveBtn(regTip(`ground-${ph}`, `Grounding · ${PHASES[ph].name}`, d, 'ground'))}</div>` : ''}
       <div class="sgx-st"><b>How</b><ol class="gr2-ol"><li>${d[1].replace(/^\d+ minutes (\w)/, (m, c) => c.toUpperCase())}</li><li>${d[2]}</li></ol></div>
       ${P ? `<details class="gr2-why"><summary>Why in this phase ${icon('chevD', 13)}</summary><p>${P.why}</p></details>` : ''}
-      <button class="ul3-cta" data-action="grGo">Start the golden roots</button>
+      <button class="ul3-cta" data-action="grGo">See all the ways to ground</button>
       <p class="o3-sign">the earth has you <i>♡</i></p>
     </section>
     <ul class="ul3-no gr2-rules">${rules.map(([ic, t, c], i) => `<li style="--r:${[-2, 1.5, -1][i]}deg"><span class="o3-x ${c}">${ic}</span>${t}</li>`).join('')}</ul>
@@ -12454,8 +12444,10 @@ const actions = {
     }
     groundEnter(hero, img, done);
   },
-  grGo: () => { const go = () => { const t = document.querySelector('#view .grr'); t && t.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); };
-    if (document.querySelector('#view .gr2-seg button.on')?.dataset.v !== 'do') { actions.grTab({ v: 'do' }); setTimeout(go, 60); } else go(); },
+  grGo: () => { const smooth = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+    if (!GROUND_GUIDE[state.profile.groundPlace]) { const q = document.querySelector('#view .grq'); q && q.scrollIntoView({ behavior: smooth, block: 'center' }); return; }
+    const go = () => { const t = document.querySelector('#view .gr2-seg'); t && t.scrollIntoView({ behavior: smooth, block: 'start' }); };
+    if (ui.grTab !== 'me') { actions.grTab({ v: 'me' }); setTimeout(go, 60); } else go(); },
   bzClose: () => bzClose(),
   bzPhase: d => bzOpen(d.v),
   cyFact: d => { const j = +d.v; ui.cyFact = ui.cyFact === j ? null : j; render(); },
