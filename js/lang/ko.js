@@ -10269,4 +10269,11 @@ export default {"+ Cayenne":"+ 카옌페퍼",
 "Potassium, calcium and magnesium in one plate.":"한 접시에 칼륨, 칼슘, 마그네슘.",
 "Magnesium, plant omega-{0} and calcium in one plate.":"한 접시에 마그네슘, 식물성 오메가-{0}, 칼슘.",
 "Magnesium, plant omega-{0} and iron in one plate.":"한 접시에 마그네슘, 식물성 오메가-{0}, 철분.",
-"Choline, vitamin C and protein in one plate.":"한 접시에 콜린, 비타민 C, 단백질."};
+"Choline, vitamin C and protein in one plate.":"한 접시에 콜린, 비타민 C, 단백질.",
+"<t0>Love</t0> from {0}":"{0}의 <t0>사랑</t0>",
+"<t0>A little care</t0> from {0}":"{0}의 <t0>작은 챙김</t0>",
+"Love":"사랑",
+"A little care":"작은 챙김",
+"just now":"방금",
+"Send love back":"나도 사랑 보내기",
+"Ease in":"천천히 시작"};

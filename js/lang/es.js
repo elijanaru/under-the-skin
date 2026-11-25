@@ -6255,4 +6255,11 @@ export default {"+ Cayenne":"+ Cayena",
 "Potassium, calcium and magnesium in one plate.":"Potasio, calcio y magnesio en un solo plato.",
 "Magnesium, plant omega-{0} and calcium in one plate.":"Magnesio, omega-{0} vegetal y calcio en un solo plato.",
 "Magnesium, plant omega-{0} and iron in one plate.":"Magnesio, omega-{0} vegetal y hierro en un solo plato.",
-"Choline, vitamin C and protein in one plate.":"Colina, vitamina C y proteína en un solo plato."};
+"Choline, vitamin C and protein in one plate.":"Colina, vitamina C y proteína en un solo plato.",
+"<t0>Love</t0> from {0}":"<t0>Amor</t0> de {0}",
+"<t0>A little care</t0> from {0}":"<t0>Un mimo</t0> de {0}",
+"Love":"Amor",
+"A little care":"Un mimo",
+"just now":"ahora mismo",
+"Send love back":"Devolver amor",
+"Ease in":"Arranca suave"};

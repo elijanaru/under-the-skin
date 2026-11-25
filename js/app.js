@@ -9084,17 +9084,53 @@ function handleSignal(m) {
   showSignal(sig, d.f, from, d.x, d);
   if (document.hidden && 'Notification' in window && Notification.permission === 'granted') navigator.serviceWorker?.ready.then(r => r.showNotification(`${sig.g} ${d.f}`, { body: `${d.f} ${sig.s}`, icon: 'icons/icon-192.png', tag: 'sig-' + m.id })).catch(() => {});
 }
+// Love from her people (25 Nov 2026): the card lives on its own layer next to the app, so a redraw never wipes it,
+// it waits for the opening splash, and several that arrived while the app was closed come one after another.
+const SIG_Q = [];
+const sigLayer = () => $app.parentElement || document.body;
 function showSignal(sig, name, from, x, meta) {
-  document.querySelector('.sig-pop')?.remove();
   if (sig.k === 'date' && x) return showTicket(name, from, x, meta);
-  const isLove = LOVE.includes(sig);
-  const hearts = Array.from({ length: 18 }, (_, i) => `<i style="left:${(i * 37) % 100}%;animation-delay:${(i * .3) % 4}s;animation-duration:${5 + (i % 4)}s;width:${14 + (i * 7) % 18}px;height:${14 + (i * 7) % 18}px">${HEART(i % 3 === 1 ? '#fff' : isLove ? '#ff2d4b' : 'hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)')}</i>`).join('');
-  const el = document.createElement('div'); el.className = `sig-pop ${isLove ? 'love' : 'care'}`;
-  el.innerHTML = `<div class="lv-hearts">${hearts}</div><div class="lv-in"><div class="lv-art">${loveArt('xl')}<span class="lv-av">${(from && from.t) || okPic(meta?.t) ? `<img src="${esc((from && from.t) || okPic(meta.t))}" alt="">` : esc((name || '?')[0])}</span><span class="lv-g">${sig.g}</span></div>
-    <h1>${esc(name)} ${sig.s}</h1>${x ? `<p class="sig-x">${esc(String(x).slice(0, 120))}</p>` : ''}<p class="muted">just now · Underskin</p>
-    ${from ? `<button class="btn btn-love btn-block" data-action="openLove" data-id="${from.id}">${icon('heart', 16)} Send love back</button>` : ''}
-    <button class="btn btn-ghost btn-block" data-action="sigClose">Close</button></div>`;
-  $app.appendChild(el);
+  SIG_Q.push([sig, name, from, x, meta]); afterSplash(sigNext);
+}
+function sigNext() {
+  if (!SIG_Q.length || document.querySelector('.sig-pop') || ui.loveFor) return;
+  sigPop(...SIG_Q[0]);
+}
+function sigDone(next = true) {
+  const p = document.querySelector('.sig-pop'); if (!p) return;
+  if (p.dataset.q) SIG_Q.shift();
+  p.classList.add('out'); setTimeout(() => p.remove(), 420);
+  if (next && SIG_Q.length) setTimeout(sigNext, 700);
+}
+const SPARK = c => `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 0c.9 5.2 3.9 8.6 10 10-6.1 1.4-9.1 4.8-10 10-.9-5.2-3.9-8.6-10-10C6.1 8.6 9.1 5.2 10 0z" fill="${c}"/></svg>`;
+function sigPop(sig, name, from, x, meta) {
+  const isLove = LOVE.includes(sig), pic = (from && from.t) || okPic(meta?.t);
+  const cols = isLove ? ['#e6809c', '#f3b6c8', '#fff', '#efd4dd', '#f7c9b5'] : ['#a9c27a', '#cfe0b0', '#fff', '#efd4dd', '#d8e6c2'];
+  const drift = Array.from({ length: 16 }, (_, i) => { const z = 12 + (i * 7) % 20;
+    return `<i style="--x:${(i * 37 + 7) % 100}%;--d:${(i * .55) % 6}s;--t:${8 + (i % 5)}s;--s:${z}px;--w:${10 + (i * 13) % 26}px;--b:${i % 4 === 3 ? 2 : 0}px">${HEART(cols[i % cols.length])}</i>`; }).join('');
+  const sparks = [[14, 22, 0], [82, 16, .6], [8, 64, 1.2], [90, 58, .3], [24, 86, .9], [76, 88, 1.5]].map(([l, t, d], i) =>
+    `<i style="left:${l}%;top:${t}%;--d:${d}s;--z:${i % 2 ? 12 : 16}px">${SPARK(i % 2 ? '#fff' : isLove ? '#f1c27d' : '#c9d6a8')}</i>`).join('');
+  const el = document.createElement('div'); el.className = `sig-pop sgp ${isLove ? 'love' : 'care'}`; el.dataset.q = '1';
+  el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
+  el.innerHTML = `<div class="sgp-mist" aria-hidden="true"><b></b><b></b><b></b></div><div class="sgp-drift" aria-hidden="true">${drift}</div>
+    <div class="sgp-in">
+      <div class="sgp-stage">
+        <span class="sgp-bloom" aria-hidden="true"></span><span class="sgp-ring" aria-hidden="true"></span>
+        <span class="sgp-orbit" aria-hidden="true"><i>${HEART(isLove ? '#e6809c' : '#a9c27a')}</i><i>${HEART('#fff')}</i><i>${HEART(isLove ? '#f3b6c8' : '#cfe0b0')}</i></span>
+        <span class="sgp-sparks" aria-hidden="true">${sparks}</span>
+        <span class="sgp-av">${pic ? `<img src="${esc(pic)}" alt="">` : `<b>${esc((name || '?')[0])}</b>`}</span>
+        <span class="sgp-g" aria-hidden="true">${sig.g}</span>
+      </div>
+      <p class="sgp-from"><span>${isLove ? 'Love' : 'A little care'}</span> from ${esc(name)}</p>
+      <h1>${esc(name)} ${sig.s}</h1>${x ? `<p class="sig-x">${esc(String(x).slice(0, 120))}</p>` : ''}
+      <p class="sgp-when">just now</p>
+      <div class="sgp-btns">${from ? `<button class="sgp-back" data-action="openLove" data-id="${from.id}">${HEART('#fff')}<span>Send love back</span></button>` : ''}
+        <button class="sgp-close" data-action="sigClose">Close</button></div>
+    </div>`;
+  I18N.tr(el); sigLayer().appendChild(el);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduce) setTimeout(() => { const a = el.isConnected && el.querySelector('.sgp-av'); if (!a) return; const r = a.getBoundingClientRect(); heartBurst(r.left + r.width / 2, r.top + r.height / 2); }, 1100);
+  buzz?.('tick');
   import('./sfx.js').then(S => S.breeze({ dur: 1.8, vol: .14 })).catch(() => {});
 }
 // His date ticket lands on her phone: it drops in from the top with a little spin, settles, a light glints across it and hearts burst.
@@ -9117,7 +9153,7 @@ function showTicket0(name, from, x, meta) {
     <div class="tk-vt">${vtTicket({ to: (state && state.profile && state.profile.name) || 'You', from: name, plan: plan.slice(0, 90), when: fmt(new Date(), { weekday: 'long' }), title: meta.t, ph: PHASES[meta.ph] ? meta.ph : null })}<span class="tk-glint"></span></div>
     ${from ? `<button class="tkb tkb-yes" data-action="openLove" data-id="${from.id}"><span class="tkb-shine" aria-hidden="true"></span>${TKB_CORNERS('#fff')}<span class="tkb-t">${HEART('#fff')} Say yes with love</span></button>` : ''}
     <button class="tkb tkb-close" data-action="sigClose"><span class="tkb-shine" aria-hidden="true"></span>${TKB_CORNERS('#e6809c', 1)}<span class="tkb-t">Close</span></button></div>`;
-  $app.appendChild(el);
+  I18N.tr(el); sigLayer().appendChild(el);
   { // the ticket drops in on its "With love" back, lands with a hop and turns over (motion from the Rive scene); CSS version as fallback
     const box = el.querySelector('.tk-vt');
     if (box && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -12187,8 +12223,8 @@ const actions = {
   calMoveStart: () => { const last = M.stats.periods[M.stats.periods.length - 1]; if (!last) return; ui.calEdit = false; ui.calFix = null; ui.calStart = C.iso(last.start); const m = new Date(last.start); ui.calMonth = C.iso(new Date(m.getFullYear(), m.getMonth(), 1)); render(); },
   calEdit: () => { ui.calEdit = !ui.calEdit; if (!ui.calEdit) ui.calFix = null; if (!ui.calEdit) toast('Saved · predictions updated'); calRefresh(null, true); },
   pinPartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (!p) return; p.pin = !p.pin; save(); toast(p.pin ? `${p.n} pinned to your home screen` : 'Unpinned'); render(); },
-  openLove: d => { document.querySelector('.sig-pop')?.remove(); ui.loveFor = d.id; render(); if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().catch(() => {}); },
-  sigClose: () => document.querySelector('.sig-pop')?.remove(),
+  openLove: d => { sigDone(false); ui.loveFor = d.id; render(); if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().catch(() => {}); },
+  sigClose: () => sigDone(),
   loveClose: () => { ui.loveFor = null; render(); },
   noop: () => {},
   sendLove: async (d, el) => {
@@ -13404,6 +13440,7 @@ function render() {
   if (fresh || arriving || !prev) pageInto($app, page); else morphInto($app, page);
   if (arriving) $app.appendChild(arriving);
   if (ui.loveFor) $app.insertAdjacentHTML('beforeend', loveSheet());
+  else if (SIG_Q.length && !document.querySelector('.sig-pop')) setTimeout(sigNext, 600);
   const v = document.getElementById('view');
   v.style.setProperty('--viewH', `${v.clientHeight}px`); // full-page photo intros fill exactly one screen
   if (fresh) { holdSet(v, 0); v.scrollTop = keep; } else holdPlace(v, keep);
