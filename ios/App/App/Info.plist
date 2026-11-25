@@ -59,6 +59,8 @@
 	<string>Take a profile photo. It stays on your phone unless you sync it to your account.</string>
 	<key>NSLocationDefaultAccuracyReduced</key>
 	<true/>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Underskin only uses your location while the app is open, to set the UV index, vitamin D and sunrise times for where you are. It stays on your phone; only a rounded area (about 10 km) is sent to get the UV forecast.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Your location sets the UV index, vitamin D and sunrise times for where you are. It stays on your phone; only a rounded area (about 10 km) is sent to get the UV forecast.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
