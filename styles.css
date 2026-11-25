@@ -18503,3 +18503,8 @@ html .view:has(> .grh) .section-title h3 { display: flex !important; padding: 0 
 .view:has(> .grh) .grhw-back { background: rgba(251,250,243,.94); color: #304023; }
 @media (prefers-reduced-motion: reduce) { .view:has(> .grh) .gr3::before { animation: none; } }
 html .view:has(> .grh) .section-title h3::before { background: #c3d394 !important; box-shadow: 0 0 10px rgba(195,211,148,.55) !important; }
+/* her hand-painted surface pictures in the Where it works best rows */
+.grw-surf li { justify-content: flex-start; padding: 8px 14px 8px 8px; }
+.grw-surf li > span { flex: 1; }
+.grw-surf .grw-sp { flex: none; width: 76px; height: 46px; border-radius: 11px; object-fit: cover; box-shadow: 0 0 0 1px rgba(48,64,35,.06); }
+.grw-surf li.no .grw-sp { filter: saturate(.6); opacity: .8; }

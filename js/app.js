@@ -644,6 +644,8 @@ function grWayOpen(k) {
     ${warm ? `<p class="grw-note pk"><i aria-hidden="true">🌸</i><span><b>Your period is close</b>${warmOk ? 'Warm, dry ground only, and socks on straight after.' : 'Hands only for now, and keep your feet warm.'}</span></p>` : ''}
   </div>`, 'grw-ws');
 }
+// her own hand-painted pictures for each surface, same order as GROUND_WHERE
+const GROUND_SURF = ['sand', 'grass', 'soil', 'sea', 'stone', 'road'];
 function grInfoOpen(v) {
   if (v === 'studies') {
     wsOpen(`<div class="grw-sh grw-info"><h3>The studies</h3><p class="gr2-lead">Five small studies, ${GROUND_STUDIES[0][1]} to ${GROUND_STUDIES[GROUND_STUDIES.length - 1][1]}. Tap one for the chart.</p>
@@ -669,7 +671,7 @@ function grInfoOpen(v) {
       <li><b class="dotnum">3</b><span><b>You</b><small>Small studies link it to calmer stress, deeper sleep and less soreness.</small></span></li>
     </ol>
     <b class="grw-sub">Where it works best</b>
-    <ul class="grw-surf">${GROUND_WHERE.map(([n, c]) => `<li class="${c ? '' : 'no'}"><span>${n}</span>${c ? `<i class="gw-d" role="img" aria-label="Connects ${c} of 3">${[1, 2, 3].map(j => `<i class="${j <= c ? 'on' : ''}"></i>`).join('')}</i>` : `<small>blocks it</small>`}</li>`).join('')}</ul>
+    <ul class="grw-surf">${GROUND_WHERE.map(([n, c], i) => `<li class="${c ? '' : 'no'}"><img class="grw-sp" src="images/ground/${GROUND_SURF[i]}.webp" alt="" loading="lazy" decoding="async"><span>${n}</span>${c ? `<i class="gw-d" role="img" aria-label="Connects ${c} of 3">${[1, 2, 3].map(j => `<i class="${j <= c ? 'on' : ''}"></i>`).join('')}</i>` : `<small>blocks it</small>`}</li>`).join('')}</ul>
     <details class="grhw-more"><summary>The longer version ${icon('chevD', 13)}</summary>
       <p>Your body runs on tiny electrical signals: your heart, your nerves, every muscle. Modern life keeps you insulated, with rubber soles, high floors and little time outside.</p>
       <p>Grounding, also called earthing, simply reconnects you. Researchers think the earth’s free electrons may calm inflammation and help your nervous system shift from stress into rest. That is why many women feel steadier and sleep better.</p>
