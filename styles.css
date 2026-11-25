@@ -18214,7 +18214,7 @@ html .grq-village .sy-rel-e { background: #e9f0d8; }
 .lt-send:disabled { background: #fff; color: rgba(43,38,34,.6); border-color: rgba(43,38,34,.35); box-shadow: 0 3px 0 rgba(43,38,34,.2); cursor: default; }
 .lt-send:disabled img { opacity: .55; }
 .lt-clear { border: 0; background: none; font: 400 13.5px var(--font); color: #5d6653; text-decoration: underline; text-underline-offset: 3px; padding: 8px 2px; cursor: pointer; }
-.env-fly { position: fixed; z-index: 999; pointer-events: none; object-fit: contain; }
+.stk-fly { position: fixed; z-index: 999; pointer-events: none; object-fit: contain; }
 .sig-log .sl .sl-stk { width: 30px; height: 30px; object-fit: contain; }
 .mail-wait { display: flex; align-items: center; gap: 12px; width: 100%; margin: 12px 0; padding: 10px 16px; border-radius: 20px; border: 2px dashed rgba(224,122,152,.55); background: #fff; font: 500 15px var(--font); color: #304023; cursor: pointer; }
 .mail-wait img { width: 46px; height: 34px; object-fit: contain; animation: ltpWiggle 3.2s ease-in-out infinite; }

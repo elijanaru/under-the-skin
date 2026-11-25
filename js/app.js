@@ -9162,13 +9162,6 @@ function letterPop(it, name, from, meta) {
   buzz?.('tick');
   import('./sfx.js').then(S => S.breeze({ dur: 1.4, vol: .12 })).catch(() => {});
 }
-// the envelope lifts off the send button and flies away
-function envFly(btn) {
-  const img = btn.querySelector('img'); if (!img || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const r = img.getBoundingClientRect(), f = img.cloneNode(); f.className = 'env-fly'; Object.assign(f.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px' });
-  document.body.appendChild(f);
-  f.animate([{ transform: 'none', opacity: 1 }, { transform: 'translate(-10px,-40px) rotate(-12deg) scale(1.6)', opacity: 1, offset: .35 }, { transform: 'translate(60px,-420px) rotate(18deg) scale(.6)', opacity: 0 }], { duration: 900, easing: 'cubic-bezier(.3,.7,.2,1)' }).onfinish = () => f.remove();
-}
 function ltOpen(el) {
   const pop = el.closest('.sig-pop'); if (!pop || pop.classList.contains('opened')) return;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -9251,23 +9244,52 @@ function lswTile(l, i, action) {
   const n = (ui.letter || {})[l.k] || 0;
   return `<button class="lsw-s stk ${n ? 'has' : ''}" data-action="${action}" data-k="${l.k}" aria-label="${l.t}" style="--r:${LSW_R[i % LSW_R.length]}deg;--i:${i}"><img src="${stk(l)}" alt="" draggable="false" decoding="async"><b class="lsw-x" aria-hidden="true">${n ? `×${n}` : ''}</b></button>`;
 }
-function letterBar() {
-  const n = itCount(ui.letter);
-  return `<div class="lt-bar"><button class="lt-clear" data-action="letterClear" ${n ? '' : 'hidden'}>Start over</button>
-    <button class="lt-send" data-action="letterSend" ${n ? '' : 'disabled'}><img src="images/stk/envelope.webp" alt=""><span>${n ? `Send ${n} ${n === 1 ? 'sticker' : 'stickers'}` : 'Tap a sticker'}</span></button></div>`;
+let LT_T = null;
+// the tapped sticker lifts off and floats away
+function stkFly(el) {
+  const img = el.querySelector('img'); if (!img || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const r = img.getBoundingClientRect(), c = img.cloneNode(); c.className = 'stk-fly'; c.setAttribute('aria-hidden', 'true');
+  Object.assign(c.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px' }); document.body.appendChild(c);
+  c.animate([{ transform: 'none', opacity: 1 }, { transform: `translate(${(Math.random() * 60 - 30).toFixed(0)}px, ${-(r.top + 90).toFixed(0)}px) scale(.55) rotate(14deg)`, opacity: 0 }], { duration: 760, easing: 'cubic-bezier(.45,0,.7,.35)' }).onfinish = () => c.remove();
+}
+// sends what was tapped; the sheet stays open so she can keep sending
+async function letterFlush(sheet) {
+  LT_T = null; const it = cleanIt(ui.letter), n = itCount(it); ui.letter = {}; if (!n) return;
+  sheet?.querySelectorAll('.lsw-s.has').forEach(t => { t.classList.remove('has'); const x = t.querySelector('.lsw-x'); if (x) x.textContent = ''; });
+  const pv = !!(sheet && sheet.classList.contains('pv'));
+  let ok = false, who = 'her';
+  if (pv) {
+    const snap = pvSnap(); if (!snap) return; who = snap.n || 'her';
+    if (!snap.i) return toast(`${snap.n || 'She'} needs to open her app once, then her link can receive it`);
+    const me = himP().n || (state && state.profile && state.profile.name) || 'Your partner';
+    try { ok = navigator.onLine && (await fetch(RELAY + snap.i, { method: 'POST', body: JSON.stringify({ k: 'letter', it, f: me, t: okPic(himP().ph) }) })).ok; } catch {}
+    if (ok) oakDo('love', true);
+  } else {
+    const p = (state.partners || []).find(x => x.id === ui.loveFor) || (state.partners || []).find(x => x.id === sheet?.dataset.pid); if (!p) return; who = p.n;
+    Object.entries(it).forEach(([k, c]) => { for (let i = 0; i < c; i++) (state.loveSent = state.loveSent || []).push({ to: p.id, k, at: Date.now() }); }); state.loveSent = state.loveSent.slice(-200); save();
+    if (!p.i) { // she hasn't connected yet: share a link to the letter
+      const snap = { f: state.profile.name || 'Someone', it }; if (state.profile.thumb) snap.t = state.profile.thumb;
+      const url = `${appBase()}#/love?d=${b64e(snap)}`, text = `💌 ${state.profile.name || 'I'} sent you a little letter`;
+      ui.loveFor = null; render(); if (await shareOut({ text, url })) return toast(`💌 Sent to ${p.n}`);
+      try { await navigator.clipboard.writeText(`${text} ${url}`); toast('Copied: paste it in your chat 💌'); } catch { prompt('Copy and send', `${text} ${url}`); }
+      return;
+    }
+    ok = await sendSignal(p, 'letter', { it });
+    if (!ok) { (state.outbox = state.outbox || []).push({ to: p.id, it, at: Date.now() }); state.outbox = state.outbox.slice(-20); save(); ok = 'q'; }
+  }
+  toast(ok === 'q' ? 'No internet right now. Your letter waits and flies as soon as you’re back online 💌' : ok ? `💌 Sent to ${who}` : 'Couldn’t send: check your connection');
 }
 function lswHead(name, av, sub, fr) {
   return `<div class="lsw-head"><span class="lsw-env">${loveBtnArt()}${av || ''}</span><div><small class="lsw-e">${fr ? 'A little hello' : 'A little love note'} ${LSW_SPK('#f1b27c')}</small><h3>${fr ? 'Say hi to' : 'Send love to'} <span class="lsw-n">${esc(name)}</span></h3><p>${sub}</p></div></div>`;
 }
 function loveSheet() {
   const p = (state.partners || []).find(x => x.id === ui.loveFor); if (!p) return '';
-  return `<div class="love-sheet" data-action="loveClose"><div class="ls-card ls2 lsw lt-sheet ${isFr(p) ? 'fr' : 'lv'}" data-action="noop">
+  return `<div class="love-sheet" data-action="loveClose" data-pid="${p.id}"><div class="ls-card ls2 lsw lt-sheet ${isFr(p) ? 'fr' : 'lv'}" data-action="noop">
     <div class="ls-grip"></div>${LSW_SPK(isFr(p) ? '#e8c35a' : '#e7a3bb')}
-    ${lswHead(p.n, ptAvatar(p, 'sm'), 'Tap as many as you like, they all go in one letter', isFr(p))}
+    ${lswHead(p.n, ptAvatar(p, 'sm'), 'Tap a sticker and it flies over right away', isFr(p))}
     <div class="lsw-grid stk4">${(isFr(p) ? FR_LOVE : PV_LOVE).map(k => LOVE.find(l => l.k === k)).map((l, i) => lswTile(l, i, 'letterAdd')).join('')}</div>
     <div class="lsw-k care">🌱 Care nudges</div>
-    <div class="lsw-grid stk4 care">${CARE.map((l, i) => lswTile(l, i + 8, 'letterAdd')).join('')}</div>
-    ${letterBar()}</div></div>`;
+    <div class="lsw-grid stk4 care">${CARE.map((l, i) => lswTile(l, i + 8, 'letterAdd')).join('')}</div></div></div>`;
 }
 function fmtAgo(t) { const m = Math.round((Date.now() - t) / 60000); return m < 1 ? 'just now' : m < 60 ? `${m} min ago` : m < 1440 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} d ago`; }
 function heartBurst(x, y) {
@@ -12298,40 +12320,14 @@ const actions = {
   ltLater: () => { ui.mailSnooze = true; sigDone(false, true); toast('💌 It waits for you. Open it any time from your people'); },
   mailOpen: () => { ui.mailSnooze = false; sigNext(); },
   offOk: () => { const n = document.querySelector('.off-note'); if (n) { n.classList.add('out'); setTimeout(() => n.remove(), 400); } },
+  // tap = it flies (26 Nov 2026, her ask: no send button). Quick taps within a moment travel together, so love ×3 lands as 3 hearts.
   letterAdd: (d, el) => {
-    const L = ui.letter = ui.letter || {}; if (itCount(L) >= 24) return toast('That’s a full letter 💌');
+    const L = ui.letter = ui.letter || {}; if (itCount(L) >= 24) return;
     L[d.k] = (L[d.k] || 0) + 1; el.classList.add('has'); el.querySelector('.lsw-x').textContent = `×${L[d.k]}`;
-    el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); buzz?.('tick');
-    const sh = el.closest('.lsw'), bar = sh && sh.querySelector('.lt-bar'); if (bar) { bar.outerHTML = letterBar(); I18N.tr(sh.querySelector('.lt-bar')); }
+    el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); buzz?.('tick'); stkFly(el);
+    const sheet = el.closest('.love-sheet'); clearTimeout(LT_T); LT_T = setTimeout(() => letterFlush(sheet), 900);
   },
-  letterClear: (d, el) => { ui.letter = {}; const sh = el.closest('.lsw'); if (!sh) return; sh.querySelectorAll('.lsw-s').forEach(t => { t.classList.remove('has'); t.querySelector('.lsw-x').textContent = ''; }); sh.querySelector('.lt-bar').outerHTML = letterBar(); I18N.tr(sh.querySelector('.lt-bar')); },
-  letterSend: async (d, el) => {
-    const it = cleanIt(ui.letter), n = itCount(it); if (!n) return;
-    const sheet = el.closest('.love-sheet'), pv = sheet && sheet.classList.contains('pv');
-    envFly(el);
-    let ok = false, who = 'her';
-    if (pv) {
-      const snap = pvSnap(); if (!snap) return; who = snap.n || 'her';
-      if (!snap.i) return toast(`${snap.n || 'She'} needs to open her app once, then her link can receive it`);
-      const me = himP().n || (state && state.profile && state.profile.name) || 'Your partner';
-      try { ok = navigator.onLine && (await fetch(RELAY + snap.i, { method: 'POST', body: JSON.stringify({ k: 'letter', it, f: me, t: okPic(himP().ph) }) })).ok; } catch {}
-      if (ok) oakDo('love', true);
-    } else {
-      const p = (state.partners || []).find(x => x.id === ui.loveFor); if (!p) return; who = p.n;
-      Object.entries(it).forEach(([k, c]) => { for (let i = 0; i < c; i++) (state.loveSent = state.loveSent || []).push({ to: p.id, k, at: Date.now() }); }); state.loveSent = state.loveSent.slice(-200); save();
-      if (!p.i) { // she hasn't connected yet: share a link to the letter
-        const snap = { f: state.profile.name || 'Someone', it }; if (state.profile.thumb) snap.t = state.profile.thumb;
-        const url = `${appBase()}#/love?d=${b64e(snap)}`, text = `💌 ${state.profile.name || 'I'} sent you a little letter`;
-        ui.letter = {}; setTimeout(async () => { ui.loveFor = null; render(); if (await shareOut({ text, url })) return toast(`💌 Sent to ${p.n}`); try { await navigator.clipboard.writeText(`${text} ${url}`); toast('Copied: paste it in your chat 💌'); } catch { prompt('Copy and send', `${text} ${url}`); } }, 700);
-        return;
-      }
-      ok = await sendSignal(p, 'letter', { it });
-      if (!ok) { (state.outbox = state.outbox || []).push({ to: p.id, it, at: Date.now() }); state.outbox = state.outbox.slice(-20); save(); ok = 'q'; }
-    }
-    ui.letter = {};
-    setTimeout(() => { if (pv) sheet.remove(); else { ui.loveFor = null; render(); } toast(ok === 'q' ? 'No internet right now. Your letter waits and flies as soon as you’re back online 💌' : ok ? `💌 Sent to ${who}` : 'Couldn’t send: check your connection'); }, 650);
-  },
-  loveClose: () => { ui.loveFor = null; render(); },
+  loveClose: () => { if (LT_T) { clearTimeout(LT_T); letterFlush(document.querySelector('.love-sheet:not(.pv)')); } ui.loveFor = null; render(); },
   noop: () => {},
   hubTip: d => {
     ui.hubTip = ui.hubTip === d.k ? null : d.k;
@@ -12863,11 +12859,11 @@ const actions = {
     document.querySelector('.love-sheet.pv')?.remove();
     ui.letter = {};
     $app.insertAdjacentHTML('beforeend', `<div class="love-sheet pv" data-action="pvLoveClose"><div class="ls-card ls2 lsw lt-sheet ${snap.a === 'friend' ? 'fr' : 'lv'}" data-action="noop"><div class="ls-grip"></div>${LSW_SPK(snap.a === 'friend' ? '#e8c35a' : '#e7a3bb')}
-      ${lswHead(snap.n || 'her', '', 'Tap as many as you like, they all go in one letter', snap.a === 'friend')}
-      <div class="lsw-grid stk4">${(snap.a === 'friend' ? FR_LOVE : PV_LOVE).map(k => LOVE.find(l => l.k === k)).map((l, i) => lswTile(l, i, 'letterAdd')).join('')}</div>${letterBar()}</div></div>`);
+      ${lswHead(snap.n || 'her', '', 'Tap a sticker and it flies over right away', snap.a === 'friend')}
+      <div class="lsw-grid stk4">${(snap.a === 'friend' ? FR_LOVE : PV_LOVE).map(k => LOVE.find(l => l.k === k)).map((l, i) => lswTile(l, i, 'letterAdd')).join('')}</div></div></div>`);
     I18N.tr($app.querySelector('.love-sheet.pv'));
   },
-  pvLoveClose: () => document.querySelector('.love-sheet.pv')?.remove(),
+  pvLoveClose: () => { const sh = document.querySelector('.love-sheet.pv'); if (LT_T) { clearTimeout(LT_T); letterFlush(sh); } sh?.remove(); },
   pvDuo: (d, el) => { // open the recipe of the tapped tile under the pair, in place (the 3D dish and cup keep turning)
     const card = el.closest('.pv2-duo'); if (!card) return;
     const on = el.getAttribute('aria-expanded') !== 'true';

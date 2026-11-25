@@ -6366,4 +6366,5 @@ export default {"+ Cayenne":"+ Cayena",
 "Big hug":"Abrazo enorme",
 "Thinking of you":"Pienso en ti",
 "You got a <t0>secret message</t0> from <t1>{0}</t1>":"Te llegó un <t0>mensaje secreto</t0> de <t1>{0}</t1>",
-"Open it":"Ábrela"};
+"Open it":"Ábrela",
+"Tap a sticker and it flies over right away":"Toca un sticker y sale volando al instante"};
