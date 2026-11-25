@@ -35,5 +35,7 @@
  "Okay!": "알겠어요!",
  "You’re back online": "다시 연결됐어요",
  "Everything is syncing again.": "모두 다시 동기화하고 있어요.",
- "{0} sent you a secret message": "{0}에게서 비밀 편지가 왔어요"
+ "{0} sent you a secret message": "{0}에게서 비밀 편지가 왔어요",
+ "You got a <t0>secret message</t0> from <t1>{0}</t1>": "<t1>{0}</t1>에게서 <t0>비밀 편지</t0>가 왔어요",
+ "Open it": "열어 볼래요"
 }

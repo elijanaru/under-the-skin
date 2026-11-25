@@ -9149,16 +9149,15 @@ function letterPop(it, name, from, meta) {
   el.innerHTML = `<div class="ltp-paper" aria-hidden="true"></div><div class="ltp-spk" aria-hidden="true">${sparks}</div>
     <div class="ltp-in">
       <div class="ltp-ask">
-        <p class="ltp-h">Hey! You got a <u>secret message</u>. Want to <mark>open</mark> it?</p>
+        <p class="ltp-h">You got a <u>secret message</u> from <mark>${esc(name)}</mark></p>
         <button class="ltp-env" data-action="ltOpen" aria-label="Open the letter"><img src="images/stk/envelope.webp" alt=""><span class="ltp-av">${pic ? `<img src="${esc(pic)}" alt="">` : `<b>${esc((name || '?')[0])}</b>`}</span></button>
-        <p class="ltp-from">from <b>${esc(name)}</b></p>
-        <div class="ltp-btns"><button class="ltp-b yes" data-action="ltOpen">Yes</button><button class="ltp-b no" data-action="ltLater">Later</button></div>
+        <div class="ltp-btns"><button class="ltp-b yes" data-action="ltOpen">${icon('heart', 16)} Open it</button><button class="ltp-b no" data-action="ltLater">Later</button></div>
       </div>
       <div class="ltp-open" hidden>
         ${ltStickers(it)}
         <h1>${ltHead(it, name)}</h1>
         ${ltChips(it)}
-        <div class="ltp-btns">${from ? `<button class="ltp-b yes wide" data-action="openLove" data-id="${from.id}">Send love back</button>` : ''}<button class="ltp-b no" data-action="sigClose">Close</button></div>
+        <div class="ltp-btns">${from ? `<button class="ltp-b yes" data-action="openLove" data-id="${from.id}">${icon('heart', 16)} Send love back</button>` : ''}<button class="ltp-b no" data-action="sigClose">Close</button></div>
       </div>
     </div>`;
   I18N.tr(el); sigLayer().appendChild(el);

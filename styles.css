@@ -18223,10 +18223,11 @@ html .grq-village .sy-rel-e { background: #e9f0d8; }
 .sig-pop.ltp.out { animation: sgpOut .42s ease both; }
 .ltp-paper { position: absolute; inset: 0; background: radial-gradient(60% 38% at 50% 34%, #fde1ea 0, rgba(253,225,234,0) 70%), radial-gradient(rgba(224,122,152,.2) 1.2px, transparent 1.5px) 0 0 / 22px 22px, #fdf6f7; }
 .ltp.care .ltp-paper { background: radial-gradient(60% 38% at 50% 34%, #e6efd6 0, rgba(230,239,214,0) 70%), radial-gradient(rgba(108,130,62,.2) 1.2px, transparent 1.5px) 0 0 / 22px 22px, #f7f8f1; }
+.ltp-spk { position: absolute; inset: 0; pointer-events: none; }
 .ltp-spk i { position: absolute; width: var(--z); height: var(--z); animation: sgpTwinkle 2.8s ease-in-out infinite; animation-delay: var(--d); }
 .ltp-spk svg { width: 100%; height: 100%; display: block; }
 .ltp-in { position: relative; width: 100%; max-width: 340px; text-align: center; color: #2b2622; }
-.ltp-h { margin: 0 0 20px; font: 700 26px/1.5 Kalam, var(--font); color: #2b2622; text-wrap: balance; }
+.ltp-h { margin: 0 0 26px; font: 700 26px/1.5 Kalam, var(--font); color: #2b2622; text-wrap: balance; }
 .ltp-h u { text-decoration: underline 3px #6fa8dc; text-underline-offset: 7px; text-decoration-skip-ink: none; }
 .ltp-h mark { background: #ef8fb4; color: #fff; padding: 0 6px; border-radius: 3px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 .ltp-env { position: relative; display: block; margin: 0 auto; width: 220px; border: 0; background: none; padding: 0; cursor: pointer; animation: ltpBob 3.6s ease-in-out infinite; }
@@ -18237,11 +18238,13 @@ html .grq-village .sy-rel-e { background: #e9f0d8; }
 .ltp-from { margin: 20px 0 22px; font: 400 15px var(--font); color: #5f5254; }
 .ltp-from b { font-weight: 500; color: #2b2622; }
 .ltp-btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
-.ltp-b { min-width: 100px; height: 50px; padding: 0 22px; border-radius: 99px; border: 2.5px solid #2b2622; background: #e3a07f; color: #fff; font: 700 19px/1 Kalam, var(--font); box-shadow: 0 4px 0 #2b2622; cursor: pointer; transition: transform .12s, box-shadow .12s; }
-.ltp-b.no { background: #fff; color: #2b2622; }
-.ltp-b.yes { animation: ltpNudge 2.8s ease-in-out infinite 1.8s; }
-.ltp-b.wide { background: #ef9ab8; font-size: 17px; }
-.ltp-b:active { transform: translateY(3px); box-shadow: 0 1px 0 #2b2622; }
+.ltp-btns { margin-top: 30px; }
+.ltp-open .ltp-btns { margin-top: 0; }
+.ltp-b { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 132px; height: 52px; padding: 0 26px; border-radius: 99px; border: 1px solid rgba(48,64,35,.14); background: rgba(255,255,255,.86); color: #304023; font: 500 16px/1 var(--font); letter-spacing: .01em; box-shadow: 0 10px 24px -12px rgba(48,64,35,.35), inset 0 1px 0 #fff; -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; }
+.ltp-b.yes { background: #304023; border-color: #304023; color: #fff; box-shadow: 0 12px 26px -12px rgba(48,64,35,.6); }
+.ltp-b.yes svg { color: #efb3c8; }
+.ltp.care .ltp-b.yes svg { color: #c9dba6; }
+.ltp-b:active { transform: scale(.97); }
 .ltp.opening .ltp-env { animation: ltpOpen .52s cubic-bezier(.5,-.4,.6,1) forwards; }
 .ltp.opening .ltp-h, .ltp.opening .ltp-from, .ltp.opening .ltp-ask .ltp-btns { opacity: 0; transition: opacity .25s; }
 .ltp-open { animation: sgpIn .4s ease both; }
@@ -18258,7 +18261,7 @@ html .grq-village .sy-rel-e { background: #e9f0d8; }
 @keyframes ltpNudge { 0%, 80%, 100% { transform: none; } 88% { transform: scale(1.07) rotate(-2deg); } }
 @keyframes ltpOpen { 35% { transform: rotate(-8deg) scale(1.08); } 100% { transform: translateY(-40px) scale(1.35); opacity: 0; } }
 @keyframes ltpStk { from { opacity: 0; transform: translate(-50%, -10%) rotate(0deg) scale(.2); } }
-html[lang="ko"] .ltp-h, html[lang="ko"] .ltp-open h1, html[lang="ko"] .ltp-b, html[lang="ko"] .lt-send, html[lang="ko"] .off-in b, html[lang="ko"] .off-ok { font-family: 'Gaegu', 'Jua', cursive; word-break: keep-all; }
+html[lang="ko"] .ltp-h, html[lang="ko"] .ltp-open h1, html[lang="ko"] .lt-send, html[lang="ko"] .off-in b, html[lang="ko"] .off-ok { font-family: 'Gaegu', 'Jua', cursive; word-break: keep-all; }
 html[lang="ko"] .ltp-h { font-size: 28px; }
 
 /* Hey, you're offline: a sleepy cloud on a taped paper note, once per offline spell; "back online" for a moment after */

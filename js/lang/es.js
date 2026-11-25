@@ -6364,4 +6364,6 @@ export default {"+ Cayenne":"+ Cayena",
 "Kisses":"Besos",
 "Love you":"Te quiero",
 "Big hug":"Abrazo enorme",
-"Thinking of you":"Pienso en ti"};
+"Thinking of you":"Pienso en ti",
+"You got a <t0>secret message</t0> from <t1>{0}</t1>":"Te llegó un <t0>mensaje secreto</t0> de <t1>{0}</t1>",
+"Open it":"Ábrela"};
