@@ -13152,4 +13152,6 @@ export default {"+ Cayenne":"+ 카옌페퍼",
 "These are small studies, many from one research group, so think of grounding as a calm daily habit, not a treatment. Never ground outdoors in a thunderstorm, and only use indoor grounding mats that are properly wired and tested.":"작은 연구들이고 상당수가 한 연구팀에서 나왔으니, 그라운딩은 치료가 아니라 차분한 매일의 습관으로 생각해요. 천둥번개 칠 땐 절대 밖에서 하지 말고, 실내 그라운딩 매트는 제대로 배선되고 검증된 것만 써요.",
 "You got a <t0>secret message</t0> from <t1>{0}</t1>":"<t1>{0}</t1>에게서 <t0>비밀 편지</t0>가 왔어요",
 "Open it":"열어 볼래요",
-"Tap a sticker and it flies over right away":"스티커를 누르면 바로 날아가요"};
+"Tap a sticker and it flies over right away":"스티커를 누르면 바로 날아가요",
+"One question first":"먼저 하나만 물어볼게요",
+"Two hands resting flat on the bark of a redwood in a misty forest":"안개 낀 숲, 레드우드 나무껍질에 가만히 얹은 두 손"};

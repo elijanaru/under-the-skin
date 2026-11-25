@@ -6367,4 +6367,6 @@ export default {"+ Cayenne":"+ Cayena",
 "Thinking of you":"Pienso en ti",
 "You got a <t0>secret message</t0> from <t1>{0}</t1>":"Te llegó un <t0>mensaje secreto</t0> de <t1>{0}</t1>",
 "Open it":"Ábrela",
-"Tap a sticker and it flies over right away":"Toca un sticker y sale volando al instante"};
+"Tap a sticker and it flies over right away":"Toca un sticker y sale volando al instante",
+"One question first":"Primero, una pregunta",
+"Two hands resting flat on the bark of a redwood in a misty forest":"Dos manos apoyadas en la corteza de una secuoya en un bosque con niebla"};

@@ -628,8 +628,9 @@ const GRQ_ART = {
   village: '<svg viewBox="0 0 120 150" aria-hidden="true"><defs><linearGradient id="grq-vs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8f0d8"/><stop offset="1" stop-color="#fdf5ea"/></linearGradient></defs><rect width="120" height="150" fill="url(#grq-vs)"/><circle cx="30" cy="32" r="10" fill="#f6dba6"/><path d="M0 92c26-18 52-20 76-8s34 4 44-2v68H0z" fill="#cfe0b0"/><path d="M0 116c30-14 64-12 120-4v38H0z" fill="#a9c27a"/><rect x="66" y="84" width="28" height="22" fill="#fdf3ec"/><path d="M62 86l18-16 18 16z" fill="#e6a9ba"/><rect x="76" y="94" width="8" height="12" fill="#c9a37e"/><path d="M28 120v-20" stroke="#9c7a5a" stroke-width="3" stroke-linecap="round"/><circle cx="28" cy="92" r="13" fill="#8c9768"/><circle cx="36" cy="96" r="8" fill="#a3ad7e"/><g fill="#fff"><circle cx="16" cy="134" r="2"/><circle cx="52" cy="128" r="2"/><circle cx="98" cy="136" r="2"/></g><g fill="#efb5c7"><circle cx="40" cy="140" r="2"/><circle cx="74" cy="132" r="2"/><circle cx="108" cy="124" r="2"/></g></svg>',
 };
 function groundAsk() {
-  return `<section class="grq paper"><b class="grq-q">Where do you live?</b><small class="grq-s">So your grounding fits your life.</small>
-    <div class="sy-pick grq-pick">${GROUND_PLACES.map(([k, t, s, e]) => `<button class="sy-opt sy-rel grq-o grq-${k}" data-action="grPlace" data-v="${k}" aria-label="${t}"><span class="sy-pol"><span class="sy-tape" aria-hidden="true"></span><span class="sy-ph grq-art">${GRQ_ART[k]}</span><span class="sy-rel-e" aria-hidden="true">${e}</span></span><b class="sy-rel-n">${t}</b><small class="grq-l">${s}</small></button>`).join('')}</div></section>`;
+  return `<section class="grq grq2" aria-labelledby="grq-q"><small class="grq2-e">${icon('leaf', 13)} One question first</small>
+    <b class="grq-q" id="grq-q">Where do you live?</b><small class="grq-s">So your grounding fits your life.</small>
+    <div class="grq2-o">${GROUND_PLACES.map(([k, t, s], i) => `<button class="grq2-b grq-o" style="--i:${i}" data-action="grPlace" data-v="${k}"><span class="grq2-ph"><img src="images/ground/q-${k}.webp" alt="" decoding="async"></span><b>${t}</b><small>${s}</small></button>`).join('')}</div></section>`;
 }
 function groundGuide() {
   const pl = state.profile.groundPlace, G = GROUND_GUIDE[pl];
@@ -674,6 +675,38 @@ function groundPanel(tab) {
       <div class="grr-f"><span>Repeat for ${GROUND_ROOTS.mins} minutes</span>${saveBtn(regTip('ground-roots', 'Grounding · roots', GROUND_ROOTS.d, 'ground'))}</div>
     </section>`;
 }
+// Answering the question walks her into the window: the photo zooms into the forest,
+// then the page glides down to her methods and the photo quietly settles back behind her.
+const GR_EASE = 'cubic-bezier(.65,0,.25,1)';
+function grZoom(hero, img) {
+  const r = img.getBoundingClientRect(), nw = img.naturalWidth || 1080, nh = img.naturalHeight || 1920;
+  const k = Math.max(r.width / nw, r.height / nh), dw = nw * k, dh = nh * k;
+  const x = (r.width - dw) * .5 + dw * .5, y = (r.height - dh) * .6 + dh * .49;
+  return { o: `${x}px ${y}px`, t: `translate3d(0, ${(r.height / 2 - y).toFixed(1)}px, 0) scale(2.35)` };
+}
+function grGlide(to, ms) {
+  const sc = document.getElementById('view') || document.scrollingElement, from = sc.scrollTop, t0 = performance.now();
+  const ease = p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+  return new Promise(res => { let end = false; const fin = () => { if (end) return; end = true; sc.scrollTop = to; res(); };
+    const step = now => { if (end) return; const p = Math.min(1, (now - t0) / ms); sc.scrollTop = from + (to - from) * ease(p); p < 1 ? requestAnimationFrame(step) : fin(); };
+    requestAnimationFrame(step); setTimeout(fin, ms + 400); });
+}
+function groundEnter(hero, img, done) {
+  const Z = grZoom(hero, img), fade = { duration: 700, easing: GR_EASE, fill: 'forwards' };
+  img.style.transformOrigin = Z.o; hero.classList.add('gr-zoom');
+  img.animate([{ transform: 'none', filter: 'brightness(1)' }, { transform: Z.t, filter: 'brightness(1.08)' }], { duration: 1500, easing: GR_EASE, fill: 'forwards' });
+  hero.querySelectorAll('.grq, .grh-t').forEach((el, i) => el.animate([{ opacity: 1, filter: 'blur(0)', transform: 'none' }, { opacity: 0, filter: 'blur(10px)', transform: `translateY(${i ? -14 : 18}px) scale(.98)` }], { ...fade, delay: 380 + i * 60 }));
+  setTimeout(() => {
+    done(); ui.grEnter = true; render(); ui.grEnter = false;
+    const h2 = document.querySelector('#view .grh'), i2 = h2 && h2.querySelector(':scope > img'), seg = document.querySelector('#view .gr2-seg');
+    if (!h2 || !i2) return;
+    i2.getAnimations().forEach(a => a.cancel()); h2.querySelectorAll('.grh-t').forEach(e => e.getAnimations().forEach(a => a.cancel()));
+    i2.style.transformOrigin = Z.o;
+    const hold = i2.animate([{ transform: Z.t, filter: 'brightness(1.08)' }, { transform: Z.t, filter: 'brightness(1.08)' }], { duration: 1, fill: 'forwards' });
+    const sv = document.getElementById('view'), top = seg ? seg.getBoundingClientRect().top - sv.getBoundingClientRect().top + sv.scrollTop - 16 : h2.offsetHeight;
+    grGlide(top, 1400).then(() => { hold.cancel(); i2.animate([{ transform: Z.t }, { transform: 'none' }], { duration: 900, easing: GR_EASE }); h2.classList.add('gr-back'); });
+  }, 1450);
+}
 function viewGround() {
   const info = M.info, ph = info && info.phase, P = ph && GROUND_PHASE[ph];
   const late = info && info.daysToPeriod <= 3 && !info.isPeriod, d = P ? P.d : GROUND_NOW, warm = ph === 'menstrual' || late;
@@ -681,15 +714,15 @@ function viewGround() {
   const swirl = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';
   const mins = (d[1].match(/(\d+) minutes/) || [])[1];
   const rules = [[O3_TICK, 'Bare skin', 'ok'], [O3_TICK, 'Phone away', 'ok'], [O3_X, 'No storms', '']];
-  return `<section class="grh">${topbar('', { back: true })}
+  return `<section class="grh${ui.grEnter ? ' gr-in' : ''}">${topbar('', { back: true })}
     <img src="images/ground-hero.webp" alt="A quiet wooden room open to a sunlit forest, one person sitting on a cushion" fetchpriority="high" decoding="async">
     <h1 class="grh-t">Ground yourself.</h1>
     ${ask ? groundAsk() : ''}
   </section>
-  <div class="pad ul3 ul4 gr2">
+  <div class="pad ul3 ul4 gr2${ui.grEnter ? ' gr-in' : ''}">
     <div class="ul4-stage gr2-stage">
       <svg class="ul4-sp" viewBox="0 0 360 250" aria-hidden="true">${o3Spark('#f1d58a', 30, 30, 0)}${o3Spark('#fff', 330, 40, 1.1)}${o3Spark('#c9d6a8', 338, 222, 2)}${o3Spark('#f6c6d4', 20, 214, 1.6)}<circle class="o3-sp" style="--d:.6s" cx="296" cy="8" r="2.4" fill="#fff"/><circle class="o3-sp" style="--d:1.8s" cx="52" cy="240" r="2" fill="#fff"/></svg>
-      <figure class="gr2-pol"><img src="images/ground-tree.webp" alt="A hand resting on a giant redwood, light circling up into the sky" decoding="async"><figcaption>palms on the bark</figcaption></figure>
+      <figure class="gr2-pol"><img src="images/ground/palms-bark.webp" alt="Two hands resting flat on the bark of a redwood in a misty forest" decoding="async"><figcaption>palms on the bark</figcaption></figure>
       <span class="gr2-min"><b class="dotnum">15</b><small>min a day</small></span>
     </div>
     <section class="o3-note ul3-note ul4-note gr2-note">
@@ -12397,11 +12430,17 @@ const actions = {
     document.querySelectorAll('#view .gr2-seg button').forEach(b => { const on = b.dataset.v === d.v; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
     pn.innerHTML = groundPanel(d.v); pn.classList.remove('sw'); void pn.offsetWidth; pn.classList.add('sw'); decorateStudies?.(pn); },
   grPlace: d => { const v = GROUND_GUIDE[d.v] ? d.v : undefined, first = !state.profile.groundPlace;
-    state.profile.groundPlace = v; save(); buzz('tick');
-    if (!v) { render(); const q = document.querySelector('#view .grq'); q && q.scrollIntoView({ block: 'center' }); return; }
+    buzz('tick');
+    if (!v) { state.profile.groundPlace = v; save(); render(); const q = document.querySelector('#view .grq'); q && q.scrollIntoView({ block: 'center' }); return; }
+    const q = document.querySelector('#view .grq'); q && q.classList.add('has-pick');
     document.querySelectorAll('#view .grq-o').forEach(b => b.classList.toggle('picked', b.dataset.v === v));
-    setTimeout(() => { ui.grTab = 'me'; render();
-      const seg = document.querySelector('#view .gr2-seg'); if (first && seg) seg.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); }, 320); },
+    const hero = document.querySelector('#view .grh'), img = hero && hero.querySelector(':scope > img');
+    const done = () => { state.profile.groundPlace = v; save(); ui.grTab = 'me'; };
+    if (!first || !hero || !img || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return setTimeout(() => { done(); render(); const seg = document.querySelector('#view .gr2-seg'); first && seg && seg.scrollIntoView({ block: 'start' }); }, 320);
+    }
+    groundEnter(hero, img, done);
+  },
   grGo: () => { const go = () => { const t = document.querySelector('#view .gtr2'); t && t.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); };
     if (document.querySelector('#view .gr2-seg button.on')?.dataset.v !== 'do') { actions.grTab({ v: 'do' }); setTimeout(go, 60); } else go(); },
   bzClose: () => bzClose(),
