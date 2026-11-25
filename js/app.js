@@ -14,7 +14,7 @@ import * as SZ from './seasonal.js';
 import { WORLD, worldOf, PHASE_EAT, PANTRY } from './world.js';
 import { TRAIN_SAFE, TRAIN_SAFE_CREDIT, TRAIN_WHEN, TRAIN_NUM } from './athlete.js';
 import { BODY_MAP, BODY_PIN } from './bodymap.js';
-import { GROUND_NOW, GROUND_WHERE, GROUND_PHASE, GROUND_MOON, GROUND_STUDIES, GROUND_CAUTION, GROUND_PLACES, GROUND_GUIDE, GROUND_WINTER } from './ground.js';
+import { GROUND_NOW, GROUND_WHERE, GROUND_PHASE, GROUND_MOON, GROUND_STUDIES, GROUND_CAUTION, GROUND_PLACES, GROUND_GUIDE, GROUND_WINTER, GROUND_GOOD, GROUND_WAYS, GROUND_BEST } from './ground.js';
 import { MOLECULES, MOL_BALL } from './molecules.js';
 import { sunTimes, sunAltitude, COUNTRY_GEO } from './sun.js';
 import * as A from './account.js';
@@ -569,11 +569,6 @@ function trainSafe() {
     <p class="ts-credit">${TRAIN_SAFE_CREDIT}</p>`;
 }
 // ---------- grounding: bare skin on the earth ----------
-// A tiny drawn scene for each surface in "Where to stand" (same order as GROUND_WHERE).
-// her hand-painted pictures for each surface, same order as GROUND_WHERE
-const GROUND_PIC = ['sand', 'grass', 'soil', 'sea', 'stone', 'road'];
-// the surface that suits each phase best (picture from Where to stand, plain words for the spot)
-const GROUND_SPOT = { menstrual: ['sand', 'Sun-warmed, dry sand'], follicular: ['grass', 'Dewy morning grass'], ovulatory: ['sea', 'Wet sand at the water'], luteal: ['soil', 'Garden or park soil'] };
 const GROUND_ART = [
   '<svg viewBox="0 0 120 56"><rect width="120" height="56" fill="#efdcbc"/><path d="M0 0h120v16c-14 6-24-4-40 2s-26 8-40 2S12 12 0 18z" fill="#a9cdd0"/><path d="M0 18c12-6 26 2 40-2s24-8 40-2 26 4 40-2" fill="none" stroke="#fff" stroke-width="2" opacity=".8"/><g fill="#caa77a"><ellipse cx="44" cy="34" rx="4" ry="6.5"/><ellipse cx="58" cy="44" rx="4" ry="6.5"/><ellipse cx="74" cy="32" rx="4" ry="6.5"/></g></svg>',
   `<svg viewBox="0 0 120 56"><rect width="120" height="56" fill="#e3ecd3"/><g fill="none" stroke="#6c823e" stroke-width="2.4" stroke-linecap="round">${Array.from({ length: 14 }, (_, i) => `<path d="M${6 + i * 8.4} 56c${i % 2 ? 2 : -2}-10 ${i % 3 - 1}-20 ${i % 2 ? 4 : -3}-${24 + (i * 7) % 14}"/>`).join('')}</g><g fill="#fff" stroke="#9fc3c8" stroke-width=".8"><circle cx="22" cy="24" r="2.4"/><circle cx="64" cy="18" r="2.8"/><circle cx="96" cy="28" r="2.2"/></g></svg>`,
@@ -595,10 +590,6 @@ function rtNow(el, row) {
   img.src = `images/tree-ink-${i}.webp`;
   cap.innerHTML = `<b><i class="dotnum">${i + 1}</i> ${esc(row.querySelector('.rt-t b').textContent)}</b><span>${esc(row.dataset.x)}</span>`;
 }
-// Ground (18 Nov 2026, redesign in the Unlock style): the title first, then the redwood as a taped polaroid among sparkles,
-// a day pill, the paper note with today's ground for her phase, sticker rules, and four sub-tabs instead of one long scroll:
-// Practices (tree + golden roots), Where to stand, Energy, Studies. A tab tap swaps only the panel.
-const GR_TABS = [['me', 'Your guide'], ['where', 'Where'], ['studies', 'Studies']];
 // Her own guide (25 Nov 2026): city or village, asked the first time she opens Ground, and a winter version in the cold months.
 // The cold months follow her hemisphere; near the equator it is never cold enough to change anything.
 function groundCold(d = new Date()) {
@@ -615,37 +606,74 @@ function groundAsk() {
     <b class="grq-q" id="grq-q">Where do you live?</b><small class="grq-s">So your grounding fits your life.</small>
     <div class="grq2-o">${GROUND_PLACES.map(([k, t, s], i) => `<button class="grq2-b grq-o" style="--i:${i}" data-action="grPlace" data-v="${k}"><span class="grq2-ph"><img src="images/ground/q-${k}.webp" alt="" decoding="async"></span><b>${t}</b><small>${s}</small></button>`).join('')}</div></section>`;
 }
-function groundGuide() {
-  const pl = state.profile.groundPlace, G = GROUND_GUIDE[pl];
-  if (!G) return groundAsk();
-  const info = M.info, cold = groundCold(), W = GROUND_WINTER, P = GROUND_PLACES.find(x => x[0] === pl);
-  const warmOnly = info && (info.isPeriod || (info.daysToPeriod <= 3 && !info.isPeriod));
-  return `<section class="card ul3-keep grg">
-    <div class="grg-top"><span class="grg-pl"><i aria-hidden="true">${P[3]}</i>${P[1]}</span><button class="grg-ch" data-action="grPlace" data-v="">Change</button></div>
-    <h3>${G.t}</h3><p class="gr2-sub">${G.lead}</p>
-    ${cold ? `<div class="grg-w"><b class="grg-wt"><i aria-hidden="true">❄️</i>${W.t}</b><p>${W.lead}</p>
-      <ul class="grg-wr">${W.rules.map(([e, t, x]) => `<li><span aria-hidden="true">${e}</span><b>${t}</b><small>${x}</small></li>`).join('')}</ul>
-      ${warmOnly ? `<p class="grg-pd">${icon('heart', 13)} ${W.period}</p>` : ''}</div>` : ''}
-    <div class="grg-l">${G.spots.map(([e, n, how, min, more, cHow, cMin], i) => { const h = cold && cHow ? cHow : how, m = cold && cMin ? cMin : min;
-      return `<details class="grg-r" style="--i:${i}"><summary class="ul3-r"><span class="ul3-ic grg-e" aria-hidden="true">${e}</span><span><b>${n}</b><small>${h}</small></span><span class="grg-m"><b class="dotnum">${m}</b><small>min</small></span></summary><p>${more}</p></details>`; }).join('')}</div>
-    <ul class="grg-tips">${G.tips.map(t => `<li>${t}</li>`).join('')}</ul>
-    ${cold ? `<p class="grg-care">${W.care}</p>` : ''}
-  </section>`;
+// Ground (25 Nov 2026, simpler): the photo with her one question, then what it does for her (with the X),
+// then every way to ground as a picture card. The detail only opens when she taps.
+function grWarm() { const i = M.info; return !!i && (i.isPeriod || i.daysToPeriod <= 3); }
+function grBestKey() { const i = M.info; return !i ? '' : grWarm() ? GROUND_BEST.late : GROUND_BEST[i.phase] || ''; }
+const GRW_ORDER = { city: ['tree', 'grass', 'water', 'path', 'mat', 'lie', 'soil'], village: ['grass', 'soil', 'path', 'lie', 'tree', 'water', 'mat'] };
+function grWayList() {
+  const pl = state.profile.groundPlace, best = grBestKey(), o = GRW_ORDER[pl], warm = grWarm();
+  const rank = w => (w[0] === best ? -10 : 0) + (warm && !w[11] ? 10 : 0) + (o ? o.indexOf(w[0]) : GROUND_WAYS.indexOf(w));
+  return GROUND_WAYS.slice().sort((a, b) => rank(a) - rank(b));
 }
-function groundPanel(tab) {
-  if (tab === 'me') return groundGuide();
-  if (tab === 'where') return `<section class="card ul3-keep gr2-where"><h3>Where to stand</h3><p class="gr2-sub">How well each surface connects you to the earth.</p>
-    ${GROUND_WHERE.map(([n, v, t], i) => `<div class="ul3-r gr2-w ${v ? '' : 'no'}" style="--i:${i}"><span class="ul3-ic gr2-pic"><img src="images/ground/${GROUND_PIC[i]}.webp" alt="" loading="lazy"></span><span><b>${n}</b><small>${t}</small></span>
-      ${v ? `<span class="gw-d" role="img" aria-label="Connects ${v} of 3">${[1, 2, 3].map(j => `<i class="${j <= v ? 'on' : ''}"></i>`).join('')}</span>` : `<span class="o3-x gr2-no" role="img" aria-label="Blocks it">${O3_X}</span>`}</div>`).join('')}</section>`;
-  if (tab === 'studies') return `<p class="gr2-lead">Five small studies, ${GROUND_STUDIES[0][1]} to ${GROUND_STUDIES[GROUND_STUDIES.length - 1][1]}. Tap one for the chart.</p>
+function groundWays() {
+  const pl = state.profile.groundPlace, P = GROUND_PLACES.find(x => x[0] === pl), best = grBestKey(), cold = groundCold(), warm = grWarm();
+  return `${sectionTitle('Ways to ground')}
+    ${P || cold ? `<div class="grw-top">${P ? `<span class="grg-pl"><i aria-hidden="true">${P[3]}</i>${P[1]}</span><button class="grg-ch" data-action="grPlace" data-v="">Change</button>` : ''}
+      ${cold ? `<button class="grw-cold" data-action="grCold"><i aria-hidden="true">❄️</i>Cold out? ${icon('chevR', 12)}</button>` : ''}</div>` : ''}
+    <div class="grw">${grWayList().map(([k, img, t, min, line, , , , , cHow, cMin, warmOk], i) => {
+      const m = cold && cMin ? cMin : min, tag = k === best ? 'Best today' : warm && !warmOk ? 'After your period' : '';
+      return `<button class="grw-c${warm && !warmOk ? ' later' : ''}" style="--i:${i}" data-action="grWay" data-v="${k}">
+        <span class="grw-ph"><img src="images/ground/${img}.webp" alt="" loading="lazy" decoding="async">${tag ? `<em class="grw-tag${k === best ? ' best' : ''}">${tag}</em>` : ''}
+          <span class="grw-m"><b class="dotnum">${m}</b> min</span></span>
+        <b class="grw-t">${t}</b><small>${line}</small></button>`; }).join('')}</div>`;
+}
+function grWayOpen(k) {
+  const w = GROUND_WAYS.find(x => x[0] === k); if (!w) return;
+  const [, img, t, min, , steps, why, city, village, cHow, cMin, warmOk] = w;
+  const pl = state.profile.groundPlace, cold = groundCold(), warm = grWarm(), best = grBestKey() === k;
+  const where = pl === 'city' ? [['In the city', city]] : pl === 'village' ? [['In the village', village]] : [['In the city', city], ['In the village', village]];
+  wsOpen(`<div class="grw-sh">
+    <figure class="grw-hero"><img src="images/ground/${img}.webp" alt="" decoding="async">${best ? '<em class="grw-tag best">Best today</em>' : ''}</figure>
+    <h3>${t}</h3>
+    <p class="grw-meta"><span><b class="dotnum">${cold && cMin ? cMin : min}</b> min</span></p>
+    <ol class="grw-st">${steps.map((s, i) => `<li><b class="dotnum">${i + 1}</b><span>${s}</span></li>`).join('')}</ol>
+    <details class="grw-why"><summary>Why it helps ${icon('chevD', 13)}</summary><p>${why}</p>
+      ${where.map(([h, x]) => `<p class="grw-pl"><b>${h}</b>${x}</p>`).join('')}</details>
+    ${cold && cHow ? `<p class="grw-note"><i aria-hidden="true">❄️</i><span><b>When it is cold</b><span>${cHow}</span> <em class="grw-cm"><b class="dotnum">${cMin}</b> min</em></span></p>` : ''}
+    ${warm ? `<p class="grw-note pk"><i aria-hidden="true">🌸</i><span><b>Your period is close</b>${warmOk ? 'Warm, dry ground only, and socks on straight after.' : 'Hands only for now, and keep your feet warm.'}</span></p>` : ''}
+  </div>`, 'grw-ws');
+}
+function grInfoOpen(v) {
+  if (v === 'studies') {
+    wsOpen(`<div class="grw-sh grw-info"><h3>The studies</h3><p class="gr2-lead">Five small studies, ${GROUND_STUDIES[0][1]} to ${GROUND_STUDIES[GROUND_STUDIES.length - 1][1]}. Tap one for the chart.</p>
     <section class="grs" style="--pc:${PH_HEX[(M.info || {}).phase] || '#6c823e'}">
       ${GROUND_STUDIES.map(([a, y, j, f, d, n, t], i) => `<details class="grs-r"><summary><b class="dotnum grs-y">${y}</b><span class="grs-t"><b>${f}</b>
         <span class="grs-p" aria-label="${n ? `${n} people` : 'A review'}">${n ? `<i class="grs-dots">${'<i></i>'.repeat(n)}</i><small><em class="grs-a">${a.split(/[ ,&]/)[0]}</em> · ${n} people · ${t}</small>` : `<small><em class="grs-a">${a.split(/[ ,&]/)[0]}</em> · reviews the earlier work</small>`}</span></span>${icon('chevD', 15)}</summary>
         <div class="grs-d"><figure class="msd-g">${groundArt(i)}</figure><p>${d}</p><small><b>${a}</b> · ${j}</small></div></details>`).join('')}
       <dl class="grs-care"><div><dt>${icon('heart', 14)} How to read it</dt><dd>Small studies: a calm habit, not a treatment</dd></div>
         <div><dt>${icon('bolt', 14)} Outdoors</dt><dd>Never in a thunderstorm</dd></div><div><dt>${icon('home', 14)} Indoor mats</dt><dd>Only properly wired and tested ones</dd></div></dl>
-    </section>`;
-  return groundGuide();
+    </section></div>`, 'grw-ws');
+    const s = document.querySelector('.grw-ws'); s && decorateStudies?.(s); return;
+  }
+  if (v === 'cold') {
+    const W = GROUND_WINTER;
+    return wsOpen(`<div class="grw-sh grw-info"><h3>${W.t}</h3><p class="gr2-sub">${W.lead}</p>
+      <ul class="grg-wr">${W.rules.map(([e, t, x]) => `<li><span aria-hidden="true">${e}</span><b>${t}</b><small>${x}</small></li>`).join('')}</ul>
+      ${grWarm() ? `<p class="grg-pd">${icon('heart', 13)} ${W.period}</p>` : ''}<p class="grg-care">${W.care}</p></div>`, 'grw-ws');
+  }
+  wsOpen(`<div class="grw-sh grw-info"><h3>How it works</h3>
+    <ol class="grhw-s">
+      <li><b class="dotnum">1</b><span><b>The earth</b><small>The ground holds a soft natural charge, full of free electrons.</small></span></li>
+      <li><b class="dotnum">2</b><span><b>Your skin</b><small>Bare feet or hands on grass, sand, soil or water let it flow in. Shoes and plastic block it.</small></span></li>
+      <li><b class="dotnum">3</b><span><b>You</b><small>Small studies link it to calmer stress, deeper sleep and less soreness.</small></span></li>
+    </ol>
+    <b class="grw-sub">Where it works best</b>
+    <ul class="grw-surf">${GROUND_WHERE.map(([n, c]) => `<li class="${c ? '' : 'no'}"><span>${n}</span>${c ? `<i class="gw-d" role="img" aria-label="Connects ${c} of 3">${[1, 2, 3].map(j => `<i class="${j <= c ? 'on' : ''}"></i>`).join('')}</i>` : `<small>blocks it</small>`}</li>`).join('')}</ul>
+    <details class="grhw-more"><summary>The longer version ${icon('chevD', 13)}</summary>
+      <p>Your body runs on tiny electrical signals: your heart, your nerves, every muscle. Modern life keeps you insulated, with rubber soles, high floors and little time outside.</p>
+      <p>Grounding, also called earthing, simply reconnects you. Researchers think the earth’s free electrons may calm inflammation and help your nervous system shift from stress into rest. That is why many women feel steadier and sleep better.</p>
+      <p>The studies are small, so treat it as a calm daily habit, not a treatment. Never ground outdoors in a thunderstorm.</p></details></div>`, 'grw-ws');
 }
 // Answering the question walks her into the window: the photo zooms into the forest,
 // then the page glides down to her methods and the photo quietly settles back behind her.
@@ -670,7 +698,7 @@ function groundEnter(hero, img, done) {
   hero.querySelectorAll('.grq, .grh-t').forEach((el, i) => el.animate([{ opacity: 1, filter: 'blur(0)', transform: 'none' }, { opacity: 0, filter: 'blur(10px)', transform: `translateY(${i ? -14 : 18}px) scale(.98)` }], { ...fade, delay: 380 + i * 60 }));
   setTimeout(() => {
     done(); ui.grEnter = true; render(); ui.grEnter = false;
-    const h2 = document.querySelector('#view .grh'), i2 = h2 && h2.querySelector(':scope > img'), seg = document.querySelector('#view .grhw') || document.querySelector('#view .gr2-seg');
+    const h2 = document.querySelector('#view .grh'), i2 = h2 && h2.querySelector(':scope > img'), seg = document.querySelector('#view .grhw, #view .grhw-back');
     if (!h2 || !i2) return;
     i2.getAnimations().forEach(a => a.cancel()); h2.querySelectorAll('.grh-t').forEach(e => e.getAnimations().forEach(a => a.cancel()));
     i2.style.transformOrigin = Z.o;
@@ -679,62 +707,33 @@ function groundEnter(hero, img, done) {
     grGlide(top, 1400).then(() => { hold.cancel(); i2.animate([{ transform: Z.t }, { transform: 'none' }], { duration: 900, easing: GR_EASE }); h2.classList.add('gr-back'); });
   }, 1450);
 }
-// How grounding works: one picture, three short lines, the long version behind a tap. She can close it with the X.
+// What grounding does for her: one picture, four benefit tiles, the how and the studies behind a tap. She can close it with the X.
 function groundHow() {
-  if (state.profile.grHowOff) return `<button class="grhw-back" data-action="grHow" data-v="on">${icon('leaf', 14)} How grounding works</button>`;
+  if (state.profile.grHowOff) return `<button class="grhw-back" data-action="grHow" data-v="on">${icon('leaf', 14)} Why ground</button>`;
   const flow = (d, i) => `<path class="grhw-f" style="--d:${(i * .37) % 1.6}s" d="${d}"/>`;
   const lines = ['M8 100C12 92 18 84 20 72S22 46 21 22', 'M24 100C25 92 26 84 26 72S26 46 26 18', 'M42 100C40 92 34 84 31 72S31 46 31 24',
     'M62 100C66 92 70 84 72 72S73 46 73 22', 'M80 100C80 92 79 84 78 72S78 46 78 18', 'M98 100C95 92 88 84 84 72S84 46 83 24'];
-  return `<section class="card grhw" aria-labelledby="grhw-t">
-    <button class="grhw-x" data-action="grHow" data-v="off" aria-label="Hide how it works">${icon('close', 16, 2)}</button>
-    <small class="ul4-eye">How it works</small>
-    <h3 id="grhw-t">Why bare feet help</h3>
+  return `<section class="card grhw grb" aria-labelledby="grhw-t">
+    <button class="grhw-x" data-action="grHow" data-v="off" aria-label="Hide why ground">${icon('close', 16, 2)}</button>
+    <small class="ul4-eye">Why ground</small>
+    <h3 id="grhw-t">What it does for you</h3>
     <figure class="grhw-g"><img src="images/ground/how-feet.webp" alt="Bare feet standing on a city lawn" loading="lazy" decoding="async">
       <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines.map(flow).join('')}</svg>
       <figcaption><span class="grhw-c up">The earth’s charge rises</span><span class="grhw-c">You feel calmer</span></figcaption></figure>
-    <ol class="grhw-s">
-      <li><b class="dotnum">1</b><span><b>The earth</b><small>The ground holds a soft natural charge, full of free electrons.</small></span></li>
-      <li><b class="dotnum">2</b><span><b>Your skin</b><small>Bare feet or hands on grass, sand, soil or water let it flow in. Shoes and plastic block it.</small></span></li>
-      <li><b class="dotnum">3</b><span><b>You</b><small>Small studies link it to calmer stress, deeper sleep and less soreness.</small></span></li>
-    </ol>
-    <details class="grhw-more"><summary>The longer version ${icon('chevD', 13)}</summary>
-      <p>Your body runs on tiny electrical signals: your heart, your nerves, every muscle. Modern life keeps you insulated, with rubber soles, high floors and little time outside.</p>
-      <p>Grounding, also called earthing, simply reconnects you. Researchers think the earth’s free electrons may calm inflammation and help your nervous system shift from stress into rest. That is why many women feel steadier and sleep better.</p>
-      <p>The studies are small, so treat it as a calm daily habit, not a treatment. Never ground outdoors in a thunderstorm.</p></details>
+    <ul class="grb-g">${GROUND_GOOD.map(([e, t, x], i) => `<li style="--i:${i}"><span aria-hidden="true">${e}</span><b>${t}</b><small>${x}</small></li>`).join('')}</ul>
+    <div class="grb-l"><button data-action="grInfo" data-v="how">How it works ${icon('chevR', 12)}</button><button data-action="grInfo" data-v="studies">The studies ${icon('chevR', 12)}</button></div>
   </section>`;
 }
 function viewGround() {
-  const info = M.info, ph = info && info.phase, P = ph && GROUND_PHASE[ph];
-  const late = info && info.daysToPeriod <= 3 && !info.isPeriod, d = P ? P.d : GROUND_NOW, warm = ph === 'menstrual' || late;
-  const ask = !GROUND_GUIDE[state.profile.groundPlace], tabs = ask ? GR_TABS.slice(1) : GR_TABS, tab = tabs.some(t => t[0] === ui.grTab) ? ui.grTab : tabs[0][0];
-  const swirl = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';
-  const mins = (d[1].match(/(\d+) minutes/) || [])[1];
-  const rules = [[O3_TICK, 'Bare skin', 'ok'], [O3_TICK, 'Phone away', 'ok'], [O3_X, 'No storms', '']];
+  const ask = !GROUND_GUIDE[state.profile.groundPlace];
   return `<section class="grh${ui.grEnter ? ' gr-in' : ''}">${topbar('', { back: true })}
     <img src="images/ground-hero.webp" alt="A quiet wooden room open to a sunlit forest, one person sitting on a cushion" fetchpriority="high" decoding="async">
     <h1 class="grh-t">Ground yourself.</h1>
     ${ask ? groundAsk() : ''}
   </section>
-  <div class="pad ul3 ul4 gr2${ui.grEnter ? ' gr-in' : ''}">
-    <div class="ul4-stage gr2-stage">
-      <svg class="ul4-sp" viewBox="0 0 360 250" aria-hidden="true">${o3Spark('#f1d58a', 30, 30, 0)}${o3Spark('#fff', 330, 40, 1.1)}${o3Spark('#c9d6a8', 338, 222, 2)}${o3Spark('#f6c6d4', 20, 214, 1.6)}<circle class="o3-sp" style="--d:.6s" cx="296" cy="8" r="2.4" fill="#fff"/><circle class="o3-sp" style="--d:1.8s" cx="52" cy="240" r="2" fill="#fff"/></svg>
-      <figure class="gr2-pol"><img src="images/ground/palms-bark.webp" alt="Two hands resting flat on the bark of a redwood in a misty forest" decoding="async"><figcaption>palms on the bark</figcaption></figure>
-      <span class="gr2-min"><b class="dotnum">15</b><small>min a day</small></span>
-    </div>
-    <section class="o3-note ul3-note ul4-note gr2-note">
-      <small class="ul4-eye">Your ground today</small>
-      <h2 class="ul4-h">${P ? `Today,<br><em>${P.t.toLowerCase()}${swirl}</em>` : `Shoes off,<br><em>feet down${swirl}</em>`}</h2>
-      <p class="o3-lead">${P ? `${d[0]}${mins ? ` for <mark>${mins} minutes</mark>` : ''}.` : 'Grass, sand or soil for <mark>10 to 20 minutes</mark>.'}</p>
-      ${P ? `<div class="gr2-spot"><img src="images/ground/${GROUND_SPOT[ph][0]}.webp" alt="" loading="lazy"><span><b>${GROUND_SPOT[ph][1]}</b><small>${({ Morning: 'Best in the morning', Midday: 'Best at midday', Evening: 'Best in the evening' })[d[3]] || `Best ${d[3].toLowerCase()}`}</small></span>${saveBtn(regTip(`ground-${ph}`, `Grounding · ${PHASES[ph].name}`, d, 'ground'))}</div>` : ''}
-      <div class="sgx-st"><b>How</b><ol class="gr2-ol"><li>${d[1].replace(/^\d+ minutes (\w)/, (m, c) => c.toUpperCase())}</li><li>${d[2]}</li></ol></div>
-      ${P ? `<details class="gr2-why"><summary>Why in this phase ${icon('chevD', 13)}</summary><p>${P.why}</p></details>` : ''}
-      <button class="ul3-cta" data-action="grGo">See all the ways to ground</button>
-      <p class="o3-sign">the earth has you <i>♡</i></p>
-    </section>
-    <ul class="ul3-no gr2-rules">${rules.map(([ic, t, c], i) => `<li style="--r:${[-2, 1.5, -1][i]}deg"><span class="o3-x ${c}">${ic}</span>${t}</li>`).join('')}</ul>
+  <div class="pad ul3 ul4 gr2 gr3${ui.grEnter ? ' gr-in' : ''}">
     ${groundHow()}
-    <div class="seg gr2-seg" role="tablist" aria-label="Grounding">${tabs.map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" role="tab" aria-selected="${tab === k}" data-action="grTab" data-v="${k}">${l}</button>`).join('')}</div>
-    <div class="gr2-panel" role="tabpanel">${groundPanel(tab)}</div>
+    ${groundWays()}
   </div>`;
 }
 // Ideas she can save straight from this page: today's tip for each of her focus areas first, then the rest.
@@ -12427,25 +12426,21 @@ const actions = {
     buzz?.('tick'); card.style.height = card.offsetHeight + 'px'; card.getBoundingClientRect();
     card.classList.add('out'); card.style.height = '0px';
     setTimeout(go, 560); },
-  grTab: d => { ui.grTab = d.v; const pn = document.querySelector('#view .gr2-panel'); if (!pn) return render();
-    document.querySelectorAll('#view .gr2-seg button').forEach(b => { const on = b.dataset.v === d.v; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
-    pn.innerHTML = groundPanel(d.v); pn.classList.remove('sw'); void pn.offsetWidth; pn.classList.add('sw'); decorateStudies?.(pn); },
+  grWay: d => grWayOpen(d.v),
+  grInfo: d => grInfoOpen(d.v),
+  grCold: () => grInfoOpen('cold'),
   grPlace: d => { const v = GROUND_GUIDE[d.v] ? d.v : undefined, first = !state.profile.groundPlace;
     buzz('tick');
     if (!v) { state.profile.groundPlace = v; save(); render(); const q = document.querySelector('#view .grq'); q && q.scrollIntoView({ block: 'center' }); return; }
     const q = document.querySelector('#view .grq'); q && q.classList.add('has-pick');
     document.querySelectorAll('#view .grq-o').forEach(b => b.classList.toggle('picked', b.dataset.v === v));
     const hero = document.querySelector('#view .grh'), img = hero && hero.querySelector(':scope > img');
-    const done = () => { state.profile.groundPlace = v; save(); ui.grTab = 'me'; };
+    const done = () => { state.profile.groundPlace = v; save(); };
     if (!first || !hero || !img || matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      return setTimeout(() => { done(); render(); const seg = document.querySelector('#view .gr2-seg'); first && seg && seg.scrollIntoView({ block: 'start' }); }, 320);
+      return setTimeout(() => { done(); render(); const seg = document.querySelector('#view .grw-top, #view .grw'); first && seg && seg.scrollIntoView({ block: 'start' }); }, 320);
     }
     groundEnter(hero, img, done);
   },
-  grGo: () => { const smooth = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
-    if (!GROUND_GUIDE[state.profile.groundPlace]) { const q = document.querySelector('#view .grq'); q && q.scrollIntoView({ behavior: smooth, block: 'center' }); return; }
-    const go = () => { const t = document.querySelector('#view .gr2-seg'); t && t.scrollIntoView({ behavior: smooth, block: 'start' }); };
-    if (ui.grTab !== 'me') { actions.grTab({ v: 'me' }); setTimeout(go, 60); } else go(); },
   bzClose: () => bzClose(),
   bzPhase: d => bzOpen(d.v),
   cyFact: d => { const j = +d.v; ui.cyFact = ui.cyFact === j ? null : j; render(); },

@@ -18408,3 +18408,65 @@ html .ls-card.lsw.fr { border-top-color: rgba(214,180,80,.35); background:
 
 /* 25 Nov 2026: the "Her" step is gone, so the line from step 01 only runs down to "Him" */
 .sy-flow:not([data-who="m"]) .sy-st::before { display: none; }
+
+/* Ground, simpler (25 Nov 2026): why ground (benefit tiles, the X), then every way to ground as a picture card; detail in a sheet */
+.gr3 .grb-g { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.gr3 .grb-g li { display: grid; align-content: start; gap: 3px; padding: 12px 12px 13px; border-radius: 18px; background: #f8f4f1; box-shadow: inset 0 0 0 1px rgba(48,64,35,.05); }
+.gr3 .grb-g li > span { font-size: 20px; line-height: 1; margin-bottom: 5px; }
+.gr3 .grb-g b { font: 500 14px/1.2 var(--font); color: #20301a; }
+.gr3 .grb-g small { font: 400 12px/1.35 var(--font); color: #5d6b52; }
+.gr3 .grb-l { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.gr3 .grb-l button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; border: 0; border-radius: 99px; background: #fff;
+  box-shadow: 0 0 0 1px rgba(48,64,35,.12); font: 500 13.5px/1 var(--font); color: #304023; cursor: pointer; }
+.gr3 .grb-l button:active { transform: scale(.97); }
+.gr3 .grhw-g { margin-top: 12px; }
+.gr3 > .section-title { margin-top: 26px; }
+.grw-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 12px; }
+.grw-top .grg-pl { background: rgba(255,255,255,.88); box-shadow: 0 0 0 1px rgba(48,64,35,.08); }
+.grw-top .grg-ch { color: #fff; text-shadow: 0 1px 6px rgba(32,48,26,.35); }
+.grw-cold { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 0 12px; border: 0; border-radius: 99px;
+  background: rgba(255,255,255,.88); box-shadow: 0 0 0 1px rgba(48,64,35,.08); font: 500 13px/1 var(--font); color: #304023; cursor: pointer; }
+.grw { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grw-c { display: grid; align-content: start; gap: 3px; padding: 7px 7px 14px; border: 0; border-radius: 26px; text-align: left; cursor: pointer;
+  background: rgba(255,255,255,.92); box-shadow: 0 10px 26px rgba(48,64,35,.09), 0 0 0 1px rgba(255,255,255,.7) inset;
+  animation: rise .7s cubic-bezier(.22,1,.36,1) both; animation-delay: calc(var(--i) * .05s); transition: transform .25s ease; }
+.grw-c:active { transform: scale(.97); }
+.grw-ph { position: relative; display: block; aspect-ratio: 1 / 1.05; border-radius: 20px; overflow: hidden; margin-bottom: 8px; background: #eef0e6; }
+.grw-ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.grw-c b.grw-t { padding: 0 7px; font: 500 15px/1.2 var(--font); color: #20301a; }
+.grw-c > small { padding: 0 7px; font: 400 12.5px/1.3 var(--font); color: #5d6b52; }
+.grw-tag { position: absolute; left: 8px; top: 8px; padding: 5px 9px; border-radius: 99px; font: 500 11px/1 var(--font); font-style: normal;
+  background: rgba(255,255,255,.9); color: #304023; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.grw-tag.best { background: #6c823e; color: #fff; }
+.grw-m { position: absolute; right: 8px; bottom: 8px; display: inline-flex; align-items: baseline; gap: 3px; padding: 5px 9px; border-radius: 99px;
+  background: rgba(255,255,255,.9); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); font: 500 11px/1 var(--font); color: #304023; }
+.grw-m b { font-size: 13px; }
+.grw-c.later .grw-ph img { filter: saturate(.7) brightness(1.04); }
+/* the sheet */
+.grw-sh h3 { margin: 16px 0 6px; font: 600 24px/1.15 var(--font); letter-spacing: -.02em; color: #20301a; }
+.grw-info h3 { margin-top: 4px; }
+.grw-hero { position: relative; margin: 0; aspect-ratio: 4 / 3; border-radius: 26px; overflow: hidden; background: #eef0e6; }
+.grw-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.grw-meta { margin: 0; } .grw-meta span { display: inline-flex; align-items: baseline; gap: 4px; padding: 6px 12px; border-radius: 99px; background: #f2f5ea; font: 500 13px/1 var(--font); color: #4f6a2a; }
+.grw-meta b { font-size: 15px; }
+.grw-st { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 10px; }
+.grw-st li { display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: center; font: 400 15px/1.4 var(--font); color: #20301a; }
+.grw-st li > b { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #eef2e3; color: #304023; font-size: 14px; }
+.grw-why { margin-top: 16px; border-top: 1px solid rgba(32,48,26,.08); }
+.grw-why summary { list-style: none; display: flex; align-items: center; gap: 6px; padding: 14px 0 6px; font: 500 14px/1 var(--font); color: #4f6a2a; cursor: pointer; }
+.grw-why summary::-webkit-details-marker { display: none; }
+.grw-why[open] summary svg { transform: rotate(180deg); }
+.grw-why p { margin: 6px 0 0; font: 400 14px/1.5 var(--font); color: #3a4730; }
+.grw-pl b { display: block; font-weight: 600; color: #20301a; }
+.grw-note { display: flex; gap: 10px; align-items: flex-start; margin: 12px 0 0; padding: 12px 14px; border-radius: 18px; background: #f2f5ea; font: 400 13.5px/1.45 var(--font); color: #3a4730; }
+.grw-note.pk { background: #fbeef2; }
+.grw-note i { font-style: normal; font-size: 17px; line-height: 1.2; }
+.grw-note b { display: block; font-weight: 600; color: #20301a; }
+.grw-sub { display: block; margin: 20px 0 8px; font: 600 15px/1.2 var(--font); color: #20301a; }
+.grw-surf { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.grw-surf li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; border-radius: 14px; background: #f8f4f1; font: 400 14px/1.3 var(--font); color: #20301a; }
+.grw-surf li.no { color: #7a8471; } .grw-surf small { font: 400 12px/1 var(--font); color: #9a6f7d; }
+.grw-surf .gw-d i { background: #e6e9dc; } .grw-surf .gw-d i.on { background: #6c823e; }
+.grw-info .grs { box-shadow: none; padding: 0; } .grw-info .gr2-lead { color: #5d6b52; margin: 0 0 6px; }
+@media (prefers-reduced-motion: reduce) { .grw-c { animation: none; transition: none; } }
+.grw-note .grw-cm { display: inline-flex; align-items: baseline; gap: 3px; margin-top: 4px; font-style: normal; font-weight: 500; color: #4f6a2a; } .grw-note .grw-cm b { display: inline; font-size: 14px; color: #4f6a2a; }

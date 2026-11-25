@@ -95,3 +95,60 @@ export const GROUND_WINTER = {
   period: 'On your period and the 3 days before it: hands only, and keep your feet warm.',
   care: 'Skip cold bare feet if you have Raynaud’s, diabetes or numb feet, and never stand on snow or ice.',
 };
+
+// What grounding does for her (25 Nov 2026): four tiles first, the how and the studies behind a tap.
+// [emoji, benefit, one short line]
+export const GROUND_GOOD = [
+  ['😌', 'Calmer stress', 'Night cortisol evens out'],
+  ['🌙', 'Deeper sleep', 'Fewer wake-ups'],
+  ['🌿', 'Less soreness', 'Muscles recover sooner'],
+  ['☀️', 'Lighter mood', 'After just an hour'],
+];
+// Every way to ground, as picture cards (25 Nov 2026). [key, photo, title, minutes, short line, steps, why, city, village,
+// cold how, cold minutes, warm-safe on the period]. Feet in water or on cold wet ground never on the period or the 3 days before it.
+export const GROUND_WAYS = [
+  ['grass', 'w-grass', 'Barefoot on grass', 15, 'Morning grass, soles down',
+    ['Shoes and socks off in the middle of the lawn', 'Stand still or walk slowly, phone away', 'Feel your soles and breathe out long'],
+    'Dewy grass is one of the best spots there is. Go out after sunrise and face the light: it also sets your body clock.',
+    'A park lawn away from the paths. Pick the same spot at lunch, check for glass and rinse your feet after.',
+    'Your garden or a meadow, still a little wet with dew.',
+    'Dry grass at midday, then socks straight back on', 5, true],
+  ['tree', 'palms-bark', 'Palms on a tree', 5, 'Both hands on the bark',
+    ['Find an old tree and rest both palms flat on the bark', 'Take ten slow breaths', 'Then sit with your back against it'],
+    'Hands ground you too, and your feet stay warm. It is the gentlest way, on cold days and on your period.',
+    'Most street trees stand in a small square of open earth. Rest a hand on one on your way home.',
+    'An old tree near home becomes your spot.',
+    '', 0, true],
+  ['water', 'w-shore', 'Walk the water line', 20, 'Wet sand connects best',
+    ['Walk barefoot where the water reaches the sand', 'Let the small waves wash over your feet', 'Slow steps, eyes on the horizon'],
+    'Wet sand and water connect you best of all. Around ovulation you run warmer, so the cool water feels good.',
+    'Many cities grew up by water. Find a small beach or a stony bank of the river or lake.',
+    'A stream or pond: feet in at the edge, or hands in the water.',
+    'Hands on a wet stone at the edge, no paddling', 3, false],
+  ['soil', 'w-soil', 'Hands in the soil', 10, 'Plant, weed or just press',
+    ['Gloves off for the soft jobs', 'Press both palms into the soil', 'Name one thing you want to grow'],
+    'Bare hands in real soil ground you, and the slow work outside calms you down.',
+    'Allotments and community gardens often welcome visitors. On busy days, a big pot of garden soil still calms you, though it does not ground you the same way.',
+    'Garden work with bare hands: weeding, planting, digging.',
+    'Turn the compost or cut winter herbs, gloves off for a few minutes', 5, true],
+  ['path', 'w-path', 'A barefoot walk', 15, 'Moss and forest floor',
+    ['Pick a soft path: moss, earth, forest floor', 'Walk slowly and look where you step', 'Feel each step from heel to toes'],
+    'Walking adds gentle movement to the calm. Soft ground under trees feels lovely and stays milder in the cold.',
+    'A botanical garden, churchyard or the edge of a city forest.',
+    'Field paths and the forest floor right outside.',
+    'Under big trees the soil stays softer, shoes back on after', 5, true],
+  ['lie', 'w-lying', 'Lie on the earth', 15, 'Arms open, whole back down',
+    ['Lie on your back on dry grass, arms open', 'Let your whole weight sink into the ground', 'Breathe slowly into your belly'],
+    'The most skin on the earth at once. Lovely in the evening of your luteal phase, when you want to land before sleep.',
+    'A quiet corner of a park lawn on a dry, warm day.',
+    'Your garden or a meadow on a dry afternoon.',
+    '', 0, true],
+  ['mat', 'w-mat', 'A grounding mat', 30, 'At home, at your desk',
+    ['Plug the mat into a properly earthed socket', 'Rest your bare feet on it while you read or work', 'Unplug it in a thunderstorm'],
+    'An indoor mat connects to the earth wire of a socket. Use one only if the socket is properly earthed and the mat is tested.',
+    'The easy way for city days when you cannot get out.',
+    'For rainy days and dark evenings.',
+    '', 0, true],
+];
+// Her phase's pick, shown first with a Best today tag. The last 3 days before the period count as the period.
+export const GROUND_BEST = { menstrual: 'tree', follicular: 'grass', ovulatory: 'water', luteal: 'lie', late: 'tree' };
