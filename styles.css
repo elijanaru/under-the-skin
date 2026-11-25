@@ -18402,3 +18402,6 @@ html .ls-card.lsw.fr { border-top-color: rgba(214,180,80,.35); background:
   background: radial-gradient(60% 70% at 25% 100%, rgba(255,240,190,.32), transparent 70%), radial-gradient(60% 70% at 78% 100%, rgba(255,240,190,.32), transparent 70%); }
 .grhw-f { stroke-dasharray: .01 24; stroke-width: 4.5px; }
 @media (prefers-reduced-motion: no-preference) { .grhw-f { animation: grhwFlow3 3s linear infinite; animation-delay: calc(var(--d) * -1); } @keyframes grhwFlow3 { to { stroke-dashoffset: -72.03; } } }
+/* battery saver hides the 3D cups and dishes: their photos stay (25 Nov, the picture went blank) */
+.saver .cup3d-w img, .saver .cup3d-w.tg-ready img { opacity: 1 !important; }
+.saver .tg-3d > img { display: block !important; }

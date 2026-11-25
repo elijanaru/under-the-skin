@@ -13128,7 +13128,7 @@ function mountFigures() {
   document.querySelectorAll('canvas.teacup3d').forEach(c => {
     const hero = c.closest('.tg-hero, .cup3d-w'), fail = () => { hero?.classList.remove('tg-3d', 'tg-ready'); c.remove(); };
     const start = () => import('./teacup3d.js').then(m => {
-      if (!c.isConnected) return; if (!m.webglOK()) throw new Error('no webgl');
+      if (!c.isConnected) return; if (document.documentElement.classList.contains('saver')) return fail(); // low battery: the photo, no 3D if (!m.webglOK()) throw new Error('no webgl');
       unmountFigs.push(m.mountTeaCup(c, { model: c.dataset.model || undefined, elev: c.dataset.elev ? +c.dataset.elev : undefined, fit: c.dataset.fit ? +c.dataset.fit : undefined, steam: c.dataset.steam !== '0', shadow: c.dataset.shadow !== '0', onReady: () => hero?.classList.add('tg-ready'), onFail: fail }));
     }).catch(fail);
     const idle = f => (window.requestIdleCallback ? requestIdleCallback(f, { timeout: 1500 }) : setTimeout(f, 300));
