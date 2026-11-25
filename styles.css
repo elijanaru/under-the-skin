@@ -17124,7 +17124,7 @@ html .spec.stack .spec-media.m-art .pt-hero > svg.pt-art { position: static; ins
 
 /* Calendar, tapped day: one quiet line on warm days (the period and the 3 days before it), 17 Nov 2026 */
 html .cdl .cdl-warm { grid-column: 1 / -1; flex-basis: 100%; display: flex; align-items: center; gap: 7px; margin: 10px 0 0; padding: 9px 12px; border-radius: 14px;
-  background: hsl(calc(var(--hb) + 30 * var(--hk)) calc(70% * var(--hs)) 94%); font: 500 12.5px/1.35 var(--font); color: #20301a; white-space: nowrap; }
+  background: hsl(calc(var(--hb) + 30 * var(--hk)) calc(70% * var(--hs)) 94%); font: 500 12.5px/1.35 var(--font); color: #20301a; white-space: normal; word-break: keep-all; overflow-wrap: anywhere; }
 html .cdl .cdl-warm svg { flex: none; color: hsl(calc(var(--hb) + 30 * var(--hk)) calc(75% * var(--hs)) 30%); stroke-width: 2.2; }
 
 /* Herb sheets: when in the cycle as small named phase chips above the line (17 Nov 2026) */
