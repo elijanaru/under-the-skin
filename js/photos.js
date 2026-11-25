@@ -819,7 +819,7 @@ export const TEA_PHOTOS = {
   'Warm milk with cinnamon': '1692299107317-5247cd821a40', 'Holy basil (tulsi)': '1604169424355-b49050de301a', 'Green tea': '1627435601361-ec25f5b1d0e5', 'Matcha': '1774674534665-9c8b197595a8',
   'Ginseng or tulsi': '1695798790639-c3c4294373ab', 'Your coffee': '1610632380989-680fe40816c6', 'Spearmint': '1498481548071-4d439c62cd6e', 'Burdock & nettle': '1594631252845-29fc4cc8cde9',
   'Chrysanthemum': '1605540443725-7e216f615d9f', 'Nettle': '1608158454932-bec5a8364a30', 'Red raspberry leaf': '1597318109735-d3612887d1ad', 'Hibiscus': '1563636680-28d36aeb83a4',
-  'Ginger & cinnamon': '1610450622827-195cb7308af8', 'Chamomile & ginger': '1571934811356-5cc061b6821f', 'Tea': '1531969179221-3946e6b5a5e7',
+  'Ginger & cinnamon': '1610450622827-195cb7308af8', 'Cinnamon ginger lemon': '1682530016814-6a1c1311cd6e', 'Chamomile & ginger': '1571934811356-5cc061b6821f', 'Tea': '1531969179221-3946e6b5a5e7',
   'Valerian root': '1635739056558-6d8b9249ca93', 'Saffron': '1631189945107-34e33ff1c648', 'Lavender': '1523920290228-4f321a939b4c', 'Rosemary': '1586161665517-0325578c2784',
   'Elderberry': '1723239714209-1f124b16572b', 'Mugwort': '1702353803708-9ce6929ef7f3',
   'Vanilla chai': '1555251415-4716d9d0b8af',
