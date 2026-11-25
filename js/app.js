@@ -12997,11 +12997,19 @@ document.addEventListener('click', e => {
   const fn = actions[el.dataset.action];
   if (!fn) return;
   e.preventDefault();
-  const v0 = document.getElementById('view'), top = v0 ? v0.scrollTop : 0, h = location.hash;
+  const v0 = document.getElementById('view'), h = location.hash; let top = v0 ? v0.scrollTop : 0;
+  // what she tapped stays where it is on screen (25 Nov 2026: nothing in the app may move the page when she taps).
+  // Safari has no scroll anchoring, so when a part above it changes height (the grocery summary, a panel) we shift back.
+  const inView = v0 && v0.contains(el) && !el.closest('.tabbar, .ws'), y0 = inView ? el.getBoundingClientRect().top : 0;
+  const same = inView && el.dataset.action ? `[data-action="${CSS.escape(el.dataset.action)}"]${[...el.attributes].filter(a => a.name.startsWith('data-') && a.name !== 'data-action').map(a => `[${a.name}="${CSS.escape(a.value)}"]`).join('')}` : '';
   const r = fn(el.dataset, el);
-  const keep = () => { const v = document.getElementById('view'); if (location.hash === h && state?.onboarded && v && (v !== v0 || clamped(v, top))) holdPlace(v, top); };
-  // also after the next frames and a beat later: many taps redraw a part one frame later (the calendar day panel),
-  // and a shorter new part must never pull the page up (25 Nov 2026: nothing goes back up when she taps)
+  const keep = () => { const v = document.getElementById('view'); if (location.hash !== h || !state?.onboarded || !v) return;
+    if (v !== v0 || clamped(v, top)) holdPlace(v, top);
+    if (!inView || Math.abs(v.scrollTop - top) > 1) return; // the tap scrolled on purpose (a glide, a jump to a section)
+    const a = el.isConnected && v.contains(el) ? el : same && v.querySelector(same); if (!a || a.closest('.ws')) return;
+    const dy = a.getBoundingClientRect().top - y0;
+    if (Math.abs(dy) > 1 && Math.abs(dy) < 700) { holdPlace(v, Math.max(0, top + dy)); top = v.scrollTop; } };
+  // also after the next frames and a beat later: many taps redraw a part one frame later (the calendar day panel)
   keep(); requestAnimationFrame(() => requestAnimationFrame(keep)); setTimeout(keep, 160); setTimeout(keep, 420);
   if (r && r.then) r.then(keep, () => {});
 });
