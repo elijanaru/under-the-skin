@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sticker Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500&family=Gaegu:wght@700&display=swap" rel="stylesheet">
+<style>
+  /* Sticker Studio: draw your own hand-drawn stickers for Underskin's love letters. Not shipped in the app (studio/ is outside the build). */
+  :root { --ink: #304023; --mist: #f6eef0; --blush: #e6b1c4; --dolce: #efd4dd; --moss: #6c823e; --paper: #fffdfb; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: var(--mist); color: var(--ink); font: 400 15px/1.4 Outfit, system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 18px 16px 32px; }
+  h1 { font: 700 34px/1 Gaegu, cursive; margin: 4px 0 2px; letter-spacing: .5px; }
+  .sub { margin: 0 0 14px; opacity: .82; font-size: 14px; text-align: center; }
+  .wrap { width: min(92vw, 620px); }
+  .stage { position: relative; aspect-ratio: 1; width: 100%; border-radius: 28px; background: var(--paper);
+    background-image: radial-gradient(rgba(48,64,35,.05) 1px, transparent 1px); background-size: 14px 14px;
+    box-shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 18px 40px -22px rgba(48,64,35,.35); border: 1px solid rgba(48,64,35,.08); overflow: hidden; touch-action: none; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: crosshair; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; margin: 12px 0; }
+  button, select, label.btn { font: 500 14px Outfit, sans-serif; color: var(--ink); background: #fff; border: 1px solid rgba(48,64,35,.12); border-radius: 999px; padding: 9px 15px; cursor: pointer; transition: transform .15s, background .15s; }
+  button:active { transform: scale(.95); }
+  button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .sw { width: 30px; height: 30px; padding: 0; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(48,64,35,.18); }
+  .sw.on { box-shadow: 0 0 0 2.5px var(--ink); }
+  input[type=range] { accent-color: var(--moss); width: 140px; }
+  input[type=color] { width: 34px; height: 34px; border: 0; background: none; padding: 0; cursor: pointer; }
+  .save { background: var(--blush); border-color: transparent; font-weight: 500; padding: 11px 22px; }
+  .note { font-size: 13px; opacity: .8; text-align: center; margin-top: 6px; }
+  .k { font-size: 12px; opacity: .78; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+  <h1>Sticker Studio</h1>
+  <p class="sub">Draw a sticker for the love letters. The paper stays see-through when you save.</p>
+  <div class="wrap">
+    <div class="bar" id="tools">
+      <button data-tool="crayon" class="on">🖍️ Crayon</button>
+      <button data-tool="pen">✒️ Pen</button>
+      <button data-tool="marker">🖊️ Marker</button>
+      <button data-tool="fill">🪣 Fill</button>
+      <button data-tool="eraser">🩹 Eraser</button>
+    </div>
+    <div class="bar" id="colors"></div>
+    <div class="bar">
+      <span class="k">Size</span><input type="range" id="size" min="2" max="60" value="14">
+      <button id="undo">↶ Undo</button><button id="redo">↷ Redo</button><button id="clear">Clear</button>
+      <label class="btn">Open PNG<input type="file" id="open" accept="image/png,image/webp,image/jpeg" hidden></label>
+    </div>
+    <div class="stage" id="stage"><canvas id="c" width="1024" height="1024"></canvas></div>
+    <div class="bar">
+      <span class="k">This sticker is</span>
+      <select id="name">
+        <option value="envelope">Envelope (closed)</option><option value="envelope-open">Envelope (open)</option>
+        <option value="love">Heart · Love you</option><option value="flowers">Flowers</option><option value="strawberries">Strawberries</option>
+        <option value="friends">Friends holding hands</option><option value="laugh">Laughing face</option><option value="miss">Crying cat · Miss you</option>
+        <option value="kiss">Kiss</option><option value="hug">Hug</option><option value="think">Thinking of you</option><option value="date">Date night</option>
+        <option value="choc">Chocolate</option><option value="tea">Tea</option><option value="strong">You’ve got this</option>
+        <option value="eat">Time to eat</option><option value="water">Drink water</option><option value="rest">Go to bed</option><option value="walk">Fresh air</option>
+        <option value="yes">Yes button</option><option value="no">No button</option><option value="other">Something new</option>
+      </select>
+      <button class="save" id="save">Save sticker 💌</button>
+    </div>
+    <p class="note">Saved stickers land in your Downloads as sticker-name.png. Tell Claude when you’ve made some and they go straight into the app.</p>
+  </div>
+<script>
+const cv = document.getElementById('c'), x = cv.getContext('2d', { willReadFrequently: true });
+const COLORS = ['#2b2622', '#304023', '#6c823e', '#a9c27a', '#e6b1c4', '#e07a98', '#d9455a', '#f2a65a', '#f7e38e', '#8cc3ea', '#b9a3d9', '#8a5a3c', '#ffffff'];
+let tool = 'crayon', color = '#e07a98', size = 14, drawing = false, last = null, hist = [], fut = [];
+const bar = document.getElementById('colors');
+COLORS.forEach(c => { const b = document.createElement('button'); b.className = 'sw' + (c === color ? ' on' : ''); b.style.background = c; b.title = c; b.onclick = () => pick(c, b); bar.appendChild(b); });
+const custom = document.createElement('input'); custom.type = 'color'; custom.value = color; custom.oninput = () => pick(custom.value, null); bar.appendChild(custom);
+function pick(c, b) { color = c; bar.querySelectorAll('.sw').forEach(s => s.classList.toggle('on', s === b)); if (tool === 'eraser' || tool === 'fill') {} }
+document.getElementById('tools').onclick = e => { const b = e.target.closest('button'); if (!b) return; tool = b.dataset.tool; document.querySelectorAll('#tools button').forEach(t => t.classList.toggle('on', t === b)); };
+document.getElementById('size').oninput = e => size = +e.target.value;
+const snap = () => { hist.push(x.getImageData(0, 0, 1024, 1024)); if (hist.length > 40) hist.shift(); fut = []; };
+document.getElementById('undo').onclick = () => { if (!hist.length) return; fut.push(x.getImageData(0, 0, 1024, 1024)); x.putImageData(hist.pop(), 0, 0); };
+document.getElementById('redo').onclick = () => { if (!fut.length) return; hist.push(x.getImageData(0, 0, 1024, 1024)); x.putImageData(fut.pop(), 0, 0); };
+document.getElementById('clear').onclick = () => { snap(); x.clearRect(0, 0, 1024, 1024); };
+document.getElementById('open').onchange = e => { const f = e.target.files[0]; if (!f) return; const im = new Image(); im.onload = () => { snap(); const s = Math.min(1024 / im.width, 1024 / im.height); x.drawImage(im, (1024 - im.width * s) / 2, (1024 - im.height * s) / 2, im.width * s, im.height * s); }; im.src = URL.createObjectURL(f); };
+const pos = e => { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) * 1024 / r.width, y: (e.clientY - r.top) * 1024 / r.height, p: e.pressure && e.pointerType !== 'mouse' ? e.pressure : .6 }; };
+// crayon: many small grainy dabs along the stroke, so it looks like wax on paper
+function crayon(a, b) {
+  const d = Math.hypot(b.x - a.x, b.y - a.y), n = Math.max(1, d / 1.5), r = size * (0.6 + b.p * .6);
+  x.fillStyle = color;
+  for (let i = 0; i < n; i++) { const t = i / n, cx = a.x + (b.x - a.x) * t, cy = a.y + (b.y - a.y) * t;
+    for (let k = 0; k < r * 1.4; k++) { const ang = Math.random() * 6.283, rr = Math.random() * r / 2; x.globalAlpha = .18 + Math.random() * .35; x.fillRect(cx + Math.cos(ang) * rr, cy + Math.sin(ang) * rr, 1.6, 1.6); } }
+  x.globalAlpha = 1;
+}
+function line(a, b, w, alpha = 1) { x.globalAlpha = alpha; x.strokeStyle = color; x.lineWidth = w; x.lineCap = x.lineJoin = 'round'; x.beginPath(); x.moveTo(a.x, a.y); x.lineTo(b.x, b.y); x.stroke(); x.globalAlpha = 1; }
+function stroke(a, b) {
+  if (tool === 'eraser') { x.globalCompositeOperation = 'destination-out'; line(a, b, size * 1.6); x.globalCompositeOperation = 'source-over'; }
+  else if (tool === 'crayon') crayon(a, b);
+  else if (tool === 'pen') line(a, b, Math.max(1.5, size * .35 * (0.5 + b.p)));
+  else if (tool === 'marker') line(a, b, size * 1.2, .9);
+}
+// bucket fill on the see-through canvas (fills the shape you tap)
+function fill(p) {
+  const img = x.getImageData(0, 0, 1024, 1024), D = img.data, sx = p.x | 0, sy = p.y | 0, i0 = (sy * 1024 + sx) * 4, t = [D[i0], D[i0 + 1], D[i0 + 2], D[i0 + 3]];
+  const c = color.match(/\w\w/g).map(h => parseInt(h, 16)), near = i => Math.abs(D[i] - t[0]) + Math.abs(D[i + 1] - t[1]) + Math.abs(D[i + 2] - t[2]) + Math.abs(D[i + 3] - t[3]) < 90;
+  if (Math.abs(D[i0] - c[0]) + Math.abs(D[i0 + 1] - c[1]) + Math.abs(D[i0 + 2] - c[2]) < 6 && D[i0 + 3] > 250) return;
+  const st = [[sx, sy]], seen = new Uint8Array(1024 * 1024);
+  while (st.length) { const [px, py] = st.pop(); if (px < 0 || py < 0 || px > 1023 || py > 1023) continue; const k = py * 1024 + px; if (seen[k]) continue; seen[k] = 1; const i = k * 4; if (!near(i)) continue;
+    D[i] = c[0]; D[i + 1] = c[1]; D[i + 2] = c[2]; D[i + 3] = 255; st.push([px + 1, py], [px - 1, py], [px, py + 1], [px, py - 1]); }
+  x.putImageData(img, 0, 0);
+}
+cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); snap(); const p = pos(e); if (tool === 'fill') return fill(p); drawing = true; last = p; stroke(p, { ...p, x: p.x + .1 }); });
+cv.addEventListener('pointermove', e => { if (!drawing) return; (e.getCoalescedEvents ? e.getCoalescedEvents() : [e]).forEach(ev => { const p = pos(ev); stroke(last, p); last = p; }); });
+['pointerup', 'pointercancel', 'pointerleave'].forEach(t => cv.addEventListener(t, () => drawing = false));
+addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key === 'z') { e.preventDefault(); document.getElementById(e.shiftKey ? 'redo' : 'undo').click(); } });
+// save: trim the empty paper around the drawing, keep it see-through, a little breathing room
+document.getElementById('save').onclick = () => {
+  const D = x.getImageData(0, 0, 1024, 1024).data; let l = 1024, t = 1024, r = -1, b = -1;
+  for (let y = 0; y < 1024; y++) for (let xx = 0; xx < 1024; xx++) if (D[(y * 1024 + xx) * 4 + 3] > 8) { if (xx < l) l = xx; if (xx > r) r = xx; if (y < t) t = y; if (y > b) b = y; }
+  if (r < 0) return alert('Draw something first 🖍️');
+  const pad = 24, w = r - l + 1 + pad * 2, h = b - t + 1 + pad * 2, o = document.createElement('canvas'); o.width = w; o.height = h;
+  o.getContext('2d').drawImage(cv, l - pad, t - pad, w, h, 0, 0, w, h);
+  const a = document.createElement('a'); a.download = `sticker-${document.getElementById('name').value}.png`; a.href = o.toDataURL('image/png'); a.click();
+};
+</script>
+</body>
+</html>

@@ -8963,7 +8963,7 @@ function loveBtnArt() { return `<svg class="lb2-env" viewBox="0 0 64 56" aria-hi
     <path d="M32 33c-6-4-9-7-9-10.5a4.5 4.5 0 0 1 9-1.5 4.5 4.5 0 0 1 9 1.5c0 3.5-3 6.5-9 10.5z" fill="#e6809c" stroke="#304023" stroke-width="1.8" stroke-linejoin="round"/></svg>`; }
 // Friends and partners (23 Nov 2026): kisses and love notes are only for partners; a friend gets a little hello instead.
 const isFr = p => !!p && p.a === 'friend';
-const FR_LOVE = ['hug', 'think', 'strong', 'tea'];
+const FR_LOVE = ['friends', 'hug', 'laugh', 'think', 'flowers', 'berry', 'miss', 'strong']; // friends get the two holding hands instead of a love heart
 function loveBtn(p, big) {
   const art = loveBtnArt();
   if (isFr(p)) return `<button class="lb2 lbw fr ${big ? 'big' : ''}" data-action="openLove" data-id="${p.id}" aria-label="Say hi to ${esc(p.n)}">
@@ -9035,24 +9035,31 @@ function partnerRead(pi, p) {
 const HEART = c => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.6-4.7-9.7-9.3C.8 8.3 3 4.4 6.8 4.4c2.1 0 3.6 1.1 4.3 2.5h1.8c.7-1.4 2.2-2.5 4.3-2.5 3.8 0 6 3.9 4.5 7.3C19.6 16.3 12 21 12 21z" fill="${c}"/></svg>`;
 // beating red heart with a pulse ring and two white hearts orbiting
 const loveArt = (sz = 'md') => `<span class="la la-${sz}"><i class="la-ring"></i><i class="la-ring r2"></i><span class="la-main">${HEART('#ff2d4b')}</span><span class="la-o o1">${HEART('#fff')}</span><span class="la-o o2">${HEART('#fff')}</span></span>`;
+// Hand-drawn stickers (26 Nov 2026, her ask: like crayon doodles, not emoji): every love and care message is a sticker in
+// images/stk (made for Underskin). Taps add up in one letter, so love tapped three times arrives as three hearts.
 const LOVE = [
-  { k: 'hug', ic: 'users', g: '🤗', t: 'Big hug', s: 'sent you a big warm hug' },
+  { k: 'love', ic: 'heart', g: '❤️', t: 'Love you', s: 'loves you' },
   { k: 'kiss', ic: 'lips', g: '💋', t: 'Kisses', s: 'is sending you kisses' },
-  { k: 'tea', ic: 'cup', g: '🍵', t: 'Tea’s coming', s: 'is making you a cup of tea' },
+  { k: 'flowers', ic: 'leaf', g: '💐', t: 'Flowers for you', s: 'sent you flowers' },
+  { k: 'berry', ic: 'heart', g: '🍓', pic: 'strawberries', t: 'Sweet on you', s: 'thinks you’re the sweetest' },
+  { k: 'hug', ic: 'users', g: '🤗', t: 'Big hug', s: 'sent you a big warm hug' },
   { k: 'think', ic: 'mind', g: '💭', t: 'Thinking of you', s: 'is thinking of you' },
+  { k: 'miss', ic: 'heart', g: '🥺', t: 'Miss you', s: 'misses you' },
+  { k: 'laugh', ic: 'spark', g: '😆', t: 'You make me laugh', s: 'says: you make me laugh' },
+  { k: 'friends', ic: 'users', g: '🫶', t: 'Best friends', s: 'is so glad you’re friends' },
   { k: 'strong', ic: 'bolt', g: '💪', t: 'You’ve got this', s: 'says: you’ve got this' },
+  { k: 'tea', ic: 'cup', g: '🍵', t: 'Tea’s coming', s: 'is making you a cup of tea' },
   { k: 'date', ic: 'moon', g: '🌙', t: 'Date night?', s: 'wants a date night with you' },
   { k: 'choc', ic: 'bar', g: '🍫', t: 'Chocolate run', s: 'is bringing you chocolate' },
-  { k: 'love', ic: 'heart', g: '❤️', t: 'Love you', s: 'loves you' },
-  { k: 'miss', ic: 'heart', g: '🥺', t: 'Miss you', s: 'misses you' },
 ];
-const PV_LOVE = ['kiss', 'think', 'love', 'miss']; // the only ones on his love sheet
+const PV_LOVE = ['love', 'kiss', 'flowers', 'berry', 'hug', 'think', 'miss', 'laugh']; // his love sheet
 const CARE = [
   { k: 'eat', ic: 'bowl', g: '🍽️', t: 'Time to eat', s: 'says: time to eat something nourishing' },
   { k: 'water', ic: 'drop', g: '💧', t: 'Drink water', s: 'reminds you to drink some water' },
   { k: 'rest', ic: 'moon', g: '😴', t: 'Go to bed', s: 'says: time to rest, go to bed' },
   { k: 'walk', ic: 'leaf', g: '🌿', t: 'Fresh air', s: 'says: take a little walk outside' },
 ];
+const stk = l => `images/stk/${l.pic || l.k}.webp`;
 const SIGNALS = [...LOVE, ...CARE];
 // ---- live signals between phones (free ntfy.sh relay; each app has a private inbox code) ----
 const RELAY = 'https://ntfy.sh/uts-';
@@ -9065,9 +9072,24 @@ function myInbox() {
 const okPic = t => typeof t === 'string' && (/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(t) && t.length < 12000 || /^images\/pets\/[\w-]+\.(webp|png|jpg)$/.test(t)) ? t : undefined;
 const picOut = () => { (state.partners || []).forEach(x => syncTo(x)); publishLive(); }; // she changed her photo: her people see it right away
 const myPic = () => okPic(state?.profile?.thumb);
-async function sendSignal(p, k) {
-  if (!p.i) return false;
-  try { const r = await fetch(RELAY + p.i, { method: 'POST', body: JSON.stringify({ k, f: state.profile.name || 'Someone', fi: myInbox(), t: myPic() }) }); return r.ok; } catch { return false; }
+async function sendSignal(p, k, extra) {
+  if (!p.i || !navigator.onLine) return false;
+  try { const r = await fetch(RELAY + p.i, { method: 'POST', body: JSON.stringify({ k, ...(extra || {}), f: state.profile.name || 'Someone', fi: myInbox(), t: myPic() }) }); return r.ok; } catch { return false; }
+}
+// a letter: { sticker key: how many }, only known stickers, at most 24 of each
+function cleanIt(o) {
+  if (!o || typeof o !== 'object') return null;
+  const e = Object.entries(o).filter(([k, n]) => SIGNALS.some(x => x.k === k) && Number.isFinite(+n) && +n > 0).slice(0, 13).map(([k, n]) => [k, Math.min(24, Math.round(+n))]);
+  return e.length ? Object.fromEntries(e) : null;
+}
+const itCount = it => Object.values(it || {}).reduce((a, b) => a + b, 0);
+// letters that couldn't fly (no internet) wait here and go out as soon as she's back online
+async function flushOutbox() {
+  const box = state?.outbox; if (!box || !box.length || !navigator.onLine) return;
+  const left = [];
+  for (const o of box) { const p = (state.partners || []).find(x => x.id === o.to); if (!p) continue; if (!(await sendSignal(p, 'letter', { it: o.it }))) left.push(o); }
+  const sent = box.length - left.length; state.outbox = left; save();
+  if (sent) toast(`💌 ${sent === 1 ? 'Your waiting letter just flew' : `${sent} waiting letters just flew`}`);
 }
 function handleSignal(m) {
   const seen = state.sigSeen = state.sigSeen || []; if (!m || !m.id || seen.includes(m.id)) return;
@@ -9081,62 +9103,102 @@ function handleSignal(m) {
     else if (ps.length < 4) { ps.push({ ...snap, t: okPic(d.t) || okPic(snap.t), id: Date.now().toString(36), added: Date.now() }); toast(`${snap.n} is connected`); }
     save(); if (['partners', 'today'].includes(route().name)) render(); return;
   }
-  const sig = SIGNALS.find(x => x.k === d.k); if (!sig) return;
+  const it = d.k === 'letter' ? cleanIt(d.it) : SIGNALS.some(x => x.k === d.k) ? { [d.k]: 1 } : null; if (!it) return;
   const from = (state.partners || []).find(x => x.i === d.fi);
   if (from && okPic(d.t) && from.t !== d.t) from.t = d.t; // their newest photo
-  (state.sigLog = state.sigLog || []).unshift({ k: d.k, f: d.f, at: (m.time || Date.now() / 1000) * 1000, pid: from?.id }); state.sigLog = state.sigLog.slice(0, 30); save();
-  showSignal(sig, d.f, from, d.x, d);
-  if (document.hidden && 'Notification' in window && Notification.permission === 'granted') navigator.serviceWorker?.ready.then(r => r.showNotification(`${sig.g} ${d.f}`, { body: `${d.f} ${sig.s}`, icon: 'icons/icon-192.png', tag: 'sig-' + m.id })).catch(() => {});
+  const at = (m.time || Date.now() / 1000) * 1000;
+  Object.entries(it).forEach(([k, n]) => (state.sigLog = state.sigLog || []).unshift({ k, n, f: d.f, at, pid: from?.id })); state.sigLog = state.sigLog.slice(0, 30); save();
+  if (d.k === 'date' && d.x) showTicket(d.f, from, d.x, d); else showLetter(it, d.f, from, d);
+  if (document.hidden && 'Notification' in window && Notification.permission === 'granted') navigator.serviceWorker?.ready.then(r => r.showNotification(`💌 ${d.f}`, { body: `${d.f} sent you a secret message`, icon: 'icons/icon-192.png', tag: 'sig-' + m.id })).catch(() => {});
 }
-// Love from her people (25 Nov 2026): the card lives on its own layer next to the app, so a redraw never wipes it,
-// it waits for the opening splash, and several that arrived while the app was closed come one after another.
+// Love from her people (26 Nov 2026, her ask): a secret-message envelope asks "Want to open it?", Yes opens everything
+// they sent as crayon stickers (love tapped 3 times = 3 hearts). It lives on its own layer next to the app, so a redraw never
+// wipes it, it waits for the opening splash, letters wait in a mailbox (kept on the phone) until she opens them, Later snoozes.
 const SIG_Q = [];
 const sigLayer = () => $app.parentElement || document.body;
-function showSignal(sig, name, from, x, meta) {
-  if (sig.k === 'date' && x) return showTicket(name, from, x, meta);
-  SIG_Q.push([sig, name, from, x, meta]); afterSplash(sigNext);
-}
+const mailSave = () => { if (!state) return; state.mailbox = SIG_Q.map(([it, f, pid, meta]) => [it, f, pid, { t: okPic(meta?.t) }]).slice(-12); save(); };
+function showSignal(sig, name, from, x, meta) { if (sig.k === 'date' && x) return showTicket(name, from, x, meta); showLetter({ [sig.k]: 1 }, name, from, meta); }
+function showLetter(it, name, from, meta) { SIG_Q.push([it, name, from?.id, meta]); mailSave(); afterSplash(sigNext); }
 function sigNext() {
-  if (!SIG_Q.length || document.querySelector('.sig-pop') || ui.loveFor) return;
-  sigPop(...SIG_Q[0]);
+  if (!SIG_Q.length || ui.mailSnooze || document.querySelector('.sig-pop') || ui.loveFor) return;
+  const [it, name, pid, meta] = SIG_Q[0];
+  letterPop(it, name, (state.partners || []).find(x => x.id === pid), meta);
 }
-function sigDone(next = true) {
+function sigDone(next = true, keep = false) {
   const p = document.querySelector('.sig-pop'); if (!p) return;
-  if (p.dataset.q) SIG_Q.shift();
+  if (p.dataset.q && !keep) { SIG_Q.shift(); mailSave(); }
   p.classList.add('out'); setTimeout(() => p.remove(), 420);
   if (next && SIG_Q.length) setTimeout(sigNext, 700);
 }
 const SPARK = c => `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 0c.9 5.2 3.9 8.6 10 10-6.1 1.4-9.1 4.8-10 10-.9-5.2-3.9-8.6-10-10C6.1 8.6 9.1 5.2 10 0z" fill="${c}"/></svg>`;
-function sigPop(sig, name, from, x, meta) {
-  const isLove = LOVE.includes(sig), pic = (from && from.t) || okPic(meta?.t);
-  const cols = isLove ? ['#e6809c', '#f3b6c8', '#fff', '#efd4dd', '#f7c9b5'] : ['#a9c27a', '#cfe0b0', '#fff', '#efd4dd', '#d8e6c2'];
-  const drift = Array.from({ length: 16 }, (_, i) => { const z = 12 + (i * 7) % 20;
-    return `<i style="--x:${(i * 37 + 7) % 100}%;--d:${(i * .55) % 6}s;--t:${8 + (i % 5)}s;--s:${z}px;--w:${10 + (i * 13) % 26}px;--b:${i % 4 === 3 ? 2 : 0}px">${HEART(cols[i % cols.length])}</i>`; }).join('');
-  const sparks = [[14, 22, 0], [82, 16, .6], [8, 64, 1.2], [90, 58, .3], [24, 86, .9], [76, 88, 1.5]].map(([l, t, d], i) =>
-    `<i style="left:${l}%;top:${t}%;--d:${d}s;--z:${i % 2 ? 12 : 16}px">${SPARK(i % 2 ? '#fff' : isLove ? '#f1c27d' : '#c9d6a8')}</i>`).join('');
-  const el = document.createElement('div'); el.className = `sig-pop sgp ${isLove ? 'love' : 'care'}`; el.dataset.q = '1';
+// the stickers of a letter, scattered like on a fridge: each one as often as it was sent (at most 16 on screen)
+function ltStickers(it) {
+  const list = Object.entries(it).flatMap(([k, n]) => { const l = SIGNALS.find(x => x.k === k); return l ? Array(n).fill(l) : []; }).slice(0, 16), N = list.length;
+  const sz = N === 1 ? 150 : N <= 3 ? 112 : N <= 6 ? 88 : N <= 10 ? 72 : 60, cols = Math.min(N, N <= 3 ? N : N <= 6 ? 3 : 4), rows = Math.ceil(N / cols);
+  return `<div class="ltp-stk" style="--sz:${sz}px;height:${Math.min(300, rows * sz * .86 + 30)}px">${list.map((l, i) => { const c = i % cols, r = Math.floor(i / cols), inRow = Math.min(cols, N - r * cols);
+    const x = 50 + (c - (inRow - 1) / 2) * (100 / Math.max(cols, 2)) * .92 + ((i * 37) % 9 - 4), y = (r + .5) / rows * 100 + ((i * 53) % 11 - 5);
+    return `<img src="${stk(l)}" alt="" style="left:${x}%;top:${y}%;--r:${(i * 47) % 25 - 12}deg;--d:${.15 + i * .16}s">`; }).join('')}</div>`;
+}
+const ltChips = it => `<div class="ltp-chips">${Object.entries(it).map(([k, n]) => { const l = SIGNALS.find(x => x.k === k); return l ? `<span class="ltp-c"><img src="${stk(l)}" alt="">${n > 1 ? `<b>×${n}</b>` : ''}<small>${l.t}</small></span>` : ''; }).join('')}</div>`;
+function ltHead(it, name) { const ks = Object.keys(it), one = ks.length === 1 && SIGNALS.find(x => x.k === ks[0]); return one ? `${esc(name)} ${one.s}` : `${esc(name)} sent you a little letter`; }
+function letterPop(it, name, from, meta) {
+  const care = Object.keys(it).every(k => CARE.some(c => c.k === k)), pic = (from && (from.t || ptPet(from))) || okPic(meta?.t);
+  const sparks = [[10, 18, 0], [86, 12, .7], [6, 58, 1.3], [92, 50, .4], [18, 88, 1], [80, 84, 1.6]].map(([l, t, d], i) => `<i style="left:${l}%;top:${t}%;--d:${d}s;--z:${i % 2 ? 11 : 15}px">${SPARK(i % 3 === 2 ? '#f6d77e' : '#ef9ab8')}</i>`).join('');
+  const el = document.createElement('div'); el.className = `sig-pop ltp ${care ? 'care' : ''}`; el.dataset.q = '1';
   el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
-  el.innerHTML = `<div class="sgp-mist" aria-hidden="true"><b></b><b></b><b></b></div><div class="sgp-drift" aria-hidden="true">${drift}</div>
-    <div class="sgp-in">
-      <div class="sgp-stage">
-        <span class="sgp-bloom" aria-hidden="true"></span><span class="sgp-ring" aria-hidden="true"></span>
-        <span class="sgp-orbit" aria-hidden="true"><i>${HEART(isLove ? '#e6809c' : '#a9c27a')}</i><i>${HEART('#fff')}</i><i>${HEART(isLove ? '#f3b6c8' : '#cfe0b0')}</i></span>
-        <span class="sgp-sparks" aria-hidden="true">${sparks}</span>
-        <span class="sgp-av">${pic ? `<img src="${esc(pic)}" alt="">` : `<b>${esc((name || '?')[0])}</b>`}</span>
-        <span class="sgp-g" aria-hidden="true">${sig.g}</span>
+  el.innerHTML = `<div class="ltp-paper" aria-hidden="true"></div><div class="ltp-spk" aria-hidden="true">${sparks}</div>
+    <div class="ltp-in">
+      <div class="ltp-ask">
+        <p class="ltp-h">Hey! You got a <u>secret message</u>. Want to <mark>open</mark> it?</p>
+        <button class="ltp-env" data-action="ltOpen" aria-label="Open the letter"><img src="images/stk/envelope.webp" alt=""><span class="ltp-av">${pic ? `<img src="${esc(pic)}" alt="">` : `<b>${esc((name || '?')[0])}</b>`}</span></button>
+        <p class="ltp-from">from <b>${esc(name)}</b></p>
+        <div class="ltp-btns"><button class="ltp-b yes" data-action="ltOpen">Yes</button><button class="ltp-b no" data-action="ltLater">Later</button></div>
       </div>
-      <p class="sgp-from"><span>${isLove ? 'Love' : 'A little care'}</span> from ${esc(name)}</p>
-      <h1>${esc(name)} ${sig.s}</h1>${x ? `<p class="sig-x">${esc(String(x).slice(0, 120))}</p>` : ''}
-      <p class="sgp-when">just now</p>
-      <div class="sgp-btns">${from ? `<button class="sgp-back" data-action="openLove" data-id="${from.id}">${HEART('#fff')}<span>Send love back</span></button>` : ''}
-        <button class="sgp-close" data-action="sigClose">Close</button></div>
+      <div class="ltp-open" hidden>
+        ${ltStickers(it)}
+        <h1>${ltHead(it, name)}</h1>
+        ${ltChips(it)}
+        <div class="ltp-btns">${from ? `<button class="ltp-b yes wide" data-action="openLove" data-id="${from.id}">Send love back</button>` : ''}<button class="ltp-b no" data-action="sigClose">Close</button></div>
+      </div>
     </div>`;
   I18N.tr(el); sigLayer().appendChild(el);
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!reduce) setTimeout(() => { const a = el.isConnected && el.querySelector('.sgp-av'); if (!a) return; const r = a.getBoundingClientRect(); heartBurst(r.left + r.width / 2, r.top + r.height / 2); }, 1100);
   buzz?.('tick');
-  import('./sfx.js').then(S => S.breeze({ dur: 1.8, vol: .14 })).catch(() => {});
+  import('./sfx.js').then(S => S.breeze({ dur: 1.4, vol: .12 })).catch(() => {});
 }
+// the envelope lifts off the send button and flies away
+function envFly(btn) {
+  const img = btn.querySelector('img'); if (!img || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const r = img.getBoundingClientRect(), f = img.cloneNode(); f.className = 'env-fly'; Object.assign(f.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px' });
+  document.body.appendChild(f);
+  f.animate([{ transform: 'none', opacity: 1 }, { transform: 'translate(-10px,-40px) rotate(-12deg) scale(1.6)', opacity: 1, offset: .35 }, { transform: 'translate(60px,-420px) rotate(18deg) scale(.6)', opacity: 0 }], { duration: 900, easing: 'cubic-bezier(.3,.7,.2,1)' }).onfinish = () => f.remove();
+}
+function ltOpen(el) {
+  const pop = el.closest('.sig-pop'); if (!pop || pop.classList.contains('opened')) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  pop.classList.add('opening');
+  setTimeout(() => {
+    pop.classList.add('opened'); pop.querySelector('.ltp-ask').hidden = true; pop.querySelector('.ltp-open').hidden = false;
+    buzz?.('success');
+    if (!reduce) setTimeout(() => { const s = pop.isConnected && pop.querySelector('.ltp-stk'); if (!s) return; const r = s.getBoundingClientRect(); heartBurst(r.left + r.width / 2, r.top + r.height / 2); }, 350);
+  }, reduce ? 0 : 520);
+}
+// Hey, you're offline (26 Nov 2026): a little sleepy cloud says so once, the app keeps working on the phone and syncs when the internet is back
+const OFF_ART = `<svg viewBox="0 0 64 48" aria-hidden="true"><path d="M16 40c-7 0-11-4.6-11-10 0-5.6 4.4-9.4 10-9.4 1.3-7 7-11.6 14-11.6 6.6 0 11.6 4 13.4 9.8 6.6-.4 12.6 4.2 12.6 10.8 0 6-4.6 10.4-11 10.4z" fill="#fff" stroke="#2b2622" stroke-width="2.2" stroke-linejoin="round"/><path d="M22 29q2.4 2.4 4.8 0M35 29q2.4 2.4 4.8 0" fill="none" stroke="#2b2622" stroke-width="2" stroke-linecap="round"/><circle cx="19.5" cy="33" r="2.4" fill="#f3b6c8"/><circle cx="43.5" cy="33" r="2.4" fill="#f3b6c8"/><path d="M29 35.5q2.6 1.6 5 0" fill="none" stroke="#2b2622" stroke-width="1.8" stroke-linecap="round"/><path d="M50 6l4 0-4 5 4 0M57 1l3 0-3 3.6 3 0" fill="none" stroke="#7aa6d6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+function offNote(back) {
+  document.querySelector('.off-note')?.remove();
+  const el = document.createElement('div'); el.className = `off-note ${back ? 'back' : ''}`; el.setAttribute('role', 'status');
+  el.innerHTML = back ? `<div class="off-in"><span class="off-art">${SPARK('#ef9ab8')}</span><div><b>You’re back online</b><p>Everything is syncing again.</p></div></div>`
+    : `<div class="off-in"><span class="off-art">${OFF_ART}</span><div><b>Hey, I think you’re offline</b><p>Your cycle, your plan and everything you log still work. Love notes and your people’s days might be a little behind until we sync again. Just a heads up!</p></div><button class="off-ok" data-action="offOk">Okay!</button></div>`;
+  I18N.tr(el); sigLayer().appendChild(el);
+  if (back) setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 400); }, 2600);
+}
+function goOffline() { if (ui.offSeen) return; ui.offSeen = true; try { sigSource?.close(); } catch {} sigSource = null; afterSplash(() => !navigator.onLine && offNote()); }
+function goOnline() { const was = ui.offSeen; ui.offSeen = false; if (was) offNote(true); startSignals(); flushOutbox(); }
+addEventListener('offline', goOffline); addEventListener('online', goOnline);
+// a picture that can't load (offline, slow network) fades into its soft card instead of showing a broken image
+document.addEventListener('error', e => { const t = e.target; if (t && t.tagName === 'IMG' && !t.classList.contains('img-off')) t.classList.add('img-off'); }, true);
+// low battery (where the phone tells us): the turning 3D cups and drifting decorations rest
+try { navigator.getBattery?.().then(b => { const f = () => document.documentElement.classList.toggle('saver', b.level < .2 && !b.charging); f(); b.addEventListener('levelchange', f); b.addEventListener('chargingchange', f); }).catch(() => {}); } catch {}
 // His date ticket lands on her phone: it drops in from the top with a little spin, settles, a light glints across it and hearts burst.
 // run something once the opening splash has lifted, so an arrival animation is seen and not played under it
 function afterSplash(fn) {
@@ -9170,8 +9232,11 @@ function showTicket0(name, from, x, meta) {
 }
 let sigSource = null;
 async function startSignals() {
-  if (!state?.onboarded || !((state.partners || []).length || state.profile.linkSent)) return; // listen once she shared her link
-  const id = myInbox();
+  if (!state?.onboarded) return;
+  if (SIG_Q.length === 0 && (state.mailbox || []).length) { SIG_Q.push(...state.mailbox); afterSplash(sigNext); } // letters she hasn't opened yet
+  if (!navigator.onLine) return goOffline();
+  if (!((state.partners || []).length || state.profile.linkSent)) return; // listen once she shared her link
+  const id = myInbox(); flushOutbox();
   syncPartners(); publishLive(); refreshPartners();
   try { // catch up on anything sent while the app was closed (relay keeps ~12h)
     const since = state.sigSince ? state.sigSince + 1 : '12h';
@@ -9181,29 +9246,31 @@ async function startSignals() {
   if (sigSource || !('EventSource' in window)) return;
   try { sigSource = new EventSource(`${RELAY}${id}/sse`); sigSource.onmessage = e => { try { const m = JSON.parse(e.data); if (m.event === 'message') handleSignal(m); } catch {} }; } catch {}
 }
-// Pastel disc + ink colour for each love tile, so the sheet reads like a little box of stickers.
-const LS_TINT = { miss: ['#fde3ea', '#c0507a'], hug: ['#fbe0e8', '#b0475f'], kiss: ['#f9d3dd', '#c2385c'], tea: ['#f3ead9', '#8a6a3a'], think: ['#ece6f6', '#6d5a9c'], strong: ['#fbefcf', '#a8781a'], date: ['#e6e4f2', '#4f4a82'], choc: ['#f0e0d6', '#7a4a36'], love: ['#ffd9e1', '#e0405f'],
-  eat: ['#e9f0d8', '#4f6a2a'], water: ['#dcecf0', '#2f6a7a'], rest: ['#e6e4f2', '#4f4a82'], walk: ['#e3ecc9', '#4f6a2a'] };
-// The love sheet (23 Nov 2026, her ask: whimsical like the partner card): a dotted paper sheet with a taped envelope,
-// her name underlined in peach and every message a little rotated sticker with a stitched edge and a big emoji.
+// The love sheet (26 Nov 2026): crayon stickers on dotted paper. Every tap adds one to the letter (a ×2, ×3 badge pops),
+// then one envelope button sends them all together.
 const LSW_R = [-3, 2, -1.5, 2.5, -2, 1.5, -2.5, 3, -1, 2, -2.5, 1.5, -1.5];
 const LSW_SPK = c => `<svg class="lsw-spk" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c.8 6.5 3.5 9.2 10 10-6.5.8-9.2 3.5-10 10-.8-6.5-3.5-9.2-10-10 6.5-.8 9.2-3.5 10-10z" fill="${c}"/></svg>`;
 function lswTile(l, i, action) {
-  const [bg, ink] = LS_TINT[l.k] || ['#fbe0e8', '#b0475f'];
-  return `<button class="lsw-s ${i % 4 === 1 ? 'tp' : ''}" data-action="${action}" data-k="${l.k}" style="--bg:${bg};--ink:${ink};--r:${LSW_R[i % LSW_R.length]}deg;--i:${i}"><span class="lsw-d"><b class="ls2-emo">${l.g}</b></span><small>${l.t}</small></button>`;
+  const n = (ui.letter || {})[l.k] || 0;
+  return `<button class="lsw-s stk ${n ? 'has' : ''}" data-action="${action}" data-k="${l.k}" style="--r:${LSW_R[i % LSW_R.length]}deg;--i:${i}"><img src="${stk(l)}" alt="" draggable="false" decoding="async"><small>${l.t}</small><b class="lsw-x" aria-hidden="true">${n ? `×${n}` : ''}</b></button>`;
+}
+function letterBar() {
+  const n = itCount(ui.letter);
+  return `<div class="lt-bar"><button class="lt-clear" data-action="letterClear" ${n ? '' : 'hidden'}>Start over</button>
+    <button class="lt-send" data-action="letterSend" ${n ? '' : 'disabled'}><img src="images/stk/envelope.webp" alt=""><span>${n ? `Send ${n} ${n === 1 ? 'sticker' : 'stickers'}` : 'Tap a sticker'}</span></button></div>`;
 }
 function lswHead(name, av, sub, fr) {
   return `<div class="lsw-head"><span class="lsw-env">${loveBtnArt()}${av || ''}</span><div><small class="lsw-e">${fr ? 'A little hello' : 'A little love note'} ${LSW_SPK('#f1b27c')}</small><h3>${fr ? 'Say hi to' : 'Send love to'} <span class="lsw-n">${esc(name)}</span></h3><p>${sub}</p></div></div>`;
 }
 function loveSheet() {
   const p = (state.partners || []).find(x => x.id === ui.loveFor); if (!p) return '';
-  const sent = (state.loveSent || []).filter(x => x.to === p.id).length;
-  return `<div class="love-sheet" data-action="loveClose"><div class="ls-card ls2 lsw" data-action="noop">
+  return `<div class="love-sheet" data-action="loveClose"><div class="ls-card ls2 lsw lt-sheet" data-action="noop">
     <div class="ls-grip"></div>${LSW_SPK('#e7a3bb')}
-    ${lswHead(p.n, ptAvatar(p, 'sm'), sent && !isFr(p) ? `${sent} ${sent === 1 ? 'heart' : 'hearts'} sent so far` : 'Tap one and it lands on her phone', isFr(p))}
-    <div class="lsw-grid four">${(isFr(p) ? FR_LOVE : PV_LOVE).map(k => LOVE.find(l => l.k === k)).map((l, i) => lswTile(l, i, 'sendLove')).join('')}</div>
+    ${lswHead(p.n, ptAvatar(p, 'sm'), 'Tap as many as you like, they all go in one letter', isFr(p))}
+    <div class="lsw-grid stk4">${(isFr(p) ? FR_LOVE : PV_LOVE).map(k => LOVE.find(l => l.k === k)).map((l, i) => lswTile(l, i, 'letterAdd')).join('')}</div>
     <div class="lsw-k care">🌱 Care nudges</div>
-    <div class="lsw-grid care">${CARE.map((l, i) => lswTile(l, i + 4, 'sendLove')).join('')}</div></div></div>`;
+    <div class="lsw-grid stk4 care">${CARE.map((l, i) => lswTile(l, i + 8, 'letterAdd')).join('')}</div>
+    ${letterBar()}</div></div>`;
 }
 function fmtAgo(t) { const m = Math.round((Date.now() - t) / 60000); return m < 1 ? 'just now' : m < 60 ? `${m} min ago` : m < 1440 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} d ago`; }
 function heartBurst(x, y) {
@@ -9212,11 +9279,11 @@ function heartBurst(x, y) {
   document.body.appendChild(wrap); setTimeout(() => wrap.remove(), 1600);
 }
 function viewLove(q) {
-  const d = b64d(q.get('d') || ''), l = d && LOVE.find(x => x.k === d.k);
+  const d = b64d(q.get('d') || ''), it = d && (cleanIt(d.it) || (SIGNALS.some(x => x.k === d.k) ? { [d.k]: 1 } : null)), l = it && SIGNALS.find(x => x.k === Object.keys(it)[0]);
   if (!l) return `<div class="pad"><h1 class="page-h" style="margin-top:80px">Link not valid</h1></div>`;
   const hearts = Array.from({ length: 24 }, (_, i) => `<i style="left:${(i * 37) % 100}%;animation-delay:${(i * .37) % 7}s;animation-duration:${6 + (i % 5)}s;width:${12 + (i * 7) % 22}px;height:${12 + (i * 7) % 22}px">${HEART(i % 3 === 1 ? '#fff' : '#ff2d4b')}</i>`).join('');
   return `<div class="love-view"><div class="lv-hearts">${hearts}</div>
-    <div class="lv-in"><div class="lv-art">${loveArt('xl')}<span class="lv-av">${okPic(d.t) ? `<img src="${esc(okPic(d.t))}" alt="">` : esc((SAFE_TXT(d.f, 40) || '?')[0])}</span><span class="lv-g">${icon(l.ic, 26)}</span></div><h1>${esc(SAFE_TXT(d.f, 40) || 'Someone')} ${l.s}</h1>${d.x ? `<p class="sig-x">${esc(SAFE_TXT(String(d.x), 120))}</p>` : ''}
+    <div class="lv-in ltp-link">${ltStickers(it)}<h1>${ltHead(it, SAFE_TXT(d.f, 40) || 'Someone')}</h1>${ltChips(it)}${d.x ? `<p class="sig-x">${esc(SAFE_TXT(String(d.x), 120))}</p>` : ''}
       <p class="muted">${fmt(new Date(), { weekday: 'long' })} · with love, from Underskin</p>
       ${state && state.onboarded ? `<a class="btn btn-love btn-block" href="#/partners">${icon('heart', 16)} Send love back</a>` : `<a class="btn btn-light btn-block" href="#/today">Get Underskin</a>`}</div></div>`;
 }
@@ -9468,7 +9535,8 @@ function viewPartner(p) {
       return `<section class="card glass feel-card"><div class="eyebrow">${real ? `${esc(p.n)} logged today` : 'How she’s feeling'}</div>
         <div class="feel-chips">${(real ? p.m.map(esc) : moods).map(m => `<span class="${real ? 'real' : ''}">${m}</span>`).join('')}</div>
         <p class="body sm">${partnerRead(pi, p).split('. ').slice(1, 2).join('')}.</p></section>`; })()}
-    ${(() => { const got = (state.sigLog || []).filter(x => x.pid === p.id).slice(0, 3); return got.length ? `<section class="card glass sig-log"><div class="eyebrow">From ${esc(p.n)}</div>${got.map(x => { const g = SIGNALS.find(y => y.k === x.k); return `<div class="sl"><span>${g ? g.g : '❤️'}</span><b>${g ? g.t : ''}</b><small>${fmtAgo(x.at)}</small></div>`; }).join('')}</section>` : ''; })()}
+    ${(() => { const got = (state.sigLog || []).filter(x => x.pid === p.id).slice(0, 3); return got.length ? `<section class="card glass sig-log"><div class="eyebrow">From ${esc(p.n)}</div>${got.map(x => { const g = SIGNALS.find(y => y.k === x.k); return `<div class="sl">${g ? `<img class="sl-stk" src="${stk(g)}" alt="">` : '<span>❤️</span>'}<b>${g ? g.t : ''}${x.n > 1 ? ` ×${x.n}` : ''}</b><small>${fmtAgo(x.at)}</small></div>`; }).join('')}</section>` : ''; })()}
+    ${SIG_Q.length && ui.mailSnooze ? `<button class="mail-wait" data-action="mailOpen"><img src="images/stk/envelope.webp" alt=""><span>A letter is waiting for you</span></button>` : ''}
     ${loveBtn(p, true)}
     ${p.l ? pvLoss(esc(p.n)) : ''}
 
@@ -12227,23 +12295,47 @@ const actions = {
   calMoveStart: () => { const last = M.stats.periods[M.stats.periods.length - 1]; if (!last) return; ui.calEdit = false; ui.calFix = null; ui.calStart = C.iso(last.start); const m = new Date(last.start); ui.calMonth = C.iso(new Date(m.getFullYear(), m.getMonth(), 1)); render(); },
   calEdit: () => { ui.calEdit = !ui.calEdit; if (!ui.calEdit) ui.calFix = null; if (!ui.calEdit) toast('Saved · predictions updated'); calRefresh(null, true); },
   pinPartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (!p) return; p.pin = !p.pin; save(); toast(p.pin ? `${p.n} pinned to your home screen` : 'Unpinned'); render(); },
-  openLove: d => { sigDone(false); ui.loveFor = d.id; render(); if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().catch(() => {}); },
+  openLove: d => { sigDone(false); ui.loveFor = d.id; ui.letter = {}; render(); if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().catch(() => {}); },
   sigClose: () => sigDone(),
+  ltOpen: (d, el) => ltOpen(el),
+  ltLater: () => { ui.mailSnooze = true; sigDone(false, true); toast('💌 It waits for you. Open it any time from your people'); },
+  mailOpen: () => { ui.mailSnooze = false; sigNext(); },
+  offOk: () => { const n = document.querySelector('.off-note'); if (n) { n.classList.add('out'); setTimeout(() => n.remove(), 400); } },
+  letterAdd: (d, el) => {
+    const L = ui.letter = ui.letter || {}; if (itCount(L) >= 24) return toast('That’s a full letter 💌');
+    L[d.k] = (L[d.k] || 0) + 1; el.classList.add('has'); el.querySelector('.lsw-x').textContent = `×${L[d.k]}`;
+    el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); buzz?.('tick');
+    const sh = el.closest('.lsw'), bar = sh && sh.querySelector('.lt-bar'); if (bar) { bar.outerHTML = letterBar(); I18N.tr(sh.querySelector('.lt-bar')); }
+  },
+  letterClear: (d, el) => { ui.letter = {}; const sh = el.closest('.lsw'); if (!sh) return; sh.querySelectorAll('.lsw-s').forEach(t => { t.classList.remove('has'); t.querySelector('.lsw-x').textContent = ''; }); sh.querySelector('.lt-bar').outerHTML = letterBar(); I18N.tr(sh.querySelector('.lt-bar')); },
+  letterSend: async (d, el) => {
+    const it = cleanIt(ui.letter), n = itCount(it); if (!n) return;
+    const sheet = el.closest('.love-sheet'), pv = sheet && sheet.classList.contains('pv');
+    envFly(el);
+    let ok = false, who = 'her';
+    if (pv) {
+      const snap = pvSnap(); if (!snap) return; who = snap.n || 'her';
+      if (!snap.i) return toast(`${snap.n || 'She'} needs to open her app once, then her link can receive it`);
+      const me = himP().n || (state && state.profile && state.profile.name) || 'Your partner';
+      try { ok = navigator.onLine && (await fetch(RELAY + snap.i, { method: 'POST', body: JSON.stringify({ k: 'letter', it, f: me, t: okPic(himP().ph) }) })).ok; } catch {}
+      if (ok) oakDo('love', true);
+    } else {
+      const p = (state.partners || []).find(x => x.id === ui.loveFor); if (!p) return; who = p.n;
+      Object.entries(it).forEach(([k, c]) => { for (let i = 0; i < c; i++) (state.loveSent = state.loveSent || []).push({ to: p.id, k, at: Date.now() }); }); state.loveSent = state.loveSent.slice(-200); save();
+      if (!p.i) { // she hasn't connected yet: share a link to the letter
+        const snap = { f: state.profile.name || 'Someone', it }; if (state.profile.thumb) snap.t = state.profile.thumb;
+        const url = `${appBase()}#/love?d=${b64e(snap)}`, text = `💌 ${state.profile.name || 'I'} sent you a little letter`;
+        ui.letter = {}; setTimeout(async () => { ui.loveFor = null; render(); if (await shareOut({ text, url })) return toast(`💌 Sent to ${p.n}`); try { await navigator.clipboard.writeText(`${text} ${url}`); toast('Copied: paste it in your chat 💌'); } catch { prompt('Copy and send', `${text} ${url}`); } }, 700);
+        return;
+      }
+      ok = await sendSignal(p, 'letter', { it });
+      if (!ok) { (state.outbox = state.outbox || []).push({ to: p.id, it, at: Date.now() }); state.outbox = state.outbox.slice(-20); save(); ok = 'q'; }
+    }
+    ui.letter = {};
+    setTimeout(() => { if (pv) sheet.remove(); else { ui.loveFor = null; render(); } toast(ok === 'q' ? 'No internet right now. Your letter waits and flies as soon as you’re back online 💌' : ok ? `💌 Sent to ${who}` : 'Couldn’t send: check your connection'); }, 650);
+  },
   loveClose: () => { ui.loveFor = null; render(); },
   noop: () => {},
-  sendLove: async (d, el) => {
-    const p = (state.partners || []).find(x => x.id === ui.loveFor), l = SIGNALS.find(x => x.k === d.k); if (!p || !l) return;
-    const r = el.getBoundingClientRect(); heartBurst(r.left + r.width / 2, r.top + r.height / 2);
-    const snap = { f: state.profile.name || 'Someone', k: l.k }; if (state.profile.thumb) snap.t = state.profile.thumb;
-    const url = `${appBase()}#/love?d=${b64e(snap)}`, text = `${l.g} ${state.profile.name || 'I'} ${l.s}`;
-    (state.loveSent = state.loveSent || []).push({ to: p.id, k: l.k, at: Date.now() }); state.loveSent = state.loveSent.slice(-200); save();
-    if (p.i) { const ok = await sendSignal(p, l.k); setTimeout(() => { ui.loveFor = null; render(); toast(ok ? `${l.g} Sent to ${p.n}` : 'Couldn’t send: check your connection'); }, 600); return; }
-    setTimeout(async () => {
-      ui.loveFor = null; render();
-      if (await shareOut({ text, url })) { toast(`Love sent to ${p.n} ❤️`); return; }
-      try { await navigator.clipboard.writeText(`${text} ${url}`); toast('Copied: paste it in your chat ❤️'); } catch { prompt('Copy and send', `${text} ${url}`); }
-    }, 700);
-  },
   hubTip: d => {
     ui.hubTip = ui.hubTip === d.k ? null : d.k;
     const box = document.querySelector('.hub-plan'); if (!box || !M.info) return render();
@@ -12772,20 +12864,13 @@ const actions = {
   pvLove: () => { // the little love tiles, sent live to her phone
     const snap = pvSnap(); if (!snap) return;
     document.querySelector('.love-sheet.pv')?.remove();
-    $app.insertAdjacentHTML('beforeend', `<div class="love-sheet pv" data-action="pvLoveClose"><div class="ls-card ls2 lsw" data-action="noop"><div class="ls-grip"></div>${LSW_SPK('#e7a3bb')}
-      ${lswHead(snap.n || 'her', '', 'Tap one and it lands on her phone', snap.a === 'friend')}
-      <div class="lsw-grid four">${(snap.a === 'friend' ? FR_LOVE : PV_LOVE).map(k => LOVE.find(l => l.k === k)).map((l, i) => lswTile(l, i, 'pvLoveSend')).join('')}</div></div></div>`);
+    ui.letter = {};
+    $app.insertAdjacentHTML('beforeend', `<div class="love-sheet pv" data-action="pvLoveClose"><div class="ls-card ls2 lsw lt-sheet" data-action="noop"><div class="ls-grip"></div>${LSW_SPK('#e7a3bb')}
+      ${lswHead(snap.n || 'her', '', 'Tap as many as you like, they all go in one letter', snap.a === 'friend')}
+      <div class="lsw-grid stk4">${(snap.a === 'friend' ? FR_LOVE : PV_LOVE).map(k => LOVE.find(l => l.k === k)).map((l, i) => lswTile(l, i, 'letterAdd')).join('')}</div>${letterBar()}</div></div>`);
+    I18N.tr($app.querySelector('.love-sheet.pv'));
   },
   pvLoveClose: () => document.querySelector('.love-sheet.pv')?.remove(),
-  pvLoveSend: async (d, el) => {
-    const snap = pvSnap(), l = LOVE.find(x => x.k === d.k); if (!snap || !l) return;
-    const b = el.getBoundingClientRect(); heartBurst(b.left + b.width / 2, b.top + b.height / 2);
-    if (!snap.i) { toast(`${snap.n || 'She'} needs to open her app once, then her link can receive it`); return; }
-    const me = himP().n || (state && state.profile && state.profile.name) || 'Your partner';
-    let ok = false; try { ok = (await fetch(RELAY + snap.i, { method: 'POST', body: JSON.stringify({ k: l.k, f: me, t: okPic(himP().ph) }) })).ok; } catch {}
-    if (ok) oakDo('love', true);
-    setTimeout(() => { document.querySelector('.love-sheet.pv')?.remove(); toast(ok ? `${l.g} Sent to ${snap.n || 'her'}` : 'Couldn’t send: check your connection'); }, 500);
-  },
   pvDuo: (d, el) => { // open the recipe of the tapped tile under the pair, in place (the 3D dish and cup keep turning)
     const card = el.closest('.pv2-duo'); if (!card) return;
     const on = el.getAttribute('aria-expanded') !== 'true';
