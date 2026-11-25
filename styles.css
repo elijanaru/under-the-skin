@@ -18510,3 +18510,29 @@ html .view:has(> .grh) .section-title h3::before { background: #c3d394 !importan
 .grw-surf li.no .grw-sp { filter: saturate(.6); opacity: .8; }
 /* the bottom bar stays on Ground, so the question sits just above it */
 .grq.grq2 { bottom: calc(104px + env(safe-area-inset-bottom, 0px)); }
+
+/* Remedy page, 26 Nov 2026 redesign in the Unlock structure: taped polaroid high on the stage with a round element
+   sticker, the name in dark ink on the paper note, dose rows as a small spec sheet, tick pills, then white cards */
+.rxu-stage { padding: 14px 0 26px; }
+.rxu-pol { transform: rotate(-2.5deg); }
+.rxu-pol img { aspect-ratio: 5 / 4; }
+.rxu-art { display: block; position: relative; aspect-ratio: 5 / 4; overflow: hidden; border-radius: 2px; background: #f3efe6; }
+.rxu-stk { position: absolute; right: -16px; bottom: 44px; width: 68px; height: 68px; display: grid; place-content: center; text-align: center; rotate: 9deg;
+  border-radius: 50%; background: #fff7d6; border: 2px dashed rgba(176,79,108,.45); box-shadow: 0 8px 16px -8px rgba(60,40,30,.45); color: #20301a; }
+.rxu-stk b { font: 500 22px/1 'Noto Serif SC', serif; color: #b04f6c; }
+.rxu-stk small { margin-top: 3px; font: 600 8px/1 var(--font); letter-spacing: .02em; text-transform: uppercase; color: #5b4a3a; }
+.rxu-off { background: #fff4e0; }
+.rxu-take { margin: 16px 0 4px; border-top: 1px solid rgba(32,48,26,.12); }
+.rxu-take > div { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; padding: 11px 0; border-bottom: 1px solid rgba(32,48,26,.12); }
+.rxu-take span { flex: none; font: 400 14px/1.3 var(--font); color: #6a7458; }
+.rxu-take b { font: 600 15px/1.3 var(--font); color: #20301a; text-align: right; }
+.rxu-why { margin: 10px 0 2px; }
+.rxu-why summary { list-style: none; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font: 600 14px/1 var(--font); color: #b04f6c; padding: 6px 0; }
+.rxu-why summary::-webkit-details-marker { display: none; }
+.rxu-why[open] summary svg { transform: rotate(180deg); }
+.rxu-why p { margin: 6px 0 0; font: 400 14.5px/1.55 var(--font); color: #3d4733; }
+.rxu-note .ul3-cta { margin-top: 18px; }
+.ul3-no .rxu-tick { background: #e8efd8 !important; }
+.ul3-no .rxu-tick svg { stroke: #4f6a2a; }
+.rxu-fit h3 { margin-bottom: 6px; }
+.rxu-pol figcaption { padding: 10px 6px 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

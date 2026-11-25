@@ -6026,7 +6026,8 @@ function viewRemedy(id) {
   if (r.days) {
     const ls = lemonState();
     if (!ls || ls.over) {
-      tracker = `<section class="card card-light"><div class="eyebrow dark">28-day ritual</div><h3 class="dark-h">${ls?.over ? 'Ready for another round?' : 'Start your 28 days'}</h3>
+      tracker = ''; // the note's button starts it now (26 Nov 2026 redesign)
+      if (0) tracker = `<section class="card card-light"><div class="eyebrow dark">28-day ritual</div><h3 class="dark-h">${ls?.over ? 'Ready for another round?' : 'Start your 28 days'}</h3>
         <p class="dp-text">${info && info.cd === 1 ? 'Today is day 1 of your cycle, the perfect day to begin.' : info ? `Best started on day 1 of your cycle. Your next one is in ${plural(info.daysToPeriod, 'day')}. You can also start today.` : ''}</p>
         <button class="btn btn-dark btn-block" data-action="lemonStart">${icon('play', 16)} Start today</button></section>`;
     } else {
@@ -6039,10 +6040,34 @@ function viewRemedy(id) {
         <div class="lm-dots">${dots}</div><div class="lm-foot">${ls.count} of 28 mornings done</div></section>`;
     }
   }
-  return `${topbar('Remedy', { back: true })}<div class="pad sp2 sp2t">
-    ${specHero({ stack: true, photo: carePhoto(r.id, 1000), glyph: r.glyph, han: true, eyebrow: `${r.nature} · ${r.element} · ${r.organ}`, name: r.name,
-      label: r.take ? 'How to take it' : 'Key ingredients', rows: r.take ? [['Dose', r.take.dose], ['How often', r.take.often], ['When', r.take.when]] : r.ingredients.map(ingRow), desc: r.why.split(/(?<=\.)\s+/)[0], more: r.why.split(/(?<=\.)\s+/).slice(1).join(' ') })}
-    <section class="card glass tea-fit"><div class="tf-k">Best in your cycle${r.raw ? ' · raw days' : ''}</div>${r.raw && M.info ? rawStrip(M.info) : phaseFit(r.phases, M.info && M.info.phase)}${r.phases.length === 4 ? '<small class="tf-all">Good every day of your cycle</small>' : ''}
+  // 26 Nov 2026 redesign in the Unlock structure (her rule): the photo as a taped polaroid high on a sparkled stage, a day
+  // pill, the taped paper note with the name in dark ink (it sat low and faint on the arch before), pills, then white cards
+  const swirl = '<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg>';
+  const why = splitSentences(r.why), words = r.name.split(' '), head = words.slice(0, -1).join(' '), tail = words.slice(-1)[0];
+  const ph = info && PHASES[info.phase], off = r.raw && warm, fits = info && r.phases.includes(info.phase) && !off;
+  const nextOk = info && !fits && (() => { const O = PHASE_ORDER, i0 = O.indexOf(info.phase); return [1, 2, 3].map(k => O[(i0 + k) % 4]).find(p => r.phases.includes(p) && !(r.raw && p === 'menstrual')); })();
+  const status = !info ? '' : off ? 'warm days, paused' : fits ? 'good for you today' : nextOk ? `best in your ${PHASES[nextOk].name.toLowerCase()} phase` : '';
+  const cap = r.ingredients.filter(g => !/^optional/i.test(g)).slice(0, 2).map(g => ingRow(g)[0].split(/,| or | with /)[0].split(' ').slice(0, 3).join(' ').toLowerCase()).join(' · ');
+  const ls = r.days && lemonState(), run = ls && !ls.over;
+  const pills = r.take ? [r.take.often, r.take.when.split(',')[0], r.take.more ? r.take.more[2].split(',')[0] : ''].filter(Boolean).slice(0, 3) : [];
+  return `${topbar('Remedy', { back: true })}<div class="pad ul3 ul4 rxu">
+    <div class="ul4-stage sgu-stage rxu-stage">
+      <svg class="ul4-sp" viewBox="0 0 360 250" aria-hidden="true">${o3Spark('#f1d58a', 26, 34, 0)}${o3Spark('#fff', 334, 22, 1.1)}${o3Spark('#c9d6a8', 344, 214, 2)}${o3Spark('#f6c6d4', 14, 222, 1.6)}</svg>
+      <figure class="sgu-pol rxu-pol">${carePhoto(r.id, 900) ? `<img src="${carePhoto(r.id, 900)}" alt="">` : `<span class="rxu-art">${liquidArt(r.glyph, true)}</span>`}<figcaption>${cap}</figcaption>
+        <span class="rxu-stk" aria-hidden="true"><b>${r.glyph}</b><small>${r.nature.split(' · ')[0].toLowerCase()}</small></span></figure>
+    </div>
+    ${info ? `<span class="ul3-days ${off ? 'rxu-off' : ''}">${icon(off ? 'sun' : 'leaf', 13)} <span>Day ${dayNo(info)}</span> · <span>${ph.name}</span>${status ? ` · <span>${status}</span>` : ''}</span>` : ''}
+    <section class="o3-note ul3-note ul4-note rxu-note">
+      <small class="ul4-eye">A home remedy for your ${r.organ.toLowerCase()}</small>
+      <h2 class="ul4-h">${head ? `${head}<br>` : ''}<em>${tail}${swirl}</em></h2>
+      <p class="o3-lead">${why[0]}</p>
+      ${r.take ? `<div class="rxu-take">${[['Dose', r.take.dose], ['How often', r.take.often], ['When', r.take.when]].map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join('')}</div>` : ''}
+      ${why.length > 1 ? `<details class="rxu-why"><summary>Why it works ${icon('chevD', 13)}</summary><p>${why.slice(1).join(' ')}</p></details>` : ''}
+      ${r.days && !off ? `<button class="ul3-cta" data-action="${run ? 'lemonTick' : 'lemonStart'}">${run ? (ls.doneToday ? `${icon('check', 16, 2.2)} Done today, day ${ls.day} of 28` : `Tick today, day ${ls.day} of 28`) : 'Start my 28 days'}</button>` : ''}
+      <p class="o3-sign">a small ritual, a softer cycle <i>♡</i></p>
+    </section>
+    ${pills.length ? `<ul class="ul3-no rxu-pills">${pills.map((t, i) => `<li style="--r:${[-2, 1.5, -1][i]}deg"><span class="o3-x rxu-tick">${O3_TICK}</span>${t}</li>`).join('')}</ul>` : ''}
+    <section class="card ul3-keep tea-fit rxu-fit"><h3>Best in your cycle${r.raw ? ' · raw days' : ''}</h3>${r.raw && M.info ? rawStrip(M.info) : phaseFit(r.phases, M.info && M.info.phase)}${r.phases.length === 4 ? '<small class="tf-all">Good every day of your cycle</small>' : ''}
       ${r.take && r.take.more ? (() => { const [ic, k, v] = r.take.more, now = (k === 'Pause' || k === 'Warm days') && r.raw && warm; return `<div class="rx-row ${now ? 'now' : ''}"><span>${icon(ic, 14)} ${now ? (k === 'Pause' ? 'Paused right now' : 'Right now') : k}</span><b>${v}</b></div>`; })() : ''}
       ${organPhase ? `<div class="rx-row"><span><i class="rx-han">${Z.FIVE[r.element].han}</i> In Chinese medicine</span><b class="rx-org">${r.organ}<small>${PHASES[organPhase].name} phase</small></b></div>` : ''}</section>
     ${r.raw && warm ? `<section class="card flag"><span class="bn-ic">${icon('yinyang', 18)}</span><div class="bn-t"><b>Not today</b><p>You’re in your warm window. Chinese medicine keeps raw and cold food away during your period and the days before. Save this for your follicular phase.</p></div></section>` : ''}
