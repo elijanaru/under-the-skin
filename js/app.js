@@ -698,7 +698,7 @@ function groundEnter(hero, img, done) {
   hero.querySelectorAll('.grq, .grh-t').forEach((el, i) => el.animate([{ opacity: 1, filter: 'blur(0)', transform: 'none' }, { opacity: 0, filter: 'blur(10px)', transform: `translateY(${i ? -14 : 18}px) scale(.98)` }], { ...fade, delay: 380 + i * 60 }));
   setTimeout(() => {
     done(); ui.grEnter = true; render(); ui.grEnter = false;
-    const h2 = document.querySelector('#view .grh'), i2 = h2 && h2.querySelector(':scope > img'), seg = document.querySelector('#view .gr2-seg');
+    const h2 = document.querySelector('#view .grh'), i2 = h2 && h2.querySelector(':scope > img'), seg = document.querySelector('#view .grhw') || document.querySelector('#view .gr2-seg');
     if (!h2 || !i2) return;
     i2.getAnimations().forEach(a => a.cancel()); h2.querySelectorAll('.grh-t').forEach(e => e.getAnimations().forEach(a => a.cancel()));
     i2.style.transformOrigin = Z.o;
@@ -706,6 +706,30 @@ function groundEnter(hero, img, done) {
     const sv = document.getElementById('view'), top = seg ? seg.getBoundingClientRect().top - sv.getBoundingClientRect().top + sv.scrollTop - 16 : h2.offsetHeight;
     grGlide(top, 1400).then(() => { hold.cancel(); i2.animate([{ transform: Z.t }, { transform: 'none' }], { duration: 900, easing: GR_EASE }); h2.classList.add('gr-back'); });
   }, 1450);
+}
+// How grounding works: one picture, three short lines, the long version behind a tap. She can close it with the X.
+function groundHow() {
+  if (state.profile.grHowOff) return `<button class="grhw-back" data-action="grHow" data-v="on">${icon('leaf', 14)} How grounding works</button>`;
+  const flow = (d, i) => `<path class="grhw-f" style="--d:${(i * .37) % 1.6}s" d="${d}"/>`;
+  const lines = ['M8 100C12 92 18 84 20 72S22 46 21 22', 'M24 100C25 92 26 84 26 72S26 46 26 18', 'M42 100C40 92 34 84 31 72S31 46 31 24',
+    'M62 100C66 92 70 84 72 72S73 46 73 22', 'M80 100C80 92 79 84 78 72S78 46 78 18', 'M98 100C95 92 88 84 84 72S84 46 83 24'];
+  return `<section class="card grhw" aria-labelledby="grhw-t">
+    <button class="grhw-x" data-action="grHow" data-v="off" aria-label="Hide how it works">${icon('close', 16, 2)}</button>
+    <small class="ul4-eye">How it works</small>
+    <h3 id="grhw-t">Why bare feet help</h3>
+    <figure class="grhw-g"><img src="images/ground/how-feet.webp" alt="Bare feet standing on a city lawn" loading="lazy" decoding="async">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines.map(flow).join('')}</svg>
+      <figcaption><span class="grhw-c up">The earth’s charge rises</span><span class="grhw-c">You feel calmer</span></figcaption></figure>
+    <ol class="grhw-s">
+      <li><b class="dotnum">1</b><span><b>The earth</b><small>The ground holds a soft natural charge, full of free electrons.</small></span></li>
+      <li><b class="dotnum">2</b><span><b>Your skin</b><small>Bare feet or hands on grass, sand, soil or water let it flow in. Shoes and plastic block it.</small></span></li>
+      <li><b class="dotnum">3</b><span><b>You</b><small>Small studies link it to calmer stress, deeper sleep and less soreness.</small></span></li>
+    </ol>
+    <details class="grhw-more"><summary>The longer version ${icon('chevD', 13)}</summary>
+      <p>Your body runs on tiny electrical signals: your heart, your nerves, every muscle. Modern life keeps you insulated, with rubber soles, high floors and little time outside.</p>
+      <p>Grounding, also called earthing, simply reconnects you. Researchers think the earth’s free electrons may calm inflammation and help your nervous system shift from stress into rest. That is why many women feel steadier and sleep better.</p>
+      <p>The studies are small, so treat it as a calm daily habit, not a treatment. Never ground outdoors in a thunderstorm.</p></details>
+  </section>`;
 }
 function viewGround() {
   const info = M.info, ph = info && info.phase, P = ph && GROUND_PHASE[ph];
@@ -736,6 +760,7 @@ function viewGround() {
       <p class="o3-sign">the earth has you <i>♡</i></p>
     </section>
     <ul class="ul3-no gr2-rules">${rules.map(([ic, t, c], i) => `<li style="--r:${[-2, 1.5, -1][i]}deg"><span class="o3-x ${c}">${ic}</span>${t}</li>`).join('')}</ul>
+    ${groundHow()}
     <div class="seg gr2-seg" role="tablist" aria-label="Grounding">${tabs.map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" role="tab" aria-selected="${tab === k}" data-action="grTab" data-v="${k}">${l}</button>`).join('')}</div>
     <div class="gr2-panel" role="tabpanel">${groundPanel(tab)}</div>
   </div>`;
@@ -12426,6 +12451,12 @@ const actions = {
       av.forEach(a => { a.classList.add('has-photo'); const img = a.querySelector('img'); if (img) img.src = src; else { const t = [...a.childNodes].find(n => n.nodeType === 3 && n.textContent.trim()); const im = document.createElement('img'); im.src = src; im.alt = ''; t ? t.replaceWith(im) : a.prepend(im); } });
       toast(`Hello, little ${pet[1].toLowerCase()} ♡`);
     } },
+  grHow: d => { const off = d.v === 'off', card = document.querySelector('#view .grhw');
+    const go = () => { state.profile.grHowOff = off; save(); render(); if (!off) { const c = document.querySelector('#view .grhw'); c && c.scrollIntoView({ behavior: 'smooth', block: 'start' }); } };
+    if (!off || !card || matchMedia('(prefers-reduced-motion: reduce)').matches) return go();
+    buzz?.('tick'); card.style.height = card.offsetHeight + 'px'; card.getBoundingClientRect();
+    card.classList.add('out'); card.style.height = '0px';
+    setTimeout(go, 560); },
   grTab: d => { ui.grTab = d.v; const pn = document.querySelector('#view .gr2-panel'); if (!pn) return render();
     document.querySelectorAll('#view .gr2-seg button').forEach(b => { const on = b.dataset.v === d.v; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
     pn.innerHTML = groundPanel(d.v); pn.classList.remove('sw'); void pn.offsetWidth; pn.classList.add('sw'); decorateStudies?.(pn); },
