@@ -13248,4 +13248,12 @@ export default {"+ Cayenne":"+ 카옌페퍼",
 "Unplug it in a thunderstorm":"천둥 번개가 칠 땐 플러그를 뽑아요",
 "An indoor mat connects to the earth wire of a socket. Use one only if the socket is properly earthed and the mat is tested.":"실내 매트는 콘센트의 접지선에 연결돼요. 콘센트 접지가 제대로 되어 있고 검사를 거친 매트만 사용하세요.",
 "The easy way for city days when you cannot get out.":"밖에 나갈 수 없는 도시의 날에 쉬운 방법이에요.",
-"For rainy days and dark evenings.":"비 오는 날과 어두운 저녁에요."};
+"For rainy days and dark evenings.":"비 오는 날과 어두운 저녁에요.",
+"Period any day now":"이제 곧 생리가 시작돼요",
+"Period in {0} day":"{0}일 후 생리",
+"Period in {0} days":"{0}일 후 생리",
+"Egg release today · fertile":"오늘 배란 · 가임기",
+"Fertile window · egg release in {0} day":"가임기 · {0}일 후 배란",
+"Fertile window · egg release in {0} days":"가임기 · {0}일 후 배란",
+"Premenstrual · period in {0} day":"생리 전 · {0}일 후 생리",
+"Premenstrual · period in {0} days":"생리 전 · {0}일 후 생리"};

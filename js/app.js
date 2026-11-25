@@ -6876,7 +6876,7 @@ function stageHero(info, energy, o = {}) {
         <span class="bubble ${info.phase}" title="${FLOWER[info.phase].n}">${flowerImg(info.phase)}<i class="bubble-glass"></i></span></div>
       <span class="stage-base"></span>
       <div class="stage-stats">
-        <div class="stage-day"><small>Day</small> ${cd}</div>
+        <div class="stage-day"><small>Day</small> ${info.cd}</div>
         <svg class="stage-br" viewBox="0 0 300 30" preserveAspectRatio="none" aria-hidden="true"><path d="M150 0 V12 M150 12 C150 18 140 18 130 18 H62 C52 18 50 22 50 30 M150 12 C150 18 160 18 170 18 H238 C248 18 250 22 250 30" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
         <div class="caps">${cap('bolt', `${energy}%`, energy, 'Energy', 'energy')}${perCapX}${o.fert === false ? '' : fertCap}</div>
       </div>
@@ -9047,8 +9047,10 @@ function partnersCard(info) {
 // One line saying what is happening for her right now / next.
 function partnerStatus(pi, p) {
   if (pi.isPeriod) return `Period · day ${pi.cd}`;
+  if (pi.late > 0) return 'Period any day now';
   if (pi.daysToPeriod <= 3) return `Period in ${plural(pi.daysToPeriod, 'day')}`;
-  if (p.f && pi.isOvulation) return 'Egg release today';
+  if (p.f && pi.isOvulation) return 'Egg release today · fertile';
+  if (p.f && pi.fertile) return `Fertile window · egg release in ${plural(pi.daysToOv, 'day')}`;
   if (pi.cd > pi.L - 4) return `Premenstrual · period in ${plural(pi.daysToPeriod, 'day')}`;
   return `Period in ${plural(pi.daysToPeriod, 'day')}`;
 }
@@ -9364,7 +9366,7 @@ function viewPartners(id) {
     ${ps.length ? `${sectionTitle(`Your people · ${ps.length} of 4`)}
     ${ps.slice().sort((a, b) => !!b.pin - !!a.pin).map(p => { const pi = snapInfo(p, new Date()), ph = PHASES[pi.phase], zs = p.z ? Z.sunSign(+p.z.slice(0, 2), +p.z.slice(3)) : null;
       return `<div class="sy-row"><button class="card glass sy-card" data-action="nav" data-to="partners/${p.id}">${ptAvatar(p, 'lg')}
-        <span class="pt-b"><b>${esc(p.n)}</b><small>${ph.name} · day ${pi.cd} · ${partnerStatus(pi, p)}</small></span>${icon('chevR', 16)}</button></div>`; }).join('')}` : ''}
+        <span class="pt-b"><b>${esc(p.n)}</b><small><span>${ph.name}</span> · <span>day ${pi.cd}</span> · <span>${partnerStatus(pi, p)}</span></small></span>${icon('chevR', 16)}</button></div>`; }).join('')}` : ''}
 
     ${ps.length >= 4 ? '<p class="fine center">You’re connected with 4 people, the most Underskin keeps. Remove someone to add a new person.</p>' : ''}
     ${ps.length >= 4 ? '' : (() => { const sent = !!me.linkSent, got = ps.length > 0, rel = me.ptRel || '', who = (rel && me.ptWho) || '', done = () => `<span class="sy-n done">${icon('check', 15, 2.4)}</span>`;
@@ -9549,7 +9551,7 @@ function herCheckin(p, fr) {
   </section>`;
 }
 function viewPartner(p) {
-  const today = C.startOfDay(new Date()), pi = snapInfo(p, today), ph = PHASES[pi.phase], tcm = TCM[pi.phase], fr = isFr(p), fert = !!p.f && !fr;
+  const today = C.startOfDay(new Date()), pi = snapInfo(p, today), ph = PHASES[pi.phase], tcm = TCM[pi.phase], fr = isFr(p), fert = !!p.f;
   const S = SUPPORT[pi.phase], sup = S[p.a === 'friend' ? 'friend' : 'partner'], en = Math.round(C.energyAt(pi.cd, pi.L, pi.P) * 100);
   const mv = MOVE_GUIDE[dayWindow(pi)], rec = pick(recipesFor(pi.phase, pi), dayNum(today) + 3);
   // next 14 days for both of you; best shared day = highest combined energy
@@ -11052,7 +11054,13 @@ function syncPartners() {
 // Cycle info rebuilt from a shared snapshot (projected forward cycle by cycle).
 function snapInfo(snap, date) {
   const L = Math.round(Math.min(60, Math.max(15, +snap.c || 28))), P = Math.round(Math.min(10, Math.max(1, +snap.p || 5))), d = C.startOfDay(date), s = C.parseISO(String(snap.s));
-  const diff = Math.max(0, C.diffDays(d, s)), nx = snap.nx && C.parseISO(String(snap.nx)), ov = C.ovulationDay(L, P);
+  const diff = Math.max(0, C.diffDays(d, s)), ov = C.ovulationDay(L, P), t0 = C.startOfDay(new Date());
+  let nx = snap.nx && C.parseISO(String(snap.nx));
+  // her due date has passed and no new period came in: she is late, exactly like on her own phone (which moves the
+  // next date to tomorrow every day she waits). Never start a new cycle she has not logged (26 Nov 2026: her friends
+  // saw her on her period while her phone said day 28). After three weeks past due it goes back to projecting.
+  const due = nx || C.addDays(s, L);
+  if (t0 >= due && C.diffDays(t0, s) + 1 <= Math.max(L + 21, 45)) nx = C.addDays(t0, 1);
   if (nx && d < nx) { // still in the cycle she is in: her own phone's next date, so a late period shows as late, never as a new cycle
     const cd = diff + 1, Lc = Math.max(cd, C.diffDays(nx, s)), late = Math.max(0, cd - L);
     return { cd, L, P, ov, phase: C.phaseFor(Math.min(cd, L), L, P), cycleStart: s, nextStart: nx,
@@ -11795,7 +11803,7 @@ function viewWith(q) {
   }
   const list = (arr, cls) => `<ul class="plist ${cls || ''}">${arr.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
   const chips = [`<span class="hchip">${icon('drop', 14)} ${info.isPeriod ? 'On her period' : `Period in ${plural(info.daysToPeriod, 'day')}`}</span>`];
-  if (snap.f && role === 'partner') chips.push(`<span class="hchip ${info.fertile ? 'hl' : ''}">${icon('spark', 14)} ${info.fertile ? 'Fertile window' : 'Low fertility'}</span>`);
+  if (snap.f) chips.push(`<span class="hchip ${info.fertile ? 'hl' : ''}">${icon('spark', 14)} ${info.fertile ? 'Fertile window' : 'Low fertility'}</span>`);
   const mine = state && state.onboarded && M?.stats?.periods?.length && snap.n === (state.profile.name || 'Her') && snap.s === C.iso(M.stats.periods[M.stats.periods.length - 1].start);
   const him = snap.w === 'm'; // a man only views her rhythm, he never tracks
   if (!(state && state.onboarded)) { try { localStorage.setItem(him ? 'uts.viewOnly' : 'uts.pendingPartner', q.get('d')); } catch {} }
@@ -11807,7 +11815,7 @@ function viewWith(q) {
   <div class="pad pv-page">
     <div class="pv-top">${back}${seg}</div>
     ${him && ui.hisTab === 'read' ? `${pvRead(snap, info, name)}</div>` : him && ui.hisTab === 'his' ? `<div class="pv2-title"><small>${himP().n ? `${esc(himP().n)}’s day` : 'Your day'} · ${fmt(today, { weekday: 'long', month: 'short', day: 'numeric' })}</small><h1>Your <b>24-hour drive</b></h1><p>Testosterone runs on a daily clock. Use it, and see what raises it.</p></div>${oakCard()}${snap.g ? `<section class="pv2-card pv2-warn">${icon('heart', 16)}<p><b>Trying for a baby?</b> Never take testosterone or “T boosters”. Extra testosterone shuts down your sperm. Sleep, lifting and food below are the safe way.</p></section>` : ''}${hisDay(info, name)}</div>` : `
-    <section class="hub pt-stage pv-hero">${stageHero(info, Math.round(C.energyAt(info.cd, info.L, info.P) * 100), { nav: false, id: 'with', fert: !!snap.f && role === 'partner', title: `${name} is in her` })}</section>
+    <section class="hub pt-stage pv-hero">${stageHero(info, Math.round(C.energyAt(info.cd, info.L, info.P) * 100), { nav: false, id: 'with', fert: !!snap.f, title: `${name} is in her` })}</section>
     ${herCheckin(snap, role === 'friend')}
     ${pvHerDay(info, S, sup)}
     ${role === 'partner' ? pvReadTeaser(info, him) : ''}
@@ -11823,7 +11831,7 @@ function viewWith(q) {
     ${him ? '' : `${sectionTitle('Her hormones')}
     <section class="card glass chart-card">${cycleChart(info, { id: 'with', compact: true, who: 'Her' })}</section>`}
     ${sectionTitle('Her next two weeks')}
-    ${ptCalendar(snap, !!snap.f && role === 'partner')}
+    ${ptCalendar(snap, !!snap.f)}
     <p class="fine center">Estimates based on her cycle. Every body is different, so ask her too.</p>
     ${mine ? '' : state && state.onboarded
       ? ((state.partners || []).some(x => x.n === snap.n && x.s === snap.s)
