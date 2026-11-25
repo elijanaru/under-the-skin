@@ -18508,3 +18508,5 @@ html .view:has(> .grh) .section-title h3::before { background: #c3d394 !importan
 .grw-surf li > span { flex: 1; }
 .grw-surf .grw-sp { flex: none; width: 76px; height: 46px; border-radius: 11px; object-fit: cover; box-shadow: 0 0 0 1px rgba(48,64,35,.06); }
 .grw-surf li.no .grw-sp { filter: saturate(.6); opacity: .8; }
+/* the bottom bar stays on Ground, so the question sits just above it */
+.grq.grq2 { bottom: calc(104px + env(safe-area-inset-bottom, 0px)); }

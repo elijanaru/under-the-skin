@@ -140,6 +140,8 @@ document.addEventListener('scroll', e => {
   const i = Math.round(el.scrollLeft / m.step); if (m.i !== null && i !== m.i) buzz('tick'); m.i = i;
 }, { capture: true, passive: true });
 // sub-pages: the tab bar rises once she reaches the end of the page, so home is one tap away
+// Ground keeps it in view the whole time (25 Nov 2026, her ask)
+const NO_PEEK = ['ground'];
 function peekTabs() {
   const nav = document.querySelector('.tabbar.peek'), v = document.getElementById('view'); if (!nav || !v) return;
   nav.classList.toggle('show', v.scrollTop + v.clientHeight >= v.scrollHeight - 90);
@@ -13562,7 +13564,7 @@ function render() {
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];
   const html = (views[r.name] || viewToday)();
   const arriving = $app.querySelector('.arrive');
-  const page = `${statusbar()}<div class="view ${fresh ? 'enter' : ''} ${arriving ? 'arrive-in' : ''}" id="view">${html}</div>${tabs.includes(r.name) || !views[r.name] ? tabbar(r.name in views ? r.name : 'today') : r.name !== 'unlock' ? tabbar('', true) : ''}${!termsOK() && r.name !== 'privacy' ? termsSheet() : ''}`;
+  const page = `${statusbar()}<div class="view ${fresh ? 'enter' : ''} ${arriving ? 'arrive-in' : ''}" id="view">${html}</div>${tabs.includes(r.name) || !views[r.name] ? tabbar(r.name in views ? r.name : 'today') : r.name !== 'unlock' ? tabbar('', !NO_PEEK.includes(r.name)) : ''}${!termsOK() && r.name !== 'privacy' ? termsSheet() : ''}`;
   I18N.setNames([state.profile?.name, ...(state.partners || []).map(p => p.n)]);
   if (fresh || arriving || !prev) pageInto($app, page); else morphInto($app, page);
   if (arriving) $app.appendChild(arriving);
