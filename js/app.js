@@ -9139,7 +9139,6 @@ function ltStickers(it) {
     const x = 50 + (c - (inRow - 1) / 2) * (100 / Math.max(cols, 2)) * .92 + ((i * 37) % 9 - 4), y = (r + .5) / rows * 100 + ((i * 53) % 11 - 5);
     return `<img src="${stk(l)}" alt="" style="left:${x}%;top:${y}%;--r:${(i * 47) % 25 - 12}deg;--d:${.15 + i * .16}s">`; }).join('')}</div>`;
 }
-const ltChips = it => `<div class="ltp-chips">${Object.entries(it).map(([k, n]) => { const l = SIGNALS.find(x => x.k === k); return l ? `<span class="ltp-c"><img src="${stk(l)}" alt="">${n > 1 ? `<b>×${n}</b>` : ''}<small>${l.t}</small></span>` : ''; }).join('')}</div>`;
 function ltHead(it, name) { const ks = Object.keys(it), one = ks.length === 1 && SIGNALS.find(x => x.k === ks[0]); return one ? `${esc(name)} ${one.s}` : `${esc(name)} sent you a little letter`; }
 function letterPop(it, name, from, meta) {
   const care = Object.keys(it).every(k => CARE.some(c => c.k === k)), pic = (from && (from.t || ptPet(from))) || okPic(meta?.t);
@@ -9156,7 +9155,6 @@ function letterPop(it, name, from, meta) {
       <div class="ltp-open" hidden>
         ${ltStickers(it)}
         <h1>${ltHead(it, name)}</h1>
-        ${ltChips(it)}
         <div class="ltp-btns">${from ? `<button class="ltp-b yes" data-action="openLove" data-id="${from.id}">${icon('heart', 16)} Send love back</button>` : ''}<button class="ltp-b no" data-action="sigClose">Close</button></div>
       </div>
     </div>`;
@@ -9251,7 +9249,7 @@ const LSW_R = [-3, 2, -1.5, 2.5, -2, 1.5, -2.5, 3, -1, 2, -2.5, 1.5, -1.5];
 const LSW_SPK = c => `<svg class="lsw-spk" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c.8 6.5 3.5 9.2 10 10-6.5.8-9.2 3.5-10 10-.8-6.5-3.5-9.2-10-10 6.5-.8 9.2-3.5 10-10z" fill="${c}"/></svg>`;
 function lswTile(l, i, action) {
   const n = (ui.letter || {})[l.k] || 0;
-  return `<button class="lsw-s stk ${n ? 'has' : ''}" data-action="${action}" data-k="${l.k}" style="--r:${LSW_R[i % LSW_R.length]}deg;--i:${i}"><img src="${stk(l)}" alt="" draggable="false" decoding="async"><small>${l.t}</small><b class="lsw-x" aria-hidden="true">${n ? `×${n}` : ''}</b></button>`;
+  return `<button class="lsw-s stk ${n ? 'has' : ''}" data-action="${action}" data-k="${l.k}" aria-label="${l.t}" style="--r:${LSW_R[i % LSW_R.length]}deg;--i:${i}"><img src="${stk(l)}" alt="" draggable="false" decoding="async"><b class="lsw-x" aria-hidden="true">${n ? `×${n}` : ''}</b></button>`;
 }
 function letterBar() {
   const n = itCount(ui.letter);
@@ -9263,8 +9261,8 @@ function lswHead(name, av, sub, fr) {
 }
 function loveSheet() {
   const p = (state.partners || []).find(x => x.id === ui.loveFor); if (!p) return '';
-  return `<div class="love-sheet" data-action="loveClose"><div class="ls-card ls2 lsw lt-sheet" data-action="noop">
-    <div class="ls-grip"></div>${LSW_SPK('#e7a3bb')}
+  return `<div class="love-sheet" data-action="loveClose"><div class="ls-card ls2 lsw lt-sheet ${isFr(p) ? 'fr' : 'lv'}" data-action="noop">
+    <div class="ls-grip"></div>${LSW_SPK(isFr(p) ? '#e8c35a' : '#e7a3bb')}
     ${lswHead(p.n, ptAvatar(p, 'sm'), 'Tap as many as you like, they all go in one letter', isFr(p))}
     <div class="lsw-grid stk4">${(isFr(p) ? FR_LOVE : PV_LOVE).map(k => LOVE.find(l => l.k === k)).map((l, i) => lswTile(l, i, 'letterAdd')).join('')}</div>
     <div class="lsw-k care">🌱 Care nudges</div>
@@ -9282,7 +9280,7 @@ function viewLove(q) {
   if (!l) return `<div class="pad"><h1 class="page-h" style="margin-top:80px">Link not valid</h1></div>`;
   const hearts = Array.from({ length: 24 }, (_, i) => `<i style="left:${(i * 37) % 100}%;animation-delay:${(i * .37) % 7}s;animation-duration:${6 + (i % 5)}s;width:${12 + (i * 7) % 22}px;height:${12 + (i * 7) % 22}px">${HEART(i % 3 === 1 ? '#fff' : '#ff2d4b')}</i>`).join('');
   return `<div class="love-view"><div class="lv-hearts">${hearts}</div>
-    <div class="lv-in ltp-link">${ltStickers(it)}<h1>${ltHead(it, SAFE_TXT(d.f, 40) || 'Someone')}</h1>${ltChips(it)}${d.x ? `<p class="sig-x">${esc(SAFE_TXT(String(d.x), 120))}</p>` : ''}
+    <div class="lv-in ltp-link">${ltStickers(it)}<h1>${ltHead(it, SAFE_TXT(d.f, 40) || 'Someone')}</h1>${d.x ? `<p class="sig-x">${esc(SAFE_TXT(String(d.x), 120))}</p>` : ''}
       <p class="muted">${fmt(new Date(), { weekday: 'long' })} · with love, from Underskin</p>
       ${state && state.onboarded ? `<a class="btn btn-love btn-block" href="#/partners">${icon('heart', 16)} Send love back</a>` : `<a class="btn btn-light btn-block" href="#/today">Get Underskin</a>`}</div></div>`;
 }
@@ -12864,7 +12862,7 @@ const actions = {
     const snap = pvSnap(); if (!snap) return;
     document.querySelector('.love-sheet.pv')?.remove();
     ui.letter = {};
-    $app.insertAdjacentHTML('beforeend', `<div class="love-sheet pv" data-action="pvLoveClose"><div class="ls-card ls2 lsw lt-sheet" data-action="noop"><div class="ls-grip"></div>${LSW_SPK('#e7a3bb')}
+    $app.insertAdjacentHTML('beforeend', `<div class="love-sheet pv" data-action="pvLoveClose"><div class="ls-card ls2 lsw lt-sheet ${snap.a === 'friend' ? 'fr' : 'lv'}" data-action="noop"><div class="ls-grip"></div>${LSW_SPK(snap.a === 'friend' ? '#e8c35a' : '#e7a3bb')}
       ${lswHead(snap.n || 'her', '', 'Tap as many as you like, they all go in one letter', snap.a === 'friend')}
       <div class="lsw-grid stk4">${(snap.a === 'friend' ? FR_LOVE : PV_LOVE).map(k => LOVE.find(l => l.k === k)).map((l, i) => lswTile(l, i, 'letterAdd')).join('')}</div>${letterBar()}</div></div>`);
     I18N.tr($app.querySelector('.love-sheet.pv'));
