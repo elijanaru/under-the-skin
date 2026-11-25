@@ -22,7 +22,10 @@ import * as I18N from './i18n.js';
 const { T } = I18N;
 // One day number everywhere (25 Nov 2026): the flower on Today, the hormone pages and every card show the same day,
 // held at her cycle length while the period is late (the lateness is shown on its own).
-const dayNo = i => Math.min(i.cd, i.L);
+// the day she sees is her real day, also when her period is late (day 30 of a 28-day cycle, 26 Nov 2026: one panel said
+// 28 while Today said 30); the hormone curves, rings and bars use dayPos, which stops at the last day of the model
+const dayNo = i => i.cd;
+const dayPos = i => Math.min(i.cd, i.L);
 // pop-ups speak her language too
 const confirm = m => window.confirm(T(m)), prompt = (m, v) => window.prompt(T(m), v);
 
@@ -1289,9 +1292,9 @@ function roSpark(x, cd, L, P) {
   return `<svg viewBox="-4 0 ${W + 8} ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${line}L${W} ${H}L0 ${H}Z" fill="${x.color}" opacity=".1"/><path d="${line}" fill="none" stroke="${x.color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" opacity=".85" ${x.dash ? `stroke-dasharray="${x.dash}"` : ''}/></svg><i style="left:${((tx + 4) / (W + 8) * 100).toFixed(1)}%;top:${(ty / H * 100).toFixed(1)}%;background:${x.color}"></i>`;
 }
 function readout(cdRaw, L, P, isYou, flat = false, pill = false) {
-  const cd = Math.min(cdRaw, L);
+  const cd = Math.min(cdRaw, L), shown = cdRaw;
   const ph = chartPhase(cd, L, P, pill), h = C.hormonesRel(cd, L, P), tcm = TCM[ph];
-  if (flat) return `<div class="ro-head"><div class="ro-phase">Day ${cd} · ${PHASES[ph].name}</div></div><p class="ro-flat">${pill ? 'The pill keeps your own estrogen and progesterone low and steady, so there is no egg release. Your bleed comes in the pill break.' : 'Your birth control keeps your own hormones low and steady, so there is no egg release this cycle.'}</p>`;
+  if (flat) return `<div class="ro-head"><div class="ro-phase">Day ${shown} · ${PHASES[ph].name}</div></div><p class="ro-flat">${pill ? 'The pill keeps your own estrogen and progesterone low and steady, so there is no egg release. Your bleed comes in the pill break.' : 'Your birth control keeps your own hormones low and steady, so there is no egg release this cycle.'}</p>`;
   // which way each hormone is heading: today against tomorrow in the model (after the last day the next cycle starts)
   const nx = C.hormonesRel(cd >= L ? 1 : cd + 1, L, P);
   const pv = C.hormonesRel(cd <= 1 ? L : cd - 1, L, P);
@@ -1300,7 +1303,7 @@ function readout(cdRaw, L, P, isYou, flat = false, pill = false) {
       <span class="ro-bar ro-sp">${roSpark(x, cd, L, P)}</span>
       <span class="ro-lvl">${(() => { const d = C.trendOf(pv[x.key], h[x.key], nx[x.key]), lv = trLevel(C.hormoneLevel(h[x.key]), d); return `${lv} <em class="tr ${d}" aria-hidden="true">${trArrow(d)}</em>`; })()}</span><i class="ro-go" aria-hidden="true">${icon('chevR', 13)}</i></div>`;
   }).join('');
-  return `<div class="ro-head"><div class="ro-phase">Day ${cd} · ${PHASES[ph].name}</div></div>
+  return `<div class="ro-head"><div class="ro-phase">Day ${shown} · ${PHASES[ph].name}</div></div>
     <div class="ro-rows">${rows}</div>
     ${(() => { const ov = C.ovulationDay(L, P), d = ov - cd; return `<div class="ro-egg"><svg class="egg-ic" viewBox="-7 -8 14 16" width="12" height="14" aria-hidden="true"><ellipse rx="5" ry="6.4" cy="-.4" fill="#fff" stroke="#c9961a" stroke-width="1.6"/><circle r="2.3" cy=".6" fill="#e8b52c"/></svg>${d === 0 ? 'Egg release today' : d === 1 ? 'Egg release tomorrow' : d > 1 ? `Egg release in ${d} days · day ${ov}` : `Egg released on day ${ov}`}</div>`; })()}`;
 }
@@ -2490,7 +2493,7 @@ function cycleBars() {
   const rows = [];
   for (let i = Math.max(0, ps.length - 7); i < ps.length - 1; i++) { const L = C.diffDays(ps[i + 1].start, ps[i].start); if (L >= 15 && L <= 60) rows.push({ s: ps[i].start, P: Math.min(ps[i].length, L), L }); }
   if (!rows.length) return '';
-  const cur = { s: info.cycleStart, P: info.P, L: info.L, now: dayNo(info) };
+  const cur = { s: info.cycleStart, P: info.P, L: info.L, now: dayPos(info) };
   const all = [...rows, cur], max = Math.max(...all.map(r => r.L), 35), avg = M.stats.avgCycle, pm = Math.max(1, Math.round(M.stats.variation / 2));
   const sd = d => fmt(d, { month: 'short', day: 'numeric' }), pct = n => (n / max * 100).toFixed(1);
   const row = (r, i) => { const ov = Math.max(r.P + 1, r.L - 14), end = C.addDays(r.s, r.L - 1), short = !r.now && r.L < 21;
@@ -2526,7 +2529,7 @@ function moonWidget() {
     <div class="sw-sky"><div class="mn-orb sw-orb">${moonArt(mn.elong, 'mn-flat')}<canvas class="moon3d" data-e="${mn.elong.toFixed(1)}" aria-label="The Moon as it looks tonight, ${lit} percent lit. Drag to turn it."></canvas></div></div>
     <div class="cn-score"><small>Tonight</small><b>${lit}%</b><span>${pg.name}</span></div>
     <div class="cn-rings">
-      ${ringBub(info ? dayNo(info) / L : 0, info ? dayNo(info) : '–', 'day', 'Body', info ? MG.INNER_SEASON[phase].name : 'your cycle', 'body')}
+      ${ringBub(info ? dayPos(info) / L : 0, info ? dayNo(info) : '–', 'day', 'Body', info ? MG.INNER_SEASON[phase].name : 'your cycle', 'body')}
       ${ringBub(mn.age / 29.53, Math.floor(mn.age) + 1, '', 'Moon day', 'of 29.5', 'moon')}
       ${ringBub(next ? 1 - days / 15 : 0, days, 'd', next ? next[0] : 'Next', next ? mnDay(next[1]) : '', 'self')}
     </div>
@@ -4274,7 +4277,7 @@ function cosmicNight(cp, c) {
     ${opalStone(sunK)}
     <div class="cn-score ${sc ? sc.tone : ''}"><small>${sc ? 'Today’s sky for you' : 'Your sign'}</small>${sc ? `<b>${sc.s}</b><span>${sc.word}</span>` : `<h1>${sun.name}</h1>`}</div>
     <div class="cn-rings">
-      ${ringBub(info ? dayNo(info) / L : 0, info ? dayNo(info) : '–', 'day', 'Body', info ? MG.INNER_SEASON[phase].name : 'your cycle', 'body')}
+      ${ringBub(info ? dayPos(info) / L : 0, info ? dayNo(info) : '–', 'day', 'Body', info ? MG.INNER_SEASON[phase].name : 'your cycle', 'body')}
       ${ringBub(mn.illum, Math.round(mn.illum * 100), '%', 'Moon', `in ${ms.name}`, 'moon')}
       ${ringBub(c ? c.planets[0].deg / 30 : 0.5, sun.glyph, '', 'Self', `${sun.name} Sun`, 'self')}
     </div>
@@ -5778,8 +5781,8 @@ function upcomingPatterns(P) {
 }
 // Personal energy: blends the hormone model with what you actually log (1–5) once there's data for that day.
 function myEnergy(info) {
-  const base = C.energyAt(dayNo(info), info.L, info.P);
-  const P = patterns(), v = P.eAvg[dayNo(info)];
+  const base = C.energyAt(dayPos(info), info.L, info.P);
+  const P = patterns(), v = P.eAvg[dayPos(info)];
   return v == null ? base : Math.max(.3, Math.min(.95, base * .5 + (.3 + (v - 1) / 4 * .62) * .5));
 }
 // How well Underskin knows her rhythm: cycles learned out of 6, as one Opal-style ring with the quickest way to sharpen it.
@@ -5831,7 +5834,7 @@ function learnedCard() {
       ${pm ? `<rect x="${X(L - pm) - 4}" y="${y0 - 4}" width="${X(L) - X(L - pm) + 9}" height="${sh + 8}" rx="${(sh + 8) / 2}" fill="none" stroke="#304023" stroke-opacity=".55" stroke-dasharray="3 3"/>` : ''}
       <circle cx="${X(ov)}" cy="${y0 + sh / 2}" r="10" fill="#fff" stroke="#d6a443" stroke-width="3"/><circle cx="${X(ov)}" cy="${y0 + sh / 2}" r="4" fill="#d6a443"/>
       ${peak ? `<g><line x1="${X(peak)}" x2="${X(peak)}" y1="${y0 - 14}" y2="${y0 - 1}" stroke="#20301a" stroke-width="1.4"/><circle cx="${X(peak)}" cy="${y0 - 22}" r="10" fill="#20301a"/><text x="${X(peak)}" y="${y0 - 18}" text-anchor="middle" class="lm-e">⚡</text><text x="${Math.min(W - 40, Math.max(40, X(peak)))}" y="${y0 - 36}" text-anchor="middle" class="lm-lab">energy peak · day ${peak}</text></g>` : ''}
-      <rect x="${X(dayNo(info)) - 2}" y="${y0 - 5}" width="4" height="${sh + 10}" rx="2" fill="#20301a"/>
+      <rect x="${X(dayPos(info)) - 2}" y="${y0 - 5}" width="4" height="${sh + 10}" rx="2" fill="#20301a"/>
       ${pins.map(q => `<path d="M${q.at} ${y0 + sh + 2} L${q.at} ${y0 + sh + 10} L${q.px} ${pinY - 20}" fill="none" stroke="#20301a" stroke-opacity=".3" stroke-width="1.2"/><circle cx="${q.px}" cy="${pinY - 4}" r="15" fill="#fff" stroke="rgba(48,64,35,.2)"/><text x="${q.px}" y="${pinY + 1.5}" text-anchor="middle" class="lm-pe">${LOG_EMOJI[q.x.name] || '•'}</text><text x="${q.px}" y="${pinY + 26}" text-anchor="middle" class="lm-pn">${q.x.name}</text><text x="${q.px}" y="${pinY + 40}" text-anchor="middle" class="lm-ax">day ${q.d}</text>`).join('')}
       <text x="14" y="${y0 - 9}" class="lm-ax">Day 1</text><text x="${W - 14}" y="${y0 - 9}" text-anchor="end" class="lm-ax">Day ${L}</text></svg>`;
   const tile = (cls, ic, k, v, u, sub, pre = '') => `<div class="lm-r ${cls}"><span class="lm-ic">${ic}</span><span class="lm-k">${k}<small>${sub}</small></span><b>${pre ? `<span class="lm-pre">${pre}</span> ` : ''}<em class="dotnum">${v}</em>${u ? `<i>${u}</i>` : ''}</b></div>`;
@@ -6353,8 +6356,8 @@ function moonIcon(moon, size = 18) {
 }
 function alignmentCard(info) {
   const ph = PHASES[info.phase], tcm = TCM[info.phase], moon = Z.moonPhase(new Date()), cp = cosmicProfile();
-  const h = C.hormonesRel(dayNo(info), info.L, info.P);
-  const hs = HORMONES.filter(x => x.key !== 'fsh').map(x => ({ ...x, v: h[x.key], tr: C.hormoneTrend(dayNo(info), info.L, info.P, x.key) })).sort((a, b) => b.v - a.v).slice(0, 2);
+  const h = C.hormonesRel(dayPos(info), info.L, info.P);
+  const hs = HORMONES.filter(x => x.key !== 'fsh').map(x => ({ ...x, v: h[x.key], tr: C.hormoneTrend(dayPos(info), info.L, info.P, x.key) })).sort((a, b) => b.v - a.v).slice(0, 2);
   const hLine = hs.map(x => `${x.name} ${trLevel(C.hormoneLevel(x.v), x.tr).toLowerCase()}${x.tr === 'rising' ? ' and rising' : x.tr === 'falling' ? ' and falling' : ''}`).join(' · ');
   const waxing = moon.age < 14.77, building = info.phase === 'follicular' || info.phase === 'ovulatory';
   const moonSync = waxing === building ? (waxing ? 'In sync: moon and hormones are both building.' : 'In sync: moon and body are both turning inward.') : (waxing ? 'The moon is building while your body turns inward. Honour your body first.' : 'The moon is releasing while your energy rises. Use both: let go and begin.');
@@ -6975,7 +6978,7 @@ function fullCycleGuide(info) {
     <path d="${lining}" fill="#f2a5ad" fill-opacity=".6"/>${drops}
     ${Array.from({ length: L }, (_, i) => { const d = i + 1; return `<rect x="${(X(d) + .6).toFixed(1)}" y="${sy}" width="${(cw - 1.2).toFixed(1)}" height="12" rx="2" fill="${COL[kind(d)]}" ${d === cd ? 'stroke="#fff" stroke-width="1.8"' : ''}/>`; }).join('')}
     <g id="g-mark"><line x1="${X(cd + .5)}" x2="${X(cd + .5)}" y1="22" y2="${sy + 14}" stroke="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)" stroke-width="1.5"/><circle cx="${X(cd + .5)}" cy="${sy + 6}" r="5" fill="hsl(calc(var(--hb) + 79 * var(--hk)) calc(73% * var(--hs)) 77%)"/>
-      <text id="g-mark-t" x="${X(cd + .5)}" y="${sy + 26}" text-anchor="${cd < L * .2 ? 'start' : cd > L * .8 ? 'end' : 'middle'}" class="fcg-today">Today · day ${cd}</text></g>
+      <text id="g-mark-t" x="${X(cd + .5)}" y="${sy + 26}" text-anchor="${cd < L * .2 ? 'start' : cd > L * .8 ? 'end' : 'middle'}" class="fcg-today">Today · day ${info.cd}</text></g>
     <rect class="g-hit" x="0" y="0" width="${W}" height="206" fill="transparent"/>
     <text x="${x0}" y="${sy + 36}" class="fcg-k">Day 1</text><text x="${x1}" y="${sy + 36}" text-anchor="end" class="fcg-k">Day ${L}</text>
   </svg>`;
@@ -8172,7 +8175,7 @@ const HS_PH = { menstrual: 'Period', follicular: 'Follicular', ovulatory: 'Ovula
 function hormoneRelay(info) {
   // the strip uses the same phase maths as the rest of the app, so the pin always sits in the phase that is lit
   const L = info.L || 28, R = C.phaseRanges(L, info.P), len = Object.fromEntries(PHASE_ORDER.map(k => { const r = R.find(x => x.key === k); return [k, r ? r.to - r.from + 1 : 0]; }));
-  const pin = Math.min(98, Math.max(2, (dayNo(info) - .5) / L * 100));
+  const pin = Math.min(98, Math.max(2, (dayPos(info) - .5) / L * 100));
   return `<section class="card glass hs-relay hs-relay2"><div class="hr-k">Who leads when</div>
     <div class="hr-strip" aria-hidden="true">${PHASE_ORDER.map(k => `<i class="${info.phase === k ? 'on' : ''}" style="flex:${len[k]};--c:${PH_HEX[k]}"></i>`).join('')}<span class="hr-pin" style="left:${pin}%"><b>Day <em class="dotnum">${dayNo(info)}</em></b></span></div>
     ${PHASE_ORDER.map(k => `<details class="hr-r ${info.phase === k ? 'on' : ''}" style="--c:${PH_HEX[k]}" ${info.phase === k ? 'open' : ''}><summary><i aria-hidden="true"></i><span>${HS_PH[k]}${info.phase === k ? '<em>You</em>' : ''}</span><b>${HORMONE_RELAY[k].lead}</b>${icon('chevD', 13)}</summary><p>${HORMONE_RELAY[k].t}</p></details>`).join('')}</section>`;
@@ -8224,7 +8227,7 @@ function viewHormone(i) {
       <div class="hz-mol" aria-hidden="true">${mol}</div><span class="hz-floor" aria-hidden="true"></span>
       <span class="hz-tag">made by ${fun.from || x.g.toLowerCase()}</span>
     </div>
-    <span class="ul3-days">Day <b class="dotnum">${cd}</b> · ${HS_PH[info.phase]}</span>
+    <span class="ul3-days">Day <b class="dotnum">${info.cd}</b> · ${HS_PH[info.phase]}</span>
     <section class="o3-note ul3-note ul4-note hz-note">
       <small class="ul4-eye">Meet ${x.n === 'Thyroid hormones' ? 'your thyroid hormones' : nm}</small>
       <h2 class="ul4-h">${like.join(' ')}${like.length ? '<br>' : ''}<em>${last}${swirl}</em></h2>
@@ -8539,7 +8542,7 @@ function breathCycle(k) {
   const info = M.info; if (!info) return '';
   const L = info.L || M.stats.avgCycle, P = M.stats.avgPeriod, R = C.phaseRanges(L, P), cd = Math.min(info.cd, L);
   return `<section class="bzc">
-    <div class="bzc-h"><div><small>Your breath for this phase</small><b>${BREATHS[BREATH_FOR[info.phase]].name}</b></div><span class="bzc-day"><b>${cd}</b><small>day</small></span></div>
+    <div class="bzc-h"><div><small>Your breath for this phase</small><b>${BREATHS[BREATH_FOR[info.phase]].name}</b></div><span class="bzc-day"><b>${info.cd}</b><small>day</small></span></div>
     <div class="bzc-g one">${R.filter(r => r.key === info.phase).map(r => { const id = BREATH_FOR[r.key], B = BREATHS[id], now = r.key === info.phase;
       return `<button class="bzc-t ${now ? 'now' : ''} ${id === k ? 'sel' : ''}" style="--c:${PH_HEX[r.key]}" data-action="bzPhase" data-v="${id}" aria-label="${BZ_PH_NAME[r.key]}, days ${r.from} to ${r.to}: ${B.name}. ${BZ_PH_WHY[r.key]}">
         <span class="bzc-ph"><i></i>${BZ_PH_NAME[r.key]}<small>${r.from === r.to ? `day ${r.from}` : `days ${r.from}–${r.to}`}</small>${now ? '<em>Now</em>' : ''}</span>
