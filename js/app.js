@@ -232,7 +232,7 @@ function topbar(title, { back } = {}) {
 function tabbar(active, peek) {
   const items = [['today', 'home', 'Today'], ['calendar', 'calendar', 'Calendar'], ['log', 'plus', 'Log'], ['plan', 'bowl', 'Food guide'], ['insights', 'chart', 'Insights']];
   return `<nav class="tabbar${peek ? ' peek' : ''}">${items.map(([to, ic, label]) =>
-    `<button class="tab ${to === 'log' ? 'tab-main' : ''} ${active === to ? 'active' : ''}" data-action="nav" data-to="${to}" aria-label="${label}">${icon(ic, to === 'log' ? 26 : 21)}</button>`).join('')}</nav>`;
+    `<button class="tab ${to === 'log' ? 'tab-main' : ''} ${active === to ? 'active' : ''}" data-action="nav" data-to="${to}" data-top="1" aria-label="${label}">${icon(ic, to === 'log' ? 26 : 21)}</button>`).join('')}</nav>`;
 }
 // Each section on a page gets the next tone (deep green, lime glow, black glass), so sections are easy to tell apart.
 let secN = 0;
@@ -12124,7 +12124,11 @@ const actions = {
     if (!confirm('Delete your account and the copy of your data in the cloud? This cannot be undone. The data on this phone stays.')) return;
     try { await A.deleteAccount(); if (state) { delete state.account; save(true); } toast('Account deleted'); render(); } catch (e) { toast(e.message); }
   },
-  nav: d => { const m = /^relief\/(.+)$/.exec(d.to || ''), k = m && decodeURIComponent(m[1]); if (k && RELIEF[k]) return reliefOpen(k); if (document.querySelector('.ws')) wsClose(true); go(d.to); },
+  nav: d => {
+    // the bottom bar always opens a page at its top (25 Nov 2026); only the back arrow returns her to where she was
+    if (d.top) { ui.navStack = []; if (ui.scrollMem) delete ui.scrollMem[d.to];
+      if (route().key === d.to) { const v = document.getElementById('view'); if (v && v.scrollTop) matchMedia('(prefers-reduced-motion: reduce)').matches ? (v.scrollTop = 0) : grGlide(0, 520); return; } }
+    const m = /^relief\/(.+)$/.exec(d.to || ''), k = m && decodeURIComponent(m[1]); if (k && RELIEF[k]) return reliefOpen(k); if (document.querySelector('.ws')) wsClose(true); go(d.to); },
   letterOpen: (d, el) => {
     const lv = el.closest('.lv'); if (!lv) return;
     const open = !lv.classList.contains('open'), pp = lv.querySelector('.lv-paper');
