@@ -36,7 +36,12 @@ const NO = /^(nav|back|ac[A-Z]|sound|openLove|sendLove|useGeo|calPick|calSync|ca
       Object.defineProperty(window, '__splashOff', { value: 1 });
       if (sh) { const D = Date, off = sh * 864e5; class FD extends D { constructor(...a) { super(...(a.length ? a : [D.now() + off])); } static now() { return D.now() + off; } } window.Date = FD; }
     }, shift);
-    await p.goto('http://127.0.0.1:5173/?nosw=1', { waitUntil: 'networkidle2' }); await w(2500);
+    for (let t = 0; t < 3; t++) { // the app can load slowly: wait until it is really there, or reload
+      await p.goto('http://127.0.0.1:5173/?nosw=1', { waitUntil: 'networkidle2' }).catch(() => {});
+      if (await p.waitForFunction(() => window.__app && window.__app.ui, { timeout: 30000 }).then(() => true, () => false)) break;
+      console.log(`day+${shift}: app not ready, reloading`);
+    }
+    await w(2500);
     await p.evaluate(() => document.getElementById('splash')?.remove());
     if (shift === 0) { // the onboarding, step by step
       for (let s = 0; s <= 12; s++) { await p.evaluate(s => { const u = window.__app.ui; u.onbStep = s; u.onbGateDone = true; u.onb.name = 'Mia'; window.__app.render(); }, s); await w(250); }
@@ -53,6 +58,19 @@ const NO = /^(nav|back|ac[A-Z]|sound|openLove|sendLove|useGeo|calPick|calSync|ca
     });
     const queue = ['today'], done = new Set(), queued = new Set(queue);
     const add = t => { if (!queued.has(t)) { queued.add(t); queue.push(t); } };
+    if (shift === 0) { // every detail page by its id, not only the ones a link happens to show (28 Nov 2026)
+      const seeds = await p.evaluate(async () => {
+        const D = await import('./js/data.js'), ids = v => Array.isArray(v) ? v.map(x => x && x.id).filter(Boolean) : v ? Object.keys(v) : [];
+        const fam = { recipe: ids(D.RECIPES), remedy: ids(D.REMEDIES), article: ids(D.ARTICLES), ritual: ids(D.RITUALS), supp: ids(D.SUPP_LIB), nutrients: ids(D.NUTRIENTS),
+          relief: ids(D.RELIEF).map(encodeURIComponent), tea: ids(D.TEA_PROFILES), do: ids(D.TIPS), point: ids(D.POINT_SCIENCE), hormones: ['0', '1', '2', '3', '4', '5', '6'] };
+        const top = ['calendar', 'plan', 'partners', 'profile', 'explore', 'log', 'share', 'guide', 'hormones', 'move', 'stress', 'sugar', 'energy', 'rhythm', 'quiet', 'manifest', 'ground',
+          'breathe', 'habits', 'roadmap', 'insights', 'grocery', 'supp', 'nutrients', 'season', 'trying', 'pill', 'after', 'comeback', 'loss', 'saved', 'learn', 'diet', 'drink', 'relief', 'unlock', 'brain', 'world'];
+        return [...top, ...Object.entries(fam).flatMap(([f, l]) => [f, ...l.map(i => `${f}/${i}`)])];
+      }).catch(() => []);
+      seeds.forEach(add); console.log('seeded', seeds.length, 'detail pages');
+      await p.evaluate(async () => { localStorage.removeItem('uts.termsAt'); window.__app.render(); await new Promise(r => setTimeout(r, 300));
+        window.dispatchEvent(new Event('offline')); await new Promise(r => setTimeout(r, 300)); localStorage.setItem('uts.termsAt', String(Date.now())); window.__app.render(); }).catch(() => {});
+    }
     const t0 = Date.now();
     while (queue.length && done.size < (shift ? Math.min(150, MAX) : MAX)) { // the other days only change phase content
       const h = queue.shift(); done.add(h);

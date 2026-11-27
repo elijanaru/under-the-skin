@@ -18562,3 +18562,13 @@ html .view:has(> .grh) .section-title h3::before { background: #c3d394 !importan
 
 /* her kitty drawings (28 Nov 2026) keep their whole shape */
 html .cat-f { object-fit: contain; -webkit-user-drag: none; }
+/* Period late? sheet + check-in teas in the basket (28 Nov 2026) */
+.lts .tyf-c { margin: 0 0 4px; }
+.lts .lts-doc { margin-top: 16px; background: #fdecef; } .lts .lts-doc b { color: #a8344f; } .lts .lts-doc p { color: #3a2128; }
+.lts-l { text-align: left; }
+.lts-mine { margin: 0 0 4px; text-align: left; font: 500 13.5px/1.45 var(--font); color: #b04f6c; }
+.lts-l .np-s.lts-hi b { color: #b04f6c; }
+.lts-btns { display: grid; gap: 8px; margin-top: 18px; }
+.bx-gro { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: center; width: 100%; margin: 12px 0 0; padding: 12px 14px; border: 1px solid rgba(32,48,26,.08); border-radius: 20px; background: rgba(255,255,255,.88); color: #20301a; text-align: left; font: inherit; }
+.bx-gro .emo { font-size: 22px; text-align: center; } .bx-gro b { display: block; font: 500 14.5px/1.25 var(--font); } .bx-gro small { font: 400 12.5px/1.3 var(--font); color: #6b7462; }
+.bx-gro svg { width: 15px; height: 15px; fill: none; stroke: #304023; stroke-width: 2; }
