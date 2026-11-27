@@ -8955,21 +8955,8 @@ function calmScience(info) {
 // ---------- hormone habits ----------
 // redraw only the Today habits card so the page doesn't jump or replay its animations
 // hand-drawn cat faces for the partner picker: a girl cat with a bow, a boy cat with a bow tie
-function catFace(k) {
-  const g = k === 'w', fur = g ? '#f6dde5' : '#e3ead6', ink = '#20301a';
-  return `<svg class="cat-f" viewBox="0 0 100 90" aria-hidden="true">
-    <path d="M22 40 L18 8 L44 26 Z M78 40 L82 8 L56 26 Z" fill="${fur}" stroke="${ink}" stroke-width="2.4" stroke-linejoin="round"/>
-    <path d="M24 33 L22 16 L37 26 Z M76 33 L78 16 L63 26 Z" fill="${g ? '#e8a3b8' : '#b9c79a'}"/>
-    <ellipse cx="50" cy="50" rx="34" ry="29" fill="${fur}" stroke="${ink}" stroke-width="2.4"/>
-    ${g ? `<path d="M37 45 q3 -4 6 0 M57 45 q3 -4 6 0" fill="none" stroke="${ink}" stroke-width="2.4" stroke-linecap="round"/><path d="M36 43 l-3 -3 M64 43 l3 -3" stroke="${ink}" stroke-width="1.8" stroke-linecap="round"/>`
-      : `<circle cx="40" cy="45" r="3.4" fill="${ink}"/><circle cx="60" cy="45" r="3.4" fill="${ink}"/>`}
-    <path d="M47 53 h6 l-3 3.5 z" fill="${g ? '#d9768f' : '#8a6a52'}"/>
-    <path d="M50 56.5 q-3 4 -7 2 M50 56.5 q3 4 7 2" fill="none" stroke="${ink}" stroke-width="2" stroke-linecap="round"/>
-    <path d="M30 54 h-14 M30 58 l-13 4 M70 54 h14 M70 58 l13 4" stroke="${ink}" stroke-width="1.6" stroke-linecap="round" opacity=".55"/>
-    ${g ? `<g transform="translate(70 20) rotate(18)"><path d="M0 0 L-11 -7 L-11 7 Z M0 0 L11 -7 L11 7 Z" fill="#d9768f" stroke="${ink}" stroke-width="1.8" stroke-linejoin="round"/><circle r="3.2" fill="#d9768f" stroke="${ink}" stroke-width="1.8"/></g>`
-      : `<g transform="translate(50 82)"><path d="M0 0 L-12 -6 L-12 6 Z M0 0 L12 -6 L12 6 Z" fill="#6c823e" stroke="${ink}" stroke-width="1.8" stroke-linejoin="round"/><circle r="3" fill="#6c823e" stroke="${ink}" stroke-width="1.8"/></g>`}
-  </svg>`;
-}
+// her own kitty drawings (28 Nov 2026): grey tabby with a bow tie for a man, pink tabby with pearls for a woman
+function catFace(k) { return `<img class="cat-f" src="images/kitty-${k === 'm' ? 'm' : 'w'}.webp" alt="" aria-hidden="true" decoding="async">`; }
 function hhRefresh() {
   const old = document.querySelector('#view .hbc'); if (!old) return false;
   const t = document.createElement('div'); t.innerHTML = hhCard(M.info); const nu = t.firstElementChild;
