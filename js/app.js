@@ -210,6 +210,8 @@ function route() {
   return { name, id, q: new URLSearchParams(q || ''), key: h };
 }
 function go(h) { location.hash = '#/' + h; }
+// leaving a friend's link swaps it out of the history, so back never reopens it
+function linkTo(h) { const st = ui.navStack; if (st && /^(with|w)([/?]|$)/.test(st[st.length - 1] || '')) st.pop(); history.replaceState(null, '', '#/' + h); render(); }
 function toast(msg) {
   $toast.textContent = msg; $toast.classList.add('show');
   clearTimeout(toast.t); toast.t = setTimeout(() => $toast.classList.remove('show'), 1600);
@@ -11835,7 +11837,7 @@ function viewWith(q) {
   const mine = state && state.onboarded && M?.stats?.periods?.length && snap.n === (state.profile.name || 'Her') && snap.s === C.iso(M.stats.periods[M.stats.periods.length - 1].start);
   const him = snap.w === 'm'; // a man only views her rhythm, he never tracks
   if (!(state && state.onboarded)) { try { localStorage.setItem(him ? 'uts.viewOnly' : 'uts.pendingPartner', q.get('d')); } catch {} }
-  const back = state && state.onboarded ? `<button class="pv-back" data-action="nav" data-to="partners" aria-label="Back">${icon('chevL', 20)}</button>` : '';
+  const back = state && state.onboarded ? `<button class="pv-back" data-action="pvBack" aria-label="Back">${icon('chevL', 20)}</button>` : '';
   const seg = him ? `<div class="seg his-seg ${back ? 'with-back' : ''}">${[['her', `${name}'s rhythm`], ['read', 'Read'], ['his', 'My day']].map(([k, l]) => `<button class="${(ui.hisTab || 'her') === k ? 'on' : ''}" data-action="hisTab" data-v="${k}">${l}</button>`).join('')}</div>` : '';
   const herTab = !him || !ui.hisTab || ui.hisTab === 'her';
   if (him && !mine && !himP().at) return himOnboarding(name);
@@ -11863,7 +11865,7 @@ function viewWith(q) {
     <p class="fine center">Estimates based on her cycle. Every body is different, so ask her too.</p>
     ${mine ? '' : state && state.onboarded
       ? ((state.partners || []).some(x => x.n === snap.n && x.s === snap.s)
-        ? `<a class="btn btn-ghost btn-block" href="#/today">${icon('check', 16)} ${name} is on your dashboard</a>`
+        ? `<button class="btn btn-ghost btn-block" data-action="linkGo" data-to="today">${icon('check', 16)} ${name} is on your dashboard</button>`
         : `<button class="btn btn-light btn-block" data-action="addPartner" data-d="${esc(q.get('d'))}">${icon('heart', 16)} Add ${name} to my app</button>
            <p class="fine center">You both use Underskin. Add her and you’ll see each other’s cycle side by side.</p>`)
       : him ? `<section class="pv2-card pv2-save"><span class="sv-ic">📲</span><p><b>Save this page to your home screen</b>so you see her day with one tap.</p></section>
@@ -12190,6 +12192,12 @@ const actions = {
       rows: [['bowl', 'How much', amt || 'A small portion'], ['leaf', 'When', warm ? 'These days, warm and cooked' : 'Today and the next few days']], study: null, care: '' });
   },
   back: () => (history.length > 1 ? history.back() : go('today')),
+  // a friend's link: one tap on the back arrow leaves it for good (27 Nov 2026). She goes back to the page she came from,
+  // or to Today when the link opened the app, and the link is swapped out of the history so it never reopens on back.
+  linkGo: d => linkTo(d.to),
+  pvBack: () => { const st = ui.navStack || [], prev = st[st.length - 2], ok = prev && !/^(with|w)([/?]|$)/.test(prev);
+    if (ok && history.length > 1) return history.back();
+    linkTo(ok ? prev : 'today'); },
   selectDay: d => { ui.selected = d.date; render(); },
   onbEnter: d => {
     const w = welcome3d, el = document.querySelector('.onb-welcome');
@@ -12847,9 +12855,9 @@ const actions = {
   hhOpen: d => { ui.hhOpen = ui.hhOpen === d.id ? null : d.id; hhRefresh() || render(); },
   addPartner: d => { const snap = inSnap(d.d); if (!snap) return; const ps = state.partners = state.partners || [];
     const old = ps.find(x => x.n === snap.n);
-    if (old) { Object.assign(old, snap, { id: old.id, t: okPic(snap.t) || old.t, added: Date.now() }); save(); syncTo(old); toast(`${snap.n} updated`); return go('partners/' + old.id); }
-    if (ps.length >= 4) { toast('You can connect up to 4 people'); return go('partners'); }
-    ps.push({ ...snap, t: okPic(snap.t), id: Date.now().toString(36), added: Date.now() }); save(); startSignals(); syncTo(ps[ps.length - 1]).then(ok => toast(ok ? `${snap.n} added, and she now sees you too` : `${snap.n} added`)); go('partners/' + ps[ps.length - 1].id); },
+    if (old) { Object.assign(old, snap, { id: old.id, t: okPic(snap.t) || old.t, added: Date.now() }); save(); syncTo(old); toast(`${snap.n} updated`); return linkTo('partners/' + old.id); }
+    if (ps.length >= 4) { toast('You can connect up to 4 people'); return linkTo('partners'); }
+    ps.push({ ...snap, t: okPic(snap.t), id: Date.now().toString(36), added: Date.now() }); save(); startSignals(); syncTo(ps[ps.length - 1]).then(ok => toast(ok ? `${snap.n} added, and she now sees you too` : `${snap.n} added`)); linkTo('partners/' + ps[ps.length - 1].id); },
   openPartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (p) { const { id, ...snap } = p; location.hash = '#/with?d=' + b64e(snap); } },
   removePartner: d => { const p = (state.partners || []).find(x => x.id === d.id); if (!p || !confirm(`Remove ${p.n}?`)) return; state.partners = state.partners.filter(x => x.id !== d.id); save(); if (route().name === 'partners') go('partners'); else render(); },
   seasonView: d => { ui.seasonView = d.v; render(); },
