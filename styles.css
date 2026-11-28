@@ -18679,3 +18679,65 @@ html .grq2-b.picked .grq2-ph img { transform: none; }
 @media (prefers-reduced-motion: no-preference) { .lgi-p { transform-box: fill-box; transform-origin: center; animation: lgiPulse 2.4s ease-in-out infinite; }
   @keyframes lgiPulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.25); opacity: .7; } } }
 html .lgi .slp-i .emo { display: inline; margin: 0; font-size: 17px; }
+
+/* ---------- Onboarding age check (28 Nov 2026): Underskin is for 16 and up ---------- */
+.onb-age { display: flex; width: max-content; align-items: center; gap: 10px; margin: 18px auto 0; padding: 10px 18px 10px 10px; border-radius: 999px; border: 1px solid rgba(48,64,35,.18); background: rgba(255,255,255,.72); font: 400 15px var(--font); color: #304023; cursor: pointer; transition: background .2s ease, border-color .2s ease, transform .16s cubic-bezier(.2,.8,.2,1); }
+.onb-age i { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid rgba(48,64,35,.35); background: #fff; color: #fff; transition: background .2s ease, border-color .2s ease, transform .3s cubic-bezier(.34,1.56,.64,1); }
+.onb-age.on { border-color: rgba(108,130,62,.5); background: #fff; }
+.onb-age.on i { background: #6c823e; border-color: #6c823e; transform: scale(1.08); }
+.onb-age:active { transform: scale(.97); }
+.onb-young { display: block; margin: 10px auto 0; font-size: 13px; opacity: .7; }
+
+/* ---------- Motion principles (28 Nov 2026, her "19 principles of UX & animation" reel) ----------
+   Anticipation, follow-through, Doherty threshold, exaggeration, origin awareness, rubber banding, staggering,
+   squash and stretch, arcs, secondary action, timing, frequency of use and peak-end. Calm, short and never flashy. */
+:root { --mo-out: cubic-bezier(.22,1,.36,1); --mo-io: cubic-bezier(.65,0,.35,1); --mo-spring: cubic-bezier(.34,1.56,.64,1); }
+@media (prefers-reduced-motion: no-preference) {
+  /* every tap answers at once (under 100 ms) with a small press, then springs back with a soft overshoot */
+  :where(button:not(:disabled), a[href], [role="button"], summary) { transition: scale .34s var(--mo-spring); }
+  :where(button:not(:disabled), a[href], [role="button"], summary):active { scale: .97; transition: scale .07s ease-out; }
+  /* a wrong answer shakes, like a wrong passcode */
+  .shake { animation: moShake .46s cubic-bezier(.36,.07,.19,.97) both; }
+  @keyframes moShake { 10%, 90% { translate: -2px 0; } 20%, 80% { translate: 4px 0; } 30%, 50%, 70% { translate: -7px 0; } 40%, 60% { translate: 7px 0; } }
+  /* something she switches on squashes and stretches for a moment, so it feels soft, not stiff */
+  .view:not(.enter) :is([data-action="logSet"].on, .fd-o.on, .lg-chip.on, .bt-c.on, .fl-o.on, .pl-o.on, .pl-o[aria-pressed="true"], .onb-age.on, .sv-btn.on, .chip.on, .bc-opt.on, .hob-o button.on, .lg-yn button.on) { animation: moSquash .44s var(--mo-out) both; }
+  @keyframes moSquash { 0% { scale: 1; } 30% { scale: 1.07 .93; } 55% { scale: .97 1.04; } 78% { scale: 1.01 .99; } 100% { scale: 1; } }
+  /* pages: the first visit rises in, part after part; a page she opens again and again just fades in quickly */
+  .view.enter:not(.again) > *:nth-child(2) { animation-delay: .06s; }
+  .view.enter:not(.again) > *:nth-child(3) { animation-delay: .12s; }
+  .view.enter:not(.again) > *:nth-child(4) { animation-delay: .18s; }
+  .view.enter:not(.again) > *:nth-child(n+5) { animation-delay: .22s; }
+  .view.enter.again > * { animation: moQuick .24s var(--mo-out) both; }
+  @keyframes moQuick { from { opacity: .35; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  /* a sheet grows out of the spot she tapped, and opens and closes a little faster */
+  .ws-sh { transform: translateY(104%) scale(.94); transition-duration: .5s; }
+  .ws.down .ws-sh { transform: translateY(104%) scale(.96); transition-duration: .34s; }
+  /* six dots curve out of a button she saves or likes */
+  .mo-burst { position: fixed; z-index: 900; width: 0; height: 0; pointer-events: none; }
+  .mo-burst i { position: absolute; left: -3px; top: -3px; width: 6px; height: 6px; border-radius: 50%; background: #e6b1c4; opacity: 0; animation: moArc .7s var(--mo-out) forwards; }
+  .mo-burst i:nth-child(even) { background: #8c9768; width: 5px; height: 5px; }
+  @keyframes moArc { 0% { opacity: 1; transform: rotate(var(--a)) translateX(4px) scale(1); } 100% { opacity: 0; transform: rotate(calc(var(--a) + 48deg)) translateX(26px) scale(.4); } }
+}
+/* bigger hit area for small round buttons (Fitts's law), without changing how they look */
+.ws-x::after { content: ''; position: absolute; inset: -7px; border-radius: 50%; }
+/* peak-end: the end of her check-in is a small warm moment */
+.br2-seal { position: relative; display: inline-flex; align-items: center; gap: 8px; margin: 2px auto 10px; padding: 6px 14px 6px 6px; border-radius: 999px; background: rgba(255,255,255,.86); border: 1px solid rgba(108,130,62,.22); color: #304023; font: 500 13px var(--font); }
+.br2-seal svg { width: 26px; height: 26px; }
+.br2-seal .sl-c { fill: #6c823e; stroke: none; }
+.br2-seal .sl-k { fill: none; stroke: #fff; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+.br2-seal .sl-p { position: absolute; left: 19px; top: 50%; width: 5px; height: 5px; margin: -2.5px; border-radius: 50%; background: #e6b1c4; opacity: 0; pointer-events: none; }
+.br2-seal .sl-p:nth-of-type(even) { background: #c9b35e; }
+@media (prefers-reduced-motion: no-preference) {
+  .br2-seal { animation: moSeal .7s var(--mo-spring) .15s both; }
+  .br2-seal .sl-c { transform-origin: center; transform-box: fill-box; animation: moPop .5s var(--mo-spring) .25s both; }
+  .br2-seal .sl-k { stroke-dasharray: 30; stroke-dashoffset: 30; animation: moDraw .38s var(--mo-out) .55s forwards; }
+  .br2-seal .sl-p { animation: moArc .8s var(--mo-out) calc(.6s + var(--d)) forwards; }
+  @keyframes moSeal { from { opacity: 0; transform: translateY(8px) scale(.9); } to { opacity: 1; transform: none; } }
+  @keyframes moPop { from { transform: scale(.3); } to { transform: scale(1); } }
+  @keyframes moDraw { to { stroke-dashoffset: 0; } }
+}
+.ac-age .gx-sw-t small .link { display: inline; padding: 0; margin: 0; border: 0; background: none; font: inherit; color: #6c823e; font-weight: 500; text-decoration: none; cursor: pointer; }
+/* Fitts's law: small buttons get a bigger invisible tap area, they look the same */
+.pl-o, .pls { position: relative; }
+.pl-o::after { content: ''; position: absolute; inset: -4px 0; }
+.pls::after, .tf-hide::after { content: ''; position: absolute; inset: -6px; border-radius: 50%; }

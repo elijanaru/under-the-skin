@@ -122,9 +122,10 @@ function buzz(kind = 'tap') {
       if (kind === 'tick') return HAP.selectionChanged?.() ?? HAP.impact({ style: 'LIGHT' });
       if (kind === 'done') return HAP.notification({ type: 'SUCCESS' });
       if (kind === 'long') return HAP.notification({ type: 'WARNING' });
+      if (kind === 'warn') return HAP.notification({ type: 'ERROR' });
       return HAP.impact({ style: kind === 'firm' ? 'MEDIUM' : 'LIGHT' });
     }
-    navigator.vibrate?.({ tick: 4, tap: 8, firm: 14, done: [12, 60, 12], long: [180, 120, 180] }[kind] || 8);
+    navigator.vibrate?.({ tick: 4, tap: 8, firm: 14, done: [12, 60, 12], warn: [16, 50, 16, 50, 16], long: [180, 120, 180] }[kind] || 8);
   } catch {}
 }
 if (HAP) HAP.selectionStart?.().catch?.(() => {});
@@ -1768,6 +1769,21 @@ const O3_TICK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 12.8 
 const o3Spark = (c, x0, y0, r) => `<path class="o3-sp" style="--d:${r}s" d="M${x0} ${y0 - 7} C ${x0 + .8} ${y0 - 1.5}, ${x0 + 1.5} ${y0 - .8}, ${x0 + 7} ${y0} C ${x0 + 1.5} ${y0 + .8}, ${x0 + .8} ${y0 + 1.5}, ${x0} ${y0 + 7} C ${x0 - .8} ${y0 + 1.5}, ${x0 - 1.5} ${y0 + .8}, ${x0 - 7} ${y0} C ${x0 - 1.5} ${y0 - .8}, ${x0 - .8} ${y0 - 1.5}, ${x0} ${y0 - 7} Z" fill="${c}"/>`;
 // A whimsical sheet that rises from below and fills the phone (tea cards, herbs). It lives next to #app, so a re-render
 // of the page never wipes it; drag the top down, tap the shade or the close button to let it sink back.
+// Motion principles (28 Nov 2026, from her "19 principles of UX & animation" reel): a wrong answer shakes, a sheet
+// grows from where she tapped, pulling past the edge gives a little rubber band, and the snap back overshoots softly.
+function shake(el) { if (!el) return; el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); buzz('warn'); setTimeout(() => el.classList.remove('shake'), 520); }
+// six soft dots that curve out of a button she just saved or liked (secondary action, moving in arcs)
+function burst(el) {
+  if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const r = el.getBoundingClientRect(), b = document.createElement('div'); b.className = 'mo-burst'; b.setAttribute('aria-hidden', 'true');
+  b.style.left = `${r.left + r.width / 2}px`; b.style.top = `${r.top + r.height / 2}px`;
+  b.innerHTML = [0, 1, 2, 3, 4, 5].map(i => `<i style="--a:${i * 60 + 30}deg"></i>`).join('');
+  document.body.appendChild(b); setTimeout(() => b.remove(), 760);
+}
+let lastTap = null;
+document.addEventListener('pointerdown', e => { lastTap = { x: e.clientX, y: e.clientY, t: Date.now() }; }, { capture: true, passive: true });
+const rubber = (raw, max = 26) => raw >= 0 ? raw : -max * (1 - Math.exp(raw / 70));
+function snapBack(sh) { sh.style.transition = 'transform .5s cubic-bezier(.34,1.36,.64,1)'; sh.style.transform = ''; setTimeout(() => { sh.style.transition = ''; }, 520); }
 function wsOpen(html, cls = '') {
   wsClose(true);
   const app = document.getElementById('app'); if (!app) return;
@@ -1775,12 +1791,13 @@ function wsOpen(html, cls = '') {
   el.className = `ws ${cls}`; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
   el.innerHTML = `<div class="ws-bg" data-action="wsClose"></div><div class="ws-sh"><div class="ws-top"><span class="ws-grab" aria-hidden="true"></span>
     <button class="ws-x" data-action="wsClose" aria-label="Close">${icon('close', 17, 2.2)}</button></div><div class="ws-in">${html}</div></div>`;
+  const sh = el.querySelector('.ws-sh'), top = el.querySelector('.ws-top'); let y0 = null, dy = 0;
+  if (lastTap && Date.now() - lastTap.t < 1500) sh.style.transformOrigin = `${Math.round(lastTap.x)}px 0`;
   app.parentElement.appendChild(el);
   requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('up')));
-  const sh = el.querySelector('.ws-sh'), top = el.querySelector('.ws-top'); let y0 = null, dy = 0;
   top.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse' || e.target.closest('button')) return; y0 = e.clientY; dy = 0; sh.style.transition = 'none'; top.setPointerCapture(e.pointerId); });
-  top.addEventListener('pointermove', e => { if (y0 == null) return; dy = Math.max(0, e.clientY - y0); sh.style.transform = `translateY(${dy}px)`; });
-  const end = () => { if (y0 == null) return; y0 = null; sh.style.transition = ''; sh.style.transform = ''; if (dy > 90) wsClose(); };
+  top.addEventListener('pointermove', e => { if (y0 == null) return; dy = rubber(e.clientY - y0); sh.style.transform = `translateY(${dy}px)`; });
+  const end = () => { if (y0 == null) return; y0 = null; if (dy > 90) { sh.style.transition = ''; sh.style.transform = ''; wsClose(); } else snapBack(sh); };
   top.addEventListener('pointerup', end); top.addEventListener('pointercancel', end);
   // 28 Nov 2026 (her ask): pull the whole sheet down to close it, like an iPhone sheet. Anywhere on it, as long as its
   // content is scrolled to the top; a quick flick closes it too. Sideways swipes and scrolling stay untouched.
@@ -1795,9 +1812,9 @@ function wsOpen(html, cls = '') {
       const sc = e.target.closest('.ws-in') ? inn.scrollTop : 0;
       if (dy > 8 && sc <= 0) { pull = true; sh.style.transition = 'none'; t0.y += 8; } else if (dy < -8 || sc > 0) { if (Math.abs(dy) > 8) t0 = null; return; } else return;
     }
-    e.preventDefault(); tdy = Math.max(0, e.touches[0].clientY - t0.y); sh.style.transform = `translateY(${tdy}px)`;
+    e.preventDefault(); tdy = rubber(e.touches[0].clientY - t0.y); sh.style.transform = `translateY(${tdy}px)`;
   }, { passive: false });
-  const tend = () => { if (pull) { const fast = tdy > 40 && Date.now() - t0.t < 260; const go = tdy > 110 || fast; sh.style.transition = ''; sh.style.transform = go ? 'translateY(110%)' : ''; if (go) wsClose(); } t0 = null; pull = false; };
+  const tend = () => { if (pull) { const fast = tdy > 40 && Date.now() - t0.t < 260; const go = tdy > 110 || fast; if (go) { sh.style.transition = ''; sh.style.transform = 'translateY(110%)'; wsClose(); } else snapBack(sh); } t0 = null; pull = false; };
   sh.addEventListener('touchend', tend); sh.addEventListener('touchcancel', tend);
   setTimeout(() => el.querySelector('.ws-x')?.focus({ preventScroll: true }), 400);
   return el;
@@ -2051,7 +2068,9 @@ function viewOnboarding() {
         <div class="gxw-why">${[['leaf', 't2', 'Season foods'], ['sun', 't4', 'Sunrise & sunset'], ['spark', 't1', 'UV for vitamin D']].map(([ic, t, l]) => `<span><i class="gx-fi ${t}">${icon(ic, 18, 1.8)}</i>${l}</span>`).join('')}</div>
         ${countryPicker('onb', o.country || myCountry(), 'cp-onb')}` : `<div class="onb-avatar">${o.photo ? `<img src="${o.photo}" alt="">` : AVATAR_SVG}</div><h2 class="onb-title">What should we <span>call you?</span></h2>
         <input class="field big-in" data-input="onb.name" placeholder="Your first name" value="${esc(o.name)}" autocomplete="given-name" maxlength="24">
-        <p class="onb-greet ${o.name.trim() ? 'on' : ''}">Nice to meet you, <b>${esc(o.name.trim())}</b> ✦</p>`,
+        <p class="onb-greet ${o.name.trim() ? 'on' : ''}">Nice to meet you, <b>${esc(o.name.trim())}</b> ✦</p>
+        ${!o.age16 || ui.onbAgeShown ? (ui.onbAgeShown = true, `<button class="onb-age ${o.age16 ? 'on' : ''}" data-action="onbAge" role="checkbox" aria-checked="${o.age16 ? 'true' : 'false'}"><i aria-hidden="true">${o.age16 ? icon('check', 14, 2.8) : ''}</i>I’m 16 or older</button>
+        <button class="link onb-young" data-action="onbYoung">I’m younger than 16</button>`) : ''}`,
     2: `<h2 class="onb-title">Add a <span>profile picture</span></h2>
         <p class="gx-sub">It greets you on your home screen. Optional.</p>
         <label class="gxp ${o.photo ? 'has' : ''}"><span class="gxp-ring"><span class="gxp-img">${o.photo ? `<img src="${o.photo}" alt="Your photo">` : AVATAR_SVG}</span></span>
@@ -3090,6 +3109,7 @@ function viewBrain(id) {
           <path d="M70 30 q-4 -12 6 -16 q-1 9 -6 16" fill="#6c823e" stroke="#304023" stroke-width="2" stroke-linejoin="round"/></g>
       </svg>
       <div class="br2-day"><span>${isToday ? 'Today' : fmt(C.parseISO(k), { month: 'short', day: 'numeric' })}</span>${R ? `<span>Day <b>${R.di.cd}</b></span><span class="br2-ph">${ph.name}</span>` : ''}</div>
+      ${n && isToday && ui.prevRoute === 'log' && ui.sealDay !== k ? (ui.sealDay = k, setTimeout(() => buzz('done'), 650), `<div class="br2-seal" role="status"><svg viewBox="0 0 44 44" aria-hidden="true"><circle class="sl-c" cx="22" cy="22" r="19"/><path class="sl-k" d="M13.5 22.5l6 6 11-12.5"/></svg><span>Check-in saved</span>${[0, 1, 2, 3, 4, 5].map(i => `<i class="sl-p" style="--a:${i * 60 + 15}deg;--d:${i * 40}ms"></i>`).join('')}</div>`) : ''}
       <h1 class="br2-h">What your body<em>is saying</em></h1>
       ${!n && isToday ? `<p class="br2-sub">Tell me how you feel in 10 seconds and I’ll tell you what helps today.</p><button class="br2-cta" data-action="nav" data-to="log">${icon('plus', 17, 2.2)} Check in</button>` : ''}
       ${n ? `<p class="br2-n">${acts.length ? `<b>${acts.length}</b> ${acts.length === 1 ? 'tip' : 'tips'}` : ''}${acts.length && warns.length ? ' · ' : ''}${warns.length ? `<b>${warns.length}</b> to check` : ''}${!acts.length && !warns.length ? 'All looking good' : ''}</p>` : ''}
@@ -12263,7 +12283,8 @@ function socialAuth(gx) {
       <div class="gate-checks">
         ${gx ? `
         <label class="ac-consent gx-sw"><span class="gx-sw-t"><b>Save my logs in a private account</b><small>Only I can see my periods, symptoms and notes. I can delete them anytime. <a href="#/privacy">Privacy</a></small></span><input type="checkbox" id="ac-consent" role="switch"><i class="gx-tr" aria-hidden="true"></i></label>
-        <label class="ac-consent ac-terms gx-sw"><span class="gx-sw-t"><b>Wellness, not medical advice</b><small>I choose what I try and ask a doctor when unsure. <a href="#/privacy">Terms</a></small></span><input type="checkbox" id="ac-terms" role="switch" ${termsOK() ? 'checked' : ''}><i class="gx-tr" aria-hidden="true"></i></label>`
+        <label class="ac-consent ac-terms gx-sw"><span class="gx-sw-t"><b>Wellness, not medical advice</b><small>I choose what I try and ask a doctor when unsure. <a href="#/privacy">Terms</a></small></span><input type="checkbox" id="ac-terms" role="switch" ${termsOK() ? 'checked' : ''}><i class="gx-tr" aria-hidden="true"></i></label>
+        <label class="ac-consent ac-age gx-sw"><span class="gx-sw-t"><b>I’m 16 or older</b><small>Underskin keeps health notes, so it is for 16 and up. <button type="button" class="link" data-action="onbYoung">Younger?</button></small></span><input type="checkbox" id="ac-age" role="switch" ${ui.onb.age16 ? 'checked' : ''}><i class="gx-tr" aria-hidden="true"></i></label>`
         : `<label class="ac-consent"><input type="checkbox" id="ac-consent"><span>Save my periods, symptoms and notes in my own private account. Only I can see them, and I can delete them anytime. <a href="#/privacy">Privacy</a></span></label>
         <label class="ac-consent ac-terms"><input type="checkbox" id="ac-terms" ${termsOK() ? 'checked' : ''}><span>Underskin is wellness information, not medical advice. What I try is my own choice and responsibility, and I ask a doctor when unsure. <a href="#/privacy">Terms</a></span></label>`}
       </div>
@@ -12400,6 +12421,8 @@ function demoState(name) {
 const TERMS_SINCE = Date.UTC(2026, 10, 5); // wording widened to everything in the app: everyone agrees again once
 function termsOK() { return Math.max(+(state && state.termsAt) || 0, +lsGet('uts.termsAt') || 0) >= TERMS_SINCE; }
 function termsTick() {
+  const ag = document.getElementById('ac-age'); // the sign-up form asks her age before anything is saved (28 Nov 2026)
+  if (ag && ag.offsetParent) { if (!ag.checked) { acMsg('Underskin is for 16 and up. Please confirm your age.', true); const l = ag.closest('label'); l?.classList.add('need'); shake(l); return false; } ui.onb.age16 = true; }
   const t = document.getElementById('ac-terms'); if (!t || !t.offsetParent) return true;
   if (!t.checked) { acMsg('Please tick that you use the app at your own responsibility.', true); const l = t.closest('label'); l?.classList.add('need'); l?.scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
   const at = Date.now(); try { localStorage.setItem('uts.termsAt', String(at)); } catch {} if (state) state.termsAt = at;
@@ -12544,10 +12567,18 @@ const actions = {
     } catch { if (d.v === 'n') o.askN = 'denied'; else o.askG = 'denied'; }
     ui.onbStill = true; render();
   },
+  // Underskin keeps health and cycle notes, so it is for 16 and up (28 Nov 2026: GDPR consent age in Germany, COPPA under 13)
+  onbAge: () => { ui.onb.age16 = !ui.onb.age16; render(); },
+  onbYoung: () => wsOpen(`<div class="tyf"><span class="tyf-e"><span class="emo" aria-hidden="true">🌸</span></span><h2>Underskin is for 16 and up</h2>
+    <p class="tyf-s">It keeps private health and cycle notes, so the law asks us to wait until you are 16.</p>
+    <div class="lts-l"><div class="np-s slp-s"><span class="slp-i"><span class="emo" aria-hidden="true">💬</span></span><span><b>Questions about your period?</b><small>A parent, a school nurse or your doctor are lovely people to ask. Nothing is too small or too awkward.</small></span></div>
+    <div class="np-s slp-s"><span class="slp-i"><span class="emo" aria-hidden="true">🎂</span></span><span><b>See you soon</b><small>Come back on your 16th birthday. We will be here.</small></span></div></div>
+    <div class="lts-btns"><button class="btn btn-dark" data-action="wsClose">Okay</button></div></div>`, 'ws-ty'),
   onbNext: () => {
+    if (ui.onbStep === 1 && !ui.onbWhere && !ui.onb.age16) { toast('Tick “I’m 16 or older” to go on'); shake(document.querySelector('.onb-age')); return; }
     if (ui.onbStep === 1 && !ui.onbWhere) { ui.onbWhere = true; ui.onbAnim = 'fwd'; render(); window.scrollTo(0, 0); return; } // name → where she lives
     if (ui.onbStep === 1) { ui.onb.country = ui.onb.country || myCountry(); ui.onbWhere = false; }
-    if (ui.onbStep === 6 && !ui.onb.bc) { toast('Pick one, so we can tailor your plan'); return; }
+    if (ui.onbStep === 6 && !ui.onb.bc) { toast('Pick one, so we can tailor your plan'); shake(document.querySelector('#view .onb-opts, #view .gx-opts, #view .onb-title')); return; }
     if (ui.onbStep === 6 && !ui.onbPreg) { ui.onbPreg = true; ui.onbAnim = 'fwd'; render(); window.scrollTo(0, 0); return; } // birth control → pregnancy history
     if (ui.onbStep === 6 && !ui.onbLoss && ui.onb.preg === 'loss' && lossRecent(ui.onb)) { ui.onbLoss = true; ui.onbAnim = 'fwd'; render(); window.scrollTo(0, 0); return; } // a recent loss → what would help
     if (ui.onbStep === 6) { ui.onbPreg = false; ui.onbLoss = false; }
@@ -12559,7 +12590,7 @@ const actions = {
     if (!o.noPeriod) for (let i = 0; i < o.periodLength; i++) { const d = C.addDays(s, i); if (d <= new Date()) logs[C.iso(d)] = { flow: i === 0 || i === 1 ? 'medium' : 'light' }; }
     ui.arrive = true;
     let pend = null; try { pend = inSnap(localStorage.getItem('uts.pendingPartner')); localStorage.removeItem('uts.pendingPartner'); } catch {}
-    state = { onboarded: true, profile: { name: o.name.trim(), country: o.country || myCountry(), diet: o.diet || 'all', cycleLength: o.unsure || o.noPeriod ? 28 : o.cycleLength, cycleUnsure: !!(o.unsure || o.noPeriod), noPeriod: !!o.noPeriod || undefined, npWhy: o.noPeriod && o.npWhy?.length ? o.npWhy : undefined, npSince: o.noPeriod ? todayISO() : undefined, preg: o.preg || (o.purpose === 'after' ? 'kids' : undefined), ttc: o.purpose === 'conceive' && o.ttc || undefined, ttcSince: o.purpose === 'conceive' && o.ttcSince || undefined, ppAt: o.ppAt || undefined, ppOld: o.ppOld || undefined, lossAt: o.preg === 'loss' && o.lossAt || undefined, lossOld: o.preg === 'loss' && o.lossOld || undefined, lossN: o.preg === 'loss' && o.lossN || undefined, lossHelp: o.preg === 'loss' && o.lossHelp?.length ? o.lossHelp : undefined, bf: o.bf || undefined, bc: o.bc || 'none', sexWith: o.sexWith || undefined, bcPlan: hormonalBC(o.bc) ? o.bcPlan || 'think' : undefined, pillKind: o.bc === 'pill' && o.pillKind || undefined, pillStart: o.bc === 'pill' && o.pillStart || undefined, bcStop: o.bcPlan === 'stop' ? todayISO() : undefined, planStart: todayISO(), periodLength: o.periodLength, goals: o.goals, purpose: o.purpose || 'know', focus: (o.focus && o.focus.length) ? o.focus : ['hormones', 'energy', 'eat'], birthday: o.birthday || undefined, birthTime: o.birthday && o.birthTime || undefined, birthPlace: o.birthday && o.birthPlace || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
+    state = { onboarded: true, profile: { age16: !!o.age16, name: o.name.trim(), country: o.country || myCountry(), diet: o.diet || 'all', cycleLength: o.unsure || o.noPeriod ? 28 : o.cycleLength, cycleUnsure: !!(o.unsure || o.noPeriod), noPeriod: !!o.noPeriod || undefined, npWhy: o.noPeriod && o.npWhy?.length ? o.npWhy : undefined, npSince: o.noPeriod ? todayISO() : undefined, preg: o.preg || (o.purpose === 'after' ? 'kids' : undefined), ttc: o.purpose === 'conceive' && o.ttc || undefined, ttcSince: o.purpose === 'conceive' && o.ttcSince || undefined, ppAt: o.ppAt || undefined, ppOld: o.ppOld || undefined, lossAt: o.preg === 'loss' && o.lossAt || undefined, lossOld: o.preg === 'loss' && o.lossOld || undefined, lossN: o.preg === 'loss' && o.lossN || undefined, lossHelp: o.preg === 'loss' && o.lossHelp?.length ? o.lossHelp : undefined, bf: o.bf || undefined, bc: o.bc || 'none', sexWith: o.sexWith || undefined, bcPlan: hormonalBC(o.bc) ? o.bcPlan || 'think' : undefined, pillKind: o.bc === 'pill' && o.pillKind || undefined, pillStart: o.bc === 'pill' && o.pillStart || undefined, bcStop: o.bcPlan === 'stop' ? todayISO() : undefined, planStart: todayISO(), periodLength: o.periodLength, goals: o.goals, purpose: o.purpose || 'know', focus: (o.focus && o.focus.length) ? o.focus : ['hormones', 'energy', 'eat'], birthday: o.birthday || undefined, birthTime: o.birthday && o.birthTime || undefined, birthPlace: o.birthday && o.birthPlace || undefined, photo: o.photo || undefined, thumb: o.thumb || undefined }, logs, favorites: [] };
     if (pend && pend.s && pend.c) state.partners = [{ ...pend, id: Date.now().toString(36), added: Date.now() }];
     if (o.geo) state.profile.geo = o.geo; if (o.askG) state.profile.geoAsked = true; // asked on the last onboarding page
     ui.scrollMem = {}; ui.navStack = []; save(); go('today'); render(); toTop(); requestAnimationFrame(toTop); setTimeout(toTop, 400); // she lands at the very top of Today
@@ -13118,10 +13149,11 @@ const actions = {
   grStudy: d => { ui.grStudy = ui.grStudy === +d.i ? null : +d.i; render(); },
   saveTip: d => {
     const L = state.savedTips = state.savedTips || [], i = L.findIndex(x => x.id === d.id);
-    if (i >= 0) { L.splice(i, 1); toast('Removed from Saved'); } else { const t = TIPREG[d.id]; if (!t) return; L.push({ ...t, at: todayISO() }); toast('Saved · find it in Saved tips'); buzz('done'); }
+    if (i >= 0) { L.splice(i, 1); toast('Removed from Saved'); } else { const t = TIPREG[d.id]; if (!t) return; L.push({ ...t, at: todayISO() }); toast('Saved · find it in Saved tips'); buzz('done'); ui.burstId = d.id; }
     save(); render();
+    if (ui.burstId) { burst(document.querySelector(`.sv-btn[data-id="${CSS.escape(d.id)}"]`)); ui.burstId = null; }
   },
-  fav: d => { const f = state.favorites = state.favorites || []; const i = f.indexOf(d.id); i < 0 ? f.push(d.id) : f.splice(i, 1); save(); render(); },
+  fav: d => { const f = state.favorites = state.favorites || []; const i = f.indexOf(d.id); i < 0 ? f.push(d.id) : f.splice(i, 1); save(); render(); if (i < 0) burst(document.querySelector(`[data-action="fav"][data-id="${CSS.escape(d.id)}"]`)); },
   check: d => { ui.checked[d.k] = !ui.checked[d.k]; render(); },
   timer: d => { bellCtx(); ui.timer = { title: d.title, secs: +d.secs, remaining: +d.secs, running: true, done: false }; renderOverlay(); startTick(); },
   timerToggle: () => { ui.timer.running = !ui.timer.running; renderOverlay(); },
@@ -13912,6 +13944,8 @@ function render() {
     if (st.length > 1 && st[st.length - 2] === r.key) { st.pop(); keep = (ui.scrollMem || {})[r.key] || 0; } else st.push(r.key);
   }
   if (r.name !== 'log' && fresh) ui.logDate = r.name === 'log' ? ui.logDate : ui.logDate;
+  if (fresh) ui.prevRoute = ui.lastRoute;
+  const seenR = ui.seenR = ui.seenR || new Set(), again = fresh && seenR.has(r.key); seenR.add(r.key);
   ui.lastRoute = r.key; ui.plAnim = fresh; if (r.key !== 'calendar') ui.calStart = null;
 
   if (r.name === 'love') {
@@ -13975,7 +14009,7 @@ function render() {
   const tabs = ['today', 'calendar', 'log', 'plan', 'insights'];
   const html = (views[r.name] || viewToday)();
   const arriving = $app.querySelector('.arrive');
-  const page = `${statusbar()}<div class="view ${fresh ? 'enter' : ''} ${arriving ? 'arrive-in' : ''}" id="view">${html}</div>${tabs.includes(r.name) || !views[r.name] ? tabbar(r.name in views ? r.name : 'today') : r.name !== 'unlock' ? tabbar('', !NO_PEEK.includes(r.name)) : ''}${!termsOK() && r.name !== 'privacy' ? termsSheet() : ''}`;
+  const page = `${statusbar()}<div class="view ${fresh ? 'enter' : ''} ${again ? 'again' : ''} ${arriving ? 'arrive-in' : ''}" id="view">${html}</div>${tabs.includes(r.name) || !views[r.name] ? tabbar(r.name in views ? r.name : 'today') : r.name !== 'unlock' ? tabbar('', !NO_PEEK.includes(r.name)) : ''}${!termsOK() && r.name !== 'privacy' ? termsSheet() : ''}`;
   I18N.setNames([state?.profile?.name, ...(state.partners || []).map(p => p.n)]);
   if (fresh || arriving || !prev) pageInto($app, page); else morphInto($app, page);
   if (UTSW) setTimeout(widgetSync, 800);
