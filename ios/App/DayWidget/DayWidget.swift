@@ -3,13 +3,14 @@
 // language, so the widget stays right for two weeks even if she doesn't open the app.
 import WidgetKit
 import SwiftUI
+import UIKit
 
 private let groupID = "group.com.elijanaru.undertheskin"
 
 struct UDay: Codable {
     let d: String, n: Int, L: Int, ph: String, phn: String, mode: String, tip: String, sub: String, day: String, dl: String, today: String
-    var say: String? = nil, work: String? = nil, move: String? = nil, ease: String? = nil, moveT: String? = nil, easeT: String? = nil, tea: String? = nil, teaWhy: String? = nil
-    static let sample = UDay(d: "", n: 12, L: 28, ph: "follicular", phn: "Follicular", mode: "Build", tip: "Train more, try something new.", sub: "Period in 16 days", day: "Day", dl: "Day 12", today: "Today", say: "Start new things", work: "Start new projects, brainstorm, learn, say yes to plans.", tea: "🍵 Green tea", teaWhy: "Calm energy and antioxidants as estrogen rises.")
+    var say: String? = nil, work: String? = nil, teaN: String? = nil, cup: String? = nil, move: String? = nil, ease: String? = nil, moveT: String? = nil, easeT: String? = nil, tea: String? = nil, teaWhy: String? = nil
+    static let sample = UDay(d: "", n: 12, L: 28, ph: "follicular", phn: "Follicular", mode: "Build", tip: "Train more, try something new.", sub: "Period in 16 days", day: "Day", dl: "Day 12", today: "Today", say: "Start new things", work: "Start new projects, brainstorm, learn, say yes to plans.", teaN: "Green tea", cup: "greentea", tea: "🍵 Green tea", teaWhy: "Calm energy and antioxidants as estrogen rises.")
 }
 struct UNow: Codable {
     static let sample = UNow(d: "", feel: "Calm · Good energy", ask: "How do you feel today?", check: "Tap to check in", feelT: "How you feel", teaT: "Your tea today", alerts: ["🌙 Late nights lately"], headsT: "Heads-up")
@@ -92,6 +93,18 @@ private struct Lotus: View {
             .shadow(color: Color(hex: 0xe6b1c4).opacity(0.55), radius: 8, y: 2)
     }
 }
+// her tea as the app's own 3D cup render (28 Nov 2026, her ask: a picture of the tea, not just words)
+private struct TeaCup: View {
+    let cup: String?
+    let size: CGFloat
+    var body: some View {
+        if let c = cup, UIImage(named: "cup-\(c)") != nil {
+            Image("cup-\(c)").resizable().interpolation(.high).aspectRatio(contentMode: .fit).frame(width: size, height: size)
+                .shadow(color: ink.opacity(0.18), radius: 4, y: 3)
+        }
+    }
+}
+private func hasCup(_ d: UDay) -> Bool { if let c = d.cup { return UIImage(named: "cup-\(c)") != nil } else { return false } }
 private struct Eyebrow: View {
     let t: String
     var body: some View { Text(t.uppercased()).font(.system(size: 10, weight: .medium)).tracking(1.2).foregroundColor(ink.opacity(0.5)).lineLimit(1) }
@@ -170,7 +183,15 @@ private struct MediumView: View {
                 Text(d.say ?? d.sub).font(.system(size: 16, weight: .medium)).foregroundColor(ink).lineLimit(1).minimumScaleFactor(0.75)
                 Text(d.tip).font(.system(size: 12, weight: .regular)).foregroundColor(ink.opacity(0.75)).lineSpacing(1).lineLimit(2).minimumScaleFactor(0.85)
                 Spacer(minLength: 0)
-                if let t = d.tea {
+                if hasCup(d) {
+                    HStack(spacing: 8) {
+                        TeaCup(cup: d.cup, size: 38)
+                        Text(d.teaN ?? d.tea ?? "").font(.system(size: 13, weight: .medium)).foregroundColor(ink).lineLimit(1).minimumScaleFactor(0.75)
+                        Spacer(minLength: 0)
+                    }
+                    .padding(.leading, 4).padding(.trailing, 10).padding(.vertical, 1)
+                    .background(Capsule().fill(Color.white.opacity(0.7)))
+                } else if let t = d.tea {
                     HStack(spacing: 6) {
                         Text(t).font(.system(size: 12, weight: .medium)).foregroundColor(ink).lineLimit(1).minimumScaleFactor(0.8)
                         Spacer(minLength: 0)
@@ -223,10 +244,21 @@ private struct LargeView: View {
                     }
                     Link(destination: URL(string: "underskin://open#/do/tea")!) {
                         Glass(pad: 10) {
-                            VStack(alignment: .leading, spacing: 3) {
-                                Eyebrow(t: now?.teaT ?? "Your tea today")
-                                Text(d.tea ?? "").font(.system(size: 13, weight: .medium)).foregroundColor(ink).lineLimit(1).minimumScaleFactor(0.75)
-                                Text(d.teaWhy ?? "").font(.system(size: 10, weight: .regular)).foregroundColor(ink.opacity(0.65)).lineLimit(2).minimumScaleFactor(0.85)
+                            if hasCup(d) {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Eyebrow(t: now?.teaT ?? "Your tea today")
+                                    HStack(alignment: .center, spacing: 4) {
+                                        Text(d.teaN ?? "").font(.system(size: 13, weight: .medium)).foregroundColor(ink).lineLimit(2).minimumScaleFactor(0.75)
+                                        Spacer(minLength: 0)
+                                        TeaCup(cup: d.cup, size: 50)
+                                    }
+                                }
+                            } else {
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Eyebrow(t: now?.teaT ?? "Your tea today")
+                                    Text(d.tea ?? "").font(.system(size: 13, weight: .medium)).foregroundColor(ink).lineLimit(1).minimumScaleFactor(0.75)
+                                    Text(d.teaWhy ?? "").font(.system(size: 10, weight: .regular)).foregroundColor(ink.opacity(0.65)).lineLimit(2).minimumScaleFactor(0.85)
+                                }
                             }
                         }
                     }

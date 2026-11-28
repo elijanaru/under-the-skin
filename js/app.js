@@ -13537,7 +13537,7 @@ function widgetSync() {
       const w = dayWindow(x), cp = COMPASS[w] || COMPASS.rising, tea = TEA_DAY[w] || TEA_DAY.rising;
       const sub = x.isPeriod ? `On your period · day ${x.cd}` : x.late ? `Period ${plural(x.late, 'day')} late` : x.dueToday || x.anyDay ? 'Period due any day' : x.noPred ? PHASES[x.phase].name : x.daysToPeriod === 1 ? 'Period tomorrow' : `Period in ${x.daysToPeriod} days`;
       days.push({ d: C.iso(d), n: x.cd, L: x.L, ph: x.phase, phn: T(PHASES[x.phase].name), mode: T(cp.mode), say: T((COMPASS_SHORT[w] || [])[0] || ''), move: T((COMPASS_SHORT[w] || [])[2] || ''), ease: T((COMPASS_SHORT[w] || [])[1] || ''), moveT: T('Move'), easeT: T('Go easy on'), tip: T(dietProse(cp.body)), work: T(cp.work),
-        tea: `${tea[0]} ${T(tea[1])}`, teaWhy: T(tea[2]), sub: T(sub), day: T('Day'), dl: T(`Day ${x.cd}`), today: T('Today') });
+        tea: `${tea[0]} ${T(tea[1])}`, teaN: T(tea[1]), cup: teaCup(tea[1])[1], teaWhy: T(tea[2]), sub: T(sub), day: T('Day'), dl: T(`Day ${x.cd}`), today: T('Today') });
     }
     // today only (28 Nov 2026, her ask): how she feels from today's check-in, and her heads-ups, for the big widget
     const l = state.logs[todayISO()] || {}, en = l.energy ? ['Drained', 'Low energy', 'Okay energy', 'Good energy', 'Radiant'][l.energy - 1] : '';
