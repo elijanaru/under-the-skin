@@ -178,27 +178,21 @@ private struct MediumView: View {
                     Text("\(d.day) · \(d.phn)").font(.system(size: 11, weight: .medium)).foregroundColor(accent(d.ph)).lineLimit(1).minimumScaleFactor(0.7)
                 }
             }.frame(width: 104)
-            VStack(alignment: .leading, spacing: 6) {
-                HStack { Eyebrow(t: d.today); Spacer(minLength: 0); ModePill(d: d, size: 11) }
-                Text(d.say ?? d.sub).font(.system(size: 16, weight: .medium)).foregroundColor(ink).lineLimit(1).minimumScaleFactor(0.75)
-                Text(d.tip).font(.system(size: 12, weight: .regular)).foregroundColor(ink.opacity(0.75)).lineSpacing(1).lineLimit(2).minimumScaleFactor(0.85)
+            VStack(alignment: .leading, spacing: 5) {
+                Eyebrow(t: d.today)
+                ModePill(d: d, size: 11)
+                Text(d.say ?? d.sub).font(.system(size: 15, weight: .medium)).foregroundColor(ink).lineLimit(2).minimumScaleFactor(0.75)
+                Text(d.tip).font(.system(size: 11, weight: .regular)).foregroundColor(ink.opacity(0.75)).lineLimit(2).minimumScaleFactor(0.85)
                 Spacer(minLength: 0)
-                if hasCup(d) {
-                    HStack(spacing: 8) {
-                        TeaCup(cup: d.cup, size: 38)
-                        Text(d.teaN ?? d.tea ?? "").font(.system(size: 13, weight: .medium)).foregroundColor(ink).lineLimit(1).minimumScaleFactor(0.75)
-                        Spacer(minLength: 0)
-                    }
-                    .padding(.leading, 4).padding(.trailing, 10).padding(.vertical, 1)
-                    .background(Capsule().fill(Color.white.opacity(0.7)))
-                } else if let t = d.tea {
-                    HStack(spacing: 6) {
-                        Text(t).font(.system(size: 12, weight: .medium)).foregroundColor(ink).lineLimit(1).minimumScaleFactor(0.8)
-                        Spacer(minLength: 0)
-                    }
-                    .padding(.horizontal, 10).padding(.vertical, 6)
-                    .background(Capsule().fill(Color.white.opacity(0.7)))
-                }
+            }.frame(maxWidth: .infinity, alignment: .leading)
+            if hasCup(d) {
+                // her tea, big, with its name under the cup (28 Nov 2026, her ask)
+                VStack(spacing: 4) {
+                    Spacer(minLength: 0)
+                    TeaCup(cup: d.cup, size: 74)
+                    Text(d.teaN ?? "").font(.system(size: 12, weight: .medium)).foregroundColor(ink).multilineTextAlignment(.center).lineLimit(2).minimumScaleFactor(0.7)
+                    Spacer(minLength: 0)
+                }.frame(width: 82)
             }
         }
     }
@@ -211,9 +205,9 @@ private struct LargeView: View {
     var body: some View {
         ZStack(alignment: .top) {
             Sparkles(c: accent(d.ph), pts: [(0.12, 0.05, 8), (0.88, 0.04, 6), (0.22, 0.2, 5), (0.8, 0.19, 7)])
-            VStack(spacing: 8) {
+            VStack(spacing: 7) {
                 VStack(spacing: 0) {
-                    Lotus(w: 118)
+                    Lotus(w: 100)
                     HStack(alignment: .firstTextBaseline, spacing: 6) {
                         Text(d.day).font(.system(size: 15, weight: .light)).foregroundColor(ink.opacity(0.7))
                         Text("\(d.n)").font(.system(size: 34, weight: .thin, design: .rounded)).monospacedDigit().foregroundColor(ink)
@@ -245,14 +239,11 @@ private struct LargeView: View {
                     Link(destination: URL(string: "underskin://open#/do/tea")!) {
                         Glass(pad: 10) {
                             if hasCup(d) {
-                                VStack(alignment: .leading, spacing: 2) {
+                                VStack(spacing: 1) {
                                     Eyebrow(t: now?.teaT ?? "Your tea today")
-                                    HStack(alignment: .center, spacing: 4) {
-                                        Text(d.teaN ?? "").font(.system(size: 13, weight: .medium)).foregroundColor(ink).lineLimit(2).minimumScaleFactor(0.75)
-                                        Spacer(minLength: 0)
-                                        TeaCup(cup: d.cup, size: 50)
-                                    }
-                                }
+                                    TeaCup(cup: d.cup, size: 62)
+                                    Text(d.teaN ?? "").font(.system(size: 13, weight: .medium)).foregroundColor(ink).multilineTextAlignment(.center).lineLimit(1).minimumScaleFactor(0.7)
+                                }.frame(maxWidth: .infinity)
                             } else {
                                 VStack(alignment: .leading, spacing: 3) {
                                     Eyebrow(t: now?.teaT ?? "Your tea today")
