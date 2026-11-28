@@ -732,14 +732,16 @@ function groundEnter(hero, img, done) {
 function groundHow() {
   if (state.profile.grHowOff) return `<button class="grhw-back" data-action="grHow" data-v="on">${icon('leaf', 14)} Why ground</button>`;
   const flow = (d, i) => `<path class="grhw-f" style="--d:${(i * .37) % 1.6}s" d="${d}"/>`;
-  const lines = ['M8 100C12 92 18 84 20 72S22 46 21 22', 'M24 100C25 92 26 84 26 72S26 46 26 18', 'M42 100C40 92 34 84 31 72S31 46 31 24',
-    'M62 100C66 92 70 84 72 72S73 46 73 22', 'M80 100C80 92 79 84 78 72S78 46 78 18', 'M98 100C95 92 88 84 84 72S84 46 83 24'];
+  // 28 Nov 2026 (her ask): the bubbles rise from the cat's paws, up its legs and body; a soft glow where each paw meets the earth
+  const paws = [[46, 70], [59, 76], [67, 61]];
+  const lines = ['M44 72C43 62 42 52 41 40S40 22 39 8', 'M47 73C47 62 47 52 46 40S46 24 46 6', 'M45 72C44 60 39 50 36 38S34 22 33 10',
+    'M57 78C57 66 56 54 55 42S54 24 53 8', 'M60 78C61 66 61 54 60 42S59 26 59 10', 'M66 62C66 54 65 46 63 36S61 22 61 10'];
   return `<section class="card grhw grb" aria-labelledby="grhw-t">
     <button class="grhw-x" data-action="grHow" data-v="off" aria-label="Hide why ground">${icon('close', 16, 2)}</button>
     <small class="ul4-eye">Why ground</small>
     <h3 id="grhw-t">What it does for you</h3>
     <figure class="grhw-g"><img src="images/ground/how-cat.webp" alt="A tabby cat walking on the grass in the sun" loading="lazy" decoding="async">
-      <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines.map(flow).join('')}</svg>
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${paws.map(([x, y], i) => `<ellipse class="grhw-p" style="--d:${i * .7}s" cx="${x}" cy="${y}" rx="6" ry="2.6"/>`).join('')}${lines.map(flow).join('')}</svg>
       <figcaption><span class="grhw-c up">The earth’s charge rises</span><span class="grhw-c">You feel calmer</span></figcaption></figure>
     <ul class="grb-g">${GROUND_GOOD.map(([e, t, x], i) => `<li style="--i:${i}"><span aria-hidden="true">${e}</span><b>${t}</b><small>${x}</small></li>`).join('')}</ul>
     <div class="grb-l"><button data-action="grInfo" data-v="how">How it works ${icon('chevR', 12)}</button><button data-action="grInfo" data-v="studies">The studies ${icon('chevR', 12)}</button></div>
