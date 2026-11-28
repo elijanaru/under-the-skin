@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D4A700000000000000000004 /* DayWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A700000000000000000001 /* DayWidget.swift */; };
+		D4A700000000000000000005 /* DayWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D4A700000000000000000003 /* DayWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D4A700000000000000000015 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D4A700000000000000000014 /* Assets.xcassets */; };
+		D4A700000000000000000013 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D4A700000000000000000012 /* PrivacyInfo.xcprivacy */; };
 		A1B2C3D4E5F60718293A4B5D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5C /* PrivacyInfo.xcprivacy */; };
 		2FAD9763203C412B000D30F8 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2FAD9762203C412B000D30F8 /* config.xml */; };
 		4D22ABE92AF431CB00220026 /* CapApp-SPM in Frameworks */ = {isa = PBXBuildFile; productRef = 4D22ABE82AF431CB00220026 /* CapApp-SPM */; };
@@ -31,6 +35,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		D4A700000000000000000010 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 504EC2FC1FED79650016851F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D4A70000000000000000000A;
+			remoteInfo = DayWidget;
+		};
 		C0FFEE000000000000000010 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 504EC2FC1FED79650016851F /* Project object */;
@@ -69,6 +80,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				C0FFEE000000000000000005 /* LetterView.appex in Embed Foundation Extensions */,
+				D4A700000000000000000005 /* DayWidget.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -76,6 +88,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D4A700000000000000000001 /* DayWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayWidget.swift; sourceTree = "<group>"; };
+		D4A700000000000000000002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D4A700000000000000000003 /* DayWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DayWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		D4A700000000000000000011 /* DayWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DayWidget.entitlements; sourceTree = "<group>"; };
+		D4A700000000000000000014 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D4A700000000000000000012 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4B5C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2FAD9762203C412B000D30F8 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = config.xml; sourceTree = "<group>"; };
 		50379B222058CBB4000EE86E /* capacitor.config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = capacitor.config.json; sourceTree = "<group>"; };
@@ -110,6 +128,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		D4A700000000000000000008 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		504EC3011FED79650016851F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -149,12 +174,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D4A700000000000000000006 /* DayWidget */ = {
+			isa = PBXGroup;
+			children = (
+				D4A700000000000000000001 /* DayWidget.swift */,
+				D4A700000000000000000002 /* Info.plist */,
+				D4A700000000000000000011 /* DayWidget.entitlements */,
+				D4A700000000000000000012 /* PrivacyInfo.xcprivacy */,
+				D4A700000000000000000014 /* Assets.xcassets */,
+			);
+			path = DayWidget;
+			sourceTree = "<group>";
+		};
 		504EC2FB1FED79650016851F = {
 			isa = PBXGroup;
 			children = (
 				958DCC722DB07C7200EA8C5F /* debug.xcconfig */,
 				504EC3061FED79650016851F /* App */,
 				C0FFEE000000000000000006 /* LetterView */,
+				D4A700000000000000000006 /* DayWidget */,
 				B10C0000000000000000000C /* BlockMonitor */,
 				B10C0000000000000000001C /* BlockShield */,
 				B10C0000000000000000002D /* BlockAction */,
@@ -168,6 +206,7 @@
 			children = (
 				504EC3041FED79650016851F /* App.app */,
 				C0FFEE000000000000000003 /* LetterView.appex */,
+				D4A700000000000000000003 /* DayWidget.appex */,
 				B10C0000000000000000000B /* BlockMonitor.appex */,
 				B10C0000000000000000001B /* BlockShield.appex */,
 				B10C0000000000000000002C /* BlockAction.appex */,
@@ -245,6 +284,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		D4A70000000000000000000A /* DayWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D4A70000000000000000000B /* Build configuration list for PBXNativeTarget "DayWidget" */;
+			buildPhases = (
+				D4A700000000000000000007 /* Sources */,
+				D4A700000000000000000008 /* Frameworks */,
+				D4A700000000000000000009 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DayWidget;
+			productName = DayWidget;
+			productReference = D4A700000000000000000003 /* DayWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		504EC3031FED79650016851F /* App */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 504EC3161FED79650016851F /* Build configuration list for PBXNativeTarget "App" */;
@@ -259,6 +315,7 @@
 			);
 			dependencies = (
 				C0FFEE00000000000000000F /* PBXTargetDependency */,
+				D4A70000000000000000000F /* PBXTargetDependency */,
 				B10C00000000000000000017 /* PBXTargetDependency */,
 				B10C00000000000000000027 /* PBXTargetDependency */,
 				B10C00000000000000000038 /* PBXTargetDependency */,
@@ -348,6 +405,10 @@
 				LastSwiftUpdateCheck = 0920;
 				LastUpgradeCheck = 0920;
 				TargetAttributes = {
+					D4A70000000000000000000A = {
+						CreatedOnToolsVersion = 16.0;
+						ProvisioningStyle = Automatic;
+					};
 					504EC3031FED79650016851F = {
 						CreatedOnToolsVersion = 9.2;
 						LastSwiftMigration = 1100;
@@ -389,6 +450,7 @@
 			targets = (
 				504EC3031FED79650016851F /* App */,
 				C0FFEE00000000000000000A /* LetterView */,
+				D4A70000000000000000000A /* DayWidget */,
 				B10C0000000000000000000D /* BlockMonitor */,
 				B10C0000000000000000001D /* BlockShield */,
 				B10C0000000000000000002E /* BlockAction */,
@@ -397,6 +459,15 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		D4A700000000000000000009 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D4A700000000000000000013 /* PrivacyInfo.xcprivacy in Resources */,
+				D4A700000000000000000015 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		504EC3021FED79650016851F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -465,6 +536,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		D4A700000000000000000007 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D4A700000000000000000004 /* DayWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		504EC3001FED79650016851F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -514,6 +593,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		D4A70000000000000000000F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D4A70000000000000000000A /* DayWidget */;
+			targetProxy = D4A700000000000000000010 /* PBXContainerItemProxy */;
+		};
 		C0FFEE00000000000000000F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C0FFEE00000000000000000A /* LetterView */;
@@ -556,6 +640,57 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		D4A70000000000000000000C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = DayWidget/DayWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = 77H93N462G;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DayWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.elijanaru.undertheskin.DayWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+			};
+			name = Debug;
+		};
+		D4A70000000000000000000D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = DayWidget/DayWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = 77H93N462G;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DayWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.elijanaru.undertheskin.DayWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 		504EC3141FED79650016851F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 958DCC722DB07C7200EA8C5F /* debug.xcconfig */;
@@ -923,6 +1058,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D4A70000000000000000000B /* Build configuration list for PBXNativeTarget "DayWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D4A70000000000000000000C /* Debug */,
+				D4A70000000000000000000D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		504EC2FF1FED79650016851F /* Build configuration list for PBXProject "App" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

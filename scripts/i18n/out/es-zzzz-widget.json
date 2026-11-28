@@ -1,0 +1,20 @@
+{
+"On your period · day {0}": "Con la regla · día {0}",
+"Period {0} days late": "Regla {0} días tarde",
+"Period {0} day late": "Regla {0} día tarde",
+"Period due any day": "La regla llega cualquier día",
+"Period tomorrow": "Regla mañana",
+"Open Underskin to see your day": "Abre Underskin para ver tu día",
+"Reading Apple Health…": "Leyendo Apple Salud…",
+"Bring in periods from Apple Health": "Trae tus reglas de Apple Salud",
+"Last time {0} {1} · {2} new period days": "La última vez {0} {1} · {2} días de regla nuevos",
+"Last time {0} {1} · {2} new period day": "La última vez {0} {1} · {2} día de regla nuevo",
+"Your past periods, so your rhythm is right from day one": "Tus reglas pasadas, para que tu ritmo sea exacto desde el primer día",
+"No period days found in Apple Health": "No hay días de regla en Apple Salud",
+"{0} periods added from Apple Health": "{0} reglas añadidas desde Apple Salud",
+"{0} period added from Apple Health": "{0} regla añadida desde Apple Salud",
+"{0} period days added from Apple Health": "{0} días de regla añadidos desde Apple Salud",
+"{0} period day added from Apple Health": "{0} día de regla añadido desde Apple Salud",
+"You’re up to date with Apple Health": "Ya estás al día con Apple Salud",
+"Apple Health is not available right now": "Apple Salud no está disponible ahora"
+}

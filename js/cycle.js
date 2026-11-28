@@ -174,8 +174,9 @@ export function dayInfo(date, stats) {
     isOvulation: !noOv && !tooShort && cd === ov,
     isPeriod: periodActual || (pk ? pillPred : periodPredicted), periodActual, periodPredicted: pk ? pillPred : periodPredicted,
     // while the app is still guessing her length ("I'm not sure"), passing day 28 is not "late": the period is simply due any day
-    late: !pk && !noOv && !stats.noPred && !stats.learning && isToday && startP === last && lateBy > 0 ? lateBy : 0,
-    anyDay: !pk && !stats.noPred && !!stats.learning && isToday && startP === last && lateBy >= 0,
+    // 28 Nov 2026 (her day 33 showed nothing): once she is past day 31, a period is late even while the length is a guess
+    late: !pk && !noOv && !stats.noPred && isToday && startP === last && lateBy > (stats.learning ? 3 : 0) ? lateBy : 0,
+    anyDay: !pk && !stats.noPred && !!stats.learning && isToday && startP === last && lateBy >= 0 && lateBy <= 3,
     dueToday: !pk && isToday && startP === last && lateBy === 0,
     daysToPeriod: Math.max(0, diffDays(pk ? pillNext : nextStart, d)),
     daysToOv: noOv ? 999 : cd < ov ? ov - cd : cd === ov ? 0 : (L - cd) + ov,

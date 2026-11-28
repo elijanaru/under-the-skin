@@ -1,6 +1,8 @@
 import UIKit
 import Capacitor
 import StoreKit
+import WidgetKit
+import HealthKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
@@ -33,6 +35,8 @@ class UTSBridgeViewController: CAPBridgeViewController {
     }
     override open func capacitorDidLoad() {
         bridge?.registerPluginInstance(UTSStorePlugin())
+        bridge?.registerPluginInstance(UTSWidgetPlugin())
+        bridge?.registerPluginInstance(UTSHealthPlugin())
         #if SCREEN_TIME
         bridge?.registerPluginInstance(UTSBlockPlugin())
         #endif
@@ -142,6 +146,59 @@ public class UTSStorePlugin: CAPPlugin, CAPBridgedPlugin {
                 SKPaymentQueue.default().presentCodeRedemptionSheet()
                 call.resolve()
             }
+        }
+    }
+}
+
+
+// Home screen widget (28 Nov 2026): the app hands over the next 14 days as JSON, already in her language; the widget
+// (DayWidget target) reads it from the shared app group and switches day at midnight.
+@objc(UTSWidgetPlugin)
+public class UTSWidgetPlugin: CAPPlugin, CAPBridgedPlugin {
+    public let identifier = "UTSWidgetPlugin"
+    public let jsName = "UTSWidget"
+    public let pluginMethods: [CAPPluginMethod] = [CAPPluginMethod(name: "set", returnType: CAPPluginReturnPromise)]
+    @objc func set(_ call: CAPPluginCall) {
+        let json = call.getString("json") ?? ""
+        UserDefaults(suiteName: "group.com.elijanaru.undertheskin")?.set(json, forKey: "uts.widget")
+        WidgetCenter.shared.reloadAllTimelines()
+        call.resolve()
+    }
+}
+
+// Apple Health (28 Nov 2026): read-only. Her period days from Health (menstrual flow samples), so the app knows her
+// rhythm from day one. Nothing is written to Health and nothing leaves the phone from here.
+@objc(UTSHealthPlugin)
+public class UTSHealthPlugin: CAPPlugin, CAPBridgedPlugin {
+    public let identifier = "UTSHealthPlugin"
+    public let jsName = "UTSHealth"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "available", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "periods", returnType: CAPPluginReturnPromise),
+    ]
+    private let store = HKHealthStore()
+    @objc func available(_ call: CAPPluginCall) { call.resolve(["ok": HKHealthStore.isHealthDataAvailable()]) }
+    @objc func periods(_ call: CAPPluginCall) {
+        guard HKHealthStore.isHealthDataAvailable(), let type = HKObjectType.categoryType(forIdentifier: .menstrualFlow) else { call.reject("unavailable"); return }
+        let days = call.getInt("days") ?? 730
+        store.requestAuthorization(toShare: nil, read: [type]) { [weak self] _, error in
+            if let error = error { call.reject(error.localizedDescription); return }
+            let start = Calendar.current.date(byAdding: .day, value: -days, to: Date())
+            let pred = HKQuery.predicateForSamples(withStart: start, end: Date(), options: [])
+            let q = HKSampleQuery(sampleType: type, predicate: pred, limit: HKObjectQueryNoLimit,
+                                  sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)]) { _, samples, error in
+                if let error = error { call.reject(error.localizedDescription); return }
+                let f = DateFormatter(); f.calendar = Calendar(identifier: .gregorian); f.locale = Locale(identifier: "en_US_POSIX"); f.timeZone = .current; f.dateFormat = "yyyy-MM-dd"
+                // raw values of the flow category: 1 unspecified, 2 light, 3 medium, 4 heavy, 5 none
+                let names = [1: "medium", 2: "light", 3: "medium", 4: "heavy"]
+                var out: [[String: String]] = []
+                for s in (samples as? [HKCategorySample]) ?? [] {
+                    guard let flow = names[s.value] else { continue }
+                    out.append(["d": f.string(from: s.startDate), "flow": flow])
+                }
+                call.resolve(["days": out])
+            }
+            self?.store.execute(q)
         }
     }
 }

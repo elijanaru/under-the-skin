@@ -47,7 +47,7 @@ function load() { try { return JSON.parse(localStorage.getItem(KEY)); } catch { 
 function save(quiet) {
   if (state && !quiet) state.updatedAt = Date.now();
   try { localStorage.setItem(KEY, JSON.stringify(state)); } catch { /* storage unavailable */ }
-  if (!quiet) { cloudSoon(); calSoon(); clearTimeout(save.lt); save.lt = setTimeout(() => scheduleLettersNative(), 2500); } // letters for the next days follow a newly logged period
+  if (!quiet) { cloudSoon(); calSoon(); clearTimeout(save.lt); save.lt = setTimeout(() => { scheduleLettersNative(); scheduleLateNative(); scheduleSleepNative(); }, 2500); } // letters for the next days follow a newly logged period
 }
 
 // ---------- account sync ----------
@@ -200,6 +200,7 @@ function setLog(k, patch) {
   save();
 }
 function route() {
+  if (route.o) return route.o;
   const h = location.hash.replace(/^#\/?/, '') || 'today';
   const [path, q] = h.split('?');
   const [name, id] = path.split('/');
@@ -210,6 +211,17 @@ function route() {
   return { name, id, q: new URLSearchParams(q || ''), key: h };
 }
 function go(h) { location.hash = '#/' + h; }
+// Food opens fast (28 Nov 2026, her ask: food loading felt laggy): its photos come from the web, so a few seconds after
+// the app opens, when the phone is idle, the Food and Recipes pages are drawn off screen and their photos fetched quietly.
+// Next time she taps Food they come from the phone's cache at once. Once per app start, a few at a time.
+function foodWarm() {
+  if (foodWarm.done || !state?.onboarded || !M?.info || navigator.connection?.saveData) return; foodWarm.done = true;
+  let html = '';
+  for (const id of ['', 'recipes']) { try { route.o = { name: 'plan', id, q: new URLSearchParams(), key: id ? 'plan/' + id : 'plan' }; html += viewPlan(); } catch { /* skip */ } finally { route.o = null; } }
+  const urls = [...new Set(html.match(/https:\/\/images\.unsplash\.com\/[^"'\s)]+/g) || [])].map(u => u.replace(/&amp;/g, '&')).slice(0, 40);
+  const next = () => { const u = urls.shift(); if (!u) return; const im = new Image(); im.decoding = 'async'; im.onload = im.onerror = () => setTimeout(next, 60); im.src = u; };
+  for (let i = 0; i < 4; i++) next();
+}
 // leaving a friend's link swaps it out of the history, so back never reopens it
 function linkTo(h) { const st = ui.navStack; if (st && /^(with|w)([/?]|$)/.test(st[st.length - 1] || '')) st.pop(); history.replaceState(null, '', '#/' + h); render(); }
 function toast(msg) {
@@ -1764,10 +1776,27 @@ function wsOpen(html, cls = '') {
   app.parentElement.appendChild(el);
   requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('up')));
   const sh = el.querySelector('.ws-sh'), top = el.querySelector('.ws-top'); let y0 = null, dy = 0;
-  top.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; y0 = e.clientY; dy = 0; sh.style.transition = 'none'; top.setPointerCapture(e.pointerId); });
+  top.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse' || e.target.closest('button')) return; y0 = e.clientY; dy = 0; sh.style.transition = 'none'; top.setPointerCapture(e.pointerId); });
   top.addEventListener('pointermove', e => { if (y0 == null) return; dy = Math.max(0, e.clientY - y0); sh.style.transform = `translateY(${dy}px)`; });
   const end = () => { if (y0 == null) return; y0 = null; sh.style.transition = ''; sh.style.transform = ''; if (dy > 90) wsClose(); };
   top.addEventListener('pointerup', end); top.addEventListener('pointercancel', end);
+  // 28 Nov 2026 (her ask): pull the whole sheet down to close it, like an iPhone sheet. Anywhere on it, as long as its
+  // content is scrolled to the top; a quick flick closes it too. Sideways swipes and scrolling stay untouched.
+  const inn = el.querySelector('.ws-in'); let t0 = null, pull = false, tdy = 0;
+  sh.addEventListener('touchstart', e => { if (e.touches.length !== 1 || e.target.closest('input, textarea, select, [data-nodrag]')) { t0 = null; return; }
+    t0 = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() }; pull = false; tdy = 0; }, { passive: true });
+  sh.addEventListener('touchmove', e => {
+    if (!t0) return;
+    const dx = e.touches[0].clientX - t0.x, dy = e.touches[0].clientY - t0.y;
+    if (!pull) {
+      if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) { t0 = null; return; }
+      const sc = e.target.closest('.ws-in') ? inn.scrollTop : 0;
+      if (dy > 8 && sc <= 0) { pull = true; sh.style.transition = 'none'; t0.y += 8; } else if (dy < -8 || sc > 0) { if (Math.abs(dy) > 8) t0 = null; return; } else return;
+    }
+    e.preventDefault(); tdy = Math.max(0, e.touches[0].clientY - t0.y); sh.style.transform = `translateY(${tdy}px)`;
+  }, { passive: false });
+  const tend = () => { if (pull) { const fast = tdy > 40 && Date.now() - t0.t < 260; const go = tdy > 110 || fast; sh.style.transition = ''; sh.style.transform = go ? 'translateY(110%)' : ''; if (go) wsClose(); } t0 = null; pull = false; };
+  sh.addEventListener('touchend', tend); sh.addEventListener('touchcancel', tend);
   setTimeout(() => el.querySelector('.ws-x')?.focus({ preventScroll: true }), 400);
   return el;
 }
@@ -2150,11 +2179,11 @@ function viewToday() {
   const AL_EMO = { drop: '🩸', bell: '🔔', moon: '🌙', sun: '☀️', leaf: '🌿', heart: '💗', spark: '✨', cup: '🍵', pill: '💊', mind: '💭', chart: '📈' };
   const alWhen = d => d === 0 ? '<span class="al2-w now">Today</span>' : `<span class="al2-w"><b class="dotnum">${d}</b><small>${d === 1 ? 'day' : 'days'}</small></span>`;
   const alerts = due.filter(x => !/^(phase-|rh-|letter-)/.test(x.id) && !(x.id === 'late' && !hormonalBC(state.profile.bc))).map(x => `<div class="al2-r"><span class="al2-e emo" aria-hidden="true">${AL_EMO[x.icon] || '🔔'}</span>
-      <span class="al2-t" ${x.to ? `data-action="nav" data-to="${x.to}" role="button"` : ''}><b>${esc(x.title)}</b><small>${esc(x.body)}</small></span>
+      <span class="al2-t" ${x.act ? `data-action="${x.act}" role="button"` : x.to ? `data-action="nav" data-to="${x.to}" role="button"` : ''}><b>${esc(x.title)}</b><small>${esc(x.body)}</small></span>
       <button class="bn-x" data-action="dismissRem" data-id="${x.id}" aria-label="Dismiss">${icon('close', 14)}</button></div>`);
   // the important tips from today's check-in sit here too, warnings first (28 Nov 2026)
   alerts.unshift(...brainTips());
-  if (info.late && !hormonalBC(state.profile.bc)) alerts.unshift(`<button class="al2-r" data-action="lateSheet"><span class="al2-e emo" aria-hidden="true">🩸</span><span class="al2-t"><b>Period late?</b><small>${plural(info.late, 'day')} past your usual ${info.L} · why, and what helps</small></span>${icon('chevR', 15)}</button>`);
+  if (info.late && !hormonalBC(state.profile.bc)) alerts.unshift(`<button class="al2-r" data-action="lateSheet"><span class="al2-e emo" aria-hidden="true">🩸</span><span class="al2-t"><b>Period late?</b><small>${plural(info.late, 'day')} past ${M.stats.learning ? 'day 28' : `your usual ${info.L}`} · why, and what helps</small></span>${icon('chevR', 15)}</button>`);
   if (onPill()) alerts.unshift(state.profile.pillStart && state.profile.pillKind !== 'cont'
     ? `<button class="al2-r" data-action="nav" data-to="pill"><span class="al2-e emo" aria-hidden="true">💊</span><span class="al2-t"><b>Your next bleed</b><small>In your pill break, around ${fmt(info.nextStart, { month: 'short', day: 'numeric' })}</small></span>${alWhen(info.daysToPeriod)}</button>`
     : state.profile.pillKind === 'cont' ? '' : `<button class="al2-r" data-action="pillSetup"><span class="al2-e emo" aria-hidden="true">💊</span><span class="al2-t"><b>Add your pill pack</b><small>So the app can show when your next bleed comes</small></span>${icon('chevR', 15)}</button>`);
@@ -2752,7 +2781,7 @@ function journalCard(d, di, l, isToday) {
     ${past.length ? `<details class="jr-past"><summary>Your journal <small>${past.length} ${past.length === 1 ? 'entry' : 'entries'}</small>${icon('chevD', 13)}</summary>${past.map(k => { const x = state.logs[k]; return `<div class="jr-e"><small>${fmt(C.parseISO(k), { weekday: 'short', month: 'short', day: 'numeric' })}</small>${x.jp ? `<b>${esc(x.jp)}</b>` : ''}<p>${esc(x.notes)}</p></div>`; }).join('')}</details>` : ''}
   </div>`;
 }
-const LOG_SECS = [['flow', 'drop', 'Period & down there'], ['body', 'user', 'Body'], ['mind', 'mind', 'Mind & mood'], ['rest', 'bolt', 'Energy'],
+const LOG_SECS = [['flow', 'drop', 'Period & down there'], ['body', 'user', 'Body'], ['mind', 'mind', 'Mind & mood'], ['rest', 'bolt', 'Energy & sleep'],
   ['desire', 'heart', 'Desire & intimacy'], ['disrupt', 'clock', 'Cycle disruptors'], ['note', 'book', 'Journal']];
 // What she is most likely to feel today: her own patterns first, then what's common in this phase.
 const PHASE_LIKELY = { menstrual: ['Cramps', 'Fatigue', 'Back pain', 'Bloating'], follicular: ['Energetic', 'Glowing skin', 'Acne', 'Headache'],
@@ -2816,7 +2845,7 @@ function viewLog() {
   const has = f => (l[f] || []).length;
   const count = {
     flow: (l.flow ? 1 : 0) + (l.fluid ? 1 : 0) + (l.bcol ? 1 : 0) + has('down'),
-    body: has('symptoms'), mind: has('moods'), rest: l.energy ? 1 : 0,
+    body: has('symptoms'), mind: has('moods'), rest: (l.energy ? 1 : 0) + (l.bed ? 1 : 0),
     desire: (l.drive ? 1 : 0) + (l.intim || []).filter(v => !v.startsWith('Sex,')).length, disrupt: has('disrupt'), note: l.notes ? 1 : 0, sex: l.sex || hadSex(l) ? 1 : 0,
   };
   const inner = {
@@ -2840,7 +2869,10 @@ function viewLog() {
     mind: ['Light', 'Heavy'].map(side => `<div class="lg-k">${side === 'Light' ? 'Feeling light' : 'Feeling heavy'}</div><div class="mb ${side === 'Light' ? 'up' : 'down'}">${MOOD_LIST.filter(([m]) => GOOD_FEELINGS.includes(m) === (side === 'Light')).map(([v, e], i) => {
       const on = (l.moods || []).includes(v); return `<button class="mb-b ${on ? 'on' : ''}" style="--i:${i}" data-action="logSet" data-field="moods" data-v="${esc(v)}" data-multi="1" aria-pressed="${on}"><span>${e}</span><small>${v}</small></button>`; }).join('')}</div>`).join(''),
     rest: `<div class="bt"><div class="bt-body">${[1, 2, 3, 4, 5].map(n => `<button class="bt-c ${l.energy >= n ? 'on' : ''}" data-action="logSet" data-field="energy" data-v="${n}" aria-label="Energy ${n} of 5" aria-pressed="${l.energy === n}"></button>`).join('')}</div><i class="bt-cap"></i></div>
-      <div class="dz-l"><span>Drained</span><b>${l.energy ? ['Drained', 'Low', 'Okay', 'Good', 'Radiant'][l.energy - 1] : 'Tap your battery'}</b><span>Radiant</span></div>`,
+      <div class="dz-l"><span>Drained</span><b>${l.energy ? ['Drained', 'Low', 'Okay', 'Good', 'Radiant'][l.energy - 1] : 'Tap your battery'}</b><span>Radiant</span></div>
+      <div class="lg-k">Last night I fell asleep</div>
+      <div class="slb">${[['early', '🌙', 'Before midnight'], ['late', '🌌', 'After midnight']].map(([v, e, t]) => lgPick(l.bed === v, 'bed', v, false, 'slb-o', `<span class="emo" aria-hidden="true">${e}</span><small>${t}</small>`, t)).join('')}</div>
+      ${l.bed === 'late' ? `<button class="slb-go" data-action="sleepFix"><span class="emo" aria-hidden="true">🕯️</span><span><b>Fix my sleep schedule</b><small>Step by step, back to earlier nights</small></span>${icon('chevR', 15)}</button>` : ''}`,
     desire: `<div class="lg-k">Sex drive</div>
       <div class="dz"><div class="dz-track">
         ${DRIVE.map(([e, w], i) => `<button class="dz-s ${l.drive >= i + 1 ? 'lit' : ''} ${l.drive === i + 1 ? 'on' : ''}" style="--i:${i}" data-action="logSet" data-field="drive" data-v="${i + 1}" aria-label="Sex drive: ${w}" aria-pressed="${l.drive === i + 1}"><span>${e}</span></button>`).join('')}</div>
@@ -3712,7 +3744,7 @@ const FOOD_EMO = [
   [/\bbeet/i, 'e:beetroot'], [/sweet potato|goguma|shakarkandi|cassava|taro|colocasia|yam/i, '🍠'], [/potato/i, '🥔'],
   [/carrot|parsnip|salsify|burdock|root vegetable|turnip|rutabaga|celeriac|jerusalem|horseradish|lotus root/i, '🥕'],
   [/pumpkin|squash|kabocha|danhobak/i, '🎃'], [/aubergine|eggplant/i, '🍆'], [/broccoli|cauliflower|brussels|kohlrabi/i, '🥦'],
-  [/corn|bhutta/i, '🌽'], [/pepper/i, '🫑'], [/tomato/i, '🍅'], [/cucumber|courgette|zucchini|aehobak|gourd|bitter melon|karela|lauki|chayote|okra|bhindi/i, '🥒'],
+  [/corn|bhutta/i, '🌽'], [/(?<!black )pepper(?!mint|corn)/i, '🫑'], [/tomato/i, '🍅'], [/cucumber|courgette|zucchini|aehobak|gourd|bitter melon|karela|lauki|chayote|okra|bhindi/i, '🥒'],
   [/onion|leek|ramps/i, '🧅'], [/artichoke|cardoon/i, '🥬'], [/\bpeas?\b|edamame|broad bean|green bean|long bean|drumstick|moringa/i, '🫛'],
   [/avocado/i, '🥑'], [/basil|parsley|coriander|mint|thyme|herb|nettle|wild garlic|minari|dandelion|watercress|samphire/i, '🌿'],
   [/spinach|kale|chard|cabbage|lettuce|greens|collard|silverbeet|palak|sigeumchi|sarson|sprouts|kongnamul|water spinach/i, '🥬'],
@@ -4701,7 +4733,7 @@ function cosmicHero(title, sub, extra = '') {
 
 // ---------- grocery list (built from the coming week's phases) ----------
 const AISLES = [
-  ['Produce', /spinach|pepper|citrus|kiwi|strawberr|broccoli|berr|avocado|beet|banana|potato|kale|rocket|cucumber|tomato|pear|lemon|orange|fennel|asparagus|sprout|cauliflower|greens|radish|pumpkin|watermelon|pomegranate|apple|prune|cherr|mulberr|ginger$|^ginger|fresh ginger|cabbage|carrot|lettuce|leek|parsnip|squash|celeri|chard|onion|garlic|turnip|courgette|zucchini|mushroom|quince|plum|grape|fig|artichoke|salsify|fruit|watercress|nettle/i],
+  ['Produce', /spinach|(?<!black )pepper(?!mint|corn)|citrus|kiwi|strawberr|broccoli|berr|avocado|beet|banana|potato|kale|rocket|cucumber|tomato|pear|lemon|orange|fennel|asparagus|sprout|cauliflower|greens|radish|pumpkin|watermelon|pomegranate|apple|prune|cherr|mulberr|ginger$|^ginger|fresh ginger|cabbage|carrot|lettuce|leek|parsnip|squash|celeri|chard|onion|garlic|turnip|courgette|zucchini|mushroom|quince|plum|grape|fig|artichoke|salsify|fruit|watercress|nettle/i],
   ['Protein', /meat|salmon|sardine|egg|chicken|turkey|beef|shellfish|prawn|fish|\blamb(?!'s)|liver|venison|mussel|oyster/i],
   ['Grains & legumes', /lentil|oat|quinoa|rice|bean|chickpea|millet|sourdough|cracker|grain|congee/i],
   ['Dairy & alternatives', /yoghurt|yogurt|kefir|milk/i],
@@ -4761,7 +4793,7 @@ function groceryItems() {
 // A grocery item without a photo gets a calm emoji tile so every row lines up.
 const GRO_EMO = [[/potato/i, '🍠'], [/pumpkin|squash/i, '🎃'], [/spinach|collard|kale|chard|greens|lettuce|rocket/i, '🥬'], [/cabbage|brussels|broccoli|cauli/i, '🥦'], [/leek|onion|garlic|shallot/i, '🧅'], [/turnip|rutabaga|beet|radish|root/i, '🫚'], [/carrot/i, '🥕'],
   [/cranberr|berr|cherr/i, '🍒'], [/pecan|walnut|almond|nut|hazel/i, '🌰'], [/seed|sesame|flax|chia/i, '🌻'], [/apple|pear|quince/i, '🍐'], [/citrus|orange|lemon|grapefruit|mandarin/i, '🍊'], [/fish|salmon|sardine|mackerel/i, '🐟'], [/oyster|mussel|clam|shell/i, '🦪'],
-  [/egg/i, '🥚'], [/beef|lamb|meat|liver|organ/i, '🥩'], [/chicken|duck|turkey/i, '🍗'], [/milk|kefir|yog|cheese|butter|ghee/i, '🥛'], [/lentil|bean|pea|chickpea/i, '🫘'], [/mushroom|shiitake/i, '🍄'], [/avocado/i, '🥑'], [/tomato/i, '🍅'], [/pepper/i, '🫑'],
+  [/egg/i, '🥚'], [/beef|lamb|meat|liver|organ/i, '🥩'], [/chicken|duck|turkey/i, '🍗'], [/milk|kefir|yog|cheese|butter|ghee/i, '🥛'], [/lentil|bean|pea|chickpea/i, '🫘'], [/mushroom|shiitake/i, '🍄'], [/avocado/i, '🥑'], [/tomato/i, '🍅'], [/(?<!black )pepper(?!mint|corn)/i, '🫑'],
   [/melon/i, '🍉'], [/fig|date|prune/i, '🫐'], [/ginger|turmeric/i, '🫚'], [/herb|mint|parsley|basil|cilantro|dill/i, '🌿'], [/seaweed|kelp|nori|gim|miyeok/i, '🌊'], [/millet|rice|buckwheat|quinoa|grain/i, '🌾'], [/honey|molasses/i, '🍯'], [/cinnamon|spice|clove/i, '✨'], [/kimchi|sauerkraut|ferment/i, '🫙']];
 const groEmoji = n => (GRO_EMO.find(([r]) => r.test(n)) || [0, '🌱'])[1];
 // grocery foods as the same cut-outs the In season page uses, or a drawn emoji, on one soft tinted bubble (no busy round stock photos)
@@ -4853,7 +4885,7 @@ function eatTodayCard(info) {
 }
 
 // ---------- reminders ----------
-const REM_DEFAULT = { period: true, periodDays: 2, phase: true, cycle: true, rhythm: true, sunAm: true, sunPm: true, checkin: true, checkinHour: 20, calm: true, calmHour: 18, letters: true, lettersN: 1, dismissed: {}, fired: {} };
+const REM_DEFAULT = { period: true, periodDays: 2, phase: true, cycle: true, rhythm: true, sunAm: true, sunPm: true, checkin: true, checkinHour: 20, sleep: true, calm: true, calmHour: 18, letters: true, lettersN: 1, dismissed: {}, fired: {} };
 const hr12 = h => `${((h + 11) % 12) + 1}${h < 12 ? 'am' : 'pm'}`;
 // How stressed she is today: 2 = she logged stress, 1 = a high-stress part of her cycle, 0 = calm
 const STRESS_MOODS = ['Stressed', 'Anxious', 'Irritable', 'Angry', 'Overwhelmed'];
@@ -4872,7 +4904,7 @@ const SUN_REM = {
 // short titles with one emoji, the pink swirl as the Android status-bar icon. Letters carry the LETTER category, which
 // the iPhone's letter view (ios/App/LetterView) draws as a handwritten letter on paper.
 const NOTIF_TITLE = { am: '💌 A letter from your body', mid: '🌿 A midday letter from your body', pm: '🕯️ A letter for tonight', sunAm: '☀️ Morning light is here', sunPm: '🌅 The sun is setting' };
-const NOTIF_KIND = { letters: ['letters', 'Letters from your body', 'A few gentle words a day, matched to your cycle'], sun: ['sun', 'Sun rhythm', 'Morning light and sunset, timed to your sun'] };
+const NOTIF_KIND = { letters: ['letters', 'Letters from your body', 'A few gentle words a day, matched to your cycle'], sun: ['sun', 'Sun rhythm', 'Morning light and sunset, timed to your sun'], cycle: ['cycle', 'Your period', 'A heads-up when your period is late'], sleep: ['sleep', 'Sleep', 'A nudge when late nights pile up'] };
 function notifLook(kind, pic, extra) {
   const ios = CAP?.getPlatform?.() === 'ios', [ch, name] = NOTIF_KIND[kind];
   return { sound: 'uts_chime.wav', threadIdentifier: ch, summaryArgument: name, group: ch, channelId: ch, smallIcon: 'ic_stat_swirl', iconColor: '#c2577a',
@@ -4949,6 +4981,84 @@ async function scheduleLettersNative(ask) {
     if (list.length) await notifSchedule(LN, list);
   } catch { /* notifications not available */ }
 }
+// Period late on her phone (28 Nov 2026, her ask: day 33 and nothing told her): a morning note on the first late day,
+// then every few days, that opens the Period late sheet. It follows the same rule as the app (past day 31 while learning).
+async function scheduleLateNative() {
+  const LN = NATIVE && CAP?.Plugins?.LocalNotifications; if (!LN || !state?.onboarded || !M?.stats) return;
+  try {
+    await LN.cancel({ notifications: Array.from({ length: 6 }, (_, i) => ({ id: 7400 + i })) });
+    const s = M.stats, last = s.periods[s.periods.length - 1];
+    if (!rem().period || !last || s.pill || s.noOv || s.noPred || hormonalBC(state.profile.bc)) return;
+    if ((await LN.checkPermissions()).display !== 'granted') return;
+    const due = C.addDays(last.start, s.avgCycle), first = s.learning ? 4 : 1, now = Date.now(), list = [];
+    for (let i = 0; i < 21 && list.length < 6; i++) {
+      const d = C.addDays(new Date(), i), n = C.diffDays(d, due);
+      if (n < first || (n - first) % 3) continue;
+      const at = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 9, 15); if (at <= now) continue;
+      const body = `Often it’s stress, travel or short sleep. Tap for what helps it come${ttc() ? ', when to test' : ''} and when to see a doctor.`;
+      list.push({ id: 7400 + list.length, title: `🩸 Your period is ${plural(n, 'day')} late`, body, largeBody: body, schedule: { at }, ...notifLook('cycle', 'letter-menstrual', { late: 1 }) });
+    }
+    if (list.length) await notifSchedule(LN, list);
+  } catch { /* notifications not available */ }
+}
+function lateTapInit() {
+  const LN = NATIVE && CAP?.Plugins?.LocalNotifications; if (!LN?.addListener) return;
+  LN.addListener('localNotificationActionPerformed', e => {
+    const k = e?.notification?.extra?.kind;
+    if (k === 'cycle') setTimeout(() => { if (M?.info?.late) wsOpen(lateSheet(), 'ws-ty'); }, 700);
+    if (k === 'sleep') setTimeout(() => wsOpen(sleepFixSheet(), 'ws-ty'), 700);
+  });
+}
+// Late nights (28 Nov 2026, her ask): the check-in asks if she fell asleep before or after midnight. Two late nights out of
+// three bring a Heads-up row, a 9:45 pm phone nudge and this sheet: a picture of the plan, the steps, then lesser-known tricks.
+function sleepLateN() { let n = 0; for (let i = 0; i < 3; i++) if (state.logs[C.iso(C.addDays(new Date(), -i))]?.bed === 'late') n++; return n; }
+const SLEEP_STEPS = [['⏰', 'Pick one wake-up time', 'The same every day, weekends too, within an hour. Your body clock sets itself in the morning, not at night.'],
+  ['☀️', 'Light in your eyes after waking', '10 minutes outside within half an hour, no sunglasses, 20 on a cloudy day. It pulls tonight’s sleepiness earlier.'],
+  ['🌗', 'Bedtime 15 minutes earlier, every 2 nights', 'Small steps stick, big jumps don’t. From 12:30 to 11:00 takes about two weeks.'],
+  ['🍲', 'Dinner about 3 hours before bed', 'Warm, with protein. A late heavy meal keeps your body busy when it wants to rest.'],
+  ['🕯️', 'Lamps low 2 hours before bed', 'Warm, dim light and a dim screen. Bright light at night holds back melatonin.'],
+  ['🛁', 'Warm shower, then a cool room', 'A warm shower or bath 1 to 2 hours before bed, then a bedroom around 18 °C.'],
+  ['📵', 'Phone sleeps outside your room', 'Charge it in the hall. Use a simple alarm clock instead.']];
+const SLEEP_NICHE = [['🧦', 'Warm socks in bed', 'Warm feet open the blood vessels and let your core cool, the signal your body reads as bedtime.', 'Ko et al. 2018: people wearing bed socks fell asleep about 7 minutes sooner and woke less.'],
+  ['📝', 'A 5 minute to-do list for tomorrow', 'Write down what is still open, so your mind can let go of it.', 'Scullin et al. 2018: people who wrote a to-do list fell asleep faster than people who wrote about what they had done.'],
+  ['🔀', 'The cognitive shuffle', 'Pick a word, like “moon”. Picture things that start with each letter: mango, mirror, mouse… then o, o, n. It copies the drifting thoughts of falling asleep.', 'Developed by sleep researcher Luc Beaudoin.'],
+  ['🥝', 'Two kiwis an hour before bed', 'Kiwis carry serotonin, the building block of melatonin.', 'Lin et al. 2011: after four weeks of two kiwis an hour before bed, people fell asleep faster and slept longer.'],
+  ['🍒', 'Tart cherry juice', '30 ml of concentrate in water, morning and evening. Tart cherries hold natural melatonin.', 'Howatson et al. 2012: a week of tart cherry juice raised melatonin and added time asleep.'],
+  ['🏕️', 'A weekend reset outdoors', 'A weekend in nature, with only daylight and firelight, pulls a late body clock earlier.', 'Wright et al. 2013: a week of camping moved people’s body clocks about 2 hours earlier.'],
+  ['🚪', 'Awake after 20 minutes? Get up', 'Sit in dim light with something calm until you feel sleepy, then go back. Your bed stays a place for sleep.', 'This is part of CBT-I, the first treatment doctors recommend for trouble sleeping.'],
+  ['🌿', 'Magnesium glycinate', '200 to 300 mg with dinner. Ask your doctor first if you have kidney problems or take other medicine.', 'Abbasi et al. 2012: magnesium helped older adults fall asleep and sleep better.']];
+const SLEEP_PHASE = { menstrual: 'On your period, warmth helps most: warm socks, a hot water bottle and an early night.', follicular: 'Your energy is rising, the easiest time of the month to move your bedtime earlier.',
+  ovulatory: 'Energy is at its peak, so keep the evening calm. Lamps low and phone away matter most now.', luteal: 'After egg release you run warmer and sleep lighter, so a cool room and magnesium help most now.' };
+function sleepFixSheet() {
+  const ph = M?.info?.phase || 'follicular', n = sleepLateN();
+  const T = ['12:30', '12:15', '12:00', '11:45', '11:30', '11:15', '11:00'];
+  const dial = `<svg class="slp-g" viewBox="0 0 320 112" role="img" aria-label="Bedtime moves from 12:30 to 11:00, 15 minutes earlier every two nights">
+    <path d="M18 78 C 90 78, 150 70, 302 30" fill="none" stroke="#e6b1c4" stroke-width="2" stroke-dasharray="2 6" stroke-linecap="round"/>
+    ${T.map((t, i) => { const x = 18 + i * 47.3, y = 78 - Math.pow(i / 6, 1.6) * 48; return `<circle cx="${x}" cy="${y}" r="${i === 6 ? 9 : 5}" fill="${i === 6 ? '#304023' : '#fff'}" stroke="#8c9768" stroke-width="1.6"/>
+      <text x="${x}" y="${y - 14}" text-anchor="middle" class="slp-t">${t}</text><text x="${x}" y="104" text-anchor="middle" class="slp-n">${i === 0 ? 'Now' : `Night ${i * 2 + 1}`}</text>`; }).join('')}
+    <path d="M298 26a6 6 0 1 0 6 8 4.5 4.5 0 1 1-6-8z" fill="#fff"/></svg>`;
+  return `<div class="tyf slp"><span class="tyf-e"><span class="emo" aria-hidden="true">🌙</span></span><h2>Back to earlier nights</h2>
+    <p class="tyf-s">${n ? `After midnight ${n} of your last 3 nights` : 'A gentle way to an earlier bedtime'}</p>
+    ${dial}
+    <p class="slp-sum">Three things do most of the work: one wake-up time, morning light, and bedtime 15 minutes earlier every two nights.</p>
+    <h5>Step by step</h5>
+    <div class="lts-l">${SLEEP_STEPS.map(([e, t, p], i) => `<div class="np-s slp-s"><span class="slp-i"><b class="dotnum">${i + 1}</b></span><span><b><span class="emo" aria-hidden="true">${e}</span> ${t}</b><small>${p}</small></span></div>`).join('')}</div>
+    <h5>Little tricks that work</h5>
+    <div class="slp-x">${SLEEP_NICHE.map(([e, t, p, st]) => `<details class="slp-d"><summary><span class="emo" aria-hidden="true">${e}</span><b>${t}</b>${icon('chevD', 13)}</summary><p>${p}</p><small>${st}</small></details>`).join('')}</div>
+    <div class="tyf-c slp-c"><b>For your phase</b><p>${SLEEP_PHASE[ph]} In Chinese medicine, 11 pm to 3 am is when the Liver and Gallbladder renew your Blood, so sleep before 11 is the old advice for a calm cycle.</p></div>
+    <div class="lts-btns"><button class="btn btn-dark" data-action="wsClose">I’ll start tonight</button></div></div>`;
+}
+async function scheduleSleepNative() {
+  const LN = NATIVE && CAP?.Plugins?.LocalNotifications; if (!LN || !state?.onboarded) return;
+  try {
+    await LN.cancel({ notifications: [{ id: 7410 }] });
+    const n = sleepLateN(); if (!rem().sleep || n < 2) return;
+    if ((await LN.checkPermissions()).display !== 'granted') return;
+    const d = new Date(); let at = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 21, 45); if (at <= d) at = C.addDays(at, 1);
+    const body = 'Lamps low now, phone in the hall, and bed 15 minutes earlier than last night. Tap for the plan.';
+    await notifSchedule(LN, [{ id: 7410, title: '🌙 Tonight, 15 minutes earlier', body, largeBody: body, schedule: { at }, ...notifLook('sleep', 'sunset', { sleep: 1 }) }]);
+  } catch { /* notifications not available */ }
+}
 // Period late? (28 Nov 2026, her ask): once she passes her usual length, a row in the Heads-up card opens this sheet:
 // what can push a period back (her own logged reasons first), what helps it come, and when to see a doctor.
 function lateSheet() {
@@ -4971,7 +5081,7 @@ function lateSheet() {
     ['🫧', 'Ten calm minutes', 'Slow breathing lowers cortisol, one of the most common reasons a period waits.'],
     ['🚶‍♀️', 'Move gently', 'Walks and stretching instead of hard training until it comes.']];
   return `<div class="tyf lts"><span class="tyf-e"><span class="emo" aria-hidden="true">🩸</span></span><h2>Period late?</h2>
-    <p class="tyf-s">${plural(info.late, 'day')} later than your usual ${info.L} days</p>
+    <p class="tyf-s">${M.stats.learning ? `Day ${info.cd} of your cycle` : `${plural(info.late, 'day')} later than your usual ${info.L} days`}</p>
     ${preg ? `<div class="tyf-c"><b>Could you be pregnant?</b><p>A test from a pharmacy is reliable from the first day your period is late. Morning pee gives the clearest result.</p></div>` : ''}
     <h5>Why it can be late</h5>
     ${picked.length ? `<p class="lts-mine">${picked.length > 1 ? 'You logged both this cycle. They are the most likely reasons.' : 'You logged this one this cycle. It is the most likely reason.'}</p>` : ''}
@@ -4986,6 +5096,7 @@ function rem() { const o = state.reminders || {}, off = o.rhythm === false && !(
 function dueReminders() {
   if (!M || !M.info) return [];
   const r = rem(), info = M.info, today = todayISO(), out = [];
+  if (r.sleep && sleepLateN() >= 2) out.push({ id: 'sleep-late', icon: 'moon', title: 'Late nights lately', body: `After midnight ${sleepLateN()} of your last 3 nights. A gentle way back, step by step.`, act: 'sleepFix' });
   if (r.period) {
     if (info.late) out.push({ id: 'late', icon: 'drop', title: `Period ${plural(info.late, 'day')} late`, body: postpartum() ? `After a birth${state.profile.bf ? ' and while breastfeeding' : ''}, late or paused periods are common. Log your period when it arrives${ttc() ? ', and take a test if you might be pregnant' : ''}.` : `Stress, travel and sleep can shift your cycle. Log your period when it arrives${ttc() ? ', and take a test if you might be pregnant' : ''}.` });
     else if (info.dueToday) out.push({ id: 'due', icon: 'drop', title: 'Period expected today', body: 'Keep warm, have supplies ready and plan a softer day.' });
@@ -10773,7 +10884,7 @@ function recipeMacros(r) { const p = r.protein || 0, c = RECIPE_CARBS[r.id] ?? M
 const NU_SRC = {
   Protein: /egg|beef|lamb|meat|chicken|turkey|salmon|sardine|mackerel|cod|fish|prawn|liver|yog|kefir|cheese|lentil|bean/, Probiotics: /kimchi|sauerkraut|kefir|yog|miso/,
   'B vitamins': /egg|beef|lamb|liver|salmon|chicken|mushroom|spinach/, Iron: /beef|lamb|liver|meat|lentil|spinach|beet|sardine|mussel|oyster|chickpea|bean|cacao|quinoa|pumpkin seed|sesame|tahini/, 'Heme iron': /beef|lamb|liver|meat|sardine|mussel|oyster/,
-  Fibre: /broccoli|bean|lentil|flax|chia|kale|carrot|beet|cabbage|apple|pear|berr|sweet potato|chickpea|quinoa|date/, 'Vitamin C': /lemon|lime|orange|kiwi|pepper|broccoli|berr|kale|citrus|cabbage|tomato/,
+  Fibre: /broccoli|bean|lentil|flax|chia|kale|carrot|beet|cabbage|apple|pear|berr|sweet potato|chickpea|quinoa|date/, 'Vitamin C': /lemon|lime|orange|kiwi|(?<!black )pepper(?!mint|corn)|broccoli|berr|kale|citrus|cabbage|tomato/,
   Magnesium: /pumpkin seed|cacao|chocolate|spinach|almond|sesame|tahini|cashew|bean|avocado|walnut|quinoa/, Potassium: /avocado|sweet potato|potato|spinach|beet|coconut|banana|date|bean|squash|pumpkin/,
   B12: /egg|beef|lamb|liver|salmon|sardine|mussel|oyster|milk/, 'Omega-3': /salmon|sardine|mackerel|anchov|flax|chia|walnut/, Antioxidants: /berr|cacao|beet|pomegranate|kale|tomato|turmeric/,
   Sulforaphane: /broccoli|cabbage|kale|sprout|radish|cauliflower/, Zinc: /pumpkin seed|oyster|prawn|shrimp|crab|mussel|beef|lamb|sesame|tahini|egg/, 'Complex carbs': /sweet potato|potato|rice|bean|lentil|pumpkin|squash|buckwheat/,
@@ -11051,6 +11162,7 @@ function viewProfile() {
       <div class="stepper-row"><span class="pf-ic">${icon('calendar', 16)}</span><span>Default cycle length<small>Used until you've logged 2+ periods · now ${s.avgCycle}d</small></span>${stepper('cycleLength', p.cycleLength, 'profile')}</div>
       <div class="stepper-row"><span class="pf-ic">${icon('drop', 16)}</span><span>Default period length<small>Now ${s.avgPeriod}d</small></span>${stepper('periodLength', p.periodLength, 'profile')}</div>
     </section>
+    ${healthCard()}
     ${sectionTitle('How you eat')}
     <section class="card glass"><div class="chips">${DIETS.map(x => `<button class="chip ${(p.diet || 'all') === x.k ? 'on' : ''}" data-action="setDiet" data-v="${x.k}">${x.g} ${x.t}</button>`).join('')}</div>
       <p class="fine" style="margin:10px 0 0">${DIETS.find(x => x.k === (p.diet || 'all')).s}. Your recipes, food guide and supplements follow this.${DIET_GUIDE[p.diet] ? ` <button class="link" data-action="nav" data-to="diet">Open your guide</button>` : ''}</p></section>
@@ -11116,7 +11228,8 @@ function b64d(s) { try { return JSON.parse(decodeURIComponent(escape(atob(s.repl
 // an outside image that tracks her, or a wrong type that breaks a page.
 const ISO_D = v => typeof v === 'string' && /^\d{4}-\d\d-\d\d$/.test(v) ? v : undefined;
 const NUM_IN = (v, lo, hi) => { const x = +v; return typeof v !== 'object' && Number.isFinite(x) && x >= lo && x <= hi ? x : undefined; };
-const SAFE_TXT = (v, n) => typeof v === 'string' ? v.replace(/[<>\u0000-\u001f\u007f]/g, '').trim().slice(0, n) : '';
+// text from other phones (names, notes) loses anything that could become code: < > " ` and control characters (28 Nov 2026: quotes too, so a name can't break out of an attribute)
+const SAFE_TXT = (v, n) => typeof v === 'string' ? v.replace(/[<>"`\u0000-\u001f\u007f]/g, '').trim().slice(0, n) : '';
 const SAFE_TAGS = (v, n) => Array.isArray(v) ? [...new Set(v.filter(x => typeof x === 'string' && /^[\p{L}\p{N}\p{M} '’&/()+.,-]{1,32}$/u.test(x)))].slice(0, n) : undefined;
 function cleanSnap(o) {
   if (!o || typeof o !== 'object' || Array.isArray(o)) return null;
@@ -11631,7 +11744,7 @@ function duoBring(info) {
       <div class="duo-c" role="button" tabindex="0" data-action="pvDuo" data-v="dish" aria-expanded="false"><span class="pv2-3d duo-v">${D ? cup3d(D.img, ` data-model="${D.model}" data-elev="${D.elev || 0.9}" data-fit="${+(Math.min(D.tileFit || D.fit, 1.45) * 0.9).toFixed(2)}"${D.steam === 0 ? ' data-steam="0"' : ''}`, rec.name) : `<img class="pv2-mph" src="${photoUrl(rec.id, 500)}" alt="" loading="lazy">`}</span>
         <small>Cook together</small><b>${rec.name}</b><p>${recWhy(rec)}</p><em>${icon('clock', 12)} ${rec.time >= 60 ? `${Math.floor(rec.time / 60)} h${rec.time % 60 ? ` ${rec.time % 60}` : ''}` : `${rec.time} min`}</em></div>
       <div class="duo-c" role="button" tabindex="0" data-action="pvDuo" data-v="tea" aria-expanded="false"><span class="pv2-3d duo-v tea">${cup3d(teaCupImg(td[1]), teaCupAttr(td[1]) + (teaCupAttr(td[1]) ? ` data-fit="${/matcha/i.test(td[1]) ? 0.92 : /green tea/i.test(td[1]) ? 1.1 : 1.3}"` : ''), td[1])}</span>
-        <small>Make her a cup</small><b>${td[1]}</b><p>${td[2].replace(/\byour\b/g, 'her').replace(/\byou\b/g, 'she')}</p><em>${icon('clock', 12)} ${steep}${tWhen ? ` · ${tWhen.toLowerCase()}` : ''}</em></div>
+        <small>Make her a cup</small><b>${td[1]}</b><p>${td[2].replace(/\b(helps|keeps) you\b/gi, '$1 her').replace(/\byou run\b/g, 'she runs').replace(/\byour\b/g, 'her').replace(/\byou\b/g, 'she')}</p><em>${icon('clock', 12)} ${steep}${tWhen ? ` · ${tWhen.toLowerCase()}` : ''}</em></div>
       <div class="duo-pan" data-p="dish" hidden><div class="pv2-rec"><b class="pv2-sub">Ingredients</b>${rec.ingredients.map(g => `<div class="pv2-ing">${(e => `<span class="pv2-ie">${e ? emoRaw(e) : ''}</span>`)(ingEmo(String(g).replace(/^[\d½¼¾\/.\s–-]+(g|kg|ml|l|tbsp|tsp|cups?|slices?|cloves?|cans?|large|small|medium|handful)?\s*/i, '')))}<span>${g}</span></div>`).join('')}
         <b class="pv2-sub">Method</b>${rec.steps.map((x, i) => `<div class="pv2-step"><i>${i + 1}</i><p>${Array.isArray(x) ? `<b>${x[0]}.</b> ${x[1]}` : x}</p></div>`).join('')}</div></div>
       <div class="duo-pan" data-p="tea" hidden>${(b => b ? `<div class="duo-brew"><div><b class="dotnum">${b[0]}°</b><small>Water</small></div><div><b class="dotnum">${b[1]}</b><small>${b[6] === 'Whisk' ? 'min whisking' : b[6] ? 'min, covered' : 'min steeping'}</small></div><div><b class="dotnum">${b[3]}</b><small>${b[4]} ${b[5].toLowerCase()}</small></div></div>` : '')(TEA_BREW[dw])}<p class="duo-how">${td[3]}</p></div>
@@ -12840,10 +12953,12 @@ const actions = {
   hpTier: d => { ui.hpT = +d.v; const s = document.querySelector('.hp'); if (!s) return render(); const y = window.scrollY; s.outerHTML = hormonePyramid(); window.scrollTo(0, y); },
   hpHorm: d => wsOpen(hpHormSheet(d.k), 'ws-ty ws-mini'),
   lateSheet: () => wsOpen(lateSheet(), 'ws-ty'),
+  sleepFix: () => wsOpen(sleepFixSheet(), 'ws-ty'),
   lateStart: () => { wsClose(); actions.periodStart(); },
   lateGo: d => { wsClose(); go(d.to); },
   hpItem: d => wsOpen(hpItemSheet(d.k, d.kind), 'ws-ty ws-mini'),
   hugGo: (d, el) => hugGo(el),
+  healthImport: () => healthImport(),
   touchGo: () => { wsClose(); go('touch'); },
   cuddleNext: () => { ui.cuddleI = (ui.cuddleI || 0) + 1; route().name === 'with' ? softWith() : render(); },
   tyFound: d => wsOpen(tyFoundSheet(d.k), 'ws-ty'),
@@ -13411,6 +13526,55 @@ function locked() {
 // the native bridge exposes our StoreKit plugin as Capacitor.Plugins.UTSStore (there is no registerPlugin without @capacitor/core)
 const UTSS = NATIVE && /iOS/i.test(CAP?.getPlatform?.() || '') ? (CAP.Plugins?.UTSStore || (CAP.registerPlugin ? CAP.registerPlugin('UTSStore') : null)) : null;
 let TEST_BUILD = DEV_HOST; // TestFlight, Xcode or the dev server
+// ---------- home screen widget (28 Nov 2026): the next 14 days go to the native widget, already in her language ----------
+const UTSW = NATIVE && /iOS/i.test(CAP?.getPlatform?.() || '') ? (CAP.Plugins?.UTSWidget || (CAP.registerPlugin ? CAP.registerPlugin('UTSWidget') : null)) : null;
+function widgetSync() {
+  if (!UTSW || !state?.onboarded || !M?.stats) return;
+  try {
+    const T = s => I18N.T(s), t0 = C.startOfDay(new Date()), days = [];
+    for (let i = 0; i < 14; i++) {
+      const d = C.addDays(t0, i), x = C.dayInfo(d, M.stats); if (!x || !x.phase) continue;
+      const w = dayWindow(x), cp = COMPASS[w] || COMPASS.rising, tea = TEA_DAY[w] || TEA_DAY.rising;
+      const sub = x.isPeriod ? `On your period · day ${x.cd}` : x.late ? `Period ${plural(x.late, 'day')} late` : x.dueToday || x.anyDay ? 'Period due any day' : x.noPred ? PHASES[x.phase].name : x.daysToPeriod === 1 ? 'Period tomorrow' : `Period in ${x.daysToPeriod} days`;
+      days.push({ d: C.iso(d), n: x.cd, L: x.L, ph: x.phase, phn: T(PHASES[x.phase].name), mode: T(cp.mode), say: T((COMPASS_SHORT[w] || [])[0] || ''), move: T((COMPASS_SHORT[w] || [])[2] || ''), ease: T((COMPASS_SHORT[w] || [])[1] || ''), moveT: T('Move'), easeT: T('Go easy on'), tip: T(dietProse(cp.body)), work: T(cp.work),
+        tea: `${tea[0]} ${T(tea[1])}`, teaWhy: T(tea[2]), sub: T(sub), day: T('Day'), dl: T(`Day ${x.cd}`), today: T('Today') });
+    }
+    // today only (28 Nov 2026, her ask): how she feels from today's check-in, and her heads-ups, for the big widget
+    const l = state.logs[todayISO()] || {}, en = l.energy ? ['Drained', 'Low energy', 'Okay energy', 'Good energy', 'Radiant'][l.energy - 1] : '';
+    const feel = [...(l.moods || []).slice(0, 2), en].filter(Boolean).map(T).join(' · ');
+    const al = [];
+    if (M.info?.late) al.push(`🩸 ${T(`Period ${plural(M.info.late, 'day')} late`)}`);
+    dueReminders().filter(x => !/^(phase-|rh-|letter-|late$)/.test(x.id)).slice(0, 2).forEach(x => al.push(`${({ drop: '🩸', moon: '🌙', sun: '☀️', leaf: '🌿', heart: '💗', cup: '🍵', pill: '💊' })[x.icon] || '🔔'} ${T(x.title)}`));
+    const now = { d: C.iso(t0), feel, ask: T('How do you feel today?'), check: T('Tap to check in'), feelT: T('How you feel'), teaT: T('Your tea today'), alerts: al.slice(0, 2), headsT: T('Heads-up') };
+    const json = JSON.stringify({ days, now, empty: T('Open Underskin to see your day') });
+    if (json === widgetSync.last) return;
+    widgetSync.last = json; UTSW.set({ json }).catch(() => {});
+  } catch {}
+}
+// ---------- Apple Health (28 Nov 2026): bring in her past period days, read-only; her own logs always win ----------
+const UTSH = NATIVE && /iOS/i.test(CAP?.getPlatform?.() || '') ? (CAP.Plugins?.UTSHealth || (CAP.registerPlugin ? CAP.registerPlugin('UTSHealth') : null)) : null;
+function healthCard() {
+  if (!UTSH) return '';
+  const h = state.profile.health;
+  return `<button class="card glass pf-link" data-action="healthImport" ${ui.healthBusy ? 'disabled' : ''}><span>${icon('heart', 18)}</span><b>${ui.healthBusy ? 'Reading Apple Health…' : 'Bring in periods from Apple Health'}<small>${h ? `Last time ${fmt(new Date(h.at), { month: 'short', day: 'numeric' })} · ${plural(h.n, 'new period day')}` : 'Your past periods, so your rhythm is right from day one'}</small></b>${icon('chevR', 16)}</button>`;
+}
+async function healthImport() {
+  if (!UTSH || ui.healthBusy) return;
+  ui.healthBusy = true; render();
+  try {
+    const r = await UTSH.periods({ days: 730 }), list = (r && r.days) || [], today = todayISO();
+    const before = C.cycleStats(state).periods.length; let n = 0;
+    for (const x of list) {
+      if (!x.d || x.d > today) continue;
+      const l = getLog(x.d); if (l.flow) continue; // never overwrite what she logged herself
+      setLog(x.d, { flow: ['light', 'medium', 'heavy'].includes(x.flow) ? x.flow : 'medium' }); n++;
+    }
+    state.profile.health = { at: Date.now(), n }; save();
+    const added = C.cycleStats(state).periods.length - before;
+    toast(!list.length ? 'No period days found in Apple Health' : n ? (added > 0 ? `${plural(added, 'period')} added from Apple Health` : `${plural(n, 'period day')} added from Apple Health`) : 'You’re up to date with Apple Health');
+  } catch { toast('Apple Health is not available right now'); }
+  ui.healthBusy = false; render();
+}
 if (UTSS) {
   const tf = UTSS.isTestFlight().then(r => { TEST_BUILD = !!r?.value; }).catch(() => {});
   // a code redeemed in Apple's sheet (or a purchase approved later) arrives here
@@ -13791,6 +13955,7 @@ function render() {
   const page = `${statusbar()}<div class="view ${fresh ? 'enter' : ''} ${arriving ? 'arrive-in' : ''}" id="view">${html}</div>${tabs.includes(r.name) || !views[r.name] ? tabbar(r.name in views ? r.name : 'today') : r.name !== 'unlock' ? tabbar('', !NO_PEEK.includes(r.name)) : ''}${!termsOK() && r.name !== 'privacy' ? termsSheet() : ''}`;
   I18N.setNames([state?.profile?.name, ...(state.partners || []).map(p => p.n)]);
   if (fresh || arriving || !prev) pageInto($app, page); else morphInto($app, page);
+  if (UTSW) setTimeout(widgetSync, 800);
   if (arriving) $app.appendChild(arriving);
   if (ui.loveFor) $app.insertAdjacentHTML('beforeend', loveSheet());
   else if (SIG_Q.length && !document.querySelector('.sig-pop')) setTimeout(sigNext, 600);
@@ -13811,7 +13976,9 @@ function render() {
   if (wk) { const on = wk.querySelector('.on'); if (on) wk.scrollLeft = on.offsetLeft - wk.clientWidth / 2 + on.clientWidth / 2; }
 }
 
-setTimeout(() => { startSignals(); scheduleSunNative(); scheduleLettersNative(); geoAuto(); }, 800);
+lateTapInit();
+setTimeout(() => (window.requestIdleCallback ? requestIdleCallback(foodWarm, { timeout: 6000 }) : foodWarm()), 4000);
+setTimeout(() => { startSignals(); scheduleSunNative(); scheduleLettersNative(); scheduleLateNative(); scheduleSleepNative(); geoAuto(); }, 800);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { startSignals(); calSoon(); } });
 if ('serviceWorker' in navigator) {
   // pick up new versions right away: check on open and whenever the app comes back to the foreground,

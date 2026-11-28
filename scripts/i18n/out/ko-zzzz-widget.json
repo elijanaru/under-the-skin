@@ -1,0 +1,20 @@
+{
+"On your period · day {0}": "생리 중 · {0}일째",
+"Period {0} days late": "생리가 {0}일 늦어요",
+"Period {0} day late": "생리가 {0}일 늦어요",
+"Period due any day": "생리가 곧 시작돼요",
+"Period tomorrow": "내일 생리 예정",
+"Open Underskin to see your day": "Underskin을 열어 오늘을 확인해요",
+"Reading Apple Health…": "Apple 건강 앱을 읽는 중…",
+"Bring in periods from Apple Health": "Apple 건강 앱에서 생리 기록 가져오기",
+"Last time {0} {1} · {2} new period days": "지난번 {0} {1} · 새 생리일 {2}일",
+"Last time {0} {1} · {2} new period day": "지난번 {0} {1} · 새 생리일 {2}일",
+"Your past periods, so your rhythm is right from day one": "지난 생리 기록으로 첫날부터 내 리듬을 정확하게",
+"No period days found in Apple Health": "Apple 건강 앱에 생리 기록이 없어요",
+"{0} periods added from Apple Health": "Apple 건강 앱에서 생리 {0}번을 가져왔어요",
+"{0} period added from Apple Health": "Apple 건강 앱에서 생리 {0}번을 가져왔어요",
+"{0} period days added from Apple Health": "Apple 건강 앱에서 생리일 {0}일을 가져왔어요",
+"{0} period day added from Apple Health": "Apple 건강 앱에서 생리일 {0}일을 가져왔어요",
+"You’re up to date with Apple Health": "Apple 건강 앱과 이미 맞춰져 있어요",
+"Apple Health is not available right now": "지금은 Apple 건강 앱을 쓸 수 없어요"
+}
