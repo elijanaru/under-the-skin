@@ -9290,18 +9290,32 @@ function ltOpen(el) {
   }, reduce ? 0 : 520);
 }
 // Hey, you're offline (26 Nov 2026): a little sleepy cloud says so once, the app keeps working on the phone and syncs when the internet is back
-const OFF_ART = `<svg viewBox="0 0 64 48" aria-hidden="true"><path d="M16 40c-7 0-11-4.6-11-10 0-5.6 4.4-9.4 10-9.4 1.3-7 7-11.6 14-11.6 6.6 0 11.6 4 13.4 9.8 6.6-.4 12.6 4.2 12.6 10.8 0 6-4.6 10.4-11 10.4z" fill="#fff" stroke="#2b2622" stroke-width="2.2" stroke-linejoin="round"/><path d="M22 29q2.4 2.4 4.8 0M35 29q2.4 2.4 4.8 0" fill="none" stroke="#2b2622" stroke-width="2" stroke-linecap="round"/><circle cx="19.5" cy="33" r="2.4" fill="#f3b6c8"/><circle cx="43.5" cy="33" r="2.4" fill="#f3b6c8"/><path d="M29 35.5q2.6 1.6 5 0" fill="none" stroke="#2b2622" stroke-width="1.8" stroke-linecap="round"/><path d="M50 6l4 0-4 5 4 0M57 1l3 0-3 3.6 3 0" fill="none" stroke="#7aa6d6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const OFF_ART = `<svg viewBox="0 0 64 48" aria-hidden="true"><path d="M16 40c-7 0-11-4.6-11-10 0-5.6 4.4-9.4 10-9.4 1.3-7 7-11.6 14-11.6 6.6 0 11.6 4 13.4 9.8 6.6-.4 12.6 4.2 12.6 10.8 0 6-4.6 10.4-11 10.4z" fill="#fff" stroke="#8c9768" stroke-width="1.6" stroke-linejoin="round"/><path d="M22.5 29q2.2 2 4.4 0M35.5 29q2.2 2 4.4 0" fill="none" stroke="#304023" stroke-width="1.5" stroke-linecap="round"/><circle cx="20" cy="33" r="2.3" fill="#efc3d2"/><circle cx="43" cy="33" r="2.3" fill="#efc3d2"/><path d="M29.4 35.2q2.2 1.3 4.2 0" fill="none" stroke="#304023" stroke-width="1.4" stroke-linecap="round"/><path d="M50 6h4l-4 5h4M57 1h3l-3 3.6h3" fill="none" stroke="#e6b1c4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 function offNote(back) {
   document.querySelector('.off-note')?.remove();
   const el = document.createElement('div'); el.className = `off-note ${back ? 'back' : ''}`; el.setAttribute('role', 'status');
-  el.innerHTML = back ? `<div class="off-in"><span class="off-art">${SPARK('#ef9ab8')}</span><div><b>You’re back online</b><p>Everything is syncing again.</p></div></div>`
+  el.innerHTML = back ? `<div class="off-in"><span class="off-art">${SPARK('#e6b1c4')}</span><div><b>You’re back online</b><p>Everything is syncing again.</p></div></div>`
     : `<div class="off-in"><span class="off-art">${OFF_ART}</span><div><b>Hey, I think you’re offline</b><p>Your cycle, your plan and everything you log still work. Love notes and your people’s days might be a little behind until we sync again. Just a heads up!</p></div><button class="off-ok" data-action="offOk">Okay!</button></div>`;
   I18N.tr(el); sigLayer().appendChild(el);
   if (back) setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 400); }, 2600);
 }
-function goOffline() { if (ui.offSeen) return; ui.offSeen = true; try { sigSource?.close(); } catch {} sigSource = null; afterSplash(() => !navigator.onLine && offNote()); }
-function goOnline() { const was = ui.offSeen; ui.offSeen = false; if (was) offNote(true); startSignals(); flushOutbox(); }
-addEventListener('offline', goOffline); addEventListener('online', goOnline);
+// The phone's "offline" flag can be wrong (a Wi-Fi to mobile hand-off, or the web view simply lying), so the note only shows after
+// 4 s still without a connection AND a real request to the love relay (never cached by sw.js) fails. A false alarm quietly carries on.
+async function netDown() {
+  const c = new AbortController(), t = setTimeout(() => c.abort(), 6000);
+  try { await fetch('https://ntfy.sh/v1/health', { cache: 'no-store', signal: c.signal }); return false; } catch { return true; } finally { clearTimeout(t); }
+}
+function goOffline() {
+  if (ui.offSeen) return; ui.offSeen = true; ui.netOk = false; try { sigSource?.close(); } catch {} sigSource = null;
+  clearTimeout(ui.offT);
+  ui.offT = setTimeout(async () => {
+    if (!ui.offSeen) return;
+    if (!(await netDown())) { ui.offSeen = false; ui.netOk = true; startSignals(); return; } // online after all
+    if (ui.offSeen) afterSplash(() => { if (ui.offSeen && !ui.offShown) { ui.offShown = true; offNote(); } });
+  }, 4000);
+}
+function goOnline() { const shown = ui.offShown; ui.offSeen = false; ui.offShown = false; ui.netOk = true; clearTimeout(ui.offT); if (shown) offNote(true); else document.querySelector('.off-note')?.remove(); startSignals(); flushOutbox(); }
+addEventListener('offline', () => { ui.netOk = false; goOffline(); }); addEventListener('online', goOnline);
 // a picture that can't load (offline, slow network) fades into its soft card instead of showing a broken image
 document.addEventListener('error', e => { const t = e.target; if (t && t.tagName === 'IMG' && !t.classList.contains('img-off')) t.classList.add('img-off'); }, true);
 // low battery (where the phone tells us): the turning 3D cups and drifting decorations rest
@@ -9341,7 +9355,7 @@ let sigSource = null;
 async function startSignals() {
   if (!state?.onboarded) return;
   if (SIG_Q.length === 0 && (state.mailbox || []).length) { SIG_Q.push(...state.mailbox); afterSplash(sigNext); } // letters she hasn't opened yet
-  if (!navigator.onLine) return goOffline();
+  if (!navigator.onLine && !ui.netOk) return goOffline();
   if (!((state.partners || []).length || state.profile.linkSent)) return; // listen once she shared her link
   const id = myInbox(); flushOutbox();
   syncPartners(); publishLive(); refreshPartners();
