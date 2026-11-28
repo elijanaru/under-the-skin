@@ -2,7 +2,8 @@
 // Local-first: the app works fully without an account; signing in only adds a private copy in the cloud.
 import { SUPABASE_URL, SUPABASE_ANON_KEY, GOOGLE_WEB_CLIENT_ID, GOOGLE_IOS_CLIENT_ID, WEB_OAUTH } from './config.js';
 
-const LIB = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm';
+// bundled inside the app (28 Nov 2026), so no outside server can swap the sign-in code
+const LIB = '../vendor/supabase/supabase-2.119.2.mjs';
 const TABLE = 'cycle_data';
 let sb = null, ready = null, user = null, told; // told = the user id subscribers last heard about
 const subs = new Set();

@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <!-- Security (25 Nov 2026): code and data only from the app itself and the few services it uses; nothing can send her data anywhere else -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob: data:; worker-src 'self' blob:; connect-src 'self' blob: data: https://cdn.jsdelivr.net https://yscpgbmnaltfghjthbex.supabase.co wss://yscpgbmnaltfghjthbex.supabase.co https://ntfy.sh https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob: data:; worker-src 'self' blob:; connect-src 'self' blob: data: https://yscpgbmnaltfghjthbex.supabase.co wss://yscpgbmnaltfghjthbex.supabase.co https://ntfy.sh https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'">
+  <script>/* clickjacking guard (28 Nov 2026): Underskin never runs inside another site's frame */ if (window.top !== window.self) { document.documentElement.style.display = 'none'; try { window.top.location.replace(window.location.href); } catch (e) {} }</script>
   <meta name="theme-color" content="#070807">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
