@@ -5517,13 +5517,13 @@ function hpItemSheet(k, kind) {
   const x = HP_ITEM[k]; if (!x) return '';
   const ri = x[3] ? FB.findIndex(f => f.id === x[3]) : -1;
   return `<div class="tyf hpx"><span class="tyf-e ${kind}">${emoRaw(x[0])}</span><h2>${x[1]}</h2><p class="tyf-s">${kind === 'on' ? 'Brings your hormones back' : 'Knocks your hormones off'}</p>
-    <p class="tyf-p">${dietProse(x[2])}</p>${ri >= 0 ? `<button class="hp-rit" data-action="fbSheet" data-i="${ri}">Open the ritual ${icon('chevR', 13)}</button>` : ''}</div>`;
+    <p class="tyf-p">${dietProse(x[2])}</p>${ri >= 0 ? `<button class="hp-rit" data-action="fbSheet" data-i="${ri}">Open the ritual ${icon('chevR', 13)}</button>` : ''}${k === 'hug' ? `<button class="hp-rit" data-action="touchGo">Try a 20 second hug ${icon('chevR', 13)}</button>` : ''}</div>`;
 }
 function hpHormSheet(k) {
   const H = HP_HORM[k]; if (!H) return '';
   const tier = HP_TIER.find(T => T.h.includes(k));
   return `<div class="tyf hpx"><span class="tyf-e hm">${emoRaw(H[0])}</span><h2>${H[1]}</h2><p class="tyf-s">${H[2]}</p><p class="tyf-p">${H[3]}</p>
-    ${tier ? `<p class="hpx-t">Lives in <b>${tier.n}</b>, ${['the base', 'the middle', 'the top'][HP_TIER.indexOf(tier)]} of the pyramid.</p>` : ''}</div>`;
+    ${tier ? `<p class="hpx-t">Lives in <b>${tier.n}</b>, ${['the base', 'the middle', 'the top'][HP_TIER.indexOf(tier)]} of the pyramid.</p>` : ''}${k === 'oxytocin' ? `<button class="hp-rit" data-action="touchGo">Raise it with touch ${icon('chevR', 13)}</button>` : ''}</div>`;
 }
 // Your daily plan (17 Nov 2026 redesign, her "knowledge is power" moodboard): a clear protocol, not a stack of panels.
 // Four numbered steps on one track, each named by the hormones it works on, then one paper card that reads like a schedule:
@@ -5592,6 +5592,100 @@ function pillarHtml(P) {
     <ul>${P.do.map(dietProse).filter(Boolean).map(x => `<li>${icon('check', 12, 2.6)}<span>${x}</span></li>`).join('')}</ul><p><b>Why it works.</b> ${P.why}</p>
     ${P.st ? `<div class="sgt-st"><b class="dotnum">${P.st[2]}</b><span><em>${P.st[1]}</em>${P.st[0]}<small>${P.st[3]}</small></span></div>` : ''}</div>`;
 }
+// ---------- Touch & oxytocin (28 Nov 2026, her ask): touch as part of hormone balance. Her page (#/touch) in the Unlock style:
+// a 20 second hug timer as the stage, the taped note, touch for her phase now, on your own, and the studies behind a tap.
+// His page (and a woman partner's view) gets a "Cuddle her" card with an idea for her phase; tap for another.
+const TOUCH = {
+  menstrual: [['♨️', 'A warm hand on your belly', 'Warmth and touch together ease cramps. Ask for it, or use your own hand and a hot water bottle.'],
+    ['🛋️', 'Held, no plans', 'Lie close on the sofa under one blanket. Being held is the whole plan.'],
+    ['🦶', 'A slow foot rub', 'Warm hands, warm socks after. It calms the whole body down.']],
+  follicular: [['💃', 'Dance in the kitchen', 'Playful touch fits your rising energy. One song is enough.'],
+    ['🤝', 'Hand in hand', 'Hold hands on a walk. Small, steady touch keeps you close all day.'],
+    ['💆‍♀️', 'A head massage', 'Fingers slowly through your hair and over your scalp, two minutes.']],
+  ovulatory: [['🫶', 'Skin to skin', 'Your most open days. Skin on skin releases the most oxytocin.'],
+    ['💋', 'Long, slow kisses', 'No rush and no goal. Desire is at its peak, so let it build.'],
+    ['🧴', 'A warm oil massage', 'Shoulders and back with warm oil, long strokes towards the heart.']],
+  luteal: [['🤗', 'A 20 second hug', 'The second it ends you feel calmer. Do it when you come home.'],
+    ['😴', 'Head on a chest', 'Lie together and take ten slow breaths in time. Easier sleep follows.'],
+    ['🦵', 'Calves and feet', 'Slow strokes up the legs ease the heavy, puffy feeling before your period.']],
+};
+const TOUCH_HIM = {
+  menstrual: [['♨️', 'Spoon her, hand on her belly', 'Your warm hand on her lower belly eases cramps. Bring a hot water bottle too.'], ['🛋️', 'Hold her, no fixing', 'Lie close under one blanket. Don’t try to solve anything, just be there.'], ['🦶', 'Rub her feet', 'Slow, warm hands, then warm socks. She can fully let go.'], ['🌙', 'Low back circles', 'Slow circles on her lower back with a flat warm hand.']],
+  follicular: [['💃', 'Dance with her in the kitchen', 'She’s light and playful now. One song, any song.'], ['🤝', 'Hold her hand', 'On a walk, in the car, at the table. Small touch all day.'], ['💆‍♀️', 'Play with her hair', 'Slow fingers through her hair and over her scalp, two minutes.'], ['🫧', 'A long hug hello', 'When you meet, hold it until she lets go first.']],
+  ovulatory: [['🫶', 'Skin to skin', 'Her most open days. Skin on skin releases the most oxytocin, in you both.'], ['💋', 'Long, slow kisses', 'No rush and no goal. Her desire peaks now, let it build.'], ['🧴', 'A warm oil massage', 'Shoulders and back, long strokes towards the heart.'], ['🕺', 'A slow dance', 'Lights low, one song, hold her close.']],
+  luteal: [['🫂', 'Hug her for 20 seconds', 'Long enough for oxytocin to rise and her stress hormone to fall. Every time you come home.'], ['😴', 'Her head on your chest', 'Lie together and breathe slowly in time. She falls asleep more easily.'], ['🦵', 'Rub her calves and feet', 'Slow strokes upwards ease the heavy, puffy feeling before her period.'], ['🛁', 'Wash her hair', 'Warm water, slow hands. It feels like care without words.']],
+};
+const TOUCH_SELF = [['🤍', 'Hand on your heart', 'One hand on your heart, one on your belly, 20 seconds. In a study it softened the stress hormone like a hug did.'],
+  ['🧴', 'Rub in warm oil', 'Belly, feet or face, slow and kind. Two minutes after your shower.'],
+  ['🐈', 'A pet on your lap', 'Stroking a dog or cat raises oxytocin, in you and in them.'],
+  ['👭', 'Hug a friend', 'A long hug hello counts. Twenty seconds, or until she lets go.']];
+const TOUCH_STUDY = [['Light 2005', 'Women who got more hugs from their partner had more oxytocin and lower blood pressure.', 'Biological Psychology'],
+  ['Ditzen 2007', 'A partner’s neck and shoulder massage before a stressful test meant a smaller rise in the stress hormone cortisol.', 'Psychoneuroendocrinology'],
+  ['Cohen 2015', 'People who were hugged more often were less likely to fall ill after being exposed to a cold virus.', 'Psychological Science'],
+  ['Dreisoerner 2021', 'Twenty seconds of soothing touch on your own heart and belly softened the cortisol rise after stress, just like a hug.', 'Comprehensive Psychoneuroendocrinology']];
+function hugCount() { return ((state.hugs || {})[todayISO()]) || 0; }
+function viewTouch() {
+  const info = M.info, ph = info ? info.phase : 'follicular', T = TOUCH[ph], n = hugCount();
+  const lover = (state.partners || []).find(p => (p.a || 'partner') === 'partner' && p.i);
+  const R = 92, C2 = (2 * Math.PI * R).toFixed(1);
+  return `${topbar('Touch', { back: true })}
+  <div class="pad ul3 tch">
+    <div class="tch-stage">
+      <svg class="ul4-sp" viewBox="0 0 360 250" aria-hidden="true">${o3Spark('#f6c6d4', 30, 40, 0)}${o3Spark('#fff', 330, 30, 1.1)}${o3Spark('#c9d6a8', 338, 210, 2)}${o3Spark('#f1d58a', 20, 214, 1.6)}</svg>
+      <button class="tch-hug" data-action="hugGo" aria-label="Start a 20 second hug">
+        <svg viewBox="0 0 220 220" aria-hidden="true"><circle class="tch-track" cx="110" cy="110" r="${R}"/><circle class="tch-ring" cx="110" cy="110" r="${R}" style="stroke-dasharray:${C2};stroke-dashoffset:${C2}"/></svg>
+        <span class="tch-in"><span class="tch-e">${emoRaw('🫂')}</span><b class="dotnum tch-n">20</b><small class="tch-l">Tap and hug</small></span>
+      </button>
+    </div>
+    <span class="ul3-days">${n ? `${icon('heart', 13)} <b class="dotnum">${n}</b> ${n === 1 ? 'hug' : 'hugs'} today` : `${icon('heart', 13)} A 20 second hug`}</span>
+    <section class="o3-note ul3-note">
+      <small class="ul4-eye">Oxytocin, your calm hormone</small>
+      <h2><span>Touch is</span><em>hormone care<svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 40 22, 70 4, 104 12 S 170 20, 196 8"/></svg></em></h2>
+      <p class="o3-lead">A hug, a cuddle or a slow massage releases <mark>oxytocin</mark>. It softens cortisol, eases pain and tells your body it is safe, and a safe body makes hormones more easily.</p>
+    </section>
+    <ul class="ul3-no">${['Works in 20 seconds', 'No partner needed', 'Free'].map((t, i) => `<li style="--r:${[-2, 1.5, -1][i]}deg"><span class="o3-x tch-x">${O3_TICK}</span>${t}</li>`).join('')}</ul>
+    <section class="card ul3-keep"><h3>For your ${PHASES[ph].name.toLowerCase()} phase</h3>
+      ${T.map(([e, t, s], i) => `<div class="ul3-r tch-r" style="--i:${i}"><span class="ul3-ic emo" aria-hidden="true">${emoRaw(e)}</span><span><b>${t}</b><small>${s}</small></span></div>`).join('')}</section>
+    ${lover ? `<button class="tch-ask" data-action="openLove" data-id="${lover.id}"><span>${emoRaw('💌')}</span><span><b>Ask ${esc(lover.n)} for a cuddle</b><small>A love note lands on their phone</small></span>${icon('chevR', 16)}</button>` : ''}
+    <section class="card ul3-keep"><h3>On your own</h3>
+      ${TOUCH_SELF.map(([e, t, s], i) => `<div class="ul3-r tch-r" style="--i:${i}"><span class="ul3-ic emo" aria-hidden="true">${emoRaw(e)}</span><span><b>${t}</b><small>${s}</small></span></div>`).join('')}</section>
+    <details class="card ul3-keep tch-st"><summary><h3>What studies found</h3>${icon('chevD', 14)}</summary>
+      ${TOUCH_STUDY.map(([who, f, j]) => `<div class="tch-s"><p>${f}</p><small>${who} · ${j}</small></div>`).join('')}</details>
+  </div>`;
+}
+let hugTimer = null;
+function hugGo(el) {
+  const b = el.closest('.tch-hug'); if (!b) return;
+  if (b.classList.contains('run')) { clearInterval(hugTimer); b.classList.remove('run'); const rg = b.querySelector('.tch-ring'); rg.style.strokeDashoffset = rg.style.strokeDasharray; b.querySelector('.tch-n').textContent = '20'; b.querySelector('.tch-l').textContent = I18N.T('Tap and hug'); return; }
+  b.classList.remove('done'); void b.offsetWidth; b.classList.add('run');
+  const n = b.querySelector('.tch-n'), l = b.querySelector('.tch-l'), ring = b.querySelector('.tch-ring'), full = parseFloat(ring.style.strokeDasharray); let s = 20; n.textContent = s;
+  ring.style.strokeDashoffset = full; requestAnimationFrame(() => { ring.style.strokeDashoffset = full * 19 / 20; }); l.textContent = I18N.T('Breathe slowly'); buzz('tap');
+  clearInterval(hugTimer);
+  hugTimer = setInterval(() => {
+    if (!b.isConnected) return clearInterval(hugTimer);
+    s--; n.textContent = Math.max(s, 0); ring.style.strokeDashoffset = full * Math.max(s - 1, 0) / 20;
+    if (s === 10) l.textContent = I18N.T('Oxytocin is rising');
+    if (s <= 0) {
+      clearInterval(hugTimer); b.classList.remove('run'); b.classList.add('done'); n.textContent = '✓'; l.textContent = I18N.T('Calmer already');
+      const H = state.hugs = state.hugs || {}, k = todayISO(); H[k] = (H[k] || 0) + 1;
+      for (const d of Object.keys(H)) if (d < C.iso(C.addDays(new Date(), -60))) delete H[d];
+      save(); buzz?.('success');
+      const r = b.getBoundingClientRect(); if (!matchMedia('(prefers-reduced-motion: reduce)').matches) heartBurst(r.left + r.width / 2, r.top + r.height / 2);
+      const pill = document.querySelector('.tch ~ * .ul3-days, .tch .ul3-days'); if (pill) { const c = hugCount(); pill.innerHTML = `${icon('heart', 13)} <b class="dotnum">${c}</b> ${c === 1 ? 'hug' : 'hugs'} today`; I18N.tr(pill); }
+    }
+  }, 1000);
+}
+// His page and a woman partner's view: one cuddle idea for her phase, tap for the next one
+function cuddleCard(info, name) {
+  const L = TOUCH_HIM[info.phase], i = ((ui.cuddleI || 0) + dayNum(C.startOfDay(new Date()))) % L.length, [e, t, s] = L[i];
+  return `${sectionTitle(`Cuddle ${name}`)}
+    <button class="pv2-card cdl" data-action="cuddleNext" aria-label="Another cuddle idea">
+      <span class="cdl-e">${emoRaw(e)}</span>
+      <span class="cdl-b"><small>For her ${PHASES[info.phase].name.toLowerCase()} phase</small><b>${t}</b><p>${s}</p></span>
+      <span class="cdl-why">${icon('heart', 12)} 20 seconds of touch releases oxytocin in you both and lowers her stress hormone.</span>
+      <span class="cdl-more">Another idea ${icon('chevR', 12)}</span>
+    </button>`;
+}
 function viewReliefIndex() {
   const recent = new Set();
   for (let i = 0; i < 4; i++) { const l = getLog(C.iso(C.addDays(new Date(), -i))); [...(l.symptoms || []), ...(l.moods || [])].forEach(s => { const k = reliefKey(s); if (k) recent.add(k); }); }
@@ -5603,6 +5697,7 @@ function viewReliefIndex() {
   return `${topbar('Balance', { back: true })}
   <div class="pad hg fb">
     ${hormonePyramid()}
+    <button class="tch-ask tch-link" data-action="nav" data-to="touch"><span>${emoRaw('🫂')}</span><span><b>Touch &amp; oxytocin</b><small>Your calm hormone, released in 20 seconds</small></span>${icon('chevR', 16)}</button>
     <section class="bgx2 dp-w dp-hbc">
       ${sectionTitle('Your daily plan')}
       <p class="bgx2-sub">Your habits for hormone balance today. Tap one for how and why.</p>
@@ -9688,6 +9783,7 @@ function viewPartner(p) {
     ${fr ? friendDash(p, pi, esc(p.n), sup) : moodDesire(pi, p)}
     ${partnerCare(pi, esc(p.n))}
     ${fr ? '' : duoBring(pi)}
+    ${fr ? '' : cuddleCard(pi, esc(p.n))}
 
     ${sectionTitle('Her hormones')}
     <section class="card glass chart-card">${cycleChart(pi, { id: 'pt', compact: true, who: 'Her' })}</section>
@@ -11549,6 +11645,7 @@ function pvToday(info, name, sup, snap) {
   const day = dayNum(C.startOfDay(new Date())), her = C.energyAt(info.cd, info.L, info.P);
   const when = warm ? 'Tonight, at home' : her > .7 ? `From ${hLabel(w + 7)}, your strongest hours` : `From ${hLabel(w + 11)}, when you’re calmer`;
   return `${duoBring(info)}
+    ${cuddleCard(info, name)}
     ${dateSentToday() ? '' : (([, dt, dp]) => `<section class="pv2-vt" role="button" tabindex="0" data-action="pvDateSend" aria-label="Send ${name} this date">${vtTicket({ to: name, from: himP().n || 'Me', plan: dp, title: dt, ph, when: warm ? 'Tonight, at home' : `Today, ${hLabel(her > .7 ? w + 7 : w + 11)}`, note: `*Tap the ticket and it flies to ${esc(name)}’s phone.` })}</section>`)(dateIdea(info))}
     ${(st => dateCards(dateIdeas(info, st ? 3 : 4).slice(st ? 0 : 1), 'More date ideas', st ? 'Tonight' : 'Or try'))(dateSentToday())}
     ${snap && (snap.a || 'partner') === 'partner' ? `<button class="lb2 lbw dt-send" data-action="pvLove" aria-label="Send ${name} love">
@@ -11891,7 +11988,7 @@ function viewWith(q) {
   if (!snap || !snap.s || !snap.c) return `<div class="pad"><h1 class="page-h" style="margin-top:80px">Link not valid</h1><p class="muted">Ask her to send it again.</p></div>`;
   const today = C.startOfDay(new Date()), info = snapInfo(snap, today), ph = PHASES[info.phase], tcm = TCM[info.phase];
   const S = SUPPORT[info.phase], role = snap.a === 'friend' ? 'friend' : 'partner', sup = S[role];
-  const name = esc(snap.n);
+  const name = esc(snap.n); ui.withName = snap.n; // her name becomes a placeholder, so his page lines translate with any name
   let week = '';
   for (let i = 0; i < 7; i++) {
     const d = C.addDays(today, i), di = snapInfo(snap, d);
@@ -12746,6 +12843,9 @@ const actions = {
   lateStart: () => { wsClose(); actions.periodStart(); },
   lateGo: d => { wsClose(); go(d.to); },
   hpItem: d => wsOpen(hpItemSheet(d.k, d.kind), 'ws-ty ws-mini'),
+  hugGo: (d, el) => hugGo(el),
+  touchGo: () => { wsClose(); go('touch'); },
+  cuddleNext: () => { ui.cuddleI = (ui.cuddleI || 0) + 1; route().name === 'with' ? softWith() : render(); },
   tyFound: d => wsOpen(tyFoundSheet(d.k), 'ws-ty'),
   fbSheet: d => wsOpen(`<div class="fbp-det fbs">${fbDetail(+d.i)}</div>`, 'ws-fb'),
   fbTick: (d, el) => { const k = todayISO(), H = state.habits = state.habits || {}; const a = H[k] = H[k] || []; a.includes(d.id) ? a.splice(a.indexOf(d.id), 1) : a.push(d.id); save();
@@ -13636,13 +13736,15 @@ function render() {
     return;
   }
   if (r.name === 'with') {
-    $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewWith(r.q)}</div>${appPill()}`; softWith.keep();
+    const wv = viewWith(r.q); I18N.setNames([state?.profile?.name, ...((state && state.partners) || []).map(p => p.n), ui.withName]);
+    $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${wv}</div>${appPill()}`; softWith.keep();
     if (keep) document.getElementById('view').scrollTop = keep; // a tap on his page keeps his place
     decorateStudies($app); mountFigures(); if (r.q.get('d')) refreshWith(r.q.get('d')); return;
   }
   let vo = null; if (!state || !state.onboarded) { try { vo = localStorage.getItem('uts.viewOnly'); } catch {} }
   if (vo) { // he opened her link before: the app is just her rhythm for him
-    $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${viewWith(new URLSearchParams({ d: vo }))}</div>`; softWith.keep();
+    const wv = viewWith(new URLSearchParams({ d: vo })); I18N.setNames([ui.withName]);
+    $app.innerHTML = `${statusbar()}<div class="view ${fresh ? 'enter' : ''}" id="view">${wv}</div>`; softWith.keep();
     if (keep) document.getElementById('view').scrollTop = keep;
     decorateStudies($app); mountFigures(); refreshWith(vo); return;
   }
@@ -13675,6 +13777,7 @@ function render() {
   const views = {
     today: viewToday, saved: viewSaved, ground: viewGround, roadmap: viewRoadmap, calendar: viewCalendar, log: viewLog, brain: () => viewBrain(r.id), breathe: () => viewBreathe(r.id), do: () => viewTopic(r.id), plan: viewPlan, diet: viewDiet, insights: viewInsights, profile: viewProfile, share: viewShare, cosmic: viewCalendar, manifest: viewManifest, moon: viewCalendar, grocery: viewGrocery, remedy: () => viewRemedy(r.id), supp: () => (r.id ? viewSupp(r.id) : viewSupps()), habits: viewReliefIndex, guide: viewGuide, sugar: viewSugar, tea: () => (r.id ? viewTeaItem(r.id) : viewTea()), drink: () => viewDrink(r.id), quiet: () => viewQuiet(), nutrients: () => (r.id ? viewNutrient(r.id) : viewNutrients()), rhythm: viewRhythm, energy: viewEnergy, partners: () => viewPartners(r.id), hormones: viewHormones, move: viewMove, stress: viewStress, season: () => viewSeason(r.id), apothecary: () => { location.replace('#/plan/foods'); return ''; }, world: () => viewWorld(r.id), privacy: viewPrivacy, imprint: viewImprint, relief: () => (r.id ? viewRelief(r.id) : viewReliefIndex()),
     unlock: viewUnlock,
+    touch: viewTouch,
     after: viewAfter,
     trying: viewTrying,
     loss: viewLoss,
@@ -13686,7 +13789,7 @@ function render() {
   const html = (views[r.name] || viewToday)();
   const arriving = $app.querySelector('.arrive');
   const page = `${statusbar()}<div class="view ${fresh ? 'enter' : ''} ${arriving ? 'arrive-in' : ''}" id="view">${html}</div>${tabs.includes(r.name) || !views[r.name] ? tabbar(r.name in views ? r.name : 'today') : r.name !== 'unlock' ? tabbar('', !NO_PEEK.includes(r.name)) : ''}${!termsOK() && r.name !== 'privacy' ? termsSheet() : ''}`;
-  I18N.setNames([state.profile?.name, ...(state.partners || []).map(p => p.n)]);
+  I18N.setNames([state?.profile?.name, ...(state.partners || []).map(p => p.n)]);
   if (fresh || arriving || !prev) pageInto($app, page); else morphInto($app, page);
   if (arriving) $app.appendChild(arriving);
   if (ui.loveFor) $app.insertAdjacentHTML('beforeend', loveSheet());
