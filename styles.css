@@ -5191,7 +5191,7 @@ img[src$="read-lilies.webp"] { object-fit: contain !important; object-position: 
 .o9-hero h2 { font-size: 34px; line-height: 1.02; }
 .o9-hero > p { margin: 10px 0 0; font-size: 15px; font-weight: 500; color: var(--o9-mid); }
 .o9-lily { position: relative; margin: 16px -8px 0; }
-.o9-lily img { display: block; width: 100%; aspect-ratio: 1100 / 560; object-fit: cover; object-position: 50% 40%; }
+.o9-lily img { display: block; width: 100%; aspect-ratio: 1100 / 560; object-fit: cover; object-position: 50% 20%; }
 .o9-lily ol { list-style: none; margin: 0; padding: 10px 0 0; display: grid; grid-template-columns: repeat(4, 1fr); position: relative; }
 .o9-lily ol::before { content: ''; position: absolute; left: 12.5%; right: 12.5%; top: 0; height: 2px; border-radius: 2px; background: linear-gradient(90deg, #cfe0b5, var(--o9-moss)); }
 .o9-lily li { position: relative; display: grid; justify-items: center; }
@@ -11491,7 +11491,7 @@ html .sup-full .sup-spec dd { max-width: 70%; }
 .st3-pad { padding-top: 4px; padding-bottom: 0; }
 .st3-hero { border-radius: 32px; background: rgba(255,255,255,0.95); border: 1px solid rgba(48,64,35,0.10); box-shadow: 0 18px 40px rgba(120,70,90,0.10); overflow: hidden; }
 .st3-media { display: block; position: relative; height: 230px; margin: 8px 8px 0; border-radius: 25px; overflow: hidden; background: #efe3e7; }
-.st3-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; }
+.st3-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
 .st3-b { padding: 18px 20px 20px; }
 .st3-b > small { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: rgba(32,48,26,0.55); }
 .st3-b > small i { width: 7px; height: 7px; border-radius: 50%; background: hsl(calc(var(--hb) + 0 * var(--hk)) calc(45% * var(--hs)) 50%); }
@@ -18377,7 +18377,7 @@ html .ls-card.lsw.fr { border-top-color: rgba(214,180,80,.35); background:
 .grhw .ul4-eye { display: block; }
 .grhw h3 { margin: 4px 44px 14px 0; font: 500 23px/1.15 var(--font); letter-spacing: -.01em; color: #20301a; }
 .grhw-g { position: relative; margin: 0; border-radius: 22px; overflow: hidden; aspect-ratio: 1 / .9; background: #dfe6d0; }
-.grhw-g img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 70%; }
+.grhw-g img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
 .grhw-g::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,250,240,.0) 50%, rgba(30,40,20,.32) 100%); pointer-events: none; }
 .grhw-g svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .grhw-f { fill: none; stroke: #fff9e6; stroke-width: 1.15; stroke-linecap: round; stroke-dasharray: .01 4.2; vector-effect: non-scaling-stroke; stroke-width: 3.2px;

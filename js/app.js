@@ -738,7 +738,7 @@ function groundHow() {
     <button class="grhw-x" data-action="grHow" data-v="off" aria-label="Hide why ground">${icon('close', 16, 2)}</button>
     <small class="ul4-eye">Why ground</small>
     <h3 id="grhw-t">What it does for you</h3>
-    <figure class="grhw-g"><img src="images/ground/how-feet.webp" alt="Bare feet standing on a city lawn" loading="lazy" decoding="async">
+    <figure class="grhw-g"><img src="images/ground/how-cat.webp" alt="A tabby cat walking on the grass in the sun" loading="lazy" decoding="async">
       <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines.map(flow).join('')}</svg>
       <figcaption><span class="grhw-c up">The earth’s charge rises</span><span class="grhw-c">You feel calmer</span></figcaption></figure>
     <ul class="grb-g">${GROUND_GOOD.map(([e, t, x], i) => `<li style="--i:${i}"><span aria-hidden="true">${e}</span><b>${t}</b><small>${x}</small></li>`).join('')}</ul>
