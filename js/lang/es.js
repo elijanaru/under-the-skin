@@ -18205,4 +18205,8 @@ export default {"+ Cayenne":"+ Cayena",
 "Every check-in teaches the app your own rhythm, not an average one, so its help fits you.":"Cada registro le enseña a la app tu propio ritmo, no uno promedio, para que su ayuda sea a tu medida.",
 "Ready before it comes":"Lista antes de que llegue",
 "Once it knows your patterns, it tells you before cramps, low days or cravings come back, so you can prepare.":"Cuando conoce tus patrones, te avisa antes de que vuelvan los cólicos, los días bajos o los antojos, para que puedas prepararte.",
-"Start my check-in":"Empezar mi registro"};
+"Start my check-in":"Empezar mi registro",
+"Organise & edit":"Organiza y revisa",
+"Tidy your space, clear admin and tie loose ends.":"Ordena tu espacio, despeja trámites y ata cabos sueltos.",
+"Lean into: Tidy your space, clear admin and tie loose ends.":"Aprovecha para: ordenar tu espacio, despejar trámites y atar cabos sueltos.",
+"Wrap up. Progesterone is high. Many women feel more inward and enjoy order. Lean into: Tidy your space, clear admin and tie loose ends. An estimate from Underskin, not contraception.":"Cierra pendientes. La progesterona está alta. Muchas mujeres se vuelven más introspectivas y disfrutan del orden. Aprovecha para: ordenar tu espacio, despejar trámites y atar cabos sueltos. Una estimación de Underskin, no un anticonceptivo."};

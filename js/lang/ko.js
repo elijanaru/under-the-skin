@@ -18239,4 +18239,8 @@ export default {"+ Cayenne":"+ 카옌페퍼",
 "Every check-in teaches the app your own rhythm, not an average one, so its help fits you.":"기록할 때마다 앱이 평균이 아닌 나만의 리듬을 배워서, 나에게 꼭 맞게 도와줘요.",
 "Ready before it comes":"오기 전에 미리 준비해요",
 "Once it knows your patterns, it tells you before cramps, low days or cravings come back, so you can prepare.":"패턴을 알게 되면 생리통, 기운 없는 날, 식욕이 돌아오기 전에 미리 알려줘서 준비할 수 있어요.",
-"Start my check-in":"기록 시작하기"};
+"Start my check-in":"기록 시작하기",
+"Organise & edit":"정리 & 다듬기",
+"Tidy your space, clear admin and tie loose ends.":"공간을 정돈하고, 서류 일을 처리하고, 남은 일을 매듭지어요.",
+"Lean into: Tidy your space, clear admin and tie loose ends.":"이럴 때 해 보세요: 공간 정돈하기, 서류 일 처리하기, 남은 일 매듭짓기.",
+"Wrap up. Progesterone is high. Many women feel more inward and enjoy order. Lean into: Tidy your space, clear admin and tie loose ends. An estimate from Underskin, not contraception.":"마무리해요. 프로게스테론이 높아요. 많은 여성이 내면으로 향하고 정돈하는 걸 즐겨요. 이럴 때 해 보세요: 공간 정돈하기, 서류 일 처리하기, 남은 일 매듭짓기. Underskin의 예상일 뿐, 피임 수단이 아니에요."};

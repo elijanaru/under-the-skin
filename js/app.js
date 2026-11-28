@@ -7044,7 +7044,7 @@ const COMPASS = {
   building: { mode: 'Push', lvl: 3, why: 'Estrogen climbs to its peak and testosterone rises. For many women energy is at its highest now.', work: 'Your big tasks, hard decisions and important conversations.', ease: 'Skipping meals and sleep because you’re flying.', body: 'Strength, intervals, your hardest sessions, if you feel like it.' },
   peak: { mode: 'Push', lvl: 3, why: 'Around ovulation energy, confidence and social drive are often at their peak.', work: 'Pitch, present, network, ask for what you want.', ease: 'Saying yes to everything. Protect next week.', body: 'High-energy training, dancing, sprints if you feel good.' },
   settle: { mode: 'Steady', lvl: 2, why: 'Progesterone rises and energy turns calmer and steadier.', work: 'Finish what you started, deep work, admin.', ease: 'Starting five new things at once.', body: 'Moderate strength, longer steady sessions, eat a little more.' },
-  focus: { mode: 'Wrap up', lvl: 1, why: 'Progesterone is high. Many women feel more inward and enjoy order.', work: 'Wrap up, organise, edit, tie loose ends.', ease: 'Late nights and back-to-back plans.', body: 'Pilates, yoga, walks, moderate weights.' },
+  focus: { mode: 'Wrap up', lvl: 1, why: 'Progesterone is high. Many women feel more inward and enjoy order.', work: 'Tidy your space, clear admin and tie loose ends.', ease: 'Late nights and back-to-back plans.', body: 'Pilates, yoga, walks, moderate weights.' },
   premenstrual: { mode: 'Slow down', lvl: 0, why: 'Hormones fall before your period. Energy dips and stress can feel bigger.', work: 'A lighter schedule: finish only what’s due and say no more often.', ease: 'Harsh self-talk, and comparing yourself with your best week.', body: 'Gentle movement, warm food, early nights.' },
 };
 const COMPASS_LINE = [
@@ -7094,7 +7094,7 @@ const COMPASS_SHORT = {
   'flow-start': ['Plan & reflect', 'Big launches', 'Walk & stretch'], 'flow-end': ['Small tasks, set goals', 'Cramming', 'Gentle movement'],
   rising: ['Start new things', 'Overbooking', 'Try something new'], building: ['Big tasks & decisions', 'Skipping sleep', 'Hardest sessions'],
   peak: ['Pitch, present, ask', 'Saying yes to all', 'Dance, sprint, lift'], settle: ['Finish & deep work', 'Starting five things', 'Steady strength'],
-  focus: ['Wrap up & organise', 'Late nights', 'Pilates & walks'], premenstrual: ['Only what’s due', 'Harsh self-talk', 'Gentle & warm'],
+  focus: ['Organise & edit', 'Late nights', 'Pilates & walks'], premenstrual: ['Only what’s due', 'Harsh self-talk', 'Gentle & warm'],
 };
 // Under the period button: the pixel aura woman floating in the middle, with five sticky notes about her life today
 // (16 Nov 2026, her call: food and moves were repeating the cards below): her superpower, work, people, self-care and a line to

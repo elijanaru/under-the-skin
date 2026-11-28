@@ -239,14 +239,12 @@ private struct LargeView: View {
                     Link(destination: URL(string: "underskin://open#/do/tea")!) {
                         Glass(pad: 10) {
                             if hasCup(d) {
-                                VStack(spacing: 1) {
-                                    Eyebrow(t: now?.teaT ?? "Your tea today")
-                                    TeaCup(cup: d.cup, size: 62)
+                                VStack(spacing: 2) {
+                                    TeaCup(cup: d.cup, size: 72)
                                     Text(d.teaN ?? "").font(.system(size: 13, weight: .medium)).foregroundColor(ink).multilineTextAlignment(.center).lineLimit(1).minimumScaleFactor(0.7)
                                 }.frame(maxWidth: .infinity)
                             } else {
                                 VStack(alignment: .leading, spacing: 3) {
-                                    Eyebrow(t: now?.teaT ?? "Your tea today")
                                     Text(d.tea ?? "").font(.system(size: 13, weight: .medium)).foregroundColor(ink).lineLimit(1).minimumScaleFactor(0.75)
                                     Text(d.teaWhy ?? "").font(.system(size: 10, weight: .regular)).foregroundColor(ink.opacity(0.65)).lineLimit(2).minimumScaleFactor(0.85)
                                 }
