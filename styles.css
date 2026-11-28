@@ -18671,3 +18671,11 @@ html .slp-d summary .emo, html .slb-o .emo, html .slb-go .emo { display: block; 
 html .grq2-ph, html .grq2 .grq2-ph { aspect-ratio: 3 / 2; border-radius: 22px; }
 @media (max-height: 700px) { html .grq2-ph, html .grq2 .grq2-ph { aspect-ratio: 3 / 2; } }
 html .grq2-b.picked .grq2-ph img { transform: none; }
+
+/* ---------- Check-in intro (28 Nov 2026): why logging matters, shown once ---------- */
+.lgi-g { display: block; width: 100%; height: auto; margin: 6px 0 14px; padding: 12px 8px 6px; border-radius: 22px; background: linear-gradient(180deg, #fbf6f2, #f1f2e6); }
+.lgi-g .lgi-t { font: 400 10.5px var(--font); fill: #6b7558; }
+.lgi-g .lgi-b { font-size: 15px; }
+@media (prefers-reduced-motion: no-preference) { .lgi-p { transform-box: fill-box; transform-origin: center; animation: lgiPulse 2.4s ease-in-out infinite; }
+  @keyframes lgiPulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.25); opacity: .7; } } }
+html .lgi .slp-i .emo { display: inline; margin: 0; font-size: 17px; }

@@ -2833,7 +2833,28 @@ function logTeas(l, di) {
   return `<section class="lt-card"><div class="lt-h">${icon('cup', 16)} <b>Your tea for today</b></div>
     ${list.map(x => `<button class="lt-t" data-action="nav" data-to="${x.r.to}"><img src="${teaPhoto(x.n, 200, 200)}" alt="" loading="lazy"><span><small>For your ${and(x.f)}</small><b>${x.n}</b><em>${x.r.why}</em></span>${icon('chevR', 16)}</button>`).join('')}</section>`;
 }
+// The first time she opens the check-in (28 Nov 2026, her ask): why logging matters, once, before she starts
+function logIntroSheet() {
+  const pts = [[16, 70], [40, 58], [64, 44], [88, 40], [112, 52], [136, 70], [160, 80]], ahead = [[184, 70], [208, 54], [232, 42], [256, 40], [280, 52], [304, 68]];
+  const line = a => a.map(([x, y], i) => `${i ? 'L' : 'M'}${x} ${y}`).join(' ');
+  const g = `<svg class="lgi-g" viewBox="0 0 320 112" role="img" aria-label="Your check-ins draw your own rhythm, so the pattern ahead can be seen before it comes">
+    <path d="${line(pts)}" fill="none" stroke="#8c9768" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M160 80 ${line(ahead).replace('M', 'L')}" fill="none" stroke="#e6b1c4" stroke-width="2" stroke-dasharray="2 6" stroke-linecap="round"/>
+    ${pts.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5" fill="#fff" stroke="#6c823e" stroke-width="1.6"/>`).join('')}
+    ${ahead.map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="${i === 3 ? 8 : 3.5}" fill="${i === 3 ? '#e6b1c4' : '#fff'}" stroke="#e6b1c4" stroke-width="1.4"${i === 3 ? ' class="lgi-p"' : ''}/>`).join('')}
+    <text x="88" y="104" text-anchor="middle" class="lgi-t">Your check-ins</text><text x="244" y="104" text-anchor="middle" class="lgi-t">Your pattern ahead</text>
+    <text x="256" y="24" text-anchor="middle" class="lgi-b" aria-hidden="true">🔔</text></svg>`;
+  const rows = [['🧘‍♀️', 'Stay present', 'A minute a day of noticing how you feel keeps you aware of your body. That awareness is where hormone balance starts.'],
+    ['🌿', 'Underskin learns you', 'Every check-in teaches the app your own rhythm, not an average one, so its help fits you.'],
+    ['🔮', 'Ready before it comes', 'Once it knows your patterns, it tells you before cramps, low days or cravings come back, so you can prepare.']];
+  return `<div class="tyf lgi"><span class="tyf-e"><span class="emo" aria-hidden="true">📝</span></span><h2>Why check in?</h2>
+    <p class="tyf-s">A minute a day, the first step of hormone balance</p>
+    ${g}
+    <div class="lts-l">${rows.map(([e, t, p]) => `<div class="np-s slp-s"><span class="slp-i"><span class="emo" aria-hidden="true">${e}</span></span><span><b>${t}</b><small>${p}</small></span></div>`).join('')}</div>
+    <div class="lts-btns"><button class="btn btn-dark" data-action="wsClose">Start my check-in</button></div></div>`;
+}
 function viewLog() {
+  if (state.onboarded && !state.profile.logIntro) { state.profile.logIntro = 1; save(); setTimeout(() => { if (route().name === 'log') wsOpen(logIntroSheet(), 'ws-ty'); }, 450); }
   const k = ui.logDate || todayISO(), d = C.parseISO(k), l = getLog(k);
   const isToday = k === todayISO(), di = M.stats ? C.dayInfo(d, M.stats) : null;
   const open = ui.logOpen = ui.logOpen || { flow: 1, body: 1 };
