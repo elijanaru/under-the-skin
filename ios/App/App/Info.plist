@@ -4,6 +4,8 @@
 <dict>
 	<key>NSHealthShareUsageDescription</key>
 	<string>Underskin reads your period days from Apple Health, so it knows your cycle from day one. It never writes to Health.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Underskin only reads your period days from Apple Health. It never adds or changes anything in Health.</string>
 	<key>CAPACITOR_DEBUG</key>
 	<string>$(CAPACITOR_DEBUG)</string>
 	<key>CFBundleDevelopmentRegion</key>
